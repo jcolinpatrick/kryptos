@@ -3,6 +3,25 @@ import json, math, os, re, sys, urllib.request, urllib.error
 from collections import Counter
 from pathlib import Path
 
+REPO_ROOT = Path(__file__).resolve().parents[1]
+BASE_DIR = Path(os.getenv("K4_BASE_DIR", str(REPO_ROOT)))
+
+REFERENCE = BASE_DIR / "reference"
+WORDLISTS = BASE_DIR / "wordlists"
+DATA = BASE_DIR / "data"
+
+INPUT_FILES = [
+    REFERENCE / "carter_gutenberg.txt",
+    REFERENCE / "carter_text_cache.txt",
+    ...
+    WORDLISTS / "english.txt",
+]
+
+OUTPUT_PATH = DATA / "english_quadgrams.json"
+
+
+
+
 GUTENBERG_URLS = [
     'https://www.gutenberg.org/cache/epub/2600/pg2600.txt',
     'https://www.gutenberg.org/cache/epub/2701/pg2701.txt',
