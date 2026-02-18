@@ -1,0 +1,38 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3:*)",
+      "Bash(pip3 show:*)",
+      "Bash(pip show:*)",
+      "Bash(pip3 list:*)",
+      "Bash(xargs:*)",
+      "Bash(git clone:*)",
+      "Bash(PYTHONPATH=src python3:*)",
+      "Bash(/home/cpatrick/kryptos/scripts/k4_algebraic_eliminations.py:*)",
+      "Bash(PYTHONPATH=/home/cpatrick/kryptos/src python3:*)",
+      "Bash(wc:*)",
+      "Bash(find:*)",
+      "Bash(source:*)",
+      "Bash(python scripts/e02_misspelling_deltas.py:*)",
+      "WebSearch",
+      "WebFetch(domain:rumkin.com)",
+      "WebFetch(domain:kryptosfan.wordpress.com)",
+      "WebFetch(domain:www.elonka.com)",
+      "WebFetch(domain:inteltoday.org)",
+      "WebFetch(domain:www.thekryptosproject.com)",
+      "WebFetch(domain:kryptosinfo.wordpress.com)",
+      "WebFetch(domain:en.wikipedia.org)",
+      "WebFetch(domain:www.lemmi.no)",
+      "WebFetch(domain:prinsfrank.nl)",
+      "WebFetch(domain:avanier.dev)",
+      "WebFetch(domain:www.nsa.gov)",
+      "WebFetch(domain:elonka.com)",
+      "WebFetch(domain:scirealm.org)",
+      "WebFetch(domain:www.solvingkryptos.com)",
+      "WebFetch(domain:www.cia.gov)",
+      "Bash(ls:*)",
+      "Bash(grep:*)",
+      "Bash(head:*)"
+    ]
+  }
+}
