@@ -3,7 +3,9 @@ Algebraic elimination of Hill cipher, Autokey, Enigma, and Gronsfeld for K4.
 Tests multiple cipher types against the known cribs at positions 21-33 and 63-73.
 """
 import sys
-sys.path.insert(0, '/home/cpatrick/kryptos/src')
+from pathlib import Path
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'src'))
 
 from itertools import product
 
