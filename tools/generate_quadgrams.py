@@ -53,22 +53,7 @@ GUTENBERG_URLS = [
     'https://www.gutenberg.org/cache/epub/768/pg768.txt',
 ]
 
-LOCAL_TEXT_FILES = [
-    '/home/cpatrick/kryptos/reference/carter_gutenberg.txt',
-    '/home/cpatrick/kryptos/reference/carter_text_cache.txt',
-    '/home/cpatrick/kryptos/reference/carter_vol1.txt',
-    '/home/cpatrick/kryptos/reference/running_key_texts/cia_charter.txt',
-    '/home/cpatrick/kryptos/reference/running_key_texts/jfk_berlin.txt',
-    '/home/cpatrick/kryptos/reference/running_key_texts/nsa_act_1947.txt',
-    '/home/cpatrick/kryptos/reference/running_key_texts/reagan_berlin.txt',
-    '/home/cpatrick/kryptos/reference/running_key_texts/udhr.txt',
-    '/home/cpatrick/kryptos/reference/sanborn_correspondence.md',
-    '/home/cpatrick/kryptos/reference/smithsonian_archive.md',
-    '/home/cpatrick/kryptos/reference/youtube_transcript.md',
-    '/home/cpatrick/kryptos/wordlists/english.txt',
-]
-
-OUTPUT_PATH = Path('/home/cpatrick/kryptos/data/english_quadgrams.json')
+LOCAL_TEXT_FILES = [str(p) for p in INPUT_FILES]
 ALPHA_RE = re.compile(r'[^A-Z]')
 
 def sanitize(text):

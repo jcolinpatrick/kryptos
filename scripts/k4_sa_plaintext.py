@@ -4,7 +4,11 @@ Fixes cribs at known positions and optimizes free positions
 to maximize English quadgram score of the full plaintext.
 Also enforces Bean equality: k[27] = k[65].
 """
-import json, math, random, time, sys
+import json, math, os, random, time, sys
+from pathlib import Path
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
+BASE_DIR = Path(os.getenv("K4_BASE_DIR", str(REPO_ROOT)))
 
 CT = 'OBKRUOXOGHULBSOLIFBBWFLRVQQPRNGKSSOTWTQSJQSSEKZZWATJKLUDIAWINFBNYPVTTMZFPKWGDKZXTJCDIGKUHUAUEKCAR'
 CT_NUM = [ord(c) - ord('A') for c in CT]
@@ -27,7 +31,7 @@ free_pos = sorted(set(range(N)) - set(fixed.keys()))
 print(f"Free positions: {len(free_pos)}, Fixed: {len(fixed)}")
 
 # Load quadgrams
-QG_PATH = '/home/cpatrick/kryptos/data/english_quadgrams.json'
+QG_PATH = str(BASE_DIR / "data" / "english_quadgrams.json")
 with open(QG_PATH) as f:
     quadgrams = json.load(f)
 

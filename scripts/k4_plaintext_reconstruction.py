@@ -5,8 +5,10 @@ score the resulting keystream for structure (English, patterns, math).
 """
 import sys, json, os
 from pathlib import Path
-import sys
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'src'))
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
+BASE_DIR = Path(os.getenv("K4_BASE_DIR", str(REPO_ROOT)))
 
 CT = 'OBKRUOXOGHULBSOLIFBBWFLRVQQPRNGKSSOTWTQSJQSSEKZZWATJKLUDIAWINFBNYPVTTMZFPKWGDKZXTJCDIGKUHUAUEKCAR'
 CT_NUM = [ord(c) - ord('A') for c in CT]
@@ -16,7 +18,7 @@ def c2n(c): return ord(c) - ord('A')
 def n2c(n): return chr(n % 26 + ord('A'))
 
 # Load quadgram scorer
-QUADGRAM_PATH = '/home/cpatrick/kryptos/results/anneal_step7_start8/english_quadgrams.json'
+QUADGRAM_PATH = str(BASE_DIR / "data" / "english_quadgrams.json")
 quadgrams = {}
 if os.path.exists(QUADGRAM_PATH):
     with open(QUADGRAM_PATH) as f:
