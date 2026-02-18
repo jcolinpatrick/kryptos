@@ -3,7 +3,8 @@ You are one of 8 parallel agents operating in a git worktree. Your job is to adv
 Hard rules:
 - Confirm you are NOT in /home/cpatrick/kryptos (main). You must be in /home/cpatrick/kryptos_agents/agentXX.
 - Always set and honor: K4_AGENT_ID and K4_BASE_DIR. Never write to hard-coded ~/kryptos paths.
-- Before starting any task: git pull --rebase.
+- Before starting any task: git fetch --all --prune || true
+- then: git rebase main.
 - Use lockfiles to avoid duplication:
   - Claim a task by creating current_tasks/<task>.lock containing: agent id + timestamp + 1-line intent.
   - Commit+push the lock. If push fails, pick a different task.
