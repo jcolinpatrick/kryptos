@@ -8,8 +8,10 @@ Novel K4 attack vectors:
 import sys, json, os, random, math
 from collections import Counter
 from pathlib import Path
-import sys
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'src'))
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
+BASE_DIR = Path(os.getenv("K4_BASE_DIR", str(REPO_ROOT)))
 
 CT = 'OBKRUOXOGHULBSOLIFBBWFLRVQQPRNGKSSOTWTQSJQSSEKZZWATJKLUDIAWINFBNYPVTTMZFPKWGDKZXTJCDIGKUHUAUEKCAR'
 CT_NUM = [ord(c) - ord('A') for c in CT]
@@ -29,7 +31,7 @@ for start, pt in [(ENE_POS, ENE_PT), (BC_POS, BC_PT)]:
         known[pos] = (CT_NUM[pos] - c2n(ch)) % 26
 
 # Load quadgrams
-QUADGRAM_PATH = '/home/cpatrick/kryptos/results/anneal_step7_start8/english_quadgrams.json'
+QUADGRAM_PATH = str(BASE_DIR / "data" / "english_quadgrams.json")
 qg = {}
 if os.path.exists(QUADGRAM_PATH):
     with open(QUADGRAM_PATH) as f:

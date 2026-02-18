@@ -8,7 +8,11 @@ The combined score may find solutions that single-objective SA misses.
 
 Also includes: SA on Beaufort decryption, and SA on key-as-English.
 """
-import json, math, random, time
+import json, math, os, random, time
+from pathlib import Path
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
+BASE_DIR = Path(os.getenv("K4_BASE_DIR", str(REPO_ROOT)))
 
 CT = 'OBKRUOXOGHULBSOLIFBBWFLRVQQPRNGKSSOTWTQSJQSSEKZZWATJKLUDIAWINFBNYPVTTMZFPKWGDKZXTJCDIGKUHUAUEKCAR'
 CT_NUM = [ord(c) - ord('A') for c in CT]
@@ -24,7 +28,7 @@ for start, pt in CRIBS.items():
 
 free_pos = sorted(set(range(N)) - set(fixed_key.keys()))
 
-QG_PATH = '/home/cpatrick/kryptos/data/english_quadgrams.json'
+QG_PATH = str(BASE_DIR / "data" / "english_quadgrams.json")
 with open(QG_PATH) as f:
     quadgrams = json.load(f)
 FLOOR = -10.0
