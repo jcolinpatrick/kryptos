@@ -5,8 +5,10 @@ Tests all offsets with Vigenere, Beaufort, and Variant Beaufort.
 """
 import sys, os, glob
 from pathlib import Path
-import sys
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'src'))
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
+BASE_DIR = Path(os.getenv("K4_BASE_DIR", str(REPO_ROOT)))
 
 CT = 'OBKRUOXOGHULBSOLIFBBWFLRVQQPRNGKSSOTWTQSJQSSEKZZWATJKLUDIAWINFBNYPVTTMZFPKWGDKZXTJCDIGKUHUAUEKCAR'
 CT_NUM = [ord(c) - ord('A') for c in CT]
@@ -37,7 +39,7 @@ print("K4 THEMATIC RUNNING KEY ATTACK")
 print("=" * 70)
 
 # Load all text files
-text_dir = '/home/cpatrick/kryptos/reference/running_key_texts/'
+text_dir = str(BASE_DIR / "reference" / "running_key_texts") + '/'
 text_files = glob.glob(os.path.join(text_dir, '*.txt'))
 
 # Also include Carter text and K1-K3 plaintexts
@@ -49,7 +51,7 @@ extra_texts = {
 }
 
 # Load Carter text
-carter_files = glob.glob('/home/cpatrick/kryptos/reference/carter*.txt')
+carter_files = glob.glob(str(BASE_DIR / "reference" / "carter*.txt"))
 for cf in carter_files:
     try:
         with open(cf) as f:

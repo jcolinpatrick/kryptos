@@ -13,11 +13,13 @@ Strategy: build candidate plaintexts from word fragments that could appear
 in the three free zones (pre-ENE, mid, post-BC), and check if the resulting
 keystream shows structure (periodicity, English text, or known patterns).
 """
-import sys, json, time
+import sys, json, time, os
 from collections import Counter
 from pathlib import Path
-import sys
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'src'))
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
+BASE_DIR = Path(os.getenv("K4_BASE_DIR", str(REPO_ROOT)))
 
 CT = 'OBKRUOXOGHULBSOLIFBBWFLRVQQPRNGKSSOTWTQSJQSSEKZZWATJKLUDIAWINFBNYPVTTMZFPKWGDKZXTJCDIGKUHUAUEKCAR'
 CT_NUM = [ord(c) - ord('A') for c in CT]
@@ -37,7 +39,7 @@ for start, pt in [(ENE_POS, ENE_PT), (BC_POS, BC_PT)]:
         known_vig[pos] = (CT_NUM[pos] - c2n(ch)) % 26
 
 # Load quadgrams
-QG_PATH = '/home/cpatrick/kryptos/data/english_quadgrams.json'
+QG_PATH = str(BASE_DIR / "data" / "english_quadgrams.json")
 with open(QG_PATH) as f:
     quadgrams = json.load(f)
 
@@ -314,7 +316,7 @@ print("APPROACH 3: SEARCH FOR ENGLISH WORDS IN KEY FRAGMENTS")
 print("=" * 70)
 
 # Load dictionary
-dict_path = '/home/cpatrick/kryptos/wordlists/english.txt'
+dict_path = str(BASE_DIR / "wordlists" / "english.txt")
 with open(dict_path) as f:
     dictionary = set(w.strip().upper() for w in f if len(w.strip()) >= 4)
 
