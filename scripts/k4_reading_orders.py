@@ -4,7 +4,9 @@ If K4's CT should be read in a non-standard order before decryption,
 the cribs would match after reordering + Vigenère/Beaufort decryption.
 """
 import sys
-sys.path.insert(0, '/home/cpatrick/kryptos/src')
+from pathlib import Path
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'src'))
 from math import gcd
 
 CT = 'OBKRUOXOGHULBSOLIFBBWFLRVQQPRNGKSSOTWTQSJQSSEKZZWATJKLUDIAWINFBNYPVTTMZFPKWGDKZXTJCDIGKUHUAUEKCAR'

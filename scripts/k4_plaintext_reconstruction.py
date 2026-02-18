@@ -4,7 +4,9 @@ Given the cribs and thematic clues, construct candidate plaintexts and
 score the resulting keystream for structure (English, patterns, math).
 """
 import sys, json, os
-sys.path.insert(0, '/home/cpatrick/kryptos/src')
+from pathlib import Path
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'src'))
 
 CT = 'OBKRUOXOGHULBSOLIFBBWFLRVQQPRNGKSSOTWTQSJQSSEKZZWATJKLUDIAWINFBNYPVTTMZFPKWGDKZXTJCDIGKUHUAUEKCAR'
 CT_NUM = [ord(c) - ord('A') for c in CT]
