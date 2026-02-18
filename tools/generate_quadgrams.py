@@ -11,13 +11,21 @@ WORDLISTS = BASE_DIR / "wordlists"
 DATA = BASE_DIR / "data"
 
 INPUT_FILES = [
-    REFERENCE / "carter_gutenberg.txt",
-    REFERENCE / "carter_text_cache.txt",
-    ...
-    WORDLISTS / "english.txt",
+    BASE_DIR / "reference" / "carter_gutenberg.txt",
+    BASE_DIR / "reference" / "carter_text_cache.txt",
+    BASE_DIR / "reference" / "carter_vol1.txt",
+    BASE_DIR / "reference" / "running_key_texts" / "cia_charter.txt",
+    BASE_DIR / "reference" / "running_key_texts" / "jfk_berlin.txt",
+    BASE_DIR / "reference" / "running_key_texts" / "nsa_act_1947.txt",
+    BASE_DIR / "reference" / "running_key_texts" / "reagan_berlin.txt",
+    BASE_DIR / "reference" / "running_key_texts" / "udhr.txt",
+    BASE_DIR / "reference" / "sanborn_correspondence.md",
+    BASE_DIR / "reference" / "smithsonian_archive.md",
+    BASE_DIR / "reference" / "youtube_transcript.md",
+    BASE_DIR / "wordlists" / "english.txt",
 ]
+OUTPUT_PATH = BASE_DIR / "data" / "english_quadgrams.json"
 
-OUTPUT_PATH = DATA / "english_quadgrams.json"
 
 
 
