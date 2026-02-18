@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Virtual environments
+venv/
+.venv/
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Logs
+*.log
+agent_logs/
+work/
+tmp/
+
+# Data/artifacts that are usually large or per-run
+db/
+results/
+artifacts/
+
+# If you later decide some of these should be versioned,
+# narrow this ignore (e.g., ignore db/*.sqlite but keep db/README.md)
