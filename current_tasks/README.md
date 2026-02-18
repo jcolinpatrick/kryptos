@@ -1,1 +1,1 @@
-# Lockfiles for agent-team tasks
+# agent task locks
