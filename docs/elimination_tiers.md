@@ -2,7 +2,7 @@
 
 **CRITICAL FRAMING:** Every exhaustive-search elimination in this project was conducted under the assumption of **direct positional correspondence** — meaning CT position N maps to PT position N with no transposition. The primary hypothesis (H1) is that a transposition layer exists, which means **the substitution families below have NOT been tested in their correct context as one layer of a multi-layer system.** The TRANS, JTS, and FRAC agents are doing that work now.
 
-**FRAC AGENT STATUS (2026-02-20):** The FRAC agent has completed 36 experiments (E-FRAC-01 through E-FRAC-36). Key results that affect this document:
+**FRAC AGENT STATUS (2026-02-20, FINAL):** The FRAC agent has completed all 38 experiments (E-FRAC-01 through E-FRAC-38). Mandate COMPLETE. Key results that affect this document:
 - ALL fractionation families structurally eliminated (E-FRAC-21) — proofs hold WITH OR WITHOUT transposition
 - **Columnar widths 5-15 + periodic substitution: ALL ELIMINATED at discriminating periods**
   - Width-5, Width-7: Bean-ELIMINATED (ZERO orderings pass Bean equality, E-FRAC-26/27)
@@ -23,6 +23,8 @@
 - Recommended JTS thresholds: crib=24 + Bean + quadgram > -5.0 + IC > 0.055 + word ≥6 chars
 - **Bean impossibility proof (E-FRAC-35):** ALL periods 2-12, 14, 15, 17, 18, 21, 22, 25 eliminated for ANY transposition + periodic key. Only 8 of 25 periods (2-26) survive: {8, 13, 16, 19, 20, 23, 24, 26}. This is a UNIVERSAL PROOF holding for all 97! permutations.
 - **Bean-surviving period validation (E-FRAC-36):** Hill-climbing at periods 8 and 13 (first two Bean-surviving periods) with Bean as HARD constraint. 175 false 24/24+Bean solutions found; ALL have quadgram < -5.0/char (best: -6.171). Multi-objective oracle discriminates at Bean-surviving periods too.
+- **Autokey structural elimination (E-FRAC-37):** Autokey (PT/CT × Vig/Beau) + arbitrary transposition CANNOT reach 24/24. PT-autokey max=16/24, CT-autokey max=21/24. Autokey is MORE constrained than periodic keying. This is a structural elimination, not just noise.
+- **Comprehensive key model Bean analysis (E-FRAC-38):** Progressive key BEAN-ELIMINATED (δ∈{0,13} only). Quadratic key BEAN-ELIMINATED (0/676 survive full Bean). Fibonacci key BEAN-ELIMINATED (0/676 survive). Running key is the ONLY structured model surviving Bean constraints.
 - Full meta-analysis: `reports/frac_statistical_meta_analysis.md`
 
 Read these tiers carefully before deciding what is and isn't worth testing.
@@ -47,6 +49,10 @@ These are algebraic proofs, not search results. They are permanently valid unles
 | Columnar widths 10-15 sampled crib scoring | Widths 10-15 columnar + periodic sub: 100K samples each, all max 14/24, ALL underperform random (expected 15+) | Requires cribs and CT correctness (E-FRAC-30) |
 | Simple transposition families | Cyclic shifts, reverse, affine, block reversal, rail fence, single swaps + periodic sub: 14,035 perms, max 13/24, BELOW random (14/24) | Requires cribs and CT correctness (E-FRAC-32) |
 | **ANY transposition + periodic key (p=2-12,14,15,17,18,21,22,25)** | **PROOF: Bean inequalities structurally violated at these periods for ALL 97! permutations. Type 1: same-residue inequality. Type 2: Bean equality-inequality conflict.** | **Requires Bean constraint correctness (E-FRAC-35)** |
+| **Progressive key (k[i]=k[0]+iδ) + ANY transposition** | **BEAN-ELIMINATED: 38δ ≡ 0 (mod 26) → δ ∈ {0,13}. δ=0 is mono (trivial). δ=13 ≈ period-2 (Bean-eliminated by E-FRAC-35).** | **Requires Bean constraint (E-FRAC-38)** |
+| **Quadratic key (k[i]=ai²+bi+c) + ANY transposition** | **BEAN-ELIMINATED: 0/676 (a,b) pairs survive full Bean inequalities.** | **Requires Bean constraint (E-FRAC-38)** |
+| **Fibonacci key + ANY transposition** | **BEAN-ELIMINATED: 0/676 seeds survive full Bean inequalities.** | **Requires Bean constraint (E-FRAC-38)** |
+| **Autokey (PT/CT) + arbitrary transposition** | **STRUCTURAL: Cannot reach 24/24 cribs. PT-autokey max=16/24, CT-autokey max=21/24. More constrained than periodic.** | **Requires cribs (E-FRAC-37)** |
 
 **What could invalidate Tier 1:** Only if the 24 crib positions are wrong (off-by-one, wrong character mapping) or the CT transcription has an error. The wave1 report already caught one VKB error (position 74 was listed as K→K self-encryption; actual CT[74]=W). If one error existed, others could too. The cribs themselves come from Sanborn's public announcements and are highly trustworthy, but the exact 0-indexed position mapping has been a source of bugs.
 
@@ -66,7 +72,7 @@ These eliminations are solid FOR THEIR SPECIFIC MODEL: "Is K4 cipher family X ap
 | Quagmire I/II/III/IV | ~2 million | 17/24 (artifact) | ELIMINATED | **OPEN** |
 | Bifid / Playfair / Four-Square / Two-Square | ~4.9 billion | 11/24 | ELIMINATED | **STRUCTURALLY ELIMINATED** (E-FRAC-21: parity + alphabet proofs hold with or without transposition) |
 | Nihilist | ~4.9 billion | 11/24 | ELIMINATED | **OPEN** |
-| Autokey (PT and CT) | ~50,000 | 6/24 | ELIMINATED | **OPEN — target for JTS agent** |
+| Autokey (PT and CT) | ~50,000 | 6/24 | ELIMINATED | **STRUCTURALLY ELIMINATED** (E-FRAC-37: cannot reach 24/24 even with arbitrary transposition; PT max=16/24, CT max=21/24) |
 | Running Key (K1–K3 as keystream) | ~45,000 | 7/24 | ELIMINATED | **OPEN** |
 | Grid Rotation (K3-style) | ~14,000 | 7/24 | ELIMINATED | N/A (is itself a transposition) |
 | Columnar + Vigenère (no bimodal pre-filter) | ~4 million | 12/15 | ELIMINATED (widths 5–10) | **OPEN — needs re-test WITH bimodal filter and polyalphabetic check** |
@@ -142,4 +148,4 @@ The persistent 14–17/24 ceiling across all families has been interpreted as ev
 
 ---
 
-*Updated 2026-02-20 by agent_frac. See also: `docs/invariants.md` (verified computational invariants), `docs/research_questions.md` (prioritized unknowns).*
+*Updated 2026-02-20 by agent_frac (FINAL — 38 experiments, mandate complete). See also: `docs/invariants.md` (verified computational invariants), `docs/research_questions.md` (prioritized unknowns).*
