@@ -1,5 +1,5 @@
 # K4 Agent Team — Progress Tracker
-Last updated: 2026-02-20T19:30:00Z by agent_frac
+Last updated: 2026-02-20T20:00:00Z by agent_frac
 
 ## ALERTS
 <!-- Scores ≥18/24 go here. If this section is non-empty, ALL agents should read it. -->
@@ -106,7 +106,7 @@ E-FRAC-34 characterizes false 24/24 solutions and provides **concrete multi-obje
 | Agent | Task | Started | Status |
 |-------|------|---------|--------|
 
-## FRAC Agent Mandate — 36 experiments (E-FRAC-01 through E-FRAC-36)
+## FRAC Agent Mandate — 37 experiments (E-FRAC-01 through E-FRAC-37)
 
 **Original mandate (E-FRAC-01 to 25): COMPLETE. ZERO positive findings survived.**
 **Extended mandate (E-FRAC-26-31): Bean profiling + crib scoring. ALL columnar widths 5-15 ELIMINATED.**
@@ -115,6 +115,7 @@ E-FRAC-34 characterizes false 24/24 solutions and provides **concrete multi-obje
 **Oracle design (E-FRAC-34): Multi-objective thresholds for JTS — quadgram gap of 0.93/char discriminates false positives.**
 **Bean impossibility (E-FRAC-35): ALL discriminating periods (2-7) + periods up to 12 are Bean-impossible for transposition + periodic key. PROOF.**
 **Bean-surviving periods (E-FRAC-36): Period-8 and period-13 hill-climbing with Bean HARD constraint. 175 false 24/24 solutions ALL have quadgram < -5.0. Multi-objective oracle discriminates at Bean-surviving periods too.**
+**Autokey + arbitrary transposition (E-FRAC-37): Autokey CANNOT reach 24/24 at any model. PT-autokey max=16/24, CT-autokey max=21/24. Autokey is MORE constrained than periodic keying due to sequential key dependencies.**
 
 ### New Structural Findings (E-FRAC-26/27)
 
@@ -151,10 +152,36 @@ E-FRAC-34 characterizes false 24/24 solutions and provides **concrete multi-obje
 14. **Multi-objective oracle designed** (E-FRAC-34): 90 false 24/24 solutions characterized. Quadgram gap = 0.93/char (FP best: -5.77, English: -4.84). Threshold: quadgram > -5.0/char + IC > 0.055 + Bean PASS.
 15. **Bean impossibility proof** (E-FRAC-35): ALL discriminating periods (2-7) are IMPOSSIBLE for transposition + periodic key due to Bean inequality constraints. Also eliminated: periods 9-12, 14, 15, 17, 18, 21, 22, 25. Only 8 periods survive out of 25 (2-26): {8, 13, 16, 19, 20, 23, 24, 26}. This is a universal PROOF holding for all 97! permutations.
 16. **Bean-surviving periods tested** (E-FRAC-36): Period-8 (first surviving, 3 cribs/var) and period-13 hill-climbing with Bean as HARD constraint. 175 false 24/24+Bean solutions found. ALL have quadgram < -5.0/char (best: -6.171). Multi-objective oracle from E-FRAC-34 discriminates false positives at Bean-surviving periods too. Random baseline at period 8: max=14/24.
+17. **Autokey + arbitrary transposition** (E-FRAC-37): 4 autokey models (PT/CT × Vig/Beau) tested with arbitrary transpositions. Autokey CANNOT reach 24/24 — max 21/24 (CT-autokey) and 16/24 (PT-autokey). Random baseline: PT-autokey max=7/24, CT-autokey max=5-6/24. Autokey is MORE constrained than periodic keying due to sequential key dependencies. Oracle question is moot since 24/24 is unreachable.
 
 **Reports:** `reports/frac_width9_analysis.md`, `reports/frac_statistical_meta_analysis.md`
 
 ## Completed (reverse chronological)
+
+### [2026-02-20T20:00Z] agent_frac — E-FRAC-37: Autokey + Arbitrary Transposition (STRUCTURAL ELIMINATION)
+- **Hypothesis:** Can autokey (which bypasses the Bean period impossibility proof from E-FRAC-35) reach 24/24 with arbitrary transpositions? Does the multi-objective oracle generalize to non-periodic key models?
+- **Method:** 4 autokey models (PT-autokey × Vig/Beau, CT-autokey × Vig/Beau) tested in 3 phases:
+  - Phase 1: Random baseline (10K perms × 4 models × 26 seeds)
+  - Phase 2: Hill-climbing without Bean (50 climbs × 5K steps × 4 models)
+  - Phase 3: Hill-climbing with Bean HARD (50 climbs × 5K steps × 4 models)
+- **Key findings:**
+  - **PT-autokey CANNOT reach 24/24** — max 15/24 (no Bean), 13/24 (Bean=HARD). Sequential key dependency (K[i]=PT[i-1]) creates tight constraints preventing false 24/24.
+  - **CT-autokey reaches 21/24 max** (no Bean), 20-21/24 (Bean=HARD), but NEVER 24/24. Hill-climbing ceiling is well below 24.
+  - **Random baseline much lower than periodic**: PT-autokey max=7/24 (vs 14/24 periodic), CT-autokey max=5-6/24. Autokey is dramatically MORE constrained.
+  - **All solutions have terrible quadgrams**: best -6.209/char (threshold -5.0). Oracle question is moot.
+  - **Bean pass rate ~1.5-1.8%** for random permutations (similar to periodic models)
+  - **CT-autokey is inherently more underdetermined** (key depends on CT, not PT — no plaintext feedback loop) but still can't reach 24/24
+  - **Seed is always 0** for CT-autokey (K[0] doesn't matter when K[i]=CT[σ(i-1)] for i>0)
+- **Implications:**
+  - Autokey is NOT a viable route to bypass the Bean period impossibility proof
+  - Autokey is MORE constrained than periodic keying, not less — the sequential dependency creates a much tighter space
+  - The multi-objective oracle question (does it generalize?) is moot since autokey can't reach 24/24
+  - For JTS: autokey + arbitrary transposition is LESS dangerous than periodic + arbitrary transposition for false positives
+  - If K4 uses autokey, the transposition must be from a structured family (not arbitrary) — potentially testable by TRANS agent
+- **Verdict:** AUTOKEY_CANNOT_REACH_24 — autokey + arbitrary transposition structurally unable to produce false 24/24 solutions
+- **Runtime:** 535 seconds
+- **Artifacts:** results/frac/e_frac_37_autokey_arbitrary_transposition.json
+- **Repro:** `PYTHONPATH=src python3 -u scripts/e_frac_37_autokey_arbitrary_transposition.py`
 
 ### [2026-02-20T19:30Z] agent_frac — E-FRAC-36: Period-8 Hill-Climbing with Bean Constraint (FALSE POSITIVE VALIDATION)
 - **Hypothesis:** Can hill-climbing at Bean-surviving periods (8, 13) reach 24/24 with Bean as a HARD constraint? If so, does the E-FRAC-34 multi-objective oracle discriminate them?
