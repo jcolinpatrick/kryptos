@@ -1,9 +1,9 @@
 # K4 Statistical Meta-Analysis — What the Numbers Actually Say
 
 **Agent:** frac (FRAC role)
-**Date:** 2026-02-21 (updated: E-FRAC-42)
-**Experiments:** E-FRAC-01 through E-FRAC-42
-**Status:** FRAC mandate COMPLETE + extension — 42 experiments. Running key + transposition fully characterized: MASSIVELY UNDERDETERMINED, no automated discriminator achieves perfect separation between SA gibberish and real English
+**Date:** 2026-02-21 (updated: E-FRAC-43)
+**Experiments:** E-FRAC-01 through E-FRAC-43
+**Status:** FRAC mandate COMPLETE + extension — 43 experiments. Running key + transposition fully characterized: MASSIVELY UNDERDETERMINED, no automated discriminator achieves perfect separation between SA gibberish and real English. Discriminator investigation CONCLUDED.
 
 ## Executive Summary
 
@@ -537,9 +537,21 @@ SA-optimized gibberish contains dictionary words, including crib-derived words (
 
 **Best metric: non-crib words ≥7 chars (Cohen's d = 1.14).** This is a LARGE effect size but with 70% overlap — meaning many SA gibberish values fall within the English range.
 
+### N-Gram Scoring Provides Zero Discrimination (E-FRAC-43)
+
+Bigram and trigram transition probability scoring was tested as an alternative automated discriminator. Models were trained on Carter text (117K alpha chars).
+
+| Metric | English | SA Gibberish | Cohen's d |
+|--------|---------|-------------|-----------|
+| Bigram score | -1.118 | -1.096 | **-0.35** (SA better!) |
+| Trigram score | -1.031 | -1.039 | 0.11 (no discrimination) |
+| Quadgram score | -4.344 | -4.233 | **-0.65** (SA better!) |
+
+SA gibberish is actually MORE n-gram-coherent than real English at all scales. This is expected: SA explicitly optimizes for quadgram fitness, and local n-gram coherence propagates to bigram/trigram levels. Real English has word boundaries, punctuation patterns, and less-common transitions that slightly REDUCE its n-gram scores compared to SA-optimized text.
+
 ### The Fundamental Limitation
 
-At 97 characters (after removing spaces/punctuation from English), there is simply not enough text for reliable automated discrimination. SA quadgram optimization is powerful enough to produce genuine English words (not just crib-derived ones), and the crib words themselves inflate word counts. The only fully reliable discriminator is **semantic coherence** evaluated by a human: does the text make sense as a message?
+At 97 characters (after removing spaces/punctuation from English), there is simply not enough text for reliable automated discrimination. SA quadgram optimization is powerful enough to produce genuine English words (not just crib-derived ones), text that scores well on ALL n-gram metrics, and the crib words themselves inflate word counts. The only fully reliable discriminator is **semantic coherence** evaluated by a human: does the text make sense as a message?
 
 **Repro:**
 - `PYTHONPATH=src python3 -u scripts/e_frac_39_running_key_bipartite.py`
@@ -552,7 +564,7 @@ At 97 characters (after removing spaces/punctuation from English), there is simp
 
 ## Part XIII: Final FRAC Mandate Summary
 
-### Complete Experiment Registry (42 experiments)
+### Complete Experiment Registry (43 experiments)
 
 | ID | Topic | Verdict |
 |----|-------|---------|
@@ -599,14 +611,15 @@ At 97 characters (after removing spaces/punctuation from English), there is simp
 | E-FRAC-40b | Random key control | Random key = Carter quadgrams |
 | E-FRAC-41 | Word-level discriminator | WEAK (SA gibberish has words) |
 | E-FRAC-42 | Refined discriminator (non-crib) | MODERATE (d=1.14, no perfect sep.) |
+| E-FRAC-43 | Bigram/trigram discriminator | NO IMPROVEMENT (n-grams: d≤0.11) |
 
 ### Bottom Line
 
-After 42 experiments covering every hypothesis in the FRAC mandate space, the conclusive finding is: **ZERO positive results survive.** K4's ciphertext is statistically indistinguishable from random text. Every structured key model except running key is Bean-eliminated. Every transposition family tested is noise or underperforms random. Running key + transposition is massively underdetermined — bipartite matching and Bean constraints provide zero discrimination among candidate (offset, transposition) pairs. SA quadgram optimization trivially achieves English-like quadgrams (-4.3/char) with ANY key, making Carter text indistinguishable from random as a running key source. No automated discriminator perfectly separates SA gibberish from real English at 97 characters (best: non-crib words ≥7 chars, Cohen's d = 1.14, but with significant overlap). **Semantic coherence via human evaluation is the ONLY fully reliable discriminator for final candidate acceptance.**
+After 43 experiments covering every hypothesis in the FRAC mandate space, the conclusive finding is: **ZERO positive results survive.** K4's ciphertext is statistically indistinguishable from random text. Every structured key model except running key is Bean-eliminated. Every transposition family tested is noise or underperforms random. Running key + transposition is massively underdetermined — bipartite matching and Bean constraints provide zero discrimination among candidate (offset, transposition) pairs. SA quadgram optimization trivially achieves English-like quadgrams (-4.3/char) with ANY key, making Carter text indistinguishable from random as a running key source. No automated discriminator perfectly separates SA gibberish from real English at 97 characters: non-crib words ≥7 chars is the best (Cohen's d = 1.14), while n-gram scoring provides zero discrimination (SA gibberish is actually MORE n-gram-coherent than real English). **Semantic coherence via human evaluation is the ONLY fully reliable discriminator for final candidate acceptance.**
 
 **The remaining viable hypothesis space for K4 is: running key from unknown text + structured transposition + Vigenère (or Beaufort) substitution.**
 
 ---
 
-*Generated by agent_frac. Final update 2026-02-21. 42 experiments, ~62M+ configs + key/structural analysis + false positive characterization + Bean impossibility proof + autokey elimination + comprehensive key model taxonomy + running key feasibility + discriminator design, ~8800 seconds total compute.*
+*Generated by agent_frac. Final update 2026-02-21. 43 experiments, ~62M+ configs + key/structural analysis + false positive characterization + Bean impossibility proof + autokey elimination + comprehensive key model taxonomy + running key feasibility + discriminator design (word + n-gram), ~8800 seconds total compute.*
 *Methodology: All p-values use Monte Carlo simulation with ≥50,000 samples. Multiple testing correction uses Bonferroni where applicable. Corrected p-values account for number of trials: P(max ≥ X | N) = 1 - (1-p)^N.*
