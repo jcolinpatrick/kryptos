@@ -1,13 +1,13 @@
 # K4 Statistical Meta-Analysis — What the Numbers Actually Say
 
 **Agent:** frac (FRAC role)
-**Date:** 2026-02-20 (updated: E-FRAC-39)
-**Experiments:** E-FRAC-01 through E-FRAC-39
-**Status:** FRAC mandate COMPLETE + extension — 39 experiments. Running key + transposition feasibility quantified: MASSIVELY UNDERDETERMINED (bipartite matching provides no discrimination)
+**Date:** 2026-02-21 (updated: E-FRAC-42)
+**Experiments:** E-FRAC-01 through E-FRAC-42
+**Status:** FRAC mandate COMPLETE + extension — 42 experiments. Running key + transposition fully characterized: MASSIVELY UNDERDETERMINED, no automated discriminator achieves perfect separation between SA gibberish and real English
 
 ## Executive Summary
 
-After 39 experiments totaling ~62 million configurations and ~8250 seconds of compute, the FRAC agent has comprehensively addressed its mandate: width-9 grid hypothesis, fractionation families, structural analysis, meta-validation of prior claims, comprehensive Bean/columnar width elimination, Bean impossibility proofs, multi-objective oracle design, autokey structural elimination, comprehensive key model Bean analysis, and running key + transposition feasibility. The headline finding: **K4's statistical properties are largely consistent with random text of length 97.** Most previously cited "anomalies" (below-random IC, lag-7 autocorrelation, DFT peak at k=9, "English-like pre-ENE") fail to reach significance after proper multiple-testing correction. **ALL columnar transposition widths 5-15 are eliminated. Periodic keying at ALL discriminating periods is Bean-impossible for ANY transposition (universal proof). At Bean-surviving periods, 24/24+Bean is easily achievable but ALL solutions are false positives. Autokey CANNOT reach 24/24 (more constrained than periodic). Running key is the ONLY structured key model surviving Bean constraints. Running key + transposition is MASSIVELY UNDERDETERMINED: ~35% of English text offsets achieve 24/24 bipartite matching, bipartite/Bean constraints provide zero discrimination.**
+After 42 experiments totaling ~62 million configurations and ~8800 seconds of compute, the FRAC agent has comprehensively addressed its mandate: width-9 grid hypothesis, fractionation families, structural analysis, meta-validation of prior claims, comprehensive Bean/columnar width elimination, Bean impossibility proofs, multi-objective oracle design, autokey structural elimination, comprehensive key model Bean analysis, running key + transposition feasibility, and automated discriminator design. The headline finding: **K4's statistical properties are largely consistent with random text of length 97.** Most previously cited "anomalies" (below-random IC, lag-7 autocorrelation, DFT peak at k=9, "English-like pre-ENE") fail to reach significance after proper multiple-testing correction. **ALL columnar transposition widths 5-15 are eliminated. Periodic keying at ALL discriminating periods is Bean-impossible for ANY transposition (universal proof). At Bean-surviving periods, 24/24+Bean is easily achievable but ALL solutions are false positives. Autokey CANNOT reach 24/24 (more constrained than periodic). Running key is the ONLY structured key model surviving Bean constraints. Running key + transposition is MASSIVELY UNDERDETERMINED: ~35% of English text offsets achieve 24/24 bipartite matching, bipartite/Bean constraints provide zero discrimination. SA quadgram optimization trivially achieves -4.3/char with ANY key (Carter is NOT special). No automated discriminator perfectly separates SA gibberish from real English — semantic coherence (human evaluation) is required.**
 
 **One positive finding (now RETRACTED):** The Beaufort key distribution was more concentrated than random (entropy at 0.3rd percentile, p=0.003). E-FRAC-23/24/25 showed this is likely a **selection effect**, not evidence for Beaufort:
 - The Beaufort key text contains KKK — impossible in any natural language (E-FRAC-24)
@@ -187,6 +187,7 @@ The sequence of differences CT[i+1]-CT[i] (mod 26) follows a uniform distributio
 3. **The "10.8 rows" annotation** — remains sole evidence for width-9, could be coincidence or refer to something else
 4. ~~**Beaufort variant hypothesis**~~ — RETRACTED (E-FRAC-25 shows Vigenère is the simpler interpretation)
 5. **BC positions conflict more than ENE** — E-FRAC-20 found 82% vs 54% BC/ENE conflict rates at Vig p=5 (implications for transposition search)
+6. **Better automated discriminators** — E-FRAC-42 found d=1.14 for non-crib words ≥7 chars. Could try: n-gram perplexity, language model scoring, bigram transition probabilities, or hybrid composite metrics. But the fundamental constraint is 97 chars — too short for reliable statistical discrimination.
 
 ---
 
@@ -208,6 +209,8 @@ The sequence of differences CT[i+1]-CT[i] (mod 26) follows a uniform distributio
 7. **Landscape is smooth** (r=0.93 per period) — SA CAN navigate, but it navigates to underdetermination artifacts without additional constraints.
 8. **CRITICAL (E-FRAC-35):** Periodic keying at periods 2-7 is Bean-IMPOSSIBLE for ANY transposition (universal proof). Do NOT search with periodic keys at discriminating periods. If using periodic keys, period 8 is the only viable target with ≥2 cribs/var.
 9. **CRITICAL (E-FRAC-36):** Even at Bean-surviving periods (8, 13), 24/24+Bean is trivially achievable by hill-climbing, but ALL 175 solutions are false positives (quadgram < -5.0). The multi-objective thresholds remain valid: quadgram > -5.0 + IC > 0.055.
+10. **CRITICAL (E-FRAC-40/40b):** SA quadgram optimization trivially achieves -4.3/char with ANY key (Carter, random uniform, English-frequency random). Carter is NOT special. The -5.0 threshold is too weak for quadgram-optimized SA. Updated threshold: quadgram > -4.84/char.
+11. **CRITICAL (E-FRAC-41/42):** Word detection is a MODERATE discriminator (Cohen's d = 1.14 for non-crib words ≥7 chars) but NOT a perfect separator. SA gibberish produces real English words (DISTINGUISHED, LABORATORY) via quadgram optimization. **Semantic coherence (human evaluation) is the ONLY fully reliable discriminator.** Any candidate passing automated filters must be reviewed by a human.
 
 ### For BESPOKE Agent
 1. Strip manipulation with periodic substitution is noise (E-FRAC-10)
@@ -233,7 +236,7 @@ K4's ciphertext is a 97-character string with **no statistically significant int
 2. **Running key cipher on English plaintext** — the IC signature matches perfectly
 3. **Long-period (≥10) polyalphabetic on English plaintext** — marginally compatible
 
-After 36 experiments, there are **ZERO statistically significant findings** that survive scrutiny:
+After 42 experiments, there are **ZERO statistically significant findings** that survive scrutiny:
 - The Beaufort key entropy (p=0.003 from E-FRAC-16) was retracted by E-FRAC-23/24/25 as a selection effect
 - All other statistical claims (IC, lag-7, DFT k=9, pre-ENE) were already debunked (E-FRAC-13/14/19)
 - The Bean impossibility proof (E-FRAC-35) eliminates periodic keying at ALL discriminating periods for ANY transposition
@@ -326,14 +329,21 @@ E-FRAC-33 showed that hill-climbing over the 97! permutation space converges to 
 
 ### Recommended Multi-Objective Thresholds
 
+**UPDATED by E-FRAC-40/41/42:** The original -5.0/char threshold is ONLY valid for crib-optimized search. When SA optimizes for quadgrams (as JTS naturally would), it trivially achieves -4.3/char with ANY key. Updated thresholds:
+
 For JTS simulated annealing, a candidate solution should satisfy ALL of:
 1. **Crib score = 24/24** (primary oracle)
 2. **Bean constraint PASS** (structural filter)
-3. **Quadgram/char > -5.0** (all FPs ≤ -5.77, English ≈ -4.84; threshold has 0.77 margin)
+3. **Quadgram/char > -4.84** (SA-optimized false positives reach -4.27; English ≈ -4.84; this threshold is TIGHT)
 4. **IC > 0.055** (English ≈ 0.067; false positives all ≤ 0.045)
-5. **At least one word ≥6 chars** in plaintext
+5. **Non-crib words ≥7 chars: at least 3** (Cohen's d = 1.14 between SA and English; excludes 16 crib-derived words)
+6. **Semantic coherence — human evaluation** (THE ultimate discriminator; no automated metric achieves perfect separation)
 
-**Combined false positive rate with these thresholds: 0/90 (0%).** All 90 false 24/24 solutions fail criterion 3 (quadgram) and criterion 4 (IC).
+**Important caveats (from E-FRAC-40/41/42):**
+- The -5.0/char threshold from the original E-FRAC-34 analysis was designed for crib-optimized search and is TOO WEAK for quadgram-optimized SA
+- Carter text is NOT special — random keys achieve the same quadgram range as Carter (E-FRAC-40b)
+- Word detection (even non-crib words) is a MODERATE discriminator (d=1.14) but NOT a perfect separator — SA gibberish can produce real English words like DISTINGUISHED, LABORATORY, UNIFORMED via quadgram optimization
+- The original crib-optimized FP analysis remains valid: 0/265 crib-optimized FPs pass the original thresholds
 
 ### Implications for Search Strategy
 
@@ -493,9 +503,56 @@ Running key is the ONLY non-trivial structured key model that survives Bean cons
 
 ---
 
-## Part XII: Final FRAC Mandate Summary
+## Part XII: Running Key + Transposition Feasibility (E-FRAC-39/40/41/42)
 
-### Complete Experiment Registry (38 experiments)
+E-FRAC-38 established that running key is the ONLY structured key model surviving Bean constraints. E-FRAC-39-42 quantify the feasibility of running key + arbitrary transposition as a K4 model.
+
+### Bipartite Matching Feasibility (E-FRAC-39)
+
+For each running key offset in reference texts, the max achievable crib score under ANY transposition is determined by bipartite matching: 24 crib positions (left) → 97 CT positions (right), edge exists iff CT[j] has the required letter for crib i.
+
+**Result:** ~35% of English text offsets achieve 24/24 matching — extraordinarily permissive. After Bean filtering: ~0.6% are fully feasible. Carter text has 699-2,031 fully feasible offsets per variant. This is identical to random English text — bipartite/Bean constraints provide ZERO discrimination.
+
+### Carter Is NOT Special (E-FRAC-40/40b)
+
+SA-optimized transposition at feasible Carter offsets achieves quadgrams of -4.27/char (Vigenère best). BUT random keys (uniform and English-frequency) also achieve -4.40/char — the difference is only 0.13/char, within noise.
+
+**Verdict:** The quadgram "signal" at Carter offsets is an SA optimization artifact. Any sufficiently long key can be paired with a transposition that produces locally English-looking text, because:
+- SA optimizes the 73 non-crib positions for quadgrams
+- 24 crib positions are fixed by bipartite matching (guaranteed 24/24)
+- The non-crib positions have enough freedom to achieve good quadgrams regardless of the key
+
+### Word-Level Discrimination (E-FRAC-41/42)
+
+SA-optimized gibberish contains dictionary words, including crib-derived words (NORTHEAST, BERLIN) and words emerging from quadgram optimization (DISTINGUISHED, LABORATORY, UNIFORMED).
+
+| Metric | English | SA Gibberish | Cohen's d | Perfect Sep.? |
+|--------|---------|-------------|-----------|--------------|
+| All words ≥6 chars | mean 10.7 [5-20] | mean 8.6 [3-17] | 0.56 | NO |
+| Non-crib words ≥6 chars | mean 10.7 [5-20] | mean 6.9 [1-16] | 1.00 | NO |
+| **Non-crib words ≥7 chars** | **mean 6.3 [1-14]** | **mean 3.0 [0-11]** | **1.14** | **NO** |
+| Non-crib words ≥8 chars | mean 3.8 [0-9] | mean 1.4 [0-7] | 1.03 | NO |
+| Composite (words×(1+cov)) | mean 16.2 | mean 9.5 | 1.03 | NO |
+| Max word length | mean 10.2 [7-15] | mean 8.6 [6-13] | 0.81 | NO |
+
+**Best metric: non-crib words ≥7 chars (Cohen's d = 1.14).** This is a LARGE effect size but with 70% overlap — meaning many SA gibberish values fall within the English range.
+
+### The Fundamental Limitation
+
+At 97 characters (after removing spaces/punctuation from English), there is simply not enough text for reliable automated discrimination. SA quadgram optimization is powerful enough to produce genuine English words (not just crib-derived ones), and the crib words themselves inflate word counts. The only fully reliable discriminator is **semantic coherence** evaluated by a human: does the text make sense as a message?
+
+**Repro:**
+- `PYTHONPATH=src python3 -u scripts/e_frac_39_running_key_bipartite.py`
+- `PYTHONPATH=src python3 -u scripts/e_frac_40_carter_quadgram_screen.py`
+- `PYTHONPATH=src python3 -u scripts/e_frac_40b_random_key_control.py`
+- `PYTHONPATH=src python3 -u scripts/e_frac_41_word_discriminator.py`
+- `PYTHONPATH=src python3 -u scripts/e_frac_42_refined_discriminator.py`
+
+---
+
+## Part XIII: Final FRAC Mandate Summary
+
+### Complete Experiment Registry (42 experiments)
 
 | ID | Topic | Verdict |
 |----|-------|---------|
@@ -537,14 +594,19 @@ Running key is the ONLY non-trivial structured key model that survives Bean cons
 | E-FRAC-36 | Bean-surviving periods | 175 FPs, all quadgram < -5.0 |
 | E-FRAC-37 | Autokey + arbitrary trans | CANNOT REACH 24/24 |
 | E-FRAC-38 | All key models Bean analysis | Running key ONLY survivor |
+| E-FRAC-39 | Running key bipartite feasibility | MASSIVELY UNDERDETERMINED |
+| E-FRAC-40 | Carter quadgram screening | Carter NOT special (SA artifact) |
+| E-FRAC-40b | Random key control | Random key = Carter quadgrams |
+| E-FRAC-41 | Word-level discriminator | WEAK (SA gibberish has words) |
+| E-FRAC-42 | Refined discriminator (non-crib) | MODERATE (d=1.14, no perfect sep.) |
 
 ### Bottom Line
 
-After 38 experiments covering every hypothesis in the FRAC mandate space, the conclusive finding is: **ZERO positive results survive.** K4's ciphertext is statistically indistinguishable from random text. Every structured key model except running key is Bean-eliminated. Every transposition family tested is noise or underperforms random. The multi-objective oracle (crib=24 + Bean + quadgram > -5.0 + IC > 0.055) reliably discriminates false positives from real solutions at all tested periods.
+After 42 experiments covering every hypothesis in the FRAC mandate space, the conclusive finding is: **ZERO positive results survive.** K4's ciphertext is statistically indistinguishable from random text. Every structured key model except running key is Bean-eliminated. Every transposition family tested is noise or underperforms random. Running key + transposition is massively underdetermined — bipartite matching and Bean constraints provide zero discrimination among candidate (offset, transposition) pairs. SA quadgram optimization trivially achieves English-like quadgrams (-4.3/char) with ANY key, making Carter text indistinguishable from random as a running key source. No automated discriminator perfectly separates SA gibberish from real English at 97 characters (best: non-crib words ≥7 chars, Cohen's d = 1.14, but with significant overlap). **Semantic coherence via human evaluation is the ONLY fully reliable discriminator for final candidate acceptance.**
 
 **The remaining viable hypothesis space for K4 is: running key from unknown text + structured transposition + Vigenère (or Beaufort) substitution.**
 
 ---
 
-*Generated by agent_frac. Final update 2026-02-20. 38 experiments, ~62M+ configs + key/structural analysis + false positive characterization + Bean impossibility proof + autokey elimination + comprehensive key model taxonomy, ~8000 seconds total compute.*
+*Generated by agent_frac. Final update 2026-02-21. 42 experiments, ~62M+ configs + key/structural analysis + false positive characterization + Bean impossibility proof + autokey elimination + comprehensive key model taxonomy + running key feasibility + discriminator design, ~8800 seconds total compute.*
 *Methodology: All p-values use Monte Carlo simulation with ≥50,000 samples. Multiple testing correction uses Bonferroni where applicable. Corrected p-values account for number of trials: P(max ≥ X | N) = 1 - (1-p)^N.*
