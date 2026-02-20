@@ -1,5 +1,5 @@
 # K4 Agent Team — Progress Tracker
-Last updated: 2026-02-20T22:00:00Z by agent_frac
+Last updated: 2026-02-20T23:00:00Z by agent_frac
 
 ## ALERTS
 <!-- Scores ≥18/24 go here. If this section is non-empty, ALL agents should read it. -->
@@ -77,6 +77,27 @@ E-FRAC-34 characterizes false 24/24 solutions and provides **concrete multi-obje
 **Repro:** `PYTHONPATH=src python3 -u scripts/e_frac_34_multi_objective_oracle.py`
 **Artifacts:** results/frac/e_frac_34_multi_objective_oracle.json
 
+### [2026-02-20T23:00Z] agent_frac — QUADGRAM THRESHOLD TOO WEAK FOR SA-OPTIMIZED SOLUTIONS (E-FRAC-40)
+**ALL AGENTS READ THIS — especially JTS. UPDATES E-FRAC-34 ORACLE.**
+
+The -5.0/char quadgram threshold from E-FRAC-34 is **ONLY valid for crib-optimized transpositions** (where SA maximizes crib score, not quadgrams). When SA optimizes the transposition for QUADGRAM FITNESS (while holding 24 cribs fixed via bipartite matching), it routinely achieves **-4.27 to -4.55/char** — well above the -5.0 threshold.
+
+**Key evidence (E-FRAC-40/40b):**
+- Carter running key + SA quadgram optimization: best=-4.27/char, mean=-4.55, ALL 200 offsets above -5.0
+- **RANDOM key + SA quadgram optimization: best=-4.40/char, mean=-4.52** — nearly identical to Carter
+- English-freq random key + SA: best=-4.39/char — also nearly identical
+- **Carter is NOT special** — the "signal" is an SA optimization artifact
+
+**Updated JTS thresholds (SUPERSEDES E-FRAC-34):**
+1. Crib score = 24/24
+2. Bean constraint PASS
+3. ~~Quadgram > -5.0/char~~ → Quadgram > -4.84/char (actual English benchmark; -5.0 is too easy when SA optimizes for quadgrams)
+4. IC > 0.055
+5. **Complete English words ≥6 chars: at least 3** (THE key discriminator — SA gibberish has fragments but no complete words)
+6. **Semantic coherence** (human evaluation for final candidates)
+
+**Repro:** `PYTHONPATH=src python3 -u scripts/e_frac_40_carter_quadgram_screen.py && PYTHONPATH=src python3 -u scripts/e_frac_40b_random_key_control.py`
+
 ### [2026-02-20T18:00Z] agent_frac — BEAN IMPOSSIBILITY: ALL DISCRIMINATING PERIODS ELIMINATED (E-FRAC-35)
 **ALL AGENTS READ THIS — especially JTS and TRANS. This is a PROOF, not an empirical finding.**
 
@@ -106,7 +127,7 @@ E-FRAC-34 characterizes false 24/24 solutions and provides **concrete multi-obje
 | Agent | Task | Started | Status |
 |-------|------|---------|--------|
 
-## FRAC Agent Mandate — 39 experiments (E-FRAC-01 through E-FRAC-39)
+## FRAC Agent Mandate — 40 experiments (E-FRAC-01 through E-FRAC-40)
 
 **Original mandate (E-FRAC-01 to 25): COMPLETE. ZERO positive findings survived.**
 **Extended mandate (E-FRAC-26-31): Bean profiling + crib scoring. ALL columnar widths 5-15 ELIMINATED.**
@@ -118,6 +139,7 @@ E-FRAC-34 characterizes false 24/24 solutions and provides **concrete multi-obje
 **Autokey + arbitrary transposition (E-FRAC-37): Autokey CANNOT reach 24/24 at any model. PT-autokey max=16/24, CT-autokey max=21/24. Autokey is MORE constrained than periodic keying due to sequential key dependencies.**
 **Bean key model analysis (E-FRAC-38): Progressive, quadratic, and Fibonacci keys ALL Bean-eliminated. Running key is the ONLY structured model that survives. FRAC mandate COMPLETE.**
 **Running key bipartite feasibility (E-FRAC-39): ~35% of English text offsets achieve 24/24 bipartite matching under SOME transposition. After Bean: ~0.6% feasible. Carter text has ~700-2,000 fully feasible offsets. MASSIVELY UNDERDETERMINED — multi-objective oracle essential.**
+**Carter quadgram screening (E-FRAC-40): SA-optimized transposition achieves -4.27/char with Carter key. BUT random key also achieves -4.40/char — Carter is NOT special. E-FRAC-34's -5.0 threshold is too weak for SA-optimized solutions. Word-level detection is the ONLY reliable discriminator.**
 
 ### New Structural Findings (E-FRAC-26/27)
 
@@ -171,10 +193,47 @@ E-FRAC-34 characterizes false 24/24 solutions and provides **concrete multi-obje
     - **Random baseline identical:** ~35% matching rate in random English text, confirming the constraint provides NO discrimination
     - **Running key + transposition is MASSIVELY UNDERDETERMINED** — comparable to periodic key underdetermination (E-FRAC-33-36)
     - **Multi-objective oracle (quadgram > -5.0) is the ONLY viable discriminator** for JTS
+20. **Carter running key + SA quadgram screening** (E-FRAC-40): SA-optimized transposition at feasible Carter offsets achieves quadgrams of -4.27 to -4.55/char. BUT:
+    - **RANDOM key + SA also achieves -4.40/char** — Carter is NOT special (control experiment E-FRAC-40b)
+    - **The "signal" is an SA optimization artifact**, not evidence for Carter as running key source
+    - **E-FRAC-34's -5.0 threshold is TOO WEAK** for SA-optimized transpositions (threshold was designed for crib-optimized, not quadgram-optimized search)
+    - SA gibberish has English-like quadgrams (-4.3 to -4.5) but NO complete words (key discriminator)
+    - **Updated JTS oracle:** quadgram > -4.84 + IC > 0.055 + ≥3 complete words (≥6 chars) + semantic coherence
+    - **Implication:** quadgram optimization alone CANNOT distinguish real solutions from SA-crafted false positives
 
 **Reports:** `reports/frac_width9_analysis.md`, `reports/frac_statistical_meta_analysis.md`
 
 ## Completed (reverse chronological)
+
+### [2026-02-20T23:00Z] agent_frac — E-FRAC-40: Carter Running Key Quadgram Screening + Random Control (CRITICAL META-RESULT)
+- **Hypothesis:** Does Carter's text (the primary running key candidate) produce better plaintext quality than random keys when SA optimizes the transposition for quadgrams? Is the -5.0/char threshold from E-FRAC-34 sufficient?
+- **Method:**
+  1. E-FRAC-40: For 200 Bean-passing, matching=24 Carter offsets, SA-optimize the transposition (73 non-crib positions) for quadgram fitness. 3 restarts × 5K steps each.
+  2. E-FRAC-40b: Same SA optimization with uniform random keys (100 trials, 39 feasible) and English-frequency random keys (100 trials, 39 feasible).
+- **Key findings:**
+  - **Carter Gutenberg (Vigenère):** best=-4.2685/char, mean=-4.5466. ALL 200 offsets above -5.0.
+  - **Carter Gutenberg (Beaufort):** best=-4.3245/char, mean=-4.5311. ALL 200 offsets above -5.0.
+  - **Carter Vol1 extract (Vigenère):** best=-4.3293/char, mean=-4.5421. ALL 200 offsets above -5.0.
+  - **Uniform random key:** best=-4.4027/char, mean=-4.5172. ALL 39 feasible trials above -5.0.
+  - **English-freq random key:** best=-4.3913/char, mean=-4.5340. ALL 39 feasible trials above -5.0.
+  - **Carter vs random difference: only 0.13/char** — within noise for different sample sizes (200 vs 39).
+  - **ALL "plaintexts" are SA-optimized gibberish** — fragments like "ICALLY", "GENTO", "PORTED" appear but NO complete words ≥6 chars.
+- **Critical implications:**
+  1. **E-FRAC-34's -5.0 threshold is ONLY valid for crib-optimized transpositions.** When SA optimizes for quadgrams (which JTS would naturally do), quadgrams of -4.3 to -4.5 are trivially achievable.
+  2. **Carter is NOT special.** Random keys produce the same quadgram range. The bipartite matching + SA optimization is so powerful that any 97-char key can be paired with a transposition producing locally English-looking text.
+  3. **Quadgram fitness ALONE cannot discriminate** real solutions from SA-crafted false positives.
+  4. **The ONLY reliable discriminator is word-level coherence:** real English will have complete words (≥6 chars), grammatical structure, and semantic meaning. SA gibberish has good quadgrams but no words.
+  5. **Updated JTS oracle (SUPERSEDES E-FRAC-34):**
+     - Crib = 24/24 + Bean PASS (unchanged)
+     - Quadgram > -4.84/char (actual English; -5.0 is too easy)
+     - IC > 0.055 (unchanged)
+     - **≥3 complete English words (≥6 chars)** (KEY NEW DISCRIMINATOR)
+     - Semantic coherence (human evaluation)
+- **For JTS:** SA will routinely produce false positives with excellent quadgrams (-4.3). Do NOT use quadgram score alone as the acceptance criterion. Implement word detection as a HARD constraint.
+- **Verdict:** CARTER_NOT_SPECIAL — SA optimization artifact. E-FRAC-34 threshold updated.
+- **Runtime:** 469s (E-FRAC-40) + 47s (E-FRAC-40b) = 516s
+- **Artifacts:** results/frac/e_frac_40_carter_quadgram_screen.json, results/frac/e_frac_40b_random_key_control.json
+- **Repro:** `PYTHONPATH=src python3 -u scripts/e_frac_40_carter_quadgram_screen.py && PYTHONPATH=src python3 -u scripts/e_frac_40b_random_key_control.py`
 
 ### [2026-02-20T22:00Z] agent_frac — E-FRAC-39: Running Key + Transposition Bipartite Feasibility (STRUCTURAL)
 - **Hypothesis:** For running key from known reference texts + arbitrary transposition, how many (offset, transposition) pairs can achieve 24/24+Bean? Is the bipartite matching constraint (max achievable crib score under ANY transposition) discriminating?
