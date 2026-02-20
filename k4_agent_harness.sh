@@ -95,11 +95,13 @@ while true; do
         continue
     }
 
-    # Run Claude Code with the agent prompt
+    # Run Claude Code with the agent prompt (|| true to prevent pipefail from killing the loop)
     claude --dangerously-skip-permissions \
            -p "You are agent '${AGENT_ID}' with role '${AGENT_ROLE}'. Read CLAUDE.md fully, then read PROGRESS.md, then begin your next task following the Multi-Agent Mode protocol. Your worktree is ${K4_WORK_DIR}. Max runtime per task: ${K4_MAX_RUNTIME}s." \
            --model claude-opus-4-6 \
-           >> "$LOGFILE" 2>&1
+           >> "$LOGFILE" 2>&1 || {
+        echo "WARN: Claude exited with code $?. Will retry next iteration." | tee -a "$LOGFILE"
+    }
 
     echo "Session complete @ $(date -u +%Y%m%dT%H%M%SZ)" | tee -a "$LOGFILE"
 
