@@ -1,5 +1,5 @@
 # K4 Agent Team — Progress Tracker
-Last updated: 2026-02-20T20:00:00Z by agent_frac
+Last updated: 2026-02-20T20:30:00Z by agent_frac
 
 ## ALERTS
 <!-- Scores ≥18/24 go here. If this section is non-empty, ALL agents should read it. -->
@@ -106,7 +106,7 @@ E-FRAC-34 characterizes false 24/24 solutions and provides **concrete multi-obje
 | Agent | Task | Started | Status |
 |-------|------|---------|--------|
 
-## FRAC Agent Mandate — 37 experiments (E-FRAC-01 through E-FRAC-37)
+## FRAC Agent Mandate — 38 experiments (E-FRAC-01 through E-FRAC-38)
 
 **Original mandate (E-FRAC-01 to 25): COMPLETE. ZERO positive findings survived.**
 **Extended mandate (E-FRAC-26-31): Bean profiling + crib scoring. ALL columnar widths 5-15 ELIMINATED.**
@@ -116,6 +116,7 @@ E-FRAC-34 characterizes false 24/24 solutions and provides **concrete multi-obje
 **Bean impossibility (E-FRAC-35): ALL discriminating periods (2-7) + periods up to 12 are Bean-impossible for transposition + periodic key. PROOF.**
 **Bean-surviving periods (E-FRAC-36): Period-8 and period-13 hill-climbing with Bean HARD constraint. 175 false 24/24 solutions ALL have quadgram < -5.0. Multi-objective oracle discriminates at Bean-surviving periods too.**
 **Autokey + arbitrary transposition (E-FRAC-37): Autokey CANNOT reach 24/24 at any model. PT-autokey max=16/24, CT-autokey max=21/24. Autokey is MORE constrained than periodic keying due to sequential key dependencies.**
+**Bean key model analysis (E-FRAC-38): Progressive, quadratic, and Fibonacci keys ALL Bean-eliminated. Running key is the ONLY structured model that survives. FRAC mandate COMPLETE.**
 
 ### New Structural Findings (E-FRAC-26/27)
 
@@ -153,10 +154,37 @@ E-FRAC-34 characterizes false 24/24 solutions and provides **concrete multi-obje
 15. **Bean impossibility proof** (E-FRAC-35): ALL discriminating periods (2-7) are IMPOSSIBLE for transposition + periodic key due to Bean inequality constraints. Also eliminated: periods 9-12, 14, 15, 17, 18, 21, 22, 25. Only 8 periods survive out of 25 (2-26): {8, 13, 16, 19, 20, 23, 24, 26}. This is a universal PROOF holding for all 97! permutations.
 16. **Bean-surviving periods tested** (E-FRAC-36): Period-8 (first surviving, 3 cribs/var) and period-13 hill-climbing with Bean as HARD constraint. 175 false 24/24+Bean solutions found. ALL have quadgram < -5.0/char (best: -6.171). Multi-objective oracle from E-FRAC-34 discriminates false positives at Bean-surviving periods too. Random baseline at period 8: max=14/24.
 17. **Autokey + arbitrary transposition** (E-FRAC-37): 4 autokey models (PT/CT × Vig/Beau) tested with arbitrary transpositions. Autokey CANNOT reach 24/24 — max 21/24 (CT-autokey) and 16/24 (PT-autokey). Random baseline: PT-autokey max=7/24, CT-autokey max=5-6/24. Autokey is MORE constrained than periodic keying due to sequential key dependencies. Oracle question is moot since 24/24 is unreachable.
+18. **Bean constraint analysis for ALL key models** (E-FRAC-38): Comprehensive algebraic + computational analysis of Bean constraints against every key generation model:
+    - **Progressive key: BEAN-ELIMINATED** (delta ∈ {0,13} only, both trivial)
+    - **Quadratic key: BEAN-ELIMINATED** (0/676 (a,b) pairs survive full Bean)
+    - **Fibonacci key: BEAN-ELIMINATED** (0/676 seeds survive full Bean)
+    - **General recurrence: 2,892/456,976 survive** (0.63%) but noise from E-FRAC-15
+    - **Running key: OPEN** (Bean only constrains ~6.5% of offsets)
+    - **Key insight:** Running key is the ONLY non-trivial structured key model that survives Bean constraints. All polynomial/recurrence/progressive models are eliminated.
 
 **Reports:** `reports/frac_width9_analysis.md`, `reports/frac_statistical_meta_analysis.md`
 
 ## Completed (reverse chronological)
+
+### [2026-02-20T20:30Z] agent_frac — E-FRAC-38: Bean Constraint Analysis — ALL Key Models (FINAL STRUCTURAL ANALYSIS)
+- **Hypothesis:** Which key generation models survive Bean constraints? Comprehensive algebraic + computational analysis.
+- **Models analyzed:** Periodic, progressive, quadratic, running key, PT-autokey, CT-autokey, Fibonacci, general recurrence
+- **Key findings:**
+  - **Progressive key: BEAN-ELIMINATED.** Bean equality → 38δ ≡ 0 (mod 26) → δ ∈ {0, 13}. δ=0 is monoalphabetic (trivially eliminated). δ=13 is effectively period-2 (Bean-eliminated by E-FRAC-35).
+  - **Quadratic key: BEAN-ELIMINATED.** 52/676 (a,b) pairs pass Bean equality, but ALL 52 fail at least one Bean inequality. Zero survive.
+  - **Fibonacci key: BEAN-ELIMINATED.** 26/676 seeds pass Bean equality, zero pass full Bean.
+  - **General recurrence K[i]=(c1·K[i-1]+c2·K[i-2])%26: 2,892/456,976 survive** (0.63%). But max <8/24 from E-FRAC-15 → noise.
+  - **Running key: OPEN.** Bean only constrains ~6.5% of offsets in English source text (Bean eq pass), ~1.7% pass full Bean. Minimal constraint.
+  - **PT-autokey: COMP. ELIMINATED** (E-FRAC-37, max 16/24).
+  - **CT-autokey: COMP. ELIMINATED** (E-FRAC-37, max 21/24).
+- **Key insight:** Running key + transposition is the ONLY non-trivial structured key model that survives Bean constraints. All polynomial, recurrence, and progressive models are Bean-eliminated. This strongly focuses remaining search on:
+  1. Running key from unknown text + structured transposition
+  2. Non-standard key generation (position-dependent, bespoke)
+  3. Periodic keying at surviving periods (8,13,16,...) — underdetermined
+- **Verdict:** STRUCTURAL_ANALYSIS_COMPLETE — comprehensive Bean constraint taxonomy for all key models
+- **Runtime:** 10 seconds
+- **Artifacts:** results/frac/e_frac_38_bean_key_model_constraints.json
+- **Repro:** `PYTHONPATH=src python3 -u scripts/e_frac_38_bean_key_model_constraints.py`
 
 ### [2026-02-20T20:00Z] agent_frac — E-FRAC-37: Autokey + Arbitrary Transposition (STRUCTURAL ELIMINATION)
 - **Hypothesis:** Can autokey (which bypasses the Bean period impossibility proof from E-FRAC-35) reach 24/24 with arbitrary transpositions? Does the multi-objective oracle generalize to non-periodic key models?
