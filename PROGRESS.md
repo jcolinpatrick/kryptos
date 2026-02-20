@@ -1,5 +1,5 @@
 # K4 Agent Team — Progress Tracker
-Last updated: 2026-02-21T00:00:00Z by agent_frac
+Last updated: 2026-02-21T01:00:00Z by agent_frac
 
 ## ALERTS
 <!-- Scores ≥18/24 go here. If this section is non-empty, ALL agents should read it. -->
@@ -88,21 +88,21 @@ The -5.0/char quadgram threshold from E-FRAC-34 is **ONLY valid for crib-optimiz
 - English-freq random key + SA: best=-4.39/char — also nearly identical
 - **Carter is NOT special** — the "signal" is an SA optimization artifact
 
-**Word-level discrimination is WEAKER than expected (E-FRAC-41):**
-- SA gibberish: 3-17 words ≥6 chars (mean 8.6), coverage 42%
-- Real English (spaces removed): 5-20 words ≥6 chars (mean 10.7), coverage 48%
-- **Significant overlap exists** because SA gibberish contains crib words (NORTHEAST, BERLIN, CLOCK) plus quadgram-optimized English fragments
-- Random text: 0 words (clear separation). English-freq random: 0-2 words (clear separation).
-- **Word count alone is a WEAK discriminator** between SA gibberish and real English
+**Word-level discrimination refined (E-FRAC-41 + E-FRAC-42):**
+- **Raw word count ≥6 chars is WEAK:** SA gibberish 3-17 words, English 5-20 words (overlap exists due to crib words)
+- **Non-crib words ≥7 chars is the BEST automated metric:** Cohen's d = 1.14 (LARGE effect)
+  - English: mean 6.3 [1-14], SA gibberish: mean 3.0 [0-11]
+  - Excluding crib words improves d from 0.81 → 1.14
+- **BUT no perfect separation exists** — SA produces real English words (DISTINGUISHED, LABORATORY, UNIFORMED) via quadgram optimization
+- Random/English-freq random: 0-2 words (clear separation from both English and SA)
 
-**Updated JTS thresholds (SUPERSEDES E-FRAC-34):**
+**Updated JTS thresholds (SUPERSEDES E-FRAC-34, refined by E-FRAC-42):**
 1. Crib score = 24/24
 2. Bean constraint PASS
 3. ~~Quadgram > -5.0/char~~ → Quadgram > -4.84/char (actual English benchmark; -5.0 is too easy when SA optimizes for quadgrams)
 4. IC > 0.055
-5. **Non-crib words ≥6 chars: at least 3** (exclude NORTHEAST, BERLIN, CLOCK, EASTNORTHEAST from count)
-6. **Word coverage > 60%** (English ≈ 48% with 6-char cutoff, but nearly 100% with 4-char cutoff; SA gibberish ≈ 42%)
-7. **Semantic coherence** (human evaluation for final candidates — THE ultimate discriminator)
+5. **Non-crib words ≥7 chars: at least 3** (exclude NORTHEAST, BERLIN, CLOCK, EAST, NORTH, STERN, ASTER, etc. — 16 crib-derived words)
+6. **Semantic coherence** (human evaluation for final candidates — THE ultimate discriminator; no automated metric achieves perfect separation)
 
 **Repro:** `PYTHONPATH=src python3 -u scripts/e_frac_40_carter_quadgram_screen.py && PYTHONPATH=src python3 -u scripts/e_frac_40b_random_key_control.py && PYTHONPATH=src python3 -u scripts/e_frac_41_word_discriminator.py`
 
@@ -135,7 +135,7 @@ The -5.0/char quadgram threshold from E-FRAC-34 is **ONLY valid for crib-optimiz
 | Agent | Task | Started | Status |
 |-------|------|---------|--------|
 
-## FRAC Agent Mandate — 41 experiments (E-FRAC-01 through E-FRAC-41)
+## FRAC Agent Mandate — 42 experiments (E-FRAC-01 through E-FRAC-42)
 
 **Original mandate (E-FRAC-01 to 25): COMPLETE. ZERO positive findings survived.**
 **Extended mandate (E-FRAC-26-31): Bean profiling + crib scoring. ALL columnar widths 5-15 ELIMINATED.**
@@ -215,10 +215,47 @@ The -5.0/char quadgram threshold from E-FRAC-34 is **ONLY valid for crib-optimiz
     - Random text: 0 words. English-freq random: 0-2 words.
     - **Word count is WEAK discriminator** — significant overlap between SA gibberish and English because cribs (NORTHEAST, BERLIN) and quadgram optimization produce English fragments
     - **Semantic coherence remains the ultimate discriminator** — no automated metric reliably separates SA gibberish from real English at the 97-char scale
+22. **Refined word discriminator** (E-FRAC-42): Excludes crib words + tests multiple word-length thresholds.
+    - **Non-crib words ≥7 chars is the best automated metric:** Cohen's d = 1.14 (LARGE effect)
+    - Excluding crib words significantly improves d: from 0.81 to 1.14 at ≥7 chars
+    - **BUT no perfect separation:** SA gibberish can have up to 11 non-crib words ≥7 chars (e.g., DISTINGUISHED, LABORATORY, UNIFORMED, MACHINIST) — these emerge from quadgram optimization
+    - English min = 1 non-crib word ≥7 chars in some segments — so a threshold-based filter would produce both false positives AND false negatives
+    - **Composite metric** (noncrib_words × (1 + coverage)): Cohen's d = 1.03, still no perfect separation
+    - **Verdict: MODERATE_DISCRIMINATOR** — non-crib word count helps but cannot replace semantic evaluation
 
 **Reports:** `reports/frac_width9_analysis.md`, `reports/frac_statistical_meta_analysis.md`
 
 ## Completed (reverse chronological)
+
+### [2026-02-21T01:00Z] agent_frac — E-FRAC-42: Refined Word Discriminator — Non-Crib Words (JTS ORACLE REFINEMENT)
+- **Hypothesis:** Does excluding crib words from the word count improve discrimination? Is there ANY automated metric that achieves perfect separation between SA gibberish and real English?
+- **Method:**
+  1. Exclude 16 crib-derived words (NORTHEAST, BERLIN, CLOCK, EAST, NORTH, STERN, ASTER, etc.) from non-crib count
+  2. Test word-length thresholds: ≥4, ≥5, ≥6, ≥7, ≥8 chars
+  3. Compute Cohen's d and overlap coefficient for each metric
+  4. Test composite metrics (word count × coverage)
+  5. Analyze word-length distribution and max non-crib word length
+- **Key findings:**
+  - **Best metric: non-crib words ≥7 chars** — Cohen's d = 1.14 (LARGE effect)
+  - Excluding crib words: d improved from 0.81 → 1.14 at ≥7 chars (significant improvement)
+  - English: mean 6.3 non-crib words ≥7 chars [1-14]
+  - SA gibberish: mean 3.0 non-crib words ≥7 chars [0-11]
+  - **NO perfect separation at ANY threshold** — SA gibberish produces real English words:
+    - DISTINGUISHED, LABORATORY, UNIFORMED, MACHINIST, SPIRATED, MANDATE, DIRECTLY
+    - These are NOT crib-derived — they emerge from SA quadgram optimization
+  - Overlap coefficient: 0.70 (70% of SA values fall within English range)
+  - Composite metric (words × coverage): d=1.03, also no perfect separation
+  - Max word length: d=0.81, English mean=10.2, SA mean=8.6
+- **Critical implications:**
+  1. **Non-crib word count is a MODERATE discriminator** — Cohen's d=1.14 is statistically useful but insufficient for binary classification
+  2. **SA quadgram optimization is powerful enough to produce real English words** (DISTINGUISHED, LABORATORY) — this means word counting fundamentally cannot achieve perfect separation
+  3. **Semantic coherence remains the ONLY fully reliable discriminator** — automated metrics can reduce candidates but final acceptance requires human evaluation
+  4. **Recommended automated filter for JTS:** non-crib words ≥7 chars ≥ 3 (eliminates most SA gibberish while accepting most real English)
+- **For JTS:** Use non-crib word count ≥7 chars as a PRE-FILTER (threshold ≥3), then apply human semantic evaluation. No fully automated oracle exists.
+- **Verdict:** MODERATE_DISCRIMINATOR — d=1.14, significant improvement over E-FRAC-41, but overlap remains
+- **Runtime:** 1.4 seconds
+- **Artifacts:** results/frac/e_frac_42_refined_discriminator.json
+- **Repro:** `PYTHONPATH=src python3 -u scripts/e_frac_42_refined_discriminator.py`
 
 ### [2026-02-21T00:00Z] agent_frac — E-FRAC-41: Word-Level Discriminator Analysis (JTS ORACLE REFINEMENT)
 - **Hypothesis:** Is word-level detection (dictionary words ≥6 chars) a reliable discriminator between real English plaintext and SA-optimized gibberish? Can automated word counting replace semantic coherence evaluation?
