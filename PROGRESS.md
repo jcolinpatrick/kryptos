@@ -1,5 +1,5 @@
 # K4 Agent Team — Progress Tracker
-Last updated: 2026-02-21T01:00:00Z by agent_frac
+Last updated: 2026-02-20T12:00:00Z by agent_frac
 
 ## ALERTS
 <!-- Scores ≥18/24 go here. If this section is non-empty, ALL agents should read it. -->
@@ -49,16 +49,45 @@ The 24-crib scoring oracle is **fundamentally insufficient** to identify the cor
 
 **Repro:** `PYTHONPATH=src python3 -u scripts/e_frac_33_fitness_landscape.py && PYTHONPATH=src python3 -u scripts/e_frac_33b_perperiod_fix.py`
 
+### [2026-02-20T12:00Z] agent_frac — MULTI-OBJECTIVE ORACLE DESIGNED FOR JTS (E-FRAC-34)
+**ALL AGENTS READ THIS — especially JTS.**
+
+E-FRAC-34 characterizes false 24/24 solutions and provides **concrete multi-objective thresholds** for distinguishing real solutions from false positives:
+
+**False positive characterization (90 false 24/24 solutions collected):**
+- Quadgram/char: mean=-5.96, best=-5.77 (false positives produce gibberish)
+- IC: mean=0.038 (same as random — IC does NOT discriminate)
+- Word coverage (≥4 chars): mean=29% (vs 99% for real English)
+- Periods: 34 at p7, 35 at p5, 16 at p2, 5 at p6 (p2 is hardest to fake)
+
+**Benchmarks:**
+- Real English: quadgram=-4.84/char, IC=0.087, word coverage=99.7%
+- Random text: quadgram=-6.43/char, IC=0.038, word coverage=6%
+- K4 CT: quadgram=-6.38/char, IC=0.036
+
+**The GAP: 0.93/char between best false positive (-5.77) and English (-4.84). Quadgram alone discriminates.**
+
+**RECOMMENDED THRESHOLDS for JTS:**
+1. Crib score = 24/24
+2. Bean constraint PASS
+3. **Quadgram/char > -5.0** (all false positives ≤ -5.77, English ≈ -4.84)
+4. IC > 0.055 (English ≈ 0.067)
+5. At least one word ≥6 chars in plaintext
+
+**Repro:** `PYTHONPATH=src python3 -u scripts/e_frac_34_multi_objective_oracle.py`
+**Artifacts:** results/frac/e_frac_34_multi_objective_oracle.json
+
 ## Active Tasks
 | Agent | Task | Started | Status |
 |-------|------|---------|--------|
 
-## FRAC Agent Mandate — 33 experiments (E-FRAC-01 through E-FRAC-33)
+## FRAC Agent Mandate — 34 experiments (E-FRAC-01 through E-FRAC-34)
 
 **Original mandate (E-FRAC-01 to 25): COMPLETE. ZERO positive findings survived.**
 **Extended mandate (E-FRAC-26-31): Bean profiling + crib scoring. ALL columnar widths 5-15 ELIMINATED.**
 **Final sweep (E-FRAC-32): Simple transposition families (cyclic, affine, rail fence, swap, reversal) ALL ELIMINATED.**
 **Meta-analysis (E-FRAC-33): Fitness landscape smooth, but crib oracle INSUFFICIENT — false 24/24 solutions exist at ALL periods.**
+**Oracle design (E-FRAC-34): Multi-objective thresholds for JTS — quadgram gap of 0.93/char discriminates false positives.**
 
 ### New Structural Findings (E-FRAC-26/27)
 
@@ -92,10 +121,34 @@ The 24-crib scoring oracle is **fundamentally insufficient** to identify the cor
 11. **Bean constraint NOT informative** for transposition identification (E-FRAC-31)
 12. **Simple transposition families** (cyclic shifts, affine, reversal, rail fence, single swaps): ALL ELIMINATED — max 13/24, BELOW random baseline 14/24 (E-FRAC-32)
 13. **Crib oracle INSUFFICIENT for arbitrary permutations** — hill-climbing reaches false 24/24 at ALL periods including period 5 (E-FRAC-33). Must combine with plaintext quality metrics.
+14. **Multi-objective oracle designed** (E-FRAC-34): 90 false 24/24 solutions characterized. Quadgram gap = 0.93/char (FP best: -5.77, English: -4.84). Threshold: quadgram > -5.0/char + IC > 0.055 + Bean PASS.
 
 **Reports:** `reports/frac_width9_analysis.md`, `reports/frac_statistical_meta_analysis.md`
 
 ## Completed (reverse chronological)
+
+### [2026-02-20T12:00Z] agent_frac — E-FRAC-34: Multi-Objective Oracle Design for JTS (CRITICAL)
+- **Hypothesis:** Can plaintext quality metrics distinguish real solutions from false 24/24 positives? What thresholds should JTS use?
+- **Method:** Hill-climbing (50 climbs × 10K steps) at best-period, period-5-only, and period-2-only, collecting all solutions ≥20/24 (best), ≥18/24 (p5), ≥16/24 (p2). For each false positive, derive full 97-char plaintext using periodic key, evaluate quadgram fitness, IC, and English word coverage.
+- **Key findings:**
+  - **90 false 24/24 solutions** collected: 34 at p7, 35 at p5, 16 at p2, 5 at p6
+  - **Quadgram gap is CLEAR:** False positive best = -5.77/char, English benchmark = -4.84/char. Gap = 0.93/char.
+  - **IC does NOT discriminate:** False positives have IC ≈ 0.038 (same as random). IC measures substitution quality, not permutation correctness.
+  - **Word coverage discriminates:** False positives: 29% word coverage (≥4 chars), English: 99.7%
+  - All 90 false 24/24 solutions correctly contain ENE and BC in plaintext (expected — they're the cribs)
+  - Period 2 produces fewest false positives (16 vs 34-35) — most constrained
+  - False positives at ALL score levels (16-24/24) have quadgrams in [-6.1, -5.77] range — far from English
+  - No false positive has quadgram better than -5.77/char despite 563K total solutions evaluated
+- **Multi-objective thresholds for JTS:**
+  1. Crib score = 24/24
+  2. Bean constraint PASS
+  3. Quadgram/char > -5.0 (all FPs ≤ -5.77, English ≈ -4.84)
+  4. IC > 0.055 (English ≈ 0.067, random ≈ 0.038)
+  5. At least one word ≥6 chars in plaintext
+- **Verdict:** ORACLE_DESIGNED — quadgram fitness alone provides a 0.93/char gap between false positives and real English. Multi-objective thresholds should reliably filter false positives.
+- **Runtime:** 441 seconds
+- **Artifacts:** results/frac/e_frac_34_multi_objective_oracle.json
+- **Repro:** `PYTHONPATH=src python3 -u scripts/e_frac_34_multi_objective_oracle.py`
 
 ### [2026-02-21T01:00Z] agent_frac — E-FRAC-33: Fitness Landscape Analysis (CRITICAL META-RESULT)
 - **Hypothesis:** Is the crib-scoring fitness landscape over 97-element permutations smooth enough for SA/hill-climbing? Can the 24-crib oracle identify the correct transposition from arbitrary permutations?
