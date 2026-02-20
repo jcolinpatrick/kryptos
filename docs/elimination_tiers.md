@@ -2,7 +2,7 @@
 
 **CRITICAL FRAMING:** Every exhaustive-search elimination in this project was conducted under the assumption of **direct positional correspondence** — meaning CT position N maps to PT position N with no transposition. The primary hypothesis (H1) is that a transposition layer exists, which means **the substitution families below have NOT been tested in their correct context as one layer of a multi-layer system.** The TRANS, JTS, and FRAC agents are doing that work now.
 
-**FRAC AGENT STATUS (2026-02-20):** The FRAC agent has completed 34 experiments (E-FRAC-01 through E-FRAC-34). Key results that affect this document:
+**FRAC AGENT STATUS (2026-02-20):** The FRAC agent has completed 36 experiments (E-FRAC-01 through E-FRAC-36). Key results that affect this document:
 - ALL fractionation families structurally eliminated (E-FRAC-21) — proofs hold WITH OR WITHOUT transposition
 - **Columnar widths 5-15 + periodic substitution: ALL ELIMINATED at discriminating periods**
   - Width-5, Width-7: Bean-ELIMINATED (ZERO orderings pass Bean equality, E-FRAC-26/27)
@@ -22,6 +22,7 @@
 - Multi-objective oracle for JTS: quadgram gap of 0.93/char between false positives and English (E-FRAC-34)
 - Recommended JTS thresholds: crib=24 + Bean + quadgram > -5.0 + IC > 0.055 + word ≥6 chars
 - **Bean impossibility proof (E-FRAC-35):** ALL periods 2-12, 14, 15, 17, 18, 21, 22, 25 eliminated for ANY transposition + periodic key. Only 8 of 25 periods (2-26) survive: {8, 13, 16, 19, 20, 23, 24, 26}. This is a UNIVERSAL PROOF holding for all 97! permutations.
+- **Bean-surviving period validation (E-FRAC-36):** Hill-climbing at periods 8 and 13 (first two Bean-surviving periods) with Bean as HARD constraint. 175 false 24/24+Bean solutions found; ALL have quadgram < -5.0/char (best: -6.171). Multi-objective oracle discriminates at Bean-surviving periods too.
 - Full meta-analysis: `reports/frac_statistical_meta_analysis.md`
 
 Read these tiers carefully before deciding what is and isn't worth testing.
@@ -133,10 +134,11 @@ The persistent 14–17/24 ceiling across all families has been interpreted as ev
 | "English-like" pre-ENE IC | 97.6th pctile | Bonferroni p=1.0 (13 segments have IC ≥ 0.067) | E-FRAC-19 |
 | Beaufort key low entropy | p=0.003 | Selection effect — Vigenère key at 16.27th pctile (unremarkable) | E-FRAC-16→25 |
 | **Periodic key + ANY transposition** | periods 2-12 | **PROOF: Bean inequalities structurally violated. Only {8,13,16,19,20,23,24,26} survive.** | E-FRAC-35 |
+| **Bean-surviving periods (8, 13)** | 175 false 24/24 | **ALL have quadgram < -5.0/char (best: -6.171). Multi-objective oracle discriminates.** | E-FRAC-36 |
 
-**Implication:** There is no statistical evidence favoring any specific transposition width, periodicity, or cipher variant. Prior claims about DFT peaks, lag-7, and Beaufort preference should be retracted. The Bean impossibility proof (E-FRAC-35) eliminates periodic keying at all discriminating periods under ANY transposition.
+**Implication:** There is no statistical evidence favoring any specific transposition width, periodicity, or cipher variant. Prior claims about DFT peaks, lag-7, and Beaufort preference should be retracted. The Bean impossibility proof (E-FRAC-35) eliminates periodic keying at all discriminating periods under ANY transposition. At Bean-surviving periods, hill-climbing trivially reaches 24/24+Bean but produces only false positives discriminated by quadgram score (E-FRAC-36).
 
-**Repro:** See `reports/frac_statistical_meta_analysis.md` for full analysis with all 25 experiments.
+**Repro:** See `reports/frac_statistical_meta_analysis.md` for full analysis with all 36 experiments.
 
 ---
 
