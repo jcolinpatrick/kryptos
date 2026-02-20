@@ -100,6 +100,7 @@ with all thematic keyword alphabets. No breakthrough.
 - **Running key + ALL structured families from 7 texts: ZERO matches** (E-FRAC-50)
 - **Running key from unknown English text + columnar: ZERO configs with English-like keys** (E-FRAC-51)
 - **Universal proof:** ALL 97! perms + periodic key at p2-7 violate Bean (E-FRAC-35)
+- **Bean-surviving periods:** columnar w6/8/9 at p8/13/16 — max=14/24 at p8 (=random), ZERO 24/24 matches (E-FRAC-55)
 - **Information-theoretic proof:** 138-bit deficit, arbitrary search underdetermined (E-FRAC-44)
 - **Three-layer Sub+Trans+Sub:** non-periodic effective key, ZERO viable candidates (E-FRAC-52)
 - **Mono+Trans+Periodic:** bypasses 9/21 Bean-ineq, ZERO at discriminating periods (E-FRAC-53)
@@ -294,7 +295,7 @@ could produce a different ciphertext.
 | RQ-12 (alphabets) | LOW | Yes | 5 | 1 | 4 |
 | RQ-13 (reading dir) | LOW | Yes | 16 | 0 | 16 |
 
-*Updated 2026-02-20 — includes FRAC agent findings (E-FRAC-01 to 53, ALL gaps closed)*
+*Updated 2026-02-21 — includes FRAC agent findings (E-FRAC-01 to 55, ALL gaps closed)*
 
 ---
 

@@ -2,7 +2,7 @@
 
 **CRITICAL FRAMING:** Every exhaustive-search elimination in this project was conducted under the assumption of **direct positional correspondence** — meaning CT position N maps to PT position N with no transposition. The primary hypothesis (H1) is that a transposition layer exists, which means **the substitution families below have NOT been tested in their correct context as one layer of a multi-layer system.** The TRANS, JTS, and FRAC agents are doing that work now.
 
-**FRAC AGENT STATUS (2026-02-20, FINAL):** The FRAC agent has completed 54 experiments (E-FRAC-01 through E-FRAC-54). Mandate COMPLETE + running key gap closure + English key detection + three-layer model + mono inner layer + mono running key underdetermination. Key results that affect this document:
+**FRAC AGENT STATUS (2026-02-21, FINAL):** The FRAC agent has completed 55 experiments (E-FRAC-01 through E-FRAC-55). Mandate COMPLETE + running key gap closure + English key detection + three-layer model + mono inner layer + mono running key underdetermination + Bean-surviving period gap closed. Key results that affect this document:
 - ALL fractionation families structurally eliminated (E-FRAC-21) — proofs hold WITH OR WITHOUT transposition
 - **Columnar widths 5-15 + periodic substitution: ALL ELIMINATED at discriminating periods**
   - Width-5, Width-7: Bean-ELIMINATED (ZERO orderings pass Bean equality, E-FRAC-26/27)
@@ -79,6 +79,7 @@ These are algebraic proofs, not search results. They are permanently valid unles
 | **Myszkowski transposition (widths 5-13)** | **226,390 unique permutations (exhaustive at w5-7, sampled at w8-13) + periodic sub: max 15/24, matches random. Tie structure provides no advantage over standard columnar.** | **Requires cribs and CT correctness (E-FRAC-47)** |
 | **AMSCO/Nihilist/Swapped columnar (widths 8-13)** | **361,280 permutations (w8 exhaustive, w9-13 sampled 10K each × 4 variants): max 14/24, matches random. ZERO Bean passes (0.0%) — structurally Bean-incompatible. Combined with E-S-22 (widths 5-8): ALL widths 5-13 ELIMINATED.** | **Requires cribs and CT correctness (E-FRAC-48)** |
 | **ANY transposition + periodic key (p=2-12,14,15,17,18,21,22,25)** | **PROOF: Bean inequalities structurally violated at these periods for ALL 97! permutations. Type 1: same-residue inequality. Type 2: Bean equality-inequality conflict.** | **Requires Bean constraint correctness (E-FRAC-35)** |
+| **Columnar (w6/8/9) + periodic key at Bean-surviving periods (p=8,13,16)** | **17,124 Bean-eq configs × 3 periods × 3 variants = 154K checks. Period 8: max=14/24 = random. Periods 13/16: max=18/20 (underdetermination, random mean 13.4/16.3). ZERO 24/24 matches. Bean-surviving period gap CLOSED.** | **Requires cribs and CT correctness (E-FRAC-55)** |
 | **Progressive key (k[i]=k[0]+iδ) + ANY transposition** | **BEAN-ELIMINATED: 38δ ≡ 0 (mod 26) → δ ∈ {0,13}. δ=0 is mono (trivial). δ=13 ≈ period-2 (Bean-eliminated by E-FRAC-35).** | **Requires Bean constraint (E-FRAC-38)** |
 | **Quadratic key (k[i]=ai²+bi+c) + ANY transposition** | **BEAN-ELIMINATED: 0/676 (a,b) pairs survive full Bean inequalities.** | **Requires Bean constraint (E-FRAC-38)** |
 | **Fibonacci key + ANY transposition** | **BEAN-ELIMINATED: 0/676 seeds survive full Bean inequalities.** | **Requires Bean constraint (E-FRAC-38)** |
