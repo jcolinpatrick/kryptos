@@ -21,6 +21,7 @@
 - Crib positions validated as correct (E-FRAC-18)
 - Multi-objective oracle for JTS: quadgram gap of 0.93/char between false positives and English (E-FRAC-34)
 - Recommended JTS thresholds: crib=24 + Bean + quadgram > -5.0 + IC > 0.055 + word ≥6 chars
+- **Bean impossibility proof (E-FRAC-35):** ALL periods 2-12, 14, 15, 17, 18, 21, 22, 25 eliminated for ANY transposition + periodic key. Only 8 of 25 periods (2-26) survive: {8, 13, 16, 19, 20, 23, 24, 26}. This is a UNIVERSAL PROOF holding for all 97! permutations.
 - Full meta-analysis: `reports/frac_statistical_meta_analysis.md`
 
 Read these tiers carefully before deciding what is and isn't worth testing.
@@ -44,6 +45,7 @@ These are algebraic proofs, not search results. They are permanently valid unles
 | Columnar width-9 exhaustive crib scoring | Width-9 columnar + periodic sub: exhaustive 362,880 orderings, max 14/24, UNDERPERFORMS random (expected ≥15) | Requires cribs and CT correctness (E-FRAC-12) |
 | Columnar widths 10-15 sampled crib scoring | Widths 10-15 columnar + periodic sub: 100K samples each, all max 14/24, ALL underperform random (expected 15+) | Requires cribs and CT correctness (E-FRAC-30) |
 | Simple transposition families | Cyclic shifts, reverse, affine, block reversal, rail fence, single swaps + periodic sub: 14,035 perms, max 13/24, BELOW random (14/24) | Requires cribs and CT correctness (E-FRAC-32) |
+| **ANY transposition + periodic key (p=2-12,14,15,17,18,21,22,25)** | **PROOF: Bean inequalities structurally violated at these periods for ALL 97! permutations. Type 1: same-residue inequality. Type 2: Bean equality-inequality conflict.** | **Requires Bean constraint correctness (E-FRAC-35)** |
 
 **What could invalidate Tier 1:** Only if the 24 crib positions are wrong (off-by-one, wrong character mapping) or the CT transcription has an error. The wave1 report already caught one VKB error (position 74 was listed as K→K self-encryption; actual CT[74]=W). If one error existed, others could too. The cribs themselves come from Sanborn's public announcements and are highly trustworthy, but the exact 0-indexed position mapping has been a source of bugs.
 
@@ -130,8 +132,9 @@ The persistent 14–17/24 ceiling across all families has been interpreted as ev
 | DFT peak at k=9 | mag=162 | Below 95th pctile of random max (192) | E-FRAC-14 |
 | "English-like" pre-ENE IC | 97.6th pctile | Bonferroni p=1.0 (13 segments have IC ≥ 0.067) | E-FRAC-19 |
 | Beaufort key low entropy | p=0.003 | Selection effect — Vigenère key at 16.27th pctile (unremarkable) | E-FRAC-16→25 |
+| **Periodic key + ANY transposition** | periods 2-12 | **PROOF: Bean inequalities structurally violated. Only {8,13,16,19,20,23,24,26} survive.** | E-FRAC-35 |
 
-**Implication:** There is no statistical evidence favoring any specific transposition width, periodicity, or cipher variant. Prior claims about DFT peaks, lag-7, and Beaufort preference should be retracted.
+**Implication:** There is no statistical evidence favoring any specific transposition width, periodicity, or cipher variant. Prior claims about DFT peaks, lag-7, and Beaufort preference should be retracted. The Bean impossibility proof (E-FRAC-35) eliminates periodic keying at all discriminating periods under ANY transposition.
 
 **Repro:** See `reports/frac_statistical_meta_analysis.md` for full analysis with all 25 experiments.
 
