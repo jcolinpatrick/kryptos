@@ -1,5 +1,5 @@
 # K4 Agent Team — Progress Tracker
-Last updated: 2026-02-19T03:45:00Z by agent_frac
+Last updated: 2026-02-19T05:30:00Z by agent_frac
 
 ## ALERTS
 <!-- Scores ≥18/24 go here. If this section is non-empty, ALL agents should read it. -->
@@ -17,11 +17,70 @@ Last updated: 2026-02-19T03:45:00Z by agent_frac
 **Repro:** `PYTHONPATH=src python3 -u scripts/e_frac_11_bimodal_validity.py`
 **Artifacts:** results/frac/e_frac_11_bimodal_validity.json
 
+### [2026-02-19T05:00Z] agent_frac — STATISTICAL SIGNALS ARE WEAKER THAN CLAIMED (E-FRAC-13/14)
+**ALL AGENTS READ THIS.** Three pillars of the width-9 / structural hypotheses are statistically weak:
+
+1. **K4's IC = 0.036 is NOT unusual.** It's at the 21.5th percentile of random 97-char text (z=-0.84, p=0.21). The "below-random IC" claim is not meaningful at n=97. IC does NOT constrain the cipher family.
+
+2. **Lag-7 autocorrelation does NOT survive Bonferroni correction.** p=0.0077 uncorrected, but with 48 lags tested, the corrected threshold is p<0.001. After correction, ZERO lags are significant. The lag-7 signal is expected to appear at SOME lag by chance.
+
+3. **DFT peak at k=9 is NOT significant.** Magnitude = 162, but the 95th percentile of the maximum random peak is 192. The k=9 peak doesn't even reach the 95th percentile, let alone 99th. Zero DFT peaks are significant.
+
+**Implication:** There is NO strong statistical evidence for any specific transposition width, periodicity, or structural pattern in K4. The CT is statistically consistent with random text of length 97. Previous claims about DFT peaks and lag-7 as evidence for width-9 should be RETRACTED.
+
+**Additional finding:** Bifid 6×6 on English plaintext produces IC ≈ 0.059-0.069 at ALL periods, far above K4's 0.036. K4 is at the 0th percentile. **Bifid is IC-incompatible with K4**, with or without transposition.
+
+**Repro:** `PYTHONPATH=src python3 -u scripts/e_frac_13_ic_analysis.py && PYTHONPATH=src python3 -u scripts/e_frac_14_autocorrelation.py`
+
 ## Active Tasks
 | Agent | Task | Started | Status |
 |-------|------|---------|--------|
 
 ## Completed (reverse chronological)
+
+### [2026-02-19T05:25Z] agent_frac — E-FRAC-15: Functional Key Models (Linear, Quadratic, Exponential, Recurrence)
+- **Hypothesis:** Is K4's key a simple mathematical function of position?
+- **Models tested:** 676 linear (k=ai+b), 17,576 quadratic (k=ai²+bi+c), 600 exponential (k=a·b^i), 676 Fibonacci, 43,264 generalized recurrence — all × Vig/Beau/VB
+- **Best scores:** Linear 7/24 (k=4i+20 Vig, ~3σ above best-of-676 random baseline 4.9±0.7), Quadratic 8/24, Exponential <6, Fibonacci <6, Gen. recurrence <8
+- **None produce readable plaintext.** Random 3-letter words ("WAY", "ALL") appear by chance.
+- **Verdict:** NOISE — the key is NOT a polynomial, exponential, or recurrence function of position
+- **Runtime:** 6 seconds
+- **Artifacts:** results/frac/e_frac_15_linear_key.json
+- **Repro:** `PYTHONPATH=src python3 -u scripts/e_frac_15_linear_key.py`
+
+### [2026-02-19T04:50Z] agent_frac — E-FRAC-14: Autocorrelation Deep Dive & Statistical Fingerprint (CRITICAL META-RESULT)
+- **Hypothesis:** Is K4's lag-7 autocorrelation significant? What other statistical signals exist?
+- **Key findings:**
+  - Lag-7 has 9 matches (p=0.0077 uncorrected) but does NOT survive Bonferroni correction (48 lags tested, threshold p<0.001)
+  - ZERO lags significant after Bonferroni
+  - DFT: ZERO peaks exceed 95th percentile of random max (k=9 magnitude=162, threshold=192)
+  - Lag-7 positions: [0, 7, 12, 15, 32, 45, 65, 76, 86]; 3 involve cribs
+  - 10 repeated bigrams (z=+1.73 vs random, not significant); 0 repeated trigrams
+  - First-order differences are UNIFORM (chi2=25.3, p>0.05)
+  - Best linear key fit: k=4i+20 matches 7/24 (~3σ above best-of-676 baseline)
+  - Best quadratic fit: 8/24 (same as linear + noise floor effect)
+  - Beaufort key: positions 29-31 all have value 10 (K) — noteworthy but not conclusive
+  - Almost any columnar width (5-10) reduces lag-7; not specific to width-9
+- **Verdict:** K4 is statistically consistent with RANDOM TEXT. No significant autocorrelation, DFT, or ngram signals after proper multiple-testing correction.
+- **Runtime:** 506 seconds
+- **Artifacts:** results/frac/e_frac_14_autocorrelation.json
+- **Repro:** `PYTHONPATH=src python3 -u scripts/e_frac_14_autocorrelation.py`
+
+### [2026-02-19T04:30Z] agent_frac — E-FRAC-13: IC Statistical Analysis (CRITICAL META-RESULT)
+- **Hypothesis:** Is K4's below-random IC (0.036) statistically significant? Does it constrain the cipher family?
+- **Key findings:**
+  - K4 IC = 0.036 is at 21.5th percentile of random text (z=-0.84). NOT significant.
+  - Pre-ENE segment (pos 0-20) IC = 0.067 at 97.6th percentile — marginally interesting but not significant after multiple testing (5 segments tested, Bonferroni p≈0.12)
+  - Periodic Vigenere at period 5-7: K4 at 2-4th percentile (marginally consistent)
+  - Running key / long-period polyalphabetic: K4 at 22nd percentile (perfectly consistent)
+  - **Bifid 6×6 is IC-INCOMPATIBLE**: mean IC 0.059-0.069 at ALL periods on English text, K4 at 0th percentile
+  - Bifid 5×5: mean IC 0.045, K4 at ~1st percentile (also structurally impossible — 26 letters)
+  - K4 letter frequencies NOT different from uniform (chi2=19.1, p>0.05)
+  - Transposition preserves IC exactly (verified 10K samples)
+- **Verdict:** IC is NOT diagnostic — does not constrain cipher family. Bifid 6×6 is IC-eliminated.
+- **Runtime:** 77 seconds
+- **Artifacts:** results/frac/e_frac_13_ic_analysis.json
+- **Repro:** `PYTHONPATH=src python3 -u scripts/e_frac_13_ic_analysis.py`
 
 ### [2026-02-19T03:40Z] agent_frac — E-FRAC-12: Width-9 Strict Re-evaluation (No Bimodal, Periods 2-7)
 - **Hypothesis:** Does width-9 columnar show signal at discriminating periods when bimodal filter is dropped?
