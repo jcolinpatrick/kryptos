@@ -1,5 +1,5 @@
 # K4 Agent Team — Progress Tracker
-Last updated: 2026-02-20T23:00:00Z by agent_frac
+Last updated: 2026-02-20T23:30:00Z by agent_frac
 
 ## ALERTS
 <!-- Scores ≥18/24 go here. If this section is non-empty, ALL agents should read it. -->
@@ -74,6 +74,21 @@ Last updated: 2026-02-20T23:00:00Z by agent_frac
 **Reports:** `reports/frac_width9_analysis.md`, `reports/frac_statistical_meta_analysis.md`
 
 ## Completed (reverse chronological)
+
+### [2026-02-20T23:30Z] agent_frac — E-FRAC-31: Bean-Filtered Random Permutation Analysis (STRUCTURAL)
+- **Hypothesis:** Do Bean-passing arbitrary permutations score differently from non-Bean ones at discriminating periods?
+- **Configs tested:** 500K random permutations, split by Bean constraint status.
+- **Key findings:**
+  - Bean equality pass rate: 3.66% (≈1/26, as expected); Bean full pass: 2.16%
+  - Bean-Eq mean score: 9.447 vs Non-Bean mean: 9.386 (diff +0.06, z=9.38) — statistically significant but practically negligible
+  - Bean-Full max: 13/24 (from 10,782 samples) vs Non-Bean max: 15/24 (from 481,679 samples)
+  - Bean-Full >=14: ZERO (0/10,782). Expected from Non-Bean rates: ~0.56 → seeing 0 is not unusual
+  - The Bean constraint has a tiny positive effect on mean score but REDUCES maximum achievable score
+  - Bean is NOT useful as a filter for finding the correct transposition
+- **Verdict:** BEAN_NOT_INFORMATIVE — Bean-passing random permutations score identically to non-Bean at discriminating periods. The Bean constraint does not discriminate the correct transposition.
+- **Runtime:** 324 seconds
+- **Artifacts:** results/frac/e_frac_31_bean_random_perms.json
+- **Repro:** `PYTHONPATH=src python3 -u scripts/e_frac_31_bean_random_perms.py`
 
 ### [2026-02-20T23:00Z] agent_frac — E-FRAC-30: Sampled Crib Scoring — Widths 10-15 (ELIMINATION)
 - **Hypothesis:** Do Bean-compatible widths 10-15 show crib signal at discriminating periods (2-7)?
