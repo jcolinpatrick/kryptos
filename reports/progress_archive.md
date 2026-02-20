@@ -1,74 +1,174 @@
 # K4 Agent Team — Progress Tracker
-Last updated: 2026-02-21T07:00:00Z by agent_frac
+Last updated: 2026-02-20T21:00:00Z by agent_tableau
 
-> **Full history (1,210 lines, 170+ experiments):** [`reports/progress_archive.md`](reports/progress_archive.md)
+## ALERTS
+<!-- Scores ≥18/24 go here. If this section is non-empty, ALL agents should read it. -->
 
----
+### [2026-02-19T03:20Z] agent_frac — BIMODAL FINGERPRINT IS LIKELY AN ARTIFACT (E-FRAC-11)
+**ALL AGENTS READ THIS.** The bimodal fingerprint pre-filter (MANDATORY in AGENT_PROMPT.md) is likely based on a statistical artifact, NOT evidence of transposition structure.
 
-## ALERTS (carried forward — still relevant)
+**Evidence:**
+1. Per-position crib match rates decline MONOTONICALLY from position 21 (100%) to position 73 (11%) under random permutations. There is no "bimodal" pattern — just a smooth gradient caused by crib ordering.
+2. ENE (positions 21-33) matches 3.5x better than BC (positions 63-73) under RANDOM permutations with NO transposition. This is because ENE positions come first and are more likely to be "first assignments" in periodic scoring.
+3. 0/500,000 random permutations pass the bimodal check — the constraint is too restrictive.
+4. ALL high-scoring random permutations show ENE >> BC regardless of transposition structure.
 
-### Bimodal fingerprint is an artifact (E-FRAC-11)
-The bimodal pre-filter is based on a statistical artifact, NOT transposition structure. 0/500K random permutations pass. **Do not use.**
+**Implication:** The bimodal pre-filter eliminates valid candidates based on an unfounded assumption. Agents should consider dropping or relaxing this filter.
+**Repro:** `PYTHONPATH=src python3 -u scripts/e_frac_11_bimodal_validity.py`
+**Artifacts:** results/frac/e_frac_11_bimodal_validity.json
 
-### Statistical signals debunked (E-FRAC-13/14)
-- IC = 0.036 is NOT unusual (21.5th percentile, z=-0.84)
-- Lag-7 autocorrelation fails Bonferroni correction (p=0.0077, needs p<0.001)
-- DFT peak at k=9 below 95th percentile of random maximum
-- **No statistical evidence for any specific width, period, or structure**
+### [2026-02-19T05:00Z] agent_frac — STATISTICAL SIGNALS ARE WEAKER THAN CLAIMED (E-FRAC-13/14)
+**ALL AGENTS READ THIS.** Three pillars of the width-9 / structural hypotheses are statistically weak:
 
-### Crib oracle is insufficient for arbitrary permutation search (E-FRAC-33)
-Hill-climbing reaches false 24/24 at ALL discriminating periods. Must combine cribs with plaintext quality metrics (quadgrams, word count, semantic coherence).
+1. **K4's IC = 0.036 is NOT unusual.** It's at the 21.5th percentile of random 97-char text (z=-0.84, p=0.21). The "below-random IC" claim is not meaningful at n=97. IC does NOT constrain the cipher family.
 
-### Bean impossibility proof (E-FRAC-35)
-ALL discriminating periods (2-7) are Bean-impossible for transposition + periodic key. Only periods {8, 13, 16, 19, 20, 23, 24, 26} survive. This is a universal proof for all 97! permutations.
+2. **Lag-7 autocorrelation does NOT survive Bonferroni correction.** p=0.0077 uncorrected, but with 48 lags tested, the corrected threshold is p<0.001. After correction, ZERO lags are significant. The lag-7 signal is expected to appear at SOME lag by chance.
 
-### Multi-objective oracle thresholds for search (E-FRAC-34/40/42)
-Any search must use ALL of: crib=24/24 + Bean PASS + quadgram > -4.84/char + IC > 0.055 + non-crib words >= 7 chars >= 3 + semantic coherence (human).
+3. **DFT peak at k=9 is NOT significant.** Magnitude = 162, but the 95th percentile of the maximum random peak is 192. The k=9 peak doesn't even reach the 95th percentile, let alone 99th. Zero DFT peaks are significant.
 
-### Information-theoretic underdetermination (E-FRAC-44)
-138-bit deficit: ~2^138 permutations satisfy all constraints. Structured families (search space < 2^20) have expected FP=0. Arbitrary permutations (2^505) guarantee false positives.
+**Implication:** There is NO strong statistical evidence for any specific transposition width, periodicity, or structural pattern in K4. The CT is statistically consistent with random text of length 97. Previous claims about DFT peaks and lag-7 as evidence for width-9 should be RETRACTED.
 
----
+**Additional finding:** Bifid 6×6 on English plaintext produces IC ≈ 0.059-0.069 at ALL periods, far above K4's 0.036. K4 is at the 0th percentile. **Bifid is IC-incompatible with K4**, with or without transposition.
+
+**Repro:** `PYTHONPATH=src python3 -u scripts/e_frac_13_ic_analysis.py && PYTHONPATH=src python3 -u scripts/e_frac_14_autocorrelation.py`
+
+### [2026-02-21T01:00Z] agent_frac — CRIB ORACLE IS INSUFFICIENT FOR ARBITRARY PERMUTATION SEARCH (E-FRAC-33)
+**ALL AGENTS READ THIS — especially JTS.**
+
+The 24-crib scoring oracle is **fundamentally insufficient** to identify the correct transposition from arbitrary (unstructured) permutations:
+
+1. **Landscape is smooth** (parent-child correlation ~0.93 at ALL periods 2-7)
+2. **Hill-climbing at period 5 reaches 24/24** in 30% of trials (50 climbs × 5K steps). Random max is only 12/24.
+3. **Hill-climbing at "best period" reaches 24/24** in 50% of trials — mostly at period 7 (87%) and period 6 (13%).
+4. **These are FALSE POSITIVES** — the 97! permutation space is so large that accidental perfect solutions exist at every discriminating period.
+5. Even **period 2** (the most constrained) likely has false 24/24 solutions if searched long enough.
+
+**Implication for JTS:** SA/hill-climbing on crib score alone WILL converge to false positives at ANY period. The search MUST combine crib scoring with **plaintext quality metrics** (quadgram fitness, IC, English word detection) to distinguish real solutions from false positives.
+
+**Implication for TRANS:** Structured transposition families (columnar, rail fence, etc.) don't have this problem because their search space is small enough that false 24/24 solutions don't exist (per E-FRAC-12/29/30/32). The underdetermination only occurs in the full 97! space.
+
+**Repro:** `PYTHONPATH=src python3 -u scripts/e_frac_33_fitness_landscape.py && PYTHONPATH=src python3 -u scripts/e_frac_33b_perperiod_fix.py`
+
+### [2026-02-20T12:00Z] agent_frac — MULTI-OBJECTIVE ORACLE DESIGNED FOR JTS (E-FRAC-34)
+**ALL AGENTS READ THIS — especially JTS.**
+
+E-FRAC-34 characterizes false 24/24 solutions and provides **concrete multi-objective thresholds** for distinguishing real solutions from false positives:
+
+**False positive characterization (90 false 24/24 solutions collected):**
+- Quadgram/char: mean=-5.96, best=-5.77 (false positives produce gibberish)
+- IC: mean=0.038 (same as random — IC does NOT discriminate)
+- Word coverage (≥4 chars): mean=29% (vs 99% for real English)
+- Periods: 34 at p7, 35 at p5, 16 at p2, 5 at p6 (p2 is hardest to fake)
+
+**Benchmarks:**
+- Real English: quadgram=-4.84/char, IC=0.087, word coverage=99.7%
+- Random text: quadgram=-6.43/char, IC=0.038, word coverage=6%
+- K4 CT: quadgram=-6.38/char, IC=0.036
+
+**The GAP: 0.93/char between best false positive (-5.77) and English (-4.84). Quadgram alone discriminates.**
+
+**RECOMMENDED THRESHOLDS for JTS:**
+1. Crib score = 24/24
+2. Bean constraint PASS
+3. **Quadgram/char > -5.0** (all false positives ≤ -5.77, English ≈ -4.84)
+4. IC > 0.055 (English ≈ 0.067)
+5. At least one word ≥6 chars in plaintext
+
+**Repro:** `PYTHONPATH=src python3 -u scripts/e_frac_34_multi_objective_oracle.py`
+**Artifacts:** results/frac/e_frac_34_multi_objective_oracle.json
+
+### [2026-02-20T23:00Z] agent_frac — QUADGRAM THRESHOLD TOO WEAK FOR SA-OPTIMIZED SOLUTIONS (E-FRAC-40/41)
+**ALL AGENTS READ THIS — especially JTS. UPDATES E-FRAC-34 ORACLE.**
+
+The -5.0/char quadgram threshold from E-FRAC-34 is **ONLY valid for crib-optimized transpositions** (where SA maximizes crib score, not quadgrams). When SA optimizes the transposition for QUADGRAM FITNESS (while holding 24 cribs fixed via bipartite matching), it routinely achieves **-4.27 to -4.55/char** — well above the -5.0 threshold.
+
+**Key evidence (E-FRAC-40/40b):**
+- Carter running key + SA quadgram optimization: best=-4.27/char, mean=-4.55, ALL 200 offsets above -5.0
+- **RANDOM key + SA quadgram optimization: best=-4.40/char, mean=-4.52** — nearly identical to Carter
+- English-freq random key + SA: best=-4.39/char — also nearly identical
+- **Carter is NOT special** — the "signal" is an SA optimization artifact
+
+**Word-level discrimination refined (E-FRAC-41 + E-FRAC-42):**
+- **Raw word count ≥6 chars is WEAK:** SA gibberish 3-17 words, English 5-20 words (overlap exists due to crib words)
+- **Non-crib words ≥7 chars is the BEST automated metric:** Cohen's d = 1.14 (LARGE effect)
+  - English: mean 6.3 [1-14], SA gibberish: mean 3.0 [0-11]
+  - Excluding crib words improves d from 0.81 → 1.14
+- **BUT no perfect separation exists** — SA produces real English words (DISTINGUISHED, LABORATORY, UNIFORMED) via quadgram optimization
+- Random/English-freq random: 0-2 words (clear separation from both English and SA)
+
+**Updated JTS thresholds (SUPERSEDES E-FRAC-34, refined by E-FRAC-42):**
+1. Crib score = 24/24
+2. Bean constraint PASS
+3. ~~Quadgram > -5.0/char~~ → Quadgram > -4.84/char (actual English benchmark; -5.0 is too easy when SA optimizes for quadgrams)
+4. IC > 0.055
+5. **Non-crib words ≥7 chars: at least 3** (exclude NORTHEAST, BERLIN, CLOCK, EAST, NORTH, STERN, ASTER, etc. — 16 crib-derived words)
+6. **Semantic coherence** (human evaluation for final candidates — THE ultimate discriminator; no automated metric achieves perfect separation)
+
+**Repro:** `PYTHONPATH=src python3 -u scripts/e_frac_40_carter_quadgram_screen.py && PYTHONPATH=src python3 -u scripts/e_frac_40b_random_key_control.py && PYTHONPATH=src python3 -u scripts/e_frac_41_word_discriminator.py`
+
+### [2026-02-21T04:00Z] agent_frac — INFORMATION-THEORETIC UNDERDETERMINATION PROOF (E-FRAC-44)
+**ALL AGENTS READ THIS — especially JTS.**
+
+The K4 crib oracle is **information-theoretically insufficient** for arbitrary permutation search. Unified theoretical framework:
+
+**Information Budget:**
+| Source | Bits |
+|--------|------|
+| Target: identify 1 of 97! perms | 505 |
+| 24 known plaintext positions | 113 |
+| Bean constraints (1 eq + 21 ineq) | 6 |
+| English on 73 unknown positions | 248 |
+| **TOTAL available** | **367** |
+| **DEFICIT** | **138** |
+
+**~2^138 permutations are consistent with ALL known constraints** (cribs + Bean + English plaintext quality).
+
+**Per-period false positive estimates:**
+- Period 2: P(crib-consistent) ≈ 7.4×10⁻³², expected #FP ≈ 2^401
+- Period 5: P ≈ 1.3×10⁻²⁷, #FP ≈ 2^416
+- Period 7: P ≈ 7.4×10⁻²⁵, #FP ≈ 2^425
+
+**The key structural insight — why structured families work but arbitrary search doesn't:**
+- Columnar width-9: 362K orderings (2^18.5) × P(consistent) ≈ 10⁻³² → **expected FP = 0**
+- Arbitrary perms: 97! (2^505) × P(consistent) ≈ 10⁻³² → **expected FP = 2^401**
+- Structured transposition families ELIMINATE false positives by constraining the search space
+- Arbitrary permutation search is inherently underdetermined regardless of oracle quality
+
+**For JTS:** SA/hill-climbing over arbitrary permutations will ALWAYS find false positives. The only viable strategies are: (1) restrict to structured transposition families, or (2) accept underdetermination and rely on human semantic evaluation for final discrimination.
+
+**Repro:** `PYTHONPATH=src python3 -u scripts/e_frac_44_information_theoretic.py`
+**Artifacts:** results/frac/e_frac_44_information_theoretic.json
+
+### [2026-02-20T18:00Z] agent_frac — BEAN IMPOSSIBILITY: ALL DISCRIMINATING PERIODS ELIMINATED (E-FRAC-35)
+**ALL AGENTS READ THIS — especially JTS and TRANS. This is a PROOF, not an empirical finding.**
+
+**Theorem:** For ANY transposition σ (including identity), periodic substitution at periods 2-12 (and 14, 15, 17, 18, 21, 22, 25) violates at least one Bean inequality constraint. This holds for ALL 97! permutations.
+
+**Two elimination mechanisms:**
+1. **Type 1 (same-residue inequality):** If Bean inequality pair (a,b) has a ≡ b (mod p), then k[a] = k[b] under periodic keying, violating k[a] ≠ k[b]. Eliminates periods: {2,3,4,5,6,7,9,10,14,15,17,21,25}.
+2. **Type 2 (equality-inequality conflict):** Bean equality forces key[27%p] = key[65%p], but if some Bean inequality pair (a,b) maps to the same residue pair, the equality and inequality directly conflict. Eliminates periods: {11,12,18,22} additionally.
+
+**Combined: 17 of 25 periods (2-26) are ELIMINATED. Only 8 survive: {8, 13, 16, 19, 20, 23, 24, 26}.**
+
+**Critical implications:**
+- ALL discriminating periods (2-7) are Bean-impossible for transposition + periodic key
+- Period 8 is the FIRST surviving period (3 cribs per key variable)
+- Only 3 surviving periods have ≥1.5 cribs/var: {8, 13, 16}
+- The 90 false 24/24 solutions from E-FRAC-33/34 were ALL at Bean-eliminated periods
+- IF K4 uses periodic keying + transposition, the period MUST be ≥8
+- This strongly increases the likelihood of a NON-PERIODIC key model
+
+**For JTS:** Target period 8 as primary search period. Do NOT search periods 2-7 with periodic keying.
+**For TRANS:** All prior tests at periods 2-7 were in Bean-impossible territory. This doesn't invalidate eliminations but provides a cleaner structural explanation.
+
+**Repro:** `PYTHONPATH=src python3 -u scripts/e_frac_35_bean_period_impossibility.py`
+**Artifacts:** results/frac/e_frac_35_bean_period_impossibility.json
 
 ## Active Tasks
 | Agent | Task | Started | Status |
 |-------|------|---------|--------|
-| (none) | System archived and reset | 2026-02-20 | Transitioning to official agent teams |
 
-## Cross-Agent Synthesis (2026-02-21)
-
-**Total experiments across all agents: ~175+ (FRAC:55, TRANS:54, JTS:12+, BESPOKE:52+, TABLEAU:21, QA:39 tests)**
-**Positive findings: ZERO genuine signals survived scrutiny across ALL agents.**
-
-### What Has Been COMPREHENSIVELY Eliminated (combined all agents):
-1. **ALL periodic polyalphabetic + ANY transposition at p2-7**: Universal Bean impossibility proof (E-FRAC-35)
-2. **ALL structured transposition families + periodic key at ALL periods**: Columnar w5-15, simple families, double columnar, Myszkowski, AMSCO/Nihilist/Swapped, strip, grid reads (FRAC/TRANS/JTS)
-3. **ALL fractionation families**: Structural proofs with or without transposition (E-FRAC-21)
-4. **Autokey + ANY transposition**: Cannot reach 24/24 (E-FRAC-37)
-5. **ALL structured non-periodic key models except running key**: Progressive, quadratic, Fibonacci, Vimark recurrence all Bean-eliminated (E-FRAC-38, E-JTS-08/11)
-6. **Running key from ALL known reference texts + structured transpositions**: ZERO matches from 17B+ checks (E-FRAC-49/50, E-JTS-10/12)
-7. **Running key from unknown English text + columnar**: ZERO in English range (E-FRAC-51, E-TABLEAU-21)
-8. **Three-layer Sub+Trans+Sub + Mono+Trans+Periodic**: ZERO viable candidates (E-FRAC-52/53)
-9. **Non-standard tableau usage, K3-method, thematic keywords**: ALL ELIMINATED (TABLEAU 21 experiments)
-10. **Hill cipher + transposition**: ELIMINATED (BESPOKE E-BESPOKE-42)
-11. **Non-standard cipher models (Polybius, affine, column/row keys)**: ELIMINATED (BESPOKE E-BESPOKE-50)
-
-### What Remains GENUINELY Open:
-1. **Running key from unknown NON-ENGLISH text + bespoke transposition**: Untestable without candidate texts
-2. **Mono+Trans+Running key (E-FRAC-54)**: UNDERDETERMINED — 13 mono DOF saturate key fragment analysis
-3. **Bespoke physical transpositions**: S-curve, strip manipulation, non-enumerable physical methods
-4. **Models that don't fit ANY classical paradigm**: "Not even a math solution" (Sanborn)
-5. **Arbitrary (unstructured) transposition search**: Provably underdetermined (E-FRAC-44, 138-bit deficit)
-
-### Information-Theoretic Summary:
-- 505 bits needed to identify correct transposition from 97! space
-- 367 bits available from ALL known constraints (cribs + Bean + English)
-- 138-bit deficit: ~2^138 permutations satisfy ALL constraints
-- Structured families (2^18 options): oracle SUFFICIENT, all tested and eliminated
-- Arbitrary permutations (2^505 options): oracle INSUFFICIENT, provably underdetermined
-- **Implication: K4 either uses a bespoke method not yet conceived, or requires additional information beyond the 24 known plaintext positions**
-
-## FRAC Agent Mandate — 55 experiments (E-FRAC-01 through E-FRAC-55)
+## FRAC Agent Mandate — 48 experiments (E-FRAC-01 through E-FRAC-48)
 
 **Original mandate (E-FRAC-01 to 25): COMPLETE. ZERO positive findings survived.**
 **Extended mandate (E-FRAC-26-31): Bean profiling + crib scoring. ALL columnar widths 5-15 ELIMINATED.**
@@ -81,34 +181,24 @@ Any search must use ALL of: crib=24/24 + Bean PASS + quadgram > -4.84/char + IC 
 **Bean key model analysis (E-FRAC-38): Progressive, quadratic, and Fibonacci keys ALL Bean-eliminated. Running key is the ONLY structured model that survives. FRAC mandate COMPLETE.**
 **Running key bipartite feasibility (E-FRAC-39): ~35% of English text offsets achieve 24/24 bipartite matching under SOME transposition. After Bean: ~0.6% feasible. Carter text has ~700-2,000 fully feasible offsets. MASSIVELY UNDERDETERMINED — multi-objective oracle essential.**
 **Carter quadgram screening (E-FRAC-40): SA-optimized transposition achieves -4.27/char with Carter key. BUT random key also achieves -4.40/char — Carter is NOT special. E-FRAC-34's -5.0 threshold is too weak for SA-optimized solutions. Word-level detection is the ONLY reliable discriminator.**
-**Running key + columnar (E-FRAC-49): ALL Bean-passing columnar orderings at widths 6, 8, 9 (16,597 configs) × 7 reference texts × 3 cipher variants. 8.4 billion (config × offset) checks. ZERO 24/24 matches. Running key + structured columnar is ELIMINATED for all known reference texts.**
-**Running key + all structured families (E-FRAC-50): Identity, cyclic, affine, rail fence, block reversal, double columnar (9 Bean-compatible width pairs). 369K permutations → 17,306 Bean-passing configs × 7 texts × 3 variants. 8.8B checks. ZERO matches. ALL structured transposition families are ELIMINATED with running key from known texts.**
-**English-like key detection (E-FRAC-51): ALL 16,597 Bean-passing columnar configs at widths 6,8,9 × 3 variants scored for English-like key fragments at crib positions. Best quadgram=-4.151/char, English 5th percentile=-3.551/char. ZERO configs in English range (0/16,597). Running key from ANY unknown English text + columnar transposition is ELIMINATED. Extends E-FRAC-49/50 from 7 specific texts to the general case.**
-**Three-layer model (E-FRAC-52): Sub+Trans+Sub model CT=Enc₂(σ(Enc₁(PT,K1)),K2) with K1 period p1, K2 period p2. Effective key K_eff[j]=K1[j%p1]+K2[inv(j)%p2] is non-periodic, bypassing E-FRAC-35's Bean impossibility proof. ALL 17,124 Bean-eq columnar configs × 143 period pairs (p1,p2∈1..12) × 2 c-types tested. ZERO candidates at p1*p2≤50 (strongly constrained). Only 74 candidates at p1*p2≥132 (weakly constrained), ALL with quadgram≤-5.87/char (gibberish). E-FRAC-35 validation: zero p2=1 candidates. Three-layer Sub+Trans+Sub ELIMINATED.**
-**Mono+Trans+Periodic model (E-FRAC-53): Tests CT[inv(j)]=(Sub[PT[j]]+K[inv(j)%p])%26, where Sub is monoalphabetic. KEY INSIGHT: E-FRAC-35's Bean proof relies on 9 different-letter inequality pairs; mono inner layer auto-satisfies these (Sub[L1]≠Sub[L2] guaranteed), making periods 3-7 potentially viable. 17,124 configs × 10 periods (3-12). At discriminating periods 3-7: 556-5,282 configs pass same-letter Bean-ineq, but ZERO pass bipartite consistency+BFS solve. 34 candidates only at period 12, all gibberish (best Q=-6.33). Mono+Trans+Periodic ELIMINATED.**
-**Mono+Trans+Running key detection (E-FRAC-54): Tests whether mono inner layer's 13 DOF (one shift per PT letter) can make key fragments at crib positions look English-like. KEY FINDING: mono optimization provides ~2.5/char quadgram improvement — ALL 1500 sampled columnar configs, ALL random permutations, and identity transposition produce key fragments ABOVE the English 5th percentile (-3.551). Best: -2.687/char (columnar), -2.691 (random perm), -2.923 (identity). The 13 mono DOF SATURATE the analysis: key fragment English-likeness CANNOT distinguish real English running keys from gibberish when a mono layer is present. E-FRAC-51's elimination (no mono) does NOT extend to the mono case. Mono+Trans+Running key is UNDERDETERMINED by fragment analysis.**
-**Columnar at Bean-surviving periods (E-FRAC-55): Prior experiments (E-FRAC-12/29/30) tested columnar at periods 2-7, but E-FRAC-35 proved those periods Bean-impossible. This experiment closes the gap by testing 17,124 Bean-eq-passing columnar configs (widths 6,8,9) at Bean-SURVIVING periods {8, 13, 16}. Period 8 (most discriminating, 16 constraints): max 14/24 = random max. Periods 13/16: higher max scores (18/24, 20/24) are entirely explained by underdetermination (only 8-11 constraints → random mean 13.4-16.3). ZERO 24/24 matches. ZERO coupled-key matches. ALL plaintext gibberish (best Q=-6.018/char). Bean impossibility gap fully closed.**
----
 
-## Agent Mandate Summary (all exhausted)
+### New Structural Findings (E-FRAC-26/27)
 
-| Agent | Experiments | Key Result |
-|-------|------------|------------|
-| FRAC | 55 (E-FRAC-01 to 55) | All structured transpositions ELIMINATED at all widths 5-15. All key models except running key Bean-eliminated. Information-theoretic proof of underdetermination. |
-| TRANS | 54 (E-TRANS-1 to 6 + FRAC overlap) | Domain exhausted. All columnar/double/Myszkowski/AMSCO/simple families produce noise. |
-| TABLEAU | 23 (E-TABLEAU-01 to 23) | All non-standard tableau usage, K3-method variants, misspelling chains, and thematic keywords at Bean-surviving periods ELIMINATED. |
-| JTS | 12 (E-JTS-01 to 12) | Columnar at Bean-surviving periods, Vimark, strip transposition, K1-K3 running key — all ELIMINATED. |
-| BESPOKE | 55 (E-BESPOKE-01 to 55) | Text-derived perms, multi-objective SA, physical params, Hill, strip reversal, segmented encryption — all STORE or NOISE. |
-| QA | Cross-verification | 39 new tests, 28 experiments cross-verified. Regression meta-analysis (R^2=0.58). |
+**Width-5 and Width-7 are Bean-ELIMINATED** (exhaustive proof):
+- Width-5: 0/120 orderings pass Bean equality
+- Width-7: 0/5,040 orderings pass Bean equality, 0/75,600 configs pass full Bean
+- This is a HARD STRUCTURAL CONSTRAINT — no ordering at these widths can satisfy CT[inv(27)] = CT[inv(65)]
 
----
+**Width-9 has significantly better Bean-quadgram compatibility than width-7:**
+- Width-9: 67,320 Bean-passing configs (1.24%), best Bean quadgram: -6.238
+- Width-9 best quadgram exceeds all 10K random samples (p < 0.0001)
+- Width-8: 3,006 full Bean passes (2.49%), best Bean quadgram: -6.371
+- Width-6: 127 full Bean passes (5.88%), best Bean quadgram: -6.655
 
-## What Remains Open
-
-1. **Running key from unknown text** — Only structured key model surviving Bean constraints
-2. **Bespoke physical/procedural cipher** — "Not a math solution" (Sanborn), coding charts ($962.5K auction)
-3. **Non-standard structures not yet conceived** — Position-dependent alphabets, non-textbook methods
-4. **External information** — K5 ciphertext, Smithsonian archives (sealed 2075), decoded coding charts
+**Bean compatibility profile (widths 5-15):**
+- Bean-INCOMPATIBLE: widths 5, 7 (zero Bean passes, exhaustively verified)
+- Bean-COMPATIBLE: widths 6, 8, 9, 10, 11, 12, 13, 14, 15
+- BUT: all plaintexts are still gibberish. No width produces English text.
 
 ### Summary of what FRAC has eliminated/established:
 1. **ALL 10 fractionation families** — structurally eliminated (E-FRAC-21)
@@ -124,7 +214,6 @@ Any search must use ALL of: crib=24/24 + Bean PASS + quadgram > -4.84/char + IC 
 11. **Bean constraint NOT informative** for transposition identification (E-FRAC-31)
 12. **Simple transposition families** (cyclic shifts, affine, reversal, rail fence, single swaps): ALL ELIMINATED — max 13/24, BELOW random baseline 14/24 (E-FRAC-32)
 13. **Crib oracle INSUFFICIENT for arbitrary permutations** — hill-climbing reaches false 24/24 at ALL periods including period 5 (E-FRAC-33). Must combine with plaintext quality metrics.
-35. **Columnar at Bean-surviving periods {8, 13, 16}** — NOISE (E-FRAC-55): 17,124 Bean-eq configs × 3 periods × 3 variants = 154K checks. Period 8 max=14/24 (= random). Periods 13/16 max 18/20 — pure underdetermination artifacts (random mean 13.4/16.3). ZERO 24/24 matches. Bean impossibility gap FULLY CLOSED.
 14. **Multi-objective oracle designed** (E-FRAC-34): 90 false 24/24 solutions characterized. Quadgram gap = 0.93/char (FP best: -5.77, English: -4.84). Threshold: quadgram > -5.0/char + IC > 0.055 + Bean PASS.
 15. **Bean impossibility proof** (E-FRAC-35): ALL discriminating periods (2-7) are IMPOSSIBLE for transposition + periodic key due to Bean inequality constraints. Also eliminated: periods 9-12, 14, 15, 17, 18, 21, 22, 25. Only 8 periods survive out of 25 (2-26): {8, 13, 16, 19, 20, 23, 24, 26}. This is a universal PROOF holding for all 97! permutations.
 16. **Bean-surviving periods tested** (E-FRAC-36): Period-8 (first surviving, 3 cribs/var) and period-13 hill-climbing with Bean as HARD constraint. 175 false 24/24+Bean solutions found. ALL have quadgram < -5.0/char (best: -6.171). Multi-objective oracle from E-FRAC-34 discriminates false positives at Bean-surviving periods too. Random baseline at period 8: max=14/24.
@@ -235,24 +324,6 @@ Any search must use ALL of: crib=24/24 + Bean PASS + quadgram > -4.84/char + IC 
 
 ## Completed (reverse chronological)
 
-### [2026-02-21T01:00Z] agent_frac — E-FRAC-55: Columnar at Bean-Surviving Periods (NOISE — gap closed)
-- **Hypothesis:** Prior experiments (E-FRAC-12/29/30) tested columnar transpositions at periods 2-7, which E-FRAC-35 then proved Bean-impossible. The Bean-surviving periods {8, 13, 16, ...} were never tested with structured columnar orderings. Does columnar transposition + periodic key at Bean-surviving periods show signal?
-- **Method:** All 17,124 Bean-eq-passing columnar orderings at widths 6, 8, 9 scored at periods 8, 13, 16. Three cipher variants (Vig/Beau/VB) = 154,116 total checks. Random baseline: 50K random permutations. Additional test: coupled-key constraint (same keyword for columnar order AND Vigenère key) at width=period=8.
-- **Configs tested:** 17,124 × 3 periods × 3 variants = 154,116 checks
-- **Key findings:**
-  - **Period 8 (most discriminating, 16 constraints):** max=14/24 = random max. Expected random mean=8.62/24. Only 5 configs reach 14/24. Corrected p=0.998 (NOISE). Period 8 behaves identically to periods 2-7: no columnar ordering shows signal.
-  - **Period 13 (11 constraints):** max=18/24, random max=17/24. But P(max≥18 from 51K trials under null) ≈ 0.80 — completely expected from noise. 6 configs at 18/24, only 2 pass Bean-ineq. All plaintext gibberish (best Q=-6.550/char).
-  - **Period 16 (8 constraints):** max=20/24, random max=19/24. P(max≥20 from 51K trials under null) ≈ 0.999. 12 configs at 20/24, none pass Bean-ineq. All plaintext gibberish (best Q=-6.018/char).
-  - **ZERO exact 24/24 matches** — confirms E-FRAC-44 prediction (expected FP = 0 for structured families)
-  - **ZERO coupled-key matches** — no width-8 ordering produces a key that respects the alphabetical ranking constraint
-  - **All plaintexts gibberish** — best quadgram -6.018/char, far below English threshold -4.84/char
-  - **High scores at periods 13/16 are pure underdetermination artifacts** — random mean is already 13.4/24 (p13) and 16.3/24 (p16), confirming that only period 8 provides meaningful discrimination at surviving periods
-- **Analytical context:** At period 8 with 16 constraints, P(24/24 consistent) ≈ (1/26)^16 ≈ 4×10^-23. Expected false positives from 51K configs: 2×10^-18 → effectively 0. This is exactly what E-FRAC-44 predicted for structured families.
-- **Verdict:** NOISE — columnar transposition at Bean-surviving periods {8, 13, 16} produces only noise. Period 8 (most discriminating) matches random exactly. Periods 13/16 show underdetermination artifacts. The Bean impossibility gap is fully closed: columnar + periodic key is ELIMINATED at ALL periods (2-7 by E-FRAC-35 proof, 8/13/16 by this experiment, higher periods by underdetermination).
-- **Runtime:** 8 seconds
-- **Artifacts:** results/frac/e_frac_55_bean_surviving_periods.json
-- **Repro:** `PYTHONPATH=src python3 -u scripts/e_frac_55_bean_surviving_periods.py`
-
 ### [2026-02-20T21:00Z] agent_tableau — E-TABLEAU-20: K3-Method Thematic Keywords at Bean-Surviving Periods (ELIMINATION)
 - **Hypothesis:** Does K4 use K3's method (columnar + Vigenère/Beaufort) with a thematic keyword at a Bean-surviving period? ABSCISSA (K2 keyword, period 8) is the most historically motivated candidate.
 - **Motivation:** K3 used Model B: Columnar(KRYPTOS, w7) → Vig(PALIMPSEST, p10). FRAC E-FRAC-35 proved periods 2-7 are Bean-impossible. Only period 8+ survives. ABSCISSA (K2's keyword) has period 8 — the first Bean-surviving period.
@@ -274,23 +345,6 @@ Any search must use ALL of: crib=24/24 + Bean PASS + quadgram > -4.84/char + IC 
 - **Runtime:** 24 seconds
 - **Artifacts:** results/tableau/e_tableau_20_k3method_keywords.json
 - **Repro:** `PYTHONPATH=src python3 -u scripts/e_tableau_20_k3method_keywords.py`
-
-### [2026-02-20T23:30Z] agent_frac — E-FRAC-54: Mono Inner + Running Key Detection (UNDERDETERMINED)
-- **Hypothesis:** Adding a monoalphabetic inner substitution before transposition provides 13 degrees of freedom (one shift per known PT letter: E,A,S,T,N,O,R,H,B,L,I,C,K) to adjust implied running key values at crib positions. Can these shifts make key fragments look English-like? Extends E-FRAC-51 (which tested WITHOUT mono and found ZERO in English range).
-- **Method:** For each columnar ordering σ (500 sampled from 17,124 Bean-eq configs at widths 6,8,9) × 3 cipher variants: optimize 13 mono shifts via coordinate descent (5 restarts × up to 10 rounds) to maximize quadgram score of combined key fragments (pos 21-33: 13 chars + pos 63-73: 11 chars). Unconstrained optimization (shifts can repeat — gives upper bound). Baselines: identity transposition (10 restarts × 15 rounds), random permutations (2,000 samples), English text (10,000 Carter pairs).
-- **Configs tested:** 500 sampled columnar × 3 variants = 1,500 scored configs + 2,000 random permutations + 3 identity variants
-- **Key findings:**
-  - **ALL 1,500 columnar configs exceed English 5th percentile (-3.551/char)** — 100% in English range
-  - **ALL random permutations also in English range** — mean=-3.019, max=-2.691
-  - **Identity transposition in English range** — best=-2.923 (VB), improvement=2.8/char from E-FRAC-51
-  - **Best columnar: -2.687/char** (width 9, [2,8,7,0,3,4,1,6,5], VB, Bean PASS)
-  - **English baseline: mean=-3.210, p5=-3.551** — mono-optimized fragments are MORE English-like than real English
-  - **13 mono DOF provide ~2.5/char improvement** — far exceeds the 0.6/char gap to English
-  - **Mono shifts are NOT injective** (unconstrained) — constrained optimization would score lower but likely still in English range
-- **Verdict:** UNDERDETERMINED — mono optimization makes ALL key fragments English-like regardless of transposition or key source. Test is uninformative.
-- **Runtime:** 331 seconds
-- **Artifacts:** results/frac/e_frac_54_mono_running_key_detection.json
-- **Repro:** `PYTHONPATH=src python3 -u scripts/e_frac_54_mono_running_key_detection.py`
 
 ### [2026-02-20T14:00Z] agent_frac — E-FRAC-48: AMSCO/Nihilist/Swapped Columnar at Widths 8-13 (ELIMINATION)
 - **Hypothesis:** Do AMSCO, Nihilist, and Swapped columnar transpositions at widths 8-13 show crib signal at discriminating periods? Prior test E-S-22 only covered widths 5-8.
@@ -1154,5 +1208,3 @@ Any search must use ALL of: crib=24/24 + Bean PASS + quadgram > -4.84/char + IC 
 - **Runtime:** 67 seconds
 - **Artifacts:** results/frac/e_frac_01_w9_structural.json
 - **Repro:** `PYTHONPATH=src python3 -u scripts/e_frac_01_w9_structural.py`
-
-See also [`reports/final_synthesis.md`](reports/final_synthesis.md) for the comprehensive synthesis.
