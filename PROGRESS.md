@@ -1,5 +1,5 @@
 # K4 Agent Team — Progress Tracker
-Last updated: 2026-02-20T20:30:00Z by agent_frac
+Last updated: 2026-02-20T22:00:00Z by agent_frac
 
 ## ALERTS
 <!-- Scores ≥18/24 go here. If this section is non-empty, ALL agents should read it. -->
@@ -106,7 +106,7 @@ E-FRAC-34 characterizes false 24/24 solutions and provides **concrete multi-obje
 | Agent | Task | Started | Status |
 |-------|------|---------|--------|
 
-## FRAC Agent Mandate — 38 experiments (E-FRAC-01 through E-FRAC-38)
+## FRAC Agent Mandate — 39 experiments (E-FRAC-01 through E-FRAC-39)
 
 **Original mandate (E-FRAC-01 to 25): COMPLETE. ZERO positive findings survived.**
 **Extended mandate (E-FRAC-26-31): Bean profiling + crib scoring. ALL columnar widths 5-15 ELIMINATED.**
@@ -117,6 +117,7 @@ E-FRAC-34 characterizes false 24/24 solutions and provides **concrete multi-obje
 **Bean-surviving periods (E-FRAC-36): Period-8 and period-13 hill-climbing with Bean HARD constraint. 175 false 24/24 solutions ALL have quadgram < -5.0. Multi-objective oracle discriminates at Bean-surviving periods too.**
 **Autokey + arbitrary transposition (E-FRAC-37): Autokey CANNOT reach 24/24 at any model. PT-autokey max=16/24, CT-autokey max=21/24. Autokey is MORE constrained than periodic keying due to sequential key dependencies.**
 **Bean key model analysis (E-FRAC-38): Progressive, quadratic, and Fibonacci keys ALL Bean-eliminated. Running key is the ONLY structured model that survives. FRAC mandate COMPLETE.**
+**Running key bipartite feasibility (E-FRAC-39): ~35% of English text offsets achieve 24/24 bipartite matching under SOME transposition. After Bean: ~0.6% feasible. Carter text has ~700-2,000 fully feasible offsets. MASSIVELY UNDERDETERMINED — multi-objective oracle essential.**
 
 ### New Structural Findings (E-FRAC-26/27)
 
@@ -161,10 +162,50 @@ E-FRAC-34 characterizes false 24/24 solutions and provides **concrete multi-obje
     - **General recurrence: 2,892/456,976 survive** (0.63%) but noise from E-FRAC-15
     - **Running key: OPEN** (Bean only constrains ~6.5% of offsets)
     - **Key insight:** Running key is the ONLY non-trivial structured key model that survives Bean constraints. All polynomial/recurrence/progressive models are eliminated.
+19. **Running key + transposition bipartite feasibility** (E-FRAC-39): For each running key offset in reference texts, max achievable crib score under ANY transposition = bipartite matching size. Key findings:
+    - **~35% of random English text offsets achieve 24/24 matching** — bipartite matching is extremely permissive
+    - **After Bean filtering: ~0.6% of offsets are fully feasible** (matching=24 + Bean full pass)
+    - **Carter Gutenberg: 699-807 fully feasible offsets** per variant
+    - **Carter Vol1 extract: 1,647-2,031 fully feasible offsets** per variant
+    - **ALL reference texts have feasible offsets** — none are eliminated as running key sources by bipartite/Bean constraints
+    - **Random baseline identical:** ~35% matching rate in random English text, confirming the constraint provides NO discrimination
+    - **Running key + transposition is MASSIVELY UNDERDETERMINED** — comparable to periodic key underdetermination (E-FRAC-33-36)
+    - **Multi-objective oracle (quadgram > -5.0) is the ONLY viable discriminator** for JTS
 
 **Reports:** `reports/frac_width9_analysis.md`, `reports/frac_statistical_meta_analysis.md`
 
 ## Completed (reverse chronological)
+
+### [2026-02-20T22:00Z] agent_frac — E-FRAC-39: Running Key + Transposition Bipartite Feasibility (STRUCTURAL)
+- **Hypothesis:** For running key from known reference texts + arbitrary transposition, how many (offset, transposition) pairs can achieve 24/24+Bean? Is the bipartite matching constraint (max achievable crib score under ANY transposition) discriminating?
+- **Method:** For each offset in 8 reference texts (Carter Gutenberg 117K, Carter Vol1 288K, CIA Charter 9K, JFK Berlin 2.8K, NSA Act 70K, Reagan Berlin 12.7K, UDHR 8.7K, K1-K3 plaintext 710 chars), compute:
+  1. Bean equality and inequality pass/fail for the running key
+  2. Bipartite matching: 24 crib positions → 97 CT positions (edge exists iff CT[j] has the required letter for crib i at this offset). Max matching = max achievable crib score under ANY transposition.
+  3. Both Vigenère and Beaufort variants tested
+  4. Monte Carlo baseline: 20 random English texts × 200K chars each
+- **Key findings:**
+  - **~35% of offsets achieve matching=24** across all texts and both variants. Reference texts: 33-42% matching=24. Random baseline: 35.8% (Vig), 40.2% (Beau). No difference between reference and random.
+  - **Bean full pass rate: ~1.7-1.9%** across all texts (matches E-FRAC-38 prediction)
+  - **Fully feasible offsets (matching=24 + Bean full pass):**
+    - Carter Gutenberg: 699 (Vig), 807 (Beau) — 0.60-0.69% of offsets
+    - Carter Vol1 extract: 1,647 (Vig), 2,031 (Beau) — 0.57-0.71%
+    - NSA Act: 398 (Vig), 488 (Beau) — 0.57-0.70%
+    - K1-K3 plaintext: 3 (Vig), 5 (Beau) — tiny text, still feasible
+    - ALL other texts: 12-84 feasible offsets each
+  - **Random baseline: ~1,043 (Vig) / ~1,231 (Beau) feasible per 200K-char text** — reference texts are INDISTINGUISHABLE from random
+  - **Matching distribution is remarkably stable:** 24/24 ≈ 35-40%, 23/24 ≈ 33%, 22/24 ≈ 18%, 21/24 ≈ 8%, 20/24 ≈ 3%. Nearly identical for all texts.
+  - **Per-crib expected CT matches = 3.7** (97/26) — each crib has ~3.7 compatible CT positions, making 24/24 matching common
+  - **Beaufort consistently more permissive** than Vigenère (~40% vs ~35% matching=24) due to CT letter distribution interaction
+- **Implications:**
+  - Running key + transposition is NOT eliminated by bipartite/Bean constraints for ANY tested reference text
+  - The bipartite matching constraint provides ZERO discrimination — it eliminates almost nothing
+  - This extends the underdetermination theme from E-FRAC-33-36: the 24 cribs are insufficient to constrain the combined (offset × transposition) space
+  - **For JTS:** With ~700-2,000 feasible offsets per major text, each having millions of compatible transpositions, the search space is ~10^9+ candidates. SA/hill-climbing WILL find 24/24+Bean solutions at many offsets. The multi-objective oracle (quadgram > -5.0, IC > 0.055, word ≥6 chars) from E-FRAC-34 is ESSENTIAL to distinguish real from false solutions.
+  - **For running key search:** The key discriminator is NOT crib matching (too easy to satisfy) but plaintext QUALITY. Only the correct (offset, transposition) pair will produce English plaintext with quadgram > -5.0.
+- **Verdict:** MASSIVELY_UNDERDETERMINED — running key + transposition from known texts is feasible at hundreds to thousands of offsets, but bipartite/Bean constraints provide no discrimination. Multi-objective oracle required.
+- **Runtime:** 253 seconds
+- **Artifacts:** results/frac/e_frac_39_running_key_bipartite.json
+- **Repro:** `PYTHONPATH=src python3 -u scripts/e_frac_39_running_key_bipartite.py`
 
 ### [2026-02-20T20:30Z] agent_frac — E-FRAC-38: Bean Constraint Analysis — ALL Key Models (FINAL STRUCTURAL ANALYSIS)
 - **Hypothesis:** Which key generation models survive Bean constraints? Comprehensive algebraic + computational analysis.
