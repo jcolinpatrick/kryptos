@@ -6,7 +6,9 @@
 
 ## Executive Summary
 
-The width-9 grid hypothesis — that K4's transposition layer uses a 9-column grid (97/9 ≈ 10.78 rows, matching Sanborn's "10.8 rows" annotation) — has been tested exhaustively across multiple substitution models. **No discriminating signal was found.** However, the structural analysis shows that width-9 transposition naturally explains the observed lag-7 autocorrelation in the ciphertext, which keeps the hypothesis alive for non-standard substitution models not yet tested.
+The width-9 grid hypothesis — that K4's transposition layer uses a 9-column grid (97/9 ≈ 10.78 rows, matching Sanborn's "10.8 rows" annotation) — has been tested exhaustively across multiple substitution models.
+
+**CRITICAL UPDATE (E-FRAC-07):** Width-9 COLUMNAR transposition is **structurally incompatible** with the bimodal fingerprint. Zero of 362,880 orderings satisfy even loose bimodal constraints because positions 22-30 span all 9 columns, making near-identity mapping impossible. **If the bimodal fingerprint is valid, width-9 columnar is eliminated.** Non-columnar width-9 methods (strip manipulation, physical procedures) remain open.
 
 ## Evidence For Width-9
 
@@ -63,25 +65,38 @@ Under width-9 columnar transposition, the following substitution models are **EL
 | Non-columnar reading orders + periodic | 16/24 (p=13) | 16/24 (identity at p=13) | ARTIFACT |
 | Compound w9×w7 + periodic | 0/24 (p≤7) | N/A | ELIMINATED |
 
+### E-FRAC-07: Bimodal Fingerprint (CRITICAL)
+- **Result:** ZERO width-9 columnar orderings satisfy the bimodal fingerprint at ANY tolerance
+- **Root cause:** Positions 22-30 span all 9 columns. CT position 22 maps to row 0 of some column (PT 0-8), giving minimum displacement of 14.
+- **Implication:** Width-9 columnar is structurally incompatible with the bimodal fingerprint
+
+### E-FRAC-06: Width-11 and Width-13
+- **Result:** Both produce scores identical to random baseline (14/24 max at period 7)
+- **Verdict:** NOISE — no evidence for width-11 or width-13
+
 ## What Remains Open
 
-1. **Width-9 columnar + running key from UNKNOWN text:** The key IC (mean 0.038) is close to random, meaning the key looks random. An English running key should have IC ≈ 0.067. This argues against English running key, but a non-English or deliberately constructed key is possible.
+1. ~~Width-9 columnar + any substitution model~~ **ELIMINATED** if bimodal fingerprint is valid (E-FRAC-07)
 
-2. **Width-9 columnar + completely arbitrary key:** By definition, any permutation is "consistent" with an arbitrary key (since any 97 key values can be assigned). The only discriminator is whether the resulting plaintext is meaningful English. This requires attempting to solve the substitution directly, which is the JTS agent's domain.
+2. **Width-9 with non-columnar transposition (e.g., strip manipulation):** Non-columnar methods on a 9-wide grid may satisfy the bimodal fingerprint because they don't necessarily have the same displacement constraints as columnar reading.
 
-3. **Width-9 with non-columnar transposition + non-periodic substitution:** Only columnar reading was tested exhaustively. Non-standard transpositions on a 9-wide grid (e.g., physical manipulations of paper strips) combined with non-periodic keys remain untested.
+3. **The bimodal fingerprint itself is a hypothesis, not proven.** If we DROP the bimodal assumption, width-9 columnar with arbitrary key remains technically open (but no positive signal from any test).
+
+4. **Width-7 remains the only width where the bimodal fingerprint is architecturally compatible** — this is the TRANS agent's primary focus.
 
 ## Structural Insights
 
-1. **Width-9 creates lag-7:** This is the strongest evidence for width-9 as the transposition width. The mechanism: in a width-9 grid, positions separated by 7 in the original text can end up adjacent or periodic after columnar rearrangement, creating apparent lag-7 correlations.
+1. **Width-9 creates lag-7:** 99.2% of width-9 orderings reduce lag-7 in un-transposed text. BUT: this is a general property — random permutations and other widths (11, 13) also reduce lag-7 at similar rates. The lag-7 reduction is NOT width-9-specific.
 
-2. **PT-column mixed alphabets are impossible:** Under any width-9 columnar ordering, the crib positions that share a column in the plaintext grid ALWAYS produce bijection conflicts when interpreted as column-dependent substitutions. This rules out a large class of "Sanborn used different alphabets for each column" hypotheses.
+2. **Bimodal incompatibility is the key result:** Width-9 columnar structurally cannot preserve positions 22-30 because they span all 9 columns. This is a hard mathematical elimination.
 
-3. **Bean constraint as pruner:** Bean reduces the width-9 ordering space from 362,880 to ~4,860 (Vigenère) or ~3,744 (Beaufort). Combined with CT-column bijection, only 3,293 orderings remain. These could be useful starting points for the JTS agent's optimization.
+3. **PT-column mixed alphabets are impossible:** Under any width-9 columnar ordering, crib positions sharing a column produce bijection conflicts. Eliminates "different alphabets per column" hypotheses.
+
+4. **Bean constraint as pruner:** Bean reduces the width-9 ordering space from 362,880 to ~4,860 (Vigenère) or ~3,744 (Beaufort). Combined with CT-column bijection, only 3,293 orderings remain.
 
 ## Recommendations
 
-1. **For TRANS agent:** Width-9 results are available. The lag-7 explanation supports width-9 as a serious candidate. Consider testing width-9 orderings with bimodal pre-filter (positions 22-30 near-identity, 64-74 scattered).
+1. **For TRANS agent:** Width-9 COLUMNAR is likely dead (bimodal incompatibility). Focus on width-7 and non-standard transpositions. Width-9 results are available if the bimodal assumption needs revisiting.
 
 2. **For JTS agent:** The 3,293 orderings passing both Bean and CT-column bijection are the most constrained starting points. Each has 19 known alphabet entries and 215 unknown — still highly underdetermined, but a starting point for SA/hill-climbing.
 

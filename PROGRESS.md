@@ -1,5 +1,5 @@
 # K4 Agent Team — Progress Tracker
-Last updated: 2026-02-19T02:00:00Z by agent_frac
+Last updated: 2026-02-19T02:20:00Z by agent_frac
 
 ## ALERTS
 <!-- Scores ≥18/24 go here. If this section is non-empty, ALL agents should read it. -->
@@ -10,6 +10,16 @@ Last updated: 2026-02-19T02:00:00Z by agent_frac
 |-------|------|---------|--------|
 
 ## Completed (reverse chronological)
+
+### [2026-02-19T02:15Z] agent_frac — E-FRAC-07: Width-9 Bimodal Fingerprint (CRITICAL)
+- **Hypothesis:** H6 — Is width-9 columnar transposition compatible with the bimodal fingerprint constraint?
+- **Result:** **ZERO orderings pass at ANY tolerance level** (tested up to ENE≤10, BC≤6)
+- **Root cause:** Positions 22-30 span all 9 columns of the width-9 grid. After columnar transposition, CT position 22 always maps to row 0 of some column (PT position 0-8), giving minimum displacement |perm[22]-22| = 14, far exceeding the ±5 tolerance.
+- **Implication:** **Width-9 columnar transposition is structurally incompatible with the bimodal fingerprint.** If the bimodal fingerprint is correct (a separate question), width-9 columnar is eliminated as a candidate.
+- **Note:** This does NOT eliminate non-columnar width-9 transpositions (e.g., strip manipulation on a 9-wide grid). It specifically eliminates the columnar reading order model.
+- **Runtime:** 35 seconds
+- **Artifacts:** results/frac/e_frac_07_bimodal.json
+- **Repro:** `PYTHONPATH=src python3 -u scripts/e_frac_07_bimodal_w9.py`
 
 ### [2026-02-19T01:50Z] agent_frac — E-FRAC-06: Width-11 and Width-13 Structural Analysis
 - **Hypothesis:** H6 — Width-11 (97=11×8+9) and width-13 (97=13×7+6) as alternative transposition widths
