@@ -1,5 +1,5 @@
 # K4 Agent Team — Progress Tracker
-Last updated: 2026-02-20T10:00:00Z by agent_frac
+Last updated: 2026-02-20T12:00:00Z by agent_frac
 
 ## ALERTS
 <!-- Scores ≥18/24 go here. If this section is non-empty, ALL agents should read it. -->
@@ -35,6 +35,36 @@ Last updated: 2026-02-20T10:00:00Z by agent_frac
 ## Active Tasks
 | Agent | Task | Started | Status |
 |-------|------|---------|--------|
+
+## FRAC Agent Mandate — COMPLETE (2026-02-20)
+
+**25 experiments completed (E-FRAC-01 through E-FRAC-25). ZERO positive findings survive.**
+
+Summary of what FRAC eliminated:
+1. **ALL 10 fractionation families** — structurally eliminated, proofs hold with/without transposition (E-FRAC-21)
+2. **Width-9 columnar + ALL substitution models** — NOISE at discriminating periods (E-FRAC-01 to 12)
+3. **Width-9 non-columnar reading orders** — NOISE (E-FRAC-03)
+4. **Width-9 × width-7 compound transposition** — ELIMINATED (E-FRAC-04)
+5. **Width-9 mixed alphabets** — ELIMINATED or underdetermined (E-FRAC-05)
+6. **Width-11/13 columnar** — NOISE, identical to random (E-FRAC-06)
+7. **ALL prior statistical claims** — debunked after proper multiple-testing correction (E-FRAC-13/14)
+8. **Bimodal fingerprint pre-filter** — shown to be a statistical artifact (E-FRAC-11)
+9. **Beaufort key entropy signal** — RETRACTED as selection effect (E-FRAC-16→23→24→25)
+10. **Crib positions** — validated as correct (E-FRAC-18)
+11. **Pre-ENE "English-like" IC** — debunked after Bonferroni correction (E-FRAC-19)
+12. **Null cipher / interval readings** — no hidden message (E-FRAC-22)
+13. **All functional key models** — NOISE (E-FRAC-15)
+14. **Running key from reference texts** — NOISE (E-FRAC-17)
+15. **All structured non-periodic key models** — ELIMINATED (E-FRAC-23)
+
+**What remains OPEN (not in FRAC's mandate):**
+- Transposition families NOT tested: turning grille, bespoke physical methods, double columnar
+- Non-standard substitution: position-dependent alphabets, non-standard tableau usage
+- Running key from UNKNOWN source text (known texts eliminated, unknown texts remain viable)
+- Joint transposition-substitution optimization (JTS agent's mandate)
+- Creative/physical cipher methods (BESPOKE agent's mandate)
+
+**Reports:** `reports/frac_width9_analysis.md`, `reports/frac_statistical_meta_analysis.md`
 
 ## Completed (reverse chronological)
 
