@@ -1,5 +1,5 @@
 # K4 Agent Team — Progress Tracker
-Last updated: 2026-02-20T20:00:00Z by agent_frac
+Last updated: 2026-02-20T21:00:00Z by agent_frac
 
 ## ALERTS
 <!-- Scores ≥18/24 go here. If this section is non-empty, ALL agents should read it. -->
@@ -168,7 +168,7 @@ The K4 crib oracle is **information-theoretically insufficient** for arbitrary p
 | Agent | Task | Started | Status |
 |-------|------|---------|--------|
 
-## FRAC Agent Mandate — 51 experiments (E-FRAC-01 through E-FRAC-51)
+## FRAC Agent Mandate — 52 experiments (E-FRAC-01 through E-FRAC-52)
 
 **Original mandate (E-FRAC-01 to 25): COMPLETE. ZERO positive findings survived.**
 **Extended mandate (E-FRAC-26-31): Bean profiling + crib scoring. ALL columnar widths 5-15 ELIMINATED.**
@@ -184,6 +184,7 @@ The K4 crib oracle is **information-theoretically insufficient** for arbitrary p
 **Running key + columnar (E-FRAC-49): ALL Bean-passing columnar orderings at widths 6, 8, 9 (16,597 configs) × 7 reference texts × 3 cipher variants. 8.4 billion (config × offset) checks. ZERO 24/24 matches. Running key + structured columnar is ELIMINATED for all known reference texts.**
 **Running key + all structured families (E-FRAC-50): Identity, cyclic, affine, rail fence, block reversal, double columnar (9 Bean-compatible width pairs). 369K permutations → 17,306 Bean-passing configs × 7 texts × 3 variants. 8.8B checks. ZERO matches. ALL structured transposition families are ELIMINATED with running key from known texts.**
 **English-like key detection (E-FRAC-51): ALL 16,597 Bean-passing columnar configs at widths 6,8,9 × 3 variants scored for English-like key fragments at crib positions. Best quadgram=-4.151/char, English 5th percentile=-3.551/char. ZERO configs in English range (0/16,597). Running key from ANY unknown English text + columnar transposition is ELIMINATED. Extends E-FRAC-49/50 from 7 specific texts to the general case.**
+**Three-layer model (E-FRAC-52): Sub+Trans+Sub model CT=Enc₂(σ(Enc₁(PT,K1)),K2) with K1 period p1, K2 period p2. Effective key K_eff[j]=K1[j%p1]+K2[inv(j)%p2] is non-periodic, bypassing E-FRAC-35's Bean impossibility proof. ALL 17,124 Bean-eq columnar configs × 143 period pairs (p1,p2∈1..12) × 2 c-types tested. ZERO candidates at p1*p2≤50 (strongly constrained). Only 74 candidates at p1*p2≥132 (weakly constrained), ALL with quadgram≤-5.87/char (gibberish). E-FRAC-35 validation: zero p2=1 candidates. Three-layer Sub+Trans+Sub ELIMINATED.**
 
 ### New Structural Findings (E-FRAC-26/27)
 
@@ -287,6 +288,7 @@ The K4 crib oracle is **information-theoretically insufficient** for arbitrary p
 29. **Running key + structured columnar** (E-FRAC-49): Widths 6, 8, 9 exhaustive (403,920 orderings) → 16,597 Bean-passing configs × 7 reference texts (509K chars) × 3 cipher variants. 8.4 billion (config × offset) checks. **ZERO 24/24 matches.** Information-theoretic prediction (expected FP ≈ 10⁻²⁵) confirmed. Running key + columnar is ELIMINATED for all known reference texts. Fills the gap between E-FRAC-12/29/30 (columnar + periodic) and E-FRAC-39 (running key + arbitrary transpositions).
 30. **Running key + ALL structured families** (E-FRAC-50): Identity, cyclic, affine (9,215), rail fence (19), block reversal (47), double columnar (9 Bean-compatible width pairs, 360K compositions). 369,379 total permutations → 17,306 Bean-passing configs × 7 texts × 3 variants. 8.8 billion checks. **ZERO matches.** Reverse and rail fence are Bean-INCOMPATIBLE (0 passes). ALL structured transposition families comprehensively eliminated with running key from known texts.
 31. **English-like key detection** (E-FRAC-51): All 16,597 Bean-passing columnar orderings at widths 6,8,9 × 3 cipher variants. Derived implied key at 24 crib positions, formed two key fragments (positions 21-33: 13 chars, positions 63-73: 11 chars), scored for English-likeness using quadgrams and word detection. **Best quadgram=-4.151/char**, far below English 5th percentile (-3.551). **ZERO configs in English range.** Extends E-FRAC-49/50 from 7 specific source texts to ANY unknown English running key. Columnar configs produce key fragments **statistically identical to random** (d=-0.09). Random perm baseline max=-4.057 exceeds best columnar. Running key from unknown English text + columnar transposition is COMPREHENSIVELY ELIMINATED.
+32. **Three-layer model (Sub+Trans+Sub)** (E-FRAC-52): Tests CT = Enc₂(σ(Enc₁(PT, K1)), K2) where K1 has period p1 and K2 has period p2. The effective key K_eff[j] = K1[j%p1] + K2[inv(j)%p2] is NON-PERIODIC, bypassing E-FRAC-35's Bean impossibility proof for single periodic keys. All 17,124 Bean-eq columnar configs (w6/8/9) × 143 period pairs (p1,p2 ∈ {1..12} excl (1,1)) × 2 c-types (A=CT-PT, B=CT+PT, covering all 9 inner/outer variant combos). 1.53M consistency checks. **ZERO candidates at p1*p2 ≤ 50** (strongly constrained). 74 candidates only at p1*p2 ≥ 132 (weakly constrained), **ALL with quadgram ≤ -5.87/char** (far below English -4.84 threshold). Validates E-FRAC-35: zero p2=1 candidates. p1=1 (key-after-transposition): also zero candidates. **Three-layer Sub+Trans+Sub ELIMINATED for columnar transpositions with periods up to 12.**
 
 **Reports:** `reports/frac_width9_analysis.md`, `reports/frac_statistical_meta_analysis.md`
 
@@ -312,6 +314,25 @@ The K4 crib oracle is **information-theoretically insufficient** for arbitrary p
 - **Verdict:** NOISE — running key from unknown English text + columnar transposition ELIMINATED
 - **Runtime:** 14.7 seconds
 - **Artifacts:** results/frac/e_frac_51_english_key_detection.json
+
+### [2026-02-20T21:00Z] agent_frac — E-FRAC-52: Three-Layer Model (Sub+Trans+Sub) — NOISE
+- **Hypothesis:** If K4 uses a three-layer model CT=Enc₂(σ(Enc₁(PT,K1)),K2) with periodic K1 (period p1) and K2 (period p2), the effective key K_eff[j]=K1[j%p1]+K2[inv(j)%p2] is non-periodic and bypasses E-FRAC-35's Bean impossibility proof for single periodic keys. This is a genuinely untested hypothesis class (H12).
+- **Method:** For each Bean-eq-passing columnar σ (widths 6,8,9: 17,124 configs), precompute c-values at 24 crib positions for 2 c-types (A=CT-PT covers Vig+Vig/Beau+Beau/VB+Vig/Vig+VB; B=CT+PT covers remaining 4 combos). Bean-ineq precheck eliminates 68.8% of (σ,c-type) pairs. For each surviving pair × 143 period pairs (p1,p2 ∈ {1..12}, excl (1,1)): check consistency (same (j%p1, inv(j)%p2) → same c), then BFS solve bipartite system K1[r1]+K2[r2]=c with cycle detection, derive 97-char plaintext, score with quadgrams.
+- **Total checks:** 1,528,384 consistency checks
+- **Key findings:**
+  - **ZERO candidates at p1*p2 ≤ 50:** consistency check is extremely stringent for small period products (~10⁻¹⁶ FP rate at product ≤ 24)
+  - **74 candidates total**, ALL at products 132 (p1=11,p2=12 or reverse: 6 candidates) and 144 (p1=12,p2=12: 68 candidates)
+  - **Best quadgram: -5.866/char** — far below English threshold of -4.84, worse than random text (~-5.39)
+  - **Mean quadgram: -6.305/char** — significantly worse than random
+  - **All 74 candidates produce gibberish plaintext** (e.g. "EOAIXNATMMLNAPJSETYEW...")
+  - **E-FRAC-35 validation:** zero p2=1 candidates (confirms Bean impossibility for single periodic key)
+  - **p1=1 (key after transposition):** zero candidates — this genuinely new territory also fails
+  - **Random baseline:** 0/414 checks at small products consistent (validates FP rate)
+  - **174,493 cycle failures** detected by BFS (15% of checks that pass within-group consistency fail on cycle constraints)
+- **Why three-layer fails:** For small period products (p1*p2 ≤ 50), the 24 crib equations create >5 independent constraints via collisions in the (r1,r2) space, making random consistency probability < 10⁻⁸. For larger products (≥132), there are too few collisions to constrain the system, producing underdetermined candidates with random-quality plaintext.
+- **Verdict:** NOISE — three-layer Sub+Trans+Sub ELIMINATED for columnar widths 6,8,9 with periods 1-12
+- **Runtime:** 12.1 seconds
+- **Artifacts:** results/frac/e_frac_52_three_layer.json
 - **Repro:** `PYTHONPATH=src python3 -u scripts/e_frac_51_english_key_detection.py`
 
 ### [2026-02-20T18:00Z] agent_frac — E-FRAC-50: Running Key + ALL Structured Transposition Families (ELIMINATION)

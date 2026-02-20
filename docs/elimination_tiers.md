@@ -2,7 +2,7 @@
 
 **CRITICAL FRAMING:** Every exhaustive-search elimination in this project was conducted under the assumption of **direct positional correspondence** — meaning CT position N maps to PT position N with no transposition. The primary hypothesis (H1) is that a transposition layer exists, which means **the substitution families below have NOT been tested in their correct context as one layer of a multi-layer system.** The TRANS, JTS, and FRAC agents are doing that work now.
 
-**FRAC AGENT STATUS (2026-02-20, FINAL+++):** The FRAC agent has completed 51 experiments (E-FRAC-01 through E-FRAC-51). Mandate COMPLETE + running key gap closure + English key detection. Key results that affect this document:
+**FRAC AGENT STATUS (2026-02-20, FINAL++++):** The FRAC agent has completed 52 experiments (E-FRAC-01 through E-FRAC-52). Mandate COMPLETE + running key gap closure + English key detection + three-layer model. Key results that affect this document:
 - ALL fractionation families structurally eliminated (E-FRAC-21) — proofs hold WITH OR WITHOUT transposition
 - **Columnar widths 5-15 + periodic substitution: ALL ELIMINATED at discriminating periods**
   - Width-5, Width-7: Bean-ELIMINATED (ZERO orderings pass Bean equality, E-FRAC-26/27)
@@ -36,6 +36,12 @@
   - Best quadgram: -4.151/char, English 5th percentile: -3.551/char, gap: 0.6/char
   - ZERO configs produce English-like key fragments (0/16,597)
   - Extends E-FRAC-49/50 from 7 specific texts to ANY unknown English running key
+- **Three-layer model Sub+Trans+Sub: ELIMINATED for columnar widths 6,8,9 + periods 1-12** (E-FRAC-52)
+  - Model: CT=Enc₂(σ(Enc₁(PT,K1)),K2) with effective key K_eff[j]=K1[j%p1]+K2[inv(j)%p2] (non-periodic)
+  - Bypasses E-FRAC-35's Bean impossibility proof (which only covers single periodic keys)
+  - 17,124 Bean-eq configs × 143 period pairs × 2 c-types = 1.53M consistency checks
+  - ZERO candidates at p1*p2 ≤ 50; 74 candidates only at p1*p2 ≥ 132, all gibberish (best Q=-5.87/char)
+  - p1=1 (key-after-transposition) and p2=1 (single-key): both zero candidates
 - Full meta-analysis: `reports/frac_statistical_meta_analysis.md`
 
 Read these tiers carefully before deciding what is and isn't worth testing.
@@ -67,6 +73,7 @@ These are algebraic proofs, not search results. They are permanently valid unles
 | **Quadratic key (k[i]=ai²+bi+c) + ANY transposition** | **BEAN-ELIMINATED: 0/676 (a,b) pairs survive full Bean inequalities.** | **Requires Bean constraint (E-FRAC-38)** |
 | **Fibonacci key + ANY transposition** | **BEAN-ELIMINATED: 0/676 seeds survive full Bean inequalities.** | **Requires Bean constraint (E-FRAC-38)** |
 | **Autokey (PT/CT) + arbitrary transposition** | **STRUCTURAL: Cannot reach 24/24 cribs. PT-autokey max=16/24, CT-autokey max=21/24. More constrained than periodic.** | **Requires cribs (E-FRAC-37)** |
+| **Three-layer Sub+Trans+Sub (columnar w6/8/9, periods 1-12)** | **Non-periodic effective key K_eff[j]=K1[j%p1]+K2[inv(j)%p2] bypasses E-FRAC-35 but: ZERO candidates at p1*p2≤50, 74 candidates only at p1*p2≥132 all gibberish (best Q=-5.87/char). p1=1 and p2=1 also zero candidates.** | **Requires cribs, Bean, CT correctness (E-FRAC-52)** |
 
 **What could invalidate Tier 1:** Only if the 24 crib positions are wrong (off-by-one, wrong character mapping) or the CT transcription has an error. The wave1 report already caught one VKB error (position 74 was listed as K→K self-encryption; actual CT[74]=W). If one error existed, others could too. The cribs themselves come from Sanborn's public announcements and are highly trustworthy, but the exact 0-indexed position mapping has been a source of bugs.
 
