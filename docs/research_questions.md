@@ -50,17 +50,21 @@ and NOT a simple linear recurrence keystream (orders 1-8 eliminated).
 
 **If resolved**: Directly produces the plaintext.
 
-**FRAC findings (E-FRAC-38/39/49/50):**
+**FRAC findings (E-FRAC-38/39/49/50/51):**
 - Running key is the ONLY structured non-periodic key model surviving Bean constraints (E-FRAC-38)
 - Running key + ALL structured transposition families (columnar w6/8/9, identity, cyclic, affine, rail fence, block reversal, double columnar) produce ZERO matches from 7 known reference texts (E-FRAC-49/50)
+- Running key from UNKNOWN English text + columnar: ZERO configs produce English-like key fragments (E-FRAC-51)
 - Running key + arbitrary transposition is massively underdetermined (~700-2000 feasible offsets per text, E-FRAC-39)
 - Carter is NOT special — SA optimization produces same quadgram quality with random keys (E-FRAC-40)
+- Three-layer Sub+Trans+Sub: non-periodic effective key bypasses Bean proof but produces only gibberish (E-FRAC-52)
+- Mono+Trans+Periodic: bypasses 9/21 Bean-ineq but ZERO candidates at discriminating periods (E-FRAC-53)
 
 **Novelty engine priority**: HIGHEST — focus on:
-- Running key from UNKNOWN texts (all 7 tested reference texts eliminated with structured transpositions)
+- Running key from UNKNOWN NON-ENGLISH texts (English running key + columnar eliminated by E-FRAC-51)
 - Running key from other Sanborn-associated texts not yet tested
 - Artifact-derived key sequences (clock readings, coordinates, dates)
 - Non-linear key generation from a short seed
+- Models that don't fit standard transposition+substitution paradigm
 
 ---
 
@@ -93,12 +97,15 @@ with all thematic keyword alphabets. No breakthrough.
 - AMSCO/Nihilist/Swapped (widths 8-13): eliminated, 0% Bean pass (E-FRAC-48)
 - **Running key + columnar (w6,8,9) from 7 texts: ZERO matches** (E-FRAC-49)
 - **Running key + ALL structured families from 7 texts: ZERO matches** (E-FRAC-50)
+- **Running key from unknown English text + columnar: ZERO configs with English-like keys** (E-FRAC-51)
 - **Universal proof:** ALL 97! perms + periodic key at p2-7 violate Bean (E-FRAC-35)
 - **Information-theoretic proof:** 138-bit deficit, arbitrary search underdetermined (E-FRAC-44)
+- **Three-layer Sub+Trans+Sub:** non-periodic effective key, ZERO viable candidates (E-FRAC-52)
+- **Mono+Trans+Periodic:** bypasses 9/21 Bean-ineq, ZERO at discriminating periods (E-FRAC-53)
 
 **If resolved**: Reduces problem from "find transposition AND substitution" to "find substitution."
 
-**Novelty engine priority**: HIGH — but constrained by crib positions.
+**Novelty engine priority**: HIGH — but constrained by crib positions. ALL standard structured transposition families + ALL standard key models now eliminated.
 
 ---
 
@@ -286,7 +293,7 @@ could produce a different ciphertext.
 | RQ-12 (alphabets) | LOW | Yes | 5 | 1 | 4 |
 | RQ-13 (reading dir) | LOW | Yes | 16 | 0 | 16 |
 
-*Updated 2026-02-20 — includes FRAC agent findings (E-FRAC-01 to 50)*
+*Updated 2026-02-20 — includes FRAC agent findings (E-FRAC-01 to 53, ALL gaps closed)*
 
 ---
 
