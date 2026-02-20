@@ -2,7 +2,7 @@
 
 **CRITICAL FRAMING:** Every exhaustive-search elimination in this project was conducted under the assumption of **direct positional correspondence** — meaning CT position N maps to PT position N with no transposition. The primary hypothesis (H1) is that a transposition layer exists, which means **the substitution families below have NOT been tested in their correct context as one layer of a multi-layer system.** The TRANS, JTS, and FRAC agents are doing that work now.
 
-**FRAC AGENT STATUS (2026-02-20, FINAL):** The FRAC agent has completed all 38 experiments (E-FRAC-01 through E-FRAC-38). Mandate COMPLETE. Key results that affect this document:
+**FRAC AGENT STATUS (2026-02-20, FINAL+):** The FRAC agent has completed 47 experiments (E-FRAC-01 through E-FRAC-47). Mandate COMPLETE + 2 Tier-4 gap-closure experiments. Key results that affect this document:
 - ALL fractionation families structurally eliminated (E-FRAC-21) — proofs hold WITH OR WITHOUT transposition
 - **Columnar widths 5-15 + periodic substitution: ALL ELIMINATED at discriminating periods**
   - Width-5, Width-7: Bean-ELIMINATED (ZERO orderings pass Bean equality, E-FRAC-26/27)
@@ -48,6 +48,8 @@ These are algebraic proofs, not search results. They are permanently valid unles
 | Columnar width-9 exhaustive crib scoring | Width-9 columnar + periodic sub: exhaustive 362,880 orderings, max 14/24, UNDERPERFORMS random (expected ≥15) | Requires cribs and CT correctness (E-FRAC-12) |
 | Columnar widths 10-15 sampled crib scoring | Widths 10-15 columnar + periodic sub: 100K samples each, all max 14/24, ALL underperform random (expected 15+) | Requires cribs and CT correctness (E-FRAC-30) |
 | Simple transposition families | Cyclic shifts, reverse, affine, block reversal, rail fence, single swaps + periodic sub: 14,035 perms, max 13/24, BELOW random (14/24) | Requires cribs and CT correctness (E-FRAC-32) |
+| **Double columnar (Bean-compatible widths)** | **9 width pairs (w6×w6, w6×w8, w8×w6, w6×w9, w9×w6, w8×w8, w8×w9, w9×w8, w9×w9) + periodic sub: 2,958,400 compositions, max 15/24, matches random. Prior test w9×w7 was flawed (w7 Bean-incompatible).** | **Requires cribs and CT correctness (E-FRAC-46)** |
+| **Myszkowski transposition (widths 5-13)** | **226,390 unique permutations (exhaustive at w5-7, sampled at w8-13) + periodic sub: max 15/24, matches random. Tie structure provides no advantage over standard columnar.** | **Requires cribs and CT correctness (E-FRAC-47)** |
 | **ANY transposition + periodic key (p=2-12,14,15,17,18,21,22,25)** | **PROOF: Bean inequalities structurally violated at these periods for ALL 97! permutations. Type 1: same-residue inequality. Type 2: Bean equality-inequality conflict.** | **Requires Bean constraint correctness (E-FRAC-35)** |
 | **Progressive key (k[i]=k[0]+iδ) + ANY transposition** | **BEAN-ELIMINATED: 38δ ≡ 0 (mod 26) → δ ∈ {0,13}. δ=0 is mono (trivial). δ=13 ≈ period-2 (Bean-eliminated by E-FRAC-35).** | **Requires Bean constraint (E-FRAC-38)** |
 | **Quadratic key (k[i]=ai²+bi+c) + ANY transposition** | **BEAN-ELIMINATED: 0/676 (a,b) pairs survive full Bean inequalities.** | **Requires Bean constraint (E-FRAC-38)** |
@@ -102,8 +104,8 @@ These hypothesis classes appear in the status report's "What We Have NOT Tested"
 | Hypothesis | Why Untested | Assigned Agent |
 |-----------|-------------|----------------|
 | Polyalphabetic consistency AFTER transposition | Prior columnar+Vigenère tests checked monoalphabetic consistency only | TRANS, JTS |
-| Double columnar transposition | Combinatorial explosion; needs keyword-pair pruning | TRANS |
-| Myszkowski transposition | Not in any prior sweep | TRANS |
+| ~~Double columnar transposition~~ | **DONE — 9 Bean-compatible width pairs, 2.96M compositions, max 15/24 = noise (E-FRAC-46)** | ~~TRANS~~ COMPLETE |
+| ~~Myszkowski transposition~~ | **DONE — Widths 5-13, 226K unique patterns, max 15/24 = noise (E-FRAC-47)** | ~~TRANS~~ COMPLETE |
 | Turning grille (systematic, with constraints) | Prior test was Monte Carlo only | TRANS |
 | Bespoke physical transposition (S-curve, strip manipulation) | Cannot be enumerated without creative hypothesis | BESPOKE |
 | Non-standard tableau usage | Structural analysis, not a sweep | TABLEAU |
