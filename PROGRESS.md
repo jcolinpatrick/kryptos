@@ -1,5 +1,5 @@
 # K4 Agent Team — Progress Tracker
-Last updated: 2026-02-20T18:00:00Z by agent_frac
+Last updated: 2026-02-20T19:30:00Z by agent_frac
 
 ## ALERTS
 <!-- Scores ≥18/24 go here. If this section is non-empty, ALL agents should read it. -->
@@ -106,7 +106,7 @@ E-FRAC-34 characterizes false 24/24 solutions and provides **concrete multi-obje
 | Agent | Task | Started | Status |
 |-------|------|---------|--------|
 
-## FRAC Agent Mandate — 35 experiments (E-FRAC-01 through E-FRAC-35)
+## FRAC Agent Mandate — 36 experiments (E-FRAC-01 through E-FRAC-36)
 
 **Original mandate (E-FRAC-01 to 25): COMPLETE. ZERO positive findings survived.**
 **Extended mandate (E-FRAC-26-31): Bean profiling + crib scoring. ALL columnar widths 5-15 ELIMINATED.**
@@ -114,6 +114,7 @@ E-FRAC-34 characterizes false 24/24 solutions and provides **concrete multi-obje
 **Meta-analysis (E-FRAC-33): Fitness landscape smooth, but crib oracle INSUFFICIENT — false 24/24 solutions exist at ALL periods.**
 **Oracle design (E-FRAC-34): Multi-objective thresholds for JTS — quadgram gap of 0.93/char discriminates false positives.**
 **Bean impossibility (E-FRAC-35): ALL discriminating periods (2-7) + periods up to 12 are Bean-impossible for transposition + periodic key. PROOF.**
+**Bean-surviving periods (E-FRAC-36): Period-8 and period-13 hill-climbing with Bean HARD constraint. 175 false 24/24 solutions ALL have quadgram < -5.0. Multi-objective oracle discriminates at Bean-surviving periods too.**
 
 ### New Structural Findings (E-FRAC-26/27)
 
@@ -149,10 +150,34 @@ E-FRAC-34 characterizes false 24/24 solutions and provides **concrete multi-obje
 13. **Crib oracle INSUFFICIENT for arbitrary permutations** — hill-climbing reaches false 24/24 at ALL periods including period 5 (E-FRAC-33). Must combine with plaintext quality metrics.
 14. **Multi-objective oracle designed** (E-FRAC-34): 90 false 24/24 solutions characterized. Quadgram gap = 0.93/char (FP best: -5.77, English: -4.84). Threshold: quadgram > -5.0/char + IC > 0.055 + Bean PASS.
 15. **Bean impossibility proof** (E-FRAC-35): ALL discriminating periods (2-7) are IMPOSSIBLE for transposition + periodic key due to Bean inequality constraints. Also eliminated: periods 9-12, 14, 15, 17, 18, 21, 22, 25. Only 8 periods survive out of 25 (2-26): {8, 13, 16, 19, 20, 23, 24, 26}. This is a universal PROOF holding for all 97! permutations.
+16. **Bean-surviving periods tested** (E-FRAC-36): Period-8 (first surviving, 3 cribs/var) and period-13 hill-climbing with Bean as HARD constraint. 175 false 24/24+Bean solutions found. ALL have quadgram < -5.0/char (best: -6.171). Multi-objective oracle from E-FRAC-34 discriminates false positives at Bean-surviving periods too. Random baseline at period 8: max=14/24.
 
 **Reports:** `reports/frac_width9_analysis.md`, `reports/frac_statistical_meta_analysis.md`
 
 ## Completed (reverse chronological)
+
+### [2026-02-20T19:30Z] agent_frac — E-FRAC-36: Period-8 Hill-Climbing with Bean Constraint (FALSE POSITIVE VALIDATION)
+- **Hypothesis:** Can hill-climbing at Bean-surviving periods (8, 13) reach 24/24 with Bean as a HARD constraint? If so, does the E-FRAC-34 multi-objective oracle discriminate them?
+- **Method:** 50 hill-climbs × 10K steps each, at periods 8 and 13, both Vigenère and Beaufort, with Bean as non-negotiable constraint. Also 50 climbs without Bean for comparison. Random baseline: 10K samples.
+- **Key findings:**
+  - **Period 8 Vigenère:** 41/50 climbs reach 24/24 with Bean (82%), max without Bean: 24/24 (96%)
+  - **Period 8 Beaufort:** 47/50 reach 24/24 with Bean (94%)
+  - **Period 13 Vigenère:** 44/50 reach 24/24 with Bean (88%)
+  - **Period 13 Beaufort:** 43/50 reach 24/24 with Bean (86%)
+  - **ALL 175 false 24/24+Bean solutions have quadgram < -5.0/char** (best: -6.171/char)
+  - **English benchmark: -4.84/char, gap ≥ 0.83/char** — multi-objective oracle discriminates perfectly
+  - **Random baseline (period 8):** max=14/24, mean=9.00; Bean-passing random: max=11/24
+  - **Bean constraint REDUCES max score** from random baseline (11 vs 14) but does NOT prevent hill-climbing from reaching 24/24
+  - **Period 8 vs period 13:** Nearly identical false positive profiles. Period 13 has more underdetermination (1.8 cribs/var vs 3.0) but same quadgram range
+- **Implications:**
+  - The E-FRAC-34 multi-objective oracle works at ALL tested periods (eliminated AND surviving)
+  - Hill-climbing + Bean constraint is NOT sufficient to find the correct transposition — must combine with quadgram/IC/word metrics
+  - For JTS: the threshold quadgram > -5.0/char remains valid even at Bean-surviving periods
+  - 175 additional false positive solutions confirm and extend E-FRAC-34's characterization
+- **Verdict:** FALSE_POSITIVES_AT_P8 — 24/24+Bean is easily achievable at surviving periods, but ALL are false positives discriminated by quadgram score
+- **Runtime:** ~300 seconds
+- **Artifacts:** results/frac/e_frac_36_period8_bean_hillclimb.json
+- **Repro:** `PYTHONPATH=src python3 -u scripts/e_frac_36_period8_bean_hillclimb.py`
 
 ### [2026-02-20T18:00Z] agent_frac — E-FRAC-35: Bean Impossibility Proof (CRITICAL PROOF)
 - **Theorem:** For ANY transposition σ and periodic key at period p, Bean constraints eliminate ALL discriminating periods (2-7) plus periods 9-12, 14, 15, 17, 18, 21, 22, 25. Only 8 of 25 periods (2-26) survive: {8, 13, 16, 19, 20, 23, 24, 26}.
