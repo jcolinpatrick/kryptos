@@ -2,13 +2,15 @@
 
 **Agent:** frac (FRAC role)
 **Date:** 2026-02-19
-**Status:** Priority tasks 1-4 completed
+**Status:** All priority tasks completed + bimodal analysis series (E-FRAC-07 through E-FRAC-11)
 
 ## Executive Summary
 
 The width-9 grid hypothesis — that K4's transposition layer uses a 9-column grid (97/9 ≈ 10.78 rows, matching Sanborn's "10.8 rows" annotation) — has been tested exhaustively across multiple substitution models.
 
-**CRITICAL UPDATE (E-FRAC-07/08):** Width-9 COLUMNAR transposition is **structurally incompatible** with the bimodal fingerprint. Zero of 362,880 orderings satisfy even loose bimodal constraints because positions 22-30 span all 9 columns, making near-identity mapping impossible. **E-FRAC-08 extends this to ALL widths (2-20): NO columnar transposition at ANY width is bimodal-compatible** (exhaustive for w≤10, 100K samples for w>10). This means either (1) the bimodal assumption is wrong, (2) the transposition is not columnar, or (3) the system is more complex than assumed. Non-columnar methods (route ciphers, grilles, strips) remain open.
+**CRITICAL UPDATE (E-FRAC-07/08/09/10/11):** The bimodal fingerprint is likely a **statistical artifact**, not evidence of transposition structure (E-FRAC-11). The "bimodal" pattern (ENE matches better than BC) is caused by crib position ordering: ENE positions come first in the sequence and match 3.5x better than BC under RANDOM permutations with no transposition. Per-position match rates decline MONOTONICALLY from position 21 (100%) to position 73 (11%) — no bimodal structure, just a smooth gradient.
+
+Earlier findings (E-FRAC-07/08) showed NO columnar transposition at ANY width is bimodal-compatible. E-FRAC-09 showed only "patch-based" transpositions (strip manipulation, block swaps) satisfy bimodal. E-FRAC-10 showed strip manipulation with periodic substitution scores within noise. **Given that the bimodal assumption itself is questionable, these compatibility results may be moot.** Columnar transposition should be re-evaluated WITHOUT the bimodal pre-filter.
 
 ## Evidence For Width-9
 
@@ -82,13 +84,13 @@ Under width-9 columnar transposition, the following substitution models are **EL
 
 ## What Remains Open
 
-1. ~~Width-9 columnar + any substitution model~~ **ELIMINATED** if bimodal fingerprint is valid (E-FRAC-07)
+1. **Width-9 columnar with non-periodic substitution:** All periodic substitution tests showed noise, but arbitrary (non-periodic, non-autokey) substitution is technically untested. However, the parameter space is too large for direct search.
 
-2. **Width-9 with non-columnar transposition (e.g., strip manipulation):** Non-columnar methods on a 9-wide grid may satisfy the bimodal fingerprint because they don't necessarily have the same displacement constraints as columnar reading.
+2. **The bimodal fingerprint is likely an artifact** (E-FRAC-11). The "bimodal" pre-filter should NOT be used to eliminate transposition candidates. This reopens columnar transposition at ALL widths.
 
-3. **The bimodal fingerprint itself is a hypothesis, not proven.** If we DROP the bimodal assumption, width-9 columnar with arbitrary key remains technically open (but no positive signal from any test).
+3. **Strip manipulation (Sanborn's stated method):** Bimodal-compatible but scores within noise under periodic substitution. Worth testing with non-periodic models.
 
-4. **Width-7 remains the only width where the bimodal fingerprint is architecturally compatible** — this is the TRANS agent's primary focus.
+4. **Width-9 grid with arbitrary key:** No scoring signal found, but 97/9 ≈ 10.78 ≈ Sanborn's "10.8 rows" still has structural appeal.
 
 ## Structural Insights
 
@@ -102,7 +104,7 @@ Under width-9 columnar transposition, the following substitution models are **EL
 
 ## Recommendations
 
-1. **For TRANS agent:** ALL columnar transpositions (any width) are bimodal-incompatible (E-FRAC-08). Focus on non-columnar transpositions (route ciphers, grilles, strip methods) OR revisit the bimodal assumption itself.
+1. **For TRANS agent:** The bimodal pre-filter is likely an artifact (E-FRAC-11) and should NOT be used to eliminate candidates. Columnar transpositions at ALL widths should be re-evaluated without this filter. The bimodal incompatibility (E-FRAC-07/08) is real but irrelevant if bimodal is wrong.
 
 2. **For JTS agent:** The 3,293 orderings passing both Bean and CT-column bijection are the most constrained starting points. Each has 19 known alphabet entries and 215 unknown — still highly underdetermined, but a starting point for SA/hill-climbing.
 
