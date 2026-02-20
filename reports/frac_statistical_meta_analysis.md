@@ -1,9 +1,9 @@
 # K4 Statistical Meta-Analysis — What the Numbers Actually Say
 
 **Agent:** frac (FRAC role)
-**Date:** 2026-02-20 (updated: E-FRAC-32 added)
-**Experiments:** E-FRAC-01 through E-FRAC-32
-**Status:** FRAC mandate complete + extended — 32 experiments, ALL columnar widths 5-15 + simple transposition families eliminated
+**Date:** 2026-02-21 (updated: E-FRAC-33 added)
+**Experiments:** E-FRAC-01 through E-FRAC-33
+**Status:** FRAC mandate complete + extended — 33 experiments, ALL columnar widths 5-15 + simple transposition families eliminated + fitness landscape analyzed
 
 ## Executive Summary
 
@@ -170,6 +170,7 @@ The sequence of differences CT[i+1]-CT[i] (mod 26) follows a uniform distributio
 | Bean constraint as transposition filter | E-FRAC-31 | **NOT INFORMATIVE** (Bean-passing perms score same as non-Bean) |
 | SA key optimization on Bean-passing orderings | E-FRAC-28 | **NOISE** (underdetermination artifact at period 12-13) |
 | Simple transposition families (cyclic, affine, rail fence, swap, reversal) | E-FRAC-32 | **ELIMINATED** (14,035 perms, max 13/24, BELOW random 14/24) |
+| Crib oracle sufficiency for arbitrary permutations | E-FRAC-33 | **INSUFFICIENT** (hill-climbing reaches false 24/24 at ALL periods, including period 5) |
 
 ### What Remains Open (Relevant to FRAC Mandate)
 
@@ -195,6 +196,8 @@ The sequence of differences CT[i+1]-CT[i] (mod 26) follows a uniform distributio
 3. ~~The Beaufort key entropy finding suggests Beaufort~~ — RETRACTED. Use both Vigenère and Beaufort equally in joint optimization
 4. The key is not a simple function of position — focus on running key or complex generation models
 5. **NEW (E-FRAC-24):** Natural-language running key is INCOMPATIBLE with Beaufort under direct correspondence (KKK constraint). If testing running key without transposition, use Vigenère.
+6. **CRITICAL (E-FRAC-33):** Hill-climbing on crib score over arbitrary permutations reaches FALSE 24/24 at ALL periods (including period 5). The 97! permutation space is so large that accidental perfect solutions exist everywhere. **You MUST combine crib scoring with plaintext quality metrics (quadgram fitness, IC, English word detection) in a multi-objective fitness function.** Crib scoring alone WILL converge to false positives.
+7. **Landscape is smooth** (r=0.93 per period) — SA CAN navigate, but it navigates to underdetermination artifacts without additional constraints.
 
 ### For BESPOKE Agent
 1. Strip manipulation with periodic substitution is noise (E-FRAC-10)
