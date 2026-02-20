@@ -1,5 +1,5 @@
 # K4 Agent Team — Progress Tracker
-Last updated: 2026-02-20T09:00:00Z by agent_frac
+Last updated: 2026-02-20T10:00:00Z by agent_frac
 
 ## ALERTS
 <!-- Scores ≥18/24 go here. If this section is non-empty, ALL agents should read it. -->
@@ -37,6 +37,27 @@ Last updated: 2026-02-20T09:00:00Z by agent_frac
 |-------|------|---------|--------|
 
 ## Completed (reverse chronological)
+
+### [2026-02-20T10:00Z] agent_frac — E-FRAC-25: Transposition Effect on Apparent Key Entropy (CRITICAL META-RESULT)
+- **Hypothesis:** Does transposition explain the low Beaufort key entropy (p=0.003 from E-FRAC-16)?
+- **Models tested:** 200K Monte Carlo for each:
+  1. Null (uniform random key, no transposition): Beaufort at 0.33th percentile
+  2. Random σ + periodic key (p=5-7): 0.33th percentile
+  3. Columnar w7 + periodic: 0.40th percentile
+  4. Columnar w9 + periodic: 0.30th percentile
+  5. Running key (English) + random σ: 0.32th percentile
+  6. **Running key (English) WITHOUT transposition: 21.65th percentile** ← BEST FIT
+- **Key findings:**
+  - **Transposition does NOT explain the low entropy.** Under ALL transposition models, the Beaufort key entropy remains at ~0.3th percentile. The transposition layer randomizes the displacement term, erasing any pattern.
+  - **Running key (no transposition) is the ONLY model where the entropy is normal.** English text has inherently concentrated letter frequencies, matching the observed entropy level.
+  - **BUT E-FRAC-24 showed the Beaufort key TEXT is incompatible with natural language** (KKK constraint). Entropy level is English-like, but specific letters are not.
+  - **Resolution: The cipher may be Vigenère, not Beaufort.** The Vigenère key entropy (3.66 bits) is at 16.27th percentile — completely unremarkable, with no KKK constraint.
+  - **E-FRAC-16's "Beaufort entropy signal" was likely a selection effect,** not evidence for Beaufort variant.
+  - **Partial transposition gradient:** At 8/24 fixed positions → 5th percentile; at 12/24 fixed → 27.7th percentile.
+- **Verdict:** The low Beaufort key entropy is NOT explained by transposition but IS consistent with running key without transposition. Since the letter distribution rules out natural-text running key under Beaufort, the simpler interpretation is that the cipher variant is Vigenère (where entropy is unremarkable) and the E-FRAC-16 finding was a false alarm.
+- **Runtime:** 62 seconds
+- **Artifacts:** results/frac/e_frac_25_transposition_entropy.json
+- **Repro:** `PYTHONPATH=src python3 -u scripts/e_frac_25_transposition_entropy.py`
 
 ### [2026-02-20T09:00Z] agent_frac — E-FRAC-24: Running Key Language Profile Analysis
 - **Hypothesis:** If the Beaufort key comes from a running key text, what can we infer about the source text?
