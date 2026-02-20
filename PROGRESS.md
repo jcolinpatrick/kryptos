@@ -1,5 +1,5 @@
 # K4 Agent Team — Progress Tracker
-Last updated: 2026-02-20T23:00:00Z by agent_frac
+Last updated: 2026-02-21T00:00:00Z by agent_frac
 
 ## ALERTS
 <!-- Scores ≥18/24 go here. If this section is non-empty, ALL agents should read it. -->
@@ -77,7 +77,7 @@ E-FRAC-34 characterizes false 24/24 solutions and provides **concrete multi-obje
 **Repro:** `PYTHONPATH=src python3 -u scripts/e_frac_34_multi_objective_oracle.py`
 **Artifacts:** results/frac/e_frac_34_multi_objective_oracle.json
 
-### [2026-02-20T23:00Z] agent_frac — QUADGRAM THRESHOLD TOO WEAK FOR SA-OPTIMIZED SOLUTIONS (E-FRAC-40)
+### [2026-02-20T23:00Z] agent_frac — QUADGRAM THRESHOLD TOO WEAK FOR SA-OPTIMIZED SOLUTIONS (E-FRAC-40/41)
 **ALL AGENTS READ THIS — especially JTS. UPDATES E-FRAC-34 ORACLE.**
 
 The -5.0/char quadgram threshold from E-FRAC-34 is **ONLY valid for crib-optimized transpositions** (where SA maximizes crib score, not quadgrams). When SA optimizes the transposition for QUADGRAM FITNESS (while holding 24 cribs fixed via bipartite matching), it routinely achieves **-4.27 to -4.55/char** — well above the -5.0 threshold.
@@ -88,15 +88,23 @@ The -5.0/char quadgram threshold from E-FRAC-34 is **ONLY valid for crib-optimiz
 - English-freq random key + SA: best=-4.39/char — also nearly identical
 - **Carter is NOT special** — the "signal" is an SA optimization artifact
 
+**Word-level discrimination is WEAKER than expected (E-FRAC-41):**
+- SA gibberish: 3-17 words ≥6 chars (mean 8.6), coverage 42%
+- Real English (spaces removed): 5-20 words ≥6 chars (mean 10.7), coverage 48%
+- **Significant overlap exists** because SA gibberish contains crib words (NORTHEAST, BERLIN, CLOCK) plus quadgram-optimized English fragments
+- Random text: 0 words (clear separation). English-freq random: 0-2 words (clear separation).
+- **Word count alone is a WEAK discriminator** between SA gibberish and real English
+
 **Updated JTS thresholds (SUPERSEDES E-FRAC-34):**
 1. Crib score = 24/24
 2. Bean constraint PASS
 3. ~~Quadgram > -5.0/char~~ → Quadgram > -4.84/char (actual English benchmark; -5.0 is too easy when SA optimizes for quadgrams)
 4. IC > 0.055
-5. **Complete English words ≥6 chars: at least 3** (THE key discriminator — SA gibberish has fragments but no complete words)
-6. **Semantic coherence** (human evaluation for final candidates)
+5. **Non-crib words ≥6 chars: at least 3** (exclude NORTHEAST, BERLIN, CLOCK, EASTNORTHEAST from count)
+6. **Word coverage > 60%** (English ≈ 48% with 6-char cutoff, but nearly 100% with 4-char cutoff; SA gibberish ≈ 42%)
+7. **Semantic coherence** (human evaluation for final candidates — THE ultimate discriminator)
 
-**Repro:** `PYTHONPATH=src python3 -u scripts/e_frac_40_carter_quadgram_screen.py && PYTHONPATH=src python3 -u scripts/e_frac_40b_random_key_control.py`
+**Repro:** `PYTHONPATH=src python3 -u scripts/e_frac_40_carter_quadgram_screen.py && PYTHONPATH=src python3 -u scripts/e_frac_40b_random_key_control.py && PYTHONPATH=src python3 -u scripts/e_frac_41_word_discriminator.py`
 
 ### [2026-02-20T18:00Z] agent_frac — BEAN IMPOSSIBILITY: ALL DISCRIMINATING PERIODS ELIMINATED (E-FRAC-35)
 **ALL AGENTS READ THIS — especially JTS and TRANS. This is a PROOF, not an empirical finding.**
@@ -127,7 +135,7 @@ The -5.0/char quadgram threshold from E-FRAC-34 is **ONLY valid for crib-optimiz
 | Agent | Task | Started | Status |
 |-------|------|---------|--------|
 
-## FRAC Agent Mandate — 40 experiments (E-FRAC-01 through E-FRAC-40)
+## FRAC Agent Mandate — 41 experiments (E-FRAC-01 through E-FRAC-41)
 
 **Original mandate (E-FRAC-01 to 25): COMPLETE. ZERO positive findings survived.**
 **Extended mandate (E-FRAC-26-31): Bean profiling + crib scoring. ALL columnar widths 5-15 ELIMINATED.**
@@ -197,13 +205,48 @@ The -5.0/char quadgram threshold from E-FRAC-34 is **ONLY valid for crib-optimiz
     - **RANDOM key + SA also achieves -4.40/char** — Carter is NOT special (control experiment E-FRAC-40b)
     - **The "signal" is an SA optimization artifact**, not evidence for Carter as running key source
     - **E-FRAC-34's -5.0 threshold is TOO WEAK** for SA-optimized transpositions (threshold was designed for crib-optimized, not quadgram-optimized search)
-    - SA gibberish has English-like quadgrams (-4.3 to -4.5) but NO complete words (key discriminator)
-    - **Updated JTS oracle:** quadgram > -4.84 + IC > 0.055 + ≥3 complete words (≥6 chars) + semantic coherence
+    - SA gibberish has English-like quadgrams (-4.3 to -4.5) AND contains dictionary words (mean 8.6 words ≥6 chars)
+    - **Updated JTS oracle:** quadgram > -4.84 + IC > 0.055 + non-crib words ≥6 chars + semantic coherence
     - **Implication:** quadgram optimization alone CANNOT distinguish real solutions from SA-crafted false positives
+    - **Word-level discrimination is WEAK** (E-FRAC-41): SA gibberish has 3-17 words vs English 5-20 words. Must exclude crib words from count.
+21. **Word-level discriminator analysis** (E-FRAC-41): Validates word detection as a JTS discriminator.
+    - SA gibberish: mean 8.6 words ≥6 chars (max 17), coverage 42%
+    - Real English: mean 10.7 words ≥6 chars (max 20), coverage 48%
+    - Random text: 0 words. English-freq random: 0-2 words.
+    - **Word count is WEAK discriminator** — significant overlap between SA gibberish and English because cribs (NORTHEAST, BERLIN) and quadgram optimization produce English fragments
+    - **Semantic coherence remains the ultimate discriminator** — no automated metric reliably separates SA gibberish from real English at the 97-char scale
 
 **Reports:** `reports/frac_width9_analysis.md`, `reports/frac_statistical_meta_analysis.md`
 
 ## Completed (reverse chronological)
+
+### [2026-02-21T00:00Z] agent_frac — E-FRAC-41: Word-Level Discriminator Analysis (JTS ORACLE REFINEMENT)
+- **Hypothesis:** Is word-level detection (dictionary words ≥6 chars) a reliable discriminator between real English plaintext and SA-optimized gibberish? Can automated word counting replace semantic coherence evaluation?
+- **Method:**
+  1. Load 333K dictionary words ≥6 chars from `wordlists/english.txt`
+  2. Real English: 71 overlapping 97-char segments from Carter/K1-K3 plaintext (spaces/punctuation removed, uppercased)
+  3. SA gibberish: 20 representative SA-optimized plaintexts from E-FRAC-40 (Carter key + random key results)
+  4. Random baselines: 100 uniform random + 100 English-frequency random 97-char texts
+  5. Metrics: word count (≥6 chars), greedy non-overlapping word coverage fraction
+- **Key findings:**
+  - **Real English:** 5-20 words ≥6 chars (mean 10.7), coverage 48%
+  - **SA gibberish:** 3-17 words ≥6 chars (mean 8.6), coverage 42%
+  - **Random text:** 0 words (0% coverage) — clear separation from both
+  - **English-freq random:** 0-2 words (0.1 mean) — clear separation
+  - **SA gibberish contains crib words** (NORTHEAST, BERLIN, CLOCK) which are dictionary words ≥6 chars, inflating the count
+  - **SA quadgram optimization naturally produces English fragments** (3-4 letter sequences that form parts of real words)
+  - **Word count distributions OVERLAP significantly** — mean difference is only 2.1 words, and some SA gibberish exceeds some English segments
+- **Critical implications:**
+  1. **Word count ≥6 chars is a WEAK discriminator** — cannot reliably separate SA gibberish from real English at 97 chars
+  2. **The "≥3 complete words ≥6 chars" threshold from E-FRAC-40 is too easy** — SA gibberish routinely exceeds it (mean 8.6)
+  3. **Non-crib word count** (excluding NORTHEAST, BERLIN, CLOCK, EAST) may improve discrimination but was not tested
+  4. **Semantic coherence remains the ONLY reliable discriminator** — no automated metric tested can reliably separate SA gibberish from real English
+  5. **The fundamental challenge:** at 97 characters, even randomly shuffled English fragments produce many dictionary hits. The discriminant is not word PRESENCE but word MEANING in context.
+- **For JTS:** Do NOT rely solely on automated word detection. Any candidate passing crib=24 + Bean + quadgram > -4.84 must undergo HUMAN evaluation for semantic coherence. There is no fully automated oracle.
+- **Verdict:** WEAK_DISCRIMINATOR — word detection is better than nothing but insufficient as a standalone filter
+- **Runtime:** 0.4 seconds
+- **Artifacts:** results/frac/e_frac_41_word_discriminator.json
+- **Repro:** `PYTHONPATH=src python3 -u scripts/e_frac_41_word_discriminator.py`
 
 ### [2026-02-20T23:00Z] agent_frac — E-FRAC-40: Carter Running Key Quadgram Screening + Random Control (CRITICAL META-RESULT)
 - **Hypothesis:** Does Carter's text (the primary running key candidate) produce better plaintext quality than random keys when SA optimizes the transposition for quadgrams? Is the -5.0/char threshold from E-FRAC-34 sufficient?
@@ -217,18 +260,18 @@ The -5.0/char quadgram threshold from E-FRAC-34 is **ONLY valid for crib-optimiz
   - **Uniform random key:** best=-4.4027/char, mean=-4.5172. ALL 39 feasible trials above -5.0.
   - **English-freq random key:** best=-4.3913/char, mean=-4.5340. ALL 39 feasible trials above -5.0.
   - **Carter vs random difference: only 0.13/char** — within noise for different sample sizes (200 vs 39).
-  - **ALL "plaintexts" are SA-optimized gibberish** — fragments like "ICALLY", "GENTO", "PORTED" appear but NO complete words ≥6 chars.
+  - **ALL "plaintexts" are SA-optimized gibberish** — but they contain dictionary words (mean 8.6 words ≥6 chars per E-FRAC-41, including crib words NORTHEAST/BERLIN).
 - **Critical implications:**
   1. **E-FRAC-34's -5.0 threshold is ONLY valid for crib-optimized transpositions.** When SA optimizes for quadgrams (which JTS would naturally do), quadgrams of -4.3 to -4.5 are trivially achievable.
   2. **Carter is NOT special.** Random keys produce the same quadgram range. The bipartite matching + SA optimization is so powerful that any 97-char key can be paired with a transposition producing locally English-looking text.
   3. **Quadgram fitness ALONE cannot discriminate** real solutions from SA-crafted false positives.
-  4. **The ONLY reliable discriminator is word-level coherence:** real English will have complete words (≥6 chars), grammatical structure, and semantic meaning. SA gibberish has good quadgrams but no words.
-  5. **Updated JTS oracle (SUPERSEDES E-FRAC-34):**
+  4. **Automated word detection is a WEAK discriminator** (confirmed by E-FRAC-41): SA gibberish contains 3-17 dictionary words ≥6 chars (mean 8.6) vs English 5-20 (mean 10.7). Crib words inflate the count.
+  5. **Updated JTS oracle (SUPERSEDES E-FRAC-34, refined by E-FRAC-41):**
      - Crib = 24/24 + Bean PASS (unchanged)
      - Quadgram > -4.84/char (actual English; -5.0 is too easy)
      - IC > 0.055 (unchanged)
-     - **≥3 complete English words (≥6 chars)** (KEY NEW DISCRIMINATOR)
-     - Semantic coherence (human evaluation)
+     - Non-crib words ≥6 chars: at least 3 (exclude NORTHEAST, BERLIN, CLOCK, EAST)
+     - **Semantic coherence (human evaluation) — THE ultimate discriminator** (no automated metric suffices)
 - **For JTS:** SA will routinely produce false positives with excellent quadgrams (-4.3). Do NOT use quadgram score alone as the acceptance criterion. Implement word detection as a HARD constraint.
 - **Verdict:** CARTER_NOT_SPECIAL — SA optimization artifact. E-FRAC-34 threshold updated.
 - **Runtime:** 469s (E-FRAC-40) + 47s (E-FRAC-40b) = 516s
