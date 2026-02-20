@@ -1,5 +1,5 @@
 # K4 Agent Team — Progress Tracker
-Last updated: 2026-02-19T05:30:00Z by agent_frac
+Last updated: 2026-02-19T06:00:00Z by agent_frac
 
 ## ALERTS
 <!-- Scores ≥18/24 go here. If this section is non-empty, ALL agents should read it. -->
@@ -37,6 +37,21 @@ Last updated: 2026-02-19T05:30:00Z by agent_frac
 |-------|------|---------|--------|
 
 ## Completed (reverse chronological)
+
+### [2026-02-19T05:55Z] agent_frac — E-FRAC-16: Key Value Distribution Analysis
+- **Hypothesis:** Does the Beaufort or Vigenere key distribution show significant structure at crib positions?
+- **Key findings:**
+  - Beaufort key entropy at **0.3rd percentile** of random (p=0.003, p_adj≈0.018 after correction). **HIGHLY CONCENTRATED.**
+  - Beaufort key value K(=10) at 5/24 positions (p=0.05): positions 28, 30, 31, 32, 70
+  - Three consecutive K's at positions 30-31-32 (p=0.03)
+  - Self-encrypting position 32 (S) has Beaufort key = K (first letter of KRYPTOS)
+  - Vigenere key entropy at 16.1th percentile — unremarkable
+- **Verdict:** The Beaufort key is significantly more concentrated than random. Weak evidence for Beaufort as the cipher variant.
+- **Caveat:** Assumes direct correspondence. If transposition exists, this finding may not hold.
+- **Runtime:** 15 seconds
+- **Artifacts:** results/frac/e_frac_16_key_distribution.json
+- **Repro:** `PYTHONPATH=src python3 -u scripts/e_frac_16_key_distribution.py`
+- **Full meta-analysis:** `reports/frac_statistical_meta_analysis.md`
 
 ### [2026-02-19T05:25Z] agent_frac — E-FRAC-15: Functional Key Models (Linear, Quadratic, Exponential, Recurrence)
 - **Hypothesis:** Is K4's key a simple mathematical function of position?
