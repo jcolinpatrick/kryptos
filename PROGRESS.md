@@ -1,5 +1,5 @@
 # K4 Agent Team — Progress Tracker
-Last updated: 2026-02-19T01:00:00Z by agent_frac
+Last updated: 2026-02-19T01:30:00Z by agent_frac
 
 ## ALERTS
 <!-- Scores ≥18/24 go here. If this section is non-empty, ALL agents should read it. -->
@@ -10,6 +10,19 @@ Last updated: 2026-02-19T01:00:00Z by agent_frac
 |-------|------|---------|--------|
 
 ## Completed (reverse chronological)
+
+### [2026-02-19T01:25Z] agent_frac — E-FRAC-05: Width-9 + Column-Dependent Mixed Alphabets
+- **Hypothesis:** H6 — Width-9 columnar transposition with arbitrary column-dependent substitution alphabets (mixed alphabets, not just shifted)
+- **Configs tested:** 362,880 orderings, tested under PT-column and CT-column grouping models, + 50,000 random permutation baseline
+- **Key findings:**
+  - PT-column model: **0/362,880 orderings pass** (minimum 3 bijection conflicts). This is a hard mathematical elimination.
+  - CT-column model: 75,071/362,880 (20.7%) pass bijection check. Random baseline: 12.0%. Ratio: 1.73x (not compelling).
+  - CT-col + Bean: only 3,293 orderings pass both constraints
+  - All passing orderings have DOF=215 (only 19/234 alphabet entries determined = 8.1%) — massively underdetermined
+- **Verdict:** PT-column model ELIMINATED (hard math). CT-column model is NOISE (underdetermined, barely above random baseline).
+- **Runtime:** 14 seconds + 1 second (baseline)
+- **Artifacts:** results/frac/e_frac_05_mixed_alphabets.json
+- **Repro:** `PYTHONPATH=src python3 -u scripts/e_frac_05_mixed_alphabets.py`
 
 ### [2026-02-19T00:55Z] agent_frac — E-FRAC-04: Width-9 × Width-7 Compound Transposition
 - **Hypothesis:** H12 — Compound transposition (width-9 columnar followed by width-7 columnar, both directions) + periodic substitution
