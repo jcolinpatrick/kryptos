@@ -2,7 +2,7 @@
 
 **CRITICAL FRAMING:** Every exhaustive-search elimination in this project was conducted under the assumption of **direct positional correspondence** — meaning CT position N maps to PT position N with no transposition. The primary hypothesis (H1) is that a transposition layer exists, which means **the substitution families below have NOT been tested in their correct context as one layer of a multi-layer system.** The TRANS, JTS, and FRAC agents are doing that work now.
 
-**FRAC AGENT STATUS (2026-02-20, FINAL+++++):** The FRAC agent has completed 53 experiments (E-FRAC-01 through E-FRAC-53). Mandate COMPLETE + running key gap closure + English key detection + three-layer model + mono inner layer. Key results that affect this document:
+**FRAC AGENT STATUS (2026-02-20, FINAL):** The FRAC agent has completed 54 experiments (E-FRAC-01 through E-FRAC-54). Mandate COMPLETE + running key gap closure + English key detection + three-layer model + mono inner layer + mono running key underdetermination. Key results that affect this document:
 - ALL fractionation families structurally eliminated (E-FRAC-21) — proofs hold WITH OR WITHOUT transposition
 - **Columnar widths 5-15 + periodic substitution: ALL ELIMINATED at discriminating periods**
   - Width-5, Width-7: Bean-ELIMINATED (ZERO orderings pass Bean equality, E-FRAC-26/27)
@@ -47,6 +47,11 @@
   - Makes periods 3-7 potentially Bean-viable (bypasses E-FRAC-35's proof!)
   - But ZERO candidates at periods 3-7: bipartite consistency (13 letters + p residues, 24 eqns) too stringent
   - 34 candidates only at period 12 (underdetermined), all gibberish (best Q=-6.33)
+- **Mono+Trans+Running key: UNDERDETERMINED** (E-FRAC-54)
+  - 13 mono DOF (one shift per known PT letter) provide ~2.5/char quadgram improvement
+  - ALL columnar configs AND random perms produce English-range key fragments when mono-optimized
+  - E-FRAC-51's elimination (no mono) does NOT extend to the mono case
+  - Fragment analysis CANNOT distinguish real English running keys from gibberish when mono present
 - Full meta-analysis: `reports/frac_statistical_meta_analysis.md`
 
 Read these tiers carefully before deciding what is and isn't worth testing.
@@ -175,4 +180,4 @@ The persistent 14–17/24 ceiling across all families has been interpreted as ev
 
 ---
 
-*Updated 2026-02-20 by agent_frac (FINAL — 53 experiments, mandate complete + ALL gaps closed: running key gap closure + English key detection + three-layer model + mono inner layer). See also: `docs/invariants.md` (verified computational invariants), `docs/research_questions.md` (prioritized unknowns).*
+*Updated 2026-02-20 by agent_frac (FINAL — 54 experiments, mandate complete + ALL gaps closed: running key gap closure + English key detection + three-layer model + mono inner layer + mono running key underdetermination). See also: `docs/invariants.md` (verified computational invariants), `docs/research_questions.md` (prioritized unknowns).*
