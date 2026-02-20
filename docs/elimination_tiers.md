@@ -2,11 +2,12 @@
 
 **CRITICAL FRAMING:** Every exhaustive-search elimination in this project was conducted under the assumption of **direct positional correspondence** — meaning CT position N maps to PT position N with no transposition. The primary hypothesis (H1) is that a transposition layer exists, which means **the substitution families below have NOT been tested in their correct context as one layer of a multi-layer system.** The TRANS, JTS, and FRAC agents are doing that work now.
 
-**FRAC AGENT STATUS (2026-02-20):** The FRAC agent has completed 27 experiments (E-FRAC-01 through E-FRAC-27). Key results that affect this document:
+**FRAC AGENT STATUS (2026-02-20):** The FRAC agent has completed 28 experiments (E-FRAC-01 through E-FRAC-28). Key results that affect this document:
 - ALL fractionation families structurally eliminated (E-FRAC-21) — proofs hold WITH OR WITHOUT transposition
 - Width-9 columnar + all substitution models: ELIMINATED at discriminating periods (E-FRAC-01 to 12)
 - **Width-5 and Width-7 columnar: Bean-ELIMINATED** (E-FRAC-26/27) — ZERO orderings pass Bean equality constraint
 - Width-9 is Bean-compatible (1.24% pass rate, best Bean quadgram -6.238, p < 0.0001 vs random) (E-FRAC-26)
+- SA key optimization on Bean-passing orderings: underdetermination artifact at period 12-13 (E-FRAC-28)
 - "Bimodal fingerprint" pre-filter is likely a statistical artifact (E-FRAC-11) — agents should NOT rely on it
 - K4's IC, lag-7 autocorrelation, and DFT k=9 peak are NOT statistically significant (E-FRAC-13/14)
 - Beaufort key entropy signal RETRACTED — was a selection effect (E-FRAC-16→23→24→25)
