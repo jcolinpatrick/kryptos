@@ -1,5 +1,5 @@
 # K4 Agent Team — Progress Tracker
-Last updated: 2026-02-19T01:30:00Z by agent_frac
+Last updated: 2026-02-19T02:00:00Z by agent_frac
 
 ## ALERTS
 <!-- Scores ≥18/24 go here. If this section is non-empty, ALL agents should read it. -->
@@ -10,6 +10,19 @@ Last updated: 2026-02-19T01:30:00Z by agent_frac
 |-------|------|---------|--------|
 
 ## Completed (reverse chronological)
+
+### [2026-02-19T01:50Z] agent_frac — E-FRAC-06: Width-11 and Width-13 Structural Analysis
+- **Hypothesis:** H6 — Width-11 (97=11×8+9) and width-13 (97=13×7+6) as alternative transposition widths
+- **Configs tested:** 50K samples per width × 6 periods × 3 variants × 2 models = ~1.8M per width + 50K random baseline
+- **Best score (w11):** 14/24 (period 7, Beaufort, model B)
+- **Best score (w13):** 14/24 (period 7, Vigenère, model A)
+- **Random baseline:** 14/24 — identical to both widths
+- **Strict passes:** 0 for all three (w11, w13, random)
+- **Structural:** Both w11 and w13 reduce lag-7 in 100% of orderings (same as random — not width-specific)
+- **Verdict:** NOISE — width-11 and width-13 produce identical results to random permutations. Score distributions match within sampling error.
+- **Runtime:** 175 seconds
+- **Artifacts:** results/frac/e_frac_06_w11w13.json
+- **Repro:** `PYTHONPATH=src python3 -u scripts/e_frac_06_w11w13_structural.py`
 
 ### [2026-02-19T01:25Z] agent_frac — E-FRAC-05: Width-9 + Column-Dependent Mixed Alphabets
 - **Hypothesis:** H6 — Width-9 columnar transposition with arbitrary column-dependent substitution alphabets (mixed alphabets, not just shifted)
