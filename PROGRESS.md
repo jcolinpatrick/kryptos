@@ -1,5 +1,5 @@
 # K4 Agent Team — Progress Tracker
-Last updated: (not yet started)
+Last updated: 2026-02-19T01:00:00Z by agent_frac
 
 ## ALERTS
 <!-- Scores ≥18/24 go here. If this section is non-empty, ALL agents should read it. -->
@@ -10,4 +10,48 @@ Last updated: (not yet started)
 |-------|------|---------|--------|
 
 ## Completed (reverse chronological)
-(no completed tasks yet)
+
+### [2026-02-19T00:55Z] agent_frac — E-FRAC-04: Width-9 × Width-7 Compound Transposition
+- **Hypothesis:** H12 — Compound transposition (width-9 columnar followed by width-7 columnar, both directions) + periodic substitution
+- **Configs tested:** 50,500,800 (5,010 width-9 samples × 5,040 width-7 × 2 compositions)
+- **Best score:** 0/24 above threshold (strict periodic check at periods 2-7)
+- **Noise floor:** N/A — zero results above strict-pass threshold 12/24
+- **Verdict:** ELIMINATED — compound w9×w7 transposition with periodic substitution shows zero signal at discriminating periods (2-7)
+- **Runtime:** 384 seconds
+- **Artifacts:** results/frac/e_frac_04_compound_w9w7.json
+- **Repro:** `PYTHONPATH=src python3 -u jobs/pending/e_frac_04_compound_w9w7.py --workers 3 --n-w9-samples 5000`
+
+### [2026-02-19T00:40Z] agent_frac — E-FRAC-03: Width-9 Non-Columnar Reading Orders
+- **Hypothesis:** H7 — Non-standard reading orders on 9-wide grid (serpentine, diagonal, spiral, column-major, knight-move) as transposition mechanism + periodic substitution
+- **Configs tested:** 26 reading orders × 6 periods × 3 variants × 2 models = ~936
+- **Best score:** 16/24 (row_major, period 13, Beaufort, model A)
+- **Noise floor:** Identity permutation scores 16/24 at period 13 — ALL best scores are at period 13-14
+- **Verdict:** ELIMINATED — all high scores are underdetermination artifacts at high periods. No signal at discriminating periods (≤7).
+- **Runtime:** 0.1 seconds
+- **Artifacts:** results/frac/e_frac_03_w9_reading_orders.json
+- **Repro:** `PYTHONPATH=src python3 -u jobs/pending/e_frac_03_w9_reading_orders.py`
+
+### [2026-02-19T00:25Z] agent_frac — E-FRAC-02: Width-9 Columnar + Non-Periodic Substitution
+- **Hypothesis:** H6 — Width-9 columnar transposition + non-periodic substitution models (progressive key, CT-autokey, PT-autokey, column-progressive)
+- **Configs tested:** 13,464 Bean-passing (from 362,880 orderings × 3 variants)
+- **Best score:** Progressive: 8/24, CT-autokey: 6/24, PT-autokey: 7/24, Column-progressive: 20/24
+- **Noise floor:** Column-progressive noise floor = 17.7/24 (Monte Carlo, N=10,000 random permutations, max observed 21/24). Progressive noise floor ≈ 5-6/24. All observed results within noise.
+- **Verdict:** ELIMINATED — column-progressive 20/24 is a confirmed underdetermination artifact (random permutations score 17-21/24). Progressive, CT-autokey, and PT-autokey all within noise.
+- **Runtime:** 31 seconds + 29 seconds (baseline)
+- **Artifacts:** results/frac/e_frac_02_w9_nonperiodic.json
+- **Repro:** `PYTHONPATH=src python3 -u jobs/pending/e_frac_02_w9_nonperiodic.py --workers 3`
+- **Baseline repro:** `PYTHONPATH=src python3 -u scripts/e_frac_02b_colprog_baseline.py`
+
+### [2026-02-19T00:00Z] agent_frac — E-FRAC-01: Width-9 Grid Structural Analysis
+- **Hypothesis:** H6/H7 — Width-9 grid structural properties as diagnostic for the transposition hypothesis
+- **Configs tested:** 362,880 orderings (IC, lag analysis, Bean constraints)
+- **Key findings:**
+  - 99.2% of width-9 orderings REDUCE lag-7 in un-transposed text → width-9 transposition naturally CREATES lag-7 correlations (consistent with hypothesis)
+  - Bean equality passes: 15,120/362,880 (4.17%, above 3.85% random expectation)
+  - Bean full passes (eq + all 21 ineq): 4,860/362,880 (1.34%) for Vigenère
+  - CT IC = 0.0361 (below random 0.0385), invariant under permutation
+  - Lag-7 raw: 9 matches, z=3.04 (significant)
+- **Verdict:** STRUCTURAL ANALYSIS — width-9 explains the lag-7 signal, but no scoring-based signal found
+- **Runtime:** 67 seconds
+- **Artifacts:** results/frac/e_frac_01_w9_structural.json
+- **Repro:** `PYTHONPATH=src python3 -u scripts/e_frac_01_w9_structural.py`
