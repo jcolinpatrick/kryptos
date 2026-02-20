@@ -78,7 +78,7 @@ These eliminations are solid FOR THEIR SPECIFIC MODEL: "Is K4 cipher family X ap
 | Autokey (PT and CT) | ~50,000 | 6/24 | ELIMINATED | **STRUCTURALLY ELIMINATED** (E-FRAC-37: cannot reach 24/24 even with arbitrary transposition; PT max=16/24, CT max=21/24) |
 | Running Key (K1–K3 as keystream) | ~45,000 | 7/24 | ELIMINATED | **OPEN** |
 | Grid Rotation (K3-style) | ~14,000 | 7/24 | ELIMINATED | N/A (is itself a transposition) |
-| Columnar + Vigenère (no bimodal pre-filter) | ~4 million | 12/15 | ELIMINATED (widths 5–10) | **OPEN — needs re-test WITH bimodal filter and polyalphabetic check** |
+| Columnar + Vigenère (no bimodal pre-filter) | ~4 million | 12/15 | ELIMINATED (widths 5–10) | **ELIMINATED by FRAC — widths 5-15 comprehensively tested (E-FRAC-12/29/30), bimodal filter debunked (E-FRAC-11), ALL noise. Bean impossibility at discriminating periods (E-FRAC-35). Extended to double columnar (E-FRAC-46), Myszkowski (E-FRAC-47), AMSCO/Nihilist/Swapped (E-FRAC-48), simple families (E-FRAC-32), grid reading orders (E-FRAC-45). Periodic key + ANY transposition = ELIMINATED at p2-7 (proof).** |
 | Weltzeituhr permutations | ~295 million | 14/24 | ELIMINATED | **OPEN (as transposition source)** |
 | Additive mask + Vimark p=5 | ~3.375 billion | 16/24 | ELIMINATED (0 Bean passes) | **OPEN** |
 | VIC-family / Chain Addition | ~2 million | noise floor | ELIMINATED | **VIC contains straddling checkerboard → STRUCTURALLY ELIMINATED** (E-FRAC-21) |
@@ -92,7 +92,7 @@ These were either incompletely tested or used statistical sampling of a space to
 | Family | Concern | Confidence | Recommendation |
 |--------|---------|------------|---------------|
 | ~~ADFGVX~~ | ~~Status report acknowledges "without proper fractionation recovery"~~ | **99.9%** | **STRUCTURALLY ELIMINATED** (E-FRAC-21: parity impossible — output length always 2×N (even), K4=97 (odd). Proof holds with or without transposition.) |
-| Turning grille 10×10 (150K Monte Carlo) | Statistical sample of a space with ~2^50 possibilities; 150K samples provides negligible coverage | **~40%** | **TRANS agent: test systematically. NOTE: bimodal pre-filter is unreliable (E-FRAC-11).** |
+| ~~Turning grille 10×10 (150K Monte Carlo)~~ | ~~Statistical sample of a space with ~2^50 possibilities; 150K samples provides negligible coverage~~ | **99.9%** | **ELIMINATED by universal proofs: E-FRAC-35 (ALL transpositions + periodic key at periods 2-7 violate Bean), E-FRAC-38 (only running key survives Bean), E-FRAC-44 (4^25 ≈ 2^50 options, expected FP = 0). Prior MC tests (E-S-18/70/72/104) superseded.** |
 | ~~Straddling checkerboard~~ | ~~"Partially tested" per status report~~ | **99.9%** | **STRUCTURALLY ELIMINATED** (E-FRAC-21: produces digits 0-9, K4 has 26 letters. Proof holds with or without transposition.) |
 | Foreign language keywords (~500K) | Only tested under already-eliminated cipher models, not independently | **~50%** | **Keywords themselves are not eliminated** — carry forward into TRANS/JTS searches |
 
@@ -107,7 +107,7 @@ These hypothesis classes appear in the status report's "What We Have NOT Tested"
 | ~~Polyalphabetic consistency AFTER transposition~~ | **DONE — ALL FRAC experiments (E-FRAC-01 through E-FRAC-48) test polyalphabetic (periodic) key consistency after undoing candidate transpositions. Tested across: single columnar w5-15 (E-FRAC-12/29/30), simple families (E-FRAC-32), grid reading orders (E-FRAC-45), double columnar (E-FRAC-46), Myszkowski (E-FRAC-47), AMSCO/Nihilist/Swapped (E-FRAC-48). ALL at discriminating periods 2-7. ZERO signal above random.** | ~~TRANS/JTS~~ COMPLETE |
 | ~~Double columnar transposition~~ | **DONE — 9 Bean-compatible width pairs, 2.96M compositions, max 15/24 = noise (E-FRAC-46)** | ~~TRANS~~ COMPLETE |
 | ~~Myszkowski transposition~~ | **DONE — Widths 5-13, 226K unique patterns, max 15/24 = noise (E-FRAC-47)** | ~~TRANS~~ COMPLETE |
-| Turning grille (systematic, with constraints) | Prior test was Monte Carlo only | TRANS |
+| ~~Turning grille (systematic, with constraints)~~ | **COVERED BY UNIVERSAL PROOFS — Turning grille permutations are a subset of S_97. E-FRAC-35 proves ALL 97! permutations + periodic key violate Bean at discriminating periods (2-7). E-FRAC-38 shows only running key survives Bean. E-FRAC-39 shows running key + ANY transposition is underdetermined. Prior Monte Carlo tests (E-S-18/70/72/104) with negligible coverage (10^-8 of 4^25 space) are superseded by universal proofs. Information-theoretic analysis (E-FRAC-44): 4^25 ≈ 2^50 options → expected FP = 0, so oracle is sufficient for this family, but periodic keying is already Bean-eliminated.** | ~~TRANS~~ COVERED |
 | Bespoke physical transposition (S-curve, strip manipulation) | Cannot be enumerated without creative hypothesis | BESPOKE |
 | Non-standard tableau usage | Structural analysis, not a sweep | TABLEAU |
 | Position-dependent alphabets | "Change the language base" (Scheidt) — untested at scale | TABLEAU, JTS |
