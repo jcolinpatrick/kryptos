@@ -1,5 +1,5 @@
 # K4 Agent Team — Progress Tracker
-Last updated: 2026-02-20T18:00:00Z by agent_frac
+Last updated: 2026-02-20T20:00:00Z by agent_frac
 
 ## ALERTS
 <!-- Scores ≥18/24 go here. If this section is non-empty, ALL agents should read it. -->
@@ -168,7 +168,7 @@ The K4 crib oracle is **information-theoretically insufficient** for arbitrary p
 | Agent | Task | Started | Status |
 |-------|------|---------|--------|
 
-## FRAC Agent Mandate — 50 experiments (E-FRAC-01 through E-FRAC-50)
+## FRAC Agent Mandate — 51 experiments (E-FRAC-01 through E-FRAC-51)
 
 **Original mandate (E-FRAC-01 to 25): COMPLETE. ZERO positive findings survived.**
 **Extended mandate (E-FRAC-26-31): Bean profiling + crib scoring. ALL columnar widths 5-15 ELIMINATED.**
@@ -183,6 +183,7 @@ The K4 crib oracle is **information-theoretically insufficient** for arbitrary p
 **Carter quadgram screening (E-FRAC-40): SA-optimized transposition achieves -4.27/char with Carter key. BUT random key also achieves -4.40/char — Carter is NOT special. E-FRAC-34's -5.0 threshold is too weak for SA-optimized solutions. Word-level detection is the ONLY reliable discriminator.**
 **Running key + columnar (E-FRAC-49): ALL Bean-passing columnar orderings at widths 6, 8, 9 (16,597 configs) × 7 reference texts × 3 cipher variants. 8.4 billion (config × offset) checks. ZERO 24/24 matches. Running key + structured columnar is ELIMINATED for all known reference texts.**
 **Running key + all structured families (E-FRAC-50): Identity, cyclic, affine, rail fence, block reversal, double columnar (9 Bean-compatible width pairs). 369K permutations → 17,306 Bean-passing configs × 7 texts × 3 variants. 8.8B checks. ZERO matches. ALL structured transposition families are ELIMINATED with running key from known texts.**
+**English-like key detection (E-FRAC-51): ALL 16,597 Bean-passing columnar configs at widths 6,8,9 × 3 variants scored for English-like key fragments at crib positions. Best quadgram=-4.151/char, English 5th percentile=-3.551/char. ZERO configs in English range (0/16,597). Running key from ANY unknown English text + columnar transposition is ELIMINATED. Extends E-FRAC-49/50 from 7 specific texts to the general case.**
 
 ### New Structural Findings (E-FRAC-26/27)
 
@@ -285,10 +286,33 @@ The K4 crib oracle is **information-theoretically insufficient** for arbitrary p
     - **Fills FRAC Priority 2 gap**: non-columnar grid reading orders are ELIMINATED
 29. **Running key + structured columnar** (E-FRAC-49): Widths 6, 8, 9 exhaustive (403,920 orderings) → 16,597 Bean-passing configs × 7 reference texts (509K chars) × 3 cipher variants. 8.4 billion (config × offset) checks. **ZERO 24/24 matches.** Information-theoretic prediction (expected FP ≈ 10⁻²⁵) confirmed. Running key + columnar is ELIMINATED for all known reference texts. Fills the gap between E-FRAC-12/29/30 (columnar + periodic) and E-FRAC-39 (running key + arbitrary transpositions).
 30. **Running key + ALL structured families** (E-FRAC-50): Identity, cyclic, affine (9,215), rail fence (19), block reversal (47), double columnar (9 Bean-compatible width pairs, 360K compositions). 369,379 total permutations → 17,306 Bean-passing configs × 7 texts × 3 variants. 8.8 billion checks. **ZERO matches.** Reverse and rail fence are Bean-INCOMPATIBLE (0 passes). ALL structured transposition families comprehensively eliminated with running key from known texts.
+31. **English-like key detection** (E-FRAC-51): All 16,597 Bean-passing columnar orderings at widths 6,8,9 × 3 cipher variants. Derived implied key at 24 crib positions, formed two key fragments (positions 21-33: 13 chars, positions 63-73: 11 chars), scored for English-likeness using quadgrams and word detection. **Best quadgram=-4.151/char**, far below English 5th percentile (-3.551). **ZERO configs in English range.** Extends E-FRAC-49/50 from 7 specific source texts to ANY unknown English running key. Columnar configs produce key fragments **statistically identical to random** (d=-0.09). Random perm baseline max=-4.057 exceeds best columnar. Running key from unknown English text + columnar transposition is COMPREHENSIVELY ELIMINATED.
 
 **Reports:** `reports/frac_width9_analysis.md`, `reports/frac_statistical_meta_analysis.md`
 
 ## Completed (reverse chronological)
+
+### [2026-02-20T20:00Z] agent_frac — E-FRAC-51: English-Like Key Fragment Detection on Structured Transpositions (ELIMINATION)
+- **Hypothesis:** If K4 uses a running key from UNKNOWN English text + structured transposition, the implied key values at the 24 crib positions should form English-like text fragments detectable by quadgram scoring. This extends E-FRAC-49/50 (which only tested 7 specific texts) to the general case.
+- **Method:** For all Bean-passing columnar orderings at widths 6, 8, 9 (17,124 Bean-eq → 16,597 after Bean-ineq), compute implied key at 24 crib positions for each of 3 cipher variants (Vigenère, Beaufort, Variant Beaufort). Convert to letter strings, form two fragments (pos 21-33: 13 chars, pos 63-73: 11 chars), score with quadgram fitness and dictionary word detection. Three baselines: random text (50K), English text from Carter (10K), random permutations (50K).
+- **Configs tested:** 16,597 Bean-passing columnar configs
+- **Key findings:**
+  - **Best quadgram: -4.151/char** (width 9, order [5,4,7,0,2,3,1,8,6], Vigenère, key="ESSOILCASWOZB|RLCUTBICPHA")
+  - **English baseline: mean=-3.210/char, 5th percentile=-3.551/char**
+  - **Gap: 0.6/char between best columnar and English 5th percentile**
+  - **ZERO columnar configs in the English range** (0/16,597)
+  - **Random perm max: -4.057/char** — columnar FAILS to exceed random
+  - **Columnar distribution: mean=-5.414, identical to random (mean=-5.392, d=-0.09)**
+  - **Word detection matches random:** columnar mean=0.24 words ≥4 chars, random=0.27
+  - **English text clearly separated:** mean=2.88 words ≥4 chars, mean=-3.210 quadgram/char
+  - Corrected p-value = 1.0 (no signal above random noise)
+- **Per-width breakdown:** w6 max=-4.780, w8 max=-4.259, w9 max=-4.151 (all within random range)
+- **Identity transposition cross-check:** Vig=-5.462, Beau=-5.420, VB=-5.724 (all clearly non-English)
+- **Implication:** If K4 used running key from ANY English text + columnar transposition at ANY width (6, 8, 9), the 24 implied key values would form English-like fragments detectable by quadgram scoring. No such detection occurs. Combined with E-FRAC-49/50 (specific texts: zero exact matches), running key + columnar transposition is COMPREHENSIVELY ELIMINATED for both known and unknown English source texts.
+- **Verdict:** NOISE — running key from unknown English text + columnar transposition ELIMINATED
+- **Runtime:** 14.7 seconds
+- **Artifacts:** results/frac/e_frac_51_english_key_detection.json
+- **Repro:** `PYTHONPATH=src python3 -u scripts/e_frac_51_english_key_detection.py`
 
 ### [2026-02-20T18:00Z] agent_frac — E-FRAC-50: Running Key + ALL Structured Transposition Families (ELIMINATION)
 - **Hypothesis:** Does any non-columnar structured transposition family (identity, cyclic, affine, rail fence, block reversal, double columnar) combined with a running key from known reference texts produce 24/24 crib matches?
