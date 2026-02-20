@@ -12,7 +12,7 @@ This repo supports **parallel multi-agent operation**. If the environment variab
 
 **Python 3.12+** required (uses `tomllib` from stdlib). **No external runtime dependencies** — stdlib only. `pytest` is the only dev dependency.
 
-**Primary development path** (`pyproject.toml` is missing; package metadata survives in `src/kryptos.egg-info/`):
+**Primary development path** (no `pyproject.toml` or `setup.py` — `pip install -e .` will not work):
 ```bash
 PYTHONPATH=src python3 -u scripts/<name>.py   # run scripts (-u for unbuffered output)
 PYTHONPATH=src pytest tests/                   # run tests (install pytest: pip install --user pytest)
@@ -100,7 +100,7 @@ Standalone experiment scripts, each runnable with `PYTHONPATH=src python3 -u scr
 ### Key data files
 
 - `data/ct.txt` — K4 ciphertext (97 chars)
-- `data/english_quadgrams.json` — Quadgram log-probabilities (2 MB, nested `{"logp": {...}}`)
+- `data/english_quadgrams.json` — Quadgram log-probabilities (2 MB, top-level dict: `{"THAN": -3.776, ...}`)
 - `db/` — SQLite databases (sweep results, novelty ledger) — **gitignored**
 - `wordlists/english.txt` — 370K words
 - `reference/` — Carter book PDF + text extracts, Sanborn correspondence, NSA docs
@@ -115,7 +115,7 @@ Standalone experiment scripts, each runnable with `PYTHONPATH=src python3 -u scr
 
 ### Gitignored directories
 
-`.gitignore` excludes `db/`, `results/`, `artifacts/`, `agent_logs/`, `work/`, `tmp/`, `venv/`, `jobs/running/`, `jobs/done/`, `jobs/failed/`. These contain per-run data and must not be committed. Scripts in `jobs/pending/` and `reports/` are tracked.
+`.gitignore` excludes `db/`, `results/`, `artifacts/`, `agent_logs/`, `work/`, `tmp/`, `venv/`. These contain per-run data and must not be committed. The `jobs/` and `reports/` directories are tracked.
 
 ---
 
@@ -123,7 +123,7 @@ Standalone experiment scripts, each runnable with `PYTHONPATH=src python3 -u scr
 
 `score_candidate()` returns a `ScoreBreakdown` with these key fields:
 - **crib_matches** (0–24): Number of crib positions where derived key is consistent. Primary signal.
-- **bean_pass** (bool): Whether Bean equality (k[27]=k[65]) and all 21 inequalities hold.
+- **bean_passed** (bool): Whether Bean equality (k[27]=k[65]) and all 21 inequalities hold.
 - **ic**: Index of coincidence of the candidate plaintext.
 
 | Score | Classification | Meaning |
@@ -150,7 +150,7 @@ workers = 8
 ### Adding a hypothesis to the novelty engine
 
 1. Add a generator function in `src/kryptos/novelty/generators.py` that yields `Hypothesis` objects
-2. Each hypothesis needs: `name`, `description`, `research_question` (RQ-1 through RQ-13), `test_plan`, and `parameters` dict
+2. Each hypothesis needs: `description`, `transform_stack`, `research_questions` (list of `ResearchQuestion` enums, RQ1–RQ13), `triage_tests`, and `expected_signatures`
 3. Register the generator in the `ALL_GENERATORS` list at the bottom of `generators.py`
 4. Run `PYTHONPATH=src python3 -m kryptos novelty generate` to populate the ledger
 5. Run `PYTHONPATH=src python3 -m kryptos novelty triage --limit N` to test cheaply before expensive sweeps
@@ -208,6 +208,7 @@ Domain knowledge, public facts, and detailed operating policies live in separate
 - **`docs/invariants.md`** — Verified computational invariants (keystream, Bean constraints, alphabets, eliminated hypotheses)
 - **`docs/elimination_tiers.md`** — Elimination confidence tiers (Tier 1–4) with full tables of what has/hasn't been tested
 - **`docs/research_questions.md`** — Prioritized unknowns (RQ-1 through RQ-13) with current state and next steps
+- **`docs/ARCHITECTURE_PLAN.md`** — Original architecture plan for the refactored codebase
 - **`anomaly_registry.md`** — Physical anomalies in the Kryptos sculpture (misspellings, alignments)
 
 ---
@@ -227,7 +228,7 @@ Detailed elimination status for all tested cipher families is maintained in [`do
 - **Tier 1 (mathematical proofs, ~99.9%):** Pure transposition, periodic polyalphabetic (direct correspondence), Hill 2×2/3×3 — permanently eliminated.
 - **Tier 2 (exhaustive search, direct correspondence only, ~95%):** Vigenère, Beaufort, Bifid, Playfair, Nihilist, etc. — eliminated as single-layer but **OPEN** as substitution layer after transposition.
 - **Tier 3 (partial, 40–70%):** ADFGVX, turning grille, straddling checkerboard — warrant re-testing.
-- **Tier 4 (never tested, 0%):** Double columnar, Myszkowski, bespoke physical methods, position-dependent alphabets.
+- **Tier 4 (never tested, 0%):** Bespoke physical methods, position-dependent alphabets, non-standard structures not yet conceived.
 
 **Critical framing:** All Tier 2 eliminations assume direct positional correspondence (CT[i] maps to PT[i]). They do NOT eliminate these ciphers as one layer of a multi-layer system.
 

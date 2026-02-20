@@ -65,6 +65,12 @@ def bifid_encrypt(plaintext: str, grid: List[str], period: int = 0) -> str:
     """Bifid cipher encryption.
 
     If period == 0, uses full-length period (classical bifid).
+
+    Steps:
+    1. Encode PT to Polybius (row, col) pairs
+    2. Concatenate all rows then all cols: [r0, r1, ..., c0, c1, ...]
+    3. Take consecutive pairs: (combined[0], combined[1]), (combined[2], combined[3]), ...
+    4. Decode each pair back to a letter
     """
     coords = polybius_encode(plaintext, grid)
     if not coords:
@@ -79,14 +85,21 @@ def bifid_encrypt(plaintext: str, grid: List[str], period: int = 0) -> str:
         rows = [r for r, _ in block]
         col_vals = [c for _, c in block]
         combined = rows + col_vals
-        new_coords = [(combined[i], combined[i + len(block)]) for i in range(len(block))]
+        new_coords = [(combined[2 * i], combined[2 * i + 1]) for i in range(len(block))]
         result.append(polybius_decode(new_coords, grid))
 
     return "".join(result)
 
 
 def bifid_decrypt(ciphertext: str, grid: List[str], period: int = 0) -> str:
-    """Bifid cipher decryption."""
+    """Bifid cipher decryption.
+
+    Reverses bifid_encrypt:
+    1. Encode CT to Polybius (row, col) pairs
+    2. Interleave rows and cols: [r0, c0, r1, c1, ...]
+    3. Split in half: first half = PT rows, second half = PT cols
+    4. Zip and decode to get plaintext
+    """
     coords = polybius_encode(ciphertext, grid)
     if not coords:
         return ""
@@ -97,12 +110,14 @@ def bifid_decrypt(ciphertext: str, grid: List[str], period: int = 0) -> str:
     result: list[str] = []
     for start in range(0, len(coords), period):
         block = coords[start : start + period]
-        rows = [r for r, _ in block]
-        col_vals = [c for _, c in block]
-        combined = rows + col_vals
+        # Interleave: flatten CT coords as consecutive (row, col) pairs
+        flat: list[int] = []
+        for r, c in block:
+            flat.append(r)
+            flat.append(c)
         half = len(block)
-        orig_rows = combined[:half]
-        orig_cols = combined[half:]
+        orig_rows = flat[:half]
+        orig_cols = flat[half:]
         orig_coords = list(zip(orig_rows, orig_cols))
         result.append(polybius_decode(orig_coords, grid))
 
