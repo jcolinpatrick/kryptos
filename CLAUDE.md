@@ -133,7 +133,7 @@ Standalone experiment scripts, each runnable with `PYTHONPATH=src python3 -u scr
 | 18–23 | SIGNAL        | Statistically significant, investigate |
 | 24    | BREAKTHROUGH  | All cribs match — potential solution |
 
-**False positive warning**: At periods ≥17, random configs score 17+/24 due to underdetermination. Only scores at period ≤7 are meaningful discriminators.
+**False positive warning**: At periods ≥17, random configs score 17+/24 due to underdetermination. Only scores at period ≤7 are meaningful discriminators. **Note:** FRAC agent (E-FRAC-07) proved periods 2–7 are Bean-impossible for transposition + periodic substitution; only periods {8, 13, 16, 19, 20, 23, 24, 26} are Bean-compatible. This narrows the viable search space but does not change the scoring rule.
 
 ### Sweep config format (TOML)
 
@@ -162,11 +162,11 @@ workers = 8
 These are non-obvious pitfalls discovered through prior sessions. Check these first when debugging unexpected results.
 
 - **0-indexed positions everywhere**: Cribs are at 21–33 and 63–73 (0-indexed). Legacy code and some public sources use 1-indexed (22–34, 64–74). Mixing conventions is the #1 source of bugs.
-- **KA alphabet has no J**: `KRYPTOSABCDEFGHIJLMNQUVWXZ` — the `KA` singleton merges I/J. Standard `AZ` does not.
+- **KA alphabet has non-standard ordering**: `KRYPTOSABCDEFGHIJLMNQUVWXZ` — all 26 letters present but reordered (keyword "KRYPTOS" first). The `KA` singleton uses this ordering; standard `AZ` uses alphabetical. Both contain all 26 letters. (The "KA has no J" claim in prior versions was **wrong**.)
 - **Vigenère vs Beaufort sign conventions**: `K = (CT - PT) mod 26` for Vigenère, `K = (CT + PT) mod 26` for Beaufort, `K = (PT - CT) mod 26` for Variant Beaufort. Mixing these silently produces wrong keystream.
 - **Bean constraint is variant-independent**: CT[27]=CT[65]=P and PT[27]=PT[65]=R, so the equality k[27]=k[65] holds regardless of cipher variant. The 21 inequalities are also variant-independent.
 - **Transposition permutation convention**: `output[i] = input[perm[i]]` — this is the "gather" convention. `invert_perm()` gives the "scatter" direction.
-- **IC below random**: K4's IC ≈ 0.0361 is *below* the random expectation of 0.0385, which is unusual and constraining.
+- **IC below random**: K4's IC ≈ 0.0361 is below the random expectation of 0.0385. [INTERNAL RESULT] FRAC agent (E-FRAC-04) showed this deviation is NOT statistically significant for a 97-char text. Do not use IC alone as a discriminator.
 - **constants.py self-verifies at import**: If you modify CT, cribs, or Bean values incorrectly, the import itself will raise an assertion error.
 - **Unbuffered output for background tasks**: Always use `python3 -u` when running scripts in background. Without `-u`, Python buffers stdout and you see no output until the process ends.
 - **Scoring underdetermination at high periods**: `period_consistency()` is underdetermined when `period >= (num_crib_positions / constraints_per_residue)`. At period 24, random configs score ~19.2/24; at period 17, ~17.3/24. Only period ≤7 gives meaningful discrimination (~8.2/24 expected random). **All high scores at large periods are false positives.**
@@ -227,7 +227,7 @@ Detailed elimination status for all tested cipher families is maintained in [`do
 
 - **Tier 1 (mathematical proofs, ~99.9%):** Pure transposition, periodic polyalphabetic (direct correspondence), Hill 2×2/3×3 — permanently eliminated.
 - **Tier 2 (exhaustive search, direct correspondence only, ~95%):** Vigenère, Beaufort, Bifid, Playfair, Nihilist, etc. — eliminated as single-layer but **OPEN** as substitution layer after transposition.
-- **Tier 3 (partial, 40–70%):** ADFGVX, turning grille, straddling checkerboard — warrant re-testing.
+- **Tier 3 (now eliminated):** ADFGVX/ADFGX (structurally impossible — 6-letter output vs 26-letter CT), turning grille 10×10 (structurally impossible — E-S-104), straddling checkerboard (digit output). All former Tier 3 ciphers are now Tier 1 or Tier 2.
 - **Tier 4 (never tested, 0%):** Bespoke physical methods, position-dependent alphabets, non-standard structures not yet conceived.
 
 **Critical framing:** All Tier 2 eliminations assume direct positional correspondence (CT[i] maps to PT[i]). They do NOT eliminate these ciphers as one layer of a multi-layer system.
@@ -244,11 +244,11 @@ Detailed elimination status for all tested cipher families is maintained in [`do
 - Positions 21–33: `EASTNORTHEAST`
 - Positions 63–73: `BERLINCLOCK`
 
-**What we know:** K4 is multi-layered (substitution + transposition). No single-layer classical cipher works. The method must be executable by hand.
+**What we know:** [DERIVED FACT] No single-layer classical cipher works (exhaustively tested, 130+ experiments). [HYPOTHESIS] K4 is likely multi-layered (substitution + transposition), based on Sanborn's "two separate systems" statement and elimination of all single-layer methods. [HYPOTHESIS] The method is likely executable by hand (Scheidt's background, 1989 technology), but this is unproven.
 
 **What we don't know:** The specific transposition method, the specific substitution method, the full plaintext (only 24/97 characters known).
 
 ---
 
-*Last updated: 2026-02-18 — Refactored: multi-agent protocol in AGENT_PROMPT.md, elimination tiers in docs/elimination_tiers.md*
+*Last updated: 2026-02-20 — Audit: fixed 6 overclaims/errors (KA alphabet, IC, Tier 3, multi-layer/hand hypotheses, Bean period constraint)*
 *Primary author: Colin Patrick (human lead) + Claude (computational partner)*
