@@ -1,4 +1,7 @@
 {
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+  },
   "permissions": {
     "allow": [
       "Bash(python3:*)",
@@ -32,7 +35,8 @@
       "WebFetch(domain:www.cia.gov)",
       "Bash(ls:*)",
       "Bash(grep:*)",
-      "Bash(head:*)"
+      "Bash(head:*)",
+      "Bash(git -C /home/cpatrick/kryptos log --oneline -10)"
     ]
   }
 }
