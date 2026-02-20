@@ -23,7 +23,7 @@ and NOT a simple linear recurrence keystream (orders 1-8 eliminated).
 **What remains viable**:
 - Running key from an unknown text (key = plaintext of another document)
 - Non-linear key generation (lookup tables, non-algebraic rules)
-- Fractionation ciphers (Polybius, bifid, trifid) — partially tested
+- ~~Fractionation ciphers (Polybius, bifid, trifid)~~ **ALL 10 families structurally eliminated** (E-FRAC-21: parity, alphabet, IC proofs hold with or without transposition)
 - Manual/procedural cipher (Sanborn: "not even a math solution")
 - Multi-layer cipher with a non-standard composition
 - Modified Quagmire with artifact-derived parameters
@@ -74,6 +74,14 @@ with all thematic keyword alphabets. No breakthrough.
 - Spiral, diagonal, or S-curve reading of the sculpture text
 - Transposition followed by UNKNOWN (not Vigenere) substitution
 - No transposition at all (pure substitution with complex key)
+
+**FRAC agent eliminations (E-FRAC-01 to 32):**
+- Columnar widths 5-15 + periodic sub: ALL eliminated at discriminating periods
+- Width-9 non-columnar reads (serpentine, spiral, diagonal): eliminated (E-FRAC-03)
+- Width-9 × width-7 compound: eliminated (E-FRAC-04)
+- Simple families (cyclic, affine, rail fence, swap, reversal): ALL eliminated (E-FRAC-32)
+- Width-9 + running key, progressive, autokey: eliminated (E-FRAC-02)
+- Width-9 + mixed alphabets: eliminated (E-FRAC-05)
 
 **If resolved**: Reduces problem from "find transposition AND substitution" to "find substitution."
 
@@ -136,13 +144,13 @@ with all thematic keyword alphabets. No breakthrough.
 
 ### RQ-7: What does the pre-ENE segment (positions 0-20) encode?
 
-**Observation**: IC = 0.0667 at positions 0-20 (English-like), versus 0.0361 for the full CT.
+**Observation**: IC = 0.0667 at positions 0-20. **FRAC finding (E-FRAC-19): This IC is NOT unusual.** It ranks #10 out of 77 contiguous 21-char segments of K4 (13 segments have IC ≥ 0.067). Bonferroni-corrected p=1.0. The "English-like" claim is unfounded — the high IC is just letter repetition (4 O's, 4 B's) in a short sample. Pre-ENE letter frequencies have near-zero correlation with English (r=0.018).
 
-**Hypotheses**:
-- A. Different cipher for first 21 characters (simpler, possibly key indicator)
+**Hypotheses** (all weakened by E-FRAC-19 finding):
+- A. Different cipher for first 21 characters (simpler, possibly key indicator) — IC not significant
 - B. Same cipher but the key happens to produce English-like IC
 - C. Transposition has moved English text into these positions
-- D. Null cipher or plaintext header
+- D. Null cipher or plaintext header — eliminated by E-FRAC-22
 
 **If resolved**: May reveal a "key indicator group" or separate cipher for the header.
 
@@ -222,9 +230,9 @@ analysis at 5 moduli, K1-K3 plaintext as running key)
 - Trifid cipher with 27-symbol alphabet
 - Reversed KRYPTOS-keyed alphabet
 
-Mostly tested but not exhaustively for all cipher types. Fractionation ciphers
+Mostly tested but not exhaustively for all cipher types. ~~Fractionation ciphers
 (bifid, trifid) are particularly interesting because they produce very low IC
-values, matching K4's 0.0361.
+values, matching K4's 0.0361.~~ **FRAC finding (E-FRAC-13/21): ALL fractionation families structurally eliminated. Bifid 6×6 is IC-INCOMPATIBLE (IC 0.059-0.069, K4 at 0th percentile). Bifid 5×5 requires 25-letter alphabet but K4 uses all 26.**
 
 **Novelty engine coverage**: 5 hypotheses (IJ merge, bifid, trifid, reversed alphabet,
 Quagmire III cross-listed from RQ-8)
