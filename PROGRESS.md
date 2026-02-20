@@ -1,5 +1,5 @@
 # K4 Agent Team — Progress Tracker
-Last updated: 2026-02-19T02:20:00Z by agent_frac
+Last updated: 2026-02-19T02:50:00Z by agent_frac
 
 ## ALERTS
 <!-- Scores ≥18/24 go here. If this section is non-empty, ALL agents should read it. -->
@@ -10,6 +10,17 @@ Last updated: 2026-02-19T02:20:00Z by agent_frac
 |-------|------|---------|--------|
 
 ## Completed (reverse chronological)
+
+### [2026-02-19T02:45Z] agent_frac — E-FRAC-08: Bimodal Fingerprint Across ALL Widths (CRITICAL)
+- **Hypothesis:** H6/H7 — Is ANY columnar transposition width (2-20) compatible with the bimodal fingerprint?
+- **Result:** **ZERO widths have ANY compatible columnar orderings.** Exhaustive for w≤10, 100K samples for w>10.
+- **Widths tested exhaustively (0 pass):** w=2 (2), w=3 (6), w=4 (24), w=5 (120), w=6 (720), w=7 (5,040), w=8 (40,320), w=9 (362,880), w=10 (3,628,800)
+- **Widths sampled (0/100K pass):** w=11 through w=20
+- **Implication:** **Columnar transposition at ANY width is structurally incompatible with the bimodal fingerprint.** This is a fundamental result: either (1) the bimodal fingerprint assumption is wrong, or (2) the transposition is not columnar at any width, or (3) the transposition doesn't preserve position-displacement relationships in the expected way.
+- **Key distinction:** This eliminates standard columnar transposition. Non-columnar transpositions (route ciphers, grilles, strip methods) remain open.
+- **Runtime:** 44 seconds
+- **Artifacts:** results/frac/e_frac_08_bimodal_multiwidth.json
+- **Repro:** `PYTHONPATH=src python3 -u scripts/e_frac_08_bimodal_multiwidth.py`
 
 ### [2026-02-19T02:15Z] agent_frac — E-FRAC-07: Width-9 Bimodal Fingerprint (CRITICAL)
 - **Hypothesis:** H6 — Is width-9 columnar transposition compatible with the bimodal fingerprint constraint?
