@@ -1,5 +1,5 @@
 # K4 Agent Team — Progress Tracker
-Last updated: 2026-02-20T18:30:00Z by agent_frac
+Last updated: 2026-02-20T22:00:00Z by agent_frac
 
 ## ALERTS
 <!-- Scores ≥18/24 go here. If this section is non-empty, ALL agents should read it. -->
@@ -39,7 +39,7 @@ Last updated: 2026-02-20T18:30:00Z by agent_frac
 ## FRAC Agent Mandate — 28 experiments (E-FRAC-01 through E-FRAC-28)
 
 **Original mandate (E-FRAC-01 to 25): COMPLETE. ZERO positive findings survived.**
-**Extended mandate (E-FRAC-26/27/28): Quadgram + Bean structural profiling. NEW STRUCTURAL FINDINGS.**
+**Extended mandate (E-FRAC-26/27/28/29): Quadgram + Bean structural profiling + exhaustive crib scoring.**
 
 ### New Structural Findings (E-FRAC-26/27)
 
@@ -63,15 +63,42 @@ Last updated: 2026-02-20T18:30:00Z by agent_frac
 1. **ALL 10 fractionation families** — structurally eliminated (E-FRAC-21)
 2. **Width-9 columnar + ALL substitution models** — NOISE at discriminating periods (E-FRAC-01 to 12)
 3. **Width-5 and Width-7 columnar** — Bean-ELIMINATED (E-FRAC-26/27)
-4. **Width-9 × width-7 compound transposition** — ELIMINATED (E-FRAC-04)
-5. **ALL prior statistical claims** — debunked after multiple-testing correction (E-FRAC-13/14)
-6. **Bimodal fingerprint pre-filter** — statistical artifact (E-FRAC-11)
-7. **Beaufort key entropy signal** — RETRACTED as selection effect (E-FRAC-16→25)
-8. **Crib positions** — validated as correct (E-FRAC-18)
+4. **Width-6 and Width-8 columnar** — NOISE at discriminating periods, width-8 UNDERPERFORMS random (E-FRAC-29)
+5. **Width-9 × width-7 compound transposition** — ELIMINATED (E-FRAC-04)
+6. **ALL prior statistical claims** — debunked after multiple-testing correction (E-FRAC-13/14)
+7. **Bimodal fingerprint pre-filter** — statistical artifact (E-FRAC-11)
+8. **Beaufort key entropy signal** — RETRACTED as selection effect (E-FRAC-16→25)
+9. **Crib positions** — validated as correct (E-FRAC-18)
+10. **Columnar widths 5-9**: ALL ELIMINATED — Bean-impossible (5,7) or noise (6,8,9) at discriminating periods
 
 **Reports:** `reports/frac_width9_analysis.md`, `reports/frac_statistical_meta_analysis.md`
 
 ## Completed (reverse chronological)
+
+### [2026-02-20T22:00Z] agent_frac — E-FRAC-29: Exhaustive Crib Scoring — Widths 6 and 8 (ELIMINATION)
+- **Hypothesis:** Do Bean-compatible widths 6 and 8 show crib signal at discriminating periods (2-7)?
+- **Gap filled:** E-FRAC-27 showed widths 6 and 8 are Bean-compatible, but they were never scored against cribs at discriminating periods. Width-9 was tested in E-FRAC-12.
+- **Configs tested:** Width-6: 720 orderings (exhaustive) × 3 variants × 2 models × 6 periods; Width-8: 40,320 orderings (exhaustive) × 3 variants × 2 models × 6 periods; + 100K random baseline.
+- **Key findings:**
+  - Width-6 max: 13/24 (order=[4,3,2,5,1,0], period 6, Beaufort, model B)
+  - Width-8 max: 13/24 (50 orderings tied, all at period 7)
+  - Random baseline: max 15/24, mean 9.38, p99=12, p999=12
+  - **Raw p=0.0009 is MISLEADING** — must correct for number of trials
+  - **Width-6 corrected p=0.485** (48% of random 720-trial experiments reach 13) → NOISE
+  - **Width-8 corrected p≈1.0** (100% of random 40K-trial experiments reach 13) → UNDERPERFORMS random
+  - Width-8: expected max for 40K trials is ≥14 (87% probability); observed only 13 → BELOW random
+  - Width-8: ZERO orderings with score ≥10 AND Bean pass — Bean-compatible orderings score poorly
+  - Width-6: 3 Bean-passing orderings with score ≥10, best 13 (Vigenère Bean pass, but score from Beaufort)
+- **Cross-width summary (widths 5-9, all at discriminating periods):**
+  - Width-5: Bean-ELIMINATED (0/120 orderings)
+  - Width-6: NOISE (corrected p=0.485)
+  - Width-7: Bean-ELIMINATED (0/5,040 orderings)
+  - Width-8: NOISE, underperforms random (corrected p≈1.0)
+  - Width-9: NOISE, underperforms random (corrected p≈1.0, E-FRAC-12)
+- **Verdict:** NOISE — ALL Bean-compatible widths 5-9 are eliminated for columnar + periodic substitution at discriminating periods. Both width-8 and width-9 score WORSE than random, suggesting columnar structure is ANTI-correlated with crib matching.
+- **Runtime:** 97 seconds
+- **Artifacts:** results/frac/e_frac_29_w6w8_crib_scoring.json
+- **Repro:** `PYTHONPATH=src python3 -u scripts/e_frac_29_w6w8_crib_scoring.py`
 
 ### [2026-02-20T20:00Z] agent_frac — E-FRAC-28: SA Key Optimization on Bean-Passing Orderings (STRUCTURAL)
 - **Hypothesis:** Can SA key optimization on top Bean-passing width-8/9 orderings produce readable English?
