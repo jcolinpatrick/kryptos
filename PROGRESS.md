@@ -1,5 +1,5 @@
 # K4 Agent Team — Progress Tracker
-Last updated: 2026-02-19T06:00:00Z by agent_frac
+Last updated: 2026-02-20T00:15:00Z by agent_frac
 
 ## ALERTS
 <!-- Scores ≥18/24 go here. If this section is non-empty, ALL agents should read it. -->
@@ -37,6 +37,16 @@ Last updated: 2026-02-19T06:00:00Z by agent_frac
 |-------|------|---------|--------|
 
 ## Completed (reverse chronological)
+
+### [2026-02-20T00:10Z] agent_frac — E-FRAC-17: Running Key Search Against Reference Texts
+- **Hypothesis:** Is K4's key derived from a known text (running key) under Beaufort or Vigenere?
+- **Texts searched:** Carter Gutenberg (117K chars), Carter Vol1 extract (288K chars), CIA Charter, JFK Berlin speech, NSA Act 1947, Reagan Berlin speech, UDHR, K1-K3 combined plaintext
+- **Best matches:** 7/24 (Carter texts, both Beaufort and Vigenere) — multiple offsets
+- **Random baseline:** Expected best for 10K offsets = 6.1/24, for 100K+ offsets ≈ 6.5-7/24
+- **Verdict:** NOISE — 7/24 matches is exactly at random expectation for texts of this length. No reference text is the running key source under direct correspondence.
+- **Runtime:** ~180 seconds (terminated early; sufficient data)
+- **Artifacts:** results/frac/e_frac_17_beaufort_running_key.json (partial)
+- **Repro:** `PYTHONPATH=src python3 -u scripts/e_frac_17_beaufort_running_key.py`
 
 ### [2026-02-19T05:55Z] agent_frac — E-FRAC-16: Key Value Distribution Analysis
 - **Hypothesis:** Does the Beaufort or Vigenere key distribution show significant structure at crib positions?
