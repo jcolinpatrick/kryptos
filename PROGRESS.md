@@ -1,5 +1,5 @@
 # K4 Agent Team — Progress Tracker
-Last updated: 2026-02-20T12:00:00Z by agent_frac
+Last updated: 2026-02-20T18:00:00Z by agent_frac
 
 ## ALERTS
 <!-- Scores ≥18/24 go here. If this section is non-empty, ALL agents should read it. -->
@@ -77,17 +77,43 @@ E-FRAC-34 characterizes false 24/24 solutions and provides **concrete multi-obje
 **Repro:** `PYTHONPATH=src python3 -u scripts/e_frac_34_multi_objective_oracle.py`
 **Artifacts:** results/frac/e_frac_34_multi_objective_oracle.json
 
+### [2026-02-20T18:00Z] agent_frac — BEAN IMPOSSIBILITY: ALL DISCRIMINATING PERIODS ELIMINATED (E-FRAC-35)
+**ALL AGENTS READ THIS — especially JTS and TRANS. This is a PROOF, not an empirical finding.**
+
+**Theorem:** For ANY transposition σ (including identity), periodic substitution at periods 2-12 (and 14, 15, 17, 18, 21, 22, 25) violates at least one Bean inequality constraint. This holds for ALL 97! permutations.
+
+**Two elimination mechanisms:**
+1. **Type 1 (same-residue inequality):** If Bean inequality pair (a,b) has a ≡ b (mod p), then k[a] = k[b] under periodic keying, violating k[a] ≠ k[b]. Eliminates periods: {2,3,4,5,6,7,9,10,14,15,17,21,25}.
+2. **Type 2 (equality-inequality conflict):** Bean equality forces key[27%p] = key[65%p], but if some Bean inequality pair (a,b) maps to the same residue pair, the equality and inequality directly conflict. Eliminates periods: {11,12,18,22} additionally.
+
+**Combined: 17 of 25 periods (2-26) are ELIMINATED. Only 8 survive: {8, 13, 16, 19, 20, 23, 24, 26}.**
+
+**Critical implications:**
+- ALL discriminating periods (2-7) are Bean-impossible for transposition + periodic key
+- Period 8 is the FIRST surviving period (3 cribs per key variable)
+- Only 3 surviving periods have ≥1.5 cribs/var: {8, 13, 16}
+- The 90 false 24/24 solutions from E-FRAC-33/34 were ALL at Bean-eliminated periods
+- IF K4 uses periodic keying + transposition, the period MUST be ≥8
+- This strongly increases the likelihood of a NON-PERIODIC key model
+
+**For JTS:** Target period 8 as primary search period. Do NOT search periods 2-7 with periodic keying.
+**For TRANS:** All prior tests at periods 2-7 were in Bean-impossible territory. This doesn't invalidate eliminations but provides a cleaner structural explanation.
+
+**Repro:** `PYTHONPATH=src python3 -u scripts/e_frac_35_bean_period_impossibility.py`
+**Artifacts:** results/frac/e_frac_35_bean_period_impossibility.json
+
 ## Active Tasks
 | Agent | Task | Started | Status |
 |-------|------|---------|--------|
 
-## FRAC Agent Mandate — 34 experiments (E-FRAC-01 through E-FRAC-34)
+## FRAC Agent Mandate — 35 experiments (E-FRAC-01 through E-FRAC-35)
 
 **Original mandate (E-FRAC-01 to 25): COMPLETE. ZERO positive findings survived.**
 **Extended mandate (E-FRAC-26-31): Bean profiling + crib scoring. ALL columnar widths 5-15 ELIMINATED.**
 **Final sweep (E-FRAC-32): Simple transposition families (cyclic, affine, rail fence, swap, reversal) ALL ELIMINATED.**
 **Meta-analysis (E-FRAC-33): Fitness landscape smooth, but crib oracle INSUFFICIENT — false 24/24 solutions exist at ALL periods.**
 **Oracle design (E-FRAC-34): Multi-objective thresholds for JTS — quadgram gap of 0.93/char discriminates false positives.**
+**Bean impossibility (E-FRAC-35): ALL discriminating periods (2-7) + periods up to 12 are Bean-impossible for transposition + periodic key. PROOF.**
 
 ### New Structural Findings (E-FRAC-26/27)
 
@@ -122,10 +148,28 @@ E-FRAC-34 characterizes false 24/24 solutions and provides **concrete multi-obje
 12. **Simple transposition families** (cyclic shifts, affine, reversal, rail fence, single swaps): ALL ELIMINATED — max 13/24, BELOW random baseline 14/24 (E-FRAC-32)
 13. **Crib oracle INSUFFICIENT for arbitrary permutations** — hill-climbing reaches false 24/24 at ALL periods including period 5 (E-FRAC-33). Must combine with plaintext quality metrics.
 14. **Multi-objective oracle designed** (E-FRAC-34): 90 false 24/24 solutions characterized. Quadgram gap = 0.93/char (FP best: -5.77, English: -4.84). Threshold: quadgram > -5.0/char + IC > 0.055 + Bean PASS.
+15. **Bean impossibility proof** (E-FRAC-35): ALL discriminating periods (2-7) are IMPOSSIBLE for transposition + periodic key due to Bean inequality constraints. Also eliminated: periods 9-12, 14, 15, 17, 18, 21, 22, 25. Only 8 periods survive out of 25 (2-26): {8, 13, 16, 19, 20, 23, 24, 26}. This is a universal PROOF holding for all 97! permutations.
 
 **Reports:** `reports/frac_width9_analysis.md`, `reports/frac_statistical_meta_analysis.md`
 
 ## Completed (reverse chronological)
+
+### [2026-02-20T18:00Z] agent_frac — E-FRAC-35: Bean Impossibility Proof (CRITICAL PROOF)
+- **Theorem:** For ANY transposition σ and periodic key at period p, Bean constraints eliminate ALL discriminating periods (2-7) plus periods 9-12, 14, 15, 17, 18, 21, 22, 25. Only 8 of 25 periods (2-26) survive: {8, 13, 16, 19, 20, 23, 24, 26}.
+- **Method:** Two elimination mechanisms:
+  - **Type 1 (same-residue inequality):** Bean inequality pair (a,b) with a ≡ b (mod p) forces k[a]=k[b], violating k[a]≠k[b]. Differences {1,3,4,5,9,34,42,43,45,50} eliminate periods 2-7, 9, 10, 14, 15, 17, 21, 25.
+  - **Type 2 (equality-inequality conflict):** Bean equality forces key[27%p]=key[65%p], but inequality pair (71,21) has {71%p,21%p}={5,10}={27%11,65%11}, creating direct contradiction. Similarly for (29,63) at period 12. Eliminates periods 11, 12, 18, 22.
+- **Feasibility at surviving periods (bipartite matching, 1M samples):**
+  - Period 8: 7,959 feasible key tuples (0.80%) → est. 1.66B total
+  - Period 13: 5,890 feasible (0.59%) → est. 14.6 quadrillion total (highly underdetermined)
+  - Period 16: 6,164 feasible (0.62%) → est. 269 quintillion total (extremely underdetermined)
+  - Periods 11, 12: ZERO Bean-passing from 1M samples (confirmed eq-ineq conflict)
+- **Cross-validation:** All 90 false 24/24 solutions from E-FRAC-33/34 were at Bean-eliminated periods (p2, p5, p6, p7). Bean impossibility provides a STRUCTURAL explanation for why these are false positives.
+- **Key implication:** If K4 uses periodic keying with transposition, the period must be ≥8. Period 8 is the ONLY viable period with ≥2 cribs/var. This strongly favors NON-PERIODIC key models.
+- **Verdict:** PROOF — universal Bean impossibility for transposition + periodic key at discriminating periods
+- **Runtime:** 22 seconds
+- **Artifacts:** results/frac/e_frac_35_bean_period_impossibility.json
+- **Repro:** `PYTHONPATH=src python3 -u scripts/e_frac_35_bean_period_impossibility.py`
 
 ### [2026-02-20T12:00Z] agent_frac — E-FRAC-34: Multi-Objective Oracle Design for JTS (CRITICAL)
 - **Hypothesis:** Can plaintext quality metrics distinguish real solutions from false 24/24 positives? What thresholds should JTS use?
