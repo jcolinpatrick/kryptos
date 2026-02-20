@@ -1,5 +1,5 @@
 # K4 Agent Team — Progress Tracker
-Last updated: 2026-02-20T12:00:00Z by agent_frac
+Last updated: 2026-02-20T18:30:00Z by agent_frac
 
 ## ALERTS
 <!-- Scores ≥18/24 go here. If this section is non-empty, ALL agents should read it. -->
@@ -36,37 +36,72 @@ Last updated: 2026-02-20T12:00:00Z by agent_frac
 | Agent | Task | Started | Status |
 |-------|------|---------|--------|
 
-## FRAC Agent Mandate — COMPLETE (2026-02-20)
+## FRAC Agent Mandate — 27 experiments (E-FRAC-01 through E-FRAC-27)
 
-**25 experiments completed (E-FRAC-01 through E-FRAC-25). ZERO positive findings survive.**
+**Original mandate (E-FRAC-01 to 25): COMPLETE. ZERO positive findings survived.**
+**Extended mandate (E-FRAC-26/27): Quadgram + Bean structural profiling. NEW STRUCTURAL FINDINGS.**
 
-Summary of what FRAC eliminated:
-1. **ALL 10 fractionation families** — structurally eliminated, proofs hold with/without transposition (E-FRAC-21)
+### New Structural Findings (E-FRAC-26/27)
+
+**Width-5 and Width-7 are Bean-ELIMINATED** (exhaustive proof):
+- Width-5: 0/120 orderings pass Bean equality
+- Width-7: 0/5,040 orderings pass Bean equality, 0/75,600 configs pass full Bean
+- This is a HARD STRUCTURAL CONSTRAINT — no ordering at these widths can satisfy CT[inv(27)] = CT[inv(65)]
+
+**Width-9 has significantly better Bean-quadgram compatibility than width-7:**
+- Width-9: 67,320 Bean-passing configs (1.24%), best Bean quadgram: -6.238
+- Width-9 best quadgram exceeds all 10K random samples (p < 0.0001)
+- Width-8: 3,006 full Bean passes (2.49%), best Bean quadgram: -6.371
+- Width-6: 127 full Bean passes (5.88%), best Bean quadgram: -6.655
+
+**Bean compatibility profile (widths 5-15):**
+- Bean-INCOMPATIBLE: widths 5, 7 (zero Bean passes, exhaustively verified)
+- Bean-COMPATIBLE: widths 6, 8, 9, 10, 11, 12, 13, 14, 15
+- BUT: all plaintexts are still gibberish. No width produces English text.
+
+### Summary of what FRAC has eliminated/established:
+1. **ALL 10 fractionation families** — structurally eliminated (E-FRAC-21)
 2. **Width-9 columnar + ALL substitution models** — NOISE at discriminating periods (E-FRAC-01 to 12)
-3. **Width-9 non-columnar reading orders** — NOISE (E-FRAC-03)
+3. **Width-5 and Width-7 columnar** — Bean-ELIMINATED (E-FRAC-26/27)
 4. **Width-9 × width-7 compound transposition** — ELIMINATED (E-FRAC-04)
-5. **Width-9 mixed alphabets** — ELIMINATED or underdetermined (E-FRAC-05)
-6. **Width-11/13 columnar** — NOISE, identical to random (E-FRAC-06)
-7. **ALL prior statistical claims** — debunked after proper multiple-testing correction (E-FRAC-13/14)
-8. **Bimodal fingerprint pre-filter** — shown to be a statistical artifact (E-FRAC-11)
-9. **Beaufort key entropy signal** — RETRACTED as selection effect (E-FRAC-16→23→24→25)
-10. **Crib positions** — validated as correct (E-FRAC-18)
-11. **Pre-ENE "English-like" IC** — debunked after Bonferroni correction (E-FRAC-19)
-12. **Null cipher / interval readings** — no hidden message (E-FRAC-22)
-13. **All functional key models** — NOISE (E-FRAC-15)
-14. **Running key from reference texts** — NOISE (E-FRAC-17)
-15. **All structured non-periodic key models** — ELIMINATED (E-FRAC-23)
-
-**What remains OPEN (not in FRAC's mandate):**
-- Transposition families NOT tested: turning grille, bespoke physical methods, double columnar
-- Non-standard substitution: position-dependent alphabets, non-standard tableau usage
-- Running key from UNKNOWN source text (known texts eliminated, unknown texts remain viable)
-- Joint transposition-substitution optimization (JTS agent's mandate)
-- Creative/physical cipher methods (BESPOKE agent's mandate)
+5. **ALL prior statistical claims** — debunked after multiple-testing correction (E-FRAC-13/14)
+6. **Bimodal fingerprint pre-filter** — statistical artifact (E-FRAC-11)
+7. **Beaufort key entropy signal** — RETRACTED as selection effect (E-FRAC-16→25)
+8. **Crib positions** — validated as correct (E-FRAC-18)
 
 **Reports:** `reports/frac_width9_analysis.md`, `reports/frac_statistical_meta_analysis.md`
 
 ## Completed (reverse chronological)
+
+### [2026-02-20T18:30Z] agent_frac — E-FRAC-27: Bean-Compatible Width Profiling (STRUCTURAL)
+- **Hypothesis:** Which columnar transposition widths are structurally compatible with the Bean constraint?
+- **Widths tested:** 5-15, exhaustive for w≤8, 50K samples for w≥9
+- **Key findings:**
+  - **Bean-INCOMPATIBLE widths: 5 and 7** (exhaustive proof, ZERO orderings pass Bean equality)
+  - **Bean-COMPATIBLE widths: 6, 8, 9, 10, 11, 12, 13, 14, 15** (all have non-zero pass rates)
+  - Width-5: common CT letters exist but no ordering maps Bean positions to matching letters
+  - Width-7: only 'R' is common but no ordering achieves simultaneous match
+  - Width-6 has highest eq pass rate (11.67%), width-8 has highest full pass rate (2.49%)
+  - Best Bean-passing quadgrams: w=9 (-6.342/char from 50K sample; -6.238 from E-FRAC-26 exhaustive)
+- **Verdict:** STRUCTURAL — width-5 and width-7 are ELIMINATED by Bean constraint
+- **Runtime:** 362 seconds
+- **Artifacts:** results/frac/e_frac_27_bean_width_profile.json
+- **Repro:** `PYTHONPATH=src python3 -u scripts/e_frac_27_bean_width_profile.py`
+
+### [2026-02-20T17:00Z] agent_frac — E-FRAC-26: Exhaustive Width-9 Quadgram Search (STRUCTURAL)
+- **Hypothesis:** Does width-9 show better Bean-quadgram compatibility than width-7?
+- **Configs tested:** 5,443,200 (width-9: 362,880 orderings × 3 variants × 5 periods) + 75,600 (width-7 exhaustive) + 150,000 (random baseline)
+- **Key findings:**
+  - **Width-7: ZERO Bean-passing configs** (0/75,600) — structurally incompatible with Bean
+  - **Width-9: 67,320 Bean-passing configs** (1.24%) — structurally compatible
+  - Width-9 best quadgram (any): -6.079/char — exceeds all 10K random samples (p < 0.0001)
+  - Width-9 best Bean-passing quadgram: -6.238/char — exceeds all random Bean results (-6.435)
+  - Width-9 has 1 Bean pass in top-15 quadgram vs 0 for width-7
+  - All plaintexts still gibberish (far from English -4.3/char)
+- **Verdict:** STORE — width-9 is Bean-compatible with statistically significant quadgram improvement, but plaintext is not English
+- **Runtime:** 365 seconds
+- **Artifacts:** results/frac/e_frac_26_w9_quadgram.json
+- **Repro:** `PYTHONPATH=src python3 -u scripts/e_frac_26_w9_quadgram.py`
 
 ### [2026-02-20T10:00Z] agent_frac — E-FRAC-25: Transposition Effect on Apparent Key Entropy (CRITICAL META-RESULT)
 - **Hypothesis:** Does transposition explain the low Beaufort key entropy (p=0.003 from E-FRAC-16)?

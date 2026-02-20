@@ -2,9 +2,11 @@
 
 **CRITICAL FRAMING:** Every exhaustive-search elimination in this project was conducted under the assumption of **direct positional correspondence** — meaning CT position N maps to PT position N with no transposition. The primary hypothesis (H1) is that a transposition layer exists, which means **the substitution families below have NOT been tested in their correct context as one layer of a multi-layer system.** The TRANS, JTS, and FRAC agents are doing that work now.
 
-**FRAC AGENT STATUS (2026-02-20):** The FRAC agent has completed 25 experiments (E-FRAC-01 through E-FRAC-25). Key results that affect this document:
+**FRAC AGENT STATUS (2026-02-20):** The FRAC agent has completed 27 experiments (E-FRAC-01 through E-FRAC-27). Key results that affect this document:
 - ALL fractionation families structurally eliminated (E-FRAC-21) — proofs hold WITH OR WITHOUT transposition
 - Width-9 columnar + all substitution models: ELIMINATED at discriminating periods (E-FRAC-01 to 12)
+- **Width-5 and Width-7 columnar: Bean-ELIMINATED** (E-FRAC-26/27) — ZERO orderings pass Bean equality constraint
+- Width-9 is Bean-compatible (1.24% pass rate, best Bean quadgram -6.238, p < 0.0001 vs random) (E-FRAC-26)
 - "Bimodal fingerprint" pre-filter is likely a statistical artifact (E-FRAC-11) — agents should NOT rely on it
 - K4's IC, lag-7 autocorrelation, and DFT k=9 peak are NOT statistically significant (E-FRAC-13/14)
 - Beaufort key entropy signal RETRACTED — was a selection effect (E-FRAC-16→23→24→25)
@@ -25,6 +27,8 @@ These are algebraic proofs, not search results. They are permanently valid unles
 | Periodic polyalphabetic impossibility | All periodic substitution ciphers (period ≤26) under Vigenère, Beaufort, or Variant Beaufort with direct positional correspondence | Requires CT, cribs, AND direct correspondence |
 | Hill 2×2 / 3×3 impossibility | Hill cipher with direct positional correspondence | Requires CT, cribs, AND direct correspondence |
 | Vimark p=5 algebraic incompatibility | Vimark p=5 with direct positional correspondence | Requires CT, cribs, AND direct correspondence |
+| Columnar width-5 Bean impossibility | Width-5 columnar transposition + any periodic substitution (all 120 orderings × all variants: ZERO Bean passes) | Requires Bean constraint (k[27]=k[65]) and CT correctness |
+| Columnar width-7 Bean impossibility | Width-7 columnar transposition + any periodic substitution (all 5,040 orderings × all variants: ZERO Bean passes) | Requires Bean constraint (k[27]=k[65]) and CT correctness |
 
 **What could invalidate Tier 1:** Only if the 24 crib positions are wrong (off-by-one, wrong character mapping) or the CT transcription has an error. The wave1 report already caught one VKB error (position 74 was listed as K→K self-encryption; actual CT[74]=W). If one error existed, others could too. The cribs themselves come from Sanborn's public announcements and are highly trustworthy, but the exact 0-indexed position mapping has been a source of bugs.
 
