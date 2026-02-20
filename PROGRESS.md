@@ -1,5 +1,5 @@
 # K4 Agent Team — Progress Tracker
-Last updated: 2026-02-19T03:20:00Z by agent_frac
+Last updated: 2026-02-19T03:45:00Z by agent_frac
 
 ## ALERTS
 <!-- Scores ≥18/24 go here. If this section is non-empty, ALL agents should read it. -->
@@ -22,6 +22,18 @@ Last updated: 2026-02-19T03:20:00Z by agent_frac
 |-------|------|---------|--------|
 
 ## Completed (reverse chronological)
+
+### [2026-02-19T03:40Z] agent_frac — E-FRAC-12: Width-9 Strict Re-evaluation (No Bimodal, Periods 2-7)
+- **Hypothesis:** Does width-9 columnar show signal at discriminating periods when bimodal filter is dropped?
+- **Configs tested:** 362,880 orderings × 3 variants × 2 models × periods 2-7 (exhaustive)
+- **Best score:** 14/24 (20 orderings, all at period 7, ALL fail Bean)
+- **Best Bean-passing:** 13/24 (one ordering: [2,0,6,4,1,3,7,5,8], p7 Beaufort model B)
+- **Random baseline (N=100K):** max=15/24, mean=9.38, 99.9th=12
+- **Distribution comparison:** Width-9 score distribution matches random at ALL levels (ratios 0.97x-1.38x). No structural enhancement.
+- **Verdict:** NOISE — width-9 columnar is indistinguishable from random at discriminating periods, even without the bimodal filter.
+- **Runtime:** 934 seconds
+- **Artifacts:** results/frac/e_frac_12_w9_strict_reeval.json
+- **Repro:** `PYTHONPATH=src python3 -u scripts/e_frac_12_w9_strict_reeval.py`
 
 ### [2026-02-19T03:15Z] agent_frac — E-FRAC-11: Bimodal Fingerprint Validity Analysis (CRITICAL)
 - **Hypothesis:** Is the bimodal fingerprint a real cryptanalytic constraint or a statistical artifact?
