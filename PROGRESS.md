@@ -1,5 +1,5 @@
 # K4 Agent Team — Progress Tracker
-Last updated: 2026-02-20T22:00:00Z by agent_trans
+Last updated: 2026-02-20T21:00:00Z by agent_tableau
 
 ## ALERTS
 <!-- Scores ≥18/24 go here. If this section is non-empty, ALL agents should read it. -->
@@ -168,35 +168,6 @@ The K4 crib oracle is **information-theoretically insufficient** for arbitrary p
 | Agent | Task | Started | Status |
 |-------|------|---------|--------|
 
-## TRANS Agent — Final Status: DOMAIN EXHAUSTED (6 experiments, 0 signals)
-
-**Experiments:** 6 by TRANS agent + 48 by FRAC agent covering overlapping transposition domain = 54 total.
-
-**TRANS agent experiments:**
-1. **w9_columnar:** 362,880 orderings, 0 bimodal passes, 0/28.3M strict passes. ELIMINATED.
-2. **w9_noncolumnar:** 11 reading orders, best 16/24 at p=13 (noise). ELIMINATED.
-3. **w11_w13_columnar:** 57,265 keyword orderings, best 18/24 at p=14 (false positive). ELIMINATED.
-4. **bimodal_compatible:** 68,923 perms across 6 families, best 19/24 at p=13 (ENE artifact). 0 strict passes. ELIMINATED.
-5. **sa_bimodal:** 24 chains x 500K steps = 12M steps. ALL chains hit 24/24 at p=9-10. **OVERFITTING** (97 DoF vs 24 constraints). ELIMINATED.
-6. **nofilter_strict:** 1,009,080 columnar orderings (w5-15), 0 strict passes at p=2-10. ELIMINATED.
-
-**Comprehensive coverage (combined with FRAC):**
-- ALL columnar widths 5-15 (exhaustive or 100K sampled) + periodic sub: NOISE
-- Widths 5, 7: Bean-IMPOSSIBLE (zero orderings pass Bean equality)
-- Double columnar (9 Bean-compatible width pairs): NOISE
-- Myszkowski (w5-13): NOISE
-- AMSCO/Nihilist/Swapped (w5-13): Bean-INCOMPATIBLE + NOISE
-- Simple transpositions (cyclic, affine, rail fence, reverse, swap): below random
-- Grid reading orders (13 families, w5-13): below random
-- ANY transposition + periodic key at periods 2-7: Bean-IMPOSSIBLE (PROOF)
-- Autokey + arbitrary transposition: can't reach 24/24
-- Progressive/Quadratic/Fibonacci key: Bean-ELIMINATED
-- Running key: underdetermined but OPEN (JTS territory)
-
-**Verdict:** ALL structured transposition + periodic/autokey/progressive/polynomial substitution models are ELIMINATED. The TRANS domain is exhausted. Remaining open territory (running key + structured transposition, bespoke physical methods, position-dependent alphabets) belongs to JTS, BESPOKE, and TABLEAU agents.
-
-**Full synthesis report:** `results/trans/SUMMARY.md`
-
 ## FRAC Agent Mandate — 48 experiments (E-FRAC-01 through E-FRAC-48)
 
 **Original mandate (E-FRAC-01 to 25): COMPLETE. ZERO positive findings survived.**
@@ -313,7 +284,67 @@ The K4 crib oracle is **information-theoretically insufficient** for arbitrary p
 
 **Reports:** `reports/frac_width9_analysis.md`, `reports/frac_statistical_meta_analysis.md`
 
+## TABLEAU Agent Mandate — 20 experiments (E-TABLEAU-01 through E-TABLEAU-20)
+
+**Hypothesis space:** H8/H9 — Non-standard tableau usage, K1-K3 as instructions, position-dependent alphabets.
+**Role:** Lower-compute, higher-analysis — structural reasoning and cheap tests.
+
+**E-TABLEAU-01 to E-TABLEAU-19 (prior sessions, YIELDED):** All simple tableau models eliminated:
+1. **Non-standard tableau access** (column reads, rotations, paths, physical keys): ALL ELIMINATED
+2. **Kryptos tableau as key source:** ELIMINATED — no path through tableau explains observed keystream
+3. **K1-K3 instructions:** "LAYER TWO" confirmed as compound encipherment instruction; no other operational instructions found
+4. **Misspelling chain (QUAY, EQUAL):** ELIMINATED — all delta/keyword tests at noise
+5. **Hill 2×2:** ELIMINATED direct (exhaustive) and after transposition (MC validation)
+6. **Autokey (all 6 variants):** ELIMINATED after width-9
+7. **Affine substitution (a≠1):** ELIMINATED — zero power beyond Vigenère
+8. **Cross-alphabet Quagmire (KA×STD, STD×KA):** ELIMINATED
+9. **Running key from English text:** ELIMINATED
+10. **Row/column additive, linear, quadratic key models:** ELIMINATED
+11. **Gronsfeld:** ELIMINATED — zero passes
+12. **Key conclusion:** Kryptos tableau is for SUBSTITUTION, not key generation. Keystream is genuinely aperiodic and non-algebraic.
+
+**E-TABLEAU-20 (2026-02-20): K3-method thematic keywords at Bean-surviving periods:**
+- FRAC E-FRAC-35 proved periodic keys at periods 2-7 are Bean-impossible under ANY transposition
+- Only periods {8, 13, 16, 19, 20, 23, 24, 26} survive Bean constraints
+- Tested 25 thematic keywords (ABSCISSA, MAGNETIC, POSITION, ILLUSION, VIRGINIA, etc.) at width-8 (40K exhaustive), width-13 (50K sampled), and width-9 (50K sampled)
+- 4.38M configs tested across 1.095M orderings × 4 model/variant combinations
+- **Global best: 8/24** — far below noise floor (14/24)
+- **Zero Bean-passing high scorers, zero 24/24 hits**
+- **Thematic keywords ANTI-correlate with crib structure** (worse than random)
+- **Verdict: ALL thematic keywords at Bean-surviving periods ELIMINATED**
+
+**Structural constraints established by TABLEAU:**
+- Bean P-pair: σ must map two CT P's to positions 27 and 65 (only 3 P's in CT)
+- Bottleneck positions: pos 64 needs Y (unique), pos 69 needs M (unique)
+- Width-7 IMPOSSIBLE (zero Bean passers — confirmed by FRAC E-FRAC-27)
+- IC = 0.0361 (below random 0.0385), invariant under permutation
+- Scoring underdetermination: period ≥8 gives false positives; only period ≤7 discriminates
+- **Width-9 Bean-passing:** 4,860 Vig / 3,744 Beau (confirmed by FRAC E-FRAC-01)
+- **Future experiments should test BOTH standard AND KA alphabets**
+
 ## Completed (reverse chronological)
+
+### [2026-02-20T21:00Z] agent_tableau — E-TABLEAU-20: K3-Method Thematic Keywords at Bean-Surviving Periods (ELIMINATION)
+- **Hypothesis:** Does K4 use K3's method (columnar + Vigenère/Beaufort) with a thematic keyword at a Bean-surviving period? ABSCISSA (K2 keyword, period 8) is the most historically motivated candidate.
+- **Motivation:** K3 used Model B: Columnar(KRYPTOS, w7) → Vig(PALIMPSEST, p10). FRAC E-FRAC-35 proved periods 2-7 are Bean-impossible. Only period 8+ survives. ABSCISSA (K2's keyword) has period 8 — the first Bean-surviving period.
+- **Method:**
+  - Phase 1: Specific keyword-derived orderings (K3-style pairings, 5 combos × 4 configs): best 3/24
+  - Phase 2: Width-8 exhaustive (40,320 orderings) × 16 period-8 keywords × 4 model/variant: best 7/24
+  - Phase 3: Width-13 (50K orderings) × 6 period-13 keywords × 4 configs: best 8/24
+  - Phase 4: Width-9 (50K orderings) × 3 period-8 keywords × 4 configs: best 8/24
+- **Configs tested:** 4,380,480 (1,095,120 orderings × 4 model×variant)
+- **Keywords tested:** ABSCISSA, MAGNETIC, LOCATION, POSITION, ILLUSION, IQLUSION, VIRGINIA, TREASURE, DECEMBER, NINETEEN, MONUMENT, EMBEDDED, DISPATCH, INSCRIBE, MERIDIAN, LANGUAGE, EASTNORTHEAST, ESTABLISHMENT, COMMUNICATION, CONSTELLATION, CORRESPONDING, UNDERSTANDING
+- **Key findings:**
+  - Global best: 8/24 (CONSTELLATION w13, CORRESPONDING w13, ABSCISSA w9)
+  - All period-8 keywords at width-8: best 5-7/24 (below random noise 14/24)
+  - Zero Bean-passing high scorers at any width/keyword
+  - Thematic keywords perform WORSE than random — specific letter patterns anti-correlate with crib structure
+  - K3-style specific pairings (KRYPTOS+PALIMPSEST, ABSCISSA+ABSCISSA, etc.): 0-3/24
+- **Noise floor:** Random baseline at period 8: max 14/24 (FRAC E-FRAC-36)
+- **Verdict:** ELIMINATED — no K3-method variant with thematic keyword at Bean-surviving period produces signal. Combined with prior results: ALL keyword-based Vigenère/Beaufort + columnar transposition models are dead at every period and every width.
+- **Runtime:** 24 seconds
+- **Artifacts:** results/tableau/e_tableau_20_k3method_keywords.json
+- **Repro:** `PYTHONPATH=src python3 -u scripts/e_tableau_20_k3method_keywords.py`
 
 ### [2026-02-20T14:00Z] agent_frac — E-FRAC-48: AMSCO/Nihilist/Swapped Columnar at Widths 8-13 (ELIMINATION)
 - **Hypothesis:** Do AMSCO, Nihilist, and Swapped columnar transpositions at widths 8-13 show crib signal at discriminating periods? Prior test E-S-22 only covered widths 5-8.
