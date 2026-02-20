@@ -2,7 +2,7 @@
 
 **CRITICAL FRAMING:** Every exhaustive-search elimination in this project was conducted under the assumption of **direct positional correspondence** — meaning CT position N maps to PT position N with no transposition. The primary hypothesis (H1) is that a transposition layer exists, which means **the substitution families below have NOT been tested in their correct context as one layer of a multi-layer system.** The TRANS, JTS, and FRAC agents are doing that work now.
 
-**FRAC AGENT STATUS (2026-02-20, FINAL++):** The FRAC agent has completed 50 experiments (E-FRAC-01 through E-FRAC-50). Mandate COMPLETE + running key gap closure. Key results that affect this document:
+**FRAC AGENT STATUS (2026-02-20, FINAL+++):** The FRAC agent has completed 51 experiments (E-FRAC-01 through E-FRAC-51). Mandate COMPLETE + running key gap closure + English key detection. Key results that affect this document:
 - ALL fractionation families structurally eliminated (E-FRAC-21) — proofs hold WITH OR WITHOUT transposition
 - **Columnar widths 5-15 + periodic substitution: ALL ELIMINATED at discriminating periods**
   - Width-5, Width-7: Bean-ELIMINATED (ZERO orderings pass Bean equality, E-FRAC-26/27)
@@ -31,6 +31,11 @@
   - Identity, cyclic, affine, rail fence, block reversal, double columnar: 17,306 Bean-passing configs × 7 texts × 3 variants, 8.8B checks, ZERO matches
   - Reverse and rail fence: Bean-INCOMPATIBLE (zero passes)
   - Combined with E-FRAC-12/29/30 (periodic keys): ALL structured transposition families eliminated with BOTH periodic and running key models from known texts
+- **Running key from unknown English text + columnar: ELIMINATED** (E-FRAC-51)
+  - 16,597 Bean-passing columnar configs × 3 variants scored for English-like key fragments
+  - Best quadgram: -4.151/char, English 5th percentile: -3.551/char, gap: 0.6/char
+  - ZERO configs produce English-like key fragments (0/16,597)
+  - Extends E-FRAC-49/50 from 7 specific texts to ANY unknown English running key
 - Full meta-analysis: `reports/frac_statistical_meta_analysis.md`
 
 Read these tiers carefully before deciding what is and isn't worth testing.
@@ -82,7 +87,7 @@ These eliminations are solid FOR THEIR SPECIFIC MODEL: "Is K4 cipher family X ap
 | Bifid / Playfair / Four-Square / Two-Square | ~4.9 billion | 11/24 | ELIMINATED | **STRUCTURALLY ELIMINATED** (E-FRAC-21: parity + alphabet proofs hold with or without transposition) |
 | Nihilist | ~4.9 billion | 11/24 | ELIMINATED | **OPEN** |
 | Autokey (PT and CT) | ~50,000 | 6/24 | ELIMINATED | **STRUCTURALLY ELIMINATED** (E-FRAC-37: cannot reach 24/24 even with arbitrary transposition; PT max=16/24, CT max=21/24) |
-| Running Key (K1–K3 as keystream) | ~45,000 | 7/24 | ELIMINATED | **ELIMINATED for known texts + structured transpositions** (E-FRAC-49/50: columnar w6/8/9, affine, cyclic, double columnar × 7 reference texts × 3 variants = 0 matches out of 17B checks. OPEN for unknown source texts or bespoke transpositions.) |
+| Running Key (K1–K3 as keystream) | ~45,000 | 7/24 | ELIMINATED | **ELIMINATED for known texts + structured transpositions** (E-FRAC-49/50: columnar w6/8/9, affine, cyclic, double columnar × 7 reference texts × 3 variants = 0 matches out of 17B checks). **ELIMINATED for unknown English text + columnar** (E-FRAC-51: key fragment quadgram detection, 0/16,597 configs in English range). OPEN only for unknown non-English source texts or bespoke transpositions. |
 | Grid Rotation (K3-style) | ~14,000 | 7/24 | ELIMINATED | N/A (is itself a transposition) |
 | Columnar + Vigenère (no bimodal pre-filter) | ~4 million | 12/15 | ELIMINATED (widths 5–10) | **ELIMINATED by FRAC — widths 5-15 comprehensively tested (E-FRAC-12/29/30), bimodal filter debunked (E-FRAC-11), ALL noise. Bean impossibility at discriminating periods (E-FRAC-35). Extended to double columnar (E-FRAC-46), Myszkowski (E-FRAC-47), AMSCO/Nihilist/Swapped (E-FRAC-48), simple families (E-FRAC-32), grid reading orders (E-FRAC-45). Periodic key + ANY transposition = ELIMINATED at p2-7 (proof).** |
 | Weltzeituhr permutations | ~295 million | 14/24 | ELIMINATED | **OPEN (as transposition source)** |
