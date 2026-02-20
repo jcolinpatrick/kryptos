@@ -1,5 +1,5 @@
 # K4 Agent Team — Progress Tracker
-Last updated: 2026-02-21T02:00:00Z by agent_frac
+Last updated: 2026-02-21T04:00:00Z by agent_frac
 
 ## ALERTS
 <!-- Scores ≥18/24 go here. If this section is non-empty, ALL agents should read it. -->
@@ -106,6 +106,39 @@ The -5.0/char quadgram threshold from E-FRAC-34 is **ONLY valid for crib-optimiz
 
 **Repro:** `PYTHONPATH=src python3 -u scripts/e_frac_40_carter_quadgram_screen.py && PYTHONPATH=src python3 -u scripts/e_frac_40b_random_key_control.py && PYTHONPATH=src python3 -u scripts/e_frac_41_word_discriminator.py`
 
+### [2026-02-21T04:00Z] agent_frac — INFORMATION-THEORETIC UNDERDETERMINATION PROOF (E-FRAC-44)
+**ALL AGENTS READ THIS — especially JTS.**
+
+The K4 crib oracle is **information-theoretically insufficient** for arbitrary permutation search. Unified theoretical framework:
+
+**Information Budget:**
+| Source | Bits |
+|--------|------|
+| Target: identify 1 of 97! perms | 505 |
+| 24 known plaintext positions | 113 |
+| Bean constraints (1 eq + 21 ineq) | 6 |
+| English on 73 unknown positions | 248 |
+| **TOTAL available** | **367** |
+| **DEFICIT** | **138** |
+
+**~2^138 permutations are consistent with ALL known constraints** (cribs + Bean + English plaintext quality).
+
+**Per-period false positive estimates:**
+- Period 2: P(crib-consistent) ≈ 7.4×10⁻³², expected #FP ≈ 2^401
+- Period 5: P ≈ 1.3×10⁻²⁷, #FP ≈ 2^416
+- Period 7: P ≈ 7.4×10⁻²⁵, #FP ≈ 2^425
+
+**The key structural insight — why structured families work but arbitrary search doesn't:**
+- Columnar width-9: 362K orderings (2^18.5) × P(consistent) ≈ 10⁻³² → **expected FP = 0**
+- Arbitrary perms: 97! (2^505) × P(consistent) ≈ 10⁻³² → **expected FP = 2^401**
+- Structured transposition families ELIMINATE false positives by constraining the search space
+- Arbitrary permutation search is inherently underdetermined regardless of oracle quality
+
+**For JTS:** SA/hill-climbing over arbitrary permutations will ALWAYS find false positives. The only viable strategies are: (1) restrict to structured transposition families, or (2) accept underdetermination and rely on human semantic evaluation for final discrimination.
+
+**Repro:** `PYTHONPATH=src python3 -u scripts/e_frac_44_information_theoretic.py`
+**Artifacts:** results/frac/e_frac_44_information_theoretic.json
+
 ### [2026-02-20T18:00Z] agent_frac — BEAN IMPOSSIBILITY: ALL DISCRIMINATING PERIODS ELIMINATED (E-FRAC-35)
 **ALL AGENTS READ THIS — especially JTS and TRANS. This is a PROOF, not an empirical finding.**
 
@@ -135,7 +168,7 @@ The -5.0/char quadgram threshold from E-FRAC-34 is **ONLY valid for crib-optimiz
 | Agent | Task | Started | Status |
 |-------|------|---------|--------|
 
-## FRAC Agent Mandate — 43 experiments (E-FRAC-01 through E-FRAC-43)
+## FRAC Agent Mandate — 44 experiments (E-FRAC-01 through E-FRAC-44)
 
 **Original mandate (E-FRAC-01 to 25): COMPLETE. ZERO positive findings survived.**
 **Extended mandate (E-FRAC-26-31): Bean profiling + crib scoring. ALL columnar widths 5-15 ELIMINATED.**
@@ -230,10 +263,44 @@ The -5.0/char quadgram threshold from E-FRAC-34 is **ONLY valid for crib-optimiz
     - SA gibberish is locally MORE coherent than real English at all n-gram scales
     - **Confirms: non-crib word count (d=1.14) is the BEST automated metric. N-grams cannot help.**
     - **Semantic coherence is confirmed as the ONLY reliable discriminator** — no n-gram metric can distinguish SA gibberish from real English at 97 chars
+24. **Information-theoretic analysis** (E-FRAC-44): Unified framework explaining ALL underdetermination findings.
+    - **505 bits needed** to identify 1 of 97! permutations
+    - **367 bits available** from cribs (113) + Bean (6) + English (248)
+    - **138-bit deficit** → ~2^138 permutations consistent with ALL constraints
+    - **Structured families (columnar): expected FP = 0** (2^18.5 × 10⁻³² ≈ 0)
+    - **Arbitrary permutations: expected FP = 2^401** at period 2 (2^505 × 10⁻³²)
+    - **This quantifies WHY structured families work but arbitrary search fails**
+    - The problem is fundamentally underdetermined for arbitrary transpositions
 
 **Reports:** `reports/frac_width9_analysis.md`, `reports/frac_statistical_meta_analysis.md`
 
 ## Completed (reverse chronological)
+
+### [2026-02-21T04:00Z] agent_frac — E-FRAC-44: Information-Theoretic Analysis of Crib Oracle (THEORETICAL CAPSTONE)
+- **Hypothesis:** How much information do the 24 known plaintext positions provide about the 97-element transposition? Can we quantify the fundamental limits of any oracle-based search?
+- **Method:** Compute information content of each constraint source (cribs, Bean, English, periodic key model), compare against the 505-bit target (log2(97!)). Analytical and Monte Carlo estimates of per-period false positive counts.
+- **Key findings:**
+  - **Permutation entropy: 505 bits** (log2(97!))
+  - **Crib information: 113 bits** (24 × log2(26) = 22% of target)
+  - **Bean information: 6 bits** (negligible — 1% of target)
+  - **English constraint: 248 bits** (73 unknown positions × 3.4 bits/position)
+  - **Total available: 367 bits. DEFICIT: 138 bits**
+  - **~2^138 permutations satisfy ALL known constraints simultaneously**
+  - Per-period analytical FP: P2 = 2^401, P5 = 2^416, P7 = 2^425 (crib-consistent perms)
+  - **Structured families eliminate FPs:** 362K (width-9) × 10⁻³² = 0 expected FPs
+  - **Arbitrary permutations guarantee FPs:** 2^505 × 10⁻³² = 2^401 FPs
+  - Monte Carlo (200K trials) finds 0 consistent perms — consistent with P ≈ 10⁻³² being too rare for random sampling (but hill-climbing navigates to them, per E-FRAC-33)
+- **Critical implications:**
+  1. The crib oracle provides only 22% of the information needed to identify the correct permutation
+  2. Bean constraints add only 1% — structurally irrelevant for search guidance
+  3. Even ALL constraints combined leave 138 bits of freedom (2^138 solutions)
+  4. The **key structural insight**: structured transposition families (columnar, route) constrain the search space from 2^505 to 2^18 options, making the oracle sufficient. Arbitrary permutation search is inherently underdetermined.
+  5. This provides a unified theoretical explanation for ALL empirical findings: E-FRAC-33 (landscape smooth), E-FRAC-31 (Bean uninformative), E-FRAC-34 (false positives at all periods), E-FRAC-40-43 (no automated metric suffices)
+- **For JTS:** Arbitrary permutation search is provably underdetermined. Focus on structured transposition families where the oracle IS sufficient, or accept that human semantic evaluation is the final discriminator.
+- **Verdict:** PROOF — information-theoretic underdetermination of arbitrary transposition search
+- **Runtime:** 86 seconds
+- **Artifacts:** results/frac/e_frac_44_information_theoretic.json
+- **Repro:** `PYTHONPATH=src python3 -u scripts/e_frac_44_information_theoretic.py`
 
 ### [2026-02-21T02:00Z] agent_frac — E-FRAC-43: Bigram/Trigram Transition Discriminator (NEGATIVE RESULT)
 - **Hypothesis:** Do bigram/trigram transition probabilities provide better discrimination than word counting? SA quadgram optimization produces good local coherence, but perhaps bigram/trigram transitions capture different information.
