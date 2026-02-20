@@ -8,7 +8,7 @@
 
 The width-9 grid hypothesis — that K4's transposition layer uses a 9-column grid (97/9 ≈ 10.78 rows, matching Sanborn's "10.8 rows" annotation) — has been tested exhaustively across multiple substitution models.
 
-**CRITICAL UPDATE (E-FRAC-07):** Width-9 COLUMNAR transposition is **structurally incompatible** with the bimodal fingerprint. Zero of 362,880 orderings satisfy even loose bimodal constraints because positions 22-30 span all 9 columns, making near-identity mapping impossible. **If the bimodal fingerprint is valid, width-9 columnar is eliminated.** Non-columnar width-9 methods (strip manipulation, physical procedures) remain open.
+**CRITICAL UPDATE (E-FRAC-07/08):** Width-9 COLUMNAR transposition is **structurally incompatible** with the bimodal fingerprint. Zero of 362,880 orderings satisfy even loose bimodal constraints because positions 22-30 span all 9 columns, making near-identity mapping impossible. **E-FRAC-08 extends this to ALL widths (2-20): NO columnar transposition at ANY width is bimodal-compatible** (exhaustive for w≤10, 100K samples for w>10). This means either (1) the bimodal assumption is wrong, (2) the transposition is not columnar, or (3) the system is more complex than assumed. Non-columnar methods (route ciphers, grilles, strips) remain open.
 
 ## Evidence For Width-9
 
@@ -70,6 +70,12 @@ Under width-9 columnar transposition, the following substitution models are **EL
 - **Root cause:** Positions 22-30 span all 9 columns. CT position 22 maps to row 0 of some column (PT 0-8), giving minimum displacement of 14.
 - **Implication:** Width-9 columnar is structurally incompatible with the bimodal fingerprint
 
+### E-FRAC-08: Bimodal Fingerprint — ALL Widths (CRITICAL)
+- **Result:** ZERO columnar orderings at ANY width (2-20) satisfy the bimodal fingerprint
+- **Method:** Exhaustive for w≤10 (up to 3.6M orderings), 100K samples for w>10
+- **Implication:** Columnar transposition as a family is structurally incompatible with the bimodal fingerprint. This is not a width-9-specific result — it's a fundamental incompatibility.
+- **Significance:** Either the bimodal assumption must be relaxed, or the transposition is not columnar.
+
 ### E-FRAC-06: Width-11 and Width-13
 - **Result:** Both produce scores identical to random baseline (14/24 max at period 7)
 - **Verdict:** NOISE — no evidence for width-11 or width-13
@@ -96,7 +102,7 @@ Under width-9 columnar transposition, the following substitution models are **EL
 
 ## Recommendations
 
-1. **For TRANS agent:** Width-9 COLUMNAR is likely dead (bimodal incompatibility). Focus on width-7 and non-standard transpositions. Width-9 results are available if the bimodal assumption needs revisiting.
+1. **For TRANS agent:** ALL columnar transpositions (any width) are bimodal-incompatible (E-FRAC-08). Focus on non-columnar transpositions (route ciphers, grilles, strip methods) OR revisit the bimodal assumption itself.
 
 2. **For JTS agent:** The 3,293 orderings passing both Bean and CT-column bijection are the most constrained starting points. Each has 19 known alphabet entries and 215 unknown — still highly underdetermined, but a starting point for SA/hill-climbing.
 
