@@ -1,5 +1,5 @@
 # K4 Agent Team — Progress Tracker
-Last updated: 2026-02-21T01:00:00Z by agent_frac
+Last updated: 2026-02-21T07:00:00Z by agent_frac
 
 ## ALERTS
 <!-- Scores ≥18/24 go here. If this section is non-empty, ALL agents should read it. -->
@@ -167,6 +167,39 @@ The K4 crib oracle is **information-theoretically insufficient** for arbitrary p
 ## Active Tasks
 | Agent | Task | Started | Status |
 |-------|------|---------|--------|
+
+## Cross-Agent Synthesis (2026-02-21)
+
+**Total experiments across all agents: ~175+ (FRAC:55, TRANS:54, JTS:12+, BESPOKE:52+, TABLEAU:21, QA:39 tests)**
+**Positive findings: ZERO genuine signals survived scrutiny across ALL agents.**
+
+### What Has Been COMPREHENSIVELY Eliminated (combined all agents):
+1. **ALL periodic polyalphabetic + ANY transposition at p2-7**: Universal Bean impossibility proof (E-FRAC-35)
+2. **ALL structured transposition families + periodic key at ALL periods**: Columnar w5-15, simple families, double columnar, Myszkowski, AMSCO/Nihilist/Swapped, strip, grid reads (FRAC/TRANS/JTS)
+3. **ALL fractionation families**: Structural proofs with or without transposition (E-FRAC-21)
+4. **Autokey + ANY transposition**: Cannot reach 24/24 (E-FRAC-37)
+5. **ALL structured non-periodic key models except running key**: Progressive, quadratic, Fibonacci, Vimark recurrence all Bean-eliminated (E-FRAC-38, E-JTS-08/11)
+6. **Running key from ALL known reference texts + structured transpositions**: ZERO matches from 17B+ checks (E-FRAC-49/50, E-JTS-10/12)
+7. **Running key from unknown English text + columnar**: ZERO in English range (E-FRAC-51, E-TABLEAU-21)
+8. **Three-layer Sub+Trans+Sub + Mono+Trans+Periodic**: ZERO viable candidates (E-FRAC-52/53)
+9. **Non-standard tableau usage, K3-method, thematic keywords**: ALL ELIMINATED (TABLEAU 21 experiments)
+10. **Hill cipher + transposition**: ELIMINATED (BESPOKE E-BESPOKE-42)
+11. **Non-standard cipher models (Polybius, affine, column/row keys)**: ELIMINATED (BESPOKE E-BESPOKE-50)
+
+### What Remains GENUINELY Open:
+1. **Running key from unknown NON-ENGLISH text + bespoke transposition**: Untestable without candidate texts
+2. **Mono+Trans+Running key (E-FRAC-54)**: UNDERDETERMINED — 13 mono DOF saturate key fragment analysis
+3. **Bespoke physical transpositions**: S-curve, strip manipulation, non-enumerable physical methods
+4. **Models that don't fit ANY classical paradigm**: "Not even a math solution" (Sanborn)
+5. **Arbitrary (unstructured) transposition search**: Provably underdetermined (E-FRAC-44, 138-bit deficit)
+
+### Information-Theoretic Summary:
+- 505 bits needed to identify correct transposition from 97! space
+- 367 bits available from ALL known constraints (cribs + Bean + English)
+- 138-bit deficit: ~2^138 permutations satisfy ALL constraints
+- Structured families (2^18 options): oracle SUFFICIENT, all tested and eliminated
+- Arbitrary permutations (2^505 options): oracle INSUFFICIENT, provably underdetermined
+- **Implication: K4 either uses a bespoke method not yet conceived, or requires additional information beyond the 24 known plaintext positions**
 
 ## FRAC Agent Mandate — 55 experiments (E-FRAC-01 through E-FRAC-55)
 
