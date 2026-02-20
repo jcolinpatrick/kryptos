@@ -1,5 +1,5 @@
 # K4 Agent Team — Progress Tracker
-Last updated: 2026-02-21T04:00:00Z by agent_frac
+Last updated: 2026-02-21T06:00:00Z by agent_frac
 
 ## ALERTS
 <!-- Scores ≥18/24 go here. If this section is non-empty, ALL agents should read it. -->
@@ -168,7 +168,7 @@ The K4 crib oracle is **information-theoretically insufficient** for arbitrary p
 | Agent | Task | Started | Status |
 |-------|------|---------|--------|
 
-## FRAC Agent Mandate — 44 experiments (E-FRAC-01 through E-FRAC-44)
+## FRAC Agent Mandate — 45 experiments (E-FRAC-01 through E-FRAC-45)
 
 **Original mandate (E-FRAC-01 to 25): COMPLETE. ZERO positive findings survived.**
 **Extended mandate (E-FRAC-26-31): Bean profiling + crib scoring. ALL columnar widths 5-15 ELIMINATED.**
@@ -271,10 +271,35 @@ The K4 crib oracle is **information-theoretically insufficient** for arbitrary p
     - **Arbitrary permutations: expected FP = 2^401** at period 2 (2^505 × 10⁻³²)
     - **This quantifies WHY structured families work but arbitrary search fails**
     - The problem is fundamentally underdetermined for arbitrary transpositions
+25. **Grid-based non-columnar reading orders** (E-FRAC-45): 13 reading order families (serpentine, spiral, diagonal, snake-column, reverse-row/col, etc.) tested at widths 5-13.
+    - **108 unique reading orders × 36 configs = 3,888 total configs scored**
+    - **Global max: 12/24** (width-9 reverse-col, period 6, Beaufort, model A)
+    - **Random baseline max: 14/24** — grid reading orders UNDERPERFORM random
+    - **Width-9 corrected p = 0.195** — NOT significant
+    - **No width shows signal above random at any reading order**
+    - **Fills FRAC Priority 2 gap**: non-columnar grid reading orders are ELIMINATED
 
 **Reports:** `reports/frac_width9_analysis.md`, `reports/frac_statistical_meta_analysis.md`
 
 ## Completed (reverse chronological)
+
+### [2026-02-21T06:00Z] agent_frac — E-FRAC-45: Grid-Based Non-Columnar Reading Orders (ELIMINATION)
+- **Hypothesis:** Do non-columnar reading orders (serpentine, spiral, diagonal, etc.) on grids of various widths show crib signal at discriminating periods?
+- **Method:** 13 reading order families tested at widths 5-13: serpentine (both directions), column-major (both directions), snake-column, reverse-row, reverse-col, reverse-both, spiral-inward (CW & CCW), spiral-outward, diagonal NW-SE, diagonal NE-SW. Each scored at periods 2-7 × 3 variants × 2 models = 36 configs.
+- **Configs tested:** 108 unique permutations × 36 configs = 3,888 total
+- **Key findings:**
+  - Global max: 12/24 (width-9 reverse-col, period 6, Beaufort, model A) — Bean eq FAIL
+  - Random baseline max: 14/24 (50K samples) — grid reading orders UNDERPERFORM random
+  - Width-9 corrected p = 0.195 — NOT significant
+  - Best width-9 with Bean eq pass: 10/24 (spiral-inward-cw, serpentine-rev) — noise
+  - No width (5-13) shows signal above random at any reading order
+  - All best scores cluster at periods 6-7 (least discriminating), consistent with noise
+  - Grid-based reading orders show same anti-correlation pattern as columnar (E-FRAC-29/30)
+- **Implication:** Non-columnar grid reading orders are no more informative than columnar. The width-9 grid hypothesis is comprehensively dead across ALL tested reading orders (columnar + 13 non-columnar families).
+- **Verdict:** NOISE — ALL grid reading orders at ALL widths 5-13 are ELIMINATED. Best score (12/24) is below random baseline (14/24).
+- **Runtime:** 32 seconds
+- **Artifacts:** results/frac/e_frac_45_grid_reading_orders.json
+- **Repro:** `PYTHONPATH=src python3 -u scripts/e_frac_45_grid_reading_orders.py`
 
 ### [2026-02-21T04:00Z] agent_frac — E-FRAC-44: Information-Theoretic Analysis of Crib Oracle (THEORETICAL CAPSTONE)
 - **Hypothesis:** How much information do the 24 known plaintext positions provide about the 97-element transposition? Can we quantify the fundamental limits of any oracle-based search?
