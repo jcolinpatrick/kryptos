@@ -166,7 +166,9 @@ def cmd_report_top(args: argparse.Namespace) -> int:
     print(f"Top {len(results)} results from {args.db}:")
     print("-" * 60)
     for r in results:
-        print(f"  Score: {r.get('score', '?'):3d}  "
+        score = r.get('score')
+        score_str = f"{score:3d}" if isinstance(score, int) else "  ?"
+        print(f"  Score: {score_str}  "
               f"Bean: {'Y' if r.get('bean_pass') else 'N'}  "
               f"Exp: {r.get('experiment_id', '?')}")
     return 0
