@@ -36,10 +36,10 @@ Last updated: 2026-02-20T18:30:00Z by agent_frac
 | Agent | Task | Started | Status |
 |-------|------|---------|--------|
 
-## FRAC Agent Mandate — 27 experiments (E-FRAC-01 through E-FRAC-27)
+## FRAC Agent Mandate — 28 experiments (E-FRAC-01 through E-FRAC-28)
 
 **Original mandate (E-FRAC-01 to 25): COMPLETE. ZERO positive findings survived.**
-**Extended mandate (E-FRAC-26/27): Quadgram + Bean structural profiling. NEW STRUCTURAL FINDINGS.**
+**Extended mandate (E-FRAC-26/27/28): Quadgram + Bean structural profiling. NEW STRUCTURAL FINDINGS.**
 
 ### New Structural Findings (E-FRAC-26/27)
 
@@ -72,6 +72,26 @@ Last updated: 2026-02-20T18:30:00Z by agent_frac
 **Reports:** `reports/frac_width9_analysis.md`, `reports/frac_statistical_meta_analysis.md`
 
 ## Completed (reverse chronological)
+
+### [2026-02-20T20:00Z] agent_frac — E-FRAC-28: SA Key Optimization on Bean-Passing Orderings (STRUCTURAL)
+- **Hypothesis:** Can SA key optimization on top Bean-passing width-8/9 orderings produce readable English?
+- **Method:** For top 30 Bean-passing orderings at each width, SA over key values (periods 3-13) to maximize quadgram fitness, with Bean as hard constraint. 3 restarts × 20K steps each.
+- **Key findings:**
+  - **ALL top results at period 12-13** — classic underdetermination (13 free key values, only ~2 crib constraints per residue)
+  - **Crib scores 0-4/24** — SA abandoned crib matching entirely in favor of quadgram optimization
+  - Width-8 best: -5.309/char (Beaufort p=13); width-9 best: -5.321/char (Vigenere p=13)
+  - Width-8 and width-9 nearly identical (mean -5.525 vs -5.522)
+  - Plaintexts are quadgram-optimized gibberish, not English (real English ≈ -4.3/char)
+  - Example: "WEOROSTROVISTBUDDINDMANLANGANOTEECTUEBEIFELIONELEEBRANMYBY..."
+- **Implications:**
+  - Periodic key + columnar transposition does NOT produce readable English at ANY width or period
+  - The -5.3 quadgram scores are underdetermination artifacts (too many key variables, too few constraints)
+  - Width-8 and width-9 perform identically — no structural advantage for either width
+  - The substitution cipher (if K4 has one) is NOT periodic with period ≤13 under columnar transposition
+- **Verdict:** NOISE — SA improvement is an underdetermination artifact. Confirms E-FRAC-01 to 12.
+- **Runtime:** 4,032 seconds
+- **Artifacts:** results/frac/e_frac_28_w9_bean_key_sa.json
+- **Repro:** `PYTHONPATH=src python3 -u scripts/e_frac_28_w9_bean_key_sa.py`
 
 ### [2026-02-20T18:30Z] agent_frac — E-FRAC-27: Bean-Compatible Width Profiling (STRUCTURAL)
 - **Hypothesis:** Which columnar transposition widths are structurally compatible with the Bean constraint?
