@@ -1,15 +1,59 @@
 # K4 Agent Team — Progress Tracker
-Last updated: 2026-02-19T02:50:00Z by agent_frac
+Last updated: 2026-02-19T03:20:00Z by agent_frac
 
 ## ALERTS
 <!-- Scores ≥18/24 go here. If this section is non-empty, ALL agents should read it. -->
-(none)
+
+### [2026-02-19T03:20Z] agent_frac — BIMODAL FINGERPRINT IS LIKELY AN ARTIFACT (E-FRAC-11)
+**ALL AGENTS READ THIS.** The bimodal fingerprint pre-filter (MANDATORY in AGENT_PROMPT.md) is likely based on a statistical artifact, NOT evidence of transposition structure.
+
+**Evidence:**
+1. Per-position crib match rates decline MONOTONICALLY from position 21 (100%) to position 73 (11%) under random permutations. There is no "bimodal" pattern — just a smooth gradient caused by crib ordering.
+2. ENE (positions 21-33) matches 3.5x better than BC (positions 63-73) under RANDOM permutations with NO transposition. This is because ENE positions come first and are more likely to be "first assignments" in periodic scoring.
+3. 0/500,000 random permutations pass the bimodal check — the constraint is too restrictive.
+4. ALL high-scoring random permutations show ENE >> BC regardless of transposition structure.
+
+**Implication:** The bimodal pre-filter eliminates valid candidates based on an unfounded assumption. Agents should consider dropping or relaxing this filter.
+**Repro:** `PYTHONPATH=src python3 -u scripts/e_frac_11_bimodal_validity.py`
+**Artifacts:** results/frac/e_frac_11_bimodal_validity.json
 
 ## Active Tasks
 | Agent | Task | Started | Status |
 |-------|------|---------|--------|
 
 ## Completed (reverse chronological)
+
+### [2026-02-19T03:15Z] agent_frac — E-FRAC-11: Bimodal Fingerprint Validity Analysis (CRITICAL)
+- **Hypothesis:** Is the bimodal fingerprint a real cryptanalytic constraint or a statistical artifact?
+- **Result:** **ARTIFACT.** The "bimodal" pattern (ENE matches better than BC) is caused by crib position ordering in the scoring algorithm. Position 21 matches 100% of the time (first assignment), declining monotonically to position 73 (11%). No bimodal structure — just a smooth gradient.
+- **Key finding:** ENE/BC ratio = 3.5x under RANDOM permutations with no transposition. The bimodal pre-filter is filtering out valid candidates based on an unfounded assumption.
+- **Additional:** Shifted BC cribs (±1, ±2) show slightly different scores but nothing conclusive about crib indexing errors.
+- **Runtime:** 188 seconds
+- **Artifacts:** results/frac/e_frac_11_bimodal_validity.json
+- **Repro:** `PYTHONPATH=src python3 -u scripts/e_frac_11_bimodal_validity.py`
+
+### [2026-02-19T03:00Z] agent_frac — E-FRAC-10: Strip Manipulation + Periodic Substitution
+- **Hypothesis:** Strip manipulation (bimodal-compatible) + periodic substitution at discriminating periods (2-7)
+- **Configs tested:** ~1.8M strip configs across widths 5-20, filtered by bimodal + Bean
+- **Best score:** 10/24 (strip width 11, period 7, Beaufort model A)
+- **Noise floor:** Random bimodal+Bean baseline: max 12/24, mean 8.3/24
+- **Verdict:** NOISE — best strip score within random baseline
+- **Runtime:** 60 seconds
+- **Artifacts:** results/frac/e_frac_10_strip_bimodal.json
+- **Repro:** `PYTHONPATH=src python3 -u scripts/e_frac_10_strip_bimodal.py`
+
+### [2026-02-19T02:50Z] agent_frac — E-FRAC-09: Structural Characterization of Bimodal-Compatible Permutations
+- **Hypothesis:** What kinds of permutations satisfy the bimodal fingerprint? (Guides TRANS/BESPOKE search)
+- **Key findings:**
+  - 0/1M random permutations pass bimodal — extremely restrictive
+  - Strip manipulation passes at 2.0% rate (strip width 11 best at 5.5%)
+  - Block swaps pass at 10.5% (swapping blocks in BC region)
+  - Local swaps (50 swaps, dist≤5) pass at 4.8%
+  - Rail fence, route ciphers, columnar: ALL fail bimodal
+- **Verdict:** If bimodal is valid (now questionable per E-FRAC-11), only "patch-based" transpositions are compatible
+- **Runtime:** 151 seconds
+- **Artifacts:** results/frac/e_frac_09_bimodal_structure.json
+- **Repro:** `PYTHONPATH=src python3 -u scripts/e_frac_09_bimodal_structure.py`
 
 ### [2026-02-19T02:45Z] agent_frac — E-FRAC-08: Bimodal Fingerprint Across ALL Widths (CRITICAL)
 - **Hypothesis:** H6/H7 — Is ANY columnar transposition width (2-20) compatible with the bimodal fingerprint?
