@@ -89,6 +89,8 @@ Standalone experiment scripts, each runnable with `PYTHONPATH=src python3 -u scr
 - `e01_*` through `e06_*` — Numbered elimination experiments
 - `e_nsa_*.py` — NSA document-inspired experiments
 - `e_desp_*.py` / `e_s_*.py` — Structural experiments
+- `e_frac_*.py` — FRAC agent experiments (statistical analysis, width hypotheses, key distribution)
+- `e_tableau_*.py` — Tableau agent experiments (K3-method variants, keyword tableaux)
 
 **Writing a new experiment script:**
 1. Name it `scripts/e_<id>_<short_name>.py` (next available number)
@@ -215,9 +217,22 @@ Domain knowledge, public facts, and detailed operating policies live in separate
 
 ## Multi-Agent Mode
 
-When `$K4_AGENT_ID` is set, you are one agent in a team. Read [`AGENT_PROMPT.md`](AGENT_PROMPT.md) for the full multi-agent protocol: role definitions, agent lifecycle, task claiming, compute job protocol, git workflow, alert protocol, priority matrices, and prohibited actions.
+This project uses **official Claude Code agent teams** (experimental feature, enabled in `.claude/settings.local.json`). The previous custom harness system (6 agents, git worktrees, lockfiles) completed 170+ experiments and is now archived.
 
-Harness scripts (already extracted to repo root): `k4_agent_harness.sh`, `k4_setup_agents.sh`, `k4_launch_all.sh`, `k4_job_runner.sh`.
+**Current team structure (3 agents):**
+- **Lead**: Interactive session. Manages task list, synthesizes findings, decides what to test next.
+- **Explorer**: Tests creative/physical/non-standard cipher hypotheses. Low compute, high analysis. Should require plan approval.
+- **Validator**: Reproduces claimed signals, runs multi-objective scoring (crib + quadgram + word count + Bean), stress-tests candidates. Can use Sonnet for cost efficiency.
+
+**Key constraints for teammates:**
+- Import constants from `kryptos.kernel.constants` — never hardcode CT/cribs
+- Use `score_candidate()` from `kryptos.kernel.scoring.aggregate` — never hand-roll scoring
+- Only scores at period <= 7 are meaningful (see Key Gotchas)
+- Multi-objective thresholds: crib=24/24 + Bean PASS + quadgram > -4.84/char + IC > 0.055 + non-crib words >= 7 chars >= 3
+
+**Historical reference:** The previous custom harness (`AGENT_PROMPT.md`, `k4_agent_harness.sh`, `k4_setup_agents.sh`, `k4_launch_all.sh`) and its full experiment log (`reports/progress_archive.md`) are preserved for reference. The comprehensive synthesis is at [`reports/final_synthesis.md`](reports/final_synthesis.md).
+
+**Compute separation:** `k4_job_runner.sh` remains available for CPU-heavy sweeps independent of the agent team. Write sweep scripts to `jobs/pending/`, the runner handles execution.
 
 ---
 
@@ -244,11 +259,11 @@ Detailed elimination status for all tested cipher families is maintained in [`do
 - Positions 21–33: `EASTNORTHEAST`
 - Positions 63–73: `BERLINCLOCK`
 
-**What we know:** [DERIVED FACT] No single-layer classical cipher works (exhaustively tested, 130+ experiments). [HYPOTHESIS] K4 is likely multi-layered (substitution + transposition), based on Sanborn's "two separate systems" statement and elimination of all single-layer methods. [HYPOTHESIS] The method is likely executable by hand (Scheidt's background, 1989 technology), but this is unproven.
+**What we know:** [DERIVED FACT] No single-layer classical cipher works (exhaustively tested, 200+ experiments, 65M+ configurations). [HYPOTHESIS] K4 is likely multi-layered (substitution + transposition), based on Sanborn's "two separate systems" statement and elimination of all single-layer methods. [HYPOTHESIS] The method is likely executable by hand (Scheidt's background, 1989 technology), but this is unproven. See [`reports/final_synthesis.md`](reports/final_synthesis.md) for the full elimination landscape.
 
 **What we don't know:** The specific transposition method, the specific substitution method, the full plaintext (only 24/97 characters known).
 
 ---
 
-*Last updated: 2026-02-20 — Audit: fixed 6 overclaims/errors (KA alphabet, IC, Tier 3, multi-layer/hand hypotheses, Bean period constraint)*
+*Last updated: 2026-02-20 — Migrated to official agent teams, archived custom harness (170+ experiments complete)*
 *Primary author: Colin Patrick (human lead) + Claude (computational partner)*
