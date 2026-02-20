@@ -2,6 +2,15 @@
 
 **CRITICAL FRAMING:** Every exhaustive-search elimination in this project was conducted under the assumption of **direct positional correspondence** — meaning CT position N maps to PT position N with no transposition. The primary hypothesis (H1) is that a transposition layer exists, which means **the substitution families below have NOT been tested in their correct context as one layer of a multi-layer system.** The TRANS, JTS, and FRAC agents are doing that work now.
 
+**FRAC AGENT STATUS (2026-02-20):** The FRAC agent has completed 25 experiments (E-FRAC-01 through E-FRAC-25). Key results that affect this document:
+- ALL fractionation families structurally eliminated (E-FRAC-21) — proofs hold WITH OR WITHOUT transposition
+- Width-9 columnar + all substitution models: ELIMINATED at discriminating periods (E-FRAC-01 to 12)
+- "Bimodal fingerprint" pre-filter is likely a statistical artifact (E-FRAC-11) — agents should NOT rely on it
+- K4's IC, lag-7 autocorrelation, and DFT k=9 peak are NOT statistically significant (E-FRAC-13/14)
+- Beaufort key entropy signal RETRACTED — was a selection effect (E-FRAC-16→23→24→25)
+- Crib positions validated as correct (E-FRAC-18)
+- Full meta-analysis: `reports/frac_statistical_meta_analysis.md`
+
 Read these tiers carefully before deciding what is and isn't worth testing.
 
 ---
@@ -33,7 +42,7 @@ These eliminations are solid FOR THEIR SPECIFIC MODEL: "Is K4 cipher family X ap
 | Beaufort / Variant Beaufort | ~500 million | 14/24 | ELIMINATED | **OPEN — primary target for TRANS/JTS** |
 | Gromark / Vimark (p=4–7) | ~12 million | 14/24 | ELIMINATED | **OPEN** |
 | Quagmire I/II/III/IV | ~2 million | 17/24 (artifact) | ELIMINATED | **OPEN** |
-| Bifid / Playfair / Four-Square / Two-Square | ~4.9 billion | 11/24 | ELIMINATED | **OPEN — target for FRAC agent** |
+| Bifid / Playfair / Four-Square / Two-Square | ~4.9 billion | 11/24 | ELIMINATED | **STRUCTURALLY ELIMINATED** (E-FRAC-21: parity + alphabet proofs hold with or without transposition) |
 | Nihilist | ~4.9 billion | 11/24 | ELIMINATED | **OPEN** |
 | Autokey (PT and CT) | ~50,000 | 6/24 | ELIMINATED | **OPEN — target for JTS agent** |
 | Running Key (K1–K3 as keystream) | ~45,000 | 7/24 | ELIMINATED | **OPEN** |
@@ -41,7 +50,7 @@ These eliminations are solid FOR THEIR SPECIFIC MODEL: "Is K4 cipher family X ap
 | Columnar + Vigenère (no bimodal pre-filter) | ~4 million | 12/15 | ELIMINATED (widths 5–10) | **OPEN — needs re-test WITH bimodal filter and polyalphabetic check** |
 | Weltzeituhr permutations | ~295 million | 14/24 | ELIMINATED | **OPEN (as transposition source)** |
 | Additive mask + Vimark p=5 | ~3.375 billion | 16/24 | ELIMINATED (0 Bean passes) | **OPEN** |
-| VIC-family / Chain Addition | ~2 million | noise floor | ELIMINATED | **OPEN — target for FRAC agent** |
+| VIC-family / Chain Addition | ~2 million | noise floor | ELIMINATED | **VIC contains straddling checkerboard → STRUCTURALLY ELIMINATED** (E-FRAC-21) |
 
 ---
 
@@ -51,9 +60,9 @@ These were either incompletely tested or used statistical sampling of a space to
 
 | Family | Concern | Confidence | Recommendation |
 |--------|---------|------------|---------------|
-| ADFGVX (~100K configs) | Status report acknowledges "without proper fractionation recovery" — the undo procedure may have been incorrect | **~60%** | **FRAC agent: re-test with correct recovery** |
-| Turning grille 10×10 (150K Monte Carlo) | Statistical sample of a space with ~2^50 possibilities; 150K samples provides negligible coverage | **~40%** | **TRANS agent: test systematically with bimodal constraint to prune** |
-| Straddling checkerboard | "Partially tested" per status report; no config count given | **~30%** | **FRAC agent: needs proper exhaustive test** |
+| ~~ADFGVX~~ | ~~Status report acknowledges "without proper fractionation recovery"~~ | **99.9%** | **STRUCTURALLY ELIMINATED** (E-FRAC-21: parity impossible — output length always 2×N (even), K4=97 (odd). Proof holds with or without transposition.) |
+| Turning grille 10×10 (150K Monte Carlo) | Statistical sample of a space with ~2^50 possibilities; 150K samples provides negligible coverage | **~40%** | **TRANS agent: test systematically. NOTE: bimodal pre-filter is unreliable (E-FRAC-11).** |
+| ~~Straddling checkerboard~~ | ~~"Partially tested" per status report~~ | **99.9%** | **STRUCTURALLY ELIMINATED** (E-FRAC-21: produces digits 0-9, K4 has 26 letters. Proof holds with or without transposition.) |
 | Foreign language keywords (~500K) | Only tested under already-eliminated cipher models, not independently | **~50%** | **Keywords themselves are not eliminated** — carry forward into TRANS/JTS searches |
 
 ---
@@ -71,7 +80,7 @@ These hypothesis classes appear in the status report's "What We Have NOT Tested"
 | Bespoke physical transposition (S-curve, strip manipulation) | Cannot be enumerated without creative hypothesis | BESPOKE |
 | Non-standard tableau usage | Structural analysis, not a sweep | TABLEAU |
 | Position-dependent alphabets | "Change the language base" (Scheidt) — untested at scale | TABLEAU, JTS |
-| Fractionation with proper recovery (ADFGVX, straddling checkerboard) | Prior tests acknowledged as incomplete | FRAC |
+| ~~Fractionation with proper recovery (ADFGVX, straddling checkerboard)~~ | **DONE — ALL 10 fractionation families structurally eliminated** (E-FRAC-21). Proofs hold with or without transposition. | ~~FRAC~~ COMPLETE |
 
 ---
 
@@ -83,10 +92,30 @@ The persistent 14–17/24 ceiling across all families has been interpreted as ev
 
 **Mitigation:** The cribs come from Sanborn's own public announcements (2010, 2014, 2020) and are highly authoritative. But the wave1 report already caught one error in the project's "verified" knowledge base. The `constants.py` self-verification gate is our primary defense.
 
-**Test plan:** If the TRANS agent completes its full priority matrix without finding signal, the QA agent should run a systematic crib-perturbation experiment: for each of the 24 crib positions, try shifting it ±1 and re-run the best-performing cipher configurations. If shifting a specific position dramatically improves scores, that position may be mis-indexed.
+**FRAC agent test (E-FRAC-18):** Crib position sensitivity analysis COMPLETED. Result: no shift at any discriminating period (2-7) produces improvement above baseline. Self-encrypting positions confirmed (pos 32 S→S, pos 73 K→K). The published positions (21-33 for ENE, 63-73 for BC) are validated. The crib error hypothesis is effectively ruled out.
+
+**FRAC agent finding (E-FRAC-11):** The bimodal fingerprint is likely a statistical artifact, NOT evidence of transposition structure. The ENE/BC asymmetry is caused by crib ordering in the scoring algorithm (ENE comes first → higher match rate). The bimodal pre-filter in AGENT_PROMPT.md is too restrictive (0/500K random permutations pass) and should not be relied upon.
 
 **Refer to:** `docs/invariants.md` for the full elimination record with artifact pointers.
 
+## FRAC Agent Statistical Meta-Findings (E-FRAC-13/14)
+
+[DERIVED FACT — reproducible via scripts listed below]
+
+**K4's statistical properties are consistent with random text of length 97.** None of the previously cited "anomalies" survive proper multiple-testing correction:
+
+| Claimed Signal | Raw Stat | Corrected Result | Reference |
+|---|---|---|---|
+| Below-random IC (0.036) | z=-0.84 | 21.5th percentile of random (NOT significant) | E-FRAC-13 |
+| Lag-7 autocorrelation | p=0.0077 | Fails Bonferroni (48 lags, needs p<0.001) | E-FRAC-14 |
+| DFT peak at k=9 | mag=162 | Below 95th pctile of random max (192) | E-FRAC-14 |
+| "English-like" pre-ENE IC | 97.6th pctile | Bonferroni p=1.0 (13 segments have IC ≥ 0.067) | E-FRAC-19 |
+| Beaufort key low entropy | p=0.003 | Selection effect — Vigenère key at 16.27th pctile (unremarkable) | E-FRAC-16→25 |
+
+**Implication:** There is no statistical evidence favoring any specific transposition width, periodicity, or cipher variant. Prior claims about DFT peaks, lag-7, and Beaufort preference should be retracted.
+
+**Repro:** See `reports/frac_statistical_meta_analysis.md` for full analysis with all 25 experiments.
+
 ---
 
-*Extracted from CLAUDE.md on 2026-02-18. See also: `docs/invariants.md` (verified computational invariants), `docs/research_questions.md` (prioritized unknowns).*
+*Updated 2026-02-20 by agent_frac. See also: `docs/invariants.md` (verified computational invariants), `docs/research_questions.md` (prioritized unknowns).*
