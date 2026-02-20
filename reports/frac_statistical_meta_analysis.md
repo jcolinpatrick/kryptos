@@ -1,15 +1,20 @@
 # K4 Statistical Meta-Analysis — What the Numbers Actually Say
 
 **Agent:** frac (FRAC role)
-**Date:** 2026-02-20 (updated from 2026-02-19)
-**Experiments:** E-FRAC-01 through E-FRAC-22
-**Status:** FRAC mandate complete — all assigned hypothesis spaces eliminated
+**Date:** 2026-02-20 (updated: E-FRAC-23 through E-FRAC-25 added)
+**Experiments:** E-FRAC-01 through E-FRAC-25
+**Status:** FRAC mandate complete — all assigned hypothesis spaces eliminated + deep key analysis
 
 ## Executive Summary
 
 After 22 experiments totaling ~55 million configurations and ~4000 seconds of compute, the FRAC agent has comprehensively addressed its mandate: width-9 grid hypothesis, fractionation families, structural analysis, and meta-validation of prior claims. The headline finding: **K4's statistical properties are largely consistent with random text of length 97.** Most previously cited "anomalies" (below-random IC, lag-7 autocorrelation, DFT peak at k=9, "English-like pre-ENE") fail to reach significance after proper multiple-testing correction.
 
-**One positive finding:** The Beaufort key distribution is more concentrated than random (entropy at 0.3rd percentile, p=0.003). This weakly favors Beaufort over Vigenere as the cipher variant.
+**One positive finding (now RETRACTED):** The Beaufort key distribution was more concentrated than random (entropy at 0.3rd percentile, p=0.003). E-FRAC-23/24/25 showed this is likely a **selection effect**, not evidence for Beaufort:
+- The Beaufort key text contains KKK — impossible in any natural language (E-FRAC-24)
+- No structured non-periodic key model produces the observed values (E-FRAC-23)
+- Transposition does NOT explain the low entropy (E-FRAC-25)
+- The Vigenère key entropy (16.27th percentile) is completely unremarkable
+- **The simplest explanation is that the cipher is Vigenère, not Beaufort**
 
 **Major eliminations (E-FRAC-17 through E-FRAC-22):**
 - Running key from 8 reference texts: NOISE (7/24 = random expectation)
@@ -22,19 +27,20 @@ After 22 experiments totaling ~55 million configurations and ~4000 seconds of co
 
 ## Part I: What IS Statistically Significant (After Correction)
 
-### 1. Beaufort Key Entropy (p = 0.003, p_adj ≈ 0.018)
-[INTERNAL RESULT — E-FRAC-16]
+### 1. Beaufort Key Entropy (p = 0.003 — NOW RETRACTED AS EVIDENCE FOR BEAUFORT)
+[INTERNAL RESULT — E-FRAC-16, updated by E-FRAC-23/24/25]
 
-Under the Beaufort formulation, the 24 known key values have Shannon entropy at the 0.3rd percentile of random 24-value distributions. This means the Beaufort key is significantly more concentrated than expected.
+Under the Beaufort formulation, the 24 known key values have Shannon entropy at the 0.3rd percentile of random 24-value distributions. This was initially interpreted as evidence for the Beaufort cipher variant. **Follow-up analysis (E-FRAC-23/24/25) shows this interpretation was wrong:**
 
-- Most common value: K(=10) at 5/24 positions (28, 30, 31, 32, 70)
-- Includes a run of K×3 at positions 30-31-32 (p=0.03 uncorrected)
-- Self-encrypting position 32 (S) has Beaufort key = K (first letter of KRYPTOS)
-- Under Vigenere, the key has 16.1th percentile entropy — unremarkable
+**Why the Beaufort entropy finding is NOT evidence for Beaufort:**
+1. **KKK constraint (E-FRAC-24):** The Beaufort key at positions 30-32 = K,K,K. Under a running key model, the source text would need to contain "KKK" — which occurs in 0/100,000 samples of English text. The Beaufort key text is at 0.0th percentile for ALL tested natural languages.
+2. **No structured key generation (E-FRAC-23):** Zero progressive, double-period, recurrence, or modifier models produce the observed Beaufort key values. The key is ANTI-structured (fewer consistent models than random).
+3. **Transposition doesn't help (E-FRAC-25):** Under ALL transposition models (random σ, columnar w7/9/11), the Beaufort entropy remains at ~0.3th percentile. Transposition randomizes displacement terms, not reducing the anomaly.
+4. **English running key explains the entropy level (E-FRAC-25):** Under a running key from English text (without transposition), the entropy is at 21.65th percentile — normal. But this model is ruled out by the KKK constraint.
 
-**Implication:** If the cipher variant is Beaufort (not Vigenere), the key has more structure than random. The KRYPTOS letter K dominating the key is provocative but not conclusive.
+**The resolution:** The Vigenère key entropy (3.66 bits) is at 16.27th percentile — completely unremarkable. The Vigenère key has no triple letters and no structural impossibilities. **The E-FRAC-16 "Beaufort signal" was a selection effect: Beaufort happens to produce concentrated key values from this particular CT+PT combination, but this doesn't indicate the cipher is Beaufort.**
 
-**Caveat:** This analysis assumes DIRECT correspondence (no transposition). If a transposition layer exists, key-to-position assignments change and this finding may not hold.
+**Status:** This finding is now reclassified from "positive result" to "null result after further investigation."
 
 ### 2. Width-9 Columnar Is Definitively Eliminated
 [INTERNAL RESULT — E-FRAC-01 through E-FRAC-12]
@@ -152,13 +158,16 @@ The sequence of differences CT[i+1]-CT[i] (mod 26) follows a uniform distributio
 | Playfair, Two-Square, Four-Square | E-FRAC-21 | **STRUCTURALLY IMPOSSIBLE** (parity + alphabet) |
 | VIC cipher | E-FRAC-21 | **STRUCTURALLY IMPOSSIBLE** (contains strad. CB) |
 | Null cipher / interval reading | E-FRAC-22 | **ELIMINATED** (K4 more uniform than random) |
+| All structured non-periodic key generation | E-FRAC-23 | **ELIMINATED** (0 consistent progressive, double-period, recurrence, modifier) |
+| Natural-language running key under Beaufort (no transposition) | E-FRAC-24 | **ELIMINATED** (KKK impossible in natural text) |
+| Beaufort variant hypothesis (based on key entropy) | E-FRAC-25 | **RETRACTED** (Vigenère entropy is unremarkable; Beaufort signal was selection effect) |
 
 ### What Remains Open (Relevant to FRAC Mandate)
 
 1. **Width-9 with truly arbitrary substitution** — technically open but has 26^97 parameters (intractable)
 2. **Strip manipulation + non-periodic substitution** — untested, low priority given E-FRAC-10 noise result
 3. **The "10.8 rows" annotation** — remains sole evidence for width-9, could be coincidence or refer to something else
-4. **Beaufort variant hypothesis** — weakly supported by key entropy finding (p=0.003)
+4. ~~**Beaufort variant hypothesis**~~ — RETRACTED (E-FRAC-25 shows Vigenère is the simpler interpretation)
 5. **BC positions conflict more than ENE** — E-FRAC-20 found 82% vs 54% BC/ENE conflict rates at Vig p=5 (implications for transposition search)
 
 ---
@@ -168,14 +177,15 @@ The sequence of differences CT[i+1]-CT[i] (mod 26) follows a uniform distributio
 ### For TRANS Agent
 1. **DROP the bimodal pre-filter** — it is a statistical artifact (E-FRAC-11)
 2. **Do NOT rely on lag-7 or DFT k=9 as evidence for any specific width** — neither is significant after correction
-3. **Consider testing Beaufort variant specifically** if running width sweeps — the Beaufort key shows more structure
+3. ~~Consider testing Beaufort variant specifically~~ — E-FRAC-25 shows Vigenère is the simpler interpretation; test both variants equally
 4. Width-9 columnar is comprehensively eliminated; do not re-test
 
 ### For JTS Agent
 1. The bimodal pre-filter should not be used as a search constraint
 2. Width-9 is eliminated; focus on other transposition families
-3. **The Beaufort key entropy finding (p=0.003)** suggests trying Beaufort as the preferred variant in joint optimization
+3. ~~The Beaufort key entropy finding suggests Beaufort~~ — RETRACTED. Use both Vigenère and Beaufort equally in joint optimization
 4. The key is not a simple function of position — focus on running key or complex generation models
+5. **NEW (E-FRAC-24):** Natural-language running key is INCOMPATIBLE with Beaufort under direct correspondence (KKK constraint). If testing running key without transposition, use Vigenère.
 
 ### For BESPOKE Agent
 1. Strip manipulation with periodic substitution is noise (E-FRAC-10)
@@ -183,8 +193,8 @@ The sequence of differences CT[i+1]-CT[i] (mod 26) follows a uniform distributio
 3. The best remaining bespoke lead is physical/procedural methods, not statistical
 
 ### For TABLEAU Agent
-1. **The Beaufort + KRYPTOS connection** is worth exploring: under Beaufort, the dominant key value is K (first letter of KRYPTOS), and the self-encrypting S (pos 32) has Beaufort key = K
-2. Consider: does the KRYPTOS tableau, used as Beaufort (not Vigenere), reveal key structure?
+1. ~~The Beaufort + KRYPTOS connection is worth exploring~~ — E-FRAC-25 suggests this was a false signal. Beaufort produces KKK in the key, which is likely an artifact of the CT+PT combination, not evidence of KRYPTOS-related structure.
+2. The cipher variant question (Beaufort vs Vigenère) remains formally open, but Vigenère is the simpler interpretation since its key has no anomalies.
 
 ### For QA Agent
 1. The bimodal fingerprint definition in AGENT_PROMPT.md should be reclassified from "MANDATORY pre-filter" to "[HYPOTHESIS — confirmed artifact, DO NOT USE]"
@@ -201,10 +211,11 @@ K4's ciphertext is a 97-character string with **no statistically significant int
 2. **Running key cipher on English plaintext** — the IC signature matches perfectly
 3. **Long-period (≥10) polyalphabetic on English plaintext** — marginally compatible
 
-The ONLY statistically significant finding across all 22 experiments is:
-- **Beaufort key entropy (p=0.003)** — the key is more concentrated under Beaufort than under Vigenere or under random
+After 25 experiments, there are **ZERO statistically significant findings** that survive scrutiny:
+- The Beaufort key entropy (p=0.003 from E-FRAC-16) was retracted by E-FRAC-23/24/25 as a selection effect
+- All other statistical claims (IC, lag-7, DFT k=9, pre-ENE) were already debunked (E-FRAC-13/14/19)
 
-The publicly known constraints (24 crib positions, Bean constraints, self-encrypting positions) remain the primary attack surface. Statistical signals in the CT itself are insufficient to constrain the cipher family or transposition.
+**K4 is statistically indistinguishable from random text.** The publicly known constraints (24 crib positions, Bean constraints, self-encrypting positions) remain the primary attack surface. Statistical signals in the CT itself are insufficient to constrain the cipher family or transposition.
 
 ---
 
@@ -219,10 +230,15 @@ The publicly known constraints (24 crib positions, Bean constraints, self-encryp
 ### Structural Analysis
 **STATUS: COMPLETE.** IC is not diagnostic. Lag-7 is not significant. Pre-ENE is not significant. Crib positions are correct. No null cipher. K4 is statistically consistent with random text.
 
-### Remaining Contribution: Key Pattern Analysis
-The Beaufort key entropy finding (E-FRAC-16) is the sole positive result. Further analysis of Beaufort key patterns would require specific hypotheses about key generation — this crosses into TABLEAU territory (non-standard tableau usage, position-dependent alphabets).
+### Extended Analysis: Key Generation (E-FRAC-23/24/25)
+**STATUS: COMPLETE.** The Beaufort key entropy finding (E-FRAC-16) was investigated in depth:
+- E-FRAC-23: All structured non-periodic key generation models fail — progressive, double-period, recurrence, modifier, CT-derived (0 consistent models each)
+- E-FRAC-24: Beaufort key text is incompatible with all natural languages (KKK constraint, 0.0th percentile)
+- E-FRAC-25: Transposition does NOT explain the low entropy; running key (English, no transposition) is the only model where entropy is normal (21.65th percentile), but this is ruled out by KKK
+
+**Final verdict:** The E-FRAC-16 "Beaufort signal" was a false alarm. The Vigenère key has no anomalies (16.27th percentile entropy, no triple letters, no structural impossibilities). **There are now ZERO significant positive findings across all 25 experiments.**
 
 ---
 
-*Generated by agent_frac. Updated 2026-02-20. 22 experiments, ~55M configs, ~4000 seconds total compute.*
+*Generated by agent_frac. Updated 2026-02-20. 25 experiments, ~55M configs + key analysis, ~4200 seconds total compute.*
 *Methodology: All p-values use Monte Carlo simulation with ≥50,000 samples. Multiple testing correction uses Bonferroni where applicable.*
