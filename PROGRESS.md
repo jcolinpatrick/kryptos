@@ -1,5 +1,5 @@
 # K4 Agent Team — Progress Tracker
-Last updated: 2026-02-20T04:30:00Z by agent_frac
+Last updated: 2026-02-20T05:30:00Z by agent_frac
 
 ## ALERTS
 <!-- Scores ≥18/24 go here. If this section is non-empty, ALL agents should read it. -->
@@ -37,6 +37,39 @@ Last updated: 2026-02-20T04:30:00Z by agent_frac
 |-------|------|---------|--------|
 
 ## Completed (reverse chronological)
+
+### [2026-02-20T05:20Z] agent_frac — E-FRAC-22: Null Cipher / Interval Reading Analysis
+- **Hypothesis:** Does K4 contain a hidden message readable by decimation (every Nth character)?
+- **Tests:** 300+ decimation configs (N=2..25, all offsets), Caesar-shifted decimations, grid-based readings, simple transforms
+- **Key findings:**
+  - K4 has FEWER high-IC decimations than random (6.6th percentile) — K4 is MORE uniform than expected
+  - Most "interesting" fragments are at very short lengths (4-14 chars) where word matches are expected by chance
+  - Width-9 column 4 with Caesar +8 gives "CATSRIEBLOK" (fcorr=0.567) — recognizable fragments but probably noise given ~5000 tests
+  - Reverse CT contains "OUR" — expected by chance (3/26³ ≈ 0.017% per trigram, 95 possible positions)
+  - Monte Carlo: K4 is less structured than random at the decimation level, not more
+- **Verdict:** NO_NULL_CIPHER — no evidence of hidden interval-readable message. K4 is unusually uniform.
+- **Runtime:** 5 seconds
+- **Artifacts:** results/frac/e_frac_22_null_cipher_intervals.json
+- **Repro:** `PYTHONPATH=src python3 -u scripts/e_frac_22_null_cipher_intervals.py`
+
+### [2026-02-20T05:10Z] agent_frac — E-FRAC-21: Structural Proofs — Complete Fractionation Elimination
+- **Hypothesis:** Are any fractionation families still viable? (Closes Tier 3/4 items assigned to FRAC)
+- **Results: ALL 10 fractionation families eliminated by structural proofs:**
+  - ADFGVX: **Parity impossible** — output length always 2×N (even), K4=97 (odd)
+  - ADFGX: **Parity impossible** — same argument
+  - Straddling checkerboard: **Output incompatible** — produces digits (0-9), K4 has 26 letters
+  - Bifid 5×5: **Alphabet impossible** — requires 25-letter alphabet, K4 CT has 26 distinct letters
+  - Bifid 6×6: **IC-incompatible** — produces IC 0.059-0.069, K4 at 0.036 (0th percentile)
+  - Trifid: **Algebraically impossible** — prior proof at all periods
+  - VIC cipher: **Component impossible** — contains straddling checkerboard (eliminated)
+  - Playfair: **Parity + alphabet** — needs even length + 25-letter alphabet
+  - Two-Square: **Parity + alphabet** — same
+  - Four-Square: **Parity + alphabet** — same
+- **Critical note:** These proofs hold WITH OR WITHOUT a transposition layer. IC is permutation-invariant. Parity and alphabet constraints are preserved by transposition.
+- **Verdict:** ALL_FRACTIONATION_STRUCTURALLY_ELIMINATED
+- **Runtime:** 0 seconds (pure proofs)
+- **Artifacts:** results/frac/e_frac_21_fractionation_proofs.json
+- **Repro:** `PYTHONPATH=src python3 -u scripts/e_frac_21_fractionation_structural_proofs.py`
 
 ### [2026-02-20T04:30Z] agent_frac — E-FRAC-20: Residue Conflict Map — Which Positions Block Full Score?
 - **Hypothesis:** Which specific crib positions cause periodic scoring to fail? Where must transposition act?
