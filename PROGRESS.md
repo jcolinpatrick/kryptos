@@ -1,5 +1,5 @@
 # K4 Agent Team — Progress Tracker
-Last updated: 2026-02-20T23:30:00Z by agent_frac
+Last updated: 2026-02-21T00:30:00Z by agent_frac
 
 ## ALERTS
 <!-- Scores ≥18/24 go here. If this section is non-empty, ALL agents should read it. -->
@@ -36,10 +36,11 @@ Last updated: 2026-02-20T23:30:00Z by agent_frac
 | Agent | Task | Started | Status |
 |-------|------|---------|--------|
 
-## FRAC Agent Mandate — 28 experiments (E-FRAC-01 through E-FRAC-28)
+## FRAC Agent Mandate — 32 experiments (E-FRAC-01 through E-FRAC-32)
 
 **Original mandate (E-FRAC-01 to 25): COMPLETE. ZERO positive findings survived.**
-**Extended mandate (E-FRAC-26/27/28/29/30): Bean profiling + crib scoring. ALL columnar widths 5-15 ELIMINATED.**
+**Extended mandate (E-FRAC-26-31): Bean profiling + crib scoring. ALL columnar widths 5-15 ELIMINATED.**
+**Final sweep (E-FRAC-32): Simple transposition families (cyclic, affine, rail fence, swap, reversal) ALL ELIMINATED.**
 
 ### New Structural Findings (E-FRAC-26/27)
 
@@ -70,10 +71,37 @@ Last updated: 2026-02-20T23:30:00Z by agent_frac
 8. **Beaufort key entropy signal** — RETRACTED as selection effect (E-FRAC-16→25)
 9. **Crib positions** — validated as correct (E-FRAC-18)
 10. **Columnar widths 5-15**: ALL ELIMINATED — Bean-impossible (5,7), noise (6,8,9), underperform random (10-15) (E-FRAC-12/26/27/29/30)
+11. **Bean constraint NOT informative** for transposition identification (E-FRAC-31)
+12. **Simple transposition families** (cyclic shifts, affine, reversal, rail fence, single swaps): ALL ELIMINATED — max 13/24, BELOW random baseline 14/24 (E-FRAC-32)
 
 **Reports:** `reports/frac_width9_analysis.md`, `reports/frac_statistical_meta_analysis.md`
 
 ## Completed (reverse chronological)
+
+### [2026-02-21T00:30Z] agent_frac — E-FRAC-32: Simple Transposition Family Sweep (ELIMINATION)
+- **Hypothesis:** Do simple, non-columnar transposition families show crib signal at discriminating periods?
+- **Families tested:**
+  - Cyclic shifts σ(i)=(i+k) mod 97: 96 permutations
+  - Reverse σ(i)=96-i: 1 permutation
+  - Affine σ(i)=(a*i+b) mod 97: 9,215 permutations (97 is prime → all a=2..96 valid)
+  - Block reversal (B=2..48): 47 permutations
+  - Rail fence (depth 2-20): 19 permutations
+  - Single swaps: 4,656 permutations (all C(97,2) pairs)
+  - Adjacent pair swaps: 1 permutation
+- **Total:** 14,035 permutations × 3 variants × 2 models × 6 periods = 505,260 configs
+- **Key findings:**
+  - Global max: 13/24 (affine a=5,b=36, period 7, Vigenère, model B)
+  - Random baseline max: 14/24 (50K samples) — structured families UNDERPERFORM random
+  - Corrected p ≈ 1.0 (100% of random experiments of this size reach 13+)
+  - Best affine with Bean pass: 13/24 (a=7,b=78) — still noise
+  - Single swaps: 96% Bean eq pass rate (near-identity preserves Bean) but max only 10/24
+  - Rail fence depth 3: 12/24 — noise
+  - All top results at period 7 (least discriminating of discriminating periods)
+  - No family shows any advantage over random permutations
+- **Verdict:** NOISE — ALL simple transposition families eliminated. Best score 13/24 is BELOW random baseline (14/24). Simple transpositions ANTI-correlate with crib matching, same pattern as columnar.
+- **Runtime:** 40 seconds
+- **Artifacts:** results/frac/e_frac_32_simple_transposition_sweep.json
+- **Repro:** `PYTHONPATH=src python3 -u scripts/e_frac_32_simple_transposition_sweep.py`
 
 ### [2026-02-20T23:30Z] agent_frac — E-FRAC-31: Bean-Filtered Random Permutation Analysis (STRUCTURAL)
 - **Hypothesis:** Do Bean-passing arbitrary permutations score differently from non-Bean ones at discriminating periods?

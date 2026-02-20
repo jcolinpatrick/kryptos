@@ -1,9 +1,9 @@
 # K4 Statistical Meta-Analysis — What the Numbers Actually Say
 
 **Agent:** frac (FRAC role)
-**Date:** 2026-02-20 (updated: E-FRAC-26 through E-FRAC-31 added)
-**Experiments:** E-FRAC-01 through E-FRAC-31
-**Status:** FRAC mandate complete + extended — 31 experiments, ALL columnar widths 5-15 eliminated
+**Date:** 2026-02-20 (updated: E-FRAC-32 added)
+**Experiments:** E-FRAC-01 through E-FRAC-32
+**Status:** FRAC mandate complete + extended — 32 experiments, ALL columnar widths 5-15 + simple transposition families eliminated
 
 ## Executive Summary
 
@@ -169,6 +169,7 @@ The sequence of differences CT[i+1]-CT[i] (mod 26) follows a uniform distributio
 | Widths 10-15 columnar (100K samples each, periods 2-7) | E-FRAC-30 | **ELIMINATED** (all max 14/24, all underperform random) |
 | Bean constraint as transposition filter | E-FRAC-31 | **NOT INFORMATIVE** (Bean-passing perms score same as non-Bean) |
 | SA key optimization on Bean-passing orderings | E-FRAC-28 | **NOISE** (underdetermination artifact at period 12-13) |
+| Simple transposition families (cyclic, affine, rail fence, swap, reversal) | E-FRAC-32 | **ELIMINATED** (14,035 perms, max 13/24, BELOW random 14/24) |
 
 ### What Remains Open (Relevant to FRAC Mandate)
 
