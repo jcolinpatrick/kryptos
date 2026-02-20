@@ -50,9 +50,15 @@ and NOT a simple linear recurrence keystream (orders 1-8 eliminated).
 
 **If resolved**: Directly produces the plaintext.
 
+**FRAC findings (E-FRAC-38/39/49/50):**
+- Running key is the ONLY structured non-periodic key model surviving Bean constraints (E-FRAC-38)
+- Running key + ALL structured transposition families (columnar w6/8/9, identity, cyclic, affine, rail fence, block reversal, double columnar) produce ZERO matches from 7 known reference texts (E-FRAC-49/50)
+- Running key + arbitrary transposition is massively underdetermined (~700-2000 feasible offsets per text, E-FRAC-39)
+- Carter is NOT special — SA optimization produces same quadgram quality with random keys (E-FRAC-40)
+
 **Novelty engine priority**: HIGHEST — focus on:
-- Running key from Carter's "Tomb of Tutankhamun" (now available as reference)
-- Running key from other Sanborn-associated texts
+- Running key from UNKNOWN texts (all 7 tested reference texts eliminated with structured transpositions)
+- Running key from other Sanborn-associated texts not yet tested
 - Artifact-derived key sequences (clock readings, coordinates, dates)
 - Non-linear key generation from a short seed
 
@@ -75,13 +81,20 @@ with all thematic keyword alphabets. No breakthrough.
 - Transposition followed by UNKNOWN (not Vigenere) substitution
 - No transposition at all (pure substitution with complex key)
 
-**FRAC agent eliminations (E-FRAC-01 to 32):**
+**FRAC agent eliminations (E-FRAC-01 to 50):**
 - Columnar widths 5-15 + periodic sub: ALL eliminated at discriminating periods
-- Width-9 non-columnar reads (serpentine, spiral, diagonal): eliminated (E-FRAC-03)
-- Width-9 × width-7 compound: eliminated (E-FRAC-04)
+- Width-9 non-columnar reads (serpentine, spiral, diagonal): eliminated (E-FRAC-03/45)
+- Width-9 × width-7 compound: eliminated (E-FRAC-04/46)
 - Simple families (cyclic, affine, rail fence, swap, reversal): ALL eliminated (E-FRAC-32)
 - Width-9 + running key, progressive, autokey: eliminated (E-FRAC-02)
 - Width-9 + mixed alphabets: eliminated (E-FRAC-05)
+- Double columnar (9 Bean-compatible width pairs): eliminated (E-FRAC-46)
+- Myszkowski (widths 5-13): eliminated (E-FRAC-47)
+- AMSCO/Nihilist/Swapped (widths 8-13): eliminated, 0% Bean pass (E-FRAC-48)
+- **Running key + columnar (w6,8,9) from 7 texts: ZERO matches** (E-FRAC-49)
+- **Running key + ALL structured families from 7 texts: ZERO matches** (E-FRAC-50)
+- **Universal proof:** ALL 97! perms + periodic key at p2-7 violate Bean (E-FRAC-35)
+- **Information-theoretic proof:** 138-bit deficit, arbitrary search underdetermined (E-FRAC-44)
 
 **If resolved**: Reduces problem from "find transposition AND substitution" to "find substitution."
 
@@ -273,7 +286,7 @@ could produce a different ciphertext.
 | RQ-12 (alphabets) | LOW | Yes | 5 | 1 | 4 |
 | RQ-13 (reading dir) | LOW | Yes | 16 | 0 | 16 |
 
-*Updated 2026-02-17 from `python -m kryptos novelty status`*
+*Updated 2026-02-20 — includes FRAC agent findings (E-FRAC-01 to 50)*
 
 ---
 
