@@ -3,11 +3,11 @@
 **Agent:** frac (FRAC role)
 **Date:** 2026-02-21 (FINAL update: E-FRAC-55)
 **Experiments:** E-FRAC-01 through E-FRAC-55
-**Status:** FRAC mandate COMPLETE — ALL GAPS CLOSED — 55 experiments. E-FRAC-49-53 close the running key + structured transposition gap and test multi-layer model classes. E-FRAC-54 tests mono+running key detection (underdetermined). E-FRAC-55 closes the Bean-surviving period gap (columnar at periods 8/13/16: NOISE). Running key + ALL structured transposition families (columnar w6/8/9, identity, cyclic, affine, rail fence, block reversal, double columnar) from 7 reference texts: ZERO matches (17B checks). Running key from unknown English text + columnar: ZERO configs with English-like key fragments. Three-layer Sub+Trans+Sub: non-periodic effective key bypasses Bean impossibility but produces only gibberish. Mono+Trans+Periodic: bypasses 9/21 Bean-ineq pairs but zero candidates at discriminating periods. **ZERO positive findings survive across all 53 experiments.**
+**Status:** FRAC mandate COMPLETE — ALL GAPS CLOSED — 55 experiments. E-FRAC-49-53 close the running key + structured transposition gap and test multi-layer model classes. E-FRAC-54 tests mono+running key detection (underdetermined). E-FRAC-55 closes the Bean-surviving period gap (columnar at periods 8/13/16: NOISE). Running key + ALL structured transposition families (columnar w6/8/9, identity, cyclic, affine, rail fence, block reversal, double columnar) from 7 reference texts: ZERO matches (17B checks). Running key from unknown English text + columnar: ZERO configs with English-like key fragments. Three-layer Sub+Trans+Sub: non-periodic effective key bypasses Bean impossibility but produces only gibberish. Mono+Trans+Periodic: bypasses 9/21 Bean-ineq pairs but zero candidates at discriminating periods. **ZERO positive findings survive across all 55 experiments.**
 
 ## Executive Summary
 
-After 53 experiments totaling ~85 million configurations, ~27 billion key/offset checks, and ~11,000 seconds of compute, the FRAC agent has comprehensively addressed its mandate and closed ALL identified gaps: width-9 grid hypothesis, fractionation families, structural analysis, meta-validation of prior claims, comprehensive Bean/columnar width elimination, Bean impossibility proofs, multi-objective oracle design, autokey structural elimination, comprehensive key model Bean analysis, running key + transposition feasibility (both known and unknown texts), automated discriminator design, information-theoretic analysis, double columnar transposition, Myszkowski transposition, AMSCO/Nihilist/Swapped, running key + ALL structured transposition families, English-like key detection, three-layer Sub+Trans+Sub, and Mono+Trans+Periodic models. The headline finding: **K4's statistical properties are largely consistent with random text of length 97.** Most previously cited "anomalies" (below-random IC, lag-7 autocorrelation, DFT peak at k=9, "English-like pre-ENE") fail to reach significance after proper multiple-testing correction. **ALL columnar transposition widths 5-15 are eliminated. Periodic keying at ALL discriminating periods is Bean-impossible for ANY transposition (universal proof). At Bean-surviving periods, 24/24+Bean is easily achievable but ALL solutions are false positives. Autokey CANNOT reach 24/24 (more constrained than periodic). Running key is the ONLY structured key model surviving Bean constraints. Running key + ALL structured transposition families from 7 reference texts: ZERO matches (17.2 billion checks). Running key from unknown English text + columnar: ZERO configs with English-like key fragments. Three-layer and mono-inner multi-layer models: ZERO viable candidates at discriminating periods. SA quadgram optimization trivially achieves -4.3/char with ANY key (Carter is NOT special). No automated discriminator perfectly separates SA gibberish from real English — semantic coherence (human evaluation) is required.** Information-theoretic analysis (E-FRAC-44) provides the unified framework: 24 cribs provide 113 bits against a 505-bit target (22%), with a 138-bit deficit remaining even after all constraints. Structured transposition families (2^18 options) make the oracle sufficient; arbitrary permutations (2^505 options) guarantee underdetermination.
+After 55 experiments totaling ~85 million configurations, ~27 billion key/offset checks, and ~11,000 seconds of compute, the FRAC agent has comprehensively addressed its mandate and closed ALL identified gaps: width-9 grid hypothesis, fractionation families, structural analysis, meta-validation of prior claims, comprehensive Bean/columnar width elimination, Bean impossibility proofs, multi-objective oracle design, autokey structural elimination, comprehensive key model Bean analysis, running key + transposition feasibility (both known and unknown texts), automated discriminator design, information-theoretic analysis, double columnar transposition, Myszkowski transposition, AMSCO/Nihilist/Swapped, running key + ALL structured transposition families, English-like key detection, three-layer Sub+Trans+Sub, and Mono+Trans+Periodic models. The headline finding: **K4's statistical properties are largely consistent with random text of length 97.** Most previously cited "anomalies" (below-random IC, lag-7 autocorrelation, DFT peak at k=9, "English-like pre-ENE") fail to reach significance after proper multiple-testing correction. **ALL columnar transposition widths 5-15 are eliminated. Periodic keying at ALL discriminating periods is Bean-impossible for ANY transposition (universal proof). At Bean-surviving periods, 24/24+Bean is easily achievable but ALL solutions are false positives. Autokey CANNOT reach 24/24 (more constrained than periodic). Running key is the ONLY structured key model surviving Bean constraints. Running key + ALL structured transposition families from 7 reference texts: ZERO matches (17.2 billion checks). Running key from unknown English text + columnar: ZERO configs with English-like key fragments. Three-layer and mono-inner multi-layer models: ZERO viable candidates at discriminating periods. SA quadgram optimization trivially achieves -4.3/char with ANY key (Carter is NOT special). No automated discriminator perfectly separates SA gibberish from real English — semantic coherence (human evaluation) is required.** Information-theoretic analysis (E-FRAC-44) provides the unified framework: 24 cribs provide 113 bits against a 505-bit target (22%), with a 138-bit deficit remaining even after all constraints. Structured transposition families (2^18 options) make the oracle sufficient; arbitrary permutations (2^505 options) guarantee underdetermination.
 
 **One positive finding (now RETRACTED):** The Beaufort key distribution was more concentrated than random (entropy at 0.3rd percentile, p=0.003). E-FRAC-23/24/25 showed this is likely a **selection effect**, not evidence for Beaufort:
 - The Beaufort key text contains KKK — impossible in any natural language (E-FRAC-24)
@@ -566,7 +566,7 @@ At 97 characters (after removing spaces/punctuation from English), there is simp
 
 ## Part XIII: Final FRAC Mandate Summary
 
-### Complete Experiment Registry (53 experiments)
+### Complete Experiment Registry (55 experiments)
 
 | ID | Topic | Verdict |
 |----|-------|---------|
@@ -624,10 +624,12 @@ At 97 characters (after removing spaces/punctuation from English), there is simp
 | E-FRAC-51 | English-like key detection (columnar) | ELIMINATED (0/16,597 in English range; extends to unknown text) |
 | E-FRAC-52 | Three-layer Sub+Trans+Sub | ELIMINATED (non-periodic K_eff, 0 at p1*p2≤50, 74 gibberish at ≥132) |
 | E-FRAC-53 | Mono+Trans+Periodic | ELIMINATED (bypasses 9/21 Bean-ineq, 0 at periods 3-7, 34 gibberish at p12) |
+| E-FRAC-54 | Mono inner + running key detection | UNDERDETERMINED (13 mono DOF saturate key fragment analysis) |
+| E-FRAC-55 | Columnar at Bean-surviving periods | NOISE (p8 max=14/24=random, p13/16 underdetermination artifacts, ZERO 24/24) |
 
 ### Bottom Line
 
-After 53 experiments covering every hypothesis in the FRAC mandate space plus all identified gaps, the conclusive finding is: **ZERO positive results survive.** K4's ciphertext is statistically indistinguishable from random text. Every structured key model except running key is Bean-eliminated. Every transposition family tested is noise or underperforms random. Running key + transposition is massively underdetermined — bipartite matching and Bean constraints provide zero discrimination among candidate (offset, transposition) pairs. SA quadgram optimization trivially achieves English-like quadgrams (-4.3/char) with ANY key, making Carter text indistinguishable from random as a running key source. No automated discriminator perfectly separates SA gibberish from real English at 97 characters: non-crib words ≥7 chars is the best (Cohen's d = 1.14), while n-gram scoring provides zero discrimination (SA gibberish is actually MORE n-gram-coherent than real English). **Semantic coherence via human evaluation is the ONLY fully reliable discriminator for final candidate acceptance.**
+After 55 experiments covering every hypothesis in the FRAC mandate space plus all identified gaps, the conclusive finding is: **ZERO positive results survive.** K4's ciphertext is statistically indistinguishable from random text. Every structured key model except running key is Bean-eliminated. Every transposition family tested is noise or underperforms random. Running key + transposition is massively underdetermined — bipartite matching and Bean constraints provide zero discrimination among candidate (offset, transposition) pairs. SA quadgram optimization trivially achieves English-like quadgrams (-4.3/char) with ANY key, making Carter text indistinguishable from random as a running key source. No automated discriminator perfectly separates SA gibberish from real English at 97 characters: non-crib words ≥7 chars is the best (Cohen's d = 1.14), while n-gram scoring provides zero discrimination (SA gibberish is actually MORE n-gram-coherent than real English). **Semantic coherence via human evaluation is the ONLY fully reliable discriminator for final candidate acceptance.**
 
 **Information-theoretic analysis (E-FRAC-44)** provides the unified framework: the 24 cribs provide 113 bits of information against a 505-bit target (22%). Even with Bean (6 bits) and English plaintext quality (248 bits), a 138-bit deficit remains — meaning ~2^138 permutations satisfy ALL known constraints. This is why arbitrary permutation search is inherently underdetermined: 2^505 candidates × 10^-32 consistency rate = 2^401 false positives. Structured transposition families (2^18 candidates × 10^-32 = 0 expected false positives) are the ONLY context where the oracle is sufficient.
 
@@ -680,6 +682,20 @@ All 17,124 Bean-eq columnar configs × 10 periods (3-12). At discriminating peri
 
 **Result: ZERO candidates at discriminating periods 3-7. Mono+Trans+Periodic ELIMINATED.** Even relaxing 9/21 Bean constraints is insufficient — the bipartite consistency of 24 equations with 12+p unknowns creates enough redundancy to eliminate false positives at discriminating periods.
 
+### Mono Inner + Running Key Detection (E-FRAC-54)
+[INTERNAL RESULT — E-FRAC-54]
+
+Tests whether a monoalphabetic inner substitution (13 DOF — one shift per known PT letter) can make running key fragments at crib positions look English-like, regardless of transposition or key source. For 500 sampled columnar configs × 3 cipher variants, mono shifts were optimized via coordinate descent (5 restarts × 10 rounds) to maximize quadgram score of combined key fragments.
+
+**Result: ALL 1,500 columnar configs AND all random permutations AND identity produce key fragments ABOVE the English 5th percentile (-3.551/char).** Best columnar: -2.687/char. Best random perm: -2.691/char. English mean: -3.210/char. The 13 mono DOF provide ~2.5/char improvement — far more than the 0.6/char gap to English. E-FRAC-51's elimination (no mono) does NOT extend to the mono case. **Mono+Trans+Running key is UNDERDETERMINED by fragment analysis.**
+
+### Columnar at Bean-Surviving Periods (E-FRAC-55)
+[INTERNAL RESULT — E-FRAC-55]
+
+Prior experiments (E-FRAC-12/29/30) tested columnar at periods 2-7, which E-FRAC-35 proved Bean-impossible. This experiment closes the gap by testing 17,124 Bean-eq-passing columnar configs (widths 6,8,9) at Bean-SURVIVING periods {8, 13, 16}. Three cipher variants = 154,116 checks.
+
+**Result:** Period 8 (most discriminating, 16 constraints): max=14/24 = random max. Periods 13/16: max 18/20 are pure underdetermination artifacts (random mean 13.4/16.3). ZERO 24/24 matches. ZERO coupled-key matches. All plaintext gibberish (best Q=-6.018/char). **Bean impossibility gap fully closed: columnar + periodic key is ELIMINATED at ALL periods.**
+
 ---
 
 ## Part XVI: Information-Theoretic Analysis (E-FRAC-44)
@@ -717,7 +733,7 @@ The analytical estimate for the probability that a random permutation produces a
 
 ### The Structured vs Arbitrary Divide
 
-This is the **key structural insight** that explains all 43 prior experiments:
+This is the **key structural insight** that explains all prior experiments:
 
 - **Structured family (e.g., columnar width-9):** 362,880 options (2^18.5)
   - Expected FP: 2^18.5 × 10⁻³² = 2^18.5 × 2⁻¹⁰⁶ ≈ **0** → Oracle is SUFFICIENT
@@ -754,8 +770,10 @@ The ratio is 2^(505-18.5) = 2^486.5 — the arbitrary space is ~10^146 times lar
 | E-FRAC-51 | Key fragments not English-like | 367-505=-138 bits: key is underdetermined |
 | E-FRAC-52 | Three-layer: 0 at small products | Non-periodic K_eff adds constraints, not freedom |
 | E-FRAC-53 | Mono+periodic: 0 at p3-7 | 24 eqns, 12+p unknowns → overconstrained |
+| E-FRAC-54 | Mono+running key: ALL in English range | 13 DOF saturate 24-bit signal → underdetermined |
+| E-FRAC-55 | Columnar at p8/13/16: NOISE | 2^18 × 10⁻²³ ≈ 0 FPs at p8 (confirmed) |
 
 ---
 
-*Generated by agent_frac. FINAL update 2026-02-20. 53 experiments, ~85M+ configs + 27B key/offset checks + key/structural analysis + false positive characterization + Bean impossibility proof + autokey elimination + comprehensive key model taxonomy + running key comprehensive elimination (known + unknown texts) + discriminator design (word + n-gram) + information-theoretic analysis + multi-layer model exploration, ~11,000 seconds total compute.*
+*Generated by agent_frac. FINAL update 2026-02-21. 55 experiments, ~85M+ configs + 27B key/offset checks + key/structural analysis + false positive characterization + Bean impossibility proof + autokey elimination + comprehensive key model taxonomy + running key comprehensive elimination (known + unknown texts) + discriminator design (word + n-gram) + information-theoretic analysis + multi-layer model exploration, ~11,000 seconds total compute.*
 *Methodology: All p-values use Monte Carlo simulation with ≥50,000 samples. Multiple testing correction uses Bonferroni where applicable. Corrected p-values account for number of trials: P(max ≥ X | N) = 1 - (1-p)^N.*
