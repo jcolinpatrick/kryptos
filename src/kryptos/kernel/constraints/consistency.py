@@ -8,13 +8,13 @@ Provides checks that apply across cipher types:
 """
 from __future__ import annotations
 
-from collections import Counter
 from typing import Dict, List, Tuple
 
 from kryptos.kernel.constants import (
     ALPH, CT, CRIB_DICT, CRIB_POSITIONS, SELF_ENCRYPTING,
 )
 from kryptos.kernel.alphabet import Alphabet
+from kryptos.kernel.scoring.ic import ic
 
 
 def check_self_encrypting(text: str) -> List[Tuple[int, str, str]]:
@@ -60,10 +60,5 @@ def check_alphabet_bijection(alphabet: Alphabet) -> bool:
     )
 
 
-def ic(text: str) -> float:
-    """Index of Coincidence."""
-    freq = Counter(text)
-    n = len(text)
-    if n <= 1:
-        return 0.0
-    return sum(f * (f - 1) for f in freq.values()) / (n * (n - 1))
+# ic() is imported from kryptos.kernel.scoring.ic above
+# (was previously a duplicate definition here)

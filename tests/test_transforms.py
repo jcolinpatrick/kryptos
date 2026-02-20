@@ -160,3 +160,51 @@ class TestBlockTransposition:
         perm = list(range(1, BLOCK_SIZE)) + [0]  # shift by 1
         result = unmask_block_transposition(CT, perm)
         assert result[96] == CT[96]  # Remainder preserved
+
+
+class TestBifid:
+    """Tests for Bifid cipher correctness."""
+
+    def test_bifid_not_identity(self):
+        """Bifid encrypt must NOT be an identity function."""
+        from kryptos.kernel.transforms.polybius import bifid_encrypt, make_polybius_5x5
+        grid = make_polybius_5x5("KRYPTOS")
+        pt = "HELLO"
+        ct = bifid_encrypt(pt, grid, period=5)
+        assert ct != pt, "Bifid encrypt should not be identity"
+
+    def test_bifid_roundtrip(self):
+        """Bifid encrypt then decrypt must roundtrip."""
+        from kryptos.kernel.transforms.polybius import (
+            bifid_encrypt, bifid_decrypt, make_polybius_5x5,
+        )
+        grid = make_polybius_5x5("KRYPTOS")
+        for period in [2, 3, 5, 7, 10]:
+            pt = "ATTACKATDAWN"
+            ct = bifid_encrypt(pt, grid, period=period)
+            recovered = bifid_decrypt(ct, grid, period=period)
+            assert recovered == pt, f"Roundtrip failed at period {period}"
+
+    def test_bifid_full_period(self):
+        """Bifid with full-length period should work."""
+        from kryptos.kernel.transforms.polybius import (
+            bifid_encrypt, bifid_decrypt, make_polybius_5x5,
+        )
+        grid = make_polybius_5x5("")
+        pt = "FLEEATONCE"
+        ct = bifid_encrypt(pt, grid, period=0)
+        assert ct != pt
+        recovered = bifid_decrypt(ct, grid, period=0)
+        assert recovered == pt
+
+    def test_bifid_different_grids(self):
+        """Different keywords should produce different ciphertexts."""
+        from kryptos.kernel.transforms.polybius import (
+            bifid_encrypt, make_polybius_5x5,
+        )
+        pt = "TESTMESSAGE"
+        grid1 = make_polybius_5x5("KRYPTOS")
+        grid2 = make_polybius_5x5("ABSCISSA")
+        ct1 = bifid_encrypt(pt, grid1, period=5)
+        ct2 = bifid_encrypt(pt, grid2, period=5)
+        assert ct1 != ct2, "Different grids should give different ciphertexts"

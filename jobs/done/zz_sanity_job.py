@@ -1,0 +1,1 @@
+print("RESULT: sanity ok")
