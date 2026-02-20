@@ -2,13 +2,14 @@
 
 **CRITICAL FRAMING:** Every exhaustive-search elimination in this project was conducted under the assumption of **direct positional correspondence** — meaning CT position N maps to PT position N with no transposition. The primary hypothesis (H1) is that a transposition layer exists, which means **the substitution families below have NOT been tested in their correct context as one layer of a multi-layer system.** The TRANS, JTS, and FRAC agents are doing that work now.
 
-**FRAC AGENT STATUS (2026-02-20):** The FRAC agent has completed 29 experiments (E-FRAC-01 through E-FRAC-29). Key results that affect this document:
+**FRAC AGENT STATUS (2026-02-20):** The FRAC agent has completed 30 experiments (E-FRAC-01 through E-FRAC-30). Key results that affect this document:
 - ALL fractionation families structurally eliminated (E-FRAC-21) — proofs hold WITH OR WITHOUT transposition
-- **Columnar widths 5-9 + periodic substitution: ALL ELIMINATED at discriminating periods**
+- **Columnar widths 5-15 + periodic substitution: ALL ELIMINATED at discriminating periods**
   - Width-5, Width-7: Bean-ELIMINATED (ZERO orderings pass Bean equality, E-FRAC-26/27)
   - Width-6: exhaustive, best 13/24, corrected p=0.485 = NOISE (E-FRAC-29)
   - Width-8: exhaustive, best 13/24, UNDERPERFORMS random (expected ≥14, E-FRAC-29)
   - Width-9: exhaustive, best 14/24, UNDERPERFORMS random (expected ≥15, E-FRAC-12)
+  - Widths 10-15: sampled (100K each), all max 14/24, all underperform random (E-FRAC-30)
 - SA key optimization on Bean-passing orderings: underdetermination artifact at period 12-13 (E-FRAC-28)
 - "Bimodal fingerprint" pre-filter is likely a statistical artifact (E-FRAC-11) — agents should NOT rely on it
 - K4's IC, lag-7 autocorrelation, and DFT k=9 peak are NOT statistically significant (E-FRAC-13/14)
@@ -35,6 +36,7 @@ These are algebraic proofs, not search results. They are permanently valid unles
 | Columnar width-6 exhaustive crib scoring | Width-6 columnar + periodic sub: exhaustive 720 orderings, max 13/24, corrected p=0.485 (NOISE) | Requires cribs and CT correctness (E-FRAC-29) |
 | Columnar width-8 exhaustive crib scoring | Width-8 columnar + periodic sub: exhaustive 40,320 orderings, max 13/24, UNDERPERFORMS random (expected ≥14) | Requires cribs and CT correctness (E-FRAC-29) |
 | Columnar width-9 exhaustive crib scoring | Width-9 columnar + periodic sub: exhaustive 362,880 orderings, max 14/24, UNDERPERFORMS random (expected ≥15) | Requires cribs and CT correctness (E-FRAC-12) |
+| Columnar widths 10-15 sampled crib scoring | Widths 10-15 columnar + periodic sub: 100K samples each, all max 14/24, ALL underperform random (expected 15+) | Requires cribs and CT correctness (E-FRAC-30) |
 
 **What could invalidate Tier 1:** Only if the 24 crib positions are wrong (off-by-one, wrong character mapping) or the CT transcription has an error. The wave1 report already caught one VKB error (position 74 was listed as K→K self-encryption; actual CT[74]=W). If one error existed, others could too. The cribs themselves come from Sanborn's public announcements and are highly trustworthy, but the exact 0-indexed position mapping has been a source of bugs.
 

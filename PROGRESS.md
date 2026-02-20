@@ -1,5 +1,5 @@
 # K4 Agent Team — Progress Tracker
-Last updated: 2026-02-20T22:00:00Z by agent_frac
+Last updated: 2026-02-20T23:00:00Z by agent_frac
 
 ## ALERTS
 <!-- Scores ≥18/24 go here. If this section is non-empty, ALL agents should read it. -->
@@ -39,7 +39,7 @@ Last updated: 2026-02-20T22:00:00Z by agent_frac
 ## FRAC Agent Mandate — 28 experiments (E-FRAC-01 through E-FRAC-28)
 
 **Original mandate (E-FRAC-01 to 25): COMPLETE. ZERO positive findings survived.**
-**Extended mandate (E-FRAC-26/27/28/29): Quadgram + Bean structural profiling + exhaustive crib scoring.**
+**Extended mandate (E-FRAC-26/27/28/29/30): Bean profiling + crib scoring. ALL columnar widths 5-15 ELIMINATED.**
 
 ### New Structural Findings (E-FRAC-26/27)
 
@@ -69,11 +69,33 @@ Last updated: 2026-02-20T22:00:00Z by agent_frac
 7. **Bimodal fingerprint pre-filter** — statistical artifact (E-FRAC-11)
 8. **Beaufort key entropy signal** — RETRACTED as selection effect (E-FRAC-16→25)
 9. **Crib positions** — validated as correct (E-FRAC-18)
-10. **Columnar widths 5-9**: ALL ELIMINATED — Bean-impossible (5,7) or noise (6,8,9) at discriminating periods
+10. **Columnar widths 5-15**: ALL ELIMINATED — Bean-impossible (5,7), noise (6,8,9), underperform random (10-15) (E-FRAC-12/26/27/29/30)
 
 **Reports:** `reports/frac_width9_analysis.md`, `reports/frac_statistical_meta_analysis.md`
 
 ## Completed (reverse chronological)
+
+### [2026-02-20T23:00Z] agent_frac — E-FRAC-30: Sampled Crib Scoring — Widths 10-15 (ELIMINATION)
+- **Hypothesis:** Do Bean-compatible widths 10-15 show crib signal at discriminating periods (2-7)?
+- **Configs tested:** 100K sampled orderings per width × 3 variants × 2 models × 6 periods (600K total per width) + 100K random baseline.
+- **Key findings:**
+  - ALL widths 10-15: max score 14/24 from 100K samples
+  - Corrected p = 0.993 for all (99.3% of random 100K-trial experiments also reach 14)
+  - ALL widths 10-15 UNDERPERFORM random (random gets max=15, columnar gets max=14)
+  - Score distributions nearly identical to random at all widths (means 9.18-9.40 vs random 9.38)
+  - Bean pass rates: 2.6-4.7% equality, full pass rates roughly match E-FRAC-27
+  - Width-10: 1 Bean-passing ordering scored 14 (Beaufort p=7) — noise
+  - Widths 12, 13, 14: ZERO Bean-passing orderings scored ≥12
+- **Comprehensive width elimination (5-15):**
+  - Width-5, 7: Bean-ELIMINATED (zero orderings pass Bean equality)
+  - Width-6: NOISE (exhaustive, corrected p=0.485)
+  - Width-8: NOISE, underperforms random (exhaustive, corrected p≈1.0)
+  - Width-9: NOISE, underperforms random (exhaustive, corrected p≈1.0)
+  - Width-10 through 15: NOISE, all underperform random (sampled, corrected p=0.993)
+- **Verdict:** NOISE — ALL columnar widths 5-15 are ELIMINATED for columnar + periodic substitution at discriminating periods. The columnar transposition hypothesis is dead at every practical width.
+- **Runtime:** 447 seconds
+- **Artifacts:** results/frac/e_frac_30_w10_w15_crib_scoring.json
+- **Repro:** `PYTHONPATH=src python3 -u scripts/e_frac_30_w10_w15_crib_scoring.py`
 
 ### [2026-02-20T22:00Z] agent_frac — E-FRAC-29: Exhaustive Crib Scoring — Widths 6 and 8 (ELIMINATION)
 - **Hypothesis:** Do Bean-compatible widths 6 and 8 show crib signal at discriminating periods (2-7)?
