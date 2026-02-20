@@ -1,5 +1,5 @@
 # K4 Agent Team — Progress Tracker
-Last updated: 2026-02-21T01:00:00Z by agent_frac
+Last updated: 2026-02-21T02:00:00Z by agent_frac
 
 ## ALERTS
 <!-- Scores ≥18/24 go here. If this section is non-empty, ALL agents should read it. -->
@@ -135,7 +135,7 @@ The -5.0/char quadgram threshold from E-FRAC-34 is **ONLY valid for crib-optimiz
 | Agent | Task | Started | Status |
 |-------|------|---------|--------|
 
-## FRAC Agent Mandate — 42 experiments (E-FRAC-01 through E-FRAC-42)
+## FRAC Agent Mandate — 43 experiments (E-FRAC-01 through E-FRAC-43)
 
 **Original mandate (E-FRAC-01 to 25): COMPLETE. ZERO positive findings survived.**
 **Extended mandate (E-FRAC-26-31): Bean profiling + crib scoring. ALL columnar widths 5-15 ELIMINATED.**
@@ -222,10 +222,39 @@ The -5.0/char quadgram threshold from E-FRAC-34 is **ONLY valid for crib-optimiz
     - English min = 1 non-crib word ≥7 chars in some segments — so a threshold-based filter would produce both false positives AND false negatives
     - **Composite metric** (noncrib_words × (1 + coverage)): Cohen's d = 1.03, still no perfect separation
     - **Verdict: MODERATE_DISCRIMINATOR** — non-crib word count helps but cannot replace semantic evaluation
+23. **Bigram/trigram transition discriminator** (E-FRAC-43): Tests n-gram transition scoring as an alternative.
+    - **Bigram: Cohen's d = -0.35** — SA gibberish scores BETTER than English (SA optimizes for local coherence)
+    - **Trigram: Cohen's d = 0.11** — essentially no discrimination
+    - **Quadgram: Cohen's d = -0.65** — SA gibberish scores better (expected — SA optimizes quadgrams)
+    - **N-gram scoring provides ZERO additional discrimination** over word counting
+    - SA gibberish is locally MORE coherent than real English at all n-gram scales
+    - **Confirms: non-crib word count (d=1.14) is the BEST automated metric. N-grams cannot help.**
+    - **Semantic coherence is confirmed as the ONLY reliable discriminator** — no n-gram metric can distinguish SA gibberish from real English at 97 chars
 
 **Reports:** `reports/frac_width9_analysis.md`, `reports/frac_statistical_meta_analysis.md`
 
 ## Completed (reverse chronological)
+
+### [2026-02-21T02:00Z] agent_frac — E-FRAC-43: Bigram/Trigram Transition Discriminator (NEGATIVE RESULT)
+- **Hypothesis:** Do bigram/trigram transition probabilities provide better discrimination than word counting? SA quadgram optimization produces good local coherence, but perhaps bigram/trigram transitions capture different information.
+- **Method:** Build bigram/trigram models from Carter text (117K alpha chars), score 97-char segments from English (71 segments), SA gibberish (20), random (100), English-freq random (100). Compare Cohen's d across metrics.
+- **Key findings:**
+  - **Bigram score: Cohen's d = -0.35** — SA gibberish scores BETTER than English
+  - **Trigram score: Cohen's d = 0.11** — essentially zero discrimination
+  - **Quadgram score: Cohen's d = -0.65** — SA gibberish scores better (expected — SA optimizes for quadgrams)
+  - SA gibberish mean bigram score = -1.096 vs English -1.118 (SA is MORE bigram-coherent)
+  - SA gibberish mean trigram score = -1.039 vs English -1.031 (nearly identical)
+  - Random text: clearly separated from both (bigram -1.601, trigram -1.411)
+- **Critical implications:**
+  1. **SA quadgram optimization produces text that is locally English-like at ALL n-gram scales** (bigram, trigram, quadgram)
+  2. **N-gram scoring provides ZERO additional discrimination** — in fact, SA gibberish is MORE n-gram-coherent than real English
+  3. **Non-crib word counting (d=1.14 from E-FRAC-42) remains the BEST automated metric** — no n-gram metric comes close
+  4. **The fundamental limitation is confirmed:** at 97 characters, SA optimization can make ANY text score well on local coherence metrics. Discrimination requires GLOBAL semantic understanding, not local n-gram statistics.
+- **For JTS:** Do NOT add bigram/trigram scoring to the oracle. It provides no discrimination. Stick with: crib=24 + Bean + non-crib words ≥7 chars ≥ 3 + human semantic evaluation.
+- **Verdict:** NO_IMPROVEMENT — n-gram transitions provide zero discrimination. Non-crib word count remains the best automated metric.
+- **Runtime:** 0.3 seconds
+- **Artifacts:** results/frac/e_frac_43_bigram_discriminator.json
+- **Repro:** `PYTHONPATH=src python3 -u scripts/e_frac_43_bigram_discriminator.py`
 
 ### [2026-02-21T01:00Z] agent_frac — E-FRAC-42: Refined Word Discriminator — Non-Crib Words (JTS ORACLE REFINEMENT)
 - **Hypothesis:** Does excluding crib words from the word count improve discrimination? Is there ANY automated metric that achieves perfect separation between SA gibberish and real English?
