@@ -1,5 +1,5 @@
 # K4 Agent Team — Progress Tracker
-Last updated: 2026-02-20T12:00:00Z by agent_frac
+Last updated: 2026-02-20T14:00:00Z by agent_frac
 
 ## ALERTS
 <!-- Scores ≥18/24 go here. If this section is non-empty, ALL agents should read it. -->
@@ -168,7 +168,7 @@ The K4 crib oracle is **information-theoretically insufficient** for arbitrary p
 | Agent | Task | Started | Status |
 |-------|------|---------|--------|
 
-## FRAC Agent Mandate — 47 experiments (E-FRAC-01 through E-FRAC-47)
+## FRAC Agent Mandate — 48 experiments (E-FRAC-01 through E-FRAC-48)
 
 **Original mandate (E-FRAC-01 to 25): COMPLETE. ZERO positive findings survived.**
 **Extended mandate (E-FRAC-26-31): Bean profiling + crib scoring. ALL columnar widths 5-15 ELIMINATED.**
@@ -274,6 +274,7 @@ The K4 crib oracle is **information-theoretically insufficient** for arbitrary p
 25. **Grid-based non-columnar reading orders** (E-FRAC-45): 13 reading order families (serpentine, spiral, diagonal, snake-column, reverse-row/col, etc.) tested at widths 5-13.
 26. **Double columnar transposition** (E-FRAC-46): 9 Bean-compatible width pairs (w6×w6, w6×w8, w8×w6, w6×w9, w9×w6, w8×w8, w8×w9, w9×w8, w9×w9) tested. 2,958,400 compositions, best 15/24 (noise level for 3M trials). Double columnar MATCHES random performance — second transposition randomizes the first. ALL width pairs ELIMINATED.
 27. **Myszkowski transposition** (E-FRAC-47): Widths 5-13, exhaustive at w5-7 (52-877 patterns), sampled at w8-13 (4K-50K each). 226,390 unique permutations total (226,383 Myszkowski-only + 7 standard columnar). Best 15/24 (width 13, noise for 226K trials). Score distributions match random at ALL widths. ZERO Bean-passing among top scorers. Myszkowski tie structure provides NO advantage. ALL widths ELIMINATED.
+28. **AMSCO/Nihilist/Swapped columnar** (E-FRAC-48): Widths 8-13 (E-S-22 covered 5-8). 361,280 permutations (AMSCO sp1+sp2, Nihilist, Swapped × column orderings). Best 14/24 — matches random baseline exactly. **ZERO Bean passes** across all 361K perms (0.0%) — these families are Bean-INCOMPATIBLE at widths 8-13. ALL widths ELIMINATED.
     - **108 unique reading orders × 36 configs = 3,888 total configs scored**
     - **Global max: 12/24** (width-9 reverse-col, period 6, Beaufort, model A)
     - **Random baseline max: 14/24** — grid reading orders UNDERPERFORM random
@@ -284,6 +285,23 @@ The K4 crib oracle is **information-theoretically insufficient** for arbitrary p
 **Reports:** `reports/frac_width9_analysis.md`, `reports/frac_statistical_meta_analysis.md`
 
 ## Completed (reverse chronological)
+
+### [2026-02-20T14:00Z] agent_frac — E-FRAC-48: AMSCO/Nihilist/Swapped Columnar at Widths 8-13 (ELIMINATION)
+- **Hypothesis:** Do AMSCO, Nihilist, and Swapped columnar transpositions at widths 8-13 show crib signal at discriminating periods? Prior test E-S-22 only covered widths 5-8.
+- **Method:** Width 8 exhaustive (40,320 orderings), widths 9-13 sampled (10K orderings each). Each ordering generates 4 variants (AMSCO sp1, AMSCO sp2, Nihilist, Swapped). Scored at periods 2-7 × Vig/Beau. Bean constraints checked. Random baseline: 50K.
+- **Configs tested:** 361,280 permutations
+- **Key findings:**
+  - Global best: 14/24 (AMSCO sp2, w9, p7 vig) — matches random baseline exactly
+  - Width 8 best: 13/24 (UNDERPERFORMS random)
+  - **ZERO Bean passes across ALL 361K permutations** (0.0% at every width)
+  - These families appear to be structurally Bean-INCOMPATIBLE at widths 8-13
+  - Score distributions match random at all widths
+  - All top scores at period 7 — noise signature
+- **Cross-reference:** E-S-22 found max 15/24 at widths 5-8. Combined with this result, AMSCO/Nihilist/Swapped are ELIMINATED at ALL widths 5-13.
+- **Verdict:** NOISE — ALL ELIMINATED. Bean incompatibility is an additional structural elimination mechanism.
+- **Runtime:** 408 seconds
+- **Artifacts:** results/frac/e_frac_48_amsco_disrupted.json
+- **Repro:** `PYTHONPATH=src python3 -u scripts/e_frac_48_amsco_disrupted.py`
 
 ### [2026-02-20T13:00Z] agent_frac — E-FRAC-47: Myszkowski Transposition (ELIMINATION)
 - **Hypothesis:** Does Myszkowski transposition (where tied keyword columns are read row-by-row across ties) show crib signal at discriminating periods? This is listed as Tier 4 (never properly tested) in elimination_tiers.md.
