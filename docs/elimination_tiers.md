@@ -175,4 +175,4 @@ The persistent 14–17/24 ceiling across all families has been interpreted as ev
 
 ---
 
-*Updated 2026-02-20 by agent_frac (FINAL — 50 experiments, mandate complete + running key gap closure). See also: `docs/invariants.md` (verified computational invariants), `docs/research_questions.md` (prioritized unknowns).*
+*Updated 2026-02-20 by agent_frac (FINAL — 53 experiments, mandate complete + ALL gaps closed: running key gap closure + English key detection + three-layer model + mono inner layer). See also: `docs/invariants.md` (verified computational invariants), `docs/research_questions.md` (prioritized unknowns).*
