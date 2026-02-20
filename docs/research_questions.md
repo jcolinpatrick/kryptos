@@ -50,7 +50,7 @@ and NOT a simple linear recurrence keystream (orders 1-8 eliminated).
 
 **If resolved**: Directly produces the plaintext.
 
-**FRAC findings (E-FRAC-38/39/49/50/51):**
+**FRAC findings (E-FRAC-38/39/49/50/51/52/53/54):**
 - Running key is the ONLY structured non-periodic key model surviving Bean constraints (E-FRAC-38)
 - Running key + ALL structured transposition families (columnar w6/8/9, identity, cyclic, affine, rail fence, block reversal, double columnar) produce ZERO matches from 7 known reference texts (E-FRAC-49/50)
 - Running key from UNKNOWN English text + columnar: ZERO configs produce English-like key fragments (E-FRAC-51)
@@ -58,6 +58,7 @@ and NOT a simple linear recurrence keystream (orders 1-8 eliminated).
 - Carter is NOT special — SA optimization produces same quadgram quality with random keys (E-FRAC-40)
 - Three-layer Sub+Trans+Sub: non-periodic effective key bypasses Bean proof but produces only gibberish (E-FRAC-52)
 - Mono+Trans+Periodic: bypasses 9/21 Bean-ineq but ZERO candidates at discriminating periods (E-FRAC-53)
+- **Mono+Trans+Running key: UNDERDETERMINED** — 13 mono DOF saturate key fragment analysis, making English detection impossible when mono layer present (E-FRAC-54)
 
 **Novelty engine priority**: HIGHEST — focus on:
 - Running key from UNKNOWN NON-ENGLISH texts (English running key + columnar eliminated by E-FRAC-51)

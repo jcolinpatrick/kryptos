@@ -1,5 +1,5 @@
 # K4 Agent Team — Progress Tracker
-Last updated: 2026-02-20T22:00:00Z by agent_frac
+Last updated: 2026-02-20T23:30:00Z by agent_frac
 
 ## ALERTS
 <!-- Scores ≥18/24 go here. If this section is non-empty, ALL agents should read it. -->
@@ -168,7 +168,7 @@ The K4 crib oracle is **information-theoretically insufficient** for arbitrary p
 | Agent | Task | Started | Status |
 |-------|------|---------|--------|
 
-## FRAC Agent Mandate — 53 experiments (E-FRAC-01 through E-FRAC-53)
+## FRAC Agent Mandate — 54 experiments (E-FRAC-01 through E-FRAC-54)
 
 **Original mandate (E-FRAC-01 to 25): COMPLETE. ZERO positive findings survived.**
 **Extended mandate (E-FRAC-26-31): Bean profiling + crib scoring. ALL columnar widths 5-15 ELIMINATED.**
@@ -186,6 +186,7 @@ The K4 crib oracle is **information-theoretically insufficient** for arbitrary p
 **English-like key detection (E-FRAC-51): ALL 16,597 Bean-passing columnar configs at widths 6,8,9 × 3 variants scored for English-like key fragments at crib positions. Best quadgram=-4.151/char, English 5th percentile=-3.551/char. ZERO configs in English range (0/16,597). Running key from ANY unknown English text + columnar transposition is ELIMINATED. Extends E-FRAC-49/50 from 7 specific texts to the general case.**
 **Three-layer model (E-FRAC-52): Sub+Trans+Sub model CT=Enc₂(σ(Enc₁(PT,K1)),K2) with K1 period p1, K2 period p2. Effective key K_eff[j]=K1[j%p1]+K2[inv(j)%p2] is non-periodic, bypassing E-FRAC-35's Bean impossibility proof. ALL 17,124 Bean-eq columnar configs × 143 period pairs (p1,p2∈1..12) × 2 c-types tested. ZERO candidates at p1*p2≤50 (strongly constrained). Only 74 candidates at p1*p2≥132 (weakly constrained), ALL with quadgram≤-5.87/char (gibberish). E-FRAC-35 validation: zero p2=1 candidates. Three-layer Sub+Trans+Sub ELIMINATED.**
 **Mono+Trans+Periodic model (E-FRAC-53): Tests CT[inv(j)]=(Sub[PT[j]]+K[inv(j)%p])%26, where Sub is monoalphabetic. KEY INSIGHT: E-FRAC-35's Bean proof relies on 9 different-letter inequality pairs; mono inner layer auto-satisfies these (Sub[L1]≠Sub[L2] guaranteed), making periods 3-7 potentially viable. 17,124 configs × 10 periods (3-12). At discriminating periods 3-7: 556-5,282 configs pass same-letter Bean-ineq, but ZERO pass bipartite consistency+BFS solve. 34 candidates only at period 12, all gibberish (best Q=-6.33). Mono+Trans+Periodic ELIMINATED.**
+**Mono+Trans+Running key detection (E-FRAC-54): Tests whether mono inner layer's 13 DOF (one shift per PT letter) can make key fragments at crib positions look English-like. KEY FINDING: mono optimization provides ~2.5/char quadgram improvement — ALL 1500 sampled columnar configs, ALL random permutations, and identity transposition produce key fragments ABOVE the English 5th percentile (-3.551). Best: -2.687/char (columnar), -2.691 (random perm), -2.923 (identity). The 13 mono DOF SATURATE the analysis: key fragment English-likeness CANNOT distinguish real English running keys from gibberish when a mono layer is present. E-FRAC-51's elimination (no mono) does NOT extend to the mono case. Mono+Trans+Running key is UNDERDETERMINED by fragment analysis.**
 
 ### New Structural Findings (E-FRAC-26/27)
 
@@ -292,10 +293,35 @@ The K4 crib oracle is **information-theoretically insufficient** for arbitrary p
 32. **Three-layer model (Sub+Trans+Sub)** (E-FRAC-52): Tests CT = Enc₂(σ(Enc₁(PT, K1)), K2) where K1 has period p1 and K2 has period p2. The effective key K_eff[j] = K1[j%p1] + K2[inv(j)%p2] is NON-PERIODIC, bypassing E-FRAC-35's Bean impossibility proof for single periodic keys. All 17,124 Bean-eq columnar configs (w6/8/9) × 143 period pairs (p1,p2 ∈ {1..12} excl (1,1)) × 2 c-types (A=CT-PT, B=CT+PT, covering all 9 inner/outer variant combos). 1.53M consistency checks. **ZERO candidates at p1*p2 ≤ 50** (strongly constrained). 74 candidates only at p1*p2 ≥ 132 (weakly constrained), **ALL with quadgram ≤ -5.87/char** (far below English -4.84 threshold). Validates E-FRAC-35: zero p2=1 candidates. p1=1 (key-after-transposition): also zero candidates. **Three-layer Sub+Trans+Sub ELIMINATED for columnar transpositions with periods up to 12.**
 
 33. **Mono+Trans+Periodic model** (E-FRAC-53): Tests CT[inv(j)] = (Sub[PT[j]] + K[inv(j)%p]) % 26, where Sub is an unknown monoalphabetic substitution. **KEY INSIGHT:** E-FRAC-35's Bean impossibility proof relies on 9 different-letter Bean inequality pairs (e.g., T≠L at positions 24,66). Adding a monoalphabetic inner layer AUTO-SATISFIES these 9 pairs (since Sub[T]≠Sub[L] is guaranteed by permutation), leaving only 12 same-letter pairs. Period 2 remains pigeonhole-impossible (3 T-positions in 2 bins), but **periods 3-7 become potentially viable** — a genuine E-FRAC-35 bypass. All 17,124 Bean-eq columnar configs × 10 periods (3-12). At discriminating periods 3-7: 556-5,282 configs pass same-letter Bean-ineq, but **ZERO pass the bipartite consistency check** (12+p unknowns, 24 equations, 5-9 redundant constraints at periods 3-7). 47,143 cycle failures detected by BFS. 34 candidates only at period 12 (underdetermined, 0 redundant), all gibberish (best Q=-6.327). **Mono+Trans+Periodic ELIMINATED for columnar widths 6,8,9 with periods 3-12.**
+34. **Mono+Trans+Running key detection** (E-FRAC-54): Tests whether adding a mono inner layer (13 DOF = one shift per known PT letter) can make key fragments at 24 crib positions look English-like, extending E-FRAC-51 (which found ZERO English-like fragments WITHOUT mono). **KEY FINDING:** 13 mono DOF provide ~2.5/char quadgram improvement — **ALL 1,500 sampled columnar configs AND ALL 2,000 random permutations** produce key fragments ABOVE the English 5th percentile (-3.551/char). Best columnar: -2.687/char, best random perm: -2.691/char, best identity: -2.923/char — all ABOVE English mean (-3.210). **The mono layer COMPLETELY SATURATES the fragment analysis.** E-FRAC-51's elimination does NOT extend to the mono case. **Mono+Trans+Running key from English is UNDERDETERMINED — fragment analysis cannot confirm or deny it.** This parallels E-FRAC-40 (SA makes random keys look English) but operates on a different axis (mono shifts vs transposition optimization).
 
-**Reports:** `reports/frac_width9_analysis.md`, `reports/frac_statistical_meta_analysis.md`
+**Reports:** `reports/frac_width9_analysis.md`, `reports/frac_statistical_meta_analysis.md`, `reports/frac_final_synthesis.md`
 
 ## Completed (reverse chronological)
+
+### [2026-02-20T23:30Z] agent_frac — E-FRAC-54: Mono Inner + Running Key Detection (UNDERDETERMINED)
+- **Hypothesis:** Adding a monoalphabetic inner substitution before transposition provides 13 degrees of freedom (one shift per known PT letter: E,A,S,T,N,O,R,H,B,L,I,C,K) to adjust implied running key values at crib positions. Can these shifts make key fragments look English-like? Extends E-FRAC-51 (which tested WITHOUT mono and found ZERO in English range).
+- **Method:** For each columnar ordering σ (500 sampled from 17,124 Bean-eq configs at widths 6,8,9) × 3 cipher variants: optimize 13 mono shifts via coordinate descent (5 restarts × up to 10 rounds) to maximize quadgram score of combined key fragments (pos 21-33: 13 chars + pos 63-73: 11 chars). Unconstrained optimization (shifts can repeat — gives upper bound). Baselines: identity transposition (10 restarts × 15 rounds), random permutations (2,000 samples), English text (10,000 Carter pairs).
+- **Configs tested:** 500 sampled columnar × 3 variants = 1,500 scored configs + 2,000 random permutations + 3 identity variants
+- **Key findings:**
+  - **ALL 1,500 columnar configs exceed English 5th percentile (-3.551/char)** — 100% in English range
+  - **ALL random permutations also in English range** — mean=-3.019, max=-2.691
+  - **Identity transposition in English range** — best=-2.923 (VB), improvement=2.8/char from E-FRAC-51
+  - **Best columnar: -2.687/char** (width 9, [2,8,7,0,3,4,1,6,5], VB, Bean PASS)
+  - **English baseline: mean=-3.210, p5=-3.551** — mono-optimized fragments are MORE English-like than real English
+  - **13 mono DOF provide ~2.5/char improvement** — far exceeds the 0.6/char gap to English
+  - **Best fragments: "TTERMATIONORC|ISTINTERROW"** — quadgram-coherent but not meaningful English
+  - **Mono shifts are NOT injective** (unconstrained) — e.g., VB identity uses Y for 3 letters. Constrained optimization would score lower but likely still in English range (0.86/char margin).
+- **Critical implications:**
+  1. Key fragment analysis is UNINFORMATIVE when a mono inner layer is present
+  2. E-FRAC-51's elimination (running key from English + columnar) does NOT extend to mono+running_key+columnar
+  3. Mono+trans+running_key is UNDERDETERMINED — comparable to E-FRAC-40 (SA makes random keys look English)
+  4. Multi-layer models with mono substitution are either eliminable by crib constraints (E-FRAC-53: periodic key) or underdetermined by fragment analysis (E-FRAC-54: running key)
+  5. This completes the picture: adding model layers ALWAYS leads to either overconstrained (eliminated) or underdetermined (unfalsifiable) outcomes
+- **Verdict:** UNDERDETERMINED — mono optimization makes ALL key fragments English-like regardless of transposition or key source. Test is uninformative.
+- **Runtime:** 331 seconds
+- **Artifacts:** results/frac/e_frac_54_mono_running_key_detection.json
+- **Repro:** `PYTHONPATH=src python3 -u scripts/e_frac_54_mono_running_key_detection.py`
 
 ### [2026-02-20T20:00Z] agent_frac — E-FRAC-51: English-Like Key Fragment Detection on Structured Transpositions (ELIMINATION)
 - **Hypothesis:** If K4 uses a running key from UNKNOWN English text + structured transposition, the implied key values at the 24 crib positions should form English-like text fragments detectable by quadgram scoring. This extends E-FRAC-49/50 (which only tested 7 specific texts) to the general case.

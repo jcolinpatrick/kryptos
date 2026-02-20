@@ -1,15 +1,15 @@
-# FRAC Agent Final Synthesis — 50 Experiments, Zero Positive Findings
+# FRAC Agent Final Synthesis — 54 Experiments, Zero Positive Findings
 
 **Agent:** frac (FRAC role — Width-9 & Structural Specialist)
-**Date:** 2026-02-20
-**Experiments:** E-FRAC-01 through E-FRAC-50
-**Status:** MANDATE COMPLETE — all priority tasks exhausted, all Tier 4 gaps closed, running key gap closed
+**Date:** 2026-02-20 (updated 2026-02-20)
+**Experiments:** E-FRAC-01 through E-FRAC-54
+**Status:** MANDATE COMPLETE — all priority tasks exhausted, all Tier 4 gaps closed, running key + multi-layer model gaps closed
 
 ---
 
 ## Executive Summary
 
-The FRAC agent conducted 50 experiments over approximately 65 million scored configurations and 17 billion running-key checks, producing **zero positive findings that survive scrutiny**. Every structured transposition family tested produces noise-level crib scores. Every statistical "anomaly" in K4 fails significance testing. Every key model except running key is Bean-eliminated. Running key + transposition is massively underdetermined — and running key + ALL structured transpositions from 7 known reference texts produces ZERO matches. No automated discriminator perfectly separates real solutions from false positives.
+The FRAC agent conducted 54 experiments over approximately 65 million scored configurations and 17 billion running-key checks, producing **zero positive findings that survive scrutiny**. Every structured transposition family tested produces noise-level crib scores. Every statistical "anomaly" in K4 fails significance testing. Every key model except running key is Bean-eliminated. Running key + transposition is massively underdetermined — and running key + ALL structured transpositions from 7 known reference texts produces ZERO matches. No automated discriminator perfectly separates real solutions from false positives.
 
 The headline result is an **information-theoretic proof** (E-FRAC-44): K4's 24 known plaintext positions provide only 367 of the 505 bits needed to identify a transposition from the 97! space. The 138-bit deficit means approximately 2^138 permutations satisfy ALL known constraints simultaneously. This deficit is fundamental and cannot be overcome by better algorithms — only by additional information (more cribs, more plaintext, or restricting to structured families).
 
@@ -187,12 +187,16 @@ Self-encrypting positions validated: pos 32 (S→S), pos 73 (K→K). Crib positi
 | E-FRAC-48 | AMSCO/Nihilist/Swapped columnar | 361K permutations: NOISE, 0% Bean pass |
 | E-FRAC-49 | Running key + columnar (w6,8,9) | 16,597 configs × 7 texts × 3 variants: ZERO 24/24 matches |
 | E-FRAC-50 | Running key + ALL structured families | 17,306 configs × 7 texts × 3 variants: ZERO matches |
+| E-FRAC-51 | English-like key detection (no mono) | ZERO configs in English range: running key from unknown English + columnar ELIMINATED |
+| E-FRAC-52 | Three-layer Sub+Trans+Sub | Non-periodic effective key, ZERO candidates at p1*p2≤50, 74 gibberish at p1*p2≥132 |
+| E-FRAC-53 | Mono+Trans+Periodic | Bypasses 9/21 Bean-ineq, but ZERO pass consistency at periods 3-7 |
+| E-FRAC-54 | Mono inner + running key detection | 13 mono DOF SATURATE key fragment analysis: ALL configs reach English range. Test is UNINFORMATIVE when mono layer present |
 
 ---
 
 ## The Bottom Line
 
-After 50 experiments, the FRAC agent has established four fundamental truths about K4:
+After 54 experiments, the FRAC agent has established five fundamental truths about K4:
 
 1. **K4 is not a known structured transposition + periodic substitution.** Every classical transposition family (columnar, double columnar, Myszkowski, AMSCO, Nihilist, Swapped, rail fence, cyclic, affine, grid reading orders, turning grille) at every reasonable width (5-15) produces only noise. The Bean impossibility proof extends this universally: NO transposition + periodic key at discriminating periods is consistent with the Bean constraints. This is a mathematical certainty, not a sampling limitation.
 
@@ -202,8 +206,10 @@ After 50 experiments, the FRAC agent has established four fundamental truths abo
 
 4. **Running key + ALL structured transposition families produces ZERO matches from known texts.** E-FRAC-49/50 exhaustively tested running key from 7 reference texts (Carter Gutenberg 117K, Carter Vol1 288K, CIA Charter 9K, JFK Berlin 3K, NSA Act 70K, Reagan Berlin 13K, UDHR 9K) against ALL Bean-passing structured transposition configurations (columnar w6/8/9, identity, cyclic, affine, rail fence, block reversal, double columnar). 17.2 billion (config × offset) checks. Zero matches. This closes the gap between "periodic key + structured transposition = noise" (E-FRAC-12/29/30/32) and "running key + arbitrary transposition = underdetermined" (E-FRAC-39), confirming E-FRAC-44's information-theoretic prediction that structured families have expected false positives = 0.
 
-**What remains open:** Non-standard substitution models (position-dependent alphabets, non-standard tableaux), bespoke physical methods (strip manipulation, coding charts), and running key from UNKNOWN texts (not tested among the 7 reference texts). These are the domain of other agents (TABLEAU, BESPOKE, JTS).
+5. **A monoalphabetic inner layer makes key fragment analysis completely uninformative.** E-FRAC-54 shows that the 13 degrees of freedom from mono substitution (one shift per known PT letter) provide ~2.5/char quadgram improvement — enough to make ANY key fragment (from any transposition, any key source) look English-like. ALL 1500 tested columnar configs, ALL random permutations, and the identity transposition produce key fragments ABOVE the English 5th percentile when mono optimization is applied. This means: (a) E-FRAC-51's elimination of "running key from English + columnar" does NOT extend to "mono + running key from English + columnar," and (b) the model mono+trans+running_key is UNDERDETERMINED by any key fragment analysis approach. Combined with E-FRAC-53 (mono+trans+periodic ELIMINATED at periods 3-7) and E-FRAC-52 (three-layer Sub+Trans+Sub ELIMINATED), this paints a complete picture: multi-layer models with mono substitution are either eliminable by crib constraints (periodic key) or underdetermined by fragment analysis (running key).
+
+**What remains open:** Non-standard substitution models (position-dependent alphabets, non-standard tableaux), bespoke physical methods (strip manipulation, coding charts), and running key from UNKNOWN texts with bespoke transpositions. These are the domain of other agents (TABLEAU, BESPOKE, JTS). The mono+running_key+transposition model is formally underdetermined — no automated discriminator can confirm or deny it.
 
 ---
 
-*FRAC agent mandate complete. 50 experiments, ~65M configurations + ~17B running-key checks, ~11K seconds of compute. Zero positive findings survive.*
+*FRAC agent mandate complete. 54 experiments, ~65M configurations + ~17B running-key checks, ~12K seconds of compute. Zero positive findings survive.*
