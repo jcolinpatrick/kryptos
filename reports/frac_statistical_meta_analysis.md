@@ -1,13 +1,13 @@
 # K4 Statistical Meta-Analysis — What the Numbers Actually Say
 
 **Agent:** frac (FRAC role)
-**Date:** 2026-02-20 (updated: E-FRAC-34 added)
-**Experiments:** E-FRAC-01 through E-FRAC-34
-**Status:** FRAC mandate complete + extended — 34 experiments, ALL columnar widths 5-15 + simple transposition families eliminated + fitness landscape analyzed + multi-objective oracle designed
+**Date:** 2026-02-20 (updated: E-FRAC-36 added)
+**Experiments:** E-FRAC-01 through E-FRAC-36
+**Status:** FRAC mandate complete + extended — 36 experiments, ALL columnar widths 5-15 + simple transposition families eliminated + fitness landscape analyzed + multi-objective oracle designed + Bean impossibility proof + Bean-surviving periods validated
 
 ## Executive Summary
 
-After 31 experiments totaling ~62 million configurations and ~6000 seconds of compute, the FRAC agent has comprehensively addressed its mandate: width-9 grid hypothesis, fractionation families, structural analysis, meta-validation of prior claims, and comprehensive Bean/columnar width elimination. The headline finding: **K4's statistical properties are largely consistent with random text of length 97.** Most previously cited "anomalies" (below-random IC, lag-7 autocorrelation, DFT peak at k=9, "English-like pre-ENE") fail to reach significance after proper multiple-testing correction. **ALL columnar transposition widths 5-15 are eliminated.**
+After 36 experiments totaling ~62 million configurations and ~7000 seconds of compute, the FRAC agent has comprehensively addressed its mandate: width-9 grid hypothesis, fractionation families, structural analysis, meta-validation of prior claims, comprehensive Bean/columnar width elimination, Bean impossibility proofs, and multi-objective oracle design. The headline finding: **K4's statistical properties are largely consistent with random text of length 97.** Most previously cited "anomalies" (below-random IC, lag-7 autocorrelation, DFT peak at k=9, "English-like pre-ENE") fail to reach significance after proper multiple-testing correction. **ALL columnar transposition widths 5-15 are eliminated. Periodic keying at ALL discriminating periods is Bean-impossible for ANY transposition (universal proof). At Bean-surviving periods, 24/24+Bean is easily achievable but ALL solutions are false positives.**
 
 **One positive finding (now RETRACTED):** The Beaufort key distribution was more concentrated than random (entropy at 0.3rd percentile, p=0.003). E-FRAC-23/24/25 showed this is likely a **selection effect**, not evidence for Beaufort:
 - The Beaufort key text contains KKK — impossible in any natural language (E-FRAC-24)
@@ -171,6 +171,8 @@ The sequence of differences CT[i+1]-CT[i] (mod 26) follows a uniform distributio
 | SA key optimization on Bean-passing orderings | E-FRAC-28 | **NOISE** (underdetermination artifact at period 12-13) |
 | Simple transposition families (cyclic, affine, rail fence, swap, reversal) | E-FRAC-32 | **ELIMINATED** (14,035 perms, max 13/24, BELOW random 14/24) |
 | Crib oracle sufficiency for arbitrary permutations | E-FRAC-33 | **INSUFFICIENT** (hill-climbing reaches false 24/24 at ALL periods, including period 5) |
+| **ANY transposition + periodic key (p=2-12,14,15,17,18,21,22,25)** | E-FRAC-35 | **PROOF: Bean inequalities structurally violated for ALL 97! permutations** |
+| **Bean-surviving periods (8, 13) + Bean HARD constraint** | E-FRAC-36 | **FALSE POSITIVES** (175 solutions at 24/24+Bean, ALL quadgram < -5.0/char) |
 
 ### What Remains Open (Relevant to FRAC Mandate)
 
@@ -198,6 +200,8 @@ The sequence of differences CT[i+1]-CT[i] (mod 26) follows a uniform distributio
 5. **NEW (E-FRAC-24):** Natural-language running key is INCOMPATIBLE with Beaufort under direct correspondence (KKK constraint). If testing running key without transposition, use Vigenère.
 6. **CRITICAL (E-FRAC-33):** Hill-climbing on crib score over arbitrary permutations reaches FALSE 24/24 at ALL periods (including period 5). The 97! permutation space is so large that accidental perfect solutions exist everywhere. **You MUST combine crib scoring with plaintext quality metrics (quadgram fitness, IC, English word detection) in a multi-objective fitness function.** Crib scoring alone WILL converge to false positives.
 7. **Landscape is smooth** (r=0.93 per period) — SA CAN navigate, but it navigates to underdetermination artifacts without additional constraints.
+8. **CRITICAL (E-FRAC-35):** Periodic keying at periods 2-7 is Bean-IMPOSSIBLE for ANY transposition (universal proof). Do NOT search with periodic keys at discriminating periods. If using periodic keys, period 8 is the only viable target with ≥2 cribs/var.
+9. **CRITICAL (E-FRAC-36):** Even at Bean-surviving periods (8, 13), 24/24+Bean is trivially achievable by hill-climbing, but ALL 175 solutions are false positives (quadgram < -5.0). The multi-objective thresholds remain valid: quadgram > -5.0 + IC > 0.055.
 
 ### For BESPOKE Agent
 1. Strip manipulation with periodic substitution is noise (E-FRAC-10)
@@ -223,9 +227,11 @@ K4's ciphertext is a 97-character string with **no statistically significant int
 2. **Running key cipher on English plaintext** — the IC signature matches perfectly
 3. **Long-period (≥10) polyalphabetic on English plaintext** — marginally compatible
 
-After 31 experiments, there are **ZERO statistically significant findings** that survive scrutiny:
+After 36 experiments, there are **ZERO statistically significant findings** that survive scrutiny:
 - The Beaufort key entropy (p=0.003 from E-FRAC-16) was retracted by E-FRAC-23/24/25 as a selection effect
 - All other statistical claims (IC, lag-7, DFT k=9, pre-ENE) were already debunked (E-FRAC-13/14/19)
+- The Bean impossibility proof (E-FRAC-35) eliminates periodic keying at ALL discriminating periods for ANY transposition
+- 265 false 24/24 solutions characterized (E-FRAC-34/36) — ALL discriminated by quadgram score
 
 **K4 is statistically indistinguishable from random text.** The publicly known constraints (24 crib positions, Bean constraints, self-encrypting positions) remain the primary attack surface. Statistical signals in the CT itself are insufficient to constrain the cipher family or transposition.
 
@@ -257,7 +263,7 @@ After 31 experiments, there are **ZERO statistically significant findings** that
 - E-FRAC-24: Beaufort key text is incompatible with all natural languages (KKK constraint, 0.0th percentile)
 - E-FRAC-25: Transposition does NOT explain the low entropy; running key (English, no transposition) is the only model where entropy is normal (21.65th percentile), but this is ruled out by KKK
 
-**Final verdict:** The E-FRAC-16 "Beaufort signal" was a false alarm. The Vigenère key has no anomalies (16.27th percentile entropy, no triple letters, no structural impossibilities). **There are now ZERO significant positive findings across all 31 experiments.**
+**Final verdict:** The E-FRAC-16 "Beaufort signal" was a false alarm. The Vigenère key has no anomalies (16.27th percentile entropy, no triple letters, no structural impossibilities). **There are now ZERO significant positive findings across all 36 experiments.**
 
 ### Extended Analysis: Comprehensive Columnar Width Elimination (E-FRAC-26-31)
 **STATUS: COMPLETE.**
@@ -335,5 +341,84 @@ where α, β, γ are tuned to jointly optimize. The crib score provides the "rig
 
 ---
 
-*Generated by agent_frac. Updated 2026-02-20. 34 experiments, ~62M+ configs + key/structural analysis + false positive characterization, ~6500 seconds total compute.*
+## Part VIII: Bean Period Impossibility Proof (E-FRAC-35)
+
+### The Theorem
+
+**For ANY transposition σ (including identity), periodic substitution at periods 2-12 (and 14, 15, 17, 18, 21, 22, 25) violates at least one Bean inequality constraint. This holds for ALL 97! permutations.**
+
+This is a pure algebraic proof, not a search result. Under periodic keying with period p, key value k[i] = key[i mod p]. Bean inequality constraints require k[a] ≠ k[b] for 21 specific position pairs. Two elimination mechanisms:
+
+### Type 1: Same-Residue Inequality
+
+If Bean inequality pair (a, b) has a ≡ b (mod p), then under periodic keying k[a] = key[a mod p] = key[b mod p] = k[b], directly violating k[a] ≠ k[b].
+
+The 21 Bean inequality pairs have position differences: {1, 3, 4, 5, 9, 34, 42, 43, 45, 50}. Any period p that divides any of these differences is Type-1 eliminated.
+
+**Type 1 eliminated periods:** {2, 3, 4, 5, 6, 7, 9, 10, 14, 15, 17, 21, 25}
+
+### Type 2: Bean Equality-Inequality Conflict
+
+Bean equality forces key[27 mod p] = key[65 mod p]. If some Bean inequality pair (a, b) has {a mod p, b mod p} = {27 mod p, 65 mod p}, then the equality and inequality directly conflict.
+
+**Examples:**
+- Period 11: Bean equality requires key[5] = key[10] (from 27%11=5, 65%11=10). But inequality pair (71, 21) has 71%11=5, 21%11=10, requiring key[5] ≠ key[10]. Direct contradiction.
+- Period 12: Bean equality requires key[3] = key[5] (from 27%12=3, 65%12=5). But inequality pair (29, 63) has 29%12=5, 63%12=3, requiring key[5] ≠ key[3]. Direct contradiction.
+
+**Type 2 eliminated periods (additional):** {11, 12, 18, 22}
+
+### Combined Result
+
+**17 of 25 periods (2-26) are ELIMINATED. Only 8 survive: {8, 13, 16, 19, 20, 23, 24, 26}.**
+
+Critical observation: **ALL discriminating periods (2-7) are Bean-impossible.** Period 8 is the FIRST surviving period, with only 3 cribs per key variable. Most surviving periods (≥13) are deeply underdetermined.
+
+### Implications
+
+1. If K4 uses periodic keying with transposition, the period must be ≥8
+2. Period 8 is the ONLY viable period with ≥2 cribs/var
+3. The 90 false 24/24 solutions from E-FRAC-33/34 were ALL at Bean-eliminated periods — this provides a structural explanation for why they're false positives
+4. This strongly increases the likelihood of a NON-PERIODIC key model (autokey, running key, etc.)
+
+**Repro:** `PYTHONPATH=src python3 -u scripts/e_frac_35_bean_period_impossibility.py`
+
+---
+
+## Part IX: Bean-Surviving Period Validation (E-FRAC-36)
+
+E-FRAC-35 proved that periodic keying at discriminating periods is impossible. But what about the surviving periods? E-FRAC-36 tests whether the multi-objective oracle from E-FRAC-34 still works at Bean-surviving periods.
+
+### Method
+
+50 hill-climbs × 10K steps each, at periods 8 and 13, both Vigenère and Beaufort, with Bean as a HARD constraint (moves that violate Bean are rejected). Comparison: 50 climbs without Bean.
+
+### Results
+
+| Config | 24/24 + Bean | Best Quadgram | Random Max |
+|--------|-------------|---------------|------------|
+| Period 8, Vigenère, Bean=HARD | 41/50 (82%) | -6.171/char | 14/24 |
+| Period 8, Beaufort, Bean=HARD | 47/50 (94%) | -6.179/char | — |
+| Period 13, Vigenère, Bean=HARD | 44/50 (88%) | -6.319/char | — |
+| Period 13, Beaufort, Bean=HARD | 43/50 (86%) | -6.435/char | — |
+
+**All 175 false 24/24 + Bean solutions have quadgram < -5.0/char.** Best: -6.171/char. English benchmark: -4.84/char. Gap: ≥0.83/char.
+
+### Key Findings
+
+1. **24/24 + Bean PASS is trivially achievable** at Bean-surviving periods via hill-climbing (82-94% success rate)
+2. **ALL solutions are false positives** — indistinguishable from random text by quadgram score
+3. **The E-FRAC-34 multi-objective oracle discriminates perfectly** at Bean-surviving periods too
+4. **Bean constraint REDUCES random max** (11 vs 14 at period 8) but does NOT prevent hill-climbing from finding false 24/24
+5. **Periods 8 and 13 produce nearly identical false positive profiles** — no structural advantage for either
+
+### Combined Oracle Validation
+
+Across E-FRAC-34 (90 solutions at eliminated periods) and E-FRAC-36 (175 solutions at surviving periods), **265 total false 24/24 solutions** have been characterized. None has quadgram > -5.77/char. The multi-objective thresholds from E-FRAC-34 hold universally:
+- Crib = 24/24 + Bean PASS + quadgram > -5.0 + IC > 0.055 + word ≥6 chars
+
+**Repro:** `PYTHONPATH=src python3 -u scripts/e_frac_36_period8_bean_hillclimb.py`
+
+---
+
+*Generated by agent_frac. Updated 2026-02-20. 36 experiments, ~62M+ configs + key/structural analysis + false positive characterization + Bean impossibility proof + Bean-surviving validation, ~7000 seconds total compute.*
 *Methodology: All p-values use Monte Carlo simulation with ≥50,000 samples. Multiple testing correction uses Bonferroni where applicable. Corrected p-values account for number of trials: P(max ≥ X | N) = 1 - (1-p)^N.*
