@@ -1,5 +1,5 @@
 # K4 Agent Team — Progress Tracker
-Last updated: 2026-02-20T00:15:00Z by agent_frac
+Last updated: 2026-02-20T04:30:00Z by agent_frac
 
 ## ALERTS
 <!-- Scores ≥18/24 go here. If this section is non-empty, ALL agents should read it. -->
@@ -37,6 +37,53 @@ Last updated: 2026-02-20T00:15:00Z by agent_frac
 |-------|------|---------|--------|
 
 ## Completed (reverse chronological)
+
+### [2026-02-20T04:30Z] agent_frac — E-FRAC-20: Residue Conflict Map — Which Positions Block Full Score?
+- **Hypothesis:** Which specific crib positions cause periodic scoring to fail? Where must transposition act?
+- **Key findings:**
+  - Best periodic score at discriminating periods (2-7): **8/24** across all Vig/Beau/VB variants
+  - Best config: Vigenere p=5 at 95.2nd percentile of random (z=1.27) — NOT significant
+  - BC positions conflict more than ENE (82% vs 54% at Vig p=5; 91% vs 46% at Vig p=7)
+  - Every residue class has multiple conflicts — no "clean" residues at any discriminating period
+  - 16/24 crib positions are in conflict for any top config — the cipher is deeply incompatible with periodicity
+  - If transposition exists, it must move MANY positions (16+/24), not just a few
+- **Verdict:** K4_CONSISTENT_WITH_RANDOM — periodic model scores consistent with random CT (z=1.27)
+- **Runtime:** 1 second
+- **Artifacts:** results/frac/e_frac_20_residue_conflict_map.json
+- **Repro:** `PYTHONPATH=src python3 -u scripts/e_frac_20_residue_conflict_map.py`
+
+### [2026-02-20T04:15Z] agent_frac — E-FRAC-19: Pre-ENE Segment Deep Analysis (RQ-7)
+- **Hypothesis:** Is the pre-ENE segment (pos 0-20, IC=0.067) encrypted differently from the rest of K4?
+- **Key findings:**
+  - Pre-ENE IC = 0.067 is at **97.6th percentile of random 21-char text** (z=2.13) — high but...
+  - It ranks **#10 out of 77** contiguous 21-char segments of K4 — 13 segments have IC ≥ 0.067
+  - Highest IC segments are pos 23-43 (IC=0.086), NOT pre-ENE — these overlap with the QSS-rich region
+  - **Bonferroni-corrected p-value = 1.0** — completely insignificant after multiple testing
+  - Pre-ENE letter frequencies have near-zero correlation with English (r=0.018) — NOT English-like
+  - Pre-ENE has 4 O's and 4 B's out of 21 chars — the "high IC" is just letter repetition in a short sample
+  - Pre-ENE as a key for positions 21-96: 2/24 matches (random baseline)
+  - Using pre-ENE as a repeating key for Vig/Beaufort: 2/24 matches
+  - Gap segment (pos 34-62): IC at 53.2nd percentile of random — completely unremarkable
+  - All segments consistent with random text after length calibration
+- **Verdict:** MARGINALLY_INTERESTING — high IC does NOT survive multiple testing. The "English-like pre-ENE" claim from prior work is unfounded.
+- **Runtime:** 18 seconds
+- **Artifacts:** results/frac/e_frac_19_pre_ene_analysis.json
+- **Repro:** `PYTHONPATH=src python3 -u scripts/e_frac_19_pre_ene_analysis.py`
+
+### [2026-02-20T04:00Z] agent_frac — E-FRAC-18: Crib Position Sensitivity Analysis
+- **Hypothesis:** Are any crib positions off by ±1 or ±2? (Meta-risk: if cribs are wrong, all eliminations are invalid)
+- **Tests:** Block shifts (ENE ±2, BC ±2), individual position shifts, drop-one analysis
+- **Key findings:**
+  - Baseline best: 16/24 at period 15 (underdetermination territory — not meaningful)
+  - Best shifted: 17/24 (ENE-1 BC-1, period 15) — +1 above baseline, noise
+  - At discriminating periods (2-7): NO shift produces improvement above baseline
+  - Drop-one analysis: nearly all positions give 16/23 when dropped — no position stands out
+  - Self-encrypting positions confirmed: pos 32 (S→S) and pos 73 (K→K) are correct
+  - Key entropy at shifted positions: no shift produces notably lower entropy
+- **Verdict:** MARGINAL_IMPROVEMENT — crib positions are correct. No shift at any discriminating period improves the score. The published positions (21-33 for ENE, 63-73 for BC) are validated.
+- **Runtime:** 0.1 seconds
+- **Artifacts:** results/frac/e_frac_18_crib_sensitivity.json
+- **Repro:** `PYTHONPATH=src python3 -u scripts/e_frac_18_crib_sensitivity.py`
 
 ### [2026-02-20T00:10Z] agent_frac — E-FRAC-17: Running Key Search Against Reference Texts
 - **Hypothesis:** Is K4's key derived from a known text (running key) under Beaufort or Vigenere?
