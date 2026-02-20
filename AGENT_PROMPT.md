@@ -172,6 +172,38 @@ Last updated: 2026-02-18T16:45:00Z by agent_trans
 
 ---
 
+## Ground Truth Summary (READ BEFORE STARTING)
+
+**130+ experiments across 27 sessions have eliminated ALL standard classical cipher families.** Before proposing any work, check `docs/elimination_tiers.md` and the elimination list in `CLAUDE.md`. The following are **DEFINITIVELY DEAD** — do not re-test:
+
+- ALL periodic polyalphabetic (Vig/Beaufort/VB) at any period, with or without transposition
+- ALL autokey forms (PT/CT, direct + columnar widths 5-10)
+- Hill 2×2 through 4×4, Quagmire I-IV, Porta, Gronsfeld
+- Bifid 5×5/6×6, Trifid 3×3×3 (algebraic proofs, all periods)
+- Playfair, Two-Square, Four-Square, Nihilist
+- ADFGVX/ADFGX, straddling checkerboard (structurally impossible)
+- Monoalphabetic + columnar widths 5-11
+- Double columnar (widths 5-8) + periodic Vig, Myszkowski + periodic
+- Turning grille 10×10 (structurally impossible)
+- Running key from K1-K3, Carter book, 25+ themed texts
+- ALL polynomial/recurrence/derived keystreams + width-7
+- Decimation ciphers, self-keying, keyword interleaving
+
+**What HASN'T been eliminated:**
+- **Width-9 columnar** + substitution (TOP PRIORITY — DFT peak + Sanborn's "10.8 rows" annotation)
+- Non-keyword mixed alphabets (bespoke coding charts)
+- Running key from UNKNOWN text (key is probably NOT English)
+- Physical/procedural ciphers ("not a math solution")
+- Non-standard structures not yet conceived
+
+**Key constraints:**
+- Key is provably non-periodic and position-dependent
+- Underdetermination is absolute: 20% of random p7 keys satisfy all 24 cribs via bipartite matching
+- Only scores at period ≤7 are meaningful discriminators
+- IC = 0.0361 (below random), lag-7 autocorrelation z=3.036
+
+---
+
 ## Agent Roles
 
 There are six defined agent roles. Each role has a specific hypothesis space and a mandate. **You must stay in your lane** — do not work on another role's hypothesis space unless PROGRESS.md shows that role's agent is down or abandoned.
@@ -191,14 +223,21 @@ Systematically enumerate structured transposition families applied to the 97-cha
 3. Check if the implied key values are periodic (periods 3–15), autokey, or otherwise structured
 4. Use the bimodal fingerprint as a **pre-filter**: reject any σ that moves positions 22–30 significantly (these should be approximately preserved) while leaving positions 64–74 in place (these should be scrambled)
 
+**ALREADY ELIMINATED — DO NOT RE-TEST:**
+- Columnar widths 5-11 + periodic/autokey/mono substitution (E-S-91/94/99)
+- Double columnar all width-pairs 5-8 + periodic Vig (1B+ configs, E-S-33)
+- Myszkowski + periodic Vig/Beau (47K orderings, E-S-39)
+- Turning grille 10×10 (structurally impossible, E-S-104)
+- AMSCO, disrupted columnar, Nihilist transposition
+- Route ciphers on standard grids (E-S-55)
+
 **Transposition families to test (priority order):**
-1. Columnar transposition — widths 5–15, keyword-derived orders from `wordlists/english.txt`
-2. Double columnar — all keyword pairs for widths 5–8
-3. Myszkowski transposition — repeated-letter keywords
-4. Turning grille — systematic grille patterns for 10×10 grid (97 + 3 nulls)
-5. Route ciphers on rectangular grids — all factorizations of dimensions close to 97
-6. Nihilist transposition — period-based disrupted columnar
-7. Bespoke: S-curve readout orders derived from the sculpture's physical geometry
+1. **Width-9 columnar** — DFT peak at k=9 (z≈2.83) + Sanborn's "10.8 rows" annotation → 97/9≈10.78. RELATIVELY UNTESTED. All 9! orderings × substitution models.
+2. Width-9 non-columnar — serpentine, spiral, diagonal reads on 9-wide grid
+3. Non-standard width-7 transpositions — rail fence, redefence, disrupted patterns NOT yet tested with non-periodic substitution
+4. Width-11 and width-13 columnar — 97=11×8+9, 97=13×7+6. Sparse coverage.
+5. Bespoke: S-curve readout orders derived from the sculpture's physical geometry
+6. Multi-step transpositions: columnar(w9) then columnar(w7), or vice versa
 
 **Success criterion:** Implied key values after undoing σ show periodic consistency at >=20/24 positions for some period <=15.
 
@@ -290,23 +329,33 @@ This is the most computationally expensive role. Use these strategies to manage 
 
 ---
 
-### Role: FRAC (Fractionation Specialist)
+### Role: FRAC (Width-9 & Structural Specialist)
 
 **Agent ID:** `frac`
-**Hypothesis space:** H6/H7 — Fractionation ciphers (ADFGVX, straddling checkerboard, Bifid variants).
-**Research questions:** RQ-7 (fractionation compatibility), RQ-8 (ADFGVX recovery)
+**Hypothesis space:** H6/H7/H12 — Width-9 grid hypothesis, structural analysis, and any remaining non-standard multi-layer models.
+**Research questions:** RQ-1 (transposition family), RQ-7 (fractionation compatibility)
+
+**ALREADY ELIMINATED — DO NOT RE-TEST:**
+- ADFGVX/ADFGX (structurally impossible — CT has 26 letters, ADFGVX produces 6)
+- Straddling checkerboard (digit output, structurally impossible)
+- Bifid 5×5 (25-letter alphabet, K4 uses all 26) and Bifid 6×6 (all periods 2-97, algebraic proof)
+- Trifid 3×3×3 (all periods 2-97, algebraic proof)
+- Playfair, Two-Square, Four-Square (eliminated)
 
 **Mandate:**
-Test fractionation-based cipher families that combine substitution and transposition in a mathematically interleaved way. These are distinct from simple "substitute then transpose" because fractionation splits each plaintext letter into multiple intermediate symbols before transposition.
+The original fractionation families are ALL eliminated. This role is **repurposed** to focus on the **width-9 grid hypothesis** — the strongest untested structural lead:
 
-**Families to test:**
-1. ADFGVX — 6x6 grid fractionation + columnar transposition (WWI German cipher; Scheidt would know this)
-2. ADFGX — 5x5 variant (but note: K4 CT has 26 distinct letters, so the intermediate alphabet must accommodate this)
-3. Straddling checkerboard — unequal-length substitution + columnar transposition (Cold War Soviet tradecraft, matches Berlin narrative)
-4. Modified Bifid — non-standard Polybius grids with period variation
-5. Trifid — 3x3x3 cube fractionation (less likely but cheap to test)
+**Evidence for width 9:**
+- Sanborn's yellow pad annotation appears to read "10.8 rows" → 97/9 = 10.78 ≈ 10.8
+- DFT peak at k=9 (period ~10.8, z≈2.83) from CT structural analysis (E-S-25)
+- Width-9 grid: 9 columns, 7 cols of 11 rows + 2 cols of 10 rows
 
-**Important constraint:** Previous Bifid/Playfair testing used standard 5x5 grids. K4's CT contains all 26 letters, which eliminates standard 5x5 Polybius. But 6x6 or augmented grids have NOT been exhaustively tested.
+**Tasks (priority order):**
+1. Width-9 columnar + non-periodic substitution models (running key, progressive, position-dependent)
+2. Width-9 non-columnar reading orders (spiral, diagonal, serpentine on 9-wide grid)
+3. Width-9 × width-7 compound transposition (apply both in sequence)
+4. Width-9 grid with mixed alphabets (arbitrary substitution tables per column)
+5. Structural analysis: does width-9 explain the lag-7 autocorrelation signal?
 
 ---
 
@@ -641,22 +690,30 @@ When deciding what to work on next, agents should consult this matrix. Higher pr
 
 | Priority | Task | Estimated Runtime | Rationale |
 |----------|------|-------------------|-----------|
-| 1 | Columnar width 5-10, exhaustive perms | 2-8 hours per width | Highest-probability transposition family |
-| 2 | Columnar width 11-15, keyword-derived orders | 1-4 hours | Extends coverage to wider columns |
-| 3 | Double columnar, width pairs (5,5) through (7,7) | 4-12 hours | Tests compound transposition |
-| 4 | Myszkowski (repeated-letter keywords from wordlist) | 2-6 hours | Uncommon but Sanborn might use names |
-| 5 | Route ciphers on near-97 grids | 1-3 hours | Grid dimensions: 10x10-3, 11x9-2, etc. |
-| 6 | Turning grille (10x10, systematic) | Hours-days | Large space, needs Monte Carlo sampling |
+| 1 | Width-9 columnar, all 9!=362880 orderings × sub models | 2-4 hours | Top untested hypothesis (DFT + Sanborn notes) |
+| 2 | Width-9 non-columnar reads (serpentine, spiral, diagonal) | 1-2 hours | Alternative reading orders on 9-wide grid |
+| 3 | Width-11/13 columnar with keyword orderings | 2-4 hours | Sparse prior coverage |
+| 4 | Multi-step transpositions (w9→w7, w7→w9) | 4-8 hours | Compound transposition |
+| 5 | Non-standard width-7 with non-periodic substitution | 2-4 hours | Width-7 tested only with periodic keys |
+
+**For FRAC agent (repurposed):**
+
+| Priority | Task | Estimated Runtime | Rationale |
+|----------|------|-------------------|-----------|
+| 1 | Width-9 columnar + running key models | 2-4 hours | Complement TRANS with non-periodic sub |
+| 2 | Width-9 grid structural analysis (IC, lag, DFT per column) | Minutes | Cheap diagnostic tests |
+| 3 | Width-9 × width-7 compound transposition | 4-8 hours | Two-layer hypothesis |
+| 4 | Width-9 + position-dependent mixed alphabets | Hours | Arbitrary sub tables per column |
 
 **For BESPOKE agent:**
 
 | Priority | Task | Estimated Runtime | Rationale |
 |----------|------|-------------------|-----------|
-| 1 | Strip manipulation (Smithsonian model) | Minutes each | Direct evidence from archives |
-| 2 | S-curve readout variations | Minutes each | Physical sculpture geometry |
-| 3 | Boustrophedon / serpentine reads | Minutes each | Simple physical reading method |
-| 4 | Grille-through-tableau | Minutes-hours | Physical alignment hypothesis |
-| 5 | Non-standard tableau lookups | Minutes each | K1-K3 used tableau standardly; K4 may not |
+| 1 | Strip manipulation on 9-wide and 7-wide grids | Minutes each | Direct evidence from archives + width hypothesis |
+| 2 | Physical reading orders from sculpture geometry | Minutes each | S-curve, boustrophedon on actual dimensions |
+| 3 | "Coding chart" models — arbitrary lookup tables | Minutes-hours | Sanborn's confirmed encipherment tool ($962K auction) |
+| 4 | K1-K3 plaintext as operational instructions | Minutes | "LAYER TWO" instruction, parse for more |
+| 5 | Non-mathematical procedures a sculptor would use | Minutes each | "Who says it is even a math solution?" |
 
 ---
 
