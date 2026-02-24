@@ -5,7 +5,7 @@ These tests independently verify the claims that other agents rely on:
 1. DFT peak at k=9 with z≈2.83 (from E-S-25)
 2. Lag-7 autocorrelation z≈3.04 (strongest CT signal)
 3. Width-9 grid geometry (97/9 = 10.78, Sanborn annotation)
-4. Bimodal pre-filter correctness (AGENT_PROMPT.md specification)
+4. Bimodal pre-filter correctness (legacy harness specification)
 5. Underdetermination noise floors at various periods
 6. Known keystream values at crib positions
 
@@ -76,11 +76,11 @@ def period_consistency_score(perm: list[int], period: int, variant: str = "vigen
     return score
 
 
-# ── Helper: bimodal pre-filter (from AGENT_PROMPT.md specification) ─────────
+# ── Helper: bimodal pre-filter (from legacy harness specification) ──────────
 def bimodal_check(perm: list[int]) -> bool:
     """Reject permutations inconsistent with the bimodal fingerprint.
 
-    Exactly as specified in AGENT_PROMPT.md lines 246-260.
+    From original legacy harness specification (now in archive/legacy_harness/).
     """
     # Positions 22-30 should map approximately to themselves (+-5)
     for i in range(22, 31):
@@ -330,7 +330,7 @@ class TestWidth9Geometry:
 
 
 class TestBimodalPreFilter:
-    """Verify the bimodal pre-filter specified in AGENT_PROMPT.md."""
+    """Verify the bimodal pre-filter from the legacy harness specification."""
 
     def test_identity_permutation_passes(self):
         """Identity permutation should pass: positions 22-30 are preserved,
