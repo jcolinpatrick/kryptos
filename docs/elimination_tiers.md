@@ -1,6 +1,6 @@
 # Elimination Confidence Tiers
 
-**CRITICAL FRAMING:** Every exhaustive-search elimination in this project was conducted under the assumption of **direct positional correspondence** — meaning CT position N maps to PT position N with no transposition. The primary hypothesis (H1) is that a transposition layer exists, which means **the substitution families below have NOT been tested in their correct context as one layer of a multi-layer system.** The TRANS, JTS, and FRAC agents are doing that work now.
+**CRITICAL FRAMING:** Every exhaustive-search elimination in this project was conducted under the assumption of **direct positional correspondence** — meaning CT position N maps to PT position N with no transposition. The primary hypothesis (H1) is that a transposition layer exists, which means **the substitution families below have NOT been tested in their correct context as one layer of a multi-layer system.** Multi-layer testing was completed across 250+ experiments (see `reports/final_synthesis.md`).
 
 **FRAC AGENT STATUS (2026-02-21, FINAL):** The FRAC agent has completed 55 experiments (E-FRAC-01 through E-FRAC-55). Mandate COMPLETE + running key gap closure + English key detection + three-layer model + mono inner layer + mono running key underdetermination + Bean-surviving period gap closed. Key results that affect this document:
 - ALL fractionation families structurally eliminated (E-FRAC-21) — proofs hold WITH OR WITHOUT transposition
