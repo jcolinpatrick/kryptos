@@ -354,3 +354,25 @@ This is Sanborn's most revealing statement. He's telling us:
 NOTHING ON THE SCULPTURE IS A MISTAKE. Every anomaly is a design choice.
 The only admitted error (omitted X) he went out of his way to correct 16 years later.
 Everything else? Intentional until proven otherwise.
+
+---
+
+## H. NARRATIVE ANOMALY ALLOCATION (confirmed 2026-02-20)
+
+### Consumed by narrative (plaintext/keyword clues — NOT available for K4 method):
+- K0 stray E's -> PALIMPSEST (conceptual recognition of sculpture form)
+- K0 "cut" letters (I->E, O->T, L->Q) + missing WHA -> ABSCISSA ("cut off")
+- Lodestone/compass -> EASTNORTHEAST (K4 crib, physical direction)
+- K2 plaintext theme (Berlin Tunnel / Operation Gold) -> BERLIN (K4 crib)
+- K2 "LAYER TWO" -> K3 method
+
+### Remaining for K4 METHOD (unresolved):
+- YAR superscript (Y=24, A=0, R=17) -- K3/K4 boundary marker or auth trigraph
+- Extra L -> HILL on tableau (same line as YAR) -- Hill cipher ELIMINATED (E-S-151)
+- "T IS YOUR POSITION" (T=19) -- COMSEC position indicator / DRYAD set letter (HIGH confidence)
+- DESPARATLY (E->A pos 5, missing E pos 8) -- Sanborn REFUSED to answer
+- RQ at Morse end (R=17, Q=16) -- radio prosign, truncated CQ (HIGH confidence)
+- "?" between K3/K4 -- BT break prosign (MEDIUM-HIGH)
+- 26 extra E's -- structural markers?
+- **Frame 1 (Hill cipher) ELIMINATED** -> YART not Hill matrix parameters
+- **Frame 2 (physical/procedural) SURVIVES** -> "not a math solution", coding charts
