@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Research Questions &mdash; kryptosbot.com{% endblock %}
+
+{% block content %}
+<h1>Open Research Questions</h1>
+<p>
+  These are the prioritized unknowns driving our investigation. Each question
+  represents a gap in our understanding of K4. Resolving any Tier 1 question
+  would be a game-changer.
+</p>
+
+{% for tier_name, tier_rqs in tiers %}
+<h2>{{ tier_name }}</h2>
+{% for rq in tier_rqs %}
+<div class="rq-card" id="{{ rq.id }}">
+  <h3>{{ rq.id }}: {{ rq.title }}</h3>
+  {% if rq.current_state %}
+  <p>{{ rq.current_state }}</p>
+  {% endif %}
+  {% if rq.hypotheses_total is defined and rq.hypotheses_total %}
+  <div class="rq-meta">
+    {{ rq.hypotheses_eliminated|default(0) }} / {{ rq.hypotheses_total }} hypotheses eliminated
+    <div class="progress-bar">
+      <div class="progress-fill" style="width: {{ (rq.hypotheses_eliminated|default(0) / rq.hypotheses_total * 100) if rq.hypotheses_total else 0 }}%"></div>
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endfor %}
+{% endfor %}
+{% endblock %}

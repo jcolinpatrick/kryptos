@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Submit a Theory &mdash; kryptosbot.com{% endblock %}
+
+{% block content %}
+<h1>Submit Your K4 Theory</h1>
+<p>
+  Describe your theory about how Kryptos K4 is encrypted. Our AI classifier
+  will check whether it matches any of the {{ total_experiments }}+ experiments
+  we have already run.
+</p>
+
+<div class="credit-notice">
+  If your submission leads to the solution of Kryptos K4, you will receive
+  <strong>full credit</strong> for the discovery. This site exists solely to
+  support the K4 community.
+</div>
+
+<form id="submit-form">
+  <label for="theory-input">Your theory (plain English)</label>
+  <textarea id="theory-input" rows="6"
+    placeholder="Example: I think K4 uses a Playfair cipher with keyword KRYPTOS, followed by a columnar transposition with width 9..."></textarea>
+  <div id="char-counter" class="char-counter">0 / 2000</div>
+
+  <button type="submit" id="submit-btn" disabled>Classify Theory</button>
+</form>
+
+<div id="submit-result" class="result-box"></div>
+
+<hr>
+<p>
+  <strong>Not sure what to search for?</strong>
+  <a href="/browse/">Browse our elimination database</a> to see what has already been tested.
+</p>
+
+<noscript>
+  <p>
+    The theory classifier requires JavaScript.
+    You can still <a href="/browse/">browse the database</a> or
+    <a href="https://github.com/cpatrick/kryptos/issues/new">open a GitHub Issue</a>
+    to submit your theory manually.
+  </p>
+</noscript>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/submit.js"></script>
+{% endblock %}

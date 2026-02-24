@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block title %}FAQ &mdash; kryptosbot.com{% endblock %}
+
+{% block content %}
+<h1>Frequently Asked Questions</h1>
+
+<details open>
+  <summary>Is Kryptos K4 solved?</summary>
+  <p>
+    No. As of 2026, K4 remains unsolved after 35 years. In September 2025,
+    the full plaintext was found in Smithsonian archives but is sealed until
+    2075. The <em>encryption method</em> is still unknown to the public.
+  </p>
+</details>
+
+<details>
+  <summary>What has already been tried?</summary>
+  <p>
+    Over 250 experiments covering 2.3 billion+ configurations have been run,
+    testing every major classical cipher family: Vigen&egrave;re, Beaufort,
+    columnar transposition, Playfair, Bifid, running keys, and many more.
+    All single-layer classical ciphers have been eliminated.
+    <a href="/browse/">Browse the full database</a> to see what has been tested.
+  </p>
+</details>
+
+<details>
+  <summary>What approaches remain open?</summary>
+  <p>
+    The main surviving hypotheses are:
+    (1) a running key from an unknown source text,
+    (2) a bespoke physical/procedural cipher using coding charts,
+    (3) non-standard multi-layer combinations not yet conceived.
+    See our <a href="/research-questions/">Research Questions</a> for the full
+    list of open problems.
+  </p>
+</details>
+
+<details>
+  <summary>Can I submit my own theory?</summary>
+  <p>
+    Yes! Use our <a href="/submit/">Submit a Theory</a> page. Describe your idea
+    in plain English and our AI classifier will check whether it matches anything
+    we have already tested. If your theory is genuinely novel, it will be queued for
+    evaluation by our team.
+  </p>
+  <div class="credit-notice">
+    If your submission leads to the solution of Kryptos K4, you will receive
+    <strong>full credit</strong> for the discovery. This site exists solely to
+    support the K4 community.
+  </div>
+</details>
+
+<details>
+  <summary>How do I know your results are correct?</summary>
+  <p>
+    Every elimination includes a <strong>reproduction command</strong> you can
+    run yourself. Our codebase is fully
+    <a href="https://github.com/cpatrick/kryptos">open source</a>. We also
+    classify results by confidence tier and list explicit scope limitations
+    for each elimination. If you find an error,
+    <a href="/report-error/">report it</a> and we will investigate.
+  </p>
+</details>
+
+<details>
+  <summary>Who built this?</summary>
+  <p>
+    kryptosbot.com is built by <strong>Colin Patrick</strong> (human lead) and
+    <strong>Claude</strong> (AI computational partner, by Anthropic). The project
+    began as a systematic attempt to solve K4 using computational cryptanalysis
+    and evolved into this public elimination database so the community can
+    build on our work rather than re-testing approaches that have already been
+    proven fruitless.
+  </p>
+</details>
+
+<details>
+  <summary>Why can&rsquo;t computers just solve K4?</summary>
+  <p>
+    K4 has only 97 characters &mdash; too short for most statistical attacks to
+    distinguish signal from noise. The key is provably non-periodic, and the
+    cipher likely involves at least two layers (substitution + transposition).
+    With 97! possible permutations for the transposition alone, brute force
+    is impossible. The information-theoretic deficit is approximately 138 bits,
+    meaning ~2<sup>138</sup> different configurations satisfy all known constraints.
+    Solving K4 likely requires identifying the specific <em>method</em>, not just
+    trying all keys.
+  </p>
+</details>
+{% endblock %}

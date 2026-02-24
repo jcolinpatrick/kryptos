@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Report an Error &mdash; kryptosbot.com{% endblock %}
+
+{% block content %}
+<h1>Report an Error</h1>
+<p>
+  Found a mistake in our elimination database? We take accuracy seriously.
+  Every result should be reproducible and correctly described.
+</p>
+
+<h2>How to Report</h2>
+<ol>
+  <li>Navigate to the specific elimination page that contains the error.</li>
+  <li>Click the <strong>"Report it on GitHub"</strong> link at the bottom of the page.
+      This opens a pre-filled GitHub Issue with the elimination ID.</li>
+  <li>Describe the error you found: wrong parameters, incorrect verdict,
+      reproduction command fails, scope limitations missing, etc.</li>
+  <li>Submit the issue. We will investigate and update the database if confirmed.</li>
+</ol>
+
+<h2>What to Report</h2>
+<ul>
+  <li><strong>Incorrect results:</strong> Reproduction command gives different output than claimed.</li>
+  <li><strong>Missing scope limitations:</strong> The elimination claims to rule out something broader than it actually tested.</li>
+  <li><strong>Wrong parameters:</strong> Period range, key model, or cipher type is misidentified.</li>
+  <li><strong>Stale information:</strong> New public information changes the interpretation of results.</li>
+  <li><strong>Bug in the code:</strong> Indexing errors, sign convention mistakes, or other implementation bugs.</li>
+</ul>
+
+<h2>General Issues</h2>
+<p>
+  For errors not tied to a specific elimination, or for general feedback:
+</p>
+<p>
+  <a href="https://github.com/cpatrick/kryptos/issues/new" class="btn">
+    Open a GitHub Issue
+  </a>
+</p>
+{% endblock %}

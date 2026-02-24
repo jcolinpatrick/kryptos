@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}kryptosbot.com — The K4 Elimination Database{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <div class="hero-tagline">Kryptos K4 Elimination Database</div>
+  <h1>What doesn't decrypt K4</h1>
+  <p>
+    A comprehensive, open-source record of rigorously tested cipher theories for
+    Kryptos K4 — the last unsolved section of Jim Sanborn's sculpture at CIA
+    headquarters. Every entry is reproducible.
+  </p>
+</section>
+
+<div class="stats-grid">
+  <div class="stat-card stat-accent">
+    <div class="stat-value">{{ total_configs }}</div>
+    <div class="stat-label">Configurations Tested</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value">{{ total_experiments }}</div>
+    <div class="stat-label">Experiments Run</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value">{{ total_categories }}</div>
+    <div class="stat-label">Cipher Families</div>
+  </div>
+</div>
+
+<div class="section-label">Explore</div>
+<div class="entry-grid">
+  <div class="entry-card">
+    <h3><a href="/browse/">Browse by Category</a></h3>
+    <p>
+      Explore eliminations organized by cipher family — substitution,
+      transposition, fractionation, multi-layer, and more.
+    </p>
+    <span class="entry-arrow">Browse &rarr;</span>
+  </div>
+  <div class="entry-card">
+    <h3><a href="/search/">Search</a></h3>
+    <p>
+      Find specific ciphers, parameters, or techniques across
+      the full elimination database.
+    </p>
+    <span class="entry-arrow">Search &rarr;</span>
+  </div>
+  <div class="entry-card">
+    <h3><a href="/submit/">Submit a Theory</a></h3>
+    <p>
+      Describe your K4 theory in plain English. We'll check whether
+      it has already been tested or is genuinely novel.
+    </p>
+    <span class="entry-arrow">Submit &rarr;</span>
+  </div>
+</div>
+
+<div class="section-label">Categories</div>
+<div class="category-list">
+  {% for cat in categories %}
+  <div class="category-card">
+    <h3><a href="/browse/{{ cat.slug }}/">{{ cat.name }}</a></h3>
+    <div class="count">{{ cat.count }} elimination{{ "s" if cat.count != 1 else "" }}</div>
+    <p><small>{{ cat.description }}</small></p>
+  </div>
+  {% endfor %}
+</div>
+
+<div class="section-label">What is Kryptos K4?</div>
+<p>
+  <strong>Kryptos</strong> is an encrypted sculpture at CIA headquarters
+  containing four messages. K1–K3 were solved in 1999. K4 — <strong>97
+  characters</strong> — has resisted all public attempts for 35 years.
+  We know 24 characters: <code>EASTNORTHEAST</code> at positions 21–33
+  and <code>BERLINCLOCK</code> at positions 63–73.
+</p>
+{% endblock %}

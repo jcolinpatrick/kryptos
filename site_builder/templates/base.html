@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="kryptosbot.com — The K4 Elimination Database. Rigorous, reproducible cryptanalysis of Kryptos K4.">
+  <title>{% block title %}kryptosbot.com{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
+  {% block head_extra %}{% endblock %}
+</head>
+<body>
+  <div class="disproven-banner">
+    <span class="disproven-count">{{ total_configs_disproven }}</span>
+    <span class="disproven-label">configurations disproven</span>
+  </div>
+
+  <nav>
+    <ul>
+      <li><strong><a href="/">kryptosbot</a></strong></li>
+    </ul>
+    <ul>
+      <li><a href="/browse/">Browse</a></li>
+      <li><a href="/search/">Search</a></li>
+      <li><a href="/methodology/">Methodology</a></li>
+      <li><a href="/research-questions/">Research</a></li>
+      <li><a href="/recent/">Recent</a></li>
+      <li><a href="/faq/">FAQ</a></li>
+      <li><a href="/about-kryptos/">About</a></li>
+      <li><a href="/submit/">Submit</a></li>
+    </ul>
+  </nav>
+
+  <main class="container">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="container">
+    <hr>
+    <p>
+      Built by <a href="https://github.com/cpatrick">Colin Patrick</a> &amp; <a href="https://claude.ai">Claude</a>
+      &middot; <a href="https://github.com/cpatrick/kryptos">Source</a>
+      &middot; <a href="/report-error/">Report error</a>
+    </p>
+    <p><small>Not affiliated with the CIA, Jim Sanborn, or Ed Scheidt.</small></p>
+  </footer>
+
+  {% block scripts %}{% endblock %}
+</body>
+</html>

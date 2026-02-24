@@ -1,0 +1,188 @@
+# Manual enrichment for key eliminations.
+# These override or supplement data loaded from DBs and result JSON files.
+# Keyed by elimination ID (experiment_id or hypothesis_id).
+
+[elimination.E-BESPOKE-02-ABSCISSA-LINEAR]
+title = "Abscissa-derived linear keys"
+category = "bespoke"
+subcategory = "physical-sculpture"
+scope_limitations = "Single-layer only. Does not test abscissa concept as part of multi-layer cipher."
+assumptions = "Direct positional correspondence (CT[i] -> PT[i]); Standard A-Z alphabet"
+confidence_tier = 2
+repro_command = "PYTHONPATH=src python3 -u scripts/e_bespoke_02_abscissa_linear.py"
+
+[elimination.E-BESPOKE-10-ROTATION-GRID]
+title = "K3-style rotation grid applied to K4"
+category = "transposition"
+subcategory = "grid-rotation"
+scope_limitations = "Only tests grids matching K3's 42x8 rotation method. Does not test arbitrary grid dimensions."
+assumptions = "K4 uses the same rotation grid method as K3; Standard reading order"
+confidence_tier = 2
+repro_command = "PYTHONPATH=src python3 -u scripts/e_bespoke_10_rotation_grid.py"
+
+[elimination.E-CHART-01-RUNNING-KEY]
+title = "Running key from known reference texts + columnar transposition"
+category = "multi-layer"
+subcategory = "transposition-plus-substitution"
+scope_limitations = "Only tests against 15+ specific known texts (Carter volumes, Gutenberg editions, K1-K3 plaintext). Does not eliminate running key from unknown source text."
+assumptions = "Columnar transposition widths 5-15; Vigenere/Beaufort/VB variants; Known reference texts only"
+confidence_tier = 2
+repro_command = "PYTHONPATH=src python3 -u scripts/e_chart_01_running_key.py"
+
+[elimination.E-CHART-02-AUTOKEY]
+title = "Autokey cipher with all variant combinations"
+category = "substitution"
+subcategory = "vigenere"
+scope_limitations = "Does not test autokey as one layer of multi-layer. Structural ceiling proven: autokey max 21/24."
+assumptions = "Direct positional correspondence; All autokey seed lengths tested"
+confidence_tier = 1
+repro_command = "PYTHONPATH=src python3 -u scripts/e_chart_02_autokey.py"
+
+[elimination.E-CHART-03-MISSPELLING]
+title = "Misspelling-derived tableau reconstruction"
+category = "bespoke"
+subcategory = "misspelling-derived"
+scope_limitations = "Only tests tableau modifications derived from the 4-5 known misspellings. Does not eliminate arbitrary tableau modifications."
+assumptions = "Misspelling letter pairs encode tableau column shifts or substitutions"
+confidence_tier = 2
+repro_command = "PYTHONPATH=src python3 -u scripts/e_chart_03_misspelling_tableau.py"
+
+[elimination.E-OPGOLD-01-KEYWORDS]
+title = "Operation Gold / Stopwatch thematic keywords"
+category = "key-models"
+subcategory = "keyword-derived"
+scope_limitations = "Only tests specific Operation Gold keywords as cipher keys. Does not eliminate all keyword possibilities."
+assumptions = "Single keyword used directly as periodic key; Vigenere/Beaufort/VB"
+confidence_tier = 2
+repro_command = "PYTHONPATH=src python3 -u scripts/e_opgold_01_keywords.py"
+
+[elimination.E-OPGOLD-03-BRITISH]
+title = "British intelligence keywords (MI6, GCHQ, ENIGMA, TURING, etc.)"
+category = "key-models"
+subcategory = "keyword-derived"
+scope_limitations = "Only tests British intelligence agency names and codebreaker names as keys."
+assumptions = "Single keyword used directly as periodic key"
+confidence_tier = 2
+repro_command = "PYTHONPATH=src python3 -u scripts/e_opgold_03_british.py"
+
+[elimination.E-ROMAN-01-COMPREHENSIVE]
+title = "Roman numeral / coordinate-based decryption"
+category = "bespoke"
+subcategory = "roman-numeral"
+scope_limitations = "Only tests specific coordinate-to-key mappings. Does not eliminate all positional ciphers."
+assumptions = "Roman numerals on sculpture encode key positions or values"
+confidence_tier = 2
+repro_command = "PYTHONPATH=src python3 -u scripts/e_roman_01_comprehensive.py"
+
+[elimination.E-S-06-DOUBLE-COLUMNAR]
+title = "Double columnar transposition (all keyword pairs, widths 5-15)"
+category = "transposition"
+subcategory = "double-columnar"
+scope_limitations = "Single-layer only. Does not eliminate double columnar as transposition step in multi-layer."
+assumptions = "Direct positional correspondence; Both columns use widths 5-15; Standard alphabetic ordering"
+confidence_tier = 2
+repro_command = "PYTHONPATH=src python3 -u scripts/e_s_06_double_columnar.py"
+
+[elimination.E-S-09-BIFID-ALGEBRAIC]
+title = "Bifid cipher (algebraic proof of impossibility)"
+category = "fractionation"
+subcategory = "bifid"
+scope_limitations = "Permanent elimination. Bifid requires 25-letter alphabet (I/J merged), but all 26 letters appear in K4."
+assumptions = "None (structural impossibility)"
+confidence_tier = 1
+repro_command = "PYTHONPATH=src python3 -u scripts/e_s_09_bifid_algebraic.py"
+truth_tag = "[DERIVED FACT]"
+
+[elimination.E-S-18-TURNING-GRILLE]
+title = "Turning grille transposition"
+category = "transposition"
+subcategory = "turning-grille"
+scope_limitations = "Tested standard Fleissner-style grilles. Does not eliminate non-standard grille patterns."
+assumptions = "Standard square grille rotated 4 times; Grid sizes matching K4 length"
+confidence_tier = 2
+repro_command = "PYTHONPATH=src python3 -u scripts/e_s_18_turning_grille.py"
+
+[elimination.E-S-35-NULL-CIPHER]
+title = "Null cipher / skip cipher extraction patterns"
+category = "multi-layer"
+subcategory = "null-extraction"
+scope_limitations = "Tested mod-7, Nth-char, doubled-letter nulls, single-letter removal. Does not eliminate all possible null extraction rules."
+assumptions = "Regular extraction pattern; Standard alphabet"
+confidence_tier = 2
+repro_command = "PYTHONPATH=src python3 -u scripts/e_s_35_null_cipher.py"
+
+[elimination.E-S-39-MYSZKOWSKI]
+title = "Myszkowski transposition"
+category = "transposition"
+subcategory = "myszkowski"
+scope_limitations = "Single-layer only. Does not eliminate Myszkowski as one step of multi-layer."
+assumptions = "Direct positional correspondence; Standard keyword-derived column ordering"
+confidence_tier = 2
+repro_command = "PYTHONPATH=src python3 -u scripts/e_s_39_myszkowski.py"
+
+[elimination.E-S-88-REDEFENCE]
+title = "Rail fence / redefence transposition"
+category = "transposition"
+subcategory = "rail-fence"
+scope_limitations = "Tested standard rail fence with 2-20 rails. Does not eliminate irregular rail fence variants."
+assumptions = "Standard zig-zag pattern; Direct positional correspondence"
+confidence_tier = 2
+repro_command = "PYTHONPATH=src python3 -u scripts/e_s_88_redefence.py"
+
+[elimination.E-S-134-WELTZEITUHR-DDR]
+title = "Weltzeituhr (World Clock) Berlin permutations"
+category = "bespoke"
+subcategory = "physical-sculpture"
+scope_limitations = "Only tests Weltzeituhr clock face permutations. Does not eliminate all Berlin-themed approaches."
+assumptions = "Clock positions map to transposition columns or key values"
+confidence_tier = 2
+repro_command = "PYTHONPATH=src python3 -u scripts/e_s_134_weltzeituhr_ddr.py"
+
+[elimination.E-S-145-DRYAD-MATRIX]
+title = "DRYAD-style matrix code lookup"
+category = "bespoke"
+subcategory = "nato-comsec"
+scope_limitations = "Only tests computationally reconstructible DRYAD grids. Cannot test the actual Sanborn coding charts (sold at auction, content unknown)."
+assumptions = "DRYAD grid derivable from public sculpture elements; Standard DRYAD row/column structure"
+confidence_tier = 3
+repro_command = "PYTHONPATH=src python3 -u scripts/e_s_145_dryad_matrix.py"
+
+[elimination.E-S-151-HILL-W9-YART]
+title = "Hill cipher with YAR-derived matrix parameters (width 9)"
+category = "substitution"
+subcategory = "hill"
+scope_limitations = "Tested Hill 2x2 and 3x3 with YAR/RQ parameters. Hill cipher is structurally incompatible with K4 crib pattern."
+assumptions = "YAR superscript values (Y=24, A=0, R=17) form Hill cipher matrix"
+confidence_tier = 1
+repro_command = "PYTHONPATH=src python3 -u scripts/e_s_151_hill_w9_yart.py"
+
+[elimination.E-S-152-NATO-PROTOCOL]
+title = "NATO/COMSEC protocol keys (DRYAD, KA running key, chain addition)"
+category = "bespoke"
+subcategory = "nato-comsec"
+scope_limitations = "Tests NATO-style key generation methods computationally. Cannot test physical coding chart content."
+assumptions = "NATO-standard key generation; KA alphabet running key; Chain addition from sculpture values"
+confidence_tier = 2
+repro_command = "PYTHONPATH=src python3 -u scripts/e_s_152_nato_protocol.py"
+
+[elimination.E-S-22]
+title = "AMSCO + disrupted columnar transposition (Swapped, Nihilist)"
+category = "transposition"
+subcategory = "amsco"
+verdict = "NOISE — 15/24 at period 8 only; period 7 = 0/24; Bean FAIL"
+scope_limitations = "Single-layer only. Tests AMSCO (1-2 alternating), Nihilist transposition, and swapped columnar at widths 5-14."
+assumptions = "Direct positional correspondence; Periodic substitution (Vigenere/Beaufort) at periods tested; Standard AMSCO alternating fill pattern"
+confidence_tier = 2
+repro_command = "PYTHONPATH=src python3 -u scripts/e_s_22_amsco_disrupted.py"
+
+[elimination.DRAGNET-V4]
+title = "Dragnet v4: Double columnar exhaustive (w7-9) + single columnar exhaustive (w10-12) + keyword columnar (w13-15)"
+category = "transposition"
+subcategory = "double-columnar"
+tags = ["transposition", "double-columnar", "columnar", "exhaustive", "periodic"]
+scope_limitations = "Exhaustive for single columnar w5-12 and double columnar w7-9 width pairs. Keyword-only for w13-15. Does not cover double columnar with w10+ (too many permutations). Does not test non-columnar transpositions."
+assumptions = "Columnar transposition (standard reading order); Periodic substitution (Vigenere or Beaufort) at periods 8 and 13; Direct positional correspondence within each model"
+confidence_tier = 2
+truth_tag = "[INTERNAL RESULT]"
+repro_command = "PYTHONPATH=src python3 -u scripts/dragnet_v4.py --workers 14"
+research_questions = ["RQ-1", "RQ-2"]

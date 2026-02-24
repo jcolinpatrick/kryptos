@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}{{ category.name }} — kryptosbot.com{% endblock %}
+
+{% block content %}
+<p class="breadcrumb"><a href="/browse/">&larr; All categories</a></p>
+
+<h1>{{ category.name }}</h1>
+<p>{{ category.description }}</p>
+
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Configs Tested</th>
+        <th>Best Score</th>
+        <th>Verdict</th>
+        <th>Confidence</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for e in eliminations %}
+      <tr>
+        <td><a href="/elimination/{{ e.slug }}/">{{ e.title }}</a></td>
+        <td class="text-mono">{{ "{:,}".format(e.configs_tested) if e.configs_tested else "N/A" }}</td>
+        <td>
+          {% if e.best_score is not none %}
+            <span class="{% if e.best_score >= 24 %}score-breakthrough{% elif e.best_score >= 18 %}score-signal{% elif e.best_score >= 7 %}score-store{% else %}score-noise{% endif %}">
+              {{ e.best_score }}/24
+            </span>
+            {% if e.expected_random is not none %}
+              <small class="text-muted">({{ e.expected_random }})</small>
+            {% endif %}
+          {% else %}
+            —
+          {% endif %}
+        </td>
+        <td>
+          <span class="verdict verdict-{{ e.verdict|lower if e.verdict else 'noise' }}">
+            {{ e.verdict or "NOISE" }}
+          </span>
+        </td>
+        <td>
+          {% if e.confidence_tier %}
+            <span class="tier-badge tier-{{ e.confidence_tier }}">Tier {{ e.confidence_tier }}</span>
+          {% else %}
+            —
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

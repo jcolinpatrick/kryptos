@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+{% block title %}{{ e.title }} — kryptosbot.com{% endblock %}
+
+{% block content %}
+<p class="breadcrumb">
+  <a href="/browse/">All categories</a>
+  {% if e.category %}
+    / <a href="/browse/{{ e.category|lower|replace(' ', '-') }}/">{{ e.category }}</a>
+  {% endif %}
+</p>
+
+<h1>{{ e.title }}</h1>
+
+<p>{{ e.description }}</p>
+
+<div style="display:flex;gap:var(--sp-3);align-items:center;margin:var(--sp-6) 0">
+  <span class="verdict verdict-{{ e.verdict|lower if e.verdict else 'noise' }}">
+    {{ e.verdict or "NOISE" }}
+  </span>
+  {% if e.confidence_tier %}
+    <span class="tier-badge tier-{{ e.confidence_tier }}">Tier {{ e.confidence_tier }}</span>
+  {% endif %}
+</div>
+
+<dl class="detail-grid">
+  {% if e.cipher_type %}
+  <dt>Cipher Type</dt>
+  <dd>{{ e.cipher_type }}</dd>
+  {% endif %}
+
+  {% if e.period_range %}
+  <dt>Period Range</dt>
+  <dd>{{ e.period_range }}</dd>
+  {% endif %}
+
+  {% if e.key_model %}
+  <dt>Key Model</dt>
+  <dd>{{ e.key_model }}</dd>
+  {% endif %}
+
+  {% if e.transposition_family %}
+  <dt>Transposition</dt>
+  <dd>{{ e.transposition_family }}</dd>
+  {% endif %}
+
+  {% if e.alphabet %}
+  <dt>Alphabet</dt>
+  <dd>{{ e.alphabet }}</dd>
+  {% endif %}
+
+  <dt>Configs Tested</dt>
+  <dd><strong>{{ "{:,}".format(e.configs_tested) if e.configs_tested > 0 else "1" }}</strong></dd>
+
+  <dt>Best Score</dt>
+  <dd>
+    {% if e.best_score is not none %}
+      <span class="score-display {% if e.best_score >= 24 %}score-breakthrough{% elif e.best_score >= 18 %}score-signal{% elif e.best_score >= 7 %}score-store{% else %}score-noise{% endif %}">
+        {{ e.best_score }}/24
+      </span>
+      {% if e.expected_random is not none %}
+        <small style="margin-left:var(--sp-3)">random: {{ e.expected_random }}</small>
+      {% endif %}
+    {% else %}
+      N/A
+    {% endif %}
+  </dd>
+
+  {% if e.bean_passed is not none %}
+  <dt>Bean Constraint</dt>
+  <dd>
+    {% if e.bean_passed %}
+      <span style="color:var(--green);font-weight:700">PASS</span>
+    {% else %}
+      <span style="color:var(--red);font-weight:700">FAIL</span>
+    {% endif %}
+  </dd>
+  {% endif %}
+
+  <dt>Confidence</dt>
+  <dd>
+    {% if e.confidence_tier == 1 %}
+      <strong>Tier 1</strong> — Mathematical proof. Permanently valid unless cribs or CT are wrong.
+    {% elif e.confidence_tier == 2 %}
+      <strong>Tier 2</strong> — Exhaustive search under direct correspondence. Does not eliminate multi-layer variants.
+    {% elif e.confidence_tier == 3 %}
+      <strong>Tier 3</strong> — Partial or statistical. May warrant re-testing under different assumptions.
+    {% elif e.confidence_tier == 4 %}
+      <strong>Tier 4</strong> — Not properly tested. Fully open.
+    {% else %}
+      Not classified.
+    {% endif %}
+  </dd>
+
+  {% if e.truth_tag %}
+  <dt>Truth Tag</dt>
+  <dd><code>{{ e.truth_tag }}</code></dd>
+  {% endif %}
+
+  {% if e.date_tested %}
+  <dt>Date Tested</dt>
+  <dd>{{ e.date_tested|format_date }}</dd>
+  {% endif %}
+
+  {% if e.experiment_script %}
+  <dt>Script</dt>
+  <dd><code>{{ e.experiment_script }}</code></dd>
+  {% endif %}
+</dl>
+
+{% if e.scope_limitations %}
+<h2>Scope Limitations</h2>
+<p>This elimination does <strong>not</strong> rule out:</p>
+<ul>
+  {% for s in e.scope_limitations %}
+  <li>{{ s }}</li>
+  {% endfor %}
+</ul>
+{% endif %}
+
+{% if e.assumptions %}
+<h2>Assumptions</h2>
+<ul>
+  {% for a in e.assumptions %}
+  <li>{{ a }}</li>
+  {% endfor %}
+</ul>
+{% endif %}
+
+{% if e.research_questions %}
+<h2>Related Research Questions</h2>
+<ul>
+  {% for rq in e.research_questions %}
+  <li><a href="/research-questions/#{{ rq }}">{{ rq }}</a></li>
+  {% endfor %}
+</ul>
+{% endif %}
+
+{% if e.repro_command %}
+<h2>Reproduce</h2>
+<pre><code>{{ e.repro_command }}</code></pre>
+<p><small>
+  Requires the <a href="https://github.com/cpatrick/kryptos">kryptos repo</a>,
+  Python 3.12+, PYTHONPATH=src.
+</small></p>
+{% endif %}
+
+<hr>
+<p class="text-muted">
+  <strong>Found an error?</strong>
+  {% if e.github_issue_url %}
+    <a href="{{ e.github_issue_url }}">Report on GitHub</a>
+  {% else %}
+    <a href="https://github.com/cpatrick/kryptos/issues/new?title=Error%20in%20{{ e.slug|urlencode }}&body=Describe%20the%20error%20in%20elimination%20{{ e.slug|urlencode }}">
+      Report on GitHub
+    </a>
+  {% endif %}
+</p>
+{% endblock %}
