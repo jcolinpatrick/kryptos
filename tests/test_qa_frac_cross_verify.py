@@ -332,7 +332,7 @@ class TestBeanImpossibility:
 
 def bimodal_check(perm):
     """
-    Bimodal pre-filter from AGENT_PROMPT.md.
+    Bimodal pre-filter from legacy harness specification.
 
     Positions 22-30 should map approximately to themselves (+-5).
     Positions 64-74 should NOT all map to themselves.

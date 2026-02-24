@@ -123,11 +123,11 @@ Use official Claude Code agent teams (3 agents: lead + explorer + validator) wit
 |-------|--------|-------------|
 | FRAC | `reports/frac_final_synthesis.md` | E-FRAC-01 to 55 |
 | TRANS | `results/trans/SUMMARY.md` | E-TRANS-1 to 6 |
-| TABLEAU | `reports/tableau_post_frac_synthesis.md` | E-TABLEAU-01 to 23 |
+| TABLEAU | `archive/session_reports/tableau_post_frac_synthesis.md` | E-TABLEAU-01 to 23 |
 | JTS | `reports/frac_jts_oracle_specification.md` | E-JTS-01 to 12 |
-| QA | `reports/qa_final_cross_verify.md` | Cross-verification |
-| All | `reports/session_27_regression_report.md` | Regression meta-analysis |
-| All | `reports/progress_archive.md` | Full 1,210-line experiment log |
+| QA | `archive/session_reports/qa_structural_claims_verification.md` | Cross-verification |
+| All | `archive/session_reports/session_27_regression_report.md` | Regression meta-analysis |
+| All | `archive/session_reports/progress_archive.md` | Full 1,210-line experiment log |
 
 ---
 
