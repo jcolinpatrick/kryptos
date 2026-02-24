@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+{% block title %}Methodology &mdash; kryptosbot.com{% endblock %}
+
+{% block content %}
+<h1>Methodology</h1>
+<p>
+  This page explains how we test theories, score results, and determine
+  whether a cipher approach has been eliminated.
+</p>
+
+<h2>The K4 Ciphertext</h2>
+<p>
+  K4 consists of 97 characters. All 26 letters of the English alphabet appear
+  at least once. The ciphertext, with known plaintext positions highlighted:
+</p>
+<div class="ct-display">{{ ct[:21] }}<span class="crib">{{ ct[21:34] }}</span>{{ ct[34:63] }}<span class="crib">{{ ct[63:74] }}</span>{{ ct[74:] }}</div>
+
+<p>
+  <strong>Known plaintext</strong> (0-indexed positions, confirmed by Jim Sanborn):
+</p>
+<ul>
+  <li>Positions 21&ndash;33: <code>EASTNORTHEAST</code> (13 characters)</li>
+  <li>Positions 63&ndash;73: <code>BERLINCLOCK</code> (11 characters)</li>
+</ul>
+<p>
+  These 24 known characters are the foundation of our scoring system.
+  They also produce known <em>keystream</em> values at those positions,
+  which constrain what cipher methods and keys are possible.
+</p>
+
+<h2>Scoring: Crib Matching (0&ndash;24)</h2>
+<p>
+  For any proposed decryption method and key, we check how many of the 24
+  known plaintext positions produce the correct letter. This gives a score
+  from 0 to 24.
+</p>
+
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr><th>Score</th><th>Classification</th><th>Meaning</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>&le; 6</td><td>NOISE</td><td>Expected performance from a random key/method. Not meaningful.</td></tr>
+      <tr><td>7&ndash;17</td><td>STORE</td><td>Worth logging for completeness. Almost certainly noise, but recorded.</td></tr>
+      <tr><td>18&ndash;23</td><td>SIGNAL</td><td>Statistically unusual. Warrants investigation, but may be a false positive at high periods.</td></tr>
+      <tr><td>24</td><td>BREAKTHROUGH</td><td>All 24 cribs match. Potential solution &mdash; requires further verification.</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<h2>Expected Random Scores by Period</h2>
+<p>
+  A critical subtlety: the expected random score depends on the cipher's
+  <em>period</em> (key length). At higher periods, random keys match more cribs
+  simply due to underdetermination &mdash; there are fewer constraints per key
+  position.
+</p>
+
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr><th>Period</th><th>Expected Random Score</th><th>Discriminative?</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>2&ndash;7</td><td>~8.2 / 24</td><td><strong>Yes</strong> &mdash; meaningful range</td></tr>
+      <tr><td>8</td><td>~9.6 / 24</td><td>Marginally</td></tr>
+      <tr><td>13</td><td>~13.5 / 24</td><td>Weak</td></tr>
+      <tr><td>17</td><td>~17.3 / 24</td><td>No &mdash; random matches 17+</td></tr>
+      <tr><td>19</td><td>~18.1 / 24</td><td>No</td></tr>
+      <tr><td>24</td><td>~19.2 / 24</td><td>No &mdash; random matches 19+</td></tr>
+      <tr><td>26</td><td>~20.0 / 24</td><td>No</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<p>
+  <strong>Key insight:</strong> Only scores at period &le; 7 are meaningful
+  discriminators. All high scores at period &ge; 17 are false positives.
+  This is a mathematical property of underdetermination, not a limitation
+  of our testing.
+</p>
+
+<h2>Bean Constraints</h2>
+<p>
+  In 2020, Richard Bean published additional constraints on the K4 keystream
+  derived from the repeated letter P at positions 27 and 65 of the ciphertext
+  (which decrypt to R at both positions). This gives:
+</p>
+<ul>
+  <li><strong>Equality:</strong> k[27] = k[65] (the key values at these positions must be equal)</li>
+  <li><strong>21 Inequalities:</strong> specific pairs of key positions that must differ</li>
+</ul>
+<p>
+  These constraints are <em>variant-independent</em> &mdash; they hold whether the cipher
+  is Vigen&egrave;re, Beaufort, or Variant Beaufort. Any valid solution must satisfy all
+  Bean constraints.
+</p>
+
+<h2>Multi-Objective Thresholds</h2>
+<p>
+  A genuine solution must pass <strong>all</strong> of the following simultaneously:
+</p>
+<ul>
+  <li>Crib score: 24/24</li>
+  <li>Bean constraints: PASS</li>
+  <li>Quadgram log-probability: &gt; &minus;4.84 per character (English-like text)</li>
+  <li>Index of coincidence: &gt; 0.055 (English-like distribution)</li>
+  <li>Contains &ge; 3 recognizable English words of &ge; 7 characters (outside crib positions)</li>
+  <li>Semantic coherence: reads as meaningful English (human judgment)</li>
+</ul>
+
+<h2>Truth Taxonomy</h2>
+<p>
+  Every claim in our database is classified by its evidence level:
+</p>
+<dl>
+  <dt>[PUBLIC FACT]</dt>
+  <dd>Verified by reputable public reporting or primary-source statements.</dd>
+  <dt>[DERIVED FACT]</dt>
+  <dd>Deterministic consequence of public facts, reproducible by a provided command.</dd>
+  <dt>[INTERNAL RESULT]</dt>
+  <dd>Empirical result from this project. Includes artifact pointers and a reproduction command.</dd>
+  <dt>[HYPOTHESIS]</dt>
+  <dd>Plausible claim not yet proven. Includes a test plan.</dd>
+</dl>
+
+<h2>Confidence Tiers</h2>
+<dl>
+  <dt>Tier 1 &mdash; Mathematical Proof (~99.9%)</dt>
+  <dd>Algebraic proof that the method cannot produce the known plaintext. Permanently valid
+      unless crib positions or ciphertext transcription are wrong.</dd>
+  <dt>Tier 2 &mdash; Exhaustive Search (~95%)</dt>
+  <dd>Every possible configuration was tested under stated assumptions. Solid for the specific
+      model tested, but does not eliminate multi-layer variants.</dd>
+  <dt>Tier 3 &mdash; Partial/Statistical (~40&ndash;70%)</dt>
+  <dd>Sampling-based or incomplete coverage. May warrant re-testing under different assumptions.</dd>
+  <dt>Tier 4 &mdash; Untested (~0%)</dt>
+  <dd>Never properly tested. Fully open.</dd>
+</dl>
+
+<h2>Reproducibility</h2>
+<p>
+  Every elimination in our database includes a <strong>reproduction command</strong>
+  that you can run yourself. The entire codebase is
+  <a href="https://github.com/cpatrick/kryptos">open source</a>. Clone the repo,
+  install Python 3.12+, and run any experiment with <code>PYTHONPATH=src</code>.
+</p>
+{% endblock %}

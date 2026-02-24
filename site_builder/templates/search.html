@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Search — kryptosbot.com{% endblock %}
+
+{% block content %}
+<h1>Search</h1>
+<p>
+  Search across all tested cipher theories by name, type, parameters, or keywords.
+</p>
+
+<label for="search-input" class="visually-hidden">Search</label>
+<input type="search" id="search-input" placeholder="Loading index..."
+       disabled autocomplete="off" autofocus>
+<div id="search-status" class="text-muted" style="font-size:var(--text-sm);margin-bottom:var(--sp-4)"></div>
+
+<div id="search-results"></div>
+
+<noscript>
+  <p>
+    Search requires JavaScript. You can
+    <a href="/browse/">browse eliminations by category</a> instead.
+  </p>
+</noscript>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/lunr.min.js"></script>
+<script src="/static/search.js"></script>
+{% endblock %}

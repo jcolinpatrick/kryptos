@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Recent Additions &mdash; kryptosbot.com{% endblock %}
+
+{% block content %}
+<h1>Recent Additions</h1>
+<p>
+  The most recently added elimination results, in reverse chronological order.
+</p>
+
+{% if recent_eliminations %}
+{% for e in recent_eliminations %}
+<div class="feed-item">
+  <div class="feed-date">{{ e.date_tested or "Unknown" }}</div>
+  <div class="feed-content">
+    <h3><a href="/elimination/{{ e.slug }}/">{{ e.title }}</a></h3>
+    <div class="meta">
+      <span class="verdict verdict-{{ e.verdict|lower if e.verdict else 'noise' }}">{{ e.verdict or "NOISE" }}</span>
+      <span>{{ e.best_score }}/24</span>
+      <span>{{ "{:,}".format(e.configs_tested) if e.configs_tested else "N/A" }} configs</span>
+    </div>
+  </div>
+</div>
+{% endfor %}
+{% else %}
+<p>No eliminations recorded yet.</p>
+{% endif %}
+{% endblock %}
