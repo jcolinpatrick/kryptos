@@ -224,7 +224,7 @@ The sequence of differences CT[i+1]-CT[i] (mod 26) follows a uniform distributio
 2. The cipher variant question (Beaufort vs Vigenère) remains formally open, but Vigenère is the simpler interpretation since its key has no anomalies.
 
 ### For QA Agent
-1. The bimodal fingerprint definition in AGENT_PROMPT.md should be reclassified from "MANDATORY pre-filter" to "[HYPOTHESIS — confirmed artifact, DO NOT USE]"
+1. The bimodal fingerprint definition in the legacy harness spec should be reclassified from "MANDATORY pre-filter" to "[HYPOTHESIS — confirmed artifact, DO NOT USE]"
 2. The lag-7 and DFT k=9 citations in the evidence base should be annotated with "does not survive Bonferroni correction"
 3. Consider updating `docs/research_questions.md` to reflect that statistical evidence for transposition is weaker than assumed
 
