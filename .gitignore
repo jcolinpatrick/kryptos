@@ -32,5 +32,16 @@ db/
 results/
 artifacts/
 
-# If you later decide some of these should be versioned,
-# narrow this ignore (e.g., ignore db/*.sqlite but keep db/README.md)
+# Site build output
+site/
+
+# Environment
+.env
+
+# Large reference binaries (kept on disk, not in git)
+reference/tomboftutankhame01cart.pdf
+reference/KRYPTOS_NSA_Analysis.docx
+
+# Derived text extracts (regenerable from source PDFs)
+reference/carter_text_cache.txt
+reference/carter_vol1_extract.txt
