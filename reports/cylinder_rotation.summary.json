@@ -1,0 +1,60 @@
+{
+  "experiment": "cylinder_rotation",
+  "total_configs": 912384,
+  "phase1": {
+    "configs": 506880,
+    "best_score": 6,
+    "best_config": {
+      "phase": 1,
+      "frac": "col_over_36",
+      "scale": 33,
+      "h": 32,
+      "v": 0,
+      "row_mode": "absolute",
+      "variant": "vigenere",
+      "alph": "az",
+      "pass": "pass1",
+      "crib_score": 6
+    },
+    "time_s": 1.1,
+    "hits": 0
+  },
+  "phase2": {
+    "configs": 405504,
+    "best_score": 7,
+    "best_config": {
+      "phase": 2,
+      "frac": "col_over_36",
+      "scale": 33,
+      "h": 5,
+      "v": 13,
+      "row_mode": "absolute",
+      "twist": 7,
+      "variant": "vigenere",
+      "alph": "az",
+      "pass": "pass1",
+      "crib_score": 7
+    },
+    "time_s": 0.9,
+    "hits": 0
+  },
+  "best_score": 7,
+  "best_config": {
+    "phase": 2,
+    "frac": "col_over_36",
+    "scale": 33,
+    "h": 5,
+    "v": 13,
+    "row_mode": "absolute",
+    "twist": 7,
+    "variant": "vigenere",
+    "alph": "az",
+    "pass": "pass1",
+    "crib_score": 7
+  },
+  "total_hits": 0,
+  "total_time_s": 2.0,
+  "noise_floor": 6,
+  "store_threshold": 10,
+  "timestamp": "2026-02-26T09:06:39"
+}

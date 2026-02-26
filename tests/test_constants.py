@@ -101,3 +101,78 @@ class TestKnownKeystream:
 
     def test_bean_eq_beaufort(self):
         assert BEAUFORT_KEY_ENE[6] == BEAUFORT_KEY_BC[2] == 6  # G
+
+
+class TestConstantsIntegrity:
+    """Regression guard: verify hardcoded CT/crib values in scripts match canonical."""
+
+    # Unique prefix of CT — long enough to avoid false positives
+    CT_SIGNATURE = "OBKRUOXOGHULBSOLIFBBWFLRVQQPRNGKSSO"
+
+    def _find_py_files_with_pattern(self, pattern: str, search_dir: str) -> list:
+        """Find Python files containing a pattern (excluding canonical source)."""
+        import re
+        from pathlib import Path
+
+        root = Path(search_dir)
+        if not root.exists():
+            return []
+
+        matches = []
+        for p in root.rglob("*.py"):
+            rel = str(p)
+            # Skip canonical source and tests
+            if "kernel/constants.py" in rel or "test_constants.py" in rel:
+                continue
+            try:
+                text = p.read_text()
+            except Exception:
+                continue
+            if re.search(pattern, text):
+                matches.append(p)
+        return matches
+
+    def test_hardcoded_ct_matches_canonical(self):
+        """Every hardcoded CT literal must match the canonical value."""
+        import re
+        from pathlib import Path
+
+        repo = Path(__file__).resolve().parent.parent
+        scripts_dir = repo / "scripts"
+        src_dir = repo / "src"
+
+        mismatches = []
+        for search_dir in [scripts_dir, src_dir]:
+            files = self._find_py_files_with_pattern(
+                self.CT_SIGNATURE, str(search_dir)
+            )
+            for f in files:
+                text = f.read_text()
+                # Extract all string literals containing the CT signature
+                # Match quoted strings that contain the signature
+                for m in re.finditer(
+                    r'["\'](' + self.CT_SIGNATURE + r'[A-Z]*)["\']', text
+                ):
+                    found = m.group(1)
+                    if found != CT and len(found) >= 50:
+                        mismatches.append(
+                            (str(f.relative_to(repo)), found[:40] + "...")
+                        )
+
+        assert not mismatches, (
+            f"Hardcoded CT values differ from canonical:\n"
+            + "\n".join(f"  {path}: {val}" for path, val in mismatches)
+        )
+
+    def test_ct_matches_data_file(self):
+        """CT in constants.py must match data/ct.txt."""
+        from pathlib import Path
+
+        repo = Path(__file__).resolve().parent.parent
+        ct_file = repo / "data" / "ct.txt"
+        if ct_file.exists():
+            file_ct = ct_file.read_text().strip()
+            assert CT == file_ct, (
+                f"CT mismatch: constants.py ({len(CT)} chars) vs "
+                f"data/ct.txt ({len(file_ct)} chars)"
+            )

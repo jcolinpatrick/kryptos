@@ -1,0 +1,116 @@
+{
+  "job_id": "ad-h3-strip-trans",
+  "hypotheses": [
+    {
+      "type": "H3",
+      "params": {
+        "hypothesis": "H3",
+        "grid_widths": [
+          {
+            "width": 32,
+            "label": "min_row_width"
+          },
+          {
+            "width": 33,
+            "label": "tableau_width_and_row_width"
+          },
+          {
+            "width": 34,
+            "label": "most_common_row_width"
+          },
+          {
+            "width": 35,
+            "label": "second_common_row_width"
+          },
+          {
+            "width": 36,
+            "label": "max_row_width"
+          },
+          {
+            "width": 26,
+            "label": "alphabet_length"
+          },
+          {
+            "width": 47,
+            "label": "total_rows"
+          },
+          {
+            "width": 25,
+            "label": "alphabet_minus_1"
+          },
+          {
+            "width": 4,
+            "label": "k4_row_count_per_pass"
+          },
+          {
+            "width": 97,
+            "label": "k4_length_single_row"
+          }
+        ],
+        "read_orders": [
+          {
+            "id": "col_major",
+            "description": "Read columns top-to-bottom, left-to-right"
+          },
+          {
+            "id": "col_major_reverse",
+            "description": "Read columns bottom-to-top, right-to-left"
+          },
+          {
+            "id": "boustrophedon",
+            "description": "Read alternating direction: col 0 top-down, col 1 bottom-up, etc."
+          },
+          {
+            "id": "spiral_inward",
+            "description": "Spiral from outer edge to center of the grid"
+          },
+          {
+            "id": "spiral_outward",
+            "description": "Spiral from center to outer edge"
+          },
+          {
+            "id": "diagonal_tl_br",
+            "description": "Read diagonals from top-left to bottom-right"
+          },
+          {
+            "id": "diagonal_tr_bl",
+            "description": "Read diagonals from top-right to bottom-left"
+          },
+          {
+            "id": "row_reverse_then_col",
+            "description": "Write rows reversed, then read column-major"
+          }
+        ],
+        "actual_row_widths": {
+          "pass1": {
+            "row_10": "3 chars (K4 starts ~col 31, row width 34)",
+            "row_11": "34 chars (full row)",
+            "row_12": "35 chars (full row)",
+            "row_13": "25 chars (K4 ends ~col 24)"
+          },
+          "pass2": {
+            "row_36": "14 chars (K4 starts ~col 20, row width 34)",
+            "row_37": "34 chars (full row)",
+            "row_38": "34 chars (full row)",
+            "row_39": "15 chars (K4 ends ~col 14)"
+          }
+        },
+        "variants": [
+          "vig",
+          "beau",
+          "varbeau"
+        ],
+        "substitution_mode": "apply_after_transposition",
+        "pass_modes": [
+          "pass1",
+          "pass2"
+        ],
+        "notes": "The transposition permutation is derived from the grid write/read pattern. After transposition, apply Vigenere/Beaufort/VarBeau with a separate key search (try KA alphabet shifts, KRYPTOS keyword, or coordinate-derived key from H1). Total: 10 widths x 8 read orders x 3 variants x 2 passes = 480 configs. Sharding groups by width."
+      },
+      "passes": [
+        "pass1",
+        "pass2"
+      ]
+    }
+  ]
+}

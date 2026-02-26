@@ -1,0 +1,26 @@
+{
+  "job_id": "ad-h4-offset-key",
+  "manifest_path": "jobs/pending/ad-h4-offset-key.json",
+  "configs_tested": 2808,
+  "hits": 0,
+  "best_score": 5,
+  "best_config": {
+    "hypothesis": "H4",
+    "formula": {
+      "id": "row_mod26",
+      "description": "key[i] = row_i mod 26",
+      "formula": "row % 26"
+    },
+    "offset": 10,
+    "variant": "beaufort",
+    "pass": "pass1",
+    "crib_score": 5
+  },
+  "elapsed_seconds": 0.10022783279418945,
+  "completed_hypotheses": [
+    "H4"
+  ],
+  "pass1_range": "rows 9-12",
+  "pass2_range": "rows 35-38",
+  "shutdown_clean": true
+}

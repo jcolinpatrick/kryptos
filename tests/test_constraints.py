@@ -1,10 +1,14 @@
 """Tests for constraint checking — cribs and Bean."""
 import pytest
 
-from kryptos.kernel.constants import CT, CRIB_DICT, N_CRIBS, VIGENERE_KEY_ENE, VIGENERE_KEY_BC
+from kryptos.kernel.constants import (
+    CT, CRIB_DICT, CRIB_ENTRIES, N_CRIBS, MOD,
+    VIGENERE_KEY_ENE, VIGENERE_KEY_BC,
+    BEAUFORT_KEY_ENE, BEAUFORT_KEY_BC,
+)
 from kryptos.kernel.constraints.crib import (
     crib_score, crib_matches, compute_implied_keys, implied_key_dict,
-    periodicity_score, best_periodicity,
+    periodicity_score, best_periodicity, check_vimark_consistency,
 )
 from kryptos.kernel.constraints.bean import (
     verify_bean, verify_bean_simple, expand_keystream_vimark,
@@ -100,3 +104,60 @@ class TestBean:
         """All-zero keystream fails Bean inequalities (k[a]==k[b] for all)."""
         ks = [0] * 97
         assert not verify_bean_simple(ks)
+
+    def test_bean_from_primer_roundtrip(self):
+        """verify_bean_from_primer should produce same result as manual expand+verify."""
+        primer = (1, 2, 3, 4, 5)
+        result_manual = verify_bean(expand_keystream_vimark(primer))
+        result_auto = verify_bean_from_primer(primer)
+        assert result_manual.passed == result_auto.passed
+        assert result_manual.eq_satisfied == result_auto.eq_satisfied
+        assert result_manual.ineq_satisfied == result_auto.ineq_satisfied
+
+    def test_vimark_recurrence_all_periods(self):
+        """expand_keystream_vimark recurrence holds for periods 1-10."""
+        for period in range(1, 11):
+            primer = tuple(range(period))
+            ks = expand_keystream_vimark(primer, 97)
+            assert len(ks) == 97
+            for i in range(period, 97):
+                expected = (ks[i - period] + ks[i - (period - 1)]) % MOD
+                assert ks[i] == expected, (
+                    f"Recurrence failed at period={period}, i={i}: "
+                    f"ks[{i}]={ks[i]} != ({ks[i-period]}+{ks[i-(period-1)]})%26={expected}"
+                )
+
+
+class TestVimarkConsistency:
+    """Tests for check_vimark_consistency — the core crib-matching function."""
+
+    def test_perfect_periodic_key_scores_24(self):
+        """A perfectly periodic keystream at the right period should score 24/24."""
+        # Build implied keys from CT using Vigenere
+        implied = compute_implied_keys(CT, CipherVariant.VIGENERE)
+        # At period 97, every position is unique — trivially consistent
+        n, total, primer = check_vimark_consistency(implied, 97)
+        assert n == N_CRIBS
+        # But primer should be None (not all 97 residues are filled)
+        assert primer is None
+
+    def test_identity_period_1(self):
+        """Period 1: all key values must be identical to be consistent."""
+        # With period 1, all values go to residue 0
+        implied = [(0, 5), (1, 5), (2, 5)]
+        n, total, primer = check_vimark_consistency(implied, 1)
+        assert n == 3  # All agree
+
+    def test_conflicting_values_counted(self):
+        """Majority voting should count only the most common value per residue."""
+        # Period 2: residue 0 has [5, 5, 7], residue 1 has [3, 3]
+        implied = [(0, 5), (2, 5), (4, 7), (1, 3), (3, 3)]
+        n, total, primer = check_vimark_consistency(implied, 2)
+        # Residue 0: majority=5 with count=2, residue 1: majority=3 with count=2
+        assert n == 4  # 2 + 2
+
+    def test_empty_implied_keys(self):
+        """Empty implied keys should produce score 0."""
+        n, total, primer = check_vimark_consistency([], 5)
+        assert n == 0
+        assert primer is None

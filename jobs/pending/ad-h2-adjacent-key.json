@@ -1,0 +1,118 @@
+{
+  "job_id": "ad-h2-adjacent-key",
+  "hypotheses": [
+    {
+      "type": "H2",
+      "params": {
+        "hypothesis": "H2",
+        "mappings": [
+          {
+            "id": "left_neighbor",
+            "description": "Key char = character immediately left of K4 char (same row, col-1). For col=0 chars, wrap to end of previous row or use NULL.",
+            "neighbor_mode": "left",
+            "wrap": false
+          },
+          {
+            "id": "left_neighbor_wrap",
+            "description": "Key char = character immediately left, wrapping around row boundaries",
+            "neighbor_mode": "left",
+            "wrap": true
+          },
+          {
+            "id": "right_neighbor",
+            "description": "Key char = character immediately right of K4 char (same row, col+1)",
+            "neighbor_mode": "right",
+            "wrap": false
+          },
+          {
+            "id": "right_neighbor_wrap",
+            "description": "Key char = character immediately right, wrapping around row boundaries",
+            "neighbor_mode": "right",
+            "wrap": true
+          },
+          {
+            "id": "above_neighbor",
+            "description": "Key char = character directly above (row-1, same col). Undefined for row 0.",
+            "neighbor_mode": "above",
+            "wrap": false
+          },
+          {
+            "id": "below_neighbor",
+            "description": "Key char = character directly below (row+1, same col). Undefined for last row.",
+            "neighbor_mode": "below",
+            "wrap": false
+          },
+          {
+            "id": "diag_upper_left",
+            "description": "Key char = character at (row-1, col-1)",
+            "neighbor_mode": "diag_ul",
+            "wrap": false
+          },
+          {
+            "id": "diag_upper_right",
+            "description": "Key char = character at (row-1, col+1)",
+            "neighbor_mode": "diag_ur",
+            "wrap": false
+          },
+          {
+            "id": "diag_lower_left",
+            "description": "Key char = character at (row+1, col-1)",
+            "neighbor_mode": "diag_ll",
+            "wrap": false
+          },
+          {
+            "id": "diag_lower_right",
+            "description": "Key char = character at (row+1, col+1)",
+            "neighbor_mode": "diag_lr",
+            "wrap": false
+          },
+          {
+            "id": "cross_sum",
+            "description": "Key = (above + below + left + right) mod 26 \u2014 cross-shaped neighborhood",
+            "neighbor_mode": "cross_sum",
+            "wrap": false
+          },
+          {
+            "id": "k3_tail_running_key",
+            "description": "Use the last 97 chars of K3 (as they appear before K4 on the Antipodes) as running key. K3 is 336 chars; take chars 239-335.",
+            "neighbor_mode": "k3_tail",
+            "key_length": 97
+          },
+          {
+            "id": "k3_full_running_key",
+            "description": "Use all of K3 (336 chars) as running key, cycling if needed. K3 CT appears immediately before K4 on the cylinder.",
+            "neighbor_mode": "k3_full",
+            "key_length": 336
+          },
+          {
+            "id": "k1_head_running_key",
+            "description": "Use the first 97 chars of K1 (as they appear after K4 on the Antipodes) as running key.",
+            "neighbor_mode": "k1_head",
+            "key_length": 97
+          },
+          {
+            "id": "k3_tail_k1_head_interleave",
+            "description": "Interleave K3 tail and K1 head: k[0]=K3[-1], k[1]=K1[0], k[2]=K3[-2], k[3]=K1[1]...",
+            "neighbor_mode": "k3k1_interleave",
+            "key_length": 97
+          }
+        ],
+        "variants": [
+          "vig",
+          "beau",
+          "varbeau"
+        ],
+        "pass": "both",
+        "pass_modes": [
+          "pass1",
+          "pass2"
+        ],
+        "notes": "Neighbor modes use the Antipodes grid directly. K3/K1 running key modes use the known ciphertexts. For pass1: K4 is rows 10-13. For pass2: K4 is rows 36-39. Total: 15 neighbor modes x 3 variants x 2 passes = 90 configs"
+      },
+      "passes": [
+        "pass1",
+        "pass2"
+      ]
+    }
+  ]
+}
