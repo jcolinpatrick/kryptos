@@ -99,9 +99,9 @@ class SweepRunner:
                     for result in pool.imap_unordered(self.worker_fn, pending):
                         job_id = result.get("job_id", "")
 
-                        # Persist
+                        # Persist results before checkpoint so resume
+                        # doesn't skip jobs whose results weren't stored
                         score = result.get("best_score", 0)
-                        db.checkpoint_job(self.run_id, job_id, result)
 
                         for tr in result.get("top_results", []):
                             db.store_result(
@@ -112,6 +112,7 @@ class SweepRunner:
                                 run_id=self.run_id,
                             )
 
+                        db.checkpoint_job(self.run_id, job_id, result)
                         db.commit()
                         log.write(result)
 

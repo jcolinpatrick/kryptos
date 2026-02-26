@@ -24,9 +24,9 @@ This repo has one purpose: determine the **true plaintext** and the **full encry
 
 ## Development Setup & Commands
 
-**Python 3.12+** required (uses `tomllib` from stdlib). **No external runtime dependencies** — stdlib only. `pytest` is the only dev dependency. No `pyproject.toml` or `setup.py` — `pip install -e .` will not work. All commands require `PYTHONPATH=src`.
+**Python 3.11+** required (uses `tomllib` from stdlib). **No external runtime dependencies** — stdlib only. `pytest` is the only dev dependency. No `pyproject.toml` or `setup.py` — `pip install -e .` will not work. All commands require `PYTHONPATH=src`.
 
-A `venv/` exists with numpy and pymupdf but is gitignored. Activate with `source venv/bin/activate` if needed for PDF/matrix work, but core code uses stdlib only.
+A `venv/` exists with numpy, pymupdf, and jinja2 but is gitignored. Activate with `source venv/bin/activate` if needed for PDF/matrix work or the site builder, but core code uses stdlib only.
 
 ```bash
 # Run all tests
@@ -34,7 +34,7 @@ PYTHONPATH=src pytest tests/
 
 # Run a single test file or test
 PYTHONPATH=src pytest tests/test_transforms.py
-PYTHONPATH=src pytest tests/test_transforms.py::test_vigenere_roundtrip -v
+PYTHONPATH=src pytest tests/test_transforms.py::TestVigenereFamily::test_text_roundtrip_vig -v
 
 # Run an experiment script (always use -u for unbuffered output)
 PYTHONPATH=src python3 -u scripts/e_nsa_01_interval7.py
@@ -62,7 +62,7 @@ Four layers with strict dependency direction: **kernel → pipeline → novelty 
 - **kernel/** — Pure computation, zero external dependencies, **all positions 0-indexed**.
   - `constants.py` — **SINGLE source of truth**: CT, cribs, Bean constraints, keystream values, scoring thresholds. Runs `_verify()` at import time. **Never define CT or cribs elsewhere.**
   - `transforms/` — Cipher implementations (Vigenère/Beaufort, transpositions, Polybius) + composable pipeline builder (`compose.py`: `TransformConfig` → `PipelineConfig` → `build_pipeline()`)
-  - `constraints/` — Crib scoring, Bean equality/inequality, self-encrypting checks
+  - `constraints/` — Crib scoring (`crib.py`), Bean equality/inequality (`bean.py`), consistency checks (`consistency.py` — self-encrypting positions, monoalphabetic consistency)
   - `scoring/aggregate.py` — `score_candidate()` is **THE canonical scoring path**. Thresholds: NOISE=6, STORE=10, SIGNAL=18, BREAKTHROUGH=24.
   - `persistence/` — WAL-mode SQLite (runs/results/eliminations/checkpoints) + JSONL artifacts
 - **pipeline/** — `evaluate_candidate()` is the primary entry point. `SweepRunner` handles parallel execution with checkpointing and resume.
@@ -87,10 +87,10 @@ kernel/persistence/sqlite.py (results DB) + JsonlWriter (logs)
 
 ### Experiment scripts (`scripts/`)
 
-Standalone experiment scripts, each runnable with `PYTHONPATH=src python3 -u scripts/<name>.py`. Prefixed by agent/topic (e.g. `e_frac_*`, `e_chart_*`, `e_explorer_*`, `k4_*`). ~200 scripts exist including ~150 legacy `e_s_*.py` from earlier sessions.
+Standalone experiment scripts, each runnable with `PYTHONPATH=src python3 -u scripts/<name>.py`. Prefixed by agent/topic (e.g. `e_frac_*`, `e_chart_*`, `e_explorer_*`, `k4_*`). ~270 scripts exist including ~150 legacy `e_s_*.py` from earlier sessions.
 
 **Writing a new experiment script:**
-1. Name it `scripts/e_<id>_<short_name>.py` (next available number)
+1. Name it `scripts/e_<topic>_<nn>_<short_name>.py` (topic prefix groups related work, e.g. `e_chart_*`, `e_antipodes_*`, `e_bespoke_*`)
 2. Import constants from `kryptos.kernel.constants` (never hardcode CT/cribs)
 3. Write results to `results/<experiment_id>.json` or `results/<experiment_id>/`
 4. Print a final summary with best score, config, and artifact path
@@ -98,7 +98,7 @@ Standalone experiment scripts, each runnable with `PYTHONPATH=src python3 -u scr
 
 ### Tests
 
-`tests/test_transforms.py`, `test_constraints.py`, `test_scoring.py`, `test_pipeline.py`, `test_novelty.py` cover unit/integration for each layer. `tests/test_qa_*.py` are cross-verification tests that validate structural claims, FRAC results, and pipeline-novelty integration.
+Two test categories: **Unit tests** (`test_transforms.py`, `test_constraints.py`, `test_scoring.py`, `test_pipeline.py`, `test_novelty.py`, `test_alphabet.py`, `test_constants.py`) cover each layer. **QA verification tests** (`test_qa_structural_claims.py`, `test_qa_kernel_verify.py`, `test_qa_frac_cross_verify.py`, `test_qa_pipeline_novelty.py`) are higher-level cross-checks that validate structural claims, FRAC results, and pipeline-novelty integration.
 
 ### Key data files
 
@@ -111,7 +111,11 @@ Standalone experiment scripts, each runnable with `PYTHONPATH=src python3 -u scr
 - `anomaly_registry.md` — Physical anomalies in the Kryptos sculpture
 - `external/` — Third-party reference project (patrickkellogg-Kryptos)
 
-**Gitignored:** `db/`, `results/`, `artifacts/`, `agent_logs/`, `work/`, `tmp/`, `venv/` — per-run data, must not be committed.
+### Site builder (`site_builder/`)
+
+Builds the `kryptosbot.com` static site. Requires jinja2 (in venv). Build with `python3 site_builder/build.py`, preview with `cd site && python3 -m http.server 8000`. Output goes to `site/` (gitignored). Key modules: `data_loader.py` (loads experiment data from DBs/artifacts), `categorizer.py` (classifies experiments by method), `search_index.py` (generates client-side search index), `overrides.toml` (per-experiment display overrides).
+
+**Gitignored:** `db/`, `results/`, `artifacts/`, `agent_logs/`, `work/`, `tmp/`, `venv/`, `site/` — per-run data, must not be committed.
 
 ---
 
@@ -190,7 +194,7 @@ Domain knowledge, public facts, and detailed operating policies live in separate
 
 ## Multi-Agent Mode
 
-This project uses **official Claude Code agent teams** (enabled in `.claude/settings.local.json`). Three agents: **Lead** (interactive, manages tasks), **Explorer** (creative/physical hypotheses, plan approval required), **Validator** (reproduces signals, multi-objective scoring, can use Sonnet).
+This project uses **official Claude Code agent teams** (enabled in `.claude/settings.local.json`). Three agents: **Lead** (interactive, manages tasks), **Explorer** (creative/physical hypotheses, plan approval required), **Validator** (reproduces signals, multi-objective scoring).
 
 **Key constraints for teammates:**
 - Import constants from `kryptos.kernel.constants` — never hardcode CT/cribs
@@ -204,5 +208,5 @@ This project uses **official Claude Code agent teams** (enabled in `.claude/sett
 
 ---
 
-*Last updated: 2026-02-23 — 250+ experiments complete (669B+ configs), computational work paused pending Antipodes inspection*
+*Last updated: 2026-02-26 — 260+ experiments complete (669B+ configs), computational work paused pending Antipodes inspection*
 *Primary author: Colin Patrick (human lead) + Claude (computational partner)*
