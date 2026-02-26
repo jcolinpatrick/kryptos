@@ -175,6 +175,16 @@ assumptions = "Direct positional correspondence; Periodic substitution (Vigenere
 confidence_tier = 2
 repro_command = "PYTHONPATH=src python3 -u scripts/e_s_22_amsco_disrupted.py"
 
+[elimination.E-RERUN-03]
+title = "Expanded keyword columnar + Myszkowski sweep (293 thematic keywords)"
+category = "transposition"
+subcategory = "keyword-columnar"
+verdict = "NOISE — 18/24 at period 13 (expected random ~13.5 at p=13; false positive from underdetermination)"
+scope_limitations = "Single-layer only. Only tests 293 thematic keywords. Does not eliminate arbitrary keyword columnar."
+assumptions = "Direct positional correspondence; Periodic substitution (Vigenere/Beaufort/VB) at periods tested"
+confidence_tier = 2
+repro_command = "PYTHONPATH=src python3 -u scripts/e_rerun_03_columnar_expanded.py"
+
 [elimination.DRAGNET-V4]
 title = "Dragnet v4: Double columnar exhaustive (w7-9) + single columnar exhaustive (w10-12) + keyword columnar (w13-15)"
 category = "transposition"
