@@ -31,6 +31,7 @@ tmp/
 db/
 results/
 artifacts/
+checkpoints/
 
 # Site build output
 site/
@@ -41,6 +42,7 @@ site/
 # Large reference binaries (kept on disk, not in git)
 reference/tomboftutankhame01cart.pdf
 reference/KRYPTOS_NSA_Analysis.docx
+reference/Pictures/antipodes/
 
 # Derived text extracts (regenerable from source PDFs)
 reference/carter_text_cache.txt

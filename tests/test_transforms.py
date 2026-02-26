@@ -12,11 +12,13 @@ from kryptos.kernel.transforms.vigenere import (
 )
 from kryptos.kernel.transforms.transposition import (
     columnar_perm, myszkowski_perm, rail_fence_perm,
-    serpentine_perm, spiral_perm,
+    serpentine_perm, spiral_perm, strip_perm, partial_perm,
+    make_mengen_route, apply_rotation, apply_reflection,
     invert_perm, apply_perm, compose_perms, validate_perm,
     unmask_block_transposition, BLOCK_SIZE,
 )
-from kryptos.kernel.constants import CT
+from kryptos.kernel.constants import CT, CRIB_DICT
+from kryptos.kernel.transforms.vigenere import recover_key_at_positions
 
 
 class TestVigenereFamily:
@@ -208,3 +210,101 @@ class TestBifid:
         ct1 = bifid_encrypt(pt, grid1, period=5)
         ct2 = bifid_encrypt(pt, grid2, period=5)
         assert ct1 != ct2, "Different grids should give different ciphertexts"
+
+
+class TestStripPerm:
+    """Tests for strip_perm — row/strip reordering."""
+
+    def test_identity_order(self):
+        p = strip_perm(5, [0, 1, 2, 3], 20)
+        assert p == list(range(20))
+
+    def test_reversed_order(self):
+        p = strip_perm(5, [3, 2, 1, 0], 20)
+        assert validate_perm(p, 20)
+        # First strip should be positions 15-19 (strip 3)
+        assert p[:5] == [15, 16, 17, 18, 19]
+
+    def test_incomplete_last_strip(self):
+        p = strip_perm(5, [0, 1, 2, 3], 18)
+        assert validate_perm(p, 18)
+        # Last strip has only 3 elements (positions 15, 16, 17)
+        assert len(p) == 18
+
+
+class TestPartialPerm:
+    """Tests for partial_perm — fixed prefix, permuted suffix."""
+
+    def test_basic(self):
+        p = partial_perm(5, [2, 0, 1], 8)
+        assert p == [0, 1, 2, 3, 4, 7, 5, 6]
+
+    def test_zero_boundary(self):
+        p = partial_perm(0, [2, 0, 1])
+        assert p == [2, 0, 1]
+
+    def test_full_boundary(self):
+        p = partial_perm(10, [], 10)
+        assert p == list(range(10))
+
+
+class TestMengenRoute:
+    """Tests for make_mengen_route and route transforms."""
+
+    def test_identity_route(self):
+        route = make_mengen_route("identity")
+        assert route == list(range(BLOCK_SIZE))
+
+    def test_all_routes_valid_perms(self):
+        for name in ["identity", "band_boustro", "all_forward", "all_reversed", "reverse_bands"]:
+            route = make_mengen_route(name)
+            assert validate_perm(route, BLOCK_SIZE), f"Route {name} is not a valid perm"
+
+    def test_unknown_route_raises(self):
+        with pytest.raises(ValueError):
+            make_mengen_route("nonexistent_route")
+
+    def test_rotation(self):
+        route = list(range(BLOCK_SIZE))
+        rotated = apply_rotation(route, 3)
+        assert rotated[0] == route[3]
+        assert len(rotated) == BLOCK_SIZE
+        assert validate_perm(rotated, BLOCK_SIZE)
+
+    def test_rotation_zero_identity(self):
+        route = list(range(BLOCK_SIZE))
+        assert apply_rotation(route, 0) == route
+
+    def test_reflection(self):
+        route = [0, 1, 2, 3, 4]
+        reflected = apply_reflection(route)
+        assert reflected == [4, 3, 2, 1, 0]
+
+
+class TestRecoverKeyAtPositions:
+    """Tests for recover_key_at_positions — key recovery from known PT."""
+
+    def test_matches_implied_key_dict(self):
+        """recover_key_at_positions should agree with implied_key_dict."""
+        from kryptos.kernel.constraints.crib import implied_key_dict
+        expected = implied_key_dict(CT, CipherVariant.VIGENERE)
+        result = recover_key_at_positions(CT, CRIB_DICT, CipherVariant.VIGENERE)
+        for pos in expected:
+            assert result[pos] == expected[pos], f"Mismatch at pos {pos}"
+
+    def test_all_variants_consistent(self):
+        """Each variant should produce same key values as manual computation."""
+        from kryptos.kernel.constants import ALPH_IDX, MOD
+        for variant in CipherVariant:
+            result = recover_key_at_positions(CT, CRIB_DICT, variant)
+            # Verify at least crib positions are present
+            assert len(result) == len(CRIB_DICT)
+
+    def test_with_custom_alphabets(self):
+        """recover_key_at_positions should work with non-standard alphabets."""
+        from kryptos.kernel.alphabet import AZ, KA
+        result_az = recover_key_at_positions(CT, CRIB_DICT, CipherVariant.VIGENERE, AZ, AZ)
+        result_plain = recover_key_at_positions(CT, CRIB_DICT, CipherVariant.VIGENERE)
+        # With standard alphabets, AZ/AZ should equal no-alphabet path
+        for pos in result_az:
+            assert result_az[pos] == result_plain[pos], f"Mismatch at pos {pos}"

@@ -1,0 +1,14 @@
+{
+  "experiment": "ant_002_dictionary_sweep",
+  "total_configs": 4436424,
+  "hits": 963,
+  "best_ic_k4": 0.05756,
+  "best_ic_alpha": 0.05455,
+  "best_crib": 7,
+  "best_words_k4": 1,
+  "best_words_alpha": 5,
+  "elapsed_s": 37.4,
+  "workers": 28,
+  "keywords_tested": 369702,
+  "timestamp": "2026-02-26T15:18:47"
+}

@@ -1,0 +1,20 @@
+[Unit]
+Description=Kryptosbot API (uvicorn)
+After=network.target
+
+[Service]
+Type=simple
+User=cpatrick
+Group=cpatrick
+WorkingDirectory=/home/cpatrick/kryptos
+EnvironmentFile=-/home/cpatrick/kryptos/.env
+Environment=PYTHONPATH=src
+Environment=SEARCH_INDEX_PATH=site/search-index.json
+ExecStart=/home/cpatrick/kryptos/venv/bin/uvicorn api.app:app --host 127.0.0.1 --port 8321
+Restart=on-failure
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

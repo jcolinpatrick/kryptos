@@ -1,0 +1,15 @@
+{
+  "job_id": "ad-h3-strip-trans",
+  "manifest_path": "jobs/pending/ad-h3-strip-trans.json",
+  "configs_tested": 256,
+  "hits": 0,
+  "best_score": 0,
+  "best_config": null,
+  "elapsed_seconds": 0.00019240379333496094,
+  "completed_hypotheses": [
+    "H3"
+  ],
+  "pass1_range": "rows 9-12",
+  "pass2_range": "rows 35-38",
+  "shutdown_clean": true
+}

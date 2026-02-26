@@ -36,7 +36,9 @@
       "Bash(ls:*)",
       "Bash(grep:*)",
       "Bash(head:*)",
-      "Bash(git -C /home/cpatrick/kryptos log --oneline -10)"
+      "Bash(git -C /home/cpatrick/kryptos log --oneline -10)",
+      "Bash(curl:*)",
+      "Bash(sqlite3:*)"
     ]
   }
 }

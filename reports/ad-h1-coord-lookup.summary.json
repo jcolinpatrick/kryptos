@@ -1,0 +1,23 @@
+{
+  "job_id": "ad-h1-coord-lookup",
+  "manifest_path": "jobs/pending/ad-h1-coord-lookup.json",
+  "configs_tested": 846,
+  "hits": 0,
+  "best_score": 5,
+  "best_config": {
+    "hypothesis": "H1",
+    "formula": "row_mod_col",
+    "tableau": "ka",
+    "variant": "vigenere",
+    "pass": "pass2",
+    "crib_score": 5
+  },
+  "elapsed_seconds": 0.02150702476501465,
+  "completed_hypotheses": [
+    "H1",
+    "cross_pass"
+  ],
+  "pass1_range": "rows 9-12",
+  "pass2_range": "rows 35-38",
+  "shutdown_clean": true
+}
