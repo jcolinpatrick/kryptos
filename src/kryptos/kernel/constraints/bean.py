@@ -95,8 +95,11 @@ def expand_keystream_vimark(
     """Expand a Vimark primer into a full keystream.
 
     Recurrence: k[i] = k[i - period] + k[i - (period-1)] mod 26
+    Requires period >= 2 (period=1 is undefined due to self-reference).
     """
     period = len(primer)
+    if period < 2:
+        raise ValueError(f"Vimark requires period >= 2, got {period}")
     k = list(primer)
     while len(k) < length:
         k.append((k[-period] + k[-(period - 1)]) % MOD)
@@ -109,3 +112,26 @@ def verify_bean_from_primer(
     """Expand primer to keystream and verify Bean constraints."""
     ks = expand_keystream_vimark(primer, length)
     return verify_bean(ks)
+
+
+def verify_bean_from_implied(implied_keys: Dict[int, int]) -> bool:
+    """Check Bean constraints directly from implied key values at crib positions.
+
+    Unlike verify_bean/verify_bean_simple (which require a full keystream),
+    this works with a sparse dict of {position: key_value} from any period.
+    This enables Bean checking even when no full primer is available
+    (e.g., at periods 19, 20, 23, 24, 26 where not all residue classes
+    have crib data).
+
+    Returns True if all Bean constraints that CAN be checked are satisfied.
+    Constraints where either position is missing from implied_keys are skipped.
+    """
+    for a, b in BEAN_EQ:
+        if a in implied_keys and b in implied_keys:
+            if implied_keys[a] != implied_keys[b]:
+                return False
+    for a, b in BEAN_INEQ:
+        if a in implied_keys and b in implied_keys:
+            if implied_keys[a] == implied_keys[b]:
+                return False
+    return True
