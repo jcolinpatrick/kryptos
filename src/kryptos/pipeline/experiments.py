@@ -14,7 +14,9 @@ from kryptos.kernel.transforms.transposition import (
     unmask_block_transposition, apply_perm, invert_perm,
 )
 from kryptos.kernel.constraints.crib import compute_implied_keys, check_vimark_consistency
-from kryptos.kernel.constraints.bean import verify_bean_simple, expand_keystream_vimark
+from kryptos.kernel.constraints.bean import (
+    verify_bean_simple, expand_keystream_vimark, verify_bean_from_implied,
+)
 from kryptos.pipeline.evaluation import evaluate_candidate
 
 
@@ -81,6 +83,10 @@ def block_transposition_worker(args: Dict[str, Any]) -> Dict[str, Any]:
                         if primer is not None:
                             ks = expand_keystream_vimark(primer)
                             bean_ok = verify_bean_simple(ks)
+                        else:
+                            # No full primer (high period) — check Bean
+                            # from implied keys directly
+                            bean_ok = verify_bean_from_implied(dict(implied))
 
                         entry = {
                             "score": n_consistent,
@@ -93,7 +99,7 @@ def block_transposition_worker(args: Dict[str, Any]) -> Dict[str, Any]:
                         }
                         if primer is not None:
                             entry["primer"] = list(primer)
-                        if bean_ok and primer is not None:
+                        if bean_ok and n_consistent >= 24:
                             entry["ALERT"] = True
                         top_results.append(entry)
 
@@ -150,6 +156,10 @@ def full_transposition_worker(args: Dict[str, Any]) -> Dict[str, Any]:
                 if primer is not None:
                     ks = expand_keystream_vimark(primer)
                     bean_ok = verify_bean_simple(ks)
+                else:
+                    # No full primer (high period) — check Bean
+                    # from implied keys directly
+                    bean_ok = verify_bean_from_implied(kv)
 
                 top_results.append({
                     "score": n_con,
@@ -157,7 +167,7 @@ def full_transposition_worker(args: Dict[str, Any]) -> Dict[str, Any]:
                     "period": period,
                     "bean_ok": bean_ok,
                     "primer": list(primer) if primer else None,
-                    "ALERT": bean_ok and primer is not None,
+                    "ALERT": bean_ok and n_con >= 24,
                 })
 
     return {

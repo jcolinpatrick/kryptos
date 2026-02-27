@@ -16,11 +16,13 @@ from kryptos.kernel.transforms.vigenere import CipherVariant, KEY_RECOVERY
 
 
 def crib_score(text: str) -> int:
-    """Count how many of the 24 crib positions match in text."""
-    return sum(
-        1 for pos, ch in CRIB_DICT.items()
-        if pos < len(text) and text[pos] == ch
-    )
+    """Count how many of the 24 crib positions match in text.
+
+    Delegates to score_cribs() in kernel.scoring.crib_score to avoid
+    duplication. Both functions must return identical results.
+    """
+    from kryptos.kernel.scoring.crib_score import score_cribs
+    return score_cribs(text)
 
 
 def crib_matches(text: str) -> Dict[int, bool]:
@@ -139,10 +141,7 @@ def check_vimark_consistency(
         vals = groups.get(r, [])
         if not vals:
             continue
-        valid = [v for v in vals if v >= 0]
-        if not valid:
-            continue
-        cnt = Counter(valid)
+        cnt = Counter(vals)
         best_val, best_count = cnt.most_common(1)[0]
         consistent += best_count
         primer[r] = best_val
