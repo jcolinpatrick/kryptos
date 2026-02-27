@@ -126,16 +126,12 @@ def evaluate_pipeline(
     # Check Vimark consistency
     n_consistent, total, primer = check_vimark_consistency(implied, period)
 
-    # Bean check
+    # Bean check + decrypt (share keystream computation)
     bean_result: Optional[BeanResult] = None
-    if primer is not None:
-        ks = expand_keystream_vimark(primer, CT_LEN)
-        bean_result = verify_bean(ks)
-
-    # Crib score on intermediate text directly
     from kryptos.kernel.transforms.vigenere import decrypt_text
     if primer is not None:
         ks = expand_keystream_vimark(primer, CT_LEN)
+        bean_result = verify_bean(ks)
         plaintext = decrypt_text(intermediate, ks, variant)
     else:
         plaintext = intermediate  # Can't decrypt without a key

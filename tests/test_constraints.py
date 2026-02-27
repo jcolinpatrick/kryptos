@@ -115,8 +115,8 @@ class TestBean:
         assert result_manual.ineq_satisfied == result_auto.ineq_satisfied
 
     def test_vimark_recurrence_all_periods(self):
-        """expand_keystream_vimark recurrence holds for periods 1-10."""
-        for period in range(1, 11):
+        """expand_keystream_vimark recurrence holds for periods 2-10."""
+        for period in range(2, 11):
             primer = tuple(range(period))
             ks = expand_keystream_vimark(primer, 97)
             assert len(ks) == 97
@@ -126,6 +126,12 @@ class TestBean:
                     f"Recurrence failed at period={period}, i={i}: "
                     f"ks[{i}]={ks[i]} != ({ks[i-period]}+{ks[i-(period-1)]})%26={expected}"
                 )
+
+    def test_vimark_rejects_period_1(self):
+        """expand_keystream_vimark raises ValueError for period < 2."""
+        import pytest
+        with pytest.raises(ValueError, match="period >= 2"):
+            expand_keystream_vimark((0,), 97)
 
 
 class TestVimarkConsistency:

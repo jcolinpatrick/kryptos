@@ -126,12 +126,14 @@ Builds the `kryptosbot.com` static site. Requires jinja2 (in venv). Build with `
 - **bean_passed** (bool): Whether Bean equality (k[27]=k[65]) and all 21 inequalities hold.
 - **ic**: Index of coincidence of the candidate plaintext.
 
-| Score | Classification | Meaning |
-|-------|---------------|---------|
-| ≤6    | NOISE         | Expected random performance |
-| 7–17  | STORE         | Worth logging, likely noise |
-| 18–23 | SIGNAL        | Statistically significant, investigate |
-| 24    | BREAKTHROUGH  | All cribs match — potential solution |
+| Score | Classification | Stored? | Meaning |
+|-------|---------------|---------|---------|
+| 0–9   | noise         | No (≤9) | Expected random performance |
+| 10–17 | interesting   | Yes     | Worth logging, likely noise |
+| 18–23 | signal        | Yes     | Statistically significant, investigate |
+| 24    | breakthrough  | Yes     | All cribs match — potential solution (requires Bean PASS) |
+
+Note: `is_above_noise()` triggers at score > 6, but `is_storable()` and DB persistence trigger at score ≥ 10 (`STORE_THRESHOLD`). Scores 7–9 are above noise floor but not persisted.
 
 **False positive warning**: At periods ≥17, random configs score 17+/24 due to underdetermination. Only scores at period ≤7 are meaningful discriminators. **Note:** FRAC agent (E-FRAC-07) proved periods 2–7 are Bean-impossible for transposition + periodic substitution; only periods {8, 13, 16, 19, 20, 23, 24, 26} are Bean-compatible. This narrows the viable search space but does not change the scoring rule.
 
