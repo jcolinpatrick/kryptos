@@ -22,6 +22,11 @@ Classification key:
 - **Crypto significance**: HIGH â€” "LAYER TWO" is now confirmed as the correct ending of K2.
   This is an operational instruction, not decoration.
 - **Our interpretation**: "LAYER TWO" = compound encipherment instruction
+- **TWO GROUND TRUTHS** (see `docs/two_ground_truths.md`):
+  - **Physical (A)**: Both Kryptos AND Antipodes decrypt to IDBYROWS. Neither sculpture
+    was ever physically corrected. Only 4 delimiter X exist on physical copper.
+  - **Intent (B)**: Sanborn says it should be XLAYERTWO (2006 correction, never on copper).
+  - IDBYROWS ("ID BY ROWS") may itself be meaningful as an operational instruction.
 
 ### A2. IQLUSION misspelling (K1 plaintext)
 - **What**: "ILLUSION" spelled as "IQLUSION" in the decrypted K1 plaintext
