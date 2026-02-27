@@ -1,7 +1,11 @@
 """Bean constraint verification.
 
 Verifies the equality and inequality constraints on keystream values
-derived by Jim Bean's analysis. These are non-negotiable ground truth.
+derived from the known cribs. [DERIVED FACT] conditional on:
+  A1: Crib positions correct (21-33, 63-73)
+  A2: Crib content correct (EASTNORTHEAST, BERLINCLOCK)
+  A3: Additive key model (single mod-26 shift per position)
+If ANY of these assumptions fail, Bean constraints are invalid.
 """
 from __future__ import annotations
 
