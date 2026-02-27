@@ -430,6 +430,7 @@ def apply_overrides(
             "period_range", "key_model", "transposition_family", "alphabet",
             "confidence_tier", "scope_limitations", "assumptions",
             "repro_command", "truth_tag", "verdict",
+            "configs_tested", "best_score",
         ):
             if attr in ovr:
                 setattr(elim, attr, ovr[attr])

@@ -196,3 +196,112 @@ confidence_tier = 2
 truth_tag = "[INTERNAL RESULT]"
 repro_command = "PYTHONPATH=src python3 -u scripts/dragnet_v4.py --workers 14"
 research_questions = ["RQ-1", "RQ-2"]
+
+# ── Crypto Field Manual experiments (2026-02-27) ─────────────────────────
+
+[elimination.E-CFM-00]
+title = "Webster family names as cipher key material (DRUSILLA, WEBSTER, WILLIAM)"
+category = "key-models"
+subcategory = "keyword-derived"
+scope_limitations = "Only tests Webster family name variants as periodic keys. Does not test other biographical key sources."
+assumptions = "Periodic key derived from names; Vigenere/Beaufort/VB; Direct positional correspondence"
+confidence_tier = 2
+repro_command = "PYTHONPATH=src python3 -u scripts/e_cfm_00_drusilla_hypothesis.py"
+research_questions = ["RQ-2"]
+
+[elimination.E-CFM-01]
+title = "Foreign language running keys — German and French historical texts"
+category = "key-models"
+subcategory = "running-key"
+scope_limitations = "Only tests 6 specific German/French texts. Does not eliminate all foreign language running keys."
+assumptions = "Running key from published text; Vigenere/Beaufort/VB; Identity transposition; Forward and reversed"
+confidence_tier = 2
+repro_command = "PYTHONPATH=src python3 -u scripts/e_cfm_01_running_key_foreign.py"
+research_questions = ["RQ-2", "RQ-3"]
+
+[elimination.E-CFM-02]
+title = "Monoalphabetic + transposition + running key degrees of freedom analysis"
+category = "multi-layer"
+subcategory = "transposition-plus-substitution"
+scope_limitations = "Proves underdetermination — does not eliminate the model, shows it cannot be confirmed from 24 positions."
+assumptions = "Monoalphabetic substitution as one layer; Identity transposition for self-encryption analysis"
+confidence_tier = 3
+verdict = "UNDERDETERMINED"
+repro_command = "PYTHONPATH=src python3 -u scripts/e_cfm_02_mono_running_constrain.py"
+research_questions = ["RQ-1", "RQ-3"]
+
+[elimination.E-CFM-03]
+title = "Null cipher / skip cipher / steganographic extraction patterns"
+category = "multi-layer"
+subcategory = "null-extraction"
+scope_limitations = "Tests regular extraction patterns (every-Nth, Fibonacci, prime, diagonal). Does not test arbitrary context-dependent extraction rules."
+assumptions = "Regular extraction pattern; Extracted substring is plaintext or leads to plaintext"
+confidence_tier = 2
+repro_command = "PYTHONPATH=src python3 -u scripts/e_cfm_03_null_extraction.py"
+research_questions = ["RQ-1"]
+
+[elimination.E-CFM-04]
+title = "Homophonic substitution — structural impossibility proof (direct correspondence)"
+category = "substitution"
+subcategory = "monoalphabetic"
+scope_limitations = "Only eliminates DIRECT homophonic substitution (CT[i]→PT[i]). OPEN with transposition layer that changes positional mapping."
+assumptions = "Direct positional correspondence (no transposition)"
+confidence_tier = 1
+truth_tag = "[DERIVED FACT]"
+repro_command = "PYTHONPATH=src python3 -u scripts/e_cfm_04_homophonic_partition.py"
+research_questions = ["RQ-1"]
+
+[elimination.E-CFM-05]
+title = "Nomenclator (code+cipher) — structural impossibility proof (pure model)"
+category = "substitution"
+subcategory = "monoalphabetic"
+scope_limitations = "Only eliminates PURE nomenclator without superencipherment. OPEN with position-dependent superencipherment layer."
+assumptions = "Each plaintext word/unit maps to fixed ciphertext code group; No position-dependent layer"
+confidence_tier = 1
+truth_tag = "[DERIVED FACT]"
+repro_command = "PYTHONPATH=src python3 -u scripts/e_cfm_05_nomenclator_model.py"
+research_questions = ["RQ-1"]
+
+[elimination.E-CFM-06]
+title = "EAST repetition constraint — gap-9 differential filter for running key identification"
+category = "key-models"
+subcategory = "running-key"
+scope_limitations = "Filter only works under identity transposition. Under arbitrary transposition, EAST diffs change per permutation."
+assumptions = "Additive substitution (Vigenere/Beaufort/VB); Running key from contiguous text passage"
+confidence_tier = 2
+truth_tag = "[DERIVED FACT]"
+repro_command = "PYTHONPATH=src python3 -u scripts/e_cfm_06_east_constraint.py"
+research_questions = ["RQ-2", "RQ-3"]
+
+[elimination.E-CFM-07]
+title = "K3-style rotational transposition applied to K4 (CW/CCW, pad 0-5)"
+category = "transposition"
+subcategory = "grid-rotation"
+scope_limitations = "Tests K3's specific CW rotation method at padded lengths 98-102. Does not test arbitrary rotation parameters."
+assumptions = "K4 uses same rotation method as K3; Rectangular grids from K4-length factorization; Padding with A or Z"
+confidence_tier = 2
+repro_command = "PYTHONPATH=src python3 -u scripts/e_cfm_07_k3_rotational.py"
+research_questions = ["RQ-1", "RQ-2"]
+
+[elimination.E-CFM-08]
+title = "Transposition-guided running key fragment scoring (28M Monte Carlo, 28 cores)"
+category = "multi-layer"
+subcategory = "transposition-plus-substitution"
+scope_limitations = "Proves underdetermination — optimal transposition produces English-like key fragments by coincidence from C(97,24)≈5e21 assignment freedom."
+assumptions = "Model A: CT = Trans(Vig(PT, K)); Vigenere running key; Quadgram scoring of 24-char key fragments"
+confidence_tier = 3
+verdict = "UNDERDETERMINED"
+truth_tag = "[INTERNAL RESULT]"
+repro_command = "PYTHONPATH=src python3 -u scripts/e_cfm_08_trans_key_scoring.py"
+research_questions = ["RQ-1", "RQ-2", "RQ-3"]
+
+[elimination.E-CFM-09]
+title = "Gutenberg-scale EAST constraint scan — 73 books, 47.4M characters"
+category = "key-models"
+subcategory = "running-key"
+scope_limitations = "Only tests 73 specific Gutenberg texts (English + German). Does not eliminate running key from untested texts or non-published sources."
+assumptions = "Running key from contiguous published text; Vigenere/Beaufort/VB; Identity transposition"
+confidence_tier = 2
+truth_tag = "[INTERNAL RESULT]"
+repro_command = "PYTHONPATH=src python3 -u scripts/e_cfm_09_gutenberg_east_scan.py"
+research_questions = ["RQ-2", "RQ-3"]
