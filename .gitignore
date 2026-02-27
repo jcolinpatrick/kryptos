@@ -23,6 +23,7 @@ venv/
 
 # Logs
 *.log
+logs/
 agent_logs/
 work/
 tmp/
