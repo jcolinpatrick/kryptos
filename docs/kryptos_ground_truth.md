@@ -79,6 +79,15 @@ Definition used here:
 
 **Important:** These are public-report facts about **claims and disclosures**, not proof of any specific cipher mechanism.
 
+### A5) Two Ground Truths — Physical vs Intent
+
+[POLICY] The physical sculpture and Sanborn's stated intent are NOT identical. See `docs/two_ground_truths.md` for the full framework.
+
+[DERIVED FACT] K4 ciphertext is identical across both ground truths (no corrections announced).
+[PUBLIC FACT] K2 ending decrypts as IDBYROWS on physical copper (both sculptures). Sanborn verbally corrected to XLAYERTWO in 2006 but never modified the copper.
+[PUBLIC FACT] UNDERGRUUND appears on Kryptos; UNDERGROUND (correct) appears on Antipodes. Original coding charts show correct spelling.
+[POLICY] Default to Physical Sculpture (Ground Truth A) for primary analysis. Test both when method depends on K2 structure.
+
 ---
 
 ## (B) Internal Reproducible Results
