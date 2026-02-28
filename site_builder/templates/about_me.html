@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}About &mdash; kryptosbot.com{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-text">
+      <div class="hero-tagline">An open-source K4 elimination database</div>
+      <h1>Why This Site Exists</h1>
+      <p>
+        Kryptos K4 has been unsolved for 35 years. Over that time, countless
+        people have tested countless theories &mdash; mostly in isolation,
+        often duplicating work that others already tried. This site documents
+        what has been tested so the community can focus on what hasn&rsquo;t.
+      </p>
+    </div>
+    <div class="hero-logo">
+      <img src="/static/kryptosbot.png" alt="KryptosBot logo" class="hero-logo-img">
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>The Sculpture</h2>
+  <p>
+    Jim Sanborn spent 2.5 years hand-cutting 869 letters into copper with
+    20 assistants and 900 jigsaw blades. The result is one of the most
+    celebrated works of public art in the world &mdash; and the most famous
+    unsolved cipher. Sanborn has said that Kryptos is &ldquo;available to
+    all,&rdquo; and created <a href="/about-kryptos/">Antipodes</a> at the
+    Hirshhorn Museum so that anyone could engage with it, not just those with
+    a security clearance.
+  </p>
+  <p>
+    This site is built with deep respect for Sanborn&rsquo;s work and the
+    community of solvers who have spent years studying it.
+  </p>
+</section>
+
+<section>
+  <h2>The Project</h2>
+  <p>
+    kryptosbot is an open-source elimination database. It documents what has
+    been <em>tried and disproven</em> so that the K4 community can focus its
+    energy on approaches that haven&rsquo;t been tested yet.
+  </p>
+  <p>
+    The project is a collaboration between Colin Patrick and
+    <a href="https://claude.ai">Claude</a> (Anthropic). Between us we&rsquo;ve
+    tested <strong>{{ total_configs_disproven }}</strong> configurations across
+    {{ total_experiments }}+ experiments, eliminating every standard classical
+    cipher method applied directly to K4.
+  </p>
+  <p>
+    The codebase is <a href="https://github.com/jcolinpatrick/kryptos">open source</a>.
+    Every result is reproducible. If you think you have an approach we haven&rsquo;t
+    tried, <a href="/submit/">submit it</a> &mdash; or better yet, clone the repo
+    and prove us wrong.
+  </p>
+</section>
+
+<section>
+  <h2>About Colin</h2>
+  <p>
+    I&rsquo;m a cybersecurity practitioner based in Maryland with a background
+    in audio engineering, film, and telecommunications.
+  </p>
+  <p>
+    I didn&rsquo;t set out to work on Kryptos. But if you&rsquo;re the kind
+    of person who can&rsquo;t walk away from a hard puzzle, at some point the
+    sculpture at CIA headquarters stops being an interesting footnote and
+    starts feeling like it&rsquo;s staring back at you.
+  </p>
+</section>
+
+{% endblock %}
