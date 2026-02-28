@@ -1,0 +1,16 @@
+{
+  "attack": "keyword_search",
+  "keywords_tested": 315110,
+  "cipher_types": [
+    "vigenere",
+    "beaufort"
+  ],
+  "alphabets": [
+    "standard",
+    "kryptos"
+  ],
+  "crib_matches": [],
+  "top_20": [],
+  "elapsed_seconds": 3.5312650203704834,
+  "num_workers": 28
+}
