@@ -9,14 +9,14 @@ how much resolving them would shrink the remaining search space.
 
 ### RQ-1: What is the cipher TYPE?
 
-**Current state**: Unknown. We know it's position-dependent (not state-dependent), non-periodic,
+**Current state**: Unknown. [HYPOTHESIS] It is likely position-dependent (not state-dependent) based on the K5 shared-positions inference (see `docs/kryptos_ground_truth.md` C5). It is non-periodic,
 and NOT a simple linear recurrence keystream (orders 1-8 eliminated).
 
 **What's been eliminated**:
 - Standard Vigenere with periodic key
 - Beaufort with periodic key
 - Gromark / Vimark (linear recurrence keystream, orders 1-8)
-- Chaocipher, Enigma (state-dependent, eliminated by K5 constraint)
+- Chaocipher, Enigma (state-dependent, eliminated by K5 constraint [HYPOTHESIS — conditional on K5 position-dependence inference])
 - Polynomial position function k[i]=f(i), degrees 1-20
 - Compound columnar + periodic Vigenere (widths 5-10, periods 1-22)
 
@@ -71,8 +71,8 @@ and NOT a simple linear recurrence keystream (orders 1-8 eliminated).
 
 ### RQ-3: Is there a transposition layer, and what type?
 
-**Current state**: k4suite has tested Mengenlehreuhr (480 perms) and Weltzeituhr permutations
-with all thematic keyword alphabets. No breakthrough.
+**Current state**: Mengenlehreuhr (480 perms) and Weltzeituhr permutations
+have been tested with all thematic keyword alphabets. No breakthrough.
 
 **Tested and eliminated**:
 - Columnar transposition (widths 5-10) + periodic Vigenere

@@ -8,7 +8,7 @@
 
 | Property | Value | Verification |
 |----------|-------|-------------|
-| Full CT | `OBKRUOXOGHULBSOLIFBBWFLRVQQPRNGKSSOTWTQSJQSSEKZZWATJKLUDIAWINFBNYPVTTMZFPKWGDKZXTJCDIGKUHUAUEKCAR` | Import-time assert in k4lab.py, domain.py, k4_constants.py |
+| Full CT | `OBKRUOXOGHULBSOLIFBBWFLRVQQPRNGKSSOTWTQSJQSSEKZZWATJKLUDIAWINFBNYPVTTMZFPKWGDKZXTJCDIGKUHUAUEKCAR` | Import-time assert in `kryptos.kernel.constants` (`_verify()` at import) |
 | Length | 97 (prime) | `assert len(CT) == 97` |
 | First char | `O` | `assert CT[0] == 'O'` |
 | Last char | `R` | `assert CT[-1] == 'R'` |
@@ -67,8 +67,8 @@ k[23] != k[28]
 ```
 
 ### Verification:
-- `k4suite/k4suite/core/cribs.py:verify_bean()` — authoritative implementation
-- `k4lab.py` has equivalent logic in `implied_key_values()` + periodicity check
+- `src/kryptos/kernel/constraints/bean.py:verify_bean()` — authoritative implementation
+- `src/kryptos/kernel/constraints/crib.py` has `compute_implied_keys()` + periodicity scoring
 
 ## 4. Alphabet Invariants
 
@@ -105,10 +105,10 @@ Bean equality verified: k[27] = 6 = G, k[65] = 6 = G
 
 A permutation maps output position to input position. Inverse via `invert_perm()`.
 
-### k4suite block transposition:
+### Block transposition (`src/kryptos/kernel/transforms/transposition.py`):
 - Operates on 24-char blocks (4 full blocks in 97-char CT)
 - Remainder (position 96) passes through unchanged
-- `unmask_transposition()` applies the **inverse** permutation
+- `unmask_block_transposition()` applies the **inverse** permutation
 
 ## 7. Statistical Observations (verified but not invariants)
 
@@ -116,14 +116,14 @@ A permutation maps output position to input position. Inverse via `invert_perm()
 |-------------|-------|------|
 | Pre-ENE IC (pos 0-20) | 0.0667 | English-like — possibly different cipher |
 | Full CT IC | 0.0361 | Below random |
-| Underdetermination | SA trivially achieves 24/24 with 73 free keys | Cipher MUST have structured key gen |
+| Underdetermination | SA trivially achieves 24/24 with 73 free keys (~2^138 permutations satisfy all constraints) | Cipher MUST have structured key gen |
 
 ## 8. Structural Constraints
 
 - **K5 exists**: 97 chars, shares coded words at same positions as K4
-- This means the cipher is **position-dependent**, NOT state-dependent
-- **Eliminates**: Chaocipher, Enigma, and any cipher where key depends on preceding ciphertext/plaintext
-- **Implication**: cipher is polyalphabetic substitution with non-periodic, position-dependent key
+- [HYPOTHESIS] This **suggests** the cipher is **position-dependent**, NOT state-dependent — but this inference from K5 is a hypothesis, NOT a proven fact (see `docs/kryptos_ground_truth.md` section C5). The reasoning: if K5 shares coded words at the same positions, a state-dependent cipher (where each letter's key depends on all preceding letters) would need identical preceding plaintext to produce identical coded words, which is unlikely for different messages.
+- **If this hypothesis holds, it eliminates**: Chaocipher, Enigma, and any cipher where key depends on preceding ciphertext/plaintext
+- **Implication (conditional)**: cipher is polyalphabetic substitution with non-periodic, position-dependent key
 
 ## 9. Eliminated Hypotheses (verified — do not re-test)
 
@@ -135,4 +135,4 @@ A permutation maps output position to input position. Inverse via `invert_perm()
 | Columnar transposition + periodic Vigenere (widths 5-10, periods 1-22) | ELIMINATED | ~8M orderings tested both directions |
 | Running key from K1-K3 PT/CT, Carter book, Morse | ELIMINATED | At noise floor (5/24) |
 | Gromark/Vimark (linear recurrence ≤ order 8) | ELIMINATED | Subsumed by recurrence elimination |
-| State-dependent ciphers (Chaocipher, Enigma) | ELIMINATED | K5 position-dependent constraint |
+| State-dependent ciphers (Chaocipher, Enigma) | ELIMINATED [HYPOTHESIS — depends on K5 position-dependence inference, see section 8] | K5 position-dependent constraint |
