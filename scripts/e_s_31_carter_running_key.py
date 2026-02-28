@@ -42,7 +42,7 @@ BC_RANGE = list(range(63, 74))   # 11 positions
 
 
 def load_carter_text():
-    path = "reference/carter_vol1_extract.txt"
+    path = "reference/carter_vol1.txt"
     with open(path) as f:
         text = f.read().strip().upper()
     # Convert to numbers
