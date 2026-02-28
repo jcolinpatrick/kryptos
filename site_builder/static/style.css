@@ -371,11 +371,22 @@ nav a:visited:hover {
   color: var(--text-primary);
 }
 
-nav strong a {
+nav strong a,
+nav strong a.nav-brand {
   font-size: var(--text-base);
   font-weight: 700;
   color: var(--text-primary);
   letter-spacing: -0.02em;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+.nav-logo {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
 }
 
 nav strong a:visited {
@@ -821,6 +832,17 @@ figcaption {
   margin-bottom: var(--sp-12);
 }
 
+.hero-inner {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-12);
+}
+
+.hero-text {
+  flex: 1;
+  min-width: 0;
+}
+
 .hero h1 {
   font-size: var(--text-3xl);
   font-weight: 700;
@@ -843,6 +865,23 @@ figcaption {
   letter-spacing: 0.08em;
   font-weight: 600;
   margin-bottom: var(--sp-3);
+}
+
+.hero-logo {
+  flex-shrink: 0;
+}
+
+.hero-logo-img {
+  width: 160px;
+  height: 160px;
+  border-radius: var(--radius-lg);
+  filter: drop-shadow(0 4px 24px rgba(56, 189, 248, 0.15));
+  transition: transform var(--transition), filter var(--transition);
+}
+
+.hero-logo-img:hover {
+  transform: scale(1.05);
+  filter: drop-shadow(0 6px 32px rgba(56, 189, 248, 0.25));
 }
 
 
@@ -1377,6 +1416,21 @@ noscript {
 
   .hero {
     padding: var(--sp-10) 0 var(--sp-8);
+  }
+
+  .hero-inner {
+    flex-direction: column-reverse;
+    gap: var(--sp-6);
+    text-align: center;
+  }
+
+  .hero-logo-img {
+    width: 120px;
+    height: 120px;
+  }
+
+  .hero p {
+    max-width: none;
   }
 
   .stats-grid {

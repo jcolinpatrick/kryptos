@@ -238,6 +238,10 @@ def build():
     _render(env, "about_kryptos.html", "about-kryptos/index.html", global_ctx)
     pages_built += 1
 
+    # About Me
+    _render(env, "about_me.html", "about-me/index.html", global_ctx)
+    pages_built += 1
+
     # Report error
     _render(env, "report_error.html", "report-error/index.html", global_ctx)
     pages_built += 1

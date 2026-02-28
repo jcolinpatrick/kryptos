@@ -3,13 +3,20 @@
 
 {% block content %}
 <section class="hero">
-  <div class="hero-tagline">Kryptos K4 Elimination Database</div>
-  <h1>What doesn't decrypt K4</h1>
-  <p>
-    A comprehensive, open-source record of rigorously tested cipher theories for
-    Kryptos K4 — the last unsolved section of Jim Sanborn's sculpture at CIA
-    headquarters. Every entry is reproducible.
-  </p>
+  <div class="hero-inner">
+    <div class="hero-text">
+      <div class="hero-tagline">Kryptos K4 Elimination Database</div>
+      <h1>What doesn't decrypt K4</h1>
+      <p>
+        A comprehensive, open-source record of rigorously tested cipher theories for
+        Kryptos K4 — the last unsolved section of Jim Sanborn's sculpture at CIA
+        headquarters. Every entry is reproducible.
+      </p>
+    </div>
+    <div class="hero-logo">
+      <img src="/static/kryptosbot.png" alt="KryptosBot — a copper robot holding a cipher scroll" class="hero-logo-img">
+    </div>
+  </div>
 </section>
 
 <div class="stats-grid">
@@ -66,12 +73,21 @@
   {% endfor %}
 </div>
 
+<div class="section-label">Who Built This</div>
+<p>
+  <a href="/about-me/">Colin Patrick</a> &mdash; technologist, adjunct professor,
+  woodworker, and puzzle addict based 20 minutes from Fort Meade. After 15 years
+  securing DoD communications, he pointed a 28-core server and an AI partner at
+  the world&rsquo;s most famous unsolved cipher and started keeping score.
+  <a href="/about-me/">Read more &rarr;</a>
+</p>
+
 <div class="section-label">What is Kryptos K4?</div>
 <p>
   <strong>Kryptos</strong> is an encrypted sculpture at CIA headquarters
-  containing four messages. K1–K3 were solved in 1999. K4 — <strong>97
-  characters</strong> — has resisted all public attempts for 35 years.
-  We know 24 characters: <code>EASTNORTHEAST</code> at positions 21–33
-  and <code>BERLINCLOCK</code> at positions 63–73.
+  containing four messages. K1&ndash;K3 were solved in 1999. K4 &mdash; <strong>97
+  characters</strong> &mdash; has resisted all public attempts for 35 years.
+  We know 24 characters: <code>EASTNORTHEAST</code> at positions 21&ndash;33
+  and <code>BERLINCLOCK</code> at positions 63&ndash;73.
 </p>
 {% endblock %}

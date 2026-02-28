@@ -87,7 +87,7 @@ kernel/persistence/sqlite.py (results DB) + JsonlWriter (logs)
 
 ### Experiment scripts (`scripts/`)
 
-Standalone experiment scripts, each runnable with `PYTHONPATH=src python3 -u scripts/<name>.py`. Prefixed by agent/topic (e.g. `e_frac_*`, `e_chart_*`, `e_explorer_*`, `k4_*`). ~320 scripts exist including ~150 legacy `e_s_*.py` from earlier sessions.
+Standalone experiment scripts, each runnable with `PYTHONPATH=src python3 -u scripts/<name>.py`. Prefixed by agent/topic (e.g. `e_frac_*`, `e_chart_*`, `e_explorer_*`, `k4_*`). ~350 scripts exist including ~150 legacy `e_s_*.py` from earlier sessions.
 
 **Writing a new experiment script:**
 1. Name it `scripts/e_<topic>_<nn>_<short_name>.py` (topic prefix groups related work, e.g. `e_chart_*`, `e_antipodes_*`, `e_bespoke_*`)
@@ -210,5 +210,5 @@ This project uses **official Claude Code agent teams** (enabled in `.claude/sett
 
 ---
 
-*Last updated: 2026-02-27 — 320+ experiments complete (669B+ configs), computational work paused pending Antipodes inspection*
+*Last updated: 2026-02-28 — 350+ experiments complete (669B+ configs), computational work paused pending Antipodes inspection*
 *Primary author: Colin Patrick (human lead) + Claude (computational partner)*
