@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 """
-E-TEAM-NARRATIVE: K4 Narrative Plaintext Hypothesis Tester
+⚠️  SUPERSEDED — Use e_team_narrative_pt_v2.py instead.
+    This version has character-count bugs in candidate plaintexts.
+    Retained for historical provenance only.
+
+E-TEAM-NARRATIVE: K4 Narrative Plaintext Hypothesis Tester (ORIGINAL — BUGGED)
 
 Generates candidate K4 plaintexts from narrative/thematic analysis,
 then evaluates the implied keystream under Vigenère, Beaufort, and
