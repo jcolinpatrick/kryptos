@@ -115,7 +115,9 @@ Two test categories: **Unit tests** (`test_transforms.py`, `test_constraints.py`
 
 Builds the `kryptosbot.com` static site. Requires jinja2 (in venv). Build with `python3 site_builder/build.py`, preview with `cd site && python3 -m http.server 8000`. Output goes to `site/` (gitignored). Key modules: `data_loader.py` (loads experiment data from DBs/artifacts), `categorizer.py` (classifies experiments by method), `search_index.py` (generates client-side search index), `overrides.toml` (per-experiment display overrides).
 
-**Gitignored:** `db/`, `results/`, `artifacts/`, `agent_logs/`, `work/`, `tmp/`, `venv/`, `site/` — per-run data, must not be committed.
+### Gitignored directories
+
+`db/`, `results/`, `artifacts/`, `agent_logs/`, `work/`, `tmp/`, `venv/`, `site/` — per-run data, must not be committed.
 
 ---
 

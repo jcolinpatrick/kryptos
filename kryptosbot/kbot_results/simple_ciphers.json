@@ -1,0 +1,77 @@
+{
+  "caesar_tested": 25,
+  "affine_tested": 312,
+  "crib_matches": [],
+  "caesar_top5": [
+    {
+      "shift": 6,
+      "score": -643.7874489999999,
+      "plaintext": "IVELOIRIABOFVMIFCZVVQZFLPKKJLHAEMMINQNKMDKMMYETTQU",
+      "crib_match": false
+    },
+    {
+      "shift": 16,
+      "score": -660.5964409999997,
+      "plaintext": "YLUBEYHYQREVLCYVSPLLGPVBFAAZBXQUCCYDGDACTACCOUJJGK",
+      "crib_match": false
+    },
+    {
+      "shift": 5,
+      "score": -663.1948389999999,
+      "plaintext": "JWFMPJSJBCPGWNJGDAWWRAGMQLLKMIBFNNJOROLNELNNZFUURV",
+      "crib_match": false
+    },
+    {
+      "shift": 14,
+      "score": -664.4849709999999,
+      "plaintext": "ANWDGAJASTGXNEAXURNNIRXDHCCBDZSWEEAFIFCEVCEEQWLLIM",
+      "crib_match": false
+    },
+    {
+      "shift": 2,
+      "score": -664.69251,
+      "plaintext": "MZIPSMVMEFSJZQMJGDZZUDJPTOONPLEIQQMRUROQHOQQCIXXUY",
+      "crib_match": false
+    }
+  ],
+  "affine_top5": [
+    {
+      "a": 5,
+      "b": 22,
+      "score": -639.1221399999998,
+      "plaintext": "OBIZKOVOCXKDBUODSHBBAHDZFEEJZTCIUUOPAPEUNEUUMILLAG",
+      "crib_match": false
+    },
+    {
+      "a": 3,
+      "b": 20,
+      "score": -639.1262869999998,
+      "plaintext": "YLOZAYBYENAXLIYXWVLLSVXZJQQHZPEOIIYRSRQIFQIIMOTTSC",
+      "crib_match": false
+    },
+    {
+      "a": 23,
+      "b": 8,
+      "score": -640.9323420000001,
+      "plaintext": "YLIXWYVYSJWZLOYZABLLEBZXNGGPXHSIOOYFEFGORGOOKIDDEU",
+      "crib_match": false
+    },
+    {
+      "a": 7,
+      "b": 16,
+      "score": -643.185189,
+      "plaintext": "WJOPIWBWGVIDJEWDKRJJMRDPXAALPHGOEEWTMTAEZAEECOFFMU",
+      "crib_match": false
+    },
+    {
+      "a": 1,
+      "b": 6,
+      "score": -643.7874489999999,
+      "plaintext": "IVELOIRIABOFVMIFCZVVQZFLPKKJLHAEMMINQNKMDKMMYETTQU",
+      "crib_match": false
+    }
+  ],
+  "caesar_disproved": true,
+  "affine_disproved": true,
+  "disproof_evidence": "All 25 Caesar shifts and 312 Affine keys tested. No crib match at positions 64-74. Both cipher families eliminated."
+}

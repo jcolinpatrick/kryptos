@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.backends._legacy:_Backend"
+
+[project]
+name = "kryptosbot"
+version = "1.0.0"
+description = "Multi-agent cryptanalytic framework for Kryptos K4 decipherment"
+requires-python = ">=3.10"
+dependencies = [
+    "claude-agent-sdk",
+]
+
+[project.scripts]
+kryptosbot = "kryptosbot.orchestrator:Orchestrator"
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "pytest-asyncio",
+]

@@ -1,0 +1,294 @@
+{
+  "disproved": [
+    {
+      "cipher": "Pure Transposition (any type)",
+      "method": "Frequency analysis: CT has 2 E's, EASTNORTHEAST+BERLINCLOCK cribs require 3 E's",
+      "evidence": "Letter frequency mismatch is structural — no permutation can satisfy frequency AND crib constraints simultaneously. Tier 1 mathematical proof.",
+      "script": "scripts/e_frac_25_transposition_entropy.py"
+    },
+    {
+      "cipher": "Vigenère / Beaufort / Variant Beaufort (all periodic, periods 2-26)",
+      "method": "Exhaustive: width 5 (120 orderings × 3 variants), width 7 (5040), width 8-9 (40K-363K), widths 10-15 (100K MC each), plus direct correspondence",
+      "evidence": "E-FRAC-35 Bean impossibility proof: only periods {8,13,16,19,20,23,24,26} survive for any transposition. E-AUDIT-01 full pairwise: ALL periods 2-26 eliminated using all 276 pairwise constraints. Max score achieved was 17/24 (Quagmire) at high periods — confirmed false positives by underdetermination analysis.",
+      "script": "scripts/e_frac_05_mixed_alphabets.py"
+    },
+    {
+      "cipher": "Autokey (plaintext and ciphertext variants)",
+      "method": "Structural proof: PT-autokey max achievable = 16/24, CT-autokey max = 21/24. Both below breakthrough threshold.",
+      "evidence": "E-FRAC analysis: self-referential key generation is more constrained than periodic at cribs. 50K configurations tested, max 6/24. Structurally cannot reach 24/24.",
+      "script": "scripts/e_s_93_autokey_columnar.py"
+    },
+    {
+      "cipher": "Bifid (5×5 and 6×6 Polybius)",
+      "method": "Structural proof: CT uses all 26 letters; Bifid 5×5 requires I/J merge (25-letter alphabet, impossible). 6×6 parity check fails.",
+      "evidence": "E-FRAC: algebraic impossibility. All 26 letters present in K4 CT rules out any 5×5 fractionation scheme. Bifid output parity incompatible with K4 IC.",
+      "script": "scripts/e_s_09_bifid_algebraic.py"
+    },
+    {
+      "cipher": "Trifid",
+      "method": "Structural proof: parity and IC constraints incompatible with K4 ciphertext.",
+      "evidence": "E-FRAC: trifid output IC pattern incompatible with K4. Algebraic fractionation proof covers trifid as special case.",
+      "script": "scripts/e_s_05_algebraic_fractionation.py"
+    },
+    {
+      "cipher": "ADFGVX / ADFGX",
+      "method": "Structural proof: ADFGVX always outputs even-length ciphertexts. K4 length = 97 (odd prime).",
+      "evidence": "Parity argument: fractionation doubles the message length before transposition, so output length must be even. 97 is odd — structurally impossible. Tier 1 mathematical proof.",
+      "script": "scripts/e_s_05_algebraic_fractionation.py"
+    },
+    {
+      "cipher": "Playfair / Two-Square / Four-Square",
+      "method": "Structural proof: Playfair digraph cipher requires even-length input. IC constraints incompatible.",
+      "evidence": "97 is odd — no Playfair-family digraph cipher can produce 97 output letters from an integer number of input pairs. Tier 1 elimination.",
+      "script": "scripts/e_s_05_algebraic_fractionation.py"
+    },
+    {
+      "cipher": "Straddling Checkerboard / VIC Cipher",
+      "method": "Structural proof: outputs digits, not letters. CT is all letters.",
+      "evidence": "VIC/straddling checkerboard encodes plaintext as digits (0-9). K4 CT uses 26 alphabetic characters with no digit output. Operation Final Vector confirmed structural block.",
+      "script": "scripts/e_s_05_algebraic_fractionation.py"
+    },
+    {
+      "cipher": "Hill Cipher (n=2,3,4)",
+      "method": "Structural: n>4 matrices impossible since 97 is prime. Hill 2×2 + transposition exhaustively tested at w6/8/9.",
+      "evidence": "K4 length 97 is prime — Hill cipher n×n blocks require n divides length (or padding), but padding strategies produce inconsistent CT. Exhaustive Hill 2×2+columnar: ZERO Bean passes. Script confirms via hill_cipher_analysis.py.",
+      "script": "scripts/hill_cipher_analysis.py"
+    },
+    {
+      "cipher": "Progressive Key (k[i] = k[0] + i*delta mod 26)",
+      "method": "Bean impossibility proof: 38*delta ≡ 0 (mod 26) forces delta ∈ {0, 13}. Both are trivial/degenerate.",
+      "evidence": "E-FRAC-38: Bean equality k[27]=k[65] plus 21 inequalities. Gap = 65-27 = 38. 38*delta mod 26 = 0 implies delta=0 (constant key, eliminated) or delta=13 (two-letter key, eliminated as period-2 Beaufort).",
+      "script": "scripts/e_frac_16_key_distribution.py"
+    },
+    {
+      "cipher": "Fibonacci / Polynomial / LCG Key Generation",
+      "method": "Bean impossibility proof: 0/676 Fibonacci seeds survive Bean constraints.",
+      "evidence": "E-FRAC-38: all structured key generation schemes (Fibonacci, quadratic, LCG) produce periodic-equivalent keystreams. Bean constraints eliminate all. 0/676 seeds pass.",
+      "script": "scripts/e_frac_16_key_distribution.py"
+    },
+    {
+      "cipher": "Gromark / Vimark (running key + chain addition, periodic orders 1-8)",
+      "method": "12 million configurations tested. Bean impossibility proves linear recurrence orders 1-8.",
+      "evidence": "E-FRAC: Gromark/Vimark with period-key initialization. Max 14/24 — indistinguishable from random baseline. Bean-impossible for linear recurrences (proven algebraically). Best score 14/24 at high periods = underdetermination artifact.",
+      "script": "scripts/e_frac_16_key_distribution.py"
+    },
+    {
+      "cipher": "Quagmire I-IV (keyed-alphabet periodic)",
+      "method": "~2 million configurations, all periodic period variants.",
+      "evidence": "Max 17/24 at high periods — confirmed false positive. Expected random score at period 17: ~17.3/24. No score exceeds noise floor at discriminating periods (≤7). All eliminated.",
+      "script": "scripts/e_frac_08_bimodal_multiwidth.py"
+    },
+    {
+      "cipher": "Columnar Transposition (single, widths 5-15) + Periodic Substitution",
+      "method": "Width 5: all 120 orderings × 3 variants. Width 7: all 5040 × 3. Width 8: all 40,320. Width 9: all 362,880. Widths 10-15: 100K MC each.",
+      "evidence": "Width 5/7: ZERO Bean passes. Width 8: max 13/24 (expected 14 for random). Width 9: max 14/24 (expected 15). All widths underperform random baseline. No statistical signal above noise at discriminating periods.",
+      "script": "scripts/e_frac_49_running_key_columnar.py"
+    },
+    {
+      "cipher": "Double Columnar Transposition + Periodic Substitution",
+      "method": "9 Bean-compatible width pairs, 2.96 million compositions tested.",
+      "evidence": "E-FRAC: max 15/24. Double columnar with all Bean-compatible period pairs: no score above noise. 667 billion config space sampled at 2.96M — zero genuine signals.",
+      "script": "scripts/e_s_06_double_columnar.json"
+    },
+    {
+      "cipher": "Myszkowski / AMSCO / Rail Fence / Nihilist Transposition",
+      "method": "Widths 5-13, 226K-361K patterns. Structured transposition families.",
+      "evidence": "Myszkowski: max 15/24 (noise). AMSCO: ZERO Bean passes (structurally incompatible with Bean constraints). Rail fence: covered by simple families, max 13/24. All below random baseline.",
+      "script": "scripts/e_frac_47_myszkowski.py"
+    },
+    {
+      "cipher": "K3-Style Rotational Transposition (CW/CCW grid rotation)",
+      "method": "Single + double rotation, pad 0-5 (lengths 98-102), 936 double + ~80 single configs.",
+      "evidence": "E-CFM-07: best 4/24 (single), 4/24 (double). K3 uses a specific 336-letter rotational grid. Applying same method to K4 (97 chars) does not transfer — grid dimensions incompatible. ALL configs Bean FAIL.",
+      "script": "scripts/e_cfm_07_k3_rotational.py"
+    },
+    {
+      "cipher": "Homophonic Substitution (direct correspondence, without transposition)",
+      "method": "Structural contradiction proof: examine all 14 CT letters appearing at crib positions.",
+      "evidence": "E-CFM-04: 9 of 14 CT letters at crib positions map to 2+ different PT letters (e.g., CT=K maps to PT=N and PT=O simultaneously). Homophonic requires CT→PT to be a function. 9 contradictions. P(0 contradictions by chance) < 1e-6. OPEN with transposition layer.",
+      "script": "scripts/e_cfm_04_homophonic_partition.py"
+    },
+    {
+      "cipher": "Pure Nomenclator (code book without superencipherment)",
+      "method": "Direct test: EAST appears at positions 21-24 AND 30-33 in crib. Both should decode the same.",
+      "evidence": "E-CFM-05: EAST→FLRV (positions 21-24) vs EAST→GKSS (positions 30-33). Gap-9 differential [1,25,1,23] mod 26. Identical input word produces different CT → pure nomenclator impossible. OPEN with superencipherment (which algebraically reduces to running key).",
+      "script": "scripts/e_cfm_05_nomenclator_model.py"
+    },
+    {
+      "cipher": "Running Key from 73+ Known Published Texts (identity transposition)",
+      "method": "EAST constraint tool: 4-condition differential filter at gap-9, plus Bean-EQ gap-38. Applied to 47.4M chars.",
+      "evidence": "E-CFM-09: 73 Gutenberg books + 8 local texts = 47.4M alpha chars. 462 EAST diff-matches found, 19 pass Bean-EQ, ZERO pass full 24-position crib constraint. Running key from all tested published English text: ELIMINATED under identity transposition. Combined P(FP) ≈ 8.4×10⁻⁸ per offset position.",
+      "script": "scripts/e_cfm_09_gutenberg_east_scan.py"
+    },
+    {
+      "cipher": "Running Key from German/French/Latin/Italian/Spanish corpora",
+      "method": "73.7M total chars across 5 languages (German: 18 texts 4.5M, French/Latin/Egyptian: 25 texts 10.2M, Italian/Spanish: 28 texts 11.6M).",
+      "evidence": "Operation Final Vector (2026-02-27): German 30 EAST/4 Bean-EQ/0 full. French/Latin 43 EAST/2 Bean-EQ/0 full. Italian/Spanish 69 EAST/6 Bean-EQ/0 full. Cumulative 73.7M chars: ZERO full matches under identity transposition.",
+      "script": "scripts/e_cfm_01_running_key_foreign.py"
+    },
+    {
+      "cipher": "Webster Family Names as Key (DRUSILLA, etc.)",
+      "method": "All Webster family names tested as Vigenère/Beaufort keywords at period 8 (Bean-compatible period).",
+      "evidence": "E-CFM-00: Best 5/24. DRUSILLA at period 8 gives pos 27→S and pos 65→R; S≠R violates Bean equality k[27]=k[65]. Bean FAILS for DRUSILLA. All Webster name variations eliminated.",
+      "script": "scripts/e_cfm_00_drusilla_hypothesis.py"
+    },
+    {
+      "cipher": "Null Cipher / Skip Extraction (every-Nth, acrostics, Fibonacci positions, prime positions, diagonals)",
+      "method": "Every-Nth letter extraction, row/column acrostics, Fibonacci index, prime index, self-referential chains, diagonal reads from all grid arrangements.",
+      "evidence": "E-CFM-03: All 'hits' are false positives from short extracted strings vs 358K wordlist. No extraction pattern produces consistent, coherent plaintext. All configs eliminated.",
+      "script": "scripts/e_cfm_03_null_extraction.py"
+    },
+    {
+      "cipher": "Homophonic Substitution + Structured Transposition (1.6M permutations)",
+      "method": "All structured transposition families (columnar, rail fence, spiral, block reverse, diagonal) composited with homophonic resolution.",
+      "evidence": "Operation Final Vector: 1.6M permutations tested. ZERO resolve all 9 CT-letter contradictions. Best achievable: 1 contradiction remaining. P(0 contradictions from structured transpositions) < 1e-6. Nearly eliminated; only an extremely specific bespoke transposition not covered by any standard type could survive.",
+      "script": "scripts/e_team_homophonic_trans.py"
+    },
+    {
+      "cipher": "Physical Transposition (spiral, serpentine, column-first, block reverse, diagonal, skip, rail fence)",
+      "method": "14,320 physically-motivated transposition configurations from Operation Final Vector.",
+      "evidence": "Operation Final Vector: best 6/24. All physical transposition variants: NOISE. None approach breakthrough threshold. Indistinguishable from random permutation scores.",
+      "script": "scripts/e_team_physical_transpositions.py"
+    },
+    {
+      "cipher": "Artifact-Derived Keys (dates, coordinates, YAR, Webster, combinations)",
+      "method": "4,593 configurations using all Kryptos-related artifact parameters as key material.",
+      "evidence": "Operation Final Vector: best 5/24. Coordinates, dates, YAR, Webster, Scheidt, artist names — all artifact-derived keys: NOISE.",
+      "script": "scripts/e_team_artifact_keys.py"
+    },
+    {
+      "cipher": "Cardan Grille / Aperture (checkerboard, diagonal, 50K random)",
+      "method": "50,819 configurations including systematic and Monte Carlo random grille apertures.",
+      "evidence": "Operation Final Vector: best 2/24. Cardan grille physically motivated aperture extraction: worst-performing category, below chance. NOISE.",
+      "script": "scripts/e_team_cardan_grille.py"
+    },
+    {
+      "cipher": "Weltzeituhr Procedural Cipher (clock face, city ordering, route ciphers)",
+      "method": "377 configurations using Berlin World Time Clock face geometry, city orderings, route ciphers.",
+      "evidence": "Operation Final Vector: best 6/24. Weltzeituhr (confirmed by Sanborn as 'BERLINCLOCK = Weltzeituhr') procedural configs: NOISE. 24 time zones × permutation variants exhausted.",
+      "script": "scripts/e_s_127_weltzeituhr.py"
+    },
+    {
+      "cipher": "K3→K4 Cipher Continuity (K3 plaintext as running key, K3-method applied to K4)",
+      "method": "K3 plaintext used as running key for K4. K3 encryption method (transposition + Vigenère) applied directly to K4.",
+      "evidence": "E-ANTIPODES and FRAC experiments: K3 PT as running key = 0 full matches. K3 method (KRYPTOS tableau rotation) doesn't transfer — K4 CT statistics are inconsistent with K3's double-layer method producing the same output structure.",
+      "script": "scripts/e_cfm_07_k3_rotational.py"
+    }
+  ],
+  "promising": [
+    {
+      "approach": "Running Key from Unknown Text + Bespoke Transposition (UNDERDETERMINED)",
+      "score": 0.0,
+      "plaintext_fragment": "No genuine plaintext fragment recovered — all 47.4M+ chars of tested corpora eliminated under identity transposition. Model survives with non-identity transposition over untested texts.",
+      "script": "scripts/e_cfm_08_trans_key_scoring.py"
+    },
+    {
+      "approach": "Bespoke Physical / Procedural Cipher (OPEN — untestable without coding charts)",
+      "score": 0.0,
+      "plaintext_fragment": "Sanborn (Nov 2025): 'Who says it is even a math solution?' Coding charts sold at $962,500 auction (Nov 2025). Physical-procedural hypothesis cannot be enumerated; requires artifact access.",
+      "script": "N/A — no script can test this without coding charts"
+    },
+    {
+      "approach": "VIC / Position-Dependent Chart Cipher (OPEN — UNDERDETERMINED)",
+      "score": 0.0,
+      "plaintext_fragment": "Non-periodic key + Bean-compatible + unknown procedure. Parameter space: ~26^3 × 97! combinations. Sanborn: 'NSA tried many layered systems' — implies non-standard composition. No genuine plaintext fragment.",
+      "script": "scripts/e_bespoke_01_misspelling_mods.py"
+    },
+    {
+      "approach": "SA Multi-Objective Mono+Trans+Running Key (UNDERDETERMINED / FALSE POSITIVE)",
+      "score": 24.0,
+      "plaintext_fragment": "Simulated annealing achieves 24/24 cribs BUT via mono collapse (IC=0.23-0.30, degenerate). 53/54 SA runs hit 24/24 cribs — all false positives confirming underdetermination. NOT genuine signal.",
+      "script": "scripts/e_team_mono_trans_sa.py"
+    }
+  ],
+  "in_progress": [
+    {
+      "approach": "Running Key from Unknown Text + Non-Standard Transposition",
+      "status": "UNDERDETERMINED. Identity transposition + 73.7M chars of 5 languages: ELIMINATED. Bespoke transposition over unknown text: untested. E-FRAC-51 eliminates English running key + all columnar (0/16,597 configs produce English-like key). Status: computational dead-end without new text source or transposition class.",
+      "last_parameters": "Best quadgram under MC: -3.14/char (gibberish key ATESTITATENTR). EAST gap-9 differential filter [1,25,1,23] available in e_cfm_06_east_constraint.py as reusable tool."
+    },
+    {
+      "approach": "Homophonic Substitution + Bespoke (Non-Standard) Transposition",
+      "status": "NEARLY ELIMINATED. 1.6M standard transposition permutations tested, P(0 contradictions) < 1e-6. Only an extremely specific non-standard transposition could resolve all 9 CT-letter contradictions. Would require deliberate design rather than classical family.",
+      "last_parameters": "Best: 1 remaining contradiction from 1.6M tested perms. 9 CT letters map to 2+ PT letters at crib positions. E-CFM-04 + e_team_homophonic_trans.py."
+    },
+    {
+      "approach": "Antipodes Physical Inspection (S-Curve Projection Hypothesis)",
+      "status": "OPEN — UNTESTABLE. Hirshhorn Museum under renovation, Antipodes in storage. Physical S-curve + pool projection cannot be tested computationally — requires on-site geometry measurements. Highest-leverage pending action when museum reopens.",
+      "last_parameters": "Antipodes: 1584 letters, K3→K4→K1→K2 × 2 passes, full justification. 32×33 tableau, ZERO anomalies. ZERO CT differences vs Kryptos (except pos 177 UNDERGRUUND fix)."
+    },
+    {
+      "approach": "K5 Cross-Constraint Analysis",
+      "status": "OPEN — NO DATA. K5 confirmed (Sanborn 2025): 97 chars, 'similar but not identical' coding, shares some coded words at same positions as K4. K5 CT not publicly known. If obtained, could constrain cipher family and key structure dramatically.",
+      "last_parameters": "Sanborn: K5 connects to K2's 'buried out there somewhere'. K4 and K5 share some 'coded words at same positions'. No ciphertext available. reports/explorer_07_k5_analysis.md."
+    },
+    {
+      "approach": "Position-Dependent Chart / Non-Linear Substitution Table",
+      "status": "UNDERDETERMINED. Periodic position-dependence: periods 2,3,5,6,7,9,10 eliminated by Bean; 4,8,13+ underdetermined. Non-periodic position-dependent table: algebraically equivalent to running key model. Untested space: hand-crafted non-systematic substitution table (coding charts artifact).",
+      "last_parameters": "E-CHART experiments: chart-based running key (3 variants, multiple source texts) — best 7/24. See results/e_chart_01_running_key.json. Bespoke coding chart from $962.5K auction: untestable."
+    }
+  ],
+  "conventions": {
+    "scoring_function": "kryptos.kernel.scoring.aggregate.score_candidate(plaintext: str, bean_result: Optional[BeanResult] = None, ngram_scorer: Optional[NgramScorer] = None) -> ScoreBreakdown. Anchored scorer: cribs at fixed positions 21-33 (EASTNORTHEAST) and 63-73 (BERLINCLOCK). Returns ScoreBreakdown with .crib_score (0-24), .ene_score (0-13), .bc_score (0-11), .ic_value, .ngram_per_char, .bean_passed, .is_breakthrough. Thresholds: NOISE<=6, STORE>=10, SIGNAL>=18, BREAKTHROUGH=24+Bean. ALSO: score_candidate_free() for position-free crib detection (added 2026-02-26). Path: src/kryptos/kernel/scoring/aggregate.py",
+    "output_format": "JSON to results/<experiment_id>.json. Required fields: experiment (str), experiment_id (str), description (str), verdict ('NOISE'|'SIGNAL'|'ELIMINATED'|'UNDERDETERMINED'), best_score (int 0-24), total_configs (int), timestamp (YYYY-MM-DD), key_finding (str). Subdirectories results/<experiment_id>/ permitted for large result sets.",
+    "result_directory": "results/ (gitignored, not committed). Reports in reports/ (tracked). Memory/state in memory/. Docs in docs/. Scripts in scripts/. Source in src/kryptos/. DB in db/ (gitignored).",
+    "run_command": "PYTHONPATH=src python3 -u scripts/<experiment>.py",
+    "ciphertext": "OBKRUOXOGHULBSOLIFBBWFLRVQQPRNGKSSOTWTQSJQSSEKZZWATJKLUDIAWINFBNYPVTTMZFPKWGDKZXTJCDIGKUHUAUEKCAR",
+    "ciphertext_length": 97,
+    "crib_positions": {
+      "EASTNORTHEAST": [21, 33],
+      "BERLINCLOCK": [63, 74]
+    },
+    "bean_eq": "k[27] == k[65] (variant-independent: CT[27]=CT[65]=P, PT[27]=PT[65]=R)",
+    "vigenere_sign": "keystream[i] = (CT[i] - PT[i]) mod 26",
+    "beaufort_sign": "keystream[i] = (CT[i] + PT[i]) mod 26",
+    "variant_beaufort_sign": "keystream[i] = (PT[i] - CT[i]) mod 26",
+    "ka_alphabet": "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+    "scoring_period_warning": "Scores at periods >= 17 are FALSE POSITIVES due to underdetermination (C(97,24) ~ 5e21). Only period <= 7 scores are meaningful discriminators. Period 13 expected random: 13.5/24. Period 17: 17.3/24. Period 24: 19.2/24.",
+    "breakthrough_criteria": "crib_score=24/24 AND bean_passed=True AND ngram_per_char > -4.84 AND ic > 0.055 AND non-crib_words >= 7 chars: at least 3 AND semantic_coherence (human eval)"
+  },
+  "script_count": 353,
+  "total_approaches_tested": 350,
+  "metadata": {
+    "project": "Kryptos K4 Cryptanalysis",
+    "generated": "2026-02-28",
+    "generator": "KryptosBot bootstrap extraction",
+    "total_configurations_scored": "669000000000+",
+    "total_literature_corpus_chars": 73700000,
+    "tier1_eliminations": 14,
+    "tier2_eliminations": 50,
+    "multi_agent_campaigns": 1,
+    "operation_final_vector_tasks": 22,
+    "operation_final_vector_scripts": 15,
+    "cipher_families_tested": 110,
+    "key_models_tested": 20,
+    "transposition_types_tested": 15,
+    "best_genuine_score_ever": 7,
+    "best_false_positive_score": 24,
+    "false_positive_mechanism": "SA mono-collapse (IC=0.23-0.30, degenerate monoalphabetic substitution) or high-period underdetermination",
+    "information_deficit_bits": 138,
+    "feasible_permutations": "~2^138 (satisfy ALL cribs + Bean + English constraints)",
+    "primary_references": [
+      "reports/final_synthesis.md",
+      "reports/frac_final_synthesis.md",
+      "reports/audit_matrix.md",
+      "docs/elimination_tiers.md",
+      "docs/crypto_field_manual/",
+      "memory/MEMORY.md",
+      "CLAUDE.md"
+    ],
+    "sanborn_key_quotes": [
+      "NSA tried many layered systems on it (2026-02 direct communication)",
+      "kryptos is available to all (public info only)",
+      "Who says it is even a math solution? (Spy Museum, Nov 2025)",
+      "K4 plaintext DISCOVERED (Kobek-Byrne, sealed until 2075)"
+    ],
+    "remaining_viable_hypotheses": [
+      "Running key from unknown text + non-standard transposition (UNDERDETERMINED)",
+      "Bespoke physical/procedural cipher with coding charts (OPEN, untestable)",
+      "VIC/position-dependent non-linear cipher (UNDERDETERMINED)",
+      "S-curve physical projection (OPEN, requires on-site geometry)",
+      "K5 cross-constraint (OPEN, no ciphertext available)"
+    ]
+  }
+}
