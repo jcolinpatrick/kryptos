@@ -9,6 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/static/style.css">
+  <link rel="icon" type="image/png" href="/static/kryptosbot.png">
   {% block head_extra %}{% endblock %}
 </head>
 <body>
@@ -19,7 +20,7 @@
 
   <nav>
     <ul>
-      <li><strong><a href="/">kryptosbot</a></strong></li>
+      <li><strong><a href="/" class="nav-brand"><img src="/static/kryptosbot.png" alt="" class="nav-logo">kryptosbot</a></strong></li>
     </ul>
     <ul>
       <li><a href="/browse/">Browse</a></li>
@@ -28,7 +29,8 @@
       <li><a href="/research-questions/">Research</a></li>
       <li><a href="/recent/">Recent</a></li>
       <li><a href="/faq/">FAQ</a></li>
-      <li><a href="/about-kryptos/">About</a></li>
+      <li><a href="/about-kryptos/">About Kryptos</a></li>
+      <li><a href="/about-me/">About Me</a></li>
       <li><a href="/submit/">Submit</a></li>
     </ul>
   </nav>
@@ -40,7 +42,7 @@
   <footer class="container">
     <hr>
     <p>
-      Built by <a href="https://github.com/cpatrick">Colin Patrick</a> &amp; <a href="https://claude.ai">Claude</a>
+      Built by <a href="/about-me/">Colin Patrick</a> &amp; <a href="https://claude.ai">Claude</a>
       &middot; <a href="https://github.com/cpatrick/kryptos">Source</a>
       &middot; <a href="/report-error/">Report error</a>
     </p>
