@@ -298,8 +298,7 @@ Community observation: The wrong letters Q, U, A, E, L form an anagram of "EQUAL
 - 24 known plaintext positions in K4 (13 from EASTNORTHEAST + 11 from BERLINCLOCK)
 - K4 block structure: 4 blocks of 24 + 1 remainder
 - Hours in a day: 24
-- VigenÃ¨re tableau rows: 26, but the KRYPTOS alphabet has 24 unique letters
-  (J is absent from KRYPTOSABCDEFGHIJLMNQUVWXZ â€” wait, let me check this)
+- Vigenère tableau rows: 26. The KRYPTOS alphabet `KRYPTOSABCDEFGHIJLMNQUVWXZ` contains all 26 letters in non-standard order (keyword “KRYPTOS” placed first, remaining letters in alphabetical order). No letters are missing.
 
 ---
 
