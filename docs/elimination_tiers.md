@@ -187,4 +187,61 @@ The persistent 14–17/24 ceiling across all families has been interpreted as ev
 
 ---
 
-*Updated 2026-02-21 by agent_frac (FINAL — 55 experiments, mandate complete + ALL gaps closed: running key gap closure + English key detection + three-layer model + mono inner layer + mono running key underdetermination + Bean-surviving period gap closed). See also: `docs/invariants.md` (verified computational invariants), `docs/research_questions.md` (prioritized unknowns).*
+---
+
+## Post-FRAC Eliminations (2026-02-27)
+
+### E-CFM Series (Crypto Field Manual-derived, 10 experiments)
+
+| Experiment | What It Eliminates | Evidence |
+|---|---|---|
+| E-CFM-00 | DRUSILLA / Webster family names as key | Best 5/24, Bean FAILS for DRUSILLA at period 8 (pos 27→S, pos 65→R, S≠R) |
+| E-CFM-01 | Foreign running keys (German: JFK Berlin, Reagan; French: Champollion, Napoleon) under identity transposition | Best 5/24, zero Bean passes |
+| E-CFM-03 | Null/skip ciphers (every-Nth, row acrostics, Fibonacci/prime, self-ref chains, diagonals) | All "hits" are false positives from short strings vs 358K wordlist |
+| E-CFM-04 | **Homophonic substitution (direct correspondence)** — 9/14 CT letters at crib positions map to 2+ PT letters | Structural impossibility proof. OPEN with transposition |
+| E-CFM-05 | **Pure nomenclator** — EAST→FLRV vs EAST→GKSS (non-constant shift) | Identical words produce different CT. OPEN with superencipherment |
+| E-CFM-06 | Running key from ~4M chars of tested corpora (under identity transposition) | EAST gap-9 diffs [1,25,1,23] + Bean-EQ combined filter: zero pass |
+| E-CFM-07 | K3-style CW/CCW rotational transposition for K4 (pad 0-5, single + double, 1000+ configs) | Max 4/24, all Bean FAIL |
+| E-CFM-09 | Running key from 73 Gutenberg books (47.4M English chars, identity transposition) | 462 EAST matches, 19 Bean-EQ passes, 0 full 24-position matches |
+
+E-CFM-02 and E-CFM-08 produced UNDERDETERMINED results (mono DOF / trans+key co-optimization) — not eliminations.
+
+### Operation Final Vector (2026-02-27, 22 tasks, 15+ scripts)
+
+| Category | Configs | Best Score | Status |
+|---|---|---|---|
+| Artifact-derived keys (dates, coords, keywords, YAR, Webster, combinations) | 4,593 | 5/24 | NOISE |
+| Physical transpositions (spiral, serpentine, column-first, block reverse, diagonal, skip, rail fence) | 14,320 | 6/24 | NOISE |
+| Artifact cross-product (60 keys × 112 perms × 3 variants) | 20,160 | 7/24 | NOISE |
+| Book cipher extraction (every-Nth, acrostics, Fibonacci, prime, diagonal) | 5,271 | 6/24 | NOISE |
+| Anomaly extraction masks (YAR, DESPARATLY, self-encrypt, HILL, letter masks, rotations) | 379 | 5/24 | NOISE |
+| Cardan grille / aperture (checkerboard, diagonal, 50K random) | 50,819 | 2/24 | NOISE |
+| Weltzeituhr procedural (clock face, city ordering, route ciphers) | 377 | 6/24 | NOISE |
+| Sanborn 2025 clue phrases ("what's the point", "creativity", NINETYSEVEN, etc.) | 2,233 | 6/24 | NOISE |
+| SA co-optimization (mono+trans+running) | 4.32M evals | 24/24 (degenerate) | FALSE POSITIVE — all mono collapse, IC=0.23-0.30 |
+| Homophonic+transposition (1.6M structured perms) | 1.6M | 0 contradictions: none | P(0 contradictions) < 1e-6 — NEARLY ELIMINATED |
+| Straddling checkerboard | — | — | STRUCTURALLY BLOCKED (CT uses all 26 letters, SC needs 10 digits) |
+| Extended Polybius 6×5 | — | — | BLOCKED (97 CT → 48.5 PT, not integer) |
+
+### Foreign Running Key Corpora (cumulative, identity transposition)
+
+| Corpus | Chars | EAST Matches | Bean-EQ Passes | Full Matches |
+|---|---|---|---|---|
+| English Gutenberg (73 books) | 47.4M | 462 | 19 | **0** |
+| German Gutenberg (18 texts) | 4.5M | 30 | 4 | **0** |
+| French/Latin/Egyptian (25 texts) | 10.2M | 43 | 2 | **0** |
+| Italian/Spanish (28 texts) | 11.6M | 69 | 6 | **0** |
+| **Cumulative** | **73.7M** | **604** | **31** | **0** |
+
+### Antipodes Stream Context (2026-02-28)
+
+| Experiment | What Was Tested | Configs | Best | Status |
+|---|---|---|---|---|
+| E-ANTIPODES-04 | Sculpture text as running key (Antipodes/Kryptos CT, K1-K3 PT, tableau, autokey, reversed) | 17,238 | 6/24 | NOISE |
+| E-ANTIPODES-08 | K4 in stream context: full-stream transposition, key continuation, block reordering, column/diagonal reading, cross-section autokey, surrounding CT as key, crib relocation | 2,727 | 6/24 | NOISE |
+
+**Conclusion:** CT-as-running-key at any Antipodes-defined phase offset: **ELIMINATED under identity transposition.** OPEN with non-identity transposition (same underdetermined space as all running key + transposition models).
+
+---
+
+*Updated 2026-02-28 — 320+ experiments. FRAC (55), E-CFM (10), Operation Final Vector (15+), Antipodes (10+), plus 250+ earlier experiments. See also: `docs/invariants.md`, `docs/research_questions.md`, `MEMORY.md`.*
