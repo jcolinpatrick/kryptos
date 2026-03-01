@@ -1,17 +1,40 @@
 {
   "metadata": {
-    "generated_date": "2026-02-28",
-    "generator": "KryptosBot",
-    "total_scripts": 374,
-    "total_results_files": 61,
-    "total_src_modules": 24,
-    "status": "All computational work paused. 350+ experiments, 669B+ configs, ALL NOISE.",
+    "generated_date": "2026-03-01",
+    "generator": "Claude Code inventory agent (claude-sonnet-4-7) \u2014 full codebase audit pass 2026-03-01",
+    "total_scripts": 386,
+    "total_results_files": 66,
+    "total_src_modules": 28,
+    "status": "All computational work paused. 375 experiments, 669B+ configs, ALL NOISE. Coverage audit complete (2026-03-01). Fold theory 39 approaches ALL NOISE added.",
+    "coverage_summary": {
+      "confirmed_ran_with_artifact": 72,
+      "confirmed_ran_no_artifact": 239,
+      "uncertain_no_evidence": 68,
+      "infrastructure_tools": 10,
+      "never_run_pending_jobs": 0,
+      "phantom_batch_entries": 7,
+      "new_scripts_added_this_pass": 5,
+      "total_on_disk": 379,
+      "total_in_ledger": 386
+    },
     "notes": [
       "K4 CT is 97 chars, IC=0.0361, all 26 letters present, statistically consistent with random.",
       "Cribs (0-indexed): pos 21-33=EASTNORTHEAST, pos 63-73=BERLINCLOCK.",
       "Bean EQ: CT[27]=CT[65]=P, PT[27]=PT[65]=R (variant-independent).",
       "Multi-objective oracle threshold: 24/24 crib + Bean PASS + quadgram > -4.84/char + IC > 0.055 + 3+ non-crib words of 7+ chars + semantic coherence.",
-      "Scoring thresholds: NOISE<=6, STORE>=10, SIGNAL>=18, BREAKTHROUGH=24+Bean."
+      "Scoring thresholds: NOISE<=6, STORE>=10, SIGNAL>=18, BREAKTHROUGH=24+Bean.",
+      "[USER POLICY 2026-03-01] K4 uses a MASK before encryption; English IC is mute as discriminator. All IC-based filtering is invalid.",
+      "Coverage audit 2026-03-01: run_coverage_audit_2026-03-01.md. 6 scripts found missing from prior inventory; added below as e_hybrid_01, e_ka_01, e_ledger_01, e_poly_01, e_stat_01 were already present; e_s_berlin_extend and additional scripts added.",
+      "KryptosBot SDK campaign (split_results/): 50.9K configs total, ALL NOISE, best score 0.",
+      "Key split combiner (E-SPLIT-00): 51,534 CKM-style configs, best 6/24, ALL NOISE.",
+      "[2026-03-01] Fold theory: 39 approaches ALL NOISE (max 4/24). OFLNUXZ and ILM confirmed fold artifacts but NOT decryption keys. See memory/fold_theory.md.",
+      "[2026-03-01] E-SPLIT-00: 51,534 CKM key-split configs. Best 6/24. Straightforward CKM combos ELIMINATED.",
+      "[2026-03-01] 5 new scripts added: build_experiment_ledger, e_hybrid_02, e_k4_extend_v2, e_ka_02, e_poly_02.",
+      "[2026-03-01] 7 phantom entries reconciled: 4 bin/ engines (deleted), 3 jobs/done/ scripts (completed \u2192 phantom).",
+      "[2026-03-01] ANT-002, ANT-003, ANT-004 COMPLETED (results in results/ant_002/, ant_003/, ant_004/). ALL NOISE.",
+      "[2026-03-01] KryptosBot SDK campaign: 7 strategies, 8 workers, ~1hr. ALL NOISE. Results: kryptosbot_results.db.",
+      "[2026-03-01] 24-letter anomaly pool identified: Q,A,E,C + ION + OFLNUXZ + ILM + WHA + T,RQ + L = exactly 24 letters. EQUINOX formable from all 4 sources.",
+      "[2026-03-01] Antipodes: 1,584 letters, ZERO mismatches vs Kryptos. ALL FOUR SECTIONS IDENTICAL."
     ]
   },
   "scripts": [
@@ -661,7 +684,7 @@
     },
     {
       "name": "e_s_89_progressive_key.py",
-      "purpose": "Progressive key k[i]=k[0]+i*delta (mod 26) — Bean impossibility test",
+      "purpose": "Progressive key k[i]=k[0]+i*delta (mod 26) \u2014 Bean impossibility test",
       "category": "e_s_legacy",
       "has_results": false,
       "result_summary": "ELIMINATED | Bean-eliminated: delta in {0,13} only (trivial)"
@@ -1032,7 +1055,7 @@
     },
     {
       "name": "e_s_147_shift5_f_parameter.py",
-      "purpose": "Shift-5 F-parameter hypothesis from K2 misspelling (UNDERGRUUND→5=F)",
+      "purpose": "Shift-5 F-parameter hypothesis from K2 misspelling (UNDERGRUUND\u21925=F)",
       "category": "e_s_legacy",
       "has_results": false,
       "result_summary": "NOISE | unknown"
@@ -1189,7 +1212,7 @@
       "purpose": "Key distribution analysis: chi-squared test of implied key letter frequencies",
       "category": "e_frac",
       "has_results": false,
-      "result_summary": "UNDERDETERMINED | CT chi²=19.06 vs uniform"
+      "result_summary": "UNDERDETERMINED | CT chi\u00b2=19.06 vs uniform"
     },
     {
       "name": "e_frac_17_beaufort_running_key.py",
@@ -1294,7 +1317,7 @@
       "purpose": "Monte Carlo: fraction of random permutations satisfying Bean constraints",
       "category": "e_frac",
       "has_results": false,
-      "result_summary": "PROOF | P(Bean EQ) ≈ 1/26 per position; combined P ≈ 1/676"
+      "result_summary": "PROOF | P(Bean EQ) \u2248 1/26 per position; combined P \u2248 1/676"
     },
     {
       "name": "e_frac_32_simple_transposition_sweep.py",
@@ -1522,14 +1545,14 @@
     },
     {
       "name": "e_cfm_05_nomenclator_model.py",
-      "purpose": "Pure nomenclator model test: EAST→FLRV vs EAST→GKSS (non-constant shifts)",
+      "purpose": "Pure nomenclator model test: EAST\u2192FLRV vs EAST\u2192GKSS (non-constant shifts)",
       "category": "e_cfm",
       "has_results": true,
       "result_summary": "ELIMINATED (pure nomenclator) | 0/24 | 0"
     },
     {
       "name": "e_cfm_06_east_constraint.py",
-      "purpose": "EAST gap-9 differential constraint tool: reusable running key filter (P≈2.1e-6/pos)",
+      "purpose": "EAST gap-9 differential constraint tool: reusable running key filter (P\u22482.1e-6/pos)",
       "category": "e_cfm",
       "has_results": true,
       "result_summary": "NOISE + TOOL | 0/24 | 4M chars scanned"
@@ -1585,14 +1608,14 @@
     },
     {
       "name": "e_antipodes_03_k3k4_continuity.py",
-      "purpose": "K3→K4 cipher continuity hypothesis: same key used across K3/K4 boundary",
+      "purpose": "K3\u2192K4 cipher continuity hypothesis: same key used across K3/K4 boundary",
       "category": "e_antipodes",
       "has_results": false,
       "result_summary": "NOISE | K3 method does NOT transfer to K4"
     },
     {
       "name": "e_antipodes_04_sculpture_running_key.py",
-      "purpose": "Antipodes sculpture text (K3→K4→K1→K2 sequence) as running key for K4",
+      "purpose": "Antipodes sculpture text (K3\u2192K4\u2192K1\u2192K2 sequence) as running key for K4",
       "category": "e_antipodes",
       "has_results": true,
       "result_summary": "NOISE | unknown"
@@ -1641,7 +1664,7 @@
     },
     {
       "name": "e_audit_01_crib_robustness.py",
-      "purpose": "Crib robustness audit: verify all eliminations hold under ±1 position crib variation",
+      "purpose": "Crib robustness audit: verify all eliminations hold under \u00b11 position crib variation",
       "category": "e_audit",
       "has_results": false,
       "result_summary": "NOISE | eliminations confirmed robust"
@@ -1669,7 +1692,7 @@
     },
     {
       "name": "e_audit_05_hill_2x2_lyar.py",
-      "purpose": "Hill 2x2 with LYAR key matrix (YAR extended) — structural audit",
+      "purpose": "Hill 2x2 with LYAR key matrix (YAR extended) \u2014 structural audit",
       "category": "e_audit",
       "has_results": false,
       "result_summary": "ELIMINATED | Hill blocked for 97 (prime)"
@@ -1693,7 +1716,7 @@
       "purpose": "YAR initialization parameter audit (YAR absent on Antipodes confirmed)",
       "category": "e_audit",
       "has_results": false,
-      "result_summary": "NOISE | YAR hypothesis abandoned — absent from Antipodes"
+      "result_summary": "NOISE | YAR hypothesis abandoned \u2014 absent from Antipodes"
     },
     {
       "name": "e_audit_06_k3_method_k4.py",
@@ -1893,7 +1916,7 @@
     },
     {
       "name": "e_team_artifact_cross.py",
-      "purpose": "Operation Final Vector: artifact cross-product (60 keys × 112 perms × 3 variants)",
+      "purpose": "Operation Final Vector: artifact cross-product (60 keys \u00d7 112 perms \u00d7 3 variants)",
       "category": "e_team",
       "has_results": true,
       "result_summary": "NOISE | 7/24 | 20160"
@@ -2632,6 +2655,90 @@
       "category": "e_stat",
       "has_results": false,
       "result_summary": "NOISE | statistical analysis"
+    },
+    {
+      "name": "bin/antipodes_device_engine.py",
+      "purpose": "Manifest-driven Antipodes-as-Device hypothesis engine: tests 5 hypothesis families (H1-H5) for extracting decryption keys from physical (row,col) positions of K4 chars in Antipodes grid. Runs ad-h1 through ad-h5 job manifests.",
+      "category": "bin_engine",
+      "has_results": true,
+      "result_summary": "PHANTOM (moved/deleted 2026-03-01) | Was: Antipodes device engine for independent CT reconstruction. No longer on disk."
+    },
+    {
+      "name": "bin/antipodes_independent.py",
+      "purpose": "ANT-001: Tests hypothesis that Antipodes sculpture is an independent cipher with different PT. Transcription audit, baseline null test (Kryptos keys K1/K2), statistical analysis, merged K3+K4 block analysis, delta analysis.",
+      "category": "bin_engine",
+      "has_results": true,
+      "result_summary": "PHANTOM (moved/deleted 2026-03-01) | Was: Independent Antipodes analysis engine. No longer on disk."
+    },
+    {
+      "name": "bin/antipodes_key_engine.py",
+      "purpose": "Running key + keyword decryption through KA tableau on Antipodes: Families A (Antipodes-adjacent CT running key), B (known-PT running key K1/K2/K3), C (keywords: EQUAL, misspelling-derived, thematic).",
+      "category": "bin_engine",
+      "has_results": true,
+      "result_summary": "PHANTOM (moved/deleted 2026-03-01) | Was: Antipodes key recovery engine. No longer on disk."
+    },
+    {
+      "name": "bin/cylinder_rotation_engine.py",
+      "purpose": "Cylinder rotation model: tests K4 decryption via angular alignment of Antipodes cylinder with KA tableau. Phase 1: no-twist fraction sweep (506K configs). Phase 2: helical twist (405K configs). Non-periodic key from variable row widths (32-36 chars).",
+      "category": "bin_engine",
+      "has_results": true,
+      "result_summary": "PHANTOM (moved/deleted 2026-03-01) | Was: Cylinder rotation engine for K3-style rotation applied to K4. No longer on disk."
+    },
+    {
+      "name": "jobs/done/ant_002_dictionary_sweep.py",
+      "purpose": "ANT-002: Dictionary keyword sweep (370K words + 340 thematic) on Antipodes segments. Targets K4 (97 chars), Stream Alpha (K3+K4, 433 chars), K2 (370 chars). Dual-hypothesis scoring (crib + IC/quadgrams). Vig/Beau/VarBeau in KA and AZ space.",
+      "category": "jobs_pending",
+      "has_results": true,
+      "result_summary": "COMPLETED \u2192 PHANTOM | ANT-002 dictionary sweep (370K words \u00d7 Antipodes segments) COMPLETED. Results: results/ant_002/. ALL NOISE."
+    },
+    {
+      "name": "jobs/done/ant_003_merged_transposition.py",
+      "purpose": "ANT-003: Transposition + substitution cascade on merged K3+K4 block (433 chars, no delimiter). Multiple transposition families, substitution models. Targets possibility that K3+K4 form one continuous enciphered stream.",
+      "category": "jobs_pending",
+      "has_results": true,
+      "result_summary": "COMPLETED \u2192 PHANTOM | ANT-003 merged transposition COMPLETED. Results: results/ant_003/. ALL NOISE."
+    },
+    {
+      "name": "jobs/done/ant_004_progressive.py",
+      "purpose": "ANT-004: Progressive difficulty attack on Antipodes segments (K3->K4->K1->K2 reading order). Escalating complexity of cipher configurations tested in sequence.",
+      "category": "jobs_pending",
+      "has_results": true,
+      "result_summary": "COMPLETED \u2192 PHANTOM | ANT-004 progressive Antipodes attack COMPLETED. Results: results/ant_004/. ALL NOISE."
+    },
+    {
+      "name": "build_experiment_ledger.py",
+      "purpose": "Canonical ledger builder: cross-references scripts, framework_inventory.json, results/*.json, reports/*.md to produce data/experiment_ledger.json (375+ entries) and experiment_ledger.csv",
+      "category": "infrastructure",
+      "has_results": true,
+      "result_summary": "OUTPUT: data/experiment_ledger.json (375 entries, 165KB), data/experiment_ledger.csv (49KB). Last run 2026-03-01."
+    },
+    {
+      "name": "e_hybrid_02_targeted_keywords.py",
+      "purpose": "Fills E-HYBRID-01 gaps: Model A/B keyword sweep (KRYPTOS p7, PALIMPSEST p10, SANBORN p7, SCHEIDT p7, ABSCISSA p8) at widths 2-15; BC-derived exhaustive across ALL Bean-surviving periods; Model B for 5 keywords; Monte Carlo w10-15",
+      "category": "e_hybrid",
+      "has_results": true,
+      "result_summary": "ELIMINATED | results/e_hybrid_02_targeted_keywords.json | All 5 keywords \u00d7 widths 2-9 \u00d7 all periods: 0 crib-consistent. Closes E-HYBRID-01 gaps. ALL NOISE."
+    },
+    {
+      "name": "e_k4_extend_v2.py",
+      "purpose": "Extended BERLINCLOCK analysis phase 2: KA-alphabet keystream + period consistency, two-keyword exhaustive lcm\u226497, CT-autokey self-reference, affine key model fit, period near-misses, BC differential constraint for running-key filtering",
+      "category": "misc",
+      "has_results": true,
+      "result_summary": "NOISE | results/e_k4_extend_v2.json | KA keystream: no surviving periods. Two-keyword: 0 conflict-free pairs. Affine k[i]=(a*CT+b): no fit. Near-misses documented for analyst reference."
+    },
+    {
+      "name": "e_ka_02_extended_gaps.py",
+      "purpose": "Fills E-KA-01 gaps: proves Bean-alphabet-independence (KA/AZ identical for additive); tests KA-Porta + columnar w5/7/8/9 (Porta is NOT additive, NOT covered by prior proofs); KA-Beaufort + KA-VarBeaufort wordlist scan; extended keyword list",
+      "category": "e_ka",
+      "has_results": true,
+      "result_summary": "ELIMINATED | results/e_ka_02_extended_gaps.json | Bean-alphabet-independence PROVED for Vig/Beau/VarBeau. KA-Porta + w5/7/8/9: all 0 crib-consistent. Wordlist scan: NOISE. Closes KA gap family."
+    },
+    {
+      "name": "e_poly_02_ka_tableau_and_new_keywords.py",
+      "purpose": "Fills E-POLY-01 gaps: all 4 (PA,CA) mixed-alphabet pairs (AZ/AZ, AZ/KA, KA/AZ, KA/KA) with Bean analysis; keyword sweep for domain-specific terms not in prior lists (EQUINOX, LOOMIS, BOWEN, HOWARD, LANGLEY, SOLSTICE, GILLOGLY, etc.); Bean inequality behavior per alphabet mix",
+      "category": "e_poly",
+      "has_results": true,
+      "result_summary": "NOISE | results/e_poly_02.json | All (PA,CA) mixed pairs: no surviving implied keys. 50+ new keywords: all NOISE. Bean inequality: alphabet-independent for equality, minor variation for inequalities. EQUINOX tested: NOISE."
     }
   ],
   "source_modules": [
@@ -2649,142 +2756,300 @@
     {
       "path": "src/kryptos/kernel/alphabet.py",
       "purpose": "Alphabet models for keyword-mixed and standard alphabets.",
-      "key_exports": ["Alphabet", "keyword_mixed_alphabet()", "make_alphabet()"]
+      "key_exports": [
+        "Alphabet",
+        "keyword_mixed_alphabet()",
+        "make_alphabet()"
+      ]
     },
     {
       "path": "src/kryptos/kernel/text.py",
       "purpose": "Text sanitization and letter/number conversion utilities.",
-      "key_exports": ["sanitize()", "text_to_nums()", "nums_to_text()", "char_to_num()", "num_to_char()"]
+      "key_exports": [
+        "sanitize()",
+        "text_to_nums()",
+        "nums_to_text()",
+        "char_to_num()",
+        "num_to_char()"
+      ]
     },
     {
       "path": "src/kryptos/kernel/config.py",
       "purpose": "Frozen dataclass experiment configuration with SHA256 fingerprinting.",
-      "key_exports": ["SweepConfig", "ExperimentConfig"]
+      "key_exports": [
+        "SweepConfig",
+        "ExperimentConfig"
+      ]
     },
     {
       "path": "src/kryptos/kernel/constraints/crib.py",
       "purpose": "Crib scoring and implied key computation from fixed crib positions.",
-      "key_exports": ["crib_score()", "crib_matches()", "compute_implied_keys()", "periodicity_score()"]
+      "key_exports": [
+        "crib_score()",
+        "crib_matches()",
+        "compute_implied_keys()",
+        "periodicity_score()"
+      ]
     },
     {
       "path": "src/kryptos/kernel/constraints/bean.py",
       "purpose": "Bean equality and inequality constraint verification.",
-      "key_exports": ["verify_bean()", "verify_bean_simple()", "BeanResult"]
+      "key_exports": [
+        "verify_bean()",
+        "verify_bean_simple()",
+        "BeanResult"
+      ]
     },
     {
       "path": "src/kryptos/kernel/constraints/consistency.py",
       "purpose": "Monoalphabetic consistency and self-encryption checks.",
-      "key_exports": ["check_self_encrypting()", "check_mono_consistency()"]
+      "key_exports": [
+        "check_self_encrypting()",
+        "check_mono_consistency()"
+      ]
     },
     {
       "path": "src/kryptos/kernel/scoring/aggregate.py",
       "purpose": "Canonical anchored and free-position scorer combining all scoring signals.",
-      "key_exports": ["score_candidate()", "score_candidate_free()", "ScoreBreakdown", "FreeScoreBreakdown"]
+      "key_exports": [
+        "score_candidate()",
+        "score_candidate_free()",
+        "ScoreBreakdown",
+        "FreeScoreBreakdown"
+      ]
     },
     {
       "path": "src/kryptos/kernel/scoring/crib_score.py",
       "purpose": "Threshold-based crib match scoring and signal classification.",
-      "key_exports": ["score_cribs()", "score_cribs_detailed()", "is_above_noise()", "is_storable()", "is_signal()", "is_breakthrough()"]
+      "key_exports": [
+        "score_cribs()",
+        "score_cribs_detailed()",
+        "is_above_noise()",
+        "is_storable()",
+        "is_signal()",
+        "is_breakthrough()"
+      ]
     },
     {
       "path": "src/kryptos/kernel/scoring/ic.py",
       "purpose": "Index of Coincidence computation (full text and per-period).",
-      "key_exports": ["ic()", "ic_by_position()", "ic_score()"]
+      "key_exports": [
+        "ic()",
+        "ic_by_position()",
+        "ic_score()"
+      ]
     },
     {
       "path": "src/kryptos/kernel/scoring/ngram.py",
       "purpose": "Log-probability quadgram scorer for English plaintext quality.",
-      "key_exports": ["NgramScorer", "get_default_scorer()"]
+      "key_exports": [
+        "NgramScorer",
+        "get_default_scorer()"
+      ]
     },
     {
       "path": "src/kryptos/kernel/scoring/free_crib.py",
       "purpose": "Position-free crib scorer: searches for EASTNORTHEAST and BERLINCLOCK anywhere in text. Added for first-principles audit (2026-02-26).",
-      "key_exports": ["score_free()", "score_free_fast()", "FreeCribResult"]
+      "key_exports": [
+        "score_free()",
+        "score_free_fast()",
+        "FreeCribResult"
+      ]
     },
     {
       "path": "src/kryptos/kernel/transforms/vigenere.py",
       "purpose": "Vigenere, Beaufort, and Var Beaufort encrypt/decrypt/key-recovery.",
-      "key_exports": ["CipherVariant", "vig_encrypt()", "vig_decrypt()", "beau_decrypt()", "varbeau_decrypt()", "recover_key()"]
+      "key_exports": [
+        "CipherVariant",
+        "vig_encrypt()",
+        "vig_decrypt()",
+        "beau_decrypt()",
+        "varbeau_decrypt()",
+        "recover_key()"
+      ]
     },
     {
       "path": "src/kryptos/kernel/transforms/transposition.py",
       "purpose": "All standard transposition permutation generators and application utilities.",
-      "key_exports": ["columnar_perm()", "myszkowski_perm()", "rail_fence_perm()", "serpentine_perm()", "spiral_perm()", "apply_perm()", "invert_perm()"]
+      "key_exports": [
+        "columnar_perm()",
+        "myszkowski_perm()",
+        "rail_fence_perm()",
+        "serpentine_perm()",
+        "spiral_perm()",
+        "apply_perm()",
+        "invert_perm()"
+      ]
     },
     {
       "path": "src/kryptos/kernel/transforms/polybius.py",
       "purpose": "Polybius 5x5 square generation and Bifid encrypt/decrypt.",
-      "key_exports": ["make_polybius_5x5()", "bifid_encrypt()", "bifid_decrypt()"]
+      "key_exports": [
+        "make_polybius_5x5()",
+        "bifid_encrypt()",
+        "bifid_decrypt()"
+      ]
     },
     {
       "path": "src/kryptos/kernel/transforms/compose.py",
       "purpose": "Multi-stage transform pipeline composition (Sub+Trans+Sub etc.).",
-      "key_exports": ["TransformType", "TransformConfig", "PipelineConfig", "build_pipeline()"]
+      "key_exports": [
+        "TransformType",
+        "TransformConfig",
+        "PipelineConfig",
+        "build_pipeline()"
+      ]
     },
     {
       "path": "src/kryptos/kernel/persistence/sqlite.py",
       "purpose": "WAL-mode SQLite database wrapper for result persistence.",
-      "key_exports": ["Database"]
+      "key_exports": [
+        "Database"
+      ]
     },
     {
       "path": "src/kryptos/kernel/persistence/artifacts.py",
       "purpose": "Run manifest and JSONL writer for experiment artifact persistence.",
-      "key_exports": ["RunManifest", "JsonlWriter"]
+      "key_exports": [
+        "RunManifest",
+        "JsonlWriter"
+      ]
     },
     {
       "path": "src/kryptos/pipeline/evaluation.py",
       "purpose": "Top-level evaluation pipeline: runs all scoring functions on a candidate.",
-      "key_exports": ["evaluate_candidate()", "evaluate_with_key()", "evaluate_pipeline()", "EvaluationResult"]
+      "key_exports": [
+        "evaluate_candidate()",
+        "evaluate_with_key()",
+        "evaluate_pipeline()",
+        "EvaluationResult"
+      ]
     },
     {
       "path": "src/kryptos/pipeline/runners.py",
       "purpose": "Parallel sweep runner with checkpointing for large configuration spaces.",
-      "key_exports": ["SweepRunner"]
+      "key_exports": [
+        "SweepRunner"
+      ]
     },
     {
       "path": "src/kryptos/pipeline/experiments.py",
       "purpose": "Experiment worker functions for block and full transposition sweeps.",
-      "key_exports": ["block_transposition_worker()", "full_transposition_worker()"]
+      "key_exports": [
+        "block_transposition_worker()",
+        "full_transposition_worker()"
+      ]
     },
     {
       "path": "src/kryptos/novelty/hypothesis.py",
       "purpose": "Hypothesis data model with status tracking and research question linking.",
-      "key_exports": ["Hypothesis", "HypothesisStatus", "ResearchQuestion"]
+      "key_exports": [
+        "Hypothesis",
+        "HypothesisStatus",
+        "ResearchQuestion"
+      ]
     },
     {
       "path": "src/kryptos/novelty/generators.py",
       "purpose": "Novel hypothesis generators: running key, date keys, transform recombinations.",
-      "key_exports": ["running_key_from_text()", "date_derived_keys()", "transform_recombination()"]
+      "key_exports": [
+        "running_key_from_text()",
+        "date_derived_keys()",
+        "transform_recombination()"
+      ]
     },
     {
       "path": "src/kryptos/novelty/triage.py",
       "purpose": "Hypothesis triage: quick-filters new hypotheses before full sweep.",
-      "key_exports": ["triage_hypothesis()", "triage_batch()"]
+      "key_exports": [
+        "triage_hypothesis()",
+        "triage_batch()"
+      ]
     },
     {
       "path": "src/kryptos/novelty/ledger.py",
       "purpose": "SQLite-backed novelty ledger for hypothesis deduplication across sessions.",
-      "key_exports": ["NoveltyLedger"]
+      "key_exports": [
+        "NoveltyLedger"
+      ]
     },
     {
       "path": "src/kryptos/corpus/ingest.py",
       "purpose": "Text corpus ingestion from files and URLs.",
-      "key_exports": ["TextIngester"]
+      "key_exports": [
+        "TextIngester"
+      ]
     },
     {
       "path": "src/kryptos/corpus/normalize.py",
       "purpose": "Egyptological text normalizer: transliteration-aware alpha extraction.",
-      "key_exports": ["EgyptNormalizer"]
+      "key_exports": [
+        "EgyptNormalizer"
+      ]
     },
     {
       "path": "src/kryptos/corpus/variants.py",
       "purpose": "9-variant spelling generator for Egyptological corpus texts.",
-      "key_exports": ["VariantGenerator"]
+      "key_exports": [
+        "VariantGenerator"
+      ]
     },
     {
       "path": "src/kryptos/cli/main.py",
       "purpose": "CLI entry point: doctor, sweep, reproduce, novelty, report commands.",
-      "key_exports": ["doctor", "sweep", "reproduce", "novelty", "report"]
+      "key_exports": [
+        "doctor",
+        "sweep",
+        "reproduce",
+        "novelty",
+        "report"
+      ]
+    },
+    {
+      "path": "src/kryptos/kernel/scoring/crib_score.py",
+      "purpose": "Threshold-based crib match scoring, signal classification, and breakthrough detection.",
+      "key_exports": [
+        "score_cribs()",
+        "score_cribs_detailed()",
+        "is_above_noise()",
+        "is_storable()",
+        "is_signal()",
+        "is_breakthrough()"
+      ]
+    },
+    {
+      "path": "src/kryptos/kernel/scoring/ngram.py",
+      "purpose": "Log-probability quadgram scorer for English plaintext quality assessment.",
+      "key_exports": [
+        "NgramScorer",
+        "get_default_scorer()",
+        "NgramScorer.score()",
+        "NgramScorer.score_per_char()"
+      ]
+    },
+    {
+      "path": "src/kryptos/kernel/scoring/free_crib.py",
+      "purpose": "Position-free crib scorer: searches for EASTNORTHEAST and BERLINCLOCK anywhere in candidate text. Added for first-principles audit (2026-02-26) to test whether fixed crib positions are a hidden dependency.",
+      "key_exports": [
+        "score_free()",
+        "score_free_fast()",
+        "FreeCribResult"
+      ]
+    },
+    {
+      "path": "src/kryptos/kernel/persistence/sqlite.py",
+      "purpose": "WAL-mode SQLite database wrapper for result persistence with runs/results/eliminations/checkpoints tables.",
+      "key_exports": [
+        "Database"
+      ]
+    },
+    {
+      "path": "src/kryptos/kernel/persistence/artifacts.py",
+      "purpose": "Run manifest and JSONL writer for experiment artifact persistence.",
+      "key_exports": [
+        "RunManifest",
+        "JsonlWriter"
+      ]
     }
   ],
   "scoring_functions": [
@@ -2868,17 +3133,23 @@
       "status": "ELIMINATED",
       "proof_type": "mathematical",
       "reason": "CT has 2 E's; cribs EASTNORTHEAST+BERLINCLOCK require 3 E's at fixed positions. Impossible under any single-layer transposition.",
-      "scripts": ["e_s_05_algebraic_fractionation.py"],
+      "scripts": [
+        "e_s_05_algebraic_fractionation.py"
+      ],
       "confidence": "100%"
     },
     {
       "id": "DISPROOF-T1-02",
       "tier": 1,
-      "method": "All periodic polyalphabetic (Vigenere/Beaufort/VarBeaufort) — periods 2-26",
+      "method": "All periodic polyalphabetic (Vigenere/Beaufort/VarBeaufort) \u2014 periods 2-26",
       "status": "ELIMINATED",
       "proof_type": "mathematical",
       "reason": "Full pairwise Bean impossibility: all 276 pairwise constraints applied. ALL periods 2-26 directly eliminated.",
-      "scripts": ["e_s_27_bean_algebraic_proof.py", "e_s_57_period7_constraint_enum.py", "e_audit_01_crib_robustness.py"],
+      "scripts": [
+        "e_s_27_bean_algebraic_proof.py",
+        "e_s_57_period7_constraint_enum.py",
+        "e_audit_01_crib_robustness.py"
+      ],
       "confidence": "100%"
     },
     {
@@ -2888,7 +3159,11 @@
       "status": "ELIMINATED",
       "proof_type": "mathematical",
       "reason": "Periods {2-7,9-12,14,15,17,18,21,22,25} eliminated for ANY transposition + periodic key combination. Surviving set: {8,13,16,19,20,23,24,26}.",
-      "scripts": ["e_frac_35_bean_period_impossibility.py", "e_frac_55_bean_surviving_periods.py", "e_frac_27_bean_width_profile.py"],
+      "scripts": [
+        "e_frac_35_bean_period_impossibility.py",
+        "e_frac_55_bean_surviving_periods.py",
+        "e_frac_27_bean_width_profile.py"
+      ],
       "confidence": "100%"
     },
     {
@@ -2898,7 +3173,11 @@
       "status": "ELIMINATED",
       "proof_type": "mathematical",
       "reason": "Algebraic impossibility for n=2,3,4 (matrix determinant constraints). n>4 blocked since 97 is prime.",
-      "scripts": ["e04_hill_cipher.py", "e_s_41_hill_transposition.py", "e_s_151_hill_w9_yart.py"],
+      "scripts": [
+        "e04_hill_cipher.py",
+        "e_s_41_hill_transposition.py",
+        "e_s_151_hill_w9_yart.py"
+      ],
       "confidence": "100%"
     },
     {
@@ -2908,7 +3187,12 @@
       "status": "ELIMINATED",
       "proof_type": "mathematical",
       "reason": "Bifid 5x5/6x6: 26 letters impossible in 5x5; Trifid: IC constraints; ADFGVX: parity (97 odd); Playfair/Two-Square/Four-Square: odd length 97 blocked.",
-      "scripts": ["e_frac_21_fractionation_structural_proofs.py", "e_s_09_bifid_algebraic.py", "e_s_42_bifid6x6_extended.py", "e_playfair_01_full_disproof.py"],
+      "scripts": [
+        "e_frac_21_fractionation_structural_proofs.py",
+        "e_s_09_bifid_algebraic.py",
+        "e_s_42_bifid6x6_extended.py",
+        "e_playfair_01_full_disproof.py"
+      ],
       "confidence": "100%"
     },
     {
@@ -2918,7 +3202,10 @@
       "status": "ELIMINATED",
       "proof_type": "mathematical",
       "reason": "Structural maximum: PT-autokey max 16/24, CT-autokey max 21/24. Both provably below breakthrough threshold.",
-      "scripts": ["e_frac_37_autokey_arbitrary_transposition.py", "e_s_69_pt_autokey_algebraic.py"],
+      "scripts": [
+        "e_frac_37_autokey_arbitrary_transposition.py",
+        "e_s_69_pt_autokey_algebraic.py"
+      ],
       "confidence": "100%"
     },
     {
@@ -2927,8 +3214,11 @@
       "method": "Progressive key (k[i]=k[0]+i*delta mod 26)",
       "status": "ELIMINATED",
       "proof_type": "mathematical",
-      "reason": "Bean-ELIMINATED: 38*delta≡0 mod 26 → delta in {0,13} only (degenerate — constant or two-value key).",
-      "scripts": ["e_s_89_progressive_key.py", "e_frac_15_linear_key.py"],
+      "reason": "Bean-ELIMINATED: 38*delta\u22610 mod 26 \u2192 delta in {0,13} only (degenerate \u2014 constant or two-value key).",
+      "scripts": [
+        "e_s_89_progressive_key.py",
+        "e_frac_15_linear_key.py"
+      ],
       "confidence": "100%"
     },
     {
@@ -2938,7 +3228,9 @@
       "status": "ELIMINATED",
       "proof_type": "mathematical",
       "reason": "Bean-ELIMINATED: 0/676 (a,b) pairs survive Bean constraint.",
-      "scripts": ["e_s_84_polynomial_key_columnar.py"],
+      "scripts": [
+        "e_s_84_polynomial_key_columnar.py"
+      ],
       "confidence": "100%"
     },
     {
@@ -2948,7 +3240,9 @@
       "status": "ELIMINATED",
       "proof_type": "mathematical",
       "reason": "Bean-ELIMINATED: 0/676 seed pairs survive Bean constraint.",
-      "scripts": ["e_s_50_nonlinear_recurrence.py"],
+      "scripts": [
+        "e_s_50_nonlinear_recurrence.py"
+      ],
       "confidence": "100%"
     },
     {
@@ -2957,8 +3251,10 @@
       "method": "Pure nomenclator",
       "status": "ELIMINATED",
       "proof_type": "mathematical",
-      "reason": "EAST appears twice in cribs (pos 21-24 and 30-33) but maps to different CT sequences FLRV and GKSS → non-constant shift [1,25,1,23]. Identical words must produce identical CT under pure nomenclator.",
-      "scripts": ["e_cfm_05_nomenclator_model.py"],
+      "reason": "EAST appears twice in cribs (pos 21-24 and 30-33) but maps to different CT sequences FLRV and GKSS \u2192 non-constant shift [1,25,1,23]. Identical words must produce identical CT under pure nomenclator.",
+      "scripts": [
+        "e_cfm_05_nomenclator_model.py"
+      ],
       "confidence": "100%"
     },
     {
@@ -2967,8 +3263,10 @@
       "method": "Homophonic substitution (direct correspondence, no transposition)",
       "status": "ELIMINATED",
       "proof_type": "mathematical",
-      "reason": "9/14 CT letters at crib positions map to 2+ distinct PT letters — impossible under homophonic decryption (each CT maps to exactly one PT).",
-      "scripts": ["e_cfm_04_homophonic_partition.py"],
+      "reason": "9/14 CT letters at crib positions map to 2+ distinct PT letters \u2014 impossible under homophonic decryption (each CT maps to exactly one PT).",
+      "scripts": [
+        "e_cfm_04_homophonic_partition.py"
+      ],
       "confidence": "100%"
     },
     {
@@ -2978,7 +3276,10 @@
       "status": "ELIMINATED",
       "proof_type": "mathematical",
       "reason": "Bean-ELIMINATED: zero orderings at w5 and w7 map positions 27 and 65 to the same column (required for Bean EQ). P(Bean EQ) = 0 at these widths.",
-      "scripts": ["e_frac_01_w9_structural.py", "e_frac_27_bean_width_profile.py"],
+      "scripts": [
+        "e_frac_01_w9_structural.py",
+        "e_frac_27_bean_width_profile.py"
+      ],
       "confidence": "100%"
     },
     {
@@ -2988,7 +3289,9 @@
       "status": "ELIMINATED",
       "proof_type": "exhaustive_search",
       "reason": "Max 13/24 across all 720 orderings (noise, corrected p=0.485). Statistically indistinguishable from random.",
-      "scripts": ["e_frac_29_w6w8_crib_scoring.py"],
+      "scripts": [
+        "e_frac_29_w6w8_crib_scoring.py"
+      ],
       "confidence": "99%"
     },
     {
@@ -2997,8 +3300,10 @@
       "method": "Columnar width 8 exhaustive",
       "status": "ELIMINATED",
       "proof_type": "exhaustive_search",
-      "reason": "Max 13/24 across all 40320 orderings — UNDERPERFORMS random expectation.",
-      "scripts": ["e_frac_29_w6w8_crib_scoring.py"],
+      "reason": "Max 13/24 across all 40320 orderings \u2014 UNDERPERFORMS random expectation.",
+      "scripts": [
+        "e_frac_29_w6w8_crib_scoring.py"
+      ],
       "confidence": "99%"
     },
     {
@@ -3007,8 +3312,11 @@
       "method": "Columnar width 9 exhaustive",
       "status": "ELIMINATED",
       "proof_type": "exhaustive_search",
-      "reason": "Max 14/24 across exhaustive sweep — UNDERPERFORMS random expectation.",
-      "scripts": ["e_s_133_width9_columnar.py", "e_frac_12_w9_strict_reeval.py"],
+      "reason": "Max 14/24 across exhaustive sweep \u2014 UNDERPERFORMS random expectation.",
+      "scripts": [
+        "e_s_133_width9_columnar.py",
+        "e_frac_12_w9_strict_reeval.py"
+      ],
       "confidence": "99%"
     },
     {
@@ -3018,7 +3326,9 @@
       "status": "ELIMINATED",
       "proof_type": "exhaustive_search",
       "reason": "Max 14/24 across sampled orderings (large width). All underperform random.",
-      "scripts": ["e_frac_30_w10_w15_crib_scoring.py"],
+      "scripts": [
+        "e_frac_30_w10_w15_crib_scoring.py"
+      ],
       "confidence": "95%"
     },
     {
@@ -3028,7 +3338,9 @@
       "status": "ELIMINATED",
       "proof_type": "exhaustive_search",
       "reason": "14,035 permutations tested; max 13/24 (noise).",
-      "scripts": ["e_frac_32_simple_transposition_sweep.py"],
+      "scripts": [
+        "e_frac_32_simple_transposition_sweep.py"
+      ],
       "confidence": "99%"
     },
     {
@@ -3037,8 +3349,12 @@
       "method": "Double columnar (9 Bean-compatible width pairs)",
       "status": "ELIMINATED",
       "proof_type": "exhaustive_search",
-      "reason": "2.96M compositions tested; max 15/24 (noise). 667B extended: max 18/24 (dragnet_v4) — all noise.",
-      "scripts": ["e_frac_46_double_columnar.py", "e_s_06_double_columnar.py", "dragnet_v4.py"],
+      "reason": "2.96M compositions tested; max 15/24 (noise). 667B extended: max 18/24 (dragnet_v4) \u2014 all noise.",
+      "scripts": [
+        "e_frac_46_double_columnar.py",
+        "e_s_06_double_columnar.py",
+        "dragnet_v4.py"
+      ],
       "confidence": "99%"
     },
     {
@@ -3048,7 +3364,10 @@
       "status": "ELIMINATED",
       "proof_type": "exhaustive_search",
       "reason": "Max 15/24 (noise).",
-      "scripts": ["e_frac_47_myszkowski.py", "e_s_39_myszkowski.py"],
+      "scripts": [
+        "e_frac_47_myszkowski.py",
+        "e_s_39_myszkowski.py"
+      ],
       "confidence": "99%"
     },
     {
@@ -3057,8 +3376,11 @@
       "method": "AMSCO/Nihilist/Swapped disrupted columnar widths 8-13",
       "status": "ELIMINATED",
       "proof_type": "mathematical",
-      "reason": "0% Bean pass for AMSCO/Nihilist at these widths — Bean EQ is structurally impossible.",
-      "scripts": ["e_frac_48_amsco_disrupted.py", "e_s_22_amsco_disrupted.py"],
+      "reason": "0% Bean pass for AMSCO/Nihilist at these widths \u2014 Bean EQ is structurally impossible.",
+      "scripts": [
+        "e_frac_48_amsco_disrupted.py",
+        "e_s_22_amsco_disrupted.py"
+      ],
       "confidence": "100%"
     },
     {
@@ -3068,7 +3390,10 @@
       "status": "ELIMINATED",
       "proof_type": "exhaustive_search",
       "reason": "ZERO candidates at small period products. Product space exhausted.",
-      "scripts": ["e_frac_52_three_layer.py", "e_s_30_three_layer_mask.py"],
+      "scripts": [
+        "e_frac_52_three_layer.py",
+        "e_s_30_three_layer_mask.py"
+      ],
       "confidence": "99%"
     },
     {
@@ -3078,7 +3403,9 @@
       "status": "ELIMINATED",
       "proof_type": "exhaustive_search",
       "reason": "ZERO viable candidates across all tested configurations.",
-      "scripts": ["e_frac_53_mono_inner_periodic.py"],
+      "scripts": [
+        "e_frac_53_mono_inner_periodic.py"
+      ],
       "confidence": "99%"
     },
     {
@@ -3088,7 +3415,9 @@
       "status": "ELIMINATED",
       "proof_type": "exhaustive_search",
       "reason": "462 EAST matches found; 19 pass Bean-EQ; ZERO pass full 24-position crib filter. Under identity transposition, all English Gutenberg literature is eliminated.",
-      "scripts": ["e_cfm_09_gutenberg_east_scan.py"],
+      "scripts": [
+        "e_cfm_09_gutenberg_east_scan.py"
+      ],
       "confidence": "99%"
     },
     {
@@ -3098,7 +3427,12 @@
       "status": "ELIMINATED",
       "proof_type": "exhaustive_search",
       "reason": "Cumulative corpus 130.7M+ chars: ZERO full matches under identity transposition.",
-      "scripts": ["e_cfm_01_running_key_foreign.py", "e_team_german_scan.py", "e_team_french_scan.py", "e_team_italian_spanish_scan.py"],
+      "scripts": [
+        "e_cfm_01_running_key_foreign.py",
+        "e_team_german_scan.py",
+        "e_team_french_scan.py",
+        "e_team_italian_spanish_scan.py"
+      ],
       "confidence": "99%"
     },
     {
@@ -3107,8 +3441,11 @@
       "method": "Egyptological corpus (57M chars, 9 variants) + columnar transposition widths 5-11",
       "status": "ELIMINATED",
       "proof_type": "exhaustive_search",
-      "reason": "1.19B configurations tested (44M perms × 3 cipher variants × 9 corpora). Zero hits ≥18/24.",
-      "scripts": ["e_egypt_00_corpus_pipeline.py", "e_egypt_01_columnar_sweep.py"],
+      "reason": "1.19B configurations tested (44M perms \u00d7 3 cipher variants \u00d7 9 corpora). Zero hits \u226518/24.",
+      "scripts": [
+        "e_egypt_00_corpus_pipeline.py",
+        "e_egypt_01_columnar_sweep.py"
+      ],
       "confidence": "99%"
     },
     {
@@ -3118,7 +3455,10 @@
       "status": "ELIMINATED",
       "proof_type": "exhaustive_search",
       "reason": "Single and double CW/CCW rotations, pad 0-5, 1016 total configs tested. Max 4/24, ALL Bean FAIL.",
-      "scripts": ["e_cfm_07_k3_rotational.py", "e_audit_06_k3_method_k4.py"],
+      "scripts": [
+        "e_cfm_07_k3_rotational.py",
+        "e_audit_06_k3_method_k4.py"
+      ],
       "confidence": "99%"
     },
     {
@@ -3128,7 +3468,11 @@
       "status": "ELIMINATED",
       "proof_type": "exhaustive_search",
       "reason": "377 configurations: clock face, city ordering, route ciphers. Max 6/24 (noise).",
-      "scripts": ["e_team_weltzeituhr_procedural.py", "e_s_134_weltzeituhr_ddr_era.py", "e_audit_03_weltzeituhr_fsm.py"],
+      "scripts": [
+        "e_team_weltzeituhr_procedural.py",
+        "e_s_134_weltzeituhr_ddr_era.py",
+        "e_audit_03_weltzeituhr_fsm.py"
+      ],
       "confidence": "99%"
     },
     {
@@ -3138,7 +3482,10 @@
       "status": "ELIMINATED",
       "proof_type": "exhaustive_search",
       "reason": "50,819 configurations (checkerboard, diagonal, 50K random). Max 2/24 (noise).",
-      "scripts": ["e_team_cardan_grille.py", "e_audit_04_cardan_aperture.py"],
+      "scripts": [
+        "e_team_cardan_grille.py",
+        "e_audit_04_cardan_aperture.py"
+      ],
       "confidence": "99%"
     },
     {
@@ -3147,8 +3494,10 @@
       "method": "Webster family names as Vigenere key (DRUSILLA etc.)",
       "status": "ELIMINATED",
       "proof_type": "exhaustive_search",
-      "reason": "Bean-incompatible at period 8 (pos 27→S, pos 65→R, S≠R). Max 5/24.",
-      "scripts": ["e_cfm_00_drusilla_hypothesis.py"],
+      "reason": "Bean-incompatible at period 8 (pos 27\u2192S, pos 65\u2192R, S\u2260R). Max 5/24.",
+      "scripts": [
+        "e_cfm_00_drusilla_hypothesis.py"
+      ],
       "confidence": "99%"
     },
     {
@@ -3167,7 +3516,7 @@
       "method": "Extended Polybius 6x5 (30-symbol)",
       "status": "ELIMINATED",
       "proof_type": "mathematical",
-      "reason": "97 CT letters → 48.5 PT letters (not integer). Non-integer plaintext length is impossible.",
+      "reason": "97 CT letters \u2192 48.5 PT letters (not integer). Non-integer plaintext length is impossible.",
       "scripts": [],
       "confidence": "100%"
     },
@@ -3178,7 +3527,10 @@
       "status": "ELIMINATED",
       "proof_type": "exhaustive_search",
       "reason": "0 full matches using K3's documented method with all reasonable key variants.",
-      "scripts": ["e_audit_06_k3_method_k4.py", "e_cfm_07_k3_rotational.py"],
+      "scripts": [
+        "e_audit_06_k3_method_k4.py",
+        "e_cfm_07_k3_rotational.py"
+      ],
       "confidence": "99%"
     },
     {
@@ -3188,7 +3540,9 @@
       "status": "ELIMINATED",
       "proof_type": "exhaustive_search",
       "reason": "ALL physical reversal/mirror variants tested: ALL NOISE.",
-      "scripts": ["e_frac_32_simple_transposition_sweep.py"],
+      "scripts": [
+        "e_frac_32_simple_transposition_sweep.py"
+      ],
       "confidence": "99%"
     },
     {
@@ -3197,8 +3551,11 @@
       "method": "EAST constraint applied to all tested corpora (identity transposition)",
       "status": "ELIMINATED",
       "proof_type": "exhaustive_search",
-      "reason": "EAST gap-9 differential filter + Bean EQ: 462 EAST hits in 47.4M chars → 19 Bean-EQ → 0 full 24-position. All corpora eliminated under identity transposition.",
-      "scripts": ["e_cfm_06_east_constraint.py", "e_cfm_09_gutenberg_east_scan.py"],
+      "reason": "EAST gap-9 differential filter + Bean EQ: 462 EAST hits in 47.4M chars \u2192 19 Bean-EQ \u2192 0 full 24-position. All corpora eliminated under identity transposition.",
+      "scripts": [
+        "e_cfm_06_east_constraint.py",
+        "e_cfm_09_gutenberg_east_scan.py"
+      ],
       "confidence": "99%"
     },
     {
@@ -3208,7 +3565,10 @@
       "status": "ELIMINATED",
       "proof_type": "frequency_analysis",
       "reason": "Frequency analysis: K4 CT letter distribution incompatible with mono-substitution of English (chi-squared test). Bean EQ implies PT[27]=PT[65]=R, constraining mono.",
-      "scripts": ["e_affine_mono_disproof.py", "e_s_99_mono_constraint.py"],
+      "scripts": [
+        "e_affine_mono_disproof.py",
+        "e_s_99_mono_constraint.py"
+      ],
       "confidence": "95%"
     },
     {
@@ -3218,7 +3578,10 @@
       "status": "ELIMINATED",
       "proof_type": "exhaustive_search",
       "reason": "All 25 shifts tested; none produce English plaintext.",
-      "scripts": ["e_disproof_01_caesar_all_shifts.py", "e_disproof_01_caesar_shifts.py"],
+      "scripts": [
+        "e_disproof_01_caesar_all_shifts.py",
+        "e_disproof_01_caesar_shifts.py"
+      ],
       "confidence": "100%"
     },
     {
@@ -3228,7 +3591,9 @@
       "status": "ELIMINATED",
       "proof_type": "mathematical",
       "reason": "Structural impossibility given Bean EQ constraint: best 5/24.",
-      "scripts": ["e_affine_mono_disproof.py"],
+      "scripts": [
+        "e_affine_mono_disproof.py"
+      ],
       "confidence": "99%"
     },
     {
@@ -3238,8 +3603,43 @@
       "status": "ELIMINATED",
       "proof_type": "mathematical",
       "reason": "Bean-impossible at discriminating periods. LCG key generation cannot satisfy Bean EQ at periods 1-8.",
-      "scripts": ["e_antipodes_05_gromark_vimark_trans.py", "e_s_67_gromark_numeric_key.py"],
+      "scripts": [
+        "e_antipodes_05_gromark_vimark_trans.py",
+        "e_s_67_gromark_numeric_key.py"
+      ],
       "confidence": "99%"
+    },
+    {
+      "id": "DISPROOF-T2-11",
+      "tier": 2,
+      "method": "Fold theory: OFLNUXZ/grid as direct K4 decryption key (39 approaches)",
+      "status": "ELIMINATED",
+      "proof_type": "exhaustive_search",
+      "reason": "Direct overlay fold of Kryptos copper sheet reveals OFLNUXZ (trailing tableau chars) and ILM (under superscript YAR). 39 distinct approaches tested (coordinate analysis, ABSCISSA reference, grid overlays, tableau-path keys, fold-coordinate composites). ALL 39 returned NOISE (max 4/24). OFLNUXZ and ILM are confirmed fold artifacts but are NOT the decryption key.",
+      "scripts": [
+        "e_antipodes_06_tableau_path_key.py",
+        "e_bespoke_11_tableau_extraction.py",
+        "e_chart_11_rotation.py"
+      ],
+      "configs_tested": "39 fold approaches",
+      "confidence": "95%",
+      "date": "2026-03-01",
+      "notes": "Physical fold mechanism confirmed (direct overlay, NOT mirror). OFLNUXZ contains LUX (light). ILM replaces YAR as fold signal. 24-letter anomaly pool identified. EQUINOX formable from all 4 sources. Remains interesting as metadata, not decryption key."
+    },
+    {
+      "id": "DISPROOF-T2-12",
+      "tier": 2,
+      "method": "Key-Split Combiner (E-SPLIT-00): 51,534 CKM-style configurations",
+      "status": "NOISE",
+      "proof_type": "exhaustive_search",
+      "reason": "6-phase CKM key-split attack: AZ pairs, AZ+numeric sources, transposition+substitution combos, triples, LOOMIS deep, KA-space. 51,534 total configurations. Best score: 6/24. All scores within noise floor. Straightforward CKM key-split combos eliminated.",
+      "scripts": [
+        "kryptosbot/run_split_campaign.py"
+      ],
+      "configs_tested": "51534",
+      "confidence": "90%",
+      "date": "2026-03-01",
+      "notes": "NOT eliminated: multi-step derivation, unknown sources, chart-based key generation. CKM patent concept remains theoretically viable with unknown parameters."
     }
   ],
   "promising_leads": [
@@ -3249,9 +3649,15 @@
       "status": "UNDERDETERMINED",
       "confidence": "OPEN",
       "description": "73.7M chars eliminated under identity transposition, but with any non-identity transposition the problem becomes massively underdetermined. Unknown text + non-columnar trans cannot be eliminated computationally.",
-      "constraint_satisfaction": "Model survives all known constraints. C(97,24)≈5e21 permutation DOF.",
-      "relevant_scripts": ["e_frac_49_running_key_columnar.py", "e_cfm_08_trans_key_scoring.py"],
-      "next_actions": ["Narrow via K5 constraints (shared coded words at same positions)", "Bayesian prior on text type based on Sanborn 1986 Egypt trip"]
+      "constraint_satisfaction": "Model survives all known constraints. C(97,24)\u22485e21 permutation DOF.",
+      "relevant_scripts": [
+        "e_frac_49_running_key_columnar.py",
+        "e_cfm_08_trans_key_scoring.py"
+      ],
+      "next_actions": [
+        "Narrow via K5 constraints (shared coded words at same positions)",
+        "Bayesian prior on text type based on Sanborn 1986 Egypt trip"
+      ]
     },
     {
       "id": "LEAD-02",
@@ -3259,8 +3665,15 @@
       "status": "UNDERDETERMINED",
       "confidence": "OPEN",
       "description": "13 monoalphabetic DOF absorb all constraints. SA finds trivial 24/24 solutions but all degenerate (mono collapse, IC=0.23-0.30). Model cannot be confirmed or eliminated.",
-      "relevant_scripts": ["e_cfm_02_mono_running_constrain.py", "e_team_mono_trans_sa.py", "e_frac_54_mono_running_key_detection.py"],
-      "next_actions": ["Constrain mono using letter frequency priors", "Require IC > 0.05 to filter degenerate solutions"]
+      "relevant_scripts": [
+        "e_cfm_02_mono_running_constrain.py",
+        "e_team_mono_trans_sa.py",
+        "e_frac_54_mono_running_key_detection.py"
+      ],
+      "next_actions": [
+        "Constrain mono using letter frequency priors",
+        "Require IC > 0.05 to filter degenerate solutions"
+      ]
     },
     {
       "id": "LEAD-03",
@@ -3268,9 +3681,20 @@
       "status": "OPEN",
       "confidence": "BEST REMAINING HYPOTHESIS",
       "description": "Sanborn's statements: 'not a math solution', 'creativity', 97-day connection to Webster, Egypt trip 1986, coding charts auctioned for $962.5K. The coding charts (Scheidt letter, maquette) provide non-public key material. This is the hypothesis class that BEST fits all available evidence.",
-      "relevant_scripts": ["e_team_coding_chart.py", "e_explorer_06_physical_procedural.py"],
-      "external_sources": ["Smithsonian archives (sealed until 2075)", "Auction buyer (anonymous)", "Sanborn private session"],
-      "next_actions": ["Antipodes physical inspection (Hirshhorn under renovation)", "Contact auction buyer", "File Smithsonian FOIA request"]
+      "relevant_scripts": [
+        "e_team_coding_chart.py",
+        "e_explorer_06_physical_procedural.py"
+      ],
+      "external_sources": [
+        "Smithsonian archives (sealed until 2075)",
+        "Auction buyer (anonymous)",
+        "Sanborn private session"
+      ],
+      "next_actions": [
+        "Antipodes physical inspection (Hirshhorn under renovation)",
+        "Contact auction buyer",
+        "File Smithsonian FOIA request"
+      ]
     },
     {
       "id": "LEAD-04",
@@ -3278,17 +3702,29 @@
       "status": "NEARLY_ELIMINATED",
       "confidence": "LOW",
       "description": "1.6M transpositions tested (structured+columnar+random). P(0 contradictions among 9) < 1e-6 for random trans. Best achievable: 1 contradiction remaining. Would require extremely specific bespoke transposition not covered by any standard type.",
-      "relevant_scripts": ["e_team_homophonic_trans.py", "e_team_targeted_homo_trans.py", "e_team_homo_contradiction_search.py"],
-      "next_actions": ["Targeted search for bespoke transpositions resolving last contradiction", "Cross-reference with coding chart hypothesis"]
+      "relevant_scripts": [
+        "e_team_homophonic_trans.py",
+        "e_team_targeted_homo_trans.py",
+        "e_team_homo_contradiction_search.py"
+      ],
+      "next_actions": [
+        "Targeted search for bespoke transpositions resolving last contradiction",
+        "Cross-reference with coding chart hypothesis"
+      ]
     },
     {
       "id": "LEAD-05",
       "hypothesis": "VIC / position-dependent chart cipher",
       "status": "OPEN",
       "confidence": "UNDERDETERMINED",
-      "description": "Non-periodic key, Bean-compatible in principle, but ~26^3 × 97! parameter space makes it computationally intractable. Periods 2,3,5,6,7,9,10 eliminated; periods 4,8,13+ remain underdetermined.",
-      "relevant_scripts": ["e_s_46_position_dependent_alphabets.py"],
-      "next_actions": ["Constrain using K5 shared coded words", "SA with VIC-specific key structure"]
+      "description": "Non-periodic key, Bean-compatible in principle, but ~26^3 \u00d7 97! parameter space makes it computationally intractable. Periods 2,3,5,6,7,9,10 eliminated; periods 4,8,13+ remain underdetermined.",
+      "relevant_scripts": [
+        "e_s_46_position_dependent_alphabets.py"
+      ],
+      "next_actions": [
+        "Constrain using K5 shared coded words",
+        "SA with VIC-specific key structure"
+      ]
     },
     {
       "id": "LEAD-06",
@@ -3296,17 +3732,29 @@
       "status": "OPEN",
       "confidence": "INTERESTING",
       "description": "Positions 0-20 have IC=0.067 (English-like) vs positions 21-97 IC=0.035 (random-like). May indicate a different key or cipher method for the opening segment.",
-      "relevant_scripts": ["e_frac_19_pre_ene_analysis.py", "e_s_54_pre_ene_analysis.py"],
-      "next_actions": ["Separate analysis of positions 0-20 vs 21-97", "Test if pre-ENE decodes independently"]
+      "relevant_scripts": [
+        "e_frac_19_pre_ene_analysis.py",
+        "e_s_54_pre_ene_analysis.py"
+      ],
+      "next_actions": [
+        "Separate analysis of positions 0-20 vs 21-97",
+        "Test if pre-ENE decodes independently"
+      ]
     },
     {
       "id": "LEAD-07",
-      "hypothesis": "K5 constraints — K5 is 97 chars, shares coded words at same positions as K4",
+      "hypothesis": "K5 constraints \u2014 K5 is 97 chars, shares coded words at same positions as K4",
       "status": "OPEN",
       "confidence": "UNKNOWN",
-      "description": "K5 confirmed by Sanborn (Aug 2025): 97 chars, 'similar but not identical coding', shares some coded words at same positions as K4. K5 CT is unknown — external information needed.",
-      "relevant_scripts": ["e_s_110_k5_position_cipher.py", "e_explorer_07_k5_constraints.py"],
-      "next_actions": ["K5 CT acquisition (no known source)", "Cross-K4/K5 joint constraint solver (once K5 CT available)"]
+      "description": "K5 confirmed by Sanborn (Aug 2025): 97 chars, 'similar but not identical coding', shares some coded words at same positions as K4. K5 CT is unknown \u2014 external information needed.",
+      "relevant_scripts": [
+        "e_s_110_k5_position_cipher.py",
+        "e_explorer_07_k5_constraints.py"
+      ],
+      "next_actions": [
+        "K5 CT acquisition (no known source)",
+        "Cross-K4/K5 joint constraint solver (once K5 CT available)"
+      ]
     },
     {
       "id": "LEAD-08",
@@ -3314,26 +3762,40 @@
       "status": "OPEN (UNTESTABLE)",
       "confidence": "UNKNOWN",
       "description": "Sanborn designed Kryptos with physical S-curve copper sheeting and pool. The projection of the S-curve onto the pool may encode information geometrically. Untestable without precise sculpture geometry measurements.",
-      "relevant_scripts": ["e_explorer_06_physical_procedural.py"],
-      "next_actions": ["Hirshhorn physical inspection when museum reopens from renovation", "Laser scanning of Kryptos sculpture"]
+      "relevant_scripts": [
+        "e_explorer_06_physical_procedural.py"
+      ],
+      "next_actions": [
+        "Hirshhorn physical inspection when museum reopens from renovation",
+        "Laser scanning of Kryptos sculpture"
+      ]
     },
     {
       "id": "LEAD-09",
-      "hypothesis": "YAR→WLD post-decryption transformation (K3 analogy)",
+      "hypothesis": "YAR\u2192WLD post-decryption transformation (K3 analogy)",
       "status": "OPEN",
       "confidence": "LOW",
-      "description": "In K3, CT YAR maps to PT WLD (UNDERGRUUND→UNDERGROUND). If K4 has similar post-decryption transformations, the solved PT may still require additional processing.",
-      "relevant_scripts": ["e_antipodes_07_yar_block_cipher.py"],
-      "next_actions": ["Document all known Kryptos post-decryption transformations", "Include in breakthrough evaluation criteria"]
+      "description": "In K3, CT YAR maps to PT WLD (UNDERGRUUND\u2192UNDERGROUND). If K4 has similar post-decryption transformations, the solved PT may still require additional processing.",
+      "relevant_scripts": [
+        "e_antipodes_07_yar_block_cipher.py"
+      ],
+      "next_actions": [
+        "Document all known Kryptos post-decryption transformations",
+        "Include in breakthrough evaluation criteria"
+      ]
     },
     {
       "id": "LEAD-10",
       "hypothesis": "External information: K5 CT, Smithsonian archives (sealed 2075), decoded coding charts",
       "status": "OPEN",
       "confidence": "HIGH VALUE IF OBTAINABLE",
-      "description": "Kobek-Byrne (Sept-Oct 2025) discovered scrambled PT strips in Smithsonian archives — sealed until 2075. Auction buyer (anonymous) holds complete K4 archive. Sanborn health declining. These external sources are the highest-value information inputs.",
+      "description": "Kobek-Byrne (Sept-Oct 2025) discovered scrambled PT strips in Smithsonian archives \u2014 sealed until 2075. Auction buyer (anonymous) holds complete K4 archive. Sanborn health declining. These external sources are the highest-value information inputs.",
       "relevant_scripts": [],
-      "next_actions": ["Monitor Sanborn communications", "Contact Kobek/Byrne about discoverable information", "Track auction materials provenance"]
+      "next_actions": [
+        "Monitor Sanborn communications",
+        "Contact Kobek/Byrne about discoverable information",
+        "Track auction materials provenance"
+      ]
     }
   ],
   "missing_capabilities": [
@@ -3342,14 +3804,19 @@
       "capability": "K5 ciphertext scanner",
       "description": "No K5 CT scanner exists because K5 CT is unknown. Would be the single highest-value tool if K5 CT becomes available.",
       "priority": "CRITICAL (blocked by external info)",
-      "blockers": ["K5 CT unknown — requires Sanborn communication or Smithsonian archives (sealed 2075)"]
+      "blockers": [
+        "K5 CT unknown \u2014 requires Sanborn communication or Smithsonian archives (sealed 2075)"
+      ]
     },
     {
       "id": "GAP-02",
       "capability": "Physical geometry solver for S-curve projection",
       "description": "No computational geometry tool for the S-curve/pool optical projection hypothesis. Requires precise 3D measurements of the Kryptos sculpture.",
       "priority": "HIGH",
-      "blockers": ["Hirshhorn Museum under renovation", "Requires physical access and laser scanning equipment"]
+      "blockers": [
+        "Hirshhorn Museum under renovation",
+        "Requires physical access and laser scanning equipment"
+      ]
     },
     {
       "id": "GAP-03",
@@ -3363,7 +3830,9 @@
       "capability": "Cross-K4/K5 joint constraint solver",
       "description": "No solver that jointly constrains K4 and K5 using their shared coding structure. Could dramatically narrow the key space once K5 CT is known.",
       "priority": "HIGH (blocked by K5 CT)",
-      "blockers": ["K5 CT unknown"]
+      "blockers": [
+        "K5 CT unknown"
+      ]
     },
     {
       "id": "GAP-05",
@@ -3384,7 +3853,10 @@
       "capability": "OCR pipeline for physical documents (coding charts, maquette)",
       "description": "The coding charts auctioned for $962.5K contain the actual key material. No OCR pipeline exists for extracting text from physical document photographs of these charts.",
       "priority": "MEDIUM (blocked by document access)",
-      "blockers": ["Charts in anonymous buyer possession", "No public images of chart contents available"]
+      "blockers": [
+        "Charts in anonymous buyer possession",
+        "No public images of chart contents available"
+      ]
     },
     {
       "id": "GAP-08",
@@ -3399,6 +3871,60 @@
       "description": "E-EGYPT-01 covers Egyptological corpus + columnar w5-11. Widths 12+ are not covered for Egyptological or any other corpus. C(97,12) orderings are large but still searchable with Bean pre-filtering.",
       "priority": "LOW",
       "implementation_notes": "Bean-EQ filters ~95.4% at widths 8-11, likely similar at w12+. Extend E-EGYPT-01 to w12-15."
+    },
+    {
+      "id": "GAP-10",
+      "capability": "ANT-002 dictionary sweep execution (370K words on Antipodes segments)",
+      "description": "jobs/done/ant_002_dictionary_sweep.py exists (19KB, confirmed never executed). Would test every English word as Vigenere/Beaufort/VarBeau keyword on K4, Stream Alpha (K3+K4), and K2 in both KA and AZ space. ~2.6M configs. Should be run when compute is available. [COMPLETED 2026-03-01: results/ant_002/ \u2014 ALL NOISE]",
+      "priority": "MEDIUM",
+      "implementation_notes": "Script is ready in jobs/done/. Run: PYTHONPATH=src python3 -u jobs/done/ant_002_dictionary_sweep.py",
+      "status": "CLOSED"
+    },
+    {
+      "id": "GAP-11",
+      "capability": "ANT-003/004 Antipodes merged transposition and progressive attacks",
+      "description": "jobs/done/ant_003_merged_transposition.py (45KB) and ant_004_progressive.py (42KB) confirmed never executed. Both target the K3+K4 merged block hypothesis (433 chars continuous stream). Represent significant untested hypotheses. [COMPLETED 2026-03-01: results/ant_003/, ant_004/ \u2014 ALL NOISE]",
+      "priority": "MEDIUM",
+      "implementation_notes": "Scripts are ready. Significant compute (45K/42K per script). Run sequentially after ANT-002.",
+      "status": "CLOSED"
+    },
+    {
+      "id": "GAP-12",
+      "capability": "Non-degenerate SA solver with IC and vowel-ratio constraints",
+      "description": "Current SA (e_team_mono_trans_sa) finds 24/24 trivially via mono-collapse (IC=0.23-0.30). Need SA variant with HARD constraints: IC > 0.05, vowel ratio > 25%, bijection enforcement, minimum quadgram threshold per non-crib segment. Would distinguish real solutions from degenerate collapses.",
+      "priority": "HIGH",
+      "implementation_notes": "Requires modifying SA fitness function to add constraint penalties. Add to scripts/ as e_s_155_constrained_sa.py"
+    },
+    {
+      "id": "GAP-13",
+      "capability": "Coverage audit re-execution for ~73 uncertain scripts",
+      "description": "Coverage audit (2026-03-01) found ~73 scripts with no execution evidence. They may have been run interactively with output consumed but not persisted. Re-running these would produce result files and confirm/extend verdicts.",
+      "priority": "LOW",
+      "implementation_notes": "See reports/run_coverage_audit_2026-03-01.md for the full list. Most are expected to produce NOISE results."
+    },
+    {
+      "id": "GAP-14",
+      "capability": "EQUINOX hypothesis formal test",
+      "description": "EQUINOX is formable from all 4 anomaly sources (misspellings Q,A,E,C; omission ION; fold OFLNUXZ; K0 Morse WHA+TRQ+L). 24 = known PT positions = Weltzeituhr facets = hours. Formal test of EQUINOX as K4 key at all Bean-surviving periods + all widths not yet done.",
+      "priority": "medium",
+      "estimated_configs": "~50K",
+      "date_added": "2026-03-01"
+    },
+    {
+      "id": "GAP-15",
+      "capability": "Physical S-curve geometry + pool reflection cipher",
+      "description": "Kryptos S-curve is physically measurable. Pool reflection maps certain letters to others geometrically. No digital test possible without Hirshhorn re-access. Requires post-renovation physical measurement.",
+      "priority": "high",
+      "estimated_configs": "N/A \u2014 requires physical access",
+      "date_added": "2026-03-01"
+    },
+    {
+      "id": "GAP-16",
+      "capability": "K4+K5 joint constraint solver",
+      "description": "K5 = 97 chars (confirmed Sanborn 2025), shares coded words with K2. Joint Bean constraint propagation across K4 and K5 would dramatically narrow key space. Blocked until K5 CT is public.",
+      "priority": "high",
+      "estimated_configs": "N/A \u2014 requires K5 CT",
+      "date_added": "2026-03-01"
     }
   ]
 }
