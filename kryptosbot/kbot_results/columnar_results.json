@@ -16,7 +16,7 @@
   "total_candidates_scored": 0,
   "crib_matches": [],
   "top_20": [],
-  "elapsed_seconds": 488.2808463573456,
+  "elapsed_seconds": 503.3089323043823,
   "num_workers": 28,
   "status": "DISPROVED",
   "disproof_evidence": "All permutations for widths 2-12 exhausted. No crib match found in 0 candidates."

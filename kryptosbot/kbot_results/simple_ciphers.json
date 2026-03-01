@@ -73,5 +73,5 @@
   ],
   "caesar_disproved": true,
   "affine_disproved": true,
-  "disproof_evidence": "All 25 Caesar shifts and 312 Affine keys tested. No crib match at positions 64-74. Both cipher families eliminated."
+  "disproof_evidence": "All 25 Caesar shifts and 312 Affine keys tested. No crib match at positions 63-73 (0-indexed). Both cipher families eliminated."
 }

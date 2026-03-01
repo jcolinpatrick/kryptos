@@ -90,7 +90,7 @@ async def test_sdk_auth() -> str:
     try:
         async for msg in query(
             prompt="Reply with exactly: OK",
-            options=ClaudeAgentOptions(allowed_tools=[]),
+            options=ClaudeAgentOptions(allowed_tools=[], env={"CLAUDECODE": ""}),
         ):
             if hasattr(msg, "result"):
                 result_text = str(msg.result)

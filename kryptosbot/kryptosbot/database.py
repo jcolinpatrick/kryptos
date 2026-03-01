@@ -167,6 +167,29 @@ class ResultsDB:
             ).fetchone()
             return row["cnt"] > 0 if row else False
 
+    def has_completed_run(self, strategy: str) -> bool:
+        """
+        Check if a strategy already has a completed (non-error) run.
+
+        A run counts as completed if its status is disproved, promising,
+        or inconclusive AND it has no error recorded. This prevents
+        re-dispatching strategies that already produced results.
+        """
+        with self._connect() as conn:
+            row = conn.execute(
+                "SELECT COUNT(*) as cnt FROM hypotheses "
+                "WHERE strategy = ? "
+                "AND status IN (?, ?, ?) "
+                "AND (error = '' OR error IS NULL)",
+                (
+                    strategy,
+                    HypothesisStatus.DISPROVED.value,
+                    HypothesisStatus.PROMISING.value,
+                    HypothesisStatus.INCONCLUSIVE.value,
+                ),
+            ).fetchone()
+            return row["cnt"] > 0 if row else False
+
     # ------------------------------------------------------------------
     # Evidence
     # ------------------------------------------------------------------
