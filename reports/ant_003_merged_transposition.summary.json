@@ -1,0 +1,33 @@
+{
+  "experiment": "ant_003_merged_transposition",
+  "merged_len": 433,
+  "k4_offset": 336,
+  "total_configs": 807679,
+  "total_hits": 807679,
+  "phase_stats": {
+    "A": {
+      "configs": 241788,
+      "hits": 241788,
+      "elapsed_s": 136.5
+    },
+    "B": {
+      "configs": 342,
+      "hits": 342,
+      "elapsed_s": 0.3
+    },
+    "C": {
+      "configs": 323761,
+      "hits": 323761,
+      "elapsed_s": 48.4
+    },
+    "D": {
+      "configs": 241788,
+      "effective_configs": 2601155304,
+      "hits": 241788,
+      "elapsed_s": 7220.5
+    }
+  },
+  "elapsed_s": 7421.7,
+  "workers": 28,
+  "timestamp": "2026-03-01T10:29:19"
+}
