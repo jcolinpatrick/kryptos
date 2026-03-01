@@ -730,7 +730,7 @@ def run_exhaustive_simple_ciphers(output_file: str = "simple_cipher_results.json
         "affine_disproved": len(crib_matches) == 0,
         "disproof_evidence": (
             f"All 25 Caesar shifts and {len(valid_a) * 26} Affine keys tested. "
-            "No crib match at positions 64-74. Both cipher families eliminated."
+            "No crib match at positions 63-73 (0-indexed). Both cipher families eliminated."
         ) if not crib_matches else "",
     }
 

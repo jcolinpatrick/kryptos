@@ -43,16 +43,15 @@ def build_framework_preamble(
     preamble_parts = [
         # ---- Step 1: Read project documentation ----
         "CRITICAL: Before writing ANY code or performing ANY analysis, you MUST:\n"
-        "1. Read CLAUDE.md (or .claude/CLAUDE.md) — this contains project conventions,\n"
-        "   available tools, known findings, and instructions accumulated over weeks\n"
-        "   of development.\n"
-        "2. Read MEMORY.md (or .claude/MEMORY.md) — this contains session-to-session\n"
-        "   state: what has been tried, what has been disproved, partial results,\n"
-        "   and hypotheses under investigation.\n"
-        "3. Run: find . -name '*.py' -maxdepth 2 | head -80\n"
-        "   to discover the existing script inventory.\n"
-        "4. Read the README or any index file that describes the framework structure.\n\n"
-        "DO NOT skip these steps. The framework contains 320+ validated scripts.\n"
+        "1. Read CLAUDE.md — this contains project conventions, architecture,\n"
+        "   available tools, known findings, and instructions accumulated over\n"
+        "   months of development (375+ experiments, 669B+ configurations).\n"
+        "2. Read the auto-memory file at .claude/projects/-home-cpatrick-kryptos/memory/MEMORY.md\n"
+        "   — this contains session-to-session state: what has been tried, what has been\n"
+        "   disproved, partial results, and hypotheses under investigation.\n"
+        "3. Check the scripts/ directory for existing experiment scripts.\n"
+        "4. Read docs/elimination_tiers.md for what is already eliminated.\n\n"
+        "DO NOT skip these steps. The framework contains 375+ validated scripts.\n"
         "Reimplementing existing functionality wastes compute and may produce\n"
         "results inconsistent with the validated codebase.\n",
 
@@ -61,17 +60,36 @@ def build_framework_preamble(
         "- PREFER calling existing scripts over writing new code.\n"
         "- If a scoring function, cipher implementation, or statistical test\n"
         "  already exists in the framework, USE IT. Do not rewrite it.\n"
-        "- If you need functionality that doesn't exist, write it in a style\n"
-        "  consistent with the existing codebase (check conventions in CLAUDE.md).\n"
-        "- New scripts should import from the framework's existing modules\n"
-        "  where possible, not duplicate utility functions.\n"
-        "- All file paths should be relative to the project root.\n",
+        "- Import constants from kryptos.kernel.constants — NEVER hardcode CT or cribs.\n"
+        "- Use score_candidate() from kryptos.kernel.scoring.aggregate for scoring.\n"
+        "- All positions are 0-INDEXED. Cribs: 21-33 = EASTNORTHEAST, 63-73 = BERLINCLOCK.\n"
+        "- Only scores at period <= 7 are meaningful (~8.2/24 expected random).\n"
+        "  Period >= 17 produces false positives (17.3-19.2/24). Do NOT report high-period hits.\n"
+        "- New scripts should import from the framework's existing modules.\n"
+        "- Run experiments with: PYTHONPATH=src python3 -u scripts/<name>.py\n",
 
         # ---- Step 3: K4 reference data ----
         f"REFERENCE DATA:\n"
         f"K4 Ciphertext ({K4_LENGTH} chars): {K4_CIPHERTEXT}\n"
-        f"Known plaintext cribs: {KNOWN_CRIBS}\n"
-        f"K1-K3 methods: {PRIOR_METHODS}\n",
+        f"Known plaintext cribs (0-indexed): {KNOWN_CRIBS}\n"
+        f"K1-K3 methods: {PRIOR_METHODS}\n"
+        f"Bean constraint: k[27]=k[65] (equality, variant-independent), 21 inequalities.\n"
+        f"Key is provably NON-PERIODIC under additive key model + exact cribs.\n"
+        f"KA alphabet: KRYPTOSABCDEFGHIJLMNQUVWXZ (all 26 letters, NOT missing J).\n",
+
+        # ---- Step 4: Critical findings (so agents are informed even without reading files) ----
+        "CRITICAL FINDINGS FROM 375+ EXPERIMENTS:\n"
+        "- ALL single-layer classical ciphers ELIMINATED (exhaustive search, Tier 1-2).\n"
+        "- Ed Scheidt: 'I masked the English language' — K4 likely has a MASK before encryption.\n"
+        "- Gillogly: K4 method is BESPOKE ('never appeared in cryptographic literature').\n"
+        "- Sanborn: 'two separate systems... a major clue in itself'.\n"
+        "- FRAC: Only periods {8,13,16,19,20,23,24,26} are Bean-compatible.\n"
+        "- Fold theory (2026-03): direct overlay fold reveals OFLNUXZ + ILM. 39 approaches ALL NOISE.\n"
+        "- 24-letter anomaly pool: EQUINOX formable from all 4 anomaly sources (misspellings +\n"
+        "  omission + fold + K0 Morse). 24 = known PT positions = Weltzeituhr facets = hours/day.\n"
+        "- Antipodes sculpture: 1,584 letters, ZERO mismatches vs Kryptos. All 4 sections identical.\n"
+        "- WHAT REMAINS OPEN: running key + unknown text + transposition, bespoke physical/procedural,\n"
+        "  VIC/chart cipher, physical S-curve / Antipodes inspection.\n",
     ]
 
     # ---- Step 4: Inject disproof ledger ----
@@ -153,7 +171,7 @@ FRAMEWORK_STRATEGIES: list[Strategy] = [
             "IF no existing scripts exist:\n"
             "  - Use the framework's scoring functions (find them first!)\n"
             "  - Implement columnar transposition for key widths 2-20\n"
-            "  - Use crib-based pruning: BERLIN must land at positions 64-69\n"
+            "  - Use crib-based pruning: BERLIN must land at positions 63-68 (0-indexed)\n"
             "  - Write results in the framework's standard output format\n\n"
             "Key constraint: Do NOT re-test parameter ranges that MEMORY.md or\n"
             "prior output files show have already been exhausted.\n\n"
@@ -177,7 +195,7 @@ FRAMEWORK_STRATEGIES: list[Strategy] = [
             "row-major, column-major, spiral-CW, spiral-CCW, diagonal, boustrophedon,\n"
             "and any custom patterns found in the framework.\n\n"
             "Use the framework's English scoring functions for fitness evaluation.\n"
-            "Verify BERLINCLOCK at positions 64-74 for each candidate.\n\n"
+            "Verify BERLINCLOCK at positions 63-73 (0-indexed) for each candidate.\n\n"
             "If the framework already has route cipher results, focus on:\n"
             "  - Grid dimensions not yet tested\n"
             "  - Read patterns not yet attempted\n"
@@ -224,7 +242,7 @@ FRAMEWORK_STRATEGIES: list[Strategy] = [
             "Task: Autokey cipher attack using BERLINCLOCK crib as bootstrap.\n\n"
             "Check framework for existing autokey or crib-extension scripts.\n\n"
             "Approach: In autokey mode, the keystream = seed + recovered plaintext.\n"
-            "We know plaintext at positions 64-74 = BERLINCLOCK.\n"
+            "We know plaintext at positions 63-73 (0-indexed) = BERLINCLOCK.\n"
             "This lets us back-derive the seed characters that produced those positions,\n"
             "then extend decryption bidirectionally.\n\n"
             "Test both plaintext-autokey and ciphertext-autokey variants.\n"
@@ -253,7 +271,7 @@ FRAMEWORK_STRATEGIES: list[Strategy] = [
             "The approach:\n"
             "  1. Reverse columnar transposition (widths 2-15)\n"
             "  2. Apply Vigenère decryption with candidate keywords\n"
-            "  3. Use BERLINCLOCK at 64-74 as a constraint to prune dramatically\n\n"
+            "  3. Use BERLINCLOCK at 63-73 (0-indexed) as a constraint to prune dramatically\n\n"
             "Keywords to test: KRYPTOS, PALIMPSEST, ABSCISSA, SANBORN, SCHEIDT,\n"
             "and any project-specific keyword lists found in the framework.\n\n"
             "Also test the REVERSE order (Vigenère first, then transposition).\n"
@@ -277,13 +295,13 @@ FRAMEWORK_STRATEGIES: list[Strategy] = [
             "Search for crib, drag, extend, bootstrap, key-recovery scripts.\n"
             "Read all prior results before attempting anything new.\n\n"
             "For each cipher model (Vigenère, Beaufort, autokey, running key, XOR):\n"
-            "  1. Compute the keystream at positions 64-74 from known plaintext\n"
+            "  1. Compute the keystream at positions 63-73 (0-indexed) from known plaintext\n"
             "  2. Check if the keystream has structure (repeating, autokey, dictionary)\n"
             "  3. If structured, extend it and decrypt adjacent positions\n"
             "  4. Score extended plaintext with framework scoring functions\n\n"
             "Also try: Gronsfeld, Porta, and any other cipher types in the framework.\n\n"
             "KEY QUESTION: Does the framework already have keystream analysis at\n"
-            "positions 64-74? If so, what patterns were found? Build on those."
+            "positions 63-73 (0-indexed)? If so, what patterns were found? Build on those."
         ),
         priority=1,
         estimated_minutes=40,
@@ -367,7 +385,7 @@ FRAMEWORK_STRATEGIES: list[Strategy] = [
         prompt_template=(
             "Task: Attacks using the Kryptos sculpture's keyed Vigenère tableau.\n\n"
             "The sculpture contains a modified alphabet: KRYPTOSABCDEFGHIJLMNQUVWXZ\n"
-            "(standard alphabet keyed with KRYPTOS, J omitted).\n\n"
+            "(standard alphabet keyed with KRYPTOS — all 26 letters present, reordered).\n\n"
             "Check the framework for any existing keyed-alphabet implementations.\n\n"
             "Test systematically:\n"
             "  1. Standard Vigenère with keyed tableau (exhaustive keyword search)\n"

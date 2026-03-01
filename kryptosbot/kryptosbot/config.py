@@ -23,11 +23,13 @@ K4_CIPHERTEXT = (
 )
 K4_LENGTH = len(K4_CIPHERTEXT)  # 97
 
-# Sansom / Scheidt confirmed cribs (0-indexed positions)
+# Sanborn / Scheidt confirmed cribs (0-indexed, half-open intervals)
 KNOWN_CRIBS: dict[str, tuple[int, int]] = {
-    "BERLIN": (63, 69),   # positions 64-69 in 1-indexed
-    "CLOCK": (69, 74),    # positions 70-74 in 1-indexed
+    "EASTNORTHEAST": (21, 34),  # positions 21-33 inclusive
+    "BERLIN": (63, 69),         # positions 63-68 inclusive
+    "CLOCK": (69, 74),          # positions 69-73 inclusive
 }
+# Combined: BERLINCLOCK at positions 63-73 (0-indexed)
 
 # K1-K3 solution methods (for cross-referencing / inspiration)
 PRIOR_METHODS = {
@@ -108,7 +110,7 @@ BUILTIN_STRATEGIES: list[Strategy] = [
         prompt_template=(
             "You are a cryptanalyst. The Kryptos K4 ciphertext is:\n"
             "{ciphertext}\n\n"
-            "Known plaintext: BERLIN at positions 64-69, CLOCK at positions 70-74 (1-indexed).\n\n"
+            "Known plaintext (0-indexed): EASTNORTHEAST at positions 21-33, BERLINCLOCK at positions 63-73.\n\n"
             "Task: Write and execute a Python script that performs columnar transposition "
             "decryption for ALL key widths from 2 through 20. For each width, try every "
             "permutation of columns. Score each candidate against English quadgram statistics "
@@ -131,7 +133,7 @@ BUILTIN_STRATEGIES: list[Strategy] = [
         prompt_template=(
             "You are a cryptanalyst working on Kryptos K4.\n"
             "Ciphertext ({length} chars): {ciphertext}\n"
-            "Known plaintext: BERLIN at positions 64-69, CLOCK at 70-74.\n\n"
+            "Known plaintext (0-indexed): EASTNORTHEAST at positions 21-33, BERLINCLOCK at positions 63-73.\n\n"
             "Task: Write and execute Python code that arranges the ciphertext into every "
             "rectangular grid where rows*cols >= {length} (pad with X if needed) for "
             "dimensions up to 20x20. For each grid, read off plaintext using these routes: "
@@ -153,7 +155,7 @@ BUILTIN_STRATEGIES: list[Strategy] = [
         prompt_template=(
             "You are a cryptanalyst. Kryptos K4 ciphertext:\n{ciphertext}\n\n"
             "K1 used keyword PALIMPSEST, K2 used ABSCISSA, K3 used KRYPTOS.\n"
-            "Known plaintext: BERLIN at 64-69, CLOCK at 70-74.\n\n"
+            "Known plaintext (0-indexed): EASTNORTHEAST at 21-33, BERLINCLOCK at 63-73.\n\n"
             "Task: Write Python code to perform full Kasiski examination on K4. "
             "Compute the Index of Coincidence for key lengths 1-30. For each "
             "candidate key length, perform frequency analysis on each column and "
@@ -175,11 +177,11 @@ BUILTIN_STRATEGIES: list[Strategy] = [
         description="Autokey Vigenère: key is seed + plaintext feedback. Try seed lengths 1-15 with known crib bootstrapping.",
         prompt_template=(
             "Kryptos K4 ciphertext: {ciphertext}\n"
-            "Known: BERLIN at pos 64-69, CLOCK at 70-74.\n\n"
+            "Known (0-indexed): EASTNORTHEAST at positions 21-33, BERLINCLOCK at positions 63-73.\n\n"
             "Task: Implement autokey Vigenère decryption in Python. In autokey mode, "
             "the key = seed keyword concatenated with the recovered plaintext itself. "
             "Try seed lengths 1 through 15. For each seed length, use the known "
-            "plaintext at positions 64-74 to back-derive seed characters and extend "
+            "plaintext at positions 63-73 (0-indexed) to back-derive seed characters and extend "
             "decryption bidirectionally. Score results with English quadgram statistics. "
             "Report any candidate where the crib appears at the correct positions."
         ),
@@ -196,7 +198,7 @@ BUILTIN_STRATEGIES: list[Strategy] = [
         description="Simple monoalphabetic substitution solved via simulated annealing with quadgram scoring.",
         prompt_template=(
             "Kryptos K4 ciphertext: {ciphertext}\n"
-            "Known: BERLIN at 64-69, CLOCK at 70-74.\n\n"
+            "Known (0-indexed): EASTNORTHEAST at positions 21-33, BERLINCLOCK at positions 63-73.\n\n"
             "Task: Write a simulated annealing solver for simple substitution cipher. "
             "Use English quadgram log-probabilities as the fitness function. "
             "Pin the known plaintext mappings from the crib (e.g., position 64 ciphertext "
@@ -240,13 +242,13 @@ BUILTIN_STRATEGIES: list[Strategy] = [
         prompt_template=(
             "Kryptos K4 ciphertext: {ciphertext}\n"
             "K3 was solved with transposition + Vigenère (keyword KRYPTOS).\n"
-            "Known K4 plaintext: BERLIN at 64-69, CLOCK at 70-74.\n\n"
+            "Known K4 plaintext (0-indexed): EASTNORTHEAST at 21-33, BERLINCLOCK at 63-73.\n\n"
             "Task: Implement a hybrid decrypt: first reverse a columnar transposition "
             "(try key widths 2-15), then apply Vigenère decryption with candidate "
             "keywords from the Kryptos context (KRYPTOS, PALIMPSEST, ABSCISSA, SANBORN, "
             "SCHEIDT, plus all K4 clue words). For each transposition width, test all "
             "column orderings using the crib constraint: after both operations, BERLIN "
-            "must appear at positions 64-69. Use this to prune the search space "
+            "must appear at positions 63-68 (0-indexed). Use this to prune the search space "
             "dramatically. Report any candidates with readable English."
         ),
         priority=1,
@@ -281,11 +283,11 @@ BUILTIN_STRATEGIES: list[Strategy] = [
         description="Extend known plaintext bidirectionally using crib-dragging and frequency constraints.",
         prompt_template=(
             "Kryptos K4 ciphertext: {ciphertext}\n"
-            "Known: BERLINCLOCK at positions 64-74 (1-indexed).\n\n"
-            "Task: Using the known plaintext at positions 64-74, attempt to extend "
+            "Known (0-indexed): EASTNORTHEAST at 21-33, BERLINCLOCK at 63-73.\n\n"
+            "Task: Using the known plaintext at positions 63-73 (0-indexed), attempt to extend "
             "the solution in both directions. For each assumed cipher type "
             "(Vigenère, Beaufort, autokey, running key), compute what the key stream "
-            "must be at positions 64-74. Then check if that key stream pattern extends "
+            "must be at positions 63-73 (0-indexed). Then check if that key stream pattern extends "
             "coherently (repeating, autokey feedback, or dictionary-word running key) "
             "to produce English at adjacent positions. Try extending 5 characters in "
             "each direction. Report any key stream that produces readable English "
@@ -334,7 +336,7 @@ BUILTIN_STRATEGIES: list[Strategy] = [
         prompt_template=(
             "Kryptos K4 ciphertext: {ciphertext}\n\n"
             "Task: Decrypt K4 with all 25 Caesar shifts (ROT-1 through ROT-25). "
-            "For each, check: (a) does BERLINCLOCK appear at positions 64-74? "
+            "For each, check: (a) does BERLINCLOCK appear at positions 63-73 (0-indexed)? "
             "(b) does the output resemble English (quadgram score)? "
             "Present all 25 results with scores. This is a DISPROOF task — "
             "we expect to conclusively eliminate simple Caesar cipher."
@@ -465,10 +467,38 @@ class KryptosBotConfig:
     # System prompt prefix injected into every agent
     system_prompt_prefix: str = (
         "You are KryptosBot, an expert cryptanalyst working to decipher "
-        "Kryptos K4. You write and execute Python code to perform "
-        "cryptanalytic attacks. Always show your work, explain your "
-        "reasoning, and be explicit about what has been PROVED or DISPROVED. "
-        "When a hypothesis is eliminated, state the evidence clearly."
+        "Kryptos K4 — the only unsolved section of Jim Sanborn's 1990 CIA "
+        "headquarters sculpture. You write and execute Python code to perform "
+        "cryptanalytic attacks using the existing framework (375+ experiments, "
+        "669B+ configurations tested, ALL NOISE so far).\n\n"
+        "CRITICAL CONTEXT:\n"
+        "- K4 is 97 characters. ALL 26 letters appear. IC ≈ 0.0361 (not significant for n=97).\n"
+        "- Known plaintext (0-indexed): positions 21-33 = EASTNORTHEAST, positions 63-73 = BERLINCLOCK.\n"
+        "- Bean constraint: k[27]=k[65] (equality), 21 inequalities. Variant-independent.\n"
+        "- Ed Scheidt (CIA crypto chief): 'I masked the English language... solve the technique "
+        "first then the puzzle.' K4 likely has a MASK applied BEFORE encryption.\n"
+        "- Gillogly: K4 method is BESPOKE — 'never appeared in cryptographic literature.'\n"
+        "- Sanborn: 'two separate systems... a major clue in itself.'\n"
+        "- ALL single-layer classical ciphers are ELIMINATED (Tier 1-2 proven).\n"
+        "- Only meaningful scores are at period ≤ 7 (~8.2/24 expected random). "
+        "Periods ≥ 17 produce false positives (17.3-19.2/24 from underdetermination).\n"
+        "- FRAC result: only periods {8,13,16,19,20,23,24,26} are Bean-compatible.\n"
+        "- Key is provably NON-PERIODIC under additive key model + exact cribs.\n\n"
+        "RECENT FINDINGS (2026-03):\n"
+        "- Fold theory: direct overlay fold of the sculpture copper sheet reveals OFLNUXZ "
+        "(trailing tableau chars) and ILM (under superscript YAR). 39 approaches tested, ALL NOISE.\n"
+        "- 24-letter anomaly pool: Q,A,E,C + ION + OFLNUXZ + ILM + WHA + T,RQ + L = exactly 24 letters. "
+        "EQUINOX is formable from all four anomaly sources. 24 = known PT positions = Weltzeituhr facets.\n"
+        "- Antipodes sculpture: 1,584 letters, ZERO mismatches vs Kryptos. ALL FOUR SECTIONS IDENTICAL.\n\n"
+        "WHAT REMAINS OPEN:\n"
+        "- Running key + unknown text + transposition (UNDERDETERMINED)\n"
+        "- Bespoke physical/procedural cipher (strongest remaining class)\n"
+        "- VIC/position-dependent chart cipher (UNDERDETERMINED)\n"
+        "- Physical S-curve / Antipodes inspection (untestable without access)\n\n"
+        "Always show your work, explain your reasoning, and be explicit about "
+        "what has been PROVED or DISPROVED. Import constants from "
+        "kryptos.kernel.constants — NEVER hardcode CT or cribs. Use "
+        "score_candidate() from kryptos.kernel.scoring.aggregate for scoring."
     )
 
 

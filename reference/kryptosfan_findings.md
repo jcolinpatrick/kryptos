@@ -80,7 +80,7 @@ Analysis date: 2026-03-01
 
 1. **"partly deciphered by using the table and partly by using a potentially challenging encoding system"** — Confirms two-system design from 1989, BEFORE installation. "The table" = Vigenere tableau. "Potentially challenging encoding system" = the K4 method.
 
-2. **"written in collaboration with a prominent fiction writer"** — The plaintext was co-written with a fiction writer. This could be the person who helped shape the Carter-tomb narrative. Who is this fiction writer?
+2. **"written in collaboration with a prominent fiction writer"** — **[RESOLVED]** This was **John le Carré** (David Cornwell). Sanborn confirms in Smithsonian oral history: "I had originally thought to have a prominent fiction writer like John Le Carré AKA David Cornwell contribute to the text and even sent a letter to his publisher but I never got a reply." The collaboration NEVER HAPPENED. Sanborn wrote the PT himself. The 1989 letter was either aspirational or describing the original intent. See `reference/john_le_carre_dossier.md`.
 
 3. **"the text... is revealed only after the code is deciphered"** — The plaintext has literary/narrative significance beyond just being a message.
 
