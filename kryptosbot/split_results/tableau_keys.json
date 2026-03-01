@@ -1,0 +1,8 @@
+{
+  "attack": "tableau_row_keys",
+  "configs_tested": 176,
+  "results_above_10": 0,
+  "top_20": [],
+  "elapsed_seconds": 0.1,
+  "best_score": 0
+}
