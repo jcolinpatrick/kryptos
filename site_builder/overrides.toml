@@ -295,6 +295,31 @@ truth_tag = "[INTERNAL RESULT]"
 repro_command = "PYTHONPATH=src python3 -u scripts/e_cfm_08_trans_key_scoring.py"
 research_questions = ["RQ-1", "RQ-2", "RQ-3"]
 
+# ── Egypt corpus experiments (2026-02-28) ────────────────────────────────
+
+[elimination.E-EGYPT-00]
+title = "Egyptological corpus pipeline — 18 sources, 9 transliteration variants, identity transposition"
+category = "key-models"
+subcategory = "running-key"
+scope_limitations = "Only tests identity transposition. Does not eliminate running key from Egyptian texts with non-identity transposition (see E-EGYPT-01 for columnar)."
+assumptions = "Running key from contiguous Egyptological text; Vigenere/Beaufort/VB; Identity transposition; 9 spelling normalization variants"
+confidence_tier = 2
+truth_tag = "[INTERNAL RESULT]"
+repro_command = "PYTHONPATH=src python3 -u scripts/e_egypt_00_corpus_pipeline.py"
+research_questions = ["RQ-2", "RQ-3"]
+
+[elimination.E-EGYPT-01]
+title = "Egypt corpus x columnar transposition sweep — widths 5-11, 3 variants, 9 corpora"
+category = "multi-layer"
+subcategory = "transposition-plus-substitution"
+tags = ["running-key", "columnar", "egyptian", "corpus", "transposition", "exhaustive"]
+scope_limitations = "Exhaustive for columnar widths 5-11 (44M permutations). Does not test width >= 12, non-columnar transpositions, or non-Egyptological source texts."
+assumptions = "Model A: CT[sigma(j)] = Enc(PT[j], Source[j+offset]); Columnar transposition; Running key from Egyptological corpus; Vigenere/Beaufort/VB"
+confidence_tier = 2
+truth_tag = "[INTERNAL RESULT]"
+repro_command = "PYTHONPATH=src python3 -u scripts/e_egypt_01_columnar_sweep.py"
+research_questions = ["RQ-2", "RQ-3"]
+
 [elimination.E-CFM-09]
 title = "Gutenberg-scale EAST constraint scan — 73 books, 47.4M characters"
 category = "key-models"
