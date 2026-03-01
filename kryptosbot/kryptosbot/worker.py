@@ -9,6 +9,7 @@ result extraction, and session lifecycle tracking.
 from __future__ import annotations
 
 import asyncio
+import json
 import logging
 import re
 import uuid
@@ -194,12 +195,20 @@ class WorkerManager:
         session_id = ""
         raw_chunks: list[str] = []
 
+        stderr_lines: list[str] = []
+
+        def _capture_stderr(line: str) -> None:
+            stderr_lines.append(line)
+            logger.debug("Worker %s stderr: %s", worker_id, line.rstrip())
+
         options = ClaudeAgentOptions(
             allowed_tools=self.config.allowed_tools,
             permission_mode=self.config.permission_mode,
             system_prompt=self.config.system_prompt_prefix,
             cwd=str(self.config.project_root.resolve()),
             max_buffer_size=10_485_760,  # 10 MB — default 1 MB is too small for inventory tasks
+            env={"CLAUDECODE": ""},  # Allow spawning from within Claude Code sessions
+            stderr=_capture_stderr,
         )
 
         async for message in safe_query(prompt=prompt, options=options):
@@ -277,6 +286,52 @@ class WorkerManager:
         return True, "All oracle checks passed"
 
     @staticmethod
+    def _extract_verdict_block(raw: str) -> dict[str, Any] | None:
+        """
+        Extract a structured VERDICT JSON block from agent output.
+
+        Agents are instructed to emit a block like:
+            ```verdict
+            {"status": "disproved", "score": 0, "summary": "...", ...}
+            ```
+        or:
+            VERDICT: {"status": "disproved", ...}
+
+        Returns the parsed dict, or None if no valid block found.
+        """
+        # Try fenced ```verdict block first
+        verdict_fence = re.search(
+            r"```verdict\s*\n(.+?)\n\s*```", raw, re.DOTALL
+        )
+        if verdict_fence:
+            try:
+                return json.loads(verdict_fence.group(1))
+            except (json.JSONDecodeError, ValueError):
+                pass
+
+        # Try VERDICT: { ... } on a single line
+        verdict_inline = re.search(
+            r"VERDICT:\s*(\{.+\})", raw
+        )
+        if verdict_inline:
+            try:
+                return json.loads(verdict_inline.group(1))
+            except (json.JSONDecodeError, ValueError):
+                pass
+
+        # Try any JSON block with a "verdict_status" key
+        json_blocks = re.findall(r"\{[^{}]{20,2000}\}", raw)
+        for block in reversed(json_blocks):  # prefer last (final conclusion)
+            try:
+                parsed = json.loads(block)
+                if isinstance(parsed, dict) and "verdict_status" in parsed:
+                    return parsed
+            except (json.JSONDecodeError, ValueError):
+                continue
+
+        return None
+
+    @staticmethod
     def _parse_agent_output(
         raw: str,
         strategy: Strategy,
@@ -284,93 +339,164 @@ class WorkerManager:
         worker_id: str,
     ) -> WorkerResult:
         """
-        Extract structured findings from the agent's free-text output.
+        Extract structured findings from agent output.
 
-        Uses keyword heuristics to classify the outcome. This is deliberately
-        conservative: we'd rather mark something INCONCLUSIVE than wrongly
-        claim DISPROVED.
+        STRATEGY (priority order):
+        1. Look for a structured VERDICT block (most reliable)
+        2. Fall back to keyword heuristics (conservative)
 
-        SOLVED status requires passing the multi-objective oracle — keyword
-        heuristics alone can never trigger SOLVED.
+        SOLVED status always requires passing the multi-objective oracle.
+
+        KEY FIX: Crib keywords (BERLINCLOCK etc.) appearing in agent output
+        do NOT trigger PROMISING — agents echo these from their prompt.
+        Only trigger PROMISING when the agent explicitly claims results.
         """
-        raw_lower = raw.lower()
         result = WorkerResult(
             worker_id=worker_id,
             strategy_name=strategy.name,
             hypothesis_id=hypothesis_id,
         )
 
-        # Try to extract best plaintext candidate (do this first — needed for validation)
-        pt_match = re.search(r"(?:plaintext|decrypted|candidate)[:\s]*([A-Z]{10,})", raw)
-        if pt_match:
-            result.best_plaintext = pt_match.group(1)[:200]
+        if not raw or not raw.strip():
+            result.status = HypothesisStatus.INCONCLUSIVE
+            result.summary = "Agent produced no output."
+            return result
 
-        # Try to extract a numeric score
-        score_match = re.search(r"(?:best|top|highest)\s*(?:score|fitness)[:\s]*(-?[\d.]+)", raw_lower)
-        if score_match:
+        # ── Strategy 1: Structured VERDICT block ──────────────────────
+        verdict = WorkerManager._extract_verdict_block(raw)
+        if verdict:
+            status_str = verdict.get("verdict_status", verdict.get("status", "")).lower()
+            status_map = {
+                "disproved": HypothesisStatus.DISPROVED,
+                "eliminated": HypothesisStatus.DISPROVED,
+                "promising": HypothesisStatus.PROMISING,
+                "inconclusive": HypothesisStatus.INCONCLUSIVE,
+                "solved": HypothesisStatus.PROMISING,  # claim only — oracle decides
+            }
+            result.status = status_map.get(status_str, HypothesisStatus.INCONCLUSIVE)
+            result.summary = str(verdict.get("summary", ""))[:2000]
+            result.disproof_evidence = str(verdict.get("evidence", ""))[:5000]
+            result.best_plaintext = str(verdict.get("best_plaintext", ""))[:200]
+
             try:
-                result.score = float(score_match.group(1))
-            except ValueError:
+                result.score = float(verdict.get("score", 0))
+            except (ValueError, TypeError):
                 pass
 
-        # Check for solution claims — but ONLY grant SOLVED if oracle validates
-        if "berlinclock" in raw_lower or "berlin clock" in raw_lower:
-            if any(
-                phrase in raw_lower
-                for phrase in ["solution found", "plaintext recovered", "decrypted successfully"]
-            ):
-                # Agent claims a solution — validate it
+            # If agent claims SOLVED, validate with oracle
+            if status_str == "solved" and result.best_plaintext:
                 passed, reason = WorkerManager._validate_solution(result.best_plaintext)
                 if passed:
                     result.status = HypothesisStatus.SOLVED
                     result.summary = "SOLUTION VALIDATED BY ORACLE — manual verification required!"
                     logger.critical(
-                        "ORACLE PASS for strategy '%s': %s", strategy.name, result.best_plaintext
+                        "ORACLE PASS for strategy '%s': %s",
+                        strategy.name, result.best_plaintext,
                     )
                 else:
-                    result.status = HypothesisStatus.PROMISING
                     result.summary = (
-                        f"Agent claimed solution but FAILED oracle: {reason}. "
-                        f"Downgraded to promising."
+                        f"Agent claimed solved but FAILED oracle: {reason}. "
+                        f"Verdict: {result.summary}"
                     )
-                    logger.warning(
-                        "Solution claim REJECTED by oracle for '%s': %s",
-                        strategy.name, reason,
-                    )
+
+            logger.info(
+                "Worker parsed structured verdict for '%s': %s",
+                strategy.name, result.status.value,
+            )
+            return result
+
+        # ── Strategy 2: Keyword heuristics (fallback) ────────────────
+        raw_lower = raw.lower()
+
+        # Extract best plaintext candidate
+        pt_match = re.search(r"(?:plaintext|decrypted|candidate)[:\s]*([A-Z]{10,})", raw)
+        if pt_match:
+            result.best_plaintext = pt_match.group(1)[:200]
+
+        # Extract score — require it to be in a results/findings context,
+        # not just discussed in passing. Look for the LAST match (final result).
+        score_matches = list(re.finditer(
+            r"(?:best|top|highest|final)\s*(?:score|fitness|crib[_ ]?match(?:es)?)[:\s=]*(-?[\d.]+)",
+            raw_lower,
+        ))
+        if score_matches:
+            try:
+                result.score = float(score_matches[-1].group(1))
+            except ValueError:
+                pass
+
+        # Check for explicit solution claims WITH actual plaintext evidence
+        # (not just mentioning BERLINCLOCK in analysis context)
+        solution_claimed = any(
+            phrase in raw_lower
+            for phrase in ["solution found", "plaintext recovered", "decrypted successfully",
+                           "full decryption achieved", "k4 solved"]
+        )
+        if solution_claimed and result.best_plaintext:
+            passed, reason = WorkerManager._validate_solution(result.best_plaintext)
+            if passed:
+                result.status = HypothesisStatus.SOLVED
+                result.summary = "SOLUTION VALIDATED BY ORACLE — manual verification required!"
+                logger.critical(
+                    "ORACLE PASS for strategy '%s': %s", strategy.name, result.best_plaintext
+                )
+                return result
             else:
                 result.status = HypothesisStatus.PROMISING
-                result.summary = "Crib reference detected in output — needs review."
+                result.summary = f"Solution claim FAILED oracle: {reason}."
+                return result
 
-        # Check for disproof signals
-        elif any(
-            phrase in raw_lower
-            for phrase in [
-                "conclusively eliminated",
-                "disproved",
-                "ruled out",
-                "no valid",
-                "all permutations exhausted",
-                "no crib match",
-                "can be eliminated",
-            ]
-        ):
+        # Check for disproof signals — expanded keyword set
+        disproof_phrases = [
+            "conclusively eliminated", "disproved", "ruled out",
+            "no valid", "all permutations exhausted", "no crib match",
+            "can be eliminated", "cipher family eliminated",
+            "no candidates found", "zero matches", "0 matches",
+            "exhaustive search complete", "none produced",
+            "no configuration produces", "impossible for",
+            "not consistent with", "incompatible with k4",
+            "eliminates this", "rules out this",
+            "no key produces", "no combination produces",
+            # Common natural-language disproof patterns
+            "no results found", "no matches found", "no signal detected",
+            "tested exhaustively", "exhaustively tested",
+            "all approaches tested", "all keys tested",
+            "already eliminated", "already disproved",
+            "none of the", "none produce", "none match",
+            "does not work", "cannot produce", "cannot work",
+            "failed to find", "no viable", "no solution found",
+        ]
+        if any(phrase in raw_lower for phrase in disproof_phrases):
             result.status = HypothesisStatus.DISPROVED
-            # Try to extract the disproof evidence
+            # Extract evidence lines
+            evidence_lines = []
             for line in raw.split("\n"):
-                if any(kw in line.lower() for kw in ["disproved", "eliminated", "ruled out", "conclusion"]):
-                    result.disproof_evidence += line.strip() + "\n"
-            result.summary = f"Strategy '{strategy.name}' disproved."
+                line_lower = line.lower().strip()
+                if any(kw in line_lower for kw in [
+                    "disproved", "eliminated", "ruled out", "conclusion",
+                    "result:", "finding:", "verdict:", "evidence:",
+                    "no match", "zero", "impossible", "incompatible",
+                ]):
+                    evidence_lines.append(line.strip())
+            result.disproof_evidence = "\n".join(evidence_lines[:20])
+            result.summary = f"Strategy '{strategy.name}' disproved (heuristic detection)."
+            return result
 
-        # Check for promising but not conclusive
-        elif any(
-            phrase in raw_lower
-            for phrase in ["promising", "partial match", "high score", "notable", "warrants further"]
-        ):
+        # Check for promising signals — require actual results, not just
+        # discussion of cribs (which are in every prompt)
+        promising_phrases = [
+            "partial match found", "partial crib match",
+            "score above threshold", "above noise",
+            "warrants further investigation", "promising candidate",
+            "notable result", "significant finding",
+            "non-random signal", "statistical anomaly detected",
+        ]
+        if any(phrase in raw_lower for phrase in promising_phrases):
             result.status = HypothesisStatus.PROMISING
             result.summary = "Partial results warrant follow-up investigation."
+            return result
 
-        else:
-            result.status = HypothesisStatus.INCONCLUSIVE
-            result.summary = "No clear signal detected."
-
+        # Default: inconclusive
+        result.status = HypothesisStatus.INCONCLUSIVE
+        result.summary = "No clear signal detected (no structured verdict found)."
         return result

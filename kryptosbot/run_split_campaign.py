@@ -124,7 +124,8 @@ async def run_agent_phase(args: argparse.Namespace) -> None:
     Phase B: Agent reads local compute results and provides creative
     analysis and next-step recommendations.
     """
-    from claude_agent_sdk import ClaudeAgentOptions, query
+    from claude_agent_sdk import ClaudeAgentOptions
+    from kryptosbot.sdk_wrapper import safe_query
 
     project_root = Path(os.environ.get("KBOT_PROJECT_ROOT", "..")).resolve()
     results_dir = Path(args.output)
@@ -181,10 +182,11 @@ async def run_agent_phase(args: argparse.Namespace) -> None:
         allowed_tools=["Read", "Write", "Edit", "Bash", "Glob", "Grep"],
         permission_mode="bypassPermissions",
         cwd=str(project_root),
+        env={"CLAUDECODE": ""},  # Allow spawning from within Claude Code sessions
     )
 
     output_chunks: list[str] = []
-    async for message in query(prompt=prompt, options=options):
+    async for message in safe_query(prompt=prompt, options=options):
         if hasattr(message, "result"):
             output_chunks.append(str(message.result))
             print(message.result, end="", flush=True)
@@ -289,7 +291,8 @@ SPLIT_STRATEGY_PROMPTS = {
 
 async def run_full_campaign(args: argparse.Namespace) -> None:
     """Phase C: Orchestrated 5-strategy campaign using Agent SDK."""
-    from claude_agent_sdk import ClaudeAgentOptions, query
+    from claude_agent_sdk import ClaudeAgentOptions
+    from kryptosbot.sdk_wrapper import safe_query
 
     project_root = Path(os.environ.get("KBOT_PROJECT_ROOT", "..")).resolve()
     results_dir = Path(args.output)
@@ -338,11 +341,12 @@ async def run_full_campaign(args: argparse.Namespace) -> None:
             allowed_tools=["Read", "Write", "Edit", "Bash", "Glob", "Grep"],
             permission_mode="bypassPermissions",
             cwd=str(project_root),
+            env={"CLAUDECODE": ""},  # Allow spawning from within Claude Code sessions
         )
 
         output_chunks: list[str] = []
         try:
-            async for message in query(prompt=prompt, options=options):
+            async for message in safe_query(prompt=prompt, options=options):
                 if hasattr(message, "result"):
                     output_chunks.append(str(message.result))
                     print(message.result, end="", flush=True)

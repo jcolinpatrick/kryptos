@@ -68,6 +68,24 @@ def build_framework_preamble(
         "- New scripts should import from the framework's existing modules.\n"
         "- Run experiments with: PYTHONPATH=src python3 -u scripts/<name>.py\n",
 
+        # ---- Step 2b: MANDATORY structured verdict ----
+        "MANDATORY OUTPUT — VERDICT BLOCK:\n"
+        "At the END of your response, you MUST include a verdict block that summarizes\n"
+        "your findings. This is machine-parsed — use EXACTLY this format:\n\n"
+        "```verdict\n"
+        '{"verdict_status": "<status>", "score": <number>, "summary": "<one-line>", '
+        '"evidence": "<key evidence>", "best_plaintext": "<if any>"}\n'
+        "```\n\n"
+        "Where <status> is ONE of:\n"
+        "  - \"disproved\" — cipher family/approach conclusively eliminated\n"
+        "  - \"promising\" — partial match or signal above noise found\n"
+        "  - \"inconclusive\" — no clear signal, not fully eliminated\n"
+        "  - \"solved\" — full plaintext recovered (will be oracle-validated)\n\n"
+        "IMPORTANT: Use \"disproved\" when your analysis shows an approach cannot work,\n"
+        "even if you express it as 'no matches found' or 'all tested, none worked'.\n"
+        "The verdict block is how the system tracks progress. Without it, your work\n"
+        "is classified as inconclusive and the hypothesis space does not narrow.\n",
+
         # ---- Step 3: K4 reference data ----
         f"REFERENCE DATA:\n"
         f"K4 Ciphertext ({K4_LENGTH} chars): {K4_CIPHERTEXT}\n"

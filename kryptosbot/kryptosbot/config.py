@@ -439,9 +439,12 @@ BUILTIN_STRATEGIES: list[Strategy] = [
 class KryptosBotConfig:
     """Runtime settings for the orchestrator."""
 
-    # Parallelism
-    max_workers: int = 28
-    worker_timeout_minutes: int = 120  # kill stuck agents after this
+    # Parallelism — Agent SDK sessions are expensive and rate-limited.
+    # Use max_agent_workers for SDK sessions (3-5 is safe for most plans).
+    # Use max_local_workers for CPU-bound local compute (use all cores).
+    max_workers: int = 4                  # concurrent Agent SDK sessions
+    max_local_workers: int = 28           # CPU cores for local compute
+    worker_timeout_minutes: int = 30      # kill stuck agents (was 120 — too long)
 
     # Agent SDK settings
     allowed_tools: list[str] = field(
@@ -449,9 +452,9 @@ class KryptosBotConfig:
     )
     permission_mode: str = "bypassPermissions"  # headless operation
 
-    # Paths
+    # Paths — all resolved relative to project_root to prevent dual-DB issues
     project_root: Path = Path(".")        # your existing crypto framework
-    results_db_path: Path = Path("kryptosbot_results.db")
+    results_db_path: Path = field(default=Path("kryptosbot_results.db"))
     log_dir: Path = Path("logs")
     quadgram_file: Path = Path("english_quadgrams.txt")  # for scoring
 
@@ -463,6 +466,17 @@ class KryptosBotConfig:
     strategy_names: list[str] | None = None   # None = run all
     priority_cutoff: int = 10                  # skip strategies above this
     repeat_disproved: bool = False             # re-run already disproved?
+    skip_completed: bool = True               # skip strategies with successful prior runs
+
+    def __post_init__(self) -> None:
+        """Resolve all relative paths against project_root to prevent CWD-dependent DB split."""
+        root = self.project_root.resolve()
+        if not self.results_db_path.is_absolute():
+            self.results_db_path = root / self.results_db_path
+        if not self.log_dir.is_absolute():
+            self.log_dir = root / self.log_dir
+        if not self.session_store_path.is_absolute():
+            self.session_store_path = root / self.session_store_path
 
     # System prompt prefix injected into every agent
     system_prompt_prefix: str = (
@@ -498,7 +512,14 @@ class KryptosBotConfig:
         "Always show your work, explain your reasoning, and be explicit about "
         "what has been PROVED or DISPROVED. Import constants from "
         "kryptos.kernel.constants — NEVER hardcode CT or cribs. Use "
-        "score_candidate() from kryptos.kernel.scoring.aggregate for scoring."
+        "score_candidate() from kryptos.kernel.scoring.aggregate for scoring.\n\n"
+        "MANDATORY OUTPUT — At the END of your response, include a verdict block:\n"
+        "```verdict\n"
+        '{"verdict_status": "<disproved|promising|inconclusive|solved>", '
+        '"score": <number>, "summary": "<one-line>", "evidence": "<key evidence>", '
+        '"best_plaintext": "<if any>"}\n'
+        "```\n"
+        "This is machine-parsed. Use 'disproved' when your analysis eliminates an approach."
     )
 
 
