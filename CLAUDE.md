@@ -16,7 +16,7 @@ This repo has one purpose: determine the **true plaintext** and the **full encry
 - Positions 21–33: `EASTNORTHEAST`
 - Positions 63–73: `BERLINCLOCK`
 
-**What we know:** [DERIVED FACT] No single-layer classical cipher works (exhaustively tested, 250+ experiments, 669B+ configurations). [HYPOTHESIS] K4 is likely multi-layered (substitution + transposition), based on Sanborn's "two separate systems" statement and elimination of all single-layer methods. [HYPOTHESIS] The method is likely executable by hand (Scheidt's background, 1989 technology), but this is unproven. See [`reports/final_synthesis.md`](reports/final_synthesis.md) for the full elimination landscape.
+**What we know:** [DERIVED FACT] No single-layer classical cipher works (exhaustively tested, 375+ experiments, 669B+ configurations). [HYPOTHESIS] K4 is likely multi-layered (substitution + transposition), based on Sanborn's "two separate systems" statement and elimination of all single-layer methods. [HYPOTHESIS] The method is likely executable by hand (Scheidt's background, 1989 technology), but this is unproven. [HYPOTHESIS] K4 had a **mask applied before encryption** — Scheidt (WIRED 2005): "I masked the English language... solve the technique first then the puzzle." If true, English IC/frequency analysis is mute and cannot discriminate K4 candidates. See [`reports/final_synthesis.md`](reports/final_synthesis.md) for the full elimination landscape.
 
 **What we don't know:** The specific transposition method, the specific substitution method, the full plaintext (only 24/97 characters known).
 
@@ -217,5 +217,5 @@ This project uses **official Claude Code agent teams** (enabled in `.claude/sett
 
 ---
 
-*Last updated: 2026-02-28 — 350+ experiments complete (669B+ configs), computational work paused pending Antipodes inspection*
+*Last updated: 2026-03-01 — 375+ experiments complete (669B+ configs), computational work paused pending Antipodes inspection*
 *Primary author: Colin Patrick (human lead) + Claude (computational partner)*
