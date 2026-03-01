@@ -1,0 +1,9 @@
+{
+  "attack": "key_derivation_chains",
+  "configs_tested": 2412,
+  "configs_after_bean": 65,
+  "results_above_10": 0,
+  "top_20": [],
+  "elapsed_seconds": 0.1,
+  "best_score": 0
+}

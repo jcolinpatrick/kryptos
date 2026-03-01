@@ -1,0 +1,26 @@
+{
+  "attack": "transposition_aware_splits",
+  "widths_tested": [
+    5,
+    6,
+    7,
+    8
+  ],
+  "total_perms": 46200,
+  "keywords_tested": [
+    "KRYPTOS",
+    "PALIMPSEST",
+    "ABSCISSA",
+    "SANBORN",
+    "SCHEIDT",
+    "BERLINCLOCK",
+    "LOOMIS",
+    "BOWEN",
+    "WEBSTER",
+    "LANGLEY"
+  ],
+  "results_above_10": 0,
+  "top_20": [],
+  "elapsed_seconds": 3.7,
+  "best_score": 0
+}
