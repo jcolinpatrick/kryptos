@@ -209,6 +209,20 @@ class Orchestrator:
                 if not self.db.is_strategy_disproved(s.name)
             ]
 
+        # Skip strategies that already have a successful (non-error) run
+        if self.config.skip_completed:
+            before = len(all_strategies)
+            all_strategies = [
+                s for s in all_strategies
+                if not self.db.has_completed_run(s.name)
+            ]
+            skipped = before - len(all_strategies)
+            if skipped:
+                logger.info(
+                    "Dedup: skipped %d strategies with prior completed runs "
+                    "(use skip_completed=False to override)", skipped,
+                )
+
         # Sort by priority (ascending = highest priority first)
         all_strategies.sort(key=lambda s: s.priority)
 
@@ -280,7 +294,7 @@ class Orchestrator:
 
     async def run_single(self, strategy_name: str) -> WorkerResult:
         """Run a single named strategy — useful for targeted investigation."""
-        all_strats = BUILTIN_STRATEGIES + self._custom_strategies
+        all_strats = FRAMEWORK_STRATEGIES + BUILTIN_STRATEGIES + self._custom_strategies
         match = [s for s in all_strats if s.name == strategy_name]
         if not match:
             raise ValueError(f"Unknown strategy: {strategy_name}")
