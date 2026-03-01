@@ -2,7 +2,7 @@
   "metadata": {
     "generated_date": "2026-02-28",
     "generator": "KryptosBot",
-    "total_scripts": 371,
+    "total_scripts": 374,
     "total_results_files": 61,
     "total_src_modules": 24,
     "status": "All computational work paused. 350+ experiments, 669B+ configs, ALL NOISE.",
@@ -1087,11 +1087,11 @@
       "result_summary": "NOISE | unknown"
     },
     {
-      "name": "e_s_BATCH_REMAINING_120.py",
-      "purpose": "[BATCH ENTRY] ~30 additional e_s_ scripts not individually listed above (sessions Feb 18-19, 27), covering: SA variants, additional transposition families, extended running key sweeps, Hill/Porta/Gronsfeld follow-ups, coordinate/date key combinations, anomaly hypotheses, additional thematic running keys, constraint-propagation variants",
+      "name": "e_s_berlin_extend.py",
+      "purpose": "Bidirectional crib extension from BERLINCLOCK (pos 63-73) using Vigenere/Beaufort variants with keyword-derived keys",
       "category": "e_s_legacy",
       "has_results": false,
-      "result_summary": "NOISE | all 5/24 or below | varied config counts"
+      "result_summary": "NOISE | unknown"
     },
     {
       "name": "e_frac_01_w9_structural.py",
@@ -1479,11 +1479,11 @@
       "result_summary": "PROOF | surviving set {8,13,16,19,20,23,24,26} for periodic key"
     },
     {
-      "name": "e_frac_BATCH_REMAINING.py",
-      "purpose": "[BATCH ENTRY] e_frac_03, e_frac_04 (not individually listed) — additional structural analysis scripts from FRAC agent sessions, covering additional IC variants, key size estimation, and fractionation corner cases",
-      "category": "e_frac",
-      "has_results": false,
-      "result_summary": "NOISE | unknown"
+      "name": "e_split_00_installation_key_split.py",
+      "purpose": "Installation key split combiner: 51,534 CKM-style combinations of 24 alphabetic + 25 numeric sources across 6 phases (AZ pairs, AZ+numeric, trans+sub, triple splits, LOOMIS/BOWEN deep, KA-space Quagmire III)",
+      "category": "e_split",
+      "has_results": true,
+      "result_summary": "NOISE | best 6/24 | 51,534 configs"
     },
     {
       "name": "e_cfm_00_drusilla_hypothesis.py",
@@ -2597,6 +2597,41 @@
       "category": "infrastructure",
       "has_results": false,
       "result_summary": "TOOL | K1 solution verified"
+    },
+    {
+      "name": "e_hybrid_01_k3struct_extended.py",
+      "purpose": "K3-structure hybrid attack extended: columnar transposition (keyword=KRYPTOS, width=7) combined with Vigenere/Beaufort, applied to K4",
+      "category": "e_hybrid",
+      "has_results": false,
+      "result_summary": "NOISE | unknown"
+    },
+    {
+      "name": "e_ka_01_keyed_tableau_systematic.py",
+      "purpose": "Systematic KA tableau attack: all keyed-alphabet cipher variants (Quagmire I-IV, Beaufort, Variant Beaufort) using KA=KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "category": "e_ka",
+      "has_results": false,
+      "result_summary": "NOISE | unknown"
+    },
+    {
+      "name": "e_ledger_01_systematic_elimination.py",
+      "purpose": "Systematic elimination ledger: covers all cipher families (Caesar/ROT, simple substitution, Vigenere, transposition, etc.) with elimination proof or remaining gap",
+      "category": "e_ledger",
+      "has_results": false,
+      "result_summary": "DOCUMENTED | systematic elimination reference"
+    },
+    {
+      "name": "e_poly_01_polyalphabetic_analysis.py",
+      "purpose": "Polyalphabetic cipher analysis of K4: Kasiski, IC-per-period, mutual IC, statistical tests for polyalphabetic structure",
+      "category": "e_poly",
+      "has_results": false,
+      "result_summary": "NOISE | statistical analysis"
+    },
+    {
+      "name": "e_stat_01_missing_tests.py",
+      "purpose": "K4 statistical profiling missing tests: Kappa/Friedman IC-per-period, DFT spectral analysis, autocorrelation with MC baseline",
+      "category": "e_stat",
+      "has_results": false,
+      "result_summary": "NOISE | statistical analysis"
     }
   ],
   "source_modules": [
