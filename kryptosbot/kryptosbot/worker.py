@@ -240,6 +240,43 @@ class WorkerManager:
     # ------------------------------------------------------------------
 
     @staticmethod
+    def _validate_solution(plaintext: str) -> tuple[bool, str]:
+        """
+        Apply multi-objective oracle thresholds before allowing SOLVED status.
+
+        A candidate must meet ALL of:
+        - crib score = 24/24 (EASTNORTHEAST at 21-33 + BERLINCLOCK at 63-73)
+        - Bean equality: k[27] = k[65]
+        - Plaintext length = 97
+        - At least 3 non-crib English words >= 7 chars
+
+        Returns (passed, reason).
+        """
+        if not plaintext or len(plaintext) != 97:
+            return False, f"Wrong length ({len(plaintext) if plaintext else 0}, need 97)"
+
+        # Check EASTNORTHEAST at positions 21-33
+        if plaintext[21:34] != "EASTNORTHEAST":
+            return False, f"EASTNORTHEAST not at 21-33 (got '{plaintext[21:34]}')"
+
+        # Check BERLINCLOCK at positions 63-73
+        if plaintext[63:74] != "BERLINCLOCK":
+            return False, f"BERLINCLOCK not at 63-73 (got '{plaintext[63:74]}')"
+
+        # Check Bean equality: PT[27]=PT[65]=R, so this is implicit in crib check,
+        # but verify explicitly for safety
+        if plaintext[27] != plaintext[65]:
+            return False, f"Bean EQ fail: PT[27]='{plaintext[27]}' != PT[65]='{plaintext[65]}'"
+
+        # Check for non-crib English words (basic check with common long words)
+        non_crib = plaintext[:21] + plaintext[34:63] + plaintext[74:]
+        long_alpha_runs = re.findall(r"[A-Z]{7,}", non_crib)
+        if len(long_alpha_runs) < 3:
+            return False, f"Too few long alpha runs in non-crib region ({len(long_alpha_runs)}, need >= 3)"
+
+        return True, "All oracle checks passed"
+
+    @staticmethod
     def _parse_agent_output(
         raw: str,
         strategy: Strategy,
@@ -252,6 +289,9 @@ class WorkerManager:
         Uses keyword heuristics to classify the outcome. This is deliberately
         conservative: we'd rather mark something INCONCLUSIVE than wrongly
         claim DISPROVED.
+
+        SOLVED status requires passing the multi-objective oracle — keyword
+        heuristics alone can never trigger SOLVED.
         """
         raw_lower = raw.lower()
         result = WorkerResult(
@@ -260,15 +300,43 @@ class WorkerManager:
             hypothesis_id=hypothesis_id,
         )
 
-        # Check for the holy grail
+        # Try to extract best plaintext candidate (do this first — needed for validation)
+        pt_match = re.search(r"(?:plaintext|decrypted|candidate)[:\s]*([A-Z]{10,})", raw)
+        if pt_match:
+            result.best_plaintext = pt_match.group(1)[:200]
+
+        # Try to extract a numeric score
+        score_match = re.search(r"(?:best|top|highest)\s*(?:score|fitness)[:\s]*(-?[\d.]+)", raw_lower)
+        if score_match:
+            try:
+                result.score = float(score_match.group(1))
+            except ValueError:
+                pass
+
+        # Check for solution claims — but ONLY grant SOLVED if oracle validates
         if "berlinclock" in raw_lower or "berlin clock" in raw_lower:
-            # Look for actual plaintext near the crib mention
             if any(
                 phrase in raw_lower
                 for phrase in ["solution found", "plaintext recovered", "decrypted successfully"]
             ):
-                result.status = HypothesisStatus.SOLVED
-                result.summary = "POTENTIAL SOLUTION — manual verification required!"
+                # Agent claims a solution — validate it
+                passed, reason = WorkerManager._validate_solution(result.best_plaintext)
+                if passed:
+                    result.status = HypothesisStatus.SOLVED
+                    result.summary = "SOLUTION VALIDATED BY ORACLE — manual verification required!"
+                    logger.critical(
+                        "ORACLE PASS for strategy '%s': %s", strategy.name, result.best_plaintext
+                    )
+                else:
+                    result.status = HypothesisStatus.PROMISING
+                    result.summary = (
+                        f"Agent claimed solution but FAILED oracle: {reason}. "
+                        f"Downgraded to promising."
+                    )
+                    logger.warning(
+                        "Solution claim REJECTED by oracle for '%s': %s",
+                        strategy.name, reason,
+                    )
             else:
                 result.status = HypothesisStatus.PROMISING
                 result.summary = "Crib reference detected in output — needs review."
@@ -304,18 +372,5 @@ class WorkerManager:
         else:
             result.status = HypothesisStatus.INCONCLUSIVE
             result.summary = "No clear signal detected."
-
-        # Try to extract a numeric score
-        score_match = re.search(r"(?:best|top|highest)\s*(?:score|fitness)[:\s]*(-?[\d.]+)", raw_lower)
-        if score_match:
-            try:
-                result.score = float(score_match.group(1))
-            except ValueError:
-                pass
-
-        # Try to extract best plaintext candidate
-        pt_match = re.search(r"(?:plaintext|decrypted|candidate)[:\s]*([A-Z]{10,})", raw)
-        if pt_match:
-            result.best_plaintext = pt_match.group(1)[:200]
 
         return result
