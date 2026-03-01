@@ -1,0 +1,8 @@
+{
+  "attack": "positional_key_generation",
+  "configs_tested": 912,
+  "results_above_10": 0,
+  "top_20": [],
+  "elapsed_seconds": 0.1,
+  "best_score": 0
+}
