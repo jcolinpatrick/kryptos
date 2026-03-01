@@ -127,9 +127,22 @@ def main() -> None:
     project_root = Path(os.environ.get("KBOT_PROJECT_ROOT", ".")).resolve()
     db_path = Path(args.db) if args.db else project_root / "kryptosbot_results.db"
 
+    # Also check parent directory (for running from kryptosbot/ subdir)
+    if not db_path.exists():
+        parent_db = project_root.parent / "kryptosbot_results.db"
+        if parent_db.exists():
+            db_path = parent_db
+
+    # Check next to this script's location
+    if not db_path.exists():
+        script_dir = Path(__file__).resolve().parent
+        sibling_db = script_dir.parent / "kryptosbot_results.db"
+        if sibling_db.exists():
+            db_path = sibling_db
+
     if not db_path.exists():
         print(f"Database not found at {db_path}")
-        print("Start a campaign first, or specify --db path.")
+        print("Run from the project root, or specify --db path.")
         sys.exit(1)
 
     db = ResultsDB(db_path)

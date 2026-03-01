@@ -28,6 +28,12 @@ import os
 import sys
 from pathlib import Path
 
+try:
+    from dotenv import load_dotenv
+    load_dotenv()  # loads .env from current directory
+except ImportError:
+    pass  # python-dotenv not installed — rely on shell environment
+
 from kryptosbot.config import (
     BUILTIN_STRATEGIES,
     KryptosBotConfig,

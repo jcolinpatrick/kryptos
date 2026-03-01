@@ -16,7 +16,7 @@ from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import Any
 
-from claude_agent_sdk import ClaudeAgentOptions, query
+from claude_agent_sdk import ClaudeAgentOptions
 
 from .config import (
     HypothesisStatus,
@@ -25,6 +25,7 @@ from .config import (
 )
 from .database import ResultsDB
 from .framework_strategies import build_strategy_prompt
+from .sdk_wrapper import safe_query
 
 logger = logging.getLogger("kryptosbot.worker")
 
@@ -198,9 +199,10 @@ class WorkerManager:
             permission_mode=self.config.permission_mode,
             system_prompt=self.config.system_prompt_prefix,
             cwd=str(self.config.project_root.resolve()),
+            max_buffer_size=10_485_760,  # 10 MB — default 1 MB is too small for inventory tasks
         )
 
-        async for message in query(prompt=prompt, options=options):
+        async for message in safe_query(prompt=prompt, options=options):
             # Capture session ID from init message
             if hasattr(message, "subtype") and message.subtype == "init":
                 session_id = getattr(message, "session_id", "")

@@ -12,8 +12,34 @@ For full project guidance, see [CLAUDE.md](CLAUDE.md).
 - Computational work paused pending Antipodes physical inspection
 - Transitioned from custom 6-agent harness (170+ experiments) to official Claude Code agent teams
 
+## E-S-BERLIN-EXTEND Results (2026-02-28) — `scripts/e_s_berlin_extend.py`
+
+Bidirectional beam-search extension from BERLINCLOCK (pos 63-73) across all 3 variants.
+
+**[DERIVED FACT] Zero periods consistent**: No period 1-26 is consistent with the 24-position sparse keystream (Vigenère, Beaufort, VarBeaufort). Confirms algebraic proof from E-AUDIT-01.
+
+**[DERIVED FACT] Gronsfeld ELIMINATED (direct application)**: Keystream values at crib positions include 11, 25, 24, 20, 17 etc. — all exceed the Gronsfeld digit range {0–9}. Gronsfeld is structurally impossible under direct (no-transposition) application for all 3 variants.
+
+**[DERIVED FACT] Porta ELIMINATED (direct)**: Known keystream values exceed 12 (the Porta half-alphabet upper bound) under Vigenère convention. E.g. K[22]=L(11), K[23]=Z(25)→ Z>12.
+
+**[INTERNAL RESULT] Beam search "ACTIONATION" FALSE POSITIVE**: PT-quality beam search universally converges to "ACTIONATIONATIONATION…" across all regions (74-96, 0-20, 34-62) and all 3 variants (score ≈ -3.07 to -3.12). Implied key is always gibberish (WEKCLKTQUPVGRMTHABWWPAG etc.). This is a canonical example of the underdetermination problem: English-looking PT at the cost of incoherent key.
+
+**[INTERNAL RESULT] Key-quality beam also false positive**: Best key-quality beam forces keystream to spell "TIONATION…" (score ≈ -3.05 to -3.08) but the implied PT is incoherent. The beam exploits TION/ATION being the highest-frequency English quadgrams.
+
+**[INTERNAL RESULT] No candidate phrase at pos 74 produces coherent key**: All tested phrases (ISATFOUR, MIDNIGHT, WALL, CHECKPOINT, etc.) at position 74 score ≤ -5.05, well within noise (floor ≈ -6.63). Best: Beaufort "WALL"→key="SGOV" (-5.05).
+
+**[INTERNAL RESULT] Global sweep short-string artifacts**: Global sweep finds "WALL"@pos6 Beaufort→key="TORS" (-3.66) and "ATFOUR"@pos11 Vigenère→key="LINARR" (-4.18). These are 4–6 character coincidences producing only 1–3 quadgrams. NOT genuine signals.
+
+**[INTERNAL RESULT] Keystream Jaccard ENE∩BC ≈ 0.33–0.36**: The two keystream sets share 4–5 values out of ~13–14 unique. Consistent with random draws from mod-26 uniform distribution.
+
+**Verdict: E-S-BERLIN-EXTEND = NOISE + TOOL (Gronsfeld/Porta eliminations)**
+
+---
+
 ## What Is Eliminated (High Confidence)
 
+- **Gronsfeld** (digit key {0–9}): key values at cribs exceed 9, direct elimination (E-S-BERLIN-EXTEND)
+- **Porta** (half-alphabet key {A-M}): key values at cribs exceed 12, direct elimination (E-S-BERLIN-EXTEND)
 - All periodic polyalphabetic (any variant, any period, direct correspondence)
 - All fractionation families (Bifid, Trifid, ADFGVX, Playfair, Two-Square, Four-Square, etc.)
 - Hill cipher (n=2,3,4 algebraic; n>4 impossible since 97 is prime)
