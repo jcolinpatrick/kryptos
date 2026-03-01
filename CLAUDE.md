@@ -67,6 +67,7 @@ Four layers with strict dependency direction: **kernel → pipeline → novelty 
   - `persistence/` — WAL-mode SQLite (runs/results/eliminations/checkpoints) + JSONL artifacts
 - **pipeline/** — `evaluate_candidate()` is the primary entry point. `SweepRunner` handles parallel execution with checkpointing and resume.
 - **novelty/** — Hypothesis-driven search: `Hypothesis` dataclass → `triage_batch()` → `NoveltyLedger` (SQLite). Wired to 13 research questions (RQ-1..RQ-13). See `src/kryptos/novelty/generators.py` for adding new hypotheses.
+- **corpus/** — Egyptological corpus pipeline for running-key testing: `schema.py` (dataclasses), `normalize.py` (transliteration rules), `variants.py` (controlled variant expansion), `ingest.py` (local + Gutenberg ingestion).
 - **cli/** — Thin wrappers for `doctor`, `sweep`, `reproduce`, `novelty`, `report`.
 
 ### Data flow
@@ -98,7 +99,7 @@ Standalone experiment scripts, each runnable with `PYTHONPATH=src python3 -u scr
 
 ### Tests
 
-Two test categories: **Unit tests** (`test_transforms.py`, `test_constraints.py`, `test_scoring.py`, `test_pipeline.py`, `test_novelty.py`, `test_alphabet.py`, `test_constants.py`) cover each layer. **QA verification tests** (`test_qa_structural_claims.py`, `test_qa_kernel_verify.py`, `test_qa_frac_cross_verify.py`, `test_qa_pipeline_novelty.py`) are higher-level cross-checks that validate structural claims, FRAC results, and pipeline-novelty integration.
+Two test categories: **Unit tests** (`test_transforms.py`, `test_constraints.py`, `test_scoring.py`, `test_pipeline.py`, `test_novelty.py`, `test_alphabet.py`, `test_constants.py`, `test_free_crib.py`, `test_corpus.py`) cover each layer. **QA verification tests** (`test_qa_structural_claims.py`, `test_qa_kernel_verify.py`, `test_qa_frac_cross_verify.py`, `test_qa_pipeline_novelty.py`, `test_audit_regression.py`) are higher-level cross-checks that validate structural claims, FRAC results, audit assumptions, and pipeline-novelty integration.
 
 ### Key data files
 
@@ -114,6 +115,10 @@ Two test categories: **Unit tests** (`test_transforms.py`, `test_constraints.py`
 ### Site builder (`site_builder/`)
 
 Builds the `kryptosbot.com` static site. Requires jinja2 (in venv). Build with `python3 site_builder/build.py`, preview with `cd site && python3 -m http.server 8000`. Output goes to `site/` (gitignored). Key modules: `data_loader.py` (loads experiment data from DBs/artifacts), `categorizer.py` (classifies experiments by method), `search_index.py` (generates client-side search index), `overrides.toml` (per-experiment display overrides).
+
+### KryptosBot SDK (`kryptosbot/`)
+
+Claude Agent SDK multi-agent campaign runner. Separate from the core `src/kryptos/` package. Key modules: `orchestrator.py` (campaign coordination), `worker.py` (parallel execution), `framework_strategies.py` (strategy definitions), `compute.py` (kernel integration), `database.py` (results DB). Run campaigns with `python3 kryptosbot/run_kryptosbot.py`. Requires `python-dotenv` and `anthropic` SDK (in venv). Results go to `kryptosbot/kryptosbot_results.db`.
 
 ### Gitignored directories
 
