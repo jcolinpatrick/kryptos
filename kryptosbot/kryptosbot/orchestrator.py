@@ -180,11 +180,17 @@ class Orchestrator:
         Return the list of strategies to execute this run, filtering
         by name, priority, and disproof status.
 
-        Defaults to FRAMEWORK_STRATEGIES (which are framework-aware) rather
-        than the generic BUILTIN_STRATEGIES. The generic strategies are still
-        available via config.BUILTIN_STRATEGIES if explicitly requested.
+        Includes both FRAMEWORK_STRATEGIES and BUILTIN_STRATEGIES to
+        maximize worker utilization. Framework strategies are preferred
+        (they read CLAUDE.md/MEMORY.md first) but builtins add coverage.
+        Deduplication by name ensures no double-dispatch.
         """
-        all_strategies = FRAMEWORK_STRATEGIES + self._custom_strategies
+        seen_names: set[str] = set()
+        all_strategies: list[Strategy] = []
+        for s in FRAMEWORK_STRATEGIES + BUILTIN_STRATEGIES + self._custom_strategies:
+            if s.name not in seen_names:
+                seen_names.add(s.name)
+                all_strategies.append(s)
 
         # Filter by name if specified
         if self.config.strategy_names:
@@ -235,51 +241,36 @@ class Orchestrator:
             return self.db.summary_report()
 
         logger.info(
-            "Running %d strategies: %s",
+            "Dispatching ALL %d strategies concurrently (max_workers=%d): %s",
             len(strategies),
+            self.config.max_workers,
             ", ".join(s.name for s in strategies),
         )
 
-        # Group into priority waves
-        waves = self._group_by_priority(strategies)
-        all_results: list[WorkerResult] = []
-
-        for priority, wave_strategies in sorted(waves.items()):
-            if self._shutdown_event.is_set():
-                logger.info("Shutdown requested — skipping remaining waves.")
-                break
-
-            logger.info(
-                "--- Wave priority %d: %d strategies ---",
-                priority, len(wave_strategies),
+        # Create hypothesis records and dispatch everything at once
+        dispatch_list: list[tuple[Strategy, int]] = []
+        for strat in strategies:
+            hyp_id = self.db.create_hypothesis(
+                strategy=strat.name,
+                category=strat.category.name,
+                priority=strat.priority,
+                tags=list(strat.tags),
             )
+            dispatch_list.append((strat, hyp_id))
 
-            # Create hypothesis records for this wave
-            dispatch_list: list[tuple[Strategy, int]] = []
-            for strat in wave_strategies:
-                hyp_id = self.db.create_hypothesis(
-                    strategy=strat.name,
-                    category=strat.category.name,
-                    priority=strat.priority,
-                    tags=list(strat.tags),
-                )
-                dispatch_list.append((strat, hyp_id))
+        # Fire all workers — semaphore in WorkerManager handles throttling
+        all_results = await self.worker_mgr.run_batch(dispatch_list)
 
-            # Run the wave
-            wave_results = await self.worker_mgr.run_batch(dispatch_list)
-            all_results.extend(wave_results)
+        # Log summary
+        self._log_wave_summary(0, all_results)
 
-            # Log wave summary
-            self._log_wave_summary(priority, wave_results)
-
-            # Check for solutions
-            solutions = [r for r in wave_results if r.status == HypothesisStatus.SOLVED]
-            if solutions:
-                logger.critical(
-                    "!!! POTENTIAL SOLUTION FOUND in strategy '%s' !!!",
-                    solutions[0].strategy_name,
-                )
-                # Don't stop — keep running to validate, but flag it
+        # Check for solutions
+        solutions = [r for r in all_results if r.status == HypothesisStatus.SOLVED]
+        if solutions:
+            logger.critical(
+                "!!! POTENTIAL SOLUTION FOUND in strategy '%s' !!!",
+                solutions[0].strategy_name,
+            )
 
         # Campaign complete
         report = self.db.summary_report()
