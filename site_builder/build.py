@@ -239,7 +239,10 @@ def build():
     pages_built += 1
 
     # About Me
-    _render(env, "about_me.html", "about-me/index.html", global_ctx)
+    _render(env, "about_me.html", "about-me/index.html", {
+        **global_ctx,
+        "total_experiments": total_experiments,
+    })
     pages_built += 1
 
     # Report error
