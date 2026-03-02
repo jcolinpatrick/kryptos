@@ -10,15 +10,19 @@ This repo has one purpose: determine the **true plaintext** and the **full encry
 
 **Kryptos** is a sculpture at CIA headquarters containing four encrypted messages (K1–K4). K1–K3 were solved in 1999. **K4 (97 characters) has been unsolved since 1990.**
 
-**Ciphertext:** `OBKRUOXOGHULBSOLIFBBWFLRVQQPRNGKSSOTWTQSJQSSEKZZWATJKLUDIAWINFBNYPVTTMZFPKWGDKZXTJCDIGKUHUAUEKCAR`
+**Carved text (SCRAMBLED — NOT the real ciphertext):** `OBKRUOXOGHULBSOLIFBBWFLRVQQPRNGKSSOTWTQSJQSSEKZZWATJKLUDIAWINFBNYPVTTMZFPKWGDKZXTJCDIGKUHUAUEKCAR`
 
-**Known plaintext (0-indexed):**
+**Known plaintext (0-indexed positions in carved text):**
 - Positions 21–33: `EASTNORTHEAST`
 - Positions 63–73: `BERLINCLOCK`
 
-**What we know:** [DERIVED FACT] No single-layer classical cipher works (exhaustively tested, 375+ experiments, 669B+ configurations). [HYPOTHESIS] K4 is likely multi-layered (substitution + transposition), based on Sanborn's "two separate systems" statement and elimination of all single-layer methods. [HYPOTHESIS] The method is likely executable by hand (Scheidt's background, 1989 technology), but this is unproven. [HYPOTHESIS] K4 had a **mask applied before encryption** — Scheidt (WIRED 2005): "I masked the English language... solve the technique first then the puzzle." If true, English IC/frequency analysis is mute and cannot discriminate K4 candidates. See [`reports/final_synthesis.md`](reports/final_synthesis.md) for the full elimination landscape.
+**CRITICAL PARADIGM (2026-03-02):** [USER GROUND TRUTH] The 97 carved characters are **SCRAMBLED ciphertext**. The encryption model is: `PT → simple substitution → REAL CT → SCRAMBLE (transposition) → carved text`. Every prior experiment (400+, 669B+ configs) assumed positional correspondence and FAILED. The **singular mission** is to find the unscrambling permutation using the Cardan grille. See `memory/cardan_grille.md` for full details.
 
-**What we don't know:** The specific transposition method, the specific substitution method, the full plaintext (only 24/97 characters known).
+**Cardan grille extract (106 chars, from KA tableau):** `HJLVACINXZHUYOCMWSEAFYBZACJFHIFXRYVFIJMXEILLNELJNXZKILKRDINPADMNVZACEIMUWAFGIMUKRGILVHNQXWYABXZKIKJUFQRXCD` — T is completely absent (25/26 letters). The grille defines the reading order that unscrambles K4.
+
+**What we know:** [DERIVED FACT] No single-layer classical cipher works on the carved text (exhaustively tested). [USER GROUND TRUTH] The carved text is a permutation of the real CT. [HYPOTHESIS] The Cardan grille on the Vigenère tableau defines the unscrambling permutation. [HYPOTHESIS] Once unscrambled, K4 yields to simple substitution (Vigenère/Beaufort with a short keyword). See [`reports/final_synthesis.md`](reports/final_synthesis.md) for the elimination landscape.
+
+**What we don't know:** The unscrambling permutation, whether cribs apply to carved or real CT positions, the substitution key for the real CT.
 
 ---
 
@@ -116,6 +120,10 @@ Two test categories: **Unit tests** (`test_transforms.py`, `test_constraints.py`
 
 Builds the `kryptosbot.com` static site. Requires jinja2 (in venv). Build with `python3 site_builder/build.py`, preview with `cd site && python3 -m http.server 8000`. Output goes to `site/` (gitignored). Key modules: `data_loader.py` (loads experiment data from DBs/artifacts), `categorizer.py` (classifies experiments by method), `search_index.py` (generates client-side search index), `overrides.toml` (per-experiment display overrides).
 
+### API backend (`api/`)
+
+FastAPI backend for kryptosbot.com. Theory classifier endpoint (Claude-powered), submission queue (SQLite), CORS, rate limiting. Run with `python3 site_builder/serve.py` (requires venv: fastapi, uvicorn, python-dotenv, anthropic). Mounts `site/` as static files.
+
 ### KryptosBot SDK (`kryptosbot/`)
 
 Claude Agent SDK multi-agent campaign runner. Separate from the core `src/kryptos/` package. Key modules: `orchestrator.py` (campaign coordination), `worker.py` (parallel execution), `framework_strategies.py` (strategy definitions), `compute.py` (kernel integration), `database.py` (results DB). Run campaigns with `python3 kryptosbot/run_kryptosbot.py`. Requires `python-dotenv` and `anthropic` SDK (in venv). Results go to `kryptosbot/kryptosbot_results.db`.
@@ -201,21 +209,24 @@ Domain knowledge, public facts, and detailed operating policies live in separate
 
 ---
 
-## Multi-Agent Mode
+## Multi-Agent Mode — SINGULAR MISSION
 
-This project uses **official Claude Code agent teams** (enabled in `.claude/settings.local.json`). Three agents: **Lead** (interactive, manages tasks), **Explorer** (creative/physical hypotheses, plan approval required), **Validator** (reproduces signals, multi-objective scoring).
+**ALL agents are hyperfocused on ONE task: find the unscrambling permutation for K4.**
+
+The carved K4 text is SCRAMBLED ciphertext. The Cardan grille defines the reading order. Every agent must work on finding the permutation that reorders the 97 carved characters into the real CT.
 
 **Key constraints for teammates:**
 - Import constants from `kryptos.kernel.constants` — never hardcode CT/cribs
-- Use `score_candidate()` from `kryptos.kernel.scoring.aggregate` — never hand-roll scoring
-- Only scores at period <= 7 are meaningful (see Key Gotchas)
-- Multi-objective thresholds: crib=24/24 + Bean PASS + quadgram > -4.84/char + IC > 0.055 + non-crib words >= 7 chars >= 3
+- Read `memory/cardan_grille.md` for the grille extract, binary mask, and attack vectors
+- The 106-char grille extract: `HJLVACINXZHUYOCMWSEAFYBZACJFHIFXRYVFIJMXEILLNELJNXZKILKRDINPADMNVZACEIMUWAFGIMUKRGILVHNQXWYABXZKIKJUFQRXCD`
+- For each candidate permutation: apply to K4, try Vig/Beaufort with KRYPTOS/PALIMPSEST/ABSCISSA, check for English
+- DO NOT re-run old direct-decryption attacks — they assumed wrong positional correspondence
 
-**Compute separation:** `k4_job_runner.sh` handles CPU-heavy sweeps independently. Write sweep scripts to `jobs/pending/`.
+**KryptosBot agent runner:** `kryptosbot/run_lean.py --agent` launches a focused agent session. The prompt is tuned to the unscrambling mission.
 
 **Historical reference:** Previous custom 6-agent harness (170+ experiments) archived in `archive/legacy_harness/` and `archive/session_reports/`. Comprehensive synthesis: [`reports/final_synthesis.md`](reports/final_synthesis.md).
 
 ---
 
-*Last updated: 2026-03-01 — 375+ experiments complete (669B+ configs), computational work paused pending Antipodes inspection*
+*Last updated: 2026-03-02 — PARADIGM SHIFT: carved text is scrambled, find the real CT via Cardan grille*
 *Primary author: Colin Patrick (human lead) + Claude (computational partner)*
