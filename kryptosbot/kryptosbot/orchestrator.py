@@ -32,6 +32,7 @@ from .config import (
 )
 from .database import ResultsDB
 from .framework_strategies import FRAMEWORK_STRATEGIES, get_framework_strategies
+from .sdk_wrapper import preflight_check
 from .worker import WorkerManager, WorkerResult
 
 logger = logging.getLogger("kryptosbot.orchestrator")
@@ -248,6 +249,14 @@ class Orchestrator:
         logger.info("Results DB: %s", self.config.results_db_path)
         logger.info("=" * 70)
 
+        # ── Preflight: verify SDK + CLI + auth before wasting time ──
+        logger.info("Running preflight check...")
+        ok, msg = await preflight_check()
+        if not ok:
+            logger.error(msg)
+            print(f"\n{'='*70}\n{msg}\n{'='*70}\n", file=sys.stderr)
+            raise RuntimeError(msg)
+
         strategies = self._get_active_strategies()
 
         if not strategies:
@@ -294,6 +303,13 @@ class Orchestrator:
 
     async def run_single(self, strategy_name: str) -> WorkerResult:
         """Run a single named strategy — useful for targeted investigation."""
+        # Preflight
+        ok, msg = await preflight_check()
+        if not ok:
+            logger.error(msg)
+            print(f"\n{'='*70}\n{msg}\n{'='*70}\n", file=sys.stderr)
+            raise RuntimeError(msg)
+
         all_strats = FRAMEWORK_STRATEGIES + BUILTIN_STRATEGIES + self._custom_strategies
         match = [s for s in all_strats if s.name == strategy_name]
         if not match:

@@ -141,6 +141,30 @@ def print_report(db_path: Path) -> None:
     print("=" * 70 + "\n")
 
 
+def _run_preflight() -> None:
+    """Run the SDK preflight check and report results."""
+    from kryptosbot.sdk_wrapper import preflight_check
+
+    async def _check() -> tuple[bool, str]:
+        return await preflight_check()
+
+    print("\nRunning KryptosBot preflight check...")
+    print("-" * 50)
+
+    ok, msg = asyncio.run(_check())
+    if ok:
+        print("  PASS: Claude CLI found and responsive")
+        print("  PASS: SDK auth check succeeded")
+        print("  PASS: Ready to run campaigns")
+        print("-" * 50)
+        print("Result: ALL CHECKS PASSED\n")
+    else:
+        print(f"\n  FAIL: {msg}")
+        print("-" * 50)
+        print("Result: PREFLIGHT FAILED — fix the above before running a campaign\n")
+        sys.exit(1)
+
+
 def build_config(args: argparse.Namespace) -> KryptosBotConfig:
     """Construct config from CLI args and environment."""
     project_root = Path(os.environ.get("KBOT_PROJECT_ROOT", ".")).resolve()
@@ -187,6 +211,10 @@ def parse_args() -> argparse.Namespace:
     mode.add_argument(
         "--strategies", action="store_true",
         help="List all available strategies and exit",
+    )
+    mode.add_argument(
+        "--preflight", action="store_true",
+        help="Run SDK/CLI/auth preflight check and exit",
     )
 
     parser.add_argument(
@@ -271,6 +299,10 @@ def main() -> None:
     if args.report:
         project_root = Path(os.environ.get("KBOT_PROJECT_ROOT", ".")).resolve()
         print_report(project_root / "kryptosbot_results.db")
+        return
+
+    if args.preflight:
+        _run_preflight()
         return
 
     # Async modes require API key
