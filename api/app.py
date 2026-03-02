@@ -8,6 +8,7 @@ from typing import Optional
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 from api.classifier import classify_theory, load_elimination_index, ClassifyResult
@@ -66,6 +67,8 @@ app.add_middleware(
         "http://localhost:8000",
         "http://127.0.0.1:3000",
         "http://127.0.0.1:8000",
+        "http://192.168.1.156:8000",
+        "http://192.168.1.179:8000",
     ],
     allow_methods=["GET", "POST"],
     allow_headers=["*"],
@@ -174,3 +177,12 @@ async def classify(body: ClassifyRequest, request: Request):
         pass
 
     return result.to_dict()
+
+
+# ---------------------------------------------------------------------------
+# Static file serving (must be AFTER API routes)
+# ---------------------------------------------------------------------------
+
+SITE_DIR = os.environ.get("SITE_DIR", "site")
+if os.path.isdir(SITE_DIR):
+    app.mount("/", StaticFiles(directory=SITE_DIR, html=True), name="static")

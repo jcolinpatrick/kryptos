@@ -115,9 +115,8 @@ async def classify_theory(theory: str, index_context: str) -> ClassifyResult:
     Returns a ClassifyResult indicating whether the theory matches an existing
     elimination, is novel and feasible, or is novel but impractical.
     """
-    client = anthropic.AsyncAnthropic(
-        api_key=os.environ.get("ANTHROPIC_API_KEY", ""),
-    )
+    api_key = os.environ.get("KBOT_CLASSIFY_API_KEY") or os.environ.get("ANTHROPIC_API_KEY", "")
+    client = anthropic.AsyncAnthropic(api_key=api_key)
 
     user_message = (
         f"ELIMINATION DATABASE:\n{index_context}\n\n"
