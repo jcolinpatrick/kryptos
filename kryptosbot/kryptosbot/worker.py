@@ -11,6 +11,7 @@ from __future__ import annotations
 import asyncio
 import json
 import logging
+import os
 import re
 import uuid
 from dataclasses import dataclass, field
@@ -26,7 +27,7 @@ from .config import (
 )
 from .database import ResultsDB
 from .framework_strategies import build_strategy_prompt
-from .sdk_wrapper import safe_query
+from .sdk_wrapper import classify_error, safe_query
 
 logger = logging.getLogger("kryptosbot.worker")
 
@@ -117,13 +118,25 @@ class WorkerManager:
                     error=f"Timed out after {self.config.worker_timeout_minutes} minutes",
                 )
             except Exception as exc:
-                logger.exception("Worker %s failed with error", worker_id)
+                # Classify the error using stderr + exception text
+                stderr_text = "\n".join(stderr_lines) if stderr_lines else ""
+                combined_text = f"{exc}\n{stderr_text}"
+                label, explanation = classify_error(combined_text)
+
+                logger.error(
+                    "Worker %s failed [%s]: %s", worker_id, label, explanation,
+                )
+                if stderr_text:
+                    logger.error(
+                        "Worker %s stderr dump:\n%s", worker_id, stderr_text[:2000],
+                    )
+
                 result = WorkerResult(
                     worker_id=worker_id,
                     strategy_name=strategy.name,
                     hypothesis_id=hypothesis_id,
                     status=HypothesisStatus.INCONCLUSIVE,
-                    error=str(exc),
+                    error=f"[{label}] {explanation}\nraw: {str(exc)[:500]}",
                 )
 
             # Persist final state
@@ -199,7 +212,20 @@ class WorkerManager:
 
         def _capture_stderr(line: str) -> None:
             stderr_lines.append(line)
-            logger.debug("Worker %s stderr: %s", worker_id, line.rstrip())
+            # Surface non-trivial stderr at WARNING so it's visible on console
+            stripped = line.rstrip()
+            if stripped:
+                logger.warning("Worker %s stderr: %s", worker_id, stripped)
+
+        # Build env overrides:
+        # - CLAUDECODE="" allows spawning from within Claude Code sessions
+        # - Remove ANTHROPIC_API_KEY so the CLI uses the user's subscription
+        #   (not the .env API key which may have no credits)
+        worker_env: dict[str, str] = {"CLAUDECODE": ""}
+        if os.environ.get("ANTHROPIC_API_KEY"):
+            # Setting to empty string effectively disables it for the CLI,
+            # which then falls back to the user's Claude subscription auth
+            worker_env["ANTHROPIC_API_KEY"] = ""
 
         options = ClaudeAgentOptions(
             allowed_tools=self.config.allowed_tools,
@@ -207,7 +233,7 @@ class WorkerManager:
             system_prompt=self.config.system_prompt_prefix,
             cwd=str(self.config.project_root.resolve()),
             max_buffer_size=10_485_760,  # 10 MB — default 1 MB is too small for inventory tasks
-            env={"CLAUDECODE": ""},  # Allow spawning from within Claude Code sessions
+            env=worker_env,
             stderr=_capture_stderr,
         )
 
