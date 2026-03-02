@@ -8,13 +8,15 @@ guide focused. See also: `docs/invariants.md` for verified computational invaria
 
 ## (A) Proven / Public Facts and Derived Facts
 
-### A1) Kryptos K4 ciphertext (canonical)
+### A1) Kryptos K4 carved text (SCRAMBLED ciphertext)
 
-[PUBLIC FACT] K4 ciphertext:
+[PUBLIC FACT] K4 carved text:
 OBKRUOXOGHULBSOLIFBBWFLRVQQPRNGKSSOTWTQSJQSSEKZZWATJKLUDIAWINFBNYPVTTMZFPKWGDKZXTJCDIGKUHUAUEKCAR
 
 [DERIVED FACT] Length = 97
 [DERIVED FACT] Starts with `O`, ends with `R`
+
+[USER GROUND TRUTH, 2026-03-02] The carved text is SCRAMBLED — it is a permutation of the real ciphertext. The encryption model is: PT → simple substitution → REAL CT → transposition/scramble → carved text. The Cardan grille on the Vigenère tableau defines the unscrambling permutation. See `memory/cardan_grille.md`.
 
 [DERIVED FACT] Index of Coincidence (IC) on full ciphertext:
 - IC(K4) ≈ 0.036082… (recompute via `tools/validate_public_invariants.py` or the snippet in Appendix)
