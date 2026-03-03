@@ -16,7 +16,7 @@ This repo has one purpose: determine the **true plaintext** and the **full encry
 - Positions 21–33: `EASTNORTHEAST`
 - Positions 63–73: `BERLINCLOCK`
 
-**CRITICAL PARADIGM (2026-03-02):** [USER GROUND TRUTH] The 97 carved characters are **SCRAMBLED ciphertext**. The encryption model is: `PT → simple substitution → REAL CT → SCRAMBLE (transposition) → carved text`. Every prior experiment (400+, 669B+ configs) assumed positional correspondence and FAILED. The **singular mission** is to find the unscrambling permutation using the Cardan grille. See `memory/cardan_grille.md` for full details.
+**CRITICAL PARADIGM (2026-03-02):** [USER GROUND TRUTH] The 97 carved characters are **SCRAMBLED ciphertext**. The encryption model is: `PT → simple substitution → REAL CT → SCRAMBLE (transposition) → carved text`. Every prior experiment (400+, 669B+ configs) assumed positional correspondence and FAILED. The **singular mission** is to find the unscrambling permutation using the Cardan grille. See Claude Code auto-memory `cardan_grille.md` for full details.
 
 **Cardan grille extract (106 chars, from KA tableau):** `HJLVACINXZHUYOCMWSEAFYBZACJFHIFXRYVFIJMXEILLNELJNXZKILKRDINPADMNVZACEIMUWAFGIMUKRGILVHNQXWYABXZKIKJUFQRXCD` — T is completely absent (25/26 letters). The grille defines the reading order that unscrambles K4.
 
@@ -92,7 +92,7 @@ kernel/persistence/sqlite.py (results DB) + JsonlWriter (logs)
 
 ### Experiment scripts (`scripts/`)
 
-Standalone experiment scripts, each runnable with `PYTHONPATH=src python3 -u scripts/<name>.py`. Prefixed by agent/topic (e.g. `e_frac_*`, `e_chart_*`, `e_explorer_*`, `k4_*`). ~350 scripts exist including ~150 legacy `e_s_*.py` from earlier sessions.
+Standalone experiment scripts, each runnable with `PYTHONPATH=src python3 -u scripts/<name>.py`. Prefixed by agent/topic (e.g. `e_frac_*`, `e_chart_*`, `e_explorer_*`, `k4_*`). 430+ scripts exist including ~150 legacy `e_s_*.py` from earlier sessions.
 
 **Writing a new experiment script:**
 1. Name it `scripts/e_<topic>_<nn>_<short_name>.py` (topic prefix groups related work, e.g. `e_chart_*`, `e_antipodes_*`, `e_bespoke_*`)
@@ -126,11 +126,18 @@ FastAPI backend for kryptosbot.com. Theory classifier endpoint (Claude-powered),
 
 ### KryptosBot SDK (`kryptosbot/`)
 
-Claude Agent SDK multi-agent campaign runner. Separate from the core `src/kryptos/` package. Key modules: `orchestrator.py` (campaign coordination), `worker.py` (parallel execution), `framework_strategies.py` (strategy definitions), `compute.py` (kernel integration), `database.py` (results DB). Run campaigns with `python3 kryptosbot/run_kryptosbot.py`. Requires `python-dotenv` and `anthropic` SDK (in venv). Results go to `kryptosbot/kryptosbot_results.db`.
+Claude Agent SDK multi-agent campaign runner. Separate from the core `src/kryptos/` package. One entry point: `python3 kryptosbot/solve.py`. Key modules: `strategies.py` (22 strategies in 3 modes), `agent_runner.py` (session loop + token tracking), `sdk_wrapper.py` (SDK safety wrapper), `compute.py` (local multiprocessing), `database.py` (SQLite). Requires `claude-agent-sdk` and `python-dotenv` (in venv). Results go to `results/` (gitignored).
+
+### Other directories
+
+- **`bin/`** — Standalone engine scripts for Antipodes and cylinder rotation analysis (`antipodes_device_engine.py`, `antipodes_key_engine.py`, `cylinder_rotation_engine.py`).
+- **`jobs/`** — Job queue with `pending/`, `running/`, `done/`, `failed/` subdirectories for experiment management.
+- **`deploy/`** — Production deployment configs: systemd service (`kryptosbot-api.service`), nginx config, cron updater, setup script.
+- **`tools/`** — Utility scripts (e.g. `generate_quadgrams.py` for rebuilding quadgram data).
 
 ### Gitignored directories
 
-`db/`, `results/`, `artifacts/`, `agent_logs/`, `work/`, `tmp/`, `venv/`, `site/` — per-run data, must not be committed.
+`db/`, `results/` (unified KryptosBot output: `campaigns/`, `compute/`), `artifacts/`, `agent_logs/`, `work/`, `tmp/`, `venv/`, `site/`, `checkpoints/`, `blitz_results/`, `kbot_results/`, `split_results/` — per-run data, must not be committed.
 
 ---
 
@@ -217,16 +224,16 @@ The carved K4 text is SCRAMBLED ciphertext. The Cardan grille defines the readin
 
 **Key constraints for teammates:**
 - Import constants from `kryptos.kernel.constants` — never hardcode CT/cribs
-- Read `memory/cardan_grille.md` for the grille extract, binary mask, and attack vectors
+- Grille details are in Claude Code auto-memory (`cardan_grille.md`); key facts are in the Quick Reference above
 - The 106-char grille extract: `HJLVACINXZHUYOCMWSEAFYBZACJFHIFXRYVFIJMXEILLNELJNXZKILKRDINPADMNVZACEIMUWAFGIMUKRGILVHNQXWYABXZKIKJUFQRXCD`
 - For each candidate permutation: apply to K4, try Vig/Beaufort with KRYPTOS/PALIMPSEST/ABSCISSA, check for English
 - DO NOT re-run old direct-decryption attacks — they assumed wrong positional correspondence
 
-**KryptosBot agent runner:** `kryptosbot/run_lean.py --agent` launches a focused agent session. The prompt is tuned to the unscrambling mission.
+**KryptosBot agent runner:** `python3 kryptosbot/solve.py` launches the unified campaign runner. See `kryptosbot/RUNBOOK.md` for full usage. Key commands: `solve.py` (6 parallel agents), `solve.py compute` (free local CPU), `solve.py run <name>` (single strategy), `solve.py list` (show all strategies).
 
 **Historical reference:** Previous custom 6-agent harness (170+ experiments) archived in `archive/legacy_harness/` and `archive/session_reports/`. Comprehensive synthesis: [`reports/final_synthesis.md`](reports/final_synthesis.md).
 
 ---
 
-*Last updated: 2026-03-02 — PARADIGM SHIFT: carved text is scrambled, find the real CT via Cardan grille*
+*Last updated: 2026-03-03 — PARADIGM SHIFT: carved text is scrambled, find the real CT via Cardan grille*
 *Primary author: Colin Patrick (human lead) + Claude (computational partner)*
