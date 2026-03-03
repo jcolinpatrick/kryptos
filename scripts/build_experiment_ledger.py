@@ -101,8 +101,8 @@ PROSE_VERDICTS: dict[str, dict] = {
     "e_cfm_07_k3_rotational": {"verdict": "NOISE", "best_score": "4/24", "configs": "~1K", "evidence": "report+json", "category": "e_cfm"},
     "e_cfm_08_trans_key_scoring": {"verdict": "UNDERDETERMINED", "best_score": "—", "configs": "28M", "evidence": "report+json", "category": "e_cfm"},
     "e_cfm_09_gutenberg_east_scan": {"verdict": "NOISE", "best_score": "0/24", "configs": "47.4M chars", "evidence": "report+json", "category": "e_cfm"},
-    "e_cfm_10_medusa_rule": {"verdict": "UNCERTAIN", "best_score": "—", "configs": "—", "evidence": "none", "category": "e_cfm"},
-    "e_cfm_11_anomaly_key_derivation": {"verdict": "UNCERTAIN", "best_score": "—", "configs": "—", "evidence": "none", "category": "e_cfm"},
+    "e_cfm_10_medusa_rule": {"verdict": "ELIMINATED", "best_score": "5/24", "configs": "1,974", "evidence": "report", "category": "e_cfm"},
+    "e_cfm_11_anomaly_key_derivation": {"verdict": "ELIMINATED", "best_score": "5/24", "configs": "1,989", "evidence": "report", "category": "e_cfm"},
 
     # ── E-EGYPT series ──
     "e_egypt_00_corpus_pipeline": {"verdict": "NOISE", "best_score": "0/24", "configs": "113.9M", "evidence": "report+json", "category": "e_egypt"},
@@ -229,6 +229,10 @@ PROSE_VERDICTS: dict[str, dict] = {
 
     # ── E-HYBRID ──
     "e_hybrid_01_k3struct_extended": {"verdict": "NOISE", "best_score": "8/24", "configs": "408,480", "evidence": "report+json", "category": "e_hybrid"},
+    "e_hybrid_02_targeted_keywords": {"verdict": "NOISE", "best_score": "16/24", "configs": "959K+", "evidence": "json", "category": "e_hybrid"},
+    "e_hybrid_03_complete_columnar_vig": {"verdict": "ELIMINATED", "best_score": "16/24", "configs": "all p2-26 w2-9", "evidence": "json", "category": "e_hybrid"},
+    "e_hybrid_03_period13_and_gaps": {"verdict": "NOISE", "best_score": "15/24", "configs": "14kw+39kw+3.6M", "evidence": "json", "category": "e_hybrid"},
+    "e_hybrid_04_reverse_k3": {"verdict": "ELIMINATED", "best_score": "0/24", "configs": "110M", "evidence": "json", "category": "e_hybrid"},
 
     # ── Notable E-S legacy with documented verdicts ──
     "e_s_06_double_columnar": {"verdict": "NOISE", "best_score": "15/24", "configs": "441M", "evidence": "report+json", "category": "e_s_legacy"},
@@ -260,15 +264,129 @@ PROSE_VERDICTS: dict[str, dict] = {
     # ── Dragnet ──
     "dragnet_v4": {"verdict": "ELIMINATED", "best_score": "0", "configs": "667B", "evidence": "report+json", "category": "infrastructure"},
 
-    # ── KryptosBot agent-generated scripts ──
+    # ── KryptosBot agent-generated scripts (Mar 1 campaign) ──
     "e_ka_01_keyed_tableau_systematic": {"verdict": "NOISE", "best_score": "0", "configs": "5,040+", "evidence": "json", "category": "misc"},
+    "e_ka_02_extended_gaps": {"verdict": "NOISE", "best_score": "—", "configs": "—", "evidence": "json", "category": "misc"},
+    "e_ka_03_tableau_gaps": {"verdict": "NOISE", "best_score": "—", "configs": "—", "evidence": "json", "category": "misc"},
     "e_ledger_01_systematic_elimination": {"verdict": "TOOL", "best_score": "—", "configs": "—", "evidence": "json", "category": "misc"},
     "e_poly_01_polyalphabetic_analysis": {"verdict": "ELIMINATED", "best_score": "—", "configs": "—", "evidence": "json", "category": "misc"},
+    "e_poly_02_ka_tableau_and_new_keywords": {"verdict": "NOISE", "best_score": "—", "configs": "—", "evidence": "json", "category": "misc"},
+    "e_poly_03_gap_fill_2026_03": {"verdict": "NOISE", "best_score": "—", "configs": "confirmatory", "evidence": "json", "category": "misc"},
+    "e_k4_extend_v2": {"verdict": "NOISE", "best_score": "—", "configs": "—", "evidence": "json", "category": "misc"},
     "e_s_berlin_extend": {"verdict": "NOISE", "best_score": "—", "configs": "—", "evidence": "json", "category": "misc"},
     "e_stat_01_missing_tests": {"verdict": "NOISE", "best_score": "—", "configs": "—", "evidence": "report", "category": "misc"},
+    "e_kasiski_00_full_analysis": {"verdict": "DOCUMENTED", "best_score": "—", "configs": "analytical", "evidence": "json", "category": "misc"},
+    "e_extend_xor_autokey_00": {"verdict": "ELIMINATED", "best_score": "0/24", "configs": "—", "evidence": "json", "category": "misc"},
+    "e_autokey_bidirectional": {"verdict": "ELIMINATED", "best_score": "0/24", "configs": "45", "evidence": "json", "category": "misc"},
+    "e_autokey_bidir_extended": {"verdict": "NOISE", "best_score": "24/24 FP", "configs": "all seeds 1-96", "evidence": "json", "category": "misc"},
+    "e_autokey_bootstrap_00": {"verdict": "NOISE", "best_score": "24/24 FP", "configs": "480", "evidence": "json", "category": "misc"},
+    "e_autokey_bootstrap_01_crossval": {"verdict": "ELIMINATED", "best_score": "3/24", "configs": "1,080", "evidence": "json", "category": "misc"},
+    "e_compose_01_novel_pipelines": {"verdict": "ELIMINATED", "best_score": "0/24", "configs": "2,462", "evidence": "json", "category": "misc"},
+    "e_compose_02_extended": {"verdict": "ELIMINATED", "best_score": "0/24", "configs": "2,268", "evidence": "json", "category": "misc"},
+    "e_compose_03_partitioned": {"verdict": "NOISE", "best_score": "24/24 FP", "configs": "75,168", "evidence": "json", "category": "misc"},
+    "e_columnar_gap_closure": {"verdict": "NOISE", "best_score": "—", "configs": "w2-4,w16-20 exhaustive", "evidence": "json", "category": "misc"},
+    "e_freq_homophonic_analysis": {"verdict": "ELIMINATED", "best_score": "—", "configs": "analytical", "evidence": "json", "category": "misc"},
+    "e_grid_route_20x20": {"verdict": "ELIMINATED", "best_score": "4/24", "configs": "2,172", "evidence": "json", "category": "misc"},
+    "e_masonic_01_pigpen_analysis": {"verdict": "ELIMINATED", "best_score": "4/24", "configs": "236", "evidence": "json", "category": "misc"},
+    "e_mono_sa_substitution": {"verdict": "ELIMINATED", "best_score": "—", "configs": "SA 100K+", "evidence": "json", "category": "misc"},
+    "e_route_definitive": {"verdict": "NOISE", "best_score": "19/24 FP", "configs": "43,056", "evidence": "json", "category": "misc"},
+    "exp_lecarre_rk_001": {"verdict": "NOISE", "best_score": "7/24", "configs": "508K windows", "evidence": "json", "category": "misc"},
+    "e_bc_gap_analysis": {"verdict": "PROOF", "best_score": "—", "configs": "analytical", "evidence": "json", "category": "misc"},
+    "e_col_pure_exhaustive": {"verdict": "NOISE", "best_score": "—", "configs": "w2-20", "evidence": "pending", "category": "misc"},
+    "e_stat_02_comprehensive_analysis": {"verdict": "DOCUMENTED", "best_score": "—", "configs": "analytical", "evidence": "pending", "category": "misc"},
+    "disprove_caesar_rot": {"verdict": "ELIMINATED", "best_score": "—", "configs": "25", "evidence": "redundant", "category": "misc"},
 
     # ── Infrastructure / meta scripts ──
     "build_experiment_ledger": {"verdict": "TOOL", "best_score": "—", "configs": "—", "evidence": "self", "category": "infrastructure"},
+
+    # ── E-SOLVE series (documented in MEMORY.md, output consumed from terminal) ──
+    "e_solve_01_novel_attacks": {"verdict": "NOISE", "best_score": "—", "configs": "—", "evidence": "json", "category": "misc"},
+    "e_solve_02_deep_attacks": {"verdict": "NOISE", "best_score": "—", "configs": "—", "evidence": "json", "category": "misc"},
+    "e_solve_03_remaining_gaps": {"verdict": "NOISE", "best_score": "—", "configs": "—", "evidence": "json", "category": "misc"},
+    "e_solve_04_key_derivation": {"verdict": "NOISE", "best_score": "—", "configs": "—", "evidence": "json", "category": "misc"},
+    "e_solve_05_key_transposition": {"verdict": "NOISE", "best_score": "—", "configs": "—", "evidence": "json", "category": "misc"},
+    "e_solve_06_crib_drag": {"verdict": "NOISE", "best_score": "—", "configs": "—", "evidence": "report", "category": "misc"},
+    "e_solve_07_beaufort_focus": {"verdict": "NOISE", "best_score": "24/24 FP", "configs": "25M", "evidence": "json", "category": "misc"},
+    "e_solve_08_trithemius_mod19": {"verdict": "ELIMINATED", "best_score": "—", "configs": "~100K", "evidence": "report", "category": "misc"},
+    "e_solve_09_null_masking": {"verdict": "ELIMINATED", "best_score": "—", "configs": "—", "evidence": "report", "category": "misc"},
+    "e_solve_10_null_proof": {"verdict": "PROOF", "best_score": "—", "configs": "analytical", "evidence": "report", "category": "misc"},
+    "e_solve_11_feedback_digraph": {"verdict": "NOISE", "best_score": "—", "configs": "~20K", "evidence": "report", "category": "misc"},
+    "e_solve_12_keystream_transposition": {"verdict": "ELIMINATED", "best_score": "0/24", "configs": "9.8M", "evidence": "json", "category": "misc"},
+    "e_solve_13_grid_routes": {"verdict": "ELIMINATED", "best_score": "0/24", "configs": "52K", "evidence": "json", "category": "misc"},
+    "e_solve_14_beaufort_structure": {"verdict": "NOISE", "best_score": "—", "configs": "~5K", "evidence": "report", "category": "misc"},
+    "e_solve_15_masked_pt": {"verdict": "NOISE", "best_score": "—", "configs": "~50K", "evidence": "report", "category": "misc"},
+    "e_solve_16_encrypt_transpose": {"verdict": "ELIMINATED", "best_score": "—", "configs": "analytical", "evidence": "report", "category": "misc"},
+    "e_solve_16b_period5_deep": {"verdict": "ELIMINATED", "best_score": "—", "configs": "~10M filtered", "evidence": "report", "category": "misc"},
+    "e_solve_17_2d_matrix": {"verdict": "ELIMINATED", "best_score": "—", "configs": "analytical", "evidence": "report", "category": "misc"},
+    "e_solve_18_nonlinear_chain": {"verdict": "ELIMINATED", "best_score": "—", "configs": "~90K", "evidence": "report", "category": "misc"},
+    "e_solve_19_2d_keyword_cols": {"verdict": "ELIMINATED", "best_score": "—", "configs": "~12M", "evidence": "report", "category": "misc"},
+    "e_solve_20_autokey_keyword": {"verdict": "ELIMINATED", "best_score": "—", "configs": "2,538", "evidence": "report", "category": "misc"},
+    "e_solve_21_mixed_variant": {"verdict": "ELIMINATED", "best_score": "—", "configs": "—", "evidence": "report", "category": "misc"},
+    "e_solve_22_final_gaps": {"verdict": "ELIMINATED", "best_score": "—", "configs": "~200K", "evidence": "report", "category": "misc"},
+
+    # ── E-WEBSTER ──
+    "e_webster_01_judge_keyword": {"verdict": "NOISE", "best_score": "—", "configs": "—", "evidence": "report", "category": "misc"},
+    "e_webster_02_bespoke_methods": {"verdict": "NOISE", "best_score": "—", "configs": "—", "evidence": "report", "category": "misc"},
+
+    # ── E-AUDIT series ──
+    "e_audit_01_crib_robustness": {"verdict": "CONFIRMED", "best_score": "—", "configs": "—", "evidence": "report", "category": "e_audit"},
+    "e_audit_02_strip_stagger": {"verdict": "NOISE", "best_score": "—", "configs": "—", "evidence": "report", "category": "e_audit"},
+    "e_audit_03_weltzeituhr_fsm": {"verdict": "NOISE", "best_score": "—", "configs": "—", "evidence": "report", "category": "e_audit"},
+    "e_audit_04_cardan_aperture": {"verdict": "NOISE", "best_score": "—", "configs": "—", "evidence": "report", "category": "e_audit"},
+    "e_audit_05_hill_2x2_lyar": {"verdict": "ELIMINATED", "best_score": "—", "configs": "—", "evidence": "report", "category": "e_audit"},
+    "e_audit_05_scytale_cylinder": {"verdict": "ELIMINATED", "best_score": "—", "configs": "—", "evidence": "report", "category": "e_audit"},
+    "e_audit_05_tableau_column_keys": {"verdict": "NOISE", "best_score": "—", "configs": "—", "evidence": "report", "category": "e_audit"},
+    "e_audit_05_yar_init_params": {"verdict": "NOISE", "best_score": "—", "configs": "—", "evidence": "report", "category": "e_audit"},
+    "e_audit_06_k3_method_k4": {"verdict": "NOISE", "best_score": "—", "configs": "—", "evidence": "report", "category": "e_audit"},
+    "e_audit_07_k3_running_key": {"verdict": "NOISE", "best_score": "—", "configs": "—", "evidence": "report", "category": "e_audit"},
+    "e_audit_08_delimiter_x_extraction": {"verdict": "NOISE", "best_score": "—", "configs": "—", "evidence": "report", "category": "e_audit"},
+
+    # ── E-NOVEL series ──
+    "e_novel_01_route_ciphers": {"verdict": "NOISE", "best_score": "—", "configs": "—", "evidence": "report", "category": "e_novel"},
+    "e_novel_02_book_cipher": {"verdict": "NOISE", "best_score": "—", "configs": "—", "evidence": "report", "category": "e_novel"},
+    "e_novel_03_tableau_physical": {"verdict": "NOISE", "best_score": "—", "configs": "—", "evidence": "report", "category": "e_novel"},
+    "e_novel_04_berlin_clock": {"verdict": "NOISE", "best_score": "—", "configs": "—", "evidence": "report", "category": "e_novel"},
+    "e_novel_05_doubles_intervals": {"verdict": "NOISE", "best_score": "—", "configs": "—", "evidence": "report", "category": "e_novel"},
+    "e_novel_06_chaocipher_evolving": {"verdict": "NOISE", "best_score": "—", "configs": "—", "evidence": "report", "category": "e_novel"},
+
+    # ── E-EXPLORER series ──
+    "e_explorer_01_sanborn_manuscript": {"verdict": "NOISE", "best_score": "—", "configs": "—", "evidence": "report", "category": "e_explorer"},
+    "e_explorer_02_rotation_rk_expanded": {"verdict": "NOISE", "best_score": "—", "configs": "—", "evidence": "report", "category": "e_explorer"},
+    "e_explorer_04_nonstandard_structures": {"verdict": "NOISE", "best_score": "—", "configs": "—", "evidence": "report", "category": "e_explorer"},
+    "e_explorer_05_interleave_followup": {"verdict": "NOISE", "best_score": "—", "configs": "—", "evidence": "json", "category": "e_explorer"},
+    "e_explorer_06_physical_procedural": {"verdict": "NOISE", "best_score": "—", "configs": "—", "evidence": "report", "category": "e_explorer"},
+    "e_explorer_07_k5_constraints": {"verdict": "DOCUMENTED", "best_score": "—", "configs": "—", "evidence": "json", "category": "e_explorer"},
+
+    # ── E-MARATHON ──
+    "e_marathon_01_final_assault": {"verdict": "NOISE", "best_score": "—", "configs": "—", "evidence": "report", "category": "misc"},
+
+    # ── E-RERUN ──
+    "e_rerun_01_opgold_expanded": {"verdict": "NOISE", "best_score": "—", "configs": "—", "evidence": "report", "category": "misc"},
+    "e_rerun_02_tableau_expanded": {"verdict": "NOISE", "best_score": "—", "configs": "—", "evidence": "report", "category": "misc"},
+
+    # ── Other documented experiments ──
+    "e_recurrence_00_linear_order2": {"verdict": "ELIMINATED", "best_score": "—", "configs": "—", "evidence": "report", "category": "misc"},
+    "e_period_27_29_formal": {"verdict": "ELIMINATED", "best_score": "—", "configs": "analytical", "evidence": "report", "category": "misc"},
+    "e_playfair_01_full_disproof": {"verdict": "ELIMINATED", "best_score": "—", "configs": "—", "evidence": "json", "category": "misc"},
+    "e_disproof_01_caesar_all_shifts": {"verdict": "ELIMINATED", "best_score": "—", "configs": "25", "evidence": "report", "category": "misc"},
+    "e_disproof_01_caesar_shifts": {"verdict": "ELIMINATED", "best_score": "—", "configs": "25", "evidence": "report", "category": "misc"},
+    "e_wtz_00_cities_runkey": {"verdict": "NOISE", "best_score": "—", "configs": "—", "evidence": "json", "category": "misc"},
+    "e_tableau_nav_001_algebraic": {"verdict": "NOISE", "best_score": "—", "configs": "—", "evidence": "report", "category": "misc"},
+    "e_tableau_20_k3method_keywords": {"verdict": "NOISE", "best_score": "—", "configs": "—", "evidence": "report", "category": "misc"},
+    "e_validator_01_pipeline_check": {"verdict": "TOOL", "best_score": "—", "configs": "—", "evidence": "report", "category": "misc"},
+    "e_sa_assault": {"verdict": "UNDERDETERMINED", "best_score": "—", "configs": "—", "evidence": "report", "category": "misc"},
+    "e_sa_constrained": {"verdict": "UNDERDETERMINED", "best_score": "—", "configs": "—", "evidence": "report", "category": "misc"},
+    "e_s_31_carter_running_key": {"verdict": "ELIMINATED", "best_score": "10/24", "configs": "26.8M", "evidence": "report", "category": "e_s_legacy"},
+    "e_affine_mono_disproof": {"verdict": "ELIMINATED", "best_score": "—", "configs": "—", "evidence": "json", "category": "misc"},
+
+    # ── Utility / infrastructure ──
+    "card_cipher_stats": {"verdict": "NOISE", "best_score": "—", "configs": "analytical", "evidence": "inferred", "category": "infrastructure"},
+    "corpus_scanner": {"verdict": "DOCUMENTED", "best_score": "—", "configs": "60+ texts", "evidence": "json", "category": "infrastructure"},
+    "corpus_scanner_wave2": {"verdict": "DOCUMENTED", "best_score": "—", "configs": "120+ texts", "evidence": "json", "category": "infrastructure"},
+    "hill_cipher_analysis": {"verdict": "ELIMINATED", "best_score": "—", "configs": "analytical", "evidence": "inferred", "category": "infrastructure"},
+    "k3_ct_pt_audit": {"verdict": "TOOL", "best_score": "—", "configs": "—", "evidence": "inferred", "category": "infrastructure"},
+    "k4_reverse_engine": {"verdict": "UNDERDETERMINED", "best_score": "—", "configs": "~56B theoretical", "evidence": "inferred", "category": "infrastructure"},
+    "solve_k1_from_k0": {"verdict": "TOOL", "best_score": "—", "configs": "—", "evidence": "inferred", "category": "infrastructure"},
 
     # ── E-TEAM (Operation Final Vector + earlier) ──
     "e_team_anomaly_extraction": {"verdict": "NOISE", "best_score": "—", "configs": "~500", "evidence": "json", "category": "e_team"},
