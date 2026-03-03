@@ -1,0 +1,19 @@
+{
+  "experiment": "E-UNSCRAMBLE-03",
+  "date": "2026-03-02",
+  "total_hits": 0,
+  "any_crib_found": false,
+  "crib_hits": [],
+  "feasible_ene_bc_combos_kryptos_vig": 1894,
+  "forced_constraints": 1,
+  "hill_climb_best": {
+    "score": -3.944981627659575,
+    "kw": "KRYPTOS",
+    "pt": "RBEHALARINTINATIONSINTHEMONESSPREATEDINAELYSLESTATHEADEPERSHOWERECTORYCHOLATICRE"
+  },
+  "top_rotation": {
+    "offset": 19,
+    "score": -6.623430414893616,
+    "pt": "AIMARSLOCUVHRMZXPRIOZCSVJAHMJRBLIBXTYWRPAAWDENTSILFMDYRILIYOELIJFFVUXEONHAHJIWND"
+  }
+}
