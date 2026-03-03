@@ -2,28 +2,97 @@
 Configuration for KryptosBot.
 
 Contains K4 ciphertext, known plaintext cribs, hypothesis categories,
-and runtime tuning parameters. Edit DEFAULT_CONFIG or pass overrides
-to the orchestrator at launch time.
+and runtime tuning parameters.
+
+PARADIGM (2026-03-02):
+    The carved K4 text is SCRAMBLED. run_lean.py searches for the
+    unscrambling permutation. When found, it writes the real CT to
+    kbot_results/real_ct.json. This module loads that file if present,
+    otherwise falls back to the carved (scrambled) text.
+
+    Set KBOT_REAL_CT env var or --real-ct CLI flag to override.
 """
 
 from __future__ import annotations
 
+import json
+import logging
+import os
 from dataclasses import dataclass, field
 from enum import Enum, auto
 from pathlib import Path
 from typing import Any
 
+logger = logging.getLogger("kryptosbot.config")
+
 # ---------------------------------------------------------------------------
 # K4 Ciphertext & Known Plaintext
 # ---------------------------------------------------------------------------
 
-K4_CIPHERTEXT = (
+# The carved text — this is SCRAMBLED, not the real ciphertext
+K4_CARVED = (
     "OBKRUOXOGHULBSOLIFBBWFLRVQQPRNGKSSOTWTQSJQSSEKZZWATJKLUDIAWINFB"
     "NYPVTTMZFPKWGDKZXTJCDIGKUHUAUEKCAR"
 )
+
+
+def _load_real_ct() -> str | None:
+    """Load the real (unscrambled) CT if run_lean.py has found it.
+
+    Checks in order:
+    1. KBOT_REAL_CT environment variable (path to JSON file)
+    2. kbot_results/real_ct.json relative to this file's parent
+    3. ./kbot_results/real_ct.json relative to CWD
+
+    The JSON file schema:
+        {"real_ct": "...", "permutation": [...], "method": "...", "score": N}
+
+    Returns the real CT string, or None if not found.
+    """
+    search_paths = [
+        os.environ.get("KBOT_REAL_CT"),
+        Path(__file__).resolve().parent.parent / "kbot_results" / "real_ct.json",
+        Path("kbot_results/real_ct.json"),
+    ]
+
+    for p in search_paths:
+        if p is None:
+            continue
+        p = Path(p)
+        if p.exists():
+            try:
+                data = json.loads(p.read_text())
+                ct = data.get("real_ct", "").strip().upper()
+                if len(ct) == 97 and ct.isalpha():
+                    logger.info("Loaded REAL CT from %s (method: %s)",
+                                p, data.get("method", "unknown"))
+                    return ct
+                else:
+                    logger.warning("real_ct.json at %s has invalid CT (len=%d)", p, len(ct))
+            except (json.JSONDecodeError, KeyError, AttributeError) as e:
+                logger.warning("Failed to parse real_ct.json at %s: %s", p, e)
+
+    return None
+
+
+_real_ct = _load_real_ct()
+
+# K4_CIPHERTEXT is what the rest of the system operates on.
+# If we've found the real CT, use it. Otherwise, use the carved (scrambled) text.
+if _real_ct:
+    K4_CIPHERTEXT = _real_ct
+    K4_SOURCE = "real_ct.json (unscrambled)"
+else:
+    K4_CIPHERTEXT = K4_CARVED
+    K4_SOURCE = "carved (scrambled — real CT not yet found)"
+
 K4_LENGTH = len(K4_CIPHERTEXT)  # 97
 
 # Sanborn / Scheidt confirmed cribs (0-indexed, half-open intervals)
+# NOTE: Crib positions may differ between carved and real CT.
+# These positions were confirmed for the CARVED text. If using real CT,
+# the cribs might be at different positions — run_lean.py should include
+# updated crib positions in real_ct.json if they shift.
 KNOWN_CRIBS: dict[str, tuple[int, int]] = {
     "EASTNORTHEAST": (21, 34),  # positions 21-33 inclusive
     "BERLIN": (63, 69),         # positions 63-68 inclusive

@@ -1,10 +1,11 @@
 script,category,status,evidence_type,verdict,best_score,configs_tested,artifact_path,machine_readable,rerun_recommended,reason
 agent_k4_columnar7_nonen_scan.py,infrastructure,ran_with_artifact,json,NOISE,—,—,results/agent_k4_columnar7_nonen_scan.json,yes,no,Verdict is final: NOISE
 agent_k4_keystream_language_scan.py,infrastructure,ran_with_artifact,json,NOISE,—,—,results/agent_k4_keystream_language_scan.json,yes,no,Verdict is final: NOISE
-build_experiment_ledger.py,infrastructure,unverified,none,UNVERIFIED,—,—,,no,audit,No execution evidence found; verify if hypothesis is covered elsewhere before re-running
-card_cipher_stats.py,misc,ran_no_artifact,inferred,NOISE,—,—,,no,no,Verdict is final: NOISE
-corpus_scanner.py,infrastructure,ran_no_artifact,inferred,DOCUMENTED,—,—,,no,no,Documented in inventory but no formal verdict
-corpus_scanner_wave2.py,infrastructure,ran_no_artifact,inferred,DOCUMENTED,—,—,,no,no,Documented in inventory but no formal verdict
+build_experiment_ledger.py,infrastructure,unverified,self,TOOL,—,—,,no,no,Verdict is final: TOOL
+card_cipher_stats.py,infrastructure,ran_no_artifact,inferred,NOISE,—,analytical,,no,no,Verdict is final: NOISE
+corpus_scanner.py,infrastructure,ran_with_artifact,json,DOCUMENTED,—,60+ texts,results/corpus_scan/corpus_scan_wave2_results.json,yes,no,Documented in inventory but no formal verdict
+corpus_scanner_wave2.py,infrastructure,ran_with_artifact,json,DOCUMENTED,—,120+ texts,results/corpus_scan/corpus_scan_wave2_results.json,yes,no,Documented in inventory but no formal verdict
+disprove_caesar_rot.py,misc,unverified,redundant,ELIMINATED,—,25,,no,no,Verdict is final: ELIMINATED
 dragnet_v4.py,infrastructure,ran_with_artifact,report+json,ELIMINATED,0,667B,results/dragnet_v4.json,yes,no,Verdict is final: ELIMINATED
 e01_morse_e_extraction.py,misc,ran_no_artifact,inferred,NOISE,—,—,,no,no,Verdict is final: NOISE
 e02_misspelling_deltas.py,misc,ran_no_artifact,inferred,NOISE,—,—,,no,no,Verdict is final: NOISE
@@ -23,17 +24,22 @@ e_antipodes_07_yar_block_cipher.py,e_antipodes,ran_no_artifact,report,NOISE,6/24
 e_antipodes_08_stream_context.py,e_antipodes,ran_with_artifact,report+json,NOISE,6/24,"2,727",results/e_antipodes_08/summary.json,yes,no,Verdict is final: NOISE
 e_antipodes_09_layertwo_trim.py,e_antipodes,ran_no_artifact,report,NOISE,7/24,"12,692",,no,no,Verdict is final: NOISE
 e_antipodes_10_coordinate_grid.py,e_antipodes,ran_no_artifact,report,NOISE,6/24,915,,no,no,Verdict is final: NOISE
-e_audit_01_crib_robustness.py,e_audit,ran_no_artifact,inferred,NOISE,—,—,,no,no,Verdict is final: NOISE
-e_audit_02_strip_stagger.py,e_audit,ran_no_artifact,inferred,NOISE,—,—,,no,no,Verdict is final: NOISE
-e_audit_03_weltzeituhr_fsm.py,e_audit,ran_no_artifact,inferred,NOISE,—,—,,no,no,Verdict is final: NOISE
-e_audit_04_cardan_aperture.py,e_audit,ran_no_artifact,inferred,NOISE,—,—,,no,no,Verdict is final: NOISE
-e_audit_05_hill_2x2_lyar.py,e_audit,ran_no_artifact,inferred,ELIMINATED,—,—,,no,no,Verdict is final: ELIMINATED
-e_audit_05_scytale_cylinder.py,e_audit,ran_no_artifact,inferred,NOISE,—,—,,no,no,Verdict is final: NOISE
-e_audit_05_tableau_column_keys.py,e_audit,ran_no_artifact,inferred,NOISE,—,—,,no,no,Verdict is final: NOISE
-e_audit_05_yar_init_params.py,e_audit,ran_no_artifact,inferred,NOISE,—,—,,no,no,Verdict is final: NOISE
-e_audit_06_k3_method_k4.py,e_audit,ran_no_artifact,inferred,NOISE,—,—,,no,no,Verdict is final: NOISE
-e_audit_07_k3_running_key.py,e_audit,ran_no_artifact,inferred,NOISE,—,—,,no,no,Verdict is final: NOISE
-e_audit_08_delimiter_x_extraction.py,e_audit,ran_no_artifact,inferred,NOISE,—,—,,no,no,Verdict is final: NOISE
+e_audit_01_crib_robustness.py,e_audit,ran_no_artifact,report,CONFIRMED,—,—,,no,no,Verdict is final: CONFIRMED
+e_audit_02_strip_stagger.py,e_audit,ran_no_artifact,report,NOISE,—,—,,no,no,Verdict is final: NOISE
+e_audit_03_weltzeituhr_fsm.py,e_audit,ran_no_artifact,report,NOISE,—,—,,no,no,Verdict is final: NOISE
+e_audit_04_cardan_aperture.py,e_audit,ran_no_artifact,report,NOISE,—,—,,no,no,Verdict is final: NOISE
+e_audit_05_hill_2x2_lyar.py,e_audit,ran_no_artifact,report,ELIMINATED,—,—,,no,no,Verdict is final: ELIMINATED
+e_audit_05_scytale_cylinder.py,e_audit,ran_no_artifact,report,ELIMINATED,—,—,,no,no,Verdict is final: ELIMINATED
+e_audit_05_tableau_column_keys.py,e_audit,ran_no_artifact,report,NOISE,—,—,,no,no,Verdict is final: NOISE
+e_audit_05_yar_init_params.py,e_audit,ran_no_artifact,report,NOISE,—,—,,no,no,Verdict is final: NOISE
+e_audit_06_k3_method_k4.py,e_audit,ran_no_artifact,report,NOISE,—,—,,no,no,Verdict is final: NOISE
+e_audit_07_k3_running_key.py,e_audit,ran_no_artifact,report,NOISE,—,—,,no,no,Verdict is final: NOISE
+e_audit_08_delimiter_x_extraction.py,e_audit,ran_no_artifact,report,NOISE,—,—,,no,no,Verdict is final: NOISE
+e_autokey_bidir_extended.py,misc,ran_with_artifact,json,NOISE,24/24 FP,all seeds 1-96,results/e_autokey_bidir_extended.json,yes,no,Verdict is final: NOISE
+e_autokey_bidirectional.py,misc,ran_with_artifact,json,ELIMINATED,0/24,45,results/e_autokey_bidirectional.json,yes,no,Verdict is final: ELIMINATED
+e_autokey_bootstrap_00.py,misc,ran_with_artifact,json,NOISE,24/24 FP,480,results/e_autokey_bootstrap_00.json,yes,no,Verdict is final: NOISE
+e_autokey_bootstrap_01_crossval.py,misc,ran_with_artifact,json,ELIMINATED,3/24,"1,080",results/e_autokey_bootstrap_01_crossval.json,yes,no,Verdict is final: ELIMINATED
+e_bc_gap_analysis.py,misc,ran_with_artifact,json,PROOF,—,analytical,results/e_bc_gap_analysis.json,yes,no,Verdict is final: PROOF
 e_bespoke_01_misspelling_mods.py,e_bespoke,ran_no_artifact,report,NOISE,—,—,,no,no,Verdict is final: NOISE
 e_bespoke_02_abscissa_linear.py,e_bespoke,ran_with_artifact,report+json,NOISE,5/24,—,results/e_bespoke_02.json,yes,no,Verdict is final: NOISE
 e_bespoke_03_shift_values.py,e_bespoke,ran_no_artifact,report,NOISE,—,—,,no,no,Verdict is final: NOISE
@@ -58,8 +64,8 @@ e_cfm_06_east_constraint.py,e_cfm,ran_with_artifact,report+json,NOISE+TOOL,0/24,
 e_cfm_07_k3_rotational.py,e_cfm,ran_with_artifact,report+json,NOISE,4/24,~1K,results/e_cfm_07_k3_rotational.json,yes,no,Verdict is final: NOISE
 e_cfm_08_trans_key_scoring.py,e_cfm,ran_with_artifact,report+json,UNDERDETERMINED,—,28M,results/e_cfm_08_trans_key_scoring.json,yes,no,"Underdetermined by design (too many DOF); new constraints needed, not re-runs"
 e_cfm_09_gutenberg_east_scan.py,e_cfm,ran_with_artifact,report+json,NOISE,0/24,47.4M chars,results/e_cfm_09_gutenberg_east.json,yes,no,Verdict is final: NOISE
-e_cfm_10_medusa_rule.py,e_cfm,unverified,none,UNCERTAIN,—,—,,no,audit,No evidence found; may represent unique hypothesis
-e_cfm_11_anomaly_key_derivation.py,e_cfm,unverified,none,UNCERTAIN,—,—,,no,audit,No evidence found; may represent unique hypothesis
+e_cfm_10_medusa_rule.py,e_cfm,ran_no_artifact,report,ELIMINATED,5/24,"1,974",,no,no,Verdict is final: ELIMINATED
+e_cfm_11_anomaly_key_derivation.py,e_cfm,ran_no_artifact,report,ELIMINATED,5/24,"1,989",,no,no,Verdict is final: ELIMINATED
 e_chart_01_running_key.py,e_chart,ran_with_artifact,report+json,ELIMINATED,6/24,840K,results/e_chart_01_running_key.json,yes,no,Verdict is final: ELIMINATED
 e_chart_02_autokey.py,e_chart,ran_with_artifact,report+json,ELIMINATED,9/24,25.2M,results/e_chart_02_autokey.json,yes,no,Verdict is final: ELIMINATED
 e_chart_03_misspelling_tableau.py,e_chart,ran_with_artifact,report+json,ELIMINATED,8/24,364K,results/e_chart_03_misspelling.json,yes,no,Verdict is final: ELIMINATED
@@ -72,97 +78,117 @@ e_chart_08_noise_analysis.py,e_chart,ran_no_artifact,report,NOISE,—,—,,no,no
 e_chart_09_boundary_sweep.py,e_chart,ran_no_artifact,report,NOISE,—,—,,no,no,Verdict is final: NOISE
 e_chart_10_w9_sub.py,e_chart,ran_no_artifact,report,ELIMINATED,—,—,,no,no,Verdict is final: ELIMINATED
 e_chart_11_rotation.py,e_chart,ran_no_artifact,report,ELIMINATED,6/24,44.7K,,no,no,Verdict is final: ELIMINATED
+e_col_pure_exhaustive.py,misc,unverified,pending,NOISE,—,w2-20,,no,no,Verdict is final: NOISE
+e_columnar_gap_closure.py,misc,ran_with_artifact,json,NOISE,—,"w2-4,w16-20 exhaustive",results/e_columnar_gap_closure.json,yes,no,Verdict is final: NOISE
+e_compose_01_novel_pipelines.py,misc,ran_with_artifact,json,ELIMINATED,0/24,"2,462",results/e_compose_01.json,yes,no,Verdict is final: ELIMINATED
+e_compose_02_extended.py,misc,ran_with_artifact,json,ELIMINATED,0/24,"2,268",results/e_compose_02.json,yes,no,Verdict is final: ELIMINATED
+e_compose_03_partitioned.py,misc,ran_with_artifact,json,NOISE,24/24 FP,"75,168",results/e_compose_03.json,yes,no,Verdict is final: NOISE
 e_desp_01_missing_char_grid.py,misc,ran_no_artifact,inferred,NOISE,—,—,,no,no,Verdict is final: NOISE
-e_disproof_01_caesar_all_shifts.py,misc,ran_no_artifact,inferred,ELIMINATED,—,—,,no,no,Verdict is final: ELIMINATED
-e_disproof_01_caesar_shifts.py,misc,ran_no_artifact,inferred,ELIMINATED,—,—,,no,no,Verdict is final: ELIMINATED
+e_disproof_01_caesar_all_shifts.py,misc,ran_no_artifact,report,ELIMINATED,—,25,,no,no,Verdict is final: ELIMINATED
+e_disproof_01_caesar_shifts.py,misc,ran_no_artifact,report,ELIMINATED,—,25,,no,no,Verdict is final: ELIMINATED
 e_egypt_00_corpus_pipeline.py,e_egypt,ran_with_artifact,report+json,NOISE,0/24,113.9M,,no,no,Verdict is final: NOISE
 e_egypt_01_columnar_sweep.py,e_egypt,ran_with_artifact,report+json,NOISE,0/24,1.19B,results/e_egypt_01_columnar_sweep.json,yes,no,Verdict is final: NOISE
-e_explorer_01_sanborn_manuscript.py,e_explorer,ran_no_artifact,inferred,NOISE,—,—,,no,no,Verdict is final: NOISE
-e_explorer_02_rotation_rk_expanded.py,e_explorer,ran_no_artifact,inferred,NOISE,—,—,,no,no,Verdict is final: NOISE
+e_explorer_01_sanborn_manuscript.py,e_explorer,ran_no_artifact,report,NOISE,—,—,,no,no,Verdict is final: NOISE
+e_explorer_02_rotation_rk_expanded.py,e_explorer,ran_no_artifact,report,NOISE,—,—,,no,no,Verdict is final: NOISE
 e_explorer_03_w_separator.py,e_explorer,ran_no_artifact,inferred,NOISE,—,—,,no,no,Verdict is final: NOISE
-e_explorer_04_nonstandard_structures.py,e_explorer,ran_no_artifact,inferred,NOISE,—,—,,no,no,Verdict is final: NOISE
+e_explorer_04_nonstandard_structures.py,e_explorer,ran_no_artifact,report,NOISE,—,—,,no,no,Verdict is final: NOISE
 e_explorer_05_interleave_followup.py,e_explorer,ran_with_artifact,json,NOISE,—,—,artifacts/explorer_05_interleave_followup.json,yes,no,Verdict is final: NOISE
-e_explorer_06_physical_procedural.py,e_explorer,ran_no_artifact,inferred,DOCUMENTED,—,—,,no,no,Documented in inventory but no formal verdict
+e_explorer_06_physical_procedural.py,e_explorer,ran_no_artifact,report,NOISE,—,—,,no,no,Verdict is final: NOISE
 e_explorer_07_k5_constraints.py,e_explorer,ran_with_artifact,json,DOCUMENTED,—,—,artifacts/explorer_07_k5_constraints.json,yes,no,Documented in inventory but no formal verdict
-e_frac_01_w9_structural.py,e_frac,ran_with_artifact,report,NOISE,14/24,—,results/frac/e_frac_21_fractionation_proofs.json,yes,no,Verdict is final: NOISE
-e_frac_02b_colprog_baseline.py,e_frac,ran_with_artifact,report,NOISE,—,—,results/frac/e_frac_21_fractionation_proofs.json,yes,no,Verdict is final: NOISE
-e_frac_05_mixed_alphabets.py,e_frac,ran_with_artifact,report,NOISE,—,—,results/frac/e_frac_21_fractionation_proofs.json,yes,no,Verdict is final: NOISE
-e_frac_06_w11w13_structural.py,e_frac,ran_with_artifact,report,NOISE,—,—,results/frac/e_frac_21_fractionation_proofs.json,yes,no,Verdict is final: NOISE
-e_frac_07_bimodal_w9.py,e_frac,ran_with_artifact,report,NOISE,—,—,results/frac/e_frac_21_fractionation_proofs.json,yes,no,Verdict is final: NOISE
-e_frac_08_bimodal_multiwidth.py,e_frac,ran_with_artifact,report,NOISE,—,—,results/frac/e_frac_21_fractionation_proofs.json,yes,no,Verdict is final: NOISE
-e_frac_09_bimodal_structure.py,e_frac,ran_with_artifact,report,NOISE,—,—,results/frac/e_frac_21_fractionation_proofs.json,yes,no,Verdict is final: NOISE
-e_frac_10_strip_bimodal.py,e_frac,ran_with_artifact,report,NOISE,—,—,results/frac/e_frac_21_fractionation_proofs.json,yes,no,Verdict is final: NOISE
-e_frac_11_bimodal_validity.py,e_frac,ran_with_artifact,report,NOISE,—,—,results/frac/e_frac_21_fractionation_proofs.json,yes,no,Verdict is final: NOISE
-e_frac_12_w9_strict_reeval.py,e_frac,ran_with_artifact,report,NOISE,14/24,362K,results/frac/e_frac_21_fractionation_proofs.json,yes,no,Verdict is final: NOISE
-e_frac_13_ic_analysis.py,e_frac,ran_with_artifact,report,NOT_SIGNIFICANT,—,—,results/frac/e_frac_21_fractionation_proofs.json,yes,no,Verdict is final: NOT_SIGNIFICANT
-e_frac_14_autocorrelation.py,e_frac,ran_with_artifact,report,NOT_SIGNIFICANT,—,—,results/frac/e_frac_21_fractionation_proofs.json,yes,no,Verdict is final: NOT_SIGNIFICANT
-e_frac_15_linear_key.py,e_frac,ran_with_artifact,report,NOISE,—,—,results/frac/e_frac_21_fractionation_proofs.json,yes,no,Verdict is final: NOISE
-e_frac_16_key_distribution.py,e_frac,ran_with_artifact,report,RETRACTED,—,—,results/frac/e_frac_21_fractionation_proofs.json,yes,no,Verdict is final: RETRACTED
-e_frac_17_beaufort_running_key.py,e_frac,ran_with_artifact,report,NOISE,—,—,results/frac/e_frac_21_fractionation_proofs.json,yes,no,Verdict is final: NOISE
-e_frac_18_crib_sensitivity.py,e_frac,ran_with_artifact,report,CONFIRMED,—,—,results/frac/e_frac_21_fractionation_proofs.json,yes,no,Verdict is final: CONFIRMED
-e_frac_19_pre_ene_analysis.py,e_frac,ran_with_artifact,report,ARTIFACT,—,—,results/frac/e_frac_21_fractionation_proofs.json,yes,no,Verdict is final: ARTIFACT
-e_frac_20_residue_conflict_map.py,e_frac,ran_with_artifact,report,NOISE,—,—,results/frac/e_frac_21_fractionation_proofs.json,yes,no,Verdict is final: NOISE
-e_frac_21_fractionation_structural_proofs.py,e_frac,ran_with_artifact,report+json,ELIMINATED,—,10 families,results/frac/e_frac_21_fractionation_proofs.json,yes,no,Verdict is final: ELIMINATED
-e_frac_22_null_cipher_intervals.py,e_frac,ran_with_artifact,report,NOISE,—,—,results/frac/e_frac_21_fractionation_proofs.json,yes,no,Verdict is final: NOISE
-e_frac_23_beaufort_key_reconstruction.py,e_frac,ran_with_artifact,report,NOISE,—,—,results/frac/e_frac_21_fractionation_proofs.json,yes,no,Verdict is final: NOISE
-e_frac_24_running_key_profile.py,e_frac,ran_with_artifact,report,NOISE,—,—,results/frac/e_frac_21_fractionation_proofs.json,yes,no,Verdict is final: NOISE
-e_frac_25_transposition_entropy.py,e_frac,ran_with_artifact,report,RETRACTED,—,—,results/frac/e_frac_21_fractionation_proofs.json,yes,no,Verdict is final: RETRACTED
-e_frac_26_w9_quadgram.py,e_frac,ran_with_artifact,report,NOISE,—,—,results/frac/e_frac_21_fractionation_proofs.json,yes,no,Verdict is final: NOISE
-e_frac_27_bean_width_profile.py,e_frac,ran_with_artifact,report,NOISE,—,—,results/frac/e_frac_21_fractionation_proofs.json,yes,no,Verdict is final: NOISE
-e_frac_28_w9_bean_key_sa.py,e_frac,ran_with_artifact,report,NOISE,—,—,results/frac/e_frac_21_fractionation_proofs.json,yes,no,Verdict is final: NOISE
-e_frac_29_w6w8_crib_scoring.py,e_frac,ran_with_artifact,report,NOISE,—,~600K,results/frac/e_frac_21_fractionation_proofs.json,yes,no,Verdict is final: NOISE
-e_frac_30_w10_w15_crib_scoring.py,e_frac,ran_with_artifact,report,NOISE,—,—,results/frac/e_frac_21_fractionation_proofs.json,yes,no,Verdict is final: NOISE
-e_frac_31_bean_random_perms.py,e_frac,ran_with_artifact,report,NOISE,—,—,results/frac/e_frac_21_fractionation_proofs.json,yes,no,Verdict is final: NOISE
-e_frac_32_simple_transposition_sweep.py,e_frac,ran_with_artifact,report,NOISE,13/24,"14,035",results/frac/e_frac_21_fractionation_proofs.json,yes,no,Verdict is final: NOISE
-e_frac_33_fitness_landscape.py,e_frac,ran_with_artifact,report,UNDERDETERMINED,24/24(30%),—,results/frac/e_frac_21_fractionation_proofs.json,yes,no,"Underdetermined by design (too many DOF); new constraints needed, not re-runs"
-e_frac_33b_perperiod_fix.py,e_frac,ran_with_artifact,report,UNDERDETERMINED,—,—,results/frac/e_frac_21_fractionation_proofs.json,yes,no,"Underdetermined by design (too many DOF); new constraints needed, not re-runs"
-e_frac_34_multi_objective_oracle.py,e_frac,ran_with_artifact,report,TOOL,—,—,results/frac/e_frac_21_fractionation_proofs.json,yes,no,Verdict is final: TOOL
-e_frac_35_bean_period_impossibility.py,e_frac,ran_with_artifact,report,PROOF,—,universal,results/frac/e_frac_21_fractionation_proofs.json,yes,no,Verdict is final: PROOF
-e_frac_36_period8_bean_hillclimb.py,e_frac,ran_with_artifact,report,NOISE,—,—,results/frac/e_frac_21_fractionation_proofs.json,yes,no,Verdict is final: NOISE
-e_frac_37_autokey_arbitrary_transposition.py,e_frac,ran_with_artifact,report,ELIMINATED,21/24 max,—,results/frac/e_frac_21_fractionation_proofs.json,yes,no,Verdict is final: ELIMINATED
-e_frac_38_bean_key_model_constraints.py,e_frac,ran_with_artifact,report,ELIMINATED,—,—,results/frac/e_frac_21_fractionation_proofs.json,yes,no,Verdict is final: ELIMINATED
-e_frac_39_running_key_bipartite.py,e_frac,ran_with_artifact,report,UNDERDETERMINED,—,—,results/frac/e_frac_21_fractionation_proofs.json,yes,no,"Underdetermined by design (too many DOF); new constraints needed, not re-runs"
-e_frac_40_carter_quadgram_screen.py,e_frac,ran_with_artifact,report,NOISE,—,—,results/frac/e_frac_21_fractionation_proofs.json,yes,no,Verdict is final: NOISE
-e_frac_40b_random_key_control.py,e_frac,ran_with_artifact,report,NOISE,—,—,results/frac/e_frac_21_fractionation_proofs.json,yes,no,Verdict is final: NOISE
-e_frac_41_word_discriminator.py,e_frac,ran_with_artifact,report,NOISE,—,—,results/frac/e_frac_21_fractionation_proofs.json,yes,no,Verdict is final: NOISE
-e_frac_42_refined_discriminator.py,e_frac,ran_with_artifact,report,NOISE,—,—,results/frac/e_frac_21_fractionation_proofs.json,yes,no,Verdict is final: NOISE
-e_frac_43_bigram_discriminator.py,e_frac,ran_with_artifact,report,NOISE,—,—,results/frac/e_frac_21_fractionation_proofs.json,yes,no,Verdict is final: NOISE
-e_frac_44_information_theoretic.py,e_frac,ran_with_artifact,report,PROOF,—,—,results/frac/e_frac_21_fractionation_proofs.json,yes,no,Verdict is final: PROOF
-e_frac_45_grid_reading_orders.py,e_frac,ran_with_artifact,report,NOISE,12/24,"3,888",results/frac/e_frac_21_fractionation_proofs.json,yes,no,Verdict is final: NOISE
-e_frac_46_double_columnar.py,e_frac,ran_with_artifact,report,NOISE,15/24,"2,958,400",results/frac/e_frac_21_fractionation_proofs.json,yes,no,Verdict is final: NOISE
-e_frac_47_myszkowski.py,e_frac,ran_with_artifact,report,NOISE,15/24,"226,390",results/frac/e_frac_21_fractionation_proofs.json,yes,no,Verdict is final: NOISE
-e_frac_48_amsco_disrupted.py,e_frac,ran_with_artifact,report,NOISE,14/24,"361,280",results/frac/e_frac_21_fractionation_proofs.json,yes,no,Verdict is final: NOISE
-e_frac_49_running_key_columnar.py,e_frac,ran_with_artifact,report,NOISE,0/24,8.4B checks,results/frac/e_frac_21_fractionation_proofs.json,yes,no,Verdict is final: NOISE
-e_frac_50_running_key_all_families.py,e_frac,ran_with_artifact,report,NOISE,0/24,8.8B checks,results/frac/e_frac_21_fractionation_proofs.json,yes,no,Verdict is final: NOISE
-e_frac_51_english_key_detection.py,e_frac,ran_with_artifact,report,ELIMINATED,—,—,results/frac/e_frac_21_fractionation_proofs.json,yes,no,Verdict is final: ELIMINATED
-e_frac_52_three_layer.py,e_frac,ran_with_artifact,report,NOISE,—,—,results/frac/e_frac_21_fractionation_proofs.json,yes,no,Verdict is final: NOISE
-e_frac_53_mono_inner_periodic.py,e_frac,ran_with_artifact,report,NOISE,—,—,results/frac/e_frac_21_fractionation_proofs.json,yes,no,Verdict is final: NOISE
-e_frac_54_mono_running_key_detection.py,e_frac,ran_with_artifact,report,UNDERDETERMINED,—,"1,500+",results/frac/e_frac_21_fractionation_proofs.json,yes,no,"Underdetermined by design (too many DOF); new constraints needed, not re-runs"
-e_frac_55_bean_surviving_periods.py,e_frac,ran_with_artifact,report,NOISE,14/24(p8),—,results/frac/e_frac_21_fractionation_proofs.json,yes,no,Verdict is final: NOISE
-e_hybrid_01_k3struct_extended.py,e_hybrid,ran_with_artifact,report+json,NOISE,8/24,"408,480",results/hybrid/e_hybrid_01_k3struct_extended.json,yes,no,Verdict is final: NOISE
+e_extend_xor_autokey_00.py,misc,ran_with_artifact,json,ELIMINATED,0/24,—,results/e_extend_xor_autokey_00.json,yes,no,Verdict is final: ELIMINATED
+e_frac_01_w9_structural.py,e_frac,ran_with_artifact,report,NOISE,14/24,—,results/frac/e_frac_13_ic_analysis.json,yes,no,Verdict is final: NOISE
+e_frac_02b_colprog_baseline.py,e_frac,ran_with_artifact,report,NOISE,—,—,results/frac/e_frac_13_ic_analysis.json,yes,no,Verdict is final: NOISE
+e_frac_05_mixed_alphabets.py,e_frac,ran_with_artifact,report,NOISE,—,—,results/frac/e_frac_13_ic_analysis.json,yes,no,Verdict is final: NOISE
+e_frac_06_w11w13_structural.py,e_frac,ran_with_artifact,report,NOISE,—,—,results/frac/e_frac_13_ic_analysis.json,yes,no,Verdict is final: NOISE
+e_frac_07_bimodal_w9.py,e_frac,ran_with_artifact,report,NOISE,—,—,results/frac/e_frac_13_ic_analysis.json,yes,no,Verdict is final: NOISE
+e_frac_08_bimodal_multiwidth.py,e_frac,ran_with_artifact,report,NOISE,—,—,results/frac/e_frac_13_ic_analysis.json,yes,no,Verdict is final: NOISE
+e_frac_09_bimodal_structure.py,e_frac,ran_with_artifact,report,NOISE,—,—,results/frac/e_frac_13_ic_analysis.json,yes,no,Verdict is final: NOISE
+e_frac_10_strip_bimodal.py,e_frac,ran_with_artifact,report,NOISE,—,—,results/frac/e_frac_13_ic_analysis.json,yes,no,Verdict is final: NOISE
+e_frac_11_bimodal_validity.py,e_frac,ran_with_artifact,report,NOISE,—,—,results/frac/e_frac_13_ic_analysis.json,yes,no,Verdict is final: NOISE
+e_frac_12_w9_strict_reeval.py,e_frac,ran_with_artifact,report,NOISE,14/24,362K,results/frac/e_frac_13_ic_analysis.json,yes,no,Verdict is final: NOISE
+e_frac_13_ic_analysis.py,e_frac,ran_with_artifact,report,NOT_SIGNIFICANT,—,—,results/frac/e_frac_13_ic_analysis.json,yes,no,Verdict is final: NOT_SIGNIFICANT
+e_frac_14_autocorrelation.py,e_frac,ran_with_artifact,report,NOT_SIGNIFICANT,—,—,results/frac/e_frac_13_ic_analysis.json,yes,no,Verdict is final: NOT_SIGNIFICANT
+e_frac_15_linear_key.py,e_frac,ran_with_artifact,report,NOISE,—,—,results/frac/e_frac_13_ic_analysis.json,yes,no,Verdict is final: NOISE
+e_frac_16_key_distribution.py,e_frac,ran_with_artifact,report,RETRACTED,—,—,results/frac/e_frac_13_ic_analysis.json,yes,no,Verdict is final: RETRACTED
+e_frac_17_beaufort_running_key.py,e_frac,ran_with_artifact,report,NOISE,—,—,results/frac/e_frac_13_ic_analysis.json,yes,no,Verdict is final: NOISE
+e_frac_18_crib_sensitivity.py,e_frac,ran_with_artifact,report,CONFIRMED,—,—,results/frac/e_frac_13_ic_analysis.json,yes,no,Verdict is final: CONFIRMED
+e_frac_19_pre_ene_analysis.py,e_frac,ran_with_artifact,report,ARTIFACT,—,—,results/frac/e_frac_13_ic_analysis.json,yes,no,Verdict is final: ARTIFACT
+e_frac_20_residue_conflict_map.py,e_frac,ran_with_artifact,report,NOISE,—,—,results/frac/e_frac_13_ic_analysis.json,yes,no,Verdict is final: NOISE
+e_frac_21_fractionation_structural_proofs.py,e_frac,ran_with_artifact,report+json,ELIMINATED,—,10 families,results/frac/e_frac_13_ic_analysis.json,yes,no,Verdict is final: ELIMINATED
+e_frac_22_null_cipher_intervals.py,e_frac,ran_with_artifact,report,NOISE,—,—,results/frac/e_frac_13_ic_analysis.json,yes,no,Verdict is final: NOISE
+e_frac_23_beaufort_key_reconstruction.py,e_frac,ran_with_artifact,report,NOISE,—,—,results/frac/e_frac_13_ic_analysis.json,yes,no,Verdict is final: NOISE
+e_frac_24_running_key_profile.py,e_frac,ran_with_artifact,report,NOISE,—,—,results/frac/e_frac_13_ic_analysis.json,yes,no,Verdict is final: NOISE
+e_frac_25_transposition_entropy.py,e_frac,ran_with_artifact,report,RETRACTED,—,—,results/frac/e_frac_13_ic_analysis.json,yes,no,Verdict is final: RETRACTED
+e_frac_26_w9_quadgram.py,e_frac,ran_with_artifact,report,NOISE,—,—,results/frac/e_frac_13_ic_analysis.json,yes,no,Verdict is final: NOISE
+e_frac_27_bean_width_profile.py,e_frac,ran_with_artifact,report,NOISE,—,—,results/frac/e_frac_13_ic_analysis.json,yes,no,Verdict is final: NOISE
+e_frac_28_w9_bean_key_sa.py,e_frac,ran_with_artifact,report,NOISE,—,—,results/frac/e_frac_13_ic_analysis.json,yes,no,Verdict is final: NOISE
+e_frac_29_w6w8_crib_scoring.py,e_frac,ran_with_artifact,report,NOISE,—,~600K,results/frac/e_frac_13_ic_analysis.json,yes,no,Verdict is final: NOISE
+e_frac_30_w10_w15_crib_scoring.py,e_frac,ran_with_artifact,report,NOISE,—,—,results/frac/e_frac_13_ic_analysis.json,yes,no,Verdict is final: NOISE
+e_frac_31_bean_random_perms.py,e_frac,ran_with_artifact,report,NOISE,—,—,results/frac/e_frac_13_ic_analysis.json,yes,no,Verdict is final: NOISE
+e_frac_32_simple_transposition_sweep.py,e_frac,ran_with_artifact,report,NOISE,13/24,"14,035",results/frac/e_frac_13_ic_analysis.json,yes,no,Verdict is final: NOISE
+e_frac_33_fitness_landscape.py,e_frac,ran_with_artifact,report,UNDERDETERMINED,24/24(30%),—,results/frac/e_frac_13_ic_analysis.json,yes,no,"Underdetermined by design (too many DOF); new constraints needed, not re-runs"
+e_frac_33b_perperiod_fix.py,e_frac,ran_with_artifact,report,UNDERDETERMINED,—,—,results/frac/e_frac_13_ic_analysis.json,yes,no,"Underdetermined by design (too many DOF); new constraints needed, not re-runs"
+e_frac_34_multi_objective_oracle.py,e_frac,ran_with_artifact,report,TOOL,—,—,results/frac/e_frac_13_ic_analysis.json,yes,no,Verdict is final: TOOL
+e_frac_35_bean_period_impossibility.py,e_frac,ran_with_artifact,report,PROOF,—,universal,results/frac/e_frac_13_ic_analysis.json,yes,no,Verdict is final: PROOF
+e_frac_36_period8_bean_hillclimb.py,e_frac,ran_with_artifact,report,NOISE,—,—,results/frac/e_frac_13_ic_analysis.json,yes,no,Verdict is final: NOISE
+e_frac_37_autokey_arbitrary_transposition.py,e_frac,ran_with_artifact,report,ELIMINATED,21/24 max,—,results/frac/e_frac_13_ic_analysis.json,yes,no,Verdict is final: ELIMINATED
+e_frac_38_bean_key_model_constraints.py,e_frac,ran_with_artifact,report,ELIMINATED,—,—,results/frac/e_frac_13_ic_analysis.json,yes,no,Verdict is final: ELIMINATED
+e_frac_39_running_key_bipartite.py,e_frac,ran_with_artifact,report,UNDERDETERMINED,—,—,results/frac/e_frac_13_ic_analysis.json,yes,no,"Underdetermined by design (too many DOF); new constraints needed, not re-runs"
+e_frac_40_carter_quadgram_screen.py,e_frac,ran_with_artifact,report,NOISE,—,—,results/frac/e_frac_13_ic_analysis.json,yes,no,Verdict is final: NOISE
+e_frac_40b_random_key_control.py,e_frac,ran_with_artifact,report,NOISE,—,—,results/frac/e_frac_13_ic_analysis.json,yes,no,Verdict is final: NOISE
+e_frac_41_word_discriminator.py,e_frac,ran_with_artifact,report,NOISE,—,—,results/frac/e_frac_13_ic_analysis.json,yes,no,Verdict is final: NOISE
+e_frac_42_refined_discriminator.py,e_frac,ran_with_artifact,report,NOISE,—,—,results/frac/e_frac_13_ic_analysis.json,yes,no,Verdict is final: NOISE
+e_frac_43_bigram_discriminator.py,e_frac,ran_with_artifact,report,NOISE,—,—,results/frac/e_frac_13_ic_analysis.json,yes,no,Verdict is final: NOISE
+e_frac_44_information_theoretic.py,e_frac,ran_with_artifact,report,PROOF,—,—,results/frac/e_frac_13_ic_analysis.json,yes,no,Verdict is final: PROOF
+e_frac_45_grid_reading_orders.py,e_frac,ran_with_artifact,report,NOISE,12/24,"3,888",results/frac/e_frac_13_ic_analysis.json,yes,no,Verdict is final: NOISE
+e_frac_46_double_columnar.py,e_frac,ran_with_artifact,report,NOISE,15/24,"2,958,400",results/frac/e_frac_13_ic_analysis.json,yes,no,Verdict is final: NOISE
+e_frac_47_myszkowski.py,e_frac,ran_with_artifact,report,NOISE,15/24,"226,390",results/frac/e_frac_13_ic_analysis.json,yes,no,Verdict is final: NOISE
+e_frac_48_amsco_disrupted.py,e_frac,ran_with_artifact,report,NOISE,14/24,"361,280",results/frac/e_frac_13_ic_analysis.json,yes,no,Verdict is final: NOISE
+e_frac_49_running_key_columnar.py,e_frac,ran_with_artifact,report,NOISE,0/24,8.4B checks,results/frac/e_frac_13_ic_analysis.json,yes,no,Verdict is final: NOISE
+e_frac_50_running_key_all_families.py,e_frac,ran_with_artifact,report,NOISE,0/24,8.8B checks,results/frac/e_frac_13_ic_analysis.json,yes,no,Verdict is final: NOISE
+e_frac_51_english_key_detection.py,e_frac,ran_with_artifact,report,ELIMINATED,—,—,results/frac/e_frac_13_ic_analysis.json,yes,no,Verdict is final: ELIMINATED
+e_frac_52_three_layer.py,e_frac,ran_with_artifact,report,NOISE,—,—,results/frac/e_frac_13_ic_analysis.json,yes,no,Verdict is final: NOISE
+e_frac_53_mono_inner_periodic.py,e_frac,ran_with_artifact,report,NOISE,—,—,results/frac/e_frac_13_ic_analysis.json,yes,no,Verdict is final: NOISE
+e_frac_54_mono_running_key_detection.py,e_frac,ran_with_artifact,report,UNDERDETERMINED,—,"1,500+",results/frac/e_frac_13_ic_analysis.json,yes,no,"Underdetermined by design (too many DOF); new constraints needed, not re-runs"
+e_frac_55_bean_surviving_periods.py,e_frac,ran_with_artifact,report,NOISE,14/24(p8),—,results/frac/e_frac_13_ic_analysis.json,yes,no,Verdict is final: NOISE
+e_freq_homophonic_analysis.py,misc,ran_with_artifact,json,ELIMINATED,—,analytical,results/e_freq_homophonic_analysis.json,yes,no,Verdict is final: ELIMINATED
+e_grid_route_20x20.py,misc,ran_with_artifact,json,ELIMINATED,4/24,"2,172",results/e_grid_route_20x20.json,yes,no,Verdict is final: ELIMINATED
+e_hybrid_01_k3struct_extended.py,e_hybrid,ran_with_artifact,report+json,NOISE,8/24,"408,480",results/hybrid/e_hybrid_02_targeted_keywords.json,yes,no,Verdict is final: NOISE
+e_hybrid_02_targeted_keywords.py,e_hybrid,ran_with_artifact,json,NOISE,16/24,959K+,results/hybrid/e_hybrid_02_targeted_keywords.json,yes,no,Verdict is final: NOISE
+e_hybrid_03_complete_columnar_vig.py,e_hybrid,ran_with_artifact,json,ELIMINATED,16/24,all p2-26 w2-9,results/hybrid/e_hybrid_02_targeted_keywords.json,yes,no,Verdict is final: ELIMINATED
+e_hybrid_03_period13_and_gaps.py,e_hybrid,ran_with_artifact,json,NOISE,15/24,14kw+39kw+3.6M,results/hybrid/e_hybrid_02_targeted_keywords.json,yes,no,Verdict is final: NOISE
+e_hybrid_04_reverse_k3.py,e_hybrid,ran_with_artifact,json,ELIMINATED,0/24,110M,results/e_hybrid_04_reverse_k3.json,yes,no,Verdict is final: ELIMINATED
+e_k4_extend_v2.py,misc,ran_with_artifact,json,NOISE,—,—,results/e_k4_extend_v2.json,yes,no,Verdict is final: NOISE
 e_ka_01_keyed_tableau_systematic.py,misc,ran_with_artifact,json,NOISE,0,"5,040+",results/e_ka_01_keyed_tableau.json,yes,no,Verdict is final: NOISE
+e_ka_02_extended_gaps.py,misc,ran_with_artifact,json,NOISE,—,—,results/e_ka_02_extended_gaps.json,yes,no,Verdict is final: NOISE
+e_ka_03_tableau_gaps.py,misc,ran_with_artifact,json,NOISE,—,—,results/e_ka_03_tableau_gaps.json,yes,no,Verdict is final: NOISE
+e_kasiski_00_full_analysis.py,misc,ran_with_artifact,json,DOCUMENTED,—,analytical,results/e_kasiski_00.json,yes,no,Documented in inventory but no formal verdict
 e_ledger_01_systematic_elimination.py,misc,ran_with_artifact,json,TOOL,—,—,results/e_ledger_01_systematic_elimination.json,yes,no,Verdict is final: TOOL
-e_marathon_01_final_assault.py,misc,ran_no_artifact,inferred,NOISE,—,—,,no,no,Verdict is final: NOISE
-e_novel_01_route_ciphers.py,e_novel,ran_no_artifact,inferred,NOISE,—,—,,no,no,Verdict is final: NOISE
-e_novel_02_book_cipher.py,e_novel,ran_no_artifact,inferred,NOISE,—,—,,no,no,Verdict is final: NOISE
-e_novel_03_tableau_physical.py,e_novel,ran_no_artifact,inferred,NOISE,—,—,,no,no,Verdict is final: NOISE
-e_novel_04_berlin_clock.py,e_novel,ran_no_artifact,inferred,NOISE,—,—,,no,no,Verdict is final: NOISE
-e_novel_05_doubles_intervals.py,e_novel,ran_no_artifact,inferred,NOISE,—,—,,no,no,Verdict is final: NOISE
-e_novel_06_chaocipher_evolving.py,e_novel,ran_no_artifact,inferred,NOISE,—,—,,no,no,Verdict is final: NOISE
+e_marathon_01_final_assault.py,misc,ran_no_artifact,report,NOISE,—,—,,no,no,Verdict is final: NOISE
+e_masonic_01_pigpen_analysis.py,misc,ran_with_artifact,json,ELIMINATED,4/24,236,results/e_masonic_01.json,yes,no,Verdict is final: ELIMINATED
+e_mono_sa_substitution.py,misc,ran_with_artifact,json,ELIMINATED,—,SA 100K+,results/e_mono_sa_substitution.json,yes,no,Verdict is final: ELIMINATED
+e_novel_01_route_ciphers.py,e_novel,ran_no_artifact,report,NOISE,—,—,,no,no,Verdict is final: NOISE
+e_novel_02_book_cipher.py,e_novel,ran_no_artifact,report,NOISE,—,—,,no,no,Verdict is final: NOISE
+e_novel_03_tableau_physical.py,e_novel,ran_no_artifact,report,NOISE,—,—,,no,no,Verdict is final: NOISE
+e_novel_04_berlin_clock.py,e_novel,ran_no_artifact,report,NOISE,—,—,,no,no,Verdict is final: NOISE
+e_novel_05_doubles_intervals.py,e_novel,ran_no_artifact,report,NOISE,—,—,,no,no,Verdict is final: NOISE
+e_novel_06_chaocipher_evolving.py,e_novel,ran_no_artifact,report,NOISE,—,—,,no,no,Verdict is final: NOISE
 e_nsa_01_interval7.py,misc,ran_no_artifact,inferred,NOISE,—,—,,no,no,Verdict is final: NOISE
 e_nsa_02_missing_char.py,misc,ran_no_artifact,inferred,NOISE,—,—,,no,no,Verdict is final: NOISE
 e_opgold_01_keywords.py,e_opgold,ran_with_artifact,report+json,ELIMINATED,7/24,2.3M,results/e_opgold_01.json,yes,no,Verdict is final: ELIMINATED
 e_opgold_02_progressive.py,e_opgold,ran_no_artifact,report,ELIMINATED,5/24,1.2K,,no,no,Verdict is final: ELIMINATED
 e_opgold_03_british.py,e_opgold,ran_with_artifact,report+json,ELIMINATED,9/24,10.7M,results/e_opgold_03.json,yes,no,Verdict is final: ELIMINATED
-e_period_27_29_formal.py,misc,ran_no_artifact,inferred,NOISE,—,—,,no,no,Verdict is final: NOISE
-e_playfair_01_full_disproof.py,misc,ran_no_artifact,inferred,ELIMINATED,—,—,,no,no,Verdict is final: ELIMINATED
+e_period_27_29_formal.py,misc,ran_no_artifact,report,ELIMINATED,—,analytical,,no,no,Verdict is final: ELIMINATED
+e_playfair_01_full_disproof.py,misc,ran_with_artifact,json,ELIMINATED,—,—,,no,no,Verdict is final: ELIMINATED
 e_poly_01_polyalphabetic_analysis.py,misc,ran_with_artifact,json,ELIMINATED,—,—,results/e_poly_01.json,yes,no,Verdict is final: ELIMINATED
-e_recurrence_00_linear_order2.py,misc,ran_no_artifact,inferred,NOISE,—,—,,no,no,Verdict is final: NOISE
+e_poly_02_ka_tableau_and_new_keywords.py,misc,ran_with_artifact,json,NOISE,—,—,results/e_poly_02.json,yes,no,Verdict is final: NOISE
+e_poly_03_gap_fill_2026_03.py,misc,ran_with_artifact,json,NOISE,—,confirmatory,results/e_poly_03.json,yes,no,Verdict is final: NOISE
+e_recurrence_00_linear_order2.py,misc,ran_no_artifact,report,ELIMINATED,—,—,,no,no,Verdict is final: ELIMINATED
 e_ref_00_8row_grid.py,e_ref,ran_with_artifact,report+json,NOISE,0/24,4.5M,results/e_ref_00_8row_grid.json,yes,no,Verdict is final: NOISE
 e_ref_01_carter_chapterX.py,e_ref,ran_no_artifact,report,NOISE,0/24,—,,no,no,Verdict is final: NOISE
 e_ref_02_strip_cipher.py,e_ref,ran_with_artifact,report+json,NOISE,0/24,86.5M,results/e_ref_02_strip_cipher.json,yes,no,Verdict is final: NOISE
-e_rerun_01_opgold_expanded.py,misc,ran_no_artifact,inferred,NOISE,—,—,,no,no,Verdict is final: NOISE
-e_rerun_02_tableau_expanded.py,misc,ran_no_artifact,inferred,NOISE,—,—,,no,no,Verdict is final: NOISE
+e_rerun_01_opgold_expanded.py,misc,ran_no_artifact,report,NOISE,—,—,,no,no,Verdict is final: NOISE
+e_rerun_02_tableau_expanded.py,misc,ran_no_artifact,report,NOISE,—,—,,no,no,Verdict is final: NOISE
 e_rerun_03_columnar_expanded.py,misc,ran_with_artifact,json,NOISE,—,—,results/e_rerun_03_columnar.json,yes,no,Verdict is final: NOISE
 e_review_model_b_search.py,misc,ran_no_artifact,inferred,UNDERDETERMINED,—,—,,no,no,"Underdetermined by design (too many DOF); new constraints needed, not re-runs"
 e_roman_01_comprehensive.py,e_roman,ran_with_artifact,report+json,NOISE,4/24,—,results/e_roman_01.json,yes,no,Verdict is final: NOISE
@@ -172,11 +198,12 @@ e_roman_03b_abscissa_coords.py,e_roman,ran_no_artifact,report,NOISE,—,—,,no,
 e_roman_04_3d_grid.py,e_roman,ran_no_artifact,report,ELIMINATED,8/24,1.28M,,no,no,Verdict is final: ELIMINATED
 e_roman_04b_abscissa_coords.py,e_roman,ran_no_artifact,report,ELIMINATED,7/24,348K,,no,no,Verdict is final: ELIMINATED
 e_roman_05_anomaly_params.py,e_roman,ran_no_artifact,report,ELIMINATED,6/24,226.8K,,no,no,Verdict is final: ELIMINATED
+e_route_definitive.py,misc,ran_with_artifact,json,NOISE,19/24 FP,"43,056",results/e_route_definitive.json,yes,no,Verdict is final: NOISE
 e_runkey_002_k123_plaintext.py,misc,ran_no_artifact,inferred,NOISE,—,—,,no,no,Verdict is final: NOISE
 e_s_02_stride_transposition.py,e_s_legacy,ran_no_artifact,inferred,NOISE,—,—,,no,no,Verdict is final: NOISE
 e_s_03_missing_char_routes.py,e_s_legacy,ran_no_artifact,inferred,NOISE,—,—,,no,no,Verdict is final: NOISE
 e_s_04_missing_char_structural.py,e_s_legacy,ran_no_artifact,inferred,NOISE,—,—,,no,no,Verdict is final: NOISE
-e_s_05_algebraic_fractionation.py,e_s_legacy,ran_with_artifact,json,ELIMINATED,—,—,results/frac/e_frac_21_fractionation_proofs.json,yes,no,Verdict is final: ELIMINATED
+e_s_05_algebraic_fractionation.py,e_s_legacy,ran_with_artifact,json,ELIMINATED,—,—,results/frac/e_frac_13_ic_analysis.json,yes,no,Verdict is final: ELIMINATED
 e_s_06_double_columnar.py,e_s_legacy,ran_with_artifact,report+json,NOISE,15/24,441M,results/e_s_06_double_columnar.json,yes,no,Verdict is final: NOISE
 e_s_07_sa_permutation.py,e_s_legacy,ran_no_artifact,inferred,NOISE,—,—,,no,no,Verdict is final: NOISE
 e_s_08_sa_quadgram.py,e_s_legacy,ran_no_artifact,inferred,NOISE,—,—,,no,no,Verdict is final: NOISE
@@ -245,13 +272,13 @@ e_s_21_manifold_sa.py,e_s_legacy,ran_no_artifact,inferred,NOISE,—,—,,no,no,V
 e_s_22_amsco_disrupted.py,e_s_legacy,ran_with_artifact,report+json,NOISE,15/24,—,results/e_s_22_amsco.json,yes,no,Verdict is final: NOISE
 e_s_23_lag7_constrained_sa.py,e_s_legacy,ran_no_artifact,inferred,NOISE,—,—,,no,no,Verdict is final: NOISE
 e_s_24_thematic_keys.py,e_s_legacy,ran_no_artifact,inferred,NOISE,—,—,,no,no,Verdict is final: NOISE
-e_s_25_ct_structural_analysis.py,e_s_legacy,ran_no_artifact,inferred,NOISE,—,—,,no,no,Verdict is final: NOISE
+e_s_25_ct_structural_analysis.py,e_s_legacy,ran_with_artifact,json,NOISE,—,—,results/e_s_25_ct_structural.json,yes,no,Verdict is final: NOISE
 e_s_26_bean_manifold_sa.py,e_s_legacy,ran_no_artifact,inferred,NOISE,—,—,,no,no,Verdict is final: NOISE
 e_s_27_bean_algebraic_proof.py,e_s_legacy,ran_no_artifact,report,RETRACTED,—,—,,no,no,Verdict is final: RETRACTED
 e_s_28_bean_redundancy_proof.py,e_s_legacy,ran_no_artifact,report,PROOF,—,—,,no,no,Verdict is final: PROOF
 e_s_29_w_separator.py,e_s_legacy,ran_no_artifact,inferred,NOISE,—,—,,no,no,Verdict is final: NOISE
 e_s_30_three_layer_mask.py,e_s_legacy,ran_no_artifact,inferred,ELIMINATED,—,—,,no,no,Verdict is final: ELIMINATED
-e_s_31_carter_running_key.py,e_s_legacy,ran_no_artifact,inferred,NOISE,—,—,,no,no,Verdict is final: NOISE
+e_s_31_carter_running_key.py,e_s_legacy,ran_no_artifact,report,ELIMINATED,10/24,26.8M,,no,no,Verdict is final: ELIMINATED
 e_s_32_compass_coordinate_key.py,e_s_legacy,ran_no_artifact,inferred,NOISE,—,—,,no,no,Verdict is final: NOISE
 e_s_33_double_columnar.py,e_s_legacy,ran_no_artifact,report,ELIMINATED,0,50.8M,,no,no,Verdict is final: ELIMINATED
 e_s_33b_mixed_double_columnar.py,e_s_legacy,ran_no_artifact,report,ELIMINATED,0,1B+,,no,no,Verdict is final: ELIMINATED
@@ -264,7 +291,7 @@ e_s_39_myszkowski.py,e_s_legacy,ran_with_artifact,report+json,ELIMINATED,—,"47
 e_s_40_lag7_deep_analysis.py,e_s_legacy,ran_no_artifact,inferred,NOISE,—,—,,no,no,Verdict is final: NOISE
 e_s_41_hill_transposition.py,e_s_legacy,ran_no_artifact,report,ELIMINATED,0,—,,no,no,Verdict is final: ELIMINATED
 e_s_42_bifid6x6_extended.py,e_s_legacy,ran_no_artifact,report,ELIMINATED,—,—,,no,no,Verdict is final: ELIMINATED
-e_s_42b_trifid_extended.py,e_s_legacy,ran_no_artifact,report,ELIMINATED,—,—,,no,no,Verdict is final: ELIMINATED
+e_s_42b_trifid_extended.py,e_s_legacy,ran_with_artifact,report,ELIMINATED,—,—,results/e_s_42b_trifid_extended.json,yes,no,Verdict is final: ELIMINATED
 e_s_43_thematic_extension.py,e_s_legacy,ran_no_artifact,inferred,NOISE,—,—,,no,no,Verdict is final: NOISE
 e_s_44_trifid_p16.py,e_s_legacy,ran_with_artifact,report+json,ELIMINATED,—,—,,no,no,Verdict is final: ELIMINATED
 e_s_45_lag7_exploitation.py,e_s_legacy,ran_no_artifact,inferred,NOISE,—,—,,no,no,Verdict is final: NOISE
@@ -319,7 +346,7 @@ e_s_90_extended_structured_key.py,e_s_legacy,ran_no_artifact,inferred,NOISE,—,
 e_s_91_plaintext_extension.py,e_s_legacy,ran_no_artifact,inferred,NOISE,—,—,,no,no,Verdict is final: NOISE
 e_s_92_community_proposals.py,e_s_legacy,ran_no_artifact,inferred,NOISE,—,—,,no,no,Verdict is final: NOISE
 e_s_93_autokey_columnar.py,e_s_legacy,ran_no_artifact,inferred,ELIMINATED,—,—,,no,no,Verdict is final: ELIMINATED
-e_s_94_keystream_structure.py,e_s_legacy,ran_no_artifact,inferred,UNDERDETERMINED,—,—,,no,no,"Underdetermined by design (too many DOF); new constraints needed, not re-runs"
+e_s_94_keystream_structure.py,e_s_legacy,ran_with_artifact,json,UNDERDETERMINED,—,—,results/e_s_94_keystream_structure.json,yes,no,"Underdetermined by design (too many DOF); new constraints needed, not re-runs"
 e_s_95_creative_substitutions.py,e_s_legacy,ran_no_artifact,inferred,NOISE,—,—,,no,no,Verdict is final: NOISE
 e_s_96_multiwidth_autokey.py,e_s_legacy,ran_no_artifact,inferred,NOISE,—,—,,no,no,Verdict is final: NOISE
 e_s_97_decimation_cipher.py,e_s_legacy,ran_no_artifact,inferred,NOISE,—,—,,no,no,Verdict is final: NOISE
@@ -327,12 +354,36 @@ e_s_97b_decimation_analysis.py,e_s_legacy,ran_no_artifact,inferred,NOISE,—,—
 e_s_98_k123_running_key.py,e_s_legacy,ran_no_artifact,inferred,NOISE,—,—,,no,no,Verdict is final: NOISE
 e_s_99_mono_constraint.py,e_s_legacy,ran_no_artifact,inferred,NOISE,—,—,,no,no,Verdict is final: NOISE
 e_s_berlin_extend.py,misc,ran_with_artifact,json,NOISE,—,—,results/e_s_berlin_extend.json,yes,no,Verdict is final: NOISE
-e_sa_assault.py,misc,ran_no_artifact,inferred,NOISE,—,—,,no,no,Verdict is final: NOISE
-e_sa_constrained.py,misc,ran_no_artifact,inferred,NOISE,—,—,,no,no,Verdict is final: NOISE
+e_sa_assault.py,misc,ran_no_artifact,report,UNDERDETERMINED,—,—,,no,no,"Underdetermined by design (too many DOF); new constraints needed, not re-runs"
+e_sa_constrained.py,misc,ran_no_artifact,report,UNDERDETERMINED,—,—,,no,no,"Underdetermined by design (too many DOF); new constraints needed, not re-runs"
+e_solve_01_novel_attacks.py,misc,ran_with_artifact,json,NOISE,—,—,,no,no,Verdict is final: NOISE
+e_solve_02_deep_attacks.py,misc,ran_with_artifact,json,NOISE,—,—,,no,no,Verdict is final: NOISE
+e_solve_03_remaining_gaps.py,misc,ran_with_artifact,json,NOISE,—,—,,no,no,Verdict is final: NOISE
+e_solve_04_key_derivation.py,misc,ran_with_artifact,json,NOISE,—,—,,no,no,Verdict is final: NOISE
+e_solve_05_key_transposition.py,misc,ran_with_artifact,json,NOISE,—,—,,no,no,Verdict is final: NOISE
+e_solve_06_crib_drag.py,misc,ran_no_artifact,report,NOISE,—,—,,no,no,Verdict is final: NOISE
+e_solve_07_beaufort_focus.py,misc,ran_with_artifact,json,NOISE,24/24 FP,25M,results/e_solve_07_beaufort_focus.json,yes,no,Verdict is final: NOISE
+e_solve_08_trithemius_mod19.py,misc,ran_no_artifact,report,ELIMINATED,—,~100K,,no,no,Verdict is final: ELIMINATED
+e_solve_09_null_masking.py,misc,ran_no_artifact,report,ELIMINATED,—,—,,no,no,Verdict is final: ELIMINATED
+e_solve_10_null_proof.py,misc,ran_no_artifact,report,PROOF,—,analytical,,no,no,Verdict is final: PROOF
+e_solve_11_feedback_digraph.py,misc,ran_no_artifact,report,NOISE,—,~20K,,no,no,Verdict is final: NOISE
+e_solve_12_keystream_transposition.py,misc,ran_with_artifact,json,ELIMINATED,0/24,9.8M,results/e_solve_12_keystream_transposition.json,yes,no,Verdict is final: ELIMINATED
+e_solve_13_grid_routes.py,misc,ran_with_artifact,json,ELIMINATED,0/24,52K,results/e_solve_13_grid_routes.json,yes,no,Verdict is final: ELIMINATED
+e_solve_14_beaufort_structure.py,misc,ran_no_artifact,report,NOISE,—,~5K,,no,no,Verdict is final: NOISE
+e_solve_15_masked_pt.py,misc,ran_no_artifact,report,NOISE,—,~50K,,no,no,Verdict is final: NOISE
+e_solve_16_encrypt_transpose.py,misc,ran_no_artifact,report,ELIMINATED,—,analytical,,no,no,Verdict is final: ELIMINATED
+e_solve_16b_period5_deep.py,misc,ran_no_artifact,report,ELIMINATED,—,~10M filtered,,no,no,Verdict is final: ELIMINATED
+e_solve_17_2d_matrix.py,misc,ran_no_artifact,report,ELIMINATED,—,analytical,,no,no,Verdict is final: ELIMINATED
+e_solve_18_nonlinear_chain.py,misc,ran_no_artifact,report,ELIMINATED,—,~90K,,no,no,Verdict is final: ELIMINATED
+e_solve_19_2d_keyword_cols.py,misc,ran_no_artifact,report,ELIMINATED,—,~12M,,no,no,Verdict is final: ELIMINATED
+e_solve_20_autokey_keyword.py,misc,ran_no_artifact,report,ELIMINATED,—,"2,538",,no,no,Verdict is final: ELIMINATED
+e_solve_21_mixed_variant.py,misc,ran_no_artifact,report,ELIMINATED,—,—,,no,no,Verdict is final: ELIMINATED
+e_solve_22_final_gaps.py,misc,ran_no_artifact,report,ELIMINATED,—,~200K,,no,no,Verdict is final: ELIMINATED
 e_split_00_installation_key_split.py,e_split,ran_with_artifact,report+json,NOISE,6/24,"51,534",results/e_split_00_installation_key_split.json,yes,no,Verdict is final: NOISE
 e_stat_01_missing_tests.py,misc,ran_no_artifact,report,NOISE,—,—,,no,no,Verdict is final: NOISE
-e_tableau_20_k3method_keywords.py,misc,ran_no_artifact,inferred,NOISE,—,—,,no,no,Verdict is final: NOISE
-e_tableau_nav_001_algebraic.py,misc,ran_no_artifact,inferred,NOISE,—,—,,no,no,Verdict is final: NOISE
+e_stat_02_comprehensive_analysis.py,misc,unverified,pending,DOCUMENTED,—,analytical,,no,no,Documented in inventory but no formal verdict
+e_tableau_20_k3method_keywords.py,misc,ran_no_artifact,report,NOISE,—,—,,no,no,Verdict is final: NOISE
+e_tableau_nav_001_algebraic.py,misc,ran_no_artifact,report,NOISE,—,—,,no,no,Verdict is final: NOISE
 e_team_anomaly_extraction.py,e_team,ran_with_artifact,json,NOISE,—,~500,results/e_team_anomaly_extraction.json,yes,no,Verdict is final: NOISE
 e_team_artifact_cross.py,e_team,ran_with_artifact,json,NOISE,7/24,"~1,500",results/e_team_artifact_cross.json,yes,no,Verdict is final: NOISE
 e_team_artifact_keys.py,e_team,ran_with_artifact,json,NOISE,5/24,~500,results/e_team_artifact_keys.json,yes,no,Verdict is final: NOISE
@@ -354,12 +405,13 @@ e_team_physical_transpositions.py,e_team,ran_with_artifact,json,NOISE,6/24,"~2,0
 e_team_targeted_homo_trans.py,e_team,ran_with_artifact,json,NOISE,—,—,results/e_team_targeted_homo_trans.json,yes,no,Verdict is final: NOISE
 e_team_weltzeituhr_procedural.py,e_team,ran_with_artifact,json,NOISE,3/24,~300,results/e_team_weltzeituhr_procedural.json,yes,no,Verdict is final: NOISE
 e_team_whats_the_point.py,e_team,ran_with_artifact,json,NOISE,2/24,~200,results/e_team_whats_the_point.json,yes,no,Verdict is final: NOISE
-e_validator_01_pipeline_check.py,infrastructure,ran_no_artifact,inferred,DOCUMENTED,—,—,,no,no,Documented in inventory but no formal verdict
-e_webster_01_judge_keyword.py,misc,ran_no_artifact,inferred,NOISE,—,—,,no,no,Verdict is final: NOISE
-e_webster_02_bespoke_methods.py,misc,ran_no_artifact,inferred,NOISE,—,—,,no,no,Verdict is final: NOISE
+e_validator_01_pipeline_check.py,misc,ran_no_artifact,report,TOOL,—,—,,no,no,Verdict is final: TOOL
+e_webster_01_judge_keyword.py,misc,ran_no_artifact,report,NOISE,—,—,,no,no,Verdict is final: NOISE
+e_webster_02_bespoke_methods.py,misc,ran_no_artifact,report,NOISE,—,—,,no,no,Verdict is final: NOISE
 e_wtz_00_cities_runkey.py,misc,ran_with_artifact,json,NOISE,—,—,results/e_wtz_00_cities_runkey.json,yes,no,Verdict is final: NOISE
-hill_cipher_analysis.py,infrastructure,ran_no_artifact,inferred,DOCUMENTED,—,—,,no,no,Documented in inventory but no formal verdict
-k3_ct_pt_audit.py,infrastructure,ran_no_artifact,inferred,DOCUMENTED,—,—,,no,no,Documented in inventory but no formal verdict
+exp_lecarre_rk_001.py,misc,ran_with_artifact,json,NOISE,7/24,508K windows,results/exp_lecarre_rk_001.json,yes,no,Verdict is final: NOISE
+hill_cipher_analysis.py,infrastructure,ran_no_artifact,inferred,ELIMINATED,—,analytical,,no,no,Verdict is final: ELIMINATED
+k3_ct_pt_audit.py,infrastructure,ran_no_artifact,inferred,TOOL,—,—,,no,no,Verdict is final: TOOL
 k4_algebraic_eliminations.py,k4_early,ran_no_artifact,inferred,ELIMINATED,—,—,,no,no,Verdict is final: ELIMINATED
 k4_clock_cipher.py,k4_early,ran_no_artifact,inferred,NOISE,—,—,,no,no,Verdict is final: NOISE
 k4_deep_structure.py,k4_early,ran_no_artifact,inferred,NOISE,—,—,,no,no,Verdict is final: NOISE
@@ -367,10 +419,10 @@ k4_dual_sa.py,k4_early,ran_no_artifact,inferred,NOISE,—,—,,no,no,Verdict is 
 k4_novel_attacks.py,k4_early,ran_no_artifact,inferred,NOISE,—,—,,no,no,Verdict is final: NOISE
 k4_plaintext_reconstruction.py,k4_early,ran_no_artifact,inferred,UNDERDETERMINED,—,—,,no,no,"Underdetermined by design (too many DOF); new constraints needed, not re-runs"
 k4_reading_orders.py,k4_early,ran_no_artifact,inferred,NOISE,—,—,,no,no,Verdict is final: NOISE
-k4_reverse_engine.py,k4_early,ran_no_artifact,inferred,UNDERDETERMINED,—,—,,no,no,"Underdetermined by design (too many DOF); new constraints needed, not re-runs"
+k4_reverse_engine.py,infrastructure,ran_no_artifact,inferred,UNDERDETERMINED,—,~56B theoretical,,no,no,"Underdetermined by design (too many DOF); new constraints needed, not re-runs"
 k4_running_key_thematic.py,k4_early,ran_no_artifact,inferred,NOISE,—,—,,no,no,Verdict is final: NOISE
 k4_sa_plaintext.py,k4_early,ran_no_artifact,inferred,NOISE,—,—,,no,no,Verdict is final: NOISE
 k4_two_layer.py,k4_early,ran_no_artifact,inferred,NOISE,—,—,,no,no,Verdict is final: NOISE
 k4_whats_the_point.py,k4_early,ran_no_artifact,inferred,NOISE,—,—,,no,no,Verdict is final: NOISE
 k4_word_search.py,k4_early,ran_no_artifact,inferred,NOISE,—,—,,no,no,Verdict is final: NOISE
-solve_k1_from_k0.py,infrastructure,ran_no_artifact,inferred,DOCUMENTED,—,—,,no,no,Documented in inventory but no formal verdict
+solve_k1_from_k0.py,infrastructure,ran_no_artifact,inferred,TOOL,—,—,,no,no,Verdict is final: TOOL
