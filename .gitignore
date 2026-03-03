@@ -33,6 +33,10 @@ db/
 results/
 artifacts/
 checkpoints/
+blitz_results/
+
+# Third-party reference projects
+external/
 
 # Site build output
 site/
@@ -44,6 +48,7 @@ site/
 reference/tomboftutankhame01cart.pdf
 reference/KRYPTOS_NSA_Analysis.docx
 reference/Pictures/antipodes/
+reference/TOE.docx
 
 # Derived text extracts (regenerable from source PDFs)
 reference/carter_text_cache.txt

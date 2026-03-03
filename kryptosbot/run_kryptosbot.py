@@ -237,6 +237,11 @@ def parse_args() -> argparse.Namespace:
         "--verbose", "-v", action="store_true",
         help="Enable debug-level logging",
     )
+    parser.add_argument(
+        "--real-ct", type=str, metavar="PATH",
+        help="Path to real_ct.json (unscrambled CT from run_lean.py). "
+             "Overrides the default carved text.",
+    )
 
     return parser.parse_args()
 
@@ -304,6 +309,16 @@ def main() -> None:
     if args.preflight:
         _run_preflight()
         return
+
+    # Set real CT path if provided via CLI
+    if args.real_ct:
+        os.environ["KBOT_REAL_CT"] = args.real_ct
+
+    # Show which CT is being used
+    from kryptosbot.config import K4_CIPHERTEXT, K4_SOURCE
+    print(f"\nK4 CT source: {K4_SOURCE}")
+    print(f"K4 CT: {K4_CIPHERTEXT[:40]}...{K4_CIPHERTEXT[-10:]}")
+    print()
 
     # Async modes require API key
     check_api_key()
