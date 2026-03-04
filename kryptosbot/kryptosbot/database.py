@@ -98,6 +98,19 @@ class ResultsDB:
                     disproved_at   TEXT NOT NULL
                 );
 
+                CREATE TABLE IF NOT EXISTS campaigns (
+                    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+                    timestamp   TEXT NOT NULL,
+                    strategies  TEXT NOT NULL DEFAULT '[]',
+                    max_agents  INTEGER NOT NULL DEFAULT 6,
+                    max_turns   INTEGER NOT NULL DEFAULT 25,
+                    budget_usd  REAL DEFAULT NULL,
+                    tokens_summary TEXT DEFAULT '',
+                    crib_found  INTEGER NOT NULL DEFAULT 0,
+                    elapsed_seconds REAL DEFAULT 0.0,
+                    output_dir  TEXT DEFAULT ''
+                );
+
                 CREATE INDEX IF NOT EXISTS idx_hyp_status ON hypotheses(status);
                 CREATE INDEX IF NOT EXISTS idx_hyp_strategy ON hypotheses(strategy);
                 CREATE INDEX IF NOT EXISTS idx_evidence_hyp ON evidence(hypothesis_id);

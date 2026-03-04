@@ -206,16 +206,26 @@ def _parse_research_questions(raw: str | list | None) -> list[str]:
 
 
 def _detect_experiment_script(experiment_id: str, scripts_dir: str) -> str:
-    """Try to find the experiment script file for an experiment ID."""
+    """Try to find the experiment script file for an experiment ID.
+
+    Recursively searches subdirectories under scripts_dir.
+    """
     if not experiment_id:
         return ""
     # Normalize: E-CHART-01 -> e_chart_01
     normalized = experiment_id.lower().replace("-", "_")
     if not os.path.isdir(scripts_dir):
         return ""
-    for fname in os.listdir(scripts_dir):
-        if fname.endswith(".py") and normalized in fname.replace("-", "_"):
-            return f"scripts/{fname}"
+    for dirpath, _dirnames, filenames in os.walk(scripts_dir):
+        for fname in filenames:
+            if fname.endswith(".py") and normalized in fname.replace("-", "_"):
+                # Return path relative to project root
+                full = os.path.join(dirpath, fname)
+                try:
+                    rel = os.path.relpath(full, os.path.dirname(scripts_dir))
+                except ValueError:
+                    rel = full
+                return rel
     return ""
 
 
