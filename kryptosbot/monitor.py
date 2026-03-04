@@ -1,20 +1,21 @@
 #!/usr/bin/env python3
 """
-KryptosBot Live Monitor v2
+KryptosBot Live Monitor v3
 
-Real-time campaign dashboard. Queries the hypotheses table directly
-(not the unreliable sessions table) for ground-truth worker status.
+Real-time campaign dashboard. Scans the results/campaigns/ directory for
+active and completed agent sessions. Works with solve.py's JSON output.
 
 Usage:
-    python monitor.py                  # Refresh every 3 seconds
+    python monitor.py                  # Auto-detect latest campaign
     python monitor.py --interval 1     # Faster refresh
-    python monitor.py --db path.db     # Explicit DB path
+    python monitor.py --campaign DIR   # Explicit campaign directory
 """
 
 from __future__ import annotations
 
 import argparse
-import sqlite3
+import json
+import os
 import sys
 import time
 from datetime import datetime, timezone
@@ -33,34 +34,23 @@ MAGENTA = "\033[95m"
 CYAN    = "\033[96m"
 WHITE   = "\033[97m"
 RESET   = "\033[0m"
-BG_RED  = "\033[41m"
 BG_GREEN = "\033[42m"
-
-STATUS_STYLE = {
-    "queued":       (CYAN,   "○"),
-    "running":      (YELLOW, "⚡"),
-    "promising":    (GREEN,  "★"),
-    "disproved":    (RED,    "✗"),
-    "inconclusive": (DIM,    "·"),
-    "solved":       (BG_GREEN + WHITE, "!!!"),
-}
 
 WIDTH = 78
 
 
-def _connect(db_path: Path) -> sqlite3.Connection:
-    conn = sqlite3.connect(str(db_path), timeout=5)
-    conn.row_factory = sqlite3.Row
-    conn.execute("PRAGMA journal_mode=WAL")
-    conn.execute("PRAGMA busy_timeout=5000")
-    return conn
-
-
-def _elapsed(iso_str: str) -> str:
-    """Human-readable elapsed time from an ISO timestamp."""
+def _elapsed_since(ts: str | float | datetime) -> str:
+    """Human-readable elapsed time."""
     try:
-        start = datetime.fromisoformat(iso_str)
-        secs = (datetime.now(timezone.utc) - start).total_seconds()
+        if isinstance(ts, (int, float)):
+            secs = ts
+        elif isinstance(ts, datetime):
+            secs = (datetime.now(timezone.utc) - ts).total_seconds()
+        else:
+            start = datetime.fromisoformat(ts)
+            secs = (datetime.now(timezone.utc) - start).total_seconds()
+        if secs < 0:
+            secs = 0
         if secs < 60:
             return f"{int(secs)}s"
         elif secs < 3600:
@@ -79,9 +69,70 @@ def _bar(done: int, total: int, width: int = 30) -> str:
     return "█" * filled + "░" * (width - filled)
 
 
-def render(db_path: Path, campaign_start: datetime | None) -> str:
-    """Build the full dashboard from a single DB snapshot."""
-    conn = _connect(db_path)
+def _file_size_str(path: Path) -> str:
+    """Human-readable file size."""
+    try:
+        size = path.stat().st_size
+        if size < 1024:
+            return f"{size}B"
+        elif size < 1024 * 1024:
+            return f"{size / 1024:.1f}K"
+        else:
+            return f"{size / (1024 * 1024):.1f}M"
+    except Exception:
+        return "?"
+
+
+def _agent_status(agent_dir: Path, agent_name: str) -> dict:
+    """Determine status of a single agent from its output files."""
+    result_file = agent_dir / f"{agent_name}_result.json"
+    raw_file = agent_dir / f"{agent_name}_raw.txt"
+
+    info: dict = {
+        "name": agent_name,
+        "status": "queued",
+        "elapsed": 0,
+        "output_size": 0,
+        "crib_found": False,
+        "best_score": None,
+        "verdict": None,
+    }
+
+    # If result JSON exists, agent is done
+    if result_file.exists():
+        try:
+            data = json.loads(result_file.read_text())
+            info["status"] = "completed"
+            info["elapsed"] = data.get("elapsed_seconds", 0)
+            info["output_size"] = data.get("output_length", 0)
+            info["crib_found"] = data.get("crib_found", False)
+            info["best_score"] = data.get("best_score")
+            info["verdict"] = data.get("verdict")
+            return info
+        except Exception:
+            info["status"] = "completed"
+            return info
+
+    # If raw file exists and is growing, agent is running
+    if raw_file.exists():
+        info["status"] = "running"
+        info["output_size"] = raw_file.stat().st_size
+        # Estimate elapsed from file mtime - ctime
+        try:
+            ctime = raw_file.stat().st_ctime
+            mtime = raw_file.stat().st_mtime
+            info["elapsed"] = mtime - ctime
+            info["last_update"] = mtime
+        except Exception:
+            pass
+        return info
+
+    # No files yet — still queued/starting
+    return info
+
+
+def render(campaign_dir: Path, campaign_start: datetime | None) -> str:
+    """Build the dashboard from a campaign directory snapshot."""
     lines: list[str] = []
     now_str = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
 
@@ -90,185 +141,168 @@ def render(db_path: Path, campaign_start: datetime | None) -> str:
     lines.append(f"  KryptosBot Monitor  {DIM}│{RESET}{BOLD}{CYAN}  {now_str} UTC")
     lines.append(f"{'─' * WIDTH}{RESET}")
 
-    # ── Status counts ───────────────────────────────────────────────
-    rows = conn.execute(
-        "SELECT status, COUNT(*) as n FROM hypotheses GROUP BY status"
-    ).fetchall()
-    counts = {r["status"]: r["n"] for r in rows}
-    total = sum(counts.values())
-    running = counts.get("running", 0)
-    done = total - running - counts.get("queued", 0)
+    # ── Scan agent directories ──────────────────────────────────────
+    agents: list[dict] = []
+    for entry in sorted(campaign_dir.iterdir()):
+        if entry.is_dir() and not entry.name.startswith("."):
+            agents.append(_agent_status(entry, entry.name))
 
+    if not agents:
+        lines.append(f"  {DIM}No agents found in {campaign_dir.name}{RESET}")
+        lines.append(f"{CYAN}{DIM}{'─' * WIDTH}{RESET}")
+        return "\n".join(lines)
+
+    total = len(agents)
+    running = sum(1 for a in agents if a["status"] == "running")
+    completed = sum(1 for a in agents if a["status"] == "completed")
+    queued = sum(1 for a in agents if a["status"] == "queued")
+    crib_found = any(a["crib_found"] for a in agents)
+
+    # ── Status summary ──────────────────────────────────────────────
     parts = []
-    for status in ["running", "promising", "disproved", "inconclusive", "queued", "solved"]:
-        n = counts.get(status, 0)
-        if n:
-            color, icon = STATUS_STYLE.get(status, (RESET, "?"))
-            parts.append(f"{color}{icon} {status}:{n}{RESET}")
+    if running:
+        parts.append(f"{YELLOW}⚡ running:{running}{RESET}")
+    if completed:
+        parts.append(f"{GREEN}✓ done:{completed}{RESET}")
+    if queued:
+        parts.append(f"{CYAN}○ queued:{queued}{RESET}")
+    if crib_found:
+        parts.append(f"{BG_GREEN}{WHITE}!!! CRIB !!!{RESET}")
 
-    lines.append(f"  {BOLD}{total}{RESET} hypotheses  │  " + "  ".join(parts))
+    lines.append(f"  {BOLD}{total}{RESET} agents  │  " + "  ".join(parts))
 
     # Progress bar
-    bar = _bar(done, total)
-    pct = (done / total * 100) if total else 0
-    elapsed = ""
+    bar = _bar(completed, total)
+    pct = (completed / total * 100) if total else 0
+    elapsed_str = ""
     if campaign_start:
-        elapsed = f"  {DIM}elapsed: {_elapsed(campaign_start.isoformat())}{RESET}"
-    lines.append(f"  [{bar}] {pct:.0f}% complete ({done}/{total}){elapsed}")
+        elapsed_str = f"  {DIM}elapsed: {_elapsed_since(campaign_start)}{RESET}"
+    lines.append(f"  [{bar}] {pct:.0f}% complete ({completed}/{total}){elapsed_str}")
     lines.append("")
 
-    # ── Active workers (from hypotheses, not sessions) ──────────────
-    active = conn.execute(
-        "SELECT id, strategy, worker_id, updated_at, created_at "
-        "FROM hypotheses WHERE status = 'running' ORDER BY id ASC"
-    ).fetchall()
-
+    # ── Active agents ───────────────────────────────────────────────
+    active = [a for a in agents if a["status"] == "running"]
     if active:
-        lines.append(f"  {BOLD}{YELLOW}Active Workers ({len(active)}):{RESET}")
-        for h in active:
-            age = _elapsed(h["created_at"])
-            wid = h["worker_id"] or "pending"
-            # Truncate strategy name to fit
-            name = h["strategy"]
-            if len(name) > 38:
-                name = name[:35] + "..."
+        lines.append(f"  {BOLD}{YELLOW}Active Agents ({len(active)}):{RESET}")
+        for a in active:
+            elapsed = _elapsed_since(a.get("elapsed", 0))
+            size = a["output_size"]
+            size_str = f"{size / 1024:.1f}K" if size > 1024 else f"{size}B"
             lines.append(
-                f"    {YELLOW}⚡{RESET} {DIM}#{h['id']:>3}{RESET} "
-                f"{name:<40} {DIM}{wid}  {age}{RESET}"
+                f"    {YELLOW}⚡{RESET} {a['name']:<28} "
+                f"{DIM}output: {size_str}  running: {elapsed}{RESET}"
             )
         lines.append("")
-    else:
-        lines.append(f"  {DIM}No active workers{RESET}\n")
 
-    # ── Recently completed (last 8, newest first) ───────────────────
-    recent = conn.execute(
-        "SELECT id, strategy, status, score, summary, updated_at "
-        "FROM hypotheses "
-        "WHERE status NOT IN ('running', 'queued') "
-        "ORDER BY updated_at DESC LIMIT 8"
-    ).fetchall()
+    # ── Queued agents ───────────────────────────────────────────────
+    waiting = [a for a in agents if a["status"] == "queued"]
+    if waiting:
+        names = ", ".join(a["name"] for a in waiting)
+        lines.append(f"  {DIM}Queued: {names}{RESET}")
+        lines.append("")
 
-    if recent:
-        lines.append(f"  {BOLD}Recent Activity:{RESET}")
-        for r in recent:
-            color, icon = STATUS_STYLE.get(r["status"], (RESET, "?"))
-            age = _elapsed(r["updated_at"])
-            summary = (r["summary"] or "")[:52]
+    # ── Completed agents ────────────────────────────────────────────
+    done_agents = [a for a in agents if a["status"] == "completed"]
+    if done_agents:
+        lines.append(f"  {BOLD}Completed ({len(done_agents)}):{RESET}")
+        for a in done_agents:
+            elapsed = _elapsed_since(a.get("elapsed", 0))
             score_str = ""
-            if r["score"] and r["score"] > 0:
-                score_str = f" {WHITE}score={r['score']:.0f}{RESET}"
+            if a["best_score"] is not None:
+                score_str = f"  score={a['best_score']:.2f}"
+            crib_str = f"  {GREEN}{BOLD}CRIB!{RESET}" if a["crib_found"] else ""
+            verdict = ""
+            if a["verdict"] and isinstance(a["verdict"], dict):
+                vs = a["verdict"].get("verdict_status", "")
+                if vs:
+                    verdict = f"  [{vs}]"
             lines.append(
-                f"    {color}{icon}{RESET} {DIM}#{r['id']:>3}{RESET} "
-                f"{r['strategy'][:30]:<30} "
-                f"{color}{r['status']:<13}{RESET}"
-                f"{score_str}  {DIM}{age} ago{RESET}"
+                f"    {GREEN}✓{RESET} {a['name']:<28} "
+                f"{DIM}{elapsed}{RESET}{score_str}{verdict}{crib_str}"
             )
-            if summary:
-                lines.append(f"         {DIM}{summary}{RESET}")
         lines.append("")
 
-    # ── New disproofs this session (not pre-existing) ───────────────
-    new_disproofs = conn.execute(
-        "SELECT strategy, criteria, evidence, disproved_at "
-        "FROM disproof_log "
-        "WHERE evidence NOT LIKE 'Imported from framework%' "
-        "AND criteria NOT LIKE 'Pre-existing:%' "
-        "ORDER BY disproved_at DESC LIMIT 5"
-    ).fetchall()
-
-    if new_disproofs:
-        lines.append(f"  {BOLD}{RED}New Disproofs:{RESET}")
-        for d in new_disproofs:
-            age = _elapsed(d["disproved_at"])
-            lines.append(
-                f"    {RED}✗{RESET} {d['strategy'][:35]:<35}  {DIM}{age} ago{RESET}"
-            )
-            ev = (d["evidence"] or d["criteria"] or "")[:65]
-            if ev:
-                lines.append(f"      {DIM}{ev}{RESET}")
-        lines.append("")
-
-    # ── Disproof ledger count ───────────────────────────────────────
-    total_disproofs = conn.execute(
-        "SELECT COUNT(*) as n FROM disproof_log"
-    ).fetchone()["n"]
-    pre_existing = conn.execute(
-        "SELECT COUNT(*) as n FROM disproof_log "
-        "WHERE criteria LIKE 'Pre-existing:%' "
-        "OR evidence LIKE 'Imported from framework%'"
-    ).fetchone()["n"]
-    new_count = total_disproofs - pre_existing
-    lines.append(
-        f"  {DIM}Disproof ledger: {total_disproofs} total "
-        f"({pre_existing} inherited, {new_count} new){RESET}"
-    )
-
-    # ── SOLVED alert ────────────────────────────────────────────────
-    solved = conn.execute(
-        "SELECT strategy, score, best_plaintext FROM hypotheses "
-        "WHERE status = 'solved'"
-    ).fetchall()
-    if solved:
-        lines.append("")
+    # ── CRIB alert ──────────────────────────────────────────────────
+    crib_agents = [a for a in agents if a["crib_found"]]
+    if crib_agents:
         lines.append(f"  {BG_GREEN}{WHITE}{BOLD}{'!' * WIDTH}{RESET}")
-        lines.append(f"  {BG_GREEN}{WHITE}{BOLD}  SOLUTION DETECTED — ORACLE VALIDATED  {RESET}")
+        lines.append(f"  {BG_GREEN}{WHITE}{BOLD}  CRIB HIT DETECTED — CHECK RESULTS  {RESET}")
         lines.append(f"  {BG_GREEN}{WHITE}{BOLD}{'!' * WIDTH}{RESET}")
-        for s in solved:
-            lines.append(f"  {GREEN}{BOLD}Strategy:{RESET}  {s['strategy']}")
-            lines.append(f"  {GREEN}{BOLD}Score:{RESET}     {s['score']}")
-            lines.append(f"  {GREEN}{BOLD}Plaintext:{RESET} {s['best_plaintext']}")
+        for a in crib_agents:
+            lines.append(f"  {GREEN}{BOLD}Agent:{RESET}  {a['name']}")
         lines.append("")
+
+    # ── Tail hint ───────────────────────────────────────────────────
+    if active:
+        first_active = active[0]["name"]
+        raw_path = campaign_dir / first_active / f"{first_active}_raw.txt"
+        lines.append(f"  {DIM}Live output: tail -f {raw_path}{RESET}")
 
     # ── Footer ──────────────────────────────────────────────────────
     lines.append(f"{CYAN}{DIM}{'─' * WIDTH}")
-    lines.append(f"  DB: {db_path.name}  │  Ctrl+C to stop{RESET}")
+    lines.append(f"  Campaign: {campaign_dir.name}  │  Ctrl+C to stop{RESET}")
 
-    conn.close()
     return "\n".join(lines)
 
 
+def _find_latest_campaign(project_root: Path) -> Path | None:
+    """Find the most recent campaign directory."""
+    campaigns_dir = project_root / "results" / "campaigns"
+    if not campaigns_dir.exists():
+        return None
+    dirs = sorted(
+        (d for d in campaigns_dir.iterdir() if d.is_dir()),
+        reverse=True,
+    )
+    return dirs[0] if dirs else None
+
+
 def main() -> None:
-    parser = argparse.ArgumentParser(description="KryptosBot Live Monitor")
+    parser = argparse.ArgumentParser(description="KryptosBot Live Monitor v3")
     parser.add_argument("--interval", type=int, default=3,
                         help="Refresh interval in seconds (default: 3)")
+    parser.add_argument("--campaign", type=str, default=None,
+                        help="Path to campaign directory")
+    # Legacy support
     parser.add_argument("--db", type=str, default=None,
-                        help="Path to results database")
+                        help="(Legacy) Path to results database — ignored")
     args = parser.parse_args()
 
     if args.db:
-        db_path = Path(args.db)
-    else:
-        script_dir = Path(__file__).resolve().parent
-        db_path = script_dir.parent / "kryptosbot_results.db"
+        print(f"{YELLOW}Warning: --db is deprecated. Use --campaign instead.{RESET}")
 
-    if not db_path.exists():
-        print(f"Database not found at {db_path}")
-        print("Run from the project root, or specify --db path.")
+    project_root = Path(__file__).resolve().parent.parent
+
+    if args.campaign:
+        campaign_dir = Path(args.campaign)
+    else:
+        campaign_dir = _find_latest_campaign(project_root)
+
+    if campaign_dir is None or not campaign_dir.exists():
+        print("No campaign found.")
+        print(f"Run a campaign first: python3 kryptosbot/solve.py")
+        print(f"Or specify a directory: python3 kryptosbot/monitor.py --campaign results/campaigns/YYYYMMDD_HHMMSS")
         sys.exit(1)
 
-    # Detect campaign start from earliest running hypothesis
+    # Estimate campaign start from directory name (YYYYMMDD_HHMMSS)
     campaign_start = None
     try:
-        conn = _connect(db_path)
-        row = conn.execute(
-            "SELECT MIN(created_at) as t FROM hypotheses WHERE status = 'running'"
-        ).fetchone()
-        if row and row["t"]:
-            campaign_start = datetime.fromisoformat(row["t"])
-        conn.close()
+        ts = campaign_dir.name
+        campaign_start = datetime.strptime(ts, "%Y%m%d_%H%M%S").replace(
+            tzinfo=timezone.utc
+        )
     except Exception:
         pass
 
-    print(f"Monitoring {db_path} (Ctrl+C to stop)\n")
+    print(f"Monitoring {campaign_dir} (Ctrl+C to stop)\n")
 
     try:
         while True:
             try:
-                dashboard = render(db_path, campaign_start)
+                dashboard = render(campaign_dir, campaign_start)
                 print(CLEAR + dashboard, flush=True)
-            except sqlite3.OperationalError:
-                # DB locked momentarily — skip this tick
-                pass
+            except Exception as e:
+                print(f"  {RED}Error: {e}{RESET}")
             time.sleep(args.interval)
     except KeyboardInterrupt:
         print(f"\n{DIM}Monitor stopped.{RESET}")

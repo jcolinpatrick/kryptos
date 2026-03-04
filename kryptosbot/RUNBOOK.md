@@ -1,576 +1,280 @@
 # KryptosBot Operational Runbook
 
-**Target environment:** Ubuntu VM accessed via VS Code Remote-SSH from Windows workstation.
-The kryptos project, all 320+ scripts, and KryptosBot all live on the VM.
+**Target environment:** Ubuntu VM accessed via VS Code Remote-SSH.
+Project root: `/home/cpatrick/kryptos/`. Python venv at `~/kryptos/venv/`.
+
+**Paradigm (2026-03-04):** The 97 carved K4 characters are SCRAMBLED ciphertext.
+`PT → simple substitution → REAL CT → SCRAMBLE → carved text`.
+**Primary focus: Construct the Cardan grille from the Kryptos tableau's structural elements.**
+The Kryptos tableau (28×31 with key column) overlays the cipher grid (28×31).
+Three Kryptos-only elements (absent from Antipodes) are the grille construction clues:
+key column (AZ order), header/footer rows (standard alphabet), extra L on row N.
+The scrambling layer's exact relationship to the grille is UNKNOWN.
 
 ---
 
 ## Table of Contents
 
-1. [VS Code Remote-SSH Setup](#1-vs-code-remote-ssh-setup)
-2. [VM Prerequisites](#2-vm-prerequisites)
-3. [Installation](#3-installation)
-4. [Environment Configuration](#4-environment-configuration)
-5. [Pre-Flight Checks](#5-pre-flight-checks)
-6. [Phase 1: Local Compute Baseline (Free)](#6-phase-1-local-compute-baseline)
-7. [Phase 2: Bootstrap — Import Existing Knowledge](#7-phase-2-bootstrap)
-8. [Phase 3: Agent Analysis](#8-phase-3-agent-analysis)
-9. [Phase 4: Disproof Sweep](#9-phase-4-disproof-sweep)
-10. [Phase 5: Full Campaign (When Warranted)](#10-phase-5-full-campaign)
-11. [Monitoring](#11-monitoring)
-12. [Multi-Day Operations](#12-multi-day-operations)
-13. [Adding Custom Strategies](#13-adding-custom-strategies)
-14. [Troubleshooting](#14-troubleshooting)
-15. [Quick Reference](#15-quick-reference)
+1. [Architecture Overview](#1-architecture-overview)
+2. [Environment Setup](#2-environment-setup)
+3. [Pre-Flight Checks](#3-pre-flight-checks)
+4. [Using solve.py](#4-using-solvepy)
+5. [Monitoring](#5-monitoring)
+6. [Long-Running Operations](#6-long-running-operations)
+7. [Troubleshooting](#7-troubleshooting)
+8. [Quick Reference](#8-quick-reference)
 
 ---
 
-## 1. VS Code Remote-SSH Setup
-
-### On your Windows machine
-
-1. Install the **Remote - SSH** extension in VS Code (Microsoft, `ms-vscode-remote.remote-ssh`)
-
-2. Open the Command Palette (`Ctrl+Shift+P`) → **Remote-SSH: Add New SSH Host**
-
-   ```
-   ssh your-username@your-vm-ip-or-hostname
-   ```
-
-   Select your SSH config file when prompted (usually `C:\Users\Colin\.ssh\config`).
-
-3. If you don't already have one, your `~/.ssh/config` entry should look like:
-
-   ```
-   Host kryptosvm
-       HostName 192.168.x.x
-       User colin
-       IdentityFile ~/.ssh/id_rsa
-       ForwardAgent yes
-   ```
-
-4. Connect: Command Palette → **Remote-SSH: Connect to Host** → select `kryptosvm`
-
-5. VS Code opens a new window connected to the VM. The bottom-left corner shows
-   `SSH: kryptosvm` (green) confirming you're remote.
-
-6. **Open your kryptos project folder:** File → Open Folder → navigate to wherever
-   your existing kryptos project lives on the VM (e.g., `/home/colin/kryptos/`)
-
-### What runs where
+## 1. Architecture Overview
 
 ```
-┌─────────────────────────┐          ┌──────────────────────────────────┐
-│  Windows Workstation     │   SSH    │  Ubuntu VM                       │
-│                          │ ◄──────► │                                  │
-│  VS Code UI              │          │  VS Code Server (auto-installed) │
-│  Keyboard / display      │          │  Python / pip / node             │
-│  SSH client              │          │  Agent SDK                       │
-│                          │          │  All 28 CPU cores                │
-│                          │          │  /home/colin/kryptos/  ← project │
-│                          │          │  /home/colin/kryptos/kryptosbot/ │
-└─────────────────────────┘          └──────────────────────────────────┘
-
-Everything executes on the VM. Your Windows machine is just the display.
+~/kryptos/                              ← project root
+├── CLAUDE.md                           ← master instructions
+├── src/kryptos/                        ← core crypto kernel (stdlib only)
+├── scripts/                            ← 430+ experiment scripts
+│   └── kbot_harness.py                 ← pre-built test harness for agents
+├── data/english_quadgrams.json         ← scoring data
+├── venv/                               ← Python venv (numpy, jinja2, SDK)
+├── results/                            ← unified output (gitignored)
+│   ├── campaigns/YYYYMMDD_HHMMSS/      ← per-campaign agent output
+│   └── compute/YYYYMMDD_HHMMSS/        ← per-compute-run output
+└── kryptosbot/                         ← campaign runner directory
+    ├── solve.py                        ← THE entry point (all commands)
+    ├── monitor.py                      ← live dashboard
+    ├── RUNBOOK.md                      ← this file
+    └── kryptosbot/                     ← Python package (library modules)
+        ├── agent_runner.py             ← shared agent session loop
+        ├── sdk_wrapper.py              ← SDK safety wrapper
+        ├── config.py                   ← K4 constants, HypothesisStatus, KryptosBotConfig
+        ├── database.py                 ← SQLite persistence
+        ├── compute.py                  ← local multiprocessing engine
+        └── strategies.py               ← unified strategy registry (22 strategies)
 ```
 
-### Extensions to install on the remote side
+### Library modules
 
-After connecting, VS Code will prompt you to install extensions on the remote host.
-Install these **on the SSH remote** (not locally):
+| Module | Purpose |
+|--------|---------|
+| `strategies.py` | Unified strategy registry: 22 strategies across 3 modes (agent/reasoning/compute). Strategy definitions, prompts, `build_prompt()`, `get_strategies()`. |
+| `agent_runner.py` | Shared agent session loop. Unified message handling, verdict extraction, `AgentResult` dataclass, `TokenTracker` for budget monitoring, `crib_event` for cross-agent early termination. |
+| `sdk_wrapper.py` | Wraps `claude_agent_sdk.query()` to suppress the known anyio cleanup bug. Classifies errors (rate limit, auth, quota) into actionable messages. Provides `safe_query()` and `preflight_check()`. |
+| `config.py` | K4 ciphertext, known cribs, `HypothesisStatus` enum, `KryptosBotConfig` runtime settings. |
+| `database.py` | SQLite persistence: hypotheses, evidence, disproof_log, sessions, campaigns. WAL mode. |
+| `compute.py` | Local multiprocessing engine: columnar permutations, keyword sweeps, key derivation, quadgram scoring. |
 
-- **Python** (Microsoft)
-- **Pylance**
+### Pre-deployed test harness
 
-VS Code handles this automatically — click "Install in SSH: kryptosvm" when prompted.
+`scripts/kbot_harness.py` provides validated functions that agents can import:
+
+```python
+import sys; sys.path.insert(0, 'scripts')
+from kbot_harness import test_perm, score_text, K4_CARVED, KEYWORDS
+```
 
 ---
 
-## 2. VM Prerequisites
-
-Run these in VS Code's integrated terminal (`` Ctrl+` ``), which is already SSH'd to the VM:
+## 2. Environment Setup
 
 ```bash
-# Python 3.10+
-python3 --version
-
-# Node.js 18+ (needed by Agent SDK runtime)
-node --version
-# If missing:
-# curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
-# sudo apt-get install -y nodejs
-
-# Core count
-nproc
-
-# Git
-git --version
-
-# Verify your kryptos project
-ls ~/kryptos/CLAUDE.md
-ls ~/kryptos/MEMORY.md
-find ~/kryptos -maxdepth 1 -name "*.py" | wc -l
-```
-
----
-
-## 3. Installation
-
-In VS Code's integrated terminal:
-
-```bash
-# Navigate to your existing kryptos project
 cd ~/kryptos
+source venv/bin/activate
 
-# Extract KryptosBot INTO the project so agents can see everything
-tar xzf /path/to/kryptosbot.tar.gz
-
-# Install the Agent SDK in a venv (recommended)
-python3 -m venv ~/kryptos/kryptosbot/.venv
-source ~/kryptos/kryptosbot/.venv/bin/activate
-pip install claude-agent-sdk
+# ANTHROPIC_API_KEY must be set for agent modes
+# Either export directly or put in kryptosbot/.env:
+echo "ANTHROPIC_API_KEY=sk-ant-api03-your-key" > kryptosbot/.env
 ```
 
-### Directory layout after extraction
-
-```
-~/kryptos/                         ← your existing project root
-├── CLAUDE.md
-├── MEMORY.md
-├── scripts/                       ← your 320+ scripts
-├── data/                          ← quadgram files, wordlists, etc.
-├── results/                       ← existing results
-└── kryptosbot/                    ← newly extracted
-    ├── kryptosbot/                ← Python package
-    │   ├── __init__.py
-    │   ├── config.py
-    │   ├── compute.py             ← local multiprocessing engine
-    │   ├── database.py
-    │   ├── framework_strategies.py
-    │   ├── orchestrator.py
-    │   └── worker.py
-    ├── .vscode/
-    │   └── launch.json
-    ├── .venv/                     ← Python virtual environment
-    ├── run_kryptosbot.py
-    ├── run_lean.py                ← lean mode (recommended)
-    ├── run_custom_campaign.py
-    ├── monitor.py
-    ├── RUNBOOK.md
-    ├── .env.template
-    └── pyproject.toml
-```
-
-### Open the kryptosbot folder in VS Code
-
-File → Open Folder → `~/kryptos/kryptosbot/`
-
-This makes the launch configs in `.vscode/launch.json` work. You can also keep
-the parent open and run from terminal — either approach works.
+All commands below assume the venv is activated and you're in `~/kryptos/`.
 
 ---
 
-## 4. Environment Configuration
-
-### 4a. Create `.env` on the VM
+## 3. Pre-Flight Checks
 
 ```bash
-cd ~/kryptos/kryptosbot
-cp .env.template .env
-nano .env    # or click .env in VS Code Explorer
-```
+# 1. Verify core framework (no API key needed)
+PYTHONPATH=src python3 -m kryptos doctor
 
-Contents:
+# 2. Verify agent_runner imports
+python3 -c "from kryptosbot.kryptosbot.strategies import STRATEGIES; print(f'{len(STRATEGIES)} strategies OK')"
 
-```env
-ANTHROPIC_API_KEY=sk-ant-api03-your-key-here
+# 3. Test Agent SDK (uses a few hundred tokens)
+PYTHONPATH=src python3 kryptosbot/solve.py preflight
 
-# CRITICAL: Point to your existing framework root (the parent directory)
-KBOT_PROJECT_ROOT=/home/colin/kryptos
-```
+# 4. List all strategies
+PYTHONPATH=src python3 kryptosbot/solve.py list
 
-### 4b. Select the Python interpreter in VS Code
-
-Command Palette (`Ctrl+Shift+P`) → **Python: Select Interpreter** →
-choose `~/kryptos/kryptosbot/.venv/bin/python3`
-
-### 4c. Verify
-
-```bash
-source .venv/bin/activate
-export $(grep -v '^#' .env | xargs)
-
-echo $KBOT_PROJECT_ROOT
-ls $KBOT_PROJECT_ROOT/CLAUDE.md || ls $KBOT_PROJECT_ROOT/.claude/CLAUDE.md
+# 5. Run existing tests
+PYTHONPATH=src pytest tests/ -q
 ```
 
 ---
 
-## 5. Pre-Flight Checks
+## 4. Using solve.py
+
+### One entry point, all commands
 
 ```bash
-cd ~/kryptos/kryptosbot
-source .venv/bin/activate
-export $(grep -v '^#' .env | xargs)
+# Default: blitz campaign (6 parallel unscramble agents)
+python3 kryptosbot/solve.py
 
-# 1. List strategies (no API key needed)
-python3 run_kryptosbot.py --strategies
+# Local compute only (free, no API tokens)
+python3 kryptosbot/solve.py compute
 
-# 2. Test local compute engine (no API key needed)
-python3 -c "
-from kryptosbot.compute import run_statistical_profile
-r = run_statistical_profile('/tmp/test_stats.json')
-print('IoC:', r['index_of_coincidence'])
-print('Entropy:', r['shannon_entropy'])
-print('Conclusions:')
-for c in r['conclusions']: print(' ', c)
-import os; os.remove('/tmp/test_stats.json')
-"
+# Run specific strategies by name
+python3 kryptosbot/solve.py run grille_geometry constraint_solver wildcard
 
-# 3. Test Agent SDK auth (uses a few hundred tokens)
-python3 -c "
-import asyncio
-from claude_agent_sdk import query, ClaudeAgentOptions
-async def test():
-    async for msg in query(prompt='Say OK', options=ClaudeAgentOptions(allowed_tools=[])):
-        if hasattr(msg, 'result'):
-            print('Agent SDK:', msg.result)
-            return
-asyncio.run(test())
-"
+# Reasoning-only agents (bespoke thinking, no code execution)
+python3 kryptosbot/solve.py reason
+
+# Single agent, quick test
+python3 kryptosbot/solve.py run wildcard --max-turns 5
+
+# Full options
+python3 kryptosbot/solve.py --agents 6 --max-turns 25 --budget 50.0
+
+# Utility commands
+python3 kryptosbot/solve.py list          # Show all strategies
+python3 kryptosbot/solve.py preflight     # SDK/auth health check
+python3 kryptosbot/solve.py report        # Show results summary
 ```
 
-All three pass → you're ready.
+All commands should be prefixed with `PYTHONPATH=src` when run from `~/kryptos/`.
+
+### Strategy modes
+
+| Mode | Cost | What happens |
+|------|------|-------------|
+| **AGENT** | ~$1-60 | Claude agent with tools (Read, Write, Edit, Bash, Glob, Grep). Writes & runs code. |
+| **REASONING** | ~$1-5 | Claude agent without tools. Pure analytical thinking. |
+| **COMPUTE** | $0 | Local CPU only. No API tokens. Uses multiprocessing. |
+
+### Cost guide
+
+| Command | Approx. cost |
+|---------|-------------|
+| `solve.py compute` | $0 |
+| `solve.py run wildcard --max-turns 5` | ~$0.50 |
+| `solve.py run grille_geometry` | ~$2-5 |
+| `solve.py reason` | ~$5-15 |
+| `solve.py` (default, 6 agents) | ~$15-60 |
+| `solve.py --budget 15` | ≤$15 |
 
 ---
 
-## 6. Phase 1: Local Compute Baseline (Free)
+## 5. Monitoring
 
-**Your VM's 28 cores doing real work. Zero tokens. Zero cost.**
+### Live dashboard
+
+Open a second terminal:
 
 ```bash
-python3 run_lean.py --local --workers 28
+cd ~/kryptos
+source venv/bin/activate
+python3 kryptosbot/monitor.py --interval 3
+python3 kryptosbot/monitor.py --db results/results.db  # explicit DB path
 ```
 
-Or via VS Code: Run & Debug (`Ctrl+Shift+D`) → **Lean: Local Compute Only (FREE)**
-
-**What runs:**
-
-| Attack | What it does | Duration |
-|--------|-------------|----------|
-| `stats` | IoC, entropy, autocorrelation, chi-squared | Seconds |
-| `simple` | Exhaustive Caesar (25) and Affine (312) | Seconds |
-| `keywords` | Vigenère + Beaufort with Kryptos wordlist × 2 alphabets | Minutes |
-| `columnar` | All permutations for column widths 2-12 | Minutes–hours |
-
-**To run a single attack:**
+### Results summary
 
 ```bash
-python3 run_lean.py --local --attack stats
-python3 run_lean.py --local --attack simple
-python3 run_lean.py --local --attack keywords --workers 28
-python3 run_lean.py --local --attack columnar --workers 28 --col-max 15
-```
-
-**Results land in `kbot_results/`:**
-
-```bash
-# Quick check for crib matches (the holy grail)
-python3 -c "
-import json
-d = json.load(open('kbot_results/master_summary.json'))
-print('Total crib matches:', d['total_crib_matches'])
-for k, v in d['per_attack'].items():
-    print(f'  {k}: {v}')
-"
-
-# Read statistical conclusions
-python3 -c "
-import json
-d = json.load(open('kbot_results/statistical_profile.json'))
-for c in d['conclusions']: print(c)
-"
+PYTHONPATH=src python3 kryptosbot/solve.py report
 ```
 
 ---
 
-## 7. Phase 2: Bootstrap — Import Existing Knowledge
+## 6. Long-Running Operations
 
-**One agent session reads your framework and imports prior findings into the DB.**
-
-```bash
-python3 run_kryptosbot.py --bootstrap --verbose
-```
-
-Token cost: ~$0.30-1.00
-
-Verify:
-
-```bash
-python3 run_kryptosbot.py --report
-```
-
----
-
-## 8. Phase 3: Agent Analysis
-
-**One agent reads local compute results + framework knowledge, provides analysis.**
-
-```bash
-python3 run_lean.py --agent
-```
-
-Token cost: ~$0.60-2.50
-
-Results in `kbot_results/agent_analysis_raw.txt`. The agent may also write new
-Python scripts for you to run locally (free) in the next iteration.
-
-**The daily cycle:**
-
-```
-Local compute ($0) → Agent analysis (~$1-2) → Run new scripts ($0) → Agent → ...
-```
-
----
-
-## 9. Phase 4: Disproof Sweep
-
-```bash
-python3 run_kryptosbot.py --disproofs --verbose
-```
-
-Use when disproof requires reasoning (statistical inference, pattern analysis)
-rather than brute force (which lean mode handles locally).
-
----
-
-## 10. Phase 5: Full Campaign (When Warranted)
-
-Use sparingly. Start small:
-
-```bash
-python3 run_kryptosbot.py --workers 4 --priority 1 --verbose
-```
-
-28 agent workers burns tokens fast. 4-8 is the sweet spot for reasoning tasks.
-
----
-
-## 11. Monitoring
-
-### Live dashboard — open a second terminal in VS Code
-
-Click the **+** icon in the terminal panel (also SSH'd to the VM):
-
-```bash
-cd ~/kryptos/kryptosbot
-source .venv/bin/activate
-python3 monitor.py
-```
-
-### tmux — essential for long/overnight runs
+### tmux (essential for overnight runs)
 
 ```bash
 # Start a named session
 tmux new -s kbot
 
 # Run your campaign
-python3 run_lean.py --local --workers 28
+PYTHONPATH=src python3 -u kryptosbot/solve.py --budget 30
 
 # Split pane for monitoring: Ctrl+B then "
-python3 monitor.py
 
-# Detach (keep running after you close VS Code): Ctrl+B then D
+# Detach (keeps running after you close VS Code): Ctrl+B then D
 
-# Reconnect later (even from a different VS Code window):
+# Reconnect later:
 tmux attach -t kbot
 ```
 
-**tmux is critical.** Without it, closing your VS Code window or losing your
-SSH connection kills the running process. With tmux, the process continues on
-the VM regardless of your connection state.
+### Recommended workflow
 
-### screen alternative
-
-```bash
-screen -S kbot
-python3 run_lean.py --local --workers 28
-# Detach: Ctrl+A then D
-# Reconnect: screen -r kbot
+```
+1. solve.py compute                  Free baseline (minutes)
+2. solve.py report                   Check results
+3. solve.py run wildcard --max-turns 5   Quick test (~$0.50)
+4. solve.py --budget 15              Full parallel attack
+5. Repeat
 ```
 
 ---
 
-## 12. Multi-Day Operations
-
-### Recommended daily workflow
-
-```bash
-# Morning: start local compute in tmux (free)
-tmux new -s kbot-compute
-cd ~/kryptos/kryptosbot && source .venv/bin/activate
-export $(grep -v '^#' .env | xargs)
-python3 run_lean.py --local --workers 28
-# Detach: Ctrl+B then D
-
-# When compute finishes: agent analysis (~$1-2)
-tmux new -s kbot-agent
-cd ~/kryptos/kryptosbot && source .venv/bin/activate
-export $(grep -v '^#' .env | xargs)
-python3 run_lean.py --agent
-# Review kbot_results/agent_analysis_raw.txt
-# Run any new scripts locally (free)
-
-# Evening: check status
-python3 run_kryptosbot.py --report
-
-# Overnight: extended columnar sweep (free, in tmux)
-tmux new -s kbot-night
-python3 run_lean.py --local --attack columnar --workers 28 --col-max 18
-```
-
-### After VM reboot
-
-```bash
-cd ~/kryptos/kryptosbot && source .venv/bin/activate
-export $(grep -v '^#' .env | xargs)
-python3 run_kryptosbot.py --report     # see what completed
-python3 run_lean.py --local --workers 28  # continue
-```
-
-### Feeding Claude Code session discoveries back
-
-1. Update CLAUDE.md / MEMORY.md in your framework
-2. `python3 run_kryptosbot.py --bootstrap` to re-import
-3. Continue the cycle
-
----
-
-## 13. Adding Custom Strategies
-
-See `run_custom_campaign.py` for the template. For local compute extensions,
-add functions to `kryptosbot/compute.py` following the existing pattern.
-
----
-
-## 14. Troubleshooting
-
-### VS Code Remote-SSH won't connect
-
-```powershell
-# From Windows PowerShell, test raw SSH:
-ssh colin@your-vm-ip
-
-# Common issues:
-# - VM not running → start it
-# - Firewall blocking port 22 → sudo ufw allow ssh
-# - SSH service down → sudo systemctl start sshd
-# - Wrong key → check IdentityFile in ssh config
-```
+## 7. Troubleshooting
 
 ### "ModuleNotFoundError: No module named 'claude_agent_sdk'"
 
 ```bash
-# Make sure you activated the venv
-source ~/kryptos/kryptosbot/.venv/bin/activate
+source ~/kryptos/venv/bin/activate
 pip install claude-agent-sdk
 ```
 
-### Agent can't find CLAUDE.md
+### "ModuleNotFoundError: No module named 'kryptosbot'"
 
+Run from `~/kryptos/`, not from `~/kryptos/kryptosbot/`:
 ```bash
-echo $KBOT_PROJECT_ROOT
-ls -la $KBOT_PROJECT_ROOT/CLAUDE.md
-ls -la $KBOT_PROJECT_ROOT/.claude/CLAUDE.md
-# Fix the path in .env if wrong
+cd ~/kryptos
+PYTHONPATH=src python3 kryptosbot/solve.py preflight
 ```
 
-### Quadgram file not found
+### Token budget exceeded
 
+Use `--budget` to cap spending:
 ```bash
-find ~/kryptos -name "*quadgram*" -o -name "*4gram*" 2>/dev/null
-ln -s /actual/path/to/quadgrams.txt ~/kryptos/english_quadgrams.txt
+PYTHONPATH=src python3 kryptosbot/solve.py --budget 10.00
 ```
 
 ### Process died when VS Code disconnected
 
-You forgot tmux. Restart the run — the database preserves all completed work:
-
-```bash
-python3 run_kryptosbot.py --report    # see what finished
-python3 run_lean.py --local --workers 28  # continue
-```
-
-### Database locked errors
-
-Too many simultaneous writers. Reduce agent workers or increase timeout:
-
-```bash
-# Edit kryptosbot/database.py, change:
-#   conn.execute("PRAGMA busy_timeout=10000")
-# to:
-#   conn.execute("PRAGMA busy_timeout=30000")
-```
+Use tmux (see section 6). Results already written are preserved.
 
 ---
 
-## 15. Quick Reference
+## 8. Quick Reference
 
 ### Shell setup (every new terminal)
 
 ```bash
-cd ~/kryptos/kryptosbot
-source .venv/bin/activate
-export $(grep -v '^#' .env | xargs)
+cd ~/kryptos
+source venv/bin/activate
 ```
 
-### Commands
+### Commands at a glance
 
 ```bash
-# ── LOCAL COMPUTE (FREE) ──
-python3 run_lean.py --local --workers 28               # All attacks
-python3 run_lean.py --local --attack stats              # Stats only
-python3 run_lean.py --local --attack columnar --col-max 15  # Columnar only
+# ── FREE (local compute) ────────────────────────────────────
+PYTHONPATH=src python3 kryptosbot/solve.py compute
 
-# ── AGENT INTELLIGENCE (TOKENS) ──
-python3 run_lean.py --agent                             # Analyze results (~$1-2)
-python3 run_kryptosbot.py --bootstrap                   # Import knowledge (~$0.50)
-python3 run_kryptosbot.py --disproofs                   # Disproof sweep
-python3 run_kryptosbot.py --single <strategy>           # One strategy
-python3 run_kryptosbot.py --workers 4                   # Small parallel campaign
+# ── CHEAP ($0.50-5) ─────────────────────────────────────────
+PYTHONPATH=src python3 kryptosbot/solve.py run wildcard --max-turns 5
 
-# ── STATUS ──
-python3 run_kryptosbot.py --report
-python3 run_kryptosbot.py --strategies
-python3 monitor.py
+# ── MODERATE ($5-15) ─────────────────────────────────────────
+PYTHONPATH=src python3 kryptosbot/solve.py reason
 
-# ── LONG RUNS (use tmux) ──
-tmux new -s kbot
-tmux attach -t kbot
+# ── EXPENSIVE ($15-60) ──────────────────────────────────────
+PYTHONPATH=src python3 kryptosbot/solve.py --budget 30
+
+# ── STATUS (free) ───────────────────────────────────────────
+PYTHONPATH=src python3 kryptosbot/solve.py list
+PYTHONPATH=src python3 kryptosbot/solve.py preflight
+PYTHONPATH=src python3 kryptosbot/solve.py report
+python3 kryptosbot/monitor.py
 ```
 
-### Execution order
+---
 
-```
-1.  run_lean.py --local --workers 28        Free compute baseline
-2.  Review kbot_results/                    Check local results
-3.  run_kryptosbot.py --bootstrap           Import framework knowledge (~$0.50)
-4.  run_kryptosbot.py --report              Verify import
-5.  run_lean.py --agent                     Agent analysis (~$1-2)
-6.  Run agent-written scripts locally       Free
-7.  run_lean.py --agent                     Feed back results (~$1-2)
-8.  Repeat 6-7 daily
-9.  run_kryptosbot.py --disproofs           Periodic disproof sweep
-```
-
-### Cost guide
-
-| Operation | Dollar cost (Sonnet) |
-|-----------|---------------------|
-| Any local compute | $0 |
-| Bootstrap | $0.30-1.00 |
-| Agent analysis | $0.60-2.50 |
-| Single strategy | $0.60-2.50 |
-| Disproof sweep | $1-5 |
-| Full campaign (4 workers) | $6-25 |
-| Full campaign (28 workers) | $30-200+ ← avoid |
+*Last updated: 2026-03-03 — consolidated to solve.py, unified strategy registry*

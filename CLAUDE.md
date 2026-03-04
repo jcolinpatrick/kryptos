@@ -18,7 +18,7 @@ This repo has one purpose: determine the **true plaintext** and the **full encry
 
 **CRITICAL PARADIGM (2026-03-02):** [USER GROUND TRUTH] The 97 carved characters are **SCRAMBLED ciphertext**. The encryption model is: `PT → simple substitution → REAL CT → SCRAMBLE (transposition) → carved text`. Every prior experiment (400+, 669B+ configs) assumed positional correspondence and FAILED. The **singular mission** is to find the unscrambling permutation using the Cardan grille. See Claude Code auto-memory `cardan_grille.md` for full details.
 
-**Cardan grille extract (106 chars, from KA tableau):** `HJLVACINXZHUYOCMWSEAFYBZACJFHIFXRYVFIJMXEILLNELJNXZKILKRDINPADMNVZACEIMUWAFGIMUKRGILVHNQXWYABXZKIKJUFQRXCD` — T is completely absent (25/26 letters). The grille defines the reading order that unscrambles K4.
+**Cardan grille extract (corrected, 100 chars, from 28×31 grid):** `HJLVKDJQZKIVPCMWSAFOPCKBDLHIFXRYVFIJMXEIOMQFJNXZKILKRDIYSCLMQVZACEIMVSEFHLQKRGILVHNQXWTCDKIKJUFQRXCD` — All 26 letters present (IC = 0.0416). The grille defines the reading order that unscrambles K4. (Old 106-char extract `HJLVACIN...` is stored as `GRILLE_EXTRACT_OLD` in `kryptosbot/kryptosbot/strategies.py`.)
 
 **What we know:** [DERIVED FACT] No single-layer classical cipher works on the carved text (exhaustively tested). [USER GROUND TRUTH] The carved text is a permutation of the real CT. [HYPOTHESIS] The Cardan grille on the Vigenère tableau defines the unscrambling permutation. [HYPOTHESIS] Once unscrambled, K4 yields to simple substitution (Vigenère/Beaufort with a short keyword). See [`reports/final_synthesis.md`](reports/final_synthesis.md) for the elimination landscape.
 
@@ -41,7 +41,12 @@ PYTHONPATH=src pytest tests/test_transforms.py
 PYTHONPATH=src pytest tests/test_transforms.py::TestVigenereFamily::test_text_roundtrip_vig -v
 
 # Run an experiment script (always use -u for unbuffered output)
-PYTHONPATH=src python3 -u scripts/e_nsa_01_interval7.py
+PYTHONPATH=src python3 -u scripts/_uncategorized/e_nsa_01_interval7.py
+
+# Dispatch runner: list, run by family/status, reconcile
+PYTHONPATH=src python3 run_attack.py --list --verbose
+PYTHONPATH=src python3 run_attack.py --run --family grille --status active
+PYTHONPATH=src python3 run_attack.py --reconcile
 
 # Environment health check
 PYTHONPATH=src python3 -m kryptos doctor
@@ -65,9 +70,11 @@ Four layers with strict dependency direction: **kernel → pipeline → novelty 
 
 - **kernel/** — Pure computation, zero external dependencies, **all positions 0-indexed**.
   - `constants.py` — **SINGLE source of truth**: CT, cribs, Bean constraints, keystream values, scoring thresholds. Runs `_verify()` at import time. **Never define CT or cribs elsewhere.**
+  - `alphabet.py` — `Alphabet` class, `AZ`/`KA` singletons, `keyword_mixed_alphabet()`, `THEMATIC_KEYWORDS`
+  - `text.py` — Text normalization: `sanitize()`, `text_to_nums()`, `nums_to_text()`, `char_to_num()`, `num_to_char()`
   - `transforms/` — Cipher implementations (Vigenère/Beaufort, transpositions, Polybius) + composable pipeline builder (`compose.py`: `TransformConfig` → `PipelineConfig` → `build_pipeline()`)
   - `constraints/` — Crib scoring (`crib.py`), Bean equality/inequality (`bean.py`), consistency checks (`consistency.py` — self-encrypting positions, monoalphabetic consistency)
-  - `scoring/aggregate.py` — `score_candidate()` is **THE canonical scoring path**. Thresholds: NOISE=6, STORE=10, SIGNAL=18, BREAKTHROUGH=24.
+  - `scoring/aggregate.py` — Two canonical scoring paths: `score_candidate()` (anchored cribs at fixed positions) and `score_candidate_free()` (cribs searched anywhere — critical for scrambled-CT paradigm). Thresholds: NOISE=6, STORE=10, SIGNAL=18, BREAKTHROUGH=24. Individual scorers: `crib_score.py`, `free_crib.py`, `ic.py`, `ngram.py`.
   - `persistence/` — WAL-mode SQLite (runs/results/eliminations/checkpoints) + JSONL artifacts
 - **pipeline/** — `evaluate_candidate()` is the primary entry point. `SweepRunner` handles parallel execution with checkpointing and resume.
 - **novelty/** — Hypothesis-driven search: `Hypothesis` dataclass → `triage_batch()` → `NoveltyLedger` (SQLite). Wired to 13 research questions (RQ-1..RQ-13). See `src/kryptos/novelty/generators.py` for adding new hypotheses.
@@ -92,14 +99,28 @@ kernel/persistence/sqlite.py (results DB) + JsonlWriter (logs)
 
 ### Experiment scripts (`scripts/`)
 
-Standalone experiment scripts, each runnable with `PYTHONPATH=src python3 -u scripts/<name>.py`. Prefixed by agent/topic (e.g. `e_frac_*`, `e_chart_*`, `e_explorer_*`, `k4_*`). 430+ scripts exist including ~150 legacy `e_s_*.py` from earlier sessions.
+574 standardized attack scripts organized into 23 family subdirectories (e.g. `scripts/grille/`, `scripts/transposition/columnar/`, `scripts/blitz/`). Each script has a parseable metadata header and is tracked in `exhaustion_log.json`. Use `run_attack.py --list` to discover scripts or `run_attack.py --run --family <name>` to dispatch by family.
+
+**Script infrastructure (`scripts/lib/`):**
+- `header.py` — Parse/validate metadata headers (Cipher, Family, Status, Keyspace, Last run, Best score)
+- `exhaustion.py` — CRUD for `exhaustion_log.json` (authoritative source of truth for status)
+- `discover.py` — Recursive script discovery and manifest generation
+- `migrate.py` — Batch migration CLI for adding headers
+
+**Standard `attack()` contract** (15 scripts migrated, remainder use legacy subprocess mode):
+```python
+def attack(ciphertext: str, **params) -> list[tuple[float, str, str]]:
+    """Returns [(score, plaintext, method_description), ...] sorted by score desc."""
+```
 
 **Writing a new experiment script:**
-1. Name it `scripts/e_<topic>_<nn>_<short_name>.py` (topic prefix groups related work, e.g. `e_chart_*`, `e_antipodes_*`, `e_bespoke_*`)
-2. Import constants from `kryptos.kernel.constants` (never hardcode CT/cribs)
-3. Write results to `results/<experiment_id>.json` or `results/<experiment_id>/`
-4. Print a final summary with best score, config, and artifact path
-5. Use `python3 -u` for unbuffered output when running in background
+1. Place it in the appropriate family subdirectory: `scripts/<family>/e_<topic>_<nn>_<short_name>.py`
+2. Add a standard metadata header (see `scripts/examples/e_caesar_standard.py`)
+3. Import constants from `kryptos.kernel.constants` (never hardcode CT/cribs)
+4. Implement `attack(ciphertext, **params)` returning `list[tuple[float, str, str]]`
+5. Write results to `results/<experiment_id>.json` or `results/<experiment_id>/`
+6. Register in `exhaustion_log.json` via `scripts/lib/exhaustion.update()`
+7. Use `python3 -u` for unbuffered output when running in background
 
 ### Tests
 
@@ -110,11 +131,12 @@ Two test categories: **Unit tests** (`test_transforms.py`, `test_constraints.py`
 - `data/ct.txt` — K4 ciphertext (97 chars)
 - `data/english_quadgrams.json` — Quadgram log-probabilities (2 MB, top-level dict: `{"THAN": -3.776, ...}`)
 - `db/` — SQLite databases (sweep results, novelty ledger) — **gitignored**
-- `wordlists/english.txt` — 370K words
-- `reference/` — Carter book PDF + text extracts, Sanborn correspondence, NSA docs
+- `wordlists/english.txt` — 370K words; `wordlists/thematic_keywords.txt` — thematic keywords for key-phrase testing
+- `reference/` — Carter book PDF + text extracts, Sanborn correspondence, NSA docs, Ed Scheidt dossier, video transcripts, KryptosFan findings, Cardan grille image
 - `reports/` — Human-readable analysis reports (tracked)
 - `anomaly_registry.md` — Physical anomalies in the Kryptos sculpture
-- `external/` — Third-party reference project (patrickkellogg-Kryptos)
+- `external/` — Third-party reference projects (patrickkellogg-Kryptos, enigmator cipher tools)
+- `docs/crypto_field_manual/` — Durable cryptographic knowledge base (cipher catalog, people/orgs timeline, K4 mapping matrix)
 
 ### Site builder (`site_builder/`)
 
@@ -126,7 +148,7 @@ FastAPI backend for kryptosbot.com. Theory classifier endpoint (Claude-powered),
 
 ### KryptosBot SDK (`kryptosbot/`)
 
-Claude Agent SDK multi-agent campaign runner. Separate from the core `src/kryptos/` package. One entry point: `python3 kryptosbot/solve.py`. Key modules: `strategies.py` (22 strategies in 3 modes), `agent_runner.py` (session loop + token tracking), `sdk_wrapper.py` (SDK safety wrapper), `compute.py` (local multiprocessing), `database.py` (SQLite). Requires `claude-agent-sdk` and `python-dotenv` (in venv). Results go to `results/` (gitignored).
+Claude Agent SDK multi-agent campaign runner. Separate from the core `src/kryptos/` package. Two-level namespace: `kryptosbot/kryptosbot/` is the Python package (imports as `kryptosbot.kryptosbot.*`). Entry points: `python3 kryptosbot/solve.py` (campaigns), `python3 kryptosbot/monitor.py` (live dashboard). Key modules in `kryptosbot/kryptosbot/`: `strategies.py` (23 strategies in 4 modes: UNSCRAMBLE/REASONING/COMPUTE/LEGACY), `agent_runner.py` (session loop + token tracking), `sdk_wrapper.py` (SDK safety wrapper), `compute.py` (local multiprocessing), `database.py` (SQLite). Requires `claude-agent-sdk` and `python-dotenv` (in venv). Results go to `results/` (gitignored).
 
 ### Other directories
 
@@ -144,9 +166,13 @@ Claude Agent SDK multi-agent campaign runner. Separate from the core `src/krypto
 ## Interpreting Scores
 
 `score_candidate()` returns a `ScoreBreakdown` with these key fields:
-- **crib_matches** (0–24): Number of crib positions where derived key is consistent. Primary signal.
+- **crib_score** (0–24): Number of crib positions where derived key is consistent. Primary signal. (Split into `ene_score` 0–13 and `bc_score` 0–11.)
 - **bean_passed** (bool): Whether Bean equality (k[27]=k[65]) and all 21 inequalities hold.
-- **ic**: Index of coincidence of the candidate plaintext.
+- **ic_value**: Index of coincidence of the candidate plaintext.
+- **ngram_score** / **ngram_per_char**: Optional n-gram quality metrics.
+- **crib_classification**: One of "noise", "interesting", "signal", "breakthrough".
+
+`score_candidate_free()` returns a `FreeScoreBreakdown` with the same interface but searches for cribs at any position (for scrambled-CT work).
 
 | Score | Classification | Stored? | Meaning |
 |-------|---------------|---------|---------|
@@ -225,7 +251,7 @@ The carved K4 text is SCRAMBLED ciphertext. The Cardan grille defines the readin
 **Key constraints for teammates:**
 - Import constants from `kryptos.kernel.constants` — never hardcode CT/cribs
 - Grille details are in Claude Code auto-memory (`cardan_grille.md`); key facts are in the Quick Reference above
-- The 106-char grille extract: `HJLVACINXZHUYOCMWSEAFYBZACJFHIFXRYVFIJMXEILLNELJNXZKILKRDINPADMNVZACEIMUWAFGIMUKRGILVHNQXWYABXZKIKJUFQRXCD`
+- The corrected 100-char grille extract: `HJLVKDJQZKIVPCMWSAFOPCKBDLHIFXRYVFIJMXEIOMQFJNXZKILKRDIYSCLMQVZACEIMVSEFHLQKRGILVHNQXWTCDKIKJUFQRXCD`
 - For each candidate permutation: apply to K4, try Vig/Beaufort with KRYPTOS/PALIMPSEST/ABSCISSA, check for English
 - DO NOT re-run old direct-decryption attacks — they assumed wrong positional correspondence
 
@@ -235,5 +261,5 @@ The carved K4 text is SCRAMBLED ciphertext. The Cardan grille defines the readin
 
 ---
 
-*Last updated: 2026-03-03 — PARADIGM SHIFT: carved text is scrambled, find the real CT via Cardan grille*
+*Last updated: 2026-03-04 — PARADIGM SHIFT: carved text is scrambled, find the real CT via Cardan grille*
 *Primary author: Colin Patrick (human lead) + Claude (computational partner)*
