@@ -1,0 +1,575 @@
+path	family	status	lines	description
+transposition/columnar/agent_k4_columnar7_nonen_scan.py	Columnar transposition attacks	unknown	387	agent_k4_columnar7_nonen_scan.py
+_uncategorized/agent_k4_keystream_language_scan.py	Uncategorized — needs manual review	unknown	497	agent_k4_keystream_language_scan.py
+blitz/blitz_8lines73.py	Blitz campaign — fast brute-force sweeps	unknown	1649	blitz_8lines73.py — Exhaustive test of "8 Lines 73" interpretations for K4.
+blitz/blitz_affine_search.py	Blitz campaign — fast brute-force sweeps	unknown	870	blitz_affine_search.py — Exhaustive Affine & Power Permutation Search for K4
+blitz/blitz_concealment.py	Blitz campaign — fast brute-force sweeps	unknown	964	blitz_concealment.py — Test concealment/stego pre-processing models for K4.
+blitz/blitz_constraint_solver.py	Blitz campaign — fast brute-force sweeps	unknown	529	blitz_constraint_solver.py — Constraint-based K4 permutation search.
+blitz/blitz_constraint_solver_v2.py	Blitz campaign — fast brute-force sweeps	unknown	902	blitz_constraint_solver_v2.py — Model 2 Constraint-Based K4 Search
+blitz/blitz_coordinates_key.py	Blitz campaign — fast brute-force sweeps	unknown	1264	blitz_coordinates_key.py — K2 coordinates as numerical key material for K4.
+blitz/blitz_csp_focused.py	Blitz campaign — fast brute-force sweeps	unknown	447	blitz_csp_focused.py — Deep CSP analysis for all 18 multiset-feasible configs.
+grille/blitz_csp_grille_structural.py	Grille, turning grille, and Cardan aperture attacks	unknown	648	CSP + Structural Analysis: Find the unique permutation by combining
+grille/blitz_grille_geometry.py	Grille, turning grille, and Cardan aperture attacks	unknown	671	Blitz Grille Geometry — comprehensive approach to Cardan grille permutation extraction.
+grille/blitz_grille_geometry_v2.py	Grille, turning grille, and Cardan aperture attacks	unknown	872	Grille Geometry v2 — targeted follow-up with new approaches.
+grille/blitz_grille_geometry_v3.py	Grille, turning grille, and Cardan aperture attacks	unknown	599	Grille Geometry v3 — targeted approaches based on v1/v2 null results.
+grille/blitz_grille_geometry_v4.py	Grille, turning grille, and Cardan aperture attacks	unknown	526	Grille Geometry v4 — fast critical approaches:
+grille/blitz_grille_geometry_v5.py	Grille, turning grille, and Cardan aperture attacks	unknown	1161	(no description)
+grille/blitz_grille_geometry_v6.py	Grille, turning grille, and Cardan aperture attacks	unknown	1052	Blitz Grille Geometry v6 — Genuinely new approaches NOT covered in v1-v5.
+grille/blitz_grille_geometry_v7.py	Grille, turning grille, and Cardan aperture attacks	unknown	999	(no description)
+grille/blitz_grille_geometry_v8.py	Grille, turning grille, and Cardan aperture attacks	unknown	1038	(no description)
+grille/blitz_grille_geometry_v9.py	Grille, turning grille, and Cardan aperture attacks	unknown	730	(no description)
+grille/blitz_grille_mask.py	Grille, turning grille, and Cardan aperture attacks	unknown	1347	blitz_grille_mask.py — Systematic Cardan Grille Mask Construction
+blitz/blitz_instruction_decoder.py	Blitz campaign — fast brute-force sweeps	unknown	1828	blitz_instruction_decoder.py
+grille/blitz_k3_grille_v2.py	Grille, turning grille, and Cardan aperture attacks	unknown	751	blitz_k3_grille_v2.py — K3 confirmed pure transposition; extend to K4.
+grille/blitz_k3_grille_v3.py	Grille, turning grille, and Cardan aperture attacks	unknown	738	blitz_k3_grille_v3.py — Targeted K4 permutation search.
+grille/blitz_k3_grille_v4.py	Grille, turning grille, and Cardan aperture attacks	unknown	625	blitz_k3_grille_v4.py — CSP with YWT crib + correct K3-style formula search.
+grille/blitz_k3_grille_v5.py	Grille, turning grille, and Cardan aperture attacks	unknown	508	blitz_k3_grille_v5.py — Fix pure-transposition impossibility; search Model 2 + generalised K3 formula.
+grille/blitz_k3_grille_v5b.py	Grille, turning grille, and Cardan aperture attacks	unknown	483	blitz_k3_grille_v5b.py — Fix v5 assertion bug; run sections 3-5 cleanly.
+grille/blitz_k3_grille_verify.py	Grille, turning grille, and Cardan aperture attacks	unknown	898	blitz_k3_grille_verify.py  (REVISED 2026-03-04)
+blitz/blitz_ka_cycle_grille.py	Blitz campaign — fast brute-force sweeps	unknown	475	blitz_ka_cycle_grille.py
+blitz/blitz_model2_novel.py	Blitz campaign — fast brute-force sweeps	unknown	870	(no description)
+blitz/blitz_numeric_permuter.py	Blitz campaign — fast brute-force sweeps	unknown	1066	BLITZ: Numeric Permuter — derives 97-char permutations from the Cardan grille extract.
+blitz/blitz_numeric_permuter2.py	Blitz campaign — fast brute-force sweeps	unknown	1109	BLITZ Wave 2: Numeric Permuter — advanced approaches
+blitz/blitz_numeric_permuter3.py	Blitz campaign — fast brute-force sweeps	unknown	547	BLITZ Wave 3: Geometric Rectangle Analysis + Targeted Permutations
+blitz/blitz_numeric_permuter4.py	Blitz campaign — fast brute-force sweeps	unknown	651	BLITZ Wave 4: Targeted Approaches
+blitz/blitz_numeric_permuter5.py	Blitz campaign — fast brute-force sweeps	unknown	1239	BLITZ Wave 5: Novel Permutation Derivation — Approaches Not Tried in Waves 1–4
+blitz/blitz_plaintext_archaeology.py	Blitz campaign — fast brute-force sweeps	unknown	1365	blitz_plaintext_archaeology.py — Mining K1-K3 plaintext for K4 method instructions.
+blitz/blitz_plaintext_archaeology2.py	Blitz campaign — fast brute-force sweeps	unknown	855	blitz_plaintext_archaeology2.py — Deep dive on the most promising K1-K3 instruction models.
+blitz/blitz_rotation_180.py	Blitz campaign — fast brute-force sweeps	unknown	1538	blitz_rotation_180.py — EXTENDED 180° Cardan Grille Analysis (2026-03-04)
+blitz/blitz_step4_k4.py	Blitz campaign — fast brute-force sweeps	unknown	387	(no description)
+transposition/other/blitz_strip_cipher.py	Non-columnar transposition attacks	unknown	1423	blitz_strip_cipher.py — Strip cipher / simultaneous sub+trans model for K4.
+transposition/other/blitz_strip_cipher_v2.py	Non-columnar transposition attacks	unknown	1001	blitz_strip_cipher_v2.py — Deeper strip cipher models for K4.
+transposition/other/blitz_strip_keyfind.py	Non-columnar transposition attacks	unknown	521	(no description)
+transposition/other/blitz_strip_perm.py	Non-columnar transposition attacks	unknown	517	(no description)
+transposition/other/blitz_strip_route.py	Non-columnar transposition attacks	unknown	796	scripts/blitz_strip_route.py
+transposition/other/blitz_strip_route_fast.py	Non-columnar transposition attacks	unknown	344	scripts/blitz_strip_route_fast.py
+blitz/blitz_t_final.py	Blitz campaign — fast brute-force sweeps	unknown	735	blitz_t_final.py — Final T-position approaches with CORRECT alphabet-bounds check.
+blitz/blitz_t_position.py	Blitz campaign — fast brute-force sweeps	unknown	992	blitz_t_position.py — Exhaustive T-position exploitation for K4 unscrambling.
+blitz/blitz_t_position_corrected.py	Blitz campaign — fast brute-force sweeps	unknown	699	blitz_t_position_corrected.py — T-position exploitation with CORRECTED T-column formula.
+blitz/blitz_t_position_extended.py	Blitz campaign — fast brute-force sweeps	unknown	758	blitz_t_position_extended.py — Deep dive on T-diagonal paradox + extended approaches.
+blitz/blitz_t_position_v2.py	Blitz campaign — fast brute-force sweeps	unknown	984	blitz_t_position_v2.py — Fresh T-position exploitation using verified mask.
+blitz/blitz_t_targeted.py	Blitz campaign — fast brute-force sweeps	unknown	580	blitz_t_targeted.py — Targeted novel T-position approaches.
+tableau/blitz_tableau_matching.py	Tableau, KA alphabet, and keyword analysis	unknown	540	blitz_tableau_matching.py — Cipher-Tableau Match Analysis for 28×31 Kryptos Grid
+tableau/blitz_tableau_matching2.py	Tableau, KA alphabet, and keyword analysis	unknown	659	blitz_tableau_matching2.py — Deep Grille Constraint Analysis
+tableau/blitz_tableau_matching3.py	Tableau, KA alphabet, and keyword analysis	unknown	421	blitz_tableau_matching3.py — Targeted Deep Analysis
+tableau/blitz_tableau_structural.py	Tableau, KA alphabet, and keyword analysis	unknown	809	blitz_tableau_structural.py
+blitz/blitz_variable_cribs.py	Blitz campaign — fast brute-force sweeps	unknown	454	blitz_variable_cribs.py — Affine permutation search with variable crib positions
+blitz/blitz_wildcard.py	Blitz campaign — fast brute-force sweeps	unknown	1067	blitz_wildcard.py — Lateral & creative permutation approaches for K4 Model 2.
+blitz/blitz_wildcard2.py	Blitz campaign — fast brute-force sweeps	unknown	1135	blitz_wildcard2.py — Deep Dive Approaches (Part 2)
+blitz/blitz_wildcard_grille.py	Blitz campaign — fast brute-force sweeps	unknown	1179	blitz_wildcard_grille.py — Novel Cardan Grille Approaches for K4 (2026-03-04)
+blitz/blitz_yar_selective.py	Blitz campaign — fast brute-force sweeps	unknown	833	blitz_yar_selective.py — Test the YAR Selective Substitution Theory for K4.
+_infra/build_experiment_ledger.py	Infrastructure, harnesses, validators, corpus tools	unknown	685	Build the canonical experiment ledger from all available sources.
+statistical/card_cipher_stats.py	Statistical analysis, frequency, IC, entropy	unknown	834	Card-cipher statistical analysis of K4 ciphertext.
+_infra/corpus_scanner.py	Infrastructure, harnesses, validators, corpus tools	unknown	692	Gutenberg Corpus Running-Key Scanner for Kryptos K4.
+_infra/corpus_scanner_wave2.py	Infrastructure, harnesses, validators, corpus tools	unknown	417	Gutenberg Corpus Running-Key Scanner — Wave 2 (Expanded).
+_uncategorized/disprove_caesar_rot.py	Uncategorized — needs manual review	unknown	216	disprove_caesar_rot.py — Exhaustive Caesar (ROT-N) disproof for K4.
+_infra/dragnet_v4.py	Infrastructure, harnesses, validators, corpus tools	unknown	1212	DRAGNET v4 — Exhaustive Double Columnar + Single Columnar Gap Closure.
+encoding/e01_morse_e_extraction.py	Morse code, encoding transforms, extraction patterns	unknown	466	E-01: Extract and analyze the extra E's in Kryptos Morse code (K0).
+encoding/e02_misspelling_deltas.py	Morse code, encoding transforms, extraction patterns	unknown	369	E-02: Test misspelling substitution deltas as K4 cipher key material.
+thematic/berlin_clock/e03_berlin_clock_sweep.py	Berlin clock, Weltzeituhr, and DDR-era keys	unknown	523	E-03: Berlin Clock sweep for K4.
+substitution/e04_hill_cipher.py	Monoalphabetic, affine, Hill, bifid, trifid	unknown	566	E-04: Hill Cipher hypothesis for K4.
+_uncategorized/e05_layer_two.py	Uncategorized — needs manual review	unknown	539	E-05: 'LAYER TWO' compound cipher tests for K4.
+polyalphabetic/e06_autokey.py	Vigenère, Beaufort, autokey, and polyalphabetic	unknown	423	E-06: Autokey cipher test for K4.
+substitution/e_affine_mono_disproof.py	Monoalphabetic, affine, Hill, bifid, trifid	unknown	414	(no description)
+substitution/e_antipodes_01_hill_transposition.py	Monoalphabetic, affine, Hill, bifid, trifid	unknown	630	E-ANTIPODES-01: Hill Sublayer + Transposition
+antipodes/e_antipodes_02_mono_fixed_running_key.py	Antipodes series — paired/complementary attacks	unknown	312	E-ANTIPODES-02: Fixed Mono + Transposition + Running Key Detection
+k3_continuity/e_antipodes_03_k3k4_continuity.py	K1-K3 method applied to K4, cross-section analysis	unknown	387	E-ANTIPODES-03: K3→K4 Method Continuity
+running_key/e_antipodes_04_sculpture_running_key.py	Running key and book cipher attacks	unknown	359	E-ANTIPODES-04: Running Key from Sculpture Text
+antipodes/e_antipodes_05_gromark_vimark_trans.py	Antipodes series — paired/complementary attacks	unknown	435	E-ANTIPODES-05: Gromark/Vimark + Transposition
+tableau/e_antipodes_06_tableau_path_key.py	Tableau, KA alphabet, and keyword analysis	unknown	482	E-ANTIPODES-06: Tableau Path as Running Key
+yar/e_antipodes_07_yar_block_cipher.py	YAR family — grille reconstruction and variants	unknown	431	E-ANTIPODES-07: YAR-Parameterized Block Cipher
+antipodes/e_antipodes_08_stream_context.py	Antipodes series — paired/complementary attacks	unknown	764	E-ANTIPODES-08: K4 in Antipodes Stream Context
+antipodes/e_antipodes_09_layertwo_trim.py	Antipodes series — paired/complementary attacks	unknown	442	E-ANTIPODES-09: "LAYER TWO" as Instruction — Trimmed Stream
+thematic/sculpture_physical/e_antipodes_10_coordinate_grid.py	Physical sculpture, installation, and coordinate keys	unknown	555	E-ANTIPODES-10: Coordinate Grid / Battleship Cipher
+substitution/e_atbash_01_keyword_decrypt.py	Monoalphabetic, affine, Hill, bifid, trifid	unknown	514	E-ATBASH-01: Atbash hypothesis — the carved K4 is Atbash of the real CT.
+substitution/e_atbash_02_statistics.py	Monoalphabetic, affine, Hill, bifid, trifid	unknown	423	E-ATBASH-02: Statistical analysis of Atbash-transformed K4 ciphertext.
+substitution/e_atbash_03_crib_drag.py	Monoalphabetic, affine, Hill, bifid, trifid	unknown	698	E-ATBASH-03: Exhaustive crib-dragging on Atbash(K4) hypothesis.
+crib_analysis/e_audit_01_crib_robustness.py	Crib dragging, plaintext reconstruction, constraint solving	unknown	446	E-AUDIT-01: Crib Robustness Audit for Non-Periodicity Proof.
+transposition/other/e_audit_02_strip_stagger.py	Non-columnar transposition attacks	unknown	417	E-AUDIT-02: Unequal-Strip Stagger Cipher with Per-Strip Mixed Alphabets.
+thematic/berlin_clock/e_audit_03_weltzeituhr_fsm.py	Berlin clock, Weltzeituhr, and DDR-era keys	unknown	481	E-AUDIT-03: Weltzeituhr-Driven Finite-State Cipher.
+grille/e_audit_04_cardan_aperture.py	Grille, turning grille, and Cardan aperture attacks	unknown	478	E-AUDIT-04: Cardan-Style Aperture Extraction over Antipodes Field.
+substitution/e_audit_05_hill_2x2_lyar.py	Monoalphabetic, affine, Hill, bifid, trifid	unknown	407	E-AUDIT-05: 2x2 Hill cipher using Extra L + YAR superscript anomalies.
+transposition/other/e_audit_05_scytale_cylinder.py	Non-columnar transposition attacks	unknown	838	E-AUDIT-05: Scytale Cipher — The Antipodes IS a Cylinder.
+tableau/e_audit_05_tableau_column_keys.py	Tableau, KA alphabet, and keyword analysis	unknown	444	E-AUDIT-05: Test Kryptos tableau columns as decryption keys for K4.
+yar/e_audit_05_yar_init_params.py	YAR family — grille reconstruction and variants	unknown	698	E-AUDIT-05: Test YAR superscript values as cipher initialization parameters.
+tableau/e_audit_06_k3_method_k4.py	Tableau, KA alphabet, and keyword analysis	unknown	739	E-AUDIT-06: K3's ACTUAL Method Applied to K4.
+tableau/e_audit_07_k3_running_key.py	Tableau, KA alphabet, and keyword analysis	unknown	329	E-AUDIT-07: Exhaustive K3-as-running-key test for K4 decryption.
+encoding/e_audit_08_delimiter_x_extraction.py	Morse code, encoding transforms, extraction patterns	unknown	528	E-AUDIT-08: X-Delimiter Extraction Experiment
+polyalphabetic/e_autokey_bidir_extended.py	Vigenère, Beaufort, autokey, and polyalphabetic	unknown	335	Extended autokey bidirectional analysis: seed lengths 1-96, with detailed
+polyalphabetic/e_autokey_bidirectional.py	Vigenère, Beaufort, autokey, and polyalphabetic	unknown	599	Autokey Vigenère bidirectional back-derivation from BERLINCLOCK crib.
+polyalphabetic/e_autokey_bootstrap_00.py	Vigenère, Beaufort, autokey, and polyalphabetic	unknown	989	(no description)
+polyalphabetic/e_autokey_bootstrap_01_crossval.py	Vigenère, Beaufort, autokey, and polyalphabetic	unknown	493	E-AUTOKEY-BOOTSTRAP-01: Proper Cross-Validation for All Primer Lengths
+_uncategorized/e_bc_gap_analysis.py	Uncategorized — needs manual review	unknown	538	e_bc_gap_analysis.py  —  BC extension gap analysis (2026-03)
+exploration/e_bespoke_01_misspelling_mods.py	Exploratory analysis, bespoke methods, chart series	unknown	667	E-BESPOKE-01: Test ciphertext modifications derived from Kryptos misspellings.
+exploration/e_bespoke_02_abscissa_linear.py	Exploratory analysis, bespoke methods, chart series	unknown	648	(no description)
+exploration/e_bespoke_03_shift_values.py	Exploratory analysis, bespoke methods, chart series	unknown	890	E-BESPOKE-03: Test misspelling-derived NUMERIC SHIFT VALUES as key material.
+exploration/e_bespoke_04_t20_retest.py	Exploratory analysis, bespoke methods, chart series	unknown	1139	E-BESPOKE-04: Systematic T=20 retest (1-indexed alphabet: A=1, B=2, ... T=20).
+exploration/e_bespoke_05_98chars.py	Exploratory analysis, bespoke methods, chart series	unknown	1018	E-BESPOKE-05: 98-character hypothesis — insert one char to make K4 grid-friendly.
+exploration/e_bespoke_06_doubles_cc.py	Exploratory analysis, bespoke methods, chart series	unknown	1068	E-BESPOKE-06: Doubled-letter digraph analysis and CC insertion hypothesis.
+exploration/e_bespoke_07_1indexed_params.py	Exploratory analysis, bespoke methods, chart series	unknown	1274	E-BESPOKE-07: Systematic 1-indexed parameter variants for YAR, RQ, EQUAL, DYAR.
+exploration/e_bespoke_08_t_alphabet.py	Exploratory analysis, bespoke methods, chart series	unknown	1144	E-BESPOKE-08: T-first alphabet hypothesis — "T IS YOUR POSITION" = T=position 1.
+exploration/e_bespoke_09_99chars_cc.py	Exploratory analysis, bespoke methods, chart series	unknown	769	E-BESPOKE-09: 99-character CC insertion hypothesis.
+exploration/e_bespoke_10_rotation_grid.py	Exploratory analysis, bespoke methods, chart series	unknown	629	E-BESPOKE-10: K3-style physical rotation grid attack on K4.
+tableau/e_bespoke_11_tableau_extraction.py	Tableau, KA alphabet, and keyword analysis	unknown	975	E-BESPOKE-11: Tableau-as-key-source via structured extraction.
+exploration/e_bespoke_12_dryad_lookup.py	Exploratory analysis, bespoke methods, chart series	unknown	666	E-BESPOKE-12: 2D DRYAD lookup from K1/K2/K3 plaintext and ciphertext.
+_uncategorized/e_card_cipher_h5_deep.py	Uncategorized — needs manual review	unknown	273	Deep dive into H5 (face-card markers) and H6 grid-9 result.
+_uncategorized/e_card_cipher_tests.py	Uncategorized — needs manual review	unknown	1033	Card-based cipher hypothesis tests against K4.
+cfm/e_cfm_00_drusilla_hypothesis.py	Cipher family modeling and constraint-based elimination	unknown	284	E-CFM-00: DRUSILLA Hypothesis — Webster family name as key material.
+running_key/e_cfm_01_running_key_foreign.py	Running key and book cipher attacks	unknown	405	E-CFM-01: Foreign-language running key analysis.
+running_key/e_cfm_02_mono_running_constrain.py	Running key and book cipher attacks	unknown	276	E-CFM-02: Mono + transposition + running key — DOF reduction.
+cfm/e_cfm_03_null_extraction.py	Cipher family modeling and constraint-based elimination	unknown	218	E-CFM-03: Null cipher / steganographic extraction patterns.
+substitution/e_cfm_04_homophonic_partition.py	Monoalphabetic, affine, Hill, bifid, trifid	unknown	194	E-CFM-04: Homophonic substitution partition analysis.
+cfm/e_cfm_05_nomenclator_model.py	Cipher family modeling and constraint-based elimination	unknown	343	E-CFM-05: Nomenclator / code+cipher hybrid structural analysis.
+cfm/e_cfm_06_east_constraint.py	Cipher family modeling and constraint-based elimination	unknown	408	E-CFM-06: EAST repetition constraint mining for running key identification.
+k3_continuity/e_cfm_07_k3_rotational.py	K1-K3 method applied to K4, cross-section analysis	unknown	442	E-CFM-07: K3-style rotational transposition applied to K4.
+cfm/e_cfm_08_trans_key_scoring.py	Cipher family modeling and constraint-based elimination	unknown	577	E-CFM-08: Transposition-guided running key fragment scoring.
+cfm/e_cfm_09_gutenberg_east_scan.py	Cipher family modeling and constraint-based elimination	unknown	528	E-CFM-09: Gutenberg-scale EAST constraint scan.
+cfm/e_cfm_10_medusa_rule.py	Cipher family modeling and constraint-based elimination	unknown	353	E-CFM-10: MEDUSA Rule — Cyrillic Projector key derivation applied to Kryptos.
+cfm/e_cfm_11_anomaly_key_derivation.py	Cipher family modeling and constraint-based elimination	unknown	612	E-CFM-11: Systematic Anomaly-as-Key-Material.
+running_key/e_chart_01_running_key.py	Running key and book cipher attacks	unknown	633	E-CHART-01: K1+K2+K3 plaintext as running key through KA tableau for K4.
+polyalphabetic/e_chart_02_autokey.py	Vigenère, Beaufort, autokey, and polyalphabetic	unknown	628	E-CHART-02: Autokey Cipher Variants Through KA Tableau
+tableau/e_chart_03_misspelling_tableau.py	Tableau, KA alphabet, and keyword analysis	unknown	853	E-CHART-03: Misspelling-Modified Tableau Variants for K4
+tableau/e_chart_03b_reduced_misspelling.py	Tableau, KA alphabet, and keyword analysis	unknown	723	E-CHART-03b: Reduced Misspelling Set (4-pair) Tableau Variants for K4
+exploration/e_chart_04_morse_pattern.py	Exploratory analysis, bespoke methods, chart series	unknown	945	E-CHART-04: K0 Morse E-group pattern as tableau row selector / key generator.
+exploration/e_chart_05_antipodes_misspelling.py	Exploratory analysis, bespoke methods, chart series	unknown	775	E-CHART-05: Antipodes-Corrected Misspelling Tableau Modifications
+exploration/e_chart_06_herbert.py	Exploratory analysis, bespoke methods, chart series	unknown	332	E-CHART-06: Test HERBERT and Carter-related primers.
+exploration/e_chart_07_width9_cc.py	Exploratory analysis, bespoke methods, chart series	unknown	480	E-CHART-07: Width-9 grid with inserted characters (CC hypothesis).
+statistical/e_chart_08_noise_analysis.py	Statistical analysis, frequency, IC, entropy	unknown	355	E-CHART-08: False positive rate analysis for w9 + 2-char insertion scores.
+exploration/e_chart_09_boundary_sweep.py	Exploratory analysis, bespoke methods, chart series	unknown	567	E-CHART-09: Exhaustive boundary sweep — 2-letter insertions near BERLINCLOCK.
+exploration/e_chart_10_w9_sub.py	Exploratory analysis, bespoke methods, chart series	unknown	674	E-CHART-10: W9 orderings + keyword substitution (deep dive).
+exploration/e_chart_11_rotation.py	Exploratory analysis, bespoke methods, chart series	unknown	783	E-CHART-11: K3-style rotation-based transposition at various grid widths.
+transposition/columnar/e_col_pure_exhaustive.py	Columnar transposition attacks	unknown	248	E-COL-PURE: Pure columnar transposition decryption, ALL widths 2-20.
+transposition/columnar/e_columnar_gap_closure.py	Columnar transposition attacks	unknown	442	(no description)
+exploration/e_compose_01_novel_pipelines.py	Exploratory analysis, bespoke methods, chart series	unknown	1011	(no description)
+exploration/e_compose_02_extended.py	Exploratory analysis, bespoke methods, chart series	unknown	596	E-COMPOSE-02: Extended novel pipeline compositions — diagnostics + autokey.
+exploration/e_compose_03_partitioned.py	Exploratory analysis, bespoke methods, chart series	unknown	452	E-COMPOSE-03: Partitioned encryption — two systems on two message parts.
+_uncategorized/e_desp_01_missing_char_grid.py	Uncategorized — needs manual review	unknown	353	E-DESP-01: Missing character + 7×14 transposition grid.
+_uncategorized/e_disproof_01_caesar_all_shifts.py	Uncategorized — needs manual review	unknown	156	E-DISPROOF-01: Caesar Cipher (ROT-1 through ROT-25) Disproof for K4.
+_uncategorized/e_disproof_01_caesar_shifts.py	Uncategorized — needs manual review	unknown	235	E-DISPROOF-01: Caesar Cipher Exhaustive Disproof
+_uncategorized/e_egypt_00_corpus_pipeline.py	Uncategorized — needs manual review	unknown	741	E-EGYPT-00: Transliteration-aware Egyptological corpus pipeline.
+transposition/columnar/e_egypt_01_columnar_sweep.py	Columnar transposition attacks	unknown	471	E-EGYPT-01: Egypt Corpus x Columnar Transposition Sweep
+_uncategorized/e_endyahr_mapping.py	Uncategorized — needs manual review	unknown	1302	E-ENDYAHR-MAPPING: Investigate the ENDYAHR <-> KRYPTOS column relationship.
+exploration/e_explorer_01_sanborn_manuscript.py	Exploratory analysis, bespoke methods, chart series	unknown	720	E-EXPLORER-01: Sanborn manuscript + grid rotation + dual mono hypotheses.
+exploration/e_explorer_02_rotation_rk_expanded.py	Exploratory analysis, bespoke methods, chart series	unknown	518	E-EXPLORER-02: Expanded grid rotation + running key search.
+exploration/e_explorer_03_w_separator.py	Exploratory analysis, bespoke methods, chart series	unknown	368	E-EXPLORER-03: W-Separator Dual-Group Hypothesis (Monte Carlo Validation).
+exploration/e_explorer_04_nonstandard_structures.py	Exploratory analysis, bespoke methods, chart series	unknown	814	E-EXPLORER-04: Non-standard cipher structures.
+exploration/e_explorer_05_interleave_followup.py	Exploratory analysis, bespoke methods, chart series	unknown	471	E-EXPLORER-05: Follow-up on H3 dual-system interleave 24/24 results.
+thematic/sculpture_physical/e_explorer_06_physical_procedural.py	Physical sculpture, installation, and coordinate keys	unknown	737	(no description)
+exploration/e_explorer_07_k5_constraints.py	Exploratory analysis, bespoke methods, chart series	unknown	619	E-EXPLORER-07: K5-derived positional constraints on K4.
+polyalphabetic/e_extend_xor_autokey_00.py	Vigenère, Beaufort, autokey, and polyalphabetic	unknown	598	e_extend_xor_autokey_00.py — Focused bidirectional extension from BERLINCLOCK crib.
+fractionation/e_frac_01_w9_structural.py	Fractionation & bean-period analysis	unknown	564	E-FRAC-01: Width-9 Grid Structural Analysis.
+fractionation/e_frac_02b_colprog_baseline.py	Fractionation & bean-period analysis	unknown	94	E-FRAC-02b: Monte Carlo baseline for column-progressive model.
+fractionation/e_frac_05_mixed_alphabets.py	Fractionation & bean-period analysis	unknown	428	E-FRAC-05: Width-9 Columnar + Column-Dependent Mixed Alphabets.
+fractionation/e_frac_06_w11w13_structural.py	Fractionation & bean-period analysis	unknown	418	E-FRAC-06: Width-11 and Width-13 Structural Analysis + Periodic Sweep.
+fractionation/e_frac_07_bimodal_w9.py	Fractionation & bean-period analysis	unknown	316	E-FRAC-07: Width-9 Bimodal Fingerprint Analysis.
+fractionation/e_frac_08_bimodal_multiwidth.py	Fractionation & bean-period analysis	unknown	177	E-FRAC-08: Bimodal Fingerprint Compatibility Across All Widths.
+fractionation/e_frac_09_bimodal_structure.py	Fractionation & bean-period analysis	unknown	639	E-FRAC-09: Structural Characterization of Bimodal-Compatible Permutations.
+fractionation/e_frac_10_strip_bimodal.py	Fractionation & bean-period analysis	unknown	426	E-FRAC-10: Strip Manipulation + Periodic Substitution Scoring.
+fractionation/e_frac_11_bimodal_validity.py	Fractionation & bean-period analysis	unknown	425	E-FRAC-11: Testing the Validity of the Bimodal Fingerprint.
+fractionation/e_frac_12_w9_strict_reeval.py	Fractionation & bean-period analysis	unknown	388	E-FRAC-12: Width-9 Re-evaluation with Strict Scoring (No Bimodal Filter).
+fractionation/e_frac_13_ic_analysis.py	Fractionation & bean-period analysis	unknown	514	E-FRAC-13: IC Statistical Analysis — Is K4's below-random IC significant?
+fractionation/e_frac_14_autocorrelation.py	Fractionation & bean-period analysis	unknown	588	E-FRAC-14: K4 Autocorrelation Deep Dive
+fractionation/e_frac_15_linear_key.py	Fractionation & bean-period analysis	unknown	433	E-FRAC-15: Linear/Polynomial Key Model Test
+fractionation/e_frac_16_key_distribution.py	Fractionation & bean-period analysis	unknown	352	E-FRAC-16: Key Value Distribution Analysis
+fractionation/e_frac_17_beaufort_running_key.py	Fractionation & bean-period analysis	unknown	296	E-FRAC-17: Beaufort Running Key Search Against Reference Texts
+fractionation/e_frac_18_crib_sensitivity.py	Fractionation & bean-period analysis	unknown	483	E-FRAC-18: Crib Position Sensitivity Analysis
+fractionation/e_frac_19_pre_ene_analysis.py	Fractionation & bean-period analysis	unknown	504	E-FRAC-19: Pre-ENE Segment Deep Analysis (RQ-7)
+fractionation/e_frac_20_residue_conflict_map.py	Fractionation & bean-period analysis	unknown	393	E-FRAC-20: Residue Conflict Map — Which Crib Positions Block Full Score?
+fractionation/e_frac_21_fractionation_structural_proofs.py	Fractionation & bean-period analysis	unknown	210	E-FRAC-21: Structural Proofs — Complete Fractionation Family Elimination
+fractionation/e_frac_22_null_cipher_intervals.py	Fractionation & bean-period analysis	unknown	322	E-FRAC-22: Null Cipher / Interval Reading Analysis
+fractionation/e_frac_23_beaufort_key_reconstruction.py	Fractionation & bean-period analysis	unknown	959	E-FRAC-23: Beaufort Key Reconstruction — Structured Non-Periodic Models
+fractionation/e_frac_24_running_key_profile.py	Fractionation & bean-period analysis	unknown	566	E-FRAC-24: Running Key Language Profile Analysis
+fractionation/e_frac_25_transposition_entropy.py	Fractionation & bean-period analysis	unknown	420	E-FRAC-25: Transposition Effect on Apparent Key Entropy
+fractionation/e_frac_26_w9_quadgram.py	Fractionation & bean-period analysis	unknown	601	E-FRAC-26: Exhaustive Width-9 Columnar with Quadgram Scoring.
+fractionation/e_frac_27_bean_width_profile.py	Fractionation & bean-period analysis	unknown	526	E-FRAC-27: Bean-Compatible Width Profiling.
+fractionation/e_frac_28_w9_bean_key_sa.py	Fractionation & bean-period analysis	unknown	437	E-FRAC-28: SA Key Optimization on Bean-Passing Width-9 Orderings.
+fractionation/e_frac_29_w6w8_crib_scoring.py	Fractionation & bean-period analysis	unknown	492	E-FRAC-29: Exhaustive Crib Scoring for Bean-Compatible Widths 6 and 8.
+fractionation/e_frac_30_w10_w15_crib_scoring.py	Fractionation & bean-period analysis	unknown	469	E-FRAC-30: Sampled Crib Scoring for Widths 10-15 at Discriminating Periods.
+fractionation/e_frac_31_bean_random_perms.py	Fractionation & bean-period analysis	unknown	340	E-FRAC-31: Bean-Filtered Random Permutation Analysis.
+fractionation/e_frac_32_simple_transposition_sweep.py	Fractionation & bean-period analysis	unknown	466	E-FRAC-32: Simple Transposition Family Sweep.
+fractionation/e_frac_33_fitness_landscape.py	Fractionation & bean-period analysis	unknown	450	E-FRAC-33: Fitness Landscape Analysis of the Permutation Space.
+fractionation/e_frac_33b_perperiod_fix.py	Fractionation & bean-period analysis	unknown	312	E-FRAC-33b: Fix per-period correlation analysis from E-FRAC-33.
+fractionation/e_frac_34_multi_objective_oracle.py	Fractionation & bean-period analysis	unknown	679	E-FRAC-34: Multi-Objective Oracle Design for JTS.
+fractionation/e_frac_35_bean_period_impossibility.py	Fractionation & bean-period analysis	unknown	528	E-FRAC-35: Bean Impossibility Proof for Transposition + Periodic Key
+fractionation/e_frac_36_period8_bean_hillclimb.py	Fractionation & bean-period analysis	unknown	382	E-FRAC-36: Period-8 Hill-Climbing with Bean Constraint
+fractionation/e_frac_37_autokey_arbitrary_transposition.py	Fractionation & bean-period analysis	unknown	539	E-FRAC-37: Autokey + Arbitrary Transposition — Oracle Generalization Test
+fractionation/e_frac_38_bean_key_model_constraints.py	Fractionation & bean-period analysis	unknown	448	E-FRAC-38: Bean Constraint Analysis for ALL Key Generation Models
+fractionation/e_frac_39_running_key_bipartite.py	Fractionation & bean-period analysis	unknown	532	E-FRAC-39: Running Key + Transposition Bipartite Feasibility Analysis
+fractionation/e_frac_40_carter_quadgram_screen.py	Fractionation & bean-period analysis	unknown	436	E-FRAC-40: Carter Running Key + Transposition Quadgram Screening
+fractionation/e_frac_40b_random_key_control.py	Fractionation & bean-period analysis	unknown	365	E-FRAC-40b: Random Key Control for Quadgram Screening
+fractionation/e_frac_41_word_discriminator.py	Fractionation & bean-period analysis	unknown	374	E-FRAC-41: Word-Level Discriminator Analysis
+fractionation/e_frac_42_refined_discriminator.py	Fractionation & bean-period analysis	unknown	470	E-FRAC-42: Refined Word Discriminator — Non-Crib Words + Multi-Threshold
+fractionation/e_frac_43_bigram_discriminator.py	Fractionation & bean-period analysis	unknown	394	E-FRAC-43: Bigram Transition Discriminator
+fractionation/e_frac_44_information_theoretic.py	Fractionation & bean-period analysis	unknown	728	E-FRAC-44: Information-Theoretic Analysis of the Crib Oracle.
+fractionation/e_frac_45_grid_reading_orders.py	Fractionation & bean-period analysis	unknown	695	(no description)
+fractionation/e_frac_46_double_columnar.py	Fractionation & bean-period analysis	unknown	477	(no description)
+fractionation/e_frac_47_myszkowski.py	Fractionation & bean-period analysis	unknown	546	E-FRAC-47: Myszkowski Transposition — Comprehensive Test.
+fractionation/e_frac_48_amsco_disrupted.py	Fractionation & bean-period analysis	unknown	432	E-FRAC-48: AMSCO / Nihilist / Swapped Columnar at Widths 8-13.
+fractionation/e_frac_49_running_key_columnar.py	Fractionation & bean-period analysis	unknown	444	E-FRAC-49: Running Key + Structured Columnar Transposition (DEFINITIVE TEST)
+fractionation/e_frac_50_running_key_all_families.py	Fractionation & bean-period analysis	unknown	412	E-FRAC-50: Running Key + ALL Remaining Structured Transposition Families
+fractionation/e_frac_51_english_key_detection.py	Fractionation & bean-period analysis	unknown	613	E-FRAC-51: English-Like Key Fragment Detection on Structured Transpositions
+fractionation/e_frac_52_three_layer.py	Fractionation & bean-period analysis	unknown	493	E-FRAC-52: Three-Layer Model Test (Sub + Trans + Sub)
+fractionation/e_frac_53_mono_inner_periodic.py	Fractionation & bean-period analysis	unknown	586	(no description)
+fractionation/e_frac_54_mono_running_key_detection.py	Fractionation & bean-period analysis	unknown	601	(no description)
+fractionation/e_frac_55_bean_surviving_periods.py	Fractionation & bean-period analysis	unknown	481	(no description)
+statistical/e_freq_equiv_01.py	Statistical analysis, frequency, IC, entropy	unknown	274	E-FREQ-EQUIV-01: Test statistical significance of lower-half frequency equivalences.
+substitution/e_freq_homophonic_analysis.py	Monoalphabetic, affine, Hill, bifid, trifid	unknown	649	E-FREQ-HOMO: K4 Letter Frequency Distribution Analysis & Homophonic Solver.
+transposition/columnar/e_grid31_columnar_exhaustive.py	Columnar transposition attacks	unknown	961	Exhaustive columnar transposition search on width-31 grid and other widths for K4.
+transposition/columnar/e_grid31_columnar_phase2.py	Columnar transposition attacks	unknown	522	Phase 2: Extended columnar transposition search for K4.
+transposition/columnar/e_grid31_columnar_phase3.py	Columnar transposition attacks	unknown	401	Phase 3: Deep columnar search focusing on K3-derived approaches and
+transposition/columnar/e_grid31_corrected_06.py	Columnar transposition attacks	unknown	544	Corrected 28×31 grid with the 3rd K2 ? squeezed (doesn't occupy a grid position).
+transposition/columnar/e_grid31_first_E_05.py	Columnar transposition attacks	unknown	762	Analyze the first-E exclusion and Cardan grille overlay on the 28×31 cipher grid.
+transposition/columnar/e_grid31_k3_widths_keyed_03.py	Columnar transposition attacks	unknown	428	Test K4 with K3's exact widths (21, 28) but with KEYED column orders.
+transposition/columnar/e_grid31_k4_transposition_01.py	Columnar transposition attacks	unknown	525	Exploit the width-31 grid discovery for K4 transposition.
+transposition/columnar/e_grid31_k4_transposition_02.py	Columnar transposition attacks	unknown	513	Grid-31 K4 transposition search — INVERSE direction + expanded keys.
+transposition/columnar/e_grid31_master_build.py	Columnar transposition attacks	unknown	458	Build and verify the 28×31 Master Grid with Antipodes corrections.
+transposition/columnar/e_grid31_shifting_matrix_04.py	Columnar transposition attacks	unknown	522	"Shifting matrix" transposition — Scheidt's term.
+_uncategorized/e_grid_route_20x20.py	Uncategorized — needs manual review	unknown	420	E-GRID-ROUTE-20x20: Exhaustive rectangular grid route analysis up to 20x20.
+grille/e_grille_01_fold_cardan.py	Grille, turning grille, and Cardan aperture attacks	unknown	925	E-GRILLE-01: Fold-as-Cardan-Grille Experiment.
+grille/e_grille_02_classical_attacks.py	Grille, turning grille, and Cardan aperture attacks	unknown	491	E-GRILLE-02: Classical cipher attacks on YAR grille CT.
+grille/e_grille_03_transposition_attacks.py	Grille, turning grille, and Cardan aperture attacks	unknown	772	E-GRILLE-03: Comprehensive transposition & pattern attacks on YAR grille CT.
+grille/e_grille_04_missing_t_analysis.py	Grille, turning grille, and Cardan aperture attacks	unknown	616	E-GRILLE-04: Investigate why T is completely absent from YAR grille CT.
+grille/e_grille_04_period_attacks.py	Grille, turning grille, and Cardan aperture attacks	unknown	517	E-GRILLE-04: Period-targeted Vigenere/Beaufort attacks on YAR grille CT.
+grille/e_grille_05_5x5_grid_ciphers.py	Grille, turning grille, and Cardan aperture attacks	unknown	837	E-GRILLE-05: 5x5 Grid Cipher Attacks on YAR Grille CT.
+grille/e_grille_06_reading_orders.py	Grille, turning grille, and Cardan aperture attacks	unknown	840	E-GRILLE-06: Alternative Reading Orders for YAR Grille CT.
+grille/e_grille_07_autokey_hill_combo.py	Grille, turning grille, and Cardan aperture attacks	unknown	654	E-GRILLE-07: Autokey, Hill cipher, and K4 combination attacks on YAR grille CT.
+grille/e_grille_08_reconstruction.py	Grille, turning grille, and Cardan aperture attacks	unknown	268	E-GRILLE-08: Reconstruct YAR Cardan grille extraction from exact ciphertext layout.
+grille/e_grille_08_tableau_null_model.py	Grille, turning grille, and Cardan aperture attacks	unknown	357	E-GRILLE-08 / E-YAR-05: Tableau-specific null model for Kasiski signals.
+grille/e_grille_09_k5_hypothesis.py	Grille, turning grille, and Cardan aperture attacks	unknown	489	E-GRILLE-09: Test whether the Cardan grille extract IS K5 ciphertext.
+grille/e_grille_09_permutation_key.py	Grille, turning grille, and Cardan aperture attacks	unknown	438	E-GRILLE-09: Grille extract as PERMUTATION key for K4.
+grille/e_grille_10_anagram_literary.py	Grille, turning grille, and Cardan aperture attacks	unknown	507	E-GRILLE-10: Is the Cardan grille extract scrambled English?
+grille/e_grille_10_plaintext_source.py	Grille, turning grille, and Cardan aperture attacks	unknown	462	(no description)
+grille/e_grille_11_brute_force_ka.py	Grille, turning grille, and Cardan aperture attacks	unknown	695	E-GRILLE-11: Brute-force decrypt the Cardan grille extract using
+grille/e_grille_11_tableau_cell_model.py	Grille, turning grille, and Cardan aperture attacks	unknown	371	(no description)
+grille/e_grille_12_installation_sweep.py	Grille, turning grille, and Cardan aperture attacks	unknown	505	E-GRILLE-12: Exhaustive installation-derived keyword sweep on the
+grille/e_grille_13_field_ciphers.py	Grille, turning grille, and Cardan aperture attacks	unknown	710	E-GRILLE-13: Field-executable ciphers taught by Kryptos K1-K3.
+grille/e_grille_14_fold_keyword.py	Grille, turning grille, and Cardan aperture attacks	unknown	562	E-GRILLE-14: Derive the keyword from the FOLD itself.
+grille/e_grille_15_t_is_your_position.py	Grille, turning grille, and Cardan aperture attacks	unknown	468	E-GRILLE-15: "T IS YOUR POSITION" — Cardan grille from T-positions
+grille/e_grille_16_t_extract_scoring.py	Grille, turning grille, and Cardan aperture attacks	unknown	335	E-GRILLE-16: Score the T-position tableau extract as candidate real CT
+grille/e_grille_17_t_alternatives.py	Grille, turning grille, and Cardan aperture attacks	unknown	927	E-GRILLE-17: Alternative T-based grille constructions
+grille/e_grille_18_equal_misspelling_params.py	Grille, turning grille, and Cardan aperture attacks	unknown	863	E-GRILLE-18: EQUAL anagram + misspelling positions as grille parameters
+grille/e_grille_19_tableau_mask.py	Grille, turning grille, and Cardan aperture attacks	unknown	903	E-GRILLE-19: Tableau Geometry → Grille Mask Derivation
+grille/e_grille_20_period8_lines73.py	Grille, turning grille, and Cardan aperture attacks	unknown	497	E-GRILLE-20: Period-8 / "8 Lines 73" — Columnar Transposition Width 8
+grille/e_grille_21_scramble_order.py	Grille, turning grille, and Cardan aperture attacks	unknown	818	E-GRILLE-21: Empirical tests to distinguish scramble order for K4.
+grille/e_grille_22_model2_sa.py	Grille, turning grille, and Cardan aperture attacks	unknown	635	E-GRILLE-22: Model 2 Simulated Annealing Permutation Search
+_uncategorized/e_grille_cipher_panel.py	Uncategorized — needs manual review	unknown	625	E-GRILLE-CIPHER-PANEL: Apply the Cardan grille to the ENTIRE cipher panel.
+_uncategorized/e_grille_ct_attack.py	Uncategorized — needs manual review	unknown	731	Comprehensive attack on the new grille-derived CT from corrected 28x31 grid.
+_uncategorized/e_grille_ct_attack2.py	Uncategorized — needs manual review	unknown	555	Deep attack on new grille CT: crib-dragging, hill climbing, Beaufort focus.
+_uncategorized/e_grille_ct_attack3.py	Uncategorized — needs manual review	unknown	492	Creative attacks on new grille CT: Porta, mono, grid-offset keys, Gromark.
+_uncategorized/e_grille_krs_01.py	Uncategorized — needs manual review	unknown	413	E-GRILLE-KRS-01: Test KRS Cardan grille hypothesis.
+_uncategorized/e_hybrid_01_k3struct_extended.py	Uncategorized — needs manual review	unknown	939	(no description)
+_uncategorized/e_hybrid_02_targeted_keywords.py	Uncategorized — needs manual review	unknown	723	(no description)
+polyalphabetic/e_hybrid_03_complete_columnar_vig.py	Vigenère, Beaufort, autokey, and polyalphabetic	unknown	563	E-HYBRID-03: Complete Columnar+Vigenère Hybrid — All Periods, All Clue Words.
+_uncategorized/e_hybrid_03_period13_and_gaps.py	Uncategorized — needs manual review	unknown	934	(no description)
+k3_continuity/e_hybrid_04_reverse_k3.py	K1-K3 method applied to K4, cross-section analysis	unknown	743	(no description)
+transposition/columnar/e_k4_double_columnar_rtl.py	Columnar transposition attacks	unknown	576	Double columnar RTL transposition search for K4.
+_uncategorized/e_k4_extend_v2.py	Uncategorized — needs manual review	unknown	646	e_k4_extend_v2.py — Extended BERLINCLOCK analysis, phase 2.
+transposition/columnar/e_k4_keyed_columnar_01.py	Columnar transposition attacks	unknown	286	Test keyed columnar transposition on K4.
+transposition/columnar/e_k4_keyed_columnar_02.py	Columnar transposition attacks	unknown	277	Enhanced K4 keyed columnar test with better diagnostics.
+transposition/columnar/e_k4_keyed_columnar_03.py	Columnar transposition attacks	unknown	186	K4 keyed columnar with padding support.
+transposition/columnar/e_k4_keyword_double_columnar.py	Columnar transposition attacks	unknown	376	K4 keyword-ordered double columnar transposition search.
+transposition/columnar/e_k4_simple_columnar_04.py	Columnar transposition attacks	unknown	212	K4 simple columnar transposition with various reading orders.
+tableau/e_ka_01_keyed_tableau_systematic.py	Tableau, KA alphabet, and keyword analysis	unknown	759	(no description)
+tableau/e_ka_02_extended_gaps.py	Tableau, KA alphabet, and keyword analysis	unknown	710	E-KA-02: KA Tableau Extended Gap Analysis
+tableau/e_ka_03_tableau_gaps.py	Tableau, KA alphabet, and keyword analysis	unknown	679	E-KA-03: KA Tableau — Remaining Gaps Audit
+polyalphabetic/e_kasiski_00_full_analysis.py	Vigenère, Beaufort, autokey, and polyalphabetic	unknown	671	E-KASISKI-00: Full Kasiski Examination of Kryptos K4
+_infra/e_ledger_01_systematic_elimination.py	Infrastructure, harnesses, validators, corpus tools	unknown	778	E-LEDGER-01: Systematic Elimination Ledger for K4.
+campaigns/e_marathon_01_final_assault.py	Multi-vector campaign scripts and novel attack ideas	unknown	1895	E-MARATHON-01 — 24-Hour Final Assault on K4.
+_uncategorized/e_masonic_01_pigpen_analysis.py	Uncategorized — needs manual review	unknown	714	E-MASONIC-01: Pigpen/Masonic Cipher Analysis for K4
+grille/e_mengen_grille_01_band_reading.py	Grille, turning grille, and Cardan aperture attacks	unknown	771	E-MENGEN-GRILLE-01: Mengenlehreuhr band structure as Cardan grille reading order.
+encoding/e_misspelling_ct_letters.py	Morse code, encoding transforms, extraction patterns	unknown	530	E-MISSPELLING-CT-LETTERS: Verify what CT letters appear at misspelling positions.
+substitution/e_mono_sa_substitution.py	Monoalphabetic, affine, Hill, bifid, trifid	unknown	607	E-MONO-SA: Simulated Annealing for Simple (Monoalphabetic) Substitution on K4.
+transposition/other/e_novel_01_route_ciphers.py	Non-columnar transposition attacks	unknown	295	Novel Method A: Route Ciphers on Sculpture-Related Grids.
+running_key/e_novel_02_book_cipher.py	Running key and book cipher attacks	unknown	223	Novel Method B: Book Cipher Using Carter's Tomb Text.
+campaigns/e_novel_03_tableau_physical.py	Multi-vector campaign scripts and novel attack ideas	unknown	237	Novel Method C: Tableau as Physical Lookup Grid.
+thematic/berlin_clock/e_novel_04_berlin_clock.py	Berlin clock, Weltzeituhr, and DDR-era keys	unknown	250	Novel Method D: Berlin Clock Cipher.
+campaigns/e_novel_05_doubles_intervals.py	Multi-vector campaign scripts and novel attack ideas	unknown	306	Novel Methods E, I, J: Doubled Letters, Interval/Skip Ciphers, Self-Referential.
+campaigns/e_novel_06_chaocipher_evolving.py	Multi-vector campaign scripts and novel attack ideas	unknown	315	Novel Method F: Chaocipher-like Evolving Alphabet.
+_uncategorized/e_nsa_01_interval7.py	Uncategorized — needs manual review	unknown	543	E-NSA-01: Interval-7 transposition + substitution sweep.
+_uncategorized/e_nsa_02_missing_char.py	Uncategorized — needs manual review	unknown	348	E-NSA-02: Missing character insertion sweep.
+_uncategorized/e_opgold_01_keywords.py	Uncategorized — needs manual review	unknown	352	E-OPGOLD-01: Operation Gold / Stopwatch Keywords as Cipher Keys
+_uncategorized/e_opgold_02_progressive.py	Uncategorized — needs manual review	unknown	671	E-OPGOLD-02: K2-Derived Words + YAR Superscript as K4 Cipher Keys
+_uncategorized/e_opgold_03_british.py	Uncategorized — needs manual review	unknown	317	E-OPGOLD-03: British Intelligence / MI6 / Five Eyes Keywords
+_uncategorized/e_period_27_29_formal.py	Uncategorized — needs manual review	unknown	323	E-PERIOD-27-29: Formal elimination of periods 27, 28, 29 for K4.
+_uncategorized/e_playfair_01_full_disproof.py	Uncategorized — needs manual review	unknown	674	E-PLAYFAIR-01: Comprehensive Playfair Cipher Disproof for K4
+polyalphabetic/e_poly_01_polyalphabetic_analysis.py	Vigenère, Beaufort, autokey, and polyalphabetic	unknown	638	(no description)
+polyalphabetic/e_poly_02_ka_tableau_and_new_keywords.py	Vigenère, Beaufort, autokey, and polyalphabetic	unknown	597	(no description)
+polyalphabetic/e_poly_03_gap_fill_2026_03.py	Vigenère, Beaufort, autokey, and polyalphabetic	unknown	657	(no description)
+_uncategorized/e_recurrence_00_linear_order2.py	Uncategorized — needs manual review	unknown	254	(no description)
+_uncategorized/e_ref_00_8row_grid.py	Uncategorized — needs manual review	unknown	450	E-REF-00: 8-Row Grid Transposition Hypothesis
+_uncategorized/e_ref_01_carter_chapterX.py	Uncategorized — needs manual review	unknown	447	E-REF-01: Carter Chapter X Running Key Hypothesis
+transposition/other/e_ref_02_strip_cipher.py	Non-columnar transposition attacks	unknown	508	E-REF-02: Physical Strip Cipher Model
+campaigns/e_rerun_01_opgold_expanded.py	Multi-vector campaign scripts and novel attack ideas	unknown	289	E-RERUN-01: Expanded Thematic Keywords as Cipher Keys + Bean-Width Columnar
+campaigns/e_rerun_02_tableau_expanded.py	Multi-vector campaign scripts and novel attack ideas	unknown	400	E-RERUN-02: Expanded Thematic Keywords at Bean-Surviving Periods (K3-Method)
+transposition/columnar/e_rerun_03_columnar_expanded.py	Columnar transposition attacks	unknown	247	E-RERUN-03: Expanded Keyword Columnar + Myszkowski Sweep
+campaigns/e_review_model_b_search.py	Multi-vector campaign scripts and novel attack ideas	unknown	424	E-REVIEW-MODEL-B: Search for Model B (trans-then-sub) at periods 14-26.
+_uncategorized/e_roman_01_comprehensive.py	Uncategorized — needs manual review	unknown	783	E-ROMAN-01: Comprehensive Roman Numeral Hypothesis Test.
+_uncategorized/e_roman_02_exhaustive.py	Uncategorized — needs manual review	unknown	467	E-ROMAN-02: Exhaustive transposition sweeps with Roman numeral keys.
+_uncategorized/e_roman_03_triple_trans.py	Uncategorized — needs manual review	unknown	408	E-ROMAN-03: Triple sequential columnar transposition experiment.
+_uncategorized/e_roman_03b_abscissa_coords.py	Uncategorized — needs manual review	unknown	605	E-ROMAN-03b: ABSCISSA/PALIMPSEST/KRYPTOS coordinate-based triple transposition.
+_uncategorized/e_roman_04_3d_grid.py	Uncategorized — needs manual review	unknown	393	E-ROMAN-04: 3D Grid Transposition Experiment.
+_uncategorized/e_roman_04b_abscissa_coords.py	Uncategorized — needs manual review	unknown	558	E-ROMAN-04b: ABSCISSA=x-coordinate Hypothesis (addendum to E-ROMAN-04).
+_uncategorized/e_roman_05_anomaly_params.py	Uncategorized — needs manual review	unknown	1072	E-ROMAN-05: Anomaly-Derived Cipher Parameters.
+transposition/other/e_route_definitive.py	Non-columnar transposition attacks	unknown	727	E-ROUTE-DEFINITIVE: Comprehensive Route Transposition at Bean-Surviving Periods.
+running_key/e_runkey_002_k123_plaintext.py	Running key and book cipher attacks	unknown	184	E-RUNKEY-002: Running key from K1/K2/K3 plaintexts.
+transposition/other/e_s_02_stride_transposition.py	Non-columnar transposition attacks	unknown	490	E-S-02: Stride-based transposition sweep.
+transposition/other/e_s_03_missing_char_routes.py	Non-columnar transposition attacks	unknown	856	E-S-03: Missing character + non-columnar transpositions on 7×14 grid.
+transposition/other/e_s_04_missing_char_structural.py	Non-columnar transposition attacks	unknown	659	E-S-04: Missing character structural analysis.
+_uncategorized/e_s_05_algebraic_fractionation.py	Uncategorized — needs manual review	unknown	666	E-S-05: Algebraic Fractionation & Hill Cipher Sweep
+transposition/columnar/e_s_06_double_columnar.py	Columnar transposition attacks	unknown	376	E-S-06: Double columnar transposition + periodic Vigenère.
+transposition/other/e_s_07_sa_permutation.py	Non-columnar transposition attacks	unknown	376	E-S-07: Simulated annealing over arbitrary permutations.
+_uncategorized/e_s_08_sa_quadgram.py	Uncategorized — needs manual review	unknown	374	E-S-08: SA over permutations with quadgram + crib fitness.
+substitution/e_s_09_bifid_algebraic.py	Monoalphabetic, affine, Hill, bifid, trifid	unknown	247	E-S-09: Algebraic bifid/trifid contradiction finder for ALL periods.
+polyalphabetic/e_s_100_porta_proper.py	Vigenère, Beaufort, autokey, and polyalphabetic	unknown	272	E-S-100: Porta Cipher + Width-7 Columnar (Proper Constraint Propagation)
+transposition/columnar/e_s_101_statistical_transposition.py	Columnar transposition attacks	unknown	307	(no description)
+_uncategorized/e_s_102_grid_position_key.py	Uncategorized — needs manual review	unknown	624	E-S-102: Grid-Position Key Generation + Width-7 Columnar
+running_key/e_s_103_thematic_running_key.py	Running key and book cipher attacks	unknown	319	E-S-103: Thematic Running Key + Width-7 Columnar (Extended Search)
+grille/e_s_104_turning_grille.py	Grille, turning grille, and Cardan aperture attacks	unknown	525	E-S-104: Turning Grille with Constraint Propagation
+k3_continuity/e_s_105_self_key_and_derived.py	K1-K3 method applied to K4, cross-section analysis	unknown	467	E-S-105: Self-Keying Double Columnar + Derived Key Schemes
+k3_continuity/e_s_106_k3_outer_layer.py	K1-K3 method applied to K4, cross-section analysis	unknown	519	(no description)
+substitution/e_s_107_shifted_mixed_alpha.py	Monoalphabetic, affine, Hill, bifid, trifid	unknown	397	E-S-107: Shifted Keyword-Mixed Alphabets + Width-7 Columnar.
+transposition/columnar/e_s_108_column_statistics.py	Columnar transposition attacks	unknown	406	E-S-108: Column Statistics for Transposition Ordering Identification.
+transposition/columnar/e_s_109_top_ordering_analysis.py	Columnar transposition attacks	unknown	540	E-S-109: Deep Analysis of Top Statistically-Ranked Orderings.
+_uncategorized/e_s_10_additive_grid_key.py	Uncategorized — needs manual review	unknown	263	E-S-10: Algebraic test of additive row+column key model.
+thematic/sculpture_physical/e_s_110_k5_position_cipher.py	Physical sculpture, installation, and coordinate keys	unknown	442	(no description)
+encoding/e_s_112_morse_transforms.py	Morse code, encoding transforms, extraction patterns	unknown	356	E-S-112: Morse code transforms and K0→K4 link tests.
+thematic/sculpture_physical/e_s_117_coordinate_keys.py	Physical sculpture, installation, and coordinate keys	unknown	411	E-S-117: Coordinate-derived key tests for K4.
+k3_continuity/e_s_119_k3_grid_k4.py	K1-K3 method applied to K4, cross-section analysis	unknown	403	E-S-119: K3-derived grid rotation tests for K4.
+running_key/e_s_11_running_key_transposition.py	Running key and book cipher attacks	unknown	413	E-S-11: Running key + columnar transposition.
+_uncategorized/e_s_120_desparatly_test.py	Uncategorized — needs manual review	unknown	352	E-S-120: Misspelling-derived parameter tests for K4.
+crib_analysis/e_s_121_constraint_assembly.py	Crib dragging, plaintext reconstruction, constraint solving	unknown	297	E-S-121: Full constraint assembly pipeline — ALL K0-K3 parameters × ALL models.
+thematic/berlin_clock/e_s_122_berlin_clock_perm.py	Berlin clock, Weltzeituhr, and DDR-era keys	unknown	441	E-S-122: Berlin Clock (Mengenlehreuhr) permutation tests for K4.
+thematic/sculpture_physical/e_s_123_compass_bearing_key.py	Physical sculpture, installation, and coordinate keys	unknown	275	E-S-123: Compass bearing + YAR superscript key tests for K4.
+_uncategorized/e_s_124_palimpsest_method.py	Uncategorized — needs manual review	unknown	336	E-S-124: Palimpsest-as-method — K1-K3 texts as running key masks for K4.
+crib_analysis/e_s_125_positional_misalignment.py	Crib dragging, plaintext reconstruction, constraint solving	unknown	339	E-S-125: Positional misalignment test for K4.
+thematic/berlin_clock/e_s_127_weltzeituhr.py	Berlin clock, Weltzeituhr, and DDR-era keys	unknown	521	E-S-127: Urania Weltzeituhr (World Time Clock) tests for K4.
+thematic/berlin_clock/e_s_128_weltzeituhr_cities.py	Berlin clock, Weltzeituhr, and DDR-era keys	unknown	915	E-S-128: Weltzeituhr city-name-derived keys for K4.
+_uncategorized/e_s_129_charlie_insertion.py	Uncategorized — needs manual review	unknown	542	E-S-129: Checkpoint Charlie 'C' insertion hypothesis.
+transposition/other/e_s_12_reading_orders.py	Non-columnar transposition attacks	unknown	362	E-S-12: Non-standard reading orders + Vigenère.
+crib_analysis/e_s_130_checkpoint_98char.py	Crib dragging, plaintext reconstruction, constraint solving	unknown	499	E-S-130: CHECKPOINT 98-char hypothesis — algebraic constraint propagation.
+crib_analysis/e_s_131_point_crib_sweep.py	Crib dragging, plaintext reconstruction, constraint solving	unknown	584	E-S-131: POINT crib sweep — test POINT at all valid positions.
+statistical/e_s_132_regression_meta_analysis.py	Statistical analysis, frequency, IC, entropy	unknown	883	E-S-132: Multiple Linear Regression Meta-Analysis of All K4 Experiments.
+transposition/columnar/e_s_133_width9_columnar.py	Columnar transposition attacks	unknown	385	E-S-133: Width-9 Columnar Transposition as Multi-Layer Component.
+transposition/columnar/e_s_133b_width9_strict.py	Columnar transposition attacks	unknown	265	E-S-133b: Width-9 STRICT algebraic check + random baseline comparison.
+thematic/berlin_clock/e_s_134_weltzeituhr_ddr_era.py	Berlin clock, Weltzeituhr, and DDR-era keys	unknown	765	E-S-134: DDR-era (1989/1990) Weltzeituhr city list as K4 key material.
+running_key/e_s_135_berlin_wall_running_key.py	Running key and book cipher attacks	unknown	442	E-S-135: Berlin Wall speech texts as running key sources.
+running_key/e_s_136_great_big_story_rk.py	Running key and book cipher attacks	unknown	261	E-S-136: Great Big Story transcript as running key source.
+crib_analysis/e_s_137_point_crib_placement.py	Crib dragging, plaintext reconstruction, constraint solving	unknown	457	E-S-137: Algebraic placement analysis for POINT / THEPOINT / WHATSTHEPOINT.
+crib_analysis/e_s_138_point_sa_optimization.py	Crib dragging, plaintext reconstruction, constraint solving	unknown	540	E-S-138: SA optimization with POINT-family cribs as additional fixed plaintext.
+thematic/berlin_clock/e_s_139_berlin_themed_cribs.py	Berlin clock, Weltzeituhr, and DDR-era keys	unknown	413	E-S-139: Berlin-themed crib word analysis.
+_uncategorized/e_s_13_keyword_transposition.py	Uncategorized — needs manual review	unknown	496	E-S-13: Keyword-derived transposition + Vigenère/Beaufort period consistency.
+crib_analysis/e_s_140_secret_reminder_crib_test.py	Crib dragging, plaintext reconstruction, constraint solving	unknown	447	E-S-140: SECRET/SECRETS and REMINDER crib analysis.
+crib_analysis/e_s_141_point_end_sa.py	Crib dragging, plaintext reconstruction, constraint solving	unknown	342	E-S-141: SA optimization for POINT-family at END of plaintext (pos 74-96).
+thematic/berlin_clock/e_s_142_weltzeituhr_orrery.py	Berlin clock, Weltzeituhr, and DDR-era keys	unknown	687	E-S-142: Weltzeituhr solar system model (orrery) as K4 key material.
+campaigns/e_s_143_progressive_onion.py	Multi-vector campaign scripts and novel attack ideas	unknown	689	E-S-143: Progressive Onion — K0/K1/K2/K3 layers stacked on K4.
+encoding/e_s_144_morse_structural.py	Morse code, encoding transforms, extraction patterns	unknown	537	E-S-144: Morse code K0 data as SECOND-ORDER structural parameters for K4.
+_uncategorized/e_s_145_dryad_matrix.py	Uncategorized — needs manual review	unknown	705	E-S-145: DRYAD/BATCO-style matrix table cipher for K4.
+_uncategorized/e_s_146_anomaly_w7_transposition.py	Uncategorized — needs manual review	unknown	581	E-S-146: Anomaly-derived width-7 transposition keys with running key SA.
+_uncategorized/e_s_147_shift5_f_parameter.py	Uncategorized — needs manual review	unknown	749	E-S-147: Shift-5 (F-parameter) and anomaly-derived cipher models for K4.
+_uncategorized/e_s_148_combined_anomaly.py	Uncategorized — needs manual review	unknown	714	E-S-148: Combined anomaly-derived cipher models for K4.
+crib_analysis/e_s_149_anomaly_conceptual.py	Crib dragging, plaintext reconstruction, constraint solving	unknown	499	E-S-149: Anomaly "Enactment" Model — Cut-point rearrangements.
+crib_analysis/e_s_14_crib_perturbation.py	Crib dragging, plaintext reconstruction, constraint solving	unknown	386	E-S-14: Crib perturbation test.
+_uncategorized/e_s_150_carter_date_key.py	Uncategorized — needs manual review	unknown	482	E-S-150: Howard Carter's tomb opening date (11/26/1922) as K4 key material.
+substitution/e_s_151_hill_w9_yart.py	Monoalphabetic, affine, Hill, bifid, trifid	unknown	647	E-S-151: Hill Cipher Width-9 Gap Closure + YART Anomaly Matrices
+_uncategorized/e_s_152_nato_protocol.py	Uncategorized — needs manual review	unknown	641	E-S-152: NATO / Military Protocol Cipher Hypotheses
+thematic/berlin_clock/e_s_153_berlin_words_crib_test.py	Berlin clock, Weltzeituhr, and DDR-era keys	unknown	476	E-S-139: Test Berlin-themed words as additional cribs.
+campaigns/e_s_154_progressive_bridge.py	Multi-vector campaign scripts and novel attack ideas	unknown	519	E-S-145: Progressive bridge experiments — K3→K4 gap analysis.
+_uncategorized/e_s_15_creative_keys.py	Uncategorized — needs manual review	unknown	545	E-S-15: Creative key generation hypotheses.
+_uncategorized/e_s_16_sa_keyspace.py	Uncategorized — needs manual review	unknown	284	E-S-16: SA directly over key space (no transposition).
+encoding/e_s_17_extraction_patterns.py	Morse code, encoding transforms, extraction patterns	unknown	339	E-S-17: Steganographic / extraction pattern analysis.
+_uncategorized/e_s_18_turning_grille.py	Uncategorized — needs manual review	unknown	479	E-S-18: Turning grille constraint-guided search.
+transposition/columnar/e_s_19_double_columnar.py	Columnar transposition attacks	unknown	401	E-S-19: Double Columnar Transposition + Periodic Vigenère/Beaufort
+crib_analysis/e_s_20_constraint_propagation.py	Crib dragging, plaintext reconstruction, constraint solving	unknown	414	E-S-20: Algebraic Transposition Constraint Propagation
+_uncategorized/e_s_21_manifold_sa.py	Uncategorized — needs manual review	unknown	426	E-S-21: SA on the 24/24 Crib-Consistent Transposition Manifold
+transposition/other/e_s_22_amsco_disrupted.py	Non-columnar transposition attacks	unknown	533	E-S-22: AMSCO + Disrupted Columnar Transposition
+_uncategorized/e_s_23_lag7_constrained_sa.py	Uncategorized — needs manual review	unknown	490	E-S-23: Lag-7 Constrained SA over Transpositions
+_uncategorized/e_s_24_thematic_keys.py	Uncategorized — needs manual review	unknown	393	E-S-24: Thematic Key Derivation
+statistical/e_s_25_ct_structural_analysis.py	Statistical analysis, frequency, IC, entropy	unknown	331	E-S-25: Deep CT Structural Analysis
+_uncategorized/e_s_26_bean_manifold_sa.py	Uncategorized — needs manual review	unknown	514	E-S-26: Bean-Constrained Manifold SA
+_uncategorized/e_s_27_bean_algebraic_proof.py	Uncategorized — needs manual review	unknown	228	E-S-27: Algebraic proof that Bean constraints eliminate Model A at many periods.
+_uncategorized/e_s_28_bean_redundancy_proof.py	Uncategorized — needs manual review	unknown	193	E-S-28: Bean Constraint Redundancy Analysis
+_uncategorized/e_s_29_w_separator.py	Uncategorized — needs manual review	unknown	263	E-S-29: W-Separator Segmentation Analysis
+_uncategorized/e_s_30_three_layer_mask.py	Uncategorized — needs manual review	unknown	295	E-S-30: Three-Layer Mask Hypothesis
+running_key/e_s_31_carter_running_key.py	Running key and book cipher attacks	unknown	336	E-S-31: Carter Book Running Key + Columnar Transposition
+thematic/sculpture_physical/e_s_32_compass_coordinate_key.py	Physical sculpture, installation, and coordinate keys	unknown	326	E-S-32: Compass Bearing & Coordinate Key Derivation
+transposition/columnar/e_s_33_double_columnar.py	Columnar transposition attacks	unknown	376	E-S-33: Double Columnar Transposition + Periodic Vigenère
+transposition/columnar/e_s_33b_mixed_double_columnar.py	Columnar transposition attacks	unknown	253	E-S-33b: Mixed-Width Double Columnar + Period-7 Vigenère
+_uncategorized/e_s_34_key_fragment_analysis.py	Uncategorized — needs manual review	unknown	310	E-S-34: Transposition-Optimized Running Key Fragment Analysis
+_uncategorized/e_s_35_null_cipher_extraction.py	Uncategorized — needs manual review	unknown	438	E-S-35: Null Cipher / Steganographic Extraction
+_uncategorized/e_s_36_gronsfeld_p7.py	Uncategorized — needs manual review	unknown	313	E-S-36: Exhaustive Gronsfeld Cipher at Period 7
+substitution/e_s_37_mixed_alphabet.py	Monoalphabetic, affine, Hill, bifid, trifid	unknown	320	E-S-37: Mixed Alphabet Cipher + Columnar Transposition
+tableau/e_s_38_ka_tableau_key_analysis.py	Tableau, KA alphabet, and keyword analysis	unknown	266	E-S-38: KA-Alphabet Vigenère Tableau Key Analysis
+transposition/other/e_s_39_myszkowski.py	Non-columnar transposition attacks	unknown	337	E-S-39: Myszkowski Transposition + Periodic Vigenère/Beaufort
+_uncategorized/e_s_40_lag7_deep_analysis.py	Uncategorized — needs manual review	unknown	355	E-S-40: Deep Lag-7 Position Analysis + Transposition-Agnostic Running Key
+substitution/e_s_41_hill_transposition.py	Monoalphabetic, affine, Hill, bifid, trifid	unknown	498	E-S-41: Hill Cipher + Columnar Transposition
+substitution/e_s_42_bifid6x6_extended.py	Monoalphabetic, affine, Hill, bifid, trifid	unknown	702	E-S-42: Bifid 6×6 Extended Algebraic Elimination (Periods 9-14)
+substitution/e_s_42b_trifid_extended.py	Monoalphabetic, affine, Hill, bifid, trifid	unknown	257	E-S-42b: Trifid 3×3×3 Extended Algebraic Elimination (Periods 9-14)
+_uncategorized/e_s_43_thematic_extension.py	Uncategorized — needs manual review	unknown	495	E-S-43: Thematic Plaintext Extension and Key Analysis
+substitution/e_s_44_trifid_p16.py	Monoalphabetic, affine, Hill, bifid, trifid	unknown	609	E-S-44: Trifid 3×3×3 Period 16 — Deep Analysis + Computational Search
+_uncategorized/e_s_45_lag7_exploitation.py	Uncategorized — needs manual review	unknown	537	E-S-45: Lag-7 Structural Exploitation
+_uncategorized/e_s_46_position_dependent_alphabets.py	Uncategorized — needs manual review	unknown	427	E-S-46: Position-Dependent Alphabet Analysis
+_uncategorized/e_s_47_period7_after_transposition.py	Uncategorized — needs manual review	unknown	472	E-S-47: Period-7 Vigenère After Transposition — Constraint Enumeration
+_uncategorized/e_s_47b_model_b_period7.py	Uncategorized — needs manual review	unknown	534	E-S-47b: Period-7 Model B — Key Periodic in CT Space
+_uncategorized/e_s_48_joint_sa_p7.py	Uncategorized — needs manual review	unknown	336	E-S-48: Joint SA — Transposition + Period-7 Key with Quadgram Fitness
+_uncategorized/e_s_49_word_segmentation_sa.py	Uncategorized — needs manual review	unknown	408	E-S-49: Word-Segmentation SA — Period-7 Key + Transposition
+_uncategorized/e_s_50_nonlinear_recurrence.py	Uncategorized — needs manual review	unknown	398	(no description)
+running_key/e_s_51_dual_running_key_sa.py	Running key and book cipher attacks	unknown	502	(no description)
+running_key/e_s_52_carter_columnar_running_key.py	Running key and book cipher attacks	unknown	332	E-S-52: Width-7 Columnar + Carter Running Key (OPTIMIZED)
+transposition/columnar/e_s_53_keyword_columnar_sweep.py	Columnar transposition attacks	unknown	344	E-S-53: Keyword Columnar + Myszkowski Transposition + Polyalphabetic Sweep.
+_uncategorized/e_s_54_pre_ene_analysis.py	Uncategorized — needs manual review	unknown	534	E-S-54: Pre-ENE Segment Deep Analysis (RQ-7).
+transposition/other/e_s_55_grid_route_sweep.py	Non-columnar transposition attacks	unknown	316	E-S-55: Systematic Grid + Route Cipher + Polyalphabetic Sweep.
+polyalphabetic/e_s_56_affine_polyalphabetic.py	Vigenère, Beaufort, autokey, and polyalphabetic	unknown	397	E-S-56: Affine Polyalphabetic Cipher — Algebraic Analysis.
+_uncategorized/e_s_57_period7_constraint_enum.py	Uncategorized — needs manual review	unknown	346	E-S-57: Period-7 Transposition Constraint Enumeration.
+_uncategorized/e_s_57b_period7_constraint_correct.py	Uncategorized — needs manual review	unknown	279	E-S-57b: Period-7 Transposition Constraint Enumeration (CORRECTED).
+k3_continuity/e_s_58_k3_variant_keystream.py	K1-K3 method applied to K4, cross-section analysis	unknown	827	E-S-58: K3 Method Variant + Keystream Deep Analysis.
+_uncategorized/e_s_59_width7_nonperiodic.py	Uncategorized — needs manual review	unknown	337	E-S-59: Width-7 Grid + Non-Periodic Substitution Deep Probe.
+thematic/sculpture_physical/e_s_60_coordinate_date_keys.py	Physical sculpture, installation, and coordinate keys	unknown	609	E-S-60: Coordinate and Date-Derived Key Experiments.
+_uncategorized/e_s_61_noncolumnar_width7.py	Uncategorized — needs manual review	unknown	644	E-S-61: Non-Columnar Width-7 Transpositions.
+_uncategorized/e_s_62_width7_sa.py	Uncategorized — needs manual review	unknown	633	(no description)
+k3_continuity/e_s_63_k3_variants.py	K1-K3 method applied to K4, cross-section analysis	unknown	432	E-S-63: K3 Method Variants — Systematic Search.
+polyalphabetic/e_s_64_autokey_width7.py	Vigenère, Beaufort, autokey, and polyalphabetic	unknown	517	E-S-64: Autokey Ciphers + Width-7 Columnar Transposition.
+_uncategorized/e_s_65_key_bigram_discrimination.py	Uncategorized — needs manual review	unknown	555	E-S-65: Key Bigram Discrimination for Width-7 Model B
+running_key/e_s_66_themed_running_keys.py	Running key and book cipher attacks	unknown	346	E-S-66: Themed Running Key Texts + Width-7 Columnar (Model B)
+_uncategorized/e_s_67_gromark_numeric_key.py	Uncategorized — needs manual review	unknown	343	E-S-67: Gromark / Numeric Recurrence Key Generation + Width-7 Columnar
+_uncategorized/e_s_68_matrix_key_generation.py	Uncategorized — needs manual review	unknown	520	E-S-68: Matrix-Based Key Generation + Width-7 Columnar
+polyalphabetic/e_s_69_pt_autokey_algebraic.py	Vigenère, Beaufort, autokey, and polyalphabetic	unknown	361	E-S-69: PT-Autokey Algebraic Elimination
+polyalphabetic/e_s_69b_autokey_survivors.py	Vigenère, Beaufort, autokey, and polyalphabetic	unknown	103	E-S-69b: Test the 15 PT-autokey + w7 survivors from E-S-69.
+grille/e_s_70_turning_grille.py	Grille, turning grille, and Cardan aperture attacks	unknown	572	E-S-70: Constraint-Based Turning Grille Attack
+_uncategorized/e_s_71_seriated_key.py	Uncategorized — needs manual review	unknown	359	E-S-71: Seriated Key Generation + Width-7 Columnar
+grille/e_s_72_grille_sa.py	Grille, turning grille, and Cardan aperture attacks	unknown	390	E-S-72: Turning Grille SA Attack
+substitution/e_s_73_mixed_alphabet_sa.py	Monoalphabetic, affine, Hill, bifid, trifid	unknown	665	E-S-73: 7 Mixed Alphabets + Width-7 Columnar SA
+thematic/sculpture_physical/e_s_74_sculpture_key.py	Physical sculpture, installation, and coordinate keys	unknown	445	E-S-74: Sculpture-Derived Key Approaches
+crib_analysis/e_s_75_extended_cribs.py	Crib dragging, plaintext reconstruction, constraint solving	unknown	484	E-S-75: Extended Crib Guessing
+tableau/e_s_76_keyword_alphabet_filter.py	Tableau, KA alphabet, and keyword analysis	unknown	408	E-S-76: Keyword Mixed Alphabet Filter
+substitution/e_s_77_hill_anomaly.py	Monoalphabetic, affine, Hill, bifid, trifid	unknown	495	E-S-77: Hill Cipher Inspired by Physical Anomalies
+k3_continuity/e_s_78_reverse_engineering.py	K1-K3 method applied to K4, cross-section analysis	unknown	405	E-S-78: Reverse Engineering the Key from Constraints
+k3_continuity/e_s_79_same_ct_investigation.py	K1-K3 method applied to K4, cross-section analysis	unknown	341	E-S-79: Same-CT-Letter Key Consistency Investigation
+substitution/e_s_80_latin_square_filter.py	Monoalphabetic, affine, Hill, bifid, trifid	unknown	532	E-S-80: Latin Square Tableau Filter for Width-7 Columnar
+transposition/columnar/e_s_81_ka_tableau_columnar.py	Columnar transposition attacks	unknown	385	E-S-81: Keyword-Alphabet Tableaux + Width-7 Columnar
+_uncategorized/e_s_82_worldclock_plaintext.py	Uncategorized — needs manual review	unknown	484	E-S-82: World Clock Plaintext Hypothesis + Width-7 Constraint Propagation
+transposition/columnar/e_s_83_autokey_columnar.py	Columnar transposition attacks	unknown	389	E-S-83: Autokey Variants + Width-7 Columnar
+transposition/columnar/e_s_84_polynomial_key_columnar.py	Columnar transposition attacks	unknown	498	E-S-84: Polynomial/Recurrence Key + Width-7 Columnar
+polyalphabetic/e_s_85_autokey_decrypt.py	Vigenère, Beaufort, autokey, and polyalphabetic	unknown	439	E-S-85: CT-Autokey Full Decryption + Quadgram Scoring
+campaigns/e_s_86_three_layer.py	Multi-vector campaign scripts and novel attack ideas	unknown	394	E-S-86: Three-Layer Cipher (Trans1 + Period-7 Vig + Trans2)
+yar/e_s_87_kryptos_key_arbtrans.py	YAR family — grille reconstruction and variants	unknown	480	E-S-87: KRYPTOS Key + Arbitrary Transposition Feasibility
+transposition/other/e_s_88_redefence.py	Non-columnar transposition attacks	unknown	284	E-S-88: Redefence Cipher + Period-7 Vig/Beau
+polyalphabetic/e_s_89_progressive_key.py	Vigenère, Beaufort, autokey, and polyalphabetic	unknown	438	E-S-89: Structured Non-Periodic Key + Width-7 Columnar (Model B)
+_uncategorized/e_s_90_extended_structured_key.py	Uncategorized — needs manual review	unknown	543	E-S-90: Extended Structured Key Models + Various Transpositions
+crib_analysis/e_s_91_plaintext_extension.py	Crib dragging, plaintext reconstruction, constraint solving	unknown	415	E-S-91: Plaintext Extension + Period-7 Consistency Filter
+_uncategorized/e_s_92_community_proposals.py	Uncategorized — needs manual review	unknown	451	E-S-92: Community Proposals + Creative Models
+transposition/columnar/e_s_93_autokey_columnar.py	Columnar transposition attacks	unknown	524	E-S-93: Autokey Cipher Family + Width-7 Columnar
+_uncategorized/e_s_94_keystream_structure.py	Uncategorized — needs manual review	unknown	499	E-S-94: Keystream Structure Analysis for Width-7 Orderings
+_uncategorized/e_s_95_creative_substitutions.py	Uncategorized — needs manual review	unknown	569	E-S-95: Creative Substitution Methods + Width-7 Columnar
+polyalphabetic/e_s_96_multiwidth_autokey.py	Vigenère, Beaufort, autokey, and polyalphabetic	unknown	234	E-S-96: Multi-Width Columnar + Autokey Sweep
+_uncategorized/e_s_97_decimation_cipher.py	Uncategorized — needs manual review	unknown	376	E-S-97: Decimation (Skip) Cipher + Various Substitutions
+_uncategorized/e_s_97b_decimation_analysis.py	Uncategorized — needs manual review	unknown	132	E-S-97b: Analysis of E-S-97 decimation autokey hit (10/24)
+running_key/e_s_98_k123_running_key.py	Running key and book cipher attacks	unknown	286	E-S-98: K1-K3 Plaintext/Ciphertext as Running Key + Width-7 Columnar
+substitution/e_s_99_mono_constraint.py	Monoalphabetic, affine, Hill, bifid, trifid	unknown	286	(no description)
+_uncategorized/e_s_berlin_extend.py	Uncategorized — needs manual review	unknown	543	e_s_berlin_extend.py — Bidirectional crib extension from BERLINCLOCK (pos 63-73).
+_infra/e_sa_assault.py	Infrastructure, harnesses, validators, corpus tools	unknown	852	Simulated Annealing solver for K4: joint transposition + substitution.
+_infra/e_sa_constrained.py	Infrastructure, harnesses, validators, corpus tools	unknown	980	Constrained permutation search for K4.
+campaigns/e_solve_01_novel_attacks.py	Multi-vector campaign scripts and novel attack ideas	unknown	937	E-SOLVE-01: Novel K4 attack hypotheses not previously tested.
+campaigns/e_solve_02_deep_attacks.py	Multi-vector campaign scripts and novel attack ideas	unknown	538	E-SOLVE-02: Deep K4 attacks — advanced position-dependent keys and
+campaigns/e_solve_03_remaining_gaps.py	Multi-vector campaign scripts and novel attack ideas	unknown	750	E-SOLVE-03: Attack remaining open gaps in K4 cipher space.
+campaigns/e_solve_04_key_derivation.py	Multi-vector campaign scripts and novel attack ideas	unknown	625	E-SOLVE-04: Novel key derivation attacks.
+transposition/other/e_solve_05_key_transposition.py	Non-columnar transposition attacks	unknown	499	E-SOLVE-05: Key Transposition Hypothesis.
+crib_analysis/e_solve_06_crib_drag.py	Crib dragging, plaintext reconstruction, constraint solving	unknown	453	E-SOLVE-06: Crib Dragging and Plaintext Hypothesis Testing.
+polyalphabetic/e_solve_07_beaufort_focus.py	Vigenère, Beaufort, autokey, and polyalphabetic	unknown	1004	E-SOLVE-07: Beaufort-Focused K4 Attack.
+campaigns/e_solve_08_trithemius_mod19.py	Multi-vector campaign scripts and novel attack ideas	unknown	865	E-SOLVE-08: Trithemius Slope + Mod-19 Component Hypotheses
+campaigns/e_solve_09_null_masking.py	Multi-vector campaign scripts and novel attack ideas	unknown	1049	(no description)
+campaigns/e_solve_10_null_proof.py	Multi-vector campaign scripts and novel attack ideas	unknown	252	E-SOLVE-10: Algebraic Proof — Null Insertion Cannot Rescue Periodic Keys
+campaigns/e_solve_11_feedback_digraph.py	Multi-vector campaign scripts and novel attack ideas	unknown	821	E-SOLVE-11: Keyword-Modulated Feedback & Digraphic Pair Hypotheses
+transposition/other/e_solve_12_keystream_transposition.py	Non-columnar transposition attacks	unknown	836	E-SOLVE-12: Keystream Transposition Hypothesis
+transposition/other/e_solve_13_grid_routes.py	Non-columnar transposition attacks	unknown	639	E-SOLVE-13: Grid Route Cipher Hypothesis
+polyalphabetic/e_solve_14_beaufort_structure.py	Vigenère, Beaufort, autokey, and polyalphabetic	unknown	654	E-SOLVE-14: Deep Investigation of Beaufort Keystream Structure
+campaigns/e_solve_15_masked_pt.py	Multi-vector campaign scripts and novel attack ideas	unknown	719	E-SOLVE-15: Masked Plaintext Attack Models
+transposition/other/e_solve_16_encrypt_transpose.py	Non-columnar transposition attacks	unknown	258	E-SOLVE-16: Encrypt-Then-Transpose Pigeonhole Analysis
+campaigns/e_solve_16b_period5_deep.py	Multi-vector campaign scripts and novel attack ideas	unknown	157	E-SOLVE-16B: Deep analysis of encrypt-then-transpose at period 5.
+substitution/e_solve_17_2d_matrix.py	Monoalphabetic, affine, Hill, bifid, trifid	unknown	520	E-SOLVE-17: 2D Matrix Code (IDBYROWS) — The Convergent Hypothesis
+campaigns/e_solve_18_nonlinear_chain.py	Multi-vector campaign scripts and novel attack ideas	unknown	469	E-SOLVE-18: Non-Linear Chained Key Derivation
+thematic/sculpture_physical/e_solve_19_2d_keyword_cols.py	Physical sculpture, installation, and coordinate keys	unknown	273	E-SOLVE-19: 2D Matrix Code with Keyword-Ordered Columnar Transposition
+polyalphabetic/e_solve_20_autokey_keyword.py	Vigenère, Beaufort, autokey, and polyalphabetic	unknown	355	E-SOLVE-20: Keyword-Mixed Autokey Models
+polyalphabetic/e_solve_21_mixed_variant.py	Vigenère, Beaufort, autokey, and polyalphabetic	unknown	375	E-SOLVE-21: Mixed-Variant Periodic Cipher
+campaigns/e_solve_22_final_gaps.py	Multi-vector campaign scripts and novel attack ideas	unknown	551	E-SOLVE-22: Final Testable Gaps
+thematic/sculpture_physical/e_split_00_installation_key_split.py	Physical sculpture, installation, and coordinate keys	unknown	877	E-SPLIT-00: Installation Key Split Combiner
+statistical/e_stat_01_missing_tests.py	Statistical analysis, frequency, IC, entropy	unknown	618	e_stat_01_missing_tests.py — K4 Statistical Profiling: Missing Tests
+statistical/e_stat_02_comprehensive_analysis.py	Statistical analysis, frequency, IC, entropy	unknown	1052	e_stat_02_comprehensive_analysis.py — K4 Comprehensive Statistical Report
+tableau/e_tableau_20_k3method_keywords.py	Tableau, KA alphabet, and keyword analysis	unknown	548	E-TABLEAU-20: K3-Method Extension — Thematic Keywords at Bean-Surviving Periods
+tableau/e_tableau_comparison.py	Tableau, KA alphabet, and keyword analysis	unknown	721	e_tableau_comparison.py — Detailed comparison between Kryptos and Antipodes tableaux.
+tableau/e_tableau_nav_001_algebraic.py	Tableau, KA alphabet, and keyword analysis	unknown	507	E-TABLEAU-NAV-001: Non-standard tableau navigation (algebraic approach).
+tableau/e_tableau_overlay.py	Tableau, KA alphabet, and keyword analysis	unknown	745	E-TABLEAU-OVERLAY: Investigate the tableau-as-grille theory.
+grille/e_tableau_reflow_grille.py	Grille, turning grille, and Cardan aperture attacks	unknown	785	Tableau reflow grille analysis.
+team/e_team_anomaly_extraction.py	Team-sourced attack ideas and collaborative scripts	unknown	568	E-TEAM-ANOMALY-EXTRACTION: Physically-motivated extraction masks on K4 CT.
+team/e_team_artifact_cross.py	Team-sourced attack ideas and collaborative scripts	unknown	310	E-TEAM-ARTIFACT-CROSS: Cross-product of artifact keys x physical transpositions.
+team/e_team_artifact_keys.py	Team-sourced attack ideas and collaborative scripts	unknown	487	E-TEAM-ARTIFACT-KEYS: Test ~500 artifact-derived values as keys for K4.
+running_key/e_team_book_cipher.py	Running key and book cipher attacks	unknown	619	E-TEAM-BOOK-CIPHER: Book cipher extraction from known texts.
+team/e_team_cardan_grille.py	Team-sourced attack ideas and collaborative scripts	unknown	457	E-TEAM-CARDAN-GRILLE: Aperture mask / Cardan grille experiments on K4 CT.
+team/e_team_coding_chart.py	Team-sourced attack ideas and collaborative scripts	unknown	706	E-TEAM-CODING-CHART: Coding chart model analysis for K4.
+team/e_team_french_scan.py	Team-sourced attack ideas and collaborative scripts	unknown	461	E-TEAM-FRENCH-SCAN: French, Latin, and Egyptian-themed Gutenberg texts + EAST filter.
+team/e_team_german_scan.py	Team-sourced attack ideas and collaborative scripts	unknown	488	E-TEAM-GERMAN-SCAN: Download and scan German Gutenberg texts with EAST filter.
+substitution/e_team_homo_contradiction_search.py	Monoalphabetic, affine, Hill, bifid, trifid	unknown	506	E-TEAM-HOMO-CONTRADICTION: Systematic search for transpositions that
+substitution/e_team_homophonic_trans.py	Monoalphabetic, affine, Hill, bifid, trifid	unknown	376	E-TEAM-HOMOPHONIC-TRANS: Test whether transposition resolves homophonic contradictions.
+team/e_team_i_position.py	Team-sourced attack ideas and collaborative scripts	unknown	380	E-TEAM-I-POSITION: What does "I" at each unknown position tell us?
+team/e_team_italian_spanish_scan.py	Team-sourced attack ideas and collaborative scripts	unknown	491	E-TEAM-ITALIAN-SPANISH-SCAN: Italian + Spanish Gutenberg texts + EAST filter.
+team/e_team_layered_nomenclator_verify.py	Team-sourced attack ideas and collaborative scripts	unknown	694	E-TEAM-LAYERED: Nomenclator + Superencipherment Algebraic Verification.
+substitution/e_team_mono_trans_sa.py	Monoalphabetic, affine, Hill, bifid, trifid	unknown	444	E-TEAM-MONO-TRANS-SA: Simulated Annealing co-optimization of
+team/e_team_narrative_pt.py	Team-sourced attack ideas and collaborative scripts	unknown	695	⚠️  SUPERSEDED — Use e_team_narrative_pt_v2.py instead.
+team/e_team_narrative_pt_v2.py	Team-sourced attack ideas and collaborative scripts	unknown	643	E-TEAM-NARRATIVE-V2: K4 Narrative Plaintext Hypothesis Tester (Fixed)
+team/e_team_nomenclator_super.py	Team-sourced attack ideas and collaborative scripts	unknown	716	E-TEAM-NOMENCLATOR-SUPER: Nomenclator + superencipherment model for K4.
+transposition/other/e_team_physical_transpositions.py	Non-columnar transposition attacks	unknown	511	E-TEAM-PHYSICAL-TRANSPOSITIONS: Test ~200 physically-derived permutations for K4.
+substitution/e_team_targeted_homo_trans.py	Monoalphabetic, affine, Hill, bifid, trifid	unknown	496	E-TEAM-TARGETED-HOMO-TRANS: Targeted search for transpositions that resolve
+thematic/berlin_clock/e_team_weltzeituhr_procedural.py	Berlin clock, Weltzeituhr, and DDR-era keys	unknown	499	E-TEAM-WELTZEITUHR-PROCEDURAL: Weltzeituhr as cipher device + non-standard routes.
+crib_analysis/e_team_whats_the_point.py	Crib dragging, plaintext reconstruction, constraint solving	unknown	586	E-TEAM-WHATS-THE-POINT: Test Sanborn's 2025 clue phrases as key material.
+grille/e_unscramble_01_grille_permutations.py	Grille, turning grille, and Cardan aperture attacks	unknown	828	E-UNSCRAMBLE-01: Comprehensive grille-based unscrambling permutation search.
+grille/e_unscramble_02_correct_mask.py	Grille, turning grille, and Cardan aperture attacks	unknown	674	E-UNSCRAMBLE-02: Corrected mask (107 holes) + new targeted approaches.
+grille/e_unscramble_03_crib_constraints.py	Grille, turning grille, and Cardan aperture attacks	unknown	588	E-UNSCRAMBLE-03: Crib-constraint + strip-cipher brute force.
+grille/e_unscramble_04_crib_pinning.py	Grille, turning grille, and Cardan aperture attacks	unknown	434	E-UNSCRAMBLE-04: Crib-Pinning Simulated Annealing
+_infra/e_validator_01_pipeline_check.py	Infrastructure, harnesses, validators, corpus tools	unknown	476	Validator-01: Scoring pipeline validation and Monte Carlo null distribution.
+_uncategorized/e_vic_01_chain_addition.py	Uncategorized — needs manual review	unknown	536	E-VIC-01: VIC-style chain addition key derivation from Cardan grille extract.
+transposition/columnar/e_w9_poly_01_columnar_vig.py	Columnar transposition attacks	unknown	280	E-W9-POLY-01: Width-9 columnar transposition + periodic Vigenère/Beaufort.
+transposition/columnar/e_w9_poly_01b_baseline.py	Columnar transposition attacks	unknown	106	E-W9-POLY-01b: Baseline — expected random score at period 10 with 24 cribs.
+tableau/e_webster_01_judge_keyword.py	Tableau, KA alphabet, and keyword analysis	unknown	1013	E-WEBSTER-01: Test JUDGE and Webster-related keywords in multi-layer K4 decryption.
+tableau/e_webster_02_bespoke_methods.py	Tableau, KA alphabet, and keyword analysis	unknown	1558	E-WEBSTER-02: Bespoke Webster/Judge-Themed Cipher Methods on K4.
+running_key/e_wtz_00_cities_runkey.py	Running key and book cipher attacks	unknown	377	(no description)
+yar/e_yar_candidate_ct.py	YAR family — grille reconstruction and variants	unknown	564	Treat YAR-modified K4 as the REAL ciphertext and perform full cryptanalysis.
+yar/e_yar_crib_direct.py	YAR family — grille reconstruction and variants	unknown	282	Test YAR-modified CT as real ciphertext (NO scrambling).
+yar/e_yar_gridkey.py	YAR family — grille reconstruction and variants	unknown	1046	e_yar_gridkey.py — Grid-Position Key Derivation for K4
+yar/e_yar_nonperiodic.py	YAR family — grille reconstruction and variants	unknown	1695	E-YAR-NONPERIODIC: Non-periodic substitution methods on YAR-modified K4 CT.
+yar/e_yar_period7_dissect.py	YAR family — grille reconstruction and variants	unknown	357	Dissect which YAR replacements cause the period-7 IC spike.
+yar/e_yar_selective_sub.py	YAR family — grille reconstruction and variants	unknown	337	Test the YAR Selective Substitution Theory.
+yar/e_yar_user_ct_attack.py	YAR family — grille reconstruction and variants	unknown	268	Attack the user-provided YAR-modified K4 CT with all methods.
+running_key/exp_lecarre_rk_001.py	Running key and book cipher attacks	unknown	315	EXP-LECARRE-RK-001: Running-Key Vigenère/Beaufort from Novel Texts
+grille/grille_decrypt.py	Grille, turning grille, and Cardan aperture attacks	unknown	315	Decrypt K4 using the 106-char Cardan grille extract as running key.
+grille/grille_mask_decrypt.py	Grille, turning grille, and Cardan aperture attacks	unknown	317	Parse the user's corrected binary mask, extract from tableau, decrypt K4.
+grille/grille_t_analysis.py	Grille, turning grille, and Cardan aperture attacks	unknown	276	Analyze the T-avoidance in the Cardan grille extract.
+grille/grille_verify.py	Grille, turning grille, and Cardan aperture attacks	unknown	204	Deterministic Cardan grille verification.
+substitution/hill_cipher_analysis.py	Monoalphabetic, affine, Hill, bifid, trifid	unknown	1204	Hill Cipher Viability Analysis for K4
+k3_continuity/k3_ct_pt_audit.py	K1-K3 method applied to K4, cross-section analysis	unknown	689	K3 CT/PT Alignment Audit.
+_infra/k4_algebraic_eliminations.py	Infrastructure, harnesses, validators, corpus tools	unknown	288	Algebraic elimination of Hill cipher, Autokey, Enigma, and Gronsfeld for K4.
+_infra/k4_clock_cipher.py	Infrastructure, harnesses, validators, corpus tools	unknown	423	Clock cipher and time-based key generation for K4.
+campaigns/k4_deep_structure.py	Multi-vector campaign scripts and novel attack ideas	unknown	328	Deep structural analysis of K4 ciphertext.
+campaigns/k4_dual_sa.py	Multi-vector campaign scripts and novel attack ideas	unknown	302	Dual-objective SA: search for K4 key that produces English plaintext
+campaigns/k4_novel_attacks.py	Multi-vector campaign scripts and novel attack ideas	unknown	441	Novel K4 attack vectors:
+crib_analysis/k4_plaintext_reconstruction.py	Crib dragging, plaintext reconstruction, constraint solving	unknown	378	Plaintext reconstruction attack on K4.
+transposition/other/k4_reading_orders.py	Non-columnar transposition attacks	unknown	308	Test non-standard reading orders, CT superposition, and coordinate-derived keys.
+_infra/k4_reverse_engine.py	Infrastructure, harnesses, validators, corpus tools	unknown	1934	K4 Reverse Engineering Engine — Plaintext-First Cryptanalysis.
+running_key/k4_running_key_thematic.py	Running key and book cipher attacks	unknown	194	Running key attack using thematic texts related to K4's stated themes:
+_infra/k4_sa_plaintext.py	Infrastructure, harnesses, validators, corpus tools	unknown	194	Simulated Annealing plaintext search for K4.
+campaigns/k4_two_layer.py	Multi-vector campaign scripts and novel attack ideas	unknown	480	Two-layer cipher tests for K4.
+crib_analysis/k4_whats_the_point.py	Crib dragging, plaintext reconstruction, constraint solving	unknown	473	"What's the point?" — Sanborn's deliberate embedded clue.
+_infra/k4_word_search.py	Infrastructure, harnesses, validators, corpus tools	unknown	366	K4 Word-constrained plaintext search.
+_infra/kbot_harness.py	Infrastructure, harnesses, validators, corpus tools	unknown	266	Pre-deployed test harness for KryptosBot agent sessions.
+k3_continuity/solve_k1_from_k0.py	K1-K3 method applied to K4, cross-section analysis	unknown	406	Solve K1 using ONLY what K0 (the Vigenère tableau) reveals.
+yar/yar_grille_image_read.py	YAR family — grille reconstruction and variants	unknown	215	Direct image reading of the Cardan grille.
+yar/yar_grille_reconstruct.py	YAR family — grille reconstruction and variants	unknown	307	Reconstruct the YAR Cardan grille extraction from the Kryptos sculpture.
+yar/yar_grille_reconstruct2.py	YAR family — grille reconstruction and variants	unknown	247	(no description)
+yar/yar_grille_reconstruct3.py	YAR family — grille reconstruction and variants	unknown	413	(no description)
+yar/yar_grille_reconstruct4.py	YAR family — grille reconstruction and variants	unknown	239	(no description)
+yar/yar_grille_reconstruct5.py	YAR family — grille reconstruction and variants	unknown	253	(no description)
+yar/yar_grille_reconstruct6.py	YAR family — grille reconstruction and variants	unknown	473	(no description)
+yar/yar_grille_reconstruct7.py	YAR family — grille reconstruction and variants	unknown	228	(no description)
+yar/yar_grille_reconstruct8.py	YAR family — grille reconstruction and variants	unknown	154	YAR Cardan grille reconstruction - version 8.
+yar/yar_grille_reconstruct9.py	YAR family — grille reconstruction and variants	unknown	267	YAR Cardan grille reconstruction - version 9.
+yar/yar_grille_reconstruct_final.py	YAR family — grille reconstruction and variants	unknown	195	YAR Cardan grille reconstruction - FINAL version.
+yar/yar_grille_reverse.py	YAR family — grille reconstruction and variants	unknown	200	YAR Cardan grille - reverse engineering approach.
+yar/yar_grille_stats.py	YAR family — grille reconstruction and variants	unknown	432	Statistical analysis of the YAR grille ciphertext extracted from Kryptos.

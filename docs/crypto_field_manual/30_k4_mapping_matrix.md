@@ -69,7 +69,7 @@ Legend for **Elimination Status**:
 **Why it matters:** [INTERNAL RESULT] Running key is the ONLY structured non-periodic key model surviving Bean (E-FRAC-38). Sanborn's clues reference Berlin (German) and Egypt (potentially Arabic/French archaeological texts).
 
 **Minimal experiment outline:**
-- Script name: `scripts/e_cfm_01_running_key_foreign.py`
+- Script name: `scripts/running_key/e_cfm_01_running_key_foreign.py`
 - Approach: Test German and French source texts (Berlin Wall speeches, Tutankhamun discovery accounts in original languages) as running keys at all offsets, with Vigenere/Beaufort/VarBeau, against identity + columnar w6/8/9
 - Key parameters: Source text (5-10 foreign-language candidates), offset (0 to len(text)-97), cipher variant (3), transposition (identity + Bean-passing columnar configs)
 - Expected output: Key fragment quadgram scores against target-language models; anything above -3.5/char in the source language warrants investigation
@@ -87,7 +87,7 @@ Legend for **Elimination Status**:
 **Why it matters:** This is the ONE identified open gap in the structured cipher model space. If K4 uses this architecture, additional constraints are needed to break the underdetermination.
 
 **Minimal experiment outline:**
-- Script name: `scripts/e_cfm_02_mono_running_constrain.py`
+- Script name: `scripts/running_key/e_cfm_02_mono_running_constrain.py`
 - Approach: (1) Enumerate mono mappings that preserve known self-encrypting positions (CT[32]=PT[32]=S, CT[73]=PT[73]=K imply mono fixes S and K). (2) For each reduced-DOF mono, test running key detection on Bean-passing columnar configs. (3) Alternatively, use K4's letter frequency distribution as a constraint on the mono mapping (the mono layer must produce a CT frequency distribution consistent with K4's observed frequencies given an English plaintext)
 - Key parameters: Mono mapping (11 remaining DOF after fixing S->S, K->K), transposition (Bean-passing columnar w6/8/9), running key scoring
 - Expected output: Whether frequency-constrained mono reduces DOF enough for running key detection to work
@@ -141,7 +141,7 @@ Legend for **Elimination Status**:
 **Why it matters:** [PUBLIC FACT] Sanborn: "Who says it is even a math solution?" and "kryptos is available to all." The Antipodes at the public Hirshhorn may contain the necessary geometric information.
 
 **Minimal experiment outline:**
-- Script name: `scripts/e_cfm_05_nomenclator_model.py`
+- Script name: `scripts/cfm/e_cfm_05_nomenclator_model.py`
 - Approach: Using known sculpture dimensions (main panel: ~6ft x 3ft, ~86 rows, row widths from photographs), define candidate reading orders: (1) follow the S-curve of the copper sheet, (2) read in compass bearing order from a central point, (3) spiral from coordinates 38.9517N 77.1467W mapped onto the grid
 - Key parameters: Row widths (from photograph analysis), reading direction variants, starting position
 - Expected output: Permutation of positions 0-96; score against cribs and running key models
