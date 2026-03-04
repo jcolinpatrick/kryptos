@@ -1,0 +1,75 @@
+================================================================================
+K4 KEYED COLUMNAR TRANSPOSITION TEST RESULTS
+Date: 2026-03-03
+================================================================================
+
+OBJECTIVE:
+Test whether K4 uses keyed columnar transposition (like K3) with different
+widths and keywords than K3's confirmed (21, 28) RTL method.
+
+TEST COVERAGE:
+1. Keyed columnar with padding at widths 2-97
+2. Keywords tested: KRYPTOS, PALIMPSEST, ABSCISSA, BERLINCLOCK
+3. Substitution layers: Vigenère, Beaufort (pre and post transposition)
+4. Alphabets: Standard AZ and Kryptos-keyed KA
+5. Simple columnar transposition (LTR, RTL, spiral) as fallback
+
+SCRIPTS CREATED:
+- e_k4_keyed_columnar_01.py
+- e_k4_keyed_columnar_02.py
+- e_k4_keyed_columnar_03.py (with padding)
+- e_k4_simple_columnar_04.py (simple transposition)
+
+RESULTS:
+========
+
+KEYED COLUMNAR TESTS: 0 crib matches
+- Tested all widths 2-97 with padding to make divisible
+- 4 keywords × 4 padding chars × 3 substitution keywords × 2 alphabets
+- Transposition → Substitution AND Substitution → Transposition
+- Result: NO CRIBS FOUND (EASTNORTHEAST, BERLINCLOCK, SLOWLY, etc.)
+
+SIMPLE COLUMNAR TESTS: 0 crib matches
+- Tested all divisible widths and ALL widths with padding
+- LTR, RTL, and spiral column reading orders
+- Combined with Vig/Beaufort
+- Result: NO CRIBS FOUND
+
+SAMPLE TRANSPOSITIONS (no English visible):
+Col(7,LTR):   OOOFRTSAINZKIUBGLLNWSTAYFZGEKHIRGTEJWPPXKKRUFVKQKKIVKTUCULBQSSZLNTWJHA
+Col(14,LTR):  OORSIZIBLNSAFGKIGEWPKRFKKIKUUBSZNWHOBSZFGUXWOWBDAOFTANKUGLWTYZEHRTJPXK
+Col(21,LTR):  OFSNIBLSYGKREPKRVKVUUQZTHOQZTUXPWMAORAZUGNTFEHGJPKUKKKCLSLWABSUGRSODDX
+Col(31,LTR):  OKBKBSNCKSYAROPRUTVXOWTXXTTXOQMXGSZXHJFXUQPXLSKXBSWXSEGXOKDXLZKXIZZXFW
+
+CONCLUSION:
+===========
+
+K4 is NOT encrypted using:
+✗ Keyed columnar transposition with keywords KRYPTOS/PALIMPSEST/ABSCISSA/BERLINCLOCK
+✗ Simple columnar transposition with standard LTR/RTL reading
+✗ Standard Vigenère or Beaufort substitution alone or combined with columnar
+
+K4 MUST use:
+1. A DIFFERENT type of transposition (rail fence, route, boustrophedon, etc.)
+2. A DIFFERENT keyword (not tested)
+3. A DIFFERENT substitution system (not Vigenère/Beaufort)
+4. A completely novel/bespoke encryption method
+5. Multiple layers in a different configuration
+
+NEXT INVESTIGATION AREAS:
+=========================
+- Route transposition (various routes)
+- Rail fence cipher at multiple depths
+- Playfair or other polyalphabetic systems
+- Plaintext-dependent substitution
+- Physical/procedural ciphers (Gillogly: "never in crypto literature")
+- Alternative positions for cribs (not at indices 21-33, 63-73)
+
+CONSTRAINT NOTES:
+=================
+- 97 is prime (only divides by 1 and 97)
+- 434 = 2×7×31 (K3+?+K4 total length)
+- GCD(21,28)=7 was key to K3 method, but K4 may not follow same pattern
+- Cribs may appear at different positions if K4 plaintext structure differs from assumed
+
+================================================================================
