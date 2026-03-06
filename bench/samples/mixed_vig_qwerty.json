@@ -1,0 +1,66 @@
+{
+  "case_id": "mixed_vig_qwerty_001",
+  "status": "success",
+  "elapsed_s": 0.042,
+  "n_candidates": 25,
+  "top_candidates": [
+    {
+      "score": 3.0,
+      "plaintext": "ZICVTWQNGRZGVTWAVZHCQYGLMGJQWERTYUIOPASDFGHJKLZXCVBNMZICVTWQNGRZGVTWAVZHCQYGLMGJ",
+      "method": "Caesar ROT-0"
+    },
+    {
+      "score": 2.5,
+      "plaintext": "ABCDEFGABCDEFGABCDEFGABCDEFGABCDEFGABCDEFGABCDEFGABCDEFGABCDEFGABCDEFGABCDEFGABCDEFGHI",
+      "method": "Caesar ROT-1"
+    }
+  ],
+  "predicted_plaintext": "ZICVTWQNGRZGVTWAVZHCQYGLMGJQWERTYUIOPASDFGHJKLZXCVBNMZICVTWQNGRZGVTWAVZHCQYGLMGJ",
+  "predicted_family": "substitution",
+  "match_plaintext": false,
+  "match_rank": -1,
+  "script": "scripts/examples/e_caesar_standard.py",
+  "ciphertext": "ZICVTWQNGRZGVTWAVZHCQYGLMGJQWERTYUIOPASDFGHJKLZXCVBNMZICVTWQNGRZGVTWAVZHCQYGLMGJ",
+  "segmentation": {
+    "is_mixed": true,
+    "global_ioc": 0.045886,
+    "window_size": 20,
+    "n_segments": 3,
+    "segments": [
+      {
+        "start": 0,
+        "end": 27,
+        "label": "cipher",
+        "ioc": 0.045584,
+        "chi2": 0.979245,
+        "validated": false
+      },
+      {
+        "start": 27,
+        "end": 53,
+        "label": "padding",
+        "ioc": 0.0,
+        "chi2": 0.22025,
+        "notes": "qwerty",
+        "validated": false
+      },
+      {
+        "start": 53,
+        "end": 80,
+        "label": "cipher",
+        "ioc": 0.045584,
+        "chi2": 0.979245,
+        "validated": false
+      }
+    ]
+  },
+  "validation": {
+    "plausibility": 0.1083,
+    "confidence": "none",
+    "validated": false,
+    "wordlist_coverage": 0.1625,
+    "quadgram_per_char": -6.5001,
+    "margin": 0.5,
+    "mixed_input": true
+  }
+}

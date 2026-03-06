@@ -131,7 +131,7 @@ Two test categories: **Unit tests** (`test_transforms.py`, `test_constraints.py`
 - `data/ct.txt` — K4 ciphertext (97 chars)
 - `data/english_quadgrams.json` — Quadgram log-probabilities (2 MB, top-level dict: `{"THAN": -3.776, ...}`)
 - `db/` — SQLite databases (sweep results, novelty ledger) — **gitignored**
-- `wordlists/english.txt` — 370K words; `wordlists/thematic_keywords.txt` — thematic keywords for key-phrase testing
+- `wordlists/english.txt` — 1M+ words (merged Kaikki/Wiktextract + original); `wordlists/thematic_keywords.txt` — thematic keywords for key-phrase testing
 - `reference/` — Carter book PDF + text extracts, Sanborn correspondence, NSA docs, Ed Scheidt dossier, video transcripts, KryptosFan findings, Cardan grille image
 - `reports/` — Human-readable analysis reports (tracked)
 - `anomaly_registry.md` — Physical anomalies in the Kryptos sculpture

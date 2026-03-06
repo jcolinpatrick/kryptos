@@ -358,22 +358,45 @@ from kbot_harness import (
 )
 ```
 
-## What has been ELIMINATED
+## What has been ELIMINATED -- DO NOT RE-TEST THESE
 - ALL standard transpositions (columnar, double, triple, keyword, Myszkowski, AMSCO, rail fence,
   route, spiral, diagonal, scytale) -- 16M+ configs ZERO hits
 - Affine and power permutations mod 97 -- ALL NOISE
 - Direct Vig/Beau/VarBeau on carved text with ALL keywords -- NOISE
 - SA hill climbing ceiling at -3.73/char (gibberish, not English)
 - K3's exact method (double rotational transposition) on K4 -- NOISE
-- YAR selective substitution -- stale premise (from old grille extract, corrected version has T)
-- KRS frequency overlay on tableau -- IC not significant (E-GRILLE-KRS-01)
-- Lower-half frequency equivalences -- statistically normal (E-FREQ-EQUIV-01)
+- YAR selective substitution -- stale premise (corrected extract has T)
+- KRS frequency overlay on tableau -- IC not significant
+- Lower-half frequency equivalences -- statistically normal
+- **50+ deterministic grille masks EXHAUSTED (2026-03-05)**: cycle membership (C17/C8/Z),
+  period-8 row/col, Fibonacci, prime positions, checkerboard, T-diagonal, cipher-tableau XOR/diff,
+  KA parity, 180-degree Cardan rank, KRYPTOS periodic key, misspelling KA signal, cipher==tableau
+  match positions, row/col header patterns, letter-value thresholds, complement masks.
+  ALL scored in noise range (-5.0 to -7.9 quadgram). ZERO crib hits.
+- **"Grille holes = tableau letters = PT" model DISPROVED**: self-encrypting positions give Z,G
+  from tableau but known PT requires S,K. Model-level contradiction.
+- **10x10 Fleissner pure transposition**: SA best 12/24 from 20 restarts (noise level).
+  Pure Fleissner transposition without a substitution layer is very unlikely.
+
+## Structural findings from prior campaigns (USE these, don't re-derive)
+- K3 permutation = exactly 2 cycles of length 168. Order 168 = 8 x 7 x 3.
+- K3 dominant step within rows is 7 (KRYPTOS length). Inverse has net stride ~47 = 336/7.
+- 180-degree rotation: K4 (rows 24-27) <-> K1 (rows 0-3), K3 <-> K2. Zero overlap.
+- 8-cycle K4 letters (C,J,Q,U,V,W,X,Y) have IC = 0.1233, anomalously high vs random 0.038.
+- IDBYROWS maps to 8 grid rows {1,3,8,14,17,18,22,24} including K3 start (14) and K4 start (24).
+- Known Vig keystream: ENE = BLZCDCYYGCKAZ, BC = MUYKLGKORNA -- NOT periodic.
+- 3 question marks on sculpture + 97 K4 chars = 100 = 10x10. Grille extract = 100 chars.
 
 ## Rules
-1. Write scripts in `scripts/`, run with: `cd /home/cpatrick/kryptos && PYTHONPATH=src python3 -u scripts/YOUR_SCRIPT.py`
+1. Write scripts in `scripts/grille/`, run with: `cd /home/cpatrick/kryptos && PYTHONPATH=src python3 -u scripts/grille/YOUR_SCRIPT.py`
 2. If you find ANY crib hit (EASTNORTHEAST or BERLINCLOCK), IMMEDIATELY report it
 3. Be COMPUTATIONAL -- write code, run it, analyze results, iterate
 4. Focus on GRILLE CONSTRUCTION -- determining the binary mask is the goal
+5. **KEEP SCRIPTS SHORT** -- under 200 lines. One focused idea per script. Do NOT write 1000-line megascripts.
+6. **DO NOT re-test deterministic masks** -- 50+ patterns already exhaustively tested (see eliminations above).
+   Instead focus on: constraint propagation, SA with novel objective functions, structural analysis.
+7. **DO NOT reinvent infrastructure** -- use `data/english_quadgrams.json` for scoring, import from
+   `kryptos.kernel.constants` for CT/cribs. Cipher functions: 5-line helpers, not 50-line frameworks.
 """
 
 
@@ -431,252 +454,193 @@ _UNSCRAMBLE_PROMPTS: dict[str, tuple[str, str]] = {
     # name: (title, prompt)
 
     "tableau_structural": (
-        "Tableau Structural Analysis -- Derive grille from Kryptos-only elements + KA signal",
+        "Tableau Structural Analysis -- Derive grille from Kryptos-only structural clues",
         f"""\
-## YOUR SPECIFIC MISSION: Derive the Grille from Kryptos Tableau Structure + KA Signal
+## YOUR MISSION: How do the Kryptos-only tableau elements construct the grille?
 
-The Kryptos tableau has THREE elements absent from Antipodes. The misspellings spell KA.
-Your job: figure out how the KA alphabet structure and tableau elements define the mask.
+**DO NOT** test simple deterministic masks (cycle membership, checkerboard, etc.) -- 50+ already failed.
+**DO** focus on structural RELATIONSHIPS that generate the mask algorithmically.
 
-### The three Kryptos-only elements:
-1. **Key column** (col 0): blank, A-Z, blank -- in STANDARD AZ order, not KA
-2. **Header/footer** (rows 0,27): ABCDEFGHIJKLMNOPQRSTUVWXYZABCD -- standard alphabet
-3. **Extra L** on row N (row 14): 32 chars, only row that overflows the 31-col grid
+### Focus areas (pick ONE and go deep):
+**A. Key column as permutation seed** -- Col 0 has AZ order while body has KA order.
+   The AZ->KA permutation (17+8+1 cycles) applied to key column values could generate
+   a row-by-row mask via some rule. Explore: does applying the permutation N times to
+   each key letter produce a bit sequence? Does the cycle LENGTH (17 vs 8) at each row
+   determine a property of that row's mask pattern?
 
-### The KA signal from misspellings:
-- K1 IQLUSION -> K, K3 DESPARATLY -> A = "KA" (Kryptos Alphabet)
-- The KA alphabet itself may be the key to grille construction
-- AZ->KA permutation: 17-cycle + 8-cycle + fixed Z
+**B. Extra L and Extra T as construction parameters** -- Row 14 has extra L, row 22 has extra T.
+   V-N = T-L = 8. These could be key parameters: period 8, or split at row 14.
+   Test: read the grid in 8-column strips with L/T determining strip boundaries.
 
-### 39 cipher-tableau matches:
-- 39 cells where cipher[r][c] == tableau[r][c] -- ambiguous under grille
-- Expected: 868/26 = 33.4. Observed: 39. Test if spatial pattern matters.
-- At NON-match positions: hole shows tableau, solid shows cipher. Different outputs!
+**C. K3 calibration** -- K3 PT+CT both known (336 positions, 0 mismatches). ANY valid grille
+   theory MUST produce correct results on K3. Build your theory, test on K3 FIRST.
+   K3 permutation has 2 cycles of 168, dominant step-7.
 
-### Approaches (ordered by priority):
-**A. AZ->KA cycle-based mask** -- 17-cycle letters -> hole, 8-cycle -> solid (or vice versa).
-   For each grid cell (r,c), look at the CIPHER letter there. If it's in the 17-cycle of
-   AZ->KA, mark as hole. If 8-cycle, mark solid. Z (fixed) = special.
-**B. Key column vs KA body** -- The key column spells A-Z (AZ). Compare to what KA would give.
-   The DIFFERENCE (AZ vs KA position) at each row = binary signal for that row.
-**C. Header vs KA** -- Where headers DIFFER from KA body -> those columns are special.
-**D. Extra L as instruction** -- L marks CUT POINT at row 14 (K3 center). Split upper/lower.
-**E. Overlay difference mask** -- Construct "ideal" Kryptos tableau (pure KA body). Compare
-   to ACTUAL tableau. Every cell that differs -> mark as hole/solid.
-**F. Match-based seeding** -- Start with 39 cipher=tableau matches as candidate holes,
-   constrain with 180 degree rotation and K3 verification.
-**G. K3 calibration** -- K3 PT+CT both known. Apply each theory to K3 region first.
-
-Write your main script as `scripts/blitz_tableau_structural.py`.""",
+Keep scripts under 200 lines. Test ONE hypothesis deeply rather than 10 superficially.
+Write scripts in `scripts/grille/`.""",
     ),
 
-    "ka_cycle_grille": (
-        "KA Cycle Grille -- Use AZ->KA permutation cycles to define the mask",
+    "fleissner_grille": (
+        "Fleissner Turning Grille -- 10x10 grille on K4 + 3 question marks",
         f"""\
-## YOUR SPECIFIC MISSION: Test AZ->KA Permutation Cycle Structure as Grille Definition
+## YOUR MISSION: Deep Fleissner (turning) grille search on K4
 
-The misspellings spell "KA" -- pointing to the KA alphabet as the grille key.
-The AZ->KA permutation has a specific cycle structure that may define hole vs solid.
+### Key insight
+K4 (97 chars) + 3 question marks on sculpture = 100 = 10x10.
+The grille extract is exactly 100 characters. A Fleissner grille on 10x10
+has 25 orbits x 4 rotations = 100 cells. This is a CLEAN fit.
 
-### AZ->KA permutation:
-AZ = ABCDEFGHIJKLMNOPQRSTUVWXYZ
-KA = KRYPTOSABCDEFGHIJLMNQUVWXZ
+### What's been tested
+- Pure transposition Fleissner (no sub layer): SA best 12/24 from 20 restarts. Likely noise.
+- Fleissner + periodic Vig/Beau (p=7,8): 0 fully consistent grilles in 5M random trials.
+- Only ~10^-8 of the 4^25 = 10^15 search space has been sampled.
 
-Mapping AZ[i] -> KA[i] gives permutation:
-  A->K, B->R, C->Y, D->P, E->T, F->O, G->S, H->A, I->B, J->C,
-  K->D, L->E, M->F, N->G, O->H, P->I, Q->J, R->L, S->M, T->N,
-  U->Q, V->U, W->V, X->W, Y->X, Z->Z
+### What to do (pick ONE):
+**A. Fleissner + SA with quadgram scoring** -- Instead of crib-only scoring, use full
+   quadgram fitness. For each Fleissner grille, read K4 through the grille, apply
+   Vig/Beau decrypt with KRYPTOS or ABSCISSA, score with quadgrams. SA-optimize
+   the 25 orbit choices. This tests 4^25 grilles implicitly.
 
-**Cycle decomposition:**
-- 17-cycle: (A K D P I B R L E T N G S M F O H) -- contains all KRYPTOS letters
-- 8-cycle: (C Y X W V U Q J)
-- Fixed point: Z
+**B. Constraint propagation from cribs** -- For ABSCISSA/AZ Vig:
+   real_CT[i] = (PT[i] + ABSCISSA[i%8]) mod 26. At 24 crib positions, this gives
+   24 known real_CT values. Each must appear somewhere in K4. The Fleissner maps
+   PT position -> grid cell. Use CSP to find valid orbit assignments.
+   Key fixed points: sigma(32)=32 (since K4[32]=S=real_CT[32] under ABSCISSA shift A=0).
 
-### Approaches to test:
-**A. Cycle membership mask** -- For each cipher grid cell (r,c), check if the LETTER
-   at that position belongs to the 17-cycle, 8-cycle, or is Z.
-   Test: 17-cycle = hole, 8-cycle = solid (and vice versa).
-   How many holes land on K4? What letters do they read from tableau?
-**B. Cycle INDEX mask** -- For each letter, its position within its cycle (0-16, 0-7)
-   gives a numeric value. Use this value mod 2 to determine hole/solid.
-**C. Permutation ORDER mask** -- AZ->KA permutation has order LCM(17,8) = 136.
-   Apply the permutation N times to each letter. Test different N values.
-**D. Apply cycle structure to TABLEAU positions** -- Instead of cipher letters,
-   use the tableau letter at (r,c) to determine cycle membership.
-**E. Row/column cycle interaction** -- Key column has AZ letters. Body has KA letters.
-   The cycle membership of key_col[r] determines rule for entire row.
-**F. Combined: cycle membership of (cipher[r][c] XOR tableau[r][c])** -- the
-   difference between cipher and tableau at each position, mapped through cycles.
-**G. Verify against K3** -- Apply each mask to K3 region, check if reading produces
-   anything consistent with known K3 plaintext under Vig/KRYPTOS.
+**C. Grille extract as orbit encoding** -- The 100-char grille extract might encode
+   the Fleissner configuration. Group into 25 groups of 4 chars (one per orbit).
+   Can the letter values determine which of the 4 cells in each orbit is the hole?
 
-For EVERY mask variant, count holes in K4 region, read tableau letters at holes,
-try Vig/Beau decryption with all keywords, score for English.
+**D. Non-square Fleissner** -- The physical grid is 28x31 (not square).
+   Test 180-degree rotation (434 holes, 2 orientations instead of 4).
+   K4 positions pair with K1 positions under this rotation.
 
-Write your main script as `scripts/blitz_ka_cycle_grille.py`.""",
+Keep scripts under 200 lines. Write scripts in `scripts/grille/`.""",
     ),
 
     "rotation_180": (
-        "180 degree Rotation Hypothesis -- Two-pass grille reading",
+        "180-degree Rotation -- K4/K1 pairing and two-pass grille reading",
         f"""\
-## YOUR SPECIFIC MISSION: Test the 180 degree Rotation Hypothesis
+## YOUR MISSION: Exploit the 180-degree structural symmetry for K4
 
-At 28x31 (not square), only 180 degree rotation works: (r,c) -> (27-r, 30-c).
-The structural match is remarkable: 868/2 = 434 = K1+K2 = K3+?+K4.
+**ALREADY KNOWN** (don't re-derive):
+- 868/2 = 434 = K1+K2 = K3+?+K4 (exact split)
+- K4 (rows 24-27) <-> K1 (rows 0-3) under (r,c) -> (27-r, 30-c)
+- K3 <-> K2 under same rotation
+- 17 reading variants already tested -- all 3-5/24 (noise)
 
-### The theory
-Position 1: grille reads 434 chars from the TOP half (K1+K2)
-Position 2 (180 degree flip): grille reads 434 chars from the BOTTOM half (K3+?+K4)
-The grille extracts EXACTLY one half per orientation.
+**DO NOT** test simple reflected readings or cycle-membership masks (already failed).
 
-### KA cycle integration
-The AZ->KA 17-cycle/8-cycle/Z partition may define WHICH cells are holes:
-- Test: 17-cycle cipher letters = hole in position 1, solid in position 2
-- Under 180 degree flip, each cell switches role: hole <-> solid
-- Combined with K3 calibration, this constrains the mask heavily
+### What to do (pick ONE and go deep):
+**A. K1 as key for K4** -- K1 CT at reflected K4 positions could be a running key or
+   permutation key for K4. K1 is Vig/PALIMPSEST. Decrypt K1 reflected positions first,
+   THEN use the K1 PT as a key element for K4. This uses the solved section as
+   an instruction channel.
 
-### Approaches to try:
-**A. Symmetric mask search** -- For each cell (r,c) with r<14, assign hole or solid.
-   The cell (27-r, 30-c) gets the OPPOSITE assignment. 434 positions to determine.
-**B. K3 as calibration** -- K3 occupies rows 14-24. In 180 degree flip, these map to rows 3-13.
-   Since K3's PT is known, the grille must read K3's real CT (Vig/KRYPTOS) at those positions.
-**C. Half-grid enumeration** -- Only need 434 bits (one half), other half is complement.
-**D. Column parity** -- col c <-> col 30-c. Columns pair up (except col 15).
-**E. K4 in rotation** -- K4 at rows 24-27 maps to rows 0-3 under 180 degree.
-   In position 1: read K1 chars at K4's reflected positions.
-   In position 2: read K4 chars directly.
+**B. K3 permutation extended to K4 via rotation** -- K3's exact permutation (2 cycles of 168,
+   dominant step 7) maps K3 positions. Under 180-degree rotation, K3 maps to K2.
+   Can we derive the K4 permutation by applying the K3 formula to the rotated grid?
 
-Write your main script as `scripts/blitz_rotation_180.py`.""",
+**C. 8-cycle IC anomaly** -- K4 letters in the 8-cycle (C,J,Q,U,V,W,X,Y) have IC=0.1233
+   (anomalously high). Under 180-degree rotation, where do these letters map?
+   Do they cluster in K1? This could reveal structural information about the permutation.
+
+Keep scripts under 200 lines. Write scripts in `scripts/grille/`.""",
     ),
 
     "k3_grille_verify": (
-        "K3 Grille Calibration -- Use known K3 PT/CT to validate grille methods",
+        "K3 Permutation Analysis -- Reverse-engineer grille construction from known K3",
         """\
-## YOUR SPECIFIC MISSION: Use K3 as Ground Truth for Grille Validation
+## YOUR MISSION: Derive grille construction rules from K3's known permutation
 
-K3's plaintext AND ciphertext are both known. K3 occupies rows 14-24 of the grid.
-ANY valid grille theory must produce correct results when applied to K3.
+**ALREADY KNOWN** (don't re-derive):
+- K3 permutation: 2 cycles of 168, order 168 = 8x7x3, dominant step 7
+- K3 formula: a=i//24, b=i%24, int=14*b+13-a, c=int//8, d=int%8, pt=42*d+41-c
+- 0 mismatches across 336 positions
+- Classical Cardan grille (half-mirror): 0/168 match
+- KA cycle mask on K3: no genuine crib hits
 
-### K3 facts:
-- K3 CT: 336 chars, rows 14-24 col 0 to row 24 col 25
-- K3 PT: SLOWLYDESPARATLY...CANYOUSEEANYTHINGQ (336 chars)
-- K3 method: double rotational transposition (24x14 -> 8x42, self-inverting)
-- K3 starts at EXACT center (row 14, col 0)
-- K3 exact permutation formula:
-  ```
-  a = i // 24; b = i % 24
-  intermediate = 14 * b + 13 - a
-  c = intermediate // 8; d = intermediate % 8
-  pt_pos = 42 * d + 41 - c
-  # CT[i] = PT[pt_pos]
-  ```
-  Verified: 0 mismatches across all 336 positions.
-- K3 DESPARATLY misspelling: PT[10] -> CT[89] = A (part of KA signal)
+### What to do (pick ONE):
+**A. Grille reverse-engineering** -- K3's permutation is KNOWN exactly. If a grille
+   produced this permutation, what properties must the grille have? For each K3 position i,
+   the PT position pt_pos tells us where the grille sends position i. Can you factor
+   this into a "grille reading order" (mask + reading direction)?
 
-### KA signal integration:
-- Misspellings spell KA -> test if KA cycle membership predicts K3 grille pattern
-- For each K3 CT position, check if the cipher letter's cycle membership
-  correlates with whether it's a "grille hole" (where tableau shows through)
+**B. K3 permutation modular structure** -- The formula uses divisors 24, 14, 8, 42.
+   24 = K3_rows_in_grid? 14 = half_grid_height? 8 = ABSCISSA_length?
+   42 = 6*7 = (KRYPTOS-1)*KRYPTOS? Map these parameters to grid structure.
+   Can K4's permutation use analogous parameters scaled to K4's size?
 
-### Approaches:
-**A. Overlay analysis** -- Map K3 CT positions to tableau positions.
-   For each K3 position, compare: cipher char, tableau char, known PT, known key.
-   Which K3 positions have cipher == tableau? Do these form a pattern?
-**B. KA cycle test on K3** -- Apply AZ->KA cycle-based mask to K3 region.
-   Read tableau letters at "holes". Decrypt with Vig/KRYPTOS. Compare to known PT.
-**C. K3 transposition from grille** -- Can the grille reproduce K3's double rotational
-   transposition? GCD(21,28)=7=len(KRYPTOS). Column step pattern {7,7,7,3}.
-**D. 180 degree rotation test** -- Under flip, K3 region (rows 14-24) maps to rows 3-13.
-   Does K2 region show complementary structure?
-**E. K3 as template for K4** -- If K3's grille pattern is found, extend it to K4 region.
+**C. Step pattern analysis** -- K3 has dominant step 7 = len(KRYPTOS).
+   What's the step pattern for K4 positions in the grid? The K4 subgrid is
+   4 rows x 31 cols (roughly). If K4 uses ABSCISSA (8), the dominant step might be 8.
+   Test permutations with step-8 structure on K4.
 
-Write your main script as `scripts/blitz_k3_grille_verify.py`.""",
+Keep scripts under 200 lines. Write scripts in `scripts/grille/`.""",
     ),
 
     "instruction_decoder": (
-        "K1-K3 Instruction Decoder -- Extract grille construction instructions from solved sections",
+        "K1-K3 Instruction Decoder -- Extract actionable parameters from solved sections",
         f"""\
-## YOUR SPECIFIC MISSION: Systematically Decode K1-K3 Solving Instructions
+## YOUR MISSION: Extract ACTIONABLE construction parameters from K1-K3
 
-HYPOTHESIS: Kryptos is not solvable from K4 alone. The solved sections K1-K3 contain
-instructions for constructing the K4 grille and decryption method. Different anomalies
-serve different functions: misspellings encode "KA", plaintexts describe the method.
+**ALREADY KNOWN** (don't re-derive):
+- Misspellings spell KA (K from IQLUSION, A from DESPARATLY)
+- IDBYROWS maps to 8 grid rows {{1,3,8,14,17,18,22,24}}
+- Known keystream is non-periodic
+- "8 Lines 73": 73 + 24 cribs = 97
 
-### Known instruction channels:
-1. **Misspellings -> CT letters**: K1 IQLUSION->K, K3 DESPARATLY->A = "KA"
-   - This tells us the KA alphabet is central to the grille
-   - What other information might the CHANGED letters carry? (Q for L, A for E)
-   - Q is in the 8-cycle, L is in the 17-cycle. A is in the 17-cycle, E is in the 17-cycle.
+**DO NOT** just list observations. Each finding must produce a TESTABLE permutation or mask.
 
-2. **K3 plaintext (Carter's tomb)**: "CAN YOU SEE ANYTHING?"
-   - Looking through holes = grille instruction
-   - "slowly...remains of passage debris" = methodical uncovering
-   - "widening the hole a little" = iterative grille construction?
-   - "I inserted the candle and peered in" = the grille IS the instrument of looking
+### What to do (pick ONE):
+**A. IDBYROWS as grille reading order** -- The 8 rows {{1,3,8,14,17,18,22,24}} include
+   K3 start (14) and K4 start (24). Read the grid in this row order, then remaining rows.
+   Does this reordering + Vig/Beau produce anything? Test systematically with all keywords.
 
-3. **K2 plaintext**: Contains "LAYER TWO" and "IDBYROWS"
-   - "Layer two" = the second system (grille + substitution)
-   - "IDBYROWS" = rows-based reading order instruction?
-   - "the information was gathered and transmitted underground" = hidden channel
+**B. "8 Lines 73" as a 73-hole grille** -- Construct a mask with exactly 73 holes on K4's
+   97 positions (73 = 97-24 non-crib positions). The 24 crib positions could be "solid"
+   (pass-through), while 73 positions are reordered. SA search over 73-position permutations.
 
-4. **K1 plaintext**: "the nuance of IQLUSION"
-   - Nuance = subtle distinction (between AZ and KA? between hole and solid?)
-   - IQLUSION = the misspelling IS the nuance (points to K, first letter of KA)
+**C. K3's "CAN YOU SEE ANYTHING" as literal grille instruction** -- K3 describes peering
+   through a hole. The PHYSICAL act of looking through the grille at the cipher panel
+   gives you the PT. What if each solved section's PT tells you WHICH CELLS to look through
+   for the NEXT section? K1 PT -> K2 grille, K2 PT -> K3 grille, K3 PT -> K4 grille.
+   Test: extract a mask from K3 PT (letter values, positions of specific letters, etc.)
+   and apply to K4 region.
 
-5. **Structural anomalies**:
-   - "8 Lines 73": 8 rows x ~9.1 holes = 73 holes? Period 8?
-   - Extra L on row N: construction cut point?
-   - Extra T on row V: V-N = T-L = 8
-   - "T IS YOUR POSITION": T diagonal on KA tableau
-   - 53 T's on cipher panel x 2 = 106 = old grille extract length
-
-### What to compute:
-**A. Misspelling letter analysis** -- The ORIGINAL letters (L, E) and their REPLACEMENTS
-   (Q, A). Map these through AZ->KA cycles. What properties do they share?
-**B. K3 plaintext keyword extraction** -- Extract meaningful keywords/phrases from K3 PT
-   that could be grille construction parameters (numbers, spatial terms, etc.)
-**C. K2 IDBYROWS interpretation** -- Test reading the cipher grid by rows in different
-   orders. "ID BY ROWS" could mean identification/indexing by row number.
-**D. Cross-reference K1-K3 numbers** -- K1=63 chars, K2=369 letters, K3=336 chars.
-   These have specific factorizations. Do they encode grid parameters?
-**E. "8 Lines 73" as grille spec** -- Lay K4 (97 chars) in 8 rows. 97=8x12+1.
-   73 = 97 - 24 (number of crib positions). Test 73-hole grille patterns.
-**F. T-position mechanism** -- Map all T positions in cipher grid. Do they form a
-   pattern consistent with "T IS YOUR POSITION"?
-
-Write your main script as `scripts/blitz_instruction_decoder.py`.""",
+Keep scripts under 200 lines. Write scripts in `scripts/grille/`.""",
     ),
 
     "wildcard": (
-        "Lateral & Creative -- Novel grille construction approaches",
+        "Wildcard -- Novel approaches that haven't been tried",
         f"""\
-## YOUR SPECIFIC MISSION: Creative Approaches to Grille Construction
+## YOUR MISSION: Try something genuinely new
 
-Think outside the box. The grille pattern may follow rules nobody has considered.
-Incorporate the KA-from-misspellings discovery into creative approaches.
+**IMPORTANT**: 50+ deterministic mask patterns and 16M+ standard transpositions have ALL failed.
+DO NOT test more masks (cycle, checkerboard, parity, Fibonacci, primes, etc.) -- they're exhausted.
 
-### Approaches to try:
-**A. KA as key to grille** -- "KA" from misspellings could mean: use the KA alphabet
-   as a key for generating the grille. E.g., KA[i] mod 2 for column i determines
-   hole pattern. Or KA index of each cipher letter mod N.
-**B. "8 Lines 73" as grille spec** -- 8 rows x ~9 holes each = 73 holes? Or 73 holes total?
-   "8 Lines 73" from Sanborn's yellow pad. 73 + 24 (cribs) = 97. 73 holes in grille?
-**C. Fibonacci/prime positions** -- Holes at prime-numbered cells, Fibonacci indices, etc.
-**D. KRYPTOS keyword as mask key** -- Use KRYPTOS (7 chars) to generate a repeating hole pattern
-   across 31 columns: hole at col c if KA.index(KRYPTOS[c%7]) meets some condition
-**E. K4 as self-referential** -- K4 characters define which of their own positions are holes
-**F. KA tableau T-diagonal** -- "T IS YOUR POSITION": T appears on the main diagonal of
-   the KA tableau. The T-diagonal could define hole/solid boundaries. 53 T's x 2 = 106.
-**G. Checkerboard/chess knight pattern** -- Geometric patterns tested systematically
-**H. XOR between cipher and tableau** -- (cipher_ord - tableau_ord) mod 26 encodes binary
-   or maps to cycle membership for mask determination
-**I. Physical Kryptos constraints** -- The grille must be physically cuttable from a sheet.
-   Connected hole regions? No isolated holes?
-**J. K3 answer = K4 start** -- K3 ends "CAN YOU SEE ANYTHING", K4 may start
-   "YES WONDERFUL THINGS" (Carter's actual reply). Test this as a crib.
+### Genuinely unexplored ideas (pick ONE):
+**A. K4 starts "YES WONDERFUL THINGS"** -- K3 ends "CAN YOU SEE ANYTHING" (Carter's question).
+   Carter actually replied "Yes, wonderful things." Test "YESWONDERFULTHINGS" as a crib at
+   position 0 (21 chars). Combined with existing cribs, this gives 45/97 known PT positions.
+   With 45 known PT + any keyword, derive constraints on the permutation.
 
-For EVERY approach, implement it, test it, and report results.
-Write your main script as `scripts/blitz_wildcard_grille.py`.""",
+**B. Permutation from grille extract** -- The 100-char grille extract
+   `HJLVKDJQZKIVPCMWSAFOPCKBDLHIFXRYVFIJMXEIOMQFJNXZKILKRDIYSCLMQVZACEIMVSEFHLQKRGILVHNQXWTCDKIKJUFQRXCD`
+   could directly encode the permutation. Try: KA-index of each letter as a position number
+   (mod 97), rank ordering, or use pairs of letters as 2-digit base-26 numbers.
+
+**C. SA on full 97-element permutation with Vig/ABSCISSA** -- Forget grille construction.
+   Directly SA-search the permutation sigma where K4[sigma(i)] = real_CT[i], with
+   real_CT[i] = Vig_encrypt(PT[i], ABSCISSA[i%8]). Score with quadgrams on the full PT.
+   Fix sigma(32)=32 (known fixed point under ABSCISSA). 500K steps x 20 restarts.
+   This is the most direct attack on Model 2.
+
+**D. Double transposition** -- K3 uses double rotational transposition. K4 might use
+   a DIFFERENT double transposition. Try: columnar(key1) then columnar(key2) for
+   key lengths 3-9. Or route cipher followed by columnar. Brute-force small key lengths.
+
+Keep scripts under 200 lines. Write scripts in `scripts/grille/`.""",
     ),
 }
 
