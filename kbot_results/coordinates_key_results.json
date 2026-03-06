@@ -1,0 +1,19 @@
+{
+  "experiment": "blitz_coordinates_key",
+  "elapsed_seconds": 46.31171226501465,
+  "configs_tested": 1456,
+  "best_result": {
+    "label": "Affine a=77,b=44 len13 [AZ]",
+    "key": "SRQPONMLKJIHG",
+    "key_len": 13,
+    "cipher": "vig",
+    "alpha": "AZ",
+    "score": -760.723592,
+    "score_per_char": -8.092804170212766,
+    "pt_snippet": "WKUCGBLDWYMEVAXVTROPLVCJOKYYBYSXGHEKOMKASADERYOPNS",
+    "pt_full": "WKUCGBLDWYMEVAXVTROPLVCJOKYYBYSXGHEKOMKASADERYOPNSMDSUEOUNKXDWTGSXEDEYMTEANYWEHGDUOQWVALZNUCNUNME"
+  },
+  "above_threshold_count": 0,
+  "crib_hit_count": 0,
+  "top_results": []
+}
