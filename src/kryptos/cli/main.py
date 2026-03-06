@@ -8,6 +8,8 @@ Usage:
     kryptos novelty triage      — Triage pending hypotheses
     kryptos novelty status      — Show novelty engine status
     kryptos report <db> top     — Show top results from a database
+    kryptos bench run           — Run a benchmark suite
+    kryptos bench score         — Score results against a suite
 """
 from __future__ import annotations
 
@@ -202,6 +204,32 @@ def main() -> int:
     triage_p.add_argument("--limit", type=int, default=100, help="Max hypotheses to triage")
     novelty_sub.add_parser("status", help="Show novelty engine status")
 
+    # bench
+    bench_p = sub.add_parser("bench", help="Benchmark runner")
+    bench_sub = bench_p.add_subparsers(dest="bench_cmd")
+    bench_run_p = bench_sub.add_parser("run", help="Run a benchmark suite")
+    bench_run_p.add_argument("--suite", required=True, help="Path to suite JSONL file")
+    bench_run_p.add_argument("--parallel", type=int, default=1,
+                             help="Number of parallel workers (default: 1)")
+    bench_run_p.add_argument("--top-k", type=int, default=5,
+                             help="Top-K candidates per case (default: 5)")
+    bench_run_p.add_argument("--out", default="results/bench/",
+                             help="Output directory (default: results/bench/)")
+    bench_score_p = bench_sub.add_parser("score", help="Score results against a suite")
+    bench_score_p.add_argument("--suite", required=True, help="Path to suite JSONL file")
+    bench_score_p.add_argument("--results", required=True, help="Path to results JSONL file")
+    bench_score_p.add_argument("--out", default="results/bench/",
+                               help="Output directory (default: results/bench/)")
+    bench_gen_p = bench_sub.add_parser("generate", help="Generate benchmark suites")
+    bench_gen_p.add_argument("--tiers", default="0,1,2,3",
+                              help="Comma-separated tier numbers (default: 0,1,2,3)")
+    bench_gen_p.add_argument("--n", type=int, default=25,
+                              help="Cases per tier (default: 25)")
+    bench_gen_p.add_argument("--seed", type=int, default=42,
+                              help="RNG seed (default: 42)")
+    bench_gen_p.add_argument("--out", default="bench/suites/",
+                              help="Output directory (default: bench/suites/)")
+
     # report
     report_p = sub.add_parser("report", help="Report on results")
     report_p.add_argument("db", help="Path to SQLite database")
@@ -226,6 +254,19 @@ def main() -> int:
             return cmd_novelty_status(args)
         else:
             novelty_p.print_help()
+            return 1
+    elif args.command == "bench":
+        if args.bench_cmd == "run":
+            from bench.cli import cmd_run
+            return cmd_run(args)
+        elif args.bench_cmd == "score":
+            from bench.cli import cmd_score
+            return cmd_score(args)
+        elif args.bench_cmd == "generate":
+            from bench.generate import cmd_generate
+            return cmd_generate(args)
+        else:
+            bench_p.print_help()
             return 1
     elif args.command == "report":
         if args.action == "top":
