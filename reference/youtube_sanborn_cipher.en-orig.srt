@@ -1,0 +1,4828 @@
+1
+00:00:03,600 --> 00:00:10,880
+Hello everyone. Um I am one of the last
+
+2
+00:00:07,200 --> 00:00:14,000
+speakers after me is Jeopardy and then
+
+3
+00:00:10,880 --> 00:00:16,880
+closing ceremonies and then lightning
+
+4
+00:00:14,000 --> 00:00:19,880
+talks. Yes. Okay. You been having a good
+
+5
+00:00:16,880 --> 00:00:19,880
+freaknic
+
+6
+00:00:21,039 --> 00:00:26,240
+winding down. Okay. Good. Good. All
+
+7
+00:00:23,199 --> 00:00:28,960
+right. So, Cryptos um this is an
+
+8
+00:00:26,240 --> 00:00:31,760
+exciting topic right now because it is
+
+9
+00:00:28,960 --> 00:00:35,200
+currently on auction. The fourth
+
+10
+00:00:31,760 --> 00:00:38,000
+unsolved part is on an online auction
+
+11
+00:00:35,200 --> 00:00:41,040
+which started a few weeks ago and wraps
+
+12
+00:00:38,000 --> 00:00:43,120
+up on November 20th. So, every single
+
+13
+00:00:41,040 --> 00:00:45,040
+day I'm watching the the counter tick
+
+14
+00:00:43,120 --> 00:00:48,399
+up. We'll see what it is when I get to
+
+15
+00:00:45,040 --> 00:00:52,079
+that part of the talk. All right. So, um
+
+16
+00:00:48,399 --> 00:00:56,160
+this is a sculpture at CIA. Sound okay?
+
+17
+00:00:52,079 --> 00:01:00,160
+Yeah. Okay. Uh this was uh installed a
+
+18
+00:00:56,160 --> 00:01:02,559
+few decades ago. The CIA on the right we
+
+19
+00:01:00,160 --> 00:01:04,400
+have the original headquarters building
+
+20
+00:01:02,559 --> 00:01:07,119
+and when they wanted their new
+
+21
+00:01:04,400 --> 00:01:09,200
+headquarters building on the left they
+
+22
+00:01:07,119 --> 00:01:11,920
+uh were sort of required to have some
+
+23
+00:01:09,200 --> 00:01:13,840
+art to go around the building and one of
+
+24
+00:01:11,920 --> 00:01:15,119
+the things that they requested they
+
+25
+00:01:13,840 --> 00:01:17,360
+formed a committee that formed a
+
+26
+00:01:15,119 --> 00:01:19,600
+committee that formed a committee and
+
+27
+00:01:17,360 --> 00:01:22,799
+they I'm not I'm not making that up. Uh
+
+28
+00:01:19,600 --> 00:01:24,240
+they decided to ask Jim Samborn who'd
+
+29
+00:01:22,799 --> 00:01:27,759
+already been doing art around the
+
+30
+00:01:24,240 --> 00:01:30,080
+Washington DC area and he decided uh
+
+31
+00:01:27,759 --> 00:01:33,280
+after doing some more research to do a
+
+32
+00:01:30,080 --> 00:01:35,759
+sculpture that had this uh theme of
+
+33
+00:01:33,280 --> 00:01:38,400
+things that are hidden. So he called it
+
+34
+00:01:35,759 --> 00:01:42,000
+cryptos which is Greek for the word
+
+35
+00:01:38,400 --> 00:01:44,000
+hidden. Uh I got a chance to see it.
+
+36
+00:01:42,000 --> 00:01:46,000
+These are rubbings that I did of it.
+
+37
+00:01:44,000 --> 00:01:49,040
+Each one is on a piece of paper a
+
+38
+00:01:46,000 --> 00:01:51,520
+standard 8 1/2 by 11. sort of gives you
+
+39
+00:01:49,040 --> 00:01:54,960
+an idea of the size of the sculpture. It
+
+40
+00:01:51,520 --> 00:01:57,759
+has about 2,000 characters that are
+
+41
+00:01:54,960 --> 00:02:01,040
+carved through it. And this is the
+
+42
+00:01:57,759 --> 00:02:04,159
+dedication in 1988. And there is Jim
+
+43
+00:02:01,040 --> 00:02:06,399
+Sanborn handing an envelope to the
+
+44
+00:02:04,159 --> 00:02:09,440
+director of the CIA at the time, William
+
+45
+00:02:06,399 --> 00:02:12,640
+Webster. We think we know what is in the
+
+46
+00:02:09,440 --> 00:02:14,239
+envelope. Um, but we're not sure. It was
+
+47
+00:02:12,640 --> 00:02:16,480
+It might have been the answer to
+
+48
+00:02:14,239 --> 00:02:19,120
+Kryptos. It might not. But he put
+
+49
+00:02:16,480 --> 00:02:23,200
+something in that envelope and it was
+
+50
+00:02:19,120 --> 00:02:27,599
+sealed and he asked William Webster at
+
+51
+00:02:23,200 --> 00:02:29,840
+the time, uh, can you keep a secret? And
+
+52
+00:02:27,599 --> 00:02:33,440
+William Webster said, "My lips are
+
+53
+00:02:29,840 --> 00:02:37,120
+sealed as is the envelope." So, Jim
+
+54
+00:02:33,440 --> 00:02:40,560
+Samborn, born in 1945, Washington DC,
+
+55
+00:02:37,120 --> 00:02:43,840
+studied at Oxford, uh has done a ton of
+
+56
+00:02:40,560 --> 00:02:46,160
+travel and um has a degree in social
+
+57
+00:02:43,840 --> 00:02:49,519
+anthropology for what that's worth, and
+
+58
+00:02:46,160 --> 00:02:52,560
+a master's degree in sculpture. And I
+
+59
+00:02:49,519 --> 00:02:54,319
+started making a list of all of his
+
+60
+00:02:52,560 --> 00:02:57,920
+works. So, this I'll tell you a little
+
+61
+00:02:54,319 --> 00:03:00,640
+bit of the story. I was at a convention
+
+62
+00:02:57,920 --> 00:03:03,040
+in Atlanta called Dragon Con. Anybody
+
+63
+00:03:00,640 --> 00:03:06,239
+here been to Dragon Con? A couple
+
+64
+00:03:03,040 --> 00:03:10,239
+people. So, it's a big fan convention.
+
+65
+00:03:06,239 --> 00:03:13,760
+Uh, brings in what, 60,000 people, takes
+
+66
+00:03:10,239 --> 00:03:16,159
+over downtown Atlanta. Uh, and um, I
+
+67
+00:03:13,760 --> 00:03:18,720
+have been asked to speak at the
+
+68
+00:03:16,159 --> 00:03:21,920
+convention on my job at the time, which
+
+69
+00:03:18,720 --> 00:03:24,640
+was making computer games. And we I was
+
+70
+00:03:21,920 --> 00:03:27,599
+speaking in the electronic frontiers
+
+71
+00:03:24,640 --> 00:03:29,760
+track. And at the end of the day, you
+
+72
+00:03:27,599 --> 00:03:32,640
+get together with the other speakers.
+
+73
+00:03:29,760 --> 00:03:36,799
+And some of the speakers at the time
+
+74
+00:03:32,640 --> 00:03:39,280
+were people from Nashville who had been
+
+75
+00:03:36,799 --> 00:03:41,519
+involved with creating this convention
+
+76
+00:03:39,280 --> 00:03:44,000
+called Freaknik. Freaknick 3 at the
+
+77
+00:03:41,519 --> 00:03:46,239
+time. And at the end of the day, you get
+
+78
+00:03:44,000 --> 00:03:48,879
+together, you have a drink, and they
+
+79
+00:03:46,239 --> 00:03:52,799
+told me about this code that had been
+
+80
+00:03:48,879 --> 00:03:54,799
+released at Freaknik 3, and no one had
+
+81
+00:03:52,799 --> 00:03:57,360
+cracked it yet. Had cracked it yet. So,
+
+82
+00:03:54,799 --> 00:03:59,280
+they were handing out code on a sheet of
+
+83
+00:03:57,360 --> 00:04:01,439
+paper saying if you can solve this
+
+84
+00:03:59,280 --> 00:04:03,920
+challenge, you get a free trip to a
+
+85
+00:04:01,439 --> 00:04:06,959
+hacker con, free drinks, free t-shirts,
+
+86
+00:04:03,920 --> 00:04:09,760
+all that. So, I picked it up with all
+
+87
+00:04:06,959 --> 00:04:14,000
+the stuff you get. This was in what, 23
+
+88
+00:04:09,760 --> 00:04:17,280
+years ago, so late '9s. And I took a
+
+89
+00:04:14,000 --> 00:04:18,720
+look at it and I was home one weekend. I
+
+90
+00:04:17,280 --> 00:04:21,840
+was kind of frustrated because I wanted
+
+91
+00:04:18,720 --> 00:04:24,479
+to go to Defcon, but I couldn't cuz I
+
+92
+00:04:21,840 --> 00:04:27,199
+was sick with the flu at the time. And I
+
+93
+00:04:24,479 --> 00:04:31,040
+took a look at the code and I got
+
+94
+00:04:27,199 --> 00:04:32,800
+obsessed with cracking this code. And my
+
+95
+00:04:31,040 --> 00:04:34,320
+friends sometimes they like send me a
+
+96
+00:04:32,800 --> 00:04:35,600
+text message saying, "Hey, do you want
+
+97
+00:04:34,320 --> 00:04:36,880
+to go out to a movie out?" Don't talk to
+
+98
+00:04:35,600 --> 00:04:41,600
+me unless you want to talk about the
+
+99
+00:04:36,880 --> 00:04:44,080
+code. And um it took me 10 days, but I
+
+100
+00:04:41,600 --> 00:04:46,320
+cracked it and felt like longer, but I
+
+101
+00:04:44,080 --> 00:04:48,080
+cracked it. And then I went around
+
+102
+00:04:46,320 --> 00:04:50,479
+cracking a bunch of other codes in the
+
+103
+00:04:48,080 --> 00:04:52,639
+hacker scene. uh so many that have
+
+104
+00:04:50,479 --> 00:04:54,880
+actually been banned from competition.
+
+105
+00:04:52,639 --> 00:04:56,639
+Like when the Atlanticon they had their
+
+106
+00:04:54,880 --> 00:04:59,120
+code was on a sheet of paper and at the
+
+107
+00:04:56,639 --> 00:05:01,600
+bottom of the paper it said past puzzle
+
+108
+00:04:59,120 --> 00:05:04,240
+solvers are ineligible with solving the
+
+109
+00:05:01,600 --> 00:05:08,639
+Atlanticon puzzle. Give someone else a
+
+110
+00:05:04,240 --> 00:05:12,080
+chance. Yanka. So So I cracked that one
+
+111
+00:05:08,639 --> 00:05:15,120
+too. And um then uh September 11th
+
+112
+00:05:12,080 --> 00:05:18,479
+happened and I was as enraged as
+
+113
+00:05:15,120 --> 00:05:20,560
+everyone else and I called up the local
+
+114
+00:05:18,479 --> 00:05:22,320
+FBI and I said, "Hey, can I help with
+
+115
+00:05:20,560 --> 00:05:25,759
+the war on terrorism?" And they said,
+
+116
+00:05:22,320 --> 00:05:27,919
+"No." And um I kept calling them up and
+
+117
+00:05:25,759 --> 00:05:29,120
+eventually they asked me, "What is it
+
+118
+00:05:27,919 --> 00:05:30,400
+that you know about?" And I said, "Well,
+
+119
+00:05:29,120 --> 00:05:32,800
+I've been cracking all these codes in
+
+120
+00:05:30,400 --> 00:05:34,720
+the hacker scene and I know about binary
+
+121
+00:05:32,800 --> 00:05:37,360
+and PGP and Neo encoding and
+
+122
+00:05:34,720 --> 00:05:40,560
+steanography and all this stuff." And
+
+123
+00:05:37,360 --> 00:05:43,759
+one of them said, "hm, steganography,
+
+124
+00:05:40,560 --> 00:05:46,000
+we've been hearing rumors that al-Qaeda
+
+125
+00:05:43,759 --> 00:05:48,400
+was using steganography as a way of
+
+126
+00:05:46,000 --> 00:05:50,720
+planning the September 11th attacks."
+
+127
+00:05:48,400 --> 00:05:53,360
+And you know, we know that there's big
+
+128
+00:05:50,720 --> 00:05:55,120
+brains in Washington DC that know about
+
+129
+00:05:53,360 --> 00:05:57,520
+this stuff, but we're here in St. Louis,
+
+130
+00:05:55,120 --> 00:05:59,520
+which is where I lived at the time, and
+
+131
+00:05:57,520 --> 00:06:01,840
+uh cryptography isn't really our
+
+132
+00:05:59,520 --> 00:06:04,080
+mission. Uh maybe you could come in and
+
+133
+00:06:01,840 --> 00:06:06,319
+put together a talk about steganography.
+
+134
+00:06:04,080 --> 00:06:07,600
+I said, "Great, great." And I think they
+
+135
+00:06:06,319 --> 00:06:09,600
+thought that I was going to come in and
+
+136
+00:06:07,600 --> 00:06:11,600
+give a little three to five minute talk
+
+137
+00:06:09,600 --> 00:06:14,080
+about steganography, but no, I put
+
+138
+00:06:11,600 --> 00:06:17,280
+together a 70 slide PowerPoint
+
+139
+00:06:14,080 --> 00:06:19,440
+presentation about what kind of codes
+
+140
+00:06:17,280 --> 00:06:23,199
+that al-Qaeda was using and what they
+
+141
+00:06:19,440 --> 00:06:26,319
+weren't using. And that talk became very
+
+142
+00:06:23,199 --> 00:06:29,199
+popular. So now we take a quick step to
+
+143
+00:06:26,319 --> 00:06:32,639
+another project of mine which is after
+
+144
+00:06:29,199 --> 00:06:35,440
+September 11th. I have a cousin who
+
+145
+00:06:32,639 --> 00:06:38,720
+works in DC and he had a very close call
+
+146
+00:06:35,440 --> 00:06:40,560
+that morning on September 11th. Um he
+
+147
+00:06:38,720 --> 00:06:42,720
+was on his way to give a talk in the
+
+148
+00:06:40,560 --> 00:06:46,240
+Pentagon and he was running late because
+
+149
+00:06:42,720 --> 00:06:48,400
+he was having printer problems.
+
+150
+00:06:46,240 --> 00:06:51,440
+Give me a minute.
+
+151
+00:06:48,400 --> 00:06:55,360
+Um yeah, because he was having printer
+
+152
+00:06:51,440 --> 00:06:57,680
+problems and um on his way to the
+
+153
+00:06:55,360 --> 00:07:00,240
+Pentagon, he was checking his phone and
+
+154
+00:06:57,680 --> 00:07:02,000
+his phone actually crashed from all of
+
+155
+00:07:00,240 --> 00:07:04,479
+the messages from people that were
+
+156
+00:07:02,000 --> 00:07:08,960
+saying, "A plane just hit the Pentagon.
+
+157
+00:07:04,479 --> 00:07:12,720
+Don't go." Uh so the plane hit right
+
+158
+00:07:08,960 --> 00:07:14,560
+where he was going to be. And uh some of
+
+159
+00:07:12,720 --> 00:07:19,759
+the people that he was supposed to brief
+
+160
+00:07:14,560 --> 00:07:22,560
+were killed. And um so after all of
+
+161
+00:07:19,759 --> 00:07:27,120
+this, I went out to DC, my first time in
+
+162
+00:07:22,560 --> 00:07:31,199
+DC and uh to hug my cousin. And then we
+
+163
+00:07:27,120 --> 00:07:34,479
+went to the memorial at the Pentagon and
+
+164
+00:07:31,199 --> 00:07:37,199
+we could still smell the smoke and we
+
+165
+00:07:34,479 --> 00:07:39,599
+put a little American flag out there.
+
+166
+00:07:37,199 --> 00:07:41,520
+And then we were driving around and my
+
+167
+00:07:39,599 --> 00:07:43,039
+cousin was saying, "Hey, is there
+
+168
+00:07:41,520 --> 00:07:45,120
+anything else you'd like to see? This is
+
+169
+00:07:43,039 --> 00:07:48,080
+your first time in Washington DC." And I
+
+170
+00:07:45,120 --> 00:07:49,759
+said, "Well, no, you really." And he
+
+171
+00:07:48,080 --> 00:07:50,960
+said, "Well, thanks. That's nice. I like
+
+172
+00:07:49,759 --> 00:07:53,599
+seeing you, too. But really, there's
+
+173
+00:07:50,960 --> 00:07:55,759
+kind of a lot of stuff here to see." And
+
+174
+00:07:53,599 --> 00:07:58,560
+I said, "You know, I've heard about this
+
+175
+00:07:55,759 --> 00:08:02,160
+sculpture at CIA headquarters called
+
+176
+00:07:58,560 --> 00:08:04,479
+Cryptos with a code on it. Um, let's go
+
+177
+00:08:02,160 --> 00:08:08,240
+see that." And he said, "Okay, that's in
+
+178
+00:08:04,479 --> 00:08:10,240
+Langley." And we needed to find it. And
+
+179
+00:08:08,240 --> 00:08:12,639
+CIA is, it doesn't have a street
+
+180
+00:08:10,240 --> 00:08:15,520
+address. you can't just, you know, pump
+
+181
+00:08:12,639 --> 00:08:18,080
+it in and and ask the Map Quest or
+
+182
+00:08:15,520 --> 00:08:20,319
+something. So, um, we found it by
+
+183
+00:08:18,080 --> 00:08:22,720
+looking at overhead views from Tom
+
+184
+00:08:20,319 --> 00:08:26,720
+Clansancy movies and stuff. And then we,
+
+185
+00:08:22,720 --> 00:08:29,599
+um, drove over and we weren't thinking
+
+186
+00:08:26,720 --> 00:08:30,879
+really clearly at the time. We thought
+
+187
+00:08:29,599 --> 00:08:32,479
+we were going to just kind of take an
+
+188
+00:08:30,879 --> 00:08:34,320
+off-ramp and then drive around the
+
+189
+00:08:32,479 --> 00:08:37,120
+service road, look for the wall and peek
+
+190
+00:08:34,320 --> 00:08:39,680
+over the wall and see Kryptos. Uh it
+
+191
+00:08:37,120 --> 00:08:43,360
+didn't work like that because there's no
+
+192
+00:08:39,680 --> 00:08:46,080
+service road around the CIA. Uh and uh
+
+193
+00:08:43,360 --> 00:08:48,720
+you take the exit and you're there and
+
+194
+00:08:46,080 --> 00:08:51,279
+it's a big gate and it's got barbed wire
+
+195
+00:08:48,720 --> 00:08:53,120
+and a guard shack with a lot of big guys
+
+196
+00:08:51,279 --> 00:08:56,320
+with guns who were pouring out and
+
+197
+00:08:53,120 --> 00:08:59,440
+asking you right after se September 11th
+
+198
+00:08:56,320 --> 00:09:01,839
+very understandable questions, who are
+
+199
+00:08:59,440 --> 00:09:03,600
+you and why are you here? And you know,
+
+200
+00:09:01,839 --> 00:09:05,920
+we're like, "Oh, we're here to see uh
+
+201
+00:09:03,600 --> 00:09:07,760
+Kryptos." And they kind of relaxed a
+
+202
+00:09:05,920 --> 00:09:11,360
+little and said, "No, sorry. You only
+
+203
+00:09:07,760 --> 00:09:13,360
+get in with official business only." And
+
+204
+00:09:11,360 --> 00:09:14,959
+we like, and then my cousin and I, we
+
+205
+00:09:13,360 --> 00:09:18,800
+kind of looked at each other like, "Can
+
+206
+00:09:14,959 --> 00:09:21,920
+we talk our way into CIA?" And and we're
+
+207
+00:09:18,800 --> 00:09:24,640
+saying, "Well, um, you know, can we uh
+
+208
+00:09:21,920 --> 00:09:26,800
+get an invitation from our Congress
+
+209
+00:09:24,640 --> 00:09:28,160
+person?" And they said, "No, official
+
+210
+00:09:26,800 --> 00:09:30,720
+business only." And we're like, "Well,
+
+211
+00:09:28,160 --> 00:09:32,240
+is there like a family day? could we get
+
+212
+00:09:30,720 --> 00:09:34,640
+in that way? And the guards were saying,
+
+213
+00:09:32,240 --> 00:09:37,040
+"No, official business only." And like I
+
+214
+00:09:34,640 --> 00:09:38,800
+said, these are big guys with guns. And
+
+215
+00:09:37,040 --> 00:09:41,040
+eventually my cousin and I, we drove
+
+216
+00:09:38,800 --> 00:09:42,480
+away. And I'm sort of thinking about
+
+217
+00:09:41,040 --> 00:09:46,399
+this official business. Official
+
+218
+00:09:42,480 --> 00:09:50,800
+business. And then we come back over to
+
+219
+00:09:46,399 --> 00:09:52,800
+me talking to the St. Louis FBI and
+
+220
+00:09:50,800 --> 00:09:54,959
+thinking I was thinking maybe I could
+
+221
+00:09:52,800 --> 00:09:57,120
+use that as the official business that's
+
+222
+00:09:54,959 --> 00:10:00,480
+eventually going to get me into CIA
+
+223
+00:09:57,120 --> 00:10:03,920
+headquarters. And so I put a picture of
+
+224
+00:10:00,480 --> 00:10:07,200
+Cryptos into one of my slides and every
+
+225
+00:10:03,920 --> 00:10:09,440
+time I gave the talk, I would say, "Boy,
+
+226
+00:10:07,200 --> 00:10:11,279
+I'd love to give this talk at CIA
+
+227
+00:10:09,440 --> 00:10:14,399
+someday. I'd love to give this talk at
+
+228
+00:10:11,279 --> 00:10:18,079
+CIA someday." And at one point I was
+
+229
+00:10:14,399 --> 00:10:20,880
+giving the talk at Defcon. This is when
+
+230
+00:10:18,079 --> 00:10:24,399
+it was at the Alexis Park Hotel in Las
+
+231
+00:10:20,880 --> 00:10:27,120
+Vegas. And I was like, we were in the
+
+232
+00:10:24,399 --> 00:10:28,880
+roof, the big roof tent, and I was like,
+
+233
+00:10:27,120 --> 00:10:31,680
+"Boy, I'd love to give this talk at CIA
+
+234
+00:10:28,880 --> 00:10:33,360
+someday." And after the talk, people
+
+235
+00:10:31,680 --> 00:10:34,959
+come up, they give you business cards
+
+236
+00:10:33,360 --> 00:10:37,760
+and things. And one of them leaned
+
+237
+00:10:34,959 --> 00:10:41,519
+across the the desk and looked at me in
+
+238
+00:10:37,760 --> 00:10:43,600
+the eye and said, "I work at Langley. I
+
+239
+00:10:41,519 --> 00:10:45,760
+think I can get you in." So, I'm like,
+
+240
+00:10:43,600 --> 00:10:47,440
+"Cool. This is great. We have a CI
+
+241
+00:10:45,760 --> 00:10:50,000
+analyst that just blew their cover at
+
+242
+00:10:47,440 --> 00:10:52,800
+Defcon."
+
+243
+00:10:50,000 --> 00:10:55,519
+And uh we kind of exchanged phone
+
+244
+00:10:52,800 --> 00:10:58,000
+numbers. They only gave me a first name.
+
+245
+00:10:55,519 --> 00:11:02,000
+And uh afterwards they said, "Okay, well
+
+246
+00:10:58,000 --> 00:11:03,760
+can you um send me your slides and we'll
+
+247
+00:11:02,000 --> 00:11:06,959
+see about getting you in." And I'm like,
+
+248
+00:11:03,760 --> 00:11:09,360
+"Okay, I I can do that." And uh with the
+
+249
+00:11:06,959 --> 00:11:11,760
+condition that I can get to see Kryptos
+
+250
+00:11:09,360 --> 00:11:15,680
+once I'm over there. And they back and
+
+251
+00:11:11,760 --> 00:11:18,720
+forth. And I said, "And uh but can you
+
+252
+00:11:15,680 --> 00:11:20,800
+prove to me that you really work at CIA
+
+253
+00:11:18,720 --> 00:11:22,720
+and you're not just a hacker who's
+
+254
+00:11:20,800 --> 00:11:24,399
+pulling my chain and saying that you
+
+255
+00:11:22,720 --> 00:11:26,000
+work at CIA, but you don't really work
+
+256
+00:11:24,399 --> 00:11:27,760
+at CIA?" And they said, "Well, how am I
+
+257
+00:11:26,000 --> 00:11:30,480
+supposed to do that?" I said, "Well,
+
+258
+00:11:27,760 --> 00:11:32,240
+send me an email from an official CIA
+
+259
+00:11:30,480 --> 00:11:34,160
+email address." And they said, "Well, I
+
+260
+00:11:32,240 --> 00:11:36,000
+don't have an email from an official CIA
+
+261
+00:11:34,160 --> 00:11:39,839
+address." And I said, "Well, get an
+
+262
+00:11:36,000 --> 00:11:42,880
+email from an official CIA address." And
+
+263
+00:11:39,839 --> 00:11:46,640
+uh some time goes by and I get an email
+
+264
+00:11:42,880 --> 00:11:50,160
+from DUCIA.gov
+
+265
+00:11:46,640 --> 00:11:51,680
+which is unclassified cia.gov. And I
+
+266
+00:11:50,160 --> 00:11:53,120
+wrote back to them. And then they wrote
+
+267
+00:11:51,680 --> 00:11:55,279
+back to me. So I'm making sure we're
+
+268
+00:11:53,120 --> 00:11:58,720
+getting back and forth communication.
+
+269
+00:11:55,279 --> 00:12:01,360
+It's not a spoofed email address. And uh
+
+270
+00:11:58,720 --> 00:12:03,920
+they invited me out and I got to see
+
+271
+00:12:01,360 --> 00:12:06,480
+Kryptos up close. And I got to do the
+
+272
+00:12:03,920 --> 00:12:09,680
+rubbings as you saw uh in one of my
+
+273
+00:12:06,480 --> 00:12:12,240
+slides there. Um, so that was kind of
+
+274
+00:12:09,680 --> 00:12:15,519
+cool. Kind of achievement unlocked. I I
+
+275
+00:12:12,240 --> 00:12:19,279
+got to see Kryptos. Okay. And I did the
+
+276
+00:12:15,519 --> 00:12:21,120
+rubbings and I brought the rubbings back
+
+277
+00:12:19,279 --> 00:12:26,240
+home to St. Louis and I made a little
+
+278
+00:12:21,120 --> 00:12:28,399
+web page visit to CIA. Okay. And I
+
+279
+00:12:26,240 --> 00:12:30,639
+figured I was done at that point. I'd
+
+280
+00:12:28,399 --> 00:12:32,560
+gotten to see Kryptos and I had the
+
+281
+00:12:30,639 --> 00:12:34,800
+rubbings. I had the proof. I wrote it up
+
+282
+00:12:32,560 --> 00:12:38,000
+and I thought I was done. Well, I wasn't
+
+283
+00:12:34,800 --> 00:12:40,720
+done. That web page kind of changed my
+
+284
+00:12:38,000 --> 00:12:42,639
+life because all of a sudden people
+
+285
+00:12:40,720 --> 00:12:45,600
+started writing to me from all over the
+
+286
+00:12:42,639 --> 00:12:47,680
+world asking me questions about cryptos
+
+287
+00:12:45,600 --> 00:12:50,079
+and have you seen this? Did you do that?
+
+288
+00:12:47,680 --> 00:12:53,760
+And I'm a helpful person so I was trying
+
+289
+00:12:50,079 --> 00:12:55,600
+to answer their questions. Uh but um it
+
+290
+00:12:53,760 --> 00:12:57,600
+it just kept going and going. I had an
+
+291
+00:12:55,600 --> 00:13:02,480
+FAQ and the questions just kept going
+
+292
+00:12:57,600 --> 00:13:05,760
+and going. Uh, so, um, yeah, the that
+
+293
+00:13:02,480 --> 00:13:09,440
+web page just went out of control with
+
+294
+00:13:05,760 --> 00:13:13,600
+people writing to me and then I had the
+
+295
+00:13:09,440 --> 00:13:15,279
+artist Jim Samborn wrote to me and said,
+
+296
+00:13:13,600 --> 00:13:17,600
+"Who are you and why do you have a web
+
+297
+00:13:15,279 --> 00:13:20,000
+page about me?" Cuz he sort of thought I
+
+298
+00:13:17,600 --> 00:13:23,040
+was sort of stalking him. And I No, no,
+
+299
+00:13:20,000 --> 00:13:26,720
+no. I I'm fine. I like your work. And uh
+
+300
+00:13:23,040 --> 00:13:29,279
+so we got kind of in into a a friendly
+
+301
+00:13:26,720 --> 00:13:32,720
+conversation and I explained that I was
+
+302
+00:13:29,279 --> 00:13:35,519
+a fan and then I really started getting
+
+303
+00:13:32,720 --> 00:13:37,600
+more interested in cryptos working on it
+
+304
+00:13:35,519 --> 00:13:39,200
+and working on different methods and
+
+305
+00:13:37,600 --> 00:13:42,480
+finding out what had happened which is
+
+306
+00:13:39,200 --> 00:13:44,880
+that there are four codes on it. Three
+
+307
+00:13:42,480 --> 00:13:47,920
+of the four been solved, fourth not
+
+308
+00:13:44,880 --> 00:13:50,959
+solved. Um considered one of the most
+
+309
+00:13:47,920 --> 00:13:53,519
+famous unsolved codes in the world. And
+
+310
+00:13:50,959 --> 00:13:57,120
+the first person to publicly solve it
+
+311
+00:13:53,519 --> 00:13:59,920
+was this guy Jim Gloley in 1999. He's a
+
+312
+00:13:57,120 --> 00:14:02,959
+California computer scientist. And then
+
+313
+00:13:59,920 --> 00:14:05,920
+the CIA came forward and said, "Well,
+
+314
+00:14:02,959 --> 00:14:08,160
+we've got a guy who solved it last year,
+
+315
+00:14:05,920 --> 00:14:10,959
+1998, one of our analysts who did it on
+
+316
+00:14:08,160 --> 00:14:12,880
+his own time, David Stein, and he wrote
+
+317
+00:14:10,959 --> 00:14:15,519
+up kind of a little report and it was
+
+318
+00:14:12,880 --> 00:14:18,560
+circulated around CIA and that was as
+
+319
+00:14:15,519 --> 00:14:21,040
+far as it went. And then at the time NSA
+
+320
+00:14:18,560 --> 00:14:23,040
+came forward and said, "Well, we've got
+
+321
+00:14:21,040 --> 00:14:24,320
+a team that's done it too, but we're not
+
+322
+00:14:23,040 --> 00:14:26,480
+going to tell you who and we're not
+
+323
+00:14:24,320 --> 00:14:29,120
+going to tell you when." Which is very
+
+324
+00:14:26,480 --> 00:14:32,399
+NSA. The joke around DC is that it
+
+325
+00:14:29,120 --> 00:14:34,000
+stands for no such agency. So since
+
+326
+00:14:32,399 --> 00:14:35,680
+then, I've asked more and I found
+
+327
+00:14:34,000 --> 00:14:38,160
+others. So I know that they put together
+
+328
+00:14:35,680 --> 00:14:41,839
+a team. I know that two of them at least
+
+329
+00:14:38,160 --> 00:14:44,320
+were Ken Miller and Denny McDaniels and
+
+330
+00:14:41,839 --> 00:14:46,399
+that they had done something in 1992 and
+
+331
+00:14:44,320 --> 00:14:49,920
+they wrote a report and it was sent from
+
+332
+00:14:46,399 --> 00:14:52,639
+NSA to CIA and
+
+333
+00:14:49,920 --> 00:14:54,959
+that was it. So let's go forward and
+
+334
+00:14:52,639 --> 00:14:57,279
+I'll tell you a little bit more. So what
+
+335
+00:14:54,959 --> 00:15:00,480
+is on cryptos? Well, it's got the four
+
+336
+00:14:57,279 --> 00:15:02,240
+plates. Two of these plates are what's
+
+337
+00:15:00,480 --> 00:15:05,199
+called a visionaire table. It's a
+
+338
+00:15:02,240 --> 00:15:06,880
+hundreds of years old a type of system.
+
+339
+00:15:05,199 --> 00:15:09,600
+And if you look at it, you can see these
+
+340
+00:15:06,880 --> 00:15:12,160
+lovely diagonals in it because each
+
+341
+00:15:09,600 --> 00:15:15,519
+keyed alphabet is shifted over by one.
+
+342
+00:15:12,160 --> 00:15:17,600
+And so that's a whole half of cryptos.
+
+343
+00:15:15,519 --> 00:15:22,160
+And then you go to the part that has the
+
+344
+00:15:17,600 --> 00:15:27,760
+cipher text. And this what's called K1
+
+345
+00:15:22,160 --> 00:15:31,040
+now part one. And it starts with EM UFP.
+
+346
+00:15:27,760 --> 00:15:34,639
+And so you take that cipher text, those
+
+347
+00:15:31,040 --> 00:15:37,120
+two lines, and you apply Visionaire
+
+348
+00:15:34,639 --> 00:15:40,079
+cipher system with two keywords. The
+
+349
+00:15:37,120 --> 00:15:43,760
+keywords are cryptos, cryptos, and
+
+350
+00:15:40,079 --> 00:15:46,240
+palums. Palums is a word for a scroll
+
+351
+00:15:43,760 --> 00:15:48,000
+that's had stuff scraped off of it, and
+
+352
+00:15:46,240 --> 00:15:51,199
+then another message written on. So
+
+353
+00:15:48,000 --> 00:15:53,279
+you've got bits of the old message that
+
+354
+00:15:51,199 --> 00:15:55,680
+are showing through. And if you use
+
+355
+00:15:53,279 --> 00:15:59,040
+those two key words, you get the answer,
+
+356
+00:15:55,680 --> 00:16:01,839
+the plain text answer between subtle
+
+357
+00:15:59,040 --> 00:16:05,279
+shading and the absence of light lies
+
+358
+00:16:01,839 --> 00:16:06,959
+the nuance of illusion. So you say, "All
+
+359
+00:16:05,279 --> 00:16:09,839
+right, she's got to type on her slide."
+
+360
+00:16:06,959 --> 00:16:13,279
+No, it's that's what the plain text
+
+361
+00:16:09,839 --> 00:16:15,600
+comes out to be, which is illusion. And
+
+362
+00:16:13,279 --> 00:16:18,079
+I asked Sambborn
+
+363
+00:16:15,600 --> 00:16:19,759
+why there's a cue there, illclusions
+
+364
+00:16:18,079 --> 00:16:21,839
+instead of illusion. And I said, "Was
+
+365
+00:16:19,759 --> 00:16:24,959
+that a typo on the sculpture?" He said,
+
+366
+00:16:21,839 --> 00:16:27,040
+"No, it was deliberate, but it's not
+
+367
+00:16:24,959 --> 00:16:31,360
+what it was that's so important. It's
+
+368
+00:16:27,040 --> 00:16:33,759
+the orientation or the positioning."
+
+369
+00:16:31,360 --> 00:16:36,560
+Don't know what that means. So, let's go
+
+370
+00:16:33,759 --> 00:16:38,560
+on to part two. That starts at line
+
+371
+00:16:36,560 --> 00:16:41,519
+three and goes to the bottom of the top
+
+372
+00:16:38,560 --> 00:16:44,079
+plate there. Here's the cipher text of
+
+373
+00:16:41,519 --> 00:16:46,560
+it. Uh, there was there was a mistake in
+
+374
+00:16:44,079 --> 00:16:49,440
+this one at the very bottom line of that
+
+375
+00:16:46,560 --> 00:16:52,480
+uh cipher text. So, I'll I'll go on
+
+376
+00:16:49,440 --> 00:16:56,079
+here. So this is also visioner with the
+
+377
+00:16:52,480 --> 00:16:59,199
+two key words cryptos and abscissa.
+
+378
+00:16:56,079 --> 00:17:02,320
+Absysaa is the word for an xcoordinate
+
+379
+00:16:59,199 --> 00:17:06,079
+on a graph. And the plain text of this
+
+380
+00:17:02,320 --> 00:17:08,559
+one says it was totally invisible. How
+
+381
+00:17:06,079 --> 00:17:11,679
+is that possible? They used the earth's
+
+382
+00:17:08,559 --> 00:17:14,799
+magnetic field x. The information was
+
+383
+00:17:11,679 --> 00:17:18,319
+gathered and transmitted underground
+
+384
+00:17:14,799 --> 00:17:20,559
+to an unknown location. X. Does Langley
+
+385
+00:17:18,319 --> 00:17:23,520
+know about this? They should. It's
+
+386
+00:17:20,559 --> 00:17:27,039
+buried out there somewhere. X, who knows
+
+387
+00:17:23,520 --> 00:17:32,559
+the exact location. Only WW. This was
+
+388
+00:17:27,039 --> 00:17:37,520
+his last message. X 38° 57 minutes 6.5
+
+389
+00:17:32,559 --> 00:17:41,039
+seconds north. 77° 8 minutes 44 seconds
+
+390
+00:17:37,520 --> 00:17:45,039
+west. And then we thought after that it
+
+391
+00:17:41,039 --> 00:17:46,880
+said ID by Rose. But when he when Sam
+
+392
+00:17:45,039 --> 00:17:48,640
+Ward said that there had been a mistake
+
+393
+00:17:46,880 --> 00:17:53,120
+and it was corrected, what it actually
+
+394
+00:17:48,640 --> 00:17:55,840
+says is X layer 2.
+
+395
+00:17:53,120 --> 00:17:58,720
+Then there's part three. Starts at the
+
+396
+00:17:55,840 --> 00:18:00,320
+top of the bottom plate and goes all the
+
+397
+00:17:58,720 --> 00:18:04,160
+way down to the fourth line from the
+
+398
+00:18:00,320 --> 00:18:05,360
+bottom. And that one has it's a
+
+399
+00:18:04,160 --> 00:18:08,000
+different system. It's not a
+
+400
+00:18:05,360 --> 00:18:10,240
+substitution system like Vaneir. It's a
+
+401
+00:18:08,000 --> 00:18:13,679
+transposition system. So if you look at
+
+402
+00:18:10,240 --> 00:18:16,320
+it, you'll see lots of E's and T's and
+
+403
+00:18:13,679 --> 00:18:18,640
+A's and O's. So all the letters are
+
+404
+00:18:16,320 --> 00:18:22,160
+there. They're just scrambled in a
+
+405
+00:18:18,640 --> 00:18:24,240
+particular way. And the plain text for
+
+406
+00:18:22,160 --> 00:18:28,400
+part three, when you unscramble it,
+
+407
+00:18:24,240 --> 00:18:31,200
+says, "Slowly, desperately slowly, the
+
+408
+00:18:28,400 --> 00:18:33,840
+remains of passage debris that
+
+409
+00:18:31,200 --> 00:18:37,440
+encumbered the lower part of the doorway
+
+410
+00:18:33,840 --> 00:18:40,799
+was removed. With trembling hands, I
+
+411
+00:18:37,440 --> 00:18:44,480
+made a tiny breach in the upper left
+
+412
+00:18:40,799 --> 00:18:47,280
+hand corner. And then widening the hole
+
+413
+00:18:44,480 --> 00:18:51,280
+a little, I inserted the candle and
+
+414
+00:18:47,280 --> 00:18:55,520
+peered in. The hot air escaping from the
+
+415
+00:18:51,280 --> 00:18:58,880
+chamber caused the flame to flicker. But
+
+416
+00:18:55,520 --> 00:19:02,960
+presently, details of the room within
+
+417
+00:18:58,880 --> 00:19:05,679
+emerged from the mist. X. Can you see
+
+418
+00:19:02,960 --> 00:19:07,840
+anything? Q.
+
+419
+00:19:05,679 --> 00:19:10,559
+Anybody want to guess what that is?
+
+420
+00:19:07,840 --> 00:19:14,720
+>> I know what it is.
+
+421
+00:19:10,559 --> 00:19:18,400
+>> This is a paraphrased extract from the
+
+422
+00:19:14,720 --> 00:19:22,000
+diary of the archaeologist Howard Carter
+
+423
+00:19:18,400 --> 00:19:24,559
+on November 26th, 1922,
+
+424
+00:19:22,000 --> 00:19:27,559
+the day that he discovered King Tut's
+
+425
+00:19:24,559 --> 00:19:27,559
+tomb.
+
+426
+00:19:27,840 --> 00:19:34,640
+So, a few other interesting things about
+
+427
+00:19:31,520 --> 00:19:37,120
+uh part three is some of the letters are
+
+428
+00:19:34,640 --> 00:19:40,559
+a little out of alignment in that top
+
+429
+00:19:37,120 --> 00:19:44,080
+corner. There's five letters, the d y
+
+430
+00:19:40,559 --> 00:19:45,760
+ahr. And this is the rubbing that I did.
+
+431
+00:19:44,080 --> 00:19:47,840
+We don't know exactly what it means.
+
+432
+00:19:45,760 --> 00:19:51,600
+Sandborn has said that it's important,
+
+433
+00:19:47,840 --> 00:19:54,559
+but you don't know much beyond that. Um,
+
+434
+00:19:51,600 --> 00:19:56,880
+and then there's part four at the bottom
+
+435
+00:19:54,559 --> 00:20:00,160
+bottom four lines there. one of the most
+
+436
+00:19:56,880 --> 00:20:04,880
+famous unsolved codes in the world
+
+437
+00:20:00,160 --> 00:20:10,400
+and Sanborn has given clues about part 4
+
+438
+00:20:04,880 --> 00:20:13,840
+over the years. For example, um in 2010
+
+439
+00:20:10,400 --> 00:20:16,640
+he told us that the word Berlin is at
+
+440
+00:20:13,840 --> 00:20:19,760
+that particular location in the plain
+
+441
+00:20:16,640 --> 00:20:22,320
+text and he's told us that the word
+
+442
+00:20:19,760 --> 00:20:28,320
+clock appears immediately after it.
+
+443
+00:20:22,320 --> 00:20:31,360
+Berlin clock. Also in January 2020, he's
+
+444
+00:20:28,320 --> 00:20:34,400
+told us that the word northeast appears
+
+445
+00:20:31,360 --> 00:20:36,159
+there. And then the pandemic started and
+
+446
+00:20:34,400 --> 00:20:38,159
+he kind of wanted to mix things up a
+
+447
+00:20:36,159 --> 00:20:42,400
+little bit. And so he told us that the
+
+448
+00:20:38,159 --> 00:20:44,960
+word east appears just before northeast
+
+449
+00:20:42,400 --> 00:20:47,360
+there. And he that kind of he told one
+
+450
+00:20:44,960 --> 00:20:49,360
+person in an email and was waiting to
+
+451
+00:20:47,360 --> 00:20:51,200
+see how long it was going to percolate
+
+452
+00:20:49,360 --> 00:20:53,760
+into the community. And it took a few
+
+453
+00:20:51,200 --> 00:20:55,600
+months and then we got it. I called Jim.
+
+454
+00:20:53,760 --> 00:20:58,559
+Did you just release another clue? Yeah.
+
+455
+00:20:55,600 --> 00:21:02,200
+Yeah. So we have East, Northeast, and
+
+456
+00:20:58,559 --> 00:21:02,200
+Berlin Clock.
+
+457
+00:21:02,960 --> 00:21:09,360
+So the Berlin clocks, Berlin has a lot
+
+458
+00:21:06,080 --> 00:21:12,720
+of clocks, and we've asked Sambourne
+
+459
+00:21:09,360 --> 00:21:14,559
+about those clocks a lot. Um, which
+
+460
+00:21:12,720 --> 00:21:17,039
+clock does he have a favorite clock? And
+
+461
+00:21:14,559 --> 00:21:18,640
+he says he likes both of them. So we're
+
+462
+00:21:17,039 --> 00:21:21,120
+like, okay, what are the two most famous
+
+463
+00:21:18,640 --> 00:21:23,679
+Berlin clocks? and we point out one
+
+464
+00:21:21,120 --> 00:21:28,240
+clock that has sort of like a a binary
+
+465
+00:21:23,679 --> 00:21:30,559
+or a base 5 system and uh he says yes,
+
+466
+00:21:28,240 --> 00:21:35,360
+you should pay attention to that clock.
+
+467
+00:21:30,559 --> 00:21:39,200
+But finally just last week at a press
+
+468
+00:21:35,360 --> 00:21:42,480
+event at the spy museum, he announced
+
+469
+00:21:39,200 --> 00:21:44,799
+another clue and that clue was that
+
+470
+00:21:42,480 --> 00:21:47,039
+there's only one clock we need to pay
+
+471
+00:21:44,799 --> 00:21:48,640
+attention to. And this is the I'm not
+
+472
+00:21:47,039 --> 00:21:52,640
+even going to try and pronounce it, but
+
+473
+00:21:48,640 --> 00:21:54,720
+it's in a major plaza in Berlin. And it
+
+474
+00:21:52,640 --> 00:21:57,679
+goes in a circle and it shows all the
+
+475
+00:21:54,720 --> 00:22:00,400
+different time zones. And it was
+
+476
+00:21:57,679 --> 00:22:04,159
+something that made a big impression on
+
+477
+00:22:00,400 --> 00:22:07,360
+Sanborn when he was visiting Berlin in
+
+478
+00:22:04,159 --> 00:22:10,480
+the late 1980s cuz that was right around
+
+479
+00:22:07,360 --> 00:22:13,200
+the same time that the Berlin Wall fell.
+
+480
+00:22:10,480 --> 00:22:15,840
+And so people gathered near that clock
+
+481
+00:22:13,200 --> 00:22:19,679
+and were protesting and the the wall
+
+482
+00:22:15,840 --> 00:22:22,880
+felt the wall fell not soon after that.
+
+483
+00:22:19,679 --> 00:22:25,760
+So, another thing that I found doing my
+
+484
+00:22:22,880 --> 00:22:28,480
+research is there was a sculpture of his
+
+485
+00:22:25,760 --> 00:22:33,440
+that was just called the untitled
+
+486
+00:22:28,480 --> 00:22:35,520
+cryptos piece and he uh sold it to a
+
+487
+00:22:33,440 --> 00:22:37,679
+private collector and I tracked down a
+
+488
+00:22:35,520 --> 00:22:42,799
+private collector and it's one of the
+
+489
+00:22:37,679 --> 00:22:45,840
+dot guys in Los Angeles and I called up
+
+490
+00:22:42,799 --> 00:22:47,440
+this guy and I said, "Hi, I'm locked." I
+
+491
+00:22:45,840 --> 00:22:49,679
+tried to make myself sound super
+
+492
+00:22:47,440 --> 00:22:52,480
+important. Uh, and I said, "Can I come
+
+493
+00:22:49,679 --> 00:22:54,080
+into your backyard and see the sculpture
+
+494
+00:22:52,480 --> 00:22:56,400
+that you purchased?" And he said, "Yeah,
+
+495
+00:22:54,080 --> 00:22:58,960
+sure. Come on over." And I found out
+
+496
+00:22:56,400 --> 00:23:00,640
+that Sandborn had also made another
+
+497
+00:22:58,960 --> 00:23:02,720
+version of that that was a little
+
+498
+00:23:00,640 --> 00:23:06,159
+bigger, about 20% larger, which he'd
+
+499
+00:23:02,720 --> 00:23:09,440
+given to a museum. But at the
+
+500
+00:23:06,159 --> 00:23:11,919
+guy's backyard, this is it when I took
+
+501
+00:23:09,440 --> 00:23:14,559
+pictures when I was there. And it has
+
+502
+00:23:11,919 --> 00:23:16,720
+two sides. And on one side, it has all
+
+503
+00:23:14,559 --> 00:23:19,679
+the text of cryptos, but in a different
+
+504
+00:23:16,720 --> 00:23:23,200
+order. And on the other side it has
+
+505
+00:23:19,679 --> 00:23:25,520
+Russian text, cerillic text which also
+
+506
+00:23:23,200 --> 00:23:27,919
+appears on another sculpture of his
+
+507
+00:23:25,520 --> 00:23:30,960
+which is called the cerillic projector.
+
+508
+00:23:27,919 --> 00:23:33,440
+And we have cracked the puzzles on both
+
+509
+00:23:30,960 --> 00:23:35,120
+sides. That's a whole another long talk.
+
+510
+00:23:33,440 --> 00:23:37,840
+So I'm kind of skipping over this so we
+
+511
+00:23:35,120 --> 00:23:39,919
+get the jeopardy. So the untitled
+
+512
+00:23:37,840 --> 00:23:42,080
+cryptos piece as I said there's a
+
+513
+00:23:39,919 --> 00:23:46,480
+version outside a museum which is the
+
+514
+00:23:42,080 --> 00:23:49,600
+hershorn museum in Washington DC and we
+
+515
+00:23:46,480 --> 00:23:52,559
+have it has exactly the same text as is
+
+516
+00:23:49,600 --> 00:23:54,640
+on the sculpture at the.com guys
+
+517
+00:23:52,559 --> 00:23:58,159
+backyard it's just slightly different
+
+518
+00:23:54,640 --> 00:24:00,559
+size and what I discovered when I was
+
+519
+00:23:58,159 --> 00:24:04,000
+visiting is that there is a difference
+
+520
+00:24:00,559 --> 00:24:08,240
+in the text which is that there are two
+
+521
+00:24:04,000 --> 00:24:11,760
+dots that are that appear on that
+
+522
+00:24:08,240 --> 00:24:14,640
+sculpture, but they don't appear on the
+
+523
+00:24:11,760 --> 00:24:18,720
+crypto sculpture. Let me see if I got
+
+524
+00:24:14,640 --> 00:24:21,440
+Yeah, these two dots S.F. dot. So on the
+
+525
+00:24:18,720 --> 00:24:24,320
+crypto sculpture, it says the exact same
+
+526
+00:24:21,440 --> 00:24:29,039
+cipher text, which is you have the ZB
+
+527
+00:24:24,320 --> 00:24:32,000
+SFD, but no dots. And we're not sure
+
+528
+00:24:29,039 --> 00:24:36,159
+what that means. If they were to appear
+
+529
+00:24:32,000 --> 00:24:40,640
+on cryptos, um, they would be,
+
+530
+00:24:36,159 --> 00:24:44,600
+let me get a get my mouse going here.
+
+531
+00:24:40,640 --> 00:24:44,600
+Come on back here.
+
+532
+00:24:44,880 --> 00:24:49,360
+>> Can you see my mouse? Okay. And you can
+
+533
+00:24:47,520 --> 00:24:50,960
+see the red circle. Interesting.
+
+534
+00:24:49,360 --> 00:24:53,120
+>> It's not showing here. That's where the
+
+535
+00:24:50,960 --> 00:24:54,640
+dots would be if they were on the crypto
+
+536
+00:24:53,120 --> 00:24:57,600
+sculpture.
+
+537
+00:24:54,640 --> 00:25:02,000
+So, uh, also here's another one. The
+
+538
+00:24:57,600 --> 00:25:05,520
+latitude and longitude. the 38° 57
+
+539
+00:25:02,000 --> 00:25:09,360
+minutes 6.5 seconds north. Those point
+
+540
+00:25:05,520 --> 00:25:11,840
+not to Kryptos, but to an area about 150
+
+541
+00:25:09,360 --> 00:25:15,360
+ft southeast of Kryptos that's still
+
+542
+00:25:11,840 --> 00:25:17,120
+within that uh yard. So again, I'm
+
+543
+00:25:15,360 --> 00:25:18,880
+trying to use my mouse here. This white
+
+544
+00:25:17,120 --> 00:25:21,840
+building with the funny shaped roof,
+
+545
+00:25:18,880 --> 00:25:23,840
+that is the cafeteria. There is a line
+
+546
+00:25:21,840 --> 00:25:26,640
+of windows on the left side of the
+
+547
+00:25:23,840 --> 00:25:27,840
+cafeteria looking out into this
+
+548
+00:25:26,640 --> 00:25:29,440
+landscaped area. Yeah.
+
+549
+00:25:27,840 --> 00:25:31,919
+>> You don't have your mouse on screen.
+
+550
+00:25:29,440 --> 00:25:33,120
+>> You don't?
+
+551
+00:25:31,919 --> 00:25:37,919
+>> Okay.
+
+552
+00:25:33,120 --> 00:25:41,600
+>> Oh, just talk. Okay. Uh, white building,
+
+553
+00:25:37,919 --> 00:25:43,919
+uh, weird looking roof, cafeteria, and
+
+554
+00:25:41,600 --> 00:25:48,320
+to the left of that is the landscaped
+
+555
+00:25:43,919 --> 00:25:50,640
+area that Sanborn designed. And the new
+
+556
+00:25:48,320 --> 00:25:52,320
+headquarters building, which is the
+
+557
+00:25:50,640 --> 00:25:56,080
+building with the much more interesting
+
+558
+00:25:52,320 --> 00:25:59,039
+looking roof, uh, is uh, to the left of
+
+559
+00:25:56,080 --> 00:26:01,279
+that. And then there is a pathway
+
+560
+00:25:59,039 --> 00:26:04,159
+leading into the new headquarters
+
+561
+00:26:01,279 --> 00:26:06,799
+building. And Sanborn has designed some
+
+562
+00:26:04,159 --> 00:26:09,200
+pieces that are on both sides of that
+
+563
+00:26:06,799 --> 00:26:12,640
+pathway.
+
+564
+00:26:09,200 --> 00:26:16,080
+Okay, now we're going to try again.
+
+565
+00:26:12,640 --> 00:26:19,679
+Mouse. There we go. So, cafeteria
+
+566
+00:26:16,080 --> 00:26:23,120
+Sanborn designed this entire courtyard
+
+567
+00:26:19,679 --> 00:26:26,240
+and some other pieces over here. Cryptos
+
+568
+00:26:23,120 --> 00:26:29,120
+itself is about here and the land
+
+569
+00:26:26,240 --> 00:26:30,960
+longitude and latitude point right
+
+570
+00:26:29,120 --> 00:26:35,919
+around where my mouse is pointing to
+
+571
+00:26:30,960 --> 00:26:39,360
+right now. These large stone slabs are
+
+572
+00:26:35,919 --> 00:26:42,240
+tilted up out of the ground. So sandborn
+
+573
+00:26:39,360 --> 00:26:44,960
+was trying to replicate geologic forces
+
+574
+00:26:42,240 --> 00:26:47,520
+that are bringing something out of the
+
+575
+00:26:44,960 --> 00:26:49,840
+ground that way. And you have large
+
+576
+00:26:47,520 --> 00:26:52,880
+slabs of granite. And then in between
+
+577
+00:26:49,840 --> 00:26:56,640
+the slabs of granite, you've got these
+
+578
+00:26:52,880 --> 00:26:58,960
+uh metal sheets that have Morse code
+
+579
+00:26:56,640 --> 00:27:02,640
+written on them. And they the Morse code
+
+580
+00:26:58,960 --> 00:27:06,000
+says things like SOS, shadow forces,
+
+581
+00:27:02,640 --> 00:27:09,279
+lucid memory, T is your position,
+
+582
+00:27:06,000 --> 00:27:10,799
+digital interpret. And the reason the
+
+583
+00:27:09,279 --> 00:27:13,360
+letters are a little cut there is
+
+584
+00:27:10,799 --> 00:27:15,520
+because the Morse code goes right up
+
+585
+00:27:13,360 --> 00:27:18,080
+between. So instead of T is your
+
+586
+00:27:15,520 --> 00:27:20,559
+position, the intent was to say what is
+
+587
+00:27:18,080 --> 00:27:22,559
+your position and digital
+
+588
+00:27:20,559 --> 00:27:24,159
+interpretation.
+
+589
+00:27:22,559 --> 00:27:26,000
+Um
+
+590
+00:27:24,159 --> 00:27:28,000
+there's probably other words. I've asked
+
+591
+00:27:26,000 --> 00:27:30,640
+Sam Warren if the Morse code goes all
+
+592
+00:27:28,000 --> 00:27:33,360
+the way through and he said yes. We have
+
+593
+00:27:30,640 --> 00:27:36,960
+no idea what it says. Uh, we do know
+
+594
+00:27:33,360 --> 00:27:39,679
+that after each day that he was working,
+
+595
+00:27:36,960 --> 00:27:41,279
+the CIA would send people out to scan
+
+596
+00:27:39,679 --> 00:27:44,559
+everything that he'd done to make sure
+
+597
+00:27:41,279 --> 00:27:47,520
+he wasn't embedding u bugs or anything
+
+598
+00:27:44,559 --> 00:27:51,520
+like that in his work. Um, here are some
+
+599
+00:27:47,520 --> 00:27:54,480
+other pieces. We have a a compass rose
+
+600
+00:27:51,520 --> 00:27:57,120
+where the needle is not pointing north
+
+601
+00:27:54,480 --> 00:28:00,720
+and the there is a large stone that is a
+
+602
+00:27:57,120 --> 00:28:02,640
+load stone. So here the load stone. So
+
+603
+00:28:00,720 --> 00:28:04,960
+here we have the these three are all of
+
+604
+00:28:02,640 --> 00:28:06,960
+the same piece at the bottom. So we have
+
+605
+00:28:04,960 --> 00:28:09,039
+the compass rose which is pointing
+
+606
+00:28:06,960 --> 00:28:11,279
+towards the load stone and here's
+
+607
+00:28:09,039 --> 00:28:13,919
+another angle of it the load stone and
+
+608
+00:28:11,279 --> 00:28:16,000
+some morse code and here's another angle
+
+609
+00:28:13,919 --> 00:28:18,559
+where you see the slabs are tilted up
+
+610
+00:28:16,000 --> 00:28:21,440
+and the load stone is right there. And
+
+611
+00:28:18,559 --> 00:28:23,520
+then there's also another piece that has
+
+612
+00:28:21,440 --> 00:28:27,039
+no Morse code, no load stone. It's just
+
+613
+00:28:23,520 --> 00:28:29,279
+kind of there which is odd and maybe
+
+614
+00:28:27,039 --> 00:28:30,640
+related to other of his work there.
+
+615
+00:28:29,279 --> 00:28:33,679
+We're not sure.
+
+616
+00:28:30,640 --> 00:28:36,080
+Uh and then there's the alignment. Uh
+
+617
+00:28:33,679 --> 00:28:40,080
+many places when you see cryptos you'll
+
+618
+00:28:36,080 --> 00:28:42,320
+see the picture on the left and Sanborn
+
+619
+00:28:40,080 --> 00:28:45,679
+was very direct with me. He says don't
+
+620
+00:28:42,320 --> 00:28:49,039
+show that. That's the wrong side. That's
+
+621
+00:28:45,679 --> 00:28:52,320
+the ugly side.
+
+622
+00:28:49,039 --> 00:28:54,480
+Okay. Um how should we do it? And it's
+
+623
+00:28:52,320 --> 00:28:58,399
+the one on the right. He says yes that
+
+624
+00:28:54,480 --> 00:29:02,240
+one. That's the front of krypto. So,
+
+625
+00:28:58,399 --> 00:29:05,360
+take that for uh what it's worth. Um,
+
+626
+00:29:02,240 --> 00:29:08,159
+let's see. And then we have, as I said,
+
+627
+00:29:05,360 --> 00:29:10,799
+part four. We don't know what it says.
+
+628
+00:29:08,159 --> 00:29:13,840
+Famous unsolved code. 97 characters
+
+629
+00:29:10,799 --> 00:29:17,360
+there. Now, how did Sandborn learn about
+
+630
+00:29:13,840 --> 00:29:19,520
+codes? Well, he was paired by William
+
+631
+00:29:17,360 --> 00:29:22,080
+Webster, the director at the time, with
+
+632
+00:29:19,520 --> 00:29:25,760
+this man named Ed Shite, who was
+
+633
+00:29:22,080 --> 00:29:28,320
+chairman of a CIA cryptographic center.
+
+634
+00:29:25,760 --> 00:29:33,039
+and he loved codes. He'd have like ties
+
+635
+00:29:28,320 --> 00:29:37,200
+with hieroglyphics on them and he taught
+
+636
+00:29:33,039 --> 00:29:41,279
+Jim Samborn about codes over a period of
+
+637
+00:29:37,200 --> 00:29:44,640
+a few months and then Sambborn took that
+
+638
+00:29:41,279 --> 00:29:48,720
+knowledge and encrypted the codes that
+
+639
+00:29:44,640 --> 00:29:51,919
+he put onto cryptos. So I have met Shite
+
+640
+00:29:48,720 --> 00:29:53,760
+a few times and pumped him for
+
+641
+00:29:51,919 --> 00:29:56,080
+information, you know, get him to go to
+
+642
+00:29:53,760 --> 00:29:59,440
+sushi, buy him drinks, anything I can do
+
+643
+00:29:56,080 --> 00:30:03,360
+to get information out. Okay? And and he
+
+644
+00:29:59,440 --> 00:30:06,640
+said things like he did things to mask
+
+645
+00:30:03,360 --> 00:30:09,600
+the English in part four and he says
+
+646
+00:30:06,640 --> 00:30:11,760
+that the first three parts we solved it
+
+647
+00:30:09,600 --> 00:30:14,000
+and we had the benefits of the English
+
+648
+00:30:11,760 --> 00:30:16,799
+language.
+
+649
+00:30:14,000 --> 00:30:18,960
+Okay? And you it's like you can look for
+
+650
+00:30:16,799 --> 00:30:21,360
+most frequent letters and things like
+
+651
+00:30:18,960 --> 00:30:24,080
+that. But he says that part four you
+
+652
+00:30:21,360 --> 00:30:26,480
+cannot do that. You cannot solve it by
+
+653
+00:30:24,080 --> 00:30:29,039
+waiting the English language. And he
+
+654
+00:30:26,480 --> 00:30:34,480
+also said we solve the first three parts
+
+655
+00:30:29,039 --> 00:30:36,799
+without recovering the keys first.
+
+656
+00:30:34,480 --> 00:30:41,120
+So we're not entirely sure what that
+
+657
+00:30:36,799 --> 00:30:45,360
+means either. We we know that
+
+658
+00:30:41,120 --> 00:30:47,360
+he's he's implied and he said that
+
+659
+00:30:45,360 --> 00:30:48,960
+creating a code sometimes you leave it
+
+660
+00:30:47,360 --> 00:30:51,360
+out there and it's going to be there for
+
+661
+00:30:48,960 --> 00:30:55,120
+several years and there may be a key for
+
+662
+00:30:51,360 --> 00:30:59,360
+it but whoever has come in to solve it
+
+663
+00:30:55,120 --> 00:31:02,000
+they may have forgotten that key. So
+
+664
+00:30:59,360 --> 00:31:05,279
+there needs to be some sort of a clue
+
+665
+00:31:02,000 --> 00:31:09,360
+around there as to what the key was or
+
+666
+00:31:05,279 --> 00:31:12,320
+what the key is. So the first part K1 we
+
+667
+00:31:09,360 --> 00:31:14,799
+know that the keys were cryptos and
+
+668
+00:31:12,320 --> 00:31:17,919
+palams and then we had cryptos and
+
+669
+00:31:14,799 --> 00:31:21,520
+abscissa. So we've put a lot of energy
+
+670
+00:31:17,919 --> 00:31:24,159
+into thinking what could clue us to the
+
+671
+00:31:21,520 --> 00:31:27,039
+word of abscissa what could clue us to
+
+672
+00:31:24,159 --> 00:31:30,799
+the word of palest. We have lots of
+
+673
+00:31:27,039 --> 00:31:32,880
+guesses but we're really not sure. Um uh
+
+674
+00:31:30,799 --> 00:31:36,880
+shite has also said he used a little bit
+
+675
+00:31:32,880 --> 00:31:40,320
+of stego. Stego steganography is a way
+
+676
+00:31:36,880 --> 00:31:42,640
+of hiding a message in a way that it's
+
+677
+00:31:40,320 --> 00:31:45,919
+not entirely clear that there was a
+
+678
+00:31:42,640 --> 00:31:48,240
+message. So we've
+
+679
+00:31:45,919 --> 00:31:51,519
+the oldest the oldest example of
+
+680
+00:31:48,240 --> 00:31:54,640
+steganography goes back to the Greek
+
+681
+00:31:51,519 --> 00:31:57,840
+here historian historian Herodotus
+
+682
+00:31:54,640 --> 00:32:00,720
+who talked about a king that wanted to
+
+683
+00:31:57,840 --> 00:32:03,760
+get a message across enemy lines. He
+
+684
+00:32:00,720 --> 00:32:06,799
+knew that any message he sent, any
+
+685
+00:32:03,760 --> 00:32:09,200
+messenger he sent would be searched. And
+
+686
+00:32:06,799 --> 00:32:11,440
+if a message was found, the messenger
+
+687
+00:32:09,200 --> 00:32:13,360
+would probably be killed, which is a
+
+688
+00:32:11,440 --> 00:32:15,279
+downside, but a bigger deal is that the
+
+689
+00:32:13,360 --> 00:32:18,159
+message is not getting where it needs to
+
+690
+00:32:15,279 --> 00:32:21,360
+go. So what happened then is the king
+
+691
+00:32:18,159 --> 00:32:22,880
+took a messenger and he shaved the guy's
+
+692
+00:32:21,360 --> 00:32:26,799
+head,
+
+693
+00:32:22,880 --> 00:32:29,919
+tattooed a message onto the scalp,
+
+694
+00:32:26,799 --> 00:32:32,080
+waited for the hair to grow back,
+
+695
+00:32:29,919 --> 00:32:34,000
+and then sent the messenger across so
+
+696
+00:32:32,080 --> 00:32:36,559
+many lines. Messenger searched, no
+
+697
+00:32:34,000 --> 00:32:39,039
+messages found. He gets to uh his
+
+698
+00:32:36,559 --> 00:32:42,880
+destination, shaves his head, points it
+
+699
+00:32:39,039 --> 00:32:46,159
+at the uh at the recipient. So this is
+
+700
+00:32:42,880 --> 00:32:50,159
+not a system that can be used for rapid
+
+701
+00:32:46,159 --> 00:32:51,760
+messages, but it is a way of hiding a
+
+702
+00:32:50,159 --> 00:32:56,799
+message.
+
+703
+00:32:51,760 --> 00:33:00,240
+Um, so what did Ed mean when he said a
+
+704
+00:32:56,799 --> 00:33:02,080
+little bit of stego? We're not sure. Um,
+
+705
+00:33:00,240 --> 00:33:04,720
+but he has said that the last part is
+
+706
+00:33:02,080 --> 00:33:07,039
+English and it uses all the letters.
+
+707
+00:33:04,720 --> 00:33:08,799
+It's not a case where it just uses like
+
+708
+00:33:07,039 --> 00:33:12,320
+the first 20 letters or something like
+
+709
+00:33:08,799 --> 00:33:16,320
+that. So, we know it's 97 letters. So,
+
+710
+00:33:12,320 --> 00:33:18,640
+Sandborn has been talking a lot about
+
+711
+00:33:16,320 --> 00:33:22,240
+cryptos over the last few weeks because
+
+712
+00:33:18,640 --> 00:33:25,440
+of the auction that's going on. And in
+
+713
+00:33:22,240 --> 00:33:28,720
+an interview with Financial Times,
+
+714
+00:33:25,440 --> 00:33:31,120
+Financial Times was asking him saying,
+
+715
+00:33:28,720 --> 00:33:33,120
+"Is there really an answer there?" And
+
+716
+00:33:31,120 --> 00:33:36,720
+Samborn has said, "Yes, there's really
+
+717
+00:33:33,120 --> 00:33:40,000
+an answer." And uh yes, he uh was given
+
+718
+00:33:36,720 --> 00:33:42,799
+a real system by Shite, but he he said
+
+719
+00:33:40,000 --> 00:33:46,159
+he took Shite's system and then, pardon
+
+720
+00:33:42,799 --> 00:33:48,720
+my language, he with it.
+
+721
+00:33:46,159 --> 00:33:50,960
+We don't know what that means. Uh the
+
+722
+00:33:48,720 --> 00:33:54,240
+the reporter was asking what it mean. I
+
+723
+00:33:50,960 --> 00:33:57,600
+mean, we do know that this K4 has been
+
+724
+00:33:54,240 --> 00:34:00,159
+unsolved for what, 35 years now, and a
+
+725
+00:33:57,600 --> 00:34:03,120
+lot of really smart people have been
+
+726
+00:34:00,159 --> 00:34:05,600
+working on it, but without success. So,
+
+727
+00:34:03,120 --> 00:34:07,519
+what the heck did Sanborn do? We know
+
+728
+00:34:05,600 --> 00:34:11,200
+that he took a real system and that he
+
+729
+00:34:07,519 --> 00:34:14,399
+messed with it. So, maybe it's not ever
+
+730
+00:34:11,200 --> 00:34:16,720
+going to be solved by a college educated
+
+731
+00:34:14,399 --> 00:34:18,879
+cryptologist. Maybe it's going to be
+
+732
+00:34:16,720 --> 00:34:23,040
+someone who comes out of left field and
+
+733
+00:34:18,879 --> 00:34:25,200
+has some idea about light and how an
+
+734
+00:34:23,040 --> 00:34:27,440
+artist might mess with the system. You
+
+735
+00:34:25,200 --> 00:34:29,440
+fold the paper into origami and fold it.
+
+736
+00:34:27,440 --> 00:34:32,399
+I I don't know. I don't know. But
+
+737
+00:34:29,440 --> 00:34:35,760
+Sandborn did something weird to it.
+
+738
+00:34:32,399 --> 00:34:39,440
+So, um, another piece of information,
+
+739
+00:34:35,760 --> 00:34:42,320
+the NSA, which is our government agency,
+
+740
+00:34:39,440 --> 00:34:44,960
+that's one of their missions is solving
+
+741
+00:34:42,320 --> 00:34:49,359
+codes. So, a lot of very smart people.
+
+742
+00:34:44,960 --> 00:34:51,440
+In 1992, the CIA's deputy director,
+
+743
+00:34:49,359 --> 00:34:53,359
+Admiral Stewman,
+
+744
+00:34:51,440 --> 00:34:55,440
+uh, said to the NSA, he'd worked at the
+
+745
+00:34:53,359 --> 00:34:57,680
+NSA before, now he's at the CIA. So, he
+
+746
+00:34:55,440 --> 00:35:01,440
+said to the NSA, "Okay, you guys are so
+
+747
+00:34:57,680 --> 00:35:04,560
+hot. Let's see how hot you are." and the
+
+748
+00:35:01,440 --> 00:35:07,040
+Vice Admiral John Mike McConnell who was
+
+749
+00:35:04,560 --> 00:35:09,280
+at the NSA at the time took up the
+
+750
+00:35:07,040 --> 00:35:11,440
+challenge and they put together a team.
+
+751
+00:35:09,280 --> 00:35:15,599
+They put together a team of four people
+
+752
+00:35:11,440 --> 00:35:18,480
+and they had the uh strength of the
+
+753
+00:35:15,599 --> 00:35:21,760
+NSA's computers and they ran computer
+
+754
+00:35:18,480 --> 00:35:24,720
+attacks on the whole thing and they did
+
+755
+00:35:21,760 --> 00:35:28,480
+solve parts one through three
+
+756
+00:35:24,720 --> 00:35:30,800
+by December 1992 but could not solve
+
+757
+00:35:28,480 --> 00:35:33,839
+that fourth part. And then they wrote up
+
+758
+00:35:30,800 --> 00:35:38,000
+what they did and they sent it on to CIA
+
+759
+00:35:33,839 --> 00:35:41,440
+and they're done with it. And my group
+
+760
+00:35:38,000 --> 00:35:45,040
+is very very interested in seeing those
+
+761
+00:35:41,440 --> 00:35:48,079
+notes by the NSA. And we've gone to the
+
+762
+00:35:45,040 --> 00:35:50,480
+NSA and said, "Can we see this report?"
+
+763
+00:35:48,079 --> 00:35:52,240
+And the NSA comes back and says, "No."
+
+764
+00:35:50,480 --> 00:35:54,720
+And we say, "Well, why not?" And they
+
+765
+00:35:52,240 --> 00:35:58,160
+say, "Well, it's classified."
+
+766
+00:35:54,720 --> 00:36:00,960
+Um, and we come back and say, "This is a
+
+767
+00:35:58,160 --> 00:36:03,920
+recreational cipher that has nothing to
+
+768
+00:36:00,960 --> 00:36:05,440
+do with national security. Why is it
+
+769
+00:36:03,920 --> 00:36:08,880
+classified?" And they just, "We can't
+
+770
+00:36:05,440 --> 00:36:11,119
+tell you it's classified." So, kept on
+
+771
+00:36:08,880 --> 00:36:13,520
+pushing, kept requesting, and I put
+
+772
+00:36:11,119 --> 00:36:15,920
+together a formal foyer request, a
+
+773
+00:36:13,520 --> 00:36:18,960
+Freedom of Information Act request, and
+
+774
+00:36:15,920 --> 00:36:21,599
+sent it on to the NSA. And I won't go
+
+775
+00:36:18,960 --> 00:36:24,320
+through all the details, but this was a
+
+776
+00:36:21,599 --> 00:36:25,839
+multi-year process where I sent
+
+777
+00:36:24,320 --> 00:36:27,359
+something in and then they came back and
+
+778
+00:36:25,839 --> 00:36:28,400
+said, "Classified." And I said, "I still
+
+779
+00:36:27,359 --> 00:36:30,720
+want to see it." And they said, "Are you
+
+780
+00:36:28,400 --> 00:36:32,560
+willing to pay for copying expenses?"
+
+781
+00:36:30,720 --> 00:36:34,400
+And I said, "Yeah, sure." And they said,
+
+782
+00:36:32,560 --> 00:36:36,480
+"Okay, you're first in line." I'm like,
+
+783
+00:36:34,400 --> 00:36:38,079
+"Great." And then another two years
+
+784
+00:36:36,480 --> 00:36:39,839
+later, I get, "Okay, you're first in
+
+785
+00:36:38,079 --> 00:36:41,760
+line." And I'm like, "Whatever. just
+
+786
+00:36:39,839 --> 00:36:44,240
+just
+
+787
+00:36:41,760 --> 00:36:47,280
+I have friends who worked in DC and they
+
+788
+00:36:44,240 --> 00:36:49,839
+said, "Elanka, this is the NSA's way of
+
+789
+00:36:47,280 --> 00:36:53,520
+saying go away."
+
+790
+00:36:49,839 --> 00:36:56,880
+Um, but I I kept I kept pushing on it
+
+791
+00:36:53,520 --> 00:36:59,440
+and finally in May 2013, I got a big
+
+792
+00:36:56,880 --> 00:37:01,599
+thick envelope that came in the mail,
+
+793
+00:36:59,440 --> 00:37:04,160
+which is uh all this stuff and at the
+
+794
+00:37:01,599 --> 00:37:06,880
+top it said, "Please forward to Admiral
+
+795
+00:37:04,160 --> 00:37:10,160
+Stewman for review." and it had a whole
+
+796
+00:37:06,880 --> 00:37:12,880
+bunch of stuff redacted on it. Um, but
+
+797
+00:37:10,160 --> 00:37:14,960
+it was the report and at the bottom,
+
+798
+00:37:12,880 --> 00:37:18,960
+this is all now on the web now. You can
+
+799
+00:37:14,960 --> 00:37:24,480
+say approved for release by NSA on May
+
+800
+00:37:18,960 --> 00:37:28,839
+21st, 2013. Foye case number 61191.
+
+801
+00:37:24,480 --> 00:37:28,839
+That's me. OKAY.
+
+802
+00:37:34,720 --> 00:37:40,800
+SO, UM, why hasn't K4 been solved yet?
+
+803
+00:37:38,000 --> 00:37:42,320
+Well, it's very short. It's just 97
+
+804
+00:37:40,800 --> 00:37:44,240
+characters. And when you're working on a
+
+805
+00:37:42,320 --> 00:37:46,400
+code, you generally want a large amount
+
+806
+00:37:44,240 --> 00:37:49,280
+of cipher text. You can run mathematical
+
+807
+00:37:46,400 --> 00:37:51,520
+attacks on it. Maybe we have missed
+
+808
+00:37:49,280 --> 00:37:53,440
+something. Maybe we've been misdirected.
+
+809
+00:37:51,520 --> 00:37:55,359
+Like maybe when he says that Berlin
+
+810
+00:37:53,440 --> 00:37:58,079
+clock is in a certain maybe it doesn't
+
+811
+00:37:55,359 --> 00:38:01,280
+say Berlin clock at that position or
+
+812
+00:37:58,079 --> 00:38:05,680
+maybe it says Argentina I we don't know.
+
+813
+00:38:01,280 --> 00:38:09,119
+Um there may be a necessary key that is
+
+814
+00:38:05,680 --> 00:38:11,920
+only accessible on K4 grounds that you
+
+815
+00:38:09,119 --> 00:38:14,640
+have to find something in the CIA
+
+816
+00:38:11,920 --> 00:38:18,320
+museum. And maybe he just messed it up.
+
+817
+00:38:14,640 --> 00:38:22,880
+Maybe there is some sort of mistake. So,
+
+818
+00:38:18,320 --> 00:38:25,280
+uh, time goes by and Jim is he gets
+
+819
+00:38:22,880 --> 00:38:28,079
+email about this all the time and he
+
+820
+00:38:25,280 --> 00:38:31,680
+finally said he's tired of it and his
+
+821
+00:38:28,079 --> 00:38:34,720
+health is not the greatest. And he was
+
+822
+00:38:31,680 --> 00:38:37,200
+convinced by an auction house to put
+
+823
+00:38:34,720 --> 00:38:40,240
+that last part up for auction, which he
+
+824
+00:38:37,200 --> 00:38:42,480
+did. And there is an online auction that
+
+825
+00:38:40,240 --> 00:38:45,040
+is going on right now. Bids are coming
+
+826
+00:38:42,480 --> 00:38:49,040
+in. I check it every day. And the
+
+827
+00:38:45,040 --> 00:38:53,200
+auction will end on November 20th. And
+
+828
+00:38:49,040 --> 00:38:55,280
+this is what the uh auction list was uh
+
+829
+00:38:53,200 --> 00:38:57,359
+when they first started it. And this is
+
+830
+00:38:55,280 --> 00:39:00,480
+changed several times, but the basic
+
+831
+00:38:57,359 --> 00:39:02,400
+part of it was the papers that are going
+
+832
+00:39:00,480 --> 00:39:04,880
+out with the auction and how there's
+
+833
+00:39:02,400 --> 00:39:09,040
+going to be a big proof of concept
+
+834
+00:39:04,880 --> 00:39:11,359
+piece. And I noticed in in here where it
+
+835
+00:39:09,040 --> 00:39:12,960
+said um Oh, yeah. the bid they're
+
+836
+00:39:11,359 --> 00:39:14,800
+guesstimating it's going to go for the
+
+837
+00:39:12,960 --> 00:39:17,520
+same price as what an Enigma machine
+
+838
+00:39:14,800 --> 00:39:20,240
+would go for. Um, and I noticed this
+
+839
+00:39:17,520 --> 00:39:25,119
+part where they said uh copies of coding
+
+840
+00:39:20,240 --> 00:39:28,119
+charts originals at Smithsonian
+
+841
+00:39:25,119 --> 00:39:28,119
+originals.
+
+842
+00:39:30,480 --> 00:39:35,599
+>> Yeah. and and cuz I'd looked at the
+
+843
+00:39:33,040 --> 00:39:37,200
+Smithsonian before it like 20 years ago
+
+844
+00:39:35,599 --> 00:39:38,560
+and they didn't have anything and now
+
+845
+00:39:37,200 --> 00:39:42,880
+it's saying hm the original at
+
+846
+00:39:38,560 --> 00:39:45,839
+Smithsonian and um a couple guys decided
+
+847
+00:39:42,880 --> 00:39:49,040
+to go make the trip to the Smithsonian
+
+848
+00:39:45,839 --> 00:39:52,000
+um and this is the page from the
+
+849
+00:39:49,040 --> 00:39:54,400
+archives of American art and it shows
+
+850
+00:39:52,000 --> 00:39:58,720
+the Jim Sandborn papers and they wanted
+
+851
+00:39:54,400 --> 00:40:01,280
+because they listed Jim as one of the
+
+852
+00:39:58,720 --> 00:40:03,599
+important American artists because he'd
+
+853
+00:40:01,280 --> 00:40:05,920
+done a lot of art in many different
+
+854
+00:40:03,599 --> 00:40:08,320
+locations. And so they wanted everything
+
+855
+00:40:05,920 --> 00:40:11,119
+of his going back to when he was a a
+
+856
+00:40:08,320 --> 00:40:15,119
+child, literally a child making doodles.
+
+857
+00:40:11,119 --> 00:40:18,560
+And so they've got a a bit many boxes of
+
+858
+00:40:15,119 --> 00:40:21,359
+Jim Sandborn stuff. And if you go in and
+
+859
+00:40:18,560 --> 00:40:24,480
+you look at different box numbers, and
+
+860
+00:40:21,359 --> 00:40:27,200
+this is what's in box six, and it talks
+
+861
+00:40:24,480 --> 00:40:30,720
+about different sculptures that he made
+
+862
+00:40:27,200 --> 00:40:34,160
+and coding charts, and a couple guys
+
+863
+00:40:30,720 --> 00:40:37,200
+went in, a guy in California asked a
+
+864
+00:40:34,160 --> 00:40:38,800
+friend of his in DC to go through and
+
+865
+00:40:37,200 --> 00:40:40,880
+look through these boxes and take
+
+866
+00:40:38,800 --> 00:40:43,839
+pictures. And the guy took pictures of a
+
+867
+00:40:40,880 --> 00:40:45,839
+lot of things. And the guy in uh
+
+868
+00:40:43,839 --> 00:40:48,079
+California was looking through it and he
+
+869
+00:40:45,839 --> 00:40:50,480
+found one of the pages had a bunch of
+
+870
+00:40:48,079 --> 00:40:52,800
+little pieces that were all taped to it
+
+871
+00:40:50,480 --> 00:40:55,200
+and one of those little pieces said
+
+872
+00:40:52,800 --> 00:40:57,280
+Berlin clock
+
+873
+00:40:55,200 --> 00:40:58,960
+was and he put and he found other things
+
+874
+00:40:57,280 --> 00:41:01,359
+and read northeast and he put it all
+
+875
+00:40:58,960 --> 00:41:06,960
+together. He said this is the answer to
+
+876
+00:41:01,359 --> 00:41:10,480
+K4. Oh my god. So they sent an email to
+
+877
+00:41:06,960 --> 00:41:13,920
+Jim Samborn and said, "We think we have
+
+878
+00:41:10,480 --> 00:41:16,640
+the answer to K4 from Smithsonian." And
+
+879
+00:41:13,920 --> 00:41:18,640
+Jim got really angry. He was he felt
+
+880
+00:41:16,640 --> 00:41:20,240
+like they'd stolen it cuz the auction's
+
+881
+00:41:18,640 --> 00:41:22,800
+going on and this is probably going to
+
+882
+00:41:20,240 --> 00:41:24,640
+affect the auction. and he told the
+
+883
+00:41:22,800 --> 00:41:26,960
+auction house and the auction house
+
+884
+00:41:24,640 --> 00:41:30,640
+contacted these guys and threatened them
+
+885
+00:41:26,960 --> 00:41:32,000
+with legal action saying if uh they
+
+886
+00:41:30,640 --> 00:41:34,880
+released this answer it could
+
+887
+00:41:32,000 --> 00:41:36,640
+potentially lower the price that they'd
+
+888
+00:41:34,880 --> 00:41:39,440
+get in the auction and so there's a
+
+889
+00:41:36,640 --> 00:41:41,520
+financial difference there and the guys
+
+890
+00:41:39,440 --> 00:41:44,720
+weren't really happy about that so they
+
+891
+00:41:41,520 --> 00:41:46,960
+went to the New York Times about it and
+
+892
+00:41:44,720 --> 00:41:51,040
+the New York Times published this thing
+
+893
+00:41:46,960 --> 00:41:55,119
+about a CIA secret and they didn't
+
+894
+00:41:51,040 --> 00:41:58,160
+publish lish the answer to K4 here. But
+
+895
+00:41:55,119 --> 00:42:01,440
+the auction house wanted the guys to
+
+896
+00:41:58,160 --> 00:42:03,599
+sign an NDA, a non-disclosure agreement
+
+897
+00:42:01,440 --> 00:42:05,920
+with the understanding that they might
+
+898
+00:42:03,599 --> 00:42:08,480
+get a percentage of what comes in from
+
+899
+00:42:05,920 --> 00:42:11,599
+the auction if they're able to keep
+
+900
+00:42:08,480 --> 00:42:13,599
+their mouth shut. And the guys were for
+
+901
+00:42:11,599 --> 00:42:15,680
+whatever reason were kind of offended by
+
+902
+00:42:13,599 --> 00:42:18,720
+that. So there's a lot of back and forth
+
+903
+00:42:15,680 --> 00:42:22,400
+that was going on and is going on. Uh
+
+904
+00:42:18,720 --> 00:42:26,640
+but um that's kind of where it's at like
+
+905
+00:42:22,400 --> 00:42:29,760
+right now. So this is from a press event
+
+906
+00:42:26,640 --> 00:42:34,160
+that Sanborn did at the International
+
+907
+00:42:29,760 --> 00:42:37,359
+Spy Museum um 4 days ago. I think this
+
+908
+00:42:34,160 --> 00:42:41,599
+is live stuff going on. And this is the
+
+909
+00:42:37,359 --> 00:42:45,520
+bid as it was about an hour ago. So,
+
+910
+00:42:41,599 --> 00:42:48,319
+it's now at $244,000
+
+911
+00:42:45,520 --> 00:42:51,040
+for the answer into cryptos. With the
+
+912
+00:42:48,319 --> 00:42:54,480
+next bid, it always has to go up 10%.
+
+913
+00:42:51,040 --> 00:42:57,680
+Now, they the uh RR auction, the auction
+
+914
+00:42:54,480 --> 00:42:59,760
+house, they don't do it like eBay where
+
+915
+00:42:57,680 --> 00:43:01,680
+you have to be there in like the last
+
+916
+00:42:59,760 --> 00:43:04,480
+minute when it goes live and kind of
+
+917
+00:43:01,680 --> 00:43:07,920
+really just jam the button to see if uh
+
+918
+00:43:04,480 --> 00:43:10,400
+you can get the get your uh bid in. They
+
+919
+00:43:07,920 --> 00:43:13,839
+do it with a 30 minute system so that
+
+920
+00:43:10,400 --> 00:43:16,480
+anybody who makes a bid, everyone else
+
+921
+00:43:13,839 --> 00:43:19,280
+has at least 30 minutes in order to
+
+922
+00:43:16,480 --> 00:43:21,280
+place another bid. So that process is
+
+923
+00:43:19,280 --> 00:43:25,280
+going to that 30 minute process is going
+
+924
+00:43:21,280 --> 00:43:28,319
+to start on the 20th which is a few days
+
+925
+00:43:25,280 --> 00:43:30,560
+from now. So, I am extremely I don't
+
+926
+00:43:28,319 --> 00:43:33,680
+know. I don't know. I know. I did. I
+
+927
+00:43:30,560 --> 00:43:38,480
+did. I placed a bid. Um I was bidder
+
+928
+00:43:33,680 --> 00:43:40,319
+number three. Uh a poultry $12,100
+
+929
+00:43:38,480 --> 00:43:42,319
+right now. You can see I'm beat by at
+
+930
+00:43:40,319 --> 00:43:45,280
+least an order of magnitude going in
+
+931
+00:43:42,319 --> 00:43:50,040
+there. Um this is more than my
+
+932
+00:43:45,280 --> 00:43:50,040
+retirement account is going.
+
+933
+00:43:51,760 --> 00:43:56,400
+>> So, I'm just kind of watching it. Now, I
+
+934
+00:43:53,760 --> 00:43:59,440
+do know a few wealthy people,.com
+
+935
+00:43:56,400 --> 00:44:01,359
+millionaires. So, I kind of know some of
+
+936
+00:43:59,440 --> 00:44:02,960
+these people that are bidding. Some I
+
+937
+00:44:01,359 --> 00:44:06,800
+don't know. There may be some Saudi
+
+938
+00:44:02,960 --> 00:44:09,680
+prince that just really wants to
+
+939
+00:44:06,800 --> 00:44:11,839
+know what crypto says and then they'll
+
+940
+00:44:09,680 --> 00:44:13,839
+put in their bid and find out and then
+
+941
+00:44:11,839 --> 00:44:18,000
+they'll be not interested in it. What
+
+942
+00:44:13,839 --> 00:44:20,560
+Jim wants is for whoever wins to then be
+
+943
+00:44:18,000 --> 00:44:22,560
+what he calls the keeper of it so that
+
+944
+00:44:20,560 --> 00:44:25,200
+he doesn't keep getting emails all the
+
+945
+00:44:22,560 --> 00:44:29,520
+time. This other person, the keeper,
+
+946
+00:44:25,200 --> 00:44:32,960
+will then get these emails all the time.
+
+947
+00:44:29,520 --> 00:44:34,640
+I have volunteered to be this person. So
+
+948
+00:44:32,960 --> 00:44:36,560
+>> So they're paying for pain.
+
+949
+00:44:34,640 --> 00:44:40,720
+>> They're paying for pain. Paying for
+
+950
+00:44:36,560 --> 00:44:43,920
+pain. Yep. That's what it is. So uh kind
+
+951
+00:44:40,720 --> 00:44:47,440
+of summarizing here, Cryptos was uh
+
+952
+00:44:43,920 --> 00:44:48,880
+created around the CIA uh dedicated the
+
+953
+00:44:47,440 --> 00:44:51,760
+first three parts were solved
+
+954
+00:44:48,880 --> 00:44:55,359
+independently by various groups. K4 is
+
+955
+00:44:51,760 --> 00:44:57,440
+still unsolved after 35 years. Um
+
+956
+00:44:55,359 --> 00:44:59,520
+Sandborg is sick of it. He wants to be
+
+957
+00:44:57,440 --> 00:45:01,920
+done. He's going to be turning 80 years
+
+958
+00:44:59,520 --> 00:45:04,400
+old. He wants he has said that the uh
+
+959
+00:45:01,920 --> 00:45:06,800
+money that comes in is going to be
+
+960
+00:45:04,400 --> 00:45:08,960
+partially uh given to charity and
+
+961
+00:45:06,800 --> 00:45:11,359
+partially he's putting it into a fund
+
+962
+00:45:08,960 --> 00:45:13,119
+for his own medical expenses. Uh
+
+963
+00:45:11,359 --> 00:45:15,200
+starving artists tend not to have
+
+964
+00:45:13,119 --> 00:45:17,280
+retirement accounts. So part of that
+
+965
+00:45:15,200 --> 00:45:20,880
+money is going to go into a fund of his
+
+966
+00:45:17,280 --> 00:45:24,240
+own and it will all wrap up on the 20th.
+
+967
+00:45:20,880 --> 00:45:26,800
+Um now about this time I would say hey
+
+968
+00:45:24,240 --> 00:45:29,839
+I'm selling a book but we're sold out of
+
+969
+00:45:26,800 --> 00:45:31,440
+books. Sorry. Um, but I do have book
+
+970
+00:45:29,839 --> 00:45:33,760
+plates. So, anybody that wants an
+
+971
+00:45:31,440 --> 00:45:35,839
+autographed book plate, these are free.
+
+972
+00:45:33,760 --> 00:45:37,680
+Uh, these were designed by uh my
+
+973
+00:45:35,839 --> 00:45:39,359
+co-author and I, Claus and I, and
+
+974
+00:45:37,680 --> 00:45:42,400
+there's two puzzles hidden on the book
+
+975
+00:45:39,359 --> 00:45:45,720
+plates. And, um,
+
+976
+00:45:42,400 --> 00:45:45,720
+that's it.
+
+977
+00:45:52,240 --> 00:46:01,200
+Okay. Questions? Questions? Um, yes.
+
+978
+00:45:56,880 --> 00:46:03,440
+>> Okay. Um, so K1, K2, K3, is it visually
+
+979
+00:46:01,200 --> 00:46:05,520
+obvious that these are separate objects
+
+980
+00:46:03,440 --> 00:46:07,359
+or if you just walked up to this thing,
+
+981
+00:46:05,520 --> 00:46:08,960
+would you assume this is one giant
+
+982
+00:46:07,359 --> 00:46:11,760
+continuous cipher text?
+
+983
+00:46:08,960 --> 00:46:13,680
+>> Okay, so question was, is it obvious
+
+984
+00:46:11,760 --> 00:46:14,800
+walking up to it that there are four
+
+985
+00:46:13,680 --> 00:46:18,400
+codes?
+
+986
+00:46:14,800 --> 00:46:20,800
+>> Um, no. Uh, half of the sculpture is a
+
+987
+00:46:18,400 --> 00:46:24,079
+visionary tableau. The other half
+
+988
+00:46:20,800 --> 00:46:27,920
+there's two plates and within those two
+
+989
+00:46:24,079 --> 00:46:30,720
+plates you've got four coats. So it's
+
+990
+00:46:27,920 --> 00:46:32,079
+sort of obvious that one plate could be
+
+991
+00:46:30,720 --> 00:46:35,280
+something and one plate could be
+
+992
+00:46:32,079 --> 00:46:39,119
+something else. Um K1 and K2 are on the
+
+993
+00:46:35,280 --> 00:46:41,760
+top plate. K3 starts at the top of the
+
+994
+00:46:39,119 --> 00:46:44,319
+bottom plate goes all the way down to
+
+995
+00:46:41,760 --> 00:46:47,760
+four rows from the bottom. K4 starts
+
+996
+00:46:44,319 --> 00:46:50,319
+there and finishes out that plate. Uh,
+
+997
+00:46:47,760 --> 00:46:52,800
+also the untitled cryptos piece, it's
+
+998
+00:46:50,319 --> 00:46:57,680
+sort of the same, but there it starts
+
+999
+00:46:52,800 --> 00:47:00,560
+with three, K3, and it goes K3, K4, K1,
+
+1000
+00:46:57,680 --> 00:47:02,319
+K2, K3, K4, and then it like stops
+
+1001
+00:47:00,560 --> 00:47:03,680
+halfway through one of them. They just
+
+1002
+00:47:02,319 --> 00:47:05,440
+kind of went through letters and
+
+1003
+00:47:03,680 --> 00:47:09,040
+stopped.
+
+1004
+00:47:05,440 --> 00:47:10,800
+>> Right. Okay. Um, in the back right
+
+1005
+00:47:09,040 --> 00:47:12,960
+there. Yep. You
+
+1006
+00:47:10,800 --> 00:47:14,960
+>> uh, so can you go back to the page where
+
+1007
+00:47:12,960 --> 00:47:16,480
+at the
+
+1008
+00:47:14,960 --> 00:47:21,319
+Berlin?
+
+1009
+00:47:16,480 --> 00:47:21,319
+Go back to a page where it has what?
+
+1010
+00:47:29,920 --> 00:47:33,599
+>> Clues.
+
+1011
+00:47:31,359 --> 00:47:37,119
+>> Okay, with the clues. With the clues.
+
+1012
+00:47:33,599 --> 00:47:40,119
+Okay, let's see if I can get there.
+
+1013
+00:47:37,119 --> 00:47:40,119
+Um,
+
+1014
+00:47:41,119 --> 00:47:46,720
+no, no,
+
+1015
+00:47:43,440 --> 00:47:49,119
+no. Um, further.
+
+1016
+00:47:46,720 --> 00:47:53,319
+>> Okay, here's K4. But you want you want
+
+1017
+00:47:49,119 --> 00:47:53,319
+the part with the clues? Okay.
+
+1018
+00:47:56,640 --> 00:48:02,440
+>> Yeah, I have a lot of hidden uh hidden
+
+1019
+00:47:59,440 --> 00:48:02,440
+slides.
+
+1020
+00:48:07,760 --> 00:48:12,839
+>> This one. Okay.
+
+1021
+00:48:09,839 --> 00:48:12,839
+>> Okay.
+
+1022
+00:48:20,800 --> 00:48:24,200
+Okay, thank you.
+
+1023
+00:48:24,880 --> 00:48:31,280
+>> Second off, um Okay, so I noticed that I
+
+1024
+00:48:28,640 --> 00:48:35,400
+and I could completely um just like
+
+1025
+00:48:31,280 --> 00:48:35,400
+wrong here, but I notic
+
+1026
+00:48:37,200 --> 00:48:44,720
+I noticed that the K the two A's there,
+
+1027
+00:48:41,119 --> 00:48:46,960
+the K the f the second A is a K.
+
+1028
+00:48:44,720 --> 00:48:49,920
+And the first day is an L. So like you
+
+1029
+00:48:46,960 --> 00:48:52,800
+know and K goes you know is right before
+
+1030
+00:48:49,920 --> 00:48:54,800
+L. So what if you know okay the next
+
+1031
+00:48:52,800 --> 00:48:58,440
+time
+
+1032
+00:48:54,800 --> 00:48:58,440
+>> yeah okay I don't
+
+1033
+00:49:00,319 --> 00:49:02,160
+>> mind.
+
+1034
+00:49:01,119 --> 00:49:04,960
+>> Okay.
+
+1035
+00:49:02,160 --> 00:49:08,800
+>> Yeah. Ananka.com/cryptos.
+
+1036
+00:49:04,960 --> 00:49:12,480
+Okay. All right. Um yes with the hat.
+
+1037
+00:49:08,800 --> 00:49:14,880
+So, does does the auction include like
+
+1038
+00:49:12,480 --> 00:49:16,319
+>> the plain text and the encryption method
+
+1039
+00:49:14,880 --> 00:49:18,160
+or is there a chance you get the
+
+1040
+00:49:16,319 --> 00:49:18,559
+solution but still not know how we did
+
+1041
+00:49:18,160 --> 00:49:21,040
+it?
+
+1042
+00:49:18,559 --> 00:49:23,119
+>> That's a great question cuz I've often
+
+1043
+00:49:21,040 --> 00:49:24,640
+said like these two guys that have the
+
+1044
+00:49:23,119 --> 00:49:27,359
+answer, they have the answer but they
+
+1045
+00:49:24,640 --> 00:49:30,000
+don't have the method. And until we know
+
+1046
+00:49:27,359 --> 00:49:32,240
+how you go from the cipher text to the
+
+1047
+00:49:30,000 --> 00:49:34,640
+plain text, I don't think it's solved.
+
+1048
+00:49:32,240 --> 00:49:36,319
+So, uh, with the auction, they have
+
+1049
+00:49:34,640 --> 00:49:38,400
+promised that you get not only the
+
+1050
+00:49:36,319 --> 00:49:40,640
+stuff, but you also get an afternoon
+
+1051
+00:49:38,400 --> 00:49:43,920
+with Samborn where he's going to talk
+
+1052
+00:49:40,640 --> 00:49:47,839
+through exactly how everything uh, goes
+
+1053
+00:49:43,920 --> 00:49:50,640
+together. So, it's my uh, big hope that
+
+1054
+00:49:47,839 --> 00:49:54,640
+whoever buys it will have enough in the
+
+1055
+00:49:50,640 --> 00:49:57,520
+way of crypto chops to understand what
+
+1056
+00:49:54,640 --> 00:49:59,760
+he's saying. If not, I'm willing to
+
+1057
+00:49:57,520 --> 00:50:04,000
+volunteer a few people that maybe should
+
+1058
+00:49:59,760 --> 00:50:06,160
+be there with him. uh as as the answer
+
+1059
+00:50:04,000 --> 00:50:08,640
+is being described.
+
+1060
+00:50:06,160 --> 00:50:09,839
+>> All right. Uh
+
+1061
+00:50:08,640 --> 00:50:13,680
+yeah.
+
+1062
+00:50:09,839 --> 00:50:15,839
+>> So do you think that the discovery of
+
+1063
+00:50:13,680 --> 00:50:19,359
+the answer being in the Smithsonian
+
+1064
+00:50:15,839 --> 00:50:22,359
+files was what prompted him to reveal
+
+1065
+00:50:19,359 --> 00:50:22,359
+crypto?
+
+1066
+00:50:22,640 --> 00:50:28,880
+>> It's a great question. Do I think that
+
+1067
+00:50:25,040 --> 00:50:32,720
+the discovery of K4 in the Smithsonian
+
+1068
+00:50:28,880 --> 00:50:37,119
+files has prompted Sanborn to announce
+
+1069
+00:50:32,720 --> 00:50:40,559
+more stuff about K5? Absolutely yes.
+
+1070
+00:50:37,119 --> 00:50:42,079
+Absolutely yes. Now, he'd always hinted
+
+1071
+00:50:40,559 --> 00:50:44,800
+that
+
+1072
+00:50:42,079 --> 00:50:47,680
+even after K4 was solved, there would be
+
+1073
+00:50:44,800 --> 00:50:50,640
+some sort of further mystery to go along
+
+1074
+00:50:47,680 --> 00:50:52,800
+with it because he has said that as an
+
+1075
+00:50:50,640 --> 00:50:54,640
+artist and and he taught art for a
+
+1076
+00:50:52,800 --> 00:50:58,079
+while. That as an artist, one of your
+
+1077
+00:50:54,640 --> 00:51:00,800
+goals is to keep the attention of the
+
+1078
+00:50:58,079 --> 00:51:02,319
+viewer for as long as you can. And a
+
+1079
+00:51:00,800 --> 00:51:04,400
+piece of art that keeps someone's
+
+1080
+00:51:02,319 --> 00:51:06,319
+attention for 10 minutes is a great
+
+1081
+00:51:04,400 --> 00:51:09,119
+thing. And here he has something that's
+
+1082
+00:51:06,319 --> 00:51:12,000
+kept attention for 35 years which he
+
+1083
+00:51:09,119 --> 00:51:14,720
+thinks is fantastic. But at the same
+
+1084
+00:51:12,000 --> 00:51:17,040
+time he's a little embarrassed by it
+
+1085
+00:51:14,720 --> 00:51:19,839
+because artists they tend to have the
+
+1086
+00:51:17,040 --> 00:51:22,079
+two halves of their work. They have part
+
+1087
+00:51:19,839 --> 00:51:24,160
+of their work is the kind that you have
+
+1088
+00:51:22,079 --> 00:51:26,480
+in galleries where people show up and
+
+1089
+00:51:24,160 --> 00:51:28,319
+they drink wine and eat cheese and look
+
+1090
+00:51:26,480 --> 00:51:30,640
+around at what's in the gallery and then
+
+1091
+00:51:28,319 --> 00:51:32,559
+you have the public work which is the
+
+1092
+00:51:30,640 --> 00:51:35,920
+big pieces in the middle of a traffic
+
+1093
+00:51:32,559 --> 00:51:38,079
+circle. Right? And that's how most
+
+1094
+00:51:35,920 --> 00:51:40,800
+artists make their money is from the
+
+1095
+00:51:38,079 --> 00:51:44,480
+public work, but they get their status
+
+1096
+00:51:40,800 --> 00:51:47,359
+from the private work. And here, Kryptos
+
+1097
+00:51:44,480 --> 00:51:49,839
+is a public piece and it's the one that
+
+1098
+00:51:47,359 --> 00:51:53,280
+he's most well known for, which it kind
+
+1099
+00:51:49,839 --> 00:51:58,400
+of sticks in his craw.
+
+1100
+00:51:53,280 --> 00:52:00,880
+Uh, so yeah, say that. All right. Um,
+
+1101
+00:51:58,400 --> 00:52:02,720
+yes. Have you I I know you mentioned
+
+1102
+00:52:00,880 --> 00:52:04,079
+that like when you in your private
+
+1103
+00:52:02,720 --> 00:52:06,800
+conversations you said like the Q
+
+1104
+00:52:04,079 --> 00:52:08,720
+pointed at something like from cryptos I
+
+1105
+00:52:06,800 --> 00:52:10,240
+think it was one there was the Q the
+
+1106
+00:52:08,720 --> 00:52:11,760
+illusion
+
+1107
+00:52:10,240 --> 00:52:13,040
+you mentioned it you said it pointed at
+
+1108
+00:52:11,760 --> 00:52:15,119
+something and then you also mentioned
+
+1109
+00:52:13,040 --> 00:52:16,240
+that there was extra dots when you saw
+
+1110
+00:52:15,119 --> 00:52:17,760
+untitled
+
+1111
+00:52:16,240 --> 00:52:19,359
+>> and I was just wondering like have you
+
+1112
+00:52:17,760 --> 00:52:22,000
+personally spent any time looking at
+
+1113
+00:52:19,359 --> 00:52:23,920
+where Q would be pointing at or maybe
+
+1114
+00:52:22,000 --> 00:52:24,880
+other like trajectories I'm sure it's
+
+1115
+00:52:23,920 --> 00:52:26,400
+maybe on your website I was just
+
+1116
+00:52:24,880 --> 00:52:28,480
+wondering if you commented on that.
+
+1117
+00:52:26,400 --> 00:52:28,800
+>> Okay so let me try and repeat that.
+
+1118
+00:52:28,480 --> 00:52:31,520
+Yeah.
+
+1119
+00:52:28,800 --> 00:52:33,680
+>> So in K1 between subtle shading and the
+
+1120
+00:52:31,520 --> 00:52:37,920
+absence of illusion where illusion is
+
+1121
+00:52:33,680 --> 00:52:41,040
+misspelled with a Q, um, has anyone
+
+1122
+00:52:37,920 --> 00:52:45,440
+played with that? So to have a Q in that
+
+1123
+00:52:41,040 --> 00:52:48,000
+location, the cipher text letter is a K.
+
+1124
+00:52:45,440 --> 00:52:49,920
+And then in the later part where it says
+
+1125
+00:52:48,000 --> 00:52:51,839
+the information was gathered and
+
+1126
+00:52:49,920 --> 00:52:54,960
+transmitted underground where
+
+1127
+00:52:51,839 --> 00:52:59,040
+underground is misspelled with two U's.
+
+1128
+00:52:54,960 --> 00:53:02,400
+Um to get a U to appear in that location
+
+1129
+00:52:59,040 --> 00:53:05,280
+means that the cipher text has an R. So
+
+1130
+00:53:02,400 --> 00:53:09,680
+here we have K R on the sculpture
+
+1131
+00:53:05,280 --> 00:53:11,920
+cryptos. Um we don't know. Maybe there's
+
+1132
+00:53:09,680 --> 00:53:15,440
+more to find there. Maybe that's just
+
+1133
+00:53:11,920 --> 00:53:16,960
+coincidence. We don't know. And I guess
+
+1134
+00:53:15,440 --> 00:53:19,280
+the second part of that was have you
+
+1135
+00:53:16,960 --> 00:53:21,599
+like visually looked at the direction
+
+1136
+00:53:19,280 --> 00:53:22,880
+that those like the R and the K are
+
+1137
+00:53:21,599 --> 00:53:24,880
+pointing at?
+
+1138
+00:53:22,880 --> 00:53:25,599
+>> Have we looked at the direction that
+
+1139
+00:53:24,880 --> 00:53:27,200
+what?
+
+1140
+00:53:25,599 --> 00:53:30,559
+>> Because you mentioned a quote where you
+
+1141
+00:53:27,200 --> 00:53:31,119
+say Sam Warren said Q is pointing at
+
+1142
+00:53:30,559 --> 00:53:31,839
+something.
+
+1143
+00:53:31,119 --> 00:53:32,960
+>> Oh.
+
+1144
+00:53:31,839 --> 00:53:34,240
+>> So have you looked at the visual
+
+1145
+00:53:32,960 --> 00:53:35,599
+location of where those things are
+
+1146
+00:53:34,240 --> 00:53:37,440
+pointing at?
+
+1147
+00:53:35,599 --> 00:53:39,760
+>> Okay. Because it's not what they are,
+
+1148
+00:53:37,440 --> 00:53:40,160
+it's the orientation or the positioning.
+
+1149
+00:53:39,760 --> 00:53:42,960
+Yeah.
+
+1150
+00:53:40,160 --> 00:53:45,040
+>> Um, we've tried we've have several
+
+1151
+00:53:42,960 --> 00:53:47,839
+people who have tried to make 3D models
+
+1152
+00:53:45,040 --> 00:53:50,160
+of the sculpture and look at it at
+
+1153
+00:53:47,839 --> 00:53:54,800
+different times of day and in different
+
+1154
+00:53:50,160 --> 00:53:56,800
+seasons and we don't know.
+
+1155
+00:53:54,800 --> 00:53:59,520
+>> Okay.
+
+1156
+00:53:56,800 --> 00:54:02,559
+Any other questions?
+
+1157
+00:53:59,520 --> 00:54:05,760
+>> Yes. Is there anything or I guess do you
+
+1158
+00:54:02,559 --> 00:54:08,160
+think it's um going to be successful
+
+1159
+00:54:05,760 --> 00:54:10,559
+that whoever buys it will be the keeper
+
+1160
+00:54:08,160 --> 00:54:13,200
+of the
+
+1161
+00:54:10,559 --> 00:54:16,319
+>> do I think that whoever buys it will be
+
+1162
+00:54:13,200 --> 00:54:22,640
+interested in being the keeper of it
+
+1163
+00:54:16,319 --> 00:54:26,720
+maybe um I know uh personally I know two
+
+1164
+00:54:22,640 --> 00:54:30,240
+very wealthy people do millionaires who
+
+1165
+00:54:26,720 --> 00:54:32,400
+are bidding on it and I know One of them
+
+1166
+00:54:30,240 --> 00:54:33,680
+would be interested in being the keeper,
+
+1167
+00:54:32,400 --> 00:54:35,520
+the other one,
+
+1168
+00:54:33,680 --> 00:54:37,680
+>> you know, not so interested. I've told
+
+1169
+00:54:35,520 --> 00:54:40,319
+the other one saying, you know, I'll
+
+1170
+00:54:37,680 --> 00:54:43,839
+happily pay me and I'll happily be the
+
+1171
+00:54:40,319 --> 00:54:46,880
+the keeper uh from there. Uh it is an
+
+1172
+00:54:43,839 --> 00:54:49,040
+interesting thing that if I got that job
+
+1173
+00:54:46,880 --> 00:54:52,480
+and then I would know what the answer
+
+1174
+00:54:49,040 --> 00:54:54,559
+is, um what should I do in terms of my
+
+1175
+00:54:52,480 --> 00:54:56,880
+website and all the things that I'm
+
+1176
+00:54:54,559 --> 00:55:01,440
+doing as the moderator? Well, I would go
+
+1177
+00:54:56,880 --> 00:55:04,000
+to the other two co-odderators and tell
+
+1178
+00:55:01,440 --> 00:55:06,079
+them and we'd have a discussion about
+
+1179
+00:55:04,000 --> 00:55:08,160
+should I continue moderating the list or
+
+1180
+00:55:06,079 --> 00:55:10,800
+should I step back and let them handle
+
+1181
+00:55:08,160 --> 00:55:12,480
+it from there. Um,
+
+1182
+00:55:10,800 --> 00:55:15,280
+yeah,
+
+1183
+00:55:12,480 --> 00:55:17,760
+it we don't know at this point. I just
+
+1184
+00:55:15,280 --> 00:55:19,200
+don't know.
+
+1185
+00:55:17,760 --> 00:55:22,000
+Okay,
+
+1186
+00:55:19,200 --> 00:55:24,880
+>> any other question? Yeah. Do you hope to
+
+1187
+00:55:22,000 --> 00:55:26,240
+come back next year and avail us of all
+
+1188
+00:55:24,880 --> 00:55:28,160
+the new news?
+
+1189
+00:55:26,240 --> 00:55:30,240
+>> Come back next year and have the new
+
+1190
+00:55:28,160 --> 00:55:35,160
+news. Well, I'll probably be coming back
+
+1191
+00:55:30,240 --> 00:55:35,160
+no matter what. Um, AND
+
+1192
+00:55:39,599 --> 00:55:44,400
+I hope I hope I'll have some sort of new
+
+1193
+00:55:42,000 --> 00:55:47,040
+news. Uh, I'll also be talking about my
+
+1194
+00:55:44,400 --> 00:55:48,960
+other project which is 19th century
+
+1195
+00:55:47,040 --> 00:55:50,000
+classified. Had anyone come to my talk
+
+1196
+00:55:48,960 --> 00:55:51,440
+last night?
+
+1197
+00:55:50,000 --> 00:55:52,160
+>> Yeah. Was it good?
+
+1198
+00:55:51,440 --> 00:55:54,160
+>> Yeah.
+
+1199
+00:55:52,160 --> 00:55:56,240
+>> Yeah. Okay. Right. So, I'll probably
+
+1200
+00:55:54,160 --> 00:55:58,640
+have more on that. I'll also be speaking
+
+1201
+00:55:56,240 --> 00:56:03,119
+on that. Okay.
+
+1202
+00:55:58,640 --> 00:56:06,559
+>> All right. Any other questions?
+
+1203
+00:56:03,119 --> 00:56:08,640
+Yeah. No, you're just stretching. Okay.
+
+1204
+00:56:06,559 --> 00:56:12,760
+Okay. Um, you're bidding. You're
+
+1205
+00:56:08,640 --> 00:56:12,760
+bidding. I'll bid you.
+
+1206
+00:56:13,599 --> 00:56:20,520
+Okay. All right. I think that's it then.
+
+1207
+00:56:16,799 --> 00:56:20,520
+Again, thank you.
+
