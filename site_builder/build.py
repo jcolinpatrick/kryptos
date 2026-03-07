@@ -76,10 +76,19 @@ def build():
     total_experiments = len(eliminations)
     total_categories = len([c for c in tree if c != "uncategorized"])
 
+    # Count total scripts from exhaustion log (authoritative source)
+    exhaustion_log_path = os.path.join(PROJECT_ROOT, "exhaustion_log.json")
+    total_scripts = 0
+    if os.path.exists(exhaustion_log_path):
+        import json as _json
+        with open(exhaustion_log_path) as _f:
+            total_scripts = len(_json.load(_f))
+
     # Build the formatted disproven counter
     total_configs_disproven = format_configs(total_configs)
 
-    print(f"\n  Total experiments: {total_experiments}")
+    print(f"\n  Total experiments (with results): {total_experiments}")
+    print(f"  Total scripts tracked: {total_scripts}")
     print(f"  Total configs tested: {total_configs:,} ({total_configs_disproven})")
 
     # 4) Group research questions by tier
@@ -130,6 +139,7 @@ def build():
     _render(env, "home.html", "index.html", {
         **global_ctx,
         "total_experiments": total_experiments,
+        "total_scripts": total_scripts,
         "total_configs": total_configs_disproven,
         "total_categories": total_categories,
         "categories": categories_for_browse,
@@ -212,7 +222,10 @@ def build():
     pages_built += 1
 
     # FAQ
-    _render(env, "faq.html", "faq/index.html", global_ctx)
+    _render(env, "faq.html", "faq/index.html", {
+        **global_ctx,
+        "total_experiments": total_experiments,
+    })
     pages_built += 1
 
     # Research Questions
@@ -245,8 +258,16 @@ def build():
     })
     pages_built += 1
 
+    # Workbench
+    _render(env, "workbench.html", "workbench/index.html", global_ctx)
+    pages_built += 1
+
     # Report error
     _render(env, "report_error.html", "report-error/index.html", global_ctx)
+    pages_built += 1
+
+    # 404 page (at root for nginx error_page directive)
+    _render(env, "404.html", "404.html", global_ctx)
     pages_built += 1
 
     # 9) Build search index

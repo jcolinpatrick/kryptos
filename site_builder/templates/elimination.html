@@ -49,7 +49,7 @@
   {% endif %}
 
   <dt>Configs Tested</dt>
-  <dd><strong>{{ "{:,}".format(e.configs_tested) if e.configs_tested > 0 else "1" }}</strong></dd>
+  <dd><strong>{{ "{:,}".format(e.configs_tested) if e.configs_tested > 0 else "N/A" }}</strong></dd>
 
   <dt>Best Score</dt>
   <dd>
@@ -140,7 +140,7 @@
 <pre><code>{{ e.repro_command }}</code></pre>
 <p><small>
   Requires the <a href="https://github.com/cpatrick/kryptos">kryptos repo</a>,
-  Python 3.12+, PYTHONPATH=src.
+  Python 3.11+, PYTHONPATH=src.
 </small></p>
 {% endif %}
 
