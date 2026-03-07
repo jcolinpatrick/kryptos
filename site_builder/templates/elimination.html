@@ -13,7 +13,7 @@
 
 <p>{{ e.description }}</p>
 
-<div style="display:flex;gap:var(--sp-3);align-items:center;margin:var(--sp-6) 0">
+<div class="verdict-row">
   <span class="verdict verdict-{{ e.verdict|lower if e.verdict else 'noise' }}">
     {{ e.verdict or "NOISE" }}
   </span>

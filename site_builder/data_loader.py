@@ -44,6 +44,9 @@ class SiteElimination:
     research_questions: list[str] = field(default_factory=list)
     github_issue_url: str = ""
 
+    # Searchable keywords tested in this experiment
+    keywords_tested: list[str] = field(default_factory=list)
+
     # Extra fields from results JSON (unstructured)
     extra: dict[str, Any] = field(default_factory=dict)
 
@@ -141,22 +144,36 @@ def load_rq_coverage(db_path: str) -> list[RQCoverage]:
 
 
 def load_results_json(results_dir: str) -> list[dict[str, Any]]:
-    """Load all JSON result files from the results directory."""
+    """Load all JSON result files from the results directory.
+
+    Scans both top-level .json files and results.json inside immediate
+    subdirectories (e.g. results/tableau_keystream/results.json).
+    """
     results = []
     if not os.path.isdir(results_dir):
         print(f"  [WARN] Results directory not found: {results_dir}")
         return results
-    for fname in sorted(os.listdir(results_dir)):
-        if not fname.endswith(".json"):
-            continue
-        fpath = os.path.join(results_dir, fname)
-        try:
-            with open(fpath) as f:
-                data = json.load(f)
-            data["_source_file"] = fname
-            results.append(data)
-        except Exception as e:
-            print(f"  [WARN] Failed to load {fpath}: {e}")
+    for entry in sorted(os.listdir(results_dir)):
+        entry_path = os.path.join(results_dir, entry)
+        if os.path.isfile(entry_path) and entry.endswith(".json"):
+            try:
+                with open(entry_path) as f:
+                    data = json.load(f)
+                data["_source_file"] = entry
+                results.append(data)
+            except Exception as e:
+                print(f"  [WARN] Failed to load {entry_path}: {e}")
+        elif os.path.isdir(entry_path):
+            # Check for results.json inside subdirectory
+            sub_results = os.path.join(entry_path, "results.json")
+            if os.path.isfile(sub_results):
+                try:
+                    with open(sub_results) as f:
+                        data = json.load(f)
+                    data["_source_file"] = f"{entry}/results.json"
+                    results.append(data)
+                except Exception as e:
+                    print(f"  [WARN] Failed to load {sub_results}: {e}")
     return results
 
 
@@ -203,6 +220,76 @@ def _parse_research_questions(raw: str | list | None) -> list[str]:
         pass
     # Try comma-separated
     return [rq.strip() for rq in str(raw).split(",") if rq.strip()]
+
+
+def _extract_keywords(res: dict[str, Any]) -> list[str]:
+    """Extract tested keyword names from a results JSON dict.
+
+    Scans structured fields (keyword, keyword_results, new_keywords_list,
+    top_results labels) and the key_finding narrative for uppercase keyword
+    mentions.
+    """
+    kws: set[str] = set()
+
+    # 1) Explicit keyword field
+    kw = res.get("keyword")
+    if isinstance(kw, str) and kw.strip():
+        kws.add(kw.strip().upper())
+
+    # 2) keyword_results list (e.g. e_kasiski_00)
+    kr = res.get("keyword_results")
+    if isinstance(kr, list):
+        for entry in kr:
+            if isinstance(entry, dict):
+                k = entry.get("keyword", "")
+                if isinstance(k, str) and k.strip():
+                    kws.add(k.strip().upper())
+
+    # 3) new_keywords_list (e.g. e_poly_03)
+    nkl = res.get("new_keywords_list")
+    if isinstance(nkl, list):
+        for k in nkl:
+            if isinstance(k, str) and k.strip():
+                kws.add(k.strip().upper())
+
+    # 4) top_results labels containing "kw-" (e.g. tableau_keystream)
+    tr = res.get("top_results")
+    if isinstance(tr, list):
+        for entry in tr:
+            if isinstance(entry, dict):
+                lbl = entry.get("label", "")
+                if "kw-" in lbl:
+                    parts = lbl.split("kw-")
+                    if len(parts) > 1:
+                        kw_name = parts[1].split("-")[0].strip()
+                        if kw_name:
+                            kws.add(kw_name.upper())
+
+    # 5) Scan key_finding / description for well-known thematic keywords
+    _THEMATIC = {
+        "URANIA", "WELTZEITUHR", "ALEXANDERPLATZ", "HOROLOGE",
+        "PALIMPSEST", "ABSCISSA", "KRYPTOS", "BERLINCLOCK",
+        "EASTNORTHEAST", "SANBORN", "SCHEIDT", "VERDIGRIS",
+        "LODESTONE", "COMPASS", "SHADOW", "SPHINX", "PHARAOH",
+        "TUTANKHAMUN", "CARNARVON", "DRUSILLA", "IDBYROWS",
+        "DESPARATLY", "IQLUSION", "DIGETAL", "PARALLAX",
+        "COLOPHON", "DEFECTOR", "MAGNETIC", "ANTIPODES",
+        "UNDERGRUUND", "GROMARK",
+    }
+    for field in ("key_finding", "key_findings", "description"):
+        val = res.get(field)
+        if isinstance(val, str):
+            upper = val.upper()
+            for tk in _THEMATIC:
+                if tk in upper:
+                    kws.add(tk)
+        elif isinstance(val, list):
+            combined = " ".join(str(v) for v in val).upper()
+            for tk in _THEMATIC:
+                if tk in combined:
+                    kws.add(tk)
+
+    return sorted(kws)
 
 
 def _detect_experiment_script(experiment_id: str, scripts_dir: str) -> str:
@@ -423,6 +510,9 @@ def build_eliminations_from_results(
             tags.append("transposition")
         elim.tags = tags
 
+        # Extract tested keywords for search
+        elim.keywords_tested = _extract_keywords(res)
+
         elims.append(elim)
 
     return elims
@@ -454,6 +544,12 @@ def apply_overrides(
             for t in ovr["tags"]:
                 existing.add(t)
             elim.tags = sorted(existing)
+
+        if "keywords_tested" in ovr:
+            existing = set(elim.keywords_tested)
+            for k in ovr["keywords_tested"]:
+                existing.add(k.upper())
+            elim.keywords_tested = sorted(existing)
 
         if "research_questions" in ovr:
             elim.research_questions = ovr["research_questions"]

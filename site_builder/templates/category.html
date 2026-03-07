@@ -6,6 +6,7 @@
 
 <h1>{{ category.name }}</h1>
 <p>{{ category.description }}</p>
+<p><small class="text-muted">{{ eliminations|length }} elimination{{ "s" if eliminations|length != 1 else "" }} recorded.</small></p>
 
 <div class="table-wrap">
   <table>
