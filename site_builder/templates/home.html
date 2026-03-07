@@ -6,11 +6,12 @@
   <div class="hero-inner">
     <div class="hero-text">
       <div class="hero-tagline">Kryptos K4 Elimination Database</div>
-      <h1>What doesn't decrypt K4</h1>
+      <h1>What doesn&rsquo;t decrypt K4</h1>
       <p>
-        A comprehensive, open-source record of rigorously tested cipher theories for
-        Kryptos K4 — the last unsolved section of Jim Sanborn's sculpture at CIA
-        headquarters. Every entry is reproducible.
+        A comprehensive, open-source record of rigorously tested cryptanalytic
+        approaches for Kryptos K4 &mdash; the last unsolved section of Jim
+        Sanborn&rsquo;s sculpture at CIA headquarters. Every elimination includes
+        a reproduction command.
       </p>
     </div>
     <div class="hero-logo">
@@ -23,18 +24,22 @@
   <div class="stat-card stat-accent">
     <div class="stat-value">{{ total_configs }}</div>
     <div class="stat-label">Configurations Tested</div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-value">{{ total_scripts }}</div>
-    <div class="stat-label">Attack Scripts</div>
+    <div class="stat-micro">unique parameter combinations</div>
   </div>
   <div class="stat-card">
     <div class="stat-value">{{ total_experiments }}</div>
-    <div class="stat-label">Documented Eliminations</div>
+    <div class="stat-label">Eliminations Recorded</div>
+    <div class="stat-micro">with scored results</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value">{{ total_scripts }}</div>
+    <div class="stat-label">Experiment Scripts</div>
+    <div class="stat-micro">in the codebase</div>
   </div>
   <div class="stat-card">
     <div class="stat-value">{{ total_categories }}</div>
     <div class="stat-label">Cipher Families</div>
+    <div class="stat-micro">covered</div>
   </div>
 </div>
 
@@ -43,23 +48,23 @@
   <div class="entry-card">
     <h3><a href="/browse/">Browse by Category</a></h3>
     <p>
-      Explore eliminations organized by cipher family — substitution,
+      Explore eliminations organized by cipher family &mdash; substitution,
       transposition, fractionation, multi-layer, and more.
     </p>
     <span class="entry-arrow">Browse &rarr;</span>
   </div>
   <div class="entry-card">
-    <h3><a href="/search/">Search</a></h3>
+    <h3><a href="/workbench/">Try a Theory</a></h3>
     <p>
-      Find specific ciphers, parameters, or techniques across
-      the full elimination database.
+      Configure a transposition + substitution pipeline and score it
+      against K4&rsquo;s 24 known crib positions. Runs in your browser.
     </p>
-    <span class="entry-arrow">Search &rarr;</span>
+    <span class="entry-arrow">Workbench &rarr;</span>
   </div>
   <div class="entry-card">
     <h3><a href="/submit/">Submit a Theory</a></h3>
     <p>
-      Describe your K4 theory in plain English. We'll check whether
+      Describe your K4 theory in plain English. We&rsquo;ll check whether
       it has already been tested or is genuinely novel.
     </p>
     <span class="entry-arrow">Submit &rarr;</span>
@@ -79,10 +84,9 @@
 
 <div class="section-label">About This Project</div>
 <p>
-  Jim Sanborn designed K4 to be solved. This site honors that intent by
-  documenting every approach that has been tried and disproven, so the
-  community can focus on what hasn&rsquo;t been tested yet. Built by
-  <a href="/about-me/">Colin Patrick</a> and
+  Jim Sanborn designed K4 to be solved. This site documents every approach that
+  has been tried and eliminated, so the community can focus on what remains
+  untested. Built by <a href="/about-me/">Colin Patrick</a> and
   <a href="https://claude.ai">Claude</a> (Anthropic).
   <a href="/about-me/">Read more &rarr;</a>
 </p>
@@ -90,9 +94,15 @@
 <div class="section-label">What is Kryptos K4?</div>
 <p>
   <strong>Kryptos</strong> is an encrypted sculpture at CIA headquarters
-  containing four messages. K1&ndash;K3 were solved in 1999. K4 &mdash; <strong>97
-  characters</strong> &mdash; has resisted all public attempts for 35 years.
-  We know 24 characters: <code>EASTNORTHEAST</code> at positions 21&ndash;33
-  and <code>BERLINCLOCK</code> at positions 63&ndash;73.
+  containing four messages. K1&ndash;K3 were solved in 1999. K4 &mdash;
+  <strong>97 characters</strong> &mdash; has resisted all public cryptanalytic
+  attempts for 35 years. 24 plaintext characters are known:
+  <code>EASTNORTHEAST</code> at positions 21&ndash;33 and
+  <code>BERLINCLOCK</code> at positions 63&ndash;73.
+</p>
+
+<div class="section-label">Recent Additions</div>
+<p>
+  <a href="/recent/">View the latest eliminations &rarr;</a>
 </p>
 {% endblock %}
