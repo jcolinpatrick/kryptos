@@ -21,7 +21,6 @@ sys.path.insert(0, _project_root)
 
 from site_builder.data_loader import load_all, SiteElimination
 from site_builder.categorizer import categorize_all, get_category_stats
-from site_builder.search_index import write_search_index
 
 
 # --- Configuration ---
@@ -198,10 +197,6 @@ def build():
         })
         pages_built += 1
 
-    # Search
-    _render(env, "search.html", "search/index.html", global_ctx)
-    pages_built += 1
-
     # Submit
     _render(env, "submit.html", "submit/index.html", {
         **global_ctx,
@@ -270,18 +265,7 @@ def build():
     _render(env, "404.html", "404.html", global_ctx)
     pages_built += 1
 
-    # 9) Build search index
-    print("\nBuilding search index...")
-    index_path = os.path.join(OUTPUT_DIR, "search-index.json")
-    n_indexed = write_search_index(eliminations, index_path)
-    print(f"  Indexed {n_indexed} documents → {index_path}")
-
-    # Also copy to static dir for the search page
-    static_index = os.path.join(OUTPUT_DIR, "static", "search-index.json")
-    os.makedirs(os.path.dirname(static_index), exist_ok=True)
-    shutil.copy2(index_path, static_index)
-
-    # 10) Copy static assets
+    # 9) Copy static assets
     print("\nCopying static assets...")
     static_out = os.path.join(OUTPUT_DIR, "static")
     os.makedirs(static_out, exist_ok=True)
@@ -292,11 +276,11 @@ def build():
             shutil.copy2(src, dst)
             print(f"  {fname}")
 
-    # 11) Summary
+    # 10) Summary
     print("\n" + "=" * 60)
     print(f"BUILD COMPLETE")
     print(f"  Pages built: {pages_built}")
-    print(f"  Eliminations indexed: {n_indexed}")
+    print(f"  Eliminations: {len(eliminations)}")
     print(f"  Output directory: {OUTPUT_DIR}")
     print(f"  Total configs disproven: {total_configs_disproven}")
     print("=" * 60)
