@@ -105,7 +105,7 @@
       }
       html += "</div>";
       if (doc.description) {
-        html += '<p style="font-size:0.9375rem;color:var(--color-muted);margin:0.25rem 0 0">' + escapeHtml(truncate(doc.description, 150)) + "</p>";
+        html += '<p style="font-size:0.9375rem;color:var(--text-tertiary);margin:0.25rem 0 0">' + escapeHtml(truncate(doc.description, 150)) + "</p>";
       }
       html += "</div>";
     });

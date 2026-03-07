@@ -393,6 +393,57 @@ nav strong a:visited {
   color: var(--text-primary);
 }
 
+/* Hamburger toggle — hidden on desktop */
+.nav-toggle {
+  display: none;
+}
+
+.nav-toggle-label {
+  display: none;
+  cursor: pointer;
+  padding: var(--sp-2);
+  position: absolute;
+  right: var(--sp-4);
+  top: 14px;
+}
+
+.nav-toggle-label span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: var(--text-secondary);
+  margin: 5px 0;
+  border-radius: 1px;
+  transition: transform var(--transition), opacity var(--transition);
+}
+
+@media (max-width: 768px) {
+  .nav-toggle-label {
+    display: block;
+  }
+
+  nav .nav-links {
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    padding-bottom: var(--sp-3);
+  }
+
+  .nav-toggle:checked ~ .nav-links {
+    display: flex;
+  }
+
+  .nav-toggle:checked ~ .nav-toggle-label span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+  }
+  .nav-toggle:checked ~ .nav-toggle-label span:nth-child(2) {
+    opacity: 0;
+  }
+  .nav-toggle:checked ~ .nav-toggle-label span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+  }
+}
+
 
 /* ============================================================
    LISTS
@@ -1399,15 +1450,10 @@ noscript {
 
   nav {
     height: auto;
+    min-height: 56px;
     padding: var(--sp-3) var(--sp-4);
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--sp-2);
-  }
-
-  nav ul:last-child {
     flex-wrap: wrap;
-    gap: 0;
+    position: relative;
   }
 
   .container {
