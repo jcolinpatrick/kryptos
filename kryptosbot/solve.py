@@ -466,6 +466,19 @@ def build_parser() -> argparse.ArgumentParser:
                           choices=["agent", "reasoning", "compute"],
                           help="Filter by mode")
 
+    # horologe
+    sub_horologe = sub.add_parser("horologe", help="Deep HOROLOGE keyword investigation")
+    sub_horologe.add_argument("--phase", choices=["gromark", "sa", "genetic", "agent", "all"],
+                              default="all", help="Run specific phase")
+    sub_horologe.add_argument("--local-only", action="store_true",
+                              help="Skip agent investigation (no API tokens)")
+    sub_horologe.add_argument("--sa-iterations", type=int, default=500_000,
+                              help="SA iterations per restart")
+    sub_horologe.add_argument("--sa-temp", type=float, default=50.0,
+                              help="SA initial temperature")
+    sub_horologe.add_argument("--max-turns", type=int, default=15,
+                              help="Max agent turns (SDK)")
+
     # preflight
     sub.add_parser("preflight", help="SDK/auth health check")
 
@@ -543,6 +556,33 @@ def main() -> None:
             budget_usd=args.budget,
             output_dir=output_dir,
         ))
+
+    elif args.command == "horologe":
+        from horologe_deep import run_full_campaign, run_gromark_sweep, \
+            run_simulated_annealing, run_genetic_crossover, _load_elite_perms
+        phase = getattr(args, "phase", "all")
+        if phase == "gromark":
+            run_gromark_sweep(num_workers=args.workers)
+        elif phase == "sa":
+            run_simulated_annealing(
+                iterations=args.sa_iterations,
+                initial_temp=args.sa_temp,
+                num_workers=args.workers,
+            )
+        elif phase == "genetic":
+            elite = _load_elite_perms()
+            if len(elite) >= 2:
+                run_genetic_crossover(elite, num_workers=args.workers)
+            else:
+                print("Need at least 2 elite permutations. Run campaign.py first.")
+        elif phase == "agent":
+            print("Use: python3 kryptosbot/horologe_deep.py --phase agent")
+        else:
+            asyncio.run(run_full_campaign(
+                num_workers=args.workers,
+                local_only=getattr(args, "local_only", False),
+                max_turns=getattr(args, "max_turns", 15),
+            ))
 
     elif args.command == "list":
         run_list(mode_filter=args.mode if hasattr(args, "mode") else None)

@@ -16,7 +16,7 @@ This repo has one purpose: determine the **true plaintext** and the **full encry
 - Positions 21–33: `EASTNORTHEAST`
 - Positions 63–73: `BERLINCLOCK`
 
-**CRITICAL PARADIGM (2026-03-02):** [USER GROUND TRUTH] The 97 carved characters are **SCRAMBLED ciphertext**. The encryption model is: `PT → simple substitution → REAL CT → SCRAMBLE (transposition) → carved text`. Every prior experiment (400+, 669B+ configs) assumed positional correspondence and FAILED. The **singular mission** is to find the unscrambling permutation using the Cardan grille. See Claude Code auto-memory `cardan_grille.md` for full details.
+**CRITICAL PARADIGM (2026-03-02):** [USER GROUND TRUTH] The 97 carved characters are **SCRAMBLED ciphertext**. The encryption model is: `PT → simple substitution → REAL CT → SCRAMBLE (transposition) → carved text`. Every prior experiment (400+, 669B+ configs) assumed positional correspondence and FAILED. The **singular mission** is to derive the full encryption method and solve K4. The **most promising lead** is the Cardan grille, which may define the unscrambling permutation. See Claude Code auto-memory `cardan_grille.md` for full details.
 
 **Cardan grille extract (corrected, 100 chars, from 28×31 grid):** `HJLVKDJQZKIVPCMWSAFOPCKBDLHIFXRYVFIJMXEIOMQFJNXZKILKRDIYSCLMQVZACEIMVSEFHLQKRGILVHNQXWTCDKIKJUFQRXCD` — All 26 letters present (IC = 0.0416). The grille defines the reading order that unscrambles K4. (Old 106-char extract `HJLVACIN...` is stored as `GRILLE_EXTRACT_OLD` in `kryptosbot/kryptosbot/strategies.py`.)
 
@@ -47,6 +47,11 @@ PYTHONPATH=src python3 -u scripts/_uncategorized/e_nsa_01_interval7.py
 PYTHONPATH=src python3 run_attack.py --list --verbose
 PYTHONPATH=src python3 run_attack.py --run --family grille --status active
 PYTHONPATH=src python3 run_attack.py --reconcile
+
+# Benchmark framework
+PYTHONPATH=src python3 bench/cli.py run --suite bench/suites/tier0_smoke.jsonl
+PYTHONPATH=src python3 bench/cli.py score --suite bench/suites/tier0_smoke.jsonl --results results/bench/results.jsonl
+PYTHONPATH=src python3 bench/cli.py generate --tiers 0,1,2,3 --n 25 --seed 42 --out bench/suites/
 
 # Environment health check
 PYTHONPATH=src python3 -m kryptos doctor
@@ -99,7 +104,7 @@ kernel/persistence/sqlite.py (results DB) + JsonlWriter (logs)
 
 ### Experiment scripts (`scripts/`)
 
-574 standardized attack scripts organized into 23 family subdirectories (e.g. `scripts/grille/`, `scripts/transposition/columnar/`, `scripts/blitz/`). Each script has a parseable metadata header and is tracked in `exhaustion_log.json`. Use `run_attack.py --list` to discover scripts or `run_attack.py --run --family <name>` to dispatch by family.
+607+ standardized attack scripts organized into ~28 family subdirectories (e.g. `scripts/grille/`, `scripts/transposition/`, `scripts/blitz/`, `scripts/tableau/`, `scripts/team/`, `scripts/yar/`, `scripts/campaigns/`). Each script has a parseable metadata header and is tracked in `exhaustion_log.json` (574 entries; newer scripts may not yet be registered). Use `run_attack.py --list` to discover scripts or `run_attack.py --run --family <name>` to dispatch by family.
 
 **Script infrastructure (`scripts/lib/`):**
 - `header.py` — Parse/validate metadata headers (Cipher, Family, Status, Keyspace, Last run, Best score)
@@ -122,9 +127,13 @@ def attack(ciphertext: str, **params) -> list[tuple[float, str, str]]:
 6. Register in `exhaustion_log.json` via `scripts/lib/exhaustion.update()`
 7. Use `python3 -u` for unbuffered output when running in background
 
+### Benchmark framework (`bench/`)
+
+Cipher-solving benchmark suite for regression testing and scoring validation. CLI: `PYTHONPATH=src python bench/cli.py run --suite bench/suites/tier0_smoke.jsonl`. Modules: `runner.py` (execute suites), `scorer.py` (score results), `segmenter.py` (segment ciphertexts), `validator.py` (validate solutions), `generate.py` (generate new suites), `io.py` (JSONL I/O). Suites in `bench/suites/` (tier0–tier3). Test coverage in `tests/test_bench*.py`.
+
 ### Tests
 
-Two test categories: **Unit tests** (`test_transforms.py`, `test_constraints.py`, `test_scoring.py`, `test_pipeline.py`, `test_novelty.py`, `test_alphabet.py`, `test_constants.py`, `test_free_crib.py`, `test_corpus.py`) cover each layer. **QA verification tests** (`test_qa_structural_claims.py`, `test_qa_kernel_verify.py`, `test_qa_frac_cross_verify.py`, `test_qa_pipeline_novelty.py`, `test_audit_regression.py`) are higher-level cross-checks that validate structural claims, FRAC results, audit assumptions, and pipeline-novelty integration.
+Three test categories: **Unit tests** (`test_transforms.py`, `test_constraints.py`, `test_scoring.py`, `test_pipeline.py`, `test_novelty.py`, `test_alphabet.py`, `test_constants.py`, `test_free_crib.py`, `test_corpus.py`, `test_attack_lib.py`) cover each layer. **QA verification tests** (`test_qa_structural_claims.py`, `test_qa_kernel_verify.py`, `test_qa_frac_cross_verify.py`, `test_qa_pipeline_novelty.py`, `test_audit_regression.py`) are higher-level cross-checks that validate structural claims, FRAC results, audit assumptions, and pipeline-novelty integration. **Benchmark tests** (`test_bench.py`, `test_bench_generate.py`, `test_bench_regression.py`, `test_bench_scorer.py`, `test_bench_segmenter.py`, `test_bench_validator.py`) cover the `bench/` framework.
 
 ### Key data files
 
@@ -152,10 +161,13 @@ Claude Agent SDK multi-agent campaign runner. Separate from the core `src/krypto
 
 ### Other directories
 
+- **`bench/`** — Benchmark framework (see above).
 - **`bin/`** — Standalone engine scripts for Antipodes and cylinder rotation analysis (`antipodes_device_engine.py`, `antipodes_key_engine.py`, `cylinder_rotation_engine.py`).
 - **`jobs/`** — Job queue with `pending/`, `running/`, `done/`, `failed/` subdirectories for experiment management.
 - **`deploy/`** — Production deployment configs: systemd service (`kryptosbot-api.service`), nginx config, cron updater, setup script.
 - **`tools/`** — Utility scripts (e.g. `generate_quadgrams.py` for rebuilding quadgram data).
+
+**Top-level scripts:** `run_attack.py` (dispatch runner), `run_lean.py` (lightweight runner), `worker.py` (job worker), `k4_job_runner.sh` (shell job harness).
 
 ### Gitignored directories
 
@@ -238,21 +250,23 @@ Domain knowledge, public facts, and detailed operating policies live in separate
 - **`docs/invariants.md`** — Verified computational invariants (keystream, Bean constraints, alphabets, eliminated hypotheses)
 - **`docs/elimination_tiers.md`** — Elimination confidence tiers (Tier 1–4) with full tables of what has/hasn't been tested. Tier 1 = mathematically proven eliminated; Tier 2 = exhaustively searched (single-layer only — **OPEN as one layer of multi-layer**); Tier 4 = untested bespoke methods. **Critical framing:** All Tier 2 eliminations assume direct positional correspondence (CT[i] → PT[i]).
 - **`docs/research_questions.md`** — Prioritized unknowns (RQ-1 through RQ-13) with current state and next steps
+- **`docs/two_ground_truths.md`** — Physical sculpture vs Sanborn's intent: two distinct ground truths for K4 analysis
 - **`anomaly_registry.md`** — Physical anomalies in the Kryptos sculpture (misspellings, alignments, narrative anomaly allocation)
 
 ---
 
-## Multi-Agent Mode — SINGULAR MISSION
+## Multi-Agent Mode — Solve K4
 
-**ALL agents are hyperfocused on ONE task: find the unscrambling permutation for K4.**
+**ALL agents are focused on ONE goal: derive the full encryption method and solve K4.**
 
-The carved K4 text is SCRAMBLED ciphertext. The Cardan grille defines the reading order. Every agent must work on finding the permutation that reorders the 97 carved characters into the real CT.
+The carved K4 text is SCRAMBLED ciphertext. The most promising lead is the Cardan grille, which may define the reading order that unscrambles the carved text into the real CT. However, agents should pursue any approach that could reveal the method.
 
 **Key constraints for teammates:**
 - Import constants from `kryptos.kernel.constants` — never hardcode CT/cribs
 - Grille details are in Claude Code auto-memory (`cardan_grille.md`); key facts are in the Quick Reference above
 - The corrected 100-char grille extract: `HJLVKDJQZKIVPCMWSAFOPCKBDLHIFXRYVFIJMXEIOMQFJNXZKILKRDIYSCLMQVZACEIMVSEFHLQKRGILVHNQXWTCDKIKJUFQRXCD`
 - For each candidate permutation: apply to K4, try Vig/Beaufort with KRYPTOS/PALIMPSEST/ABSCISSA, check for English
+- Top keyword candidates (Bean-compatible, thematically strong): HOROLOGE, DEFECTOR, PARALLAX, COLOPHON
 - DO NOT re-run old direct-decryption attacks — they assumed wrong positional correspondence
 
 **KryptosBot agent runner:** `python3 kryptosbot/solve.py` launches the unified campaign runner. See `kryptosbot/RUNBOOK.md` for full usage. Key commands: `solve.py` (6 parallel agents), `solve.py compute` (free local CPU), `solve.py run <name>` (single strategy), `solve.py list` (show all strategies).
@@ -261,5 +275,5 @@ The carved K4 text is SCRAMBLED ciphertext. The Cardan grille defines the readin
 
 ---
 
-*Last updated: 2026-03-04 — PARADIGM SHIFT: carved text is scrambled, find the real CT via Cardan grille*
+*Last updated: 2026-03-06 — Mission: derive K4 method & solve. Best lead: Cardan grille. Top keywords: HOROLOGE, DEFECTOR, PARALLAX, COLOPHON*
 *Primary author: Colin Patrick (human lead) + Claude (computational partner)*

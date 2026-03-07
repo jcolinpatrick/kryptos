@@ -271,21 +271,89 @@ Classification key:
 
 ---
 
-## E. CROSS-CUTTING PATTERNS
+## E. STATISTICAL ANOMALIES (Bean 2021)
 
-### E1. Collected misspelling substitutions
-| Source    | Correct | On sculpture | Changed letter(s) |
-|-----------|---------|-------------|-------------------|
-| K1 (key)  | PALIMPSEST | PALIMPCEST | Sâ†’C (pos 7 of keyword) |
-| K1 (pt)   | ILLUSION | IQLUSION | Lâ†’Q (pos 2 of word) |
-| K2 (ctâ†’pt)| UNDERGROUND | UNDERGRUUND | Oâ†’U (pos 10 of word) |
-| K3 (pt)   | DESPERATELY | DESPARATLY | Eâ†’A (pos 5), Eâ†’Ã¸ (pos 8), Yâ†’Ã¸? |
-| Morse     | DIGITAL | DIGETAL | Iâ†’E (pos 4 of word) |
+Source: Bean, R. "Cryptodiagnosis of Kryptos K4", HistoCrypt 2021. `reference/03_Bean_HistoCrypt2021.pdf`
 
-Community observation: The wrong letters Q, U, A, E, L form an anagram of "EQUAL"
-(noted by Nina from the Kryptos group).
+### E0a. Stehle observation (DIAWINFBN constant-difference property)
+- **What**: The 9-character segment DIAWINFBN at carved positions 55–63 has the property
+  that each pair of letters 4 positions apart differs by exactly 5 (mod 26):
+  I−D=5, N−I=5, F−A=5, B−W=5, N−I=5. First noted by Stehle (2000).
+- **Source**: Bean 2021 Section 2.3, citing Stehle (2000) on sci.crypt
+- **Classification**: UNDISCUSSED by Sanborn
+- **Crypto significance**: MEDIUM-HIGH — Could indicate:
+  (a) A key offset of 5 operating at interval 4 in this segment
+  (b) Evidence for a Gromark-like key with particular step structure
+  (c) An artifact of substitution cipher with structured key
+  Bean noted it but considered it "harder to measure, explain or exploit."
 
-### E2. Character counts
+### E0b. Minor differences (KRYPTOS-set letters stay close)
+- **What**: Among the 24 known plaintext positions, the 10 where PT is in {K,R,Y,P,T,O,S}
+  (the Kryptos keyword letters), the CT letters are very close in the standard alphabet:
+  distances sum to 21, mean 2.1. Monte Carlo sampling: p ≈ 1/5,520.
+  | PT | S T O R T S T R O K |
+  | CT | R V Q P R S S P F K |
+  | Δ  | 1 2 2 2 2 0 1 2 9 0 |
+- **Source**: Materna (2020) first noted; Bean 2021 Section 2.4 measured
+- **Classification**: UNDISCUSSED by Sanborn
+- **Crypto significance**: VERY HIGH — Implies the cipher alphabet is "near" the standard
+  A-Z alphabet, perhaps based on a keyword. Consistent with a keyword-mixed cipher alphabet
+  where the keyword starts with or contains KRYPTOS letters. **Bean argues this strongly
+  implies one-to-one substitution with no transposition.**
+
+### E0c. Repeated-plaintext-letter cipher distances
+- **What**: For each repeated PT letter (A,C,E,L,N,O,R,S,T), the corresponding CT letters
+  are measured for pairwise distance. 13 values, mean 3.6, and 10/13 are less than 5.
+  Monte Carlo: p ≈ 1/240 (mean ≤ 3.6), p ≈ 1/310 (≥ 10 values < 5).
+- **Source**: Bean 2021 Section 2.4, Table 3
+- **Classification**: UNDISCUSSED by Sanborn
+- **Crypto significance**: HIGH — Further evidence for one-to-one substitution. If a
+  transposition scrambled positions, these distances would be random. Bean: "strongly suggest
+  that 'one-to-one' encryption of single letters to single letters is occurring."
+
+### E0d. Reversed-KA alphabet mod-5 pattern
+- **What**: Number PT letters 0-25 (standard alphabet), CT letters 0-25 from the
+  **reversed Kryptos alphabet**. Then (plain − cipher) mod 26 gives 13 of 24 values
+  as multiples of 5. Monte Carlo: p ≈ 1/1,470.
+- **Source**: Bean 2021 Section 2.4, footnote 2
+- **Classification**: UNDISCUSSED by Sanborn
+- **Crypto significance**: MEDIUM-HIGH — Suggests a connection between:
+  (a) The Kryptos alphabet (reversed)
+  (b) Base-5 or mod-5 arithmetic (cf. Berlin Clock uses base 5)
+  (c) Possibly 5×5 Polybius squares (Bean speculated "conjugated matrix bifid" but found nothing)
+  This pattern has NOT been explored in our codebase.
+
+### E0e. Width-21 repeated vertical bigrams
+- **What**: Writing K4 at width 21 gives 11 repeated vertical bigrams out of 76.
+  Expected for random permutations: ~1/6,750. Expected for English text at width 21: ~9.7.
+  The repeated bigrams are: AZ BS IT LS LW PK QZ SN WA ZT KK.
+- **Source**: Hannon (2010), LaTurner (2016), Kirchner (2003); measured by Bean 2021 Section 2.1
+- **Classification**: UNDISCUSSED by Sanborn
+- **Crypto significance**: VERY HIGH — This is the signature property of K4. Consistent
+  with Gromark cipher (base-2, length-5 primer → period-21 key structure), where ~1 in 10
+  ciphertexts show this property. The width-21 structure has been extensively studied but
+  never fully explained.
+
+---
+
+## F. CROSS-CUTTING PATTERNS
+
+### F1. Collected misspelling substitutions
+| Source    | Correct | On sculpture | Changed letter(s) | Status |
+|-----------|---------|-------------|-------------------|--------|
+| K1 (key)  | PALIMPSEST | PALIMPCEST | S→C (pos 7 of keyword) | DELIBERATE |
+| K1 (pt)   | ILLUSION | IQLUSION | L→Q (pos 2 of word) | DELIBERATE |
+| K2 (ct→pt)| UNDERGROUND | UNDERGRUUND | O→U (pos 10 of word) | **NOT a misspelling** — cipher error R→E, corrected on Antipodes |
+| K3 (pt)   | DESPERATELY | DESPARATLY | E→A (pos 5), E→ø (pos 8) | DELIBERATE (Sanborn refused to answer) |
+| Morse     | DIGITAL | DIGETAL | I→E (pos 4 of word) | DELIBERATE (Sanborn implied) |
+| Morse     | INTERPRETATION | INTERPRETATIU | ON→U (end of word) | DELIBERATE? Logic unclear |
+
+**Note on "EQUAL" anagram**: Community (Nina) noted wrong letters Q, U, A, E, L = "EQUAL".
+However, the U comes from UNDERGRUUND which is NOT a deliberate misspelling (corrected on
+Antipodes). Without it, the confirmed substituted letters are Q, A, E (from cipher-side) and
+E, U (from Morse-side). The "EQUAL" anagram is therefore INVALID.
+
+### F2. Character counts
 - Cipher side: 869 (865 letters + 4 question marks)
 - Tableau side: 867 (including extra L)
 - Cipher - Tableau = 2 (or 1 if you exclude the extra L)
@@ -293,7 +361,7 @@ Community observation: The wrong letters Q, U, A, E, L form an anagram of "EQUAL
 - Morse code: ~81 letters + 25 extra E's = ~106 characters
 - 97 = 4 Ã— 24 + 1 (one remainder after four 24-char blocks)
 
-### E3. The number 24 everywhere
+### F3. The number 24 everywhere
 - Weltzeituhr: 24 facets
 - 24 known plaintext positions in K4 (13 from EASTNORTHEAST + 11 from BERLINCLOCK)
 - K4 block structure: 4 blocks of 24 + 1 remainder
@@ -302,7 +370,7 @@ Community observation: The wrong letters Q, U, A, E, L form an anagram of "EQUAL
 
 ---
 
-## F. ASSESSMENT: WHAT'S OPERATIVE?
+## G. ASSESSMENT: WHAT'S OPERATIVE?
 
 ### Tier 1: Almost certainly cryptographically operative
 - **A1** (LAYER TWO): Confirmed instruction. Compound encipherment.
@@ -330,16 +398,16 @@ Community observation: The wrong letters Q, U, A, E, L form an anagram of "EQUAL
 
 ---
 
-## G. IMPLICATIONS FOR OUR CIPHER SEARCH
+## H. IMPLICATIONS FOR OUR CIPHER SEARCH
 
-### G1. YAR as position marker
+### H1. YAR as position marker
 If YAR marks the K3â†’K4 transition, and Y=24 (A=0), A=0, R=17:
 - Y=24: Could this be the BLOCK SIZE? (We already use 24.)
 - A=0: Starting offset?
 - R=17: Rotation value? Facet number?
 Test: base rotation = 17 in our progressive model.
 
-### G2. HILL cipher component (from extra L)
+### H2. HILL cipher component (from extra L)
 If K4 uses a Hill cipher layer (matrix multiplication), this would:
 - Explain why all periodic-key models plateau (Hill is not periodic)
 - Be consistent with "LAYER TWO" (Layer 1 = transposition, Layer 2 = Hill)
@@ -347,13 +415,13 @@ If K4 uses a Hill cipher layer (matrix multiplication), this would:
 - Be testable: Hill cipher + known plaintext â†’ solvable system of equations
 This is a HIGH-PRIORITY new hypothesis.
 
-### G3. DESPARATLY as positional clue
+### H3. DESPARATLY as positional clue
 The letters removed/changed from DESPERATELY:
 - Position 5: Eâ†’A
 - Position 8: E removed (DESPARATLY has 10 chars, DESPERATELY has 11)
 Could 5 and 8 be: Vimark period? Block offset? Primer values?
 
-### G4. "You could not make any mistake with 1,800 letters"
+### H4. "You could not make any mistake with 1,800 letters"
 This is Sanborn's most revealing statement. He's telling us:
 NOTHING ON THE SCULPTURE IS A MISTAKE. Every anomaly is a design choice.
 The only admitted error (omitted X) he went out of his way to correct 16 years later.
@@ -361,7 +429,7 @@ Everything else? Intentional until proven otherwise.
 
 ---
 
-## H. NARRATIVE ANOMALY ALLOCATION (confirmed 2026-02-20)
+## I. NARRATIVE ANOMALY ALLOCATION (confirmed 2026-02-20)
 
 ### Consumed by narrative (plaintext/keyword clues — NOT available for K4 method):
 - K0 stray E's -> PALIMPSEST (conceptual recognition of sculpture form)

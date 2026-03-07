@@ -46,6 +46,12 @@ class ScoreBreakdown:
     ngram_score: Optional[float] = None
     ngram_per_char: Optional[float] = None
 
+    # Word-level scoring (optional)
+    word_coverage: Optional[float] = None
+    word_score: Optional[float] = None
+    word_count: Optional[int] = None
+    longest_word: Optional[int] = None
+
     # Bean constraints
     bean_passed: bool = False
     bean_detail: Optional[str] = None
@@ -65,10 +71,12 @@ class ScoreBreakdown:
         ]
         if self.ngram_per_char is not None:
             parts.append(f"ngram={self.ngram_per_char:.2f}")
+        if self.word_coverage is not None:
+            parts.append(f"words={self.word_coverage:.0%}")
         return " | ".join(parts)
 
     def to_dict(self) -> dict:
-        return {
+        d = {
             "crib_score": self.crib_score,
             "crib_total": self.crib_total,
             "ene_score": self.ene_score,
@@ -82,12 +90,19 @@ class ScoreBreakdown:
             "bean_detail": self.bean_detail,
             "is_breakthrough": self.is_breakthrough,
         }
+        if self.word_coverage is not None:
+            d["word_coverage"] = self.word_coverage
+            d["word_score"] = self.word_score
+            d["word_count"] = self.word_count
+            d["longest_word"] = self.longest_word
+        return d
 
 
 def score_candidate(
     plaintext: str,
     bean_result: Optional[BeanResult] = None,
     ngram_scorer=None,
+    word_scorer=None,
 ) -> ScoreBreakdown:
     """Score a plaintext candidate through the canonical evaluation path.
 
@@ -97,6 +112,7 @@ def score_candidate(
         plaintext: Candidate plaintext (uppercase A-Z)
         bean_result: Optional pre-computed Bean result
         ngram_scorer: Optional NgramScorer for language quality
+        word_scorer: Optional WordScorer for word-level English detection
 
     Returns:
         ScoreBreakdown with full diagnostic information
@@ -123,6 +139,21 @@ def score_candidate(
         except Exception:
             pass
 
+    # Word-level scoring (optional)
+    w_coverage = None
+    w_score = None
+    w_count = None
+    w_longest = None
+    if word_scorer is not None:
+        try:
+            wr = word_scorer.score(plaintext)
+            w_coverage = wr.coverage
+            w_score = wr.weighted_score
+            w_count = wr.word_count
+            w_longest = wr.longest
+        except Exception:
+            pass
+
     return ScoreBreakdown(
         crib_score=crib_sc,
         crib_total=N_CRIBS,
@@ -133,6 +164,10 @@ def score_candidate(
         ic_score_normalized=ic_sc,
         ngram_score=ngram_total,
         ngram_per_char=ngram_pc,
+        word_coverage=w_coverage,
+        word_score=w_score,
+        word_count=w_count,
+        longest_word=w_longest,
         bean_passed=bean_pass,
         bean_detail=bean_det,
         is_breakthrough=is_breakthrough(crib_sc, bean_pass),
@@ -165,6 +200,12 @@ class FreeScoreBreakdown:
     ngram_score: Optional[float] = None
     ngram_per_char: Optional[float] = None
 
+    # Word-level scoring (optional)
+    word_coverage: Optional[float] = None
+    word_score: Optional[float] = None
+    word_count: Optional[int] = None
+    longest_word: Optional[int] = None
+
     # Classification
     crib_classification: str = "noise"
     is_breakthrough: bool = False
@@ -184,6 +225,8 @@ class FreeScoreBreakdown:
         parts.append(f"[{self.crib_classification}]")
         if self.ngram_per_char is not None:
             parts.append(f"ngram={self.ngram_per_char:.2f}")
+        if self.word_coverage is not None:
+            parts.append(f"words={self.word_coverage:.0%}")
         return " | ".join(parts)
 
     def to_dict(self) -> dict:
@@ -200,6 +243,11 @@ class FreeScoreBreakdown:
             "crib_classification": self.crib_classification,
             "is_breakthrough": self.is_breakthrough,
         }
+        if self.word_coverage is not None:
+            d["word_coverage"] = self.word_coverage
+            d["word_score"] = self.word_score
+            d["word_count"] = self.word_count
+            d["longest_word"] = self.longest_word
         if self.free_crib.ene_offsets:
             d["ene_offsets"] = self.free_crib.ene_offsets
         if self.free_crib.bc_offsets:
@@ -212,6 +260,7 @@ class FreeScoreBreakdown:
 def score_candidate_free(
     plaintext: str,
     ngram_scorer=None,
+    word_scorer=None,
 ) -> FreeScoreBreakdown:
     """Score a plaintext candidate using position-free crib matching.
 
@@ -225,6 +274,7 @@ def score_candidate_free(
     Args:
         plaintext: Candidate plaintext (uppercase A-Z)
         ngram_scorer: Optional NgramScorer for language quality
+        word_scorer: Optional WordScorer for word-level English detection
 
     Returns:
         FreeScoreBreakdown with full diagnostic information
@@ -245,6 +295,21 @@ def score_candidate_free(
         try:
             ngram_total = ngram_scorer.score(text)
             ngram_pc = ngram_scorer.score_per_char(text)
+        except Exception:
+            pass
+
+    # Word-level scoring (optional)
+    w_coverage = None
+    w_score = None
+    w_count = None
+    w_longest = None
+    if word_scorer is not None:
+        try:
+            wr = word_scorer.score(text)
+            w_coverage = wr.coverage
+            w_score = wr.weighted_score
+            w_count = wr.word_count
+            w_longest = wr.longest
         except Exception:
             pass
 
@@ -270,6 +335,10 @@ def score_candidate_free(
         ic_score_normalized=ic_sc,
         ngram_score=ngram_total,
         ngram_per_char=ngram_pc,
+        word_coverage=w_coverage,
+        word_score=w_score,
+        word_count=w_count,
+        longest_word=w_longest,
         crib_classification=classification,
         is_breakthrough=(sc >= 24),
     )
