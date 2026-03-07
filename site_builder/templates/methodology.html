@@ -41,8 +41,8 @@
       <tr><th>Score</th><th>Classification</th><th>Meaning</th></tr>
     </thead>
     <tbody>
-      <tr><td>&le; 6</td><td>NOISE</td><td>Expected performance from a random key/method. Not meaningful.</td></tr>
-      <tr><td>7&ndash;17</td><td>STORE</td><td>Worth logging for completeness. Almost certainly noise, but recorded.</td></tr>
+      <tr><td>0&ndash;9</td><td>NOISE</td><td>Expected performance from a random key/method. Not recorded.</td></tr>
+      <tr><td>10&ndash;17</td><td>INTERESTING</td><td>Above noise floor. Recorded for completeness, but almost certainly coincidental.</td></tr>
       <tr><td>18&ndash;23</td><td>SIGNAL</td><td>Statistically unusual. Warrants investigation, but may be a false positive at high periods.</td></tr>
       <tr><td>24</td><td>FULL MATCH</td><td>All 24 cribs match. Requires Bean constraint validation, quadgram analysis, and human review before any claim is made.</td></tr>
     </tbody>
@@ -83,7 +83,7 @@
 
 <h2>Bean Constraints</h2>
 <p>
-  In 2020, Richard Bean published additional constraints on the K4 keystream
+  In 2021, Richard Bean published additional constraints on the K4 keystream
   derived from the repeated letter P at positions 27 and 65 of the ciphertext
   (which decrypt to R at both positions). This gives:
 </p>
@@ -105,10 +105,9 @@
 <ul>
   <li>Crib score: 24/24</li>
   <li>Bean constraints: PASS</li>
-  <li>Quadgram log-probability: &gt; &minus;4.84 per character (English-like text)</li>
-  <li>Index of coincidence: &gt; 0.055 (English-like distribution)</li>
-  <li>Contains &ge; 3 recognizable English words of &ge; 7 characters (outside crib positions)</li>
-  <li>Semantic coherence: reads as meaningful English (human review required)</li>
+  <li>Quadgram log-probability: &gt; &minus;4.8 per character (English-like text quality)</li>
+  <li>Index of coincidence consistent with English (IC &approx; 0.067 expected)</li>
+  <li>Semantic coherence: reads as meaningful English with recognizable words (human review required)</li>
 </ul>
 
 <h2>Truth Taxonomy</h2>

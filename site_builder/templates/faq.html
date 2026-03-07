@@ -83,8 +83,10 @@
     periodic keys, and the cipher likely involves at least two layers
     (substitution + transposition).
     With 97! possible permutations for the transposition alone, brute force
-    is impossible. The information-theoretic deficit is approximately 138 bits,
-    meaning ~2<sup>138</sup> different configurations satisfy all known constraints.
+    is impossible. We estimate the information-theoretic deficit at roughly
+    138 bits &mdash; meaning on the order of 2<sup>138</sup> different configurations
+    could satisfy the known constraints. (This is an approximate bound that
+    depends on assumptions about plaintext entropy.)
     Solving K4 likely requires identifying the specific <em>method</em>, not just
     trying all keys.
   </p>

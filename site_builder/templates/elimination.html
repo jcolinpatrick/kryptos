@@ -54,7 +54,7 @@
   <dt>Best Score</dt>
   <dd>
     {% if e.best_score is not none %}
-      <span class="score-display {% if e.best_score >= 24 %}score-breakthrough{% elif e.best_score >= 18 %}score-signal{% elif e.best_score >= 7 %}score-store{% else %}score-noise{% endif %}">
+      <span class="score-display {% if e.best_score >= 24 %}score-breakthrough{% elif e.best_score >= 18 %}score-signal{% elif e.best_score >= 10 %}score-store{% else %}score-noise{% endif %}">
         {{ e.best_score }}/24
       </span>
       {% if e.expected_random is not none %}
