@@ -40,9 +40,9 @@
   <summary>Can I submit my own theory?</summary>
   <p>
     Yes! Use our <a href="/submit/">Submit a Theory</a> page. Describe your idea
-    in plain English and our AI classifier will check whether it matches anything
-    we have already tested. If your theory is genuinely novel, it will be queued for
-    evaluation by our team.
+    in plain English and our theory classifier will check whether it matches
+    anything in the elimination database. If your theory is genuinely novel,
+    it will be queued for evaluation.
   </p>
   <div class="credit-notice">
     If your submission leads to the solution of Kryptos K4, you will receive
@@ -79,8 +79,9 @@
   <summary>Why can&rsquo;t computers just solve K4?</summary>
   <p>
     K4 has only 97 characters &mdash; too short for most statistical attacks to
-    distinguish signal from noise. The key is provably non-periodic, and the
-    cipher likely involves at least two layers (substitution + transposition).
+    distinguish signal from noise. Exhaustive testing has eliminated all standard
+    periodic keys, and the cipher likely involves at least two layers
+    (substitution + transposition).
     With 97! possible permutations for the transposition alone, brute force
     is impossible. The information-theoretic deficit is approximately 138 bits,
     meaning ~2<sup>138</sup> different configurations satisfy all known constraints.

@@ -32,6 +32,7 @@
           this.ref("id");
           this.field("title", { boost: 10 });
           this.field("description", { boost: 5 });
+          this.field("keywords_tested", { boost: 5 });
           this.field("category", { boost: 3 });
           this.field("tags", { boost: 2 });
           this.field("cipher_type");

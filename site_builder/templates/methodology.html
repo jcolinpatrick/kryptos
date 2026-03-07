@@ -44,7 +44,7 @@
       <tr><td>&le; 6</td><td>NOISE</td><td>Expected performance from a random key/method. Not meaningful.</td></tr>
       <tr><td>7&ndash;17</td><td>STORE</td><td>Worth logging for completeness. Almost certainly noise, but recorded.</td></tr>
       <tr><td>18&ndash;23</td><td>SIGNAL</td><td>Statistically unusual. Warrants investigation, but may be a false positive at high periods.</td></tr>
-      <tr><td>24</td><td>BREAKTHROUGH</td><td>All 24 cribs match. Potential solution &mdash; requires further verification.</td></tr>
+      <tr><td>24</td><td>FULL MATCH</td><td>All 24 cribs match. Requires Bean constraint validation, quadgram analysis, and human review before any claim is made.</td></tr>
     </tbody>
   </table>
 </div>
@@ -97,9 +97,10 @@
   Bean constraints.
 </p>
 
-<h2>Multi-Objective Thresholds</h2>
+<h2>Validation Criteria</h2>
 <p>
-  A genuine solution must pass <strong>all</strong> of the following simultaneously:
+  A candidate solution is not accepted unless it passes <strong>all</strong> of the
+  following simultaneously:
 </p>
 <ul>
   <li>Crib score: 24/24</li>
@@ -107,7 +108,7 @@
   <li>Quadgram log-probability: &gt; &minus;4.84 per character (English-like text)</li>
   <li>Index of coincidence: &gt; 0.055 (English-like distribution)</li>
   <li>Contains &ge; 3 recognizable English words of &ge; 7 characters (outside crib positions)</li>
-  <li>Semantic coherence: reads as meaningful English (human judgment)</li>
+  <li>Semantic coherence: reads as meaningful English (human review required)</li>
 </ul>
 
 <h2>Truth Taxonomy</h2>

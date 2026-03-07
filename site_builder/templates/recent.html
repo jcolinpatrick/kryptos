@@ -4,13 +4,13 @@
 {% block content %}
 <h1>Recent Additions</h1>
 <p>
-  The most recently added elimination results, in reverse chronological order.
+  The most recently recorded eliminations, in reverse chronological order.
 </p>
 
 {% if recent_eliminations %}
 {% for e in recent_eliminations %}
 <div class="feed-item">
-  <div class="feed-date">{{ e.date_tested or "Unknown" }}</div>
+  <div class="feed-date">{{ e.date_tested|format_date if e.date_tested else "—" }}</div>
   <div class="feed-content">
     <h3><a href="/elimination/{{ e.slug }}/">{{ e.title }}</a></h3>
     <div class="meta">

@@ -137,6 +137,7 @@ scope_limitations = "Only tests Weltzeituhr clock face permutations. Does not el
 assumptions = "Clock positions map to transposition columns or key values"
 confidence_tier = 2
 repro_command = "PYTHONPATH=src python3 -u scripts/thematic/berlin_clock/e_s_134_weltzeituhr_ddr_era.py"
+keywords_tested = ["WELTZEITUHR", "URANIA", "ALEXANDERPLATZ", "BERLIN", "CLOCK"]
 
 [elimination.E-S-145-DRYAD-MATRIX]
 title = "DRYAD-style matrix code lookup"
@@ -184,6 +185,7 @@ scope_limitations = "Single-layer only. Only tests 293 thematic keywords. Does n
 assumptions = "Direct positional correspondence; Periodic substitution (Vigenere/Beaufort/VB) at periods tested"
 confidence_tier = 2
 repro_command = "PYTHONPATH=src python3 -u scripts/transposition/columnar/e_rerun_03_columnar_expanded.py"
+keywords_tested = ["URANIA", "ALEXANDERPLATZ", "BERLINCLOCK", "COMPASS", "HOROLOGE", "KRYPTOS", "LODESTONE", "PALIMPSEST", "SANBORN", "SHADOW", "SPHINX", "TUTANKHAMUN", "VERDIGRIS", "WELTZEITUHR"]
 
 [elimination.DRAGNET-V4]
 title = "Dragnet v4: Double columnar exhaustive (w7-9) + single columnar exhaustive (w10-12) + keyword columnar (w13-15)"
@@ -330,3 +332,17 @@ confidence_tier = 2
 truth_tag = "[INTERNAL RESULT]"
 repro_command = "PYTHONPATH=src python3 -u scripts/cfm/e_cfm_09_gutenberg_east_scan.py"
 research_questions = ["RQ-2", "RQ-3"]
+
+# ── Keyword enrichment for searchability ──────────────────────────────────
+
+[elimination.E-KASISKI-00]
+keywords_tested = ["URANIA", "WELTZEITUHR", "ALEXANDERPLATZ", "COMPASS", "LODESTONE", "SHADOW", "SPHINX", "PHARAOH", "TUTANKHAMUN", "CARNARVON", "HOROLOGE", "PALIMPSEST", "ABSCISSA", "KRYPTOS", "BERLINCLOCK", "SANBORN", "DESPARATLY", "IQLUSION", "IDBYROWS", "VERDIGRIS"]
+
+[elimination.E-POLY-01]
+keywords_tested = ["URANIA", "COMPASS", "LODESTONE", "ALEXANDERPLATZ", "KRYPTOS", "PALIMPSEST", "ABSCISSA", "BERLINCLOCK", "SANBORN"]
+
+[elimination.E-POLY-02]
+keywords_tested = ["URANIA", "COMPASS", "LODESTONE", "KRYPTOS", "PALIMPSEST", "ABSCISSA", "BERLINCLOCK"]
+
+[elimination.BERLIN-CLOCK-PERM-RESULTS]
+keywords_tested = ["URANIA", "WELTZEITUHR", "ALEXANDERPLATZ", "BERLIN", "CLOCK", "BERLINCLOCK"]
