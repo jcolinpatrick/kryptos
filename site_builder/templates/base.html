@@ -4,6 +4,15 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="kryptosbot.com — The K4 Elimination Database. Rigorous, reproducible cryptanalysis of Kryptos K4.">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="kryptosbot.com">
+  <meta property="og:title" content="{% block og_title %}kryptosbot.com — The K4 Elimination Database{% endblock %}">
+  <meta property="og:description" content="Rigorous, reproducible cryptanalysis of Kryptos K4. Documenting what has been tried and disproven so the community can focus on what remains open.">
+  <meta property="og:image" content="https://kryptosbot.com/static/kryptosbot.png">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="kryptosbot.com — The K4 Elimination Database">
+  <meta name="twitter:description" content="Rigorous, reproducible cryptanalysis of Kryptos K4.">
+  <meta name="twitter:image" content="https://kryptosbot.com/static/kryptosbot.png">
   <title>{% block title %}kryptosbot.com{% endblock %}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -22,7 +31,11 @@
     <ul>
       <li><strong><a href="/" class="nav-brand"><img src="/static/kryptosbot.png" alt="" class="nav-logo">kryptosbot</a></strong></li>
     </ul>
-    <ul>
+    <input type="checkbox" id="nav-toggle" class="nav-toggle" aria-label="Toggle navigation">
+    <label for="nav-toggle" class="nav-toggle-label" aria-hidden="true">
+      <span></span><span></span><span></span>
+    </label>
+    <ul class="nav-links">
       <li><a href="/browse/">Browse</a></li>
       <li><a href="/search/">Search</a></li>
       <li><a href="/methodology/">Methodology</a></li>
@@ -30,7 +43,8 @@
       <li><a href="/recent/">Recent</a></li>
       <li><a href="/faq/">FAQ</a></li>
       <li><a href="/about-kryptos/">About Kryptos</a></li>
-      <li><a href="/about-me/">About Me</a></li>
+      <li><a href="/about-me/">About</a></li>
+      <li><a href="/workbench/">Workbench</a></li>
       <li><a href="/submit/">Submit</a></li>
     </ul>
   </nav>

@@ -25,8 +25,12 @@
     <div class="stat-label">Configurations Tested</div>
   </div>
   <div class="stat-card">
+    <div class="stat-value">{{ total_scripts }}</div>
+    <div class="stat-label">Attack Scripts</div>
+  </div>
+  <div class="stat-card">
     <div class="stat-value">{{ total_experiments }}</div>
-    <div class="stat-label">Experiments Run</div>
+    <div class="stat-label">Documented Eliminations</div>
   </div>
   <div class="stat-card">
     <div class="stat-value">{{ total_categories }}</div>
@@ -73,12 +77,13 @@
   {% endfor %}
 </div>
 
-<div class="section-label">Who Built This</div>
+<div class="section-label">About This Project</div>
 <p>
-  <a href="/about-me/">Colin Patrick</a> &mdash; technologist, adjunct professor,
-  woodworker, and puzzle addict based 20 minutes from Fort Meade. After 15 years
-  securing DoD communications, he pointed a 28-core server and an AI partner at
-  the world&rsquo;s most famous unsolved cipher and started keeping score.
+  Jim Sanborn designed K4 to be solved. This site honors that intent by
+  documenting every approach that has been tried and disproven, so the
+  community can focus on what hasn&rsquo;t been tested yet. Built by
+  <a href="/about-me/">Colin Patrick</a> and
+  <a href="https://claude.ai">Claude</a> (Anthropic).
   <a href="/about-me/">Read more &rarr;</a>
 </p>
 
