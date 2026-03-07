@@ -277,16 +277,19 @@ def build_eliminations_from_hypotheses(
 def _extract_best_score(res: dict[str, Any]) -> int:
     """Extract best score from a results JSON, handling nested structures.
 
-    Legacy experiment JSONs store scores in various nested formats:
-    - top-level: best_score, global_best_score, max_score, etc.
-    - nested dicts: global_best.matches, best_config.score, mc_best.score
-    - grouped: best_by_type.*.matches, ct_feedback_best.matches
-    - top_results lists: top_results[0].score, top_20[0].score
+    If an explicit `best_score` integer is present at the top level, it is
+    treated as authoritative (manually curated) and returned immediately.
+    Otherwise, heuristic extraction is used across nested structures.
     """
+    # Authoritative: explicit best_score integer takes priority
+    explicit = res.get("best_score")
+    if isinstance(explicit, int):
+        return explicit
+
     best = 0
 
-    # 1) Top-level score fields
-    for key in ("best_score", "best_cribs", "global_best_score", "max_score",
+    # 1) Top-level score fields (excluding best_score, already checked)
+    for key in ("best_cribs", "global_best_score", "max_score",
                 "phase1_best", "overall_best"):
         val = res.get(key)
         if isinstance(val, (int, float)) and val > best:
