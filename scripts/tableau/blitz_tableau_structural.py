@@ -29,7 +29,7 @@ the top-left corner (rows 0-3, linear 0..96).
 For any mask, K4's unscrambling = the relative order of K4 positions
 within the grille (holes-first then complements, both in row-major order).
 
-Run: cd /home/cpatrick/kryptos && PYTHONPATH=src python3 -u scripts/blitz_tableau_structural.py
+Run: PYTHONPATH=src python3 -u scripts/tableau/blitz_tableau_structural.py
 """
 from __future__ import annotations
 import sys

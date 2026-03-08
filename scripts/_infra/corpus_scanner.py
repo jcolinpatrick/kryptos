@@ -37,7 +37,8 @@ from kryptos.kernel.constants import (
 
 # ── Configuration ────────────────────────────────────────────────────────
 NUM_WORKERS = 14
-RESULTS_DIR = Path("/home/cpatrick/kryptos/results/corpus_scan")
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+RESULTS_DIR = PROJECT_ROOT / "results" / "corpus_scan"
 CACHE_DIR = Path("/data/tmp/gutenberg_cache")
 MIN_REPORT_SCORE = 18  # Report anything at SIGNAL level or above
 BREAKTHROUGH = 24
@@ -561,7 +562,7 @@ def main():
 
     # Phase 2: Load local reference texts
     print("\nPhase 2: Loading local reference texts...")
-    base = "/home/cpatrick/kryptos"
+    base = str(PROJECT_ROOT)
     local_texts = [
         (f"{base}/reference/carter_gutenberg.txt", "Carter Gutenberg (local)"),
         (f"{base}/reference/carter_vol1.txt", "Carter Vol 1 (local)"),

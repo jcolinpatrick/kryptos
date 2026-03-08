@@ -172,7 +172,9 @@ print(f"\nK4 grid verification: OK (97 chars)")
 
 # ─── Quadgram Scorer ─────────────────────────────────────────────────────────
 
-def load_quadgrams(path="/home/cpatrick/kryptos/data/english_quadgrams.json"):
+def load_quadgrams(path=None):
+    if path is None:
+        path = str(Path(__file__).resolve().parents[2] / "data" / "english_quadgrams.json")
     with open(path) as f:
         raw = json.load(f)
     # File already contains log10 probabilities

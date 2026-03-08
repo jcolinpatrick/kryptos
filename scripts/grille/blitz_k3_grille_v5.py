@@ -23,7 +23,7 @@ THIS SCRIPT:
 4. The "V-bottleneck": V appears only twice in K4_CARVED; both consumed by cribs?
 5. Summary of what permutation families remain unexplored
 
-Run: cd /home/cpatrick/kryptos && PYTHONPATH=src python3 -u scripts/blitz_k3_grille_v5.py
+Run: PYTHONPATH=src python3 -u scripts/grille/blitz_k3_grille_v5.py
 """
 from __future__ import annotations
 import sys, math
