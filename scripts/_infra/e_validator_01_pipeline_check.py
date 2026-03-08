@@ -38,7 +38,8 @@ from kryptos.kernel.scoring.aggregate import score_candidate
 from kryptos.kernel.scoring.ic import ic
 from kryptos.kernel.constraints.bean import verify_bean
 
-ARTIFACTS_DIR = Path("/home/cpatrick/kryptos/artifacts")
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+ARTIFACTS_DIR = PROJECT_ROOT / "artifacts"
 ARTIFACTS_DIR.mkdir(exist_ok=True)
 
 REPORT_PATH = ARTIFACTS_DIR / "validator_baseline_report.json"

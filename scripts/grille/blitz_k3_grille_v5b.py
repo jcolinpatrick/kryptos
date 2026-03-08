@@ -13,7 +13,7 @@ BUG in v5: generalised_k3(336,24,8,0) returns None because N_prime=336 but
 the function checks set(result)==set(range(97)). Fix: use direct K3 formula
 for verification, then run the search.
 
-Run: cd /home/cpatrick/kryptos && PYTHONPATH=src python3 -u scripts/blitz_k3_grille_v5b.py
+Run: PYTHONPATH=src python3 -u scripts/grille/blitz_k3_grille_v5b.py
 """
 from __future__ import annotations
 import sys, math

@@ -32,7 +32,7 @@ NEW APPROACHES (not in existing wildcard):
 
 4. INVERSE PERMUTATIONS: For any found perm, try its inverse too
 
-Run: cd /home/cpatrick/kryptos && PYTHONPATH=src python3 -u scripts/blitz_affine_search.py
+Run: PYTHONPATH=src python3 -u scripts/blitz/blitz_affine_search.py
 """
 
 import sys, json, math, os, time

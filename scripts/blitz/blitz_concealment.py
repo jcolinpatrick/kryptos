@@ -28,7 +28,7 @@ Models tested:
   9. Interleaved null patterns (structured null insertion)
   10. Consonant-only encryption with vowel reinsertion
 
-Run: cd /home/cpatrick/kryptos && PYTHONPATH=src python3 -u scripts/blitz_concealment.py
+Run: PYTHONPATH=src python3 -u scripts/blitz/blitz_concealment.py
 """
 from __future__ import annotations
 

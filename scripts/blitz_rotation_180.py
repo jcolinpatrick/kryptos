@@ -32,7 +32,7 @@ TESTS:
   J. AZ->KA cycle integration: use 17-cycle/8-cycle membership to filter cells
   K. Half-and-half reading: read top half in natural order, bottom in 180-order
 
-Run: cd /home/cpatrick/kryptos && PYTHONPATH=src python3 -u scripts/blitz_rotation_180.py
+Run: PYTHONPATH=src python3 -u scripts/blitz_rotation_180.py
 """
 import sys
 import math
