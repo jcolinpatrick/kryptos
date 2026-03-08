@@ -270,6 +270,10 @@ def build():
     _render(env, "search.html", "search/index.html", global_ctx)
     pages_built += 1
 
+    # Terms of Use
+    _render(env, "terms.html", "terms/index.html", global_ctx)
+    pages_built += 1
+
     # 9) Generate search index
     search_index_path = os.path.join(OUTPUT_DIR, "search-index.json")
     n_indexed = write_search_index(eliminations, search_index_path)
