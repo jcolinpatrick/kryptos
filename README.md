@@ -148,4 +148,4 @@ The sculpture *Kryptos* was created by **Jim Sanborn** with cryptographic assist
 
 ---
 
-*If you solve K4, please tell us first so we can update the site before the NSA does.*
+
