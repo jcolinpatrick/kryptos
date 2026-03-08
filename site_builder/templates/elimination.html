@@ -139,7 +139,7 @@
 <h2>Reproduce</h2>
 <pre><code>{{ e.repro_command }}</code></pre>
 <p><small>
-  Requires the <a href="https://github.com/cpatrick/kryptos">kryptos repo</a>,
+  Requires the <a href="https://github.com/jcolinpatrick/kryptos">kryptos repo</a>,
   Python 3.11+, PYTHONPATH=src.
 </small></p>
 {% endif %}
@@ -150,7 +150,7 @@
   {% if e.github_issue_url %}
     <a href="{{ e.github_issue_url }}">Report on GitHub</a>
   {% else %}
-    <a href="https://github.com/cpatrick/kryptos/issues/new?title=Error%20in%20{{ e.slug|urlencode }}&body=Describe%20the%20error%20in%20elimination%20{{ e.slug|urlencode }}">
+    <a href="https://github.com/jcolinpatrick/kryptos/issues/new?title=Error%20in%20{{ e.slug|urlencode }}&body=Describe%20the%20error%20in%20elimination%20{{ e.slug|urlencode }}">
       Report on GitHub
     </a>
   {% endif %}
