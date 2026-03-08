@@ -5,7 +5,7 @@ Takes structured hypotheses (from api_client) and tests them across
 all available CPU cores using the existing kbot_harness infrastructure.
 
 Features:
-  - Parallel permutation testing (28 cores)
+  - Parallel permutation testing (all available cores)
   - Hill-climbing optimizer for refining promising permutations
   - Sandboxed generator execution (subprocess with timeout + restricted imports)
   - Reading order generation from grid structures

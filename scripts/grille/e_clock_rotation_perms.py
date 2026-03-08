@@ -45,9 +45,10 @@ import sys
 import time
 import itertools
 from math import gcd
+from pathlib import Path
 from typing import List, Tuple
 
-sys.path.insert(0, "/home/cpatrick/kryptos/src")
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
 from kryptos.kernel.constants import CT, CT_LEN
 from kryptos.kernel.transforms.vigenere import decrypt_text, CipherVariant

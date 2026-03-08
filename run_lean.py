@@ -3,7 +3,7 @@
 KryptosBot Lean Runner — Token-efficient operation mode.
 
 ARCHITECTURE:
-    Phase A — Local compute (FREE, uses your 28 cores):
+    Phase A — Local compute (FREE, uses your CPU cores):
         Statistical profiling, exhaustive simple-cipher disproof,
         keyword sweeps, columnar transposition brute-force.
         No Agent SDK. No tokens. Pure local Python + multiprocessing.
@@ -19,11 +19,7 @@ Usage:
     python run_lean.py --local                  # Phase A only (free)
     python run_lean.py --local --agent          # Phase A then B
     python run_lean.py --agent                  # Phase B only (reads prior results)
-    python run_lean.py --local --attack columnar --workers 28
-
-Token budget comparison:
-    Original design (28 agent workers):  ~5-20M tokens per campaign
-    Lean design (local + 1-3 agents):    ~200K-1M tokens per campaign
+    python run_lean.py --local --attack columnar --workers 4
 """
 
 from __future__ import annotations
@@ -183,8 +179,8 @@ def parse_args() -> argparse.Namespace:
         help="Run Phase B: agent intelligence (uses tokens sparingly)",
     )
     parser.add_argument(
-        "--workers", type=int, default=28,
-        help="CPU workers for local compute (default: 28)",
+        "--workers", type=int, default=os.cpu_count() or 4,
+        help="CPU workers for local compute (default: auto-detect)",
     )
     parser.add_argument(
         "--output", type=str, default="kbot_results",
