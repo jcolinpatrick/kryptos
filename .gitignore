@@ -53,3 +53,40 @@ reference/TOE.docx
 # Derived text extracts (regenerable from source PDFs)
 reference/carter_text_cache.txt
 reference/carter_vol1_extract.txt
+
+# Personal / infrastructure (not needed for community)
+.claude/
+MEMORY.md
+agent_analysis.json
+bootstrap_report.json
+manifest.json
+framework_inventory.json
+exhaustion_log.json
+kryptos_organize.py
+k4_job_runner.sh
+kryptosbot.tar.gz
+data/experiment_ledger.*
+data/experiment_prose_backfill.json
+
+# Deployment configs (server-specific)
+deploy/
+
+# Personal results and session reports
+kbot_results/
+kryptosbot/kbot_results/
+kryptosbot/split_results/
+kryptosbot/kryptosbot_results.db
+kryptosbot/RUNBOOK.md
+kryptosbot/english_quadgrams.txt
+kryptosbot/horologe_deep.py
+jobs/done/
+archive/
+reports/
+
+# Large data files
+*.jsonl
+kryptosbot_results.db
+reference/*.pdf
+reference/Pictures/
+reference/*.xlsx
+wordlists/kaikki_english.txt
