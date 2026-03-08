@@ -10,9 +10,9 @@ from __future__ import annotations
 # blitz_k3_grille_verify.py — Comprehensive K3 ground-truth grille verification.
 # Use K3's known plaintext/ciphertext as ground truth to test grille theories
 # and then apply promising theories to K4.
-# Run: cd /home/cpatrick/kryptos && PYTHONPATH=src python3 -u scripts/blitz_k3_grille_verify.py
+# Run: PYTHONPATH=src python3 -u scripts/blitz_k3_grille_verify.py
 
-import sys, json, math
+import os, sys, json, math
 from collections import Counter, defaultdict
 
 # ─── Constants ────────────────────────────────────────────────────────────────
@@ -195,7 +195,7 @@ QG = None
 QG_FLOOR = -10.0
 def load_quadgrams():
     global QG, QG_FLOOR
-    path = "/home/cpatrick/kryptos/data/english_quadgrams.json"
+    path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "english_quadgrams.json")
     try:
         with open(path) as f:
             raw = json.load(f)

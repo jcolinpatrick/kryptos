@@ -29,6 +29,7 @@ import random
 import sys
 import time
 from collections import defaultdict
+from pathlib import Path
 
 # ─── Constants ───────────────────────────────────────────────────────────────
 
@@ -122,7 +123,9 @@ print(f"Known PT positions: {sorted(PT_KNOWN.keys())} ({len(PT_KNOWN)} total)")
 
 # ─── Quadgram scorer ─────────────────────────────────────────────────────────
 
-def load_quadgrams(path="/home/cpatrick/kryptos/data/english_quadgrams.json"):
+def load_quadgrams(path=None):
+    if path is None:
+        path = str(Path(__file__).resolve().parents[2] / "data" / "english_quadgrams.json")
     with open(path) as f:
         raw = json.load(f)
     if all(v <= 0 for v in list(raw.values())[:10]):

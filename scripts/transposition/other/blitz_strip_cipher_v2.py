@@ -19,7 +19,7 @@ Follow-up to v1. Focuses on:
 7. Key elimination + partial plaintext attack
 8. Columnar-keyed strip: strip order changes every N positions (block cipher)
 
-Run: cd /home/cpatrick/kryptos && PYTHONPATH=src python3 -u scripts/blitz_strip_cipher_v2.py
+Run: PYTHONPATH=src python3 -u scripts/transposition/other/blitz_strip_cipher_v2.py
 """
 from __future__ import annotations
 

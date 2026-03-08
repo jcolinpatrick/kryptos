@@ -28,7 +28,7 @@ Derivations tested:
  13. Keys from coordinate substrings mapped to alphabet
  14. Coordinate-derived transposition permutations
 
-Run: cd /home/cpatrick/kryptos && PYTHONPATH=src python3 -u scripts/blitz_coordinates_key.py
+Run: PYTHONPATH=src python3 -u scripts/blitz/blitz_coordinates_key.py
 """
 from __future__ import annotations
 
