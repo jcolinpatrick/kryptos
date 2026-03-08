@@ -2,6 +2,7 @@
 
 import os
 import time
+import urllib.request
 from contextlib import asynccontextmanager
 from typing import Optional
 
@@ -172,11 +173,49 @@ async def classify(body: ClassifyRequest, request: Request):
         queue_pos = add_theory(body.theory, ip)
         result.message = "This theory hasn't been tested yet. It has been logged for evaluation."
         result.queue_position = queue_pos
+        # Fire notification (best-effort, never block the response)
+        try:
+            _notify_novel_theory(body.theory, queue_pos)
+        except Exception:
+            pass
     elif result.status == "rejected":
         # Theory was novel but infeasible/untestable/impossible — don't queue
         pass
 
     return result.to_dict()
+
+
+# ---------------------------------------------------------------------------
+# Notifications
+# ---------------------------------------------------------------------------
+
+NTFY_TOPIC = os.environ.get("NTFY_TOPIC", "")
+
+
+def _notify_novel_theory(theory: str, queue_pos: int) -> None:
+    """Send push notification via ntfy.sh when a novel theory arrives.
+
+    Set NTFY_TOPIC in .env to enable. Install the ntfy app on your phone
+    and subscribe to the same topic to receive notifications.
+    """
+    if not NTFY_TOPIC:
+        return
+    try:
+        preview = theory[:200].replace("\n", " ")
+        data = f"#{queue_pos}: {preview}".encode("utf-8")
+        req = urllib.request.Request(
+            f"https://ntfy.sh/{NTFY_TOPIC}",
+            data=data,
+            headers={
+                "Title": "New K4 Theory Submitted",
+                "Priority": "high",
+                "Tags": "brain,kryptos",
+                "Click": "https://kryptosbot.com/submit/",
+            },
+        )
+        urllib.request.urlopen(req, timeout=5)
+    except Exception:
+        pass  # Never let notification failure affect the API
 
 
 # ---------------------------------------------------------------------------
