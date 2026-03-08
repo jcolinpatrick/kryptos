@@ -1,6 +1,0 @@
-[TextBlock(text='Credit balance is too low')]
-Credit balance is too low
-
-
-ERROR: Command failed with exit code 1 (exit code: 1)
-Error output: Check stderr output for details
