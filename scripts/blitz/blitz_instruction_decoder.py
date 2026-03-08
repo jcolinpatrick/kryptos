@@ -23,7 +23,7 @@ Sections:
   J. Period-8 Vigenere tests
   K. SYNTHESIS
 
-Run:  cd /home/cpatrick/kryptos && PYTHONPATH=src python3 -u scripts/blitz_instruction_decoder.py
+Run: PYTHONPATH=src python3 -u scripts/blitz/blitz_instruction_decoder.py
 """
 
 import sys

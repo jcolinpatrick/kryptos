@@ -41,7 +41,8 @@ from kryptos.kernel.constants import (
 )
 
 NUM_WORKERS = 14
-RESULTS_DIR = Path("/home/cpatrick/kryptos/results/corpus_scan")
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+RESULTS_DIR = PROJECT_ROOT / "results" / "corpus_scan"
 CACHE_DIR = Path("/data/tmp/gutenberg_cache")
 MIN_REPORT_SCORE = 16  # Lower threshold for wave 2
 BREAKTHROUGH = 24

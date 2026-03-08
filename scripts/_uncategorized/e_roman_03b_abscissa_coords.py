@@ -123,7 +123,8 @@ def letter_values_to_order(letter_vals, width):
 
 def load_carter_running_key():
     """Load running key text from Carter Vol 1."""
-    carter_path = '/home/cpatrick/kryptos/reference/carter_vol1.txt'
+    carter_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
+                               'reference', 'carter_vol1.txt')
     with open(carter_path, 'r') as f:
         raw = f.read()
     return ''.join(c.upper() for c in raw if c.isalpha())

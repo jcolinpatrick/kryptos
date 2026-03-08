@@ -1034,7 +1034,7 @@ def _composite_score(bean_pass: bool, pt_ic: float,
 
 
 def _run_stage1(workers, scorer_path, words_by_len, resume):
-    """Stage 1: Independent region sweeps (~56B combos at 28 cores ~5.5h).
+    """Stage 1: Independent region sweeps (~56B combos at all cores ~5.5h).
 
     For each region × variant, enumerate all 2-word dictionary fills and
     score the implied keystream (including adjacent crib keystream) with

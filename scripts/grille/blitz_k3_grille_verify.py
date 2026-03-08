@@ -24,7 +24,7 @@ K3's PT and CT are BOTH known. Script sections:
   J. Tableau row-key AZ→KA analysis for K3/K4 rows
   K. Self-encrypting constraints filter for K4 permutations
 
-Run: cd /home/cpatrick/kryptos && PYTHONPATH=src python3 -u scripts/blitz_k3_grille_verify.py
+Run: PYTHONPATH=src python3 -u scripts/grille/blitz_k3_grille_verify.py
 """
 from __future__ import annotations
 import math, sys

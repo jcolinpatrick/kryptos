@@ -22,7 +22,7 @@ This script:
 5. Tests K4 with single-rotation grids at all sizes near 97
 6. Reports ANY crib hit immediately
 
-Run: cd /home/cpatrick/kryptos && PYTHONPATH=src python3 -u scripts/blitz_k3_grille_v2.py
+Run: PYTHONPATH=src python3 -u scripts/grille/blitz_k3_grille_v2.py
 """
 from __future__ import annotations
 import sys, math, itertools

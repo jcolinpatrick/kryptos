@@ -22,7 +22,7 @@ THIS SCRIPT:
 4. K4 structural analysis: 4+31+31+31 shape, transpositions based on seam
 5. The 97-prime transposition via stripe/offset reading of 14×31 grid
 
-Run: cd /home/cpatrick/kryptos && PYTHONPATH=src python3 -u scripts/blitz_k3_grille_v3.py
+Run: PYTHONPATH=src python3 -u scripts/grille/blitz_k3_grille_v3.py
 """
 from __future__ import annotations
 import sys, math

@@ -23,7 +23,7 @@ Also:
 4. K4-as-key analysis: What if K4 ITSELF is the decryption key (running key)?
 5. Reverse-model: What if the scramble is on the PT side (Model 1 variant)?
 
-Run: cd /home/cpatrick/kryptos && PYTHONPATH=src python3 -u scripts/blitz_variable_cribs.py
+Run: PYTHONPATH=src python3 -u scripts/blitz/blitz_variable_cribs.py
 """
 import sys, json, math, os, time
 from collections import Counter

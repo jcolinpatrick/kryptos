@@ -4,7 +4,7 @@ KryptosBot v2 — Generate-Test-Feedback loop.
 
 Architecture:
     1. ONE Claude API call generates structured hypotheses (~$0.50-2)
-    2. 28-core local compute tests them in parallel ($0)
+    2. Local multiprocessing tests them in parallel ($0)
     3. Results fed back to Claude for analysis and refinement (~$0.50-1)
     4. Auto hill-climbing on best permutations ($0)
     5. Optional batch API evaluation of top candidates (50% discount)

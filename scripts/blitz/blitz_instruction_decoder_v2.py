@@ -26,7 +26,7 @@ Builds on blitz_instruction_decoder.py (wave 1). Adds:
       E->A: KA-index diff = 7-11 = -4 = 22 mod 26
       What do these KA-index diffs encode?
 
-Run: cd /home/cpatrick/kryptos && PYTHONPATH=src python3 -u scripts/blitz/blitz_instruction_decoder_v2.py
+Run: PYTHONPATH=src python3 -u scripts/blitz/blitz_instruction_decoder_v2.py
 """
 
 import sys

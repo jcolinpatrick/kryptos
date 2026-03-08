@@ -277,7 +277,7 @@ PRIMER_WORDS = [
 
 # Also load from wordlist (5-10 letter words)
 WORDLIST_PRIMERS = []
-wl_path = "/home/cpatrick/kryptos/wordlists/english.txt"
+wl_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))), "wordlists", "english.txt")
 if os.path.exists(wl_path):
     with open(wl_path) as f:
         for line in f:

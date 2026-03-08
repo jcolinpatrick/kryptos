@@ -437,12 +437,12 @@ def main():
         (
             'Budge_Book_of_Dead_full',
             'https://www.gutenberg.org/files/5359/5359-8.txt',
-            '/home/cpatrick/kryptos/external/budge_book_of_dead.txt'
+            os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 'external', 'budge_book_of_dead.txt')
         ),
         (
             'Amarna_Letters_transliteration',
             'https://www.sacred-texts.com/egy/tell/tel00.htm',
-            '/home/cpatrick/kryptos/external/amarna_letters.txt'
+            os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 'external', 'amarna_letters.txt')
         ),
     ]
     for label, url, cache_path in live_corpora:
@@ -487,8 +487,9 @@ def main():
         'status': 'ANALYSIS_COMPLETE',
     }
 
-    os.makedirs('/home/cpatrick/kryptos/results', exist_ok=True)
-    out_path = '/home/cpatrick/kryptos/results/agent_k4_keystream_language_scan.json'
+    _project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    os.makedirs(os.path.join(_project_root, 'results'), exist_ok=True)
+    out_path = os.path.join(_project_root, 'results', 'agent_k4_keystream_language_scan.json')
     with open(out_path, 'w') as f:
         json.dump(output, f, indent=2)
     print(f"\n[DONE] Results written to {out_path}")

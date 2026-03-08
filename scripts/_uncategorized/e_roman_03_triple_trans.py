@@ -104,7 +104,8 @@ def load_carter_running_key(offset, length):
     carter_path = os.path.join(os.path.dirname(os.path.dirname(__file__)),
                                'reference', 'carter_vol1.txt')
     if not os.path.exists(carter_path):
-        carter_path = '/home/cpatrick/kryptos/reference/carter_vol1.txt'
+        carter_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
+                                   'reference', 'carter_vol1.txt')
     with open(carter_path, 'r') as f:
         raw = f.read()
     # Extract alpha chars starting from approximate byte offset

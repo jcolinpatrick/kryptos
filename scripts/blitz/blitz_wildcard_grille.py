@@ -25,7 +25,7 @@ NEW APPROACHES:
   I. YES WONDERFUL THINGS — new crib at K4_PT[0:18], feasibility filter
   J. 434-char double rotation — K3+?+K4 combined, K4 extracted as tail
 
-Run: cd /home/cpatrick/kryptos && PYTHONPATH=src python3 -u scripts/blitz_wildcard_grille.py
+Run: PYTHONPATH=src python3 -u scripts/blitz/blitz_wildcard_grille.py
 """
 
 import sys, os, json, math

@@ -565,7 +565,7 @@ def part3_exhaustive():
         for h in hits11:
             print(f"    {h}", flush=True)
 
-    # W=12: 12! = 479M × 2 conventions  (~10-15 min on 28 cores)
+    # W=12: 12! = 479M × 2 conventions  (~10-15 min on all cores)
     hits12 = exhaustive_columnar(12, batch_size=4000)
     if hits12:
         print(f"\n  *** W12 HITS: {len(hits12)} ***", flush=True)

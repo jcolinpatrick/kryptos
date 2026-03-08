@@ -533,7 +533,7 @@ print(f"Approach Z done. Tried={COUNT}")
 # SAVE
 # ─────────────────────────────────────────────────────────────────────────────
 def save():
-    out_dir = "/home/cpatrick/kryptos/blitz_results/numeric_permuter"
+    out_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "blitz_results", "numeric_permuter")
     os.makedirs(out_dir, exist_ok=True)
     summary = {"wave": 3, "total_tried": COUNT, "crib_hits": len(RESULTS),
                 "best_score": BEST_SCORE, "hits": RESULTS,

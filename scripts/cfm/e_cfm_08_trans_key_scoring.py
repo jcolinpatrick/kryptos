@@ -22,7 +22,7 @@ If even the optimal assignment produces non-English key values, the entire
 Methods:
   1. Optimal assignment (maximize English letter frequency sum)
   2. Bean-EQ-constrained optimal assignment (324 valid pairs)
-  3. Monte Carlo: 10M random assignments scored by quadgrams (28 cores)
+  3. Monte Carlo: 10M random assignments scored by quadgrams (all cores)
   4. Quadgram + Bean analysis of all top candidates
 
 VM: 28 vCPUs, 31GB RAM. Designed for local parallel execution.
@@ -375,7 +375,7 @@ def main():
         vowels = sum(1 for c in bc_key if c in "AEIOU")
         print(f"  Vowel ratio: {vowels}/24 = {vowels/24:.1%}")
 
-    # ── Step 4: Monte Carlo (random assignments, 28 cores) ──────────────
+    # ── Step 4: Monte Carlo (random assignments, all cores) ──────────────
     print("\n── Step 4: Monte Carlo — random assignments (10M samples) ──")
 
     n_workers = min(28, cpu_count())

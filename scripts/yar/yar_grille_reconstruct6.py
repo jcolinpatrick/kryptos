@@ -216,7 +216,8 @@ print(f"K4 from position: {all_ct[k4_start:k4_start+97]}")
 
 # Patrick Kellogg's transcription (from external/):
 import os
-ext_path = "/home/cpatrick/kryptos/external"
+_PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+ext_path = os.path.join(_PROJECT_ROOT, "external")
 if os.path.exists(ext_path):
     print(f"\nChecking external reference at {ext_path}")
     # Look for any transcription files
@@ -226,7 +227,7 @@ if os.path.exists(ext_path):
                 print(f"  Found: {os.path.join(root, f)}")
 
 # Let me also check the reference directory
-ref_path = "/home/cpatrick/kryptos/reference"
+ref_path = os.path.join(_PROJECT_ROOT, "reference")
 for root, dirs, files in os.walk(ref_path):
     for f in files:
         if any(keyword in f.lower() for keyword in ['transcript', 'cipher', 'text', 'fulltext']):
@@ -236,7 +237,7 @@ for root, dirs, files in os.walk(ref_path):
 # patrickkellogg project or other reference to get the exact CT layout.
 
 # Actually, let me check if the data/ct.txt file contains the full Kryptos CT
-ct_data = "/home/cpatrick/kryptos/data/ct.txt"
+ct_data = os.path.join(_PROJECT_ROOT, "data", "ct.txt")
 if os.path.exists(ct_data):
     with open(ct_data) as f:
         ct_content = f.read().strip()
@@ -251,7 +252,7 @@ if os.path.exists(ct_data):
 # https://elonka.com/kryptos/
 
 # Let me check what transcription the external reference uses.
-ext_kryptos_dir = "/home/cpatrick/kryptos/external/patrickkellogg-Kryptos"
+ext_kryptos_dir = os.path.join(_PROJECT_ROOT, "external", "patrickkellogg-Kryptos")
 if os.path.exists(ext_kryptos_dir):
     for root, dirs, files in os.walk(ext_kryptos_dir):
         for f in files:
@@ -360,7 +361,7 @@ for letter in 'YAR':
 # Let me check the external Kryptos transcription for comparison.
 
 try:
-    with open("/home/cpatrick/kryptos/data/ct.txt") as f:
+    with open(os.path.join(_PROJECT_ROOT, "data", "ct.txt")) as f:
         k4_ct = f.read().strip()
     print(f"\nK4 from data/ct.txt: {k4_ct}")
     print(f"K4 length: {len(k4_ct)}")
@@ -476,6 +477,6 @@ print(f"  Row 16: '{CT_LINES[15]}' (len={len(CT_LINES[15])})")
 
 # You know what, let me just look at the external reference for exact CT layout.
 import glob
-external_files = glob.glob("/home/cpatrick/kryptos/external/**/*.py", recursive=True)
+external_files = glob.glob(os.path.join(_PROJECT_ROOT, "external", "**", "*.py"), recursive=True)
 for f in external_files[:10]:
     print(f"  External: {f}")

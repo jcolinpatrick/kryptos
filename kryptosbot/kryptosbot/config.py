@@ -127,7 +127,7 @@ class KryptosBotConfig:
 
     # Parallelism
     max_workers: int = 4                  # concurrent Agent SDK sessions
-    max_local_workers: int = 28           # CPU cores for local compute
+    max_local_workers: int = 0            # CPU cores for local compute (0 = auto-detect)
     worker_timeout_minutes: int = 30      # kill stuck agents
 
     # Agent SDK settings

@@ -22,7 +22,7 @@ THIS SCRIPT:
 2. K3-style formula search for N' divisible by multiple widths near 97
 3. Physical-structure: the 4-row K4 layout with specific column counts
 
-Run: cd /home/cpatrick/kryptos && PYTHONPATH=src python3 -u scripts/blitz_k3_grille_v4.py
+Run: PYTHONPATH=src python3 -u scripts/grille/blitz_k3_grille_v4.py
 """
 from __future__ import annotations
 import sys, math

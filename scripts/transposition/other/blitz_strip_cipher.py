@@ -32,7 +32,7 @@ Approaches:
   9. Running-key strip cipher (K1/K3 PT as running key)
  10. Non-standard tableau constructions (reversed rows, alternating direction)
 
-Run: cd /home/cpatrick/kryptos && PYTHONPATH=src python3 -u scripts/blitz_strip_cipher.py
+Run: PYTHONPATH=src python3 -u scripts/transposition/other/blitz_strip_cipher.py
 """
 from __future__ import annotations
 

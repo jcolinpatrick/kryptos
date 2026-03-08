@@ -72,7 +72,7 @@ QG_FLOOR = -10.0
 
 def load_quadgrams():
     global QUADGRAMS, QG_FLOOR
-    qg_path = Path("/home/cpatrick/kryptos/data/english_quadgrams.json")
+    qg_path = Path(__file__).resolve().parents[2] / "data" / "english_quadgrams.json"
     with open(qg_path) as f:
         data = json.load(f)
     if "logp" in data:
@@ -1175,7 +1175,7 @@ def main():
     print(f"  Loaded {len(QUADGRAMS)} quadgrams, floor={QG_FLOOR:.4f}")
 
     # Output directory
-    out_dir = Path("/home/cpatrick/kryptos/results/tableau_otp")
+    out_dir = Path(__file__).resolve().parents[2] / "results" / "tableau_otp"
     out_dir.mkdir(parents=True, exist_ok=True)
 
     # Global stats and results

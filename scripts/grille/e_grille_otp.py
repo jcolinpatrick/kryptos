@@ -25,7 +25,8 @@ Tests:
 """
 
 import sys
-sys.path.insert(0, '/home/cpatrick/kryptos/src')
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
 from kryptos.kernel.constants import (
     CT, CT_LEN, ALPH, ALPH_IDX, KRYPTOS_ALPHABET,

@@ -3,11 +3,11 @@ KryptosBot Compute Engine — Local parallel execution layer.
 
 DESIGN PHILOSOPHY:
     The Agent SDK is expensive (tokens) but smart (reasoning).
-    Your VM is cheap (local CPU) but needs direction.
+    Your local CPU is cheap but needs direction.
 
     So: use 1-3 agent sessions for INTELLIGENCE, and dispatch
     the actual cryptanalytic computation as LOCAL multiprocessing
-    jobs across all 28 cores.
+    jobs across all available cores.
 
     Agent sessions should:
       - Read the framework, understand what exists
@@ -290,7 +290,7 @@ def run_columnar_transposition(
     Returns a summary dict and writes detailed results to output_file.
     """
     if num_workers is None:
-        num_workers = min(mp.cpu_count(), 28)
+        num_workers = mp.cpu_count() or 4
 
     all_results: list[dict[str, Any]] = []
     crib_matches: list[dict[str, Any]] = []
@@ -505,7 +505,7 @@ def run_keyword_search(
     with both Vigenère and Beaufort decryption.
     """
     if num_workers is None:
-        num_workers = min(mp.cpu_count(), 28)
+        num_workers = mp.cpu_count() or 4
 
     # Build keyword list — domain-specific words first
     kryptos_words = [
@@ -743,7 +743,7 @@ def run_exhaustive_simple_ciphers(output_file: str = "simple_cipher_results.json
 # ---------------------------------------------------------------------------
 
 def run_all_local_attacks(
-    num_workers: int = 28,
+    num_workers: int = 0,
     output_dir: str = "kbot_results",
 ) -> dict[str, Any]:
     """
@@ -752,6 +752,9 @@ def run_all_local_attacks(
 
     Returns a summary of all attacks.
     """
+    if num_workers <= 0:
+        num_workers = mp.cpu_count() or 4
+
     out = Path(output_dir)
     out.mkdir(exist_ok=True)
 
@@ -1121,7 +1124,7 @@ def run_key_derivation_chains(
     ~73K configs: all (A,B) pairs × 3 encrypt methods × 3 decrypt variants + triple chains.
     """
     if num_workers is None:
-        num_workers = min(mp.cpu_count(), 28)
+        num_workers = mp.cpu_count() or 4
 
     start_time = time.time()
     all_sources = {**SPLIT_ALPHA_SOURCES}
@@ -1255,7 +1258,7 @@ def run_tableau_row_keys(
     - Coordinate-indexed tableau lookups
     """
     if num_workers is None:
-        num_workers = min(mp.cpu_count(), 28)
+        num_workers = mp.cpu_count() or 4
 
     start_time = time.time()
     tableau = _build_ka_tableau()
@@ -1384,7 +1387,7 @@ def run_positional_key_generation(
     Six mixing functions testing Scheidt's position-dependent combiner concept.
     """
     if num_workers is None:
-        num_workers = min(mp.cpu_count(), 28)
+        num_workers = mp.cpu_count() or 4
 
     start_time = time.time()
     configs: list[dict[str, Any]] = []
@@ -1509,7 +1512,7 @@ def run_installation_text_running_key(
     Tests self-referential hypothesis: the sculpture's own text is a key component.
     """
     if num_workers is None:
-        num_workers = min(mp.cpu_count(), 28)
+        num_workers = mp.cpu_count() or 4
 
     start_time = time.time()
     configs: list[dict[str, Any]] = []
@@ -1614,7 +1617,7 @@ def run_alphabet_mapping_keys(
     keyword-through-tableau transformations.
     """
     if num_workers is None:
-        num_workers = min(mp.cpu_count(), 28)
+        num_workers = mp.cpu_count() or 4
 
     start_time = time.time()
     ka = KRYPTOS_ALPHABET
@@ -1875,7 +1878,7 @@ def run_transposition_aware_splits(
     Uses crib-first-char pruning for >96% early rejection.
     """
     if num_workers is None:
-        num_workers = min(mp.cpu_count(), 28)
+        num_workers = mp.cpu_count() or 4
 
     start_time = time.time()
     all_results: list[dict[str, Any]] = []
@@ -1966,10 +1969,13 @@ def run_transposition_aware_splits(
 # ---------------------------------------------------------------------------
 
 def run_all_split_attacks(
-    num_workers: int = 28,
+    num_workers: int = 0,
     output_dir: str = "split_results",
 ) -> dict[str, Any]:
     """Run all key-split combiner attacks. Returns summary."""
+    if num_workers <= 0:
+        num_workers = mp.cpu_count() or 4
+
     out = Path(output_dir)
     out.mkdir(exist_ok=True)
 
@@ -2075,7 +2081,7 @@ if __name__ == "__main__":
     )
 
     parser = argparse.ArgumentParser(description="KryptosBot Local Compute Engine")
-    parser.add_argument("--workers", type=int, default=28, help="Number of CPU workers")
+    parser.add_argument("--workers", type=int, default=0, help="Number of CPU workers (0 = auto-detect)")
     parser.add_argument("--output", type=str, default="kbot_results", help="Output directory")
     parser.add_argument("--attack", type=str, default="all",
                         choices=["all", "stats", "simple", "keywords", "columnar",

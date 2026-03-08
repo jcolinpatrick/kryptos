@@ -31,7 +31,7 @@ the KA Vigenère tableau (26x26). Use first 97 as running key.
 Approach B: For each Fleissner mask, reorder K4 characters, then try all
 thematic keywords with Vig/Beaufort.
 
-Uses 28-core multiprocessing, quadgram scoring, crib detection.
+Uses multicore multiprocessing, quadgram scoring, crib detection.
 """
 
 import json

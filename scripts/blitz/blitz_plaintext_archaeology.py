@@ -24,7 +24,7 @@ This script treats K1-K3 PT as LITERAL METHOD INSTRUCTIONS for K4:
   I. K3 "SLOWLY DESPARATLY SLOWLY" — rate/rhythm as reading pattern
   J. SYNTHESIS: combine best ideas
 
-Run: cd /home/cpatrick/kryptos && PYTHONPATH=src python3 -u scripts/blitz_plaintext_archaeology.py
+Run: PYTHONPATH=src python3 -u scripts/blitz/blitz_plaintext_archaeology.py
 """
 
 import sys

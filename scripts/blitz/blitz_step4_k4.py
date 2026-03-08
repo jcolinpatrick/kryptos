@@ -41,7 +41,7 @@ SEARCH:
   EXT2:  All 31² = 961 (s26, s27) for EACH predicted s25 from diff extrapolation.
 
 Usage:
-  cd /home/cpatrick/kryptos && PYTHONPATH=src python3 -u scripts/blitz_step4_k4.py
+  PYTHONPATH=src python3 -u scripts/blitz/blitz_step4_k4.py
 """
 from __future__ import annotations
 import sys, time, json

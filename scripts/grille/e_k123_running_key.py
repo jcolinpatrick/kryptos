@@ -809,7 +809,8 @@ else:
 
 # ── Save artifact ──────────────────────────────────────────────────────────
 
-os.makedirs("/home/cpatrick/kryptos/results", exist_ok=True)
+_PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+os.makedirs(os.path.join(_PROJECT_ROOT, "results"), exist_ok=True)
 artifact = {
     "experiment": "E-K123-RUNNING-KEY",
     "description": "K1-K3 plaintext/ciphertext as running key for K4",
@@ -820,7 +821,7 @@ artifact = {
     "results_above_threshold": results_log,
     "verdict": verdict,
 }
-artifact_path = "/home/cpatrick/kryptos/results/e_k123_running_key.json"
+artifact_path = os.path.join(_PROJECT_ROOT, "results", "e_k123_running_key.json")
 with open(artifact_path, "w") as f:
     json.dump(artifact, f, indent=2)
 print(f"  Artifact: {artifact_path}")

@@ -345,7 +345,8 @@ def main():
             print(f"\n[WARN] Corpus file not found: {args.corpus}")
 
     # ── Check for cached Gutenberg files from E-CFM-09 ──
-    gutenberg_dir = '/home/cpatrick/kryptos/external/gutenberg'
+    _project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+    gutenberg_dir = os.path.join(_project_root, 'external', 'gutenberg')
     if os.path.isdir(gutenberg_dir):
         print(f"\n[Gutenberg cache found — scanning with ALL 5040 orderings]")
         print("NOTE: E-CFM-09 only tested identity transposition. This is NEW.")
@@ -372,8 +373,8 @@ def main():
         'results': all_results,
         'status': 'COMPLETE',
     }
-    os.makedirs('/home/cpatrick/kryptos/results', exist_ok=True)
-    out_path = '/home/cpatrick/kryptos/results/agent_k4_columnar7_nonen_scan.json'
+    os.makedirs(os.path.join(_project_root, 'results'), exist_ok=True)
+    out_path = os.path.join(_project_root, 'results', 'agent_k4_columnar7_nonen_scan.json')
     with open(out_path, 'w') as f:
         json.dump(out, f, indent=2)
     print(f"\n[DONE] {out_path}")

@@ -388,7 +388,7 @@ from kbot_harness import (
 - 3 question marks on sculpture + 97 K4 chars = 100 = 10x10. Grille extract = 100 chars.
 
 ## Rules
-1. Write scripts in `scripts/grille/`, run with: `cd /home/cpatrick/kryptos && PYTHONPATH=src python3 -u scripts/grille/YOUR_SCRIPT.py`
+1. Write scripts in `scripts/grille/`, run with: `PYTHONPATH=src python3 -u scripts/grille/YOUR_SCRIPT.py`
 2. If you find ANY crib hit (EASTNORTHEAST or BERLINCLOCK), IMMEDIATELY report it
 3. Be COMPUTATIONAL -- write code, run it, analyze results, iterate
 4. Focus on GRILLE CONSTRUCTION -- determining the binary mask is the goal
