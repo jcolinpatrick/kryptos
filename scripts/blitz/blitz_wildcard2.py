@@ -24,7 +24,7 @@ V. Compete block transpositions (sizes 2-20)
 W. The "IDBYROWS 97" interpretation — specific width 97/N for integer N
 X. Tableau-path permutation — traverse KA tableau by steps defined by K4
 
-Run: cd /home/cpatrick/kryptos && PYTHONPATH=src python3 -u scripts/blitz_wildcard2.py
+Run: PYTHONPATH=src python3 -u scripts/blitz/blitz_wildcard2.py
 """
 
 import sys, json, math, os, time, random, itertools

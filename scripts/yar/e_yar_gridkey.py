@@ -118,7 +118,7 @@ assert K4_GRID[96] == (27, 30), f"pos 96 should be (27,30), got {K4_GRID[96]}"
 
 # ── Quadgram scoring ─────────────────────────────────────────────────────────
 
-QUADGRAM_PATH = Path("/home/cpatrick/kryptos/data/english_quadgrams.json")
+QUADGRAM_PATH = Path(__file__).resolve().parents[2] / "data" / "english_quadgrams.json"
 QUADGRAMS: Dict[str, float] = json.loads(QUADGRAM_PATH.read_text())
 FLOOR_LOG = -10.0
 

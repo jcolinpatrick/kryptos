@@ -21,7 +21,7 @@ Key insights being tested:
 7. "SLOWLY DESPARATLY SLOWLY" as a substitution indicator (6-10-6 blocks)
 8. K1 IQLUSION: Q=L substitution THEN standard decode (pre-substitution layer)
 
-Run: cd /home/cpatrick/kryptos && PYTHONPATH=src python3 -u scripts/blitz_plaintext_archaeology2.py
+Run: PYTHONPATH=src python3 -u scripts/blitz/blitz_plaintext_archaeology2.py
 """
 
 import sys
