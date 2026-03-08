@@ -24,14 +24,14 @@ venv/
 # Logs
 *.log
 logs/
-agent_logs/
-work/
-tmp/
+agent_logs
+work
+tmp
 
 # Data/artifacts that are usually large or per-run
-db/
+db
 results/
-artifacts/
+artifacts
 checkpoints/
 blitz_results/
 
@@ -57,7 +57,9 @@ reference/carter_vol1_extract.txt
 # Personal / infrastructure (not needed for community)
 .claude/
 MEMORY.md
+RUNBOOK.md
 agent_analysis.json
+scripts/vm_capability_report.sh
 bootstrap_report.json
 manifest.json
 framework_inventory.json
@@ -89,4 +91,6 @@ kryptosbot_results.db
 reference/*.pdf
 reference/Pictures/
 reference/*.xlsx
+reference/*.jpg
+reference/*.png
 wordlists/kaikki_english.txt
