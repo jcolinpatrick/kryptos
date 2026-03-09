@@ -29,15 +29,33 @@ from collections import defaultdict
 from multiprocessing import Pool, cpu_count
 
 # ---------------------------------------------------------------------------
-# Bean constraints (duplicated here for standalone worker-process use)
+# Bean constraints (derived dynamically — variant-independent: 242 pairs)
 # ---------------------------------------------------------------------------
+K4 = "OBKRUOXOGHULBSOLIFBBWFLRVQQPRNGKSSOTWTQSJQSSEKZZWATJKLUDIAWINFBNYPVTTMZFPKWGDKZXTJCDIGKUHUAUEKCAR"
+CRIBS_RAW = [(21, "EASTNORTHEAST"), (63, "BERLINCLOCK")]
 BEAN_EQ = (27, 65)
-BEAN_INEQ = [
-    (24, 28), (28, 33), (24, 33), (21, 30), (21, 64), (30, 64),
-    (68, 25), (22, 31), (66, 70), (26, 71), (69, 72), (23, 32),
-    (71, 21), (25, 26), (24, 66), (31, 73), (29, 63), (32, 33),
-    (67, 68), (27, 72), (23, 28),
-]
+
+def _derive_bean_ineq() -> list[tuple[int, int]]:
+    crib_dict: dict[int, str] = {}
+    for pos, text in CRIBS_RAW:
+        for j, ch in enumerate(text):
+            crib_dict[pos + j] = ch
+    positions = sorted(crib_dict.keys())
+    pairs: list[tuple[int, int]] = []
+    for i in range(len(positions)):
+        for j in range(i + 1, len(positions)):
+            a, b = positions[i], positions[j]
+            ca, pa = ord(K4[a]) - 65, ord(crib_dict[a]) - 65
+            cb, pb = ord(K4[b]) - 65, ord(crib_dict[b]) - 65
+            vig_eq = (ca - pa) % 26 == (cb - pb) % 26
+            beau_eq = (ca + pa) % 26 == (cb + pb) % 26
+            vbeau_eq = (pa - ca) % 26 == (pb - cb) % 26
+            if not vig_eq and not beau_eq and not vbeau_eq:
+                pairs.append((a, b))
+    return pairs
+
+BEAN_INEQ = _derive_bean_ineq()
+assert len(BEAN_INEQ) == 242, f"Expected 242 VI inequalities, got {len(BEAN_INEQ)}"
 
 # Lengths that are impossible (some inequality pair collapses to same position)
 IMPOSSIBLE_LENGTHS = set()
@@ -180,7 +198,7 @@ def check_bean_constraints(word):
     if w[27 % L] != w[65 % L]:
         return False
 
-    # All 21 inequalities
+    # All 242 variant-independent inequalities
     for i, j in BEAN_INEQ:
         if w[i % L] == w[j % L]:
             return False

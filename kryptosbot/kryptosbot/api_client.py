@@ -127,7 +127,7 @@ This dramatically reduces the search space:
 ## Bean Constraints
 
 Equality: k[27] = k[65] (both positions encrypt R→P, so key values must match)
-Inequalities: 21 pairs where key values must DIFFER (derived from same PT letter → different CT letter, or different PT letter → same CT letter)
+Inequalities: 242 variant-independent pairs where key values must DIFFER (pairs where derived key values differ under ALL three cipher variants: Vigenère, Beaufort, Variant Beaufort)
 
 These constraints are ALREADY SATISFIED under identity (no transposition) — they don't help find wrong positions, but they constrain the substitution key structure.
 

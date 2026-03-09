@@ -1,26 +1,28 @@
 #!/usr/bin/env python3
 """
-KryptosBot Campaign Runner — Bean-guided partial transposition + evolutionary search.
+KryptosBot Campaign Runner — Two-system K4 solver.
 
-Architecture (informed by Bean 2021):
-    Phase 0: Built-in reading orders (first run only)
-    Phase 1: Bean Baseline — identity decryption + Bean diagnostics
-    Phase 2: Exhaustive single-swap search (C(97,2) = 4,656 per combo)
-    Phase 3: Focused double-swap (top swap pairs from Phase 2)
-    Phase 4: Near-identity hill-climbing (start from identity, find minimal swaps)
-    Phase 5: API-guided hypothesis generation (with Bean context)
-    Phase 6: Evolutionary crossover + depth refinement (recurring)
+Architecture (2026-03-09, updated after periodic-sub impossibility proof):
+    Phase 1: Bean Baseline — identity decryption + Bean diagnostics (free)
+    Phase 2: Exhaustive single-swap search (optional, low-value)
+    Phase 3: Focused double-swap (optional, low-value)
+    Phase 4: Near-identity hill-climbing (free)
+    Phase 5: Priority keyword deep search (free)
+    Phase 6: Null-mask SA search (free)
+    Phase 7+: Evolutionary crossover + API-guided hypotheses (recurring)
 
-Key insight from Bean 2021: statistical evidence (p≈1/240 to 1/5520) says MOST
-positions have direct one-to-one substitution. Instead of searching 97! full
-permutations, we search for the FEW positions that might be transposed.
+PROVEN (2026-03-09): No periodic sub (Vig/Beau/VBeau × AZ/KA, periods 1-26)
+is crib-consistent on the raw 97-char carved text. Two systems required.
+Model A: remove nulls first → 73-char CT → decrypt. Model B: decrypt all 97 → read 73.
+~1.66M null-mask configs tested so far: ZERO signal.
 
 Usage:
     PYTHONPATH=src python3 -u kryptosbot/campaign.py
     PYTHONPATH=src python3 -u kryptosbot/campaign.py --budget 50
     PYTHONPATH=src python3 -u kryptosbot/campaign.py --local-only
     PYTHONPATH=src python3 -u kryptosbot/campaign.py --dry-run
-    PYTHONPATH=src python3 -u kryptosbot/campaign.py --phase bean   # Run Bean phases only
+    PYTHONPATH=src python3 -u kryptosbot/campaign.py --phase bean    # Bean phases only
+    PYTHONPATH=src python3 -u kryptosbot/campaign.py --phase null    # Null-mask SA only
 """
 
 from __future__ import annotations
@@ -130,6 +132,10 @@ class CampaignState:
     # Priority keyword sweep state
     priority_keyword_done: bool = False
     priority_keyword_results: dict = field(default_factory=dict)
+    # Null-mask SA state
+    null_mask_done: bool = False
+    null_mask_best_score: float = -9999.0
+    null_mask_best_positions: list[int] = field(default_factory=list)
 
     @property
     def budget_remaining(self) -> float:
@@ -277,7 +283,7 @@ def run_bean_phases(state: CampaignState, num_workers: int) -> None:
 
         print("  Top 10 by quadgram score (identity permutation):")
         for i, r in enumerate(diag["top_by_score"][:10]):
-            bean_str = f"Bean eq={r['bean_eq']} ineq={r['bean_ineq_pass']}/21"
+            bean_str = f"Bean eq={r['bean_eq']} ineq={r['bean_ineq_pass']}/242"
             md_str = f"minor_diff={r['minor_diff_mean']:.1f}"
             print(f"    {i+1:2d}. {r['method']:<30s} score={r['score']:>8.1f}  "
                   f"cribs={r['crib_hits']:<3d} {bean_str}  {md_str}")
@@ -410,7 +416,7 @@ def run_bean_phases(state: CampaignState, num_workers: int) -> None:
             print(f"    Displaced: {displaced} positions from identity")
             print(f"    Cribs:     {ni_result.get('crib_hits', 0)}")
             print(f"    Bean eq:   {ni_result.get('bean_eq', '?')}")
-            print(f"    Bean ineq: {ni_result.get('bean_ineq_pass', '?')}/21")
+            print(f"    Bean ineq: {ni_result.get('bean_ineq_pass', '?')}/242")
             print(f"    Time:      {elapsed:.1f}s")
 
             if ni_result.get("identity_top5"):
@@ -531,16 +537,320 @@ def run_bean_phases(state: CampaignState, num_workers: int) -> None:
         }
         save_state(state)
 
+    # --- Phase 6: Null-mask SA search (73-char hypothesis) ---
+    if not state.null_mask_done:
+        print("\n" + "=" * 70)
+        print("  PHASE 6: Null-Mask SA Search (73-char hypothesis)")
+        print("  Finding which 24 of 97 K4 positions are nulls.")
+        print("  Model: remove 24 nulls → 73-char CT → Vig/Beau decrypt → English")
+        print("=" * 70 + "\n")
+
+        start = time.monotonic()
+        nm_result = _run_null_mask_sa(num_workers=num_workers)
+        elapsed = time.monotonic() - start
+
+        best = nm_result.get("best", {})
+        print(f"  Null-mask SA completed in {elapsed:.1f}s")
+        print(f"  Restarts:    {nm_result.get('restarts', 0)}")
+        print(f"  Best score:  {best.get('score', -9999):.1f}")
+        print(f"  Best method: {best.get('method', '?')}")
+        print(f"  Null count:  {len(best.get('null_positions', []))}")
+        if best.get('plaintext'):
+            print(f"  Best PT:     {best['plaintext'][:60]}...")
+        if best.get('crib_hits', 0) > 0:
+            print(f"  CRIB HITS:   {best['crib_hits']} ***")
+
+        state.null_mask_done = True
+        state.null_mask_best_score = best.get("score", -9999.0)
+        state.null_mask_best_positions = best.get("null_positions", [])
+
+        if best.get("score", -9999) > ELITE_ENTRY_SCORE:
+            # Build a permutation that represents the null removal
+            # (identity perm of the 73 non-null positions)
+            non_null = [i for i in range(K4_LEN) if i not in set(best.get("null_positions", []))]
+            member = EliteMember(
+                perm=non_null,  # Not a standard 97-perm; stored as position list
+                score=best["score"],
+                method=best.get("method", "null_mask_sa"),
+                plaintext=best.get("plaintext", ""),
+                crib_hits=best.get("crib_hits", 0),
+                source="null_mask_sa",
+                round_found=0,
+            )
+            state.add_elite(member)
+
+        nm_path = CAMPAIGN_DIR / "null_mask_sa.json"
+        CAMPAIGN_DIR.mkdir(parents=True, exist_ok=True)
+        nm_path.write_text(json.dumps(nm_result, indent=2, default=str))
+        print(f"\n  Results saved: {nm_path.name}")
+        save_state(state)
+
+
+# ---------------------------------------------------------------------------
+# Null-mask SA search (Phase 6)
+# ---------------------------------------------------------------------------
+
+def _null_mask_sa_worker(args: tuple) -> dict:
+    """Single SA restart for null-mask search. Runs in worker process."""
+    import random as rng
+    import signal as _signal
+
+    # Ignore SIGINT/SIGTERM in workers — let main process handle shutdown
+    _signal.signal(_signal.SIGINT, _signal.SIG_IGN)
+    _signal.signal(_signal.SIGTERM, _signal.SIG_IGN)
+
+    seed, iterations, w_constrained = args
+    rng.seed(seed)
+
+    K4 = "OBKRUOXOGHULBSOLIFBBWFLRVQQPRNGKSSOTWTQSJQSSEKZZWATJKLUDIAWINFBNYPVTTMZFPKWGDKZXTJCDIGKUHUAUEKCAR"
+    AZ = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    KA = "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+    CRIBS = [(21, "EASTNORTHEAST"), (63, "BERLINCLOCK")]
+    TOP_KEYWORDS = ["KOMPASS", "KRYPTOS", "DEFECTOR", "COLOPHON", "KOLOPHON",
+                    "PARALLAX", "KRYPTA", "KRYPTEIA", "KLEPSYDRA", "ABSCISSA"]
+    W_POSITIONS = {20, 36, 48, 58, 74}
+
+    # Crib positions that CANNOT be nulls
+    crib_positions = set()
+    for pos, text in CRIBS:
+        for j in range(len(text)):
+            crib_positions.add(pos + j)
+
+    # Available positions for nulls (non-crib)
+    available = [i for i in range(97) if i not in crib_positions]
+
+    # Load quadgrams
+    from pathlib import Path
+    qg_path = Path(__file__).resolve().parent.parent.parent / "data" / "english_quadgrams.json"
+    if not qg_path.exists():
+        qg_path = Path("data/english_quadgrams.json")
+    import json as _json
+    with open(qg_path) as f:
+        qg = _json.load(f)
+    qg_floor = min(qg.values()) - 1.0
+
+    # Intel jargon terms for bonus scoring (avoids rejecting acronym-heavy plaintext)
+    _jargon_high = ["DEADDROP", "CLASSIFIED", "INTERCEPT", "DEFECTOR", "GCHQ",
+                     "STASI", "ASSET", "AGENT", "COVERT", "SECRET", "BURIED",
+                     "HIDDEN", "MARKER", "SIGNAL", "CIPHER"]
+    _jargon_med = ["CIA", "KGB", "NSA", "FBI", "DCI", "DDR", "GRU", "BND",
+                    "SIGINT", "HUMINT", "OPSEC", "INTEL", "LANGLEY", "MOSCOW",
+                    "BERLIN", "KREMLIN", "KRYPTOS", "SANBORN", "LODESTONE"]
+    _jargon_low = ["NEAR", "STOP", "KNOW", "FIVE", "CLOCK", "POINT", "PACES",
+                    "NORTH", "SOUTH", "EAST", "WEST", "LOCATION", "EXACTLY"]
+
+    def score_text(text):
+        if len(text) < 4:
+            return -999.0
+        qg_score = sum(qg.get(text[i:i+4], qg_floor) for i in range(len(text) - 3))
+        # Intel jargon bonus
+        bonus = 0.0
+        upper = text.upper()
+        for t in _jargon_high:
+            if t in upper:
+                bonus += 15.0
+        for t in _jargon_med:
+            if t in upper:
+                bonus += 10.0
+        for t in _jargon_low:
+            if t in upper:
+                bonus += 5.0
+        return qg_score + bonus
+
+    def vig_decrypt(ct, key, alpha=AZ):
+        result = []
+        klen = len(key)
+        for i, c in enumerate(ct):
+            ci = alpha.index(c)
+            ki = alpha.index(key[i % klen])
+            result.append(alpha[(ci - ki) % 26])
+        return "".join(result)
+
+    def beau_decrypt(ct, key, alpha=AZ):
+        result = []
+        klen = len(key)
+        for i, c in enumerate(ct):
+            ci = alpha.index(c)
+            ki = alpha.index(key[i % klen])
+            result.append(alpha[(ki - ci) % 26])
+        return "".join(result)
+
+    def evaluate_mask(null_set):
+        """Remove nulls, decrypt with top keywords, return best score."""
+        # Build reduced CT
+        reduced = []
+        pos_map = {}
+        j = 0
+        for i in range(97):
+            if i not in null_set:
+                reduced.append(K4[i])
+                pos_map[i] = j
+                j += 1
+        reduced_ct = "".join(reduced)
+        if len(reduced_ct) != 73:
+            return -9999.0, "", "", 0
+
+        best_score = -9999.0
+        best_pt = ""
+        best_method = ""
+        best_cribs = 0
+
+        for kw in TOP_KEYWORDS:
+            for cname, dfn in [("vig", vig_decrypt), ("beau", beau_decrypt)]:
+                for aname, alpha in [("AZ", AZ), ("KA", KA)]:
+                    pt = dfn(reduced_ct, kw, alpha)
+                    sc = score_text(pt)
+
+                    # Check cribs at compressed positions
+                    hits = 0
+                    for crib_start, crib_text in CRIBS:
+                        if crib_start in pos_map:
+                            cs = pos_map[crib_start]
+                            for k, ch in enumerate(crib_text):
+                                if cs + k < len(pt) and pt[cs + k] == ch:
+                                    hits += 1
+
+                    combined = sc + hits * 5.0  # Bonus for crib hits
+                    if combined > best_score:
+                        best_score = combined
+                        best_pt = pt
+                        best_method = f"null/{cname}/{kw}/{aname} cribs={hits}"
+                        best_cribs = hits
+
+        return best_score, best_pt, best_method, best_cribs
+
+    # Initialize: random 24 null positions (or W-constrained)
+    if w_constrained:
+        fixed_nulls = W_POSITIONS & set(available)
+        remaining_avail = [p for p in available if p not in fixed_nulls]
+        needed = 24 - len(fixed_nulls)
+        if needed > 0 and len(remaining_avail) >= needed:
+            extra = set(rng.sample(remaining_avail, needed))
+            null_set = fixed_nulls | extra
+        else:
+            null_set = set(rng.sample(available, 24))
+    else:
+        null_set = set(rng.sample(available, 24))
+
+    non_null = [p for p in available if p not in null_set]
+    null_list = list(null_set)
+
+    current_score, current_pt, current_method, current_cribs = evaluate_mask(null_set)
+    best_score = current_score
+    best_pt = current_pt
+    best_method = current_method
+    best_nulls = sorted(null_set)
+    best_cribs = current_cribs
+
+    # SA parameters
+    temp = 5.0
+    cooling = 0.99997
+    min_temp = 0.01
+
+    for step in range(iterations):
+        # Neighbor: swap one null with one non-null (both from available)
+        ni = rng.randrange(len(null_list))
+        nni = rng.randrange(len(non_null))
+
+        old_null = null_list[ni]
+        old_nonnull = non_null[nni]
+
+        null_set.discard(old_null)
+        null_set.add(old_nonnull)
+        null_list[ni] = old_nonnull
+        non_null[nni] = old_null
+
+        new_score, new_pt, new_method, new_cribs = evaluate_mask(null_set)
+
+        delta = new_score - current_score
+        if delta > 0 or rng.random() < (2.718281828 ** (delta / max(temp, 0.001))):
+            current_score = new_score
+            current_pt = new_pt
+            current_method = new_method
+            current_cribs = new_cribs
+            if new_score > best_score:
+                best_score = new_score
+                best_pt = new_pt
+                best_method = new_method
+                best_nulls = sorted(null_set)
+                best_cribs = new_cribs
+        else:
+            # Revert
+            null_set.discard(old_nonnull)
+            null_set.add(old_null)
+            null_list[ni] = old_null
+            non_null[nni] = old_nonnull
+
+        temp *= cooling
+        if temp < min_temp:
+            temp = min_temp
+
+    return {
+        "score": best_score,
+        "plaintext": best_pt,
+        "method": best_method,
+        "null_positions": best_nulls,
+        "crib_hits": best_cribs,
+        "seed": seed,
+    }
+
+
+def _run_null_mask_sa(
+    iterations: int = 100000,
+    num_workers: int = 0,
+) -> dict:
+    """Run parallel SA restarts searching for the 24 null positions."""
+    if num_workers <= 0:
+        num_workers = mp.cpu_count() or 4
+
+    # Run both W-constrained and unconstrained restarts
+    restarts = num_workers * 2  # Half W-constrained, half free
+    tasks = []
+    for i in range(restarts):
+        w_constrained = (i < restarts // 2)
+        tasks.append((i * 1000 + int(time.time()) % 10000, iterations, w_constrained))
+
+    print(f"  Launching {restarts} SA restarts ({restarts//2} W-constrained, "
+          f"{restarts//2} free) across {num_workers} workers...")
+    print(f"  {iterations:,} steps per restart, {len(PRIORITY_KEYWORDS)} keywords × 2 ciphers × 2 alphabets")
+    print(f"  (Note: 1.66M null-mask configs already tested in standalone scripts — all negative)")
+
+    results = []
+    with mp.Pool(num_workers) as pool:
+        for i, result in enumerate(pool.imap_unordered(_null_mask_sa_worker, tasks)):
+            results.append(result)
+            best_so_far = max(results, key=lambda r: r["score"])
+            print(f"    [{i+1}/{restarts}] score={best_so_far['score']:.1f} "
+                  f"method={best_so_far['method']}")
+
+    best = max(results, key=lambda r: r["score"])
+    return {
+        "best": best,
+        "restarts": restarts,
+        "iterations_per_restart": iterations,
+        "all_results": sorted(
+            [{"score": r["score"], "method": r["method"], "crib_hits": r["crib_hits"],
+              "null_positions": r["null_positions"]}
+             for r in results],
+            key=lambda r: r["score"],
+            reverse=True,
+        )[:20],
+    }
+
 
 # ---------------------------------------------------------------------------
 # Campaign loop
 # ---------------------------------------------------------------------------
 
 _shutdown_requested = False
+_main_pid = None
 
 
 def _signal_handler(signum, frame):
     global _shutdown_requested
+    # Only print from the main process, not from multiprocessing workers
+    if os.getpid() != _main_pid:
+        return
     if not _shutdown_requested:
         _shutdown_requested = True
         print("\n  Shutdown requested — finishing current round and saving state...")
@@ -558,11 +868,12 @@ def run_campaign(
     phase: str = "",
 ) -> None:
     """Main campaign loop. Runs until budget exhausted or Ctrl+C."""
-    global _shutdown_requested
+    global _shutdown_requested, _main_pid
 
     if num_workers <= 0:
         num_workers = mp.cpu_count() or 4
 
+    _main_pid = os.getpid()
     signal.signal(signal.SIGINT, _signal_handler)
     signal.signal(signal.SIGTERM, _signal_handler)
 
@@ -574,7 +885,7 @@ def run_campaign(
         state.started_at = datetime.now(timezone.utc).isoformat()
 
     print(f"\n{'='*70}")
-    print(f"  KryptosBot Campaign — Bean-Guided + Priority Keyword Search")
+    print(f"  KryptosBot Campaign — 73-Char Null Hypothesis + Bean-Guided Search")
     print(f"{'='*70}")
     print(f"  Budget:    ${state.budget_total:.2f} (${state.budget_spent:.2f} spent, ${state.budget_remaining:.2f} remaining)")
     print(f"  Rounds:    {state.rounds_completed} completed")
@@ -589,6 +900,7 @@ def run_campaign(
           f"near_id={'done' if state.bean_near_identity_done else 'pending'}")
     print(f"  Priority:  {'done' if state.priority_keyword_done else 'PENDING'} "
           f"(DEFECTOR/PARALLAX/COLOPHON + {len(set(PRIORITY_KEYWORDS))-3} more)")
+    print(f"  Null-mask: {'done (score=' + f'{state.null_mask_best_score:.1f})' if state.null_mask_done else 'PENDING'}")
     if state.elite:
         print(f"  Top elite: {state.elite[0]['score']:.1f} ({state.elite[0]['method']})")
     print(f"{'='*70}\n")
@@ -602,20 +914,21 @@ def run_campaign(
             print(f"\n  Best plaintext: {state.best_ever_plaintext[:60]}...")
         return
 
-    # --- Bean phases + priority keyword sweep (run once, free, no API) ---
+    # --- Bean phases + priority keyword sweep + null-mask SA (run once, free, no API) ---
     pending_phases = not all([
         state.bean_baseline_done,
         state.bean_single_swap_done,
         state.bean_double_swap_done,
         state.bean_near_identity_done,
         state.priority_keyword_done,
+        state.null_mask_done,
     ])
-    if phase in ("bean", "keyword") or pending_phases:
+    if phase in ("bean", "keyword", "null") or pending_phases:
         run_bean_phases(state, num_workers)
         if _shutdown_requested:
             _print_campaign_summary(state)
             return
-        if phase in ("bean", "keyword"):
+        if phase in ("bean", "keyword", "null"):
             _print_campaign_summary(state)
             return
 
@@ -640,8 +953,8 @@ def run_campaign(
 
         api_key = _load_api_key()
         if not api_key:
-            print("ERROR: No ANTHROPIC_API_KEY. Set in environment or kryptosbot/.env")
-            print("  Falling back to local-only mode.")
+            print("  No ANTHROPIC_API_KEY found. Running local-only (crossover + hill-climb).")
+            print("  Set key in environment or kryptosbot/.env for API-guided search.")
             local_only = True
         else:
             client = KryptosAPIClient(
@@ -677,7 +990,10 @@ def run_campaign(
             round_results: list[HypothesisResult] = []
 
             # --- Decide what to do this round ---
-            do_crossover = (round_num % CROSSOVER_INTERVAL == 0) and len(state.elite) >= 2
+            # In local-only mode, always do crossover (no API work available)
+            do_crossover = (
+                (round_num % CROSSOVER_INTERVAL == 0) or local_only
+            ) and len(state.elite) >= 2
             do_depth = (round_num % DEPTH_INTERVAL == 0) and len(state.elite) >= 1
             do_opus = (round_num % OPUS_INSIGHT_INTERVAL == 0) and client and not local_only
             do_api = not local_only and client and not do_depth
@@ -910,13 +1226,22 @@ Best plaintext so far: {state.best_ever_plaintext[:80]}
 Priority keyword sweep results: {json.dumps(state.priority_keyword_results, indent=2) if state.priority_keyword_results else 'pending'}
 
 Analyze the campaign with these focal hypotheses:
-1. DEFECTOR as keyword: K4 may be about exfiltrating a defector from East Berlin.
-   EASTNORTHEAST=compass bearing, BERLINCLOCK=checkpoint/timing signal.
-   Berlin Wall fell Nov 1989; Kryptos dedicated Nov 1990. Does the plaintext support this?
-2. PARALLAX and COLOPHON are known Sanborn keywords that pass Bean. Which scores highest?
-3. Bean's statistics say most positions are one-to-one. Are our partial-swap results consistent?
-4. What positions keep appearing in the elite methods? Are they structurally significant?
-5. Are there untried approaches: autokey, Gromark, running key, Berlin Clock base-5?
+
+CURRENT PARADIGM: 73-char null hypothesis
+- Model: 73-char PT → sub(keyword) → 73-char CT → insert 24 nulls → 97 carved
+- Core problem: which 24 positions are nulls?
+- W positions [20,36,48,58,74] bracket cribs — strong null candidates
+- Triple-24: (97-73), (cribs 13+11), (Weltzeituhr 24 facets)
+
+KEY QUESTIONS:
+1. Do null-mask SA results show any structural pattern in the null positions?
+2. What rule could Sanborn have used to decide where to insert nulls?
+3. d=13 anomaly: Beaufort k%13 collisions 3.55× expected — period 13 = len(EASTNORTHEAST).
+   Has this been exploited with null removal?
+4. HOROLOGE and ENIGMA are ELIMINATED (pigeonhole). KRYPTOS (5/6), DEFECTOR (4/6) survive.
+5. "Not standard English, second level of cryptanalysis" — telegram with W-delimiters?
+6. Are there untried null-selection rules: Weltzeituhr mapping, K1-K3 derived masks,
+   maintenance timer positions (20, 24, 8)?
 
 Be specific and actionable."""
 
@@ -989,17 +1314,25 @@ Unique permutations tested: {tried_count:,}
 
 Generate NEW hypotheses exploring angles the elite hasn't covered.
 
-KEY STRATEGY — PRIORITY KEYWORD FOCUS:
-- Top Bean-plausibility keywords: DEFECTOR, PARALLAX, COLOPHON, HOROLOGE, PEDESTAL, MONOLITH
-- DEFECTOR is the strongest narrative candidate: K4 may describe exfiltrating a
-  defector from East Berlin (cribs EASTNORTHEAST=bearing, BERLINCLOCK=checkpoint/timing)
-- Bean constraint at length 8 requires word[1]==word[3] (e.g. D-E-F-E-CTOR, P-A-R-A-LLAX)
-- Bean's evidence says most CT↔PT positions are direct one-to-one substitution
-- Focus on finding the FEW positions that might need transposing with these keywords
-- Use "partial_swap" type for specific swap hypotheses
-- Use "generator" type for systematic exploration of swap families
-- Try non-periodic key models: autokey, Gromark at base 5/8/12/26, running key
-- Consider if DIAWINFBN (positions 55-63, constant Δ4=5) marks a structural boundary
+KEY PARADIGM — 73-CHAR NULL HYPOTHESIS:
+- Model: 73-char PT → substitution → 73-char CT → insert 24 nulls → 97 carved
+- THE CORE PROBLEM: which 24 of 97 positions are nulls?
+- Crib positions (21-33, 63-73) CANNOT be nulls
+- W positions [20,36,48,58,74] are strong null candidates (bracket cribs)
+- Triple-24: (97-73), (13+11 cribs), (Weltzeituhr facets)
+- Two Systems CONFIRMED by Sanborn: substitution + null insertion
+- d=13 anomaly: Beaufort k%13 collisions 3.55× expected (strongest signal)
+
+PRODUCTIVE APPROACHES:
+- Use "generator" type for null-mask candidates: enumerate 24 null positions, remove them,
+  decrypt 73-char CT with keywords, score with quadgrams
+- Try structural null patterns: every Nth position, positions where cipher==tableau, etc.
+- Test period-13 Beaufort with null removal
+- Use "partial_swap" type for targeted position exchanges
+- Consider autokey, running key on 73-char reduced texts
+
+KEYWORDS (strongest survivors): KRYPTOS (5/6), DEFECTOR (4/6), COLOPHON (3/6), ABSCISSA (3/6)
+ELIMINATED keywords: HOROLOGE, ENIGMA (pigeonhole analysis)
 
 {f'This is round {round_num}, a depth round — crossover offspring also running. Focus on NOVEL approaches.' if round_num % CROSSOVER_INTERVAL == 0 else ''}"""
 
@@ -1082,6 +1415,12 @@ def _print_campaign_summary(state: CampaignState) -> None:
     print(f"    Near-identity HC:  {'done' if state.bean_near_identity_done else 'pending'}")
     print(f"    Identity top:      {state.bean_identity_top_score:.1f}")
     print(f"    Best swap Δ:       {state.bean_best_swap_improvement:.1f}")
+    print(f"\n  Null-Mask SA:")
+    print(f"    Status:            {'done' if state.null_mask_done else 'PENDING'}")
+    if state.null_mask_done:
+        print(f"    Best score:        {state.null_mask_best_score:.1f}")
+        if state.null_mask_best_positions:
+            print(f"    Best null pos:     {state.null_mask_best_positions[:10]}{'...' if len(state.null_mask_best_positions) > 10 else ''}")
     print(f"\n  Priority Keyword Sweep:")
     print(f"    Status:            {'done' if state.priority_keyword_done else 'PENDING'}")
     if state.priority_keyword_results:
@@ -1128,8 +1467,8 @@ def main() -> None:
     parser.add_argument("--reset", action="store_true",
                         help="Reset campaign state (start fresh)")
     parser.add_argument("--phase", type=str, default="",
-                        choices=["", "bean", "keyword"],
-                        help="Run only a specific phase (bean = Bean phases, keyword = priority keyword sweep)")
+                        choices=["", "bean", "keyword", "null"],
+                        help="Run only a specific phase (bean = Bean phases, keyword = priority keyword sweep, null = null-mask SA)")
 
     args = parser.parse_args()
 

@@ -72,7 +72,7 @@ class TestBeanConstraints:
         assert len(BEAN_EQ) == 1
 
     def test_ineq_count(self):
-        assert len(BEAN_INEQ) == 21
+        assert len(BEAN_INEQ) == 242
 
     def test_eq_positions(self):
         assert BEAN_EQ[0] == (27, 65)

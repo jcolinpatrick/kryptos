@@ -110,26 +110,49 @@ _HARDCODED_KEYWORDS = [
 
 # Priority keywords for intensive search — these get extra hill-climbing restarts
 PRIORITY_KEYWORDS = [
-    "DEFECTOR",     # Cold War narrative: East Berlin defection
+    "KOMPASS",      # German COMPASS (5/6 survival, ties KRYPTOS!) — lodestone theme
+    "DEFECTOR",     # Cold War narrative: East Berlin defection (4/6)
+    "COLOPHON",     # Known Sanborn keyword, Bean PASS, manuscripts (3/6)
+    "KOLOPHON",     # Greek original of COLOPHON — K-for-C hypothesis (3/6)
     "PARALLAX",     # Known Sanborn keyword, Bean PASS, geometry
-    "COLOPHON",     # Known Sanborn keyword, Bean PASS, manuscripts
-    "HOROLOGE",     # Clock/sundial — BERLINCLOCK crib connection
+    "KRYPTA",       # German/Greek CRYPT — same root as KRYPTOS (3/6)
+    "KRYPTEIA",     # Spartan secret police — ancient intelligence service! (2/6)
+    "KLEPSYDRA",    # Greek water clock — BERLINCLOCK + pool theme (2/6)
     "PEDESTAL",     # Sculpture base — Sanborn's medium
     "MONOLITH",     # Large single stone — monument/sculpture
     "TOPOLOGY",     # Mathematical structure
     "SPYPLANE",     # Surveillance — Cold War
-    "DEFECTOR",     # (duplicate intentional — double weight)
 ]
 
-# --- Bean constraints (hardcoded for worker-process isolation) ---
-# Source: Bean 2021 "Cryptodiagnosis of Kryptos K4" — verified exact match
+# --- Bean constraints (derived dynamically for worker-process isolation) ---
+# Source: Bean 2021 "Cryptodiagnosis of Kryptos K4"
+# Full variant-independent set: pairs where derived key differs for ALL 3 variants
 BEAN_EQ = [(27, 65)]
-BEAN_INEQ = [
-    (24, 28), (28, 33), (24, 33), (21, 30), (21, 64), (30, 64),
-    (68, 25), (22, 31), (66, 70), (26, 71), (69, 72), (23, 32),
-    (71, 21), (25, 26), (24, 66), (31, 73), (29, 63), (32, 33),
-    (67, 68), (27, 72), (23, 28),
-]
+
+# Build CRIB_DICT for Bean derivation
+_CRIB_DICT: dict[int, str] = {}
+for _pos, _text in CRIBS:
+    for _j, _ch in enumerate(_text):
+        _CRIB_DICT[_pos + _j] = _ch
+
+def _derive_bean_ineq() -> list[tuple[int, int]]:
+    """Derive the full variant-independent Bean inequality set (242 pairs)."""
+    positions = sorted(_CRIB_DICT.keys())
+    pairs: list[tuple[int, int]] = []
+    for i in range(len(positions)):
+        for j in range(i + 1, len(positions)):
+            a, b = positions[i], positions[j]
+            ca, pa = ord(K4[a]) - 65, ord(_CRIB_DICT[a]) - 65
+            cb, pb = ord(K4[b]) - 65, ord(_CRIB_DICT[b]) - 65
+            vig_eq = (ca - pa) % 26 == (cb - pb) % 26
+            beau_eq = (ca + pa) % 26 == (cb + pb) % 26
+            vbeau_eq = (pa - ca) % 26 == (pb - cb) % 26
+            if not vig_eq and not beau_eq and not vbeau_eq:
+                pairs.append((a, b))
+    return pairs
+
+BEAN_INEQ = _derive_bean_ineq()
+assert len(BEAN_INEQ) == 242, f"Expected 242 VI inequalities, got {len(BEAN_INEQ)}"
 
 # Bean-impossible lengths (precomputed: collapsed inequality OR equality-inequality contradiction)
 _BEAN_IMPOSSIBLE_LENGTHS: set[int] = set()
@@ -159,7 +182,7 @@ for _pos, _text in CRIBS:
 
 
 def _bean_passes(keyword: str) -> bool:
-    """Check if keyword satisfies Bean equality + all 21 inequalities."""
+    """Check if keyword satisfies Bean equality + all 242 variant-independent inequalities."""
     L = len(keyword)
     if L in _BEAN_IMPOSSIBLE_LENGTHS:
         return False
@@ -242,10 +265,56 @@ def _load_quadgrams() -> dict[str, float]:
 
 
 def _score_text(text: str) -> float:
+    """Score candidate plaintext: quadgrams + intel jargon bonus.
+
+    The jargon bonus ensures plaintexts containing intelligence acronyms
+    (CIA, KGB, DDR, etc.) aren't rejected as noise by quadgram scoring.
+    """
     qg = _load_quadgrams()
     if len(text) < 4:
         return -999.0
-    return sum(qg.get(text[i:i+4], _QG_FLOOR) for i in range(len(text) - 3))
+    qg_score = sum(qg.get(text[i:i+4], _QG_FLOOR) for i in range(len(text) - 3))
+    # Intel jargon bonus (each found term adds ~15-45 points to score)
+    jargon_bonus = _score_intel_jargon(text)
+    return qg_score + jargon_bonus
+
+
+# Intel jargon terms for scoring — must be self-contained for multiprocessing workers.
+# Only 4+ char terms to avoid false positives on random text.
+_INTEL_TERMS_HIGH = [  # +15 each
+    "DEADDROP", "CLASSIFIED", "INTERCEPT", "DEFECTOR",
+    "GCHQ", "STASI", "ASSET", "AGENT", "COVERT", "SECRET",
+    "BURIED", "HIDDEN", "MARKER", "SIGNAL", "CIPHER",
+]
+_INTEL_TERMS_MED = [  # +10 each
+    "SIGINT", "HUMINT", "COMINT", "ELINT", "OPSEC", "COMSEC",
+    "INTEL", "RECON", "EXFIL", "INFIL", "CHECKPOINT", "SECTOR",
+    "CURTAIN", "LANGLEY", "MOSCOW", "BERLIN", "KREMLIN",
+    "KRYPTOS", "SANBORN", "PALIMPSEST", "LODESTONE", "WELTZEITUHR",
+    "CIA", "KGB", "NSA", "FBI", "DCI", "NRO", "DIA", "GRU", "DDR",
+    "BND", "SIS", "SVR", "FSB",
+]
+_INTEL_TERMS_LOW = [  # +5 each
+    "NEAR", "STOP", "KNOW", "DOES", "ONLY", "THIS", "WHAT",
+    "WHERE", "FIVE", "CLOCK", "POINT", "PACES", "LOCATION",
+    "EXACTLY", "NORTH", "SOUTH", "EAST", "WEST",
+]
+
+
+def _score_intel_jargon(text: str) -> float:
+    """Fast inline intel jargon scorer for worker processes."""
+    text = text.upper()
+    bonus = 0.0
+    for term in _INTEL_TERMS_HIGH:
+        if term in text:
+            bonus += 15.0
+    for term in _INTEL_TERMS_MED:
+        if term in text:
+            bonus += 10.0
+    for term in _INTEL_TERMS_LOW:
+        if term in text:
+            bonus += 5.0
+    return bonus
 
 
 def _vig_decrypt(ct: str, key: str, alpha: str = AZ) -> str:
