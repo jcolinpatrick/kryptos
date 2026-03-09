@@ -2,6 +2,7 @@
 
 import hashlib
 import sqlite3
+import time
 from datetime import datetime, timezone
 from typing import Optional
 
@@ -21,7 +22,7 @@ def _get_connection(db_path: Optional[str] = None) -> sqlite3.Connection:
 
 
 def init_db(db_path: Optional[str] = None) -> None:
-    """Create the theories table if it does not exist."""
+    """Create the theories and rate_limits tables if they do not exist."""
     conn = _get_connection(db_path)
     try:
         conn.execute("""
@@ -33,7 +34,65 @@ def init_db(db_path: Optional[str] = None) -> None:
                 status TEXT NOT NULL DEFAULT 'pending'
             )
         """)
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS rate_limits (
+                ip_hash TEXT NOT NULL,
+                ts REAL NOT NULL
+            )
+        """)
+        conn.execute("""
+            CREATE INDEX IF NOT EXISTS idx_rate_limits_ip_ts
+            ON rate_limits (ip_hash, ts)
+        """)
         conn.commit()
+    finally:
+        conn.close()
+
+
+# ---------------------------------------------------------------------------
+# Rate limiting (persistent)
+# ---------------------------------------------------------------------------
+
+def record_request(ip: str, window: int, max_requests: int,
+                   db_path: Optional[str] = None) -> Optional[int]:
+    """Record a request and check the rate limit.
+
+    Returns None if under the limit, or seconds until the oldest request
+    in the window expires if the limit is exceeded.
+    """
+    ip_hash = hashlib.sha256(ip.encode()).hexdigest()
+    now = time.time()
+    cutoff = now - window
+
+    conn = _get_connection(db_path)
+    try:
+        # Prune expired entries (all IPs, keeps table small)
+        conn.execute("DELETE FROM rate_limits WHERE ts <= ?", (cutoff,))
+
+        # Count requests in window for this IP
+        row = conn.execute(
+            "SELECT COUNT(*) FROM rate_limits WHERE ip_hash = ? AND ts > ?",
+            (ip_hash, cutoff),
+        ).fetchone()
+        count = row[0]
+
+        if count >= max_requests:
+            # Find the oldest timestamp to compute retry-after
+            oldest = conn.execute(
+                "SELECT MIN(ts) FROM rate_limits WHERE ip_hash = ? AND ts > ?",
+                (ip_hash, cutoff),
+            ).fetchone()
+            conn.commit()
+            retry_after = int(oldest[0] - cutoff) + 1
+            return max(retry_after, 1)
+
+        # Record this request
+        conn.execute(
+            "INSERT INTO rate_limits (ip_hash, ts) VALUES (?, ?)",
+            (ip_hash, now),
+        )
+        conn.commit()
+        return None
     finally:
         conn.close()
 

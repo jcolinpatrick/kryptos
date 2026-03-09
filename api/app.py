@@ -1,7 +1,7 @@
 """FastAPI theory classifier API for kryptosbot.com."""
 
 import os
-import time
+import re
 import urllib.request
 from contextlib import asynccontextmanager
 from typing import Optional
@@ -10,10 +10,10 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 from api.classifier import classify_theory, load_elimination_index, ClassifyResult
-from api.queue import add_theory, init_db
+from api.queue import add_theory, init_db, record_request
 
 # ---------------------------------------------------------------------------
 # Global state
@@ -22,11 +22,64 @@ from api.queue import add_theory, init_db
 # Elimination index context string (loaded on startup)
 _index_context: Optional[str] = None
 
-# Rate limiting: IP -> list of request timestamps (epoch seconds)
-_rate_limits: dict[str, list[float]] = {}
-
 RATE_LIMIT_MAX = 10
 RATE_LIMIT_WINDOW = 3600  # 1 hour in seconds
+
+# ---------------------------------------------------------------------------
+# Content moderation — fast local pre-screen (no API cost)
+# ---------------------------------------------------------------------------
+
+# Patterns that indicate content violating Anthropic usage policy or
+# that have no plausible relation to cryptanalysis.  Case-insensitive.
+_BLOCKED_PATTERNS: list[re.Pattern] = [
+    # Hate speech / slurs (representative, not exhaustive)
+    re.compile(
+        r"\b(kill\s+(all|every|those)|ethnic\s+cleansing|white\s+power"
+        r"|racial\s+supremacy|gas\s+the|heil\s+hitler)\b", re.I,
+    ),
+    # CSAM / sexual content involving minors
+    re.compile(r"\b(child\s+porn|csam|underage\s+sex|sexual.*\bminor)\b", re.I),
+    # Explicit violence / terrorism instructions
+    re.compile(
+        r"\b(how\s+to\s+(make|build)\s+(a\s+)?(bomb|explosive|weapon)"
+        r"|biological\s+weapon|nerve\s+agent)\b", re.I,
+    ),
+    # Prompt injection attempts targeting the classifier
+    re.compile(
+        r"(ignore\s+(all\s+)?(previous|prior|above)\s+(instructions|prompts|rules)"
+        r"|you\s+are\s+now\s+(?!classif)|system\s*prompt|<\s*/?\s*system\s*>)", re.I,
+    ),
+]
+
+# Maximum ratio of non-ASCII to total characters (filters binary/encoded junk)
+_MAX_NON_ASCII_RATIO = 0.3
+
+
+def _check_content(text: str) -> Optional[dict]:
+    """Fast local content pre-screen.
+
+    Returns None if the content passes, or a JSON-serialisable error dict
+    if it should be rejected (returned as 422 to the client).
+    """
+    # Check for blocked patterns
+    for pattern in _BLOCKED_PATTERNS:
+        if pattern.search(text):
+            return {
+                "detail": "Your submission contains content that violates our usage policy. "
+                "Please keep submissions focused on cryptanalysis of Kryptos K4.",
+                "status": "error",
+            }
+
+    # Check for excessive non-ASCII (binary paste, encoded payloads)
+    non_ascii = sum(1 for c in text if ord(c) > 127)
+    if len(text) > 0 and non_ascii / len(text) > _MAX_NON_ASCII_RATIO:
+        return {
+            "detail": "Submission contains too many non-ASCII characters. "
+            "Please use plain English text.",
+            "status": "error",
+        }
+
+    return None
 
 SEARCH_INDEX_PATH = os.environ.get(
     "SEARCH_INDEX_PATH", "site/search-index.json"
@@ -59,20 +112,24 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=[
-        "https://kryptosbot.com",
-        "https://www.kryptosbot.com",
+_CORS_ORIGINS = [
+    "https://kryptosbot.com",
+    "https://www.kryptosbot.com",
+]
+# Allow local dev origins only when explicitly opted in
+if os.environ.get("KBOT_DEV_CORS"):
+    _CORS_ORIGINS += [
         "http://localhost:3000",
         "http://localhost:8000",
         "http://127.0.0.1:3000",
         "http://127.0.0.1:8000",
-        "http://192.168.1.156:8000",
-        "http://192.168.1.179:8000",
-    ],
+    ]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=_CORS_ORIGINS,
     allow_methods=["GET", "POST"],
-    allow_headers=["*"],
+    allow_headers=["Content-Type"],
 )
 
 
@@ -88,43 +145,21 @@ def _client_ip(request: Request) -> str:
     return request.client.host if request.client else "unknown"
 
 
-def _check_rate_limit(ip: str) -> Optional[int]:
-    """Check rate limit for an IP.
-
-    Returns None if under the limit, or seconds until the oldest request
-    expires if the limit is exceeded.
-    """
-    now = time.time()
-    cutoff = now - RATE_LIMIT_WINDOW
-
-    # Prune stale IPs on every call (cheap — dict iteration)
-    stale_ips = [k for k, v in _rate_limits.items() if not v or v[-1] < cutoff]
-    for k in stale_ips:
-        del _rate_limits[k]
-
-    # Get or create timestamp list for this IP
-    timestamps = _rate_limits.get(ip, [])
-
-    # Prune expired timestamps for this IP
-    timestamps = [t for t in timestamps if t > cutoff]
-    _rate_limits[ip] = timestamps
-
-    if len(timestamps) >= RATE_LIMIT_MAX:
-        # Seconds until the oldest timestamp expires
-        retry_after = int(timestamps[0] - cutoff) + 1
-        return max(retry_after, 1)
-
-    # Record this request
-    timestamps.append(now)
-    return None
-
-
 # ---------------------------------------------------------------------------
 # Request / Response models
 # ---------------------------------------------------------------------------
 
 class ClassifyRequest(BaseModel):
     theory: str = Field(..., min_length=10, max_length=2000)
+
+    @field_validator("theory")
+    @classmethod
+    def sanitize_theory(cls, v: str) -> str:
+        # Strip null bytes and control characters (except newline/tab)
+        v = re.sub(r"[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]", "", v)
+        # Collapse excessive whitespace (>3 consecutive blank lines)
+        v = re.sub(r"\n{4,}", "\n\n\n", v)
+        return v.strip()
 
 
 # ---------------------------------------------------------------------------
@@ -145,9 +180,9 @@ async def classify(body: ClassifyRequest, request: Request):
             content={"detail": "Elimination index not loaded. The site may still be building."},
         )
 
-    # Rate limiting
+    # Rate limiting (persistent — survives server restarts)
     ip = _client_ip(request)
-    retry_after = _check_rate_limit(ip)
+    retry_after = record_request(ip, RATE_LIMIT_WINDOW, RATE_LIMIT_MAX)
     if retry_after is not None:
         minutes = (retry_after + 59) // 60
         return JSONResponse(
@@ -158,6 +193,11 @@ async def classify(body: ClassifyRequest, request: Request):
             },
             headers={"Retry-After": str(retry_after)},
         )
+
+    # Content moderation pre-screen (fast, no API cost)
+    moderation = _check_content(body.theory)
+    if moderation is not None:
+        return JSONResponse(status_code=422, content=moderation)
 
     # Classify
     try:
