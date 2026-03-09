@@ -5,7 +5,7 @@
 <h1 align="center">KryptosBot</h1>
 
 <p align="center">
-  <strong>An open-source computational assault on Kryptos K4</strong><br>
+  <strong>An open-source computational analysis of Kryptos K4</strong><br>
   668 billion+ configurations tested. 188 cipher families eliminated. Zero breakthroughs yet.
 </p>
 
