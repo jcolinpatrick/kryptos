@@ -95,7 +95,7 @@ class TestBeanPositionValidity:
         assert len(BEAN_EQ) == 1
 
     def test_bean_ineq_count(self):
-        assert len(BEAN_INEQ) == 21
+        assert len(BEAN_INEQ) == 242
 
 
 # ══════════════════════════════════════════════════════════════════════════
