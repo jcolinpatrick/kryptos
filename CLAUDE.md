@@ -16,13 +16,21 @@ This repo has one purpose: determine the **true plaintext** and the **full encry
 - Positions 21–33: `EASTNORTHEAST`
 - Positions 63–73: `BERLINCLOCK`
 
-**CRITICAL PARADIGM (2026-03-02):** [USER GROUND TRUTH] The 97 carved characters are **SCRAMBLED ciphertext**. The encryption model is: `PT → simple substitution → REAL CT → SCRAMBLE (transposition) → carved text`. Every prior experiment (400+, 669B+ configs) assumed positional correspondence and FAILED. The **singular mission** is to derive the full encryption method and solve K4. The **most promising lead** is the Cardan grille, which may define the unscrambling permutation. See Claude Code auto-memory `cardan_grille.md` for full details.
+**CRITICAL PARADIGM (2026-03-08):** [USER GROUND TRUTH] The 97 carved characters involve **TWO SYSTEMS** of encipherment (confirmed via Sanborn dedication speech). The current leading model:
+```
+73-char PT → System 1 (substitution?) → 73-char CT → System 2 (insert 24 nulls + scramble) → 97 carved chars
+```
+Every prior experiment (600+, 669B+ configs) assumed positional correspondence on 97 chars and FAILED. The **singular mission** is to derive the full encryption method and solve K4.
 
-**Cardan grille extract (corrected, 100 chars, from 28×31 grid):** `HJLVKDJQZKIVPCMWSAFOPCKBDLHIFXRYVFIJMXEIOMQFJNXZKILKRDIYSCLMQVZACEIMVSEFHLQKRGILVHNQXWTCDKIKJUFQRXCD` — All 26 letters present (IC = 0.0416). The grille defines the reading order that unscrambles K4. (Old 106-char extract `HJLVACIN...` is stored as `GRILLE_EXTRACT_OLD` in `kryptosbot/kryptosbot/strategies.py`.)
+**73-character hypothesis:** Sanborn's yellow legal pad (auction lot) has boxed numbers: "14 Lines" "342" "8 lines" "73". K4 = 8 lines, but carved K4 = 97 chars → **24 chars are nulls/filler**. **TRIPLE-24 COINCIDENCE**: (1) 97-73=24, (2) EASTNORTHEAST(13)+BERLINCLOCK(11)=24 crib chars, (3) Weltzeituhr=24 facets. BERLINCLOCK literally references a 24-faceted clock.
 
-**What we know:** [DERIVED FACT] No single-layer classical cipher works on the carved text (exhaustively tested). [USER GROUND TRUTH] The carved text is a permutation of the real CT. [HYPOTHESIS] The Cardan grille on the Vigenère tableau defines the unscrambling permutation. [HYPOTHESIS] Once unscrambled, K4 yields to simple substitution (Vigenère/Beaufort with a short keyword). See [`reports/final_synthesis.md`](reports/final_synthesis.md) for the elimination landscape.
+**Cardan grille (reframed as selection mask):** The grille may SELECTS 73 real chars from 97 (original Cardan function — read through holes, ignore blocked positions), rather than reordering all 97. Extract (100 chars, from 28×31 grid): `HJLVKDJQZKIVPCMWSAFOPCKBDLHIFXRYVFIJMXEIOMQFJNXZKILKRDIYSCLMQVZACEIMVSEFHLQKRGILVHNQXWTCDKIKJUFQRXCD`. See Claude Code auto-memory `cardan_grille.md` and `73_char_hypothesis.md`.
 
-**What we don't know:** The unscrambling permutation, whether cribs apply to carved or real CT positions, the substitution key for the real CT.
+**W-as-delimiter:** 5 W's at positions [20, 36, 48, 58, 74] bracket the cribs — W at 20 immediately before EASTNORTHEAST (21), W at 74 immediately after BERLINCLOCK (73). May act as telegram-style word separators. Sanborn's clue "(CLUE) what's the point?" may reference W as period/full stop.
+
+**What we know:** [DERIVED FACT] No single-layer classical cipher works on the carved text (exhaustively tested). [PUBLIC FACT, PRIMARY SOURCE] Sanborn: "There are TWO SYSTEMS of enciphering the bottom text... designed to UNVEIL ITSELF... pull up one layer, come to the next." [HYPOTHESIS] The Cardan grille selects 73 of 97 positions (null mask). [HYPOTHESIS] Once nulls removed, the 73-char CT yields to simple substitution (Vigenère/Beaufort with a short keyword). See [`reports/final_synthesis.md`](reports/final_synthesis.md) for the elimination landscape.
+
+**What we don't know:** Which 24 of 97 positions are nulls, whether cribs apply to carved or real CT positions, the substitution key for the real CT, the structural rule governing null placement.
 
 ---
 
@@ -31,6 +39,10 @@ This repo has one purpose: determine the **true plaintext** and the **full encry
 **Python 3.11+** required (uses `tomllib` from stdlib). **No external runtime dependencies** — stdlib only. `pytest` is the only dev dependency. No `pyproject.toml` or `setup.py` — `pip install -e .` will not work. All commands require `PYTHONPATH=src`.
 
 A `venv/` exists with numpy, pymupdf, and jinja2 but is gitignored. Activate with `source venv/bin/activate` if needed for PDF/matrix work or the site builder, but core code uses stdlib only.
+
+**Code style:** No linter or formatter configured. No enforced style conventions beyond stdlib-only for core code.
+
+**Git workflow:** Development happens directly on `main`. No branch naming conventions or PR process — this is a solo research project with computational partners.
 
 ```bash
 # Run all tests
@@ -179,7 +191,7 @@ Claude Agent SDK multi-agent campaign runner. Separate from the core `src/krypto
 
 `score_candidate()` returns a `ScoreBreakdown` with these key fields:
 - **crib_score** (0–24): Number of crib positions where derived key is consistent. Primary signal. (Split into `ene_score` 0–13 and `bc_score` 0–11.)
-- **bean_passed** (bool): Whether Bean equality (k[27]=k[65]) and all 21 inequalities hold.
+- **bean_passed** (bool): Whether Bean equality (k[27]=k[65]) and all 242 variant-independent inequalities hold.
 - **ic_value**: Index of coincidence of the candidate plaintext.
 - **ngram_score** / **ngram_per_char**: Optional n-gram quality metrics.
 - **crib_classification**: One of "noise", "interesting", "signal", "breakthrough".
@@ -195,7 +207,7 @@ Claude Agent SDK multi-agent campaign runner. Separate from the core `src/krypto
 
 Note: `is_above_noise()` triggers at score > 6, but `is_storable()` and DB persistence trigger at score ≥ 10 (`STORE_THRESHOLD`). Scores 7–9 are above noise floor but not persisted.
 
-**False positive warning**: At periods ≥17, random configs score 17+/24 due to underdetermination. Only scores at period ≤7 are meaningful discriminators. **Note:** FRAC agent (E-FRAC-07) proved periods 2–7 are Bean-impossible for transposition + periodic substitution; only periods {8, 13, 16, 19, 20, 23, 24, 26} are Bean-compatible. This narrows the viable search space but does not change the scoring rule.
+**False positive warning**: At periods ≥17, random configs score 17+/24 due to underdetermination. Only scores at period ≤7 are meaningful discriminators. **Note:** With the full 242 variant-independent Bean inequality set, ALL periods 1–26 are eliminated for periodic substitution on the raw 97-char carved text. The previous result (only periods 2–7 eliminated) used an incomplete 21-pair subset.
 
 ---
 
@@ -206,7 +218,7 @@ These are non-obvious pitfalls discovered through prior sessions. Check these fi
 - **0-indexed positions everywhere**: Cribs are at 21–33 and 63–73 (0-indexed). Legacy code and some public sources use 1-indexed (22–34, 64–74). Mixing conventions is the #1 source of bugs.
 - **KA alphabet has non-standard ordering**: `KRYPTOSABCDEFGHIJLMNQUVWXZ` — all 26 letters present but reordered (keyword "KRYPTOS" first). The `KA` singleton uses this ordering; standard `AZ` uses alphabetical. Both contain all 26 letters. (The "KA has no J" claim in prior versions was **wrong**.)
 - **Vigenère vs Beaufort sign conventions**: `K = (CT - PT) mod 26` for Vigenère, `K = (CT + PT) mod 26` for Beaufort, `K = (PT - CT) mod 26` for Variant Beaufort. Mixing these silently produces wrong keystream.
-- **Bean constraint is variant-independent**: CT[27]=CT[65]=P and PT[27]=PT[65]=R, so the equality k[27]=k[65] holds regardless of cipher variant. The 21 inequalities are also variant-independent.
+- **Bean constraint is variant-independent**: CT[27]=CT[65]=P and PT[27]=PT[65]=R, so the equality k[27]=k[65] holds regardless of cipher variant. The 242 inequalities are also variant-independent (derived from all C(24,2)=276 crib pairs; 242 have distinct key values under all 3 variants).
 - **Transposition permutation convention**: `output[i] = input[perm[i]]` — this is the "gather" convention. `invert_perm()` gives the "scatter" direction.
 - **IC below random**: K4's IC ≈ 0.0361 is below the random expectation of 0.0385. [INTERNAL RESULT] FRAC agent (E-FRAC-04) showed this deviation is NOT statistically significant for a 97-char text. Do not use IC alone as a discriminator.
 - **constants.py self-verifies at import**: If you modify CT, cribs, or Bean values incorrectly, the import itself will raise an assertion error.
@@ -259,15 +271,12 @@ Domain knowledge, public facts, and detailed operating policies live in separate
 
 **ALL agents are focused on ONE goal: derive the full encryption method and solve K4.**
 
-The carved K4 text is SCRAMBLED ciphertext. The most promising lead is the Cardan grille, which may define the reading order that unscrambles the carved text into the real CT. However, agents should pursue any approach that could reveal the method.
-
 **Key constraints for teammates:**
 - Import constants from `kryptos.kernel.constants` — never hardcode CT/cribs
-- Grille details are in Claude Code auto-memory (`cardan_grille.md`); key facts are in the Quick Reference above
-- The corrected 100-char grille extract: `HJLVKDJQZKIVPCMWSAFOPCKBDLHIFXRYVFIJMXEIOMQFJNXZKILKRDIYSCLMQVZACEIMVSEFHLQKRGILVHNQXWTCDKIKJUFQRXCD`
-- For each candidate permutation: apply to K4, try Vig/Beaufort with KRYPTOS/PALIMPSEST/ABSCISSA, check for English
-- Top keyword candidates (Bean-compatible, thematically strong): HOROLOGE, DEFECTOR, PARALLAX, COLOPHON
-- DO NOT re-run old direct-decryption attacks — they assumed wrong positional correspondence
+- Grille details and current hypotheses: see Quick Reference above + Claude Code auto-memory (`cardan_grille.md`, `73_char_hypothesis.md`)
+- DO NOT re-run old direct-decryption attacks on 97 chars — they assumed wrong positional correspondence
+- Top keyword candidates (by pigeonhole letter-supply): KRYPTOS, KOMPASS, DEFECTOR, COLOPHON, ABSCISSA — note: ALL fail full Bean check on raw 97-char text (consistent with two-system model)
+- **HOROLOGE and ENIGMA are ELIMINATED** (pigeonhole analysis)
 
 **KryptosBot agent runner:** `python3 kryptosbot/solve.py` launches the unified campaign runner. See `kryptosbot/RUNBOOK.md` for full usage. Key commands: `solve.py` (6 parallel agents), `solve.py compute` (free local CPU), `solve.py run <name>` (single strategy), `solve.py list` (show all strategies).
 
@@ -275,5 +284,5 @@ The carved K4 text is SCRAMBLED ciphertext. The most promising lead is the Carda
 
 ---
 
-*Last updated: 2026-03-06 — Mission: derive K4 method & solve. Best lead: Cardan grille. Top keywords: HOROLOGE, DEFECTOR, PARALLAX, COLOPHON*
+*Last updated: 2026-03-09 — Mission: derive K4 method & solve. Best leads: 73-char hypothesis + grille-as-selection-mask + W-delimiter. Top keywords: KRYPTOS, KOMPASS, DEFECTOR, COLOPHON, ABSCISSA*
 *Primary author: Colin Patrick (human lead) + Claude (computational partner)*

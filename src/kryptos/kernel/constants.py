@@ -52,12 +52,33 @@ SELF_ENCRYPTING: Dict[int, str] = {32: "S", 73: "K"}
 
 BEAN_EQ: Tuple[Tuple[int, int], ...] = ((27, 65),)
 
-BEAN_INEQ: Tuple[Tuple[int, int], ...] = (
-    (24, 28), (28, 33), (24, 33), (21, 30), (21, 64), (30, 64),
-    (68, 25), (22, 31), (66, 70), (26, 71), (69, 72), (23, 32),
-    (71, 21), (25, 26), (24, 66), (31, 73), (29, 63), (32, 33),
-    (67, 68), (27, 72), (23, 28),
-)
+def _derive_bean_ineq() -> Tuple[Tuple[int, int], ...]:
+    """Derive the full variant-independent Bean inequality set.
+
+    A pair (a, b) is a variant-independent inequality iff the derived
+    keystream values differ for ALL three cipher variants (Vigenère,
+    Beaufort, Variant Beaufort).  This ensures the constraint holds
+    regardless of which additive variant is correct.
+
+    Previous versions hardcoded only 21 of 242 pairs, causing false
+    PASSes for keywords with repeated letters (KOLOPHON, DEFECTOR, etc.).
+    """
+    positions = sorted(CRIB_DICT.keys())
+    pairs: list[tuple[int, int]] = []
+    for i in range(len(positions)):
+        for j in range(i + 1, len(positions)):
+            a, b = positions[i], positions[j]
+            ca, pa = ALPH_IDX[CT[a]], ALPH_IDX[CRIB_DICT[a]]
+            cb, pb = ALPH_IDX[CT[b]], ALPH_IDX[CRIB_DICT[b]]
+            vig_eq = (ca - pa) % MOD == (cb - pb) % MOD
+            beau_eq = (ca + pa) % MOD == (cb + pb) % MOD
+            vbeau_eq = (pa - ca) % MOD == (pb - cb) % MOD
+            if not vig_eq and not beau_eq and not vbeau_eq:
+                pairs.append((a, b))
+    return tuple(pairs)
+
+
+BEAN_INEQ: Tuple[Tuple[int, int], ...] = _derive_bean_ineq()
 
 # ── Known keystream values (verified at crib positions) ───────────────────
 
@@ -97,6 +118,6 @@ def _verify() -> None:
     assert len(KRYPTOS_ALPHABET) == MOD and len(set(KRYPTOS_ALPHABET)) == MOD, "KA malformed"
     assert set(KRYPTOS_ALPHABET) == set(ALPH), "KA and ALPH char sets differ"
     assert len(BEAN_EQ) == 1, "Expected 1 Bean equality"
-    assert len(BEAN_INEQ) == 21, f"Expected 21 Bean inequalities, got {len(BEAN_INEQ)}"
+    assert len(BEAN_INEQ) == 242, f"Expected 242 Bean inequalities, got {len(BEAN_INEQ)}"
 
 _verify()

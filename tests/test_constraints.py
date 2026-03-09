@@ -92,7 +92,7 @@ class TestBean:
         result = verify_bean(ks)
         assert isinstance(result, BeanResult)
         assert result.eq_total == 1
-        assert result.ineq_total == 21
+        assert result.ineq_total == 242
 
     def test_bean_simple_matches_full(self):
         ks = list(range(97))

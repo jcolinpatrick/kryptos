@@ -655,8 +655,8 @@ class TestBeanConstraints:
         assert VIGENERE_KEY_ENE[6] == VIGENERE_KEY_BC[2]
 
     def test_bean_inequality_count(self):
-        """Should have exactly 21 inequalities."""
-        assert len(BEAN_INEQ) == 21
+        """Should have exactly 242 variant-independent inequalities."""
+        assert len(BEAN_INEQ) == 242
 
     def test_bean_result_fields(self):
         """BeanResult should have all expected fields."""
@@ -670,7 +670,7 @@ class TestBeanConstraints:
         assert hasattr(result, 'eq_failures')
         assert hasattr(result, 'ineq_failures')
         assert result.eq_total == 1
-        assert result.ineq_total == 21
+        assert result.ineq_total == 242
 
     def test_bean_simple_agrees_with_full(self):
         """verify_bean_simple should agree with verify_bean.passed."""

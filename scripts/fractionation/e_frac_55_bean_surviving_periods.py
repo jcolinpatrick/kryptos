@@ -11,8 +11,9 @@ Best score:
 
 GAP IDENTIFIED:
   Prior experiments (E-FRAC-12/29/30) tested columnar widths 5-15 at periods 2-7.
-  E-FRAC-35 then PROVED that periods 2-7 are Bean-impossible for ANY transposition
-  + periodic key. The Bean-surviving periods are {8, 13, 16, 19, 20, 23, 24, 26}.
+  E-FRAC-35 originally proved periods 2-7 are Bean-impossible. With the full
+  242 variant-independent inequality set, ALL periods 1-26 are now eliminated.
+  This script tests a subset (8, 13, 16) for historical completeness.
 
   However, structured columnar transpositions have NEVER been tested at these
   surviving periods. This experiment closes that gap.
@@ -67,7 +68,8 @@ N = CT_LEN  # 97
 
 QUADGRAM_FILE = os.path.join(os.path.dirname(__file__), '..', 'data', 'english_quadgrams.json')
 
-# Bean-surviving periods to test
+# Originally "Bean-surviving" periods — now all periods are eliminated with
+# the full 242 VI inequality set. Kept for historical completeness.
 SURVIVING_PERIODS = [8, 13, 16]
 
 

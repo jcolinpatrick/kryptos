@@ -828,14 +828,31 @@ for _cs, _cw in CRIBS:
     for _ci, _cc in enumerate(_cw):
         _CRIB_CHECKS.append((_cs + _ci, ord(_cc) - 65))
 
-# Bean constraint positions
+# Bean constraint positions — derived dynamically (variant-independent: 242 pairs)
 _BEAN_EQ = ((27, 65),)
-_BEAN_INEQ = (
-    (24, 28), (28, 33), (24, 33), (21, 30), (21, 64), (30, 64),
-    (68, 25), (22, 31), (66, 70), (26, 71), (69, 72), (23, 32),
-    (71, 21), (25, 26), (24, 66), (31, 73), (29, 63), (32, 33),
-    (67, 68), (27, 72), (23, 28),
-)
+
+def _derive_bean_ineq_compute() -> tuple[tuple[int, int], ...]:
+    """Derive the full variant-independent Bean inequality set."""
+    _crib_dict: dict[int, str] = {}
+    for _pos, _text in CRIBS:
+        for _j, _ch in enumerate(_text):
+            _crib_dict[_pos + _j] = _ch
+    positions = sorted(_crib_dict.keys())
+    pairs: list[tuple[int, int]] = []
+    for i in range(len(positions)):
+        for j in range(i + 1, len(positions)):
+            a, b = positions[i], positions[j]
+            ca, pa = ord(K4[a]) - 65, ord(_crib_dict[a]) - 65
+            cb, pb = ord(K4[b]) - 65, ord(_crib_dict[b]) - 65
+            vig_eq = (ca - pa) % 26 == (cb - pb) % 26
+            beau_eq = (ca + pa) % 26 == (cb + pb) % 26
+            vbeau_eq = (pa - ca) % 26 == (pb - cb) % 26
+            if not vig_eq and not beau_eq and not vbeau_eq:
+                pairs.append((a, b))
+    return tuple(pairs)
+
+_BEAN_INEQ = _derive_bean_ineq_compute()
+assert len(_BEAN_INEQ) == 242, f"Expected 242 VI inequalities, got {len(_BEAN_INEQ)}"
 
 
 # Alphabetic key sources (24 sources from installation context)

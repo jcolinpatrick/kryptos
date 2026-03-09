@@ -33,14 +33,31 @@ for _pos, _text in CRIBS:
     for _j in range(len(_text)):
         CRIB_POSITIONS.add(_pos + _j)
 
-# Bean constraints
+# Bean constraints — derived dynamically (variant-independent: 242 pairs)
 BEAN_EQ = (27, 65)
-BEAN_INEQ = [
-    (21, 22), (21, 25), (21, 29), (21, 63), (21, 64), (21, 67),
-    (22, 25), (22, 29), (22, 63), (22, 64), (22, 67),
-    (23, 24), (23, 26), (23, 28), (23, 30), (23, 33), (23, 66),
-    (25, 29), (25, 63), (25, 64), (25, 67),
-]
+
+_CRIB_DICT_K4: dict[int, str] = {}
+for _pos, _text in CRIBS:
+    for _j, _ch in enumerate(_text):
+        _CRIB_DICT_K4[_pos + _j] = _ch
+
+def _derive_bean_ineq() -> list[tuple[int, int]]:
+    positions = sorted(_CRIB_DICT_K4.keys())
+    pairs: list[tuple[int, int]] = []
+    for i in range(len(positions)):
+        for j in range(i + 1, len(positions)):
+            a, b = positions[i], positions[j]
+            ca, pa = ord(K4[a]) - 65, ord(_CRIB_DICT_K4[a]) - 65
+            cb, pb = ord(K4[b]) - 65, ord(_CRIB_DICT_K4[b]) - 65
+            vig_eq = (ca - pa) % 26 == (cb - pb) % 26
+            beau_eq = (ca + pa) % 26 == (cb + pb) % 26
+            vbeau_eq = (pa - ca) % 26 == (pb - cb) % 26
+            if not vig_eq and not beau_eq and not vbeau_eq:
+                pairs.append((a, b))
+    return pairs
+
+BEAN_INEQ = _derive_bean_ineq()
+assert len(BEAN_INEQ) == 242, f"Expected 242 VI inequalities, got {len(BEAN_INEQ)}"
 
 
 def _keyword_alphabet(keyword: str, base: str) -> str:
@@ -185,7 +202,7 @@ async def test_permutation_tool(args: dict[str, Any]) -> dict[str, Any]:
         "plaintext": pt,
         "crib_hits": crib_hits,
         "bean_eq_pass": eq_pass,
-        "bean_ineq_pass": f"{ineq_pass}/21",
+        "bean_ineq_pass": f"{ineq_pass}/{len(BEAN_INEQ)}",
         "ic": round(ic_val, 4),
         "keyword": keyword,
         "cipher": cipher,
@@ -269,7 +286,7 @@ async def swap_and_test_tool(args: dict[str, Any]) -> dict[str, Any]:
         "plaintext": pt,
         "crib_hits": crib_hits,
         "bean_eq_pass": eq_pass,
-        "bean_ineq_pass": f"{ineq_pass}/21",
+        "bean_ineq_pass": f"{ineq_pass}/{len(BEAN_INEQ)}",
         "ic": round(_ic(pt), 4),
     }
     return {"content": [{"type": "text", "text": json.dumps(result, indent=2)}]}
@@ -326,7 +343,7 @@ async def hill_climb_tool(args: dict[str, Any]) -> dict[str, Any]:
         "crib_hits": best_cribs,
         "ic": round(best_ic, 4),
         "bean_eq_pass": eq_pass,
-        "bean_ineq_pass": f"{ineq_pass}/21",
+        "bean_ineq_pass": f"{ineq_pass}/{len(BEAN_INEQ)}",
         "positions_displaced": sum(1 for i in range(K4_LEN) if best_perm[i] != i),
     }
     return {"content": [{"type": "text", "text": json.dumps(result, indent=2)}]}

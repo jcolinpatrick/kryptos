@@ -22,7 +22,7 @@ A concise technical catalog of cipher families relevant to pencil-and-paper cryp
 |------|-----------|--------|
 | ALPHA-26 | All 26 letters present in K4 CT; eliminates 5x5 Polybius (I/J merge) | `kryptos.kernel.constants` |
 | BEAN-EQ | k[27]=k[65] must hold | `docs/invariants.md` |
-| BEAN-INEQ | 21 inequality constraints on keystream values | `docs/invariants.md` |
+| BEAN-INEQ | 242 variant-independent inequality constraints on keystream values | `docs/invariants.md` |
 | CRIB-24 | 24 known PT positions (0-indexed: 21-33=EASTNORTHEAST, 63-73=BERLINCLOCK) | `kryptos.kernel.constants` |
 | IC-LOW | IC approximately 0.0361 (below random 0.0385, not significant at n=97) | `docs/invariants.md` |
 | LEN-97 | Length 97 (prime) — frustrates fixed-width grid methods | `kryptos.kernel.constants` |

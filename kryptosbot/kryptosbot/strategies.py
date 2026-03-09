@@ -82,9 +82,15 @@ KA = "KRYPTOSABCDEFGHIJLMNQUVWXZ"
 AZ = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 KEYWORDS = [
-    "KRYPTOS", "PALIMPSEST", "ABSCISSA", "SHADOW", "SANBORN",
-    "SCHEIDT", "BERLIN", "CLOCK", "EAST", "NORTH",
-    "LIGHT", "ANTIPODES", "MEDUSA", "ENIGMA",
+    # Strongest survivors (pigeonhole letter-supply test)
+    "KRYPTOS", "DEFECTOR", "COLOPHON", "ABSCISSA", "PARALLAX",
+    # K-for-C hypothesis: Greek/German K where English uses C
+    "KOMPASS", "KOLOPHON", "KRYPTA", "KRYPTEIA", "KLEPSYDRA",
+    # Other thematic
+    "PALIMPSEST", "SHADOW", "SANBORN", "SCHEIDT", "PEDESTAL",
+    "MONOLITH", "SPYPLANE", "TOPOLOGY", "VERDIGRIS",
+    # Legacy (kept for completeness)
+    "BERLIN", "CLOCK", "EAST", "NORTH", "LIGHT", "ANTIPODES",
 ]
 
 # -- 28x31 MASTER GRID (CONFIRMED 2026-03-03) --------------------------------
@@ -214,76 +220,64 @@ Row 28: 00000000000000100000001010000001~~"""
 # ---------------------------------------------------------------------------
 
 SHARED_PREAMBLE = f"""\
-## MISSION: Construct the Cardan Grille for the 28x31 Kryptos Grid
+## MISSION: Solve K4 — Derive the Full Encryption Method
 
-**PARADIGM (2026-03-04):** The Kryptos cipher panel (28x31 = 868 chars) and the KA Vigenere
-tableau (28x31 with key column included) have IDENTICAL dimensions. A Cardan grille (mask
-with holes) mediates between them. The grille defines a scrambling/reading order for K4.
+**PARADIGM (2026-03-09):** K4 REQUIRES two systems. This is now PROVEN, not hypothesized.
 
-**THE QUESTION:** How is the grille constructed? The answer lies in THREE structural elements
-that exist ONLY on Kryptos (not on Antipodes):
-1. **Key column** (col 0): blank/A-Z/blank in STANDARD AZ order (not KA)
-2. **Header/footer rows** (rows 0,27): ABCDEFGHIJKLMNOPQRSTUVWXYZABCD (standard alphabet)
-3. **Extra L on row N** (row 14): 32 chars instead of 31 -- the ONLY row that overflows
+### CRITICAL PROOF: Single-Layer Periodic Sub is IMPOSSIBLE on Raw 97
+ALL 6 cipher variants (Vigenère, Beaufort, Variant Beaufort × AZ, KA alphabets) at ALL
+periods 1-26 have KEY CONFLICTS at crib positions. No repeating keyword of any length ≤26
+can produce both EASTNORTHEAST and BERLINCLOCK at their confirmed positions in the 97-char
+carved text. Pure transposition is also impossible (CT has 2 E's, cribs need 3).
 
-### MISSPELLING -> CT LETTER = "KA" -- KEY DISCOVERY (2026-03-04)
-The two confirmed deliberate misspellings across K1-K3, when mapped to their CT positions,
-spell **KA** -- the Kryptos Alphabet:
-- K1 IQLUSION (Q for L) at PT[56] -> CT[56] = **K** (Vigenere, direct position)
-- K3 DESPARATLY (A for E) at PT[10] -> CT[89] = **A** (transposition, exact permutation verified)
-- K2 UNDERGRUUND is NOT a misspelling -- it was a cipher error (R->E), corrected on Antipodes
+**However**: Grille + substitution IS compatible with 24 fixed cribs. The cribs constrain
+the COMBINED effect, not the grille alone. Constraints are mild (period 7: 17 equations
+from 97! space). Two-system model REQUIRED.
 
-This points to the **KA alphabet system** as the key construction element for the grille.
-The AZ->KA permutation has cycle structure: **17-cycle + 8-cycle + fixed Z**.
-This partition may define hole vs. solid in the grille mask.
+### 73-Character Null Hypothesis — Two Open Models
+Sanborn's legal pad: "8 lines" "73" for K4. Carved text = 97 chars. **97 - 73 = 24 nulls.**
 
-### KRYPTOS vs ANTIPODES TABLEAU -- KEY DISCOVERY (2026-03-04)
-**Kryptos tableau**: 28 rows x 31 cols (with key column + headers) = **868 positions** = cipher grid
-**Antipodes tableau**: 32 rows x 33 cols (pure KA, NO key column, NO headers) = 1056 positions
-**Body content is IDENTICAL** (780 cells, zero mismatches). All differences are STRUCTURAL.
+**Model A** (null removal first): `97 carved → remove 24 nulls → 73-char real CT → sub → PT`
+Cribs shift after null removal. ~1.66M configs tested: ZERO signal.
 
-The key column makes Kryptos 28x31 = overlayable on cipher grid. Antipodes can't overlay.
-These structural elements are FUNCTIONAL, not decorative -- they're the grille construction clues.
+**Model B** (decrypt all 97): `97 carved → sub(all 97) → 97-char raw PT → read 73 via mask`
+Cribs stay at stated positions. 24 PT chars are garbage. "Second level" = which 73 to read.
+Model B is simpler (hand-executable), but since periodic sub on raw 97 is proven impossible,
+the cipher must be non-periodic (autokey, running key, keyed differently) OR involve a
+transformation before substitution.
 
-**Antipodes wrapping dimensions**: 33 cols = 26+7 (KRYPTOS length), 32 rows = 26+6.
+**TRIPLE-24**: (1) 97-73=24, (2) EASTNORTHEAST(13)+BERLINCLOCK(11)=24, (3) Weltzeituhr=24 facets.
+Punch card parallel: IBM 80-col card cols 1-72=data, 73-80=metadata (Scheidt's CIA era 1963-89).
 
-### 28x31 Grid -- CONFIRMED (2026-03-03, high confidence)
-- **868 = 28 x 31** -- with Antipodes corrections (squeezed 3rd K2 ? removed, R->E for UNDERGROUND)
-- **8/8 NOVA video column readings match** Sanborn's working chart
-- **Perfect center split**: top 14 rows = K1+K2 (434 chars), bottom 14 rows = K3+?+K4 (434 chars)
-- **434 = 2 x 7 x 31**, 868 = 4 x 7 x 31, 7 = len(KRYPTOS)
+### W-as-Delimiter / Null Marker
+5 W's at positions [20, 36, 48, 58, 74] **bracket the cribs:**
+- W at 20 → immediately BEFORE EASTNORTHEAST (21)
+- W at 74 → immediately AFTER BERLINCLOCK (73)
+- "(CLUE) what's the point?" — W IS the point/period (telegram delimiter)
+- Creates 6 segments: 20, 15, 11, 9, 15, 22 chars
+- W's may be 5 of the 24 nulls, leaving 19 unknown nulls
 
-### Model 2 -- CONFIRMED (but scramble mechanism UNKNOWN)
-```
-PT -> Cipher(key) -> real_CT -> SCRAMBLE(sigma) -> carved text
-```
-Periodic keys (KRYPTOS period 7, ABSCISSA period 8) are ALL VIABLE.
-**CRITICAL**: We know scrambling exists but NOT where the grille fits in:
-- Grille could define the scrambling permutation sigma
-- Or grille could define a reading order
-- Or grille could be part of the encipherment itself
-- The relationship between grille, scramble, and cipher is OPEN
+### Two Systems CONFIRMED [PRIMARY SOURCE, Sanborn Dedication Speech]
+- "There are TWO SYSTEMS of enciphering the bottom text... a major clue in itself"
+- "I used that table to encipher the top plate" → K1-K3 use Vigenère. K4 does NOT.
+- "designed to UNVEIL ITSELF... pull up one layer, come to the next"
+- K4 plaintext "is not standard English, would require a second level of cryptanalysis"
+- Scheidt: "mirrors and obfuscation" — novelty is in COMBINATION, not complexity
 
-### 180 degree Rotation Hypothesis -- CRITICAL STRUCTURAL MATCH
-At 28x31 (not square), 90 degree rotation is impossible. But 180 degree rotation works perfectly:
-- (r,c) -> (27-r, 30-c)
-- **868/2 = 434 = K1+K2 = K3+?+K4** -- the grid splits EXACTLY in half!
-- Position 1: grille reads 434 chars (one half)
-- Position 2 (180 degree flip): grille reads 434 chars (other half)
-- K3 at row 14 col 0 = PERFECT center dividing line
+### d=13 Anomaly [STRONGEST STATISTICAL SIGNAL]
+Bean 2021: Beaufort keystream collisions at k%13 are **3.55× expected**. Strongest
+deviation in entire profile. Period 13 = len(EASTNORTHEAST). Bean-compatible. UNTESTED
+with null-removal model.
 
-### K1-K3 as Solving Instructions
-The solved sections may contain grille construction instructions:
-- K3 ends "CAN YOU SEE ANYTHING" -- looking through holes (grille instruction)
-- K2 contains "LAYER TWO" / "IDBYROWS" -- two-layer system, row-based reading
-- K1 describes "the nuance of IQLUSION" -- the misspelling IS the message (K -> KA)
-- Previous decryptions provide the context needed to construct the grille
+### Grille as SELECTION MASK (not reorderer)
+Old: Cardan grille reorders 97→97. **NEW: grille SELECTS 73 of 97 (null mask).**
+This IS the original Cardan grille function — read through holes, ignore blocked positions.
 
 ## K4 Carved Text (97 chars)
 ```
-{K4_CARVED}
+{{K4_CARVED}}
 ```
-K4 in grid: starts row 24 col 27, ends row 27 col 30 (4 rows)
+K4 in grid: starts row 24 col 27, ends row 27 col 30 (4 rows).
 
 ## Cipher Grid (28 rows x 31 cols, corrected)
 ```
@@ -291,64 +285,69 @@ Row  0: EMUFPHZLRFAXYUSDJKZLDKRNSHGNFIV  K1
 Row  1: JYQTQUXQBQVYUVLLTREVJYQTMKYRDMF
 Row  2: DVFPJUDEEHZWETZYVGWHKKQETGFQJNC  K1->K2
 Row  3: EGGWHKK?DQMCPFQZDQMMIAGPFXHQRLG  K2
-Row  4: TIMVMZJANQLVKQEDAGDVFRPJUNGEUNA
-Row  5: QZGZLECGYUXUEENJTBJLBQCETBJDFHR
-Row  6: RYIZETKZEMVDUFKSJHKFWHKUWQLSZFT
-Row  7: IHHDDDUVH?DWKBFUFPWNTDFIYCUQZER
-Row  8: EEVLDKFEZMOQQJLTTUGSYQPFEUNLAVI
-Row  9: DXFLGGTEZFKZBSFDQVGOGIPUFXHHDRK
-Row 10: FFHQNTGPUAECNUVPDJMQCLQUMUNEDFQ
-Row 11: ELZZVRRGKFFVOEEXBDMVPNFQXEZLGRE
-Row 12: DNQFMPNZGLFLPMRJQYALMGNUVPDXVKP
-Row 13: DQUMEBEDMHDAFMJGZNUPLGEWJLLAETG  K2 ends
-Row 14: ENDYAHROHNLSRHEOCPTEOIBIDYSHNAI  K3 starts (CENTER)
-Row 15: ACHTNREYULDSLLSLLNOHSNOSMRWXMNE
-Row 16: TPRNGATIHNRARPESLNNELEBLPIIACAE
-Row 17: WMTWNDITEENRAHCTENEUDRETNHAEOET
-Row 18: FOLSEDTIWENHAEIOYTEYQHEENCTAYCR
-Row 19: EIFTBRSPAMHHEWENATAMATEGYEERLBT
-Row 20: EEFOASFIOTUETUAEOTOARMAEERTNRTI
-Row 21: BSEDDNIAAHTTMSTEWPIEROAGRIEWFEB
-Row 22: AECTDDHILCEIHSITEGOEAOSDDRYDLOR
-Row 23: ITRKLMLEHAGTDHARDPNEOHMGFMFEUHE
+...
 Row 24: ECDMRIPFEIMEHNLSSTTRTVDOHW?OBKR  K4 starts col 27
 Row 25: UOXOGHULBSOLIFBBWFLRVQQPRNGKSSO
 Row 26: TWTQSJQSSEKZZWATJKLUDIAWINFBNYP
 Row 27: VTTMZFPKWGDKZXTJCDIGKUHUAUEKCAR  K4 ends
 ```
 
+## Key Constants
+- Length: 97 (prime), IC: 0.0361, all 26 letters present
+- Cribs (0-indexed): 21-33=EASTNORTHEAST, 63-73=BERLINCLOCK
+- Self-encrypting: CT[32]=PT[32]=S, CT[73]=PT[73]=K
+- Bean EQ: k[27]=k[65], 21 inequalities
+- W positions in K4: [20, 36, 48, 58, 74]
+- KA: {{KA}} (all 26 letters, keyword-ordered)
+- AZ: {{AZ}}
+- Bean-compatible periods: {{{{8, 13, 16, 19, 20, 23, 24, 26}}}}
+
 ## KA Vigenere Tableau (28 rows x 31 cols, physically engraved)
 ```
-{TABLEAU_STR}
+{{TABLEAU_STR}}
 ```
-Each tableau row = key letter (col 0) + 30 body chars (KA shifted).
-Row 14 (key=N) has ANOMALOUS extra L. Row 22 (key=V) has extra T.
 
-## Key Structural Facts
-- Misspelling CT letters spell **KA**: K1 IQLUSION->K, K3 DESPARATLY->A
-- AZ->KA permutation cycles: 17-cycle + 8-cycle + fixed Z
-- Tableau anomalies: Extra L at row N (14), extra T at row V (22)
-  - V-N = T-L = **8** (period-8 signal). L+T = 30 (body width).
-  - "8 Lines 73" from Sanborn's yellow pad. 73 + 24 cribs = 97.
-- 39 cells where cipher[r][c] == tableau[r][c] (ambiguous under grille)
-- K3 PT/CT are BOTH known -> can verify any grille theory against K3
-- K3 exact permutation formula verified (0 mismatches / 336 positions)
+## Keyword Status
+- **ELIMINATED**: HOROLOGE, ENIGMA (pigeonhole analysis, all 6 variants fail)
+- **Strongest survivors**: KRYPTOS (5/6), DEFECTOR (4/6), COLOPHON (3/6), ABSCISSA (3/6)
+- **NEW — K-for-C hypothesis**: Sanborn uses Greek/German K where English uses C (KRYPTOS=CRYPTOS).
+  - **KOMPASS (5/6)** — German for COMPASS. References lodestone. Ties KRYPTOS for survival!
+  - KOLOPHON (3/6) — Greek COLOPHON (final inscription). K4 is the last message.
+  - KRYPTA (3/6) — German/Greek CRYPT.
+  - KRYPTEIA (2/6) — Spartan secret police (ancient intelligence service!)
+  - KLEPSYDRA (2/6) — Greek water clock (BERLINCLOCK theme + Kryptos pool)
+- **Rescued by KA**: PARALLAX (KA-VBeau), VERDIGRIS (KA-Beau), SHADOW (KA-Vig)
+- **Scoring blind spot**: If PT contains acronyms (CIA, KGB, DDR), quadgrams reject correct answers.
+  Score by CRIB HITS primarily, not quadgrams, when testing permutations.
+- Keywords: {{', '.join(KEYWORDS)}}
+- Alphabets: AZ={{AZ}}, KA={{KA}}
 
 ## Grille Extract (100 chars, from corrected 28x31 grid)
 ```
-{GRILLE_EXTRACT}
+{{GRILLE_EXTRACT}}
 ```
-All 26 letters present (T now appears). IC = 0.0416.
+All 26 letters present. IC = 0.0416.
 
-## Keywords
-{', '.join(KEYWORDS)}
+## K3 Parallel — Key Reference
+- Legal pad: "14 Lines 342". 14 × 24 = 336 = exact carved K3 length
+- K4: "8 lines 73". 97 - 73 = 24 nulls.
+- K3 formula verified: 0 mismatches / 336 positions. 2 cycles of 168. Dominant step 7 = len(KRYPTOS).
 
-## Alphabets
-- AZ: {AZ}
-- KA: {KA}
+## What's ELIMINATED — DO NOT RE-TEST
+- **ALL periodic sub (Vig/Beau/VBeau × AZ/KA) periods 1-26 on raw 97-char text**: PROVEN IMPOSSIBLE (key conflicts at cribs)
+- **Pure transposition on 97 chars**: IMPOSSIBLE (CT has 2 E's, cribs need 3)
+- ALL single-layer ciphers on 97-char carved text (700B+ configs tested)
+- ALL standard transpositions on 97 chars: 16M+ configs ZERO hits
+- **POINT as keyword/parameter**: 31,600 configs (keyword, coordinate, compass, X-delimiter) ALL NOISE
+- **Punch card null models**: ~1.6M configs (4x24, 8x12, IBM zone, two-keyword) ALL NOISE
+- SA hill-climbing ceiling at -3.73/char on 97-char permutations
+- ALL fractionation, Homophonic, ADFGVX, Hill, Bifid 5x5 (impossible, 26 letters)
+- 50+ deterministic grille masks (cycle, checkerboard, Fibonacci, primes, etc.) ALL NOISE
+- Gromark: 3.2B primers, ZERO matches. Affine mod 97. Mod-5 on carved text (35.6M keys).
+- HOROLOGE/ENIGMA as keyword: eliminated by pigeonhole analysis
+- **Total null-mask configs tested: ~1.66M — ALL NEGATIVE**
 
 ## How to test
-Import the pre-built harness:
 ```python
 import sys; sys.path.insert(0, 'scripts')
 from kbot_harness import (
@@ -357,46 +356,17 @@ from kbot_harness import (
     K4_CARVED, AZ, KA, KEYWORDS, CRIBS,
 )
 ```
-
-## What has been ELIMINATED -- DO NOT RE-TEST THESE
-- ALL standard transpositions (columnar, double, triple, keyword, Myszkowski, AMSCO, rail fence,
-  route, spiral, diagonal, scytale) -- 16M+ configs ZERO hits
-- Affine and power permutations mod 97 -- ALL NOISE
-- Direct Vig/Beau/VarBeau on carved text with ALL keywords -- NOISE
-- SA hill climbing ceiling at -3.73/char (gibberish, not English)
-- K3's exact method (double rotational transposition) on K4 -- NOISE
-- YAR selective substitution -- stale premise (corrected extract has T)
-- KRS frequency overlay on tableau -- IC not significant
-- Lower-half frequency equivalences -- statistically normal
-- **50+ deterministic grille masks EXHAUSTED (2026-03-05)**: cycle membership (C17/C8/Z),
-  period-8 row/col, Fibonacci, prime positions, checkerboard, T-diagonal, cipher-tableau XOR/diff,
-  KA parity, 180-degree Cardan rank, KRYPTOS periodic key, misspelling KA signal, cipher==tableau
-  match positions, row/col header patterns, letter-value thresholds, complement masks.
-  ALL scored in noise range (-5.0 to -7.9 quadgram). ZERO crib hits.
-- **"Grille holes = tableau letters = PT" model DISPROVED**: self-encrypting positions give Z,G
-  from tableau but known PT requires S,K. Model-level contradiction.
-- **10x10 Fleissner pure transposition**: SA best 12/24 from 20 restarts (noise level).
-  Pure Fleissner transposition without a substitution layer is very unlikely.
-
-## Structural findings from prior campaigns (USE these, don't re-derive)
-- K3 permutation = exactly 2 cycles of length 168. Order 168 = 8 x 7 x 3.
-- K3 dominant step within rows is 7 (KRYPTOS length). Inverse has net stride ~47 = 336/7.
-- 180-degree rotation: K4 (rows 24-27) <-> K1 (rows 0-3), K3 <-> K2. Zero overlap.
-- 8-cycle K4 letters (C,J,Q,U,V,W,X,Y) have IC = 0.1233, anomalously high vs random 0.038.
-- IDBYROWS maps to 8 grid rows {1,3,8,14,17,18,22,24} including K3 start (14) and K4 start (24).
-- Known Vig keystream: ENE = BLZCDCYYGCKAZ, BC = MUYKLGKORNA -- NOT periodic.
-- 3 question marks on sculpture + 97 K4 chars = 100 = 10x10. Grille extract = 100 chars.
+Or kernel: `from kryptos.kernel.constants import CT, CRIBS`
 
 ## Rules
-1. Write scripts in `scripts/grille/`, run with: `PYTHONPATH=src python3 -u scripts/grille/YOUR_SCRIPT.py`
-2. If you find ANY crib hit (EASTNORTHEAST or BERLINCLOCK), IMMEDIATELY report it
-3. Be COMPUTATIONAL -- write code, run it, analyze results, iterate
-4. Focus on GRILLE CONSTRUCTION -- determining the binary mask is the goal
-5. **KEEP SCRIPTS SHORT** -- under 200 lines. One focused idea per script. Do NOT write 1000-line megascripts.
-6. **DO NOT re-test deterministic masks** -- 50+ patterns already exhaustively tested (see eliminations above).
-   Instead focus on: constraint propagation, SA with novel objective functions, structural analysis.
-7. **DO NOT reinvent infrastructure** -- use `data/english_quadgrams.json` for scoring, import from
-   `kryptos.kernel.constants` for CT/cribs. Cipher functions: 5-line helpers, not 50-line frameworks.
+1. Write scripts in `scripts/grille/` or `scripts/campaigns/`
+2. Run with: `PYTHONPATH=src python3 -u scripts/<path>`
+3. If you find ANY crib match, IMMEDIATELY report it
+4. Be COMPUTATIONAL — write code, run it, analyze results, iterate
+5. **KEEP SCRIPTS SHORT** — under 200 lines. One focused idea per script.
+6. Import constants from `kryptos.kernel.constants` — never hardcode CT/cribs
+7. **FOCUS ON THE NULL-MASK PROBLEM**: which 24 of 97 positions are nulls?
+8. Every null-mask candidate must be tested: remove nulls → decrypt 73-char CT → score
 """
 
 
@@ -405,44 +375,50 @@ from kbot_harness import (
 # ---------------------------------------------------------------------------
 
 REASONING_PREAMBLE = f"""\
-## CURRENT STATE (2026-03-04): Grille Construction Paradigm
+## CURRENT STATE (2026-03-09): Two Systems PROVEN Required + 73-Char Null Hypothesis
 
-The carved K4 text is SCRAMBLED ciphertext. Model 2 is confirmed:
-  PT -> Cipher(key) -> real_CT -> SCRAMBLE(sigma) -> carved text
+### CRITICAL PROOF (2026-03-09):
+**No periodic substitution cipher works on the raw 97-char carved text.** ALL 6 variants
+(Vig/Beau/VBeau × AZ/KA) at ALL periods 1-26 have key conflicts at crib positions.
+Pure transposition also impossible (CT has 2 E's, cribs need 3). TWO SYSTEMS are
+mathematically required, not just hypothesized.
 
-A Cardan grille on the 28x31 grid mediates between the cipher panel and the KA
-Vigenere tableau. The grille defines the scrambling/reading order.
+### Two Open Models:
+**Model A**: `97 carved → remove 24 nulls → 73-char CT → sub(keyword) → 73-char PT`
+  - Cribs shift to new positions after null removal. ~1.66M configs tested: ZERO signal.
+**Model B**: `97 carved → cipher(all 97) → 97-char raw PT → read 73 → real message`
+  - Cribs stay at stated positions. 24 PT chars are garbage. Simpler for hand-solving.
+  - But periodic sub on raw 97 is proven impossible, so cipher must be non-standard.
 
-### KEY DISCOVERY: Misspellings spell KA
-- K1 IQLUSION -> CT letter K, K3 DESPARATLY -> CT letter A
-- K2 UNDERGRUUND was a cipher error (NOT a misspelling)
-- "KA" = Kryptos Alphabet. Points to KA system as grille construction key.
-- AZ->KA permutation: 17-cycle + 8-cycle + fixed Z
+### KEY DISCOVERIES:
+- **73-char hypothesis**: Legal pad "8 lines 73". Triple-24: (97-73), (13+11 cribs), (Weltzeituhr facets)
+- **Two Systems CONFIRMED**: Sanborn dedication speech (primary source)
+- **W-as-delimiter**: 5 W's at [20,36,48,58,74] bracket both cribs
+- **Grille + sub compatible with 24 cribs**: Cribs constrain combined effect, not grille alone
+- **d=13 anomaly**: Beaufort k%13 collisions 3.55× expected (strongest signal in Bean 2021)
+- **Misspellings spell KA**: K1 IQLUSION→K, K3 DESPARATLY→A. Points to KA alphabet system.
+- **Punch card parallel**: IBM cols 1-72=data, 73-80=metadata (Scheidt's CIA era)
+- **"Simpler than people think"**: Sanborn/Scheidt repeatedly say this. Hand-executable.
 
-### Three Kryptos-only structural elements (absent from Antipodes):
-1. Key column (AZ order, not KA) -- makes tableau 28x31 = overlayable
-2. Header/footer rows (standard AZ alphabet)
-3. Extra L on row N (row 14) -- only row that overflows
-
-### ELIMINATION LANDSCAPE (560+ experiments, ~700B+ configs):
-- ALL single-layer ciphers on carved text: EXHAUSTED
-- ALL standard transpositions: 16M+ configs ZERO hits
-- SA ceiling at -3.73/char (gibberish)
-- Only Bean-compatible periods: {{8, 13, 16, 19, 20, 23, 24, 26}}
-- Simple periodic keys REOPENED under Model 2 (KRYPTOS/7, ABSCISSA/8)
+### ELIMINATION LANDSCAPE (600+ experiments, ~700B+ configs):
+- **ALL periodic sub on raw 97: PROVEN IMPOSSIBLE** (key conflicts at cribs)
+- ALL single-layer ciphers on 97-char carved text: EXHAUSTED
+- ALL standard transpositions + null masks: 16M+ transpositions, 1.66M null masks, ZERO hits
+- POINT/coordinate/compass/X-delimiter: 31,600 configs ZERO signal
+- SA ceiling at -3.73/char. Gromark: 3.2B primers ZERO.
+- Only Bean-compatible periods: {{{{8, 13, 16, 19, 20, 23, 24, 26}}}}
 
 ### KRYPTOS FACTS:
-- CT: {K4_CARVED}
+- CT: {{K4_CARVED}}
 - 97 chars (prime), all 26 letters present
-- Known PT (0-indexed): pos 21-33 = EASTNORTHEAST, pos 63-73 = BERLINCLOCK
-- Bean EQ: k[27]=k[65], 21 inequalities. Self-encrypting: CT[32]=PT[32]=S, CT[73]=PT[73]=K
-- K1: Vigenere/PALIMPSEST. K2: Vigenere/ABSCISSA. K3: Double rotational transposition.
-- KA alphabet: {KA} (all 26 letters, keyed)
+- Cribs (0-indexed): 21-33=EASTNORTHEAST, 63-73=BERLINCLOCK
+- Self-encrypting: CT[32]=PT[32]=S, CT[73]=PT[73]=K
+- Bean EQ: k[27]=k[65], 21 inequalities
+- K1: Vig/PALIMPSEST. K2: Vig/ABSCISSA. K3: Double rotational transposition.
+- KA: {{KA}} (all 26 letters, keyed)
 - Sanborn: "two separate systems... a major clue in itself"
-- Gillogly: K4 method "never appeared in cryptographic literature"
-- Scheidt: CIA Crypto Center chairman 1963-1989, 36 CKM patents
-- K3 ends "CAN YOU SEE ANYTHING" -- grille instruction (looking through holes)
-- K2 ends with "LAYER TWO" / "IDBYROWS"
+- K4 PT "is not standard English" — telegram-style with W delimiters?
+- "(CLUE) what's the point?" — W as period, compass pole, or meta-question
 """
 
 
@@ -453,307 +429,281 @@ Vigenere tableau. The grille defines the scrambling/reading order.
 _UNSCRAMBLE_PROMPTS: dict[str, tuple[str, str]] = {
     # name: (title, prompt)
 
-    "tableau_structural": (
-        "Tableau Structural Analysis -- Derive grille from Kryptos-only structural clues",
-        f"""\
-## YOUR MISSION: How do the Kryptos-only tableau elements construct the grille?
+    "null_mask_search": (
+        "Null-Mask Search — Find the 24 null positions in K4",
+        f"""## YOUR MISSION: Determine which 24 of K4's 97 positions are NULLS
 
-**DO NOT** test simple deterministic masks (cycle membership, checkerboard, etc.) -- 50+ already failed.
-**DO** focus on structural RELATIONSHIPS that generate the mask algorithmically.
+The core computational problem: 97 carved chars contain 73 real CT + 24 nulls.
+Remove the right 24 chars, and the remaining 73 decrypt to English with a simple keyword.
 
-### Focus areas (pick ONE and go deep):
-**A. Key column as permutation seed** -- Col 0 has AZ order while body has KA order.
-   The AZ->KA permutation (17+8+1 cycles) applied to key column values could generate
-   a row-by-row mask via some rule. Explore: does applying the permutation N times to
-   each key letter produce a bit sequence? Does the cycle LENGTH (17 vs 8) at each row
-   determine a property of that row's mask pattern?
+### Constraints
+- Crib positions (21-33, 63-73) CANNOT be nulls — they anchor the real CT
+- W positions [20, 36, 48, 58, 74] are strong null candidates (bracket cribs)
+- Non-crib positions: seg1 0-20 (21 chars), seg2 34-62 (29 chars), seg3 74-96 (23 chars)
+- All 24 nulls must come from these 73 non-crib positions
 
-**B. Extra L and Extra T as construction parameters** -- Row 14 has extra L, row 22 has extra T.
-   V-N = T-L = 8. These could be key parameters: period 8, or split at row 14.
-   Test: read the grid in 8-column strips with L/T determining strip boundaries.
+### Approaches (pick ONE, go deep):
+**A. SA over null masks** — State = 24 null positions. Neighbor = swap one null with one
+   non-null (both non-crib). Evaluate: remove nulls → 73-char CT → Vig/Beau decrypt with
+   KRYPTOS/DEFECTOR/PARALLAX/COLOPHON → quadgram score. Anneal with 500K+ steps.
+   Try both with and without W-positions fixed as nulls.
 
-**C. K3 calibration** -- K3 PT+CT both known (336 positions, 0 mismatches). ANY valid grille
-   theory MUST produce correct results on K3. Build your theory, test on K3 FIRST.
-   K3 permutation has 2 cycles of 168, dominant step-7.
+**B. W-constrained search** — Fix W positions [20,36,48,58,74] as 5 nulls. Search for
+   19 more among 68 remaining non-crib positions. C(68,19) ≈ 10^16 but SA can explore this.
+   After removing 24 chars, check for EASTNORTHEAST/BERLINCLOCK at compressed positions.
 
-Keep scripts under 200 lines. Test ONE hypothesis deeply rather than 10 superficially.
-Write scripts in `scripts/grille/`.""",
+**C. Frequency-guided null selection** — Nulls may have distinctive frequency signature.
+   If nulls were inserted as random letters, removing them should push IC toward English (0.067).
+   Iteratively remove positions that most improve IC/quadgram score.
+
+**D. Structural null patterns** — Test regular patterns: every 4th position (97/24 ≈ 4),
+   every Nth from offset M, Weltzeituhr-clock-mapped positions, positions where cipher
+   grid letter equals tableau letter (39 self-matching positions — 24 could be nulls from these).
+
+Keep scripts under 200 lines. Write to `scripts/campaigns/`.""",
     ),
 
-    "fleissner_grille": (
-        "Fleissner Turning Grille -- 10x10 grille on K4 + 3 question marks",
-        f"""\
-## YOUR MISSION: Deep Fleissner (turning) grille search on K4
+    "d13_exploitation": (
+        "d=13 Anomaly — Exploit the strongest statistical signal in K4",
+        f"""## YOUR MISSION: Exploit the d=13 Beaufort keystream anomaly
 
-### Key insight
-K4 (97 chars) + 3 question marks on sculpture = 100 = 10x10.
-The grille extract is exactly 100 characters. A Fleissner grille on 10x10
-has 25 orbits x 4 rotations = 100 cells. This is a CLEAN fit.
+Bean 2021 found Beaufort keystream collisions at k%13 are **3.55× expected** — the single
+strongest statistical deviation in K4. Period 13 = len(EASTNORTHEAST). This is untested
+with the null-removal model.
 
-### What's been tested
-- Pure transposition Fleissner (no sub layer): SA best 12/24 from 20 restarts. Likely noise.
-- Fleissner + periodic Vig/Beau (p=7,8): 0 fully consistent grilles in 5M random trials.
-- Only ~10^-8 of the 4^25 = 10^15 search space has been sampled.
+### What's known
+- d=13 is the strongest modular collision anomaly in Bean's analysis
+- Period 13 is ELIMINATED by full 242-pair Bean check (7 Type 1 + 2 Type 2 violations), but d=13 anomaly in keystream statistics remains unexplained
+- 13 is len(EASTNORTHEAST) — likely not coincidence
+- If K4 uses period 13 substitution, any 13-letter keyword could work
+- Under null removal, period structure changes: 73/13 ≈ 5.6 residues per class
 
-### What to do (pick ONE):
-**A. Fleissner + SA with quadgram scoring** -- Instead of crib-only scoring, use full
-   quadgram fitness. For each Fleissner grille, read K4 through the grille, apply
-   Vig/Beau decrypt with KRYPTOS or ABSCISSA, score with quadgrams. SA-optimize
-   the 25 orbit choices. This tests 4^25 grilles implicitly.
+### Approaches (pick ONE):
+**A. Period-13 Beaufort + null removal** — For each null mask (24 positions removed),
+   decrypt the 73-char CT with period-13 Beaufort using Bean-passing 13-letter keywords.
+   Key constraint: k[27%13]=k[65%13] → k[1]=k[0]. SA search over null masks + keyword.
 
-**B. Constraint propagation from cribs** -- For ABSCISSA/AZ Vig:
-   real_CT[i] = (PT[i] + ABSCISSA[i%8]) mod 26. At 24 crib positions, this gives
-   24 known real_CT values. Each must appear somewhere in K4. The Fleissner maps
-   PT position -> grid cell. Use CSP to find valid orbit assignments.
-   Key fixed points: sigma(32)=32 (since K4[32]=S=real_CT[32] under ABSCISSA shift A=0).
+**B. Stehle Δ4=5 observation** — Bean noted an untested pattern at Δ4=5 (the 4th-order
+   difference in keystream). Investigate: what cipher produces constant 4th differences?
+   Test running-key or autokey models with period-13 structure.
 
-**C. Grille extract as orbit encoding** -- The 100-char grille extract might encode
-   the Fleissner configuration. Group into 25 groups of 4 chars (one per orbit).
-   Can the letter values determine which of the 4 cells in each orbit is the hole?
+**C. EASTNORTHEAST as period key** — If the period IS 13, the crib EASTNORTHEAST
+   could BE the key (or derive the key). Test: use EASTNORTHEAST as Beaufort key on
+   various null-reduced CTs. Or: EASTNORTHEAST defines the period structure, and a
+   different 13-char key decrypts.
 
-**D. Non-square Fleissner** -- The physical grid is 28x31 (not square).
-   Test 180-degree rotation (434 holes, 2 orientations instead of 4).
-   K4 positions pair with K1 positions under this rotation.
-
-Keep scripts under 200 lines. Write scripts in `scripts/grille/`.""",
+Keep scripts under 200 lines. Write to `scripts/campaigns/`.""",
     ),
 
-    "rotation_180": (
-        "180-degree Rotation -- K4/K1 pairing and two-pass grille reading",
-        f"""\
-## YOUR MISSION: Exploit the 180-degree structural symmetry for K4
+    "two_system_pipeline": (
+        "Two-System Decomposition — Systematically test System1 + System2 models",
+        f"""## YOUR MISSION: Systematically test decomposed encryption models
 
-**ALREADY KNOWN** (don't re-derive):
-- 868/2 = 434 = K1+K2 = K3+?+K4 (exact split)
-- K4 (rows 24-27) <-> K1 (rows 0-3) under (r,c) -> (27-r, 30-c)
-- K3 <-> K2 under same rotation
-- 17 reading variants already tested -- all 3-5/24 (noise)
+Sanborn confirmed TWO SYSTEMS. The question is exactly how they compose:
+```
+PT → System1(?) → intermediate → System2(?) → carved text
+```
 
-**DO NOT** test simple reflected readings or cycle-membership masks (already failed).
+### Known constraints
+- System 1 is likely substitution (Vig/Beau with keyword on KA or AZ alphabet)
+- System 2 involves expansion (73→97) via null insertion
+- "Designed to unveil itself" — layers peel off in reverse order
+- K4 PT "is not standard English" — suggests telegram/coded message (W delimiters?)
 
-### What to do (pick ONE and go deep):
-**A. K1 as key for K4** -- K1 CT at reflected K4 positions could be a running key or
-   permutation key for K4. K1 is Vig/PALIMPSEST. Decrypt K1 reflected positions first,
-   THEN use the K1 PT as a key element for K4. This uses the solved section as
-   an instruction channel.
+### Approaches (pick ONE):
+**A. Reverse-order peeling** — Try System2 first (remove nulls → 73 chars), then System1
+   (decrypt with keyword). Versus: System1 first (treat all 97 as CT, decrypt, then find
+   73 meaningful chars among 97 decrypted chars). Which model produces better scores?
 
-**B. K3 permutation extended to K4 via rotation** -- K3's exact permutation (2 cycles of 168,
-   dominant step 7) maps K3 positions. Under 180-degree rotation, K3 maps to K2.
-   Can we derive the K4 permutation by applying the K3 formula to the rotated grid?
+**B. Autokey / self-keying** — Instead of periodic keyword, test autokey Vigenère/Beaufort
+   where the key extends using plaintext or ciphertext. With null removal, this changes
+   the feedback chain. Test all autokey variants (PT-autokey, CT-autokey) on 73-char reduced texts.
 
-**C. 8-cycle IC anomaly** -- K4 letters in the 8-cycle (C,J,Q,U,V,W,X,Y) have IC=0.1233
-   (anomalously high). Under 180-degree rotation, where do these letters map?
-   Do they cluster in K1? This could reveal structural information about the permutation.
+**C. Double transposition + substitution** — K3 used double rotational transposition.
+   K4 may use a DIFFERENT combination. Test: substitution (keyword) → transposition
+   (rectangular grid, different dimensions: 73=prime so only 1×73 or 73×1 — BUT if nulls
+   are in specific pattern, the 97 chars form a grid like 4×24+1 or similar).
 
-Keep scripts under 200 lines. Write scripts in `scripts/grille/`.""",
+**D. Berlin Clock base-5 encoding** — The Berlin Clock uses base-5 (rows of 4×5hr + 4×1hr).
+   Test: interpret K4 letter positions mod 5 as encoding a base-5 number system.
+   Or: group the 73 real chars into groups of 5 and decode.
+
+Keep scripts under 200 lines. Write to `scripts/campaigns/`.""",
     ),
 
-    "k3_grille_verify": (
-        "K3 Permutation Analysis -- Reverse-engineer grille construction from known K3",
-        """\
-## YOUR MISSION: Derive grille construction rules from K3's known permutation
+    "grille_as_selector": (
+        "Grille as Selection Mask — Use Cardan grille to identify 73 real positions",
+        f"""## YOUR MISSION: Construct a Cardan grille that selects 73 of 97 K4 positions
 
-**ALREADY KNOWN** (don't re-derive):
-- K3 permutation: 2 cycles of 168, order 168 = 8x7x3, dominant step 7
-- K3 formula: a=i//24, b=i%24, int=14*b+13-a, c=int//8, d=int%8, pt=42*d+41-c
-- 0 mismatches across 336 positions
-- Classical Cardan grille (half-mirror): 0/168 match
-- KA cycle mask on K3: no genuine crib hits
+The Cardan grille's ORIGINAL function: holes reveal real text, blocked positions are nulls.
+The grille selects which K4 positions are real CT vs. inserted nulls.
 
-### What to do (pick ONE):
-**A. Grille reverse-engineering** -- K3's permutation is KNOWN exactly. If a grille
-   produced this permutation, what properties must the grille have? For each K3 position i,
-   the PT position pt_pos tells us where the grille sends position i. Can you factor
-   this into a "grille reading order" (mask + reading direction)?
+### Construction clues
+- K4 occupies rows 24-27 of the 28x31 grid (4 rows × ~24-31 cols = 97 positions)
+- The grille covers the FULL 28x31 grid; K4's portion has 73 holes and 24 solid cells
+- AZ→KA permutation (17-cycle + 8-cycle + Z fixed) may define hole vs. solid
+- Misspellings spell KA — pointing to KA cycle structure as construction key
+- Key column (AZ order) + header/footer (standard alphabet) are Kryptos-only elements
+- 39 positions where cipher[r][c] == tableau[r][c] could mark null positions
+- Extra L at row N (14), extra T at row V (22): V-N = T-L = 8 (period-8 signal)
 
-**B. K3 permutation modular structure** -- The formula uses divisors 24, 14, 8, 42.
-   24 = K3_rows_in_grid? 14 = half_grid_height? 8 = ABSCISSA_length?
-   42 = 6*7 = (KRYPTOS-1)*KRYPTOS? Map these parameters to grid structure.
-   Can K4's permutation use analogous parameters scaled to K4's size?
+### Approaches (pick ONE):
+**A. K3 calibration** — K3 PT+CT both known (336 positions). Any valid grille theory
+   MUST produce correct results on K3. Build your grille construction, test on K3 FIRST.
+   If it works for K3, apply to K4 to identify nulls.
 
-**C. Step pattern analysis** -- K3 has dominant step 7 = len(KRYPTOS).
-   What's the step pattern for K4 positions in the grid? The K4 subgrid is
-   4 rows x 31 cols (roughly). If K4 uses ABSCISSA (8), the dominant step might be 8.
-   Test permutations with step-8 structure on K4.
+**B. Cycle-based selection for K4 region** — For K4's 97 positions in the grid,
+   determine each position's letter in the cipher grid AND the tableau. Use the
+   AZ→KA cycle membership (17-cycle letter → hole, 8-cycle → solid, or vice versa)
+   applied to the cipher-tableau RELATIONSHIP at each position.
 
-Keep scripts under 200 lines. Write scripts in `scripts/grille/`.""",
-    ),
+**C. 180-degree rotation pairs** — Under (r,c)→(27-r,30-c), K4 maps to K1.
+   At each K4 position, check its K1 partner. If K1 partner is "meaningful" (in solved
+   plaintext), then K4 position is real. If K1 partner is a "filler" character, K4 position
+   is a null. Use K1's known plaintext to classify.
 
-    "instruction_decoder": (
-        "K1-K3 Instruction Decoder -- Extract actionable parameters from solved sections",
-        f"""\
-## YOUR MISSION: Extract ACTIONABLE construction parameters from K1-K3
-
-**ALREADY KNOWN** (don't re-derive):
-- Misspellings spell KA (K from IQLUSION, A from DESPARATLY)
-- IDBYROWS maps to 8 grid rows {{1,3,8,14,17,18,22,24}}
-- Known keystream is non-periodic
-- "8 Lines 73": 73 + 24 cribs = 97
-
-**DO NOT** just list observations. Each finding must produce a TESTABLE permutation or mask.
-
-### What to do (pick ONE):
-**A. IDBYROWS as grille reading order** -- The 8 rows {{1,3,8,14,17,18,22,24}} include
-   K3 start (14) and K4 start (24). Read the grid in this row order, then remaining rows.
-   Does this reordering + Vig/Beau produce anything? Test systematically with all keywords.
-
-**B. "8 Lines 73" as a 73-hole grille** -- Construct a mask with exactly 73 holes on K4's
-   97 positions (73 = 97-24 non-crib positions). The 24 crib positions could be "solid"
-   (pass-through), while 73 positions are reordered. SA search over 73-position permutations.
-
-**C. K3's "CAN YOU SEE ANYTHING" as literal grille instruction** -- K3 describes peering
-   through a hole. The PHYSICAL act of looking through the grille at the cipher panel
-   gives you the PT. What if each solved section's PT tells you WHICH CELLS to look through
-   for the NEXT section? K1 PT -> K2 grille, K2 PT -> K3 grille, K3 PT -> K4 grille.
-   Test: extract a mask from K3 PT (letter values, positions of specific letters, etc.)
-   and apply to K4 region.
-
-Keep scripts under 200 lines. Write scripts in `scripts/grille/`.""",
+Keep scripts under 200 lines. Write to `scripts/grille/`.""",
     ),
 
     "wildcard": (
-        "Wildcard -- Novel approaches that haven't been tried",
-        f"""\
-## YOUR MISSION: Try something genuinely new
+        "Wildcard — Genuinely novel approaches",
+        f"""## YOUR MISSION: Try something genuinely new that hasn't been tested
 
-**IMPORTANT**: 50+ deterministic mask patterns and 16M+ standard transpositions have ALL failed.
-DO NOT test more masks (cycle, checkerboard, parity, Fibonacci, primes, etc.) -- they're exhausted.
+ALL standard approaches on 97 chars are exhausted. The 73-char null hypothesis is the
+top lead but other models may exist.
 
 ### Genuinely unexplored ideas (pick ONE):
-**A. K4 starts "YES WONDERFUL THINGS"** -- K3 ends "CAN YOU SEE ANYTHING" (Carter's question).
-   Carter actually replied "Yes, wonderful things." Test "YESWONDERFULTHINGS" as a crib at
-   position 0 (21 chars). Combined with existing cribs, this gives 45/97 known PT positions.
-   With 45 known PT + any keyword, derive constraints on the permutation.
+**A. "YES WONDERFUL THINGS" as K4 opening** — K3 ends "CAN YOU SEE ANYTHING" (Carter's
+   question at Tutankhamun's tomb). Carter replied "Yes, wonderful things." Test
+   "YESWONDERFULTHINGS" as PT at position 0 (18 chars). Combined with cribs, this gives
+   42/97 known PT positions. Derive the keyword from these known positions and check consistency.
 
-**B. Permutation from grille extract** -- The 100-char grille extract
-   `HJLVKDJQZKIVPCMWSAFOPCKBDLHIFXRYVFIJMXEIOMQFJNXZKILKRDIYSCLMQVZACEIMVSEFHLQKRGILVHNQXWTCDKIKJUFQRXCD`
-   could directly encode the permutation. Try: KA-index of each letter as a position number
-   (mod 97), rank ordering, or use pairs of letters as 2-digit base-26 numbers.
+**B. Telegram with W-delimiters** — If W = STOP, K4 plaintext is a 6-segment telegram:
+   `[20 chars]W[EASTNORTHEAST+2]W[11]W[9]W[4+BERLINCLOCK]W[22 chars]`
+   What operational Cold War message fits this structure? Test known Cold War intelligence
+   message formats (CRITIC, OPREP, FLASH messages) for pattern match.
 
-**C. SA on full 97-element permutation with Vig/ABSCISSA** -- Forget grille construction.
-   Directly SA-search the permutation sigma where K4[sigma(i)] = real_CT[i], with
-   real_CT[i] = Vig_encrypt(PT[i], ABSCISSA[i%8]). Score with quadgrams on the full PT.
-   Fix sigma(32)=32 (known fixed point under ABSCISSA). 500K steps x 20 restarts.
-   This is the most direct attack on Model 2.
+**C. Physical sculpture geometry** — Kryptos is an INSTALLATION with 3 sites:
+   - Site 1: Entrance (Morse + lodestone)
+   - Site 2: NW courtyard (cipher sculpture)  
+   - Site 3: E courtyard (calm pool, NO text)
+   Bearings and distances between sites may encode parameters. Lodestone deflects ENE.
+   K2 coordinates (38°57'6.5"N, 77°8'44"W) may point to Site 3.
 
-**D. Double transposition** -- K3 uses double rotational transposition. K4 might use
-   a DIFFERENT double transposition. Try: columnar(key1) then columnar(key2) for
-   key lengths 3-9. Or route cipher followed by columnar. Brute-force small key lengths.
+**D. Maintenance timer as key** — Pump OFF + Light ON = 20:00-24:00 only.
+   20 → position 20 → W (first delimiter). 24 → 24 nulls. 4-hour window → 4 K messages.
+   8:00 pump start → "8 lines". These numbers may literally be parameters.
 
-Keep scripts under 200 lines. Write scripts in `scripts/grille/`.""",
+Keep scripts under 200 lines. Write to `scripts/campaigns/`.""",
     ),
 }
 
 
 _REASONING_PROMPTS: dict[str, tuple[str, str]] = {
-    "grille_theory": (
-        "How does the KA signal from misspellings construct the Cardan grille?",
-        """\
-YOUR TASK: Reason deeply about how the KA alphabet signal from misspellings
-connects to Cardan grille construction.
+    "null_position_theory": (
+        "What structural rule determines which 24 positions are nulls?",
+        """YOUR TASK: Reason about what RULE Sanborn used to decide where to insert 24 nulls.
 
 KEY FACTS:
-- K1 misspelling IQLUSION maps to CT letter K
-- K3 misspelling DESPARATLY maps to CT letter A (via exact transposition permutation)
-- K2 UNDERGRUUND was NOT a misspelling (cipher error, corrected on Antipodes)
-- Together: K, A = "KA" = Kryptos Alphabet designation
-- AZ->KA permutation has cycle structure: 17-cycle + 8-cycle + fixed Z
-- The 17-cycle contains ALL letters of KRYPTOS (K,R,Y,P,T,O,S)
-- The 8-cycle contains C,J,Q,U,V,W,X,Y
-- Z is a fixed point
-
-- Kryptos tableau is 28x31 (same as cipher grid) due to key column + headers
-- Antipodes tableau is 32x33 (pure KA, no key column)
-- These structural differences are FUNCTIONAL -- they enable grille overlay
-
-QUESTIONS TO REASON ABOUT:
-1. Does the 17/8/1 cycle partition directly define hole vs solid?
-2. Is KA a keyword for generating the grille pattern (like a keyed columnar)?
-3. Could the misspelled letters themselves (Q, A) carry additional information?
-   Q is in the 8-cycle, A is in the 17-cycle. L is 17-cycle, E is 17-cycle.
-4. How does "8 Lines 73" connect to the 8-cycle length?
-5. Could the grille be self-keyed: each solved section provides the key for the next?
-6. What is the relationship between the extra L (row N) and the KA cycle structure?
-
-For each theory:
-- Define it CONCRETELY with step-by-step construction
-- Predict how many holes it produces and where
-- Explain how it connects to other known facts
-- Rate plausibility (1-10)
-
-Write your analysis to results/grille_theory_analysis.md""",
-    ),
-
-    "two_systems_grille": (
-        "How do 'two separate systems' manifest as grille + substitution?",
-        """\
-YOUR TASK: Analyze how Sanborn's "two separate systems" maps to the
-grille-based paradigm: system 1 = Cardan grille (scrambling/permutation),
-system 2 = substitution (Vigenere/Beaufort with keyword).
-
-KEY CONTEXT:
-- Model 2: PT -> Cipher(key) -> real_CT -> SCRAMBLE(sigma) -> carved text
-- The Cardan grille defines sigma (the scrambling permutation)
-- The substitution cipher uses a keyword (KRYPTOS period 7 or ABSCISSA period 8)
-- "A major clue in itself" -- the TWO-NESS is important
-- K3 used transposition + Vigenere/KRYPTOS -- but K4's transposition is novel
+- 97 carved chars = 73 real CT + 24 nulls
+- Crib positions (21-33, 63-73) are real, not nulls
+- W positions [20, 36, 48, 58, 74] bracket the cribs — strong null candidates
+- BERLINCLOCK references Weltzeituhr which has 24 facets
+- "8 lines 73" from Sanborn's legal pad. K3: "14 lines 342", 14×24 = 336 = carved K3.
+- Cardan grille = selection mask: holes = real text, blocked = nulls
+- 39 grid positions where cipher == tableau (self-matching) — could 24 of these be nulls?
 
 QUESTIONS:
-1. In what ORDER are the two systems applied? Does it matter?
-2. Could "two systems" refer to the two orientations of the grille (180 degree)?
-3. How does the grille interact with the Vigenere key period?
-4. Scheidt's CKM patents involve key-splitting. Does the grille split the key?
-5. "IDBYROWS" -- could this describe the grille reading order?
-6. Are there exactly two pieces of information needed: the mask + the keyword?
+1. If W's are 5 nulls, what rule determines the other 19? Regular spacing? Structural?
+2. Could the Weltzeituhr's 24 facets map to 24 specific K4 positions?
+3. Does the 4×31 K4 sub-grid have a natural 24-position subset (e.g., specific columns)?
+4. Could K1-K3 plaintext encode the null positions for K4?
+5. Is there a mathematical relationship: 97 = 73 + 24, 73 is prime, 24 = 4! = 3×8?
+6. What if nulls were inserted at REGULAR intervals (every ~4th char from some offset)?
 
-For each interpretation, describe it concretely and rate plausibility (1-10).
-Write your analysis to results/two_systems_grille.md""",
+For each theory, define it concretely, predict the 24 positions, and rate plausibility (1-10).
+Write analysis to results/null_position_theory.md""",
+    ),
+
+    "two_systems_theory": (
+        "How do the TWO SYSTEMS compose to encrypt K4?",
+        """YOUR TASK: Analyze Sanborn's confirmed "two separate systems" in light of the 73-char model.
+
+CONFIRMED (Sanborn dedication speech, primary source):
+- "There are TWO SYSTEMS of enciphering the bottom text"
+- "a major clue in itself"
+- "designed to UNVEIL ITSELF... pull up one layer, come to the next"
+- K4 PT "is not standard English, would require a second level of cryptanalysis"
+- Scheidt: "mirrors and obfuscation"
+
+MODEL: PT → System1(substitution) → 73-char CT → System2(null insertion) → 97 carved
+
+QUESTIONS:
+1. System 1 = substitution. Is it Vigenère, Beaufort, or something else? Period?
+2. System 2 = null insertion. How are null characters chosen? Random? Patterned? Related to key?
+3. "Not standard English" + "second level of cryptanalysis" — is the PT a telegram with W-delimiters?
+4. If PT is 73 chars with W-delimiters, and W's are also inserted as nulls, this is "mirrors"
+5. "Unveil itself" = first remove nulls (System 2), then decrypt (System 1)?
+6. Could the two systems share a key (e.g., same keyword determines both substitution AND null positions)?
+7. K1-K3 used ONE system (Vigenère). K4 uses TWO. The "major clue" may be the count itself.
+
+For each interpretation, describe concretely and rate plausibility (1-10).
+Write analysis to results/two_systems_theory.md""",
+    ),
+
+    "installation_analysis": (
+        "How does Kryptos-as-installation encode the K4 method?",
+        """YOUR TASK: Analyze the spatial/physical installation as a clue system for K4.
+
+KEY FACTS:
+- Kryptos is an INSTALLATION, not just a sculpture. Three-site design:
+  - Site 1: Entrance (Morse code + lodestone compass)
+  - Site 2: NW courtyard (cipher sculpture + tableau)
+  - Site 3: E courtyard (calm pool, NO text — absence is clue)
+- Lodestone points ENE = EASTNORTHEAST crib. Absent from Antipodes = "one clue missing"
+- K2 coordinates (38°57'6.5"N, 77°8'44"W) may point to Site 3
+- USGS marker buried by Sanborn, removed by CIA, "still important"
+- "Who says it is even a math solution?" (Sanborn, Spy Museum, Nov 2025)
+- Carter parallel: workers' huts ON TOP of tomb = carved text ON TOP of real CT
+- Pump OFF + Light ON = 20:00-24:00 only. 20→pos 20→W. 24→nulls. 4hrs→4 messages.
+- CIA page: "bubbling pool symbolizes information being disseminated with unknown destination"
+
+QUESTIONS:
+1. What information does the 3-site spatial layout encode? Angles? Distances?
+2. Why does Site 3 have NO text? What does "absence of information" tell us?
+3. How does the maintenance timer (20:00-24:00) connect to K4 structure?
+4. "Not a math solution" — does Sanborn mean the key is physical/spatial, not computational?
+5. Could solving K4 require physically being at CIA HQ (measuring angles, reading in specific light)?
+
+For each theory, rate plausibility (1-10).
+Write analysis to results/installation_analysis.md""",
     ),
 
     "bespoke_cipher_design": (
-        "What bespoke cipher would a CIA crypto chief design for a sculptor?",
-        """\
-YOUR TASK: Reason about what cipher Scheidt would design, given the grille paradigm.
+        "What bespoke cipher would Scheidt design for a sculptor?",
+        """YOUR TASK: Reason about what cipher Scheidt designed, given the 73-char + Two Systems paradigm.
 
 CONSTRAINTS:
-- Scheidt was CIA's top cryptographer (1963-1989)
-- Method has "never appeared in cryptographic literature" (Gillogly)
-- Must be executable by hand (Sanborn encoded it physically in 1989-1990)
-- Uses "two separate systems" (Sanborn)
-- We now know: Cardan grille + substitution. The grille is novel, not the substitution.
-- Misspellings spell KA. Tableau is designed for overlay. 180 degree structural match.
-- 560+ experiments with ~700B+ configs have all produced NOISE on carved text
+- Scheidt was CIA Crypto Center chairman (1963-1989), 36 CKM patents
+- Method "never appeared in cryptographic literature" (Gillogly)
+- Must be hand-executable (Sanborn encoded it physically, 1989-1990)
+- Uses "two separate systems" — confirmed by Sanborn
+- 73-char model: substitution + null insertion
+- Novelty is in the COMBINATION, not computational complexity
+- "Method is probably embarrassingly simple once seen" (cf. Copiale: 260 years, wrong assumption)
 
-The NOVELTY is in the grille construction method, not the cipher itself.
-What construction method would a CIA crypto chief choose that:
-1. Is derivable from the sculpture's own structure
-2. Has never appeared in literature
-3. Is elegant enough for an art installation
-4. Uses the KA alphabet as a key element
+KEY INSIGHT: All Tier 2 eliminations assumed direct positional correspondence (CT[i]→PT[i]).
+The null insertion BREAKS this assumption. Every "eliminated" single-layer cipher is REOPENED
+as the substitution layer of a two-layer system where nulls are first removed.
 
-Write your analysis to results/bespoke_cipher_design.md""",
-    ),
+QUESTIONS:
+1. What null-insertion rule is elegant enough for an art installation?
+2. Could the rule be self-keying: the plaintext tells you where the nulls go?
+3. Is the "bespoke" element the null insertion pattern, not the substitution cipher?
+4. How does a CIA crypto chief hide information in plain sight?
+5. What makes this "embarrassingly simple" once you see it?
 
-    "receiver_identity": (
-        "How does 'receiver identity protection' manifest in 97 characters?",
-        """\
-YOUR TASK: Analyze Scheidt's "receiver identity protection" concept in context
-of the grille paradigm.
-
-CONTEXT:
-- Scheidt discussed "receiver identity protection" at ACA 2013
-- Medieval guild crypto: verify membership without revealing the guild
-- "IDBYROWS may not be a mistake" -- Scheidt
-- The grille is a PHYSICAL object -- only someone with the grille can read K4
-- The grille extract (100 chars from tableau through grille holes) may be a
-  membership verification string
-
-CRITICAL INSIGHT: If the grille must be physically constructed to solve K4,
-then the sculpture itself IS the receiver identity -- you must be AT Kryptos
-(or have accurate measurements) to derive the grille.
-
-For each proposed mechanism, rate plausibility (1-10).
-Write your analysis to results/receiver_identity.md""",
+Write analysis to results/bespoke_cipher_design.md""",
     ),
 }
 
@@ -791,37 +741,37 @@ def _build_strategies() -> dict[str, Strategy]:
         )
 
     # -- COMPUTE strategies (local CPU, no tokens) --------------------
-    strategies["local_grille_index"] = Strategy(
-        name="local_grille_index",
+    strategies["local_null_mask_sa"] = Strategy(
+        name="local_null_mask_sa",
         category=StrategyCategory.UNSCRAMBLE,
         mode=StrategyMode.COMPUTE,
-        description="Grille extract -> numeric index permutations (mod97, rank, inv_rank)",
+        description="SA over null-position masks: remove 24 chars, decrypt 73-char CT, score",
         priority=1,
         tags=("compute", "unscramble", "active"),
     )
-    strategies["local_180_mask_enum"] = Strategy(
-        name="local_180_mask_enum",
+    strategies["local_d13_beaufort"] = Strategy(
+        name="local_d13_beaufort",
         category=StrategyCategory.UNSCRAMBLE,
         mode=StrategyMode.COMPUTE,
-        description="Enumerate 180-degree rotation compatible masks with K3 calibration",
+        description="Period-13 Beaufort sweep with null-removal variants (d=13 anomaly)",
         priority=1,
         tags=("compute", "unscramble", "active"),
     )
-    strategies["local_ka_cycle_masks"] = Strategy(
-        name="local_ka_cycle_masks",
+    strategies["local_w_null_search"] = Strategy(
+        name="local_w_null_search",
         category=StrategyCategory.UNSCRAMBLE,
         mode=StrategyMode.COMPUTE,
-        description="Enumerate masks based on AZ->KA cycle membership (17-cycle/8-cycle/Z)",
+        description="W-constrained null search: fix 5 W's as nulls, search 19 more among 68 positions",
         priority=1,
         tags=("compute", "unscramble", "active"),
     )
-    strategies["local_reading_orders"] = Strategy(
-        name="local_reading_orders",
+    strategies["local_grille_selector"] = Strategy(
+        name="local_grille_selector",
         category=StrategyCategory.UNSCRAMBLE,
         mode=StrategyMode.COMPUTE,
-        description="Identity, reverse, boustrophedon, col-major, spiral, S-curve reading orders",
+        description="Grille-based position selection: test grille constructions as null masks on K4",
         priority=2,
-        tags=("compute", "unscramble"),
+        tags=("compute", "unscramble", "active"),
     )
 
     # -- LEGACY strategies (kept for reference, not run by default) ---

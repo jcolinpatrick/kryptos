@@ -92,7 +92,7 @@ For convenience, the full constraint set that any K4 hypothesis must satisfy:
 1. **Ciphertext**: 97 characters, all 26 letters present (ALPHA-26)
 2. **Known plaintext**: 24 characters at fixed positions (CRIB-24)
 3. **Bean equality**: k[27] = k[65] (BEAN-EQ)
-4. **Bean inequalities**: 21 pairs (BEAN-INEQ)
+4. **Bean inequalities**: 242 variant-independent pairs (BEAN-INEQ)
 5. **Non-periodic key**: Under additive model (NON-PERIODIC)
 6. **IC**: 0.0361, not statistically significant (IC-LOW)
 7. **Length**: 97, prime (LEN-97)
