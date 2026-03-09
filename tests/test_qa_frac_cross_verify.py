@@ -43,10 +43,10 @@ class TestBeanImpossibility:
         assert self.eq_a == 27, f"Expected equality position 27, got {self.eq_a}"
         assert self.eq_b == 65, f"Expected equality position 65, got {self.eq_b}"
 
-        # Bean inequalities: exactly 21 pairs
+        # Bean inequalities: full variant-independent set (242 pairs)
         self.ineq_pairs = list(BEAN_INEQ)
-        assert len(self.ineq_pairs) == 21, (
-            f"Expected 21 inequality pairs, got {len(self.ineq_pairs)}"
+        assert len(self.ineq_pairs) == 242, (
+            f"Expected 242 inequality pairs, got {len(self.ineq_pairs)}"
         )
 
         # All positions must be valid K4 indices (0-96)
@@ -101,99 +101,57 @@ class TestBeanImpossibility:
     # -- Core claim tests --------------------------------------------------
 
     def test_type1_eliminated_periods(self):
-        """Type 1 eliminates exactly {2,3,4,5,6,7,9,10,14,15,17,21,25}."""
-        expected_type1 = {2, 3, 4, 5, 6, 7, 9, 10, 14, 15, 17, 21, 25}
+        """With full 242 VI inequalities, Type 1 eliminates ALL periods 1-26."""
         actual_type1 = set()
-        for p in range(2, 27):
+        for p in range(1, 27):
             if self._type1_violations(p):
                 actual_type1.add(p)
+        expected_type1 = set(range(1, 27))
         assert actual_type1 == expected_type1, (
             f"Type 1 mismatch.\n"
             f"  Expected: {sorted(expected_type1)}\n"
             f"  Actual:   {sorted(actual_type1)}\n"
-            f"  Missing:  {sorted(expected_type1 - actual_type1)}\n"
-            f"  Extra:    {sorted(actual_type1 - expected_type1)}"
+            f"  Missing:  {sorted(expected_type1 - actual_type1)}"
         )
 
     def test_type2_additional_eliminations(self):
         """
-        Type 2 eliminates {11,12,18,22} beyond what Type 1 catches.
-        These periods have no same-residue inequality pairs, but the
-        equality-inequality residue conflict applies.
+        With full 242 VI inequalities, Type 1 already eliminates all
+        periods 1-26. Type 2 provides redundant confirming violations
+        for many periods but eliminates no additional ones.
         """
         type1_set = {p for p in range(2, 27) if self._type1_violations(p)}
         type2_only = set()
         for p in range(2, 27):
             if p not in type1_set and self._type2_violations(p):
                 type2_only.add(p)
-        expected_type2_only = {11, 12, 18, 22}
-        assert type2_only == expected_type2_only, (
-            f"Type 2 (additional) mismatch.\n"
-            f"  Expected: {sorted(expected_type2_only)}\n"
-            f"  Actual:   {sorted(type2_only)}\n"
-            f"  Missing:  {sorted(expected_type2_only - type2_only)}\n"
-            f"  Extra:    {sorted(type2_only - expected_type2_only)}"
+        assert type2_only == set(), (
+            f"With full inequality set, Type 2 should add nothing beyond Type 1.\n"
+            f"  Type 2-only: {sorted(type2_only)}"
         )
 
     def test_combined_eliminated_set(self):
-        """Combined elimination set is exactly 17 periods."""
-        expected_eliminated = {2, 3, 4, 5, 6, 7, 9, 10, 11, 12, 14, 15, 17, 18, 21, 22, 25}
+        """All 25 periods (2-26) are eliminated."""
         actual_eliminated = {p for p in range(2, 27) if self._is_eliminated(p)}
-        assert actual_eliminated == expected_eliminated, (
-            f"Eliminated set mismatch.\n"
-            f"  Expected: {sorted(expected_eliminated)}\n"
-            f"  Actual:   {sorted(actual_eliminated)}"
-        )
-        assert len(actual_eliminated) == 17
+        expected_eliminated = set(range(2, 27))
+        assert actual_eliminated == expected_eliminated
+        assert len(actual_eliminated) == 25
 
     def test_surviving_set(self):
-        """Surviving periods are exactly {8, 13, 16, 19, 20, 23, 24, 26}."""
-        expected_surviving = {8, 13, 16, 19, 20, 23, 24, 26}
+        """No periods 2-26 survive the full Bean inequality check."""
         actual_surviving = {p for p in range(2, 27) if not self._is_eliminated(p)}
-        assert actual_surviving == expected_surviving, (
-            f"Surviving set mismatch.\n"
-            f"  Expected: {sorted(expected_surviving)}\n"
-            f"  Actual:   {sorted(actual_surviving)}"
+        assert actual_surviving == set(), (
+            f"Expected no surviving periods, got {sorted(actual_surviving)}"
         )
-        assert len(actual_surviving) == 8
 
     # -- Per-period detailed tests -----------------------------------------
 
-    @pytest.mark.parametrize("p", [2, 3, 4, 5, 6, 7])
-    def test_discriminating_periods_eliminated(self, p):
-        """
-        All 'discriminating' periods (2-7) are eliminated.
-        This is the core claim: these periods have enough crib
-        constraints that underdetermination does not mask the signal,
-        yet they all violate Bean constraints.
-        """
+    @pytest.mark.parametrize("p", list(range(2, 27)))
+    def test_all_periods_eliminated(self, p):
+        """Every period 2-26 is eliminated by at least Type 1."""
         violations = self._type1_violations(p)
         assert len(violations) > 0, (
             f"Period {p} should be eliminated by Type 1 but has no violations"
-        )
-
-    @pytest.mark.parametrize("p", [8, 13, 16, 19, 20, 23, 24, 26])
-    def test_surviving_periods_clean(self, p):
-        """Surviving periods have zero violations of either type."""
-        type1 = self._type1_violations(p)
-        type2 = self._type2_violations(p)
-        assert len(type1) == 0, (
-            f"Period {p} should survive but has Type 1 violations: {type1}"
-        )
-        assert len(type2) == 0, (
-            f"Period {p} should survive but has Type 2 violations: {type2}"
-        )
-
-    @pytest.mark.parametrize("p", [11, 12, 18, 22])
-    def test_type2_only_periods(self, p):
-        """Periods eliminated only by Type 2 have no Type 1 violations."""
-        type1 = self._type1_violations(p)
-        type2 = self._type2_violations(p)
-        assert len(type1) == 0, (
-            f"Period {p} should be Type 2-only but has Type 1 violations: {type1}"
-        )
-        assert len(type2) > 0, (
-            f"Period {p} should have Type 2 violations but has none"
         )
 
     # -- Structural / sanity checks ----------------------------------------
@@ -201,12 +159,11 @@ class TestBeanImpossibility:
     def test_period_1_trivial(self):
         """
         Period 1 means all key values are the same (monoalphabetic).
-        Every inequality pair violates, but period 1 is not in the
-        claimed range (2-26) -- we just verify it's also eliminated.
+        Every inequality pair violates.
         """
         violations = self._type1_violations(1)
-        assert len(violations) == 21, (
-            "Period 1 (monoalphabetic) should violate all 21 inequalities"
+        assert len(violations) == 242, (
+            "Period 1 (monoalphabetic) should violate all 242 inequalities"
         )
 
     def test_equality_residue_overlap(self):
@@ -268,62 +225,35 @@ class TestBeanImpossibility:
 
     def test_type2_conflict_explicit(self):
         """
-        For each Type 2-only period, explicitly demonstrate the conflict:
-        the equality forces key[r1] = key[r2], but an inequality pair
-        maps to (r1, r2), requiring key[r1] != key[r2].
+        Demonstrate Type 2 conflicts for periods where equality residues
+        differ and Type 2 violations exist.
         """
-        for p in [11, 12, 18, 22]:
+        # Pick periods where Type 2 actually applies (eq residues differ
+        # and there are cross-residue inequality pairs matching eq residues)
+        for p in range(2, 27):
             eq_r_a = self.eq_a % p
             eq_r_b = self.eq_b % p
-            assert eq_r_a != eq_r_b, (
-                f"Period {p}: equality residues should differ for Type 2"
-            )
-
+            if eq_r_a == eq_r_b:
+                continue  # Type 2 doesn't apply
             type2 = self._type2_violations(p)
-            assert len(type2) > 0
-
-            # For each violating pair, show the explicit contradiction
+            if not type2:
+                continue
             for a, b in type2:
                 ineq_r = frozenset([a % p, b % p])
                 eq_r = frozenset([eq_r_a, eq_r_b])
-                assert ineq_r == eq_r, (
-                    f"Period {p}, pair ({a},{b}): residue set {ineq_r} != "
-                    f"equality residue set {eq_r}"
-                )
-
-                # Demonstrate: no key assignment can satisfy both constraints
-                # Equality: key[eq_r_a] == key[eq_r_b]
-                # Inequality: key[a%p] != key[b%p], i.e., key[eq_r_a] != key[eq_r_b]
-                # This is a direct logical contradiction.
-                for val in range(26):
-                    key = [0] * p
-                    key[eq_r_a] = val
-                    key[eq_r_b] = val  # forced by equality
-                    # Now the inequality requires key[a%p] != key[b%p]
-                    assert key[a % p] == key[b % p], (
-                        f"Period {p}: equality-forced key should make "
-                        f"k[{a}]=k[{b}], violating inequality"
-                    )
+                assert ineq_r == eq_r
 
     def test_violation_count_per_period(self):
         """
-        Verify that eliminated periods have at least 1 violation,
-        and record the count for documentation purposes.
+        All periods 2-26 have at least 1 violation.
         """
-        expected_eliminated = {2, 3, 4, 5, 6, 7, 9, 10, 11, 12, 14, 15, 17, 18, 21, 22, 25}
         for p in range(2, 27):
             t1_count = len(self._type1_violations(p))
             t2_count = len(self._type2_violations(p))
             total = t1_count + t2_count
-            if p in expected_eliminated:
-                assert total > 0, (
-                    f"Period {p} should be eliminated but has 0 violations"
-                )
-            else:
-                assert total == 0, (
-                    f"Period {p} should survive but has {total} violations "
-                    f"(Type1={t1_count}, Type2={t2_count})"
-                )
+            assert total > 0, (
+                f"Period {p} should be eliminated but has 0 violations"
+            )
 
 
 # ============================================================
