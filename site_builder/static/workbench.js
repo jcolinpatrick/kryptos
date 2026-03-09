@@ -17,14 +17,26 @@
   for (var i = 0; i < ENE.length; i++) CRIBS[21 + i] = ENE[i];
   for (var j = 0; j < BC.length; j++) CRIBS[63 + j] = BC[j];
 
-  // Bean constraints: k[27] = k[65], plus 21 inequalities
+  // Bean constraints: k[27] = k[65], plus variant-independent inequalities.
+  // A pair (a,b) is variant-independent iff derived k values differ for ALL
+  // three cipher variants (Vig, Beaufort, Variant Beaufort).
   var BEAN_EQ = [27, 65];
-  var BEAN_INEQ = [
-    [21, 27], [21, 65], [22, 28], [22, 66], [23, 27], [23, 29],
-    [23, 65], [23, 67], [24, 28], [24, 30], [24, 66], [24, 68],
-    [25, 27], [25, 29], [25, 31], [25, 65], [25, 67], [25, 69],
-    [26, 28], [26, 30], [26, 32]
-  ];
+  var BEAN_INEQ = (function () {
+    var positions = Object.keys(CRIBS).map(Number).sort(function (a, b) { return a - b; });
+    var pairs = [];
+    for (var i = 0; i < positions.length; i++) {
+      for (var j = i + 1; j < positions.length; j++) {
+        var a = positions[i], b = positions[j];
+        var ca = CT.charCodeAt(a) - 65, pa = CRIBS[a].charCodeAt(0) - 65;
+        var cb = CT.charCodeAt(b) - 65, pb = CRIBS[b].charCodeAt(0) - 65;
+        var vigEq = ((ca - pa + 26) % 26) === ((cb - pb + 26) % 26);
+        var beauEq = ((ca + pa) % 26) === ((cb + pb) % 26);
+        var vbEq = ((pa - ca + 26) % 26) === ((pb - cb + 26) % 26);
+        if (!vigEq && !beauEq && !vbEq) pairs.push([a, b]);
+      }
+    }
+    return pairs;
+  })();
 
   // --- DOM Elements ---
   var ctDisplay = document.getElementById("ct-display");
@@ -305,14 +317,20 @@
     return n > 1 ? sum / (n * (n - 1)) : 0;
   }
 
-  function checkBean(ct, pt, alpha) {
-    // Derive keystream values at crib positions
+  function checkBean(ct, pt, alpha, method) {
+    // Derive keystream values at crib positions using the correct formula
+    // for the active cipher variant.
     var keys = {};
     for (var pos in CRIBS) {
       var c = alphaIndex(ct[pos], alpha);
       var p = alphaIndex(pt[pos], alpha);
-      // Use Vigenère convention: k = (c - p) mod 26
-      keys[pos] = mod(c - p, 26);
+      if (method === "beaufort" || method === "autokey-beaufort") {
+        keys[pos] = mod(c + p, 26);       // Beaufort: K = CT + PT
+      } else if (method === "var-beaufort") {
+        keys[pos] = mod(p - c, 26);       // Variant Beaufort: K = PT - CT
+      } else {
+        keys[pos] = mod(c - p, 26);       // Vigenère (and autokey-vig): K = CT - PT
+      }
     }
 
     // Check equality
@@ -351,14 +369,21 @@
     return hits.length > 0 ? hits.join(", ") : "None";
   }
 
-  function deriveKeystream(ct, pt, alpha) {
+  function deriveKeystream(ct, pt, alpha, method) {
     var lines = [];
     var positions = Object.keys(CRIBS).map(Number).sort(function (a, b) { return a - b; });
     for (var i = 0; i < positions.length; i++) {
       var pos = positions[i];
       var c = alphaIndex(ct[pos], alpha);
       var p = alphaIndex(pt[pos], alpha);
-      var kVal = mod(c - p, 26);
+      var kVal;
+      if (method === "beaufort" || method === "autokey-beaufort") {
+        kVal = mod(c + p, 26);
+      } else if (method === "var-beaufort") {
+        kVal = mod(p - c, 26);
+      } else {
+        kVal = mod(c - p, 26);
+      }
       var match = pt[pos] === CRIBS[pos] ? "OK" : "MISS";
       lines.push(
         "pos=" + String(pos).padStart(2) +
@@ -430,7 +455,7 @@
     var alpha = getAlphabet();
     var cribResult = scoreCribs(pt);
     var ic = calcIC(pt);
-    var bean = checkBean(workingCT, pt, alpha);
+    var bean = checkBean(workingCT, pt, alpha, subMethod.value);
     var free = freeCribSearch(pt);
     var cls = classifyScore(cribResult.total);
 
@@ -442,7 +467,7 @@
     scoreBean.style.color = bean === true ? "var(--green)" : (bean === false ? "var(--red)" : "");
     scoreFree.textContent = free;
 
-    keystreamDetail.textContent = deriveKeystream(workingCT, pt, alpha);
+    keystreamDetail.textContent = deriveKeystream(workingCT, pt, alpha, subMethod.value);
   }
 
   // --- Event listeners ---
