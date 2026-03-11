@@ -89,12 +89,41 @@
 </p>
 <ul>
   <li><strong>Equality:</strong> k[27] = k[65] (the key values at these positions must be equal)</li>
-  <li><strong>21 Inequalities:</strong> specific pairs of key positions that must differ</li>
+  <li><strong>242 Variant-Independent Inequalities:</strong> pairs of key positions that must differ
+      under all three cipher variants (Vigen&egrave;re, Beaufort, Variant Beaufort). Derived from
+      all C(24,2) = 276 crib pairs, minus 13 equalities and 21 mixed pairs.</li>
 </ul>
 <p>
   These constraints are <em>variant-independent</em> &mdash; they hold whether the cipher
   is Vigen&egrave;re, Beaufort, or Variant Beaufort. Any valid solution must satisfy all
-  Bean constraints.
+  Bean constraints. The full 242-pair inequality set eliminates <strong>all</strong>
+  periods 1&ndash;26 for periodic substitution on the raw 97-character carved text.
+</p>
+
+<h2>Two-System Model</h2>
+<p>
+  Jim Sanborn confirmed at the Kryptos dedication that <em>&ldquo;there are two systems
+  of enciphering the bottom text&rdquo;</em>. Combined with the mathematical impossibility
+  of single-layer periodic substitution, this means K4 uses a <strong>product cipher</strong>
+  &mdash; two layers of encryption applied in sequence.
+</p>
+<p>
+  Statistical analysis (digram frequency test) confirms the outermost layer is
+  <strong>substitution</strong>, not transposition. This gives the encryption order:
+</p>
+<pre>  PT &rarr; transposition &rarr; substitution &rarr; carved text</pre>
+<p>
+  Our current attack strategy tests this model: undo columnar transposition, then
+  check crib consistency for the substitution layer. We have exhaustively tested:
+</p>
+<ul>
+  <li>All 362,880 width-9 column permutations &times; Vig/Beau/VBeau &times; AZ/KA &times; periods 1&ndash;13 + autokey</li>
+  <li>Keyword-derived column orders for widths 4&ndash;14 &times; all substitution types</li>
+  <li>Running-key decryption from Howard Carter&rsquo;s book and K1&ndash;K3 plaintext (crib-dragged)</li>
+</ul>
+<p>
+  All tests produced zero signal, eliminating standard columnar transposition &times;
+  periodic substitution as the K4 method.
 </p>
 
 <h2>Validation Criteria</h2>
