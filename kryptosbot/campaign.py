@@ -58,6 +58,10 @@ from kryptosbot.hypothesis_tester import (
     run_focused_double_swap,
     # Priority keyword sweep
     run_priority_keyword_sweep,
+    # Product cipher functions
+    run_product_cipher_w9,
+    run_product_cipher_general,
+    run_running_key_product,
 )
 
 logger = logging.getLogger("kryptosbot.campaign")
@@ -136,6 +140,14 @@ class CampaignState:
     null_mask_done: bool = False
     null_mask_best_score: float = -9999.0
     null_mask_best_positions: list[int] = field(default_factory=list)
+    # Product cipher phases (transposition × substitution)
+    product_w9_done: bool = False
+    product_w9_best_score: float = -9999.0
+    product_w9_best_method: str = ""
+    product_general_done: bool = False
+    product_general_best_score: float = -9999.0
+    running_key_done: bool = False
+    running_key_best_score: float = -9999.0
 
     @property
     def budget_remaining(self) -> float:
@@ -250,6 +262,8 @@ def generate_crossover_hypotheses(
     hypotheses = []
     for i in range(count):
         a, b = random.sample(elite[:min(20, len(elite))], 2)
+        if len(a.perm) != len(b.perm):
+            continue  # skip mismatched-length parents
         child = _crossover_pair(a.perm, b.perm)
         hypotheses.append({
             "name": f"crossover_{i}",
@@ -585,6 +599,114 @@ def run_bean_phases(state: CampaignState, num_workers: int) -> None:
         print(f"\n  Results saved: {nm_path.name}")
         save_state(state)
 
+    # --- Phase 7: Product cipher — width 9 exhaustive ---
+    if not state.product_w9_done:
+        print("\n" + "=" * 70)
+        print("  PHASE 7: Product Cipher — Width 9 Exhaustive")
+        print("  Model: PT → columnar transposition (w=9) → periodic sub → CT")
+        print("  Testing all 9!=362,880 column orders × Vig/Beau/VBeau × AZ/KA × p1-13")
+        print("  + autokey with single-char primers")
+        print("=" * 70 + "\n")
+
+        start = time.monotonic()
+        pw9_result = run_product_cipher_w9(num_workers=num_workers)
+        elapsed = time.monotonic() - start
+
+        best = pw9_result.get("best", {})
+        print(f"  Product W9 completed in {elapsed:.1f}s")
+        print(f"  Total perms: {pw9_result.get('total_perms', 0):,}")
+        print(f"  Total configs: {pw9_result.get('total_configs', 0):,}")
+        print(f"  Best score:  {best.get('score', -9999):.1f}")
+        print(f"  Best method: {best.get('method', '?')}")
+        if best.get('crib_hits', 0) > 0:
+            print(f"  CRIB HITS:   {best['crib_hits']} ***")
+        if best.get('plaintext'):
+            print(f"  Best PT:     {best['plaintext'][:60]}...")
+
+        if pw9_result.get("top_by_cribs"):
+            print(f"\n  Top results by crib hits:")
+            for i, r in enumerate(pw9_result["top_by_cribs"][:5]):
+                print(f"    {i+1}. cribs={r['crib_hits']} score={r['score']:.1f} "
+                      f"method={r['method'][:60]}")
+
+        state.product_w9_done = True
+        state.product_w9_best_score = best.get("score", -9999.0)
+        state.product_w9_best_method = best.get("method", "")
+
+        pw9_path = CAMPAIGN_DIR / "product_w9.json"
+        CAMPAIGN_DIR.mkdir(parents=True, exist_ok=True)
+        pw9_path.write_text(json.dumps(pw9_result, indent=2, default=str))
+        print(f"\n  Results saved: {pw9_path.name}")
+        save_state(state)
+
+    # --- Phase 8: Product cipher — general widths ---
+    if not state.product_general_done:
+        print("\n" + "=" * 70)
+        print("  PHASE 8: Product Cipher — General Widths (4-14)")
+        print("  Keyword-derived column orders × Vig/Beau/VBeau × AZ/KA × p1-13")
+        print("=" * 70 + "\n")
+
+        start = time.monotonic()
+        pg_result = run_product_cipher_general(num_workers=num_workers)
+        elapsed = time.monotonic() - start
+
+        best = pg_result.get("best", {})
+        print(f"  Product General completed in {elapsed:.1f}s")
+        print(f"  Total configs: {pg_result.get('total_configs', 0):,}")
+        print(f"  Best score:  {best.get('score', -9999):.1f}")
+        print(f"  Best method: {best.get('method', '?')}")
+        if best.get('crib_hits', 0) > 0:
+            print(f"  CRIB HITS:   {best['crib_hits']} ***")
+        if best.get('plaintext'):
+            print(f"  Best PT:     {best['plaintext'][:60]}...")
+
+        if pg_result.get("per_width"):
+            print(f"\n  Per-width results:")
+            for w in sorted(pg_result["per_width"].keys()):
+                r = pg_result["per_width"][w]
+                print(f"    Width {w:2d}: score={r['score']:.1f} cribs={r['crib_hits']} "
+                      f"method={r['method'][:50]}")
+
+        state.product_general_done = True
+        state.product_general_best_score = best.get("score", -9999.0)
+
+        pg_path = CAMPAIGN_DIR / "product_general.json"
+        CAMPAIGN_DIR.mkdir(parents=True, exist_ok=True)
+        pg_path.write_text(json.dumps(pg_result, indent=2, default=str))
+        print(f"\n  Results saved: {pg_path.name}")
+        save_state(state)
+
+    # --- Phase 9: Running-key product cipher ---
+    if not state.running_key_done:
+        print("\n" + "=" * 70)
+        print("  PHASE 9: Running-Key Product Cipher")
+        print("  Keyword-derived transpositions × running-key from corpus passages")
+        print("=" * 70 + "\n")
+
+        start = time.monotonic()
+        rk_result = run_running_key_product(num_workers=num_workers)
+        elapsed = time.monotonic() - start
+
+        best = rk_result.get("best", {})
+        print(f"  Running-key product completed in {elapsed:.1f}s")
+        print(f"  Total configs: {rk_result.get('total_configs', 0):,}")
+        print(f"  Passages used: {rk_result.get('passages_used', 0)}")
+        print(f"  Best score:  {best.get('score', -9999):.1f}")
+        print(f"  Best method: {best.get('method', '?')}")
+        if best.get('crib_hits', 0) > 0:
+            print(f"  CRIB HITS:   {best['crib_hits']} ***")
+        if best.get('plaintext'):
+            print(f"  Best PT:     {best['plaintext'][:60]}...")
+
+        state.running_key_done = True
+        state.running_key_best_score = best.get("score", -9999.0)
+
+        rk_path = CAMPAIGN_DIR / "running_key_product.json"
+        CAMPAIGN_DIR.mkdir(parents=True, exist_ok=True)
+        rk_path.write_text(json.dumps(rk_result, indent=2, default=str))
+        print(f"\n  Results saved: {rk_path.name}")
+        save_state(state)
+
 
 # ---------------------------------------------------------------------------
 # Null-mask SA search (Phase 6)
@@ -901,6 +1023,9 @@ def run_campaign(
     print(f"  Priority:  {'done' if state.priority_keyword_done else 'PENDING'} "
           f"(DEFECTOR/PARALLAX/COLOPHON + {len(set(PRIORITY_KEYWORDS))-3} more)")
     print(f"  Null-mask: {'done (score=' + f'{state.null_mask_best_score:.1f})' if state.null_mask_done else 'PENDING'}")
+    print(f"  Product:   W9={'done (score=' + f'{state.product_w9_best_score:.1f})' if state.product_w9_done else 'PENDING'} "
+          f"General={'done' if state.product_general_done else 'PENDING'} "
+          f"RunKey={'done' if state.running_key_done else 'PENDING'}")
     if state.elite:
         print(f"  Top elite: {state.elite[0]['score']:.1f} ({state.elite[0]['method']})")
     print(f"{'='*70}\n")
@@ -914,7 +1039,7 @@ def run_campaign(
             print(f"\n  Best plaintext: {state.best_ever_plaintext[:60]}...")
         return
 
-    # --- Bean phases + priority keyword sweep + null-mask SA (run once, free, no API) ---
+    # --- Bean phases + priority keyword sweep + null-mask SA + product cipher (run once, free, no API) ---
     pending_phases = not all([
         state.bean_baseline_done,
         state.bean_single_swap_done,
@@ -922,13 +1047,16 @@ def run_campaign(
         state.bean_near_identity_done,
         state.priority_keyword_done,
         state.null_mask_done,
+        state.product_w9_done,
+        state.product_general_done,
+        state.running_key_done,
     ])
-    if phase in ("bean", "keyword", "null") or pending_phases:
+    if phase in ("bean", "keyword", "null", "product") or pending_phases:
         run_bean_phases(state, num_workers)
         if _shutdown_requested:
             _print_campaign_summary(state)
             return
-        if phase in ("bean", "keyword", "null"):
+        if phase in ("bean", "keyword", "null", "product"):
             _print_campaign_summary(state)
             return
 
@@ -1421,6 +1549,12 @@ def _print_campaign_summary(state: CampaignState) -> None:
         print(f"    Best score:        {state.null_mask_best_score:.1f}")
         if state.null_mask_best_positions:
             print(f"    Best null pos:     {state.null_mask_best_positions[:10]}{'...' if len(state.null_mask_best_positions) > 10 else ''}")
+    print(f"\n  Product Cipher (transposition × substitution):")
+    print(f"    W9 exhaustive:     {'done (score=' + f'{state.product_w9_best_score:.1f})' if state.product_w9_done else 'PENDING'}")
+    if state.product_w9_done and state.product_w9_best_method:
+        print(f"    W9 best method:    {state.product_w9_best_method}")
+    print(f"    General (w4-14):   {'done (score=' + f'{state.product_general_best_score:.1f})' if state.product_general_done else 'PENDING'}")
+    print(f"    Running-key:       {'done (score=' + f'{state.running_key_best_score:.1f})' if state.running_key_done else 'PENDING'}")
     print(f"\n  Priority Keyword Sweep:")
     print(f"    Status:            {'done' if state.priority_keyword_done else 'PENDING'}")
     if state.priority_keyword_results:
@@ -1467,8 +1601,8 @@ def main() -> None:
     parser.add_argument("--reset", action="store_true",
                         help="Reset campaign state (start fresh)")
     parser.add_argument("--phase", type=str, default="",
-                        choices=["", "bean", "keyword", "null"],
-                        help="Run only a specific phase (bean = Bean phases, keyword = priority keyword sweep, null = null-mask SA)")
+                        choices=["", "bean", "keyword", "null", "product"],
+                        help="Run only a specific phase (bean = Bean phases, keyword = priority keyword sweep, null = null-mask SA, product = product cipher)")
 
     args = parser.parse_args()
 

@@ -308,3 +308,124 @@ class TestRecoverKeyAtPositions:
         # With standard alphabets, AZ/AZ should equal no-alphabet path
         for pos in result_az:
             assert result_az[pos] == result_plain[pos], f"Mismatch at pos {pos}"
+
+
+class TestQuagmire:
+    """Tests for Quagmire cipher (mixed-alphabet periodic substitution)."""
+
+    def test_roundtrip_basic(self):
+        from kryptos.kernel.transforms.quagmire import quagmire_encrypt, quagmire_decrypt
+        pt = "THEQUICKBROWNFOX"
+        ct = quagmire_encrypt(pt, "KEY", indicator="A")
+        recovered = quagmire_decrypt(ct, "KEY", indicator="A")
+        assert recovered == pt
+
+    def test_roundtrip_with_mixed_alphabet(self):
+        from kryptos.kernel.transforms.quagmire import quagmire_encrypt, quagmire_decrypt
+        pt = "ATTACKATDAWN"
+        ct = quagmire_encrypt(pt, "BERLIN", indicator="K", ct_alphabet_keyword="KRYPTOS")
+        recovered = quagmire_decrypt(ct, "BERLIN", indicator="K", ct_alphabet_keyword="KRYPTOS")
+        assert recovered == pt
+
+    def test_not_identity(self):
+        from kryptos.kernel.transforms.quagmire import quagmire_encrypt
+        pt = "HELLOWORLD"
+        ct = quagmire_encrypt(pt, "KEY", indicator="A")
+        assert ct != pt
+
+    def test_different_keywords_different_ct(self):
+        from kryptos.kernel.transforms.quagmire import quagmire_encrypt
+        pt = "TESTMESSAGE"
+        ct1 = quagmire_encrypt(pt, "ALPHA", indicator="A")
+        ct2 = quagmire_encrypt(pt, "BRAVO", indicator="A")
+        assert ct1 != ct2
+
+    def test_recover_key(self):
+        from kryptos.kernel.transforms.quagmire import quagmire_encrypt, quagmire_recover_key
+        pt = "A"
+        ct = quagmire_encrypt(pt, "D", indicator="A")
+        shift = quagmire_recover_key(ct, pt, indicator="A")
+        assert shift == 3  # D is shift 3 from A
+
+
+class TestAutokey:
+    """Tests for autokey cipher."""
+
+    def test_roundtrip_vigenere(self):
+        from kryptos.kernel.transforms.autokey import autokey_encrypt, autokey_decrypt
+        pt = "THEQUICKBROWNFOXJUMPSOVERTHELAZYDOG"
+        ct = autokey_encrypt(pt, "KEY", variant="vigenere")
+        recovered = autokey_decrypt(ct, "KEY", variant="vigenere")
+        assert recovered == pt
+
+    def test_roundtrip_beaufort(self):
+        from kryptos.kernel.transforms.autokey import autokey_encrypt, autokey_decrypt
+        pt = "ATTACKATDAWNWITHALLFORCES"
+        ct = autokey_encrypt(pt, "SECRET", variant="beaufort")
+        recovered = autokey_decrypt(ct, "SECRET", variant="beaufort")
+        assert recovered == pt
+
+    def test_roundtrip_var_beaufort(self):
+        from kryptos.kernel.transforms.autokey import autokey_encrypt, autokey_decrypt
+        pt = "BERLINCLOCKKRYPTOS"
+        ct = autokey_encrypt(pt, "XY", variant="var_beaufort")
+        recovered = autokey_decrypt(ct, "XY", variant="var_beaufort")
+        assert recovered == pt
+
+    def test_not_identity(self):
+        from kryptos.kernel.transforms.autokey import autokey_encrypt
+        pt = "HELLOWORLD"
+        ct = autokey_encrypt(pt, "A", variant="vigenere")
+        # With primer "A", first char unchanged but subsequent chars use PT as key
+        assert ct != pt  # At least some chars change (PT chars are non-A)
+
+    def test_single_char_primer(self):
+        from kryptos.kernel.transforms.autokey import autokey_encrypt, autokey_decrypt
+        pt = "KRYPTOSISASCULPTURE"
+        for primer in ["A", "K", "Z"]:
+            ct = autokey_encrypt(pt, primer, variant="vigenere")
+            recovered = autokey_decrypt(ct, primer, variant="vigenere")
+            assert recovered == pt, f"Roundtrip failed with primer {primer}"
+
+
+class TestRunningKey:
+    """Tests for running-key cipher."""
+
+    def test_roundtrip_vigenere(self):
+        from kryptos.kernel.transforms.running_key import running_key_encrypt, running_key_decrypt
+        pt = "THEQUICKBROWNFOX"
+        key_text = "TOBEORNOTTOBETHATISTHEQUESTION"
+        ct = running_key_encrypt(pt, key_text, variant="vigenere")
+        recovered = running_key_decrypt(ct, key_text, variant="vigenere")
+        assert recovered == pt
+
+    def test_roundtrip_beaufort(self):
+        from kryptos.kernel.transforms.running_key import running_key_encrypt, running_key_decrypt
+        pt = "ATTACKATDAWN"
+        key_text = "THEBOOKOFTHEDEADISANANCIENTTEXT"
+        ct = running_key_encrypt(pt, key_text, variant="beaufort")
+        recovered = running_key_decrypt(ct, key_text, variant="beaufort")
+        assert recovered == pt
+
+    def test_offset(self):
+        from kryptos.kernel.transforms.running_key import running_key_encrypt, running_key_decrypt
+        pt = "HELLO"
+        key_text = "XYZABCDEFGHIJKLMNOP"
+        ct = running_key_encrypt(pt, key_text, variant="vigenere", offset=3)
+        recovered = running_key_decrypt(ct, key_text, variant="vigenere", offset=3)
+        assert recovered == pt
+
+    def test_non_alpha_stripped_from_key(self):
+        from kryptos.kernel.transforms.running_key import running_key_encrypt, running_key_decrypt
+        pt = "TEST"
+        key_text = "T-H-E K.E.Y"  # Non-alpha chars should be stripped
+        ct = running_key_encrypt(pt, key_text, variant="vigenere")
+        recovered = running_key_decrypt(ct, key_text, variant="vigenere")
+        assert recovered == pt
+
+    def test_short_key_truncates(self):
+        from kryptos.kernel.transforms.running_key import running_key_decrypt
+        ct = "HELLOWORLD"
+        key_text = "ABC"
+        pt = running_key_decrypt(ct, key_text, variant="vigenere")
+        assert len(pt) == 3  # Only 3 key chars available
