@@ -27,6 +27,7 @@ logs/
 agent_logs
 work
 tmp
+nohup.out
 
 # Data/artifacts that are usually large or per-run
 db
@@ -93,4 +94,5 @@ reference/Pictures/
 reference/*.xlsx
 reference/*.jpg
 reference/*.png
+reference/*.xml
 wordlists/kaikki_english.txt
