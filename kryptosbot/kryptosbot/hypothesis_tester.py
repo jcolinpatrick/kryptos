@@ -66,8 +66,8 @@ _HARDCODED_KEYWORDS = [
     "FERETRUM",     # medieval reliquary or shrine
     "CEREMENT",     # burial shroud (archaeology, death theme)
     # Time / navigation — BERLINCLOCK crib connection
-    "HOROLOGE",     # sundial or clock device (BERLIN CLOCK!)
-    "HOROLOGY",     # study/measurement of time
+    # HOROLOGE — ELIMINATED (pigeonhole: all 6 AZ/KA × Vig/Beau/VBeau fail letter-supply)
+    # HOROLOGY — ELIMINATED (same as HOROLOGE)
     "TOPOLOGY",     # mathematics of geometric properties
 
     # --- TIER 2: Strong Sanborn-aesthetic, Bean-PASSING (len 8) ---
@@ -110,17 +110,21 @@ _HARDCODED_KEYWORDS = [
 
 # Priority keywords for intensive search — these get extra hill-climbing restarts
 PRIORITY_KEYWORDS = [
-    "KOMPASS",      # German COMPASS (5/6 survival, ties KRYPTOS!) — lodestone theme
-    "DEFECTOR",     # Cold War narrative: East Berlin defection (4/6)
-    "COLOPHON",     # Known Sanborn keyword, Bean PASS, manuscripts (3/6)
-    "KOLOPHON",     # Greek original of COLOPHON — K-for-C hypothesis (3/6)
-    "PARALLAX",     # Known Sanborn keyword, Bean PASS, geometry
-    "KRYPTA",       # German/Greek CRYPT — same root as KRYPTOS (3/6)
-    "KRYPTEIA",     # Spartan secret police — ancient intelligence service! (2/6)
-    "KLEPSYDRA",    # Greek water clock — BERLINCLOCK + pool theme (2/6)
+    # NOTE: ALL top keywords fail full 242-pair Bean check on raw 97-char text.
+    # These are retained for null-mask / two-system testing where Bean constraints
+    # apply to the 73-char real CT, not the 97-char carved text.
+    "DEFECTOR",     # Cold War narrative: East Berlin defection (4/6 pigeonhole)
+    "PARALLAX",     # Known Sanborn keyword, geometry (3/6 pigeonhole)
+    "COLOPHON",     # Known Sanborn keyword, manuscripts (3/6 pigeonhole)
+    "TOPOLOGY",     # Mathematics of geometric properties
     "PEDESTAL",     # Sculpture base — Sanborn's medium
     "MONOLITH",     # Large single stone — monument/sculpture
-    "TOPOLOGY",     # Mathematical structure
+    # K-for-C hypothesis keywords (thematic but weaker pigeonhole survival)
+    "KOMPASS",      # German COMPASS — lodestone theme (5/6 pigeonhole, fails Bean eq at p=7)
+    "KOLOPHON",     # Greek COLOPHON (3/6 pigeonhole)
+    "KRYPTA",       # German/Greek CRYPT (3/6 pigeonhole)
+    "KRYPTEIA",     # Spartan secret police (2/6 pigeonhole)
+    "KLEPSYDRA",    # Greek water clock — BERLINCLOCK + pool theme (2/6 pigeonhole)
     "SPYPLANE",     # Surveillance — Cold War
 ]
 
@@ -1686,4 +1690,640 @@ def run_priority_keyword_sweep(
         "per_keyword": per_keyword,
         "overall_best": overall_best,
         "top_results": all_results[:30],
+    }
+
+
+# ---------------------------------------------------------------------------
+# Product cipher workers (transposition × substitution)
+# ---------------------------------------------------------------------------
+
+# Thematic keywords for column-order derivation (must be self-contained for workers)
+_PRODUCT_KEYWORDS = [
+    "KRYPTOS", "SANBORN", "SCHEIDT", "BERLIN", "URANIA", "KOMPASS",
+    "DEFECTOR", "PARALLAX", "COLOPHON", "ABSCISSA", "PALIMPSEST",
+    "ENIGMA", "SHADOW", "COMPASS", "LODESTONE", "SPHINX", "PHARAOH",
+    "CARTER", "EGYPT", "CLOCK", "POINT", "TOPOLOGY", "PEDESTAL",
+    "MONOLITH", "SPYPLANE", "KLEPSYDRA", "QUARTZ", "CIPHER",
+    "HIDDEN", "SECRET", "COVERT", "SIGNAL", "MARKER", "BEACON",
+    "PATROL", "SECTOR", "CURTAIN", "BORDER", "ESCAPE", "TUNNEL",
+    "TRANSIT", "CONTACT", "HANDLER", "AGENT", "SLEEPER", "MOLE",
+    "LANGLEY", "MOSCOW", "PRAGUE", "VIENNA", "ZURICH", "CAIRO",
+    "TUTANKHAMUN", "HIEROGLYPH", "ALEXANDERPLATZ", "WELTZEITUHR",
+    "MENGENLEHREUHR", "CALATHOS", "APOPHYGE", "NIHILIST",
+]
+
+
+def _product_w9_worker(args: tuple) -> dict:
+    """Test a batch of width-9 columnar transposition permutations × substitution.
+
+    For each column order:
+    1. Build columnar transposition permutation (width 9)
+    2. Undo transposition: intermediate = CT[inv_perm]
+    3. For each substitution type × period:
+       - Recover key from cribs (mapped through transposition)
+       - Check key consistency
+       - If consistent: decrypt, score
+    """
+    batch_perms, batch_id = args
+
+    K4_LOCAL = "OBKRUOXOGHULBSOLIFBBWFLRVQQPRNGKSSOTWTQSJQSSEKZZWATJKLUDIAWINFBNYPVTTMZFPKWGDKZXTJCDIGKUHUAUEKCAR"
+    CRIBS_LOCAL = [(21, "EASTNORTHEAST"), (63, "BERLINCLOCK")]
+    AZ_LOCAL = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    KA_LOCAL = "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+
+    # Build crib dict
+    crib_dict: dict[int, str] = {}
+    for pos, text in CRIBS_LOCAL:
+        for j, ch in enumerate(text):
+            crib_dict[pos + j] = ch
+    crib_positions = sorted(crib_dict.keys())
+
+    qg = _load_quadgrams()
+
+    best_score = -9999.0
+    best_pt = ""
+    best_method = ""
+    best_crib_hits = 0
+    best_col_order: list[int] = []
+    configs_tested = 0
+
+    for col_order in batch_perms:
+        width = 9
+        n = 97
+
+        # Build columnar transposition permutation
+        from collections import defaultdict
+        cols: dict[int, list[int]] = defaultdict(list)
+        for pos in range(n):
+            _, c = divmod(pos, width)
+            cols[c].append(pos)
+        perm: list[int] = []
+        for rank in range(width):
+            col_idx = list(col_order).index(rank)
+            perm.extend(cols[col_idx])
+
+        # Inverse: undo transposition
+        inv_perm = [0] * n
+        for i, p in enumerate(perm):
+            inv_perm[p] = i
+
+        # intermediate[i] = K4[inv_perm[i]] — what we'd get after undoing transposition
+        intermediate = "".join(K4_LOCAL[inv_perm[i]] for i in range(n))
+
+        # Map crib positions through inverse transposition:
+        # If PT goes through transposition then substitution to become CT,
+        # then to undo: CT → undo sub → undo transposition → PT.
+        # The intermediate text after undoing transposition is the "pre-sub" text.
+        # Cribs are in the PT, so after undoing transposition, we need:
+        # PT[i] = crib_dict[i] for crib positions in the ORIGINAL plaintext.
+        # The intermediate = undo_transposition(CT).
+        # Then: intermediate[i] = sub(PT[i]) where PT positions map through transposition.
+        #
+        # Actually: CT = sub(transposed_PT), where transposed_PT = PT[perm].
+        # So: intermediate = undo_transpose(CT) = CT[inv_perm]
+        # And: intermediate[i] = sub(PT[i])  (substitution operates position-by-position)
+        # So crib positions in PT map directly to same positions in intermediate.
+
+        # For each substitution variant × period, check crib consistency
+        for variant_name, key_fn in [
+            ("vig", lambda c, p: (c - p) % 26),
+            ("beau", lambda c, p: (c + p) % 26),
+            ("vbeau", lambda c, p: (p - c) % 26),
+        ]:
+            for alpha_name, alpha in [("AZ", AZ_LOCAL), ("KA", KA_LOCAL)]:
+                # Recover key values at crib positions
+                key_at_crib: dict[int, int] = {}
+                for pos in crib_positions:
+                    c_val = alpha.index(intermediate[pos])
+                    p_val = alpha.index(crib_dict[pos])
+                    key_at_crib[pos] = key_fn(c_val, p_val)
+
+                # Test periods 1 through 13
+                for period in range(1, 14):
+                    configs_tested += 1
+                    # Check consistency: all crib positions with same residue mod period
+                    # must have the same key value
+                    residue_keys: dict[int, int] = {}
+                    consistent = True
+                    for pos in crib_positions:
+                        r = pos % period
+                        k = key_at_crib[pos]
+                        if r in residue_keys:
+                            if residue_keys[r] != k:
+                                consistent = False
+                                break
+                        else:
+                            residue_keys[r] = k
+                    if not consistent:
+                        continue
+
+                    # Consistent! Build full key and decrypt
+                    full_key = [residue_keys.get(i % period, 0) for i in range(n)]
+                    pt_chars = []
+                    for i in range(n):
+                        c_val = alpha.index(intermediate[i])
+                        k = full_key[i]
+                        if variant_name == "vig":
+                            p_val = (c_val - k) % 26
+                        elif variant_name == "beau":
+                            p_val = (k - c_val) % 26
+                        else:  # vbeau
+                            p_val = (c_val + k) % 26
+                        pt_chars.append(alpha[p_val])
+                    pt = "".join(pt_chars)
+
+                    # Score
+                    score = sum(qg.get(pt[i:i+4], _QG_FLOOR) for i in range(len(pt) - 3))
+                    score += _score_intel_jargon(pt)
+
+                    # Count crib hits
+                    hits = 0
+                    for pos, text in CRIBS_LOCAL:
+                        for k_idx, ch in enumerate(text):
+                            if pos + k_idx < len(pt) and pt[pos + k_idx] == ch:
+                                hits += 1
+
+                    if score > best_score or hits > best_crib_hits:
+                        if score > best_score:
+                            best_score = score
+                            best_pt = pt
+                            best_method = f"product_w9/{variant_name}/p{period}/{alpha_name}/col={''.join(str(c) for c in col_order)}"
+                            best_col_order = list(col_order)
+                        if hits > best_crib_hits:
+                            best_crib_hits = hits
+
+        # Also test autokey with short primers (1-3 chars)
+        for alpha_name, alpha in [("AZ", AZ_LOCAL), ("KA", KA_LOCAL)]:
+            for primer_len in range(1, 4):
+                # Try to derive primer from cribs
+                # With autokey vig: C = (P + K) mod 26, first `primer_len` key chars = primer
+                # At crib positions < primer_len, K = primer[pos]
+                # At crib positions >= primer_len, K = PT[pos - primer_len]
+                # For simplicity, brute-force primers of length 1-2, derive length 3
+                if primer_len <= 2:
+                    for p0 in range(26):
+                        primer_vals = [p0] if primer_len == 1 else None
+                        if primer_len == 2:
+                            continue  # Skip len-2 brute force in w9 (too many combos per perm)
+                        primer_str = alpha[p0]
+                        configs_tested += 1
+
+                        # Autokey Vigenère decrypt on intermediate
+                        pt_chars = []
+                        for i in range(n):
+                            c_val = alpha.index(intermediate[i])
+                            if i < 1:
+                                k = p0
+                            else:
+                                k = alpha.index(pt_chars[i - 1])
+                            p_val = (c_val - k) % 26
+                            pt_chars.append(alpha[p_val])
+                        pt = "".join(pt_chars)
+
+                        hits = 0
+                        for pos, text in CRIBS_LOCAL:
+                            for k_idx, ch in enumerate(text):
+                                if pos + k_idx < len(pt) and pt[pos + k_idx] == ch:
+                                    hits += 1
+
+                        score = sum(qg.get(pt[i:i+4], _QG_FLOOR) for i in range(len(pt) - 3))
+                        score += _score_intel_jargon(pt)
+
+                        if score > best_score or hits > best_crib_hits:
+                            if score > best_score:
+                                best_score = score
+                                best_pt = pt
+                                best_method = f"product_w9/autokey/{primer_str}/{alpha_name}/col={''.join(str(c) for c in col_order)}"
+                                best_col_order = list(col_order)
+                            if hits > best_crib_hits:
+                                best_crib_hits = hits
+
+    return {
+        "score": round(best_score, 2),
+        "plaintext": best_pt,
+        "method": best_method,
+        "crib_hits": best_crib_hits,
+        "col_order": best_col_order,
+        "configs_tested": configs_tested,
+        "batch_id": batch_id,
+    }
+
+
+def run_product_cipher_w9(num_workers: int = 0) -> dict:
+    """Exhaustive width-9 transposition × substitution product cipher.
+
+    Tests all 9! = 362,880 column permutations × substitution types.
+    Uses crib consistency to prune >99.9% of configs instantly.
+    """
+    from itertools import permutations
+
+    if num_workers <= 0:
+        num_workers = mp.cpu_count() or 4
+
+    all_perms = list(permutations(range(9)))
+    total = len(all_perms)
+
+    # Split into batches for workers
+    batch_size = max(1, total // (num_workers * 4))
+    batches = []
+    for i in range(0, total, batch_size):
+        batches.append((all_perms[i:i + batch_size], len(batches)))
+
+    print(f"  Product W9: {total} column permutations in {len(batches)} batches "
+          f"across {num_workers} workers...")
+
+    start = time.monotonic()
+    results = []
+    with ProcessPoolExecutor(max_workers=num_workers) as pool:
+        futures = [pool.submit(_product_w9_worker, batch) for batch in batches]
+        for i, future in enumerate(as_completed(futures)):
+            try:
+                result = future.result()
+                results.append(result)
+                if (i + 1) % max(1, len(batches) // 10) == 0:
+                    best_so_far = max(results, key=lambda r: r["score"])
+                    print(f"    [{i+1}/{len(batches)}] best_score={best_so_far['score']:.1f} "
+                          f"cribs={best_so_far['crib_hits']} method={best_so_far['method'][:60]}")
+            except Exception as e:
+                logger.error("Product W9 batch failed: %s", e)
+
+    elapsed = time.monotonic() - start
+    total_configs = sum(r["configs_tested"] for r in results)
+
+    best = max(results, key=lambda r: r["score"]) if results else {
+        "score": -9999.0, "plaintext": "", "method": "", "crib_hits": 0, "col_order": [],
+    }
+
+    # Collect top results by crib hits
+    top_by_cribs = sorted(results, key=lambda r: r["crib_hits"], reverse=True)[:20]
+
+    return {
+        "elapsed_seconds": round(elapsed, 2),
+        "total_perms": total,
+        "total_configs": total_configs,
+        "best": best,
+        "top_by_cribs": top_by_cribs,
+    }
+
+
+def _product_general_worker(args: tuple) -> dict:
+    """Test keyword-derived columnar transpositions × substitution for a given width."""
+    width, keywords, worker_id = args
+
+    K4_LOCAL = "OBKRUOXOGHULBSOLIFBBWFLRVQQPRNGKSSOTWTQSJQSSEKZZWATJKLUDIAWINFBNYPVTTMZFPKWGDKZXTJCDIGKUHUAUEKCAR"
+    CRIBS_LOCAL = [(21, "EASTNORTHEAST"), (63, "BERLINCLOCK")]
+    AZ_LOCAL = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    KA_LOCAL = "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+    n = 97
+
+    crib_dict: dict[int, str] = {}
+    for pos, text in CRIBS_LOCAL:
+        for j, ch in enumerate(text):
+            crib_dict[pos + j] = ch
+    crib_positions = sorted(crib_dict.keys())
+
+    qg = _load_quadgrams()
+
+    best_score = -9999.0
+    best_pt = ""
+    best_method = ""
+    best_crib_hits = 0
+    configs_tested = 0
+
+    # Generate unique column orders from keywords
+    seen_orders: set[tuple] = set()
+    col_orders: list[tuple[int, ...]] = []
+
+    for kw in keywords:
+        kw_upper = kw.upper()
+        if len(kw_upper) < width:
+            continue
+        # keyword_to_order logic (inline for worker isolation)
+        kw_slice = kw_upper[:width]
+        indexed = [(ch, i) for i, ch in enumerate(kw_slice)]
+        ranked = sorted(indexed, key=lambda x: (x[0], x[1]))
+        order = [0] * width
+        for rank, (_, pos) in enumerate(ranked):
+            order[pos] = rank
+        order_t = tuple(order)
+        if order_t not in seen_orders:
+            seen_orders.add(order_t)
+            col_orders.append(order_t)
+
+    for col_order in col_orders:
+        # Build columnar perm
+        from collections import defaultdict
+        cols: dict[int, list[int]] = defaultdict(list)
+        for pos in range(n):
+            _, c = divmod(pos, width)
+            cols[c].append(pos)
+        perm: list[int] = []
+        for rank in range(width):
+            col_idx = list(col_order).index(rank)
+            perm.extend(cols[col_idx])
+
+        inv_perm = [0] * n
+        for i, p in enumerate(perm):
+            inv_perm[p] = i
+
+        intermediate = "".join(K4_LOCAL[inv_perm[i]] for i in range(n))
+
+        for variant_name, key_fn in [
+            ("vig", lambda c, p: (c - p) % 26),
+            ("beau", lambda c, p: (c + p) % 26),
+            ("vbeau", lambda c, p: (p - c) % 26),
+        ]:
+            for alpha_name, alpha in [("AZ", AZ_LOCAL), ("KA", KA_LOCAL)]:
+                key_at_crib: dict[int, int] = {}
+                for pos in crib_positions:
+                    c_val = alpha.index(intermediate[pos])
+                    p_val = alpha.index(crib_dict[pos])
+                    key_at_crib[pos] = key_fn(c_val, p_val)
+
+                for period in range(1, min(width + 1, 14)):
+                    configs_tested += 1
+                    residue_keys: dict[int, int] = {}
+                    consistent = True
+                    for pos in crib_positions:
+                        r = pos % period
+                        k = key_at_crib[pos]
+                        if r in residue_keys:
+                            if residue_keys[r] != k:
+                                consistent = False
+                                break
+                        else:
+                            residue_keys[r] = k
+                    if not consistent:
+                        continue
+
+                    full_key = [residue_keys.get(i % period, 0) for i in range(n)]
+                    pt_chars = []
+                    for i in range(n):
+                        c_val = alpha.index(intermediate[i])
+                        k = full_key[i]
+                        if variant_name == "vig":
+                            p_val = (c_val - k) % 26
+                        elif variant_name == "beau":
+                            p_val = (k - c_val) % 26
+                        else:
+                            p_val = (c_val + k) % 26
+                        pt_chars.append(alpha[p_val])
+                    pt = "".join(pt_chars)
+
+                    score = sum(qg.get(pt[i:i+4], _QG_FLOOR) for i in range(len(pt) - 3))
+                    score += _score_intel_jargon(pt)
+
+                    hits = 0
+                    for pos, text in CRIBS_LOCAL:
+                        for k_idx, ch in enumerate(text):
+                            if pos + k_idx < len(pt) and pt[pos + k_idx] == ch:
+                                hits += 1
+
+                    if score > best_score:
+                        best_score = score
+                        best_pt = pt
+                        best_method = f"product_w{width}/{variant_name}/p{period}/{alpha_name}/col={''.join(str(c) for c in col_order)}"
+                    if hits > best_crib_hits:
+                        best_crib_hits = hits
+
+    return {
+        "score": round(best_score, 2),
+        "plaintext": best_pt,
+        "method": best_method,
+        "crib_hits": best_crib_hits,
+        "configs_tested": configs_tested,
+        "width": width,
+        "worker_id": worker_id,
+    }
+
+
+def run_product_cipher_general(num_workers: int = 0) -> dict:
+    """Keyword-derived transpositions × substitution for widths 4-14.
+
+    For each width, generates column orders from thematic keywords,
+    then tests all substitution types with crib consistency checking.
+    """
+    if num_workers <= 0:
+        num_workers = mp.cpu_count() or 4
+
+    # Build task list: one task per width
+    tasks = []
+    for width in range(4, 15):
+        tasks.append((width, _PRODUCT_KEYWORDS, len(tasks)))
+
+    print(f"  Product General: widths 4-14, {len(_PRODUCT_KEYWORDS)} keywords, "
+          f"{len(tasks)} tasks across {num_workers} workers...")
+
+    start = time.monotonic()
+    results = []
+    with ProcessPoolExecutor(max_workers=num_workers) as pool:
+        futures = [pool.submit(_product_general_worker, task) for task in tasks]
+        for future in as_completed(futures):
+            try:
+                result = future.result()
+                results.append(result)
+                print(f"    Width {result['width']:2d}: score={result['score']:.1f} "
+                      f"cribs={result['crib_hits']} configs={result['configs_tested']} "
+                      f"method={result['method'][:60]}")
+            except Exception as e:
+                logger.error("Product general worker failed: %s", e)
+
+    elapsed = time.monotonic() - start
+    total_configs = sum(r["configs_tested"] for r in results)
+
+    best = max(results, key=lambda r: r["score"]) if results else {
+        "score": -9999.0, "plaintext": "", "method": "", "crib_hits": 0,
+    }
+
+    return {
+        "elapsed_seconds": round(elapsed, 2),
+        "total_configs": total_configs,
+        "widths_tested": list(range(4, 15)),
+        "best": best,
+        "per_width": {r["width"]: {"score": r["score"], "crib_hits": r["crib_hits"],
+                                    "method": r["method"]} for r in results},
+    }
+
+
+def _running_key_product_worker(args: tuple) -> dict:
+    """Test running-key cipher on transposed text for one (perm, passage) combo."""
+    col_order, width, passage, passage_name, worker_id = args
+
+    K4_LOCAL = "OBKRUOXOGHULBSOLIFBBWFLRVQQPRNGKSSOTWTQSJQSSEKZZWATJKLUDIAWINFBNYPVTTMZFPKWGDKZXTJCDIGKUHUAUEKCAR"
+    CRIBS_LOCAL = [(21, "EASTNORTHEAST"), (63, "BERLINCLOCK")]
+    AZ_LOCAL = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    n = 97
+    import re as _re
+
+    # Sanitize passage
+    passage_clean = _re.sub(r"[^A-Z]", "", passage.upper())
+    if len(passage_clean) < n:
+        return {
+            "score": -9999.0, "plaintext": "", "method": "", "crib_hits": 0,
+            "configs_tested": 0, "worker_id": worker_id,
+        }
+
+    # Build columnar perm
+    from collections import defaultdict
+    cols: dict[int, list[int]] = defaultdict(list)
+    for pos in range(n):
+        _, c = divmod(pos, width)
+        cols[c].append(pos)
+    perm: list[int] = []
+    for rank in range(width):
+        col_idx = list(col_order).index(rank)
+        perm.extend(cols[col_idx])
+
+    inv_perm = [0] * n
+    for i, p in enumerate(perm):
+        inv_perm[p] = i
+
+    intermediate = "".join(K4_LOCAL[inv_perm[i]] for i in range(n))
+
+    qg = _load_quadgrams()
+    best_score = -9999.0
+    best_pt = ""
+    best_method = ""
+    best_crib_hits = 0
+    configs_tested = 0
+
+    max_offset = min(len(passage_clean) - n, 200)
+
+    for offset in range(0, max(1, max_offset)):
+        for variant_name, decrypt_fn in [
+            ("vig", lambda c, k: (c - k) % 26),
+            ("beau", lambda c, k: (k - c) % 26),
+            ("vbeau", lambda c, k: (c + k) % 26),
+        ]:
+            configs_tested += 1
+            pt_chars = []
+            for i in range(n):
+                c_val = AZ_LOCAL.index(intermediate[i])
+                k_val = AZ_LOCAL.index(passage_clean[offset + i])
+                p_val = decrypt_fn(c_val, k_val)
+                pt_chars.append(AZ_LOCAL[p_val])
+            pt = "".join(pt_chars)
+
+            hits = 0
+            for pos, text in CRIBS_LOCAL:
+                for k_idx, ch in enumerate(text):
+                    if pos + k_idx < len(pt) and pt[pos + k_idx] == ch:
+                        hits += 1
+
+            score = sum(qg.get(pt[i:i+4], _QG_FLOOR) for i in range(len(pt) - 3))
+            score += _score_intel_jargon(pt)
+
+            if score > best_score:
+                best_score = score
+                best_pt = pt
+                best_method = (f"running_key_w{width}/"
+                               f"{variant_name}/{passage_name}/off{offset}/"
+                               f"col={''.join(str(c) for c in col_order)}")
+            if hits > best_crib_hits:
+                best_crib_hits = hits
+
+    return {
+        "score": round(best_score, 2),
+        "plaintext": best_pt,
+        "method": best_method,
+        "crib_hits": best_crib_hits,
+        "configs_tested": configs_tested,
+        "worker_id": worker_id,
+    }
+
+
+def run_running_key_product(num_workers: int = 0) -> dict:
+    """Running-key cipher on transposed text.
+
+    Uses top transposition candidates (keyword-derived, widths 7-11)
+    combined with corpus passages as running keys.
+    """
+    if num_workers <= 0:
+        num_workers = mp.cpu_count() or 4
+
+    # Load corpus passages
+    passages: list[tuple[str, str]] = []  # (name, text)
+
+    # Try to load from reference directory
+    ref_dir = Path(__file__).resolve().parent.parent.parent / "reference"
+    if ref_dir.exists():
+        for txt_file in sorted(ref_dir.glob("*.txt")):
+            try:
+                text = txt_file.read_text(errors="ignore")
+                if len(text) >= 200:
+                    passages.append((txt_file.stem, text))
+            except Exception:
+                pass
+
+    # Load wordlist as potential key source
+    wordlist_dir = Path(__file__).resolve().parent.parent.parent / "wordlists"
+    if wordlist_dir.exists():
+        for wl_file in sorted(wordlist_dir.glob("*.txt")):
+            try:
+                text = wl_file.read_text(errors="ignore")
+                if len(text) >= 200:
+                    passages.append((wl_file.stem, text))
+            except Exception:
+                pass
+
+    if not passages:
+        print("  No corpus passages found for running-key test.")
+        return {"elapsed_seconds": 0, "total_configs": 0, "best": {
+            "score": -9999.0, "plaintext": "", "method": "", "crib_hits": 0,
+        }}
+
+    # Generate column orders from keywords for widths 7-11
+    tasks = []
+    seen_combos: set[tuple] = set()
+    for width in [9, 7, 8, 10, 11]:
+        for kw in _PRODUCT_KEYWORDS:
+            kw_upper = kw.upper()
+            if len(kw_upper) < width:
+                continue
+            kw_slice = kw_upper[:width]
+            indexed = [(ch, i) for i, ch in enumerate(kw_slice)]
+            ranked = sorted(indexed, key=lambda x: (x[0], x[1]))
+            order = [0] * width
+            for rank, (_, pos) in enumerate(ranked):
+                order[pos] = rank
+            order_t = tuple(order)
+
+            for passage_name, passage_text in passages:
+                combo_key = (order_t, width, passage_name)
+                if combo_key in seen_combos:
+                    continue
+                seen_combos.add(combo_key)
+                tasks.append((order_t, width, passage_text, passage_name, len(tasks)))
+
+    print(f"  Running-key product: {len(tasks)} tasks ({len(passages)} passages × "
+          f"keyword column orders), {num_workers} workers...")
+
+    start = time.monotonic()
+    results = []
+    with ProcessPoolExecutor(max_workers=num_workers) as pool:
+        futures = [pool.submit(_running_key_product_worker, task) for task in tasks]
+        for i, future in enumerate(as_completed(futures)):
+            try:
+                result = future.result()
+                results.append(result)
+                if (i + 1) % max(1, len(tasks) // 5) == 0:
+                    best_so_far = max(results, key=lambda r: r["score"])
+                    print(f"    [{i+1}/{len(tasks)}] best_score={best_so_far['score']:.1f} "
+                          f"cribs={best_so_far['crib_hits']}")
+            except Exception as e:
+                logger.error("Running-key worker failed: %s", e)
+
+    elapsed = time.monotonic() - start
+    total_configs = sum(r["configs_tested"] for r in results)
+
+    best = max(results, key=lambda r: r["score"]) if results else {
+        "score": -9999.0, "plaintext": "", "method": "", "crib_hits": 0,
+    }
+
+    return {
+        "elapsed_seconds": round(elapsed, 2),
+        "total_configs": total_configs,
+        "total_tasks": len(tasks),
+        "passages_used": len(passages),
+        "best": best,
     }
