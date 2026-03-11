@@ -28,9 +28,9 @@ Every prior experiment (600+, 669B+ configs) assumed positional correspondence o
 
 **W-as-delimiter:** 5 W's at positions [20, 36, 48, 58, 74] bracket the cribs — W at 20 immediately before EASTNORTHEAST (21), W at 74 immediately after BERLINCLOCK (73). May act as telegram-style word separators. Sanborn's clue "(CLUE) what's the point?" may reference W as period/full stop.
 
-**What we know:** [DERIVED FACT] No single-layer classical cipher works on the carved text (exhaustively tested). [PUBLIC FACT, PRIMARY SOURCE] Sanborn: "There are TWO SYSTEMS of enciphering the bottom text... designed to UNVEIL ITSELF... pull up one layer, come to the next." [HYPOTHESIS] The Cardan grille selects 73 of 97 positions (null mask). [HYPOTHESIS] Once nulls removed, the 73-char CT yields to simple substitution (Vigenère/Beaufort with a short keyword). See [`reports/final_synthesis.md`](reports/final_synthesis.md) for the elimination landscape.
+**What we know:** [DERIVED FACT] No single-layer classical cipher works on the carved text (exhaustively tested). [DERIVED FACT] Null mask + periodic Vig/Beau/VBeau (periods 1-23) is IMPOSSIBLE for ANY choice of 24 null positions (proven 2026-03-11 via exhaustive (n1,n2,n3) enumeration). [PUBLIC FACT, PRIMARY SOURCE] Sanborn: "There are TWO SYSTEMS of enciphering the bottom text... designed to UNVEIL ITSELF... pull up one layer, come to the next." [HYPOTHESIS] The Cardan grille selects 73 of 97 positions (null mask). [ELIMINATED] Periodic Vig/Beau after null removal — proven impossible 2026-03-11. See [`reports/final_synthesis.md`](reports/final_synthesis.md) for the elimination landscape.
 
-**What we don't know:** Which 24 of 97 positions are nulls, whether cribs apply to carved or real CT positions, the substitution key for the real CT, the structural rule governing null placement.
+**What we don't know:** Which 24 of 97 positions are nulls, whether cribs apply to carved or real CT positions, what NON-PERIODIC cipher type operates after null removal (autokey, running key, monoalphabetic, or reordering-based model), the structural rule governing null placement.
 
 ---
 
@@ -284,5 +284,5 @@ Domain knowledge, public facts, and detailed operating policies live in separate
 
 ---
 
-*Last updated: 2026-03-09 — Mission: derive K4 method & solve. Best leads: 73-char hypothesis + grille-as-selection-mask + W-delimiter. Top keywords: KRYPTOS, KOMPASS, DEFECTOR, COLOPHON, ABSCISSA*
+*Last updated: 2026-03-11 — Mission: derive K4 method & solve. Periodic sub eliminated on BOTH raw 97 AND any null-extracted 73 (periods 1-23). Best leads: 73-char hypothesis + non-periodic cipher + transposition-as-System-2. Top keywords: KRYPTOS, KOMPASS, DEFECTOR, COLOPHON, ABSCISSA*
 *Primary author: Colin Patrick (human lead) + Claude (computational partner)*
