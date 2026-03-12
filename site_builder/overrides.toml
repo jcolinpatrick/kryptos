@@ -335,6 +335,168 @@ research_questions = ["RQ-2", "RQ-3"]
 
 # ── Keyword enrichment for searchability ──────────────────────────────────
 
+# ── Session 35 eliminations (2026-03-11, session 3) ──────────────────────
+
+[elimination.E-D13-COLUMNAR-ALL]
+title = "Columnar transposition (ANY width) + period-13 substitution — structural impossibility"
+description = "Proven structurally impossible: columnar transposition at ANY width (2-48) combined with period-13 substitution cannot satisfy K4's crib constraints. P(all 11 residues match) ≈ 2.5×10⁻¹⁶ per column ordering. 61.5M configurations tested across all widths."
+category = "multi-layer"
+subcategory = "transposition-plus-substitution"
+scope_limitations = "Only eliminates columnar transposition + period-13 substitution. Non-columnar transpositions (route, spiral, double) + p13 remain open."
+assumptions = "Columnar transposition; Period-13 periodic substitution (Vig/Beau/VBeau); Cribs at positions 21-33 and 63-73"
+confidence_tier = 1
+truth_tag = "[DERIVED FACT]"
+verdict = "STRUCTURALLY IMPOSSIBLE — P≈2.5×10⁻¹⁶ per ordering, 0 hits in 61.5M configs"
+configs_tested = 61500000
+
+[elimination.E-D13-WIDTH13-P13]
+title = "Width-13 columnar + period-13 substitution — algebraic impossibility proof"
+description = "When width = period = 13, column swaps cannot move positions across residue classes. Backtracking proves zero solutions exist for ANY cipher variant or alphabet. Width-13 is special because 97 = 7×13 + 8 (close to 8 lines × 13 columns)."
+category = "multi-layer"
+subcategory = "transposition-plus-substitution"
+scope_limitations = "Specific to width=period=13. Other width-13 transpositions with non-period-13 substitution remain open."
+assumptions = "Width-13 columnar transposition; Period-13 substitution; Direct or transposed positional correspondence"
+confidence_tier = 1
+truth_tag = "[DERIVED FACT]"
+verdict = "ALGEBRAICALLY IMPOSSIBLE — zero solutions exist"
+
+[elimination.E-D13-AUTOKEY-13]
+title = "Autokey cipher with ≤13-character primers + optional columnar transposition"
+description = "Tested autokey ciphers (PT/CT feedback × Vig/Beau/VBeau × AZ/KA) with primers up to 13 characters matching EASTNORTHEAST length, with and without columnar transposition. 7.9M configurations. Top result: 9/24 crib hits — exactly matches binomial expectation for volume tested."
+category = "substitution"
+subcategory = "vigenere"
+scope_limitations = "Only tests primer lengths ≤13. Longer primers or non-standard autokey variants remain open (though autokey is structurally limited to max 21/24 per E-FRAC-37)."
+assumptions = "Autokey cipher with short primer; Optional columnar transposition; Standard crib positions"
+confidence_tier = 2
+truth_tag = "[INTERNAL RESULT]"
+verdict = "NOISE — max 9/24 = binomial expectation"
+configs_tested = 7900000
+
+[elimination.E-WCLUSTERING-TRANS]
+title = "W-clustering via single-layer transposition — ruled out"
+description = "Tested whether any transposition brings K4's 5 W positions [20,36,48,58,74] adjacent (suggesting they were separated by transposition). 62K+ columnar configs (widths 2-48), rail fence, serpentine, spiral. Best: cluster of 3 (width-10 only). Width-13 uniquely produces WWWW blocks (4 consecutive), but 5th W remains isolated. No transposition brings all 5 W's contiguous within a 10-char window."
+category = "transposition"
+subcategory = "columnar"
+scope_limitations = "Only tests single-layer transpositions. Double transposition or non-standard transpositions could still cluster W's."
+assumptions = "W's were contiguous in original plaintext and separated by transposition"
+confidence_tier = 2
+truth_tag = "[INTERNAL RESULT]"
+verdict = "RULED OUT — no single-layer transposition clusters all 5 W's"
+configs_tested = 62000
+
+[elimination.E-PRODUCT-W9-EXHAUSTIVE]
+title = "Product cipher: exhaustive width-9 columnar × all substitution types"
+description = "All 9!=362,880 column permutations × Vig/Beau/VBeau × AZ/KA × periods 1-13 + autokey single-char primers = 47,174,400 configurations in 57.6s. Best: 9/24 crib hits (autokey noise). ALL plaintext outputs gibberish."
+category = "multi-layer"
+subcategory = "transposition-plus-substitution"
+scope_limitations = "Only width-9 columnar. Other widths tested in product_general phase."
+assumptions = "Width-9 columnar transposition; Periodic or autokey substitution; Standard alphabets"
+confidence_tier = 2
+truth_tag = "[INTERNAL RESULT]"
+verdict = "NO SIGNAL — best 9/24 (autokey noise)"
+configs_tested = 47174400
+
+[elimination.E-PRODUCT-GENERAL]
+title = "Product cipher: keyword-derived columnar (w4-14) × periodic substitution"
+description = "60 thematic keywords × widths 4-14 × Vig/Beau/VBeau × AZ/KA × periods 1-13. ALL 7,326 configurations scored -9999 with 0 crib hits — hard elimination."
+category = "multi-layer"
+subcategory = "transposition-plus-substitution"
+scope_limitations = "Only keyword-derived column orderings. Arbitrary orderings require exhaustive search (done for w9)."
+assumptions = "Keyword-derived columnar transposition; Periodic substitution; Thematic keywords"
+confidence_tier = 2
+truth_tag = "[INTERNAL RESULT]"
+verdict = "HARD ELIMINATION — 0 crib hits across all configs"
+configs_tested = 7326
+
+[elimination.E-RUNKEY-CARTER]
+title = "Running-key crib-drag on Carter books (with and without transposition)"
+description = "carter_gutenberg.txt (117K alpha chars) + carter_vol1.txt (287K alpha chars) × Vig/Beau/VBeau. Direct: max 7/24. With transposition (25 keywords × widths 4-14, Vig only): max 9/24. All scores within random binomial tail."
+category = "key-models"
+subcategory = "running-key"
+scope_limitations = "Only tests Howard Carter's published works. Other running key sources remain open."
+assumptions = "Running key from Carter book text; Optional keyword-derived columnar transposition"
+confidence_tier = 2
+truth_tag = "[INTERNAL RESULT]"
+verdict = "NOISE — max 7/24 direct, 9/24 with transposition"
+
+[elimination.E-RUNKEY-K123]
+title = "Running-key crib-drag on K1-K3 plaintext (with and without transposition)"
+description = "K1+K2+K3 plaintext (658 chars), individual sections, reversed, concatenated × Vig/Beau/VBeau. Direct: max 5/24. With transposition (23 keywords × widths 4-14): max 6/24."
+category = "key-models"
+subcategory = "running-key"
+scope_limitations = "Only tests K1-K3 plaintext as running key. Does not eliminate K1-K3 ciphertext or other derived key material."
+assumptions = "Running key from K1-K3 plaintext passages; Optional keyword-derived columnar transposition"
+confidence_tier = 2
+truth_tag = "[INTERNAL RESULT]"
+verdict = "NOISE — max 5/24 direct, 6/24 with transposition"
+
+[elimination.E-NULLMASK-PERIODIC]
+title = "Null mask + periodic substitution (periods 1-23) — algebraic impossibility proof"
+description = "Proven impossible for ANY choice of 24 null positions: consistency depends only on (n1,n2,n3) = null counts per crib segment. All ~325 valid triples fail for periods 1-23. 550K random masks confirm. Only periods 24-26 survive (trivially underdetermined)."
+category = "multi-layer"
+subcategory = "null-extraction"
+scope_limitations = "Only eliminates periodic substitution after null removal. Non-periodic substitution (autokey, running key, custom tableau) after null removal remains open."
+assumptions = "24 null positions removed from 97-char CT; Periodic substitution on resulting 73 chars; Cribs at stated positions shift after null removal"
+confidence_tier = 1
+truth_tag = "[DERIVED FACT]"
+verdict = "ALGEBRAICALLY IMPOSSIBLE — all (n1,n2,n3) triples fail at periods 1-23"
+
+# ── Session 2026-03-12: 73-char column mask deep investigation ───────────
+
+[elimination.E-COLMASK-AUTOKEY]
+title = "Autokey cipher on 73-char column mask extract (all variants)"
+description = "Tested autokey (PT/CT feedback × Vig/Beau/VBeau × AZ/KA), progressive key, running key on 73-char column mask extracts from the 28×31 native grid null band. 46,170 configs across 9 keep-column variants. Max 6/24 = NOISE. This is a DIFFERENT test from autokey on raw 97 — shifted crib positions (ENE at 13-25, BC at 47-57) and different ciphertext."
+category = "substitution"
+subcategory = "vigenere"
+scope_limitations = "Only tests autokey on column-mask-extracted 73-char text. Other null mask patterns untested with autokey. Running key from limited dictionary only."
+assumptions = "Column mask removes cols 8-16 minus one kept col; Shifted crib positions; Standard autokey PT/CT feedback"
+confidence_tier = 2
+truth_tag = "[INTERNAL RESULT]"
+verdict = "NOISE — max 6/24 across 46,170 configs"
+configs_tested = 46170
+repro_command = "PYTHONPATH=src python3 -u scripts/grille/e_column_mask_autokey_01.py"
+
+[elimination.E-COLMASK-GRID-COORD]
+title = "Grid-coordinate-derived substitution keys on 73-char column mask extract"
+description = "Tested 150+ key derivation functions from (row, col) grid coordinates: row, col, row+col, row-col, |col-15|, modular keys, KRYPTOS keyword cycling, bearing-derived keys, triangular numbers, etc. Also exhaustive affine fit key=a*col+b*row+c mod 26 (17,576 combinations). 3,726 configs. Max 5/24 = NOISE. Required Vig keystream at crib positions (BLZCDCYYGCKAZ, MUYKLGKORNA) is completely irregular — no coordinate-based pattern fits."
+category = "bespoke"
+subcategory = "physical-sculpture"
+scope_limitations = "Only tests functions of (row, col). Does not test arbitrary position-dependent keys beyond coordinate derivation."
+assumptions = "28×31 grid coordinates; Column mask null removal; Key is a deterministic function of grid position"
+confidence_tier = 2
+truth_tag = "[INTERNAL RESULT]"
+verdict = "NOISE — max 5/24. Key ≠ f(row,col)"
+configs_tested = 3726
+repro_command = "PYTHONPATH=src python3 -u scripts/grille/e_grid_coordinate_keys_01.py"
+
+[elimination.E-COLMASK-MITM-TRANS-SUB]
+title = "MITM: columnar transposition × periodic substitution on 73-char column mask extract"
+description = "Meet-in-the-Middle attack on 73-char column mask extract: columnar transposition (w7-9 exhaustive, 408,240 permutations) × periodic sub (p1-13) × Vig/Beau/VBeau × key-at-CT and key-at-PT models. Also tested rail fence (depths 2-15) and route ciphers (serpentine, spiral, colwise for widths 7-14). 31.8M total configs. Best: 18/24 at w9/p11/vigenere. Monte Carlo verification (100K random w9 perms at p11) shows ~3.6 expected hits in full 362,880 search = MARGINAL NOISE. Decrypted texts: IC 0.035-0.044 (random), zero crib matches at expected positions."
+category = "multi-layer"
+subcategory = "transposition-plus-substitution"
+scope_limitations = "Only columnar, rail fence, and route transpositions. Other transposition types (double columnar, Myszkowski, turning grille) untested on 73-char extract."
+assumptions = "Column mask null removal; Columnar/route transposition; Periodic substitution; Shifted crib positions (ENE 13-25, BC 47-57)"
+confidence_tier = 2
+truth_tag = "[INTERNAL RESULT]"
+verdict = "NOISE — best 18/24 at w9/p11 ≈ expected by chance (Monte Carlo: ~3.6 hits expected)"
+configs_tested = 31800000
+repro_command = "PYTHONPATH=src python3 -u scripts/grille/e_mitm_trans_sub_73_01.py"
+
+[elimination.E-COLMASK-NATIVE-GRID-READING]
+title = "Native 28×31 grid reading orders + periodic substitution on 73-char extract"
+description = "Tested 10+ native grid reading orders (column-by-column L→R/R→L, serpentine columns/rows, diagonal TLBR/TRBL, spiral CW, paired mirror columns, row-reversed) × Vig/Beau/VBeau × periods 1-26 on 73-char column mask extract. Also tested on full 97-char text with grid column reading. 2,262 configs on 73-char, best 22/24 at serpentine_row/beaufort/p24 = UNDERDETERMINED NOISE (period 24 with 24 cribs means each residue class has ≤1 crib position). Full 97-char: best 20/24 at p25."
+category = "multi-layer"
+subcategory = "transposition-plus-substitution"
+scope_limitations = "Only tests periodic substitution after grid reading transposition. Non-periodic ciphers with grid reading remain open."
+assumptions = "28×31 native grid layout; Column mask null removal; Reading order = transposition; Periodic substitution"
+confidence_tier = 2
+truth_tag = "[INTERNAL RESULT]"
+verdict = "NOISE — all high scores at high periods (underdetermined). Discriminating periods (≤7): max ~12/24"
+configs_tested = 2262
+repro_command = "PYTHONPATH=src python3 -u scripts/grille/e_native_grid_reading_01.py"
+
+# ── Keyword enrichment for searchability ──────────────────────────────────
+
 [elimination.E-KASISKI-00]
 keywords_tested = ["URANIA", "WELTZEITUHR", "ALEXANDERPLATZ", "COMPASS", "LODESTONE", "SHADOW", "SPHINX", "PHARAOH", "TUTANKHAMUN", "CARNARVON", "HOROLOGE", "PALIMPSEST", "ABSCISSA", "KRYPTOS", "BERLINCLOCK", "SANBORN", "DESPARATLY", "IQLUSION", "IDBYROWS", "VERDIGRIS"]
 
