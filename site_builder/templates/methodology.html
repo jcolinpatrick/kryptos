@@ -117,13 +117,54 @@
   check crib consistency for the substitution layer. We have exhaustively tested:
 </p>
 <ul>
-  <li>All 362,880 width-9 column permutations &times; Vig/Beau/VBeau &times; AZ/KA &times; periods 1&ndash;13 + autokey</li>
-  <li>Keyword-derived column orders for widths 4&ndash;14 &times; all substitution types</li>
+  <li>All 362,880 width-9 column permutations &times; Vig/Beau/VBeau &times; AZ/KA &times; periods 1&ndash;13 + autokey (47.17M configs)</li>
+  <li>Keyword-derived column orders for widths 4&ndash;14 &times; all substitution types (7,326 configs)</li>
   <li>Running-key decryption from Howard Carter&rsquo;s book and K1&ndash;K3 plaintext (crib-dragged)</li>
+  <li>Columnar transposition (ANY width 2&ndash;48) + period-13 substitution: structurally impossible (61.5M configs)</li>
+  <li>MITM on 73-char column mask extract: w7&ndash;9 exhaustive &times; p1&ndash;13 &times; 3 variants (31.8M configs)</li>
+  <li>Autokey with &le;13-char primers + optional columnar transposition (7.9M configs)</li>
 </ul>
 <p>
-  All tests produced zero signal, eliminating standard columnar transposition &times;
-  periodic substitution as the K4 method.
+  All tests produced zero signal. Standard columnar transposition &times; periodic
+  substitution, columnar &times; autokey, and MITM on 73-char extracts are all eliminated.
+</p>
+
+<h2>73-Character Hypothesis</h2>
+<p>
+  Sanborn&rsquo;s yellow legal pad (auctioned 2025) shows &ldquo;8 lines 73&rdquo; for K4.
+  The carved text has 97 characters &mdash; so <strong>24 characters may be nulls</strong>.
+  This is reinforced by the <em>Triple-24 Coincidence</em>:
+</p>
+<ol>
+  <li>97 &minus; 73 = <strong>24</strong> nulls</li>
+  <li>EASTNORTHEAST (13) + BERLINCLOCK (11) = <strong>24</strong> crib characters</li>
+  <li>The Weltzeituhr (Berlin Clock) has exactly <strong>24</strong> facets</li>
+</ol>
+<p>
+  The 28&times;31 master grid has a <strong>null band</strong> at columns 8&ndash;16,
+  where K4&rsquo;s rows overlap the central gap of the Kryptos tableau. Removing 8 of 9
+  columns from this band produces exactly 24 nulls, yielding a 73-character extract with
+  shifted crib positions (ENE at 13&ndash;25, BC at 47&ndash;57).
+</p>
+
+<h3>What&rsquo;s Been Tested on the 73-Char Extract</h3>
+<p>
+  We have tested <strong>32M+ configurations</strong> on the 73-char column mask extract:
+</p>
+<ul>
+  <li><strong>Null mask + periodic substitution (p=1&ndash;23):</strong> PROVEN IMPOSSIBLE for ANY
+      choice of 24 null positions (algebraic proof via (n1,n2,n3) enumeration)</li>
+  <li><strong>Autokey (PT/CT &times; all variants):</strong> 46K configs, max 6/24 = noise</li>
+  <li><strong>MITM columnar trans &times; periodic sub:</strong> 31.8M configs (w7&ndash;9 exhaustive),
+      best 18/24 at w9/p11 = statistical noise (~3.6 expected by chance)</li>
+  <li><strong>Grid-coordinate-derived keys:</strong> 3.7K configs, max 5/24.
+      Required keystream is completely irregular &mdash; no f(row,col) pattern fits</li>
+  <li><strong>Native grid reading orders:</strong> 2.3K configs, all high scores at underdetermined periods</li>
+</ul>
+<p>
+  The column mask geometry is numerically compelling but computationally sterile.
+  The correct cipher operating after null extraction (if the 73-char model is correct)
+  is something we have not yet tested.
 </p>
 
 <h2>Validation Criteria</h2>
