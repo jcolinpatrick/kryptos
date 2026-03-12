@@ -2,27 +2,23 @@
 """
 KryptosBot Campaign Runner — Two-system K4 solver.
 
-Architecture (2026-03-09, updated after periodic-sub impossibility proof):
-    Phase 1: Bean Baseline — identity decryption + Bean diagnostics (free)
-    Phase 2: Exhaustive single-swap search (optional, low-value)
-    Phase 3: Focused double-swap (optional, low-value)
-    Phase 4: Near-identity hill-climbing (free)
-    Phase 5: Priority keyword deep search (free)
-    Phase 6: Null-mask SA search (free)
-    Phase 7+: Evolutionary crossover + API-guided hypotheses (recurring)
+Architecture (2026-03-11, post product-cipher elimination):
+    Phases 1-9:  Computational (free, run once, all cores)
+                 Bean diagnostics, swap search, null-mask SA, product cipher
+    Phase 10+:   Opus-guided exploration (API budget, recurring)
+                 Opus reasons about K4 structure → proposes hypotheses → tests locally
 
-PROVEN (2026-03-09): No periodic sub (Vig/Beau/VBeau × AZ/KA, periods 1-26)
-is crib-consistent on the raw 97-char carved text. Two systems required.
-Model A: remove nulls first → 73-char CT → decrypt. Model B: decrypt all 97 → read 73.
-~1.66M null-mask configs tested so far: ZERO signal.
+PROVEN: No periodic sub on raw 97. No product cipher (columnar trans × periodic sub).
+No null mask + periodic sub (p=1-23). Two systems required.
+Encryption order: PT → transposition → substitution → carved text.
 
 Usage:
     PYTHONPATH=src python3 -u kryptosbot/campaign.py
-    PYTHONPATH=src python3 -u kryptosbot/campaign.py --budget 50
+    PYTHONPATH=src python3 -u kryptosbot/campaign.py --budget 250
     PYTHONPATH=src python3 -u kryptosbot/campaign.py --local-only
     PYTHONPATH=src python3 -u kryptosbot/campaign.py --dry-run
-    PYTHONPATH=src python3 -u kryptosbot/campaign.py --phase bean    # Bean phases only
-    PYTHONPATH=src python3 -u kryptosbot/campaign.py --phase null    # Null-mask SA only
+    PYTHONPATH=src python3 -u kryptosbot/campaign.py --phase product
+    PYTHONPATH=src python3 -u kryptosbot/campaign.py --reset
 """
 
 from __future__ import annotations
@@ -71,18 +67,18 @@ CAMPAIGN_DIR = PROJECT_ROOT / "results" / "campaign"
 STATE_FILE = CAMPAIGN_DIR / "state.json"
 
 # --- Configuration ---
-ELITE_SIZE = 100                # Top N permutations to keep
+ELITE_SIZE = 50                 # Top N permutations to keep
 HILLCLIMB_ITERS = 50000        # Iterations per hill-climb restart
 MULTI_KW_TOP_N = 3             # Hill-climb top N keyword combos per seed
-OPUS_INSIGHT_INTERVAL = 25     # Opus analysis every N rounds
-DEPTH_INTERVAL = 10            # Full multi-keyword sweep every N rounds
-CROSSOVER_INTERVAL = 5         # Evolutionary crossover every N rounds
 BREAKTHROUGH_CRIB_HITS = 10    # Crib hits that trigger breakthrough alert
-STALE_CONVERSATION_ROUNDS = 50 # Reset conversation to avoid stale context
+STALE_CONVERSATION_ROUNDS = 20 # Reset conversation to avoid stale context
 
 # Score thresholds
-ELITE_ENTRY_SCORE = -700.0     # Min score to enter elite population
-HILLCLIMB_TRIGGER = -650.0     # Auto hill-climb results above this
+ELITE_ENTRY_SCORE = -500.0     # Min score to enter elite population
+HILLCLIMB_TRIGGER = -450.0     # Auto hill-climb results above this
+
+# Keywords proven impossible — never test these
+ELIMINATED_KEYWORDS = {"HOROLOGE", "HOROLOGY", "ENIGMA"}
 
 
 # ---------------------------------------------------------------------------
@@ -124,7 +120,7 @@ class CampaignState:
     best_ever_perm: list[int] = field(default_factory=list)
     started_at: str = ""
     last_round_at: str = ""
-    model: str = "claude-sonnet-4-6"
+    model: str = "claude-opus-4-6"
     # Bean-specific state
     bean_baseline_done: bool = False
     bean_single_swap_done: bool = False
@@ -181,7 +177,12 @@ class CampaignState:
 
     def update_best(self, score: float, crib_hits: int, plaintext: str,
                     method: str, perm: list[int]):
-        if score > self.best_ever_score:
+        # Normalize by length to prevent short-string false positives
+        pt_len = len(plaintext) if plaintext else 97
+        per_char = score / max(pt_len, 1)
+        best_per_char = self.best_ever_score / max(len(self.best_ever_plaintext), 1) \
+            if self.best_ever_plaintext else -9999.0
+        if per_char > best_per_char:
             self.best_ever_score = score
             self.best_ever_plaintext = plaintext
             self.best_ever_method = method
@@ -224,55 +225,68 @@ def save_state(state: CampaignState) -> None:
 
 
 # ---------------------------------------------------------------------------
-# Evolutionary crossover
+# Hypothesis filtering (prevent wasted cycles)
 # ---------------------------------------------------------------------------
 
-def _crossover_pair(perm_a: list[int], perm_b: list[int]) -> list[int]:
-    """Order crossover (OX1): take a segment from A, fill rest from B's order."""
-    import random
-    n = len(perm_a)
-    start = random.randint(0, n - 2)
-    end = random.randint(start + 1, n)
+def _filter_hypotheses(hypotheses: list[dict]) -> list[dict]:
+    """Filter out hypotheses testing proven-impossible configurations."""
+    valid = []
+    for h in hypotheses:
+        name = h.get("name", "unnamed")
+        data = h.get("data", {})
+        desc = h.get("description", "").upper()
 
-    child = [-1] * n
-    segment = set()
-    for i in range(start, end):
-        child[i] = perm_a[i]
-        segment.add(perm_a[i])
+        # Check for eliminated keywords in data or description
+        keyword = data.get("keyword", "").upper()
+        if keyword in ELIMINATED_KEYWORDS:
+            print(f"    [FILTERED] {name}: keyword {keyword} is eliminated")
+            continue
 
-    b_order = [x for x in perm_b if x not in segment]
-    j = 0
-    for i in range(n):
-        if child[i] == -1:
-            child[i] = b_order[j]
-            j += 1
+        # Check description for eliminated keywords
+        skip = False
+        for ek in ELIMINATED_KEYWORDS:
+            if ek in desc and "ELIMINATED" not in desc and "NOT" not in desc:
+                print(f"    [FILTERED] {name}: references eliminated keyword {ek}")
+                skip = True
+                break
+        if skip:
+            continue
 
-    return child
+        valid.append(h)
+
+    if len(valid) < len(hypotheses):
+        print(f"    Filtered {len(hypotheses) - len(valid)} invalid hypotheses")
+    return valid
 
 
-def generate_crossover_hypotheses(
-    elite: list[EliteMember],
-    count: int = 20,
-) -> list[dict]:
-    """Generate crossover offspring from elite pairs."""
-    import random
-    if len(elite) < 2:
-        return []
-
-    hypotheses = []
-    for i in range(count):
-        a, b = random.sample(elite[:min(20, len(elite))], 2)
-        if len(a.perm) != len(b.perm):
-            continue  # skip mismatched-length parents
-        child = _crossover_pair(a.perm, b.perm)
-        hypotheses.append({
-            "name": f"crossover_{i}",
-            "description": f"OX1 crossover of {a.source} × {b.source}",
-            "type": "permutation",
-            "data": {"perm": child},
-        })
-
-    return hypotheses
+def _purge_elite(state: CampaignState) -> int:
+    """Remove elite entries using eliminated keywords or nonsense methods."""
+    original = len(state.elite)
+    cleaned = []
+    for e in state.elite:
+        method = e.get("method", "").upper()
+        # Skip entries with eliminated keywords
+        skip = False
+        for ek in ELIMINATED_KEYWORDS:
+            if ek in method:
+                skip = True
+                break
+        if skip:
+            continue
+        # Skip entries with absurdly long keywords (> 12 chars = nonsense)
+        parts = method.split("/")
+        if len(parts) >= 2:
+            kw = parts[1] if len(parts) > 1 else ""
+            if len(kw) > 12 and kw not in ("ALEXANDERPLATZ", "MENGENLEHREUHR",
+                                             "TUTANKHAMUN", "WELTZEITUHR"):
+                continue
+        cleaned.append(e)
+    state.elite = cleaned
+    state._sort_elite()
+    removed = original - len(cleaned)
+    if removed:
+        print(f"  Purged {removed} invalid elite entries (eliminated keywords, nonsense)")
+    return removed
 
 
 # ---------------------------------------------------------------------------
@@ -981,7 +995,7 @@ def _signal_handler(signum, frame):
 def run_campaign(
     *,
     budget: float = 250.0,
-    model: str = "claude-sonnet-4-6",
+    model: str = "claude-opus-4-6",
     num_workers: int = 0,
     thinking_budget: int = 10000,
     local_only: bool = False,
@@ -1000,46 +1014,37 @@ def run_campaign(
     signal.signal(signal.SIGTERM, _signal_handler)
 
     state = load_state()
-    state.budget_total = max(state.budget_total, budget)
+    state.budget_total = budget
     state.model = model
 
     if not state.started_at:
         state.started_at = datetime.now(timezone.utc).isoformat()
 
+    # Purge invalid elite entries on load
+    _purge_elite(state)
+
     print(f"\n{'='*70}")
-    print(f"  KryptosBot Campaign — 73-Char Null Hypothesis + Bean-Guided Search")
+    print(f"  KryptosBot Campaign — Two-System K4 Solver")
     print(f"{'='*70}")
-    print(f"  Budget:    ${state.budget_total:.2f} (${state.budget_spent:.2f} spent, ${state.budget_remaining:.2f} remaining)")
-    print(f"  Rounds:    {state.rounds_completed} completed")
-    print(f"  Elite:     {len(state.elite)} members")
-    print(f"  Best ever: score={state.best_ever_score:.1f}, cribs={state.best_ever_crib_hits}")
     print(f"  Model:     {model}")
+    print(f"  Budget:    ${state.budget_spent:.2f} / ${state.budget_total:.2f} "
+          f"(${state.budget_remaining:.2f} remaining)")
+    print(f"  Rounds:    {state.rounds_completed}")
+    print(f"  Elite:     {len(state.elite)} members")
     print(f"  Workers:   {num_workers}")
-    print(f"  Local:     {'YES' if local_only else 'no'}")
-    print(f"  Bean:      baseline={'done' if state.bean_baseline_done else 'pending'} "
-          f"swap={'done' if state.bean_single_swap_done else 'pending'} "
-          f"double={'done' if state.bean_double_swap_done else 'pending'} "
-          f"near_id={'done' if state.bean_near_identity_done else 'pending'}")
-    print(f"  Priority:  {'done' if state.priority_keyword_done else 'PENDING'} "
-          f"(DEFECTOR/PARALLAX/COLOPHON + {len(set(PRIORITY_KEYWORDS))-3} more)")
-    print(f"  Null-mask: {'done (score=' + f'{state.null_mask_best_score:.1f})' if state.null_mask_done else 'PENDING'}")
-    print(f"  Product:   W9={'done (score=' + f'{state.product_w9_best_score:.1f})' if state.product_w9_done else 'PENDING'} "
-          f"General={'done' if state.product_general_done else 'PENDING'} "
-          f"RunKey={'done' if state.running_key_done else 'PENDING'}")
+    print(f"  Thinking:  {thinking_budget} tokens")
+    print(f"  Compute:   bean={'done' if state.bean_baseline_done else 'pending'} "
+          f"null={'done' if state.null_mask_done else 'pending'} "
+          f"product={'done' if state.product_w9_done else 'pending'}")
     if state.elite:
         print(f"  Top elite: {state.elite[0]['score']:.1f} ({state.elite[0]['method']})")
     print(f"{'='*70}\n")
 
     if dry_run:
-        if state.elite:
-            print("  Top 10 elite permutations:")
-            for i, e in enumerate(state.elite[:10]):
-                print(f"    {i+1}. score={e['score']:.1f} cribs={e['crib_hits']} "
-                      f"method={e['method']} src={e['source']}")
-            print(f"\n  Best plaintext: {state.best_ever_plaintext[:60]}...")
+        _print_campaign_summary(state)
         return
 
-    # --- Bean phases + priority keyword sweep + null-mask SA + product cipher (run once, free, no API) ---
+    # --- Computational phases 1-9 (run once, free, no API) ---
     pending_phases = not all([
         state.bean_baseline_done,
         state.bean_single_swap_done,
@@ -1060,153 +1065,131 @@ def run_campaign(
             _print_campaign_summary(state)
             return
 
-    # --- Phase 0: Built-in reading orders (first run only) ---
-    if state.rounds_completed == 0:
-        print("\n--- Phase 0: Built-in reading orders (free) ---\n")
-        builtin = [{
-            "name": "reading_orders_all",
-            "description": "All built-in grid reading orders",
-            "type": "reading_orders_all",
-            "data": {},
-        }]
-        results = test_all_hypotheses(builtin, num_workers=num_workers)
-        _ingest_results(state, results, 0)
-        _print_round_results(results)
-        save_state(state)
-
-    # --- API client ---
+    # --- API client setup ---
     client = None
     if not local_only:
         from kryptosbot.api_client import KryptosAPIClient
 
         api_key = _load_api_key()
         if not api_key:
-            print("  No ANTHROPIC_API_KEY found. Running local-only (crossover + hill-climb).")
-            print("  Set key in environment or kryptosbot/.env for API-guided search.")
-            local_only = True
-        else:
-            client = KryptosAPIClient(
-                api_key=api_key,
-                model=model,
-                budget_usd=state.budget_remaining,
-                conversation_mode=True,
-            )
-            client._conversation_history = list(state.conversation_history)
+            print("  No ANTHROPIC_API_KEY found.")
+            print("  Set key in environment or kryptosbot/.env for Opus-guided search.")
+            print("  All computational phases are complete.")
+            _print_campaign_summary(state)
+            return
+        client = KryptosAPIClient(
+            api_key=api_key,
+            model=model,
+            budget_usd=state.budget_remaining,
+            conversation_mode=True,
+        )
+        client._conversation_history = list(state.conversation_history)
+    else:
+        print("  All computational phases complete. Use API mode for Opus-guided exploration.")
+        _print_campaign_summary(state)
+        return
 
-    # --- Main loop ---
+    # --- Phase 10+: Opus-guided exploration ---
+    print(f"\n  Entering Opus-guided exploration (budget: ${state.budget_remaining:.2f})")
+
     round_num = state.rounds_completed
     try:
         while not _shutdown_requested:
             round_num += 1
 
             # Budget check
-            if client and client.is_over_budget():
+            remaining = state.budget_remaining - client.usage.cost_usd
+            if remaining <= 0 or client.is_over_budget():
                 print(f"\n  Budget exhausted (${state.budget_spent:.2f} / ${state.budget_total:.2f})")
                 break
 
-            remaining = state.budget_remaining - (client.usage.cost_usd if client else 0)
-            if remaining <= 0:
-                print(f"\n  Budget exhausted.")
-                break
-
+            cost = state.budget_spent + client.usage.cost_usd
             print(f"\n{'='*70}")
-            cost_str = f"${state.budget_spent + (client.usage.cost_usd if client else 0):.2f}/{state.budget_total:.2f}"
-            print(f"  Round {round_num} — {cost_str} — elite={len(state.elite)}")
-            print(f"{'='*70}\n")
+            print(f"  Round {round_num} — ${cost:.2f}/${state.budget_total:.2f} — "
+                  f"elite={len(state.elite)}")
+            print(f"{'='*70}")
 
             round_start = time.monotonic()
+
+            # --- Step 1: Build context for Opus ---
+            context = _build_context(state, round_num)
+
+            # --- Step 2: Ask Opus for hypotheses ---
+            print(f"\n  [Opus] Generating hypotheses (thinking={thinking_budget})...")
+            hypotheses = client.generate_hypotheses(
+                context, thinking_budget=thinking_budget,
+            )
+
+            if not hypotheses:
+                print("    No hypotheses generated. Retrying in 30s...")
+                state.rounds_completed = round_num
+                save_state(state)
+                time.sleep(30)
+                continue
+
+            # --- Step 3: Filter invalid hypotheses ---
+            hypotheses = _filter_hypotheses(hypotheses)
+
+            print(f"  {len(hypotheses)} valid hypotheses:")
+            for h in hypotheses:
+                print(f"    - {h.get('name', '?')} [{h.get('type', '?')}] "
+                      f"{h.get('description', '')[:70]}")
+
+            # --- Step 4: For generator hypotheses, ask Opus to write code ---
+            for i, h in enumerate(hypotheses):
+                if (h.get("type") == "generator"
+                        and not h.get("data", {}).get("python_code")
+                        and not client.is_over_budget()):
+                    print(f"\n  [Opus] Writing test script: {h['name']}...")
+                    code = client.generate_test_script(h, thinking_budget=thinking_budget)
+                    if code:
+                        hypotheses[i]["data"]["python_code"] = code
+                        print(f"    Generated {len(code)} chars of code")
+
+            # --- Step 4b: Persist hypothesis code ---
+            code_dir = CAMPAIGN_DIR / "hypothesis_code"
+            code_dir.mkdir(parents=True, exist_ok=True)
+            for h in hypotheses:
+                code = h.get("data", {}).get("python_code", "")
+                if code:
+                    code_file = code_dir / f"round_{round_num:04d}_{h.get('name', 'unknown')}.py"
+                    code_file.write_text(
+                        f"# Hypothesis: {h.get('name', '?')}\n"
+                        f"# Round: {round_num}\n"
+                        f"# Description: {h.get('description', '')[:200]}\n"
+                        f"# Type: {h.get('type', '?')}\n\n"
+                        f"{code}\n"
+                    )
+
+            # --- Step 5: Test hypotheses locally ---
             round_results: list[HypothesisResult] = []
-
-            # --- Decide what to do this round ---
-            # In local-only mode, always do crossover (no API work available)
-            do_crossover = (
-                (round_num % CROSSOVER_INTERVAL == 0) or local_only
-            ) and len(state.elite) >= 2
-            do_depth = (round_num % DEPTH_INTERVAL == 0) and len(state.elite) >= 1
-            do_opus = (round_num % OPUS_INSIGHT_INTERVAL == 0) and client and not local_only
-            do_api = not local_only and client and not do_depth
-            do_random = local_only and len(state.elite) < 10
-
-            # --- Random seeds (bootstrap) ---
-            if do_random:
-                import random as _rng
-                print("  [Bootstrap] Generating random permutation seeds...")
-                random_hyps = []
-                for ri in range(28):
-                    perm = list(range(K4_LEN))
-                    _rng.shuffle(perm)
-                    random_hyps.append({
-                        "name": f"random_seed_{round_num}_{ri}",
-                        "description": "Random permutation seed for hill-climbing",
-                        "type": "permutation",
-                        "data": {"perm": perm},
-                    })
-                rnd_results = test_all_hypotheses(random_hyps, num_workers=num_workers)
-                round_results.extend(rnd_results)
-                _print_round_results(rnd_results, label="Random")
-
-            # --- Crossover ---
-            if do_crossover:
-                print("  [Crossover] Generating offspring from elite...")
-                elite_members = state.elite_members
-                cx_hypotheses = generate_crossover_hypotheses(elite_members, count=20)
-                cx_results = test_all_hypotheses(cx_hypotheses, num_workers=num_workers)
-                round_results.extend(cx_results)
-                _print_round_results(cx_results, label="Crossover")
-
-            # --- API hypothesis generation (with Bean context) ---
-            if do_api:
-                print("  [Generate] Asking Claude for hypotheses...")
-                context = _build_context(state, round_num)
-                hypotheses = client.generate_hypotheses(
-                    context, thinking_budget=thinking_budget,
+            if hypotheses:
+                print(f"\n  [Test] Executing {len(hypotheses)} hypotheses "
+                      f"({num_workers} workers)...")
+                round_results = test_all_hypotheses(
+                    hypotheses, num_workers=num_workers,
                 )
+                _print_round_results(round_results)
 
-                if hypotheses:
-                    print(f"  Generated {len(hypotheses)} hypotheses:")
-                    for h in hypotheses:
-                        print(f"    - {h.get('name', '?')} [{h.get('type', '?')}]")
-
-                    for i, h in enumerate(hypotheses):
-                        if (h.get("type") == "generator"
-                                and not h.get("data", {}).get("python_code")
-                                and not client.is_over_budget()):
-                            print(f"  Generating script for: {h['name']}...")
-                            code = client.generate_test_script(h, thinking_budget=thinking_budget)
-                            if code:
-                                hypotheses[i]["data"]["python_code"] = code
-
-                    print(f"\n  Testing {len(hypotheses)} hypotheses...")
-                    api_results = test_all_hypotheses(hypotheses, num_workers=num_workers)
-                    round_results.extend(api_results)
-                    _print_round_results(api_results, label="API")
-
-            # --- Depth: multi-keyword hill-climb top elite ---
-            if do_depth and state.elite:
-                n_climb = min(5, len(state.elite))
-                print(f"  [Depth] Multi-keyword hill-climb on top {n_climb} elite...")
-
-                # Prioritize elite members from priority keyword sources
-                priority_elite = [e for e in state.elite
-                                  if any(kw.lower() in e.get('source', '').lower()
-                                         or kw.lower() in e.get('method', '').lower()
-                                         for kw in ['defector', 'parallax', 'colophon',
-                                                    'horologe', 'priority'])]
-                other_elite = [e for e in state.elite if e not in priority_elite]
-                ordered_elite = (priority_elite + other_elite)[:n_climb]
-
-                for i, e in enumerate(ordered_elite):
-                    print(f"    Climbing elite #{i+1} (score={e['score']:.1f}, "
-                          f"src={e.get('source', '?')})...")
+                # Auto hill-climb any promising results
+                climbable = [r for r in round_results
+                             if r.best_perm and r.best_score > HILLCLIMB_TRIGGER
+                             and "hillclimb" not in r.name
+                             and "hc" not in r.name]
+                climbable.sort(key=lambda r: r.best_score, reverse=True)
+                for r in climbable[:2]:
+                    if _shutdown_requested:
+                        break
+                    print(f"  [Hill-climb] {r.name} (score={r.best_score:.1f})...")
                     hc = run_hillclimb_multi_keyword(
-                        seed_perm=e["perm"],
+                        seed_perm=r.best_perm,
                         iterations=HILLCLIMB_ITERS,
                         top_n_combos=MULTI_KW_TOP_N,
                         num_workers=num_workers,
                     )
                     hr = HypothesisResult(
-                        name=f"depth_climb_{i}",
-                        description=f"Multi-kw climb of elite #{i+1}",
+                        name=f"{r.name}_hc",
+                        description=f"Hill-climb of {r.name}",
                         candidates_tested=hc.get("total_restarts", 1),
                         best_score=hc["score"],
                         best_plaintext=hc.get("plaintext", ""),
@@ -1217,92 +1200,59 @@ def run_campaign(
                         best_perm=hc.get("perm"),
                     )
                     round_results.append(hr)
-                    print(f"      score={hc['score']:.1f} method={hc.get('method', '?')} "
-                          f"cribs={hc.get('crib_hits', 0)}")
+                    delta = hc["score"] - r.best_score
+                    print(f"    score={hc['score']:.1f} (Δ={delta:+.1f})")
 
-            # --- Auto hill-climb promising results ---
-            climbable = [r for r in round_results
-                         if r.best_perm and r.best_score > HILLCLIMB_TRIGGER
-                         and "hillclimb" not in r.name and "depth" not in r.name
-                         and "mkhc" not in r.name]
-            climbable.sort(key=lambda r: r.best_score, reverse=True)
-            for r in climbable[:3]:
-                if _shutdown_requested:
-                    break
-                print(f"  [Auto-climb] {r.name} (score={r.best_score:.1f})...")
-                hc = run_hillclimb_multi_keyword(
-                    seed_perm=r.best_perm,
-                    iterations=HILLCLIMB_ITERS,
-                    top_n_combos=MULTI_KW_TOP_N,
-                    num_workers=num_workers,
-                )
-                hr = HypothesisResult(
-                    name=f"{r.name}_mkhc",
-                    description=f"Multi-kw hill-climb of {r.name}",
-                    candidates_tested=hc.get("total_restarts", 1),
-                    best_score=hc["score"],
-                    best_plaintext=hc.get("plaintext", ""),
-                    best_method=hc.get("method", ""),
-                    best_crib_hits=hc.get("crib_hits", 0),
-                    elapsed_seconds=hc.get("elapsed_seconds", 0),
-                    top_results=[hc],
-                    best_perm=hc.get("perm"),
-                )
-                round_results.append(hr)
-                improvement = hc["score"] - r.best_score
-                print(f"    score={hc['score']:.1f} (delta={improvement:+.1f})")
+                # Ingest results
+                _ingest_results(state, round_results, round_num)
 
-            # --- Ingest results ---
-            _ingest_results(state, round_results, round_num)
-
-            # --- API analysis ---
-            if do_api and client and not client.is_over_budget() and round_results:
-                print("\n  [Analyze] Sending results to Claude...")
+            # --- Step 6: Feed results back to Opus ---
+            if round_results and not client.is_over_budget():
                 results_summary = [
                     {
                         "name": r.name,
                         "tested": r.candidates_tested,
                         "best_score": r.best_score,
+                        "best_score_per_char": round(r.best_score / max(len(r.best_plaintext), 1), 2)
+                            if r.best_plaintext else 0.0,
+                        "pt_length": len(r.best_plaintext) if r.best_plaintext else 0,
                         "best_crib_hits": r.best_crib_hits,
                         "best_method": r.best_method,
-                        "best_plaintext": r.best_plaintext[:40] + "..." if r.best_plaintext else "",
+                        "best_plaintext": r.best_plaintext[:50] + "..."
+                            if r.best_plaintext else "",
                     }
                     for r in round_results
                 ]
+                print(f"\n  [Opus] Analyzing results...")
                 analysis = client.analyze_results(results_summary)
-                print(f"    {analysis[:200]}...")
+                if analysis:
+                    print(f"    {analysis[:300]}...")
 
-            # --- Opus deep analysis ---
-            if do_opus and client:
-                _run_opus_insight(state, client)
+            # --- Update state ---
+            state.budget_spent += client.usage.cost_usd
+            client.usage = type(client.usage)(model=client.model)
+            client.budget_usd = state.budget_remaining
+            state.conversation_history = list(client._conversation_history)
 
-            # --- Update budget tracking ---
-            if client:
-                state.budget_spent += client.usage.cost_usd
-                client.usage = type(client.usage)(model=client.model)
-                client.budget_usd = state.budget_remaining
+            if round_num % STALE_CONVERSATION_ROUNDS == 0:
+                client._conversation_history = client._conversation_history[-4:]
                 state.conversation_history = list(client._conversation_history)
-                if round_num % STALE_CONVERSATION_ROUNDS == 0:
-                    client._conversation_history = client._conversation_history[-4:]
-                    state.conversation_history = list(client._conversation_history)
 
             state.rounds_completed = round_num
-
-            # --- Save state ---
             save_state(state)
 
             elapsed = time.monotonic() - round_start
             print(f"\n  Round {round_num} complete: {len(round_results)} results, "
-                  f"{elapsed:.0f}s, elite={len(state.elite)}")
+                  f"{elapsed:.0f}s")
 
             # --- Breakthrough check ---
             for r in round_results:
                 if r.best_crib_hits >= BREAKTHROUGH_CRIB_HITS and r.best_score > -400:
                     print(f"\n{'*'*70}")
-                    print(f"  BREAKTHROUGH: {r.best_crib_hits} crib hits + score {r.best_score:.1f}!")
-                    print(f"  Name: {r.name}")
+                    print(f"  BREAKTHROUGH: {r.best_crib_hits} crib hits!")
+                    print(f"  Score:  {r.best_score:.1f}")
                     print(f"  Method: {r.best_method}")
-                    print(f"  PT: {r.best_plaintext}")
+                    print(f"  PT:     {r.best_plaintext}")
                     print(f"{'*'*70}")
                     _shutdown_requested = True
                     break
@@ -1319,73 +1269,7 @@ def run_campaign(
         _print_campaign_summary(state)
 
 
-def _run_opus_insight(state: CampaignState, client) -> None:
-    """Periodic Opus analysis for strategic pivots."""
-    print("\n  [Opus Insight] Deep analysis...")
-
-    original_model = client.model
-    client.model = "claude-opus-4-6"
-
-    elite_summary = "\n".join(
-        f"  #{i+1}: score={e['score']:.1f} cribs={e['crib_hits']} "
-        f"method={e['method']} src={e['source']}"
-        for i, e in enumerate(state.elite[:20])
-    )
-
-    bean_status = (
-        f"\nBean analysis status:\n"
-        f"  Identity top score: {state.bean_identity_top_score:.1f}\n"
-        f"  Best single-swap improvement: {state.bean_best_swap_improvement:.1f}\n"
-        f"  Hot swap positions: {state.bean_hot_swaps[:10]}\n"
-    )
-
-    msg = f"""Campaign status after {state.rounds_completed} rounds:
-- Budget: ${state.budget_spent:.2f} spent of ${state.budget_total:.2f}
-- Elite population: {len(state.elite)} members
-- Best ever: score={state.best_ever_score:.1f}, cribs={state.best_ever_crib_hits}
-- Hypotheses tested: {state.total_hypotheses_tested}
-- Candidates tested: {state.total_candidates_tested:,}
-{bean_status}
-Top 20 elite permutations:
-{elite_summary}
-
-Best plaintext so far: {state.best_ever_plaintext[:80]}
-
-Priority keyword sweep results: {json.dumps(state.priority_keyword_results, indent=2) if state.priority_keyword_results else 'pending'}
-
-Analyze the campaign with these focal hypotheses:
-
-CURRENT PARADIGM: 73-char null hypothesis
-- Model: 73-char PT → sub(keyword) → 73-char CT → insert 24 nulls → 97 carved
-- Core problem: which 24 positions are nulls?
-- W positions [20,36,48,58,74] bracket cribs — strong null candidates
-- Triple-24: (97-73), (cribs 13+11), (Weltzeituhr 24 facets)
-
-KEY QUESTIONS:
-1. Do null-mask SA results show any structural pattern in the null positions?
-2. What rule could Sanborn have used to decide where to insert nulls?
-3. d=13 anomaly: Beaufort k%13 collisions 3.55× expected — period 13 = len(EASTNORTHEAST).
-   Has this been exploited with null removal?
-4. HOROLOGE and ENIGMA are ELIMINATED (pigeonhole). KRYPTOS (5/6), DEFECTOR (4/6) survive.
-5. "Not standard English, second level of cryptanalysis" — telegram with W-delimiters?
-6. Are there untried null-selection rules: Weltzeituhr mapping, K1-K3 derived masks,
-   maintenance timer positions (20, 24, 8)?
-
-Be specific and actionable."""
-
-    msgs = [{"role": "user", "content": msg}]
-    try:
-        response = client._make_api_call(msgs, max_tokens=4096, thinking_budget=16000)
-        if response:
-            text = client._extract_text(response)
-            insight_path = CAMPAIGN_DIR / f"opus_insight_round_{state.rounds_completed}.txt"
-            insight_path.write_text(text)
-            print(f"    Opus insight saved to {insight_path.name}")
-            print(f"    {text[:300]}...")
-    except Exception as e:
-        logger.error("Opus insight failed: %s", e)
-
-    client.model = original_model
+    # _run_opus_insight removed — Opus is now the primary model for all rounds
 
 
 # ---------------------------------------------------------------------------
@@ -1405,64 +1289,98 @@ def _load_api_key() -> str | None:
 
 
 def _build_context(state: CampaignState, round_num: int) -> str:
-    """Build context for API hypothesis generation — Bean-informed."""
+    """Build rich context for Opus hypothesis generation."""
     elite_lines = []
-    for i, e in enumerate(state.elite[:15]):
+    for i, e in enumerate(state.elite[:10]):
+        pt = e.get('plaintext', '')
+        pt_len = len(pt) if pt else 97
+        per_char = e['score'] / max(pt_len, 1)
         elite_lines.append(
-            f"  #{i+1}: score={e['score']:.1f} cribs={e['crib_hits']} "
-            f"method={e['method']} src={e['source']} [perm available]"
+            f"  #{i+1}: score={e['score']:.1f} ({per_char:.2f}/char, {pt_len} chars) "
+            f"cribs={e['crib_hits']} method={e['method']}"
         )
+    elite_str = "\n".join(elite_lines) if elite_lines else "  (none)"
 
-    tried_count = len(state.tried_hashes)
-    elite_str = "\n".join(elite_lines) if elite_lines else "  (none yet)"
+    # Summarize what computational phases found
+    compute_summary = []
+    if state.product_w9_done:
+        compute_summary.append(
+            f"Product W9 (362K perms × sub): best={state.product_w9_best_score:.1f} — NO SIGNAL")
+    if state.product_general_done:
+        compute_summary.append(
+            f"Product General (w4-14 × keywords): best={state.product_general_best_score:.1f} — NO SIGNAL")
+    if state.running_key_done:
+        compute_summary.append(
+            f"Running-key product: best={state.running_key_best_score:.1f} — NO SIGNAL")
+    if state.null_mask_done:
+        compute_summary.append(
+            f"Null-mask SA: best={state.null_mask_best_score:.1f} — NO SIGNAL")
+    compute_str = "\n".join(f"  - {s}" for s in compute_summary) if compute_summary else "  (pending)"
 
-    # Bean-specific context
-    bean_context = ""
-    if state.bean_baseline_done:
-        bean_context += f"\nBean Analysis Results:\n"
-        bean_context += f"  Identity (no transposition) best score: {state.bean_identity_top_score:.1f}\n"
-    if state.bean_single_swap_done:
-        bean_context += f"  Best single-swap improvement over identity: {state.bean_best_swap_improvement:.1f}\n"
-    if state.bean_hot_swaps:
-        flat_positions = {}
-        for pair in state.bean_hot_swaps[:20]:
-            for p in pair:
-                flat_positions[p] = flat_positions.get(p, 0) + 1
-        top_hot = sorted(flat_positions.items(), key=lambda x: x[1], reverse=True)[:10]
-        bean_context += f"  Hot positions (most often in improving swaps): {top_hot}\n"
+    return f"""Round {round_num} of Opus-guided K4 exploration.
+Budget: ${state.budget_spent:.2f} / ${state.budget_total:.2f}.
+Hypotheses tested: {state.total_hypotheses_tested:,}. Candidates: {state.total_candidates_tested:,}.
 
-    return f"""Campaign round {round_num} ({state.rounds_completed} completed).
-Budget: ${state.budget_spent:.2f} spent of ${state.budget_total:.2f}.
-{bean_context}
-Elite population ({len(state.elite)} members, top 15):
+COMPUTATIONAL PHASE RESULTS (all ZERO signal):
+{compute_str}
+
+Top elite ({len(state.elite)} members):
 {elite_str}
 
-Best ever: score={state.best_ever_score:.1f}, cribs={state.best_ever_crib_hits}
-Unique permutations tested: {tried_count:,}
+SCORING GUIDE (CRITICAL — avoid false positives):
+- Quadgram score is LENGTH-DEPENDENT: shorter plaintext = smaller absolute score.
+  ALWAYS compare per-char scores: English ≈ -2.5/char, random ≈ -4.5/char.
+  A -294 score on 48 chars = -6.1/char (NOISE), NOT better than -580 on 97 chars (-6.0/char).
+- Crib hits: ONLY meaningful when plaintext is exactly 97 chars (matching CT positions).
+  If your generator outputs <97 chars, crib positions are WRONG — hits are coincidental.
+- SIGNAL requires: ≥10 crib hits AND score/char > -4.0 AND plaintext length = 97.
+- PERIOD-13 TRAP: Any period-13 cipher that derives its key from EASTNORTHEAST (pos 21-33)
+  gets 13/13 ENE hits FOR FREE — those 13 positions cover all 13 residues mod 13, so the
+  base key is fully determined. Only BERLINCLOCK hits (pos 63-73) are independent tests.
+  The null distribution shows max 3/11 BC hits at p=55% — NOT significant. Do NOT propose
+  period-13 progressive key, period-13 Beaufort, or similar unless BC hits alone exceed 5.
 
-Generate NEW hypotheses exploring angles the elite hasn't covered.
+WHAT THIS MEANS: Standard approaches are exhausted. The method is NOT:
+- Periodic substitution (any period, any variant) on the raw 97 chars
+- Standard columnar transposition followed by periodic substitution
+- Running key from Howard Carter's book or K1-K3 plaintext
+- Null removal + periodic substitution (any period 1-23)
+- Progressive key period-13 (any step, any variant, AZ/KA): 13 ENE hits are FREE, max 3/11 BC = noise (p=55%)
 
-KEY PARADIGM — 73-CHAR NULL HYPOTHESIS:
-- Model: 73-char PT → substitution → 73-char CT → insert 24 nulls → 97 carved
-- THE CORE PROBLEM: which 24 of 97 positions are nulls?
-- Crib positions (21-33, 63-73) CANNOT be nulls
-- W positions [20,36,48,58,74] are strong null candidates (bracket cribs)
-- Triple-24: (97-73), (13+11 cribs), (Weltzeituhr facets)
-- Two Systems CONFIRMED by Sanborn: substitution + null insertion
-- d=13 anomaly: Beaufort k%13 collisions 3.55× expected (strongest signal)
+IMPORTANT: The old "generator" type only returns PERMUTATIONS, then the framework
+applies periodic substitution — which is proven impossible. This caused all your
+recent hypotheses to crash (tested: 0). USE "plaintext_generator" INSTEAD.
+The "plaintext_generator" type lets you do your OWN transposition + substitution
+in the generate() function and return plaintext candidates directly.
 
-PRODUCTIVE APPROACHES:
-- Use "generator" type for null-mask candidates: enumerate 24 null positions, remove them,
-  decrypt 73-char CT with keywords, score with quadgrams
-- Try structural null patterns: every Nth position, positions where cipher==tableau, etc.
-- Test period-13 Beaufort with null removal
-- Use "partial_swap" type for targeted position exchanges
-- Consider autokey, running key on 73-char reduced texts
+THE METHOD MUST BE something we haven't tried yet. Think creatively:
 
-KEYWORDS (strongest survivors): KRYPTOS (5/6), DEFECTOR (4/6), COLOPHON (3/6), ABSCISSA (3/6)
-ELIMINATED keywords: HOROLOGE, ENIGMA (pigeonhole analysis)
+OPEN HYPOTHESES (highest priority):
+1. Non-columnar transposition + non-periodic substitution (autokey, Quagmire,
+   custom tableau). Use "plaintext_generator" — implement both layers yourself.
+2. The d=13 anomaly: Beaufort keystream mod 13 has 7.09× expected collisions.
+   Period-13 progressive key is ELIMINATED (p=55%, noise). The anomaly may hint at
+   a period-13 component WITHIN a more complex scheme (e.g., after transposition).
+3. Grille-based null selection: 24 of 97 positions are nulls, removed before
+   decryption. The rule for which 24 is unknown. 5 W's bracket the cribs.
+4. Double transposition: two transposition layers before substitution.
+5. K3-inspired: K3 uses double rotational transposition (24×14 → 8×42).
+   A VARIANT of this method (different grid dimensions) hasn't been tested.
+6. Width-13 × 8 rows matches "8 lines" from Sanborn's legal pad.
+   Width-14 has both cribs starting at the same column.
+7. Bespoke but hand-executable — Scheidt/Sanborn designed something elegant
+   that combines familiar components in a novel way.
 
-{f'This is round {round_num}, a depth round — crossover offspring also running. Focus on NOVEL approaches.' if round_num % CROSSOVER_INTERVAL == 0 else ''}"""
+CONSTRAINTS:
+- Keywords HOROLOGE and ENIGMA are ELIMINATED (do not use)
+- Top keyword survivors: KRYPTOS, KOMPASS, DEFECTOR, COLOPHON, ABSCISSA
+- Encryption order proven: PT → transposition → substitution → CT
+- Bean stats suggest the substitution alphabet is near-standard (keyword-based)
+- PT is "not standard English, second level of cryptanalysis needed"
+- Keep code SIMPLE: under 50 lines per generator, filter with crib_hits() >= 2
+
+Generate hypotheses using "plaintext_generator" type.
+Write simple, clean Python that implements your full cipher hypothesis."""
 
 
 def _ingest_results(
@@ -1505,6 +1423,9 @@ def _ingest_results(
             "name": r.name,
             "candidates_tested": r.candidates_tested,
             "best_score": r.best_score,
+            "best_score_per_char": round(r.best_score / max(len(r.best_plaintext), 1), 2)
+                if r.best_plaintext else 0.0,
+            "best_pt_length": len(r.best_plaintext) if r.best_plaintext else 0,
             "best_crib_hits": r.best_crib_hits,
             "best_method": r.best_method,
             "best_plaintext": r.best_plaintext[:50],
@@ -1520,8 +1441,11 @@ def _print_round_results(results: list[HypothesisResult], label: str = "") -> No
     prefix = f"  [{label}] " if label else "  "
     for r in sorted(results, key=lambda x: x.best_score, reverse=True)[:10]:
         flag = " ***" if r.best_crib_hits >= 3 else ""
-        print(f"{prefix}{r.name:<35} score={r.best_score:>8.1f}  "
-              f"cribs={r.best_crib_hits:<3} tested={r.candidates_tested}{flag}")
+        pt_len = len(r.best_plaintext) if r.best_plaintext else 0
+        per_char = r.best_score / max(pt_len, 1) if pt_len else 0.0
+        len_warn = f" [!{pt_len}ch]" if pt_len and pt_len != 97 else ""
+        print(f"{prefix}{r.name:<35} score={r.best_score:>8.1f} ({per_char:.1f}/ch)  "
+              f"cribs={r.best_crib_hits:<3} tested={r.candidates_tested}{len_warn}{flag}")
 
 
 def _print_campaign_summary(state: CampaignState) -> None:
@@ -1581,19 +1505,19 @@ def _print_campaign_summary(state: CampaignState) -> None:
 def main() -> None:
     parser = argparse.ArgumentParser(
         prog="campaign.py",
-        description="KryptosBot Campaign — Bean-guided + evolutionary K4 search",
+        description="KryptosBot Campaign — Opus-guided two-system K4 solver",
     )
     parser.add_argument("--budget", type=float, default=250.0,
                         help="Total API budget in USD (default: $250)")
-    parser.add_argument("--model", type=str, default="claude-sonnet-4-6",
+    parser.add_argument("--model", type=str, default="claude-opus-4-6",
                         choices=["claude-sonnet-4-6", "claude-opus-4-6", "claude-haiku-4-5-20251001"],
-                        help="Model for hypothesis generation (default: sonnet)")
+                        help="Model for hypothesis generation (default: opus)")
     parser.add_argument("--workers", type=int, default=0,
                         help="CPU workers (default: all cores)")
-    parser.add_argument("--thinking", type=int, default=4096,
-                        help="Extended thinking budget in tokens (default: 4096)")
+    parser.add_argument("--thinking", type=int, default=10000,
+                        help="Extended thinking budget in tokens (default: 10000)")
     parser.add_argument("--local-only", action="store_true",
-                        help="No API calls — hill-climb/crossover elite only (free)")
+                        help="No API calls — computational phases only (free)")
     parser.add_argument("--dry-run", action="store_true",
                         help="Show campaign state without running")
     parser.add_argument("--verbose", action="store_true",
