@@ -1,0 +1,10 @@
+{
+  "experiment": "E-COLMASK-NATIVE-GRID-READING",
+  "experiment_id": "E-COLMASK-NATIVE-GRID-READING",
+  "description": "Native 28×31 grid reading orders + periodic substitution on 73-char column mask extract. 10+ reading orders (column-by-column, serpentine, diagonal, spiral, paired, reversed) × 3 variants × periods 1-26.",
+  "verdict": "NOISE",
+  "best_score": 22,
+  "total_configs": 2262,
+  "timestamp": "2026-03-12",
+  "key_finding": "Best 22/24 at serpentine_row/beaufort/p24 = UNDERDETERMINED NOISE (period 24 with 24 cribs means each residue class has ≤1 crib). All discriminating-period scores (p≤7): max ~12/24. Full 97-char with grid column reading: best 20/24 at p25 = underdetermined."
+}
