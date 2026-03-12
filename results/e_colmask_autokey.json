@@ -1,0 +1,10 @@
+{
+  "experiment": "E-COLMASK-AUTOKEY",
+  "experiment_id": "E-COLMASK-AUTOKEY",
+  "description": "Autokey cipher on 73-char column mask extract (PT/CT feedback × Vig/Beau/VBeau × AZ/KA × 9 keep-col variants + progressive key + running key). Different CT and shifted crib positions vs raw 97.",
+  "verdict": "NOISE",
+  "best_score": 6,
+  "total_configs": 46170,
+  "timestamp": "2026-03-12",
+  "key_finding": "Max 6/24 across 46,170 configs. Autokey on 73-char column mask extract (shifted cribs at 13-25, 47-57) produces zero signal. This is genuinely different from autokey on raw 97."
+}
