@@ -28,9 +28,106 @@
   &mdash; no data is sent to any server.
 </p>
 
+<details id="research-context">
+  <summary>What we know about K4 (research context)</summary>
+  <div style="margin-top: var(--sp-3);">
+    <p>
+      Sanborn confirmed K4 uses <strong>two systems of encipherment</strong>:
+      <code>plaintext &rarr; transposition &rarr; substitution &rarr; carved text</code>.
+      Digram analysis of the carved text proves the outermost layer is substitution.
+    </p>
+    <p style="margin-bottom: var(--sp-2);"><strong>Eliminated</strong> <span class="verdict verdict-eliminated">proven impossible</span></p>
+    <ul>
+      <li>Any single-layer substitution on the raw 97 characters (all periodic Vigen&egrave;re/Beaufort/Variant Beaufort, periods 1&ndash;26, both AZ and KA alphabets)</li>
+      <li>Pure transposition (CT has 2 E&rsquo;s, cribs need 3)</li>
+      <li>Columnar transposition &times; periodic substitution (47M+ configs tested)</li>
+      <li>Null mask + periodic substitution on any 73-char extract (periods 1&ndash;23)</li>
+      <li>Autokey on raw 97 (exhaustive single-letter + 1M dictionary keys)</li>
+    </ul>
+    <p style="margin-bottom: var(--sp-2);"><strong>Open territory</strong> <span class="verdict verdict-survived">viable</span></p>
+    <ul>
+      <li>Non-standard transpositions (serpentine, spiral, Myszkowski) + substitution</li>
+      <li>Autokey / running key after undoing transposition</li>
+      <li>Custom or Quagmire tableaux</li>
+      <li>73-char hypothesis with non-periodic cipher after null removal</li>
+    </ul>
+    <p><a href="/methodology/">Full methodology and elimination landscape &rarr;</a></p>
+  </div>
+</details>
+
+<h3 style="margin-top: var(--sp-6);">Quick presets</h3>
+<div class="wb-presets" id="presets">
+  <div class="preset-card" data-preset="vig-kryptos" title="How K1-K3 were encrypted (Vigen&egrave;re with KRYPTOS key)">
+    <h4>Vigen&egrave;re + KRYPTOS</h4>
+    <p>K1&ndash;K3 method <span class="verdict verdict-eliminated" style="margin-left: var(--sp-1);">eliminated</span></p>
+  </div>
+  <div class="preset-card" data-preset="beau-kryptos-ka" title="Beaufort with KRYPTOS key on KA alphabet">
+    <h4>Beaufort + KA alphabet</h4>
+    <p>Kryptos-keyed Beaufort <span class="verdict verdict-eliminated" style="margin-left: var(--sp-1);">eliminated</span></p>
+  </div>
+  <div class="preset-card" data-preset="col7-vig" title="Columnar width 7 + Vigen&egrave;re (open territory)">
+    <h4>Columnar w=7 + Vig</h4>
+    <p>Two-system model <span class="verdict verdict-survived" style="margin-left: var(--sp-1);">open</span></p>
+  </div>
+  <div class="preset-card" data-preset="rail-beau" title="Rail fence depth 7 + Beaufort">
+    <h4>Rail fence + Beaufort</h4>
+    <p>Non-standard transposition <span class="verdict verdict-survived" style="margin-left: var(--sp-1);">open</span></p>
+  </div>
+  <div class="preset-card" data-preset="serpentine-vig" title="Serpentine reading + Vigen&egrave;re">
+    <h4>Serpentine + Vig</h4>
+    <p>Boustrophedon reading <span class="verdict verdict-survived" style="margin-left: var(--sp-1);">open</span></p>
+  </div>
+  <div class="preset-card" data-preset="blank" title="Clear all settings">
+    <h4>Try your own</h4>
+    <p>Blank slate</p>
+  </div>
+</div>
+
 <h2>K4 Ciphertext</h2>
 <div class="ct-display" id="ct-display"></div>
-<p><small class="text-muted">97 characters. Green = known plaintext positions (24 total).</small></p>
+<div class="wb-inline-controls">
+  <small class="text-muted">97 characters. Green = known plaintext positions (24 total).</small>
+  <label><input type="checkbox" id="w-highlight"> Highlight W positions</label>
+</div>
+<div id="w-segments" class="wb-segments hidden">
+  W-delimited segments: <span>20</span> | <span>15</span> | <span>11</span> | <span>9</span> | <span>15</span> | <span>22</span> chars
+  &mdash; W at 20 immediately before EASTNORTHEAST, W at 74 immediately after BERLINCLOCK
+</div>
+
+<details class="wb-null-panel" id="null-mask-panel" style="margin: var(--sp-4) 0;">
+  <summary>Step 0: Null Mask (73-char hypothesis)</summary>
+  <div style="margin-top: var(--sp-3);">
+    <p><small class="text-muted">
+      Sanborn&rsquo;s legal pad notes &ldquo;8 lines 73&rdquo; for K4, but the carved text is 97 characters.
+      If 24 characters are nulls/filler, a Cardan grille selects the 73 real ciphertext characters.
+    </small></p>
+
+    <label for="null-mode">Mode</label>
+    <select id="null-mode">
+      <option value="disabled">Disabled</option>
+      <option value="manual">Manual positions</option>
+      <option value="w-only">W positions only (5 nulls)</option>
+    </select>
+
+    <div id="null-manual-group" class="hidden">
+      <label for="null-positions">Null positions <small class="text-muted">(comma-separated 0-indexed, e.g. 20,36,48,58,74)</small></label>
+      <input type="text" id="null-positions" placeholder="e.g. 20,36,48,58,74">
+    </div>
+
+    <label for="null-crib-model">Crib model</label>
+    <select id="null-crib-model">
+      <option value="A">Model A: cribs shift after null removal</option>
+      <option value="B">Model B: cribs stay at original positions (garbage in null slots)</option>
+    </select>
+
+    <div id="null-extracted" class="hidden">
+      <p><small>Extracted CT (<span id="null-extracted-len">0</span> chars, <span id="null-count">0</span> nulls removed):</small></p>
+      <div class="null-extracted" id="null-extracted-ct"></div>
+    </div>
+  </div>
+</details>
+
+<div id="elimination-warning"></div>
 
 <div class="wb-pipeline">
   <div class="card">
@@ -42,12 +139,17 @@
       <option value="none">None</option>
       <option value="columnar">Columnar</option>
       <option value="railfence">Rail Fence</option>
+      <option value="serpentine">Serpentine (boustrophedon)</option>
+      <option value="spiral">Spiral</option>
+      <option value="myszkowski">Myszkowski</option>
       <option value="manual">Manual Permutation</option>
     </select>
 
     <div id="trans-opts-columnar" class="hidden">
       <label for="trans-width">Width</label>
       <input type="number" id="trans-width" min="2" max="97" value="10">
+      <label for="trans-keyword">Keyword <small class="text-muted">(auto-derives column order &mdash; overrides manual order)</small></label>
+      <input type="text" id="trans-keyword" placeholder="e.g. KRYPTOS">
       <label for="trans-colorder">Column order <small class="text-muted">(comma-separated, e.g. 0,2,1,3 &mdash; blank for natural)</small></label>
       <input type="text" id="trans-colorder" placeholder="Natural order if blank">
     </div>
@@ -55,6 +157,23 @@
     <div id="trans-opts-railfence" class="hidden">
       <label for="trans-depth">Depth (rails)</label>
       <input type="number" id="trans-depth" min="2" max="48" value="3">
+    </div>
+
+    <div id="trans-opts-serpentine" class="hidden">
+      <label for="trans-serp-width">Width (columns)</label>
+      <input type="number" id="trans-serp-width" min="2" max="97" value="10">
+      <label><input type="checkbox" id="trans-serp-vertical"> Vertical serpentine</label>
+    </div>
+
+    <div id="trans-opts-spiral" class="hidden">
+      <label for="trans-spiral-width">Width (columns)</label>
+      <input type="number" id="trans-spiral-width" min="2" max="97" value="10">
+      <label><input type="checkbox" id="trans-spiral-ccw"> Counter-clockwise</label>
+    </div>
+
+    <div id="trans-opts-myszkowski" class="hidden">
+      <label for="trans-mysz-keyword">Keyword <small class="text-muted">(repeated letters create tied columns)</small></label>
+      <input type="text" id="trans-mysz-keyword" placeholder="e.g. TOMATO">
     </div>
 
     <div id="trans-opts-manual" class="hidden">
@@ -131,6 +250,12 @@
     <summary>Derived keystream at crib positions</summary>
     <pre id="keystream-detail"></pre>
   </details>
+
+  <details>
+    <summary>Period consistency analysis</summary>
+    <p><small class="text-muted">For each period, counts how many crib-position keystream values conflict (share a residue class but have different key values). Zero conflicts = consistent with that period.</small></p>
+    <div id="keystream-analysis"></div>
+  </details>
 </div>
 
 <p class="text-muted" style="margin-top: var(--sp-8);">
@@ -143,5 +268,5 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="/static/workbench.js"></script>
+<script src="/static/workbench.js?v=2"></script>
 {% endblock %}

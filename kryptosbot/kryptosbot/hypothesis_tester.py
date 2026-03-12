@@ -1,11 +1,12 @@
 """
-Local parallel hypothesis tester for K4 permutation candidates.
+Local parallel hypothesis tester for K4 candidates.
 
 Takes structured hypotheses (from api_client) and tests them across
 all available CPU cores using the existing kbot_harness infrastructure.
 
 Features:
   - Parallel permutation testing (all available cores)
+  - Plaintext generator execution (non-periodic substitution, autokey, etc.)
   - Hill-climbing optimizer for refining promising permutations
   - Sandboxed generator execution (subprocess with timeout + restricted imports)
   - Reading order generation from grid structures
@@ -876,6 +877,211 @@ def _execute_generator_sandboxed(
 
 
 # ---------------------------------------------------------------------------
+# Plaintext generator sandbox (non-periodic substitution, autokey, etc.)
+# ---------------------------------------------------------------------------
+
+_PLAINTEXT_SANDBOX_WRAPPER = '''
+import json
+import sys
+import math
+import itertools
+import collections
+import string
+import re
+import random
+
+K4 = "{k4}"
+K4_LEN = {k4_len}
+AZ = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+KA = "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+
+# Known cribs for self-scoring
+CRIBS = [(21, "EASTNORTHEAST"), (63, "BERLINCLOCK")]
+CRIB_DICT = {{}}
+for _pos, _text in CRIBS:
+    for _j, _ch in enumerate(_text):
+        CRIB_DICT[_pos + _j] = _ch
+
+def crib_hits(pt):
+    """Count how many crib positions match."""
+    hits = 0
+    for pos, ch in CRIB_DICT.items():
+        if pos < len(pt) and pt[pos] == ch:
+            hits += 1
+    return hits
+
+{user_code}
+
+if __name__ == "__main__":
+    try:
+        results = generate(K4)
+        valid = []
+        for item in results[:50000]:
+            if isinstance(item, (list, tuple)) and len(item) >= 2:
+                pt = str(item[0])
+                label = str(item[1])
+            else:
+                continue
+            if len(pt) >= 10 and pt.isalpha():
+                valid.append([pt, label])
+        json.dump(valid, sys.stdout)
+    except Exception as e:
+        json.dump({{"error": str(e)}}, sys.stdout)
+'''
+
+
+def _execute_plaintext_generator_sandboxed(
+    code: str,
+    name: str,
+    timeout: float = 60.0,
+) -> list[tuple[str, str]]:
+    """Execute a plaintext generator in a subprocess sandbox.
+
+    Unlike the permutation generator, this returns (plaintext, label) tuples.
+    The generator does its own transposition AND substitution (autokey, running
+    key, Quagmire, etc.) and returns candidate plaintexts directly.
+
+    Longer timeout (60s) since these do more work per hypothesis.
+    """
+    wrapper = _PLAINTEXT_SANDBOX_WRAPPER.format(
+        k4=K4,
+        k4_len=K4_LEN,
+        user_code=code,
+    )
+
+    candidates: list[tuple[str, str]] = []
+    try:
+        with tempfile.NamedTemporaryFile(
+            mode='w', suffix='.py', delete=False, prefix=f'ptgen_{name}_'
+        ) as f:
+            f.write(wrapper)
+            tmp_path = f.name
+
+        result = subprocess.run(
+            [sys.executable, tmp_path],
+            capture_output=True,
+            text=True,
+            timeout=timeout,
+            cwd=os.getcwd(),
+        )
+
+        if result.returncode != 0:
+            stderr = result.stderr[:500] if result.stderr else "no stderr"
+            logger.error("PT generator %s failed (rc=%d): %s", name, result.returncode, stderr)
+        else:
+            stdout = result.stdout[:10_000_000]  # 10MB cap
+            data = json.loads(stdout)
+            if isinstance(data, dict) and "error" in data:
+                logger.error("PT generator %s error: %s", name, data["error"])
+            elif isinstance(data, list):
+                for item in data:
+                    if isinstance(item, list) and len(item) >= 2:
+                        pt, label = str(item[0]), str(item[1])
+                        if len(pt) >= 10 and pt.isalpha():
+                            candidates.append((pt, label))
+
+    except subprocess.TimeoutExpired:
+        logger.error("PT generator %s timed out after %.0fs", name, timeout)
+    except (json.JSONDecodeError, Exception) as e:
+        logger.error("PT generator %s parse error: %s", name, e)
+    finally:
+        try:
+            os.unlink(tmp_path)
+        except OSError:
+            pass
+
+    logger.info("PT generator %s produced %d candidates", name, len(candidates))
+    return candidates
+
+
+def _is_crib_constructed(pt: str) -> bool:
+    """Detect plaintexts that trivially place known cribs without real decryption.
+
+    Returns True (= artifact) when non-crib positions show degenerate patterns:
+    uniform fill (all A's/X's), very low unique char count, or extreme quadgram
+    garbage outside the crib regions.
+    """
+    if len(pt) < 97:
+        return False  # length guard handled separately
+
+    # Collect non-crib characters
+    crib_positions = set(CRIB_DICT.keys())
+    non_crib = [pt[i] for i in range(len(pt)) if i not in crib_positions]
+    if not non_crib:
+        return True
+
+    # Check 1: uniform or near-uniform fill (e.g., all A's, all X's)
+    from collections import Counter
+    counts = Counter(non_crib)
+    unique = len(counts)
+    if unique <= 3:
+        return True
+
+    # Check 2: dominant single character (>60% of non-crib positions)
+    most_common_count = counts.most_common(1)[0][1]
+    if most_common_count / len(non_crib) > 0.60:
+        return True
+
+    # Check 3: non-crib quadgram quality is extreme garbage
+    non_crib_str = ''.join(non_crib)
+    if len(non_crib_str) >= 4:
+        qg = _load_quadgrams()
+        nc_score = sum(qg.get(non_crib_str[i:i+4], _QG_FLOOR)
+                       for i in range(len(non_crib_str) - 3))
+        nc_per_char = nc_score / len(non_crib_str)
+        # Random English ≈ -4.5/char; pure garbage < -6.0/char
+        if nc_per_char < -6.0:
+            return True
+
+    return False
+
+
+def _score_plaintext_candidates(
+    candidates: list[tuple[str, str]],
+) -> list[dict]:
+    """Score plaintext candidates: crib hits + quadgram quality + Bean check.
+
+    Includes a crib-construction guard that detects and penalizes plaintexts
+    where Opus trivially places known crib text at known positions while
+    filling non-crib positions with garbage.
+    """
+    results = []
+    for pt, label in candidates:
+        hits = 0
+        for pos, ch in CRIB_DICT.items():
+            if pos < len(pt) and pt[pos] == ch:
+                hits += 1
+
+        score = _score_text(pt)
+
+        # --- Crib-construction guard ---
+        constructed = False
+
+        # Guard 1: Wrong length — crib positions (21-33, 63-73) only meaningful
+        # on 97-char text. Shorter texts get coincidental matches.
+        if len(pt) != 97 and hits > 0:
+            hits = 0
+            constructed = True
+
+        # Guard 2: Trivially constructed — cribs placed by construction, not
+        # derived from ciphertext. Zero out crib hits.
+        if hits >= 20 and _is_crib_constructed(pt):
+            hits = 0
+            constructed = True
+
+        results.append({
+            "score": round(score, 2),
+            "plaintext": pt,
+            "method": label,
+            "crib_hits": hits,
+            "label": label,
+            "constructed": constructed,
+        })
+
+    return results
+
+
+# ---------------------------------------------------------------------------
 # Hypothesis execution
 # ---------------------------------------------------------------------------
 
@@ -914,6 +1120,45 @@ def test_hypothesis(
     # --- Hill-climbing type ---
     if h_type == "hillclimb":
         return _test_hillclimb(name, desc, data, num_workers, start)
+
+    # --- Plaintext generator type (non-periodic substitution) ---
+    if h_type == "plaintext_generator":
+        code = data.get("python_code", "")
+        if not code:
+            logger.warning("No python_code for plaintext_generator %s", name)
+            return HypothesisResult(
+                name=name, description=desc,
+                candidates_tested=0, best_score=-9999.0,
+                best_plaintext="", best_method="", best_crib_hits=0,
+                elapsed_seconds=0.0,
+            )
+
+        candidates = _execute_plaintext_generator_sandboxed(code, name)
+        if not candidates:
+            return HypothesisResult(
+                name=name, description=desc,
+                candidates_tested=0, best_score=-9999.0,
+                best_plaintext="", best_method="", best_crib_hits=0,
+                elapsed_seconds=time.monotonic() - start,
+            )
+
+        all_results = _score_plaintext_candidates(candidates)
+        elapsed = time.monotonic() - start
+
+        best = max(all_results, key=lambda r: r["crib_hits"] * 1000 + r["score"])
+        top = sorted(all_results, key=lambda r: r["crib_hits"] * 1000 + r["score"], reverse=True)[:20]
+
+        return HypothesisResult(
+            name=name,
+            description=desc,
+            candidates_tested=len(candidates),
+            best_score=best["score"],
+            best_plaintext=best.get("plaintext", ""),
+            best_method=best.get("method", ""),
+            best_crib_hits=best.get("crib_hits", 0),
+            elapsed_seconds=round(elapsed, 2),
+            top_results=top,
+        )
 
     # --- Permutation generation types ---
     perms: list[tuple[list[int], str]] = []
@@ -1701,7 +1946,7 @@ def run_priority_keyword_sweep(
 _PRODUCT_KEYWORDS = [
     "KRYPTOS", "SANBORN", "SCHEIDT", "BERLIN", "URANIA", "KOMPASS",
     "DEFECTOR", "PARALLAX", "COLOPHON", "ABSCISSA", "PALIMPSEST",
-    "ENIGMA", "SHADOW", "COMPASS", "LODESTONE", "SPHINX", "PHARAOH",
+    "SHADOW", "COMPASS", "LODESTONE", "SPHINX", "PHARAOH",
     "CARTER", "EGYPT", "CLOCK", "POINT", "TOPOLOGY", "PEDESTAL",
     "MONOLITH", "SPYPLANE", "KLEPSYDRA", "QUARTZ", "CIPHER",
     "HIDDEN", "SECRET", "COVERT", "SIGNAL", "MARKER", "BEACON",

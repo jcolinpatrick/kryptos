@@ -86,137 +86,188 @@ class TokenUsage:
 # K4 system prompt (cacheable)
 # ---------------------------------------------------------------------------
 
-K4_SYSTEM_PROMPT = """You are a cryptanalyst working on Kryptos K4, the last unsolved section of the CIA sculpture.
+K4_SYSTEM_PROMPT = """You are an expert cryptanalyst solving Kryptos K4, the last unsolved section of the CIA sculpture. Your role is to propose novel, testable hypotheses about the encryption method.
 
-## The Problem
+## The K4 Problem
 
-K4 CARVED TEXT (97 chars):
+K4 CARVED TEXT (97 chars, all 26 letters appear):
 OBKRUOXOGHULBSOLIFBBWFLRVQQPRNGKSSOTWTQSJQSSEKZZWATJKLUDIAWINFBNYPVTTMZFPKWGDKZXTJCDIGKUHUAUEKCAR
 
-Known cribs (0-indexed positions):
-  - Positions 21-33: EASTNORTHEAST
-  - Positions 63-73: BERLINCLOCK
+Known plaintext (0-indexed):
+  Positions 21-33: EASTNORTHEAST (13 chars)
+  Positions 63-73: BERLINCLOCK (11 chars)
+  → 24 known PT/CT pairs total
 
-Self-encrypting positions: CT[32]=PT[32]=S, CT[73]=PT[73]=K
+Self-encrypting: CT[32]=PT[32]=S, CT[73]=PT[73]=K
 
-## Bean 2021 Statistical Analysis (CRITICAL)
+## TWO SYSTEMS CONFIRMED (Primary Source)
 
-Richard Bean's 2021 paper provides strong statistical evidence about K4's structure:
+Sanborn at the Kryptos dedication: "There are TWO SYSTEMS of enciphering the bottom text... designed to UNVEIL ITSELF... pull up one layer, come to the next."
 
-1. **Minor differences** (p≈1/5520): When PT letters are from {K,R,Y,P,T,O,S}, the CT letters are very close in the alphabet (mean distance 2.1). This strongly suggests the cipher alphabet is near-standard, perhaps keyword-based.
+Scheidt (Wired 2009): "mirrors and obfuscation" + "just because you broke it doesn't mean you have the answer."
 
-2. **Repeated-PT-letter distances** (p≈1/240): CT letters for the same PT letter are close to each other (mean 3.6, 10/13 < 5). This implies one-to-one substitution for MOST positions.
+K4 plaintext is "not standard English, would require a second level of cryptanalysis."
 
-3. **Width-21 bigram repeats** (p≈1/6750): 11 repeated vertical bigrams at width 21. Consistent with Gromark-like period-21 key structure.
+## What Is MATHEMATICALLY PROVEN
 
-4. **Reversed-KA mod-5 pattern** (p≈1/1470): Under reversed Kryptos alphabet numbering, 13/24 key values are multiples of 5. Possibly significant.
+1. SINGLE-LAYER PERIODIC SUBSTITUTION IS IMPOSSIBLE on raw 97-char text:
+   242 Bean variant-independent inequalities eliminate ALL periods 1-26 for
+   Vigenère, Beaufort, and Variant Beaufort on both AZ and KA alphabets.
 
-5. **Sanborn quote**: "BERLINCLOCK in plain matches directly with NYPVTTMZFPK. It is a one-to-one match with plain B taken, has the encipherment done to it, and out pops a cipher N."
+2. DIGRAM FREQUENCY TEST proves outermost layer is SUBSTITUTION (not transposition):
+   K4 digrams match English top-30 at 5.2% (transposition gives ~42%, random ~4.4%).
+   → Encryption order: PT → transposition → substitution → carved text
 
-Bean argues NO TRANSPOSITION is involved. However, all direct substitution attempts (including exhaustive Gromark search) have FAILED.
+3. NULL MASK + PERIODIC SUB (periods 1-23) IMPOSSIBLE for ANY choice of 24 null positions.
 
-## The Working Hypothesis: PARTIAL Transposition
+4. PURE TRANSPOSITION IMPOSSIBLE: CT has 2 E's but cribs need 3.
 
-Bean's evidence suggests MOST positions have direct one-to-one substitution correspondence. But pure substitution has been exhaustively tested and failed. The middle ground: K4 uses substitution with only a SMALL NUMBER of positions transposed (perhaps 2-10 character swaps).
+## What Is EXHAUSTIVELY ELIMINATED (47M+ configs, ZERO signal)
 
-This dramatically reduces the search space:
-  - 1 swap: C(97,2) = 4,656 candidates per keyword combo
-  - 2 swaps: ~10M (tractable with hot-position targeting)
-  - 3+ swaps: hill-climbable from near-identity starting point
+- All periodic sub (Vig/Beau/VBeau × AZ/KA) periods 1-26 on raw 97
+- All 362,880 width-9 column permutations × Vig/Beau/VBeau × AZ/KA × periods 1-13 + autokey
+- Keyword-derived column orders for widths 4-14 × all substitution types
+- Running-key crib-drag on Howard Carter's book (max 7/24 = noise)
+- Running-key crib-drag on K1-K3 plaintext (max 5/24 = noise)
+- Autokey on raw 97 (156 single-key + 1M dictionary = ZERO)
+- All standard transpositions (16M+ configs), all fractionation, Hill, Bifid, ADFGVX
+- Exhaustive Gromark (3.2B primers), VERDIGRIS (362K perms), affine mod 97
+- Keywords HOROLOGE and ENIGMA: pigeonhole elimination (DO NOT USE these keywords)
 
-## Bean Constraints
+## What Remains OPEN
 
-Equality: k[27] = k[65] (both positions encrypt R→P, so key values must match)
-Inequalities: 242 variant-independent pairs where key values must DIFFER (pairs where derived key values differ under ALL three cipher variants: Vigenère, Beaufort, Variant Beaufort)
+1. TWO-SYSTEM PRODUCT CIPHER with non-standard components:
+   - Non-columnar transposition (route cipher, rail fence, disrupted, grid-path)
+   - Non-periodic substitution after transposition (autokey with multi-char primer,
+     running key from unknown text, custom tableau, Quagmire)
+   - The transposition may NOT be standard columnar — Sanborn is an artist,
+     could use spiral, diagonal, or pattern-based reading orders
 
-These constraints are ALREADY SATISFIED under identity (no transposition) — they don't help find wrong positions, but they constrain the substitution key structure.
+2. NULL REMOVAL + NON-PERIODIC CIPHER:
+   - Remove 24 nulls → 73-char CT → autokey/running key/mono → PT
+   - The grille/selection rule for choosing 73 of 97 is unknown
+   - 5 W's at positions [20, 36, 48, 58, 74] bracket both cribs exactly
+
+3. d=13 ANOMALY: Beaufort keystream mod 13 collisions 3.55× expected.
+   Period 13 = len(EASTNORTHEAST). Open in combination with transposition.
+
+4. BESPOKE METHOD: Scheidt designed something hand-executable but novel.
+   "Simpler than people think" — novelty is in COMBINATION, not complexity.
+   Sanborn "fucked with" the system. Method must be reproducible by hand.
+
+5. WIDTH-13 = 8 ROWS matches "8 lines" from Sanborn's legal pad. Width-14 has
+   both cribs starting at same column. Both worth exploring with non-standard paths.
+
+## Bean 2021 Statistical Insights (Context, Not Constraints on Product Cipher)
+
+Bean's paper analyzed the DIRECT CT↔PT relationship and found:
+- Minor differences (p≈1/5520): KRYPTOS letters map close in alphabet. Suggests near-standard cipher alphabet.
+- One-to-one substitution evidence: CT letters for same PT are close (mean 3.6, 10/13 < 5).
+- Width-21 bigram repeats (p≈1/6750). Reversed-KA mod-5 pattern (p≈1/1470).
+- Stehle Δ4=5 constant-difference property in DIAWINFBN segment — UNTESTED in combination.
+
+CRITICAL: Bean analyzed the outer (substitution) layer. His stats are about the CT↔PT mapping
+AFTER transposition. They constrain the substitution layer, not the transposition layer.
 
 ## Key Constants
 
-KA alphabet: KRYPTOSABCDEFGHIJLMNQUVWXZ (keyword "KRYPTOS" first, all 26 letters)
-Standard: ABCDEFGHIJKLMNOPQRSTUVWXYZ
+Bean equality: k[27] = k[65] (key values at these positions must be equal)
+242 variant-independent Bean inequalities (key position pairs that must differ)
+KA alphabet: KRYPTOSABCDEFGHIJLMNQUVWXZ (keyword "KRYPTOS", all 26 letters)
+IC of K4 ≈ 0.0361 (below random 0.0385, not significant for n=97)
+Top keyword survivors (pigeonhole): KRYPTOS, KOMPASS, DEFECTOR, COLOPHON, ABSCISSA
 
-## Bean-Viable Keyword Lengths
+## Sanborn Clues
 
-Bean constraints make most keyword lengths IMPOSSIBLE:
-- IMPOSSIBLE lengths: 1-7, 9, 10, 11, 12, 14, 15, 17, 18, 21, 22, 25
-- VIABLE lengths: 8, 13, 16, 19, 20, 23, 24, 26+
-- Length 8 dominates (3,688 of 5,204 viable words from dictionary)
-
-Known keywords KRYPTOS (7), PALIMPSEST (10), ABSCISSA (8) ALL FAIL Bean constraints.
-Only COLOPHON and PARALLAX (both length 8) pass from the known series.
-DO NOT generate hypotheses using Bean-impossible keywords as periodic keys.
-
-Top Sanborn-aesthetic Bean-passing keywords (length 8):
-MONOLITH, PEDESTAL, CALATHOS, APOPHYGE, LARARIUM, LOGOGRAM, COLOPHON, PARALLAX,
-CIVISION, PARADIGM, HOROLOGY, TOPOLOGY, NIHILIST, CAVALIER, YAMAGANE
-
-## Gromark Status
-
-Exhaustively tested 3.2B primers (bases 21-26, primer lengths 2-6, AZ+KA alphabets).
-ZERO crib matches. Standard Gromark is effectively eliminated.
-
-## The Cardan Grille (for full-scramble hypotheses)
-
-28×31 grid overlaying cipher panel. Three Kryptos-only elements (absent from Antipodes):
-1. Key column (AZ order), 2. Header/footer rows, 3. Extra L on row N
-
-Corrected grille extract (100 chars): HJLVKDJQZKIVPCMWSAFOPCKBDLHIFXRYVFIJMXEIOMQFJNXZKILKRDIYSCLMQVZACEIMVSEFHLQKRGILVHNQXWTCDKIKJUFQRXCD
-
-## What Has Been Eliminated
-
-ALL single-layer classical ciphers (600+ experiments). ALL standard transpositions (16M+ configs).
-Exhaustive Gromark base-10/len-5 (39 primers). VERDIGRIS (174 configs, 362K perms).
-Affine mod 97 (9,312). K3-style rotation. Single-step 97-cycles (96).
-
-## Your Task
-
-Generate hypotheses focused on TWO complementary tracks:
-
-**Track A — Partial Transposition**: Which specific positions might be transposed? Consider:
-  - Positions where quadgram score is worst under direct decryption
-  - Positions involved in the width-21 bigram pattern (could be structural artifacts of transposition)
-  - DIAWINFBN (positions 55-63) has a constant-difference property (Δ4=5 mod 26) — could this segment be preserved or disrupted?
-  - The reversed-KA mod-5 pattern might identify which positions are "correct" vs "swapped"
-
-**Track B — Non-Periodic Key**: Bean's Gromark didn't work, but the key IS non-periodic. Consider:
-  - Generalized Fibonacci with non-standard bases (5, 8, 12, 26)
-  - Berlin Clock arithmetic (base 5 hours, base 12 minutes)
-  - Autokey variants (PT or CT feeds back into key)
-  - Running key from a thematic source text
+- "(CLUE) what's the point?" — compass point? W as delimiter? meta-question?
+- K4 solvable from Antipodes alone (no key column/lodestone needed)
+- 28×31 master grid confirmed (NOVA video). K4 starts at row 24, col 27.
+- "FIVE" appears at cylinder seam (width 31 only). 5 raised chars DYARO.
+- K3 method: double rotational transposition (24×14 → 8×42). Applied to K4 = gibberish.
 
 Output format: JSON array of hypothesis objects."""
 
 # Hypothesis format instructions (appended to user messages)
 HYPOTHESIS_FORMAT = """
-Generate 5-15 hypotheses as a JSON array. Each hypothesis must have:
-- "name": short identifier
-- "description": what this tests and why
-- "type": one of "permutation" | "generator" | "reading_order" | "hillclimb" | "partial_swap"
-- "data": depends on type:
-  - For "permutation": {"perm": [list of 97 integers 0-96]}
-  - For "generator": {"python_code": "def generate(ct):\\n  ...\\n  return [(perm, label), ...]"}
-  - For "reading_order": {"order": "description", "grid_width": N, "grid_height": M}
-  - For "hillclimb": {"seed_perm": [97 ints], "cipher": "vig", "keyword": "KRYPTOS", "alphabet": "AZ", "iterations": N, "fixed_positions": [list of position indices to keep fixed]}
-  - For "partial_swap": {"swap_positions": [[i,j], [k,l], ...], "cipher": "vig"|"beau", "keyword": "KRYPTOS", "alphabet": "AZ"|"KA"}
-    Tests specific position swaps in the CT before decryption. Use this when you believe
-    only a few specific positions are transposed.
+Generate 3-8 hypotheses as a JSON array. Quality over quantity — each should test
+a specific, well-reasoned cryptographic idea that has NOT been tried before.
 
-Prioritize hypotheses that:
-1. **PARTIAL TRANSPOSITION** — Identify specific positions likely to be transposed
-   (Bean's evidence says MOST positions are correct one-to-one)
-2. **NON-PERIODIC KEY MODELS** — Gromark variants, autokey, Berlin Clock arithmetic
-3. Use the Cardan grille structure for full-scramble hypotheses
-4. Use "generator" type for systematic enumeration of related candidates
-5. Use "hillclimb" type to refine promising permutations from prior rounds
+Each hypothesis must have:
+- "name": short identifier (e.g., "autokey_after_spiral_w7")
+- "description": what this tests, WHY it's plausible, what result confirms/denies it
+- "type": one of the types below
+- "data": type-dependent fields
 
-KEY INSIGHT: Bean's statistics show the cipher alphabet is near-standard and most positions
-have direct CT↔PT correspondence. Focus on finding the FEW exceptions, not the many.
+HYPOTHESIS TYPES:
 
-IMPORTANT for generator code:
-- Use ONLY Python stdlib (no numpy, sympy, scipy, etc.)
-- The function signature must be: def generate(ct: str) -> list[tuple[list[int], str]]
-- Each returned tuple is (permutation, label) where permutation is a list of 97 ints 0-96
+1. "plaintext_generator" — STRONGLY PREFERRED. Write Python code that does BOTH
+   transposition AND substitution, returning candidate plaintexts directly.
+   data: {"python_code": "def generate(ct):\\n  ...\\n  return [(plaintext, label), ...]"}
+   The generate() function receives the 97-char ciphertext and returns a list of
+   (plaintext_string, method_label) tuples. The framework scores each plaintext
+   against cribs and quadgrams.
+   Available: K4, K4_LEN (97), AZ, KA, CRIB_DICT, crib_hits(pt),
+              json, sys, math, itertools, collections, string, re, random.
+   Use ONLY Python stdlib. Keep code SIMPLE — under 50 lines, no deep nesting.
+   60-second timeout. Return at most 50,000 candidates.
+
+   EXAMPLE (autokey Vigenere with columnar transposition):
+   def generate(ct):
+       results = []
+       # Undo columnar transposition width 7
+       w = 7
+       rows = (len(ct) + w - 1) // w
+       grid = [''] * (rows * w)
+       pos = 0
+       for c in range(w):
+           col_len = rows if c < len(ct) % w or len(ct) % w == 0 else rows - 1
+           for r in range(col_len):
+               grid[r * w + c] = ct[pos]; pos += 1
+       unscrambled = ''.join(grid[:len(ct)])
+       # Try autokey with short primers
+       for p1 in range(26):
+           for p2 in range(26):
+               primer = AZ[p1] + AZ[p2]
+               key = list(primer)
+               pt = []
+               for i in range(len(unscrambled)):
+                   ci = AZ.index(unscrambled[i])
+                   ki = AZ.index(key[i])
+                   pi = (ci - ki) % 26
+                   pt.append(AZ[pi])
+                   key.append(AZ[pi])
+               pt_str = ''.join(pt)
+               hits = crib_hits(pt_str)
+               if hits >= 2:
+                   results.append((pt_str, f"col7/autokey/{primer}"))
+       return results
+
+2. "generator" — Permutation-only generator (framework applies periodic sub).
+   data: {"python_code": "def generate(ct):\\n  ...\\n  return [(perm, label), ...]"}
+   Returns (permutation, label) tuples. Each permutation = list of 97 ints (0-96).
+   NOTE: The framework tests periodic Vig/Beau after permutation. Since periodic
+   sub is eliminated on raw text, this is ONLY useful if your transposition
+   genuinely changes the crib alignment. Prefer "plaintext_generator" instead.
+
+3. "permutation" — Test a specific 97-element permutation.
+   data: {"perm": [list of 97 ints, permutation of 0-96]}
+
+4. "partial_swap" — Test specific position swaps before decryption.
+   data: {"swap_positions": [[a,b], [c,d], ...]}
+
+5. "hillclimb" — Hill-climb from a starting permutation.
+   data: {"seed_perm": [97 ints] or "identity", "cipher": "vig"|"beau",
+          "keyword": "DEFECTOR", "alphabet": "AZ"|"KA", "iterations": 100000}
+
+CRITICAL RULES:
+- USE "plaintext_generator" for non-periodic substitution (autokey, Quagmire, etc.)
+- DO NOT test periodic Vigenere/Beaufort on raw 97 chars (mathematically impossible)
+- DO NOT use keywords HOROLOGE or ENIGMA (eliminated by pigeonhole)
+- Keep generator code SIMPLE: under 50 lines, no complex class hierarchies
+- Filter candidates INSIDE the generator (e.g., only return if crib_hits >= 2)
+- Think about what a CIA cryptographer in 1989 would use that's hand-executable
+- Consider: autokey, running key, Quagmire, Nihilist, custom tableaux, grille masks
+- Each hypothesis should be genuinely NOVEL — test something not yet tried
 
 Return ONLY the JSON array, no other text."""
 
@@ -278,8 +329,13 @@ class KryptosAPIClient:
         }
 
         if thinking_budget and ("sonnet" in self.model or "opus" in self.model):
-            kwargs["thinking"] = {"type": "enabled", "budget_tokens": thinking_budget}
-            kwargs["max_tokens"] = max(max_tokens, thinking_budget + 4096)
+            # Adaptive/extended thinking causes Opus to spend 5+ minutes on
+            # complex crypto prompts, exceeding API timeouts. Opus without
+            # thinking already produces excellent hypotheses in ~40s.
+            # Only enable thinking for non-4.6 models where it's more bounded.
+            if "opus-4-6" not in self.model and "sonnet-4-6" not in self.model:
+                kwargs["thinking"] = {"type": "enabled", "budget_tokens": thinking_budget}
+                kwargs["max_tokens"] = max(max_tokens, thinking_budget + 4096)
 
         try:
             response = self.client.messages.create(**kwargs, timeout=180.0)
@@ -408,11 +464,22 @@ class KryptosAPIClient:
         max_tokens: int = 4096,
     ) -> str:
         """Send test results back to Claude for analysis and next-step recommendations."""
+        # Handle both dict list and pre-formatted string
+        if isinstance(results, str):
+            results_str = results[:6000]
+        else:
+            results_str = json.dumps(results, indent=2)[:6000]
+
         user_msg = f"""Here are the results from testing the last batch of hypotheses:
 
-{json.dumps(results, indent=2)[:6000]}
+{results_str}
 
 {context}
+
+SCORING REMINDER: Quadgram scores are LENGTH-DEPENDENT. Use best_score_per_char
+to compare across methods. English ≈ -2.5/char, random ≈ -4.5/char. A high
+absolute score on <97 chars is a FALSE POSITIVE. Crib positions (21-33, 63-73)
+only work on 97-char plaintext — shorter strings give coincidental matches.
 
 Analyze these results:
 1. Which hypotheses showed the most promise (highest quadgram scores, any crib proximity)?

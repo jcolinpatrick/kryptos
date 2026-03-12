@@ -1,0 +1,10 @@
+{
+  "experiment": "E-COLMASK-GRID-COORD",
+  "experiment_id": "E-COLMASK-GRID-COORD",
+  "description": "Grid-coordinate-derived substitution keys on 73-char column mask extract. 150+ key derivation functions from (row, col) grid coordinates + exhaustive affine fit.",
+  "verdict": "NOISE",
+  "best_score": 5,
+  "total_configs": 3726,
+  "timestamp": "2026-03-12",
+  "key_finding": "Max 5/24 across 3,726 configs. Required Vigenere keystream at crib positions (BLZCDCYYGCKAZ, MUYKLGKORNA) is completely irregular — no coordinate-based pattern fits. Affine fit key=a*col+b*row+c (17,576 combos): insufficient to discriminate. Key is NOT a simple function of grid position."
+}

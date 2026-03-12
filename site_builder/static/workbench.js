@@ -17,9 +17,10 @@
   for (var i = 0; i < ENE.length; i++) CRIBS[21 + i] = ENE[i];
   for (var j = 0; j < BC.length; j++) CRIBS[63 + j] = BC[j];
 
+  // W positions that bracket the cribs
+  var W_POSITIONS = [20, 36, 48, 58, 74];
+
   // Bean constraints: k[27] = k[65], plus variant-independent inequalities.
-  // A pair (a,b) is variant-independent iff derived k values differ for ALL
-  // three cipher variants (Vig, Beaufort, Variant Beaufort).
   var BEAN_EQ = [27, 65];
   var BEAN_INEQ = (function () {
     var positions = Object.keys(CRIBS).map(Number).sort(function (a, b) { return a - b; });
@@ -38,11 +39,38 @@
     return pairs;
   })();
 
+  // --- Elimination data ---
+  var ELIMINATIONS = {
+    "none:vigenere":     { severity: "proven", msg: "Single-layer Vigen\u00e8re on raw 97 chars is mathematically eliminated (key conflicts at all periods 1\u201326)." },
+    "none:beaufort":     { severity: "proven", msg: "Single-layer Beaufort on raw 97 chars is mathematically eliminated (key conflicts at all periods 1\u201326)." },
+    "none:varbeaufort":  { severity: "proven", msg: "Single-layer Variant Beaufort on raw 97 chars is mathematically eliminated (key conflicts at all periods 1\u201326)." },
+    "none:autokey-vig":  { severity: "exhausted", msg: "Autokey Vigen\u00e8re on raw 97 chars: exhaustively tested (156 single-letter + 1M dictionary keys). Zero crib hits." },
+    "none:autokey-beau": { severity: "exhausted", msg: "Autokey Beaufort on raw 97 chars: exhaustively tested. Zero crib hits." },
+    "none:caesar":       { severity: "proven", msg: "Caesar (monoalphabetic shift) is a special case of Vigen\u00e8re period 1 \u2014 mathematically eliminated." },
+    "none:atbash":       { severity: "proven", msg: "Atbash is a fixed monoalphabetic substitution \u2014 mathematically eliminated." },
+    "columnar:vigenere":   { severity: "exhausted", msg: "Columnar \u00d7 periodic Vigen\u00e8re: 47M+ configs tested across all widths and periods 1\u201313. Best: 9/24 (noise)." },
+    "columnar:beaufort":   { severity: "exhausted", msg: "Columnar \u00d7 periodic Beaufort: 47M+ configs tested. Best: 9/24 (noise)." },
+    "columnar:varbeaufort": { severity: "exhausted", msg: "Columnar \u00d7 periodic Variant Beaufort: 47M+ configs tested. Best: 9/24 (noise)." },
+    "columnar:autokey-vig":  { severity: "open", msg: "Columnar + autokey Vigen\u00e8re: partially tested but large keyspace remains. Productive territory." },
+    "columnar:autokey-beau": { severity: "open", msg: "Columnar + autokey Beaufort: partially tested. Productive territory." },
+    "railfence:vigenere":    { severity: "open", msg: "Rail fence + Vigen\u00e8re: open territory. Non-standard transposition not exhaustively tested." },
+    "railfence:beaufort":    { severity: "open", msg: "Rail fence + Beaufort: open territory." },
+    "serpentine:vigenere":   { severity: "open", msg: "Serpentine + Vigen\u00e8re: open territory. Boustrophedon reading not yet tested with substitution." },
+    "serpentine:beaufort":   { severity: "open", msg: "Serpentine + Beaufort: open territory." },
+    "spiral:vigenere":       { severity: "open", msg: "Spiral + Vigen\u00e8re: open territory. Spiral transposition not yet tested." },
+    "spiral:beaufort":       { severity: "open", msg: "Spiral + Beaufort: open territory." },
+    "myszkowski:vigenere":   { severity: "open", msg: "Myszkowski + Vigen\u00e8re: open territory. Tied-column transposition not exhaustively tested." },
+    "myszkowski:beaufort":   { severity: "open", msg: "Myszkowski + Beaufort: open territory." }
+  };
+
   // --- DOM Elements ---
   var ctDisplay = document.getElementById("ct-display");
   var transMethod = document.getElementById("trans-method");
   var transColumnar = document.getElementById("trans-opts-columnar");
   var transRailfence = document.getElementById("trans-opts-railfence");
+  var transSerpentine = document.getElementById("trans-opts-serpentine");
+  var transSpiral = document.getElementById("trans-opts-spiral");
+  var transMyszkowski = document.getElementById("trans-opts-myszkowski");
   var transManual = document.getElementById("trans-opts-manual");
   var subMethod = document.getElementById("sub-method");
   var subKey = document.getElementById("sub-key");
@@ -62,13 +90,35 @@
   var scoreBean = document.getElementById("score-bean");
   var scoreFree = document.getElementById("score-free");
   var keystreamDetail = document.getElementById("keystream-detail");
+  var keystreamAnalysis = document.getElementById("keystream-analysis");
+  var wHighlight = document.getElementById("w-highlight");
+  var wSegments = document.getElementById("w-segments");
+  var nullMode = document.getElementById("null-mode");
+  var nullManualGroup = document.getElementById("null-manual-group");
+  var nullPositionsInput = document.getElementById("null-positions");
+  var nullCribModel = document.getElementById("null-crib-model");
+  var nullExtractedDiv = document.getElementById("null-extracted");
+  var nullExtractedCt = document.getElementById("null-extracted-ct");
+  var nullExtractedLen = document.getElementById("null-extracted-len");
+  var nullCountSpan = document.getElementById("null-count");
+  var eliminationWarning = document.getElementById("elimination-warning");
 
-  // --- Render CT display with crib highlighting ---
-  function renderCT(text, container) {
+  // --- Render CT display with crib and W highlighting ---
+  function renderCT(text, container, opts) {
+    opts = opts || {};
+    var showW = opts.showW || false;
+    var nullPositions = opts.nullPositions || {};
+    var cribs = opts.cribs || CRIBS;
+
     var html = "";
     for (var i = 0; i < text.length; i++) {
-      if (CRIBS[i] !== undefined) {
-        html += '<span class="crib">' + text[i] + "</span>";
+      var classes = [];
+      if (cribs[i] !== undefined) classes.push("crib");
+      if (showW && text[i] === "W" && W_POSITIONS.indexOf(i) >= 0) classes.push("w-marker");
+      if (nullPositions[i]) classes.push("null-pos");
+
+      if (classes.length > 0) {
+        html += '<span class="' + classes.join(" ") + '">' + text[i] + "</span>";
       } else {
         html += text[i];
       }
@@ -92,40 +142,103 @@
     return ((n % m) + m) % m;
   }
 
+  // --- Null mask helpers ---
+  function getNullPositions() {
+    var mode = nullMode.value;
+    if (mode === "disabled") return [];
+    if (mode === "w-only") return W_POSITIONS.slice();
+    // manual
+    var str = nullPositionsInput.value.trim();
+    if (!str) return [];
+    return str.split(",").map(function (s) { return parseInt(s.trim()); })
+      .filter(function (n) { return !isNaN(n) && n >= 0 && n < CT.length; });
+  }
+
+  function extractCT(text, nullPos) {
+    var posSet = {};
+    for (var i = 0; i < nullPos.length; i++) posSet[nullPos[i]] = true;
+    var result = "";
+    for (var j = 0; j < text.length; j++) {
+      if (!posSet[j]) result += text[j];
+    }
+    return result;
+  }
+
+  function remapCribs(nullPos) {
+    // Model A: after removing nulls, crib positions shift
+    var posSet = {};
+    for (var i = 0; i < nullPos.length; i++) posSet[nullPos[i]] = true;
+
+    var remapped = {};
+    var newIdx = 0;
+    for (var j = 0; j < CT.length; j++) {
+      if (!posSet[j]) {
+        if (CRIBS[j] !== undefined) {
+          remapped[newIdx] = CRIBS[j];
+        }
+        newIdx++;
+      }
+    }
+    return remapped;
+  }
+
+  // --- Keyword to column order ---
+  function keywordToOrder(keyword, width) {
+    var kw = keyword.toUpperCase().replace(/[^A-Z]/g, "").substring(0, width);
+    if (kw.length < width) return null;
+    var indexed = [];
+    for (var i = 0; i < kw.length; i++) indexed.push([kw[i], i]);
+    indexed.sort(function (a, b) {
+      if (a[0] < b[0]) return -1;
+      if (a[0] > b[0]) return 1;
+      return a[1] - b[1];
+    });
+    var order = new Array(width);
+    for (var rank = 0; rank < indexed.length; rank++) {
+      order[indexed[rank][1]] = rank;
+    }
+    return order;
+  }
+
   // --- Transposition implementations ---
   function applyTransposition(text) {
     var method = transMethod.value;
     if (method === "none") return text;
     if (method === "columnar") return columnarTranspose(text);
     if (method === "railfence") return railfenceTranspose(text);
+    if (method === "serpentine") return serpentineTranspose(text);
+    if (method === "spiral") return spiralTranspose(text);
+    if (method === "myszkowski") return myszkowskiTranspose(text);
     if (method === "manual") return manualTranspose(text);
     return text;
   }
 
   function columnarTranspose(text) {
     var width = parseInt(document.getElementById("trans-width").value) || 10;
+
+    // Check for keyword-derived column order first
+    var kwInput = document.getElementById("trans-keyword").value.trim();
     var orderStr = document.getElementById("trans-colorder").value.trim();
     var n = text.length;
     var rows = Math.ceil(n / width);
 
-    // Build column order
     var colOrder;
-    if (orderStr) {
+    if (kwInput) {
+      colOrder = keywordToOrder(kwInput, width);
+      if (!colOrder) return text; // keyword too short
+    } else if (orderStr) {
       colOrder = orderStr.split(",").map(function (s) { return parseInt(s.trim()); });
-      if (colOrder.length !== width) return text; // invalid
+      if (colOrder.length !== width) return text;
     } else {
       colOrder = [];
       for (var c = 0; c < width; c++) colOrder.push(c);
     }
 
     // Read off columns in the given order to undo columnar transposition
-    // (assumes the text was written into a grid by rows and read off by columns)
     var fullCols = n % width || width;
     var result = new Array(n);
     var pos = 0;
 
-    // Inverse: text was produced by reading columns in colOrder
-    // To undo: figure out which positions each column contains
     for (var ci = 0; ci < width; ci++) {
       var col = colOrder[ci];
       var colLen = col < (n % width || width) ? rows : rows - (n % width === 0 ? 0 : 1);
@@ -142,7 +255,6 @@
     var n = text.length;
     if (depth <= 1 || depth >= n) return text;
 
-    // Compute rail lengths
     var railLens = new Array(depth).fill(0);
     var rail = 0, dir = 1;
     for (var i = 0; i < n; i++) {
@@ -152,7 +264,6 @@
       rail += dir;
     }
 
-    // Assign text to rails
     var rails = [];
     var pos = 0;
     for (var r = 0; r < depth; r++) {
@@ -160,17 +271,161 @@
       pos += railLens[r];
     }
 
-    // Read off in zigzag order
     var result = "";
     var indices = new Array(depth).fill(0);
     rail = 0; dir = 1;
-    for (var j = 0; j < n; j++) {
+    for (var k = 0; k < n; k++) {
       result += rails[rail][indices[rail]++];
       if (rail === 0) dir = 1;
       else if (rail === depth - 1) dir = -1;
       rail += dir;
     }
     return result;
+  }
+
+  // Generate a permutation and undo it (inverse apply)
+  function undoPermutation(text, perm) {
+    if (perm.length !== text.length) return text;
+    // perm is the read-off order: CT[i] = original[perm[i]]
+    // To undo: original[perm[i]] = CT[i]
+    var result = new Array(text.length);
+    for (var i = 0; i < perm.length; i++) {
+      result[perm[i]] = text[i];
+    }
+    return result.join("");
+  }
+
+  function serpentineTranspose(text) {
+    var width = parseInt(document.getElementById("trans-serp-width").value) || 10;
+    var vertical = document.getElementById("trans-serp-vertical").checked;
+    var n = text.length;
+    var rows = Math.ceil(n / width);
+
+    var perm = [];
+    if (!vertical) {
+      for (var r = 0; r < rows; r++) {
+        if (r % 2 === 0) {
+          for (var c = 0; c < width; c++) {
+            var pos = r * width + c;
+            if (pos < n) perm.push(pos);
+          }
+        } else {
+          for (var c2 = width - 1; c2 >= 0; c2--) {
+            var pos2 = r * width + c2;
+            if (pos2 < n) perm.push(pos2);
+          }
+        }
+      }
+    } else {
+      for (var c3 = 0; c3 < width; c3++) {
+        if (c3 % 2 === 0) {
+          for (var r2 = 0; r2 < rows; r2++) {
+            var pos3 = r2 * width + c3;
+            if (pos3 < n) perm.push(pos3);
+          }
+        } else {
+          for (var r3 = rows - 1; r3 >= 0; r3--) {
+            var pos4 = r3 * width + c3;
+            if (pos4 < n) perm.push(pos4);
+          }
+        }
+      }
+    }
+    return undoPermutation(text, perm);
+  }
+
+  function spiralTranspose(text) {
+    var width = parseInt(document.getElementById("trans-spiral-width").value) || 10;
+    var ccw = document.getElementById("trans-spiral-ccw").checked;
+    var n = text.length;
+    var rows = Math.ceil(n / width);
+
+    var visited = [];
+    for (var ri = 0; ri < rows; ri++) {
+      visited.push(new Array(width).fill(false));
+    }
+
+    var dirs = ccw
+      ? [[1, 0], [0, 1], [-1, 0], [0, -1]]
+      : [[0, 1], [1, 0], [0, -1], [-1, 0]];
+
+    var perm = [];
+    var r = 0, c = 0, d = 0;
+    for (var step = 0; step < rows * width; step++) {
+      var pos = r * width + c;
+      if (pos < n) perm.push(pos);
+      visited[r][c] = true;
+
+      var nr = r + dirs[d][0], nc = c + dirs[d][1];
+      if (nr >= 0 && nr < rows && nc >= 0 && nc < width && !visited[nr][nc]) {
+        r = nr; c = nc;
+      } else {
+        d = (d + 1) % 4;
+        nr = r + dirs[d][0]; nc = c + dirs[d][1];
+        if (nr >= 0 && nr < rows && nc >= 0 && nc < width && !visited[nr][nc]) {
+          r = nr; c = nc;
+        } else {
+          break;
+        }
+      }
+    }
+    return undoPermutation(text, perm);
+  }
+
+  function myszkowskiTranspose(text) {
+    var keyword = (document.getElementById("trans-mysz-keyword").value || "").toUpperCase().replace(/[^A-Z]/g, "");
+    if (!keyword) return text;
+    var width = keyword.length;
+    var n = text.length;
+    var rows = Math.ceil(n / width);
+
+    // Rank letters: tied letters get the same rank
+    var uniqueSorted = [];
+    var seen = {};
+    var kwArr = keyword.split("").slice();
+    kwArr.sort();
+    for (var s = 0; s < kwArr.length; s++) {
+      if (!seen[kwArr[s]]) { uniqueSorted.push(kwArr[s]); seen[kwArr[s]] = true; }
+    }
+    var letterRank = {};
+    for (var u = 0; u < uniqueSorted.length; u++) letterRank[uniqueSorted[u]] = u;
+    var colRanks = [];
+    for (var k = 0; k < keyword.length; k++) colRanks.push(letterRank[keyword[k]]);
+
+    // Group columns by rank
+    var rankToCols = {};
+    for (var ci = 0; ci < colRanks.length; ci++) {
+      var rk = colRanks[ci];
+      if (!rankToCols[rk]) rankToCols[rk] = [];
+      rankToCols[rk].push(ci);
+    }
+
+    // Build column contents
+    var cols = {};
+    for (var p = 0; p < n; p++) {
+      var col = p % width;
+      if (!cols[col]) cols[col] = [];
+      cols[col].push(p);
+    }
+
+    // Build perm: read ranks in order, tied columns row-by-row
+    var perm = [];
+    var sortedRanks = Object.keys(rankToCols).map(Number).sort(function (a, b) { return a - b; });
+    for (var ri = 0; ri < sortedRanks.length; ri++) {
+      var tiedCols = rankToCols[sortedRanks[ri]];
+      if (tiedCols.length === 1) {
+        var colPositions = cols[tiedCols[0]] || [];
+        for (var cp = 0; cp < colPositions.length; cp++) perm.push(colPositions[cp]);
+      } else {
+        for (var row = 0; row < rows; row++) {
+          for (var tc = 0; tc < tiedCols.length; tc++) {
+            var pos = row * width + tiedCols[tc];
+            if (pos < n) perm.push(pos);
+          }
+        }
+      }
+    }
+    return undoPermutation(text, perm);
   }
 
   function manualTranspose(text) {
@@ -212,7 +467,6 @@
   }
 
   function vigenere(ct, key, alpha) {
-    // PT = (CT - K) mod 26
     var pt = "";
     for (var i = 0; i < ct.length; i++) {
       var c = alphaIndex(ct[i], alpha);
@@ -223,7 +477,6 @@
   }
 
   function beaufort(ct, key, alpha) {
-    // PT = (K - CT) mod 26
     var pt = "";
     for (var i = 0; i < ct.length; i++) {
       var c = alphaIndex(ct[i], alpha);
@@ -234,7 +487,6 @@
   }
 
   function varBeaufort(ct, key, alpha) {
-    // Variant Beaufort decrypt: PT = (CT + K) mod 26
     var pt = "";
     for (var i = 0; i < ct.length; i++) {
       var c = alphaIndex(ct[i], alpha);
@@ -245,7 +497,6 @@
   }
 
   function autokeyVig(ct, key, alpha) {
-    // Autokey Vigenère: key extends with plaintext
     var pt = "";
     var fullKey = key.split("");
     for (var i = 0; i < ct.length; i++) {
@@ -259,7 +510,6 @@
   }
 
   function autokeyBeau(ct, key, alpha) {
-    // Autokey Beaufort: key extends with plaintext
     var pt = "";
     var fullKey = key.split("");
     for (var i = 0; i < ct.length; i++) {
@@ -291,14 +541,41 @@
   }
 
   // --- Scoring ---
-  function scoreCribs(pt) {
+  function scoreCribs(pt, cribs) {
+    cribs = cribs || CRIBS;
     var eneHits = 0, bcHits = 0;
     var matched = [];
-    for (var pos in CRIBS) {
-      if (pt[pos] === CRIBS[pos]) {
+    for (var pos in cribs) {
+      if (parseInt(pos) < pt.length && pt[pos] === cribs[pos]) {
         matched.push(parseInt(pos));
-        if (pos >= 21 && pos <= 33) eneHits++;
-        else bcHits++;
+        // Determine which crib group this belongs to
+        var origPos = parseInt(pos);
+        // For remapped cribs, check the expected letter
+        if (ENE.indexOf(cribs[pos]) >= 0 && origPos < pt.length) {
+          // Heuristic: check if this is an ENE or BC position
+          // For standard CRIBS, check position ranges
+          if (cribs === CRIBS) {
+            if (origPos >= 21 && origPos <= 33) eneHits++;
+            else bcHits++;
+          } else {
+            // For remapped cribs, we track by the original crib letter
+            // This is approximate — count by letter membership
+            eneHits++; // simplified: assign to ENE by default for remapped
+          }
+        } else {
+          bcHits++;
+        }
+      }
+    }
+    // Fix scoring for standard cribs
+    if (cribs === CRIBS) {
+      eneHits = 0; bcHits = 0;
+      for (var pos2 in CRIBS) {
+        var p = parseInt(pos2);
+        if (p < pt.length && pt[p] === CRIBS[p]) {
+          if (p >= 21 && p <= 33) eneHits++;
+          else bcHits++;
+        }
       }
     }
     return { total: eneHits + bcHits, ene: eneHits, bc: bcHits, matched: matched };
@@ -318,26 +595,24 @@
   }
 
   function checkBean(ct, pt, alpha, method) {
-    // Derive keystream values at crib positions using the correct formula
-    // for the active cipher variant.
     var keys = {};
     for (var pos in CRIBS) {
-      var c = alphaIndex(ct[pos], alpha);
-      var p = alphaIndex(pt[pos], alpha);
-      if (method === "beaufort" || method === "autokey-beaufort") {
-        keys[pos] = mod(c + p, 26);       // Beaufort: K = CT + PT
-      } else if (method === "var-beaufort") {
-        keys[pos] = mod(p - c, 26);       // Variant Beaufort: K = PT - CT
+      var p = parseInt(pos);
+      if (p >= ct.length || p >= pt.length) continue;
+      var c = alphaIndex(ct[p], alpha);
+      var pv = alphaIndex(pt[p], alpha);
+      if (method === "beaufort" || method === "autokey-beau") {
+        keys[pos] = mod(c + pv, 26);
+      } else if (method === "varbeaufort") {
+        keys[pos] = mod(pv - c, 26);
       } else {
-        keys[pos] = mod(c - p, 26);       // Vigenère (and autokey-vig): K = CT - PT
+        keys[pos] = mod(c - pv, 26);
       }
     }
 
-    // Check equality
     if (keys[BEAN_EQ[0]] === undefined || keys[BEAN_EQ[1]] === undefined) return null;
     if (keys[BEAN_EQ[0]] !== keys[BEAN_EQ[1]]) return false;
 
-    // Check inequalities
     for (var i = 0; i < BEAN_INEQ.length; i++) {
       var a = BEAN_INEQ[i][0], b = BEAN_INEQ[i][1];
       if (keys[a] === undefined || keys[b] === undefined) continue;
@@ -347,13 +622,11 @@
   }
 
   function freeCribSearch(pt) {
-    // Search for EASTNORTHEAST or BERLINCLOCK anywhere in the plaintext
     var hits = [];
     var eneIdx = pt.indexOf(ENE);
     if (eneIdx >= 0) hits.push("ENE@" + eneIdx);
     var bcIdx = pt.indexOf(BC);
     if (bcIdx >= 0) hits.push("BC@" + bcIdx);
-    // Also check substrings
     if (hits.length === 0) {
       for (var len = 6; len <= ENE.length; len++) {
         for (var start = 0; start <= pt.length - len; start++) {
@@ -369,32 +642,98 @@
     return hits.length > 0 ? hits.join(", ") : "None";
   }
 
-  function deriveKeystream(ct, pt, alpha, method) {
+  function deriveKeystream(ct, pt, alpha, method, cribs) {
+    cribs = cribs || CRIBS;
     var lines = [];
-    var positions = Object.keys(CRIBS).map(Number).sort(function (a, b) { return a - b; });
+    var positions = Object.keys(cribs).map(Number).sort(function (a, b) { return a - b; });
     for (var i = 0; i < positions.length; i++) {
       var pos = positions[i];
+      if (pos >= ct.length || pos >= pt.length) continue;
       var c = alphaIndex(ct[pos], alpha);
       var p = alphaIndex(pt[pos], alpha);
       var kVal;
-      if (method === "beaufort" || method === "autokey-beaufort") {
+      if (method === "beaufort" || method === "autokey-beau") {
         kVal = mod(c + p, 26);
-      } else if (method === "var-beaufort") {
+      } else if (method === "varbeaufort") {
         kVal = mod(p - c, 26);
       } else {
         kVal = mod(c - p, 26);
       }
-      var match = pt[pos] === CRIBS[pos] ? "OK" : "MISS";
+      var expected = cribs[pos];
+      var match = pt[pos] === expected ? "OK" : "MISS";
       lines.push(
         "pos=" + String(pos).padStart(2) +
         "  CT=" + ct[pos] +
         "  PT=" + pt[pos] +
-        "  expected=" + CRIBS[pos] +
+        "  expected=" + expected +
         "  k=" + String(kVal).padStart(2) +
-        " (" + alpha[kVal] + ")  " + match
+        " (" + AZ[kVal] + ")  " + match
       );
     }
     return lines.join("\n");
+  }
+
+  // --- Keystream period consistency analysis ---
+  function analyzeKeystream(ct, pt, alpha, method, cribs) {
+    cribs = cribs || CRIBS;
+    var positions = Object.keys(cribs).map(Number).sort(function (a, b) { return a - b; });
+
+    // Derive keystream values at crib positions
+    var keyVals = {};
+    for (var i = 0; i < positions.length; i++) {
+      var pos = positions[i];
+      if (pos >= ct.length || pos >= pt.length) continue;
+      var c = alphaIndex(ct[pos], alpha);
+      var p = alphaIndex(pt[pos], alpha);
+      if (method === "beaufort" || method === "autokey-beau") {
+        keyVals[pos] = mod(c + p, 26);
+      } else if (method === "varbeaufort") {
+        keyVals[pos] = mod(p - c, 26);
+      } else {
+        keyVals[pos] = mod(c - p, 26);
+      }
+    }
+
+    var html = '<table class="keystream-table"><thead><tr><th>Period</th><th>Conflicts</th><th>Verdict</th></tr></thead><tbody>';
+
+    for (var period = 2; period <= 13; period++) {
+      // Group crib positions by residue class mod period
+      var residueGroups = {};
+      for (var j = 0; j < positions.length; j++) {
+        var pos2 = positions[j];
+        if (keyVals[pos2] === undefined) continue;
+        var res = pos2 % period;
+        if (!residueGroups[res]) residueGroups[res] = [];
+        residueGroups[res].push(keyVals[pos2]);
+      }
+
+      // Count conflicts: within each residue group, all values should be equal
+      var conflicts = 0;
+      for (var res2 in residueGroups) {
+        var vals = residueGroups[res2];
+        if (vals.length < 2) continue;
+        var first = vals[0];
+        for (var v = 1; v < vals.length; v++) {
+          if (vals[v] !== first) conflicts++;
+        }
+      }
+
+      var cls = conflicts === 0 ? "conflict-0" : "conflict-high";
+      var verdict = conflicts === 0 ? "Consistent" : conflicts + " conflict" + (conflicts > 1 ? "s" : "");
+      html += '<tr><td>' + period + '</td><td class="' + cls + '">' + conflicts + '</td><td>' + verdict + '</td></tr>';
+    }
+
+    // Self-encrypting positions
+    html += '</tbody></table>';
+    html += '<p style="margin-top: var(--sp-3); margin-bottom: 0;"><small class="text-muted">';
+    html += 'Self-encrypting positions: ';
+    var selfEnc = [];
+    if (ct.length > 32 && pt.length > 32 && ct[32] === pt[32]) selfEnc.push("32 (CT=PT=" + ct[32] + ")");
+    if (ct.length > 73 && pt.length > 73 && ct[73] === pt[73]) selfEnc.push("73 (CT=PT=" + ct[73] + ")");
+    html += selfEnc.length > 0 ? selfEnc.join(", ") : "None detected";
+    html += '</small></p>';
+
+    return html;
   }
 
   function classifyScore(score) {
@@ -402,6 +741,85 @@
     if (score >= 18) return "signal";
     if (score >= 10) return "store";
     return "noise";
+  }
+
+  // --- Elimination check ---
+  function checkElimination() {
+    var trans = transMethod.value;
+    var sub = subMethod.value;
+    var key = trans + ":" + sub;
+    var entry = ELIMINATIONS[key];
+
+    if (!entry) {
+      eliminationWarning.innerHTML = "";
+      eliminationWarning.className = "";
+      return;
+    }
+
+    var cls = "wb-warning wb-warning-" + entry.severity;
+    var label = entry.severity === "proven" ? "PROVEN IMPOSSIBLE"
+      : entry.severity === "exhausted" ? "EXHAUSTIVELY TESTED"
+      : "OPEN TERRITORY";
+
+    eliminationWarning.className = cls;
+    eliminationWarning.innerHTML = "<strong>" + label + "</strong> " + entry.msg;
+  }
+
+  // --- Presets ---
+  function applyPreset(name) {
+    // Reset null mask
+    nullMode.value = "disabled";
+    nullManualGroup.classList.add("hidden");
+    nullExtractedDiv.classList.add("hidden");
+
+    switch (name) {
+      case "vig-kryptos":
+        transMethod.value = "none";
+        subMethod.value = "vigenere";
+        subKey.value = "KRYPTOS";
+        subAlphabet.value = "AZ";
+        break;
+      case "beau-kryptos-ka":
+        transMethod.value = "none";
+        subMethod.value = "beaufort";
+        subKey.value = "KRYPTOS";
+        subAlphabet.value = "KA";
+        break;
+      case "col7-vig":
+        transMethod.value = "columnar";
+        document.getElementById("trans-width").value = "7";
+        document.getElementById("trans-keyword").value = "";
+        document.getElementById("trans-colorder").value = "";
+        subMethod.value = "vigenere";
+        subKey.value = "KRYPTOS";
+        subAlphabet.value = "AZ";
+        break;
+      case "rail-beau":
+        transMethod.value = "railfence";
+        document.getElementById("trans-depth").value = "7";
+        subMethod.value = "beaufort";
+        subKey.value = "KRYPTOS";
+        subAlphabet.value = "AZ";
+        break;
+      case "serpentine-vig":
+        transMethod.value = "serpentine";
+        document.getElementById("trans-serp-width").value = "10";
+        document.getElementById("trans-serp-vertical").checked = false;
+        subMethod.value = "vigenere";
+        subKey.value = "KRYPTOS";
+        subAlphabet.value = "AZ";
+        break;
+      case "blank":
+        transMethod.value = "none";
+        subMethod.value = "vigenere";
+        subKey.value = "";
+        subAlphabet.value = "AZ";
+        break;
+    }
+
+    updateTransOptions();
+    updateSubOptions();
+    runPipeline();
   }
 
   // --- UI Logic ---
@@ -414,6 +832,9 @@
     var m = transMethod.value;
     showHide(transColumnar, m === "columnar");
     showHide(transRailfence, m === "railfence");
+    showHide(transSerpentine, m === "serpentine");
+    showHide(transSpiral, m === "spiral");
+    showHide(transMyszkowski, m === "myszkowski");
     showHide(transManual, m === "manual");
   }
 
@@ -425,13 +846,54 @@
     showHide(subCaesarGroup, needsCaesar);
   }
 
+  function updateNullOptions() {
+    var m = nullMode.value;
+    showHide(nullManualGroup, m === "manual");
+
+    var nullPos = getNullPositions();
+    if (m !== "disabled" && nullPos.length > 0) {
+      var extracted = extractCT(CT, nullPos);
+      nullExtractedCt.textContent = extracted;
+      nullExtractedLen.textContent = extracted.length;
+      nullCountSpan.textContent = nullPos.length;
+      showHide(nullExtractedDiv, true);
+    } else {
+      showHide(nullExtractedDiv, false);
+    }
+
+    // Re-render CT display with null highlighting
+    var showW = wHighlight.checked;
+    var nullSet = {};
+    for (var i = 0; i < nullPos.length; i++) nullSet[nullPos[i]] = true;
+    renderCT(CT, ctDisplay, { showW: showW, nullPositions: nullSet });
+  }
+
   function runPipeline() {
+    // Check elimination status
+    checkElimination();
+
+    // Step 0: Null mask
+    var nullPos = getNullPositions();
+    var workingCT = CT;
+    var activeCribs = CRIBS;
+
+    if (nullPos.length > 0) {
+      var cribModel = nullCribModel.value;
+      if (cribModel === "A") {
+        // Model A: remove nulls, cribs shift
+        workingCT = extractCT(CT, nullPos);
+        activeCribs = remapCribs(nullPos);
+      }
+      // Model B: cribs stay at original positions, pipeline runs on full CT
+      // (null positions in PT are garbage — not scored)
+    }
+
     // Step 1: Transposition
-    var workingCT = applyTransposition(CT);
+    workingCT = applyTransposition(workingCT);
     var showTrans = transMethod.value !== "none";
 
     if (showTrans) {
-      renderCT(workingCT, transposedCt);
+      renderCT(workingCT, transposedCt, { cribs: activeCribs });
       showHide(transResult, true);
     } else {
       showHide(transResult, false);
@@ -449,11 +911,11 @@
     showHide(resultsPanel, true);
 
     // Render plaintext with crib highlighting
-    renderCT(pt, ptDisplay);
+    renderCT(pt, ptDisplay, { cribs: activeCribs });
 
     // Score
     var alpha = getAlphabet();
-    var cribResult = scoreCribs(pt);
+    var cribResult = scoreCribs(pt, activeCribs);
     var ic = calcIC(pt);
     var bean = checkBean(workingCT, pt, alpha, subMethod.value);
     var free = freeCribSearch(pt);
@@ -467,7 +929,8 @@
     scoreBean.style.color = bean === true ? "var(--green)" : (bean === false ? "var(--red)" : "");
     scoreFree.textContent = free;
 
-    keystreamDetail.textContent = deriveKeystream(workingCT, pt, alpha, subMethod.value);
+    keystreamDetail.textContent = deriveKeystream(workingCT, pt, alpha, subMethod.value, activeCribs);
+    keystreamAnalysis.innerHTML = analyzeKeystream(workingCT, pt, alpha, subMethod.value, activeCribs);
   }
 
   // --- Event listeners ---
@@ -492,9 +955,45 @@
   subShift.addEventListener("input", onInput);
   subAlphabet.addEventListener("change", runPipeline);
   document.getElementById("trans-width").addEventListener("input", onInput);
+  document.getElementById("trans-keyword").addEventListener("input", onInput);
   document.getElementById("trans-colorder").addEventListener("input", onInput);
   document.getElementById("trans-depth").addEventListener("input", onInput);
   document.getElementById("trans-perm").addEventListener("input", onInput);
+  document.getElementById("trans-serp-width").addEventListener("input", onInput);
+  document.getElementById("trans-serp-vertical").addEventListener("change", runPipeline);
+  document.getElementById("trans-spiral-width").addEventListener("input", onInput);
+  document.getElementById("trans-spiral-ccw").addEventListener("change", runPipeline);
+  document.getElementById("trans-mysz-keyword").addEventListener("input", onInput);
+
+  // W-highlight toggle
+  wHighlight.addEventListener("change", function () {
+    showHide(wSegments, wHighlight.checked);
+    var nullPos = getNullPositions();
+    var nullSet = {};
+    for (var i = 0; i < nullPos.length; i++) nullSet[nullPos[i]] = true;
+    renderCT(CT, ctDisplay, { showW: wHighlight.checked, nullPositions: nullSet });
+  });
+
+  // Null mask controls
+  nullMode.addEventListener("change", function () {
+    updateNullOptions();
+    runPipeline();
+  });
+  nullPositionsInput.addEventListener("input", function () {
+    clearTimeout(debounce);
+    debounce = setTimeout(function () { updateNullOptions(); runPipeline(); }, 300);
+  });
+  nullCribModel.addEventListener("change", runPipeline);
+
+  // Preset cards
+  var presetCards = document.querySelectorAll(".preset-card[data-preset]");
+  for (var pi = 0; pi < presetCards.length; pi++) {
+    (function (card) {
+      card.addEventListener("click", function () {
+        applyPreset(card.getAttribute("data-preset"));
+      });
+    })(presetCards[pi]);
+  }
 
   // Init
   updateTransOptions();

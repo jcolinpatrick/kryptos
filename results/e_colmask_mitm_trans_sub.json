@@ -1,0 +1,10 @@
+{
+  "experiment": "E-COLMASK-MITM-TRANS-SUB",
+  "experiment_id": "E-COLMASK-MITM-TRANS-SUB",
+  "description": "MITM: columnar transposition × periodic substitution on 73-char column mask extract. w7-9 exhaustive × p1-13 × Vig/Beau/VBeau × key-at-CT + key-at-PT models. Also rail fence and route ciphers.",
+  "verdict": "NOISE",
+  "best_score": 18,
+  "total_configs": 31800000,
+  "timestamp": "2026-03-12",
+  "key_finding": "Best 18/24 at w9/p11/vigenere. Monte Carlo verification (100K random w9 perms at p11) shows ~3.6 expected hits in full 362,880 search = MARGINAL NOISE. Decrypted texts have IC 0.035-0.044 (random), zero crib matches at expected positions."
+}
