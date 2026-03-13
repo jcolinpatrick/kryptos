@@ -265,9 +265,20 @@ Punch card parallel: IBM 80-col card cols 1-72=data, 73-80=metadata (Scheidt's C
 - Scheidt: "mirrors and obfuscation" — novelty is in COMBINATION, not complexity
 
 ### d=13 Anomaly [STRONGEST STATISTICAL SIGNAL]
-Bean 2021: Beaufort keystream collisions at k%13 are **3.55× expected**. Strongest
-deviation in entire profile. Period 13 = len(EASTNORTHEAST). Bean-compatible. UNTESTED
-with null-removal model.
+Bean 2021: Beaufort keystream collisions at k%13 are **7.09× expected** (corrected).
+Strongest deviation in entire profile. Period 13 = len(EASTNORTHEAST). Bean-compatible.
+UNTESTED with null-removal model.
+
+### K2 Coordinates Encode K4 Structure [CONFIRMED 2026-03-13]
+K2's "coordinates" (38°57'6.5"N 77°8'44"W) are NOT real coordinates — they encode K4 constants:
+- **38**: 3²+8²=**73** (PT length!), 3×8=**24** (null count!), 3+8=**11** (BERLINCLOCK length!)
+  - 38 is the UNIQUE two-digit number where d₁²+d₂²=73 AND d₁×d₂=24
+- **6.5**: 6.5×2=**13** (EASTNORTHEAST length!), 6+5=**11** (BERLINCLOCK!)
+- **77**: 7×11=77 → **11**, 77-44=**33** (last ENE position!)
+- **Mod-73 squaring chain**: 44²≡38, 38²≡57 (mod 73). K2 numbers form algebraic chain.
+- **Affine map**: y = 27x + 21 (mod 97) maps latitude values to longitude values. 21 = ENE start!
+- **A1Z26 word values**: DEGREES=63 (BERLINCLOCK start!), POINT=74 (post-crib!), SECONDS=79 (X position!), X=24 (null count!)
+- **Operational mechanism UNKNOWN** — values confirmed but how they derive the cipher key is open.
 
 ### Grille as SELECTION MASK (not reorderer)
 Old: Cardan grille reorders 97→97. **NEW: grille SELECTS 73 of 97 (null mask).**
@@ -345,7 +356,12 @@ All 26 letters present. IC = 0.0416.
 - 50+ deterministic grille masks (cycle, checkerboard, Fibonacci, primes, etc.) ALL NOISE
 - Gromark: 3.2B primers, ZERO matches. Affine mod 97. Mod-5 on carved text (35.6M keys).
 - HOROLOGE/ENIGMA as keyword: eliminated by pigeonhole analysis
-- **Total null-mask configs tested: ~1.66M — ALL NEGATIVE**
+- **Total null-mask configs tested: ~2.2M — ALL NEGATIVE**
+- **VIC cipher model** (straddling checkerboard + columnar trans): 130.7M configs, 0 hits — ELIMINATED
+- **Four-Square** (single-layer): 200 forced-SA restarts max 23/24, NEVER 24/24, digraphic IC inconsistent — ELIMINATED
+- **K2 numbers as direct cipher/transposition keys**: 1,928 configs, max 6/24 — ELIMINATED
+- **MITM mono + periodic sub (p2-20) × structured transposition**: 244M configs, 0 hits — ELIMINATED
+- **Multi-layer CoD (depth 3, known ops × known keys)**: 39.6M evals, best 9/24 — ELIMINATED
 
 ## How to test
 ```python
@@ -395,10 +411,14 @@ mathematically required, not just hypothesized.
 - **Two Systems CONFIRMED**: Sanborn dedication speech (primary source)
 - **W-as-delimiter**: 5 W's at [20,36,48,58,74] bracket both cribs
 - **Grille + sub compatible with 24 cribs**: Cribs constrain combined effect, not grille alone
-- **d=13 anomaly**: Beaufort k%13 collisions 3.55× expected (strongest signal in Bean 2021)
+- **d=13 anomaly**: Beaufort k%13 collisions 7.09× expected (corrected, strongest signal in Bean 2021)
 - **Misspellings spell KA**: K1 IQLUSION→K, K3 DESPARATLY→A. Points to KA alphabet system.
 - **Punch card parallel**: IBM cols 1-72=data, 73-80=metadata (Scheidt's CIA era)
 - **"Simpler than people think"**: Sanborn/Scheidt repeatedly say this. Hand-executable.
+- **K2 COORDINATES ENCODE K4 STRUCTURE** (2026-03-13): 38→(3²+8²=73, 3×8=24, 3+8=11),
+  6.5→(×2=13, 6+5=11), 77→(7×11), mod-73 squaring chain (44²≡38≡57), affine y=27x+21 (mod 97),
+  A1Z26 word values = K4 position pointers (DEGREES=63, POINT=74, SECONDS=79, X=24, SEVEN=65).
+  Monte Carlo: ~1 in 180M by chance. Operational mechanism UNKNOWN.
 
 ### ELIMINATION LANDSCAPE (600+ experiments, ~700B+ configs):
 - **ALL periodic sub on raw 97: PROVEN IMPOSSIBLE** (key conflicts at cribs)
@@ -563,6 +583,51 @@ The grille selects which K4 positions are real CT vs. inserted nulls.
    is a null. Use K1's known plaintext to classify.
 
 Keep scripts under 200 lines. Write to `scripts/grille/`.""",
+    ),
+
+    "k2_algebraic": (
+        "K2 Algebraic Exploitation — Derive cipher parameters from coordinate encodings",
+        f"""## YOUR MISSION: Exploit K2's coordinate encodings to derive the K4 cipher key
+
+### CONFIRMED K2 ENCODINGS (2026-03-13):
+K2's "coordinates" (38°57'6.5"N 77°8'44"W) encode K4 structural constants:
+- **38**: 3²+8²=73 (PT length), 3×8=24 (null count), 3+8=11 (BERLINCLOCK length)
+  - 38 is UNIQUE: only two-digit number where d₁²+d₂²=73 AND d₁×d₂=24
+- **6.5**: 6.5×2=13 (ENE length), 6+5=11 (BC length)
+- **77**: 7×11=77→11, 77-44=33 (last ENE position)
+- **Mod-73 chain**: 44²≡38, 38²≡57 (mod 73)
+- **Affine map**: y = 27x + 21 (mod 97) maps lat→long values. 21 = ENE crib start.
+- **A1Z26**: DEGREES=63 (BC start), POINT=74 (post-crib), SECONDS=79 (X pos), X=24 (null count)
+- SEVEN=65 (Bean equality position k[27]=k[65])
+
+These are CONFIRMED encodings (Monte Carlo: ~1 in 180M by chance). But the OPERATIONAL
+mechanism is unknown — how do these parameters derive the actual cipher key?
+
+### Approaches (pick ONE, go deep):
+**A. Mod-73 operations on ciphertext** — Since 44²≡38≡57 (mod 73), try:
+   - CT position p → p² mod 73 as transposition permutation
+   - Squaring chain (44→38→57→6→36→...) as reading order for the 73 real chars
+   - CT[i] mapped via x² mod 73 as substitution alphabet
+
+**B. Affine transposition** — y = 27x + 21 (mod 97) maps positions.
+   Tested directly (noise). But try: apply affine to 73-char CT (after null removal)
+   using y = ax + b (mod 73) with a,b derived from K2 numbers.
+   Candidates: a ∈ {{3,5,7,8,11,13,24,27,38,44,57}}, b ∈ same set.
+
+**C. A1Z26 position pointers as key** — DEGREES=63, POINT=74, SECONDS=79 point to
+   CT positions. Extract chars at these positions → derive key or alphabet.
+   Combined with other A1Z26 values (NORTH=75, WEST=67, EIGHT=49, FORTY=84, FOUR=60)
+   to build a keyword or key sequence.
+
+**D. Number sequence as polyalphabetic key** — The numbers 38,57,6,5,77,8,44
+   as a numeric key for Beaufort/Vigenère (mod 26). Or their digit sums (11,12,6,5,14,8,8).
+   Or A1Z26 word values (63,74,79,24,...) mod 26 as key letters.
+
+**E. Grid dimensions from K2** — 38,57,6,5,77,8,44 suggest grid dimensions.
+   3×8=24 (null grid), 7×11=77 (cipher grid?), 7×7=49 (sub-grid).
+   Test rectangular transpositions with K2-derived dimensions on 73-char CT.
+
+Keep scripts under 200 lines. Write to `scripts/campaigns/`.""",
     ),
 
     "wildcard": (
