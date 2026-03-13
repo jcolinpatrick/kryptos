@@ -495,6 +495,45 @@ verdict = "NOISE — all high scores at high periods (underdetermined). Discrimi
 configs_tested = 2262
 repro_command = "PYTHONPATH=src python3 -u scripts/grille/e_native_grid_reading_01.py"
 
+[elimination.E-FLEISSNER-8X9-180]
+title = "Fleissner 8×9 turning grille (180° rotation) + periodic substitution"
+description = "Fleissner 8×9 turning grille on 72-char delimiter model (remove first O or last R → 96 chars, 24 nulls → 72 = 8×9). 180° rotation gives 36 position pairs, 2^36 ≈ 68.7B configs. P1: Periodic sub (p1-13) proven impossible under ANY null mask for BOTH delimiter models — 14 distinct Vig / 12 distinct Beau key values at crib positions are invariant to Fleissner configuration. P2: Keyword SA (8 keywords × Vig/Beau × 20 restarts × 100K steps): best quadgram -6.584 = NOISE. P3: Monte Carlo 500K random Fleissner trials: max 6/24 crib matches = NOISE."
+category = "multi-layer"
+subcategory = "turning-grille"
+scope_limitations = "Only tests periodic sub (p1-13) and keyword Vig/Beau after Fleissner transposition. Non-periodic ciphers (autokey, running key, custom tableau) with Fleissner remain OPEN."
+assumptions = "72 = 8×9 Fleissner grid; Delimiter model (remove first O or last R); 180° turning grille; Periodic substitution or keyword substitution"
+confidence_tier = 1
+truth_tag = "[INTERNAL RESULT]"
+verdict = "PERIODIC SUB IMPOSSIBLE (algebraic proof). Keyword SA = NOISE. MC baseline max 6/24."
+configs_tested = 500000
+repro_command = "PYTHONPATH=src python3 -u scripts/grille/e_fleissner_8x9_180.py"
+
+[elimination.E-MITM-MONO-TRANS]
+title = "MITM: Monoalphabetic substitution × structured transpositions"
+description = "Meet-in-the-middle attack testing monoalphabetic substitution combined with 14 families of structured transpositions. Model: PT → Transposition T → Intermediate → Mono Sub S → CT. The MITM filter exploits 24 known crib positions: 9 repeat-letter groups (E×3, T×3, A×2, S×2, C×2, L×2, N×2, O×2, R×2) must map to same CT letter, and 13 distinct PT letters must map to 13 distinct CT letters (injectivity). This eliminates >99.99% of transpositions instantly. Families: identity, reversal, stride/decimation (all d/starts), rail fence (2-30), columnar exhaustive (w2-10), reverse columnar (w2-7), columnar keyword (w11-20), route ciphers (spiral/snake/diagonal), double rotation (K3-style), Myszkowski, reversed CT + all above."
+category = "multi-layer"
+subcategory = "mitm-transposition"
+scope_limitations = "Only tests monoalphabetic (single-alphabet) substitution. Periodic sub tested separately in E-MITM-PERIODIC-TRANS. Assumes cribs at carved-text positions."
+assumptions = "Cribs at positions 21-33 (EASTNORTHEAST) and 63-73 (BERLINCLOCK); monoalphabetic substitution; structured transposition families"
+confidence_tier = 1
+truth_tag = "[INTERNAL RESULT]"
+verdict = "ZERO mono-consistent transpositions found. Mono sub + standard structured transposition = ELIMINATED."
+configs_tested = 4207963
+repro_command = "PYTHONPATH=src python3 -u scripts/two_system/e_mitm_mono_transposition.py"
+
+[elimination.E-MITM-PERIODIC-TRANS]
+title = "MITM: Periodic substitution (p=2-20) × structured transpositions"
+description = "Meet-in-the-middle attack testing periodic Vigenère/Beaufort/Variant-Beaufort (periods 2-20) combined with 14 families of structured transpositions. Model: PT → Transposition T → Intermediate → Periodic Sub → CT. For each transposition, crib-derived key values at 24 known positions must be consistent within each residue class (T(j) % period). 4,207,963 transpositions × 19 periods × 3 variants = 239,853,891 total configurations. Expected false positives: ~0 at p≤17, <1 at p=18-19, ~8 at p=20. Same 14 transposition families as E-MITM-MONO-TRANS."
+category = "multi-layer"
+subcategory = "mitm-transposition"
+scope_limitations = "Only tests periodic substitution. Non-periodic ciphers (autokey, running key, custom tableau) + transposition remain OPEN. Assumes cribs at carved-text positions."
+assumptions = "Cribs at positions 21-33 and 63-73; periodic Vig/Beau/VBeau at periods 2-20; structured transposition families"
+confidence_tier = 1
+truth_tag = "[INTERNAL RESULT]"
+verdict = "ZERO periodic-consistent transpositions found across all 240M configs. Periodic sub + standard structured transposition = ELIMINATED."
+configs_tested = 239853891
+repro_command = "PYTHONPATH=src python3 -u scripts/two_system/e_mitm_periodic_transposition.py"
+
 # ── Keyword enrichment for searchability ──────────────────────────────────
 
 [elimination.E-KASISKI-00]
