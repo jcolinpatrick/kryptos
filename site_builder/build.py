@@ -114,9 +114,16 @@ def build():
         "total_configs_disproven": total_configs_disproven,
     }
 
-    # 6) Prepare output directory
+    # 6) Prepare output directory (preserve stats/ which is managed by GoAccess)
     if os.path.exists(OUTPUT_DIR):
-        shutil.rmtree(OUTPUT_DIR)
+        for entry in os.listdir(OUTPUT_DIR):
+            if entry == "stats":
+                continue
+            entry_path = os.path.join(OUTPUT_DIR, entry)
+            if os.path.isdir(entry_path):
+                shutil.rmtree(entry_path)
+            else:
+                os.remove(entry_path)
     os.makedirs(OUTPUT_DIR, exist_ok=True)
 
     # 7) Build category browse data
@@ -279,14 +286,17 @@ def build():
     n_indexed = write_search_index(eliminations, search_index_path)
     print(f"\n  Search index: {n_indexed} documents → {search_index_path}")
 
-    # 10) Copy static assets
+    # 10) Copy static assets (including subdirectories like fonts/)
     print("\nCopying static assets...")
     static_out = os.path.join(OUTPUT_DIR, "static")
     os.makedirs(static_out, exist_ok=True)
     for fname in os.listdir(STATIC_DIR):
         src = os.path.join(STATIC_DIR, fname)
         dst = os.path.join(static_out, fname)
-        if os.path.isfile(src):
+        if os.path.isdir(src):
+            shutil.copytree(src, dst, dirs_exist_ok=True)
+            print(f"  {fname}/")
+        elif os.path.isfile(src):
             shutil.copy2(src, dst)
             print(f"  {fname}")
 
