@@ -2,10 +2,16 @@
 """
 Cipher: Crib position reversal — cribs in PT73 space, not CT97 space
 Family: campaigns
-Status: active
+Status: eliminated
 Keyspace: SA optimization of 24-null mask × 6 keywords × 4 cipher types × 2 alphabets
-Last run: never
-Best score: n/a
+Last run: 2026-03-14
+Best score: 17/24 (PALIMPSEST:AZ_autokey_beau, ENE@21, BCL@62) — NOISE (control=16/24)
+
+RESULT: ELIMINATED. The null mask has ~C(97,24) degrees of freedom, allowing SA
+to achieve 15-17/24 regardless of keyword. Control test with nonsense keywords
+(ZZZZZZZZZ, XYZZY, GIBBERISH) achieves 16/24 with same SA effort. Random baseline
+avg=0.9/24, max=5-6/24. The 17/24 hit is underdetermined — null mask overfitting.
+Crib-position-reversal model with autokey/vig/beau does NOT discriminate keywords.
 
 CRIB POSITION REVERSAL HYPOTHESIS
 ===================================
