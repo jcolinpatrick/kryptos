@@ -1168,6 +1168,7 @@
         nullMode.value = "manual";
         nullPositionsInput.value = "0,1,2,5,8,12,14,20,36,38,39,40,52,55,58,59,74,75,78,84,85,88,94,96";
         nullCribModel.value = "A";
+        document.getElementById("null-mask-panel").open = true;
         updateNullOptions();
         // Step 1: Columnar width 7
         transMethod.value = "columnar";
