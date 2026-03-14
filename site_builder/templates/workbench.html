@@ -193,7 +193,14 @@
       <option value="varbeaufort">Variant Beaufort</option>
       <option value="autokey-vig">Autokey (Vigen&egrave;re)</option>
       <option value="autokey-beau">Autokey (Beaufort)</option>
+      <option value="quagmire-ii">Quagmire II (sculpture tableau)</option>
+      <option value="quagmire-ii-autokey">Quagmire II Autokey</option>
+      <option value="four-square">Four-Square</option>
+      <option value="porta">Porta</option>
+      <option value="gronsfeld">Gronsfeld (numeric key)</option>
+      <option value="affine">Affine (key = &ldquo;a,b&rdquo;)</option>
       <option value="caesar">Caesar</option>
+      <option value="rot13">ROT13</option>
       <option value="atbash">Atbash</option>
       <option value="none">None (passthrough)</option>
     </select>
@@ -201,6 +208,16 @@
     <div id="sub-key-group">
       <label for="sub-key" id="sub-key-label">Key</label>
       <input type="text" id="sub-key" placeholder="e.g. KRYPTOS">
+    </div>
+
+    <div id="sub-key2-group" class="hidden">
+      <label for="sub-key2">Key 2 <small class="text-muted">(Four-Square: second keyword)</small></label>
+      <input type="text" id="sub-key2" placeholder="e.g. BERLINCLOCK">
+    </div>
+
+    <div id="sub-indicator-group" class="hidden">
+      <label for="sub-indicator">Indicator letter <small class="text-muted">(Q2: alignment point in KA, default K)</small></label>
+      <input type="text" id="sub-indicator" value="K" maxlength="1">
     </div>
 
     <div id="sub-caesar-group" class="hidden">
