@@ -129,7 +129,7 @@
   var scoreTrigram = document.getElementById("score-trigram");
   var gridViewCheckbox = document.getElementById("grid-view");
   var gridViewContainer = document.getElementById("grid-view-container");
-  var gridViewPre = document.getElementById("grid-view-pre");
+  // gridViewPre removed — grid view now uses gridViewContainer directly
   var historyCount = document.getElementById("history-count");
   var historyLog = document.getElementById("history-log");
 
@@ -966,24 +966,108 @@
     return html;
   }
 
-  // --- Grid view (28x31 master grid) ---
+  // --- Grid view (sculpture layout: K4 starts at row 11 col 27 in bottom-14 grid) ---
+  // K4 = 97 chars. In the 31-wide grid: first 4 chars at cols 27-30 of row 0,
+  // then 3 full rows (cols 0-30), then final row with 97 - 4 - 93 = 0...
+  // Actually: 97 = 4 + 31 + 31 + 31 = 97. So row 0: 4 chars (cols 27-30),
+  // rows 1-3: 31 chars each. Total = 4 + 93 = 97. ✓
+  var K4_START_COL = 27;
+  var K4_GRID_WIDTH = 31;
+
   function renderGridView(nullPos) {
-    var GRID_WIDTH = 31;
     var nullSet = {};
     for (var i = 0; i < nullPos.length; i++) nullSet[nullPos[i]] = true;
-    var html = "";
-    for (var i = 0; i < CT.length; i++) {
-      if (i > 0 && i % GRID_WIDTH === 0) html += "\n";
-      var ch = CT[i];
-      if (CRIBS[i] !== undefined) {
-        html += '<span class="crib">' + ch + "</span>";
-      } else if (nullSet[i]) {
-        html += '<span class="null-char">' + ch + "</span>";
-      } else {
-        html += ch;
+
+    // Build grid: K4 starts at col 27, wraps at width 31
+    // Row 0: cols 27-30 (4 chars: positions 0-3)
+    // Row 1: cols 0-30 (31 chars: positions 4-34)
+    // Row 2: cols 0-30 (31 chars: positions 35-65)
+    // Row 3: cols 0-30 (31 chars: positions 66-96)
+    var grid = []; // grid[row][col] = { pos: CT index, ch: letter } or null
+    var nRows = 4; // row 0 (partial) + 3 full rows
+
+    for (var r = 0; r < nRows; r++) {
+      grid[r] = [];
+      for (var c = 0; c < K4_GRID_WIDTH; c++) {
+        var ctPos;
+        if (r === 0) {
+          if (c < K4_START_COL) {
+            grid[r][c] = null; // empty cell before K4 starts
+            continue;
+          }
+          ctPos = c - K4_START_COL; // 0,1,2,3
+        } else {
+          ctPos = 4 + (r - 1) * K4_GRID_WIDTH + c;
+        }
+        if (ctPos < CT.length) {
+          grid[r][c] = { pos: ctPos, ch: CT[ctPos] };
+        } else {
+          grid[r][c] = null;
+        }
       }
     }
-    gridViewPre.innerHTML = html;
+
+    // Render as HTML table
+    var html = '<table class="grid-table"><thead><tr><th class="row-label"></th>';
+    for (var c = 0; c < K4_GRID_WIDTH; c++) {
+      html += '<th style="font-size:9px;color:var(--text-tertiary);text-align:center;">' + c + '</th>';
+    }
+    html += '</tr></thead><tbody>';
+
+    // Show row labels as the actual grid row numbers (24-27 in the full 28×31 grid)
+    var rowLabels = [24, 25, 26, 27];
+
+    for (var r = 0; r < nRows; r++) {
+      html += '<tr><td class="row-label">' + rowLabels[r] + '</td>';
+      for (var c = 0; c < K4_GRID_WIDTH; c++) {
+        var cell = grid[r][c];
+        if (!cell) {
+          html += '<td class="empty-cell"></td>';
+          continue;
+        }
+        var classes = [];
+        if (CRIBS[cell.pos] !== undefined) classes.push("crib");
+        if (nullSet[cell.pos]) classes.push("null-cell");
+        html += '<td class="' + classes.join(" ") + '" data-pos="' + cell.pos + '" title="pos ' + cell.pos + '">' + cell.ch + '</td>';
+      }
+      html += '</tr>';
+    }
+    html += '</tbody></table>';
+    html += '<p class="grid-info">K4 on the sculpture: row 24 col 27 of the 28&times;31 master grid. ';
+    html += 'Click cells to toggle null positions. ';
+    html += '<span style="color:var(--green);font-weight:700;">Green</span> = known crib positions. ';
+    html += '<span style="opacity:0.25;text-decoration:line-through;">Dimmed</span> = null (removed).</p>';
+
+    gridViewContainer.innerHTML = html;
+
+    // Attach click handlers to cells
+    var cells = gridViewContainer.querySelectorAll("td[data-pos]");
+    for (var ci = 0; ci < cells.length; ci++) {
+      (function (cell) {
+        cell.addEventListener("click", function () {
+          var pos = parseInt(cell.getAttribute("data-pos"));
+          toggleNullPosition(pos);
+        });
+      })(cells[ci]);
+    }
+  }
+
+  function toggleNullPosition(pos) {
+    // Switch to manual mode if not already
+    if (nullMode.value !== "manual") {
+      nullMode.value = "manual";
+    }
+    var current = nullPositionsInput.value.split(",").map(function (s) { return s.trim(); }).filter(Boolean).map(Number);
+    var idx = current.indexOf(pos);
+    if (idx >= 0) {
+      current.splice(idx, 1); // Remove
+    } else {
+      current.push(pos); // Add
+    }
+    current.sort(function (a, b) { return a - b; });
+    nullPositionsInput.value = current.join(",");
+    updateNullOptions();
+    runPipeline();
   }
 
   function classifyScore(score) {
