@@ -975,6 +975,7 @@
   var K4_GRID_WIDTH = 31;
 
   function renderGridView(nullPos) {
+    if (!nullPos) nullPos = [];
     var nullSet = {};
     for (var i = 0; i < nullPos.length; i++) nullSet[nullPos[i]] = true;
 
@@ -1071,6 +1072,20 @@
     }
     current.sort(function (a, b) { return a - b; });
     nullPositionsInput.value = current.join(",");
+
+    // Directly update grid cell classes without full re-render
+    var cells = gridViewContainer.querySelectorAll("td[data-pos]");
+    var newNullSet = {};
+    for (var i = 0; i < current.length; i++) newNullSet[current[i]] = true;
+    for (var ci = 0; ci < cells.length; ci++) {
+      var cellPos = parseInt(cells[ci].getAttribute("data-pos"));
+      if (newNullSet[cellPos]) {
+        cells[ci].classList.add("null-cell");
+      } else {
+        cells[ci].classList.remove("null-cell");
+      }
+    }
+
     updateNullOptions();
     runPipeline();
   }
