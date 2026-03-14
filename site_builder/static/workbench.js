@@ -60,7 +60,17 @@
     "spiral:vigenere":       { severity: "open", msg: "Spiral + Vigen\u00e8re: open territory. Spiral transposition not yet tested." },
     "spiral:beaufort":       { severity: "open", msg: "Spiral + Beaufort: open territory." },
     "myszkowski:vigenere":   { severity: "open", msg: "Myszkowski + Vigen\u00e8re: open territory. Tied-column transposition not exhaustively tested." },
-    "myszkowski:beaufort":   { severity: "open", msg: "Myszkowski + Beaufort: open territory." }
+    "myszkowski:beaufort":   { severity: "open", msg: "Myszkowski + Beaufort: open territory." },
+    "none:quagmire-ii":      { severity: "exhausted", msg: "Quagmire II (sculpture tableau) on raw 97: all periods 1\u201326 eliminated. Cross-alphabet key conflicts at all periods." },
+    "none:quagmire-ii-autokey": { severity: "exhausted", msg: "Q2 autokey on raw 97: 390 indicator/keyword/variant configs tested (2026-03-14). Best 13/24 with null mask." },
+    "columnar:quagmire-ii":  { severity: "open", msg: "Columnar + Q2: KOMPASS:vig+col7 reached 14/24. Below DEFECTOR:AZ_beau+col7 (15/24). Partially explored." },
+    "columnar:quagmire-ii-autokey": { severity: "open", msg: "Columnar + Q2 autokey: open territory." },
+    "none:four-square":      { severity: "proven", msg: "Four-Square on raw 97: eliminated. SA 200\u00d780K configs, ceiling 23/24 (never 24). Digraphic IC=1.66 (random)." },
+    "columnar:four-square":  { severity: "open", msg: "Columnar + Four-Square: open territory." },
+    "none:porta":            { severity: "proven", msg: "Porta cipher: eliminated analytically (2026-03-13). Key conflicts at all periods." },
+    "none:gronsfeld":        { severity: "proven", msg: "Gronsfeld: eliminated analytically (2026-03-13). Special case of Vigen\u00e8re with digits 0\u20139." },
+    "none:affine":           { severity: "proven", msg: "Affine cipher on 97 chars: all 9,312 (a,b) pairs tested exhaustively. Best 8/24 (noise)." },
+    "none:rot13":            { severity: "proven", msg: "ROT13: special case of Caesar shift 13 \u2014 mathematically eliminated." }
   };
 
   // --- DOM Elements ---
@@ -463,6 +473,27 @@
     if (method === "varbeaufort") return varBeaufort(text, key, alpha);
     if (method === "autokey-vig") return autokeyVig(text, key, alpha);
     if (method === "autokey-beau") return autokeyBeau(text, key, alpha);
+    if (method === "quagmire-ii") {
+      var ind = (document.getElementById("sub-indicator").value || "K").toUpperCase();
+      return quagmireII(text, key, ind);
+    }
+    if (method === "quagmire-ii-autokey") {
+      var ind2 = (document.getElementById("sub-indicator").value || "K").toUpperCase();
+      return quagmireIIAutokey(text, key, ind2);
+    }
+    if (method === "four-square") {
+      var key2 = (document.getElementById("sub-key2").value || "").toUpperCase().replace(/[^A-Z]/g, "");
+      if (!key2) return null;
+      return fourSquare(text, key, key2);
+    }
+    if (method === "porta") return porta(text, key);
+    if (method === "gronsfeld") return gronsfeld(text, key);
+    if (method === "affine") {
+      var parts = key.split(/[^0-9]+/).filter(Boolean);
+      if (parts.length < 2) return null;
+      return affine(text, parseInt(parts[0]), parseInt(parts[1]));
+    }
+    if (method === "rot13") return rot13(text);
     return text;
   }
 
@@ -536,6 +567,149 @@
     for (var i = 0; i < ct.length; i++) {
       var c = alphaIndex(ct[i], alpha);
       pt += alpha[25 - c];
+    }
+    return pt;
+  }
+
+  // --- Quagmire II (sculpture tableau) ---
+  // The Kryptos sculpture IS a Quagmire II tableau: KA body, AZ edges.
+  // K1-K3 used Quagmire III (KA everywhere). The Q2 tableau may be for K4.
+  // CT = KA[(AZ.index(key) + KA.index(PT) - indicator_pos) % 26]
+  // Decrypt: PT = KA[(KA.index(CT) - AZ.index(key) + indicator_pos) % 26]
+  function quagmireII(ct, key, indicator) {
+    var indPos = KA.indexOf(indicator.charAt(0));
+    if (indPos < 0) indPos = 0;
+    var pt = "";
+    for (var i = 0; i < ct.length; i++) {
+      var c = KA.indexOf(ct[i]);
+      var k = AZ.indexOf(key.charAt(i % key.length));
+      pt += KA[mod(c - k + indPos, 26)];
+    }
+    return pt;
+  }
+
+  // Quagmire II Autokey: PT-feedback with AZ key indexing
+  function quagmireIIAutokey(ct, key, indicator) {
+    var indPos = KA.indexOf(indicator.charAt(0));
+    if (indPos < 0) indPos = 0;
+    var pt = "";
+    var fullKey = key.split("");
+    for (var i = 0; i < ct.length; i++) {
+      var c = KA.indexOf(ct[i]);
+      var k = AZ.indexOf(fullKey[i]);
+      var pIdx = mod(c - k + indPos, 26);
+      var pChar = KA[pIdx];
+      pt += pChar;
+      fullKey.push(pChar); // PT-feedback: next key letter = PT letter
+    }
+    return pt;
+  }
+
+  // --- Four-Square cipher ---
+  // Digraphic cipher using two 5x5 keyed grids.
+  // Since K4 uses all 26 letters, we use 6x5=30 grid (no J/Q merge needed).
+  // But classic Four-Square uses 5x5 with I=J. We implement both:
+  // Standard 5x5 (I=J merged) since that's the historical form.
+  function buildFourSquareGrid(keyword) {
+    var seen = {};
+    var grid = [];
+    // Add keyword letters first (skip J, treat as I)
+    for (var i = 0; i < keyword.length; i++) {
+      var ch = keyword[i] === "J" ? "I" : keyword[i];
+      if (!seen[ch] && ch >= "A" && ch <= "Z") {
+        seen[ch] = true;
+        grid.push(ch);
+      }
+    }
+    // Fill remaining (skip J)
+    for (var c = 0; c < 26; c++) {
+      var ch = String.fromCharCode(65 + c);
+      if (ch === "J") continue;
+      if (!seen[ch]) {
+        seen[ch] = true;
+        grid.push(ch);
+      }
+    }
+    return grid; // 25 chars
+  }
+
+  function fourSquare(ct, key1, key2) {
+    var plain = buildFourSquareGrid(""); // standard A-Z (no J)
+    var grid1 = buildFourSquareGrid(key1);
+    var grid2 = buildFourSquareGrid(key2);
+    // Normalize CT: replace J with I
+    var text = ct.replace(/J/g, "I");
+    // Pad to even length
+    if (text.length % 2 !== 0) text += "X";
+    var pt = "";
+    for (var i = 0; i < text.length; i += 2) {
+      // Find positions in keyed grids
+      var idx1 = grid1.indexOf(text[i]);
+      var idx2 = grid2.indexOf(text[i + 1]);
+      if (idx1 < 0 || idx2 < 0) { pt += text[i] + text[i + 1]; continue; }
+      var r1 = Math.floor(idx1 / 5), c1 = idx1 % 5;
+      var r2 = Math.floor(idx2 / 5), c2 = idx2 % 5;
+      // Decrypt: swap columns between grids, read from plain grids
+      pt += plain[r1 * 5 + c2];
+      pt += plain[r2 * 5 + c1];
+    }
+    return pt;
+  }
+
+  // --- Porta cipher ---
+  // Reciprocal cipher: 13 alphabets, period = key length
+  function porta(ct, key) {
+    var pt = "";
+    for (var i = 0; i < ct.length; i++) {
+      var c = ct.charCodeAt(i) - 65;
+      var k = Math.floor((key.charCodeAt(i % key.length) - 65) / 2); // 0-12
+      var p;
+      if (c < 13) {
+        p = (c + k) % 13 + 13;
+      } else {
+        p = (c - 13 - k + 13) % 13;
+      }
+      pt += String.fromCharCode(p + 65);
+    }
+    return pt;
+  }
+
+  // --- Affine cipher ---
+  // P = a_inv * (C - b) mod 26
+  function affine(ct, a, b) {
+    // Find modular inverse of a mod 26
+    var aInv = -1;
+    for (var i = 1; i < 26; i++) {
+      if ((a * i) % 26 === 1) { aInv = i; break; }
+    }
+    if (aInv < 0) return null; // a not coprime to 26
+    var pt = "";
+    for (var i = 0; i < ct.length; i++) {
+      var c = ct.charCodeAt(i) - 65;
+      pt += String.fromCharCode(mod(aInv * (c - b), 26) + 65);
+    }
+    return pt;
+  }
+
+  // --- Gronsfeld cipher (numeric key) ---
+  function gronsfeld(ct, key) {
+    var pt = "";
+    var digits = key.replace(/[^0-9]/g, "");
+    if (!digits) return null;
+    for (var i = 0; i < ct.length; i++) {
+      var c = ct.charCodeAt(i) - 65;
+      var k = parseInt(digits[i % digits.length]);
+      pt += String.fromCharCode(mod(c - k, 26) + 65);
+    }
+    return pt;
+  }
+
+  // --- ROT13 ---
+  function rot13(ct) {
+    var pt = "";
+    for (var i = 0; i < ct.length; i++) {
+      var c = ct.charCodeAt(i) - 65;
+      pt += String.fromCharCode((c + 13) % 26 + 65);
     }
     return pt;
   }
@@ -840,10 +1014,24 @@
 
   function updateSubOptions() {
     var m = subMethod.value;
-    var needsKey = ["vigenere", "beaufort", "varbeaufort", "autokey-vig", "autokey-beau"].indexOf(m) >= 0;
+    var needsKey = ["vigenere", "beaufort", "varbeaufort", "autokey-vig", "autokey-beau",
+                    "quagmire-ii", "quagmire-ii-autokey", "four-square", "porta", "gronsfeld", "affine"].indexOf(m) >= 0;
     var needsCaesar = m === "caesar";
+    var needsKey2 = m === "four-square";
+    var needsIndicator = m === "quagmire-ii" || m === "quagmire-ii-autokey";
     showHide(subKeyGroup, needsKey);
     showHide(subCaesarGroup, needsCaesar);
+    var key2Group = document.getElementById("sub-key2-group");
+    var indGroup = document.getElementById("sub-indicator-group");
+    if (key2Group) showHide(key2Group, needsKey2);
+    if (indGroup) showHide(indGroup, needsIndicator);
+    // Update key label hints
+    var keyLabel = document.getElementById("sub-key-label");
+    if (keyLabel) {
+      if (m === "affine") keyLabel.textContent = "Key (a,b)";
+      else if (m === "gronsfeld") keyLabel.textContent = "Key (digits)";
+      else keyLabel.textContent = "Key";
+    }
   }
 
   function updateNullOptions() {

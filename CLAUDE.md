@@ -28,9 +28,13 @@ Every prior experiment (600+, 669B+ configs) assumed positional correspondence o
 
 **W-as-delimiter:** 5 W's at positions [20, 36, 48, 58, 74] bracket the cribs — W at 20 immediately before EASTNORTHEAST (21), W at 74 immediately after BERLINCLOCK (73). May act as telegram-style word separators. Sanborn's clue "(CLUE) what's the point?" may reference W as period/full stop.
 
-**What we know:** [DERIVED FACT] No single-layer classical cipher works on the carved text (exhaustively tested). [DERIVED FACT] Null mask + periodic Vig/Beau/VBeau (periods 1-23) is IMPOSSIBLE for ANY choice of 24 null positions (proven 2026-03-11 via exhaustive (n1,n2,n3) enumeration). [PUBLIC FACT, PRIMARY SOURCE] Sanborn: "There are TWO SYSTEMS of enciphering the bottom text... designed to UNVEIL ITSELF... pull up one layer, come to the next." [HYPOTHESIS] The Cardan grille selects 73 of 97 positions (null mask). [ELIMINATED] Periodic Vig/Beau after null removal — proven impossible 2026-03-11. See [`reports/final_synthesis.md`](reports/final_synthesis.md) for the elimination landscape.
+**What we know:** [DERIVED FACT] No single-layer classical cipher works on the carved text (exhaustively tested). [DERIVED FACT] Null mask + periodic Vig/Beau/VBeau (periods 1-23) is IMPOSSIBLE for ANY choice of 24 null positions (proven 2026-03-11 via exhaustive (n1,n2,n3) enumeration). [DERIVED FACT] MITM sub (mono, periodic, autokey) × structured transposition (14 families, ~1.2B configs) = ZERO hits (proven 2026-03-12/13). [DERIVED FACT] Four-Square, Playfair, Two-Square, VIC cipher, 2-round Feistel, Gronsfeld, Porta, Trithemius — ALL eliminated as single layer (2026-03-13). [PUBLIC FACT, PRIMARY SOURCE] Sanborn: "There are TWO SYSTEMS of enciphering the bottom text... designed to UNVEIL ITSELF... pull up one layer, come to the next." [HYPOTHESIS] The Cardan grille selects 73 of 97 positions (null mask). See [`reports/final_synthesis.md`](reports/final_synthesis.md) for the elimination landscape.
 
-**What we don't know:** Which 24 of 97 positions are nulls, whether cribs apply to carved or real CT positions, what NON-PERIODIC cipher type operates after null removal (autokey, running key, monoalphabetic, or reordering-based model), the structural rule governing null placement.
+**Current best lead (2026-03-14):** [INTERNAL RESULT] DEFECTOR:AZ_beau + col7 transposition + null mask scores **15/24** (ene=7/13, bcl=8/11). This is a **confirmed hard 3-swap local maximum** (223.7M evals, zero improvement). Achieves 3.3% of SA restarts (5/150). 17/24 null positions are identical across all 6 distinct 15/24 masks. 4/5 W-positions are consensus nulls, supporting the W-delimiter hypothesis. DEFECTOR:AZ_beau:col7 is **uniquely** at 15/24 — all 18 other keyword/variant/alphabet combinations tested max at 14/24. Model ceiling at 15/24 suggests it may be incomplete or the correct model with wrong parameters.
+
+**K2 coordinates encode K4 structure:** [DERIVED FACT] K2's "38 degrees" → 3²+8²=**73**, 3×8=**24**, 3+8=**11**. "6.5" → ×2=**13**, 6+5=**11**. UNIQUE two-digit number with all three properties. Monte Carlo: ~1 in 180M by chance. Operational mechanism unknown.
+
+**What we don't know:** Which 24 of 97 positions are nulls, whether cribs apply to carved or real CT positions, the structural rule governing null placement, and whether the correct cipher model is a variant of the DEFECTOR:AZ_beau+col7 model or something entirely different. Running key, monoalphabetic, and autokey are all eliminated WITH standard transposition — the surviving cipher space requires either non-standard transposition, a bespoke combination, or a model we haven't conceived.
 
 ---
 
@@ -225,6 +229,8 @@ These are non-obvious pitfalls discovered through prior sessions. Check these fi
 - **Unbuffered output for background tasks**: Always use `python3 -u` when running scripts in background. Without `-u`, Python buffers stdout and you see no output until the process ends.
 - **Scoring underdetermination at high periods**: `period_consistency()` is underdetermined when `period >= (num_crib_positions / constraints_per_residue)`. At period 24, random configs score ~19.2/24; at period 17, ~17.3/24. Only period ≤7 gives meaningful discrimination (~8.2/24 expected random). **All high scores at large periods are false positives.**
 - **Bifid 5×5 impossible for K4**: All 26 letters appear in K4 CT; any cipher requiring a 25-letter alphabet (I/J merged) is eliminated.
+- **15/24 is a hard local maximum**: SA and hill-climbing on the DEFECTOR:AZ_beau+col7+null-mask model get stuck at 15/24. Exhaustive 2-swap (1.95M evals) and 3-swap (223.7M evals) find ZERO improvements. Do not waste time running more SA restarts or small-neighborhood searches on this model — explore different models or larger structural changes instead.
+- **K2 numbers are NOT direct cipher keys**: Despite encoding 73/24/13/11, K2's "38 degrees 57 minutes 6.5 seconds" as raw numbers produce only noise (6/24 max) when used as Vigenère keys, transposition keys, or autokey primers. The encoding is confirmed real but the operational mechanism is unknown.
 
 ---
 
@@ -275,8 +281,12 @@ Domain knowledge, public facts, and detailed operating policies live in separate
 - Import constants from `kryptos.kernel.constants` — never hardcode CT/cribs
 - Grille details and current hypotheses: see Quick Reference above + Claude Code auto-memory (`cardan_grille.md`, `73_char_hypothesis.md`)
 - DO NOT re-run old direct-decryption attacks on 97 chars — they assumed wrong positional correspondence
+- DO NOT re-run MITM sub×transposition — mono/periodic/autokey sub × 14 standard transposition families exhaustively eliminated (~1.2B configs, ZERO hits, 2026-03-12/13)
+- DO NOT run more SA/hill-climbing on DEFECTOR:AZ_beau+col7 — 15/24 is a confirmed hard 3-swap local max (223.7M evals)
+- **Current best lead:** DEFECTOR:AZ_beau + col7 transposition + null mask = 15/24. Uniquely highest among 19 keyword/variant combinations tested. See "Current best lead" in Quick Reference above.
 - Top keyword candidates (by pigeonhole letter-supply): KRYPTOS, KOMPASS, DEFECTOR, COLOPHON, ABSCISSA — note: ALL fail full Bean check on raw 97-char text (consistent with two-system model)
 - **HOROLOGE and ENIGMA are ELIMINATED** (pigeonhole analysis)
+- **Also eliminated:** Four-Square, Playfair, Two-Square, VIC, Feistel, Gronsfeld, Porta, Trithemius, all periodic sub on raw 97 AND any null-extracted 73
 
 **KryptosBot agent runner:** `python3 kryptosbot/solve.py` launches the unified campaign runner. See `kryptosbot/RUNBOOK.md` for full usage. Key commands: `solve.py` (6 parallel agents), `solve.py compute` (free local CPU), `solve.py run <name>` (single strategy), `solve.py list` (show all strategies).
 
@@ -284,5 +294,5 @@ Domain knowledge, public facts, and detailed operating policies live in separate
 
 ---
 
-*Last updated: 2026-03-11 — Mission: derive K4 method & solve. Periodic sub eliminated on BOTH raw 97 AND any null-extracted 73 (periods 1-23). Best leads: 73-char hypothesis + non-periodic cipher + transposition-as-System-2. Top keywords: KRYPTOS, KOMPASS, DEFECTOR, COLOPHON, ABSCISSA*
+*Last updated: 2026-03-14 — Mission: derive K4 method & solve. Best lead: DEFECTOR:AZ_beau+col7+null-mask=15/24 (hard 3-swap local max). Standard sub×trans exhaustively eliminated (~1.2B configs). Four-Square/VIC/Feistel/digraphic all eliminated. Surviving space: non-standard transposition, bespoke combinations, or unconceived models. K2 coords confirmed to encode 73/24/13/11 (mechanism unknown). Top keywords: DEFECTOR (uniquely 15/24 with col7), KRYPTOS, KOMPASS, COLOPHON, ABSCISSA*
 *Primary author: Colin Patrick (human lead) + Claude (computational partner)*
