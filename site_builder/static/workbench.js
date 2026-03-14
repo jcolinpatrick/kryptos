@@ -1010,7 +1010,7 @@
     // Render as HTML table
     var html = '<table class="grid-table"><thead><tr><th class="row-label"></th>';
     for (var c = 0; c < K4_GRID_WIDTH; c++) {
-      html += '<th style="font-size:9px;color:var(--text-tertiary);text-align:center;">' + c + '</th>';
+      html += '<th style="font-size:9px;color:var(--text-tertiary);text-align:center;">' + (c + 1) + '</th>';
     }
     html += '</tr></thead><tbody>';
 
@@ -1053,10 +1053,15 @@
   }
 
   function toggleNullPosition(pos) {
-    // Switch to manual mode if not already
+    // Switch to manual mode and open the null mask panel
     if (nullMode.value !== "manual") {
       nullMode.value = "manual";
+      showHide(nullManualGroup, true);
     }
+    // Ensure the details panel is open
+    var panel = document.getElementById("null-mask-panel");
+    if (panel && !panel.open) panel.open = true;
+
     var current = nullPositionsInput.value.split(",").map(function (s) { return s.trim(); }).filter(Boolean).map(Number);
     var idx = current.indexOf(pos);
     if (idx >= 0) {
