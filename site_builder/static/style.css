@@ -1585,9 +1585,10 @@ main section + section {
 }
 
 /* --- Workbench: Null Position Styling --- */
-.ct-display .null-pos {
+.ct-display .null-pos,
+.ct-display .null-char {
   text-decoration: line-through;
-  opacity: 0.35;
+  opacity: 0.25;
 }
 
 /* --- Workbench: Preset Cards --- */

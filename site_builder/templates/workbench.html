@@ -14,6 +14,15 @@
   .score-badge-store { color: var(--amber); background: var(--amber-bg); border: 1px solid var(--amber-border); }
   .score-badge-signal { color: var(--accent); background: var(--accent-faint); border: 1px solid rgba(56,189,248,0.2); }
   .score-badge-breakthrough { color: var(--green); background: var(--green-bg); border: 1px solid var(--green-border); }
+  .null-char { opacity: 0.25; text-decoration: line-through; }
+  #grid-view-container { display: none; margin: var(--sp-3) 0; }
+  #grid-view-container pre { font-size: var(--text-sm); line-height: 1.6; letter-spacing: 0.1em; overflow-x: auto; }
+  #grid-view-container .crib { color: var(--green); font-weight: 700; }
+  #grid-view-container .null-char { opacity: 0.25; text-decoration: line-through; }
+  #history-panel { margin-top: var(--sp-6); }
+  #history-log table { width: 100%; font-size: var(--text-xs); font-family: var(--font-mono); border-collapse: collapse; }
+  #history-log th, #history-log td { padding: var(--sp-1) var(--sp-3); text-align: left; border-bottom: 1px solid var(--border-subtle); }
+  #history-log th { color: var(--text-tertiary); font-weight: 600; }
   @media (max-width: 768px) {
     .wb-pipeline { grid-template-columns: 1fr; }
   }
@@ -77,6 +86,10 @@
     <h4>Serpentine + Vig</h4>
     <p>Boustrophedon reading <span class="verdict verdict-survived" style="margin-left: var(--sp-1);">open</span></p>
   </div>
+  <div class="preset-card" data-preset="best-lead" title="DEFECTOR:AZ_beau + col7 + null mask (15/24)">
+    <h4>DEFECTOR 15/24</h4>
+    <p>Best known lead <span class="verdict verdict-survived" style="margin-left: var(--sp-1);">open</span></p>
+  </div>
   <div class="preset-card" data-preset="blank" title="Clear all settings">
     <h4>Try your own</h4>
     <p>Blank slate</p>
@@ -93,6 +106,10 @@
   W-delimited segments: <span>20</span> | <span>15</span> | <span>11</span> | <span>9</span> | <span>15</span> | <span>22</span> chars
   &mdash; W at 20 immediately before EASTNORTHEAST, W at 74 immediately after BERLINCLOCK
 </div>
+<div class="wb-inline-controls">
+  <label><input type="checkbox" id="grid-view"> Show as 28&times;31 grid</label>
+</div>
+<div id="grid-view-container"><pre id="grid-view-pre"></pre></div>
 
 <details class="wb-null-panel" id="null-mask-panel" style="margin: var(--sp-4) 0;">
   <summary>Step 0: Null Mask (73-char hypothesis)</summary>
@@ -261,6 +278,8 @@
     <dd id="score-bc">--</dd>
     <dt>IC</dt>
     <dd id="score-ic">--</dd>
+    <dt>Trigram Hits</dt>
+    <dd id="score-trigram">--</dd>
     <dt>Bean Check</dt>
     <dd id="score-bean">--</dd>
     <dt>Free Crib Search</dt>
@@ -279,6 +298,11 @@
   </details>
 </div>
 
+<details id="history-panel">
+  <summary>Session history (<span id="history-count">0</span> attempts)</summary>
+  <div id="history-log" style="max-height: 400px; overflow-y: auto;"></div>
+</details>
+
 <p class="text-muted" style="margin-top: var(--sp-8);">
   <small>Cipher toolkit inspired by <a href="https://github.com/merricx/enigmator">enigmator</a> by Merricx.</small>
 </p>
@@ -289,5 +313,5 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="/static/workbench.js?v=2"></script>
+<script src="/static/workbench.js?v=3"></script>
 {% endblock %}

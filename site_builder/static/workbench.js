@@ -73,6 +73,20 @@
     "none:rot13":            { severity: "proven", msg: "ROT13: special case of Caesar shift 13 \u2014 mathematically eliminated." }
   };
 
+  // --- Top 50 English trigrams for text quality scoring ---
+  var TOP_TRIGRAMS = [
+    "THE", "AND", "ING", "ION", "TIO", "ENT", "ERE", "HER", "ATE", "VER",
+    "TER", "THA", "ATI", "HAT", "FOR", "EST", "ALL", "INT", "ITH", "HIS",
+    "OFT", "STH", "NOT", "RES", "ORT", "WAS", "ARE", "ONE", "OUR", "OUT",
+    "HAS", "AVE", "MAN", "PRO", "ERS", "COM", "NTH", "STI", "TED", "OTH",
+    "ITI", "ERA", "ECT", "NDE", "IST", "OME", "NGT", "NCE", "ANT", "DER"
+  ];
+  var TRIGRAM_SET = {};
+  for (var ti = 0; ti < TOP_TRIGRAMS.length; ti++) TRIGRAM_SET[TOP_TRIGRAMS[ti]] = true;
+
+  // --- Session history ---
+  var sessionHistory = [];
+
   // --- DOM Elements ---
   var ctDisplay = document.getElementById("ct-display");
   var transMethod = document.getElementById("trans-method");
@@ -112,6 +126,12 @@
   var nullExtractedLen = document.getElementById("null-extracted-len");
   var nullCountSpan = document.getElementById("null-count");
   var eliminationWarning = document.getElementById("elimination-warning");
+  var scoreTrigram = document.getElementById("score-trigram");
+  var gridViewCheckbox = document.getElementById("grid-view");
+  var gridViewContainer = document.getElementById("grid-view-container");
+  var gridViewPre = document.getElementById("grid-view-pre");
+  var historyCount = document.getElementById("history-count");
+  var historyLog = document.getElementById("history-log");
 
   // --- Render CT display with crib and W highlighting ---
   function renderCT(text, container, opts) {
@@ -125,7 +145,7 @@
       var classes = [];
       if (cribs[i] !== undefined) classes.push("crib");
       if (showW && text[i] === "W" && W_POSITIONS.indexOf(i) >= 0) classes.push("w-marker");
-      if (nullPositions[i]) classes.push("null-pos");
+      if (nullPositions[i]) classes.push("null-char");
 
       if (classes.length > 0) {
         html += '<span class="' + classes.join(" ") + '">' + text[i] + "</span>";
@@ -768,25 +788,51 @@
     return n > 1 ? sum / (n * (n - 1)) : 0;
   }
 
-  function checkBean(ct, pt, alpha, method) {
+  // Build a mapping from CT97 position to working-text position after null removal
+  function buildPositionMap(nullPos) {
+    if (!nullPos || nullPos.length === 0) return null;
+    var posSet = {};
+    for (var i = 0; i < nullPos.length; i++) posSet[nullPos[i]] = true;
+    var map = {};
+    var newIdx = 0;
+    for (var j = 0; j < CT.length; j++) {
+      if (!posSet[j]) {
+        map[j] = newIdx;
+        newIdx++;
+      }
+    }
+    return map;
+  }
+
+  function checkBean(ct, pt, alpha, method, nullPos) {
+    // When null mask is active (Model A), crib positions shift.
+    // We need to map the original CT97 crib positions to positions in the
+    // working text. The Bean constraints are defined in CT97 space (positions
+    // 27, 65 for equality; pairs from BEAN_INEQ). We must remap them.
+    var posMap = buildPositionMap(nullPos);
+
     var keys = {};
     for (var pos in CRIBS) {
-      var p = parseInt(pos);
-      if (p >= ct.length || p >= pt.length) continue;
-      var c = alphaIndex(ct[p], alpha);
-      var pv = alphaIndex(pt[p], alpha);
+      var origPos = parseInt(pos);
+      // Determine the actual position in the working ct/pt
+      var workPos = posMap ? posMap[origPos] : origPos;
+      if (workPos === undefined || workPos >= ct.length || workPos >= pt.length) continue;
+      var c = alphaIndex(ct[workPos], alpha);
+      var pv = alphaIndex(pt[workPos], alpha);
       if (method === "beaufort" || method === "autokey-beau") {
-        keys[pos] = mod(c + pv, 26);
+        keys[origPos] = mod(c + pv, 26);
       } else if (method === "varbeaufort") {
-        keys[pos] = mod(pv - c, 26);
+        keys[origPos] = mod(pv - c, 26);
       } else {
-        keys[pos] = mod(c - pv, 26);
+        keys[origPos] = mod(c - pv, 26);
       }
     }
 
+    // Bean equality check uses original CT97 positions
     if (keys[BEAN_EQ[0]] === undefined || keys[BEAN_EQ[1]] === undefined) return null;
     if (keys[BEAN_EQ[0]] !== keys[BEAN_EQ[1]]) return false;
 
+    // Bean inequality checks also use original CT97 positions
     for (var i = 0; i < BEAN_INEQ.length; i++) {
       var a = BEAN_INEQ[i][0], b = BEAN_INEQ[i][1];
       if (keys[a] === undefined || keys[b] === undefined) continue;
@@ -814,6 +860,16 @@
       }
     }
     return hits.length > 0 ? hits.join(", ") : "None";
+  }
+
+  function scoreTrigrams(text) {
+    if (text.length < 3) return { hits: 0, total: 0, pct: 0 };
+    var total = text.length - 2;
+    var hits = 0;
+    for (var i = 0; i <= text.length - 3; i++) {
+      if (TRIGRAM_SET[text.substring(i, i + 3)]) hits++;
+    }
+    return { hits: hits, total: total, pct: total > 0 ? (100 * hits / total) : 0 };
   }
 
   function deriveKeystream(ct, pt, alpha, method, cribs) {
@@ -910,6 +966,26 @@
     return html;
   }
 
+  // --- Grid view (28x31 master grid) ---
+  function renderGridView(nullPos) {
+    var GRID_WIDTH = 31;
+    var nullSet = {};
+    for (var i = 0; i < nullPos.length; i++) nullSet[nullPos[i]] = true;
+    var html = "";
+    for (var i = 0; i < CT.length; i++) {
+      if (i > 0 && i % GRID_WIDTH === 0) html += "\n";
+      var ch = CT[i];
+      if (CRIBS[i] !== undefined) {
+        html += '<span class="crib">' + ch + "</span>";
+      } else if (nullSet[i]) {
+        html += '<span class="null-char">' + ch + "</span>";
+      } else {
+        html += ch;
+      }
+    }
+    gridViewPre.innerHTML = html;
+  }
+
   function classifyScore(score) {
     if (score >= 24) return "breakthrough";
     if (score >= 18) return "signal";
@@ -983,6 +1059,22 @@
         subKey.value = "KRYPTOS";
         subAlphabet.value = "AZ";
         break;
+      case "best-lead":
+        // Step 0: Null mask
+        nullMode.value = "manual";
+        nullPositionsInput.value = "0,1,2,5,8,12,14,20,36,38,39,40,52,55,58,59,74,75,78,84,85,88,94,96";
+        nullCribModel.value = "A";
+        updateNullOptions();
+        // Step 1: Columnar width 7
+        transMethod.value = "columnar";
+        document.getElementById("trans-width").value = "7";
+        document.getElementById("trans-keyword").value = "";
+        document.getElementById("trans-colorder").value = "";
+        // Step 2: Autokey Beaufort, DEFECTOR, AZ
+        subMethod.value = "autokey-beau";
+        subKey.value = "DEFECTOR";
+        subAlphabet.value = "AZ";
+        break;
       case "blank":
         transMethod.value = "none";
         subMethod.value = "vigenere";
@@ -1054,6 +1146,11 @@
     var nullSet = {};
     for (var i = 0; i < nullPos.length; i++) nullSet[nullPos[i]] = true;
     renderCT(CT, ctDisplay, { showW: showW, nullPositions: nullSet });
+
+    // Refresh grid view if visible
+    if (gridViewCheckbox.checked) {
+      renderGridView(nullPos);
+    }
   }
 
   function runPipeline() {
@@ -1105,20 +1202,55 @@
     var alpha = getAlphabet();
     var cribResult = scoreCribs(pt, activeCribs);
     var ic = calcIC(pt);
-    var bean = checkBean(workingCT, pt, alpha, subMethod.value);
+    var bean = checkBean(workingCT, pt, alpha, subMethod.value, nullPos);
     var free = freeCribSearch(pt);
+    var trigramResult = scoreTrigrams(pt);
     var cls = classifyScore(cribResult.total);
 
     scoreCrib.innerHTML = cribResult.total + "/24 <span class=\"score-badge score-badge-" + cls + "\">" + cls + "</span>";
     scoreEne.textContent = cribResult.ene + "/13";
     scoreBc.textContent = cribResult.bc + "/11";
     scoreIc.textContent = ic.toFixed(4);
+    scoreTrigram.textContent = trigramResult.hits + "/" + trigramResult.total + " (" + trigramResult.pct.toFixed(1) + "%)";
     scoreBean.textContent = bean === null ? "N/A" : (bean ? "PASS" : "FAIL");
     scoreBean.style.color = bean === true ? "var(--green)" : (bean === false ? "var(--red)" : "");
     scoreFree.textContent = free;
 
     keystreamDetail.textContent = deriveKeystream(workingCT, pt, alpha, subMethod.value, activeCribs);
     keystreamAnalysis.innerHTML = analyzeKeystream(workingCT, pt, alpha, subMethod.value, activeCribs);
+
+    // Session history
+    var methodDesc = transMethod.value !== "none" ? transMethod.value + " + " : "";
+    methodDesc += subMethod.value;
+    var keyDesc = subKey.value || subShift.value || "--";
+    sessionHistory.push({
+      attempt: sessionHistory.length + 1,
+      method: methodDesc,
+      key: keyDesc,
+      score: cribResult.total + "/24",
+      cls: cls,
+      timestamp: new Date().toLocaleTimeString()
+    });
+    renderHistory();
+  }
+
+  // --- Session history rendering ---
+  function renderHistory() {
+    historyCount.textContent = sessionHistory.length;
+    if (sessionHistory.length === 0) {
+      historyLog.innerHTML = "";
+      return;
+    }
+    var html = '<table><thead><tr><th>#</th><th>Method</th><th>Key</th><th>Score</th><th>Time</th></tr></thead><tbody>';
+    // Show most recent first
+    for (var i = sessionHistory.length - 1; i >= 0; i--) {
+      var h = sessionHistory[i];
+      html += '<tr><td>' + h.attempt + '</td><td>' + h.method + '</td><td>' + h.key +
+        '</td><td><span class="score-badge score-badge-' + h.cls + '">' + h.score +
+        '</span></td><td>' + h.timestamp + '</td></tr>';
+    }
+    html += '</tbody></table>';
+    historyLog.innerHTML = html;
   }
 
   // --- Event listeners ---
@@ -1160,6 +1292,15 @@
     var nullSet = {};
     for (var i = 0; i < nullPos.length; i++) nullSet[nullPos[i]] = true;
     renderCT(CT, ctDisplay, { showW: wHighlight.checked, nullPositions: nullSet });
+  });
+
+  // Grid view toggle
+  gridViewCheckbox.addEventListener("change", function () {
+    var checked = gridViewCheckbox.checked;
+    gridViewContainer.style.display = checked ? "block" : "none";
+    if (checked) {
+      renderGridView(getNullPositions());
+    }
   });
 
   // Null mask controls
@@ -1216,6 +1357,8 @@
     showHide(document.getElementById("results-empty"), true);
     // Reset CT display
     wHighlight.checked = false;
+    gridViewCheckbox.checked = false;
+    gridViewContainer.style.display = "none";
     renderCT(CT, ctDisplay, { showW: false, nullPositions: {} });
   });
 
