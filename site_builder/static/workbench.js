@@ -1183,6 +1183,42 @@
     })(presetCards[pi]);
   }
 
+  // Reset button
+  document.getElementById("reset-btn").addEventListener("click", function () {
+    // Step 0
+    nullMode.value = "disabled";
+    nullPositionsInput.value = "";
+    nullCribModel.value = "A";
+    updateNullOptions();
+    // Step 1
+    transMethod.value = "none";
+    document.getElementById("trans-width").value = "7";
+    document.getElementById("trans-keyword").value = "";
+    document.getElementById("trans-colorder").value = "";
+    document.getElementById("trans-depth").value = "3";
+    document.getElementById("trans-perm").value = "";
+    document.getElementById("trans-serp-width").value = "7";
+    document.getElementById("trans-spiral-width").value = "7";
+    document.getElementById("trans-mysz-keyword").value = "";
+    updateTransOptions();
+    // Step 2
+    subMethod.value = "vigenere";
+    subKey.value = "";
+    subShift.value = "0";
+    subAlphabet.value = "AZ";
+    var key2 = document.getElementById("sub-key2");
+    var ind = document.getElementById("sub-indicator");
+    if (key2) key2.value = "";
+    if (ind) ind.value = "K";
+    updateSubOptions();
+    // Clear results
+    showHide(document.getElementById("results-panel"), false);
+    showHide(document.getElementById("results-empty"), true);
+    // Reset CT display
+    wHighlight.checked = false;
+    renderCT(CT, ctDisplay, { showW: false, nullPositions: {} });
+  });
+
   // Init
   updateTransOptions();
   updateSubOptions();
