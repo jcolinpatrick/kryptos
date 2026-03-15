@@ -1,39 +1,6 @@
 {% extends "base.html" %}
 {% block title %}Workbench &mdash; internal.com{% endblock %}
 
-{% block head_extra %}
-<style>
-  .wb-pipeline { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-4); margin: var(--sp-6) 0; }
-  .wb-pipeline .card { margin-bottom: 0; }
-  .wb-step-label { font-size: var(--text-xs); font-weight: 600; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: var(--sp-2); }
-  .ct-display .crib-miss { color: var(--red); font-weight: 700; }
-  #score-grid { max-width: 640px; }
-  #keystream-detail { white-space: pre; font-size: var(--text-sm); line-height: 1.6; overflow-x: auto; }
-  .score-badge { display: inline-flex; align-items: center; padding: var(--sp-1) var(--sp-3); border-radius: 100px; font-size: var(--text-xs); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; line-height: 1; margin-left: var(--sp-2); }
-  .score-badge-noise { color: var(--text-tertiary); background: var(--bg-surface); border: 1px solid var(--border-default); }
-  .score-badge-store { color: var(--amber); background: var(--amber-bg); border: 1px solid var(--amber-border); }
-  .score-badge-signal { color: var(--accent); background: var(--accent-faint); border: 1px solid rgba(56,189,248,0.2); }
-  .score-badge-breakthrough { color: var(--green); background: var(--green-bg); border: 1px solid var(--green-border); }
-  .null-char { opacity: 0.25; text-decoration: line-through; }
-  #grid-view-container { display: none; margin: var(--sp-3) 0; }
-  #grid-view-container .grid-table { border-collapse: collapse; font-family: var(--font-mono); font-size: var(--text-xs); }
-  #grid-view-container .grid-table td { width: 1.4em; height: 1.6em; text-align: center; cursor: pointer; border: 1px solid var(--border-subtle); user-select: none; }
-  #grid-view-container .grid-table td:hover { background: var(--bg-hover); }
-  #grid-view-container .grid-table td.crib { color: var(--green); font-weight: 700; }
-  #grid-view-container .grid-table td.null-cell { opacity: 0.3; text-decoration: line-through; background: rgba(239,68,68,0.15); color: var(--red); }
-  #grid-view-container .grid-table td.empty-cell { border: none; }
-  #grid-view-container .grid-table .row-label { font-size: var(--text-xs); color: var(--text-tertiary); border: none; text-align: right; padding-right: var(--sp-2); cursor: default; }
-  #grid-view-container .grid-info { font-size: var(--text-xs); color: var(--text-tertiary); margin-top: var(--sp-2); }
-  #history-panel { margin-top: var(--sp-6); }
-  #history-log table { width: 100%; font-size: var(--text-xs); font-family: var(--font-mono); border-collapse: collapse; }
-  #history-log th, #history-log td { padding: var(--sp-1) var(--sp-3); text-align: left; border-bottom: 1px solid var(--border-subtle); }
-  #history-log th { color: var(--text-tertiary); font-weight: 600; }
-  @media (max-width: 768px) {
-    .wb-pipeline { grid-template-columns: 1fr; }
-  }
-</style>
-{% endblock %}
-
 {% block content %}
 <h1>Workbench</h1>
 <p>
@@ -42,15 +9,36 @@
   &mdash; no data is sent to any server.
 </p>
 
+<details id="your-odds" class="wb-mb2">
+  <summary>Your odds of solving K4 right here (spoiler: astronomical)</summary>
+  <div class="wb-details-body">
+    <p>
+      This workbench exposes roughly <strong>10<sup>35</sup></strong> possible configurations.
+      If you try 3 per minute, 8 hours a day, 365 days a year, you&rsquo;ll finish in about
+      <strong>10<sup>28</sup> years</strong> &mdash; roughly <em>a quintillion universe lifetimes</em>. Bring snacks.
+    </p>
+    <p>
+      You are <strong>10<sup>12</sup>&times;</strong> more likely to win the Powerball
+      <em>twice in a row</em> than to stumble on the answer here. And yet &mdash; someone,
+      someday, might try an &ldquo;obvious&rdquo; keyword that 35 years of PhDs missed and
+      crack the last unsolved message at CIA headquarters. That&rsquo;s cryptanalysis.
+    </p>
+    <p class="wb-odds-kicker">
+      668 billion configs have already been formally eliminated by this project.
+      Only 10<sup>35</sup> minus 668 billion to go.
+    </p>
+  </div>
+</details>
+
 <details id="research-context">
   <summary>What we know about K4 (research context)</summary>
-  <div style="margin-top: var(--sp-3);">
+  <div class="wb-details-body">
     <p>
       Sanborn confirmed K4 uses <strong>two systems of encipherment</strong>:
       <code>plaintext &rarr; transposition &rarr; substitution &rarr; carved text</code>.
       Digram analysis of the carved text proves the outermost layer is substitution.
     </p>
-    <p style="margin-bottom: var(--sp-2);"><strong>Eliminated</strong> <span class="verdict verdict-eliminated">proven impossible</span></p>
+    <p class="wb-mb2"><strong>Eliminated</strong> <span class="verdict verdict-eliminated">proven impossible</span></p>
     <ul>
       <li>Any single-layer substitution on the raw 97 characters (all periodic Vigen&egrave;re/Beaufort/Variant Beaufort, periods 1&ndash;26, both AZ and KA alphabets)</li>
       <li>Pure transposition (CT has 2 E&rsquo;s, cribs need 3)</li>
@@ -58,42 +46,50 @@
       <li>Null mask + periodic substitution on any 73-char extract (periods 1&ndash;23)</li>
       <li>Autokey on raw 97 (exhaustive single-letter + 1M dictionary keys)</li>
     </ul>
-    <p style="margin-bottom: var(--sp-2);"><strong>Open territory</strong> <span class="verdict verdict-survived">viable</span></p>
+    <p class="wb-mb2"><strong>Open territory</strong> <span class="verdict verdict-survived">viable</span></p>
     <ul>
       <li>Non-standard transpositions (serpentine, spiral, Myszkowski) + substitution</li>
       <li>Autokey / running key after undoing transposition</li>
       <li>Custom or Quagmire tableaux</li>
       <li>73-char hypothesis with non-periodic cipher after null removal</li>
     </ul>
+    <p class="wb-mb2"><strong>Watch for 23/24</strong></p>
+    <p><small class="text-muted">
+      K2 ends with an X separator, K3 ends with a stray Q. If K4 has a similar delimiter,
+      one crib position would mismatch even with the correct key &mdash; capping the score
+      at 23/24. Also: 73 is prime (no clean grid), but 72 = 8&times;9, matching Sanborn&rsquo;s
+      &ldquo;8 lines.&rdquo; A 72+1 message with delimiter would give a perfect grid.
+      If you hit 23/24, check which single position missed &mdash; it may be the delimiter.
+    </small></p>
     <p><a href="/methodology/">Full methodology and elimination landscape &rarr;</a></p>
   </div>
 </details>
 
-<h3 style="margin-top: var(--sp-6);">Quick presets</h3>
+<h3 class="wb-mt6">Quick presets</h3>
 <div class="wb-presets" id="presets">
   <div class="preset-card" data-preset="vig-kryptos" title="How K1-K3 were encrypted (Vigen&egrave;re with KRYPTOS key)">
     <h4>Vigen&egrave;re + KRYPTOS</h4>
-    <p>K1&ndash;K3 method <span class="verdict verdict-eliminated" style="margin-left: var(--sp-1);">eliminated</span></p>
+    <p>K1&ndash;K3 method <span class="verdict verdict-eliminated wb-verdict-inline">eliminated</span></p>
   </div>
   <div class="preset-card" data-preset="beau-kryptos-ka" title="Beaufort with KRYPTOS key on KA alphabet">
     <h4>Beaufort + KA alphabet</h4>
-    <p>Kryptos-keyed Beaufort <span class="verdict verdict-eliminated" style="margin-left: var(--sp-1);">eliminated</span></p>
+    <p>Kryptos-keyed Beaufort <span class="verdict verdict-eliminated wb-verdict-inline">eliminated</span></p>
   </div>
   <div class="preset-card" data-preset="col7-vig" title="Columnar width 7 + Vigen&egrave;re (open territory)">
     <h4>Columnar w=7 + Vig</h4>
-    <p>Two-system model <span class="verdict verdict-survived" style="margin-left: var(--sp-1);">open</span></p>
+    <p>Two-system model <span class="verdict verdict-survived wb-verdict-inline">open</span></p>
   </div>
   <div class="preset-card" data-preset="rail-beau" title="Rail fence depth 7 + Beaufort">
     <h4>Rail fence + Beaufort</h4>
-    <p>Non-standard transposition <span class="verdict verdict-survived" style="margin-left: var(--sp-1);">open</span></p>
+    <p>Non-standard transposition <span class="verdict verdict-survived wb-verdict-inline">open</span></p>
   </div>
   <div class="preset-card" data-preset="serpentine-vig" title="Serpentine reading + Vigen&egrave;re">
     <h4>Serpentine + Vig</h4>
-    <p>Boustrophedon reading <span class="verdict verdict-survived" style="margin-left: var(--sp-1);">open</span></p>
+    <p>Boustrophedon reading <span class="verdict verdict-survived wb-verdict-inline">open</span></p>
   </div>
   <div class="preset-card" data-preset="best-lead" title="DEFECTOR:AZ_beau + col7 + null mask (15/24)">
     <h4>DEFECTOR 15/24</h4>
-    <p>Best known lead <span class="verdict verdict-survived" style="margin-left: var(--sp-1);">open</span></p>
+    <p>Best known lead <span class="verdict verdict-survived wb-verdict-inline">open</span></p>
   </div>
   <div class="preset-card" data-preset="blank" title="Clear all settings">
     <h4>Try your own</h4>
@@ -112,199 +108,228 @@
   &mdash; W at 20 immediately before EASTNORTHEAST, W at 74 immediately after BERLINCLOCK
 </div>
 
-<details class="wb-null-panel" id="null-mask-panel" style="margin: var(--sp-4) 0;">
-  <summary>Step 0: Null Mask (73-char hypothesis)</summary>
-  <div style="margin-top: var(--sp-3);">
-    <p><small class="text-muted">
-      Sanborn&rsquo;s legal pad notes &ldquo;8 lines 73&rdquo; for K4, but the carved text is 97 characters.
-      If 24 characters are nulls/filler, a Cardan grille selects the 73 real ciphertext characters.
-    </small></p>
-
-    <label for="null-mode">Mode</label>
-    <select id="null-mode">
-      <option value="disabled">Disabled</option>
-      <option value="manual">Manual positions</option>
-      <option value="w-only">W positions only (5 nulls)</option>
-    </select>
-
-    <div id="null-manual-group" class="hidden">
-      <label for="null-positions">Null positions <small class="text-muted">(comma-separated 0-indexed, e.g. 20,36,48,58,74)</small></label>
-      <input type="text" id="null-positions" placeholder="e.g. 20,36,48,58,74">
-    </div>
-
-    <label for="null-crib-model">Crib model</label>
-    <select id="null-crib-model">
-      <option value="A">Model A: cribs shift after null removal</option>
-      <option value="B">Model B: cribs stay at original positions (garbage in null slots)</option>
-    </select>
-
-    <div id="null-extracted" class="hidden">
-      <p><small>Extracted CT (<span id="null-extracted-len">0</span> chars, <span id="null-count">0</span> nulls removed):</small></p>
-      <div class="null-extracted" id="null-extracted-ct"></div>
-    </div>
-  </div>
-</details>
-
 <div id="elimination-warning"></div>
 
-<div class="wb-pipeline">
-  <div class="card">
-    <div class="wb-step-label">Step 1: Transposition (optional)</div>
-    <p><small class="text-muted">Undoes the specified transposition to recover the real CT.</small></p>
+<div class="wb-workspace">
+  <div class="wb-controls">
+    <div class="wb-pipeline-flow">
+      <div class="card wb-step-card" id="null-mask-panel">
+        <div class="wb-step-label"><span class="wb-step-num">0</span> Null Mask</div>
+        <p><small class="text-muted">73-char hypothesis: 24 of 97 are nulls.</small></p>
 
-    <label for="trans-method">Method</label>
-    <select id="trans-method">
-      <option value="none">None</option>
-      <option value="columnar">Columnar</option>
-      <option value="railfence">Rail Fence</option>
-      <option value="serpentine">Serpentine (boustrophedon)</option>
-      <option value="spiral">Spiral</option>
-      <option value="myszkowski">Myszkowski</option>
-      <option value="manual">Manual Permutation</option>
-    </select>
+        <label for="null-mode">Mode</label>
+        <select id="null-mode">
+          <option value="disabled">Disabled</option>
+          <option value="manual">Manual positions</option>
+          <option value="w-only">W positions only (5 nulls)</option>
+        </select>
 
-    <div id="trans-opts-columnar" class="hidden">
-      <label for="trans-width">Width</label>
-      <input type="number" id="trans-width" min="2" max="97" value="10">
-      <label for="trans-keyword">Keyword <small class="text-muted">(auto-derives column order &mdash; overrides manual order)</small></label>
-      <input type="text" id="trans-keyword" placeholder="e.g. KRYPTOS">
-      <label for="trans-colorder">Column order <small class="text-muted">(comma-separated, e.g. 0,2,1,3 &mdash; blank for natural)</small></label>
-      <input type="text" id="trans-colorder" placeholder="Natural order if blank">
+        <div id="null-manual-group" class="hidden">
+          <label for="null-positions">Null positions <small class="text-muted">(0-indexed, comma-sep)</small></label>
+          <input type="text" id="null-positions" placeholder="e.g. 20,36,48,58,74">
+        </div>
+
+        <label for="null-crib-model">Crib model</label>
+        <select id="null-crib-model">
+          <option value="A">Model A: cribs shift after null removal</option>
+          <option value="B">Model B: cribs stay at original positions</option>
+        </select>
+
+        <div id="null-grid-container" class="null-grid-wrap hidden">
+          <div class="null-grid" id="null-grid"></div>
+          <div class="null-grid-legend">
+            <span><i class="ngl-crib"></i> crib</span>
+            <span><i class="ngl-null"></i> null</span>
+            <span><i class="ngl-w"></i> W</span>
+            <span class="ngl-count" id="null-grid-count"></span>
+          </div>
+        </div>
+
+        <div id="null-extracted" class="hidden">
+          <p><small>Extracted CT (<span id="null-extracted-len">0</span> chars, <span id="null-count">0</span> nulls removed):</small></p>
+          <div class="null-extracted" id="null-extracted-ct"></div>
+        </div>
+      </div>
+
+      <div class="wb-step-connector" aria-hidden="true"></div>
+
+      <div class="card wb-step-card">
+        <div class="wb-step-label"><span class="wb-step-num">1</span> Transposition</div>
+
+        <label for="trans-method">Method</label>
+        <select id="trans-method">
+          <option value="none">None</option>
+          <option value="columnar">Columnar</option>
+          <option value="railfence">Rail Fence</option>
+          <option value="serpentine">Serpentine (boustrophedon)</option>
+          <option value="spiral">Spiral</option>
+          <option value="myszkowski">Myszkowski</option>
+          <option value="manual">Manual Permutation</option>
+        </select>
+
+        <div id="trans-opts-columnar" class="hidden">
+          <label for="trans-width">Width</label>
+          <input type="number" id="trans-width" min="2" max="97" value="10">
+          <label for="trans-keyword">Keyword <small class="text-muted">(overrides column order)</small></label>
+          <input type="text" id="trans-keyword" placeholder="e.g. KRYPTOS">
+          <label for="trans-colorder">Column order <small class="text-muted">(e.g. 0,2,1,3)</small></label>
+          <input type="text" id="trans-colorder" placeholder="Natural order if blank">
+        </div>
+
+        <div id="trans-opts-railfence" class="hidden">
+          <label for="trans-depth">Depth (rails)</label>
+          <input type="number" id="trans-depth" min="2" max="48" value="3">
+        </div>
+
+        <div id="trans-opts-serpentine" class="hidden">
+          <label for="trans-serp-width">Width</label>
+          <input type="number" id="trans-serp-width" min="2" max="97" value="10">
+          <label><input type="checkbox" id="trans-serp-vertical"> Vertical</label>
+        </div>
+
+        <div id="trans-opts-spiral" class="hidden">
+          <label for="trans-spiral-width">Width</label>
+          <input type="number" id="trans-spiral-width" min="2" max="97" value="10">
+          <label><input type="checkbox" id="trans-spiral-ccw"> Counter-clockwise</label>
+        </div>
+
+        <div id="trans-opts-myszkowski" class="hidden">
+          <label for="trans-mysz-keyword">Keyword <small class="text-muted">(repeated letters = tied cols)</small></label>
+          <input type="text" id="trans-mysz-keyword" placeholder="e.g. TOMATO">
+        </div>
+
+        <div id="trans-opts-manual" class="hidden">
+          <label for="trans-perm">Permutation <small class="text-muted">(97 comma-sep 0-based)</small></label>
+          <textarea id="trans-perm" rows="2" placeholder="0,4,8,1,5,9,..."></textarea>
+        </div>
+      </div>
+
+      <div class="wb-step-connector" aria-hidden="true"></div>
+
+      <div class="card wb-step-card">
+        <div class="wb-step-label"><span class="wb-step-num">2</span> Substitution</div>
+
+        <label for="sub-method">Method</label>
+        <select id="sub-method">
+          <option value="vigenere">Vigen&egrave;re</option>
+          <option value="beaufort">Beaufort</option>
+          <option value="varbeaufort">Variant Beaufort</option>
+          <option value="autokey-vig">Autokey (Vigen&egrave;re)</option>
+          <option value="autokey-beau">Autokey (Beaufort)</option>
+          <option value="quagmire-ii">Quagmire II (sculpture tableau)</option>
+          <option value="quagmire-ii-autokey">Quagmire II Autokey</option>
+          <option value="four-square">Four-Square</option>
+          <option value="porta">Porta</option>
+          <option value="gronsfeld">Gronsfeld (numeric key)</option>
+          <option value="affine">Affine (key = &ldquo;a,b&rdquo;)</option>
+          <option value="caesar">Caesar</option>
+          <option value="rot13">ROT13</option>
+          <option value="atbash">Atbash</option>
+          <option value="none">None (passthrough)</option>
+        </select>
+
+        <div id="sub-key-group">
+          <label for="sub-key" id="sub-key-label">Key</label>
+          <input type="text" id="sub-key" placeholder="e.g. KRYPTOS">
+        </div>
+
+        <div id="sub-key2-group" class="hidden">
+          <label for="sub-key2">Key 2 <small class="text-muted">(Four-Square)</small></label>
+          <input type="text" id="sub-key2" placeholder="e.g. BERLINCLOCK">
+        </div>
+
+        <div id="sub-indicator-group" class="hidden">
+          <label for="sub-indicator">Indicator <small class="text-muted">(Q2 alignment, default K)</small></label>
+          <input type="text" id="sub-indicator" value="K" maxlength="1">
+        </div>
+
+        <div id="sub-caesar-group" class="hidden">
+          <label for="sub-shift">Shift (0&ndash;25)</label>
+          <input type="number" id="sub-shift" min="0" max="25" value="0">
+        </div>
+
+        <label for="sub-alphabet">Alphabet</label>
+        <select id="sub-alphabet">
+          <option value="AZ">A&ndash;Z (standard)</option>
+          <option value="KA">KA (KRYPTOS-keyed)</option>
+        </select>
+      </div>
     </div>
 
-    <div id="trans-opts-railfence" class="hidden">
-      <label for="trans-depth">Depth (rails)</label>
-      <input type="number" id="trans-depth" min="2" max="48" value="3">
-    </div>
-
-    <div id="trans-opts-serpentine" class="hidden">
-      <label for="trans-serp-width">Width (columns)</label>
-      <input type="number" id="trans-serp-width" min="2" max="97" value="10">
-      <label><input type="checkbox" id="trans-serp-vertical"> Vertical serpentine</label>
-    </div>
-
-    <div id="trans-opts-spiral" class="hidden">
-      <label for="trans-spiral-width">Width (columns)</label>
-      <input type="number" id="trans-spiral-width" min="2" max="97" value="10">
-      <label><input type="checkbox" id="trans-spiral-ccw"> Counter-clockwise</label>
-    </div>
-
-    <div id="trans-opts-myszkowski" class="hidden">
-      <label for="trans-mysz-keyword">Keyword <small class="text-muted">(repeated letters create tied columns)</small></label>
-      <input type="text" id="trans-mysz-keyword" placeholder="e.g. TOMATO">
-    </div>
-
-    <div id="trans-opts-manual" class="hidden">
-      <label for="trans-perm">Permutation <small class="text-muted">(97 comma-separated 0-based indices)</small></label>
-      <textarea id="trans-perm" rows="3" placeholder="0,4,8,1,5,9,..."></textarea>
+    <div class="wb-reset-wrap">
+      <button id="reset-btn" type="button" class="wb-reset-btn">Reset all</button>
     </div>
   </div>
 
-  <div class="card">
-    <div class="wb-step-label">Step 2: Substitution</div>
-    <p><small class="text-muted">Decrypts the (optionally transposed) CT to plaintext.</small></p>
+  <div class="wb-results">
+    <div id="elimination-warning-top"></div>
 
-    <label for="sub-method">Method</label>
-    <select id="sub-method">
-      <option value="vigenere">Vigen&egrave;re</option>
-      <option value="beaufort">Beaufort</option>
-      <option value="varbeaufort">Variant Beaufort</option>
-      <option value="autokey-vig">Autokey (Vigen&egrave;re)</option>
-      <option value="autokey-beau">Autokey (Beaufort)</option>
-      <option value="quagmire-ii">Quagmire II (sculpture tableau)</option>
-      <option value="quagmire-ii-autokey">Quagmire II Autokey</option>
-      <option value="four-square">Four-Square</option>
-      <option value="porta">Porta</option>
-      <option value="gronsfeld">Gronsfeld (numeric key)</option>
-      <option value="affine">Affine (key = &ldquo;a,b&rdquo;)</option>
-      <option value="caesar">Caesar</option>
-      <option value="rot13">ROT13</option>
-      <option value="atbash">Atbash</option>
-      <option value="none">None (passthrough)</option>
-    </select>
-
-    <div id="sub-key-group">
-      <label for="sub-key" id="sub-key-label">Key</label>
-      <input type="text" id="sub-key" placeholder="e.g. KRYPTOS">
+    <div id="results-empty" class="card">
+      <p class="text-muted">Enter a substitution key above to see results.</p>
     </div>
 
-    <div id="sub-key2-group" class="hidden">
-      <label for="sub-key2">Key 2 <small class="text-muted">(Four-Square: second keyword)</small></label>
-      <input type="text" id="sub-key2" placeholder="e.g. BERLINCLOCK">
+    <div id="results-panel" class="hidden">
+      <div class="score-hero score-hero-noise" id="score-hero">
+        <div class="score-hero-main">
+          <span class="score-hero-num" id="score-hero-num">--</span>
+          <span class="score-badge score-badge-noise" id="score-hero-badge">noise</span>
+        </div>
+        <div class="score-sub-grid">
+          <div class="score-sub-item">
+            <span class="score-sub-label">ENE</span>
+            <span class="score-sub-value" id="score-ene">--</span>
+          </div>
+          <div class="score-sub-item">
+            <span class="score-sub-label">BC</span>
+            <span class="score-sub-value" id="score-bc">--</span>
+          </div>
+          <div class="score-sub-item">
+            <span class="score-sub-label">IC</span>
+            <span class="score-sub-value" id="score-ic">--</span>
+          </div>
+          <div class="score-sub-item">
+            <span class="score-sub-label">Trigrams</span>
+            <span class="score-sub-value" id="score-trigram">--</span>
+          </div>
+          <div class="score-sub-item">
+            <span class="score-sub-label">Free Crib</span>
+            <span class="score-sub-value" id="score-free">--</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="trans-result" class="hidden">
+        <h4 class="wb-result-heading">Transposed CT</h4>
+        <div class="ct-display ct-display-compact text-mono" id="transposed-ct"></div>
+      </div>
+
+      <h4 class="wb-result-heading">Plaintext</h4>
+      <div class="ct-display ct-display-compact" id="plaintext-display"></div>
+      <div class="pt-legend">
+        <small><span class="crib-legend-match"></span> Match &nbsp; <span class="crib-legend-miss"></span> Miss</small>
+      </div>
+
+      <details>
+        <summary>Derived keystream at crib positions</summary>
+        <pre id="keystream-detail"></pre>
+        <p class="wb-mt3"><small class="text-muted">Bean constraint (k[27]=k[65]): <strong id="score-bean">--</strong> &mdash; PASS requires the correct solution; always FAIL on raw 97.</small></p>
+      </details>
+
+      <details>
+        <summary>Period consistency analysis</summary>
+        <p><small class="text-muted">For each period, counts how many crib-position keystream values conflict (share a residue class but have different key values). Zero conflicts = consistent with that period.</small></p>
+        <div id="keystream-analysis"></div>
+      </details>
     </div>
 
-    <div id="sub-indicator-group" class="hidden">
-      <label for="sub-indicator">Indicator letter <small class="text-muted">(Q2: alignment point in KA, default K)</small></label>
-      <input type="text" id="sub-indicator" value="K" maxlength="1">
-    </div>
-
-    <div id="sub-caesar-group" class="hidden">
-      <label for="sub-shift">Shift (0&ndash;25)</label>
-      <input type="number" id="sub-shift" min="0" max="25" value="0">
-    </div>
-
-    <label for="sub-alphabet">Alphabet</label>
-    <select id="sub-alphabet">
-      <option value="AZ">A&ndash;Z (standard)</option>
-      <option value="KA">KA (KRYPTOS-keyed)</option>
-    </select>
+    <details id="history-panel">
+      <summary>Session history (<span id="history-count">0</span> attempts)</summary>
+      <div id="history-log" class="wb-history-scroll"></div>
+    </details>
   </div>
 </div>
 
-<div style="margin: var(--sp-4) 0; text-align: right;">
-  <button id="reset-btn" type="button" style="padding: var(--sp-2) var(--sp-4); font-size: var(--text-sm); cursor: pointer; border: 1px solid var(--border-default); border-radius: 6px; background: var(--bg-surface); color: var(--text-secondary);">Reset all</button>
-</div>
-
-<h2>Results</h2>
-
-<div id="results-empty" class="card">
-  <p class="text-muted">Enter a substitution key above to see results.</p>
-</div>
-
-<div id="results-panel" class="hidden">
-  <div id="trans-result" class="hidden">
-    <h3>Transposed CT</h3>
-    <div class="ct-display text-mono" id="transposed-ct"></div>
-  </div>
-
-  <h3>Plaintext</h3>
-  <div class="ct-display" id="plaintext-display"></div>
-
-  <dl class="detail-grid" id="score-grid">
-    <dt>Crib Score</dt>
-    <dd id="score-crib">--</dd>
-    <dt>ENE (13)</dt>
-    <dd id="score-ene">--</dd>
-    <dt>BC (11)</dt>
-    <dd id="score-bc">--</dd>
-    <dt>IC</dt>
-    <dd id="score-ic">--</dd>
-    <dt>Trigram Hits</dt>
-    <dd id="score-trigram">--</dd>
-    <dt>Bean Check</dt>
-    <dd id="score-bean">--</dd>
-    <dt>Free Crib Search</dt>
-    <dd id="score-free">--</dd>
-  </dl>
-
-  <details>
-    <summary>Derived keystream at crib positions</summary>
-    <pre id="keystream-detail"></pre>
-  </details>
-
-  <details>
-    <summary>Period consistency analysis</summary>
-    <p><small class="text-muted">For each period, counts how many crib-position keystream values conflict (share a residue class but have different key values). Zero conflicts = consistent with that period.</small></p>
-    <div id="keystream-analysis"></div>
-  </details>
-</div>
-
-<details id="history-panel">
-  <summary>Session history (<span id="history-count">0</span> attempts)</summary>
-  <div id="history-log" style="max-height: 400px; overflow-y: auto;"></div>
-</details>
-
-<p class="text-muted" style="margin-top: var(--sp-8);">
+<p class="text-muted wb-mt8">
   <small>Cipher toolkit inspired by <a href="https://github.com/merricx/enigmator">enigmator</a> by Merricx.</small>
 </p>
 
@@ -314,5 +339,5 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="/static/workbench.js?v=3"></script>
+<script src="/static/workbench.js?v=6"></script>
 {% endblock %}

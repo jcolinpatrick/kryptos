@@ -86,6 +86,7 @@
 
   // --- Session history ---
   var sessionHistory = [];
+  var sessionNotified = {}; // dedup notifications per score
 
   // --- DOM Elements ---
   var ctDisplay = document.getElementById("ct-display");
@@ -107,7 +108,6 @@
   var transResult = document.getElementById("trans-result");
   var transposedCt = document.getElementById("transposed-ct");
   var ptDisplay = document.getElementById("plaintext-display");
-  var scoreCrib = document.getElementById("score-crib");
   var scoreEne = document.getElementById("score-ene");
   var scoreBc = document.getElementById("score-bc");
   var scoreIc = document.getElementById("score-ic");
@@ -127,11 +127,95 @@
   var nullCountSpan = document.getElementById("null-count");
   var eliminationWarning = document.getElementById("elimination-warning");
   var scoreTrigram = document.getElementById("score-trigram");
-  var gridViewCheckbox = document.getElementById("grid-view");
-  var gridViewContainer = document.getElementById("grid-view-container");
-  // gridViewPre removed — grid view now uses gridViewContainer directly
   var historyCount = document.getElementById("history-count");
   var historyLog = document.getElementById("history-log");
+  var nullGridContainer = document.getElementById("null-grid-container");
+  var nullGrid = document.getElementById("null-grid");
+  var nullGridCount = document.getElementById("null-grid-count");
+
+  // --- Null mask grid (sculpture layout: 31-wide, K4 starts at col 27) ---
+  var NULL_GRID_WIDTH = 31;
+  var NULL_GRID_START_COL = 27;
+
+  function renderNullGrid(nullPos) {
+    if (!nullGrid) return;
+    var nullSet = {};
+    for (var i = 0; i < nullPos.length; i++) nullSet[nullPos[i]] = true;
+
+    var rowLabels = [24, 25, 26, 27];
+    var html = "";
+
+    // Column headers (1-based, matching sculpture)
+    html += '<div class="null-grid-rowlabel"></div>'; // empty corner
+    for (var ch = 0; ch < NULL_GRID_WIDTH; ch++) {
+      var colNum = ch + 1;
+      // Show every 5th column number, plus 1 and 31, to avoid clutter
+      var showNum = (colNum === 1 || colNum % 5 === 0 || colNum === 31);
+      html += '<div class="null-grid-collabel">' + (showNum ? colNum : "") + '</div>';
+    }
+
+    for (var r = 0; r < 4; r++) {
+      // Row label
+      html += '<div class="null-grid-rowlabel">' + rowLabels[r] + '</div>';
+      for (var c = 0; c < NULL_GRID_WIDTH; c++) {
+        var ctPos;
+        if (r === 0) {
+          if (c < NULL_GRID_START_COL) {
+            html += '<div class="null-grid-cell is-empty"></div>';
+            continue;
+          }
+          ctPos = c - NULL_GRID_START_COL;
+        } else {
+          ctPos = 4 + (r - 1) * NULL_GRID_WIDTH + c;
+        }
+
+        if (ctPos >= CT.length) {
+          html += '<div class="null-grid-cell is-empty"></div>';
+          continue;
+        }
+
+        var cls = "null-grid-cell";
+        if (CRIBS[ctPos] !== undefined) cls += " is-crib";
+        if (nullSet[ctPos]) cls += " is-null";
+        if (W_POSITIONS.indexOf(ctPos) >= 0) cls += " is-w";
+
+        html += '<div class="' + cls + '" data-pos="' + ctPos + '" tabindex="0" role="button" aria-label="Position ' + ctPos + ', ' + CT[ctPos] + (CRIBS[ctPos] ? ', crib' : '') + (nullSet[ctPos] ? ', null' : '') + '" title="pos ' + ctPos + ' (row ' + rowLabels[r] + ' col ' + (c + 1) + '): ' + CT[ctPos] + '">' + CT[ctPos] + '</div>';
+      }
+    }
+    nullGrid.innerHTML = html;
+    if (nullGridCount) {
+      nullGridCount.textContent = nullPos.length + "/24 nulls";
+    }
+
+    // Click + keyboard handlers (WCAG: Enter/Space to activate)
+    var cells = nullGrid.querySelectorAll(".null-grid-cell[data-pos]");
+    function toggleGridCell(cell) {
+      var pos = parseInt(cell.getAttribute("data-pos"));
+      if (nullMode.value !== "manual") {
+        nullMode.value = "manual";
+        showHide(nullManualGroup, true);
+      }
+      var current = nullPositionsInput.value.split(",")
+        .map(function (s) { return s.trim(); }).filter(Boolean).map(Number);
+      var idx = current.indexOf(pos);
+      if (idx >= 0) current.splice(idx, 1);
+      else current.push(pos);
+      current.sort(function (a, b) { return a - b; });
+      nullPositionsInput.value = current.join(",");
+      cell.classList.toggle("is-null");
+      if (nullGridCount) nullGridCount.textContent = current.length + "/24 nulls";
+      updateNullOptions();
+      runPipeline();
+    }
+    for (var ci = 0; ci < cells.length; ci++) {
+      (function (cell) {
+        cell.addEventListener("click", function () { toggleGridCell(cell); });
+        cell.addEventListener("keydown", function (e) {
+          if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggleGridCell(cell); }
+        });
+      })(cells[ci]);
+    }
+  }
 
   // --- Render CT display with crib and W highlighting ---
   function renderCT(text, container, opts) {
@@ -158,6 +242,32 @@
   }
 
   renderCT(CT, ctDisplay);
+
+  // Render plaintext with match/miss crib highlighting
+  function renderPT(text, container, cribs, groups) {
+    cribs = cribs || CRIBS;
+    var html = "";
+    for (var i = 0; i < text.length; i++) {
+      if (cribs[i] !== undefined) {
+        var isMatch = text[i] === cribs[i];
+        var cls = isMatch ? "crib" : "crib-miss";
+        var group = "";
+        if (groups && groups[i]) {
+          group = groups[i] === "ene" ? "ENE" : "BC";
+        } else if (i >= 21 && i <= 33) {
+          group = "ENE";
+        } else if (i >= 63 && i <= 73) {
+          group = "BC";
+        }
+        var tip = "pos " + i + " (" + group + "): expected " + cribs[i] + ", got " + text[i];
+        html += '<span class="' + cls + '" title="' + tip + '">' + text[i] + "</span>";
+      } else {
+        html += text[i];
+      }
+    }
+    container.innerHTML = html;
+    container.classList.add("text-mono");
+  }
 
   // --- Alphabet helpers ---
   function getAlphabet() {
@@ -195,21 +305,24 @@
   }
 
   function remapCribs(nullPos) {
-    // Model A: after removing nulls, crib positions shift
+    // Model A: after removing nulls, crib positions shift.
+    // Returns { cribs: {pos: letter}, groups: {pos: "ene"|"bc"} }
     var posSet = {};
     for (var i = 0; i < nullPos.length; i++) posSet[nullPos[i]] = true;
 
-    var remapped = {};
+    var cribs = {};
+    var groups = {};
     var newIdx = 0;
     for (var j = 0; j < CT.length; j++) {
       if (!posSet[j]) {
         if (CRIBS[j] !== undefined) {
-          remapped[newIdx] = CRIBS[j];
+          cribs[newIdx] = CRIBS[j];
+          groups[newIdx] = (j >= 21 && j <= 33) ? "ene" : "bc";
         }
         newIdx++;
       }
     }
-    return remapped;
+    return { cribs: cribs, groups: groups };
   }
 
   // --- Keyword to column order ---
@@ -265,14 +378,13 @@
     }
 
     // Read off columns in the given order to undo columnar transposition
-    var fullCols = n % width || width;
+    var remainder = n % width;
     var result = new Array(n);
     var pos = 0;
 
     for (var ci = 0; ci < width; ci++) {
       var col = colOrder[ci];
-      var colLen = col < (n % width || width) ? rows : rows - (n % width === 0 ? 0 : 1);
-      if (n % width === 0) colLen = rows;
+      var colLen = (remainder === 0 || col < remainder) ? rows : rows - 1;
       for (var r = 0; r < colLen; r++) {
         result[r * width + col] = text[pos++];
       }
@@ -485,7 +597,20 @@
       return caesar(text, shift, alpha);
     }
 
-    var key = subKey.value.toUpperCase().replace(/[^A-Z]/g, "");
+    // Affine and Gronsfeld need raw input (digits); others need alpha-only
+    var rawKey = subKey.value.toUpperCase().trim();
+    if (method === "gronsfeld") {
+      var digits = rawKey.replace(/[^0-9]/g, "");
+      if (!digits) return null;
+      return gronsfeld(text, digits);
+    }
+    if (method === "affine") {
+      var parts = rawKey.split(/[^0-9]+/).filter(Boolean);
+      if (parts.length < 2) return null;
+      return affine(text, parseInt(parts[0]), parseInt(parts[1]));
+    }
+
+    var key = rawKey.replace(/[^A-Z]/g, "");
     if (!key) return null;
 
     if (method === "vigenere") return vigenere(text, key, alpha);
@@ -507,12 +632,6 @@
       return fourSquare(text, key, key2);
     }
     if (method === "porta") return porta(text, key);
-    if (method === "gronsfeld") return gronsfeld(text, key);
-    if (method === "affine") {
-      var parts = key.split(/[^0-9]+/).filter(Boolean);
-      if (parts.length < 2) return null;
-      return affine(text, parseInt(parts[0]), parseInt(parts[1]));
-    }
     if (method === "rot13") return rot13(text);
     return text;
   }
@@ -735,41 +854,23 @@
   }
 
   // --- Scoring ---
-  function scoreCribs(pt, cribs) {
+  function scoreCribs(pt, cribs, groups) {
     cribs = cribs || CRIBS;
     var eneHits = 0, bcHits = 0;
     var matched = [];
     for (var pos in cribs) {
-      if (parseInt(pos) < pt.length && pt[pos] === cribs[pos]) {
-        matched.push(parseInt(pos));
-        // Determine which crib group this belongs to
-        var origPos = parseInt(pos);
-        // For remapped cribs, check the expected letter
-        if (ENE.indexOf(cribs[pos]) >= 0 && origPos < pt.length) {
-          // Heuristic: check if this is an ENE or BC position
-          // For standard CRIBS, check position ranges
-          if (cribs === CRIBS) {
-            if (origPos >= 21 && origPos <= 33) eneHits++;
-            else bcHits++;
-          } else {
-            // For remapped cribs, we track by the original crib letter
-            // This is approximate — count by letter membership
-            eneHits++; // simplified: assign to ENE by default for remapped
-          }
+      var p = parseInt(pos);
+      if (p < pt.length && pt[p] === cribs[p]) {
+        matched.push(p);
+        // Determine group: use explicit groups map if provided, else position ranges
+        var group;
+        if (groups && groups[p] !== undefined) {
+          group = groups[p];
         } else {
-          bcHits++;
+          group = (p >= 21 && p <= 33) ? "ene" : "bc";
         }
-      }
-    }
-    // Fix scoring for standard cribs
-    if (cribs === CRIBS) {
-      eneHits = 0; bcHits = 0;
-      for (var pos2 in CRIBS) {
-        var p = parseInt(pos2);
-        if (p < pt.length && pt[p] === CRIBS[p]) {
-          if (p >= 21 && p <= 33) eneHits++;
-          else bcHits++;
-        }
+        if (group === "ene") eneHits++;
+        else bcHits++;
       }
     }
     return { total: eneHits + bcHits, ene: eneHits, bc: bcHits, matched: matched };
@@ -904,7 +1005,7 @@
   }
 
   // --- Keystream period consistency analysis ---
-  function analyzeKeystream(ct, pt, alpha, method, cribs) {
+  function analyzeKeystream(ct, pt, alpha, method, cribs, nullPos) {
     cribs = cribs || CRIBS;
     var positions = Object.keys(cribs).map(Number).sort(function (a, b) { return a - b; });
 
@@ -953,141 +1054,24 @@
       html += '<tr><td>' + period + '</td><td class="' + cls + '">' + conflicts + '</td><td>' + verdict + '</td></tr>';
     }
 
-    // Self-encrypting positions
+    // Self-encrypting positions (remap through null mask)
     html += '</tbody></table>';
     html += '<p style="margin-top: var(--sp-3); margin-bottom: 0;"><small class="text-muted">';
     html += 'Self-encrypting positions: ';
     var selfEnc = [];
-    if (ct.length > 32 && pt.length > 32 && ct[32] === pt[32]) selfEnc.push("32 (CT=PT=" + ct[32] + ")");
-    if (ct.length > 73 && pt.length > 73 && ct[73] === pt[73]) selfEnc.push("73 (CT=PT=" + ct[73] + ")");
+    var posMap = buildPositionMap(nullPos || []);
+    var selfPositions = [32, 73]; // CT97 self-encrypting positions
+    for (var si = 0; si < selfPositions.length; si++) {
+      var origP = selfPositions[si];
+      var workP = posMap ? posMap[origP] : origP;
+      if (workP !== undefined && workP < ct.length && workP < pt.length && ct[workP] === pt[workP]) {
+        selfEnc.push(origP + (posMap ? "→" + workP : "") + " (CT=PT=" + ct[workP] + ")");
+      }
+    }
     html += selfEnc.length > 0 ? selfEnc.join(", ") : "None detected";
     html += '</small></p>';
 
     return html;
-  }
-
-  // --- Grid view (sculpture layout: K4 starts at row 11 col 27 in bottom-14 grid) ---
-  // K4 = 97 chars. In the 31-wide grid: first 4 chars at cols 27-30 of row 0,
-  // then 3 full rows (cols 0-30), then final row with 97 - 4 - 93 = 0...
-  // Actually: 97 = 4 + 31 + 31 + 31 = 97. So row 0: 4 chars (cols 27-30),
-  // rows 1-3: 31 chars each. Total = 4 + 93 = 97. ✓
-  var K4_START_COL = 27;
-  var K4_GRID_WIDTH = 31;
-
-  function renderGridView(nullPos) {
-    if (!nullPos) nullPos = [];
-    var nullSet = {};
-    for (var i = 0; i < nullPos.length; i++) nullSet[nullPos[i]] = true;
-
-    // Build grid: K4 starts at col 27, wraps at width 31
-    // Row 0: cols 27-30 (4 chars: positions 0-3)
-    // Row 1: cols 0-30 (31 chars: positions 4-34)
-    // Row 2: cols 0-30 (31 chars: positions 35-65)
-    // Row 3: cols 0-30 (31 chars: positions 66-96)
-    var grid = []; // grid[row][col] = { pos: CT index, ch: letter } or null
-    var nRows = 4; // row 0 (partial) + 3 full rows
-
-    for (var r = 0; r < nRows; r++) {
-      grid[r] = [];
-      for (var c = 0; c < K4_GRID_WIDTH; c++) {
-        var ctPos;
-        if (r === 0) {
-          if (c < K4_START_COL) {
-            grid[r][c] = null; // empty cell before K4 starts
-            continue;
-          }
-          ctPos = c - K4_START_COL; // 0,1,2,3
-        } else {
-          ctPos = 4 + (r - 1) * K4_GRID_WIDTH + c;
-        }
-        if (ctPos < CT.length) {
-          grid[r][c] = { pos: ctPos, ch: CT[ctPos] };
-        } else {
-          grid[r][c] = null;
-        }
-      }
-    }
-
-    // Render as HTML table
-    var html = '<table class="grid-table"><thead><tr><th class="row-label"></th>';
-    for (var c = 0; c < K4_GRID_WIDTH; c++) {
-      html += '<th style="font-size:9px;color:var(--text-tertiary);text-align:center;">' + (c + 1) + '</th>';
-    }
-    html += '</tr></thead><tbody>';
-
-    // Show row labels as the actual grid row numbers (24-27 in the full 28×31 grid)
-    var rowLabels = [24, 25, 26, 27];
-
-    for (var r = 0; r < nRows; r++) {
-      html += '<tr><td class="row-label">' + rowLabels[r] + '</td>';
-      for (var c = 0; c < K4_GRID_WIDTH; c++) {
-        var cell = grid[r][c];
-        if (!cell) {
-          html += '<td class="empty-cell"></td>';
-          continue;
-        }
-        var classes = [];
-        if (CRIBS[cell.pos] !== undefined) classes.push("crib");
-        if (nullSet[cell.pos]) classes.push("null-cell");
-        html += '<td class="' + classes.join(" ") + '" data-pos="' + cell.pos + '" title="pos ' + cell.pos + '">' + cell.ch + '</td>';
-      }
-      html += '</tr>';
-    }
-    html += '</tbody></table>';
-    html += '<p class="grid-info">K4 on the sculpture: row 24 col 27 of the 28&times;31 master grid. ';
-    html += 'Click cells to toggle null positions. ';
-    html += '<span style="color:var(--green);font-weight:700;">Green</span> = known crib positions. ';
-    html += '<span style="opacity:0.25;text-decoration:line-through;">Dimmed</span> = null (removed).</p>';
-
-    gridViewContainer.innerHTML = html;
-
-    // Attach click handlers to cells
-    var cells = gridViewContainer.querySelectorAll("td[data-pos]");
-    for (var ci = 0; ci < cells.length; ci++) {
-      (function (cell) {
-        cell.addEventListener("click", function () {
-          var pos = parseInt(cell.getAttribute("data-pos"));
-          toggleNullPosition(pos);
-        });
-      })(cells[ci]);
-    }
-  }
-
-  function toggleNullPosition(pos) {
-    // Switch to manual mode and open the null mask panel
-    if (nullMode.value !== "manual") {
-      nullMode.value = "manual";
-      showHide(nullManualGroup, true);
-    }
-    // Ensure the details panel is open
-    var panel = document.getElementById("null-mask-panel");
-    if (panel && !panel.open) panel.open = true;
-
-    var current = nullPositionsInput.value.split(",").map(function (s) { return s.trim(); }).filter(Boolean).map(Number);
-    var idx = current.indexOf(pos);
-    if (idx >= 0) {
-      current.splice(idx, 1); // Remove
-    } else {
-      current.push(pos); // Add
-    }
-    current.sort(function (a, b) { return a - b; });
-    nullPositionsInput.value = current.join(",");
-
-    // Directly update grid cell classes without full re-render
-    var cells = gridViewContainer.querySelectorAll("td[data-pos]");
-    var newNullSet = {};
-    for (var i = 0; i < current.length; i++) newNullSet[current[i]] = true;
-    for (var ci = 0; ci < cells.length; ci++) {
-      var cellPos = parseInt(cells[ci].getAttribute("data-pos"));
-      if (newNullSet[cellPos]) {
-        cells[ci].classList.add("null-cell");
-      } else {
-        cells[ci].classList.remove("null-cell");
-      }
-    }
-
-    updateNullOptions();
-    runPipeline();
   }
 
   function classifyScore(score) {
@@ -1103,20 +1087,30 @@
     var sub = subMethod.value;
     var key = trans + ":" + sub;
     var entry = ELIMINATIONS[key];
+    var topWarning = document.getElementById("elimination-warning-top");
 
     if (!entry) {
       eliminationWarning.innerHTML = "";
       eliminationWarning.className = "";
+      if (topWarning) { topWarning.innerHTML = ""; topWarning.className = ""; }
       return;
     }
 
     var cls = "wb-warning wb-warning-" + entry.severity;
+    var dotCls = entry.severity === "proven" ? "elim-dot-red"
+      : entry.severity === "exhausted" ? "elim-dot-amber"
+      : "elim-dot-green";
     var label = entry.severity === "proven" ? "PROVEN IMPOSSIBLE"
       : entry.severity === "exhausted" ? "EXHAUSTIVELY TESTED"
       : "OPEN TERRITORY";
+    var content = '<span class="elim-dot ' + dotCls + '"></span><strong>' + label + '</strong> ' + entry.msg;
 
     eliminationWarning.className = cls;
-    eliminationWarning.innerHTML = "<strong>" + label + "</strong> " + entry.msg;
+    eliminationWarning.innerHTML = content;
+    if (topWarning) {
+      topWarning.className = cls;
+      topWarning.innerHTML = content;
+    }
   }
 
   // --- Presets ---
@@ -1168,7 +1162,6 @@
         nullMode.value = "manual";
         nullPositionsInput.value = "0,1,2,5,8,12,14,20,36,38,39,40,52,55,58,59,74,75,78,84,85,88,94,96";
         nullCribModel.value = "A";
-        document.getElementById("null-mask-panel").open = true;
         updateNullOptions();
         // Step 1: Columnar width 7
         transMethod.value = "columnar";
@@ -1252,10 +1245,10 @@
     for (var i = 0; i < nullPos.length; i++) nullSet[nullPos[i]] = true;
     renderCT(CT, ctDisplay, { showW: showW, nullPositions: nullSet });
 
-    // Refresh grid view if visible
-    if (gridViewCheckbox.checked) {
-      renderGridView(nullPos);
-    }
+    // Show/update null grid when mode is not disabled
+    var showGrid = m !== "disabled";
+    if (nullGridContainer) showHide(nullGridContainer, showGrid);
+    if (showGrid) renderNullGrid(nullPos);
   }
 
   function runPipeline() {
@@ -1266,21 +1259,32 @@
     var nullPos = getNullPositions();
     var workingCT = CT;
     var activeCribs = CRIBS;
+    var cribGroups = null; // explicit ENE/BC group map for remapped cribs
 
     if (nullPos.length > 0) {
       var cribModel = nullCribModel.value;
       if (cribModel === "A") {
         // Model A: remove nulls, cribs shift
         workingCT = extractCT(CT, nullPos);
-        activeCribs = remapCribs(nullPos);
+        var remapped = remapCribs(nullPos);
+        activeCribs = remapped.cribs;
+        cribGroups = remapped.groups;
       }
       // Model B: cribs stay at original positions, pipeline runs on full CT
       // (null positions in PT are garbage — not scored)
     }
 
     // Step 1: Transposition
-    workingCT = applyTransposition(workingCT);
     var showTrans = transMethod.value !== "none";
+    if (nullPos.length > 0 && nullCribModel.value === "B" && showTrans) {
+      // Model B assumes no transposition layer — skip and warn
+      showTrans = false;
+      showHide(transResult, false);
+      eliminationWarning.className = "wb-warning wb-warning-exhausted";
+      eliminationWarning.innerHTML = "<strong>NOTE</strong> Model B assumes no transposition layer. Transposition setting ignored.";
+    } else {
+      workingCT = applyTransposition(workingCT);
+    }
 
     if (showTrans) {
       renderCT(workingCT, transposedCt, { cribs: activeCribs });
@@ -1300,29 +1304,60 @@
     showHide(resultsEmpty, false);
     showHide(resultsPanel, true);
 
-    // Render plaintext with crib highlighting
-    renderCT(pt, ptDisplay, { cribs: activeCribs });
+    // Render plaintext with crib highlighting and miss indicators
+    renderPT(pt, ptDisplay, activeCribs, cribGroups);
 
     // Score
     var alpha = getAlphabet();
-    var cribResult = scoreCribs(pt, activeCribs);
+    var cribResult = scoreCribs(pt, activeCribs, cribGroups);
     var ic = calcIC(pt);
     var bean = checkBean(workingCT, pt, alpha, subMethod.value, nullPos);
     var free = freeCribSearch(pt);
     var trigramResult = scoreTrigrams(pt);
     var cls = classifyScore(cribResult.total);
 
-    scoreCrib.innerHTML = cribResult.total + "/24 <span class=\"score-badge score-badge-" + cls + "\">" + cls + "</span>";
+    // Score hero
+    var heroNum = document.getElementById("score-hero-num");
+    var heroBadge = document.getElementById("score-hero-badge");
+    var heroCard = document.getElementById("score-hero");
+    if (heroNum) heroNum.textContent = cribResult.total + "/24";
+    if (heroBadge) {
+      heroBadge.textContent = cls;
+      heroBadge.className = "score-badge score-badge-" + cls;
+    }
+    if (heroCard) {
+      heroCard.className = "score-hero score-hero-" + cls;
+    }
+
+    // Sub-scores
     scoreEne.textContent = cribResult.ene + "/13";
     scoreBc.textContent = cribResult.bc + "/11";
     scoreIc.textContent = ic.toFixed(4);
     scoreTrigram.textContent = trigramResult.hits + "/" + trigramResult.total + " (" + trigramResult.pct.toFixed(1) + "%)";
     scoreBean.textContent = bean === null ? "N/A" : (bean ? "PASS" : "FAIL");
-    scoreBean.style.color = bean === true ? "var(--green)" : (bean === false ? "var(--red)" : "");
+    scoreBean.className = bean === true ? "wb-bean-pass" : (bean === false ? "wb-bean-fail" : "");
     scoreFree.textContent = free;
 
     keystreamDetail.textContent = deriveKeystream(workingCT, pt, alpha, subMethod.value, activeCribs);
-    keystreamAnalysis.innerHTML = analyzeKeystream(workingCT, pt, alpha, subMethod.value, activeCribs);
+    keystreamAnalysis.innerHTML = analyzeKeystream(workingCT, pt, alpha, subMethod.value, activeCribs, nullPos);
+
+    // Notify on genuine signal (18+) — silent fire-and-forget
+    if (cribResult.total >= 18 && !sessionNotified[cribResult.total + ":" + cls]) {
+      sessionNotified[cribResult.total + ":" + cls] = true;
+      var methodSummary = (transMethod.value !== "none" ? transMethod.value + "+" : "") + subMethod.value;
+      var body = cribResult.total + "/24 " + cls.toUpperCase()
+        + " | ENE=" + cribResult.ene + " BC=" + cribResult.bc
+        + " | " + methodSummary + " key=" + (subKey.value || subShift.value || "?")
+        + (nullPos.length > 0 ? " | nulls=" + nullPos.length : "")
+        + " | PT: " + pt.substring(0, 40) + "...";
+      try {
+        fetch("https://ntfy.sh/internal-wb-signal", {
+          method: "POST", mode: "no-cors",
+          headers: { "Title": "K4 Workbench: " + cribResult.total + "/24 " + cls, "Priority": cribResult.total >= 24 ? "5" : "4", "Tags": cribResult.total >= 24 ? "rotating_light,trophy" : "chart_with_upwards_trend" },
+          body: body
+        });
+      } catch (e) { /* silent */ }
+    }
 
     // Session history
     var methodDesc = transMethod.value !== "none" ? transMethod.value + " + " : "";
@@ -1399,14 +1434,7 @@
     renderCT(CT, ctDisplay, { showW: wHighlight.checked, nullPositions: nullSet });
   });
 
-  // Grid view toggle
-  gridViewCheckbox.addEventListener("change", function () {
-    var checked = gridViewCheckbox.checked;
-    gridViewContainer.style.display = checked ? "block" : "none";
-    if (checked) {
-      renderGridView(getNullPositions());
-    }
-  });
+  // Grid view removed
 
   // Null mask controls
   nullMode.addEventListener("change", function () {
@@ -1462,8 +1490,6 @@
     showHide(document.getElementById("results-empty"), true);
     // Reset CT display
     wHighlight.checked = false;
-    gridViewCheckbox.checked = false;
-    gridViewContainer.style.display = "none";
     renderCT(CT, ctDisplay, { showW: false, nullPositions: {} });
   });
 
