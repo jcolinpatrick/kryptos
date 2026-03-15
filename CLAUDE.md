@@ -1,3 +1,17 @@
+# STOP. DO NOT SKIP THIS SECTION.
+
+You MUST complete ALL of these steps before executing any task:
+
+1. Read this entire CLAUDE.md
+2. Read MEMORY.md — specifically the disproof ledger and eliminated hypotheses
+3. If the user's request matches ANYTHING already disproved or tested, 
+   TELL THE USER and do NOT run it again
+4. Search scripts/ for existing tools — do NOT write new code if a script exists
+5. Check results/ for prior output matching the planned parameters
+
+If you skip these steps and re-test an eliminated hypothesis, you are 
+wasting 28 CPU cores and burning API tokens for zero value.
+
 # CLAUDE.md
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
@@ -28,13 +42,9 @@ Every prior experiment (600+, 669B+ configs) assumed positional correspondence o
 
 **W-as-delimiter:** 5 W's at positions [20, 36, 48, 58, 74] bracket the cribs — W at 20 immediately before EASTNORTHEAST (21), W at 74 immediately after BERLINCLOCK (73). May act as telegram-style word separators. Sanborn's clue "(CLUE) what's the point?" may reference W as period/full stop.
 
-**What we know:** [DERIVED FACT] No single-layer classical cipher works on the carved text (exhaustively tested). [DERIVED FACT] Null mask + periodic Vig/Beau/VBeau (periods 1-23) is IMPOSSIBLE for ANY choice of 24 null positions (proven 2026-03-11 via exhaustive (n1,n2,n3) enumeration). [DERIVED FACT] MITM sub (mono, periodic, autokey) × structured transposition (14 families, ~1.2B configs) = ZERO hits (proven 2026-03-12/13). [DERIVED FACT] Four-Square, Playfair, Two-Square, VIC cipher, 2-round Feistel, Gronsfeld, Porta, Trithemius — ALL eliminated as single layer (2026-03-13). [PUBLIC FACT, PRIMARY SOURCE] Sanborn: "There are TWO SYSTEMS of enciphering the bottom text... designed to UNVEIL ITSELF... pull up one layer, come to the next." [HYPOTHESIS] The Cardan grille selects 73 of 97 positions (null mask). See [`reports/final_synthesis.md`](reports/final_synthesis.md) for the elimination landscape.
+**Key facts:** [PUBLIC FACT, PRIMARY SOURCE] Sanborn: "There are TWO SYSTEMS of enciphering the bottom text... designed to UNVEIL ITSELF... pull up one layer, come to the next." [DERIVED FACT] No single-layer classical cipher works on the carved text (exhaustively tested). [HYPOTHESIS] The Cardan grille selects 73 of 97 positions (null mask). See [`reports/final_synthesis.md`](reports/final_synthesis.md) for the elimination landscape.
 
-**Current best lead (2026-03-14):** [INTERNAL RESULT] DEFECTOR:AZ_beau + col7 transposition + null mask scores **15/24** (ene=7/13, bcl=8/11). This is a **confirmed hard 3-swap local maximum** (223.7M evals, zero improvement). Achieves 3.3% of SA restarts (5/150). 17/24 null positions are identical across all 6 distinct 15/24 masks. 4/5 W-positions are consensus nulls, supporting the W-delimiter hypothesis. DEFECTOR:AZ_beau:col7 is **uniquely** at 15/24 — all 18 other keyword/variant/alphabet combinations tested max at 14/24. Model ceiling at 15/24 suggests it may be incomplete or the correct model with wrong parameters.
-
-**K2 coordinates encode K4 structure:** [DERIVED FACT] K2's "38 degrees" → 3²+8²=**73**, 3×8=**24**, 3+8=**11**. "6.5" → ×2=**13**, 6+5=**11**. UNIQUE two-digit number with all three properties. Monte Carlo: ~1 in 180M by chance. Operational mechanism unknown.
-
-**What we don't know:** Which 24 of 97 positions are nulls, whether cribs apply to carved or real CT positions, the structural rule governing null placement, and whether the correct cipher model is a variant of the DEFECTOR:AZ_beau+col7 model or something entirely different. Running key, monoalphabetic, and autokey are all eliminated WITH standard transposition — the surviving cipher space requires either non-standard transposition, a bespoke combination, or a model we haven't conceived.
+**→ Current best lead, full elimination list, open hypotheses, and K2 coordinate analysis: see MEMORY.md** (loaded automatically into every conversation).
 
 ---
 
@@ -283,10 +293,7 @@ Domain knowledge, public facts, and detailed operating policies live in separate
 - DO NOT re-run old direct-decryption attacks on 97 chars — they assumed wrong positional correspondence
 - DO NOT re-run MITM sub×transposition — mono/periodic/autokey sub × 14 standard transposition families exhaustively eliminated (~1.2B configs, ZERO hits, 2026-03-12/13)
 - DO NOT run more SA/hill-climbing on DEFECTOR:AZ_beau+col7 — 15/24 is a confirmed hard 3-swap local max (223.7M evals)
-- **Current best lead:** DEFECTOR:AZ_beau + col7 transposition + null mask = 15/24. Uniquely highest among 19 keyword/variant combinations tested. See "Current best lead" in Quick Reference above.
-- Top keyword candidates (by pigeonhole letter-supply): KRYPTOS, KOMPASS, DEFECTOR, COLOPHON, ABSCISSA — note: ALL fail full Bean check on raw 97-char text (consistent with two-system model)
-- **HOROLOGE and ENIGMA are ELIMINATED** (pigeonhole analysis)
-- **Also eliminated:** Four-Square, Playfair, Two-Square, VIC, Feistel, Gronsfeld, Porta, Trithemius, all periodic sub on raw 97 AND any null-extracted 73
+- **→ Current best lead, keyword status, and full elimination list: see MEMORY.md**
 
 **KryptosBot agent runner:** `python3 <internal>/solve.py` launches the unified campaign runner. See `<internal>` for full usage. Key commands: `solve.py` (6 parallel agents), `solve.py compute` (free local CPU), `solve.py run <name>` (single strategy), `solve.py list` (show all strategies).
 
@@ -294,5 +301,5 @@ Domain knowledge, public facts, and detailed operating policies live in separate
 
 ---
 
-*Last updated: 2026-03-14 — Mission: derive K4 method & solve. Best lead: DEFECTOR:AZ_beau+col7+null-mask=15/24 (hard 3-swap local max). Standard sub×trans exhaustively eliminated (~1.2B configs). Four-Square/VIC/Feistel/digraphic all eliminated. Surviving space: non-standard transposition, bespoke combinations, or unconceived models. K2 coords confirmed to encode 73/24/13/11 (mechanism unknown). Top keywords: DEFECTOR (uniquely 15/24 with col7), KRYPTOS, KOMPASS, COLOPHON, ABSCISSA*
+*Last updated: 2026-03-14 — Mission: derive K4 method & solve. Volatile research state (best leads, eliminations, open hypotheses) maintained in MEMORY.md.*
 *Primary author: Colin Patrick (human lead) + Claude (computational partner)*
