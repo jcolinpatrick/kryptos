@@ -70,7 +70,18 @@
     "none:porta":            { severity: "proven", msg: "Porta cipher: eliminated analytically (2026-03-13). Key conflicts at all periods." },
     "none:gronsfeld":        { severity: "proven", msg: "Gronsfeld: eliminated analytically (2026-03-13). Special case of Vigen\u00e8re with digits 0\u20139." },
     "none:affine":           { severity: "proven", msg: "Affine cipher on 97 chars: all 9,312 (a,b) pairs tested exhaustively. Best 8/24 (noise)." },
-    "none:rot13":            { severity: "proven", msg: "ROT13: special case of Caesar shift 13 \u2014 mathematically eliminated." }
+    "none:rot13":            { severity: "proven", msg: "ROT13: special case of Caesar shift 13 \u2014 mathematically eliminated." },
+    "none:ct-autokey-vig":   { severity: "proven", msg: "CT-Autokey Vigen\u00e8re on raw 97: all 576 configs eliminated analytically (2026-03-13)." },
+    "none:ct-autokey-beau":  { severity: "proven", msg: "CT-Autokey Beaufort on raw 97: all 576 configs eliminated analytically (2026-03-13)." },
+    "none:running-key-vig":  { severity: "exhausted", msg: "Running-key Vigen\u00e8re on raw 97 (Carter books + K1-K3 PT): max 7/24 direct, 9/24 with transposition." },
+    "none:running-key-beau": { severity: "exhausted", msg: "Running-key Beaufort on raw 97 (Carter books + K1-K3 PT): max 7/24 direct, 9/24 with transposition." },
+    "none:gromark":          { severity: "exhausted", msg: "Gromark on raw 97: 3.2 billion primers tested (Bean 2021 paper). Zero crib hits. Nearly eliminated." },
+    "none:bifid":            { severity: "proven", msg: "Bifid on raw 97: all 26 letters present in K4 CT, but Bifid requires 5\u00d75 grid (I/J merged = 25 letters). Structurally incompatible." },
+    "columnar:ct-autokey-vig":   { severity: "open", msg: "Columnar + CT-Autokey Vigen\u00e8re: open territory." },
+    "columnar:ct-autokey-beau":  { severity: "open", msg: "Columnar + CT-Autokey Beaufort: open territory." },
+    "columnar:running-key-vig":  { severity: "open", msg: "Columnar + Running-key Vigen\u00e8re: open territory." },
+    "columnar:running-key-beau": { severity: "open", msg: "Columnar + Running-key Beaufort: open territory." },
+    "columnar:gromark":          { severity: "open", msg: "Columnar + Gromark: open territory." }
   };
 
   // --- Top 50 English trigrams for text quality scoring ---
@@ -96,6 +107,8 @@
   var transSerpentine = document.getElementById("trans-opts-serpentine");
   var transSpiral = document.getElementById("trans-opts-spiral");
   var transMyszkowski = document.getElementById("trans-opts-myszkowski");
+  var transRoute = document.getElementById("trans-opts-route");
+  var transDoubleColumnar = document.getElementById("trans-opts-double-columnar");
   var transManual = document.getElementById("trans-opts-manual");
   var subMethod = document.getElementById("sub-method");
   var subKey = document.getElementById("sub-key");
@@ -352,6 +365,8 @@
     if (method === "serpentine") return serpentineTranspose(text);
     if (method === "spiral") return spiralTranspose(text);
     if (method === "myszkowski") return myszkowskiTranspose(text);
+    if (method === "route") return routeTranspose(text);
+    if (method === "double-columnar") return doubleColumnarTranspose(text);
     if (method === "manual") return manualTranspose(text);
     return text;
   }
@@ -570,6 +585,124 @@
     return undoPermutation(text, perm);
   }
 
+  function routeTranspose(text) {
+    var width = parseInt(document.getElementById("trans-route-width").value) || 10;
+    var routeType = document.getElementById("trans-route-type").value;
+    var n = text.length;
+    var rows = Math.ceil(n / width);
+
+    // Build reading-order permutation based on route type
+    var perm = [];
+    if (routeType === "columns") {
+      // Read columns top-down, left-to-right
+      for (var c = 0; c < width; c++) {
+        for (var r = 0; r < rows; r++) {
+          var pos = r * width + c;
+          if (pos < n) perm.push(pos);
+        }
+      }
+    } else if (routeType === "columns-alt") {
+      // Read columns, alternating direction (down, up, down, ...)
+      for (var c2 = 0; c2 < width; c2++) {
+        if (c2 % 2 === 0) {
+          for (var r2 = 0; r2 < rows; r2++) {
+            var pos2 = r2 * width + c2;
+            if (pos2 < n) perm.push(pos2);
+          }
+        } else {
+          for (var r3 = rows - 1; r3 >= 0; r3--) {
+            var pos3 = r3 * width + c2;
+            if (pos3 < n) perm.push(pos3);
+          }
+        }
+      }
+    } else if (routeType === "spiral-in" || routeType === "spiral-out") {
+      // Spiral CW inward: right, down, left, up
+      var visited = [];
+      for (var ri = 0; ri < rows; ri++) visited.push(new Array(width).fill(false));
+      var dirs = [[0, 1], [1, 0], [0, -1], [-1, 0]];
+      var cr = 0, cc = 0, cd = 0;
+      var spiralPerm = [];
+      for (var step = 0; step < rows * width; step++) {
+        var spos = cr * width + cc;
+        if (spos < n) spiralPerm.push(spos);
+        visited[cr][cc] = true;
+        var nr = cr + dirs[cd][0], nc = cc + dirs[cd][1];
+        if (nr >= 0 && nr < rows && nc >= 0 && nc < width && !visited[nr][nc]) {
+          cr = nr; cc = nc;
+        } else {
+          cd = (cd + 1) % 4;
+          nr = cr + dirs[cd][0]; nc = cc + dirs[cd][1];
+          if (nr >= 0 && nr < rows && nc >= 0 && nc < width && !visited[nr][nc]) {
+            cr = nr; cc = nc;
+          } else break;
+        }
+      }
+      if (routeType === "spiral-out") spiralPerm.reverse();
+      perm = spiralPerm;
+    } else if (routeType === "diagonal") {
+      // Read diagonals (top-left to bottom-right)
+      var diags = {};
+      for (var dr = 0; dr < rows; dr++) {
+        for (var dc = 0; dc < width; dc++) {
+          var dpos = dr * width + dc;
+          if (dpos < n) {
+            var dkey = dr + dc;
+            if (!diags[dkey]) diags[dkey] = [];
+            diags[dkey].push(dpos);
+          }
+        }
+      }
+      var maxDiag = rows + width - 2;
+      for (var d = 0; d <= maxDiag; d++) {
+        if (diags[d]) {
+          for (var di = 0; di < diags[d].length; di++) perm.push(diags[d][di]);
+        }
+      }
+    }
+    return undoPermutation(text, perm);
+  }
+
+  function doubleColumnarTranspose(text) {
+    var width1 = parseInt(document.getElementById("trans-dc-width1").value) || 7;
+    var width2 = parseInt(document.getElementById("trans-dc-width2").value) || 9;
+    var kw1 = (document.getElementById("trans-dc-keyword1").value || "").toUpperCase().replace(/[^A-Z]/g, "");
+    var kw2 = (document.getElementById("trans-dc-keyword2").value || "").toUpperCase().replace(/[^A-Z]/g, "");
+
+    // Helper: undo a single columnar transposition
+    function undoColumnar(ct, width, keyword) {
+      var n = ct.length;
+      var rows = Math.ceil(n / width);
+      var colOrder;
+      if (keyword) {
+        colOrder = keywordToOrder(keyword, width);
+        if (!colOrder) {
+          // Keyword too short, use natural order
+          colOrder = [];
+          for (var ci = 0; ci < width; ci++) colOrder.push(ci);
+        }
+      } else {
+        colOrder = [];
+        for (var ci2 = 0; ci2 < width; ci2++) colOrder.push(ci2);
+      }
+      var remainder = n % width;
+      var result = new Array(n);
+      var pos = 0;
+      for (var i = 0; i < width; i++) {
+        var col = colOrder[i];
+        var colLen = (remainder === 0 || col < remainder) ? rows : rows - 1;
+        for (var r = 0; r < colLen; r++) {
+          result[r * width + col] = ct[pos++];
+        }
+      }
+      return result.join("");
+    }
+
+    // Undo second transposition first, then first
+    var intermediate = undoColumnar(text, width2, kw2);
+    return undoColumnar(intermediate, width1, kw1);
+  }
+
   function manualTranspose(text) {
     var permStr = document.getElementById("trans-perm").value.trim();
     if (!permStr) return text;
@@ -597,6 +730,20 @@
       return caesar(text, shift, alpha);
     }
 
+    // Gromark needs primer from its own input field
+    if (method === "gromark") {
+      var primer = (document.getElementById("sub-gromark-primer").value || "").replace(/[^0-9]/g, "");
+      var base = parseInt(document.getElementById("sub-gromark-base").value) || 10;
+      if (!primer) return null;
+      return gromark(text, primer, base);
+    }
+    // Bifid needs keyword + period
+    if (method === "bifid") {
+      var bifidKey = subKey.value.toUpperCase().replace(/[^A-Z]/g, "");
+      var bifidPeriod = parseInt((document.getElementById("sub-bifid-period") || {}).value) || 0;
+      return bifid(text, bifidKey || "", bifidPeriod);
+    }
+
     // Affine and Gronsfeld need raw input (digits); others need alpha-only
     var rawKey = subKey.value.toUpperCase().trim();
     if (method === "gronsfeld") {
@@ -618,6 +765,10 @@
     if (method === "varbeaufort") return varBeaufort(text, key, alpha);
     if (method === "autokey-vig") return autokeyVig(text, key, alpha);
     if (method === "autokey-beau") return autokeyBeau(text, key, alpha);
+    if (method === "ct-autokey-vig") return ctAutokeyVig(text, key, alpha);
+    if (method === "ct-autokey-beau") return ctAutokeyBeau(text, key, alpha);
+    if (method === "running-key-vig") return runningKeyVig(text, key, alpha);
+    if (method === "running-key-beau") return runningKeyBeau(text, key, alpha);
     if (method === "quagmire-ii") {
       var ind = (document.getElementById("sub-indicator").value || "K").toUpperCase();
       return quagmireII(text, key, ind);
@@ -843,6 +994,166 @@
     return pt;
   }
 
+  // --- Running Key (Vigenere) ---
+  // Like Vigenere but key is a long text passage (no cycling).
+  // If key shorter than text, remaining chars pass through unchanged.
+  function runningKeyVig(ct, key, alpha) {
+    var pt = "";
+    for (var i = 0; i < ct.length; i++) {
+      var c = alphaIndex(ct[i], alpha);
+      if (i < key.length) {
+        var k = alphaIndex(key[i], alpha);
+        pt += alpha[mod(c - k, 26)];
+      } else {
+        pt += ct[i]; // passthrough
+      }
+    }
+    return pt;
+  }
+
+  // --- Running Key (Beaufort) ---
+  function runningKeyBeau(ct, key, alpha) {
+    var pt = "";
+    for (var i = 0; i < ct.length; i++) {
+      var c = alphaIndex(ct[i], alpha);
+      if (i < key.length) {
+        var k = alphaIndex(key[i], alpha);
+        pt += alpha[mod(k - c, 26)];
+      } else {
+        pt += ct[i]; // passthrough
+      }
+    }
+    return pt;
+  }
+
+  // --- CT-Autokey (Vigenere) ---
+  // Like autokey but feeds back CIPHERTEXT instead of plaintext.
+  // key[i] = CT[i-L] for i >= L, where L = primer length.
+  function ctAutokeyVig(ct, primer, alpha) {
+    var pt = "";
+    var L = primer.length;
+    for (var i = 0; i < ct.length; i++) {
+      var c = alphaIndex(ct[i], alpha);
+      var k;
+      if (i < L) {
+        k = alphaIndex(primer[i], alpha);
+      } else {
+        k = alphaIndex(ct[i - L], alpha);
+      }
+      pt += alpha[mod(c - k, 26)];
+    }
+    return pt;
+  }
+
+  // --- CT-Autokey (Beaufort) ---
+  function ctAutokeyBeau(ct, primer, alpha) {
+    var pt = "";
+    var L = primer.length;
+    for (var i = 0; i < ct.length; i++) {
+      var c = alphaIndex(ct[i], alpha);
+      var k;
+      if (i < L) {
+        k = alphaIndex(primer[i], alpha);
+      } else {
+        k = alphaIndex(ct[i - L], alpha);
+      }
+      pt += alpha[mod(k - c, 26)];
+    }
+    return pt;
+  }
+
+  // --- Gromark (lagged Fibonacci key generator) ---
+  // User enters a numeric primer and a base.
+  // Key expansion: k[i] = (k[i-L] + k[i-L+1]) mod base, where L = primer length.
+  // Decryption: P[i] = (C[i] - k[i]) mod 26
+  function gromark(ct, primer, base) {
+    if (!primer || primer.length === 0) return null;
+    var L = primer.length;
+    // Expand key to CT length
+    var keyStream = [];
+    for (var i = 0; i < primer.length; i++) {
+      keyStream.push(parseInt(primer[i]) || 0);
+    }
+    for (var j = L; j < ct.length; j++) {
+      keyStream.push((keyStream[j - L] + keyStream[j - L + 1]) % base);
+    }
+    var pt = "";
+    for (var k = 0; k < ct.length; k++) {
+      var c = ct.charCodeAt(k) - 65;
+      pt += String.fromCharCode(mod(c - keyStream[k], 26) + 65);
+    }
+    return pt;
+  }
+
+  // --- Bifid cipher (5x5 Polybius square, I/J merged) ---
+  function buildBifidGrid(keyword) {
+    var seen = {};
+    var grid = [];
+    var kw = keyword.toUpperCase().replace(/[^A-Z]/g, "").replace(/J/g, "I");
+    for (var i = 0; i < kw.length; i++) {
+      if (!seen[kw[i]]) {
+        seen[kw[i]] = true;
+        grid.push(kw[i]);
+      }
+    }
+    for (var c = 0; c < 26; c++) {
+      var ch = String.fromCharCode(65 + c);
+      if (ch === "J") continue;
+      if (!seen[ch]) {
+        seen[ch] = true;
+        grid.push(ch);
+      }
+    }
+    return grid; // 25 chars
+  }
+
+  function bifid(ct, keyword, period) {
+    var grid = buildBifidGrid(keyword);
+    // Build lookup: letter -> (row, col)
+    var toRC = {};
+    for (var g = 0; g < grid.length; g++) {
+      toRC[grid[g]] = [Math.floor(g / 5), g % 5];
+    }
+    // Normalize CT: J -> I
+    var text = ct.replace(/J/g, "I");
+    var n = text.length;
+    if (period <= 0) period = n;
+
+    var pt = "";
+    for (var blockStart = 0; blockStart < n; blockStart += period) {
+      var blockEnd = Math.min(blockStart + period, n);
+      var blockLen = blockEnd - blockStart;
+
+      // Split into rows and cols
+      var rowVals = [];
+      var colVals = [];
+      for (var i = blockStart; i < blockEnd; i++) {
+        var ch = text[i] === "J" ? "I" : text[i];
+        var rc = toRC[ch];
+        if (!rc) { pt += text[i]; continue; }
+        rowVals.push(rc[0]);
+        colVals.push(rc[1]);
+      }
+
+      // Interleave: for decryption, the combined stream was split in half
+      // Encryption: pairs -> all rows, then all cols -> re-pair
+      // Decryption (undo): combined stream = rows + cols, re-pair, lookup
+      // Actually for DECRYPTION of bifid:
+      // During encryption: take plaintext pairs (r,c), write all r's then all c's,
+      // re-pair consecutive values, look up to get CT.
+      // Decryption: take CT pairs (r,c), write all r's then all c's,
+      // re-pair them as (combined[0], combined[blockLen]), (combined[1], combined[blockLen+1]), ...
+      // then look up each pair in the grid.
+      var combined = rowVals.concat(colVals);
+      for (var j = 0; j < blockLen; j++) {
+        var r = combined[j];
+        var c = combined[j + blockLen];
+        pt += grid[r * 5 + c];
+      }
+    }
+    return pt;
+  }
+
   // --- ROT13 ---
   function rot13(ct) {
     var pt = "";
@@ -920,7 +1231,7 @@
       if (workPos === undefined || workPos >= ct.length || workPos >= pt.length) continue;
       var c = alphaIndex(ct[workPos], alpha);
       var pv = alphaIndex(pt[workPos], alpha);
-      if (method === "beaufort" || method === "autokey-beau") {
+      if (method === "beaufort" || method === "autokey-beau" || method === "ct-autokey-beau" || method === "running-key-beau") {
         keys[origPos] = mod(c + pv, 26);
       } else if (method === "varbeaufort") {
         keys[origPos] = mod(pv - c, 26);
@@ -983,7 +1294,7 @@
       var c = alphaIndex(ct[pos], alpha);
       var p = alphaIndex(pt[pos], alpha);
       var kVal;
-      if (method === "beaufort" || method === "autokey-beau") {
+      if (method === "beaufort" || method === "autokey-beau" || method === "ct-autokey-beau" || method === "running-key-beau") {
         kVal = mod(c + p, 26);
       } else if (method === "varbeaufort") {
         kVal = mod(p - c, 26);
@@ -1016,7 +1327,7 @@
       if (pos >= ct.length || pos >= pt.length) continue;
       var c = alphaIndex(ct[pos], alpha);
       var p = alphaIndex(pt[pos], alpha);
-      if (method === "beaufort" || method === "autokey-beau") {
+      if (method === "beaufort" || method === "autokey-beau" || method === "ct-autokey-beau" || method === "running-key-beau") {
         keyVals[pos] = mod(c + p, 26);
       } else if (method === "varbeaufort") {
         keyVals[pos] = mod(p - c, 26);
@@ -1088,6 +1399,7 @@
     var key = trans + ":" + sub;
     var entry = ELIMINATIONS[key];
     var topWarning = document.getElementById("elimination-warning-top");
+    var nullActive = nullMode.value !== "disabled";
 
     if (!entry) {
       eliminationWarning.innerHTML = "";
@@ -1096,14 +1408,27 @@
       return;
     }
 
-    var cls = "wb-warning wb-warning-" + entry.severity;
-    var dotCls = entry.severity === "proven" ? "elim-dot-red"
-      : entry.severity === "exhausted" ? "elim-dot-amber"
+    // When a null mask is active, eliminations on "raw 97" don't apply —
+    // the cipher operates on the extracted text (73 chars or fewer), which
+    // has different properties (e.g., may have ≤25 distinct letters for Bifid,
+    // different IC, different crib alignment). Downgrade proven/exhausted to
+    // informational only.
+    var severity = entry.severity;
+    var msg = entry.msg;
+    if (nullActive && (severity === "proven" || severity === "exhausted")) {
+      severity = "open";
+      msg = msg.replace(/on raw 97 chars?/g, "on raw 97")
+        + " <em>However, you have a null mask active — the cipher operates on the extracted text, not raw 97. This elimination may not apply. Treat as open territory.</em>";
+    }
+
+    var cls = "wb-warning wb-warning-" + severity;
+    var dotCls = severity === "proven" ? "elim-dot-red"
+      : severity === "exhausted" ? "elim-dot-amber"
       : "elim-dot-green";
-    var label = entry.severity === "proven" ? "PROVEN IMPOSSIBLE"
-      : entry.severity === "exhausted" ? "EXHAUSTIVELY TESTED"
+    var label = severity === "proven" ? "PROVEN IMPOSSIBLE"
+      : severity === "exhausted" ? "EXHAUSTIVELY TESTED"
       : "OPEN TERRITORY";
-    var content = '<span class="elim-dot ' + dotCls + '"></span><strong>' + label + '</strong> ' + entry.msg;
+    var content = '<span class="elim-dot ' + dotCls + '"></span><strong>' + label + '</strong> ' + msg;
 
     eliminationWarning.className = cls;
     eliminationWarning.innerHTML = content;
@@ -1199,27 +1524,40 @@
     showHide(transSerpentine, m === "serpentine");
     showHide(transSpiral, m === "spiral");
     showHide(transMyszkowski, m === "myszkowski");
+    if (transRoute) showHide(transRoute, m === "route");
+    if (transDoubleColumnar) showHide(transDoubleColumnar, m === "double-columnar");
     showHide(transManual, m === "manual");
   }
 
   function updateSubOptions() {
     var m = subMethod.value;
     var needsKey = ["vigenere", "beaufort", "varbeaufort", "autokey-vig", "autokey-beau",
-                    "quagmire-ii", "quagmire-ii-autokey", "four-square", "porta", "gronsfeld", "affine"].indexOf(m) >= 0;
+                    "ct-autokey-vig", "ct-autokey-beau", "running-key-vig", "running-key-beau",
+                    "quagmire-ii", "quagmire-ii-autokey", "four-square", "porta", "gronsfeld", "affine",
+                    "bifid"].indexOf(m) >= 0;
     var needsCaesar = m === "caesar";
     var needsKey2 = m === "four-square";
     var needsIndicator = m === "quagmire-ii" || m === "quagmire-ii-autokey";
+    var needsGromark = m === "gromark";
+    var needsBifid = m === "bifid";
     showHide(subKeyGroup, needsKey);
     showHide(subCaesarGroup, needsCaesar);
     var key2Group = document.getElementById("sub-key2-group");
     var indGroup = document.getElementById("sub-indicator-group");
+    var gromarkGroup = document.getElementById("sub-gromark-group");
+    var bifidGroup = document.getElementById("sub-bifid-group");
     if (key2Group) showHide(key2Group, needsKey2);
     if (indGroup) showHide(indGroup, needsIndicator);
+    if (gromarkGroup) showHide(gromarkGroup, needsGromark);
+    if (bifidGroup) showHide(bifidGroup, needsBifid);
     // Update key label hints
     var keyLabel = document.getElementById("sub-key-label");
     if (keyLabel) {
       if (m === "affine") keyLabel.textContent = "Key (a,b)";
       else if (m === "gronsfeld") keyLabel.textContent = "Key (digits)";
+      else if (m === "running-key-vig" || m === "running-key-beau") keyLabel.textContent = "Key (long text passage)";
+      else if (m === "ct-autokey-vig" || m === "ct-autokey-beau") keyLabel.textContent = "Primer";
+      else if (m === "bifid") keyLabel.textContent = "Keyword (5\u00d75 grid)";
       else keyLabel.textContent = "Key";
     }
   }
@@ -1424,6 +1762,24 @@
   document.getElementById("trans-spiral-width").addEventListener("input", onInput);
   document.getElementById("trans-spiral-ccw").addEventListener("change", runPipeline);
   document.getElementById("trans-mysz-keyword").addEventListener("input", onInput);
+  var routeWidth = document.getElementById("trans-route-width");
+  var routeType = document.getElementById("trans-route-type");
+  var dcWidth1 = document.getElementById("trans-dc-width1");
+  var dcWidth2 = document.getElementById("trans-dc-width2");
+  var dcKw1 = document.getElementById("trans-dc-keyword1");
+  var dcKw2 = document.getElementById("trans-dc-keyword2");
+  if (routeWidth) routeWidth.addEventListener("input", onInput);
+  if (routeType) routeType.addEventListener("change", runPipeline);
+  if (dcWidth1) dcWidth1.addEventListener("input", onInput);
+  if (dcWidth2) dcWidth2.addEventListener("input", onInput);
+  if (dcKw1) dcKw1.addEventListener("input", onInput);
+  if (dcKw2) dcKw2.addEventListener("input", onInput);
+  var gromarkPrimer = document.getElementById("sub-gromark-primer");
+  var gromarkBase = document.getElementById("sub-gromark-base");
+  var bifidPeriod = document.getElementById("sub-bifid-period");
+  if (gromarkPrimer) gromarkPrimer.addEventListener("input", onInput);
+  if (gromarkBase) gromarkBase.addEventListener("input", onInput);
+  if (bifidPeriod) bifidPeriod.addEventListener("input", onInput);
 
   // W-highlight toggle
   wHighlight.addEventListener("change", function () {
@@ -1474,6 +1830,18 @@
     document.getElementById("trans-serp-width").value = "7";
     document.getElementById("trans-spiral-width").value = "7";
     document.getElementById("trans-mysz-keyword").value = "";
+    var resetRouteWidth = document.getElementById("trans-route-width");
+    var resetRouteType = document.getElementById("trans-route-type");
+    var resetDcWidth1 = document.getElementById("trans-dc-width1");
+    var resetDcWidth2 = document.getElementById("trans-dc-width2");
+    var resetDcKw1 = document.getElementById("trans-dc-keyword1");
+    var resetDcKw2 = document.getElementById("trans-dc-keyword2");
+    if (resetRouteWidth) resetRouteWidth.value = "10";
+    if (resetRouteType) resetRouteType.value = "columns";
+    if (resetDcWidth1) resetDcWidth1.value = "7";
+    if (resetDcWidth2) resetDcWidth2.value = "9";
+    if (resetDcKw1) resetDcKw1.value = "";
+    if (resetDcKw2) resetDcKw2.value = "";
     updateTransOptions();
     // Step 2
     subMethod.value = "vigenere";
@@ -1484,6 +1852,12 @@
     var ind = document.getElementById("sub-indicator");
     if (key2) key2.value = "";
     if (ind) ind.value = "K";
+    var resetGromarkPrimer = document.getElementById("sub-gromark-primer");
+    var resetGromarkBase = document.getElementById("sub-gromark-base");
+    var resetBifidPeriod = document.getElementById("sub-bifid-period");
+    if (resetGromarkPrimer) resetGromarkPrimer.value = "";
+    if (resetGromarkBase) resetGromarkBase.value = "10";
+    if (resetBifidPeriod) resetBifidPeriod.value = "0";
     updateSubOptions();
     // Clear results
     showHide(document.getElementById("results-panel"), false);
