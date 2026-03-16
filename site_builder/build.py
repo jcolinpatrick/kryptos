@@ -33,12 +33,12 @@ OUTPUT_DIR = os.path.join(PROJECT_ROOT, "site")
 
 # Category descriptions for browse pages
 CATEGORY_DESCRIPTIONS = {
-    "substitution": "Classical substitution ciphers that replace plaintext letters using alphabetic mappings — Vigenere, Beaufort, Quagmire, Hill, and more.",
-    "transposition": "Ciphers that rearrange letter positions — columnar, double columnar, Myszkowski, AMSCO, rail fence, route ciphers, turning grilles.",
-    "fractionation": "Ciphers that split letters into components before rearranging — Bifid, Trifid, ADFGVX, Playfair, Two-Square, Four-Square.",
-    "multi-layer": "Combined approaches using multiple cipher steps — substitution + transposition, null extraction + re-encipherment, cascaded layers.",
-    "key-models": "Different key generation strategies — running keys from known texts, autokey, progressive, date-derived, keyword-derived, mathematical sequences.",
-    "bespoke": "Non-standard methods inspired by the physical sculpture — DRYAD charts, NATO/COMSEC systems, Morse-derived parameters, coordinate-based approaches.",
+    "substitution": "Classical substitution ciphers that replace plaintext letters via alphabetic mappings: Vigenere, Beaufort, Quagmire, Hill, and more.",
+    "transposition": "Ciphers that rearrange letter positions: columnar, double columnar, Myszkowski, AMSCO, rail fence, route ciphers, turning grilles.",
+    "fractionation": "Ciphers that split letters into components before rearranging: Bifid, Trifid, ADFGVX, Playfair, Two-Square, Four-Square.",
+    "multi-layer": "Combined approaches using multiple cipher steps: substitution + transposition, null extraction + re-encipherment, cascaded layers.",
+    "key-models": "Key generation strategies: running keys from known texts, autokey, progressive, date-derived, keyword-derived, mathematical sequences.",
+    "bespoke": "Non-standard methods inspired by the physical sculpture: DRYAD charts, NATO/COMSEC systems, Morse-derived parameters, coordinate-based approaches.",
     "uncategorized": "Eliminations not yet assigned to a specific category.",
 }
 
