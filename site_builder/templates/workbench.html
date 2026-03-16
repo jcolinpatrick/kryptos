@@ -160,9 +160,11 @@
         <select id="trans-method">
           <option value="none">None</option>
           <option value="columnar">Columnar</option>
+          <option value="double-columnar">Double Columnar</option>
           <option value="railfence">Rail Fence</option>
           <option value="serpentine">Serpentine (boustrophedon)</option>
           <option value="spiral">Spiral</option>
+          <option value="route">Route Cipher</option>
           <option value="myszkowski">Myszkowski</option>
           <option value="manual">Manual Permutation</option>
         </select>
@@ -193,6 +195,30 @@
           <label><input type="checkbox" id="trans-spiral-ccw"> Counter-clockwise</label>
         </div>
 
+        <div id="trans-opts-route" class="hidden">
+          <label for="trans-route-width">Width</label>
+          <input type="number" id="trans-route-width" min="2" max="97" value="10">
+          <label for="trans-route-type">Route</label>
+          <select id="trans-route-type">
+            <option value="columns">Columns (top-down, left-right)</option>
+            <option value="columns-alt">Columns (alternating direction)</option>
+            <option value="spiral-in">Spiral inward (CW)</option>
+            <option value="spiral-out">Spiral outward (CW)</option>
+            <option value="diagonal">Diagonal</option>
+          </select>
+        </div>
+
+        <div id="trans-opts-double-columnar" class="hidden">
+          <label for="trans-dc-width1">Width 1</label>
+          <input type="number" id="trans-dc-width1" min="2" max="97" value="7">
+          <label for="trans-dc-keyword1">Keyword 1 <small class="text-muted">(optional)</small></label>
+          <input type="text" id="trans-dc-keyword1" placeholder="e.g. KRYPTOS">
+          <label for="trans-dc-width2">Width 2</label>
+          <input type="number" id="trans-dc-width2" min="2" max="97" value="9">
+          <label for="trans-dc-keyword2">Keyword 2 <small class="text-muted">(optional)</small></label>
+          <input type="text" id="trans-dc-keyword2" placeholder="e.g. PALIMPSEST">
+        </div>
+
         <div id="trans-opts-myszkowski" class="hidden">
           <label for="trans-mysz-keyword">Keyword <small class="text-muted">(repeated letters = tied cols)</small></label>
           <input type="text" id="trans-mysz-keyword" placeholder="e.g. TOMATO">
@@ -216,6 +242,12 @@
           <option value="varbeaufort">Variant Beaufort</option>
           <option value="autokey-vig">Autokey (Vigen&egrave;re)</option>
           <option value="autokey-beau">Autokey (Beaufort)</option>
+          <option value="ct-autokey-vig">CT-Autokey (Vigen&egrave;re)</option>
+          <option value="ct-autokey-beau">CT-Autokey (Beaufort)</option>
+          <option value="running-key-vig">Running Key (Vigen&egrave;re)</option>
+          <option value="running-key-beau">Running Key (Beaufort)</option>
+          <option value="gromark">Gromark (Fibonacci key)</option>
+          <option value="bifid">Bifid (5&times;5 Polybius)</option>
           <option value="quagmire-ii">Quagmire II (sculpture tableau)</option>
           <option value="quagmire-ii-autokey">Quagmire II Autokey</option>
           <option value="four-square">Four-Square</option>
@@ -246,6 +278,18 @@
         <div id="sub-caesar-group" class="hidden">
           <label for="sub-shift">Shift (0&ndash;25)</label>
           <input type="number" id="sub-shift" min="0" max="25" value="0">
+        </div>
+
+        <div id="sub-gromark-group" class="hidden">
+          <label for="sub-gromark-primer">Primer <small class="text-muted">(digits, e.g. 51533)</small></label>
+          <input type="text" id="sub-gromark-primer" placeholder="e.g. 51533">
+          <label for="sub-gromark-base">Base <small class="text-muted">(modulus for Fibonacci, default 10)</small></label>
+          <input type="number" id="sub-gromark-base" min="2" max="26" value="10">
+        </div>
+
+        <div id="sub-bifid-group" class="hidden">
+          <label for="sub-bifid-period">Period <small class="text-muted">(0 = full length)</small></label>
+          <input type="number" id="sub-bifid-period" min="0" max="97" value="0">
         </div>
 
         <label for="sub-alphabet">Alphabet</label>
