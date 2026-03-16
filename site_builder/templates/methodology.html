@@ -10,8 +10,8 @@
 
 <h2>The K4 Ciphertext</h2>
 <p>
-  K4 consists of 97 characters. All 26 letters of the English alphabet appear
-  at least once. The ciphertext, with known plaintext positions highlighted:
+  K4 consists of 97 characters, and all 26 letters of the English alphabet appear
+  at least once. The ciphertext is shown below with known plaintext positions highlighted:
 </p>
 <div class="ct-display">{{ ct[:21] }}<span class="crib">{{ ct[21:34] }}</span>{{ ct[34:63] }}<span class="crib">{{ ct[63:74] }}</span>{{ ct[74:] }}</div>
 
@@ -51,9 +51,9 @@
 
 <h2>Expected Random Scores by Period</h2>
 <p>
-  A critical subtlety: the expected random score depends on the cipher's
+  A critical subtlety: expected random score depends on the cipher&rsquo;s
   <em>period</em> (key length). At higher periods, random keys match more cribs
-  simply due to underdetermination &mdash; there are fewer constraints per key
+  due to underdetermination &mdash; there are fewer constraints per key
   position.
 </p>
 
@@ -83,9 +83,9 @@
 
 <h2>Bean Constraints</h2>
 <p>
-  In 2021, Richard Bean published additional constraints on the K4 keystream
+  In 2021, Richard Bean published additional constraints on the K4 keystream,
   derived from the repeated letter P at positions 27 and 65 of the ciphertext
-  (which decrypt to R at both positions). This gives:
+  (both of which decrypt to R). This gives:
 </p>
 <ul>
   <li><strong>Equality:</strong> k[27] = k[65] (the key values at these positions must be equal)</li>
@@ -102,19 +102,19 @@
 
 <h2>Two-System Model</h2>
 <p>
-  Jim Sanborn confirmed at the Kryptos dedication that <em>&ldquo;there are two systems
-  of enciphering the bottom text&rdquo;</em>. Combined with the mathematical impossibility
+  Jim Sanborn stated at the Kryptos dedication that <em>&ldquo;there are two systems
+  of enciphering the bottom text.&rdquo;</em> Combined with the mathematical impossibility
   of single-layer periodic substitution, this means K4 uses a <strong>product cipher</strong>
   &mdash; two layers of encryption applied in sequence.
 </p>
 <p>
-  Statistical analysis (digram frequency test) confirms the outermost layer is
+  Digram frequency analysis confirms the outermost layer is
   <strong>substitution</strong>, not transposition. This gives the encryption order:
 </p>
 <pre>  PT &rarr; transposition &rarr; substitution &rarr; carved text</pre>
 <p>
-  Our current attack strategy tests this model: undo columnar transposition, then
-  check crib consistency for the substitution layer. We have exhaustively tested:
+  The primary attack strategy tests this model: undo the transposition, then
+  check crib consistency for the substitution layer. Exhaustive testing includes:
 </p>
 <ul>
   <li>All 362,880 width-9 column permutations &times; Vig/Beau/VBeau &times; AZ/KA &times; periods 1&ndash;13 + autokey (47.17M configs)</li>
@@ -126,14 +126,14 @@
 </ul>
 <p>
   All tests produced zero signal. Standard columnar transposition &times; periodic
-  substitution, columnar &times; autokey, and MITM on 73-char extracts are all eliminated.
+  substitution, columnar &times; autokey, and MITM on 73-char extracts are eliminated.
 </p>
 
 <h2>73-Character Hypothesis</h2>
 <p>
-  Sanborn&rsquo;s yellow legal pad (auctioned 2025) shows &ldquo;8 lines 73&rdquo; for K4.
-  The carved text has 97 characters &mdash; so <strong>24 characters may be nulls</strong>.
-  This is reinforced by the <em>Triple-24 Coincidence</em>:
+  Sanborn&rsquo;s yellow legal pad (auctioned in 2025) shows &ldquo;8 lines 73&rdquo; for K4.
+  The carved text has 97 characters &mdash; so <strong>24 characters may be nulls</strong>,
+  reinforced by the <em>Triple-24 Coincidence</em>:
 </p>
 <ol>
   <li>97 &minus; 73 = <strong>24</strong> nulls</li>
@@ -149,7 +149,7 @@
 
 <h3>What&rsquo;s Been Tested on the 73-Char Extract</h3>
 <p>
-  We have tested <strong>32M+ configurations</strong> on the 73-char column mask extract:
+  Over <strong>32M configurations</strong> have been tested on the 73-char column mask extract:
 </p>
 <ul>
   <li><strong>Null mask + periodic substitution (p=1&ndash;23):</strong> PROVEN IMPOSSIBLE for ANY
@@ -169,8 +169,8 @@
 
 <h2>Validation Criteria</h2>
 <p>
-  A candidate solution is not accepted unless it passes <strong>all</strong> of the
-  following simultaneously:
+  A candidate solution is not accepted unless it passes <strong>all</strong> of
+  the following simultaneously:
 </p>
 <ul>
   <li>Crib score: 24/24</li>
@@ -211,8 +211,8 @@
 
 <h2>Reproducibility</h2>
 <p>
-  Every elimination in our database includes a <strong>reproduction command</strong>
-  that you can run yourself. The entire codebase is
+  Every elimination includes a <strong>reproduction command</strong>
+  you can run yourself. The entire codebase is
   <a href="https://github.com/jcolinpatrick/kryptos">open source</a>. Clone the repo,
   install Python 3.11+, and run any experiment with <code>PYTHONPATH=src</code>.
 </p>
