@@ -304,6 +304,12 @@ def build():
             shutil.copy2(src, dst)
             print(f"  {fname}")
 
+    # 10b) Copy reference PDFs to static output
+    ref_pdf = os.path.join(PROJECT_ROOT, "reference", "Number-One-From-Moscow.pdf")
+    if os.path.isfile(ref_pdf):
+        shutil.copy2(ref_pdf, os.path.join(static_out, "Number-One-From-Moscow.pdf"))
+        print("  Number-One-From-Moscow.pdf (from reference/)")
+
     # 11) Summary
     print("\n" + "=" * 60)
     print(f"BUILD COMPLETE")
