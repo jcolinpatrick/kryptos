@@ -265,6 +265,10 @@ def build():
     _render(env, "workbench.html", "workbench/index.html", global_ctx)
     pages_built += 1
 
+    # VIC Workbench
+    _render(env, "vic_workbench.html", "vic-workbench/index.html", global_ctx)
+    pages_built += 1
+
     # Report error
     _render(env, "report_error.html", "report-error/index.html", global_ctx)
     pages_built += 1
