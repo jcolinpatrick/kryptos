@@ -1,0 +1,238 @@
+{% extends "base.html" %}
+{% block title %}VIC Cipher Workbench &mdash; internal.com{% endblock %}
+
+{% block content %}
+<h1>VIC Cipher Workbench</h1>
+<p>
+  Full implementation of the VIC cipher (Soviet one-time pad system) with optional
+  layering of classical techniques. All computation runs locally in your browser
+  &mdash; no data is sent to any server.
+</p>
+
+<details id="vic-background" class="wb-mb2">
+  <summary>What is the VIC cipher?</summary>
+  <div class="wb-details-body">
+    <p>
+      The VIC cipher was used by Soviet spy Reino H&auml;yh&auml;nen (code name VICTOR)
+      during the Cold War. It is a sophisticated hand cipher that combines a
+      straddling checkerboard with columnar and disrupted diagonal transpositions,
+      all keyed from a single set of inputs (phrase, date, personal number, keygroup).
+    </p>
+    <p>
+      <strong>Why test it on K4?</strong> Ed Scheidt (co-designer of Kryptos) worked
+      at NSA where the VIC cipher was studied extensively after its discovery in 1953.
+      Scheidt confirmed K4 uses &ldquo;two systems of enciphering&rdquo; &mdash; VIC is
+      a real-world precedent for combining substitution (checkerboard) with multiple
+      transpositions in a single hand-executable system.
+    </p>
+    <p>
+      <strong>K2 connection:</strong> The VIC cipher uses a straddling checkerboard
+      with row labels derived from key generation. K2&rsquo;s coordinate numbers
+      (38, 57, 6.5, 44) encode K3 grid dimensions &mdash; they may also encode
+      VIC-style checkerboard parameters.
+    </p>
+    <p><a href="/workbench/">Standard workbench &rarr;</a></p>
+  </div>
+</details>
+
+<h2 class="wb-mt6">VIC Inputs</h2>
+<div class="wb-workspace vic-workspace">
+  <div class="wb-controls vic-controls">
+    <div class="wb-pipeline-flow">
+
+      <div class="card wb-step-card">
+        <div class="wb-step-label"><span class="wb-step-num">A</span> Key Material</div>
+
+        <label for="vic-phrase">Phrase <small class="text-muted">(20+ letters)</small></label>
+        <input type="text" id="vic-phrase" value="KRYPTOSABCDEFGHIJLMN" maxlength="40" spellcheck="false">
+
+        <label for="vic-date">Date <small class="text-muted">(6 digits, e.g. DDMMYY)</small></label>
+        <input type="text" id="vic-date" value="091189" maxlength="6" pattern="[0-9]{6}" spellcheck="false">
+
+        <label for="vic-personal">Personal Number <small class="text-muted">(1&ndash;2 digits)</small></label>
+        <input type="text" id="vic-personal" value="5" maxlength="2" pattern="[0-9]{1,2}" spellcheck="false">
+
+        <label for="vic-keygroup">Keygroup <small class="text-muted">(5 digits)</small></label>
+        <input type="text" id="vic-keygroup" value="90271" maxlength="5" pattern="[0-9]{5}" spellcheck="false">
+
+        <label for="vic-toprow">Top-row letters <small class="text-muted">(8 high-frequency letters for row 0)</small></label>
+        <input type="text" id="vic-toprow" value="ASINTOER" maxlength="8" spellcheck="false">
+
+        <label for="vic-remaining">Remaining letters <small class="text-muted">(18 letters for rows 1&ndash;2, auto if blank)</small></label>
+        <input type="text" id="vic-remaining" value="" maxlength="20" spellcheck="false" placeholder="Auto: rest of alphabet + . /slash">
+      </div>
+
+      <div class="wb-step-connector" aria-hidden="true"></div>
+
+      <div class="card wb-step-card">
+        <div class="wb-step-label"><span class="wb-step-num">B</span> Ciphertext</div>
+
+        <label for="vic-ciphertext">Ciphertext <small class="text-muted">(letters or digits)</small></label>
+        <textarea id="vic-ciphertext" rows="3" spellcheck="false">OBKRUOXOGHULBSOLIFBBWFLRVQQPRNGKSSOTWTQSJQSSEKZZWATJKLUDIAWINFBNYPVTTMZFPKWGDKZXTJCDIGKUHUAUEKCAR</textarea>
+        <div class="wb-inline-controls">
+          <label><input type="checkbox" id="vic-ct-is-digits"> Input is digit stream (skip checkerboard encode)</label>
+        </div>
+        <div id="vic-letter-mapping-group">
+          <label for="vic-letter-mapping">Letter-to-digit mapping <small class="text-muted">(for decrypt when input is letters)</small></label>
+          <select id="vic-letter-mapping">
+            <option value="checkerboard">Via checkerboard encode table</option>
+            <option value="az_mod10">AZ mod 10, 0-indexed (A=0&hellip;J=9, K=0&hellip;Z=5)</option>
+            <option value="az_mod10_1">AZ mod 10, 1-indexed (A=1&hellip;I=9, J=0&hellip;Z=6)</option>
+            <option value="ka_mod10">KA mod 10, 0-indexed (K=0, R=1, Y=2&hellip;Z=5)</option>
+            <option value="ka_mod10_1">KA mod 10, 1-indexed (K=1, R=2, Y=3&hellip;Z=6)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="wb-step-connector" aria-hidden="true"></div>
+
+      <div class="card wb-step-card">
+        <div class="wb-step-label"><span class="wb-step-num">C</span> Pipeline Options</div>
+
+        <label for="vic-direction">Direction</label>
+        <select id="vic-direction">
+          <option value="decrypt">Decrypt</option>
+          <option value="encrypt">Encrypt</option>
+        </select>
+
+        <label for="vic-skip-checkerboard"><input type="checkbox" id="vic-skip-checkerboard"> Skip checkerboard <small class="text-muted">(use only VIC key gen + transpositions)</small></label>
+        <label for="vic-skip-transpositions"><input type="checkbox" id="vic-skip-transpositions"> Skip transpositions <small class="text-muted">(use only checkerboard)</small></label>
+        <label for="vic-skip-keygroup-extract"><input type="checkbox" id="vic-skip-keygroup-extract"> Skip keygroup insertion/extraction</label>
+      </div>
+
+      <div class="wb-step-connector" aria-hidden="true"></div>
+
+      <div class="card wb-step-card">
+        <div class="wb-step-label"><span class="wb-step-num">D</span> Additional Layers <small class="text-muted">(variant VIC)</small></div>
+
+        <label for="vic-pre-sub-method">Pre-VIC substitution</label>
+        <select id="vic-pre-sub-method">
+          <option value="none">None</option>
+          <option value="vigenere">Vigen&egrave;re</option>
+          <option value="beaufort">Beaufort</option>
+          <option value="varbeaufort">Variant Beaufort</option>
+        </select>
+        <div id="vic-pre-sub-key-group" class="hidden">
+          <label for="vic-pre-sub-key">Pre-sub keyword</label>
+          <input type="text" id="vic-pre-sub-key" placeholder="e.g. KRYPTOS" spellcheck="false">
+          <label for="vic-pre-sub-alphabet">Alphabet</label>
+          <select id="vic-pre-sub-alphabet">
+            <option value="AZ">A&ndash;Z (standard)</option>
+            <option value="KA">KA (KRYPTOS-keyed)</option>
+          </select>
+        </div>
+
+        <label for="vic-post-sub-method">Post-VIC substitution</label>
+        <select id="vic-post-sub-method">
+          <option value="none">None</option>
+          <option value="vigenere">Vigen&egrave;re</option>
+          <option value="beaufort">Beaufort</option>
+          <option value="varbeaufort">Variant Beaufort</option>
+        </select>
+        <div id="vic-post-sub-key-group" class="hidden">
+          <label for="vic-post-sub-key">Post-sub keyword</label>
+          <input type="text" id="vic-post-sub-key" placeholder="e.g. DEFECTOR" spellcheck="false">
+          <label for="vic-post-sub-alphabet">Alphabet</label>
+          <select id="vic-post-sub-alphabet">
+            <option value="AZ">A&ndash;Z (standard)</option>
+            <option value="KA">KA (KRYPTOS-keyed)</option>
+          </select>
+        </div>
+
+        <label for="vic-alt-trans">Alternative transposition <small class="text-muted">(replace VIC&rsquo;s columnar+diagonal)</small></label>
+        <select id="vic-alt-trans">
+          <option value="none">Use standard VIC transpositions</option>
+          <option value="columnar">Columnar only (Line-Q key)</option>
+          <option value="col7">Columnar width 7 (ascending)</option>
+          <option value="railfence">Rail fence (depth from Line-Q length)</option>
+        </select>
+
+        <label for="vic-null-mask-mode">Null mask</label>
+        <select id="vic-null-mask-mode">
+          <option value="none">None</option>
+          <option value="pre">Pre-VIC: remove nulls before decryption</option>
+          <option value="post">Post-VIC: remove nulls after decryption</option>
+        </select>
+        <div id="vic-null-mask-group" class="hidden">
+          <label for="vic-null-positions">Null positions <small class="text-muted">(0-indexed, comma-sep)</small></label>
+          <input type="text" id="vic-null-positions" placeholder="e.g. 20,36,48,58,74" spellcheck="false">
+        </div>
+      </div>
+
+    </div>
+
+    <div class="wb-reset-wrap">
+      <button id="vic-reset-btn" type="button" class="wb-reset-btn">Reset all</button>
+      <button id="vic-run-btn" type="button" class="wb-reset-btn" style="background:var(--accent-muted);color:var(--accent);border-color:var(--accent);">Decrypt K4</button>
+    </div>
+  </div>
+
+  <div class="wb-results vic-results">
+
+    <div id="vic-results-panel">
+
+      <div class="vic-score-bar sc-noise" id="vic-score-hero">
+        <span class="vic-score-bar-num" id="vic-score-hero-num">--</span>
+        <span class="score-badge score-badge-noise" id="vic-score-hero-badge">noise</span>
+        <div class="vic-score-bar-stats">
+          <span class="vic-score-bar-stat">ENE <b id="vic-score-ene">--</b></span>
+          <span class="vic-score-bar-stat">BC <b id="vic-score-bc">--</b></span>
+          <span class="vic-score-bar-stat">IC <b id="vic-score-ic">--</b></span>
+          <span class="vic-score-bar-stat">Free <b id="vic-score-free">--</b></span>
+        </div>
+      </div>
+
+      <h4 class="wb-result-heading">Plaintext</h4>
+      <div class="ct-display ct-display-compact" id="vic-plaintext-display">
+        <span class="text-muted">Configure inputs and run to see results.</span>
+      </div>
+      <div class="pt-legend">
+        <small><span class="crib-legend-match"></span> Match &nbsp; <span class="crib-legend-miss"></span> Miss</small>
+      </div>
+
+      <details id="vic-checkerboard-panel">
+        <summary>Checkerboard</summary>
+        <div id="vic-checkerboard-display" class="vic-grid-display"></div>
+      </details>
+
+      <details id="vic-keygen-panel">
+        <summary>Key generation</summary>
+        <div id="vic-keygen-display" class="vic-keygen-display"></div>
+      </details>
+
+      <details id="vic-trans-panel">
+        <summary>Transposition grids</summary>
+        <div id="vic-trans-display" class="vic-grid-display"></div>
+      </details>
+
+      <details>
+        <summary>Digit stream</summary>
+        <pre id="vic-digit-stream" class="text-mono" style="font-size:var(--text-xs);white-space:pre-wrap;word-break:break-all;"></pre>
+      </details>
+
+      <details>
+        <summary>Keystream at crib positions</summary>
+        <pre id="vic-keystream-detail" class="text-mono" style="font-size:var(--text-xs);white-space:pre-wrap;"></pre>
+      </details>
+
+      <details id="vic-history-panel">
+        <summary>History (<span id="vic-history-count">0</span>)</summary>
+        <div id="vic-history-log" class="wb-history-scroll"></div>
+      </details>
+
+    </div>
+  </div>
+</div>
+
+<p class="text-muted wb-mt8">
+  <small>VIC cipher reference: <a href="https://en.wikipedia.org/wiki/VIC_cipher">VIC cipher (Wikipedia)</a> · <a href="/static/Number-One-From-Moscow.pdf">Number One From Moscow (CIA)</a>. <a href="/workbench/">Standard workbench &rarr;</a></small>
+</p>
+
+<noscript>
+  <p>The VIC workbench requires JavaScript to run cipher computations.</p>
+</noscript>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/vic_workbench.js?v=1"></script>
+{% endblock %}
