@@ -8,7 +8,9 @@ You MUST complete ALL of these steps before executing any task:
 4. If the user's request matches ANYTHING already disproved or tested,
    TELL THE USER and do NOT run it again
 5. Search scripts/ for existing tools — do NOT write new code if a script exists
+   `grep -rl "KEYWORD" scripts/` or `run_attack.py --list --verbose | grep KEYWORD`
 6. Check results/ for prior output matching the planned parameters
+   `ls results/ | grep KEYWORD` or search `exhaustion_log.json`
 
 If you skip these steps and re-test an eliminated hypothesis, you are 
 wasting 28 CPU cores and burning API tokens for zero value.
@@ -53,7 +55,7 @@ Every prior experiment (860+, 669B+ configs) assumed positional correspondence o
 
 ## Development Setup & Commands
 
-**Python 3.11+** required (uses `tomllib` from stdlib). **No external runtime dependencies** — stdlib only. `pytest` is the only dev dependency. No `pyproject.toml` or `setup.py` — `pip install -e .` will not work. All commands require `PYTHONPATH=src`.
+**Python 3.11+** required (uses `tomllib` from stdlib; dev environment runs 3.12.3). **No external runtime dependencies** — stdlib only. `pytest` is the only dev dependency. No `pyproject.toml` or `setup.py` — `pip install -e .` will not work. All commands require `PYTHONPATH=src`. **Repo:** `github.com/jcolinpatrick/kryptos`.
 
 A `venv/` exists with numpy, pymupdf, and jinja2 but is gitignored. Activate with `source venv/bin/activate` if needed for PDF/matrix work or the site builder, but core code uses stdlib only.
 
@@ -108,7 +110,7 @@ Four layers with strict dependency direction: **kernel → pipeline → novelty 
   - `text.py` — Text normalization: `sanitize()`, `text_to_nums()`, `nums_to_text()`, `char_to_num()`, `num_to_char()`
   - `transforms/` — Cipher implementations (Vigenère/Beaufort, transpositions, Polybius) + composable pipeline builder (`compose.py`: `TransformConfig` → `PipelineConfig` → `build_pipeline()`)
   - `constraints/` — Crib scoring (`crib.py`), Bean equality/inequality (`bean.py`), consistency checks (`consistency.py` — self-encrypting positions, monoalphabetic consistency)
-  - `scoring/aggregate.py` — Two canonical scoring paths: `score_candidate()` (anchored cribs at fixed positions) and `score_candidate_free()` (cribs searched anywhere — critical for scrambled-CT paradigm). Thresholds: NOISE=6, STORE=10, SIGNAL=18, BREAKTHROUGH=24. Individual scorers: `crib_score.py`, `free_crib.py`, `ic.py`, `ngram.py`.
+  - `scoring/` — Under `kernel/`, NOT a top-level module. `aggregate.py` has two canonical scoring paths: `score_candidate()` (anchored cribs at fixed positions) and `score_candidate_free()` (cribs searched anywhere — critical for scrambled-CT paradigm). Thresholds: NOISE=6, STORE=10, SIGNAL=18, BREAKTHROUGH=24. Individual scorers: `crib_score.py`, `free_crib.py`, `ic.py`, `ngram.py`.
   - `persistence/` — WAL-mode SQLite (runs/results/eliminations/checkpoints) + JSONL artifacts
 - **pipeline/** — `evaluate_candidate()` is the primary entry point. `SweepRunner` handles parallel execution with checkpointing and resume.
 - **novelty/** — Hypothesis-driven search: `Hypothesis` dataclass → `triage_batch()` → `NoveltyLedger` (SQLite). Wired to 13 research questions (RQ-1..RQ-13). See `src/kryptos/novelty/generators.py` for adding new hypotheses.
@@ -133,11 +135,15 @@ kernel/persistence/sqlite.py (results DB) + JsonlWriter (logs)
 
 ### Experiment scripts (`scripts/`)
 
-860+ attack scripts organized into ~32 family subdirectories (e.g. `scripts/grille/`, `scripts/transposition/`, `scripts/blitz/`, `scripts/tableau/`, `scripts/team/`, `scripts/yar/`, `scripts/campaigns/`, `scripts/analysis/`, `scripts/geometry/`, `scripts/k3_continuity/`). Each script has a parseable metadata header and is tracked in `exhaustion_log.json` (574 registered entries; ~300 newer scripts not yet registered). Use `run_attack.py --list` to discover scripts or `run_attack.py --run --family <name>` to dispatch by family.
+866+ attack scripts organized into 31 family subdirectories. Each script has a parseable metadata header and is tracked in `exhaustion_log.json` (574 registered entries; ~300 newer scripts not yet registered). Use `run_attack.py --list` to discover scripts or `run_attack.py --run --family <name>` to dispatch by family.
+
+**All family directories:** `_infra` (infrastructure/utilities, not attacks), `_uncategorized`, `analysis`, `antipodes`, `blitz`, `campaigns`, `cfm`, `crib_analysis`, `encoding`, `examples`, `exploration`, `fractionation`, `geodetic`, `geometry`, `grille`, `k2_coords`, `k3_continuity`, `mirror_ka`, `multi_layer`, `overlay`, `polyalphabetic`, `running_key`, `statistical`, `substitution`, `tableau`, `team`, `thematic`, `transposition`, `two_system`, `yar`.
+
+**Exhaustion log locations:** Root `exhaustion_log.json` (authoritative, 2878 lines) and `scripts/EXHAUSTION.json` (legacy copy). Use the root file.
 
 **Script infrastructure (`scripts/lib/`):**
 - `header.py` — Parse/validate metadata headers (Cipher, Family, Status, Keyspace, Last run, Best score)
-- `exhaustion.py` — CRUD for `exhaustion_log.json` (authoritative source of truth for status)
+- `exhaustion.py` — CRUD for root `exhaustion_log.json` (authoritative source of truth for status)
 - `discover.py` — Recursive script discovery and manifest generation
 - `migrate.py` — Batch migration CLI for adding headers
 
@@ -147,6 +153,8 @@ def attack(ciphertext: str, **params) -> list[tuple[float, str, str]]:
     """Returns [(score, plaintext, method_description), ...] sorted by score desc."""
 ```
 
+**Script naming:** `e_` = experiment (standard metadata header required), `f_` = formal campaign (longer-running, may use custom header format). Both live in family subdirectories.
+
 **Writing a new experiment script:**
 1. Place it in the appropriate family subdirectory: `scripts/<family>/e_<topic>_<nn>_<short_name>.py`
 2. Add a standard metadata header (see `scripts/examples/e_caesar_standard.py`)
@@ -155,6 +163,14 @@ def attack(ciphertext: str, **params) -> list[tuple[float, str, str]]:
 5. Write results to `results/<experiment_id>.json` or `results/<experiment_id>/`
 6. Register in `exhaustion_log.json` via `scripts/lib/exhaustion.update()`
 7. Use `python3 -u` for unbuffered output when running in background
+
+**Standalone script bootstrap** (for scripts run directly, not via `run_attack.py`):
+```python
+import sys, os
+_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(_ROOT, "src"))
+```
+**Note:** This assumes the script is exactly 2 directories deep (e.g. `scripts/grille/e_foo.py`). For deeper nesting (e.g. `scripts/transposition/other/`), add another `os.path.dirname()` wrapper per extra level.
 
 ### Benchmark framework (`bench/`)
 
@@ -245,6 +261,7 @@ These are non-obvious pitfalls discovered through prior sessions. Check these fi
 - **15/24 is a FALSE SIGNAL, not a near-miss**: Both DEFECTOR:AZ_beau+col7 and PALIMPSEST:AZ_beau+col7 reach 15/24 — but autokey is **structurally impossible** (mathematical proof via crib-to-crib feedback contradictions: 7/8 connections are contradictions at offset=8, ALL offsets fail). The 15/24 comes from non-crib degrees of freedom, not from real signal. PALIMPSEST reaches 15/24 at 78% frequency (39/50 restarts) vs DEFECTOR at 6% — both are artifacts. Do NOT chase higher scores on any keyword+col7+autokey model.
 - **Autokey is provably impossible on K4**: PT-autokey and CT-autokey both fail structurally because crib positions feed back into each other at offsets ≤44. This is not a search failure — it's a mathematical impossibility. See `memory/keystream_forensics_v2.md`.
 - **K2 numbers are NOT direct cipher keys**: Despite encoding 73/24/13/11, K2's "38 degrees 57 minutes 6.5 seconds" as raw numbers produce only noise (6/24 max) when used as Vigenère keys, transposition keys, or autokey primers. The encoding is confirmed real but the operational mechanism is unknown.
+- **Beaufort A=0 is the confirmed default**: Use A=0 indexing for all Beaufort operations unless explicitly testing A=1. Both conventions must be tested in positional experiments.
 
 ---
 
@@ -293,15 +310,9 @@ Domain knowledge, public facts, and detailed operating policies live in separate
 
 **Key constraints for teammates:**
 - Import constants from `kryptos.kernel.constants` — never hardcode CT/cribs
-- Grille details and current hypotheses: see Quick Reference above + Claude Code auto-memory (`cardan_grille.md`, `73_char_hypothesis.md`)
-- DO NOT re-run old direct-decryption attacks on 97 chars — they assumed wrong positional correspondence
-- DO NOT re-run MITM sub×transposition — mono/periodic/autokey sub × 14 standard transposition families exhaustively eliminated (~1.2B configs, ZERO hits, 2026-03-12/13)
-- DO NOT run more SA/hill-climbing on DEFECTOR:AZ_beau+col7 — 15/24 is a **FALSE SIGNAL** (autokey structurally impossible, mathematical proof)
-- DO NOT test autokey on ANY keyword — crib-to-crib feedback contradictions prove impossibility (not a search failure)
-- DO NOT test PALIMPSEST:AZ_beau+col7 — same false signal as DEFECTOR (78% frequency at 15/24, same proof applies)
-- DO NOT test period-13 mixed-alphabet polyalphabetic — mathematical impossibility (residues r=2,r=3 require bijection violation)
-- DO NOT test VIC cipher variants — 1.32B+ configs across all models, ALL noise
-- **→ Current best lead, keyword status, and full elimination list: see MEMORY.md**
+- DO NOT re-run ANY hypothesis listed in MEMORY.md's "PROVEN IMPOSSIBLE" or "DO NOT TEST" sections
+- Current hypotheses: see Quick Reference above + Claude Code auto-memory (`cardan_grille.md`, `73_char_hypothesis.md`)
+- **→ Full elimination list, current leads, and open attack surface: see MEMORY.md**
 
 **KryptosBot agent runner:** `python3 kryptosbot/solve.py` launches the unified campaign runner. See `kryptosbot/RUNBOOK.md` for full usage. Key commands: `solve.py` (6 parallel agents), `solve.py compute` (free local CPU), `solve.py run <name>` (single strategy), `solve.py list` (show all strategies).
 
@@ -309,5 +320,5 @@ Domain knowledge, public facts, and detailed operating policies live in separate
 
 ---
 
-*Last updated: 2026-03-17 — Mission: derive K4 method & solve. Volatile research state (best leads, eliminations, open hypotheses) maintained in MEMORY.md.*
+*Last updated: 2026-03-18 — Mission: derive K4 method & solve. Volatile research state (best leads, eliminations, open hypotheses) maintained in MEMORY.md.*
 *Primary author: Colin Patrick (human lead) + Claude (computational partner)*
