@@ -1,0 +1,135 @@
+MARY LOUISE KELLY, host:
+
+For the first time in 20 years, a new clue has been dangled to the mystery that is Kryptos. If youre a would-be code-breaker, that means you were probably up all night last night trying to solve Kryptos. If, on the other hand, you have absolutely no idea what Im talking about, heres a quick primer.
+
+Two decades ago, the CIA commissioned a sculpture to grace one of the courtyards at its headquarters in Langley, Virginia. The sculptor who won the commission was a man named Jim Sanborn, and he designed a curving copper wall with a secret code embedded across four panels.
+
+Code-breakers eventually cracked the first three. But that fourth panel continues to stump even the pros at the CIA and the National Security Agency.
+
+So in the New York Times yesterday, the sculptor, Jim Sanborn, dropped a clue. Well, he's with me now in the studio. And Jim Sanborn, tell me if I've got this right. The final passage - the fourth passage - is 97 characters. The clue that you dropped yesterday was what six of those characters are. And you said it's the word - or the city Berlin, B-E-R-L-I-N. So now we know Berlin. The challenge is solving what the other 91 characters are. Has anybody come close yet since this clue came out yesterday?
+
+Mr. JIM SANBORN (Sculptor): Well, so far we have just under 1,000 attempts on cracking the code.
+
+KELLY: Since yesterday.
+
+Mr. SANBORN: Since yesterday. Most of them frivolous, but that's to be expected.
+
+KELLY: Anybody close?
+
+Mr. SANBORN: Well, not yet. The thing about it is, these people send you a code crack and they really don't want to give it to you because they don't - first of all, they're not sure that they're speaking to Jim Sanborn. And so I had to develop a system whereby I could test the calls and determine whether they got the code, without knowing what they said.
+
+KELLY: Wow. So layers of deception and sneakiness even in trying to solve this.
+
+Mr. SANBORN: Yeah, totally. I mean, it's been a crazy ride. And some people have completely changed their lives. They've changed their businesses, they've changed their homes, they've changed their relationships over Kryptos. Amazing but true. But I'm trying to somehow narrow it so that we get on with it.
+
+KELLY: Jim Sanborn, I had the chance to interview you about Kryptos back in 2005. It had then been 15 years since you'd completed the sculpture, and nobody had made much progress on the fourth passage then. And you told me back then that you're actually really terrible at keeping secrets.
+
+Mr. SANBORN: Absolutely.
+
+KELLY: Still are.
+
+Mr. SANBORN: Absolutely.
+
+(Soundbite of laughter)
+
+KELLY: Now that you're dangling this clue, should we interpret this as that you're maybe weakening, that you'd actually like somebody to solve the darn thing already?
+
+Mr. SANBORN: Okay, well, I mean, really, it's six characters out of 97. And I dangled the clue Berlin, but I also divulged - or gave images - of my original decoding charts, the ones that I - well, actually, for me they were encoding charts. And I think once the Krypto-philes study it in a forensic manner, there might be revelations in there. So in a way, I gave more than just Berlin. I think I gave other information as well.
+
+KELLY: Once this fourth passage is solved, if it is solved, you have said that there's actually - that that's just the beginning, that there's a riddle imbedded across the entire sculpture. Elaborate.
+
+Mr. SANBORN: Yeah, I mean, there - it is a riddle within a riddle. And the final passage will lead in several directions. The word directions is - I use intentionally. And that's it. I mean, what can I - if I say any more, I, you know, perhaps give away too much.
+
+KELLY: That's it for now.
+
+Mr. SANBORN: That's it for now.
+
+KELLY: Well, Jim Sanborn, thanks very much.
+
+Mr. SANBORN: Thank you for having me.
+
+KELLY: That's the sculptor Jim Sanborn, talking about his decision to drop a clue to the mystery of the Kryptos sculpture, at the CIA in Langley, Virginia.
+
+
+MELISSA BLOCK, Host:
+
+The CIA has made more than a few mistakes over the last couple of years. Well, here's one that's not the agency's fault. The story comes to us by way of wired news, and it has to do with a sculpture on the grounds of CIA headquarters in Langley, Virginia. The sculpture has baffled code breakers for years. It's called Kryptos, and it features nearly 2,000 letters divided into four sections. Three of those coded sections have been solved, but just this week the artist and author of the code revealed that there's an error, and that could be why sleuths have had a hard time figuring out the last part of the puzzle. To help us sort through what happened, we got the sculptor, Jim Sanborn, on the phone, with game developer and part-time Kryptos devotee, Elonka Dunin.
+
+ELONKA DUNIN: An analogy that I use when I'm trying to describe the situation to non-cryptographers is Jim came up with a recipe for something, and then he gave us the recipe, but he wanted to make it look good on the page, and so he removed one element without paying a lot of attention to which element he removed, and he accidentally removed a key ingredient, like he removed yeast. And we took the recipe and we made what the recipe said, and we said, hey, Jim, it tasted really great, thanks. And then, but later, when he checked on it, he's like, oops, they ended up making cookies and I intended for them to make cupcakes. And so he let us know that, well, there was this one other little piece that you probably want to try cooking it again. And so we're, like, very grateful and saying, okay, well, we had a lot of fun with what we did before, but it's good to know that we're going to make it the way you actually intended, so thank you.
+
+BLOCK: Now, Jim, this missing ingredient, if I understand this right, was the letter X that you had taken off of one line for aesthetic reasons. It didn't balance.
+
+JAMES SANBORN: Yeah, I mean, I, there were several ways I could manipulate the lines of text so I would end up with a panel that's square on the sides. Because an M is much longer than an O, if you have many Ms then you have a longer line. And so I wanted it, I wanted to have some control. So there were some things I chose to leave out, and I did leave an X out. The Xs more or less represented a period. But because a period isn't really easy to encode, I chose to use Xs. So after the end of each phrase, I would put an X. Well, in taking this one X out, the cryptographers were, you know, going swimmingly along and thinking that they had gotten the whole thing and it wasn't a period. And it is interesting that you can leave out one little period and it makes such a huge difference.
+
+BLOCK: Elonka, this all hinges on this troublesome panel which is called part two of the puzzle. What does part two say?
+
+DUNIN: It's a few sentences, and what we thought that it said was, it was totally invisible. How is that possible? They used the earth's magnetic field. X. The information was gathered and transmitted underground to an unknown location. X. Does Langley know about this? They should. It's buried out there somewhere. X. Who knows the exact location? Only WW. This was his last message. X. 38 degrees 57 minutes 6.5 seconds north, 77 degrees 8 minutes 44 seconds west, ID by rows. And then what it actually says, now that we have this from Jim, and I'll just say the last sentence, is 38 degrees 57 minutes 6.5 seconds north, 77 degrees 8 minutes 44 seconds west. X. Layer two.
+
+BLOCK: Well, it's all perfectly clear to me now. Thank you for straightening that out.
+
+DUNIN: Yeah.
+
+BLOCK: Let me try to break this down a little bit. This wrong version, ID by rows, has been out there for what, almost eight years now, right?
+
+SANBORN: That's right.
+
+BLOCK: So, Elonka, was one of the things that you said to Jim, uh, Jim, what took you so long?
+
+DUNIN: No, I was actually very excited. One of our questions all along, especially about part four, is, is the reason that it hasn't been solved yet because there's a mistake in it somewhere? And so I'm very pleased to hear that Jim is going through and checking his work, because if there's another mistake in K4, and I don't know if he's worked backwards through that yet...
+
+SANBORN: No, that one's actually safe and sound and fairly accurate.
+
+BLOCK: You sure about that, Jim?
+
+SANBORN: Yes, I'm pretty sure about that one.
+
+BLOCK: Well, Elonka Dunin, good luck figuring out part four.
+
+DUNIN: Thank you.
+
+BLOCK: And, Jim Sanborn, thanks for being with us.
+
+SANBORN: Thank you.
+
+BLOCK: Jim Sanborn is the artist who created the Kryptos sculpture at the CIA headquarters in Langley, Virginia. Elonka Dunin is a game developer and a co- moderator of a Yahoo group devoted to cracking the code of Kryptos.
+
+
+RENEE MONTAGNE, host:
+
+For 15 years, a sculpture in the courtyard of the Central Intelligence Agency has taunted amateur and professional code breakers alike. "Kryptos" is a curved copper wall. It features about 2,000 characters divided into four coded passages. Cryptographers have cracked the first three, but it's been six years since anyone reported further progress, and sculptor Jim Sanborn believes he's the only man alive who knows the full code. NPR's Mary Louise Kelly has the story.
+
+MARY LOUISE KELLY reporting:
+
+Jim Sanborn is the first to admit he's an unlikely person to have devised a code that for 15 years has stumped even the pros at the CIA and the National Security Agency.
+
+Mr. JIM SANBORN (Sculptor): This is a person--I am a person who has zero mathematical ability, took tutoring for algorithms in high school.
+
+KELLY: Not just that but Sanborn swears he's terrible at keeping secrets.
+
+Mr. SANBORN: And I'm finding that it's increasingly difficult to keep that kind of information secret because the closer people get to cracking the last 97 characters, the more difficult it is to say absolutely nothing about what it does or does not say, and so it's tough.
+
+KELLY: In fact, Sanborn just dropped a clue right there. Listen again.
+
+Mr. SANBORN: ...the closer people get to cracking the last 97 characters...
+
+KELLY: Whether the final unsolved passage is, in fact, 97 or 98 characters has been hotly debated. There's a question mark that some have argued indicates the end of the third passage, others the beginning of the fourth. Now you know. The first person known to have solved the first three passages was a CIA analyst who noodled around for years until he had a breakthrough in the late '90s. The National Security Agency confirms that three of its cryptographers have gotten to the same point, though it declines to say who or how or when. The first civilian to crack parts one, two and three was Jim Gillogly, a California computer researcher. He says that process took him four nights.
+
+Mr. JIM GILLOGLY (Computer Researcher): For part four, I would say I probably have put in several hundred hours over the course of--I guess it's been six years now.
+
+KELLY: Part four is so hard because it's short which means fewer chances to spot recurring patterns, and there's another hurdle, according to Ed Scheidt, the CIA's former chief cryptographer. Back in 1989, Scheidt was about to retire when his bosses asked him to work with Jim Sanborn on his new sculpture. The two collaborated for several months, creating a set of increasingly difficult codes for the four "Kryptos" passages. In the first three, Scheidt says you could rely on the fact that in English some letters occur more frequently than others.
+
+Mr. ED SCHEIDT (Former Chief CIA Cryptographer): For instance, if you could determine that--the number of E's vs. the number of Z's in the English language, then you would have some insight into the potential words that they made up, because there are more E's in the English language than there are Z's.
+
+KELLY: But Scheidt says in part four he deliberately masked that advantage. "Kryptos" sleuths speculate that could mean anything from random Q's and X's being thrown in to phonetic spellings such as writing the number four, P-H-O-A-R. Scheidt insists even he doesn't know exactly how it turned out, that though he helped with the basic structure of the code, he's never tried to crack Sanborn's final message. And Jim Sanborn, sole guardian of "Kryptos'" secret, is keeping mum. He says the CIA required him to hand over a sealed copy of the solution at "Kryptos'" dedication ceremony and Sanborn says he did kind of.
+
+Mr. SANBORN: I don't really believe I gave them the entire code. So, you know, if it was a deception on my part, hey, so be it. You have to play the game the way everyone else, you know, at the agency plays the game.
+
+KELLY: That kind of coyness drives "Kryptos" aficionados crazy. Nevertheless, their numbers keep growing. Dan Brown, author of "The Da Vinci Code," has drawn new followers to the cause by hinting that his next thriller might somehow contain a "Kryptos" connection. Gary Warzin founded an online discussion group devoted to "Kryptos." Warzin says his biggest torment is a sneaking suspicion that part four is actually really easy.
+
+Mr. GARY WARZIN ("Kryptos" Aficionado): In the first three parts, it really was somebody putting in the hours and putting in the hard work in figuring it out. My suspicion is that when the last part gets solved, it's not going to be the hours and it's not going to be the hard work. It's going to be a `Eureka!' moment, sort of a `Ta-dah!' when somebody sees what the simple rule is that tells you how to decrypt it.
+
+KELLY: Maybe. Sculptor Jim Sanborn offers a final clue that part four isn't the end. He nods when asked whether all four "Kryptos" passages will turn out to be linked and says whoever cracks part four will then be at the beginning of the puzzle.
+
+Mary Louise Kelly, NPR News, Washington.
+
+MONTAGNE: Want to exercise your code-breaking skills? Go to npr.org for a picture of "Kryptos" and a copy of the fourth unsolved passage.
