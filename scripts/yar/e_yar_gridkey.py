@@ -38,11 +38,7 @@ from typing import List, Tuple, Dict, Optional
 
 # ── Constants ────────────────────────────────────────────────────────────────
 
-K4_CARVED = (
-    "OBKRUOXOGHULBSOLIFBBWFLRVQQPRNGKSSOTWTQSJQSSEKZZWAT"
-    "JKLUDIAWINFBNYPVTTMZFPKWGDKZXTJCDIGKUHUAUEKCAR"
-)
-assert len(K4_CARVED) == 97
+from kryptos.kernel.constants import CT as K4_CARVED
 
 # YAR-modified CT (Y->tableau, A->tableau, R->tableau at their positions)
 # From the user's specification

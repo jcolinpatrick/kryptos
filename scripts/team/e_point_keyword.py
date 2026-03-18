@@ -21,10 +21,8 @@ from typing import Dict, List, Optional, Tuple
 
 # ── Constants (from kernel) ──────────────────────────────────────────────────
 
-CT = (
-    "OBKRUOXOGHULBSOLIFBBWFLRVQQPRNGKSSOTWTQSJQSSEKZZWAT"
-    "JKLUDIAWINFBNYPVTTMZFPKWGDKZXTJCDIGKUHUAUEKCAR"
-)
+from kryptos.kernel.constants import CT
+
 CT_LEN = 97
 AZ = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 KA = "KRYPTOSABCDEFGHIJLMNQUVWXZ"

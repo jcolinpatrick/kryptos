@@ -29,11 +29,7 @@ from typing import Dict, List, Optional, Set, Tuple
 
 # ── Constants ────────────────────────────────────────────────────────────────
 
-CT = (
-    "OBKRUOXOGHULBSOLIFBBWFLRVQQPRNGKSSOTWTQSJQSSEKZZWAT"
-    "JKLUDIAWINFBNYPVTTMZFPKWGDKZXTJCDIGKUHUAUEKCAR"
-)
-assert len(CT) == 97
+from kryptos.kernel.constants import CT
 
 ALPH = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 AZ_IDX = {c: i for i, c in enumerate(ALPH)}

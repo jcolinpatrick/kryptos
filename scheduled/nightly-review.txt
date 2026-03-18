@@ -1,0 +1,29 @@
+You are running an automated nightly review of the KryptosBot project.
+
+1. Read CLAUDE.md and MEMORY.md completely.
+
+2. Find all results files modified in the last 24 hours:
+   find results/ -mtime -1 -type f
+
+3. For each file:
+   - Parse the results in whatever format the file uses
+   - Count total configurations tested
+   - Identify the top 10 candidates by score
+   - Check each for crib alignment per CLAUDE.md's current crib positions
+   - Note if any are statistically anomalous
+
+4. Write a summary to logs/nightly-review-$(date +%Y%m%d).md containing:
+   - Files reviewed and total configs tested today
+   - Top candidates with full parameters
+   - Any crib matches (even partial)
+   - Any statistical anomalies
+   - Which parameter ranges are now fully exhausted
+
+5. If anything is crib-positive or statistically exceptional, ALSO
+   append it to MEMORY.md under "## Hot Leads" with today's date.
+
+6. If any attack type is now fully exhausted across its parameter space,
+   append a disproof entry to MEMORY.md with the date and parameters.
+
+Do NOT modify CLAUDE.md — that's maintained separately.
+Do NOT re-run any attacks — this is a review-only session.
