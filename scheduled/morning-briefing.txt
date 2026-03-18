@@ -1,0 +1,26 @@
+Generate a morning briefing for the KryptosBot project.
+
+1. Read CLAUDE.md — note the current primary hypothesis.
+2. Read MEMORY.md — note what was done most recently.
+3. Read the most recent nightly review in logs/ (if any).
+4. Check running processes: ps aux | grep python | grep -v grep
+5. Check disk usage: df -h ~ && du -sh results/
+
+Write a concise briefing to logs/briefing-$(date +%Y%m%d).md:
+
+## Current Hypothesis
+[One paragraph from CLAUDE.md]
+
+## Yesterday's Progress
+[What was tested, what was found, what was eliminated]
+
+## Active Compute
+[What's running right now, estimated completion]
+
+## Disk Status
+[Space remaining, results directory size]
+
+## Recommended Next Steps
+[Based on MEMORY.md's queued experiments and gaps in coverage]
+
+Keep it under 50 lines. This is a dashboard, not a research paper.

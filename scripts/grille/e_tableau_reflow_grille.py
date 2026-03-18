@@ -29,23 +29,9 @@ sys.path.insert(0, 'src')
 
 from collections import Counter
 
-try:
-    from kryptos.kernel.constants import (
-        CT as K4_CT, CRIB_DICT, ALPH, KRYPTOS_ALPHABET,
-    )
-except ImportError:
-    print("WARNING: Could not import from kryptos.kernel.constants, using hardcoded values")
-    K4_CT = (
-        "OBKRUOXOGHULBSOLIFBBWFLRVQQPRNGKSSOTWTQSJQSSEKZZWAT"
-        "JKLUDIAWINFBNYPVTTMZFPKWGDKZXTJCDIGKUHUAUEKCAR"
-    )
-    ALPH = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    KRYPTOS_ALPHABET = "KRYPTOSABCDEFGHIJLMNQUVWXZ"
-    CRIB_DICT = {}
-    for i, ch in enumerate("EASTNORTHEAST"):
-        CRIB_DICT[21 + i] = ch
-    for i, ch in enumerate("BERLINCLOCK"):
-        CRIB_DICT[63 + i] = ch
+from kryptos.kernel.constants import (
+    CT as K4_CT, CRIB_DICT, ALPH, KRYPTOS_ALPHABET,
+)
 
 # ============================================================
 # TABLEAU DATA — as physically carved on the sculpture
