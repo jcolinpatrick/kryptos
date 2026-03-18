@@ -212,8 +212,8 @@ class TestValidateCandidate:
         EASTNORTHEAST embedded in otherwise random-looking substitution
         output.  The overall plaintext quality is still garbage.
         """
-        # 40 chars of substitution garbage with EASTNORTHEAST in the middle
-        garbage = "QXVZBJWMFPGYL" + "EASTNORTHEAST" + "DNHRSCIEUOAXQ"
+        # 39 chars of substitution garbage with EASTNORTHEAST in the middle
+        garbage = "ZXQJZXQJZXQJZ" + "EASTNORTHEAST" + "JQXZJQXZJQXZQ"
         vr = validate_candidate(garbage)
         assert vr.confidence != CONFIDENCE_HIGH
         # The bait crib alone shouldn't push plausibility above 0.7
