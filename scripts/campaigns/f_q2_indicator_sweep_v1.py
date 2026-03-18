@@ -235,7 +235,7 @@ if __name__ == '__main__':
     # When indicator=K (pos 0 in KA), ind_pos=0, so Q2 reduces to the
     # standard KA-alphabet autokey. Verify:
     print("Sanity check: Q2(indicator=K, vig) vs standard KA autokey...")
-    test_ct = "OBKRUOXOGHULBSOLIFBBWFLRVQQPRNGKSSOTWTQSJQSSEKZZWATJKLUDIAWINFBNYPVTTMZFP"
+    test_ct = CT[:70]
     test_pt_q2 = q2_autokey_decrypt(test_ct, "KRYPTOS", "K", "vig")
     # Standard KA autokey vig for comparison:
     def _std_ka_autokey(ct_str, kw):
