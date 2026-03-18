@@ -3,11 +3,12 @@
 You MUST complete ALL of these steps before executing any task:
 
 1. Read this entire CLAUDE.md
-2. Read MEMORY.md — specifically the disproof ledger and eliminated hypotheses
-3. If the user's request matches ANYTHING already disproved or tested, 
+2. Read MEMORY.md — the decision-support index (paradigm, constants, what's open)
+3. Read `memory/elimination_ledger.md` — the complete elimination record by attack family
+4. If the user's request matches ANYTHING already disproved or tested,
    TELL THE USER and do NOT run it again
-4. Search scripts/ for existing tools — do NOT write new code if a script exists
-5. Check results/ for prior output matching the planned parameters
+5. Search scripts/ for existing tools — do NOT write new code if a script exists
+6. Check results/ for prior output matching the planned parameters
 
 If you skip these steps and re-test an eliminated hypothesis, you are 
 wasting 28 CPU cores and burning API tokens for zero value.
