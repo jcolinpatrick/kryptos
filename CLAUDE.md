@@ -37,13 +37,22 @@ This repo has one purpose: determine the **true plaintext** and the **full encry
 
 **Two systems CONFIRMED** [PRIMARY SOURCE]: Sanborn dedication speech + Scheidt (Wired). No single-layer classical cipher works on the carved text (exhaustively tested). 880+ experiments, 669B+ configs, ZERO breakthroughs.
 
-**→ Current paradigm (73-char hypothesis, null palette, W-as-delimiter), full elimination list, open hypotheses, and K2 coordinate analysis: see MEMORY.md** (read at session start per step 2 above). See [`reports/final_synthesis.md`](reports/final_synthesis.md) for the elimination landscape.
+**→ Volatile research state lives in MEMORY.md** (read at session start per step 2 above): current paradigm, full elimination list (22 categories), confirmed findings, open attack surface, key constants, and user policies. CLAUDE.md has the durable technical setup; MEMORY.md has the evolving cryptanalytic state. See [`reports/final_synthesis.md`](reports/final_synthesis.md) for the elimination landscape.
 
 ---
 
 ## Development Setup & Commands
 
 **Python 3.11+** required (uses `tomllib` from stdlib; dev environment runs 3.12.3). **No external runtime dependencies** — stdlib only. `pytest` is the only dev dependency. No `pyproject.toml` or `setup.py` — `pip install -e .` will not work. All commands require `PYTHONPATH=src`. **Repo:** `github.com/jcolinpatrick/kryptos`.
+
+**Common imports** (all require `PYTHONPATH=src`):
+```python
+from kryptos.kernel.constants import CT, CRIB_POSITIONS, BEAN_EQ, BEAN_INEQ
+from kryptos.kernel.alphabet import AZ, KA, keyword_mixed_alphabet
+from kryptos.kernel.text import sanitize, text_to_nums, nums_to_text
+from kryptos.kernel.scoring.aggregate import score_candidate, score_candidate_free
+from kryptos.kernel.transforms.vigenere import decrypt_vigenere, decrypt_beaufort
+```
 
 A `venv/` exists with numpy, pymupdf, and jinja2 but is gitignored. Activate with `source venv/bin/activate` if needed for PDF/matrix work or the site builder, but core code uses stdlib only.
 
@@ -142,7 +151,7 @@ Hundreds of attack scripts organized into 31 family subdirectories. Each script 
 - `discover.py` — Recursive script discovery and manifest generation
 - `migrate.py` — Batch migration CLI for adding headers
 
-**Standard `attack()` contract** (15 scripts migrated, remainder use legacy subprocess mode):
+**Standard `attack()` contract** (26 scripts migrated, remainder use legacy subprocess mode):
 ```python
 def attack(ciphertext: str, **params) -> list[tuple[float, str, str]]:
     """Returns [(score, plaintext, method_description), ...] sorted by score desc."""
@@ -306,5 +315,5 @@ Domain knowledge, public facts, and detailed operating policies live in separate
 
 ---
 
-*Last updated: 2026-03-18 — Mission: derive K4 method & solve. Volatile research state (best leads, eliminations, open hypotheses) maintained in MEMORY.md.*
+*Last updated: 2026-03-19 — Mission: derive K4 method & solve. Volatile research state (best leads, eliminations, open hypotheses) maintained in MEMORY.md.*
 *Primary author: Colin Patrick (human lead) + Claude (computational partner)*
