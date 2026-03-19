@@ -21,6 +21,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This repo has one purpose: determine the **true plaintext** and the **full encryption method** of **Kryptos K4**.
 
+**Contents:** [K4 Quick Reference](#the-k4-problem--quick-reference) · [Dev Setup & Commands](#development-setup--commands) · [Architecture](#architecture) · [Scores](#interpreting-scores) · [Gotchas](#key-gotchas) · [Truth Taxonomy](#truth-taxonomy-mandatory) · [Reference Docs](#reference-documents) · [Multi-Agent](#multi-agent-mode--solve-k4)
+
 ---
 
 ## The K4 Problem — Quick Reference
@@ -128,7 +130,7 @@ kernel/persistence/sqlite.py (results DB) + JsonlWriter (logs)
 
 ### Experiment scripts (`scripts/`)
 
-866+ attack scripts organized into 31 family subdirectories. Each script has a parseable metadata header and is tracked in `exhaustion_log.json` (574 registered entries; ~300 newer scripts not yet registered). Use `run_attack.py --list` to discover scripts or `run_attack.py --run --family <name>` to dispatch by family.
+Hundreds of attack scripts organized into 31 family subdirectories. Each script has a parseable metadata header and is tracked in `exhaustion_log.json`. Use `run_attack.py --list` to discover scripts or `run_attack.py --run --family <name>` to dispatch by family.
 
 **All family directories:** `_infra` (infrastructure/utilities, not attacks), `_uncategorized`, `analysis`, `antipodes`, `blitz`, `campaigns`, `cfm`, `crib_analysis`, `encoding`, `examples`, `exploration`, `fractionation`, `geodetic`, `geometry`, `grille`, `k2_coords`, `k3_continuity`, `mirror_ka`, `multi_layer`, `overlay`, `polyalphabetic`, `running_key`, `statistical`, `substitution`, `tableau`, `team`, `thematic`, `transposition`, `two_system`, `yar`.
 
@@ -199,7 +201,6 @@ Agent SDK research campaign runner. Separate from the core `src/kryptos/` packag
 
 ### Other directories
 
-- **`bench/`** — Benchmark framework (see above).
 - **`bin/`** — Standalone engine scripts for Antipodes and cylinder rotation analysis (`antipodes_device_engine.py`, `antipodes_key_engine.py`, `cylinder_rotation_engine.py`).
 - **`jobs/`** — Job queue with `pending/`, `running/`, `done/`, `failed/` subdirectories for experiment management.
 - **`deploy/`** — Production deployment configs: systemd service (`internal-api.service`), nginx config, cron updater, setup script.
@@ -246,6 +247,7 @@ These are non-obvious pitfalls discovered through prior sessions. Check these fi
 - **Autokey is provably impossible on K4**: PT-autokey and CT-autokey both fail structurally because crib positions feed back into each other at offsets ≤44. This is not a search failure — it's a mathematical impossibility. See `memory/keystream_forensics_v2.md`.
 - **K2 numbers are NOT direct cipher keys**: Despite encoding 73/24/13/11, K2's "38 degrees 57 minutes 6.5 seconds" as raw numbers produce only noise (6/24 max) when used as Vigenère keys, transposition keys, or autokey primers. The encoding is confirmed real but the operational mechanism is unknown.
 - **Beaufort A=0 is the confirmed default**: Use A=0 indexing for all Beaufort operations unless explicitly testing A=1. Both conventions must be tested in positional experiments.
+- **Standalone script `_ROOT` depth**: The bootstrap snippet (`_ROOT = os.path.dirname(os.path.dirname(...))`) assumes the script is exactly 2 directories deep (e.g. `scripts/grille/e_foo.py`). Scripts at 3+ levels need additional `os.path.dirname()` wrappers or they'll get `ModuleNotFoundError`.
 
 ---
 
