@@ -1,18 +1,62 @@
 ---
 name: k-section-parallel
-description: This skill should be used when reasoning about K4 through the lens of K1, K2, and K3. Formalizes the progressive solve pattern where solved sections predict unsolved section properties. Trigger when the user mentions "K1 and K2 use the same", "like K3", "same method", "parallel between sections", "what does K3 tell us about K4", "encoding chart format", "progressive solve", "same grid", "same transformation", or draws any analogy between solved and unsolved Kryptos sections. Also use when proposing a new K4 hypothesis to check whether it's consistent with the K1-K2-K3 progression.
+description: This skill should be used when reasoning about K4 through the lens of K0, K1, K2, and K3. Formalizes the progressive solve pattern where solved sections predict unsolved section properties. Trigger when the user mentions "K1 and K2 use the same", "like K3", "same method", "parallel between sections", "what does K3 tell us about K4", "encoding chart format", "progressive solve", "same grid", "same transformation", "K0 Morse", "tableau side", or draws any analogy between solved and unsolved Kryptos sections. Also use when proposing a new K4 hypothesis to check whether it's consistent with the K0-K1-K2-K3 progression.
 ---
 
 # K-Section Parallel Analyzer
 
-Reason about K4 by extracting patterns from K1, K2, and K3.
+Reason about K4 by extracting patterns from K0, K1, K2, and K3.
 The Kryptos sculpture has a deliberate progressive structure — each
 section builds on the previous. Properties that are consistent across
-K1-K3 are strong predictors for K4.
+solved sections are strong predictors for K4.
+
+## K0 — The Morse Code Foundation (Tableau Side)
+
+K0 is the Morse code text on the REVERSE side of the sculpture
+(the tableau side, which Sanborn says is the "right way" to view it).
+It is the FIRST section encountered from the correct viewing direction.
+
+### K0 Properties
+- **Medium**: Morse code, not alphabetic — different encoding layer
+- **Content**: Letters, digits, and extra E's interspersed
+- **Visible text**: ~106 characters including 25-26 extra E's in 10 groups
+- **E-group structure**: [2, 5, 1, 3, 2, 2, 5, 3, 1, 1] (25 E's)
+- **Inter-group message counts**: [9, 9, 7, 13, 6, 6, 5, 6, 15, 5] (81 message letters)
+- **Hidden portion**: Morse wraps underneath the stone — start is hidden
+- **Keywords visible**: VIRTUALLY, INVISIBLE, DIGETAL, INTERPRETAT(ION),
+  SHADOW, FORCES, LUCID, MEMORY — thematic vocabulary
+- **DIGETAL misspelling**: Deliberate? Parallel to K1 IQLUSION, K3 DESPARATLY
+
+### K0 → K4 Connections (tested and untested)
+- **E-groups as null mask run-lengths**: ELIMINATED (30K+ configs, max 6/24)
+- **E-groups as indirect encoding**: OPEN — mapping more complex than run-length
+- **SHADOW keyword**: Survives keyword elimination testing (not eliminated)
+- **Thematic vocabulary**: INVISIBLE, FORCES, SHADOW, MEMORY could be
+  keywords or running-key source indicators
+- **Morse as stego layer precursor**: K0 uses a different encoding (Morse)
+  on the SAME physical surface — foreshadowing K4's stego layer?
+- **"VIRTUALLY INVISIBLE"**: Describes the stego? "The information was
+  gathered and transmitted..." (K2) describes K4's hidden message?
+
+### K0 Position in Progressive Solve
+```
+K0 (Morse, tableau side) → encoding/stego foundation
+K1 (KA Vigenère, PALIMPSEST) → substitution cipher
+K2 (KA Vigenère, ABSCISSA) → same cipher, different key + coordinates
+K3 (Double rotation) → transposition cipher
+K4 (??? + stego) → combines elements from all previous?
+```
+
+If the sculpture is a TUTORIAL that teaches progressively:
+- K0 teaches: alternative encodings exist (Morse ≠ alphabet)
+- K1 teaches: substitution with keyword
+- K2 teaches: same method, different key + progressive solve hints
+- K3 teaches: transposition (a fundamentally different operation)
+- K4 combines: stego (K0 concept) + cipher (K1-K3 techniques)
 
 ## The Progressive Structure
 
-### Tier 1: Properties shared by ALL three solved sections
+### Tier 1: Properties shared by ALL solved alphabetic sections (K1-K3)
 
 These are the strongest predictors. K4 almost certainly shares them.
 
