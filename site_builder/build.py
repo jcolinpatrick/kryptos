@@ -269,8 +269,8 @@ def build():
     _render(env, "vic_workbench.html", "vic-workbench/index.html", global_ctx)
     pages_built += 1
 
-    # Cylinder Viewer
-    _render(env, "cylinder_viewer.html", "cylinder-viewer/index.html", global_ctx)
+    # Cylinder Viewer (standalone page — not a Jinja2 template)
+    _build_cylinder_viewer()
     pages_built += 1
 
     # Report error
@@ -322,6 +322,32 @@ def build():
     print(f"  Output directory: {OUTPUT_DIR}")
     print(f"  Total configs disproven: {total_configs_disproven}")
     print("=" * 60)
+
+
+def _build_cylinder_viewer():
+    """Build the cylinder viewer page from the standalone HTML + external JS.
+
+    The standalone file (reference/tools/cylinder_viewer.html) has inline JS
+    which is blocked by nginx CSP (script-src 'self'). We extract the JS to
+    an external file and swap the <script> tag for a <script src> reference.
+    """
+    src_html = os.path.join(PROJECT_ROOT, "reference", "tools", "cylinder_viewer.html")
+    with open(src_html) as f:
+        html = f.read()
+
+    # Replace the inline <script>...</script> with external reference
+    import re
+    html = re.sub(
+        r'<script>\n// ── DATA.*?</script>',
+        '<script src="/static/cylinder_viewer.js"></script>',
+        html,
+        flags=re.DOTALL,
+    )
+
+    out_dir = os.path.join(OUTPUT_DIR, "cylinder-viewer")
+    os.makedirs(out_dir, exist_ok=True)
+    with open(os.path.join(out_dir, "index.html"), "w") as f:
+        f.write(html)
 
 
 def _render(env: Environment, template_name: str, output_path: str, context: dict):
