@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>K3 Jefferson Cipher Viewer</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=DM+Sans:wght@400;500;700&display=swap');
+
+:root {
+  --bg: #0c0e14;
+  --bg-panel: #12151f;
+  --bg-cell: #1a1e2e;
+  --bg-cell-hover: #252a3e;
+  --border: #2a2f45;
+  --border-strong: #3a4060;
+  --text: #c8cdd8;
+  --text-dim: #6b7394;
+  --text-bright: #e8ecf4;
+  --accent: #5b7fff;
+  --accent-dim: rgba(91,127,255,0.15);
+  --ndyahr: #ff5c5c;
+  --ndyahr-bg: rgba(255,92,92,0.12);
+  --ndyahr-border: rgba(255,92,92,0.4);
+  --anchor: #ffd55b;
+  --anchor-bg: rgba(255,213,91,0.12);
+  --anchor-border: rgba(255,213,91,0.4);
+  --k3pt: #4ecdc4;
+  --k3pt-bg: rgba(78,205,196,0.1);
+  --readout: #a78bfa;
+  --readout-bg: rgba(167,139,250,0.08);
+  --positive: #ffd55b;
+  --negative: #ff5c5c;
+  --zero: #3a3f55;
+  --radius: 4px;
+  --cell-w: 38px;
+  --cell-h: 36px;
+  --gap: 2px;
+  --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+  --font-sans: 'DM Sans', system-ui, sans-serif;
+}
+
+html { background: var(--bg); color: var(--text); }
+body {
+  font-family: var(--font-sans);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 16px 60px;
+}
+
+h1 {
+  font-family: var(--font-mono);
+  font-size: 1.6em;
+  font-weight: 700;
+  color: var(--text-bright);
+  letter-spacing: 2px;
+  margin-bottom: 6px;
+  text-align: center;
+}
+h1 span { color: var(--ndyahr); }
+
+.subtitle {
+  text-align: center;
+  color: var(--text-dim);
+  font-size: 0.88em;
+  max-width: 640px;
+  line-height: 1.55;
+  margin-bottom: 20px;
+}
+.subtitle strong { color: var(--text); font-weight: 500; }
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  justify-content: center;
+  margin-bottom: 16px;
+  font-size: 0.8em;
+  color: var(--text-dim);
+}
+.leg { display: flex; align-items: center; gap: 5px; }
+.sw {
+  width: 14px; height: 14px;
+  border-radius: 2px;
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.sw-ndyahr { background: var(--ndyahr-bg); border-color: var(--ndyahr-border); }
+.sw-anchor { background: var(--anchor-bg); border-color: var(--anchor-border); }
+.sw-k3pt   { background: var(--k3pt-bg); border-color: var(--k3pt); }
+.sw-read   { background: var(--readout-bg); border-color: var(--readout); }
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 16px;
+}
+.btn {
+  background: var(--bg-cell);
+  color: var(--text);
+  border: 1px solid var(--border);
+  padding: 6px 14px;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 0.78em;
+  border-radius: var(--radius);
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.btn:hover { background: var(--bg-cell-hover); border-color: var(--border-strong); }
+.btn.active { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); }
+.lock-label {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 0.78em; color: var(--text-dim); cursor: pointer;
+  font-family: var(--font-mono);
+}
+.lock-label input { cursor: pointer; }
+
+.readout-bar {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 14px;
+  margin-bottom: 16px;
+  max-width: 100%;
+  overflow-x: auto;
+}
+.readout-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.readout-label {
+  font-family: var(--font-mono);
+  font-size: 0.72em;
+  color: var(--readout);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.readout-dir {
+  font-family: var(--font-mono);
+  font-size: 0.68em;
+  color: var(--text-dim);
+}
+.readout-cols {
+  display: flex;
+  gap: 6px;
+  font-family: var(--font-mono);
+}
+.readout-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+.readout-col-num {
+  font-size: 0.6em;
+  color: var(--text-dim);
+  min-width: 20px;
+  text-align: center;
+}
+.readout-col-text {
+  font-size: 0.72em;
+  color: var(--readout);
+  letter-spacing: 1px;
+  word-break: break-all;
+  writing-mode: vertical-lr;
+  text-orientation: upright;
+  max-height: 260px;
+  overflow: hidden;
+  line-height: 1.1;
+}
+
+.panel-wrap {
+  display: flex;
+  justify-content: center;
+  overflow-x: auto;
+  max-width: 100%;
+}
+.panel {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px 14px;
+  display: inline-block;
+}
+
+.col-nums {
+  display: flex;
+  gap: var(--gap);
+  margin-left: 80px;
+  margin-bottom: 4px;
+}
+.col-n {
+  width: var(--cell-w);
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 0.6em;
+  color: var(--text-dim);
+  flex-shrink: 0;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  margin-bottom: var(--gap);
+  gap: 4px;
+}
+.row-num {
+  min-width: 24px;
+  text-align: right;
+  font-family: var(--font-mono);
+  font-size: 0.7em;
+  color: var(--text-dim);
+  flex-shrink: 0;
+}
+.arrow {
+  background: var(--bg-cell);
+  color: var(--text-dim);
+  border: 1px solid var(--border);
+  width: 24px; height: var(--cell-h);
+  cursor: pointer;
+  font-size: 0.85em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius);
+  transition: all 0.12s;
+  user-select: none;
+  flex-shrink: 0;
+  padding: 0;
+}
+.arrow:hover { background: var(--bg-cell-hover); border-color: var(--border-strong); color: var(--text); }
+.arrow:active { background: var(--accent-dim); border-color: var(--accent); }
+
+.cells {
+  display: flex;
+  gap: var(--gap);
+  cursor: grab;
+  touch-action: none;
+}
+.cells:active { cursor: grabbing; }
+
+.cell {
+  width: var(--cell-w);
+  height: var(--cell-h);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-cell);
+  border: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 1em;
+  font-weight: 600;
+  color: var(--text-bright);
+  border-radius: var(--radius);
+  transition: all 0.12s;
+  user-select: none;
+  flex-shrink: 0;
+  position: relative;
+}
+.cell:hover { background: var(--bg-cell-hover); }
+
+.cell.ndyahr {
+  background: var(--ndyahr-bg);
+  color: var(--ndyahr);
+  border-color: var(--ndyahr-border);
+}
+.cell.anchor-cell {
+  background: var(--anchor-bg);
+  color: var(--anchor);
+  border-color: var(--anchor-border);
+}
+
+.cell.k3pt-on {
+  background: var(--k3pt-bg);
+  border-color: var(--k3pt);
+}
+.cell .pt-char {
+  position: absolute;
+  bottom: -1px;
+  right: 2px;
+  font-size: 0.45em;
+  color: var(--k3pt);
+  pointer-events: none;
+}
+
+.cell.col-highlight {
+  border-color: var(--readout);
+  box-shadow: 0 0 6px rgba(167,139,250,0.2);
+}
+
+.cell .disp-arrow {
+  position: absolute;
+  top: -1px;
+  left: 2px;
+  font-size: 0.5em;
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.offset {
+  min-width: 44px;
+  height: var(--cell-h);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  font-weight: 700;
+  border-radius: var(--radius);
+  flex-shrink: 0;
+  letter-spacing: 1px;
+  border: 1px solid transparent;
+}
+.offset.zero { background: rgba(255,255,255,0.02); color: var(--zero); border-color: var(--zero); }
+.offset.pos  { background: rgba(255,213,91,0.1); color: var(--positive); border-color: rgba(255,213,91,0.3); }
+.offset.neg  { background: rgba(255,92,92,0.1); color: var(--negative); border-color: rgba(255,92,92,0.3); }
+
+.ref-card {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin-top: 20px;
+  max-width: 580px;
+  width: 100%;
+}
+.ref-title {
+  font-family: var(--font-mono);
+  font-size: 0.78em;
+  color: var(--ndyahr);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.ref-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-mono);
+  font-size: 0.78em;
+}
+.ref-table th {
+  text-align: left;
+  color: var(--text-dim);
+  font-weight: 400;
+  padding: 4px 8px;
+  border-bottom: 1px solid var(--border);
+}
+.ref-table td {
+  padding: 4px 8px;
+  color: var(--text);
+  border-bottom: 1px solid rgba(42,47,69,0.5);
+}
+.ref-table .ndcell { color: var(--ndyahr); font-weight: 700; }
+.ref-table .acell  { color: var(--anchor); font-weight: 700; }
+.ref-note {
+  font-size: 0.72em;
+  color: var(--text-dim);
+  margin-top: 10px;
+  line-height: 1.5;
+}
+
+@media (max-width: 900px) {
+  :root { --cell-w: 30px; --cell-h: 30px; }
+  .col-nums { margin-left: 68px; }
+  .col-n { width: 30px; font-size: 0.5em; }
+  .cell { font-size: 0.85em; }
+  .arrow { width: 20px; height: 30px; font-size: 0.75em; }
+  .offset { min-width: 36px; font-size: 0.75em; }
+  .row-num { min-width: 18px; font-size: 0.6em; }
+}
+@media (max-width: 650px) {
+  :root { --cell-w: 22px; --cell-h: 24px; }
+  .col-nums { margin-left: 56px; }
+  .col-n { width: 22px; }
+  .cell { font-size: 0.7em; }
+  .arrow { width: 16px; height: 24px; font-size: 0.65em; }
+  .offset { min-width: 28px; font-size: 0.6em; }
+  h1 { font-size: 1.2em; }
+}
+</style>
+</head>
+<body>
+
+<h1>K3 <span>JEFFERSON</span> VIEWER</h1>
+<p class="subtitle">
+  Sanborn's K3 code chart as a <strong>14x24 vertical Jefferson cipher</strong>.
+  Each row rotates independently. NDYAHR displacement directions on the sculpture
+  may encode rotation instructions. Read columns to find hidden vertical messages.
+</p>
+
+<div class="legend">
+  <div class="leg"><span class="sw sw-ndyahr"></span>NDYAHR (displaced)</div>
+  <div class="leg"><span class="sw sw-anchor"></span>E (anchor = K)</div>
+  <div class="leg"><span class="sw sw-k3pt"></span>K3 plaintext</div>
+  <div class="leg"><span class="sw sw-read"></span>Column readout</div>
+</div>
+
+<div class="controls">
+  <button class="btn" onclick="resetAll()">Reset</button>
+  <button class="btn" id="btn-ndyahr" onclick="applyNDYAHR()">Apply NDYAHR</button>
+  <button class="btn" id="btn-dir" onclick="toggleDir()">Read: &#8593; Bottom-Up</button>
+  <button class="btn" id="btn-pt" onclick="togglePT()">Plaintext: OFF</button>
+  <label class="lock-label"><input type="checkbox" id="lock-all"> Lock rows</label>
+</div>
+
+<div class="readout-bar">
+  <div class="readout-header">
+    <span class="readout-label">Column Readout</span>
+    <span class="readout-dir" id="readout-dir-label">&#8593; bottom to top</span>
+  </div>
+  <div class="readout-cols" id="readout"></div>
+</div>
+
+<div class="panel-wrap">
+  <div id="panel" class="panel"></div>
+</div>
+
+<div class="ref-card">
+  <div class="ref-title">NDYAHR Displacement &#8594; Row Shifts</div>
+  <table class="ref-table">
+    <thead><tr><th>Letter</th><th>Direction</th><th>&#8596; KRYPTOS</th><th>Row Shift</th></tr></thead>
+    <tbody>
+      <tr><td class="acell">E</td><td>FIXED (anchor)</td><td>K</td><td>0</td></tr>
+      <tr><td class="ndcell">N</td><td>&#8592; LEFT</td><td>R</td><td>-1</td></tr>
+      <tr><td class="ndcell">D</td><td>&#8595; DOWN</td><td>Y</td><td>+1</td></tr>
+      <tr><td class="ndcell">Y</td><td>&#8593; UP</td><td>P</td><td>-1</td></tr>
+      <tr><td class="ndcell">A</td><td>&#8593; UP</td><td>T</td><td>-1</td></tr>
+      <tr><td class="ndcell">H</td><td>&#8594; RIGHT</td><td>O</td><td>+1</td></tr>
+      <tr><td class="ndcell">R</td><td>&#8593; UP</td><td>S</td><td>-1</td></tr>
+    </tbody>
+  </table>
+  <p class="ref-note">
+    Corrected directions from scale model (tableau/reverse view).
+    Permutation space: 14^24 ~ 1.1x10^27 (full);
+    but only 7 rows have NDYAHR cues, and shifts are small.
+    Constrained search: 14^7 = 105M (if only NDYAHR rows shift)
+    or ~3^24 ~ 282B (if all rows shift by {-1,0,+1}).
+  </p>
+</div>
+
+<script>
+// ── K3 DATA ─────────────────────────────────────────────────────────
+var GRID = [
+  "ILNTAYESTATHCW",
+  "BLHMHEHAROIEEH",
+  "ISIWNTHONRSLEO",
+  "OLTETYMFTEHMHD",
+  "ELAAEOAERIILUV",
+  "TSGCRIPEEPEKET",
+  "PDNADESTEWCRFR",
+  "CLRIUARBAELTMT",
+  "OUPIEHBLMTIIFT",
+  "EYTPNNTRRSHRGS",
+  "HEELEEFEAMDOMS",
+  "RRNBTWIEOTDLHL",
+  "SNMECIEYTTTDON",
+  "LTXLHTRGOHCYEH",
+  "NHWEADCEEAERNE",
+  "HCRNREYTAAADPM",
+  "OAMNNSAAUIBDDI",
+  "RISLELTMTNESRE",
+  "HAOSEOCAEDFOAF",
+  "ANNETFNTUDWAHP",
+  "YHSPITEATEEEDI",
+  "DSHRDEENOSIOTR",
+  "NYOANOHEIBRGGM",
+  "EDNRWEQWFIGEAD",
+];
+var COLS = 14, ROWS = 24;
+
+var NDYAHR_ROWS = {
+  23: { letter:'E', dir:'\u00B7', shift:0,  kryptos:'K', cls:'anchor-cell' },
+  22: { letter:'N', dir:'\u2190', shift:-1, kryptos:'R', cls:'ndyahr' },
+  21: { letter:'D', dir:'\u2193', shift:+1, kryptos:'Y', cls:'ndyahr' },
+  20: { letter:'Y', dir:'\u2191', shift:-1, kryptos:'P', cls:'ndyahr' },
+  19: { letter:'A', dir:'\u2191', shift:-1, kryptos:'T', cls:'ndyahr' },
+  18: { letter:'H', dir:'\u2192', shift:+1, kryptos:'O', cls:'ndyahr' },
+  17: { letter:'R', dir:'\u2191', shift:-1, kryptos:'S', cls:'ndyahr' },
+};
+
+var K3_PT = "SLOWLYDESPARATLYSLOWLYTHEREMAINSOFPASSAGEDEBRISTHATENCUMBERED" +
+  "THELOWERPARTOFTHEDOORWAYWASREMOVEDWITHTREMBLINGHANDSIMADEATINY" +
+  "BREACHINTHEUPPERLEFTHANDCORNERANDTHENWIDENINGTHEHOLEALITTLE" +
+  "IINSERTEDTHECANDLEANDPEEREDINTHEHOTAIRESCAPINGFROMTHECHAMBER" +
+  "CAUSEDTHEFLAMETOFLICKERBUTPRESENTLYDETAILSOFTHEROOMWITHIN" +
+  "EMERGEDFROMTHEMISTXCANYOUSEEANYTHINGQ";
+
+// Build PT grid mapping: grid[r][c] -> PT char at the corresponding CT position
+var PT_GRID = [];
+for (var r = 0; r < ROWS; r++) {
+  var ptRow = "";
+  for (var c = 0; c < COLS; c++) {
+    var ctPos = c * 24 + (23 - r);
+    ptRow += (ctPos < K3_PT.length) ? K3_PT[ctPos] : "?";
+  }
+  PT_GRID.push(ptRow);
+}
+
+// ── STATE ───────────────────────────────────────────────────────────
+var offsets = new Array(ROWS).fill(0);
+var readBottomUp = true;
+var showPT = false;
+var hoveredCol = -1;
+
+// ── DOM HELPERS ─────────────────────────────────────────────────────
+function el(tag, cls, text) {
+  var e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (text !== undefined) e.textContent = text;
+  return e;
+}
+
+// ── RENDER ──────────────────────────────────────────────────────────
+function render() {
+  var panel = document.getElementById('panel');
+  while (panel.firstChild) panel.removeChild(panel.firstChild);
+
+  var colNums = el('div', 'col-nums');
+  for (var c = 0; c < COLS; c++) colNums.appendChild(el('div', 'col-n', String(c+1)));
+  panel.appendChild(colNums);
+
+  for (var ri = 0; ri < ROWS; ri++) {
+    var rowStr = GRID[ri];
+    var n = rowStr.length;
+    var off = offsets[ri];
+
+    var row = el('div', 'row');
+    row.appendChild(el('div', 'row-num', String(ri+1)));
+
+    var la = el('button', 'arrow', '\u25C0');
+    la.addEventListener('click', (function(r){return function(){rotate(r,-1)};})(ri));
+    row.appendChild(la);
+
+    var cells = el('div', 'cells');
+    cells.dataset.row = ri;
+
+    for (var col = 0; col < COLS; col++) {
+      var srcIdx = ((col - off) % n + n) % n;
+      var ch = rowStr[srcIdx];
+      var cell = el('div', 'cell', ch);
+      cell.dataset.col = col;
+
+      if (col === 0 && NDYAHR_ROWS[ri] && srcIdx === 0) {
+        cell.classList.add(NDYAHR_ROWS[ri].cls);
+        var da = el('span', 'disp-arrow', NDYAHR_ROWS[ri].dir);
+        cell.appendChild(da);
+      }
+
+      if (showPT) {
+        var origPt = PT_GRID[ri][srcIdx];
+        cell.classList.add('k3pt-on');
+        var pts = el('span', 'pt-char', origPt);
+        cell.appendChild(pts);
+      }
+
+      if (col === hoveredCol) cell.classList.add('col-highlight');
+
+      cell.addEventListener('mouseenter', function() {
+        var c = parseInt(this.dataset.col);
+        if (hoveredCol !== c) { hoveredCol = c; highlightCol(); }
+      });
+
+      cells.appendChild(cell);
+    }
+
+    setupDrag(cells, ri);
+    row.appendChild(cells);
+
+    var ra = el('button', 'arrow', '\u25B6');
+    ra.addEventListener('click', (function(r){return function(){rotate(r,1)};})(ri));
+    row.appendChild(ra);
+
+    var badge = el('div', 'offset');
+    if (off === 0) { badge.classList.add('zero'); badge.textContent = '0'; }
+    else if (off > 0) { badge.classList.add('pos'); badge.textContent = '+'+off; }
+    else { badge.classList.add('neg'); badge.textContent = String(off); }
+    row.appendChild(badge);
+
+    panel.appendChild(row);
+  }
+  updateReadout();
+}
+
+function highlightCol() {
+  document.querySelectorAll('.cell').forEach(function(c) {
+    c.classList.toggle('col-highlight', parseInt(c.dataset.col) === hoveredCol);
+  });
+}
+
+function updateReadout() {
+  var container = document.getElementById('readout');
+  while (container.firstChild) container.removeChild(container.firstChild);
+
+  for (var c = 0; c < COLS; c++) {
+    var colDiv = el('div', 'readout-col');
+    colDiv.appendChild(el('div', 'readout-col-num', String(c+1)));
+
+    var textDiv = el('div', 'readout-col-text');
+    var colStr = '';
+    for (var r = 0; r < ROWS; r++) {
+      var ri = readBottomUp ? (ROWS-1-r) : r;
+      var off = offsets[ri];
+      var srcIdx = ((c - off) % COLS + COLS) % COLS;
+      colStr += GRID[ri][srcIdx];
+    }
+    textDiv.textContent = colStr;
+    colDiv.appendChild(textDiv);
+    container.appendChild(colDiv);
+  }
+
+  document.getElementById('readout-dir-label').textContent =
+    readBottomUp ? '\u2191 bottom to top' : '\u2193 top to bottom';
+}
+
+// ── ROTATION ────────────────────────────────────────────────────────
+function rotate(ri, delta) {
+  if (document.getElementById('lock-all').checked) {
+    for (var i = 0; i < ROWS; i++) offsets[i] += delta;
+  } else {
+    offsets[ri] += delta;
+  }
+  render();
+}
+
+function resetAll() {
+  offsets = new Array(ROWS).fill(0);
+  document.getElementById('btn-ndyahr').classList.remove('active');
+  render();
+}
+
+function applyNDYAHR() {
+  offsets = new Array(ROWS).fill(0);
+  for (var ri in NDYAHR_ROWS) offsets[parseInt(ri)] = NDYAHR_ROWS[ri].shift;
+  document.getElementById('btn-ndyahr').classList.add('active');
+  render();
+}
+
+function toggleDir() {
+  readBottomUp = !readBottomUp;
+  var btn = document.getElementById('btn-dir');
+  btn.textContent = readBottomUp ? 'Read: \u2191 Bottom-Up' : 'Read: \u2193 Top-Down';
+  btn.classList.toggle('active', !readBottomUp);
+  updateReadout();
+}
+
+function togglePT() {
+  showPT = !showPT;
+  var btn = document.getElementById('btn-pt');
+  btn.textContent = 'Plaintext: ' + (showPT ? 'ON' : 'OFF');
+  btn.classList.toggle('active', showPT);
+  render();
+}
+
+// ── DRAG ────────────────────────────────────────────────────────────
+function setupDrag(cellsEl, ri) {
+  var startX = null, accumulated = 0, threshold = 30;
+  cellsEl.addEventListener('mousedown', function(e) {
+    e.preventDefault();
+    startX = e.clientX; accumulated = 0;
+    function onMove(e2) {
+      var steps = Math.trunc((e2.clientX - startX) / threshold);
+      if (steps !== accumulated) { rotate(ri, steps - accumulated); accumulated = steps; }
+    }
+    function onUp() {
+      document.removeEventListener('mousemove', onMove);
+      document.removeEventListener('mouseup', onUp);
+    }
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
+  });
+  cellsEl.addEventListener('touchstart', function(e) {
+    if (e.touches.length === 1) { startX = e.touches[0].clientX; accumulated = 0; }
+  }, { passive: true });
+  cellsEl.addEventListener('touchmove', function(e) {
+    if (e.touches.length === 1 && startX !== null) {
+      var steps = Math.trunc((e.touches[0].clientX - startX) / threshold);
+      if (steps !== accumulated) { rotate(ri, steps - accumulated); accumulated = steps; }
+    }
+  }, { passive: true });
+  cellsEl.addEventListener('touchend', function() { startX = null; });
+}
+
+render();
+</script>
+</body>
+</html>
