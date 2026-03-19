@@ -1,0 +1,65 @@
+{
+  "evaluations": [
+    {
+      "skills": [
+        "forensic-photo-analysis"
+      ],
+      "query": "Review this JPEG for signs of localized editing or repeated copied regions. Give me a conservative report with observations, inference, confidence, and limitations.",
+      "files": [
+        "test-files/photo1.jpg"
+      ],
+      "expected_behavior": [
+        "Runs forensic_photo_analyzer.py analyze on the uploaded image",
+        "Reads SUMMARY.md and forensic_report.json before answering",
+        "Discusses ELA, clone candidates, and at least one other evidence layer",
+        "Avoids claiming manipulation from a single indicator"
+      ]
+    },
+    {
+      "skills": [
+        "forensic-photo-analysis"
+      ],
+      "query": "Compare these two photos of the same sculpture panel and identify any localized difference worth inspecting.",
+      "files": [
+        "test-files/panel_old.jpg",
+        "test-files/panel_new.jpg"
+      ],
+      "expected_behavior": [
+        "Runs forensic_photo_analyzer.py compare on the two images",
+        "Reviews the difference map and comparison summary",
+        "Explains that lighting and viewpoint can cause false positives",
+        "Returns changed regions as leads rather than proof"
+      ]
+    },
+    {
+      "skills": [
+        "forensic-photo-analysis"
+      ],
+      "query": "Use this archival PNG scan to look for hidden structure, periodicity, or unusual texture transitions in the inscription area.",
+      "files": [
+        "test-files/scan.png"
+      ],
+      "expected_behavior": [
+        "Runs forensic_photo_analyzer.py analyze on the PNG",
+        "Discusses the spectrum output and noise residual",
+        "Notes that ELA is less probative on non-JPEG originals",
+        "Separates observation from speculation"
+      ]
+    },
+    {
+      "skills": [
+        "forensic-photo-analysis"
+      ],
+      "query": "Correct the perspective on this angled photo of the K4 panel, then run a steganography-focused analysis on the corrected image.",
+      "files": [
+        "test-files/angled_panel.jpg"
+      ],
+      "expected_behavior": [
+        "Runs forensic_photo_analyzer.py correct first (auto or with manual corners)",
+        "Then runs forensic_photo_analyzer.py analyze on the corrected output",
+        "Uses steganography module preset: lsb,bitplane,chi_square,fft,statistical",
+        "Explains perspective correction limitations"
+      ]
+    }
+  ]
+}
