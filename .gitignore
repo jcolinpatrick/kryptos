@@ -57,6 +57,7 @@ reference/carter_vol1_extract.txt
 
 # Personal / infrastructure (not needed for community)
 .claude/
+CLAUDE.md
 MEMORY.md
 RUNBOOK.md
 agent_analysis.json
