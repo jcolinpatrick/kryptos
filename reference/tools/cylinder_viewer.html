@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kryptos Cylinder Viewer</title>
+<style>
+  :root {
+    --bg: #1a1a2e;
+    --panel: #16213e;
+    --cell: #0f3460;
+    --cell-text: #e0e0e0;
+    --highlight-ene: #e94560;
+    --highlight-bcl: #f5a623;
+    --anomaly: #00d2ff;
+    --null-palette: rgba(0, 210, 255, 0.25);
+    --arrow-btn: #533483;
+    --arrow-hover: #7b2d8e;
+    --border: #2a2a4a;
+    --section-label: #e94560;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Courier New', monospace;
+    background: var(--bg);
+    color: var(--cell-text);
+    min-height: 100vh;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  h1 {
+    text-align: center;
+    color: var(--highlight-ene);
+    margin-bottom: 5px;
+    font-size: 2em;
+    letter-spacing: 2px;
+  }
+
+  .subtitle {
+    text-align: center;
+    color: #888;
+    font-size: 1em;
+    margin-bottom: 20px;
+  }
+
+  .controls-bar {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  .controls-bar button {
+    background: var(--arrow-btn);
+    color: white;
+    border: 1px solid var(--border);
+    padding: 8px 20px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 1em;
+    border-radius: 4px;
+    transition: background 0.2s;
+  }
+
+  .controls-bar button:hover { background: var(--arrow-hover); }
+  .controls-bar button.active {
+    background: var(--highlight-ene);
+    border-color: var(--highlight-ene);
+  }
+
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+    margin-bottom: 20px;
+    font-size: 0.95em;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .legend-swatch {
+    width: 16px;
+    height: 16px;
+    border-radius: 2px;
+    border: 1px solid var(--border);
+  }
+
+  .lock-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 1em;
+    color: #aaa;
+  }
+
+  .lock-group input { cursor: pointer; }
+
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+    overflow-x: auto;
+    display: inline-block;
+  }
+
+  .col-numbers {
+    display: flex;
+    gap: 3px;
+    margin-left: 76px;
+    margin-bottom: 6px;
+  }
+
+  .col-num {
+    width: 36px;
+    text-align: center;
+    font-size: 0.75em;
+    color: #555;
+    flex-shrink: 0;
+  }
+
+  .row-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 4px;
+    gap: 5px;
+  }
+
+  /* Left side: row number */
+  .row-num {
+    min-width: 30px;
+    text-align: right;
+    font-size: 0.85em;
+    color: #555;
+    flex-shrink: 0;
+  }
+
+  .arrow-btn {
+    background: var(--arrow-btn);
+    color: white;
+    border: 1px solid var(--border);
+    width: 34px;
+    height: 38px;
+    cursor: pointer;
+    font-size: 1.1em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 3px;
+    transition: background 0.15s;
+    user-select: none;
+    flex-shrink: 0;
+  }
+
+  .arrow-btn:hover { background: var(--arrow-hover); }
+  .arrow-btn:active { background: var(--highlight-ene); }
+
+  .row-cells {
+    display: flex;
+    gap: 3px;
+    position: relative;
+    cursor: grab;
+    touch-action: none;
+  }
+
+  .row-cells:active { cursor: grabbing; }
+
+  .cell {
+    width: 36px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--cell);
+    border: 1px solid var(--border);
+    font-size: 1.15em;
+    font-weight: bold;
+    border-radius: 2px;
+    transition: background 0.15s, opacity 0.15s, border-color 0.15s;
+    user-select: none;
+    flex-shrink: 0;
+    position: relative;
+  }
+
+  .cell.crib-ene {
+    background: var(--highlight-ene);
+    color: white;
+    border-color: var(--highlight-ene);
+  }
+
+  .cell.crib-bcl {
+    background: var(--highlight-bcl);
+    color: #1a1a2e;
+    border-color: var(--highlight-bcl);
+  }
+
+  .cell.null-palette {
+    border-color: var(--anomaly);
+    box-shadow: inset 0 0 4px var(--null-palette);
+  }
+
+  .cell.q-mark {
+    background: #ff6b6b;
+    color: white;
+    font-style: italic;
+  }
+
+  .cell.section-k1 { }
+  .cell.section-k3 { }
+  .cell.section-k4 { }
+
+  .cell .pos-label {
+    position: absolute;
+    bottom: -14px;
+    font-size: 0.55em;
+    color: #555;
+    pointer-events: none;
+  }
+
+  /* ── Offset indicator (right side) ── */
+  .offset-badge {
+    min-width: 64px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3em;
+    font-weight: bold;
+    border-radius: 4px;
+    flex-shrink: 0;
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 1px;
+    border: 1px solid transparent;
+  }
+
+  .offset-badge.zero {
+    background: rgba(255,255,255,0.03);
+    color: #444;
+    border-color: #2a2a3a;
+  }
+
+  .offset-badge.positive {
+    background: rgba(245, 166, 35, 0.3);
+    color: #ffc964;
+    border-color: rgba(245, 166, 35, 0.6);
+  }
+
+  .offset-badge.negative {
+    background: rgba(233, 69, 96, 0.3);
+    color: #ff8a9e;
+    border-color: rgba(233, 69, 96, 0.6);
+  }
+
+  /* Section separator lines */
+  .section-sep {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 8px 0 6px 0;
+    font-size: 0.7em;
+    color: #666;
+  }
+
+  .section-sep .sep-line {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .section-sep .sep-label {
+    color: var(--section-label);
+    font-weight: bold;
+    font-size: 1em;
+    letter-spacing: 1px;
+    white-space: nowrap;
+  }
+
+  @media (max-width: 1600px) {
+    .cell { width: 30px; height: 34px; font-size: 1em; }
+    .col-num { width: 30px; font-size: 0.65em; }
+    .col-numbers { margin-left: 72px; }
+    .arrow-btn { width: 30px; height: 34px; font-size: 1em; }
+    .offset-badge { min-width: 54px; font-size: 1.1em; }
+  }
+
+  @media (max-width: 1100px) {
+    .cell { width: 24px; height: 28px; font-size: 0.85em; }
+    .col-num { width: 24px; font-size: 0.6em; }
+    .col-numbers { margin-left: 66px; }
+    .arrow-btn { width: 26px; height: 28px; font-size: 0.9em; }
+    .offset-badge { min-width: 46px; font-size: 0.95em; }
+  }
+
+  @media (max-width: 800px) {
+    .cell { width: 18px; height: 22px; font-size: 0.7em; }
+    .col-num { width: 18px; font-size: 0.5em; }
+    .col-numbers { margin-left: 56px; }
+    .row-num { min-width: 18px; font-size: 0.55em; }
+    .arrow-btn { width: 22px; height: 22px; font-size: 0.85em; }
+    .offset-badge { min-width: 36px; font-size: 0.75em; }
+  }
+</style>
+</head>
+<body>
+
+<h1>KRYPTOS CYLINDER VIEWER</h1>
+<div class="subtitle">Cipher panel &mdash; 28 rows &times; 31 columns &mdash; each row is a rotatable ring</div>
+
+<div class="legend">
+  <div class="legend-item">
+    <div class="legend-swatch" style="background:var(--highlight-ene)"></div>
+    <span>EASTNORTHEAST (K4 pos 21-33)</span>
+  </div>
+  <div class="legend-item">
+    <div class="legend-swatch" style="background:var(--highlight-bcl)"></div>
+    <span>BERLINCLOCK (K4 pos 63-73)</span>
+  </div>
+  <div class="legend-item">
+    <div class="legend-swatch" style="background:var(--cell); border-color:var(--anomaly)"></div>
+    <span>Null palette {B,G,I,K,O,W,Z}</span>
+  </div>
+</div>
+
+<div class="controls-bar">
+  <button onclick="resetAll()">Reset All</button>
+  <button id="btn-show-null" onclick="toggleNullHighlight()">Null Palette: ON</button>
+  <button id="btn-show-pos" onclick="togglePositions()">Positions: OFF</button>
+  <div class="lock-group">
+    <input type="checkbox" id="lock-all" />
+    <label for="lock-all">Lock all rows</label>
+  </div>
+</div>
+
+<div id="panel" class="panel"></div>
+
+<script>
+// ── DATA ───────────────────────────────────────────────────────────────
+// Full cipher panel: 868 chars in 28 rows of 31 (squeezed ? removed, remaining ? kept)
+// Source: strategies.py FULL_CORRECTED_CT / sculpture_path_search _FULL_CT_869
+var PANEL_ROWS = [
+  "EMUFPHZLRFAXYUSDJKZLDKRNSHGNFIV",   // 0   K1
+  "JYQTQUXQBQVYUVLLTREVJYQTMKYRDMF",   // 1   K1
+  "DVFPJUDEEHZWETZYVGWHKKQETGFQJNC",   // 2   K1 ends col 0, K2 starts col 1
+  "EGGWHKK?DQMCPFQZDQMMIAGPFXHQRLG",   // 3   K2
+  "TIMVMZJANQLVKQEDAGDVFRPJUNGEUNA",    // 4   K2
+  "QZGZLECGYUXUEENJTBJLBQCRTBJDFHR",    // 5   K2
+  "RYIZETKZEMVDUFKSJHKFWHKUWQLSZFT",    // 6   K2
+  "IHHDDDUVH?DWKBFUFPWNTDFIYCUQZER",    // 7   K2
+  "EEVLDKFEZMOQQJLTTUGSYQPFEUNLAVI",    // 8   K2
+  "DXFLGGTEZFKZBSFDQVGOGIPUFXHHDRK",    // 9   K2  (squeezed ? removed)
+  "FFHQNTGPUAECNUVPDJMQCLQUMUNEDFQ",    // 10  K2
+  "ELZZVRRGKFFVOEEXBDMVPNFQXEZLGRE",    // 11  K2
+  "DNQFMPNZGLFLPMRJQYALMGNUVPDXVKP",    // 12  K2
+  "DQUMEBEDMHDAFMJGZNUPLGEWJLLAETG",    // 13  K2 ends
+  "ENDYAHROHNLSRHEOCPTEOIBIDYSHNAI",    // 14  K3
+  "ACHTNREYULDSLLSLLNOHSNOSMRWXMNE",    // 15  K3
+  "TPRNGATIHNRARPESLNNELEBLPIIACAE",     // 16  K3
+  "WMTWNDITEENRAHCTENEUDRETNHAEOET",     // 17  K3
+  "FOLSEDTIWENHAEIOYTEYQHEENCTAYCR",     // 18  K3
+  "EIFTBRSPAMHHEWENATAMATEGYEERLBT",     // 19  K3
+  "EEFOASFIOTUETUAEOTOARMAEERTNRTI",     // 20  K3
+  "BSEDDNIAAHTTMSTEWPIEROAGRIEWFEB",    // 21  K3
+  "AECTDDHILCEIHSITEGOEAOSDDRYDLOR",     // 22  K3
+  "ITRKLMLEHAGTDHARDPNEOHMGFMFEUHE",    // 23  K3
+  "ECDMRIPFEIMEHNLSSTTRTVDOHW?OBKR",    // 24  K3 ends, K4 starts col 27
+  "UOXOGHULBSOLIFBBWFLRVQQPRNGKSSO",    // 25  K4
+  "TWTQSJQSSEKZZWATJKLUDIAWINFBNYP",    // 26  K4
+  "VTTMZFPKWGDKZXTJCDIGKUHUAUEKCAR",    // 27  K4 ends
+];
+
+var WINDOW = 31;
+var NULL_PALETTE = { B:1, G:1, I:1, K:1, O:1, W:1, Z:1 };
+
+// Section boundaries (sculpture row ranges)
+var SECTIONS = [
+  { label: 'K1', startRow: 0, endRow: 2 },
+  { label: 'K2', startRow: 2, endRow: 14 },
+  { label: 'K3', startRow: 14, endRow: 25 },
+  { label: 'K4', startRow: 24, endRow: 28 },
+];
+
+// K4 starts at global position 771 (row 24 col 27)
+// K4 CT positions 0-96 map to global positions 771-867
+var K4_GLOBAL_START = 24 * 31 + 27;  // = 771
+
+// K4 crib positions (0-indexed within K4)
+var K4_CRIBS = [
+  { start: 21, len: 13, cls: 'crib-ene' },   // EASTNORTHEAST
+  { start: 63, len: 11, cls: 'crib-bcl' },   // BERLINCLOCK
+];
+
+// Build global-position crib map
+var cribGlobalMap = {};
+K4_CRIBS.forEach(function(c) {
+  for (var i = 0; i < c.len; i++) {
+    cribGlobalMap[K4_GLOBAL_START + c.start + i] = c.cls;
+  }
+});
+
+// ── STATE ──────────────────────────────────────────────────────────────
+var showNullPalette = true;
+var showPositions = false;
+var offsets = new Array(28).fill(0);
+
+// ── HELPERS ────────────────────────────────────────────────────────────
+function clearChildren(el) {
+  while (el.firstChild) el.removeChild(el.firstChild);
+}
+
+function isK4Global(globalPos) {
+  return globalPos >= K4_GLOBAL_START && globalPos < K4_GLOBAL_START + 97;
+}
+
+// ── RENDER ─────────────────────────────────────────────────────────────
+function render() {
+  var panel = document.getElementById('panel');
+  clearChildren(panel);
+
+  // Column numbers header
+  var colNums = document.createElement('div');
+  colNums.className = 'col-numbers';
+  for (var c = 0; c < WINDOW; c++) {
+    var cn = document.createElement('div');
+    cn.className = 'col-num';
+    cn.textContent = String(c);
+    colNums.appendChild(cn);
+  }
+  panel.appendChild(colNums);
+
+  var sectionIdx = 0;
+  var shownSections = {};
+
+  for (var ri = 0; ri < 28; ri++) {
+    // Section separator labels
+    for (var si = 0; si < SECTIONS.length; si++) {
+      var sec = SECTIONS[si];
+      if (sec.startRow === ri && !shownSections[sec.label]) {
+        shownSections[sec.label] = true;
+        var sep = document.createElement('div');
+        sep.className = 'section-sep';
+        var line1 = document.createElement('div');
+        line1.className = 'sep-line';
+        var lbl = document.createElement('span');
+        lbl.className = 'sep-label';
+        lbl.textContent = sec.label;
+        var line2 = document.createElement('div');
+        line2.className = 'sep-line';
+        sep.appendChild(line1);
+        sep.appendChild(lbl);
+        sep.appendChild(line2);
+        panel.appendChild(sep);
+      }
+    }
+
+    var row = PANEL_ROWS[ri];
+    var n = row.length;
+    var offset = offsets[ri];
+
+    var container = document.createElement('div');
+    container.className = 'row-container';
+
+    // Row number
+    var rowNum = document.createElement('div');
+    rowNum.className = 'row-num';
+    rowNum.textContent = String(ri);
+    container.appendChild(rowNum);
+
+    // Left arrow
+    var leftBtn = document.createElement('button');
+    leftBtn.className = 'arrow-btn';
+    leftBtn.textContent = '\u25C0';
+    leftBtn.title = 'Rotate left';
+    leftBtn.dataset.row = String(ri);
+    leftBtn.addEventListener('click', (function(r) {
+      return function() { rotate(r, -1); };
+    })(ri));
+    container.appendChild(leftBtn);
+
+    // Cells
+    var cellsEl = document.createElement('div');
+    cellsEl.className = 'row-cells';
+    cellsEl.dataset.row = String(ri);
+
+    for (var col = 0; col < WINDOW; col++) {
+      var srcIdx = ((col - offset) % n + n) % n;
+      var ch = row[srcIdx];
+      var globalPos = ri * 31 + srcIdx;
+
+      var cell = document.createElement('div');
+      cell.className = 'cell';
+
+      // Crib highlighting
+      if (cribGlobalMap[globalPos]) {
+        cell.classList.add(cribGlobalMap[globalPos]);
+      }
+
+      // Null palette (K4 chars only)
+      if (showNullPalette && NULL_PALETTE[ch] && isK4Global(globalPos)) {
+        cell.classList.add('null-palette');
+      }
+
+      // ? marks
+      if (ch === '?') {
+        cell.classList.add('q-mark');
+      }
+
+      cell.textContent = ch;
+
+      // Position labels (K4 only)
+      if (showPositions && isK4Global(globalPos)) {
+        var posLabel = document.createElement('span');
+        posLabel.className = 'pos-label';
+        posLabel.textContent = String(globalPos - K4_GLOBAL_START);
+        cell.appendChild(posLabel);
+      }
+
+      cellsEl.appendChild(cell);
+    }
+
+    setupDrag(cellsEl, ri);
+    container.appendChild(cellsEl);
+
+    // Right arrow
+    var rightBtn = document.createElement('button');
+    rightBtn.className = 'arrow-btn';
+    rightBtn.textContent = '\u25B6';
+    rightBtn.title = 'Rotate right';
+    rightBtn.addEventListener('click', (function(r) {
+      return function() { rotate(r, 1); };
+    })(ri));
+    container.appendChild(rightBtn);
+
+    // Offset badge
+    var badge = document.createElement('div');
+    badge.className = 'offset-badge';
+    if (offset === 0) {
+      badge.classList.add('zero');
+      badge.textContent = '0';
+    } else if (offset > 0) {
+      badge.classList.add('positive');
+      badge.textContent = '+' + offset;
+    } else {
+      badge.classList.add('negative');
+      badge.textContent = String(offset);
+    }
+    container.appendChild(badge);
+
+    panel.appendChild(container);
+  }
+}
+
+// ── ROTATION ───────────────────────────────────────────────────────────
+function rotate(ri, delta) {
+  var lockAll = document.getElementById('lock-all').checked;
+  if (lockAll) {
+    for (var i = 0; i < 28; i++) offsets[i] += delta;
+  } else {
+    offsets[ri] += delta;
+  }
+  render();
+}
+
+function resetAll() {
+  for (var i = 0; i < 28; i++) offsets[i] = 0;
+  render();
+}
+
+// ── DRAG SUPPORT ───────────────────────────────────────────────────────
+function setupDrag(cellsEl, ri) {
+  var startX = null;
+  var accumulated = 0;
+  var threshold = 28;
+
+  function onStart(x) {
+    startX = x;
+    accumulated = 0;
+  }
+
+  function onMove(x) {
+    if (startX === null) return;
+    var dx = x - startX;
+    var steps = Math.trunc(dx / threshold);
+    if (steps !== accumulated) {
+      var delta = steps - accumulated;
+      accumulated = steps;
+      rotate(ri, delta);
+    }
+  }
+
+  function onEnd() {
+    startX = null;
+    accumulated = 0;
+  }
+
+  cellsEl.addEventListener('mousedown', function(e) {
+    e.preventDefault();
+    onStart(e.clientX);
+    function moveHandler(e2) { onMove(e2.clientX); }
+    function upHandler() {
+      document.removeEventListener('mousemove', moveHandler);
+      document.removeEventListener('mouseup', upHandler);
+      onEnd();
+    }
+    document.addEventListener('mousemove', moveHandler);
+    document.addEventListener('mouseup', upHandler);
+  });
+
+  cellsEl.addEventListener('touchstart', function(e) {
+    if (e.touches.length === 1) onStart(e.touches[0].clientX);
+  }, { passive: true });
+
+  cellsEl.addEventListener('touchmove', function(e) {
+    if (e.touches.length === 1) onMove(e.touches[0].clientX);
+  }, { passive: true });
+
+  cellsEl.addEventListener('touchend', function() { onEnd(); });
+  cellsEl.addEventListener('touchcancel', function() { onEnd(); });
+}
+
+// ── TOGGLES ────────────────────────────────────────────────────────────
+function toggleNullHighlight() {
+  showNullPalette = !showNullPalette;
+  document.getElementById('btn-show-null').textContent =
+    'Null Palette: ' + (showNullPalette ? 'ON' : 'OFF');
+  document.getElementById('btn-show-null').classList.toggle('active', showNullPalette);
+  render();
+}
+
+function togglePositions() {
+  showPositions = !showPositions;
+  document.getElementById('btn-show-pos').textContent =
+    'Positions: ' + (showPositions ? 'ON' : 'OFF');
+  document.getElementById('btn-show-pos').classList.toggle('active', showPositions);
+  render();
+}
+
+// ── INIT ───────────────────────────────────────────────────────────────
+document.getElementById('btn-show-null').classList.add('active');
+render();
+</script>
+</body>
+</html>
