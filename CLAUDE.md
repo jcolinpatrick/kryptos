@@ -3,7 +3,8 @@
 You MUST complete ALL of these steps before executing any task:
 
 1. Read this entire CLAUDE.md
-2. Read MEMORY.md — the decision-support index (paradigm, constants, what's open)
+2. Read MEMORY.md — the decision-support index (paradigm, constants, what's open).
+   MEMORY.md is loaded automatically; individual topic files in `memory/` are on-demand — read only when relevant to the current task.
 3. Read `memory/elimination_ledger.md` — the complete elimination record by attack family
 4. If the user's request matches ANYTHING already disproved or tested,
    TELL THE USER and do NOT run it again
@@ -54,7 +55,7 @@ from kryptos.kernel.scoring.aggregate import score_candidate, score_candidate_fr
 from kryptos.kernel.transforms.vigenere import decrypt_vigenere, decrypt_beaufort
 ```
 
-A `venv/` exists with numpy, pymupdf, and jinja2 but is gitignored. Activate with `source venv/bin/activate` if needed for PDF/matrix work or the site builder, but core code uses stdlib only.
+A `venv/` exists (gitignored) for non-core work. Activate with `source venv/bin/activate`. Packages: `numpy`, `pymupdf` (PDF), `jinja2` (site builder), `fastapi`, `uvicorn`, `python-dotenv`, `anthropic` (API server), `claude-agent-sdk` (KryptosBot SDK). Core code uses stdlib only.
 
 **Code style:** No linter or formatter configured. No enforced style conventions beyond stdlib-only for core code.
 
@@ -92,11 +93,11 @@ PYTHONPATH=src python3 -m kryptos novelty triage --limit 50
 PYTHONPATH=src python3 -m kryptos novelty status
 PYTHONPATH=src python3 -m kryptos report <db.sqlite> top --limit 20 --min-score 10
 
-# Site builder (requires venv: jinja2)
+# Site builder (requires venv)
 source venv/bin/activate && python3 site_builder/build.py
 cd site && python3 -m http.server 8000
 
-# API server (requires venv: fastapi, uvicorn, python-dotenv, anthropic)
+# API server (requires venv)
 source venv/bin/activate && python3 site_builder/serve.py
 ```
 
@@ -110,12 +111,11 @@ Four layers with strict dependency direction: **kernel → pipeline → novelty 
 
 - **kernel/** — Pure computation, zero external dependencies, **all positions 0-indexed**.
   - `constants.py` — **SINGLE source of truth**: CT, cribs, Bean constraints, keystream values, scoring thresholds. Runs `_verify()` at import time. **Never define CT or cribs elsewhere.**
-  - `alphabet.py` — `Alphabet` class, `AZ`/`KA` singletons, `keyword_mixed_alphabet()`, `THEMATIC_KEYWORDS`
-  - `text.py` — Text normalization: `sanitize()`, `text_to_nums()`, `nums_to_text()`, `char_to_num()`, `num_to_char()`
-  - `transforms/` — Cipher implementations (Vigenère/Beaufort, transpositions, Polybius) + composable pipeline builder (`compose.py`: `TransformConfig` → `PipelineConfig` → `build_pipeline()`)
-  - `constraints/` — Crib scoring (`crib.py`), Bean equality/inequality (`bean.py`), consistency checks (`consistency.py` — self-encrypting positions, monoalphabetic consistency)
-  - `scoring/` — Under `kernel/`, NOT a top-level module. `aggregate.py` has two canonical scoring paths: `score_candidate()` (anchored cribs at fixed positions) and `score_candidate_free()` (cribs searched anywhere — critical for scrambled-CT paradigm). Thresholds: NOISE=6, STORE=10, SIGNAL=18, BREAKTHROUGH=24. Individual scorers: `crib_score.py`, `free_crib.py`, `ic.py`, `ngram.py`.
-  - `persistence/` — WAL-mode SQLite (runs/results/eliminations/checkpoints) + JSONL artifacts
+  - `alphabet.py` — `AZ`/`KA` singletons, `keyword_mixed_alphabet()`. See "Key Gotchas" for KA ordering.
+  - `transforms/` — Cipher implementations + composable pipeline builder (`compose.py`: `TransformConfig` → `PipelineConfig` → `build_pipeline()`)
+  - `scoring/` — Under `kernel/`, NOT a top-level module. Two canonical paths in `aggregate.py`: `score_candidate()` (anchored cribs at fixed positions) and `score_candidate_free()` (cribs searched anywhere — critical for scrambled-CT paradigm). Thresholds: NOISE=6, STORE=10, SIGNAL=18, BREAKTHROUGH=24.
+  - `constraints/` — Bean equality/inequality (`bean.py`), crib scoring, self-encrypting position checks
+  - `persistence/` — WAL-mode SQLite + JSONL artifacts
 - **pipeline/** — `evaluate_candidate()` is the primary entry point. `SweepRunner` handles parallel execution with checkpointing and resume.
 - **novelty/** — Hypothesis-driven search: `Hypothesis` dataclass → `triage_batch()` → `NoveltyLedger` (SQLite). Wired to 13 research questions (RQ-1..RQ-13). See `src/kryptos/novelty/generators.py` for adding new hypotheses.
 - **corpus/** — Egyptological corpus pipeline for running-key testing: `schema.py` (dataclasses), `normalize.py` (transliteration rules), `variants.py` (controlled variant expansion), `ingest.py` (local + Gutenberg ingestion).
@@ -206,7 +206,7 @@ FastAPI backend for kryptosbot.com. Theory classifier endpoint (Claude-powered),
 
 ### KryptosBot SDK (`kryptosbot/`)
 
-Claude Agent SDK multi-agent campaign runner. Separate from the core `src/kryptos/` package. Two-level namespace: `kryptosbot/kryptosbot/` is the Python package (imports as `kryptosbot.kryptosbot.*`). Entry points: `python3 kryptosbot/solve.py` (campaigns), `python3 kryptosbot/monitor.py` (live dashboard). Key modules in `kryptosbot/kryptosbot/`: `strategies.py` (23 strategies in 4 modes: UNSCRAMBLE/REASONING/COMPUTE/LEGACY), `agent_runner.py` (session loop + token tracking), `sdk_wrapper.py` (SDK safety wrapper), `compute.py` (local multiprocessing), `database.py` (SQLite). Requires `claude-agent-sdk` and `python-dotenv` (in venv). Results go to `results/` (gitignored).
+Claude Agent SDK multi-agent campaign runner. Separate from the core `src/kryptos/` package. Two-level namespace: `kryptosbot/kryptosbot/` is the Python package (imports as `kryptosbot.kryptosbot.*`). Entry points: `python3 kryptosbot/solve.py` (campaigns), `python3 kryptosbot/monitor.py` (live dashboard). Key modules: `strategies.py` (23 strategies in 4 modes: UNSCRAMBLE/REASONING/COMPUTE/LEGACY), `agent_runner.py` (session loop + token tracking), `compute.py` (local multiprocessing). Requires venv. Results go to `results/` (gitignored).
 
 ### Other directories
 
@@ -219,7 +219,7 @@ Claude Agent SDK multi-agent campaign runner. Separate from the core `src/krypto
 
 ### Gitignored directories
 
-`db/`, `results/` (unified KryptosBot output: `campaigns/`, `compute/`), `artifacts/`, `agent_logs/`, `work/`, `tmp/`, `venv/`, `site/`, `checkpoints/`, `blitz_results/`, `kbot_results/`, `split_results/` — per-run data, must not be committed.
+`db/`, `results/` (unified KryptosBot output: `campaigns/`, `compute/`), `artifacts/`, `agent_logs/`, `work/`, `tmp/`, `venv/`, `site/`, `checkpoints/`, `blitz_results/`, `kbot_results/`, `split_results/`, `forensic_output/` — per-run data, must not be committed.
 
 ---
 
@@ -234,7 +234,7 @@ Two scoring paths in `kernel/scoring/aggregate.py`: `score_candidate()` (anchore
 | 18–23 | signal        | Yes     | Statistically significant, investigate |
 | 24    | breakthrough  | Yes     | All cribs match — potential solution (requires Bean PASS) |
 
-**False positive warning**: At periods ≥17, random configs score 17+/24 due to underdetermination. Only period ≤7 gives meaningful discrimination. With the full 242 Bean inequality set, ALL periods 1–26 are eliminated for periodic substitution on the raw 97-char carved text.
+**False positive warning**: `period_consistency()` is underdetermined when `period >= (num_crib_positions / constraints_per_residue)`. At period 24, random configs score ~19.2/24; at period 17, ~17.3/24. Only period ≤7 gives meaningful discrimination (~8.2/24 expected). **All high scores at large periods are false positives.** With the full 242 Bean inequality set, ALL periods 1–26 are eliminated for periodic substitution on the raw 97-char carved text.
 
 ---
 
@@ -250,7 +250,6 @@ These are non-obvious pitfalls discovered through prior sessions. Check these fi
 - **IC below random**: K4's IC ≈ 0.0361 is below the random expectation of 0.0385. [INTERNAL RESULT] FRAC agent (E-FRAC-04) showed this deviation is NOT statistically significant for a 97-char text. Do not use IC alone as a discriminator.
 - **constants.py self-verifies at import**: If you modify CT, cribs, or Bean values incorrectly, the import itself will raise an assertion error.
 - **Unbuffered output for background tasks**: Always use `python3 -u` when running scripts in background. Without `-u`, Python buffers stdout and you see no output until the process ends.
-- **Scoring underdetermination at high periods**: `period_consistency()` is underdetermined when `period >= (num_crib_positions / constraints_per_residue)`. At period 24, random configs score ~19.2/24; at period 17, ~17.3/24. Only period ≤7 gives meaningful discrimination (~8.2/24 expected random). **All high scores at large periods are false positives.**
 - **Bifid 5×5 impossible for K4**: All 26 letters appear in K4 CT; any cipher requiring a 25-letter alphabet (I/J merged) is eliminated.
 - **15/24 is a FALSE SIGNAL, not a near-miss**: Both DEFECTOR:AZ_beau+col7 and PALIMPSEST:AZ_beau+col7 reach 15/24 — but autokey is **structurally impossible** (mathematical proof via crib-to-crib feedback contradictions: 7/8 connections are contradictions at offset=8, ALL offsets fail). The 15/24 comes from non-crib degrees of freedom, not from real signal. PALIMPSEST reaches 15/24 at 78% frequency (39/50 restarts) vs DEFECTOR at 6% — both are artifacts. Do NOT chase higher scores on any keyword+col7+autokey model.
 - **Autokey is provably impossible on K4**: PT-autokey and CT-autokey both fail structurally because crib positions feed back into each other at offsets ≤44. This is not a search failure — it's a mathematical impossibility. See `memory/keystream_forensics_v2.md`.
