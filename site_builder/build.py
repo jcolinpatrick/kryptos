@@ -269,6 +269,10 @@ def build():
     _render(env, "vic_workbench.html", "vic-workbench/index.html", global_ctx)
     pages_built += 1
 
+    # Cylinder Viewer
+    _render(env, "cylinder_viewer.html", "cylinder-viewer/index.html", global_ctx)
+    pages_built += 1
+
     # Report error
     _render(env, "report_error.html", "report-error/index.html", global_ctx)
     pages_built += 1
