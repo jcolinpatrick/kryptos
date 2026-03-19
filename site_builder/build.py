@@ -269,8 +269,8 @@ def build():
     _render(env, "vic_workbench.html", "vic-workbench/index.html", global_ctx)
     pages_built += 1
 
-    # Cylinder Viewer (standalone page — not a Jinja2 template)
-    _build_cylinder_viewer()
+    # Cylinder Viewer (standalone HTML — Jinja2 corrupts inline JS)
+    _build_cylinder_viewer(global_ctx)
     pages_built += 1
 
     # Report error
@@ -324,25 +324,93 @@ def build():
     print("=" * 60)
 
 
-def _build_cylinder_viewer():
-    """Build the cylinder viewer page from the standalone HTML + external JS.
+def _build_cylinder_viewer(global_ctx: dict):
+    """Build the cylinder viewer from the standalone HTML, injecting site nav.
 
-    The standalone file (reference/tools/cylinder_viewer.html) has inline JS
-    which is blocked by nginx CSP (script-src 'self'). We extract the JS to
-    an external file and swap the <script> tag for a <script src> reference.
+    The standalone file has inline JS that Jinja2 autoescape corrupts, so we
+    build it outside the template engine.  We inject the site's banner, nav,
+    and footer via string replacement, and externalise inline style/script
+    for the nginx CSP (script-src / style-src 'self').
     """
+    import re
+
     src_html = os.path.join(PROJECT_ROOT, "reference", "tools", "cylinder_viewer.html")
     with open(src_html) as f:
         html = f.read()
 
-    # Replace the inline <script>...</script> with external reference
-    import re
+    # -- 1. Replace <head> internals: add site stylesheets before the inline <style>
+    site_head = (
+        '<meta name="description" content="internal.com — The K4 Elimination Database.">\n'
+        '<link rel="stylesheet" href="/static/fonts/fonts.css">\n'
+        '<link rel="stylesheet" href="/static/style.css">\n'
+        '<link rel="icon" type="image/png" href="/static/internal.png">\n'
+    )
+    html = html.replace('<title>Kryptos Cylinder Viewer</title>', f'<title>Cylinder Viewer — internal.com</title>\n{site_head}', 1)
+
+    # -- 2. Externalise inline <style> and <script> for CSP
+    html = re.sub(
+        r'<style>\n.*?</style>',
+        '<link rel="stylesheet" href="/static/cylinder_viewer.css">',
+        html, flags=re.DOTALL, count=1,
+    )
     html = re.sub(
         r'<script>\n// ── DATA.*?</script>',
         '<script src="/static/cylinder_viewer.js"></script>',
-        html,
-        flags=re.DOTALL,
+        html, flags=re.DOTALL,
     )
+
+    # -- 3. Inject banner + nav after <body>
+    configs = global_ctx.get("total_configs_disproven", "")
+    nav_html = f"""
+  <div class="disproven-banner">
+    <span class="disproven-count">{configs}</span>
+    <span class="disproven-label">configurations tested and eliminated</span>
+  </div>
+
+  <nav>
+    <ul>
+      <li><strong><a href="/" class="nav-brand"><img src="/static/internal.png" alt="" class="nav-logo">internal</a></strong></li>
+    </ul>
+    <input type="checkbox" id="nav-toggle" class="nav-toggle" aria-label="Toggle navigation">
+    <label for="nav-toggle" class="nav-toggle-label" aria-hidden="true">
+      <span></span><span></span><span></span>
+    </label>
+    <ul class="nav-links">
+      <li><a href="/browse/">Browse</a></li>
+      <li><a href="/methodology/">Methodology</a></li>
+      <li><a href="/research-questions/">Research</a></li>
+      <li><a href="/workbench/">Workbench</a></li>
+      <li><a href="/vic-workbench/">VIC Cipher</a></li>
+      <li><a href="/cylinder-viewer/">Cylinder</a></li>
+      <li><a href="/submit/">Submit</a></li>
+      <li><a href="/faq/">FAQ</a></li>
+      <li><a href="/about-kryptos/">About</a></li>
+    </ul>
+  </nav>
+
+  <main class="container">
+"""
+    html = html.replace('<body>\n', f'<body>\n{nav_html}', 1)
+
+    # -- 4. Inject footer before </body>
+    footer_html = """
+  </main>
+
+  <footer class="container">
+    <hr>
+    <p>
+      Built by <a href="/about-me/">Colin Patrick</a> &amp; <a href="https://claude.ai">Claude</a>
+      &middot; <a href="https://github.com/jcolinpatrick/kryptos">Source</a>
+      &middot; <a href="/terms/">Terms</a>
+      &middot; <a href="/report-error/">Report error</a>
+    </p>
+    <p><small>Not affiliated with the CIA, Jim Sanborn, Ed Scheidt, or the Kryptos Keepers. This site does not know the solution.</small></p>
+  </footer>
+"""
+    html = html.replace('</body>', f'{footer_html}</body>', 1)
+
+    # -- 5. Add data-theme="dark" to <html> for consistency with rest of site
+    html = html.replace('<html lang="en">', '<html lang="en" data-theme="dark">', 1)
 
     out_dir = os.path.join(OUTPUT_DIR, "cylinder-viewer")
     os.makedirs(out_dir, exist_ok=True)
