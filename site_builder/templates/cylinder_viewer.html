@@ -1,0 +1,372 @@
+{% extends "base.html" %}
+{% block title %}Cylinder Viewer &mdash; kryptosbot.com{% endblock %}
+{% block og_title %}Cylinder Viewer &mdash; kryptosbot.com{% endblock %}
+
+{% block head_extra %}
+<style>
+/* ── Cylinder Viewer (scoped) ────────────────────────────────── */
+.cv-intro { max-width: var(--content-width); margin-bottom: var(--sp-8); }
+.cv-intro p { color: var(--text-secondary); line-height: 1.6; margin-bottom: var(--sp-4); }
+
+.cv-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-4);
+  margin-bottom: var(--sp-6);
+}
+
+.cv-legend-item {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+
+.cv-legend-swatch {
+  width: 16px;
+  height: 16px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-default);
+  flex-shrink: 0;
+}
+
+.cv-controls {
+  display: flex;
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-6);
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.cv-btn {
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  border: 1px solid var(--border-default);
+  padding: var(--sp-2) var(--sp-4);
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  border-radius: var(--radius-sm);
+  transition: background var(--transition), border-color var(--transition);
+}
+
+.cv-btn:hover { background: var(--bg-hover); border-color: var(--border-strong); }
+.cv-btn.active { background: var(--accent-muted); border-color: var(--accent); color: var(--accent); }
+
+.cv-lock {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.cv-lock input { cursor: pointer; }
+
+.cv-panel {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  padding: var(--sp-5);
+  overflow-x: auto;
+  display: inline-block;
+  box-shadow: var(--shadow-md);
+}
+
+.cv-col-numbers {
+  display: flex;
+  gap: 3px;
+  margin-left: 76px;
+  margin-bottom: var(--sp-2);
+}
+
+.cv-col-num {
+  width: 36px;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-quaternary);
+  flex-shrink: 0;
+}
+
+.cv-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 4px;
+  gap: 5px;
+}
+
+.cv-row-num {
+  min-width: 30px;
+  text-align: right;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--text-quaternary);
+  flex-shrink: 0;
+}
+
+.cv-arrow {
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-default);
+  width: 34px;
+  height: 38px;
+  cursor: pointer;
+  font-size: 1.1em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  transition: background var(--transition), border-color var(--transition);
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.cv-arrow:hover { background: var(--bg-hover); border-color: var(--border-strong); }
+.cv-arrow:active { background: var(--accent-muted); border-color: var(--accent); }
+
+.cv-cells {
+  display: flex;
+  gap: 3px;
+  cursor: grab;
+  touch-action: none;
+}
+
+.cv-cells:active { cursor: grabbing; }
+
+.cv-cell {
+  width: 36px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-default);
+  font-family: var(--font-mono);
+  font-size: 1.15em;
+  font-weight: 600;
+  color: var(--text-primary);
+  border-radius: var(--radius-sm);
+  transition: background var(--transition), border-color var(--transition);
+  user-select: none;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.cv-cell.crib-ene {
+  background: var(--red-bg);
+  color: var(--red);
+  border-color: var(--red-border);
+}
+
+.cv-cell.crib-bcl {
+  background: var(--amber-bg);
+  color: var(--amber);
+  border-color: var(--amber-border);
+}
+
+.cv-cell.null-palette {
+  border-color: var(--accent);
+  box-shadow: inset 0 0 6px var(--accent-faint);
+}
+
+.cv-cell.q-mark {
+  background: var(--red-bg);
+  color: var(--red);
+  font-style: italic;
+  border-color: var(--red-border);
+}
+
+.cv-cell .cv-pos {
+  position: absolute;
+  bottom: -13px;
+  font-size: 0.5em;
+  color: var(--text-quaternary);
+  pointer-events: none;
+}
+
+/* Offset badge */
+.cv-offset {
+  min-width: 64px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 1.3em;
+  font-weight: 700;
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+  transition: background var(--transition), color var(--transition), border-color var(--transition);
+  letter-spacing: 1px;
+  border: 1px solid transparent;
+}
+
+.cv-offset.zero {
+  background: var(--bg-elevated);
+  color: var(--text-quaternary);
+  border-color: var(--border-subtle);
+}
+
+.cv-offset.positive {
+  background: var(--amber-bg);
+  color: var(--amber);
+  border-color: var(--amber-border);
+}
+
+.cv-offset.negative {
+  background: var(--red-bg);
+  color: var(--red);
+  border-color: var(--red-border);
+}
+
+/* Section separators */
+.cv-sep {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  margin: var(--sp-2) 0 var(--sp-2) 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+}
+
+.cv-sep-line {
+  flex: 1;
+  height: 1px;
+  background: var(--border-default);
+}
+
+.cv-sep-label {
+  color: var(--accent);
+  font-weight: 700;
+  letter-spacing: 1px;
+  white-space: nowrap;
+}
+
+/* Center the panel within the container */
+.cv-panel-wrap {
+  display: flex;
+  justify-content: center;
+}
+
+/* Chart mode: section headers */
+.cv-chart-section-hdr {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-4);
+  margin-bottom: var(--sp-1);
+}
+
+.cv-chart-math {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--text-tertiary);
+}
+
+.cv-chart-note {
+  font-size: var(--text-xs);
+  color: var(--green);
+  margin-bottom: var(--sp-2);
+  font-family: var(--font-mono);
+}
+
+/* Overflow cells */
+.cv-cell.cv-overflow {
+  background: var(--accent-muted);
+  border-color: var(--accent);
+  border-style: dashed;
+  color: var(--accent);
+}
+
+/* Empty grid slots */
+.cv-cell.cv-empty {
+  background: transparent;
+  border-style: dashed;
+  border-color: var(--border-subtle);
+  color: var(--text-quaternary);
+}
+
+/* Responsive */
+@media (max-width: 1600px) {
+  .cv-cell { width: 30px; height: 34px; font-size: 1em; }
+  .cv-col-num { width: 30px; }
+  .cv-col-numbers { margin-left: 72px; }
+  .cv-arrow { width: 30px; height: 34px; font-size: 1em; }
+  .cv-offset { min-width: 54px; font-size: 1.1em; }
+}
+
+@media (max-width: 1100px) {
+  .cv-cell { width: 24px; height: 28px; font-size: 0.85em; }
+  .cv-col-num { width: 24px; font-size: 0.6em; }
+  .cv-col-numbers { margin-left: 66px; }
+  .cv-arrow { width: 26px; height: 28px; font-size: 0.9em; }
+  .cv-offset { min-width: 46px; font-size: 0.95em; }
+}
+
+@media (max-width: 800px) {
+  .cv-cell { width: 18px; height: 22px; font-size: 0.7em; }
+  .cv-col-num { width: 18px; font-size: 0.5em; }
+  .cv-col-numbers { margin-left: 56px; }
+  .cv-row-num { min-width: 18px; font-size: 0.55em; }
+  .cv-arrow { width: 22px; height: 22px; font-size: 0.85em; }
+  .cv-offset { min-width: 36px; font-size: 0.75em; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<h1>Cylinder Viewer</h1>
+<div class="cv-intro">
+  <p>
+    The Kryptos cipher panel as 28 rotatable rings in a 31-column window.
+    Sanborn&rsquo;s encoding chart shows arrows in opposing directions
+    (&rarr; line 1, &larr; line 2), suggesting cylindrical rotation where
+    rows slide independently &mdash; like a Jefferson cipher wheel or combination lock.
+    One row (line 5, starting IMVMZJA) has 32 characters instead of 31.
+  </p>
+  <p>
+    Rotate any row with the arrow buttons or by click-dragging. The offset badge
+    on the right tracks how far each row has shifted. Look for vertical alignments,
+    repeating patterns, or columnar relationships that emerge as you slide rows
+    relative to each other.
+  </p>
+</div>
+
+<div class="cv-legend">
+  <div class="cv-legend-item">
+    <div class="cv-legend-swatch" style="background:var(--red-bg); border-color:var(--red-border)"></div>
+    <span>EASTNORTHEAST (K4 pos 21&ndash;33)</span>
+  </div>
+  <div class="cv-legend-item">
+    <div class="cv-legend-swatch" style="background:var(--amber-bg); border-color:var(--amber-border)"></div>
+    <span>BERLINCLOCK (K4 pos 63&ndash;73)</span>
+  </div>
+  <div class="cv-legend-item">
+    <div class="cv-legend-swatch" style="border-color:var(--accent)"></div>
+    <span>Null palette {B,G,I,K,O,W,Z}</span>
+  </div>
+</div>
+
+<div class="cv-controls">
+  <button class="cv-btn" id="btn-sculpture" onclick="setMode('sculpture')">Sculpture</button>
+  <button class="cv-btn" id="btn-chart" onclick="setMode('chart')">Chart</button>
+  <span style="color:var(--text-quaternary)">|</span>
+  <button class="cv-btn" onclick="resetAll()">Reset All</button>
+  <button class="cv-btn" id="btn-null" onclick="toggleNull()">Null Palette: ON</button>
+  <button class="cv-btn" id="btn-pos" onclick="togglePos()">Positions: OFF</button>
+  <label class="cv-lock">
+    <input type="checkbox" id="lock-all" />
+    Lock all rows
+  </label>
+</div>
+
+<div class="cv-panel-wrap">
+  <div id="panel" class="cv-panel"></div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/cylinder_viewer.js"></script>
+{% endblock %}

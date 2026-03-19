@@ -1,0 +1,691 @@
+Right outside the United States capitol lies the  headquarters of the Central Intelligence Agency. The building was completed back in 1961,  
+0:12
+but a major overhaul in the late-1980s led to  the creation of this courtyard, right here.
+0:18
+To enhance the aesthetics of the new facility, the CIA commissioned a local artist named Jim Sanborn
+0:24
+to decorate the courtyard as well  as the west entrance with some artwork. By early 1990, the first glimpse of this artwork appeared in an article by the Washington Post.
+0:33
+In the background lies a large sheet of metal perforated by multiple rows of letters.
+0:39
+It was some sort of code. A secret message that, according to Sanborn, had been concealed by at least two different ciphers.
+0:49
+In late June, the four copper plates  upon which the code had been inscribed   were installed in the northwest corner of the courtyard.
+0:56
+The sculpture attracted immediate attention from CIA cryptanalysts, who organized a sweepstake for someone to crack the code.
+1:02
+But, despite their best efforts,  the code remained intact. Being located at the heart of the Agency  meant the sculpture was off-limits to the public.
+1:11
+A private dedication ceremony was held in early November, but it wasn't until March the following year that images of the complete installation
+1:17
+began trickling out to the masses. It starts with three granite and  copperplate constructions
+1:22
+placed near the west entrance. One of the slabs features a compass rose pointing towards a naturally magnetized rock
+1:29
+known as a lodestone. Furthermore, strings of Morse code can be found on flat  sheets of copper interlaced with the stonework.
+1:37
+Moving through the atrium and into the  courtyard, we're greeted by a shallow pond flanked by two featureless slabs of granite.
+1:44
+No codes nor markings to speak off on these two. Finally, we reach the main attraction.
+1:49
+A curved screen of copper with hundreds of punched-out letters supported by a trunk of petrified wood.
+1:55
+The screen encircles a small fountain  surrounded by two boulders. There are 1 736 characters in total,  which can be divided into two parts.
+2:05
+The left side is the ciphertext  containing the secret message, while the right side is what's  known as a Vigenère table.
+2:12
+The table offered a major clue for how the  ciphertext was meant to be solved because a Vigenère table is typically used in combination with a Vigenère cipher.
+2:22
+Not only that, but Sanborn revealed in early interviews that the upper half of the ciphertext had indeed been encoded using a Vigenère cipher.
+The Vigenère Table
+2:30
+It works like this. We start by writing down an alphabet. The most obvious would be the English alphabet of 26 letters,
+2:36
+but Sanborn did something a bit different.  He used what's known as a keyed alphabet. Basically, you select a keyword and move the  letters of that word to the front of the alphabet.  
+2:46
+In Sanborn's case, he chose the keyword KRYPTOS,  stemming from an ancient Greek word for "hidden".
+2:51
+Okay, so we move the K to the front, followed by the R, then the Y, P, T, O, and S.
+2:59
+This keyed alphabet is then repeated underneath  the first but shifted one letter to the left.
+3:04
+So it starts with the letter R and the K is moved to the end. The next alphabet is shifted once more, so it starts with Y and ends with R.
+3:12
+This process is repeated all the way down,   until we end up with 26 rows and 26  columns for each letter in the alphabet.
+3:21
+Alright, so that's how you construct a  Vigenère table using the keyword KRYPTOS. Now, the text on the sculpture is a bit  different.
+3:29
+In addition to the table, Sanborn added two index rows and a column composed of the standard English alphabet.  
+3:35
+These indices are sometimes added  for convenience as it can simplify   the encryption and decryption process,  but they're not strictly necessary.
+3:43
+Furthermore, these four columns have been repeated at the end here, like so. This repetition has no impact on the encryption or decryption process,
+3:52
+so they might've been added for aesthetic reasons to symmetrize the left and right side of the sculpture.
+3:58
+You may have also noticed this rather  conspicuous L off to the side here,   but we'll get to that one later in the video.
+4:04
+All we have to care about right  now is the actual Vigenère table,   which is this part in the middle.
+4:10
+Okay, so let's now use this table to encrypt a message. Something simple, like, say, SECRET MESSAGE.
+4:16
+I know, I have a creative mind  like the world has never seen. The first thing we need is another  keyword. Let's say the keyword is HIDDEN.
+4:24
+Because SECRET MESSAGE is longer than HIDDEN, we simply repeat the keyword until it  matches the length of the plaintext above.
+4:31
+Once that's done, we're now ready to encrypt. The first letter of the plaintext is S, so we find  the row that starts with S in the Vigenère table.
+4:40
+The first letter of the keystream is H, so we find the column that starts with H.
+4:45
+The letter at which this row and column intersect is the first letter of the ciphertext.
+4:50
+In this case, that letter is Q. The second letter pair is E and I. So we find the row that starts with E
+4:57
+and the column that starts with I which intersect on the letter K, making K the second letter of the ciphertext.
+5:05
+By repeating this process for all the letter  pairs, we end up with a ciphertext that looks like this.
+5:11
+That's it. That's how you encrypt a message using a Vigenère cipher. Likewise, by following these steps in reverse,  you'd be able to decrypt the message.
+5:20
+But, as you can imagine, that only works if we know the keyword. Without that keyword, which functions very much like a password,
+5:27
+it becomes significantly more difficult to crack the code. This is the situation that those taking a stab at Kryptos
+5:34
+found themselves in back in the early 1990s. They were faced by this wall of ciphertext,
+5:39
+and the only person who knew  the keyword was Jim Sanborn.
+Partial Decipherment of Kryptos
+5:47
+For the next decade or so, both professional and amateur cryptanalysts took turns at solving Kryptos without success.
+5:53
+The occasional mention would pop up on various discussion forums and chat rooms but, otherwise, Kryptos quickly  faded from public consciousness.
+6:01
+Even Sanborn himself later admitted he kind of forgot about Kryptos as he went to work on other projects.
+6:06
+But all that changed on June 8, 1999, when a  computer scientist from Southern California  
+6:12
+named Jim Gillogly announced that he had finally broken through. Gillogly was a former president of the American Cryptogram Association
+6:19
+and used some bespoke software on his top-of-the-line Intel Pentium II home computer
+6:24
+to brute force solutions to Kryptos in just four days. Except, Gillogly was unable to crack the entire code.
+6:31
+He discovered that Sanborn had divided the ciphertext into four distinct segments. Gillogly managed to solve the first three, known as K1, K2, and K3,
+6:41
+but K4, comprising the final 97 characters, refused to budge.
+6:46
+Not only that, but when he called the CIA's Office of Public Affairs, Gillogly was informed that a technical analyst by the name of David Stein had beaten him to the punch.
+6:55
+Equipped with nothing but pencil and  paper and minimal knowledge of cryptology,   Stein had spent the better part of  a decade tinkering away at Kryptos  
+7:03
+before finally cracking the code in early 1998. Weirdly enough, this was reported as early as November of that year,
+7:11
+many months before Gillogly made his announcement, yet barely anyone seems to have noticed.
+7:16
+Nevertheless, Stein had likewise been stumped by K4 and only managed to solve  the first three sections.
+7:23
+But, as it turns out, Stein was not the  first to solve it either. In the wake of Gillogly's announcement,
+7:28
+it came to light that members of the National Security Agency had secretly solved K1 through K3 all the way back in 1992.
+7:36
+Few details were given at the time, but their efforts were later outlined in a series of declassified documents,
+7:42
+so let's now take a look at how the NSA partially solved Kryptos.
+Identifying Ciphers Within the Code
+7:48
+Sometime in late 1991, a group of NSA cryptanalyst interns were given a tour of CIA headquarters.
+7:55
+They took an immediate interest in Kryptos and, upon returning to NSA headquarters, formed a small study group to try and crack the code.
+8:03
+While the ciphertext is composed of 865 letters, there are also four question marks.
+8:09
+The assumption made by members of the study group was that the question marks divided the code into five segments.
+8:15
+But after a few days of trying,  this assumption failed to yield results. They wrote of one segment that it seemed to be a "completely random system"
+8:23
+that would be "very difficult to break," and had no idea how to approach K4.
+8:28
+As if placing a curse upon all future codebreakers, they wrote, "This part may be unbreakable."
+8:37
+About a year later, in early November 1992, the CIA officially challenged the NSA to solve Kryptos.
+8:43
+The challenge was accepted by four veteran cryptanalysts, who began making headway almost immediately.
+8:49
+Unlike the previous group, they  ignored the question marks and, instead, turned their attention to something known as frequency analysis.
+8:56
+It works like this. Every language uses certain letters  more frequently than others. In English, the most frequent letter is E while letters like X, Q, and Z are among the least common.
+9:06
+So if we count the letters in  a piece of English text, like, say, the beginning of the Wikipedia  article about cryptography
+9:12
+- again, creative mastermind at work here - we'd expect to find a lot more Es, Ts, and As than Bs, Zs, and Ks.
+9:20
+Sure enough, that's exactly  what we find. 42 Es and not a single K.
+9:26
+The beauty of this approach is that it works  even if the letters are scrambled. After all, we're only interested in the frequency of letters, not their positions.
+9:34
+So even if we turn our Wikipedia sample into  gibberish by rearranging the letters,   we still get the exact same result, hinting that  this text was originally written in English.
+9:45
+In cryptology-speak, this method of encryption is known as transposition. A transposition cipher will transpose or move characters around but, otherwise, leave them unchanged.
+9:56
+It differs from a substitution  cipher which, as the name suggests, can substitute or replace characters.
+10:02
+We've already seen an example of this with the Vigenère cipher, where letters are supplanted by new ones according to a Vigenère table.
+10:09
+This substitution of letters will often render frequency analysis far less useful, if not outright ineffective.
+10:15
+Alright, back to Kryptos. What the NSA cryptanalysts did was to simply count all the letters
+10:21
+in each row of the Kryptos ciphertext. Once they were done, they found that rows 15 through 25
+10:26
+produced a frequency count  that strongly resembled English. Notice, for instance, how there are plenty of  Es and Ts but not a single J nor Z.
+10:35
+In other words, this middle portion of Kryptos had probably been encoded using a transposition cipher,
+10:40
+while the rows above and below had probably been encoded using a substitution cipher.
+10:46
+By this point, the NSA team assumed the  ciphertext had been divided into three segments and felt pretty confident this  upper portion was a Vigenère cipher,
+10:53
+as Sanborn himself had publicly stated. So the next logical step was to try and suss out the keyword.
+10:59
+There are a few different ways to go about this, but a common one is to exploit certain repeating  patterns left behind by the encoding process.
+Breaking K2
+11:09
+Remember how, in a previous example, the keyword HIDDEN was repeated until it matched the length of the plaintext.
+11:15
+Well, that repetition can reveal  information about the length of the keyword. Imagine we wanted to encode the message IDEAL CONCEALMENT OF MANY DOCUMENTS
+11:24
+using the keyword MYSTERY. The resulting ciphertext would look like this. Notice how the string E-A-L becomes W-T-P both here and here.
+11:35
+Likewise, the string M-E-N-T becomes D-C-Z-R both here and here.
+11:42
+This only happens when there's an alignment of  letters in both the plaintext and the keystream below.
+11:48
+E and S becomes W, E and S becomes W. M and R becomes D, M and R becomes D, and so on.
+11:55
+In other words, identical pairings will always produce the same letter.
+12:01
+So imagine now that we only had the ciphertext. We'd quickly notice the repetitions of the letters W-T-P and D-C-Z-R.
+12:09
+We could then measure the  distance between these repetitions. Okay, so there are seven letters between the beginnings of these two
+12:15
+and fourteen letters between the beginnings of these two. This strongly implies the length of the keyword is seven
+12:22
+and, sure enough, the keyword MYSTERY is seven letters long.
+12:29
+Fortunately for the NSA team, repetitions like these were indeed present in the Kryptos ciphertext.
+12:34
+Take this one, for instance. The beginnings of these two identical strings are separated by eight letters.
+12:40
+This meant the keyword was probably eight letters long,   or possibly a factor of eight.
+12:45
+So the keyword had a length of 8, 4, 2, or 1. But eight was still the most probable, as a four-letter keyword or below
+12:52
+would likely have been a bit too easy to crack. By this point, the NSA team could've just run the ciphertext through a program
+12:58
+and checked it against all eight-letter words in an English dictionary. But Sanborn could, theoretically, have used a random jumble of letters or a word of his own invention,  
+13:07
+so they opted for a different approach. First, they evened out the rows, like so,   and divided the ciphertext into eight-letter chunks.
+13:15
+This way, they could be certain that every eighth ciphertext letter had been enciphered using the same keyword letter.
+13:22
+For instance, imagine that the keyword was OBSCURED. The first letter of that keyword is O, so every eighth ciphertext letter
+13:28
+must've been enciphered using the letter O. This means that if the same letter appears at intervals of eight in the ciphertext,
+13:36
+like, say, the letter R, here, here, here, and a few more times, we have these identical pairings I mentioned before.
+13:43
+We have R-O, R-O, R-O, all the way down, which means all of these Rs must represent the same letter in the plaintext.
+13:52
+And that's the key to breaking the cipher. Knowing that certain letters represent the same letter in the plaintext
+13:59
+makes the cipher vulnerable to frequency analysis. After all, if all these Rs represent the same letter,  
+14:06
+and the same is true of all the  other letters in the ciphertext,   we can just count the letters.
+14:11
+The letters with high frequency counts probably represent letters like E and T while letters with low frequency counts probably represent letters like Q and Z.
+14:21
+And so, that's what the NSA team did. They counted a bunch of letters, tried different combinations, until, eventually, they found  something that began to resemble English.
+14:31
+For instance, at one point they ended up with this and noticed the words SIX, FIVE, and SEVEN appeared to be forming near the end here.
+14:38
+All that was left to do was guessing the remaining letters and, just like that, the first portion of Kryptos had been solved.
+14:45
+It's a bit difficult to see when the  text is lumped together like this   but if we add some spacing between the  words, it becomes a lot more readable.
+14:53
+We'll examine this plaintext in a moment, but  first we need to address this mess at the top.
+14:59
+What the NSA team discovered was that rows 3  through 14 had been enciphered using one keyword,  
+15:04
+while the two uppermost rows had been enciphered using a different keyword. In other words, the Kryptos ciphertext was actually  composed of four distinct segments,  
+15:13
+not three as initially assumed. So the portion they solved first was actually the second segment,
+15:18
+which would later become known as K2. Alright, once K2 had been unlocked,  they immediately set their sights on K3.
+Breaking K3 and K1
+15:25
+As previously mentioned, frequency  analysis indicated K3 had been encoded using a transposition cipher,
+15:30
+so a substitution cipher like the one used to encode K2 was definitely off the table.
+15:36
+While there are many different kinds of transposition ciphers, they often rely upon some sort of matrix.
+15:42
+For instance, imagine we wanted to conceal  the plaintext THIS IS A SECRET MESSAGE. We would then pick a keyword like CLOAKED and write down the message in a grid, or matrix, like so.
+15:53
+Then we assign a number to each letter in the  keyword based on their alphabetical order. So A, C, D, E, K, L, O.
+16:02
+Then we rearrange the columns in numerical order. Finally, we write down the letters in each column to  generate the ciphertext. Fairly simple stuff.
+16:11
+But that simplicity is also the weakness of a cipher like this one because you can sort of guess your way to a solution with a lot of patience, a bit of luck, and some knowhow.
+16:21
+And that's precisely what the NSA team did. They quickly noticed there's only one Q in the entire K3 ciphertext.
+16:28
+They also knew that plenty of English words that begin with Q are followed by a U and there were only five Us.
+16:34
+So they simply took the Q along with a few letters before and after and wrote them down as a column. Then they did the same with the five  Us and placed them next to the first column.
+16:43
+Some of the letter combinations  were problematic, like Y-Y and H-H,   which would be unlikely to show up in an English word.
+16:50
+But other columns looked more promising, like the H-E in this pair of columns which could  be the end of THE, the most common word of all.
+16:58
+So they tried a few T-columns, followed by  some more columns, and a few more columns,   and that was pretty much it.
+17:06
+They eventually recovered the entire plaintext through nothing more than educated guesswork. In fact, the assumption that Q would be followed by a U proved to be wrong,
+17:15
+but they still managed to find the solution. They also realized that the last four characters  were actually part of K4 rather than K3.
+17:24
+Alright, so that was K3 unlocked, on to K1. The reason the NSA team tackled K3 ahead of K1 is because the latter was only 63 characters long.
+17:33
+Generally speaking, the shorter the ciphertext, the more difficult it is to break. Fortunately, the K1 ciphertext was  just another Vigenère cipher.
+17:41
+All they had to do was repeat the  steps taken to solve K2 and, eventually, they recovered the entire K1 plaintext, which reads as follows.
+The K1-K3 Plaintext
+17:55
+Moving on to the K2 plaintext, it reads like this.
+18:30
+Finally, we have the K3 plaintext, which reads as follows.
+19:01
+Alright, so what the hell does any of that mean? Well, something that immediately stands out is how   all three segments include  exactly one misspelled word.
+19:09
+In K1, the first L in ILLUSION  has been replaced with a Q. In K2, the O in UNDERGROUND has been supplanted by a U.
+19:17
+In K3, the word DESPERATELY is missing the third E  and has had the second E substituted for an A.
+19:23
+The prevailing belief within the Kryptos community is that these typos are deliberate. They're typically perceived as some sort of clue,  
+19:30
+and Sanborn has indeed implied or outright stated  that that's the case on multiple occasions.
+19:45
+However, Sanborn has also made statements where it almost sounds like he's only pretending  as though the typos were deliberate.
+20:17
+Looking at the overall meaning  of the plaintext it's, well,   difficult to parse, and, according to  Sanborn, that's very much by design.
+20:42
+The K1 plaintext is very short  but seems to be alluding to   shadows and how they're illusions  formed by the absence of light.
+20:49
+Light and shadow is a common theme in Sanborn's opography (opus-ography; synonym: oeuvre) so, perhaps, some sort of pattern will form when the sculpture is struck by sunlight
+20:56
+at just the right angle or something to that effect.
+21:09
+The K2 plaintext is a bit more straightforward by plainly stating that something was buried
+21:14
+at these coordinates, which point to a location  a few meters south of the sculpture.
+21:19
+But in 2013, Sanborn apparently confirmed  that what he buried at this location has since been removed.
+21:25
+According to a summary of a post-convention dinner attended by Sanborn, the item was a bronze geodetic survey marker  made by the United States Geological Survey.
+21:34
+They're typically used for things like topography  and measuring the distance between locations. That being said, it sounds like the  survey marker was only meant
+21:42
+to elucidate the meaning of the final plaintext, rather than offer clues for deciphering the code.
+22:09
+Looking at the rest of the K2 plaintext, it  makes reference to something invisible and using the Earth's magnetic field.
+22:15
+This could be alluding to a compass which, in turn, could be a reference to the compass rose 
+22:20
+etched into the stonework by the west entrance. The remaining portions seem to be about the survey maker.
+22:26
+It was buried or transmitted into the ground at an unknown location, followed by the coordinates of that location.
+22:33
+Furthermore, Langley is a nickname for the CIA  because it's based out of Langley, Virginia, and Sanborn has confirmed that WW is a  reference to former CIA Director William Webster.
+22:43
+Sanborn once said the K2 plaintext was meant to  look like an "interrupted radio transmission".   It's not uncommon for the letter X to  denote periods in radio communications,  
+22:52
+and Sanborn has confirmed that that is indeed what the multiple Xs sprinkled throughout the plaintext are meant to represent.
+22:58
+The only real question mark surrounding the K2 plaintext is this final sentence ID BY ROWS.
+23:04
+But we'll circle back to that one in a moment. The K3 plaintext is a lot easier to  parse because it's just an extract  
+23:12
+from the 1923 book The Tomb of Tut-Ankh-Amen. It recounts the moment British archaeologist Howard Carter
+23:19
+stumbled upon the tomb of the ancient Egyptian pharaoh Tutankhamun. Sanborn later explained that he included  this passage because he wanted to instill  
+23:26
+in the solvers of Kryptos a semblance of the  exhilaration experienced by the Egyptologists.
+23:32
+The only thing that doesn't make much  sense about the K3 plaintext is this final Q.
+23:37
+It's not in the sourcetext,  and it just looks out of place.
+23:42
+Some have speculated it's a reference to a character like Q in the James Bond franchise  or the godlike Q in Star Trek
+23:49
+because it sounds like the question is addressed to someone named Q. Sanborn did once briefly reference Star Trek in an interview, but
+23:56
+it doesn't sound like he's the kind of person  to include a pop culture reference in his work.
+The Mystery of K4
+24:03
+The NSA cryptanalysts were able to solve  K1 through K3 in as little as two days,  
+24:08
+although some documents suggest it took them at least a month. But despite their best efforts, the final 97 characters proved too much of a challenge.
+24:26
+After Jim Gillogly's independent solution  received widespread media attention in 1999,   thousands more joined the fray and began tinkering away at K4.
+24:34
+But in spite of this renewed interest, the final 97 characters have resisted all attempts at decipherment.
+24:42
+As indicated by the NSA, part of what makes K4 so difficult is its length. At 97 characters, it's the second-shortest segment behind K1.
+24:52
+On the bright side, K1 was eventually solved, so it's not like K4 is prohibitively short.
+24:58
+I mean, it's not like it's literally unbreakable. Wait, it is possible to solve, right?
+25:06
+It's a question that invariably shows up  in any discussion about Kryptos. What if Sanborn just threw together a bunch of random letters at the end to keep people guessing forever?
+25:15
+I mean, it's a great way to extend the longevity and relevance of an art piece.
+25:41
+On the other hand, Sanborn has very explicitly  stated on multiple occasions that K4 is solvable.
+25:56
+When the CIA commissioned Sanborn to  create Kryptos back in the late 1980s,   he received help from a CIA cryptographer named Edward Scheidt.
+26:04
+Alright, I'm just gonna give my Irish viewers some time to process that surname.
+26:09
+Alright, much like Sanborn, Scheidt is adamant the code is solvable.
+26:21
+But I must emphasize here that Scheidt  doesn't actually know the solution. He's merely saying that when he and Sanborn  devised a general outline for the code,  
+26:28
+the plan was to create something  that could be deciphered. But it's interesting that Scheidt says "deciphered or extracted"
+26:35
+because there is indeed more than one way to recover the plaintext. In fact, there's good reason to believe none of the previous segments
+26:42
+were solved in the way they were intended to be solved.
+26:53
+Remember, the NSA solved K1 through  K3 not by finding the keywords but,  
+26:58
+instead, by exploiting certain patterns  and weaknesses in the ciphers. The same is true of the methods employed  by David Stein and Jim Gillogly.
+27:07
+To use an analogy, they hotwired a  car instead of finding the keys. So, the question is, how were we  supposed to find those keys?
+The Intended Solutions
+27:21
+Let's start with K2. Alright, so through cryptanalysis, the NSA team deduced the keyword of K2 had a probable length of eight,
+27:28
+and this was confirmed once they  successfully extracted the plaintext. At this stage, there are a few different ways to reveal the actual keyword.
+27:35
+A really neat way of doing it is to truncate the Vigenère table so that the number of rows matches the length of the keyword.
+27:41
+In this case, the keyword has a length of eight so we only need the first eight rows, not counting the first one which will act as an index.
+27:50
+Then, we simply offset each row or alphabet  according to the plaintext, like this.
+27:55
+The first letter of the plaintext is I while  the first letter of the ciphertext is V,   so we slide the first row  until the V is in the I-column.
+28:04
+The second letter pair is T and F, so we slide  the second row until the F is in the T-column.
+28:10
+Once we've done that for each of the eight rows,   the eight-letter keyword ABSCISSA is  spelled out vertically in the first column.
+28:17
+The word abscissa is a mathematical term that  typically refers to the X coordinate of a point  
+28:22
+in a two-dimensional graph. So graph, point, coordinates, ordinate, abscissa.
+28:29
+It's unclear how this relates to Kryptos,   but some believe it's a metaphor for the  treasure-hunting idiom, "X marks the spot."
+28:40
+Another interpretation is that the process  of finding letters in a Vigenère table   sort of resembles points in a graph, where the  abscissa and ordinate are the columns and rows.
+28:52
+Anyway, once the keyword was known, people started looking for ways to recover ABSCISSA without first knowing the plaintext.
+28:58
+After a lot of searching, they came up with a plausible theory. Remember those granite and copperplate constructions by the west entrance inscribed with Morse code?
+29:07
+Well, if you didn't,  now you do, and here's the translation.
+29:52
+There are a few immediate takeaways. The second I in DIGITAL has been  swapped for an E and the next line  
+29:58
+is likely meant to say INTERPRETATION,   but the code is cut off so the final N is  missing and the O ends up looking like a T.
+30:05
+DIGITAL INTERPRETATION could mean there's  some sort of digital component to solving Kryptos which is consistent with a comment made by Sanborn.
+30:20
+T IS YOUR POSITION could mean a lot of things. According to some Kryptos enthusiasts,   Sanborn once told them the Morse  code actually continues underneath  
+30:28
+the blocks of granite, so the full sentence  could be something like WHAT IS YOUR POSITION. VIRTUALLY INVISIBLE is similar to the first line  of K2, while SHADOW FORCES is reminiscent of K1.
+30:39
+As for LUCID MEMORY, RQ, SOS, and the  27 seemingly superfluous Es? Who knows?
+30:46
+Alright, so that's what the Morse code  says, now, back to the keyword search. If we take the last four letters of VIRTUALLY  and the first four letters of INVISIBLE
+30:54
+and use ALLYINVI as a keyword for K2, we find  the word ABSCISSA spelled out right here.
+31:02
+The reason this works is because the sequence  ALLYINVI also appears in the K2 plaintext
+31:07
+in the phrase TOTALLY INVISIBLE. We're basically using part of the plaintext to reveal the keyword
+31:14
+instead of using the keyword to  reveal the plaintext. In fact, this works with any eight-letter sequence of the plaintext as long as it's offset at intervals of eight.
+31:23
+So if we use the first eight-letter sequence, ITWASTOT, we'll get ABSCISSA here. If we use the next eight-letter sequence, ALLYINVI, we get ABSCISSA here.
+31:31
+Using the third sequence, SIBLEHOW, we get ABSCISSA here, and so on. Presuming this was intentional and  Sanborn didn't just happen to use
+31:40
+two similar phrases without realizing one could  accidentally expose the keyword of the other,   it's still unclear how we were supposed  to know to rearrange part of the Morse code
+31:49
+to read ALLYINVI as opposed  to any other sequence of letters. Another option is to take this one E at the end of VIRTUALLY and move it to the front,
+31:57
+then we ignore the six Es at the beginning of the next line, and append INVISIBLE. Plugging that in as a keyword will also produce ABSCISSA because the first eight letters
+32:06
+act as padding to ensure ALLYINVI falls into place. In fact, we can use any eight letters  before ALLYINVI, and it works just the same.
+32:14
+But again, it's unclear how someone was  supposed to deduce that those specific letters had to be organized in that specific way.
+32:20
+Sure, Sanborn might've expected us to  simply guess by trying different Morse code fragments and successively prepending them with letters.
+32:27
+There's even a cryptographic term for this technique, which is crib dragging. But it would still have been nice to have, at least, one solution that relied exclusively on
+32:35
+clues and deductive reasoning rather than tedious guesswork. As far as I can tell, Sanborn has never  confirmed whether ABSCISSA
+32:42
+was supposed to be acquired in this way, but it's the least convoluted theory for the time being. Moving on to K1, the suspected  keyword length was ten
+32:51
+and, sure enough, if we modify the  Vigenère table like before,   we find the ten-letter keyword PALIMPSEST  spelled out vertically in the first column.
+32:59
+A palimpsest is a reused manuscript or document. If you erased the text from the page of a book and wrote new text in its place,  
+33:06
+that's a palimpsest. It's a word that fits the theme of Kryptos in multiple ways, not least of all because the curved copper screen  resembles a scroll or the flowing page of a book.
+33:17
+Another interesting find is that the combined letters of PALIMPSEST and ABSCISSA can be used to construct the anagram PS ITS AS SIMPLE AS ABC.
+33:29
+Anyway, unlike the keyword for K2, no one really  knows how PALIMPSEST was supposed to be found.
+33:34
+The only half-decent theory seems to be one that  relies on palindromes within the Morse code,   which is when a sequence of letters  reads the same forwards and backwards.  
+33:42
+The idea is to take some of these  palindromes while ignoring others,   and to then stack them in a particular  order to form the word PALIMPSEST.
+33:50
+But the process feels very contrived, so I'm not gonna go into detail here. You can check out the references  if you want to learn more.
+33:57
+Moving on to K3, things get a bit tricky because there's more than one way to recover the plaintext. 
+34:02
+The easiest one is so simple it's almost laughable. All you have to do is count every 192nd character. That's it.
+34:11
+1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15...
+34:20
+...189, 190, 191, 192. The first letter is S.
+34:27
+1, 2, 3, 4, 5, 6... ...143, 144, 145.
+34:33
+If we reach the end, we just  loop back around and keep going. 146, 147, 148, 149, 150...
+34:43
+...189, 190, 191, 192. The second letter is L.
+34:50
+Keep going like that and you'll  recover the entire K3 plaintext. There are a bunch of other decryption  methods I could explore here,  
+34:57
+including one that quite convincingly  utilizes the keyword KRYPTOS. But there is one method that's not just theory but actually has some evidence behind it.
+35:07
+In 2013, Sanborn released this encoding chart,  which he used to encode the K3 plaintext.
+35:12
+It's very low resolution, but notice what looks  like an arrow in the lower left-hand corner.
+35:18
+For many Kryptos enthusiasts, this all but  confirmed what they had long suspected. Namely, that the K3 ciphertext had been generated by simply rotating the plaintext.
+35:28
+It works like this. First, we write down the K3 plaintext in a 42x8 grid.
+35:33
+That's 42 characters per row across eight rows. We then rotate the text 90 degrees clockwise.
+35:40
+Using this new orientation, we write down the characters, row by row, in a 14x24 grid.
+35:46
+You'll notice the text now matches the  encoding chart, and all we have to do   to generate the K3 ciphertext is rotate the text once more.
+35:55
+There you go. The encoding chart even has the word END written in the  corner here to mark the end of the ciphertext.
+36:03
+But there is one problem with this approach. It leaves out the question mark at the very end of K3.
+36:08
+Notice how it's not included in the encoding chart. This has led many to suspect that this final question mark
+36:15
+is actually the beginning of K4 rather than the end of K3. Now, an argument against that is that the  sourcetext of K3, The Tomb of Tut-Ankh-Amen,  
+36:24
+does end with a question mark, and it  would, of course, make a lot more sense   for a question mark to fall at the end of a  sentence rather than the beginning of one.
+36:31
+Sanborn has repeatedly refused to  answer whether it belongs to K3 or K4,   but has confirmed it is nothing  more than a question mark.
+36:39
+Presuming it does belong to K4, the  fact the question mark appears at   the beginning might be a clue  that K4 is written in reverse.
+The IDBYROWS Mishap
+36:52
+Speaking of question marks, remember  that inscrutable final sentence of K2?   Ever since K2 was first deciphered back in 1992,  
+36:59
+the phrase ID BY ROWS or possibly ID BY ROW S has been a complete mystery.
+37:04
+But in late 2005, a Kryptos enthusiast by the name  of Monet Friedrich was crib dragging different  
+37:10
+keywords through K2 when she noticed something odd. If you move the first A of ABSCISSA to the end and plug that in as a keyword,
+37:18
+the last sentence of K2 becomes PLAYER TWO. It wasn't given much attention  at the time because, well,  
+37:25
+discoveries like these are not that uncommon.  Shifting letters around and trying different keywords is bound to generate the occasional  text that just so happens to be legible.
+37:33
+But, this time, it was different because, half a  year later, Sanborn informed the Kryptos community   that he'd made a mistake by omitting an S between  this E and W near the end of the K2 ciphertext.  
+37:44
+If we add that S back in, the final sentence  no longer reads ID BY ROWS but X LAYER TWO.
+37:52
+Something that immediately comes to mind is that a  palimpsest is a document with two layers of text.
+37:59
+Anyway, the fact that this omission still produced something legible was pure chance, and it's why it took Sanborn 16 years to detect his mistake.
+38:06
+He apparently assumed ID BY ROWS was some sort of cryptographic jargon and didn't realize there was something wrong with the actual code.
+38:13
+This does, of course, raise the rather  concerning possibility that the reason K4  
+38:19
+hasn't been solved is because it, too, contains  some sort of mistake that Sanborn has missed.
+38:41
+That is a bit concerning.  In a subsequent interview,   Sanborn said he was "pretty sure"  that K4 is "fairly accurate."
+39:00
+A few years later, Sanborn said in yet another interview that he'd completely forgotten the K4 plaintext, once again.
+39:16
+So whether Sanborn has actually gone back and  double-checked the intended steps for solving K4 remains unknown, and the possibility of  a mistake can't be completely ruled out.
+39:26
+That being said, K2 was deciphered in spite of a  mistake so even if K4 contained a similar typo,  
+39:32
+it wouldn't necessarily be rendered unsolvable. Another reason to be optimistic about  the solvability of K4 is the fact that  
+39:38
+Sanborn has gotten increasingly  impatient for someone to solve it.
+The K4 Clues
+39:56
+So to nudge the process along, Sanborn  finally caved and offered a clue in late 2010.
+40:02
+The clue was a fragment of the K4 plaintext. Specifically, the word BERLIN, located here.
+40:10
+So K4 can somehow be decoded such that the letters  N-Y-P-V-T-T are supplanted by the word BERLIN.
+40:17
+Not only that but Sanborn also released  the encoding charts he used to create   K1 and K2 which supposedly contain  some sort of revelatory information.
+40:26
+All that's really been gleaned from these  charts so far is that the IQLUSION typo   in K1 was the result of changing the  first S in PALIMPSEST to a C.
+40:34
+Meanwhile, the K2 chart does not include the UNDERGRUUND typo. This could mean IQLUSION was deliberate while UNDERGRUUND was not,
+40:43
+just as it could, you know, not mean that. Even though Sanborn stated he wouldn't  offer another clue until 2020,  
+40:50
+he apparently changed his mind and disclosed  a second clue only four years later. This time, it was the word CLOCK,  located right next to the previous clue.
+40:58
+So this portion of the K4 ciphertext  can somehow be decoded into BERLIN CLOCK.
+41:05
+The clock in question is probably this one.  It displays the time using a series of red and yellow lights and is indeed located in Berlin. 
+41:13
+But its relevance to Kryptos remains a mystery. Six years later, in early 2020, Sanborn disclosed yet another clue.
+41:19
+This time, it was the word NORTHEAST, located here. Less than a year later, in  the midst of the pandemic,  
+41:26
+Sanborn released his latest  clue, which was the word EAST. Even though nearly one quarter of the  K4 plaintext has now been disclosed,  
+41:36
+the final segment remains undeciphered.
+Hypothetical Solutions to K4
+41:44
+Something I've learned about Kryptos over the past  few months is that everything you can think of   has already been tried.
+41:50
+I mean, not literally, of course, but that's certainly what it feels like. There were so many times during my research where  I had an idea for how it might've been done,  
+41:58
+only to find that someone already  tried that some 20-odd years ago. I mean, we're talking thousands of people  trying every conceivable permutation of  
+42:06
+every conceivable cipher for over thirty years. It's especially impressive considering  Sanborn is not a cryptographer and,  
+42:14
+at his own admission, is bad at math. [SANBORN I am what I like to refer to myself as an  anathemath. Which means I have-
+42:23
+I'm afraid of mathematics. I do not have math skills. I was taught physics, but only baby physics.  
+42:32
+I was taught math in summer school because I  didn't pass math in high school. So, basically,  
+42:40
+there are other ways to make codes rather than  using algorithms, the bane of my existence.
+42:45
+Instead, he's an artist with a background in  archeology who, somehow, managed to create a code that's withstood billions upon billions  of cracking attempts and even stumped the NSA.
+42:55
+On the other hand, the fact that Kryptos was made by a non-expert and does not require advanced mathematics makes it all the more likely for a layperson to solve it.
+43:04
+If anything, a creative and artistically minded amateur may actually have a better chance of solving K4 by
+43:10
+thinking outside the box in a way that computer algorithms and professional cryptanalysts may struggle to do.
+43:29
+One of the leading hypotheses entertained  by the NSA back in the early 1990s was   that K4 had been enciphered not  just once but multiple times over.
+43:38
+The idea is that Sanborn took the K4 plaintext  and ran it through a Vigenère cipher,   like the one used to encode K1 and K2.  Then he took the resulting ciphertext  
+43:47
+and ran that through a transposition  cipher, like the one used to encode K3. This second layer of ciphertext  was then carved into the sculpture.
+43:56
+According to Edward Scheidt, the  plan for K4 was to somehow conceal   the English language to curb the  use of frequency analysis, which,  
+44:03
+as we now know, was instrumental in  solving the previous three segments. We can only guess what exactly that means,  
+44:10
+but cipher stacking would be a  very simple yet effective way to   mask the language of the plaintext and  disrupt the use of frequency analysis.
+44:22
+Another proposed solution is to use what's known as the Hill cipher. The reasoning behind this one is tied to that conspicuous L in the Vigenère table
+44:30
+mentioned near the beginning of the video. While many believe the L is merely an oversight, others believe it's a deliberate clue
+44:36
+because its inclusion means the word HILL  can be spelled out vertically on the side here.
+44:42
+Others believe the solution has something to do  with the letters D-Y-A-H-R at the beginning of K3,  
+44:48
+which have this odd spacing that makes them stand out from the rest of the code. A possible anagram of these letters is the word HYDRA, but whether that's meaningful is, of course, anyone's guess.
+44:59
+As you can imagine, there are hundreds of  theories and, out of sheer desperation,   many turn to scrutinizing everything  Sanborn and Scheidt has ever said
+45:06
+in the hopes of narrowing down the list. Exhibit A: this video. But that is, perhaps, not such a good idea.
+45:35
+Although, not even the fact  that he can't be trusted can be trusted because Sanborn has said the  complete opposite in other interviews.
+Outro
+45:46
+Disinformation and dubious benevolence aside,   Sanborn has taken steps to ensure the  solution to K4 isn't lost to time.
+45:53
+It will either be put up for auction or passed  on to someone else in the event of his death. So, one way or another, we will hopefully get  that answer at some point in the future.
+46:04
+Who knows? Maybe one of you watching this video right now will be the one to break the unbreakable.
+46:09
+Think about it, these 97 or so characters  are all that stand between you and history.  
+46:15
+Everyone will know your name. We're talking  interviews, talk shows, podcasts, conferences,   the whole circus. Centuries from now,  students will be bored out of their minds
+46:24
+as they read that one chapter about the  history of cryptography that bears your name.
+46:29
+All you need to do is throw some symbols into a blender, and you'll become immortal. You'll forever be remembered as the person who defeated the American intelligence community at their own game. 
+46:39
+The genius who solved Kryptos when no one else could. Then, when you finally do solve it, we can all look back at videos like this one
+46:46
+and laugh at how wrong we were  or be astonished by how close we got. So what are you still doing here?  Go and solve the damn thing.
+46:53
+Thanks for watching :)
