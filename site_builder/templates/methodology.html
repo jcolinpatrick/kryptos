@@ -104,15 +104,18 @@
 <p>
   Jim Sanborn stated at the Kryptos dedication that <em>&ldquo;there are two systems
   of enciphering the bottom text.&rdquo;</em> Combined with the mathematical impossibility
-  of single-layer periodic substitution, this means K4 uses a <strong>product cipher</strong>
-  &mdash; two layers of encryption applied in sequence.
+  of single-layer periodic substitution, this means K4 uses
+  <strong>two layers of encryption</strong> &mdash; though the exact structure
+  (product cipher, stego + substitution, or something else) is not yet determined.
 </p>
 <p>
-  Digram frequency analysis confirms the outermost layer is
-  <strong>substitution</strong>, not transposition. This gives the encryption order:
+  Pure transposition is independently impossible: the ciphertext contains only
+  2 E&rsquo;s, but the known cribs require 3. Therefore at least one layer must be
+  substitution.  The <strong>leading model</strong> assumes the encryption order:
 </p>
 <pre>  PT &rarr; transposition &rarr; substitution &rarr; carved text</pre>
 <p>
+  (The reverse order &mdash; substitution then transposition &mdash; has not been ruled out.)
   The primary attack strategy tests this model: undo the transposition, then
   check crib consistency for the substitution layer. Exhaustive testing includes:
 </p>
@@ -141,10 +144,11 @@
   <li>The Weltzeituhr (Berlin Clock) has exactly <strong>24</strong> facets</li>
 </ol>
 <p>
-  The 28&times;31 master grid has a <strong>null band</strong> at columns 8&ndash;16,
+  One candidate null-extraction model: the 28&times;31 master grid has columns 8&ndash;16
   where K4&rsquo;s rows overlap the central gap of the Kryptos tableau. Removing 8 of 9
-  columns from this band produces exactly 24 nulls, yielding a 73-character extract with
-  shifted crib positions (ENE at 13&ndash;25, BC at 47&ndash;57).
+  columns from this region produces exactly 24 nulls, yielding a 73-character extract with
+  shifted crib positions (ENE at 13&ndash;25, BC at 47&ndash;57). This is a <strong>hypothesis</strong>,
+  not a proven mechanism.
 </p>
 
 <h3>What&rsquo;s Been Tested on the 73-Char Extract</h3>

@@ -359,6 +359,46 @@ def _build_cylinder_viewer(global_ctx: dict):
         html, flags=re.DOTALL,
     )
 
+    # -- 2b. Remove the legend (color key) — static swatches look like broken checkboxes
+    legend_start = html.find('<div class="legend">')
+    if legend_start != -1:
+        # Find the closing </div> that ends the legend block
+        # Structure: <div class="legend"> ... 3x <div class="legend-item">...</div> ... </div>
+        # Count div open/close to find the matching end
+        depth = 0
+        i = legend_start
+        while i < len(html):
+            if html[i:i+4] == '<div':
+                depth += 1
+            elif html[i:i+6] == '</div>':
+                depth -= 1
+                if depth == 0:
+                    legend_end = i + 6
+                    # Strip trailing whitespace/newline
+                    while legend_end < len(html) and html[legend_end] in '\n\r':
+                        legend_end += 1
+                    html = html[:legend_start] + html[legend_end:]
+                    break
+            i += 1
+
+    # -- 2c. Strip inline onclick handlers (blocked by nginx CSP: script-src 'self')
+    #    The JS attaches listeners via addEventListener instead.
+    html = html.replace(' onclick="resetAll()"', '')
+    html = html.replace(' onclick="toggleNullHighlight()"', '')
+    html = html.replace(' onclick="togglePositions()"', '')
+    # Add an ID to the Reset All button so JS can find it
+    html = html.replace(
+        '<button>Reset All</button>',
+        '<button id="btn-reset">Reset All</button>',
+        1,
+    )
+
+    # -- 2c. Remap standalone CSS variables to scoped names in inline styles
+    html = html.replace('var(--highlight-ene)', 'var(--cv-ene)')
+    html = html.replace('var(--highlight-bcl)', 'var(--cv-bcl)')
+    html = html.replace('var(--anomaly)', 'var(--cv-anomaly)')
+    html = html.replace('var(--cell)', 'var(--cv-cell)')
+
     # -- 3. Inject banner + nav after <body>
     configs = global_ctx.get("total_configs_disproven", "")
     nav_html = f"""
@@ -391,6 +431,18 @@ def _build_cylinder_viewer(global_ctx: dict):
   <main class="container">
 """
     html = html.replace('<body>\n', f'<body>\n{nav_html}', 1)
+
+    # -- 3b. Wrap viewer body content in .cv-page scope
+    html = html.replace(
+        '<h1>KRYPTOS CYLINDER VIEWER</h1>',
+        '<div class="cv-page">\n<h1>KRYPTOS CYLINDER VIEWER</h1>',
+        1,
+    )
+    html = html.replace(
+        '<script src="/static/cylinder_viewer.js"></script>',
+        '</div>\n<script src="/static/cylinder_viewer.js"></script>',
+        1,
+    )
 
     # -- 4. Inject footer before </body>
     footer_html = """
