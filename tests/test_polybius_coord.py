@@ -76,3 +76,45 @@ def test_beau_r_vig_c_key_sequence():
         letter = g.coord_to_letter.get((kr, kc), '?')
         actual += letter
     assert actual == expected, f"Expected {expected}, got {actual}"
+
+
+def test_running_key_crib_check():
+    """Running-key crib check counts matches correctly."""
+    from e_polybius_coord_exploit import PolybiusGrid, count_crib_matches
+    g = PolybiusGrid(KRYPTOS_ALPHABET, 5)
+    crib_positions = sorted(CRIB_DICT.keys())
+    perfect_key = list('A' * CT_LEN)
+    for pos in crib_positions:
+        kr, kc = g.required_key(CT[pos], CRIB_DICT[pos])
+        letter = g.coord_to_letter.get((kr, kc), '?')
+        perfect_key[pos] = letter
+    perfect_key_str = "".join(perfect_key)
+    matches = count_crib_matches(g, perfect_key_str, CT)
+    assert matches == 24, f"Perfect key should match 24/24, got {matches}"
+
+
+def test_running_key_random_low_matches():
+    """Random key text should have few crib matches."""
+    from e_polybius_coord_exploit import PolybiusGrid, count_crib_matches
+    g = PolybiusGrid(KRYPTOS_ALPHABET, 5)
+    matches = count_crib_matches(g, "A" * CT_LEN, CT)
+    assert matches < 8
+
+
+def test_sa_worker_returns_valid():
+    """SA worker returns a valid result dict."""
+    from e_polybius_coord_exploit import sa_polybius_worker
+    result = sa_polybius_worker((0, 42, CT, KRYPTOS_ALPHABET, 1000))
+    assert isinstance(result, dict)
+    assert "score" in result and "pt" in result
+    assert len(result["pt"]) == CT_LEN
+    assert result["score"] > -10.0
+
+
+def test_sa_cribs_pinned():
+    """SA should pin crib positions correctly."""
+    from e_polybius_coord_exploit import sa_polybius_worker
+    result = sa_polybius_worker((0, 42, CT, KRYPTOS_ALPHABET, 3000))
+    pt = result["pt"]
+    for pos, ch in CRIB_DICT.items():
+        assert pt[pos] == ch, f"Crib pos {pos}: expected {ch}, got {pt[pos]}"
