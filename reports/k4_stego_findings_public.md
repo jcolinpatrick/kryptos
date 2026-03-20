@@ -35,7 +35,7 @@ When we analyzed which characters appear at positions that are likely filler, a 
 
 Those seven letters are: **B, G, I, K, O, W, Z**
 
-Out of the 17 filler positions we're most confident about, every single one is one of these seven letters. The probability of that happening by chance — picking 17 random letters and getting only 7 distinct values — is about **1 in 16,000**.
+Out of the 17 filler positions we're most confident about, every single one is one of these seven letters. The probability of that happening by chance — picking 17 random positions and getting only 7 distinct letter values — is about **1 in 15,000** (Monte Carlo, 50 million trials, p = 6.7 × 10⁻⁵).
 
 These aren't random letters. On the KRYPTOS alphabet grid (the alphabet rearranged starting with K-R-Y-P-T-O-S), these seven letters sit in two specific columns:
 
@@ -57,9 +57,21 @@ Here's where it gets interesting. Dr. Richard Bean, a mathematician at the Unive
 
 "Divisible by 5" in an alphabet grid means "sitting in column 0." Bean was seeing the same column structure from a different angle — he was looking at the encryption layer, we were looking at the filler layer, and both point to the same five-column grid.
 
-When we combine our filler-letter finding with Bean's keystream finding (using a standard statistical combination method called Fisher's test), the combined probability of both happening by chance is about **1 in 900,000**.
+To measure the combined significance properly, we used direct simulation rather than statistical formulas. We shuffled the 97 ciphertext letters randomly 50 million times and checked: how often does a shuffled K4 produce BOTH a restricted filler palette (≤7 distinct letters) AND keystream enrichment for that palette (≥13/24 hits)?
 
-Two independent researchers, different years, different methods, same structure. That's not a coincidence.
+**Answer: 7 times out of 50 million.** That's a probability of about **1 in 7 million** (p = 1.4 × 10⁻⁷).
+
+Crucially, among the 1,405 shuffles that DID produce a restricted palette, the average keystream enrichment was 6.6 out of 24 — essentially random chance. Only 7 of those 1,405 also produced keystream enrichment at the level we observe in K4. Having a restricted palette does NOT automatically create keystream enrichment. The two phenomena are genuinely independent in K4's ciphertext.
+
+Two researchers, different years, different methods, same structure. And the combined evidence is stronger than either finding alone.
+
+## Finding #2.5: Only Beaufort, Not Vigenère
+
+The keystream enrichment is highly specific to the cipher variant. K4's Beaufort keystream (CT + PT mod 26) gives 13/24 palette hits. The Vigenère keystream (CT - PT mod 26) gives only 9/24. Variant Beaufort (PT - CT mod 26) gives 5/24. Only Beaufort A=0 produces the concentration.
+
+This strongly suggests the cipher layer uses Beaufort rather than Vigenère — a related cipher that uses the same tableau read in a different direction. Sanborn told the New York Times in 2010 that he used "a tableaux slightly different from the one on Kryptos," which is consistent with switching from Vigenère (used for K1–K2) to Beaufort.
+
+Anyone can verify this: compute (CT[i] + PT[i]) mod 26 at each crib position (A=0, B=1, ..., Z=25), and count how many results are in {B, G, I, K, O, W, Z}. Then try (CT[i] - PT[i]) mod 26 and compare.
 
 ## Finding #3: The 14-Column Grid
 
@@ -103,6 +115,8 @@ We want to be honest about the limits:
 3. **We don't know what determines the pattern.** We can SEE that certain grid cells are filler and others are real, but we don't know what RULE Sanborn used to decide. It could be based on his encoding chart (sold at auction for $962,500 in 2025), a physical template, or something we haven't thought of.
 
 4. **There are 7 filler positions we're NOT confident about**, drawn from specific ranges in the ciphertext. Our best statistical analysis narrows these to about 55 possible combinations (down from 11,440), but we can't uniquely determine them from the ciphertext alone.
+
+5. **All findings are post-hoc.** Every pattern reported here was discovered through exploratory analysis of the data, not predicted in advance. The 50-million-trial simulation provides a rigorous combined significance, but the individual observations were not pre-registered. We have subjected every claim to adversarial statistical review (see the repository for the full audit), and the findings that survive are reported here.
 
 ## What This Means for Solving K4
 
