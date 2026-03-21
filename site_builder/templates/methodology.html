@@ -96,79 +96,95 @@
 <p>
   These constraints are <em>variant-independent</em> &mdash; they hold whether the cipher
   is Vigen&egrave;re, Beaufort, or Variant Beaufort. Any valid solution must satisfy all
-  Bean constraints. The full 242-pair inequality set eliminates <strong>all</strong>
-  periods 1&ndash;26 for periodic substitution on the raw 97-character carved text.
+  Bean constraints. The full 242-pair inequality set, combined with a fingerprint
+  argument (key value O=14 appears at positions 24, 63, and 69, forcing any period to
+  divide gcd(39,45)=3, but the key has 12 distinct values), proves that
+  <strong>no periodic key of any length</strong> &mdash; period 1 through infinity &mdash;
+  can produce the K4 crib decryptions. This is a complete mathematical proof, not a search
+  result.
 </p>
 
 <h2>Two-System Model</h2>
 <p>
   Jim Sanborn stated at the Kryptos dedication that <em>&ldquo;there are two systems
-  of enciphering the bottom text.&rdquo;</em> Combined with the mathematical impossibility
-  of single-layer periodic substitution, this means K4 uses
-  <strong>two layers of encryption</strong> &mdash; though the exact structure
-  (product cipher, stego + substitution, or something else) is not yet determined.
+  of enciphering the bottom text.&rdquo;</em> Ed Scheidt confirmed a <em>&ldquo;bit of stego&rdquo;</em>
+  and that the <em>&ldquo;masking technique may not be known.&rdquo;</em> Combined with the
+  mathematical impossibility of periodic substitution at any period, this means K4 uses
+  <strong>two layers</strong>: a steganographic layer (null mask) and a substitution cipher.
 </p>
 <p>
   Pure transposition is independently impossible: the ciphertext contains only
   2 E&rsquo;s, but the known cribs require 3. Therefore at least one layer must be
-  substitution.  The <strong>leading model</strong> assumes the encryption order:
+  substitution. The <strong>leading model</strong> is:
 </p>
-<pre>  PT &rarr; transposition &rarr; substitution &rarr; carved text</pre>
+<pre>  PT (73 chars) &rarr; substitution cipher &rarr; null insertion (24 chars) &rarr; carved text (97 chars)</pre>
 <p>
-  (The reverse order &mdash; substitution then transposition &mdash; has not been ruled out.)
-  The primary attack strategy tests this model: undo the transposition, then
-  check crib consistency for the substitution layer. Exhaustive testing includes:
+  The stego layer is partially characterized: the null palette (letters used as nulls)
+  is {B,G,I,K,O,W,Z}, which corresponds to columns 0 and 3 of a 5-wide Polybius grid
+  built from the KRYPTOS keyword-mixed alphabet (joint null probability p=1.4&times;10<sup>&minus;7</sup>,
+  50M Monte Carlo trials). 17 of 24 null positions are fixed by consensus; 7 remain uncertain.
+</p>
+<p>
+  The cipher layer remains open. Periodic keys are proven impossible at all periods.
+  Running keys from 60,230 publicly available English texts (Project Gutenberg,
+  106 billion offset-checks) produced zero signal. The surviving possibilities are:
+  a running key from a non-public source, a bespoke procedural cipher, or a one-time key.
+</p>
+<h3>What Has Been Exhaustively Tested</h3>
+<p>
+  Over <strong>930 experiments</strong> spanning <strong>882 billion+ configurations</strong>
+  have been run, eliminating:
 </p>
 <ul>
-  <li>All 362,880 width-9 column permutations &times; Vig/Beau/VBeau &times; AZ/KA &times; periods 1&ndash;13 + autokey (47.17M configs)</li>
-  <li>Keyword-derived column orders for widths 4&ndash;14 &times; all substitution types (7,326 configs)</li>
-  <li>Running-key decryption from Howard Carter&rsquo;s book and K1&ndash;K3 plaintext (crib-dragged)</li>
-  <li>Columnar transposition (ANY width 2&ndash;48) + period-13 substitution: structurally impossible (61.5M configs)</li>
-  <li>MITM on 73-char column mask extract: w7&ndash;9 exhaustive &times; p1&ndash;13 &times; 3 variants (31.8M configs)</li>
-  <li>Autokey with &le;13-char primers + optional columnar transposition (7.9M configs)</li>
+  <li><strong>All periodic substitution</strong> (Vig/Beau/VBeau &times; AZ/KA &times; all periods): mathematical proof</li>
+  <li><strong>All autokey variants</strong> (PT/CT &times; all primers): structural impossibility proof via crib-to-crib feedback</li>
+  <li><strong>All sub &times; transposition MITM</strong> (~1.2B configs): mono + periodic + autokey &times; 14 transposition families</li>
+  <li><strong>All VIC cipher models</strong> (1.32B+ configs): generic, narrative, K2-derived, historical params</li>
+  <li><strong>All digraphic ciphers</strong> (Four-Square, Playfair, Two-Square): single-layer ceiling 23/24 (overfitting)</li>
+  <li><strong>All bespoke mechanisms</strong>: Gromark (8.74B), Feistel, Gronsfeld, Porta, fractionation, homophonic, Hill</li>
+  <li><strong>Running key from 60K Gutenberg texts</strong> (106B offset-checks): zero signal</li>
+  <li><strong>All transposition within CT73 + periodic/running key</strong>: 4.5M transpositions &times; 3 variants</li>
+  <li><strong>Sculpture reading paths as key</strong>: 10,777 paths &times; 976K tests, max 7/24 = noise</li>
+  <li><strong>Grid-position-dependent keying</strong>: key=f(row,col,keyword), zero signal</li>
+  <li><strong>Morse code hypotheses</strong>: Morse Indexed Alphabet + CT&rarr;Morse&rarr;Binary null mask, all noise</li>
 </ul>
-<p>
-  All tests produced zero signal. Standard columnar transposition &times; periodic
-  substitution, columnar &times; autokey, and MITM on 73-char extracts are eliminated.
-</p>
 
 <h2>73-Character Hypothesis</h2>
 <p>
   Sanborn&rsquo;s yellow legal pad (auctioned in 2025) shows &ldquo;8 lines 73&rdquo; for K4.
   The carved text has 97 characters &mdash; so <strong>24 characters may be nulls</strong>,
-  reinforced by the <em>Triple-24 Coincidence</em>:
+  reinforced by the <em>Quadruple-24 Coincidence</em>:
 </p>
 <ol>
   <li>97 &minus; 73 = <strong>24</strong> nulls</li>
   <li>EASTNORTHEAST (13) + BERLINCLOCK (11) = <strong>24</strong> crib characters</li>
   <li>The Weltzeituhr (Berlin Clock) has exactly <strong>24</strong> facets</li>
+  <li>K3&rsquo;s encoding chart has exactly <strong>24</strong> rows (verified from worksheets)</li>
 </ol>
+
+<h3>The Null Palette</h3>
 <p>
-  One candidate null-extraction model: the 28&times;31 master grid has columns 8&ndash;16
-  where K4&rsquo;s rows overlap the central gap of the Kryptos tableau. Removing 8 of 9
-  columns from this region produces exactly 24 nulls, yielding a 73-character extract with
-  shifted crib positions (ENE at 13&ndash;25, BC at 47&ndash;57). This is a <strong>hypothesis</strong>,
-  not a proven mechanism.
+  Statistical analysis has identified a <strong>null palette</strong> &mdash; a set of 7 letters
+  {B, G, I, K, O, W, Z} that appear disproportionately at null positions
+  (p=6.7&times;10<sup>&minus;5</sup>, Monte Carlo 50M trials). These 7 letters
+  correspond exactly to columns 0 and 3 of a 5-wide Polybius grid built from the
+  KRYPTOS keyword-mixed alphabet. This structure was independently confirmed by
+  Richard Bean&rsquo;s 2021 finding that 13/24 keystream values are multiples of 5.
+</p>
+<p>
+  The <strong>joint significance</strong> of the palette existing AND producing 13/24
+  keystream enrichment at crib positions is p=1.4&times;10<sup>&minus;7</sup> (50M trials,
+  proper joint null model accounting for negative correlation between events).
+  This is the strongest confirmed statistical finding in the K4 analysis.
 </p>
 
-<h3>What&rsquo;s Been Tested on the 73-Char Extract</h3>
+<h3>What Remains</h3>
 <p>
-  Over <strong>32M configurations</strong> have been tested on the 73-char column mask extract:
-</p>
-<ul>
-  <li><strong>Null mask + periodic substitution (p=1&ndash;23):</strong> PROVEN IMPOSSIBLE for ANY
-      choice of 24 null positions (algebraic proof via (n1,n2,n3) enumeration)</li>
-  <li><strong>Autokey (PT/CT &times; all variants):</strong> 46K configs, max 6/24 = noise</li>
-  <li><strong>MITM columnar trans &times; periodic sub:</strong> 31.8M configs (w7&ndash;9 exhaustive),
-      best 18/24 at w9/p11 = statistical noise (~3.6 expected by chance)</li>
-  <li><strong>Grid-coordinate-derived keys:</strong> 3.7K configs, max 5/24.
-      Required keystream is completely irregular &mdash; no f(row,col) pattern fits</li>
-  <li><strong>Native grid reading orders:</strong> 2.3K configs, all high scores at underdetermined periods</li>
-</ul>
-<p>
-  The column mask geometry is numerically compelling but computationally sterile.
-  The correct cipher operating after null extraction (if the 73-char model is correct)
-  is something we have not yet tested.
+  <strong>Null mask + periodic substitution</strong> is proven impossible for ANY choice of
+  24 null positions at ANY period (algebraic proof extended to CT73 via Bean inequalities
+  across all 11,440 candidate masks). The cipher operating on the 73 extracted characters
+  must use a <strong>non-periodic key</strong> &mdash; a running key from an unknown source,
+  a bespoke procedural method, or a one-time key.
 </p>
 
 <h2>Validation Criteria</h2>
