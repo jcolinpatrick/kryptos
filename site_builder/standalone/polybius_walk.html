@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>K4 Keystream — Polybius Grid Walk</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0a0a0f; color: #e0e0e0; font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace; padding: 20px; }
+  h1 { color: #7fdbca; font-size: 1.3em; margin-bottom: 4px; }
+  h2 { color: #c792ea; font-size: 1.05em; margin: 18px 0 8px; }
+  .subtitle { color: #666; font-size: 0.85em; margin-bottom: 20px; }
+  .container { max-width: 1200px; margin: 0 auto; }
+  .panels { display: flex; gap: 30px; flex-wrap: wrap; }
+  .panel { background: #12121a; border: 1px solid #2a2a3a; border-radius: 8px; padding: 16px; }
+  .grid-panel { flex: 0 0 320px; }
+  .timeline-panel { flex: 1 1 600px; }
+
+  .polybius-grid { display: grid; grid-template-columns: repeat(5, 52px); gap: 3px; margin: 8px 0; }
+  .grid-cell {
+    width: 52px; height: 52px; display: flex; align-items: center; justify-content: center;
+    font-size: 1.4em; font-weight: bold; border-radius: 6px; position: relative;
+    transition: all 0.3s ease; cursor: default;
+  }
+  .grid-cell .count { position: absolute; bottom: 2px; right: 4px; font-size: 0.5em; color: #666; }
+  .grid-cell.row0 { background: #1a2332; border: 1px solid #2a4a6a; color: #82aaff; }
+  .grid-cell.row1 { background: #1a3322; border: 1px solid #2a6a4a; color: #7fdbca; }
+  .grid-cell.row2 { background: #332a1a; border: 1px solid #6a5a2a; color: #ffcb6b; }
+  .grid-cell.row3 { background: #33221a; border: 1px solid #6a3a2a; color: #f78c6c; }
+  .grid-cell.row4 { background: #2a1a33; border: 1px solid #5a2a6a; color: #c792ea; }
+  .grid-cell.row5 { background: #1a1a1a; border: 1px solid #3a3a3a; color: #666; }
+  .grid-cell.active { box-shadow: 0 0 12px rgba(255,255,255,0.4); transform: scale(1.1); z-index: 2; }
+  .grid-cell.ap { border-width: 2px; }
+  .grid-with-labels { display: flex; }
+  .row-labels { display: flex; flex-direction: column; gap: 3px; margin-right: 4px; }
+  .row-label { height: 52px; display: flex; align-items: center; color: #555; font-size: 0.75em; width: 24px; justify-content: flex-end; padding-right: 4px; }
+
+  .timeline { display: flex; gap: 2px; flex-wrap: wrap; margin: 8px 0; }
+  .ks-cell {
+    width: 36px; height: 56px; display: flex; flex-direction: column; align-items: center;
+    justify-content: center; border-radius: 4px; font-size: 0.85em; cursor: pointer;
+    transition: all 0.2s ease; position: relative;
+  }
+  .ks-cell:hover { transform: scale(1.15); z-index: 2; }
+  .ks-cell .letter { font-weight: bold; font-size: 1.1em; }
+  .ks-cell .pos { font-size: 0.55em; color: #555; margin-top: 1px; }
+  .ks-cell .rownum { font-size: 0.6em; margin-top: 1px; }
+  .ks-cell.same-row-next::after {
+    content: ''; position: absolute; right: -3px; top: 50%; width: 5px; height: 2px;
+    background: #ff5370; z-index: 3;
+  }
+  .crib-divider { width: 12px; display: flex; align-items: center; justify-content: center; color: #333; font-size: 1.2em; }
+
+  .row-seq { display: flex; gap: 1px; margin: 8px 0; align-items: flex-end; }
+  .row-bar { width: 30px; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; }
+
+  .stats { display: flex; gap: 20px; flex-wrap: wrap; margin: 10px 0; }
+  .stat { background: #181825; padding: 8px 14px; border-radius: 6px; border: 1px solid #2a2a3a; }
+  .stat .val { font-size: 1.4em; font-weight: bold; }
+  .stat .lbl { font-size: 0.75em; color: #666; }
+  .stat.significant .val { color: #f78c6c; }
+  .stat.not-sig .val { color: #666; }
+
+  .matrix { border-collapse: collapse; margin: 8px 0; }
+  .matrix td, .matrix th { width: 40px; height: 32px; text-align: center; font-size: 0.8em; border: 1px solid #2a2a3a; }
+  .matrix th { color: #666; background: #15151f; }
+  .matrix td.hot { background: #332a1a; color: #ffcb6b; font-weight: bold; }
+  .matrix td.diag { background: #2a1a1a; color: #f78c6c; font-weight: bold; }
+
+  .controls { margin: 10px 0; display: flex; gap: 10px; align-items: center; }
+  button { background: #2a2a3a; color: #e0e0e0; border: 1px solid #3a3a4a; border-radius: 4px; padding: 6px 14px; cursor: pointer; font-family: inherit; font-size: 0.85em; }
+  button:hover { background: #3a3a4a; }
+  button.active { background: #1a3a2a; border-color: #7fdbca; color: #7fdbca; }
+  .speed { width: 120px; }
+
+  .legend { display: flex; gap: 12px; flex-wrap: wrap; margin: 6px 0; font-size: 0.75em; }
+  .legend-item { display: flex; align-items: center; gap: 4px; }
+  .legend-swatch { width: 14px; height: 14px; border-radius: 3px; }
+  .note { color: #555; font-size: 0.8em; font-style: italic; margin: 4px 0; }
+</style>
+</head>
+<body>
+<div>
+  <h1>K4 Beaufort Keystream — Polybius Grid Walk</h1>
+  <div class="subtitle">
+    The K4 Beaufort keystream <code>JLJODEGKUKKKLOCGGBGOKTRU</code> shows anomalous clustering
+    when mapped to the 5-wide KRYPTOS-alphabet Polybius grid. Consecutive keystream values
+    land on the same grid row 10 out of 23 times (2.3x the random expectation, p=0.0057).
+  </div>
+
+  <div class="how-to">
+    <strong>How to use:</strong> Press <strong>Play Walk</strong> to animate the keystream path across the grid,
+    or use <strong>Step</strong> to advance one position at a time. The speed slider controls animation pace.
+    Red lines in the walk path indicate same-row transitions. Hover over any keystream cell
+    in the timeline to highlight its position on the grid.
+  </div>
+
+  <div class="stats" id="statsBar"></div>
+
+  <div class="controls">
+    <button id="btnStepBack" onclick="stepBack()">&laquo; Back</button>
+    <button id="btnPlay" onclick="togglePlay()">&#9654; Play</button>
+    <button id="btnReset" onclick="resetWalk()">&#9632; Reset</button>
+    <button id="btnStepFwd" onclick="stepForward()">Next &raquo;</button>
+    <span id="stepDisplay">Step 0/24</span>
+    <input type="range" class="scrubber" min="0" max="23" value="23" id="scrubber" title="Scrub through walk">
+  </div>
+
+  <div class="top-row">
+    <div class="panel">
+      <h2>KA Polybius Grid (5-wide)</h2>
+      <div class="legend" id="legendBar"></div>
+      <div class="grid-with-labels">
+        <div class="row-labels" id="rowLabels"></div>
+        <div class="polybius-grid" id="polybiusGrid"></div>
+      </div>
+      <div class="note">AP letters {G,K,O} have thick borders. Numbers = keystream frequency.</div>
+    </div>
+
+    <div class="panel">
+      <h2>Grid Walk Path</h2>
+      <svg class="walk-svg" id="walkSvg" viewBox="0 0 300 340" width="300" height="340"></svg>
+      <div class="note">Red lines = same-row transitions. Numbers = step order.</div>
+    </div>
+  </div>
+
+  <div class="bottom-section">
+    <div class="panel full-panel">
+      <h2>Keystream Sequence (color = Polybius row)</h2>
+      <div class="timeline" id="timeline"></div>
+    </div>
+    <div class="seq-row">
+      <div class="panel seq-panel">
+        <h2>Row Sequence</h2>
+        <div class="row-seq" id="rowSeq"></div>
+        <div class="note">Height = row number. Red shadow = same-row pair.</div>
+      </div>
+      <div class="panel seq-panel">
+        <h2>Column Sequence</h2>
+        <div class="row-seq" id="colSeq"></div>
+        <div class="note">Height = column. Blue shadow = same-column pair.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const KA = 'KRYPTOSABCDEFGHIJLMNQUVWXZ';
+const KEYSTREAM = 'JLJODEGKUKKKLOCGGBGOKTRU';
+const CRIB_LABELS = ['E','A','S','T','N','O','R','T','H','E','A','S','T','B','E','R','L','I','N','C','L','O','C','K'];
+const CRIB_POS = [21,22,23,24,25,26,27,28,29,30,31,32,33,63,64,65,66,67,68,69,70,71,72,73];
+const AP_LETTERS = new Set(['G','K','O']);
+const ROW_COLORS = ['#82aaff','#7fdbca','#ffcb6b','#f78c6c','#c792ea','#666'];
+const ROW_BG = ['#1a2332','#1a3322','#332a1a','#33221a','#2a1a33','#1a1a1a'];
+
+const gridPos = {};
+for (let i = 0; i < KA.length; i++) gridPos[KA[i]] = [Math.floor(i/5), i%5];
+
+const freq = {};
+KEYSTREAM.split('').forEach(c => freq[c] = (freq[c]||0) + 1);
+
+const ksData = KEYSTREAM.split('').map((ch, i) => ({
+  letter: ch, index: i, row: gridPos[ch][0], col: gridPos[ch][1],
+  cribPos: CRIB_POS[i], cribLetter: CRIB_LABELS[i], isAP: AP_LETTERS.has(ch)
+}));
+
+// ── Stats Bar ──
+const statsData = [
+  {val:'10/23', lbl:'Same-row pairs (2.3x)', cls:'significant'},
+  {val:'8/23', lbl:'Same-col pairs (1.7x)', cls:'not-sig'},
+  {val:'p=0.0057', lbl:'Row clustering MC', cls:'significant'},
+  {val:'p=0.075', lbl:'Col clustering MC', cls:'not-sig'},
+  {val:'12/24', lbl:'Distinct key values', cls:''}
+];
+const statsBar = document.getElementById('statsBar');
+statsData.forEach(s => {
+  const d = document.createElement('div');
+  d.className = 'stat ' + s.cls;
+  const v = document.createElement('div'); v.className = 'val'; v.textContent = s.val;
+  const l = document.createElement('div'); l.className = 'lbl'; l.textContent = s.lbl;
+  d.appendChild(v); d.appendChild(l); statsBar.appendChild(d);
+});
+
+// ── Legend ──
+const legendBar = document.getElementById('legendBar');
+for (let r = 0; r < 5; r++) {
+  const item = document.createElement('div'); item.className = 'legend-item';
+  const sw = document.createElement('div'); sw.className = 'legend-swatch';
+  sw.style.background = ROW_BG[r]; sw.style.border = '1px solid ' + ROW_COLORS[r];
+  const txt = document.createTextNode('Row ' + r);
+  item.appendChild(sw); item.appendChild(txt); legendBar.appendChild(item);
+}
+
+// ── Row Labels ──
+const rowLabels = document.getElementById('rowLabels');
+for (let r = 0; r < 6; r++) {
+  const lbl = document.createElement('div'); lbl.className = 'row-label';
+  lbl.textContent = 'R' + r; rowLabels.appendChild(lbl);
+}
+
+// ── Polybius Grid ──
+const gridEl = document.getElementById('polybiusGrid');
+for (let i = 0; i < 30; i++) {
+  const r = Math.floor(i/5), c = i%5;
+  const cell = document.createElement('div');
+  const letter = i < KA.length ? KA[i] : '';
+  cell.className = 'grid-cell row' + r + (AP_LETTERS.has(letter) ? ' ap' : '');
+  if (i >= KA.length) { cell.style.opacity = '0.15'; }
+  cell.id = letter ? 'gcell-' + letter : '';
+  const span = document.createElement('span'); span.textContent = letter;
+  cell.appendChild(span);
+  if (letter && freq[letter]) {
+    const cnt = document.createElement('span'); cnt.className = 'count';
+    cnt.textContent = freq[letter]; cell.appendChild(cnt);
+  }
+  gridEl.appendChild(cell);
+}
+
+// ── Timeline ──
+const timelineEl = document.getElementById('timeline');
+ksData.forEach((d, i) => {
+  if (i === 13) {
+    const div = document.createElement('div'); div.className = 'crib-divider';
+    div.textContent = '|'; timelineEl.appendChild(div);
+  }
+  const cell = document.createElement('div');
+  cell.className = 'ks-cell';
+  cell.style.background = ROW_BG[d.row];
+  cell.style.border = '1px solid ' + ROW_COLORS[d.row] + '40';
+  if (i < 23 && ksData[i+1].row === d.row) cell.classList.add('same-row-next');
+  cell.id = 'ks-' + i;
+
+  const lt = document.createElement('span'); lt.className = 'letter';
+  lt.style.color = ROW_COLORS[d.row]; lt.textContent = d.letter;
+  const rn = document.createElement('span'); rn.className = 'rownum';
+  rn.style.color = ROW_COLORS[d.row] + '60'; rn.textContent = 'R' + d.row;
+  const ps = document.createElement('span'); ps.className = 'pos';
+  ps.textContent = d.cribLetter + '@' + d.cribPos;
+
+  cell.appendChild(lt); cell.appendChild(rn); cell.appendChild(ps);
+  cell.addEventListener('mouseenter', () => highlightStep(i));
+  timelineEl.appendChild(cell);
+});
+
+// ── Row Sequence Bars ──
+function buildSeqBars(container, getData, sameCheck, shadowColor) {
+  ksData.forEach((d, i) => {
+    const bar = document.createElement('div'); bar.className = 'row-bar';
+    const val = getData(d);
+    const h = 10 + val * 14;
+    const sameNext = i < 23 && sameCheck(d, ksData[i+1]);
+
+    const rl = document.createElement('span'); rl.style.cssText = 'font-size:0.7em;margin-bottom:2px;color:' + ROW_COLORS[d.row];
+    rl.textContent = d.letter;
+    const b = document.createElement('div'); b.className = 'bar';
+    b.style.cssText = 'width:24px;border-radius:3px 3px 0 0;height:' + h + 'px;background:' + ROW_COLORS[d.row] + (sameNext ? ';box-shadow:3px 0 0 ' + shadowColor : '');
+    const lb = document.createElement('span'); lb.style.cssText = 'font-size:0.6em;color:#555;margin-top:2px';
+    lb.textContent = (getData === getRow ? 'R' : 'C') + val;
+
+    bar.appendChild(rl); bar.appendChild(b); bar.appendChild(lb);
+    container.appendChild(bar);
+  });
+}
+function getRow(d) { return d.row; }
+function getCol(d) { return d.col; }
+buildSeqBars(document.getElementById('rowSeq'), getRow, (a,b) => a.row === b.row, '#ff5370');
+buildSeqBars(document.getElementById('colSeq'), getCol, (a,b) => a.col === b.col, '#5370ff');
+
+// ── Transition Matrix ──
+const trans = Array.from({length:6}, () => Array(6).fill(0));
+for (let i = 0; i < 23; i++) trans[ksData[i].row][ksData[i+1].row]++;
+const matEl = document.getElementById('transMatrix');
+const hdr = document.createElement('tr');
+const corner = document.createElement('th'); corner.textContent = ''; hdr.appendChild(corner);
+for (let c = 0; c < 6; c++) {
+  const th = document.createElement('th'); th.style.color = ROW_COLORS[c]; th.textContent = 'R'+c; hdr.appendChild(th);
+}
+matEl.appendChild(hdr);
+for (let r = 0; r < 6; r++) {
+  const tr = document.createElement('tr');
+  const rh = document.createElement('th'); rh.style.color = ROW_COLORS[r]; rh.textContent = 'R'+r; tr.appendChild(rh);
+  for (let c = 0; c < 6; c++) {
+    const td = document.createElement('td');
+    td.textContent = trans[r][c] || '';
+    if (r === c && trans[r][c] > 0) td.className = 'diag';
+    else if (trans[r][c] >= 2) td.className = 'hot';
+    tr.appendChild(td);
+  }
+  matEl.appendChild(tr);
+}
+
+// ── Walk SVG ──
+const svg = document.getElementById('walkSvg');
+const ns = 'http://www.w3.org/2000/svg';
+const CW = 52, CH = 52, PAD = 14, GAP = 3;
+
+const bgRect = document.createElementNS(ns, 'rect');
+bgRect.setAttribute('width', 280); bgRect.setAttribute('height', 340);
+bgRect.setAttribute('fill', '#0d0d15'); bgRect.setAttribute('rx', 8);
+svg.appendChild(bgRect);
+
+for (let i = 0; i < 30; i++) {
+  const r = Math.floor(i/5), c = i%5;
+  if (r === 5 && c > 0) continue;
+  const x = PAD + c*(CW+GAP), y = PAD + r*(CH+GAP);
+  const rect = document.createElementNS(ns, 'rect');
+  rect.setAttribute('x', x); rect.setAttribute('y', y);
+  rect.setAttribute('width', CW); rect.setAttribute('height', CH);
+  rect.setAttribute('rx', 6); rect.setAttribute('fill', ROW_BG[r]);
+  rect.setAttribute('stroke', ROW_COLORS[r]); rect.setAttribute('stroke-opacity', 0.3);
+  svg.appendChild(rect);
+  if (i < KA.length) {
+    const txt = document.createElementNS(ns, 'text');
+    txt.setAttribute('x', x+CW/2); txt.setAttribute('y', y+CH/2+5);
+    txt.setAttribute('fill', ROW_COLORS[r]); txt.setAttribute('fill-opacity', 0.4);
+    txt.setAttribute('text-anchor', 'middle'); txt.setAttribute('font-size', 14);
+    txt.setAttribute('font-family', 'monospace'); txt.textContent = KA[i];
+    svg.appendChild(txt);
+  }
+}
+
+const walkGroup = document.createElementNS(ns, 'g'); walkGroup.id = 'walkLines'; svg.appendChild(walkGroup);
+const walkDot = document.createElementNS(ns, 'circle');
+walkDot.setAttribute('r', 8); walkDot.setAttribute('fill', '#fff');
+walkDot.setAttribute('stroke', '#ff5370'); walkDot.setAttribute('stroke-width', 2);
+walkDot.setAttribute('visibility', 'hidden'); walkDot.id = 'walkDot'; svg.appendChild(walkDot);
+
+function gridCenter(r, c) { return { x: PAD + c*(CW+GAP) + CW/2, y: PAD + r*(CH+GAP) + CH/2 }; }
+
+let currentStep = -1, playing = false, playTimer = null;
+
+function highlightStep(idx) {
+  document.querySelectorAll('.grid-cell').forEach(c => c.classList.remove('active'));
+  const cell = document.getElementById('gcell-' + ksData[idx].letter);
+  if (cell) cell.classList.add('active');
+}
+
+function drawWalkTo(step) {
+  const group = document.getElementById('walkLines');
+  while (group.firstChild) group.removeChild(group.firstChild);
+  for (let i = 0; i <= step && i < ksData.length; i++) {
+    const d = ksData[i], p = gridCenter(d.row, d.col);
+    if (i > 0) {
+      const prev = ksData[i-1], pp = gridCenter(prev.row, prev.col);
+      const sameRow = prev.row === d.row;
+      const line = document.createElementNS(ns, 'line');
+      line.setAttribute('x1', pp.x); line.setAttribute('y1', pp.y);
+      line.setAttribute('x2', p.x); line.setAttribute('y2', p.y);
+      line.setAttribute('stroke', sameRow ? '#ff5370' : '#ffffff30');
+      line.setAttribute('stroke-width', sameRow ? 2.5 : 1);
+      if (!sameRow) line.setAttribute('stroke-dasharray', '4,3');
+      group.appendChild(line);
+    }
+    const txt = document.createElementNS(ns, 'text');
+    txt.setAttribute('x', p.x + ((i%3)-1)*6); txt.setAttribute('y', p.y - 12);
+    txt.setAttribute('fill', ROW_COLORS[d.row]); txt.setAttribute('text-anchor', 'middle');
+    txt.setAttribute('font-size', 9); txt.setAttribute('font-family', 'monospace');
+    txt.textContent = i + 1; group.appendChild(txt);
+  }
+  if (step >= 0 && step < ksData.length) {
+    const d = ksData[step], p = gridCenter(d.row, d.col);
+    walkDot.setAttribute('cx', p.x); walkDot.setAttribute('cy', p.y);
+    walkDot.setAttribute('fill', ROW_COLORS[d.row]); walkDot.setAttribute('visibility', 'visible');
+  }
+  currentStep = step;
+  document.getElementById('stepDisplay').textContent = 'Step ' + (step+1) + '/24';
+  highlightStep(Math.max(0, step));
+}
+
+function stepForward() { if (currentStep < 23) drawWalkTo(currentStep + 1); }
+function stepBack() { if (currentStep > 0) drawWalkTo(currentStep - 1); }
+function resetWalk() {
+  stopPlay(); currentStep = -1;
+  const g = document.getElementById('walkLines'); while (g.firstChild) g.removeChild(g.firstChild);
+  walkDot.setAttribute('visibility', 'hidden');
+  document.querySelectorAll('.grid-cell').forEach(c => c.classList.remove('active'));
+  document.getElementById('stepDisplay').textContent = 'Step 0/24';
+}
+function togglePlay() {
+  if (playing) return stopPlay();
+  playing = true;
+  document.getElementById('btnPlay').classList.add('active');
+  document.getElementById('btnPlay').textContent = 'Pause';
+  if (currentStep >= 23) resetWalk();
+  tick();
+}
+function stopPlay() {
+  playing = false; clearTimeout(playTimer);
+  document.getElementById('btnPlay').classList.remove('active');
+  document.getElementById('btnPlay').textContent = 'Play Walk';
+}
+function tick() {
+  if (!playing) return;
+  stepForward();
+  if (currentStep >= 23) return stopPlay();
+  playTimer = setTimeout(tick, parseInt(document.getElementById('speedSlider').value));
+}
+
+drawWalkTo(23);
+</script>
+</body>
+</html>

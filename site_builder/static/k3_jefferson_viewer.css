@@ -1,0 +1,252 @@
+/* k3_jefferson_viewer.css — K3 Jefferson Cipher Viewer */
+/* Scoped under .jv-page */
+
+.jv-page {
+  --bg-panel: #0f1018;
+  --bg-cell: #1a1e2e;
+  --bg-cell-hover: #252a3e;
+  --border: #1e2235;
+  --border-strong: #3a4060;
+  --text: #c8cdd8;
+  --text-dim: #6b7394;
+  --text-bright: #e8ecf4;
+  --accent: #5b7fff;
+  --accent-dim: rgba(91,127,255,0.15);
+  --ndyahr: #ff5c5c;
+  --ndyahr-bg: rgba(255,92,92,0.12);
+  --ndyahr-border: rgba(255,92,92,0.4);
+  --anchor: #ffd55b;
+  --anchor-bg: rgba(255,213,91,0.12);
+  --anchor-border: rgba(255,213,91,0.4);
+  --k3pt: #4ecdc4;
+  --k3pt-bg: rgba(78,205,196,0.1);
+  --readout: #a78bfa;
+  --readout-bg: rgba(167,139,250,0.08);
+  --positive: #ffd55b;
+  --negative: #ff5c5c;
+  --zero: #3a3f55;
+  --jv-radius: 4px;
+  --cell-w: 38px;
+  --cell-h: 36px;
+  --jv-gap: 2px;
+  --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+  --font-sans: 'Inter', system-ui, sans-serif;
+
+  color: var(--text);
+  font-family: var(--font-sans);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ── Header ────────────────────────────────────────────────── */
+.jv-page h1 {
+  font-family: var(--font-mono);
+  font-size: 1.5em;
+  font-weight: 700;
+  color: var(--text-bright);
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+  text-align: center;
+}
+.jv-page h1 span { color: var(--ndyahr); }
+
+.jv-page .subtitle {
+  text-align: center;
+  color: var(--text-dim);
+  font-size: 0.95em;
+  max-width: 700px;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+.jv-page .subtitle strong { color: var(--text); font-weight: 500; }
+
+/* ── How-to panel ──────────────────────────────────────────── */
+.jv-page .how-to {
+  background: rgba(91,127,255,0.06);
+  border: 1px solid rgba(91,127,255,0.15);
+  border-radius: 8px;
+  padding: 14px 18px;
+  margin-bottom: 20px;
+  font-size: 0.88em;
+  line-height: 1.6;
+  color: var(--text-dim);
+  max-width: 700px;
+  width: 100%;
+}
+.jv-page .how-to strong { color: var(--text); }
+.jv-page .how-to code {
+  font-family: var(--font-mono);
+  color: var(--accent);
+  font-size: 0.9em;
+  background: rgba(91,127,255,0.08);
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+
+/* ── Legend ─────────────────────────────────────────────────── */
+.jv-page .legend {
+  display: flex; flex-wrap: wrap; gap: 16px; justify-content: center;
+  margin-bottom: 16px; font-size: 0.85em; color: var(--text-dim);
+}
+.jv-page .leg { display: flex; align-items: center; gap: 6px; }
+.jv-page .sw { width: 14px; height: 14px; border-radius: 3px; border: 1px solid var(--border); flex-shrink: 0; }
+.jv-page .sw-ndyahr { background: var(--ndyahr-bg); border-color: var(--ndyahr-border); }
+.jv-page .sw-anchor { background: var(--anchor-bg); border-color: var(--anchor-border); }
+.jv-page .sw-k3pt   { background: var(--k3pt-bg); border-color: var(--k3pt); }
+.jv-page .sw-read   { background: var(--readout-bg); border-color: var(--readout); }
+
+/* ── Controls ──────────────────────────────────────────────── */
+.jv-page .controls {
+  display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
+  align-items: center; margin-bottom: 16px;
+}
+.jv-page .btn {
+  background: var(--bg-cell); color: var(--text); border: 1px solid var(--border);
+  padding: 7px 16px; cursor: pointer; font-family: var(--font-mono);
+  font-size: 0.82em; border-radius: 6px; transition: all 0.15s; white-space: nowrap;
+}
+.jv-page .btn:hover { background: var(--bg-cell-hover); border-color: var(--border-strong); }
+.jv-page .btn.active { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); }
+.jv-page .lock-label {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 0.82em; color: var(--text-dim); cursor: pointer;
+}
+.jv-page .lock-label input { cursor: pointer; accent-color: var(--accent); }
+
+/* ── Readout bar ───────────────────────────────────────────── */
+.jv-page .readout-bar {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 18px;
+  margin-bottom: 18px;
+  max-width: 100%;
+  overflow-x: auto;
+  width: 100%;
+}
+.jv-page .readout-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.jv-page .readout-label {
+  font-family: var(--font-mono);
+  font-size: 0.8em;
+  color: var(--readout);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.jv-page .readout-dir {
+  font-family: var(--font-mono);
+  font-size: 0.75em;
+  color: var(--text-dim);
+}
+
+/* Readout columns — HORIZONTAL layout (not vertical text) */
+.jv-page .readout-cols {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 2px 12px;
+  font-family: var(--font-mono);
+  align-items: baseline;
+}
+.jv-page .readout-col {
+  display: contents;
+}
+.jv-page .readout-col-num {
+  font-size: 0.75em;
+  color: var(--text-dim);
+  text-align: right;
+  white-space: nowrap;
+}
+.jv-page .readout-col-text {
+  font-size: 0.85em;
+  color: var(--readout);
+  letter-spacing: 2px;
+  word-break: break-all;
+  line-height: 1.5;
+  /* Override the old vertical mode */
+  writing-mode: horizontal-tb;
+  text-orientation: mixed;
+  max-height: none;
+}
+
+/* ── Grid panel ────────────────────────────────────────────── */
+.jv-page .panel-wrap { display: flex; justify-content: center; overflow-x: auto; max-width: 100%; }
+.jv-page .jv-panel { background: var(--bg-panel); border: 1px solid var(--border); border-radius: 10px; padding: 16px 14px; display: inline-block; }
+
+.jv-page .col-nums { display: flex; gap: var(--jv-gap); margin-left: 80px; margin-bottom: 4px; }
+.jv-page .col-n { width: var(--cell-w); text-align: center; font-family: var(--font-mono); font-size: 0.65em; color: var(--text-dim); flex-shrink: 0; }
+
+.jv-page .row { display: flex; align-items: center; margin-bottom: var(--jv-gap); gap: 4px; }
+.jv-page .row-num { min-width: 24px; text-align: right; font-family: var(--font-mono); font-size: 0.72em; color: var(--text-dim); flex-shrink: 0; }
+.jv-page .arrow {
+  background: var(--bg-cell); color: var(--text-dim); border: 1px solid var(--border);
+  width: 24px; height: var(--cell-h); cursor: pointer; font-size: 0.85em;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: var(--jv-radius); transition: all 0.12s; user-select: none; flex-shrink: 0; padding: 0;
+}
+.jv-page .arrow:hover { background: var(--bg-cell-hover); border-color: var(--border-strong); color: var(--text); }
+.jv-page .arrow:active { background: var(--accent-dim); border-color: var(--accent); }
+
+.jv-page .cells { display: flex; gap: var(--jv-gap); cursor: grab; touch-action: none; }
+.jv-page .cells:active { cursor: grabbing; }
+
+.jv-page .cell {
+  width: var(--cell-w); height: var(--cell-h);
+  display: flex; align-items: center; justify-content: center;
+  background: var(--bg-cell); border: 1px solid var(--border);
+  font-family: var(--font-mono); font-size: 1em; font-weight: 600;
+  color: var(--text-bright); border-radius: var(--jv-radius);
+  transition: all 0.12s; user-select: none; flex-shrink: 0; position: relative;
+}
+.jv-page .cell:hover { background: var(--bg-cell-hover); }
+.jv-page .cell.ndyahr { background: var(--ndyahr-bg); color: var(--ndyahr); border-color: var(--ndyahr-border); }
+.jv-page .cell.anchor-cell { background: var(--anchor-bg); color: var(--anchor); border-color: var(--anchor-border); }
+.jv-page .cell.k3pt-on { background: var(--k3pt-bg); border-color: var(--k3pt); }
+.jv-page .cell .pt-char { position: absolute; bottom: -1px; right: 2px; font-size: 0.45em; color: var(--k3pt); pointer-events: none; }
+.jv-page .cell.col-highlight { border-color: var(--readout); box-shadow: 0 0 6px rgba(167,139,250,0.2); }
+.jv-page .cell .disp-arrow { position: absolute; top: -1px; left: 2px; font-size: 0.5em; opacity: 0.7; pointer-events: none; }
+
+.jv-page .offset {
+  min-width: 44px; height: var(--cell-h); display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono); font-size: 0.9em; font-weight: 700;
+  border-radius: var(--jv-radius); flex-shrink: 0; letter-spacing: 1px; border: 1px solid transparent;
+}
+.jv-page .offset.zero { background: rgba(255,255,255,0.02); color: var(--zero); border-color: var(--zero); }
+.jv-page .offset.pos  { background: rgba(255,213,91,0.1); color: var(--positive); border-color: rgba(255,213,91,0.3); }
+.jv-page .offset.neg  { background: rgba(255,92,92,0.1); color: var(--negative); border-color: rgba(255,92,92,0.3); }
+
+/* ── Reference card ────────────────────────────────────────── */
+.jv-page .ref-card {
+  background: var(--bg-panel); border: 1px solid var(--border);
+  border-radius: 10px; padding: 18px 22px; margin-top: 20px; max-width: 580px; width: 100%;
+}
+.jv-page .ref-title { font-family: var(--font-mono); font-size: 0.82em; color: var(--ndyahr); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 12px; }
+.jv-page .ref-table { width: 100%; border-collapse: collapse; font-family: var(--font-mono); font-size: 0.85em; }
+.jv-page .ref-table th { text-align: left; color: var(--text-dim); font-weight: 400; padding: 6px 10px; border-bottom: 1px solid var(--border); }
+.jv-page .ref-table td { padding: 6px 10px; color: var(--text); border-bottom: 1px solid rgba(30,34,53,0.8); }
+.jv-page .ref-table .ndcell { color: var(--ndyahr); font-weight: 700; }
+.jv-page .ref-table .acell  { color: var(--anchor); font-weight: 700; }
+.jv-page .ref-note { font-size: 0.78em; color: var(--text-dim); margin-top: 12px; line-height: 1.6; }
+
+@media (max-width: 900px) {
+  .jv-page { --cell-w: 30px; --cell-h: 30px; }
+  .jv-page .col-nums { margin-left: 68px; }
+  .jv-page .col-n { width: 30px; font-size: 0.5em; }
+  .jv-page .cell { font-size: 0.85em; }
+  .jv-page .arrow { width: 20px; height: 30px; font-size: 0.75em; }
+  .jv-page .offset { min-width: 36px; font-size: 0.75em; }
+  .jv-page .row-num { min-width: 18px; font-size: 0.6em; }
+}
+@media (max-width: 650px) {
+  .jv-page { --cell-w: 22px; --cell-h: 24px; }
+  .jv-page .col-nums { margin-left: 56px; }
+  .jv-page .col-n { width: 22px; }
+  .jv-page .cell { font-size: 0.7em; }
+  .jv-page .arrow { width: 16px; height: 24px; font-size: 0.65em; }
+  .jv-page .offset { min-width: 28px; font-size: 0.6em; }
+  .jv-page h1 { font-size: 1.2em; }
+}
