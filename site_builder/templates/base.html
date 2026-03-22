@@ -9,10 +9,12 @@
   <meta property="og:title" content="{% block og_title %}internal.com — The K4 Elimination Database{% endblock %}">
   <meta property="og:description" content="Rigorous, reproducible cryptanalysis of Kryptos K4. Documenting what has been tried and disproven so the community can focus on what remains open.">
   <meta property="og:image" content="https://internal.com/static/internal.png">
+  {% block og_url %}<meta property="og:url" content="https://internal.com/">{% endblock %}
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="internal.com — The K4 Elimination Database">
+  <meta name="twitter:title" content="{% block twitter_title %}internal.com — The K4 Elimination Database{% endblock %}">
   <meta name="twitter:description" content="Rigorous, reproducible cryptanalysis of Kryptos K4.">
   <meta name="twitter:image" content="https://internal.com/static/internal.png">
+  {% block canonical %}{% endblock %}
   <title>{% block title %}internal.com{% endblock %}</title>
   <link rel="stylesheet" href="/static/fonts/fonts.css">
   <link rel="stylesheet" href="/static/style.css">
@@ -40,6 +42,8 @@
       <li><a href="/workbench/">Workbench</a></li>
       <li><a href="/vic-workbench/">VIC Cipher</a></li>
       <li><a href="/cylinder-viewer/">Cylinder</a></li>
+      <li><a href="/polybius-walk/">Polybius Walk</a></li>
+      <li><a href="/k3-jefferson-viewer/">K3 Jefferson</a></li>
       <li><a href="/submit/">Submit</a></li>
       <li><a href="/faq/">FAQ</a></li>
       <li><a href="/about-kryptos/">About</a></li>
