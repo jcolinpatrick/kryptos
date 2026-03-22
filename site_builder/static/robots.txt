@@ -1,0 +1,35 @@
+# internal.com — robots.txt
+# Research site: all public content is indexable.
+# Block scanner noise and private paths.
+
+User-agent: *
+Allow: /
+
+# Block paths that don't exist (reduce 404 noise)
+Disallow: /wp-admin/
+Disallow: /wp-content/
+Disallow: /wp-includes/
+Disallow: /cgi-bin/
+Disallow: /admin/
+Disallow: /.env
+Disallow: /.git/
+Disallow: /.aws/
+Disallow: /.well-known/
+
+# Block private/auth-protected areas
+Disallow: /stats/
+Disallow: /api/
+Disallow: /db/
+
+# Sitemap
+Sitemap: https://internal.com/sitemap.xml
+
+# Crawl-delay for aggressive bots
+User-agent: AhrefsBot
+Crawl-delay: 10
+
+User-agent: MJ12bot
+Crawl-delay: 10
+
+User-agent: SemrushBot
+Crawl-delay: 10
