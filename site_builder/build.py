@@ -114,17 +114,19 @@ def build():
         "total_configs_disproven": total_configs_disproven,
     }
 
-    # 6) Prepare output directory (preserve stats/ which is managed by GoAccess)
+    # 6) Prepare output directory
+    #    Preserve stats/ (GoAccess) and static/ (avoid transient 404s for
+    #    fonts/CSS/JS while HTML pages are being regenerated — static assets
+    #    are overwritten in step 10 anyway).
     if os.path.exists(OUTPUT_DIR):
         for entry in os.listdir(OUTPUT_DIR):
-            if entry == "stats":
+            if entry in ("stats", "static"):
                 continue
             entry_path = os.path.join(OUTPUT_DIR, entry)
             if os.path.isdir(entry_path):
                 shutil.rmtree(entry_path)
             else:
                 os.remove(entry_path)
-    os.makedirs(OUTPUT_DIR, exist_ok=True)
 
     # 7) Build category browse data
     categories_for_browse = []
@@ -273,6 +275,30 @@ def build():
     _build_cylinder_viewer(global_ctx)
     pages_built += 1
 
+    # Polybius Walk Viewer (standalone → CSP-compliant with site chrome)
+    _build_standalone_viewer(
+        src_name="polybius_walk.html",
+        out_slug="polybius-walk",
+        title="Polybius Grid Walk — kryptosbot.com",
+        css_file="polybius_walk.css",
+        js_file="polybius_walk.js",
+        page_class="pw-page",
+        global_ctx=global_ctx,
+    )
+    pages_built += 1
+
+    # K3 Jefferson Viewer (standalone → CSP-compliant with site chrome)
+    _build_standalone_viewer(
+        src_name="k3_jefferson_viewer.html",
+        out_slug="k3-jefferson-viewer",
+        title="K3 Jefferson Viewer — kryptosbot.com",
+        css_file="k3_jefferson_viewer.css",
+        js_file="k3_jefferson_viewer.js",
+        page_class="jv-page",
+        global_ctx=global_ctx,
+    )
+    pages_built += 1
+
     # Report error
     _render(env, "report_error.html", "report-error/index.html", global_ctx)
     pages_built += 1
@@ -294,12 +320,22 @@ def build():
     n_indexed = write_search_index(eliminations, search_index_path)
     print(f"\n  Search index: {n_indexed} documents → {search_index_path}")
 
+    # 9b) Generate sitemap.xml
+    _write_sitemap(eliminations, tree, OUTPUT_DIR)
+    print("  sitemap.xml generated")
+
     # 10) Copy static assets (including subdirectories like fonts/)
+    # Also copy robots.txt to site root (not under /static/)
     print("\nCopying static assets...")
     static_out = os.path.join(OUTPUT_DIR, "static")
     os.makedirs(static_out, exist_ok=True)
     for fname in os.listdir(STATIC_DIR):
         src = os.path.join(STATIC_DIR, fname)
+        # robots.txt goes to site root, not /static/
+        if fname == "robots.txt":
+            shutil.copy2(src, os.path.join(OUTPUT_DIR, fname))
+            print(f"  {fname} (→ site root)")
+            continue
         dst = os.path.join(static_out, fname)
         if os.path.isdir(src):
             shutil.copytree(src, dst, dirs_exist_ok=True)
@@ -322,6 +358,115 @@ def build():
     print(f"  Output directory: {OUTPUT_DIR}")
     print(f"  Total configs disproven: {total_configs_disproven}")
     print("=" * 60)
+
+
+def _build_standalone_viewer(
+    src_name: str,
+    out_slug: str,
+    title: str,
+    css_file: str,
+    js_file: str,
+    page_class: str,
+    global_ctx: dict,
+):
+    """Build a standalone HTML viewer into the site with CSP compliance.
+
+    Strips inline <style> and <script>, injects site chrome (banner, nav,
+    footer), wraps body content in a scoping class, and links to external
+    CSS/JS files.
+    """
+    import re
+
+    standalone_dir = os.path.join(os.path.dirname(__file__), "standalone")
+    src_path = os.path.join(standalone_dir, src_name)
+    with open(src_path) as f:
+        html = f.read()
+
+    # Extract body content (between <body> and </body>)
+    body_match = re.search(r'<body[^>]*>(.*?)</body>', html, re.DOTALL)
+    if not body_match:
+        print(f"  WARNING: Could not extract body from {src_name}")
+        return
+    body_content = body_match.group(1)
+
+    # Remove any inline <script> blocks from body content
+    body_content = re.sub(r'<script\b[^>]*>.*?</script>', '', body_content, flags=re.DOTALL)
+
+    # Remove onclick attributes (CSP: event listeners are in external JS)
+    body_content = re.sub(r'\s+onclick="[^"]*"', '', body_content)
+
+    # Build the full page with site chrome
+    counter = global_ctx.get("total_configs_disproven", "")
+
+    page_html = f'''<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="kryptosbot.com — The K4 Elimination Database.">
+  <meta property="og:title" content="{title}">
+  <meta property="og:site_name" content="kryptosbot.com">
+  <meta property="og:image" content="https://kryptosbot.com/static/kryptosbot.png">
+  <link rel="icon" type="image/png" href="/static/kryptosbot.png">
+  <link rel="stylesheet" href="/static/fonts/fonts.css">
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="stylesheet" href="/static/{css_file}">
+  <title>{title}</title>
+</head>
+<body>
+  <div class="disproven-banner">
+    <span class="disproven-count">{counter}</span>
+    <span class="disproven-label">configurations tested and eliminated</span>
+  </div>
+
+  <nav>
+    <ul>
+      <li><strong><a href="/" class="nav-brand"><img src="/static/kryptosbot.png" alt="" class="nav-logo">kryptosbot</a></strong></li>
+    </ul>
+    <input type="checkbox" id="nav-toggle" class="nav-toggle" aria-label="Toggle navigation">
+    <label for="nav-toggle" class="nav-toggle-label" aria-hidden="true">
+      <span></span><span></span><span></span>
+    </label>
+    <ul class="nav-links">
+      <li><a href="/browse/">Browse</a></li>
+      <li><a href="/methodology/">Methodology</a></li>
+      <li><a href="/research-questions/">Research</a></li>
+      <li><a href="/workbench/">Workbench</a></li>
+      <li><a href="/vic-workbench/">VIC Cipher</a></li>
+      <li><a href="/cylinder-viewer/">Cylinder</a></li>
+      <li><a href="/polybius-walk/">Polybius Walk</a></li>
+      <li><a href="/k3-jefferson-viewer/">K3 Jefferson</a></li>
+      <li><a href="/submit/">Submit</a></li>
+      <li><a href="/faq/">FAQ</a></li>
+      <li><a href="/about-kryptos/">About</a></li>
+    </ul>
+  </nav>
+
+  <main class="container">
+    <div class="{page_class}">
+{body_content}
+    </div>
+  </main>
+
+  <footer class="container">
+    <hr>
+    <p>
+      Built by <a href="/about-me/">Colin Patrick</a> &amp; <a href="https://claude.ai">Claude</a>
+      &middot; <a href="https://github.com/jcolinpatrick/kryptos">Source</a>
+      &middot; <a href="/terms/">Terms</a>
+      &middot; <a href="/report-error/">Report error</a>
+    </p>
+    <p><small>Not affiliated with the CIA, Jim Sanborn, Ed Scheidt, or the Kryptos Keepers. This site does not know the solution.</small></p>
+  </footer>
+
+  <script src="/static/{js_file}"></script>
+</body>
+</html>'''
+
+    out_dir = os.path.join(OUTPUT_DIR, out_slug)
+    os.makedirs(out_dir, exist_ok=True)
+    with open(os.path.join(out_dir, "index.html"), "w") as f:
+        f.write(page_html)
 
 
 def _build_cylinder_viewer(global_ctx: dict):
@@ -422,6 +567,8 @@ def _build_cylinder_viewer(global_ctx: dict):
       <li><a href="/workbench/">Workbench</a></li>
       <li><a href="/vic-workbench/">VIC Cipher</a></li>
       <li><a href="/cylinder-viewer/">Cylinder</a></li>
+      <li><a href="/polybius-walk/">Polybius Walk</a></li>
+      <li><a href="/k3-jefferson-viewer/">K3 Jefferson</a></li>
       <li><a href="/submit/">Submit</a></li>
       <li><a href="/faq/">FAQ</a></li>
       <li><a href="/about-kryptos/">About</a></li>
@@ -529,6 +676,59 @@ def _group_research_questions(
         result.append(("Tier 4: Background", tier_4))
 
     return result
+
+
+def _write_sitemap(eliminations: list, tree: dict, output_dir: str):
+    """Generate sitemap.xml for search engine discovery."""
+    from datetime import date
+
+    base = "https://kryptosbot.com"
+    today = date.today().isoformat()
+
+    urls = []
+
+    # Static pages with priority
+    static_pages = [
+        ("/", "1.0", "weekly"),
+        ("/browse/", "0.9", "weekly"),
+        ("/methodology/", "0.7", "monthly"),
+        ("/research-questions/", "0.7", "weekly"),
+        ("/recent/", "0.8", "daily"),
+        ("/search/", "0.5", "monthly"),
+        ("/submit/", "0.6", "monthly"),
+        ("/workbench/", "0.6", "monthly"),
+        ("/vic-workbench/", "0.5", "monthly"),
+        ("/cylinder-viewer/", "0.5", "monthly"),
+        ("/faq/", "0.4", "monthly"),
+        ("/about-kryptos/", "0.5", "monthly"),
+        ("/about-me/", "0.3", "monthly"),
+        ("/terms/", "0.1", "yearly"),
+    ]
+    for path, priority, freq in static_pages:
+        urls.append(f'  <url>\n    <loc>{base}{path}</loc>\n'
+                     f'    <changefreq>{freq}</changefreq>\n'
+                     f'    <priority>{priority}</priority>\n  </url>')
+
+    # Category pages
+    for cat_name in tree:
+        urls.append(f'  <url>\n    <loc>{base}/browse/{cat_name}/</loc>\n'
+                     f'    <changefreq>weekly</changefreq>\n'
+                     f'    <priority>0.7</priority>\n  </url>')
+
+    # Elimination pages
+    for e in eliminations:
+        lastmod = e.date_tested[:10] if e.date_tested else today
+        urls.append(f'  <url>\n    <loc>{base}/elimination/{e.slug}/</loc>\n'
+                     f'    <lastmod>{lastmod}</lastmod>\n'
+                     f'    <changefreq>monthly</changefreq>\n'
+                     f'    <priority>0.5</priority>\n  </url>')
+
+    xml = ('<?xml version="1.0" encoding="UTF-8"?>\n'
+           '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+           + '\n'.join(urls) + '\n</urlset>\n')
+
+    with open(os.path.join(output_dir, "sitemap.xml"), "w") as f:
+        f.write(xml)
 
 
 if __name__ == "__main__":
