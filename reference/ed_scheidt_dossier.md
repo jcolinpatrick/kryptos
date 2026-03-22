@@ -8,20 +8,38 @@
 ## 1. BIOGRAPHY
 
 ### Early Life & Education
-- **Born**: July 20, 1939
+- **Born**: July 20, 1939, San Bernardino County, California
 - **High school**: Cor Jesu High School (now Brother Martin High School), New Orleans, LA — graduated 1957
-- **B.A.**: University of Maryland
-- **M.S.**: George Washington University
+- **B.A.**: Business Administration, University of Maryland (1970)
+- **M.S.**: Telecommunications, George Washington University (1975)
 - Scheidt later reflected on Kryptos: "It took me back to the math days of Cor Jesu... the math principles were fundamentally the same as we heard over 50 years ago." [Brother Martin alumni magazine, Oct 2010]
 
+### Military Service (1957–1963)
+- Entered the **Army** after high school graduation in 1957, later Army Reserves
+- Placed with a **military intelligence unit** focused on **signals intelligence (SIGINT)** [CIA biography, 2008]
+- Took cryptography classes from the **Army and the NSA** during military service [Scheidt's own words, CIA biography]: "Cryptography was the purview of the government and military. I took my cryptography classes from the Army and the National Security Agency (NSA) during my time in the military."
+- **NOTE**: Scheidt was NEVER employed by NSA. He took training courses from NSA while serving in Army signals intelligence. His employer was the US Army, then the CIA. [Corrected 2026-03-22 per Wikipedia with 34 references]
+
 ### CIA Career (1963–1989)
-- Joined CIA in **1963**, served 26 years in the **Office of Communications**
-- Rose to become **Chairman of the CIA Cryptographic Center** — nicknamed "The Wizard of Codes"
-- Final title: **Head of Cryptographic Programs**
+- Scheidt's SIGINT proficiency led his commander to recommend him for a federal agency [CIA biography, 2008]
+- Interviewed with and was hired by the CIA in **1963** as a **communications officer** in the **Office of Communications**
+- Rose to become **Chairman of the CIA Cryptographic Center** — nicknamed "The Wizard of Codes" by DCI Webster
+- Also described as a "key player in the Office of Communications" [CIA biography, 2008]
+- **12 years posted overseas**: Vientiane (1963), Damascus/Tel Aviv (1966–68), Manila (1971–73), Athens (1978–80) [Wikipedia, State Dept newsletters]
+- "My mother said that she could usually tell from the newspapers where her son was by which country was at war." [CIA biography, 2008]
+- As field communications officer: "we had radios that relied on paper encryption systems for voice security... **we used one-time pads and tape**" [CIA biography, 2008]
+- 1980s: became **communications security (COMSEC) officer**, working with Office of Security on technical matters [CIA biography, 2008]
 - Career overlapped with: KL-7 ADONIS era, Cold War SIGINT operations, Fialka/M-105 machine exploitation, nuclear PAL systems
 - Professional world: material exploitation of adversary ciphers, split-knowledge designs, operational security, source protection
+- On encryption: "a code is like a lock to keep honest people honest, but it can be broken if we are not watchful" [CIA biography, 2008]
 - Retired **December 1989** — the same month Sanborn wrote his letter to CIA employees (Dec 15, 1989)
 - Served under DCI **William H. Webster** (May 1987–Aug 1991), the "WW" referenced in K2
+
+### Post-CIA (Kryptos, per CIA biography)
+- "In 1990, he was asked to participate in the creation of a sculpture that would become famous: Kryptos" [CIA biography, 2008]
+- "Scheidt gave the sculptor, James Sandborn [sic], a crash course in cryptography and assisted in preparing its implementation in the sculptured text" [CIA biography, 2008]
+- "Both Jim and I were under scrutiny by the media who wanted badly to know the answer. To be honest, **I don't know the answer. After Jim finished the sculpture, I never went back to check the code.**" [CIA biography, 2008]
+- Also helped break a **13th century Middle Age manuscript** about alcohol distillation: "I guided the translator to what I thought was the methodology that provided the key" [CIA biography, 2008]
 
 ### Post-CIA Career
 - Co-founded **TecSec, Inc.** in 1990, immediately after retirement
