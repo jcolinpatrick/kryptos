@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block title %}FAQ &mdash; kryptosbot.com{% endblock %}
+{% block canonical %}<link rel="canonical" href="https://kryptosbot.com/faq/">{% endblock %}
 
 {% block content %}
 <h1>Frequently Asked Questions</h1>
@@ -91,10 +92,11 @@
     periodic keys. Sanborn confirmed two layers of encryption, and pure
     transposition is independently impossible (the ciphertext has 2 E&rsquo;s
     but the cribs require 3). The exact two-layer structure is unknown.
-    The information-theoretic deficit is roughly
+    The information-theoretic deficit is estimated at roughly
     138 bits &mdash; meaning on the order of 2<sup>138</sup> configurations
-    could satisfy the known constraints. (This bound depends on assumptions
-    about plaintext entropy.)
+    could satisfy the known constraints. (This is an order-of-magnitude estimate
+    that depends on assumptions about plaintext entropy and cipher structure;
+    it should not be treated as a precise bound.)
     Solving K4 requires identifying the specific <em>method</em>, not just
     trying all keys.
   </p>
