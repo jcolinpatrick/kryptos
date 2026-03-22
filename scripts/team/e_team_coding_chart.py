@@ -573,7 +573,7 @@ def main():
     print(f"    A chart on paper has LIMITED ENTRIES (fits on a page)")
     print(f"    Likely keyword-derived: one or two keywords generate")
     print(f"    both substitution and transposition parameters")
-    print(f"    Scheidt (NSA advisor): 'executable by hand'")
+    print(f"    Scheidt (CIA crypto chief): 'executable by hand'")
     print(f"    → Chart probably encodes a PROCEDURE, not raw data")
 
     # How many unique substitution tables can a chart encode?

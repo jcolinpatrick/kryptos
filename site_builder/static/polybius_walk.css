@@ -1,0 +1,144 @@
+/* polybius_walk.css — K4 Keystream Polybius Grid Walk */
+
+/* Widen the site container for this tool */
+.container:has(.pw-page) { max-width: 1400px; }
+
+.pw-page {
+  color: #c8cdd8;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+/* ── Typography ────────────────────────────────────────────── */
+.pw-page h1 {
+  color: #7fdbca;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.5em;
+  margin-bottom: 8px;
+  letter-spacing: 1px;
+}
+.pw-page h2 {
+  color: #c792ea;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.9em;
+  margin: 0 0 8px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+.pw-page .subtitle {
+  color: #8890a8; font-size: 0.95em; line-height: 1.6;
+  margin-bottom: 14px; max-width: 800px;
+}
+.pw-page .subtitle code {
+  font-family: 'JetBrains Mono', monospace; color: #7fdbca;
+  font-size: 0.9em; background: rgba(127,219,202,0.08);
+  padding: 1px 5px; border-radius: 3px;
+}
+.pw-page .how-to {
+  background: rgba(127,219,202,0.06); border: 1px solid rgba(127,219,202,0.15);
+  border-radius: 8px; padding: 12px 16px; margin-bottom: 14px;
+  font-size: 0.88em; line-height: 1.6; color: #8890a8; max-width: 800px;
+}
+.pw-page .how-to strong { color: #c8cdd8; }
+.pw-page .note { color: #555; font-size: 0.8em; font-style: italic; margin: 4px 0; }
+
+/* ── Stats ─────────────────────────────────────────────────── */
+.pw-page .stats { display: flex; gap: 10px; flex-wrap: wrap; margin: 10px 0 12px; }
+.pw-page .stat { background: #12121a; padding: 8px 14px; border-radius: 8px; border: 1px solid #2a2a3a; }
+.pw-page .stat .val { font-size: 1.2em; font-weight: bold; font-family: 'JetBrains Mono', monospace; }
+.pw-page .stat .lbl { font-size: 0.75em; color: #6b7394; margin-top: 2px; }
+.pw-page .stat.significant .val { color: #f78c6c; }
+.pw-page .stat.not-sig .val { color: #555; }
+
+/* ── Controls ──────────────────────────────────────────────── */
+.pw-page .controls {
+  margin: 0 0 14px; display: flex; gap: 8px;
+  align-items: center; flex-wrap: wrap;
+}
+.pw-page button {
+  background: #1a1e2e; color: #c8cdd8; border: 1px solid #2a2f45;
+  border-radius: 6px; padding: 7px 16px; cursor: pointer;
+  font-family: 'JetBrains Mono', monospace; font-size: 0.82em; transition: all 0.15s;
+}
+.pw-page button:hover { background: #252a3e; border-color: #3a4060; }
+.pw-page button.active { background: rgba(127,219,202,0.12); border-color: #7fdbca; color: #7fdbca; }
+.pw-page #stepDisplay { font-family: 'JetBrains Mono', monospace; font-size: 0.85em; color: #6b7394; }
+.pw-page .scrubber { flex: 1 1 140px; max-width: 240px; accent-color: #7fdbca; cursor: pointer; }
+
+/* ── Panel base ────────────────────────────────────────────── */
+.pw-page .panel {
+  background: #0f1018; border: 1px solid #1e2235;
+  border-radius: 10px; padding: 14px;
+}
+
+/* ── TOP ROW: Grid + Walk side by side ─────────────────────── */
+.pw-page .top-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+  align-items: start;
+}
+
+/* ── BOTTOM: Sequences full width ──────────────────────────── */
+.pw-page .bottom-section { display: flex; flex-direction: column; gap: 12px; }
+.pw-page .full-panel { width: 100%; }
+.pw-page .seq-row { display: flex; gap: 12px; }
+.pw-page .seq-panel { flex: 1 1 0; min-width: 0; }
+
+@media (max-width: 900px) {
+  .pw-page .top-row { flex-direction: column; }
+  .pw-page .seq-row { flex-direction: column; }
+}
+
+/* ── Polybius grid ─────────────────────────────────────────── */
+.pw-page .polybius-grid { display: grid; grid-template-columns: repeat(5, 52px); gap: 3px; margin: 8px 0; }
+.pw-page .grid-cell {
+  width: 52px; height: 52px; display: flex; align-items: center; justify-content: center;
+  font-size: 1.4em; font-weight: bold; border-radius: 6px;
+  font-family: 'JetBrains Mono', monospace; position: relative;
+  transition: all 0.3s ease; cursor: default;
+}
+.pw-page .grid-cell .count { position: absolute; bottom: 2px; right: 4px; font-size: 0.45em; color: #555; }
+.pw-page .grid-cell.row0 { background: #1a2332; border: 1px solid #2a4a6a; color: #82aaff; }
+.pw-page .grid-cell.row1 { background: #1a3322; border: 1px solid #2a6a4a; color: #7fdbca; }
+.pw-page .grid-cell.row2 { background: #332a1a; border: 1px solid #6a5a2a; color: #ffcb6b; }
+.pw-page .grid-cell.row3 { background: #33221a; border: 1px solid #6a3a2a; color: #f78c6c; }
+.pw-page .grid-cell.row4 { background: #2a1a33; border: 1px solid #5a2a6a; color: #c792ea; }
+.pw-page .grid-cell.row5 { background: #1a1a1a; border: 1px solid #3a3a3a; color: #666; }
+.pw-page .grid-cell.active { box-shadow: 0 0 14px rgba(255,255,255,0.35); transform: scale(1.12); z-index: 2; }
+.pw-page .grid-cell.ap { border-width: 2px; }
+.pw-page .grid-with-labels { display: flex; }
+.pw-page .row-labels { display: flex; flex-direction: column; gap: 3px; margin-right: 6px; }
+.pw-page .row-label {
+  height: 52px; display: flex; align-items: center; color: #555;
+  font-size: 0.7em; width: 24px; justify-content: flex-end; padding-right: 4px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* ── Legend ─────────────────────────────────────────────────── */
+.pw-page .legend { display: flex; gap: 14px; flex-wrap: wrap; margin: 6px 0; font-size: 0.8em; color: #6b7394; }
+.pw-page .legend-item { display: flex; align-items: center; gap: 5px; }
+.pw-page .legend-swatch { width: 14px; height: 14px; border-radius: 3px; }
+
+/* ── Timeline ──────────────────────────────────────────────── */
+.pw-page .timeline { display: flex; gap: 2px; flex-wrap: wrap; margin: 8px 0; }
+.pw-page .ks-cell {
+  width: 34px; height: 50px; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; border-radius: 5px;
+  font-size: 0.82em; cursor: pointer; transition: all 0.2s ease; position: relative;
+}
+.pw-page .ks-cell:hover { transform: scale(1.15); z-index: 2; }
+.pw-page .ks-cell .letter { font-weight: bold; font-size: 1.1em; font-family: 'JetBrains Mono', monospace; }
+.pw-page .ks-cell .pos { font-size: 0.5em; color: #555; margin-top: 1px; font-family: 'JetBrains Mono', monospace; }
+.pw-page .ks-cell .rownum { font-size: 0.55em; margin-top: 1px; font-family: 'JetBrains Mono', monospace; }
+.pw-page .ks-cell.same-row-next::after {
+  content: ''; position: absolute; right: -3px; top: 50%;
+  width: 5px; height: 2px; background: #ff5370; z-index: 3;
+}
+.pw-page .crib-divider { width: 14px; display: flex; align-items: center; justify-content: center; color: #333; font-size: 1.2em; }
+
+/* ── Sequence bars ─────────────────────────────────────────── */
+.pw-page .row-seq { display: flex; gap: 1px; margin: 8px 0; align-items: flex-end; }
+.pw-page .row-bar { width: 28px; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; }
+
+/* ── SVG walk ──────────────────────────────────────────────── */
+.pw-page .walk-svg { display: block; }
