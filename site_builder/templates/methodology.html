@@ -132,7 +132,7 @@
 </p>
 <h3>What Has Been Exhaustively Tested</h3>
 <p>
-  Over <strong>930 experiments</strong> spanning <strong>882 billion+ configurations</strong>
+  Over <strong>{{ total_experiments }} experiments</strong> spanning <strong>{{ total_configs }} configurations</strong>
   have been run, eliminating:
 </p>
 <ul>
@@ -168,8 +168,9 @@
   {B, G, I, K, O, W, Z} that appear disproportionately at null positions
   (p=6.7&times;10<sup>&minus;5</sup>, Monte Carlo 50M trials). These 7 letters
   correspond exactly to columns 0 and 3 of a 5-wide Polybius grid built from the
-  KRYPTOS keyword-mixed alphabet. This structure was independently confirmed by
-  Richard Bean&rsquo;s 2021 finding that 13/24 keystream values are multiples of 5.
+  KRYPTOS keyword-mixed alphabet. A convergent finding from disjoint position sets:
+  Richard Bean&rsquo;s 2021 analysis showed that 13/24 keystream values at crib positions
+  are multiples of 5 &mdash; the same 5-wide KA grid, approached from the opposite direction.
 </p>
 <p>
   The <strong>joint significance</strong> of the palette existing AND producing 13/24
