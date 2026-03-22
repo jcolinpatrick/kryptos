@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Methodology &mdash; internal.com{% endblock %}
+{% block og_title %}Methodology — internal.com{% endblock %}
+{% block canonical %}<link rel="canonical" href="https://internal.com/methodology/">{% endblock %}
 
 {% block content %}
 <h1>Methodology</h1>
@@ -48,6 +50,12 @@
     </tbody>
   </table>
 </div>
+<p>
+  These thresholds are conservative operational choices. Under a random key with
+  a 26-letter alphabet, the expected crib score is &sim;0.92/24 (binomial with p=1/26).
+  A score of 6 is already far beyond random expectation. The SIGNAL threshold at 18
+  is set high to account for underdetermination at large periods (see below).
+</p>
 
 <h2>Expected Random Scores by Period</h2>
 <p>
@@ -60,25 +68,24 @@
 <div class="table-wrap">
   <table>
     <thead>
-      <tr><th>Period</th><th>Expected Random Score</th><th>Discriminative?</th></tr>
+      <tr><th>Period</th><th>Approx. Expected Random Score</th><th>Discriminative?</th></tr>
     </thead>
     <tbody>
-      <tr><td>2&ndash;7</td><td>~8.2 / 24</td><td><strong>Yes</strong> &mdash; meaningful range</td></tr>
-      <tr><td>8</td><td>~9.6 / 24</td><td>Marginally</td></tr>
-      <tr><td>13</td><td>~13.5 / 24</td><td>Weak</td></tr>
-      <tr><td>17</td><td>~17.3 / 24</td><td>No &mdash; random matches 17+</td></tr>
-      <tr><td>19</td><td>~18.1 / 24</td><td>No</td></tr>
-      <tr><td>24</td><td>~19.2 / 24</td><td>No &mdash; random matches 19+</td></tr>
-      <tr><td>26</td><td>~20.0 / 24</td><td>No</td></tr>
+      <tr><td>2&ndash;7</td><td>&sim;8 / 24</td><td><strong>Yes</strong> &mdash; meaningful range</td></tr>
+      <tr><td>8</td><td>&sim;10 / 24</td><td>Marginally</td></tr>
+      <tr><td>13</td><td>&sim;14 / 24</td><td>Weak</td></tr>
+      <tr><td>17</td><td>&sim;17 / 24</td><td>No &mdash; random matches 17+</td></tr>
+      <tr><td>24</td><td>&sim;19 / 24</td><td>No &mdash; random matches 19+</td></tr>
+      <tr><td>26</td><td>&sim;20 / 24</td><td>No</td></tr>
     </tbody>
   </table>
 </div>
-
 <p>
-  <strong>Key insight:</strong> Only scores at period &le; 7 are meaningful
-  discriminators. All high scores at period &ge; 17 are false positives.
-  This is a mathematical property of underdetermination, not a limitation
-  of our testing.
+  These values are approximate and derived from the constraint structure at each period
+  (how many crib positions share each residue class). The key insight is structural:
+  at period &ge; 17, random keys routinely score above our SIGNAL threshold,
+  making high-period scores meaningless. Only scores at period &le; 7 are
+  reliable discriminators.
 </p>
 
 <h2>Bean Constraints</h2>
@@ -97,11 +104,13 @@
   These constraints are <em>variant-independent</em> &mdash; they hold whether the cipher
   is Vigen&egrave;re, Beaufort, or Variant Beaufort. Any valid solution must satisfy all
   Bean constraints. The full 242-pair inequality set, combined with a fingerprint
-  argument (key value O=14 appears at positions 24, 63, and 69, forcing any period to
-  divide gcd(39,45)=3, but the key has 12 distinct values), proves that
+  argument (the same keystream value appears at three crib positions whose pairwise
+  differences have gcd(39,45)=3, forcing any periodic key to have period dividing 3 &mdash;
+  but the key has 12 distinct values, ruling out period &le; 3), proves that
   <strong>no periodic key of any length</strong> &mdash; period 1 through infinity &mdash;
   can produce the K4 crib decryptions. This is a complete mathematical proof, not a search
-  result.
+  result. (The proof is actually stronger: the gcd across all 13 equal-key pairs is 1,
+  meaning only period 1 is consistent &mdash; trivially impossible with 12+ distinct key values.)
 </p>
 
 <h2>Two-System Model</h2>
@@ -132,14 +141,15 @@
 </p>
 <h3>What Has Been Exhaustively Tested</h3>
 <p>
-  Over <strong>{{ total_experiments }} experiments</strong> spanning <strong>{{ total_configs }} configurations</strong>
-  have been run, eliminating:
+  Over <strong>{{ total_experiments }} experiments</strong> spanning
+  <strong>{{ total_configs }} individual hypothesis evaluations</strong>
+  have been run (with overlaps across experiments), eliminating:
 </p>
 <ul>
   <li><strong>All periodic substitution</strong> (Vig/Beau/VBeau &times; AZ/KA &times; all periods): mathematical proof</li>
   <li><strong>All autokey variants</strong> (PT/CT &times; all primers): structural impossibility proof via crib-to-crib feedback</li>
-  <li><strong>All sub &times; transposition MITM</strong> (~1.2B configs): mono + periodic + autokey &times; 14 transposition families</li>
-  <li><strong>All VIC cipher models</strong> (1.32B+ configs): generic, narrative, K2-derived, historical params</li>
+  <li><strong>All sub &times; transposition MITM</strong> (~1.2B evaluations): mono + periodic + autokey &times; 14 transposition families</li>
+  <li><strong>All VIC cipher models</strong>: generic, narrative, K2-derived, historical params &mdash; extensive testing across multiple model variants</li>
   <li><strong>All digraphic ciphers</strong> (Four-Square, Playfair, Two-Square): single-layer ceiling 23/24 (overfitting)</li>
   <li><strong>All bespoke mechanisms</strong>: Gromark (8.74B), Feistel, Gronsfeld, Porta, fractionation, homophonic, Hill</li>
   <li><strong>Running key from 60K Gutenberg texts</strong> (106B offset-checks): zero signal</li>
@@ -161,14 +171,19 @@
   <li>The Weltzeituhr (Berlin Clock) has exactly <strong>24</strong> facets</li>
   <li>K3&rsquo;s encoding chart has exactly <strong>24</strong> rows (verified from worksheets)</li>
 </ol>
+<p>
+  <em>Note: The Quadruple-24 is suggestive, not proof. The recurrence of 24 across
+  independent dimensions of the puzzle is striking but could be coincidence.
+  The &ldquo;8 lines 73&rdquo; legal pad entry is the primary evidence for this model.</em>
+</p>
 
 <h3>The Null Palette</h3>
 <p>
   Statistical analysis has identified a <strong>null palette</strong> &mdash; a set of 7 letters
   {B, G, I, K, O, W, Z} that appear disproportionately at null positions
-  (p=6.7&times;10<sup>&minus;5</sup>, Monte Carlo 50M trials). These 7 letters
-  correspond exactly to columns 0 and 3 of a 5-wide Polybius grid built from the
-  KRYPTOS keyword-mixed alphabet. A convergent finding from disjoint position sets:
+  (p=6.7&times;10<sup>&minus;5</sup>, Monte Carlo 50M trials, position-shuffle null model).
+  These 7 letters correspond exactly to columns 0 and 3 of a 5-wide Polybius grid built
+  from the KRYPTOS keyword-mixed alphabet. A convergent finding from disjoint position sets:
   Richard Bean&rsquo;s 2021 analysis showed that 13/24 keystream values at crib positions
   are multiples of 5 &mdash; the same 5-wide KA grid, approached from the opposite direction.
 </p>
@@ -218,15 +233,15 @@
 
 <h2>Confidence Tiers</h2>
 <dl>
-  <dt>Tier 1 &mdash; Mathematical Proof (~99.9%)</dt>
+  <dt>Tier 1 &mdash; Mathematical Proof</dt>
   <dd>Algebraic proof that the method cannot produce the known plaintext. Permanently valid
       unless crib positions or ciphertext transcription are wrong.</dd>
-  <dt>Tier 2 &mdash; Exhaustive Search (~95%)</dt>
+  <dt>Tier 2 &mdash; Exhaustive Search</dt>
   <dd>Every possible configuration was tested under stated assumptions. Solid for the specific
       model tested, but does not eliminate multi-layer variants.</dd>
-  <dt>Tier 3 &mdash; Partial/Statistical (~40&ndash;70%)</dt>
+  <dt>Tier 3 &mdash; Partial/Statistical</dt>
   <dd>Sampling-based or incomplete coverage. May warrant re-testing under different assumptions.</dd>
-  <dt>Tier 4 &mdash; Untested (~0%)</dt>
+  <dt>Tier 4 &mdash; Untested</dt>
   <dd>Never properly tested. Fully open.</dd>
 </dl>
 
