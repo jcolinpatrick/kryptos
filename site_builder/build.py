@@ -223,6 +223,8 @@ def build():
     _render(env, "methodology.html", "methodology/index.html", {
         **global_ctx,
         "ct": CT,
+        "total_experiments": total_experiments,
+        "total_configs": total_configs_disproven,
     })
     pages_built += 1
 
