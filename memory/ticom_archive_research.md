@@ -8,7 +8,7 @@ type: reference
 
 ## Executive Summary
 
-The TICOM (Target Intelligence Committee) archive, declassified in 2009, contains 328+ documents captured by Allied forces from German and Axis cryptographic services during and after WWII. Ed Scheidt served in the Armed Forces Security Agency (NSA predecessor) and then the CIA for 26 years (1963-1989), specializing in one-time pad systems. He would have had direct professional exposure to TICOM material and the cipher techniques described therein. Several cipher systems documented in TICOM reports share structural features with K4's confirmed two-system model (substitution + steganographic masking).
+The TICOM (Target Intelligence Committee) archive, declassified in 2009, contains 328+ documents captured by Allied forces from German and Axis cryptographic services during and after WWII. Ed Scheidt served in the US Army (signals intelligence) before joining the CIA in 1963, where he served 26 years (1963-1989) specializing in one-time pad systems. He took cryptography classes from the Army and NSA during his military service [CIA biography, 2008], giving him professional exposure to TICOM-era cipher techniques. Several cipher systems documented in TICOM reports share structural features with K4's confirmed two-system model (substitution + steganographic masking).
 
 This research identifies **seven cipher families** from the TICOM-era ecosystem with direct relevance to K4, ranked by structural alignment with K4's known properties.
 
@@ -65,7 +65,7 @@ This research identifies **seven cipher families** from the TICOM-era ecosystem 
 2. **Chain addition as key generation.** K4's corrected keystream has IC=0.029 (below random), consistent with chain-addition-generated keys.
 3. **Variable-length encoding produces expansion.** Straddling checkerboard turns N letters into ~1.3N digits — analogous to 73 PT chars expanding to 97 CT chars (ratio 1.33).
 4. **Disrupted transposition = irregular mask.** The "disrupted" concept (triangular blanking of grid positions) is functionally similar to null insertion — certain positions are unused, creating irregular patterns.
-5. **Scheidt's background.** Scheidt was NSA/ASA before CIA. He would have studied the VIC cipher extensively — it was the most famous unbroken hand cipher in NSA history at the time. "Most often he used one-time pad paper systems" — VIC is the pinnacle of non-OTP hand ciphers.
+5. **Scheidt's background.** Scheidt served in Army signals intelligence before joining CIA in 1963. He took cryptography training from NSA during his military service [CIA biography, 2008]. He would have studied the VIC cipher — it was the most famous unbroken hand cipher. "Most often he used one-time pad paper systems" — VIC is the pinnacle of non-OTP hand ciphers.
 6. **Hand-executable.** VIC was designed for field agents with no access to machines. Sanborn could execute it with Scheidt's coaching.
 
 ### K4 Incompatibilities — KEY ISSUE
@@ -94,7 +94,7 @@ This research identifies **seven cipher families** from the TICOM-era ecosystem 
 ### K4 Relevance
 - The Nihilist family demonstrates the PATTERN of Soviet cipher evolution that Scheidt would have studied: layered composition of simple operations.
 - Rote Kapelle's book-based additive is analogous to running key from a text — and running key is the ONE structured non-periodic model surviving all Bean constraints for K4.
-- TICOM's documentation of these systems means they were in the NSA/ASA knowledge base when Scheidt was trained.
+- TICOM's documentation of these systems means they were in the intelligence community knowledge base when Scheidt was trained (Army SIGINT + NSA crypto courses).
 
 ---
 
@@ -197,7 +197,7 @@ Two systems documented:
 - Soviet partisans used **stencil-based transposition** — a physical grille/mask, exactly the mechanism hypothesized for K4.
 - The three-step agent cipher (memorized table + encode + book-passage additive) is structurally similar to K4's hypothesized architecture.
 - Addition without carrying (mod 10) is the standard across ALL Soviet cipher layers.
-- Scheidt's career in the Armed Forces Security Agency (NSA predecessor) would have included study of exactly these Soviet systems.
+- Scheidt's military SIGINT service and NSA crypto training would have included study of exactly these Soviet systems.
 
 ---
 
@@ -226,7 +226,7 @@ Ed Scheidt's career timeline places him in direct contact with TICOM-derived kno
 - **Kryptos (late 1980s):** "Presented several options for each encryption" to Sanborn
 
 Key facts about Scheidt's knowledge base:
-1. The VIC cipher was discovered in 1953 and studied at NSA. Scheidt entered ASA around 1957 — the VIC would have been a primary training case study.
+1. The VIC cipher was discovered in 1953 and studied at NSA. Scheidt entered Army signals intelligence around 1957 and took NSA crypto classes — the VIC would have been a training case study.
 2. TICOM documents were available within the intelligence community from 1946 onward, declassified publicly only in 2009.
 3. Scheidt explicitly confirmed: "I used a bit of stego when designing the fourth part" — steganographic null insertion is a known technique in TICOM-documented systems (RS 44 mask, Ubchi null insertion, Soviet partisan stencils).
 4. Scheidt: "The masking technique may not be [a known technique]" — potentially bespoke, but INSPIRED by known TICOM-era techniques.
