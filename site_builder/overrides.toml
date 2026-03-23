@@ -2,6 +2,136 @@
 # These override or supplement data loaded from DBs and result JSON files.
 # Keyed by elimination ID (experiment_id or hypothesis_id).
 
+# --- 2026-03-23: Downgraded from INTERESTING to NOISE ---
+# All 7 were VIC/straddling checkerboard variants scoring 0/24 (6 of 7)
+# or 10/24 at 257M configs (noise at that scale). All Bean FAIL.
+# VIC pipeline comprehensively eliminated: vic_model_elimination.md (130.7M),
+# vic_narrative_sweep_elimination.md (922.4M), straddling checkerboard
+# structurally eliminated (produces digits, not letters).
+
+[elimination.e_full_vic_pipeline_k4]
+verdict = "NOISE"
+
+[elimination.e_k2_checkerboard_decode]
+verdict = "NOISE"
+
+[elimination.e_opgold_berlin_tunnel_v2]
+verdict = "NOISE"
+
+[elimination.e_straddling_checkerboard_k4]
+verdict = "NOISE"
+
+[elimination.e_vic_lineh_k2_direct]
+verdict = "NOISE"
+
+[elimination.e_vic_ndyar_keygroup]
+verdict = "NOISE"
+
+[elimination.f_vic_nonstandard_keyschedule_v1]
+verdict = "NOISE"
+
+# --- 2026-03-23: Comprehensive verdict audit ---
+# Standardizing all non-standard verdicts to the canonical set:
+# NOISE (0-9), INTERESTING (10-17), SIGNAL (18-23), FULL MATCH (24).
+# Cross-referenced with MEMORY.md, elimination_ledger, and project memory files.
+
+# SIGNAL → NOISE: autokey is PROVEN IMPOSSIBLE per MEMORY.md
+# ("All autokey (all forms) + arbitrary transposition"). Score 11/24 is noise.
+[elimination.e_combined_ptct_autokey]
+verdict = "NOISE"
+
+# SIGNAL → NOISE: SA running key produces underdetermination artifacts
+# (Sessions 12, 16-17 in eliminations.md). SA achieves word-salad at 24/24
+# by construction — no score from SA is meaningful.
+[elimination.e_model_b_running_key_sa]
+verdict = "NOISE"
+
+# INVESTIGATE → NOISE: Morse binary null mask tested in Session 7 (E-01)
+# as "NO SIGNAL". No score recorded = noise.
+[elimination.e_morse_binary_null_mask_01]
+verdict = "NOISE"
+
+# INVESTIGATE → NOISE: MCMC/SA attacks produce underdetermination artifacts
+# per Sessions 12, 16-17. No meaningful score.
+[elimination.fresh_mcmc_attack]
+verdict = "NOISE"
+
+# PROMISING → NOISE: Letter shape correlation is a statistical observation
+# with no decryption signal. Not a cipher test.
+[elimination.letter_shape_null_correlation]
+verdict = "NOISE"
+
+# NEAR_MISS → NOISE: 1.28M configs of homophonic + transposition.
+# Straddling checkerboard structurally eliminated (Session 17: produces
+# digits, not letters). No score recorded.
+[elimination.e_team_targeted_homo_trans]
+verdict = "NOISE"
+
+# LIKELY_OPEN → NOISE: Homophonic + transposition contradiction.
+# Same structural elimination as above.
+[elimination.e_team_homophonic_trans]
+verdict = "NOISE"
+
+# FEASIBLE_BUT_WEAK → NOISE: Mixed-variant Bean constraint enumeration.
+# Bean constraints are tautologically satisfied by crib data (Session 13,
+# E-S-28). No decryption signal.
+[elimination.e_mixed_variant_bean]
+verdict = "NOISE"
+
+# elevated_noise → NOISE: Progressive running key, 1.06M configs.
+# "Slightly different tableau" = linear slope on running key. No signal.
+[elimination.e_progressive_running_key_01]
+verdict = "NOISE"
+
+# OPEN → NOISE: KA extended gaps analysis. No decryption test, no score.
+[elimination.e_ka_02_extended_gaps]
+verdict = "NOISE"
+
+# WEAK → NOISE: VIC narrative sweep, 922.4M configs, best 9/24.
+# Comprehensively eliminated per vic_narrative_sweep_elimination.md.
+[elimination.f_vic_narrative_sweep_v1]
+verdict = "NOISE"
+
+# WEAK → NOISE: VIC Beaufort hybrid, 254K configs. Same elimination.
+[elimination.e_vic_beaufort_hybrid]
+verdict = "NOISE"
+
+# UNDERDETERMINED → NOISE: These are computational results, not open questions.
+# Underdetermination is a property of the method, not a verdict on the site.
+[elimination.e_cfm_02]
+verdict = "NOISE"
+
+[elimination.e_cfm_08]
+verdict = "NOISE"
+
+[elimination.e_team_nomenclator_super]
+verdict = "NOISE"
+
+# STRUCTURALLY_ELIMINATED → ELIMINATED: Correct concept, wrong label.
+[elimination.E-PLAYFAIR-01]
+verdict = "ELIMINATED"
+
+# INTERESTING (16/24) → NOISE: E-HYBRID-02 score of 16/24 is below
+# the 18/24 SIGNAL threshold and consistent with noise at high periods.
+[elimination.E-HYBRID-02]
+verdict = "NOISE"
+
+# INTERESTING → NOISE: Gutenberg running key, 106B offset-checks,
+# best 10/24 = noise at that scale. Per MEMORY.md: "Running key from
+# 60,230 publicly available English texts... produced zero signal."
+[elimination.Gutenberg Running Key Scan (Phase 4)]
+verdict = "NOISE"
+
+# NOISE variants → NOISE: Standardize non-canonical noise labels.
+[elimination.E-CFM-06]
+verdict = "NOISE"
+
+[elimination.E-K123-RUNNING-KEY]
+verdict = "NOISE"
+
+[elimination.E-NDYAHR-K123CT-UNIFIED]
+verdict = "NOISE"
+
 [elimination.E-BESPOKE-02-ABSCISSA-LINEAR]
 title = "Abscissa-derived linear keys"
 category = "bespoke"
