@@ -182,10 +182,12 @@
   Statistical analysis has identified a <strong>null palette</strong> &mdash; a set of 7 letters
   {B, G, I, K, O, W, Z} that appear disproportionately at null positions
   (p=6.7&times;10<sup>&minus;5</sup>, Monte Carlo 50M trials, position-shuffle null model).
-  These 7 letters correspond exactly to columns 0 and 3 of a 5-wide Polybius grid built
-  from the KRYPTOS keyword-mixed alphabet. A convergent finding from disjoint position sets:
-  Richard Bean&rsquo;s 2021 analysis showed that 13/24 keystream values at crib positions
-  are multiples of 5 &mdash; the same 5-wide KA grid, approached from the opposite direction.
+  Under certain keyword-mixed alphabets (including KRYPTOS), these 7 letters concentrate
+  in exactly two columns of a 5-wide Polybius grid. About 0.6% of English keywords produce
+  this column-concentration property &mdash; the specific keyword is not uniquely determined.
+  Independently, 13/24 Beaufort keystream values at crib positions are themselves palette letters
+  (p=0.0043). This alphabet-independent coupling between the stego and cipher layers is the
+  strongest constraint on the key generation mechanism.
 </p>
 <p>
   The <strong>joint significance</strong> of the palette existing AND producing 13/24
