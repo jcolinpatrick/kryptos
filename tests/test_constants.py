@@ -8,6 +8,7 @@ from kryptos.kernel.constants import (
     SELF_ENCRYPTING,
     VIGENERE_KEY_ENE, VIGENERE_KEY_BC,
     BEAUFORT_KEY_ENE, BEAUFORT_KEY_BC,
+    NULL_PALETTE, CONSENSUS_NULL_POSITIONS, BEAUFORT_KEYSTREAM_AT_CRIBS,
 )
 
 
@@ -176,3 +177,28 @@ class TestConstantsIntegrity:
                 f"CT mismatch: constants.py ({len(CT)} chars) vs "
                 f"data/ct.txt ({len(file_ct)} chars)"
             )
+
+
+class TestStegoConstants:
+    def test_null_palette_is_frozenset_of_7(self):
+        assert isinstance(NULL_PALETTE, frozenset)
+        assert NULL_PALETTE == frozenset("BGIKOWZ")
+        assert len(NULL_PALETTE) == 7
+
+    def test_consensus_null_positions_count(self):
+        assert isinstance(CONSENSUS_NULL_POSITIONS, frozenset)
+        assert len(CONSENSUS_NULL_POSITIONS) == 17
+        # Boundary values present
+        assert 0 in CONSENSUS_NULL_POSITIONS
+        assert 85 in CONSENSUS_NULL_POSITIONS
+        # No overlap with crib ranges [21-33] and [63-73]
+        crib_range = set(range(21, 34)) | set(range(63, 74))
+        assert not (CONSENSUS_NULL_POSITIONS & crib_range)
+
+    def test_beaufort_keystream_string(self):
+        assert len(BEAUFORT_KEYSTREAM_AT_CRIBS) == 24
+        assert BEAUFORT_KEYSTREAM_AT_CRIBS == "JLJODEGKUKKKLOCGGBGOKTRU"
+
+    def test_beaufort_keystream_matches_derived(self):
+        derived = "".join(ALPH[v] for v in BEAUFORT_KEY_ENE + BEAUFORT_KEY_BC)
+        assert BEAUFORT_KEYSTREAM_AT_CRIBS == derived
