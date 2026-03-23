@@ -265,6 +265,11 @@ def build():
     })
     pages_built += 1
 
+    # Findings
+    _findings_ctx = _build_findings_context(CT, global_ctx)
+    _render(env, "findings.html", "findings/index.html", _findings_ctx)
+    pages_built += 1
+
     # Workbench
     _render(env, "workbench.html", "workbench/index.html", global_ctx)
     pages_built += 1
@@ -433,6 +438,7 @@ def _build_standalone_viewer(
       <li><a href="/browse/">Eliminations</a></li>
       <li><a href="/methodology/">Methodology</a></li>
       <li><a href="/research-questions/">Research</a></li>
+      <li><a href="/findings/">Findings</a></li>
       <li><a href="/workbench/">Workbench</a></li>
       <li><a href="/vic-workbench/">VIC Cipher</a></li>
       <li><a href="/cylinder-viewer/">Cylinder</a></li>
@@ -566,6 +572,7 @@ def _build_cylinder_viewer(global_ctx: dict):
       <li><a href="/browse/">Eliminations</a></li>
       <li><a href="/methodology/">Methodology</a></li>
       <li><a href="/research-questions/">Research</a></li>
+      <li><a href="/findings/">Findings</a></li>
       <li><a href="/workbench/">Workbench</a></li>
       <li><a href="/vic-workbench/">VIC Cipher</a></li>
       <li><a href="/cylinder-viewer/">Cylinder</a></li>
@@ -617,6 +624,53 @@ def _build_cylinder_viewer(global_ctx: dict):
     os.makedirs(out_dir, exist_ok=True)
     with open(os.path.join(out_dir, "index.html"), "w") as f:
         f.write(html)
+
+
+def _build_findings_context(ct: str, global_ctx: dict) -> dict:
+    """Build template context for the Confirmed Findings page."""
+    # Consensus null positions (17 positions where researchers agree)
+    null_positions = {0, 1, 2, 5, 8, 12, 14, 20, 36, 52, 58, 59, 74, 75, 78, 84, 85}
+
+    # KA Polybius grid (KRYPTOS keyword-mixed alphabet in 5 columns)
+    ka = "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+    polybius_rows = []
+    for r in range(6):
+        row = []
+        for c in range(5):
+            idx = r * 5 + c
+            if idx < len(ka):
+                row.append({"letter": ka[idx], "row": r, "col": c})
+        polybius_rows.append(row)
+
+    # Stehle anomaly: positions 55-63, lag-4 difference = 5
+    stehle_positions = list(range(55, 64))
+    stehle_values = [ord(ct[p]) - ord('A') for p in stehle_positions]
+    stehle_diffs = [(stehle_values[i] - stehle_values[i - 4]) % 26
+                    for i in range(4, len(stehle_values))]
+
+    # KRYPTOS x SEVEN lookup table
+    ks_table = [
+        ["?", "R", "R", "-", "N"],   # K (0)
+        ["N", "N", "-", "N", "-"],   # R (1)
+        ["R", "R", "N", "?", "-"],   # Y (2)
+        ["R", "R", "N", "R", "N"],   # P (3)
+        ["-", "R", "-", "R", "N"],   # T (4)
+        ["N", "-", "?", "-", "R"],   # O (5)
+        ["N", "-", "R", "R", "R"],   # S (6)
+    ]
+    ks_row_labels = list("KRYPTOS")
+
+    return {
+        **global_ctx,
+        "ct": ct,
+        "null_positions": null_positions,
+        "polybius_rows": polybius_rows,
+        "stehle_positions": stehle_positions,
+        "stehle_values": stehle_values,
+        "stehle_diffs": stehle_diffs,
+        "ks_table": ks_table,
+        "ks_row_labels": ks_row_labels,
+    }
 
 
 def _render(env: Environment, template_name: str, output_path: str, context: dict):
@@ -695,6 +749,7 @@ def _write_sitemap(eliminations: list, tree: dict, output_dir: str):
         ("/browse/", "0.9", "weekly"),
         ("/methodology/", "0.7", "monthly"),
         ("/research-questions/", "0.7", "weekly"),
+        ("/findings/", "0.8", "monthly"),
         ("/recent/", "0.8", "daily"),
         ("/search/", "0.5", "monthly"),
         ("/submit/", "0.6", "monthly"),
