@@ -101,6 +101,14 @@ IC_RANDOM: float = 1.0 / 26   # 0.03846
 IC_ENGLISH: float = 0.0667
 IC_PRE_ENE: float = 0.0667    # Positions 0-20, suspiciously English-like
 
+# ── Stego layer constants ──────────────────────────────────────────────
+
+NULL_PALETTE: FrozenSet[str] = frozenset("BGIKOWZ")
+CONSENSUS_NULL_POSITIONS: FrozenSet[int] = frozenset(
+    {0, 1, 2, 5, 8, 12, 14, 20, 36, 52, 58, 59, 74, 75, 78, 84, 85}
+)
+BEAUFORT_KEYSTREAM_AT_CRIBS: str = "JLJODEGKUKKKLOCGGBGOKTRU"
+
 # ── Import-time verification ─────────────────────────────────────────────
 
 def _verify() -> None:
@@ -119,5 +127,13 @@ def _verify() -> None:
     assert set(KRYPTOS_ALPHABET) == set(ALPH), "KA and ALPH char sets differ"
     assert len(BEAN_EQ) == 1, "Expected 1 Bean equality"
     assert len(BEAN_INEQ) == 242, f"Expected 242 Bean inequalities, got {len(BEAN_INEQ)}"
+    assert len(NULL_PALETTE) == 7, f"NULL_PALETTE should have 7 letters, got {len(NULL_PALETTE)}"
+    assert all(c in ALPH for c in NULL_PALETTE), "NULL_PALETTE must be uppercase A-Z"
+    assert len(CONSENSUS_NULL_POSITIONS) == 17, f"Expected 17 consensus nulls, got {len(CONSENSUS_NULL_POSITIONS)}"
+    assert all(0 <= p < CT_LEN for p in CONSENSUS_NULL_POSITIONS), "Null positions must be in [0, CT_LEN)"
+    assert not CONSENSUS_NULL_POSITIONS & CRIB_POSITIONS, "Null positions must not overlap crib positions"
+    assert len(BEAUFORT_KEYSTREAM_AT_CRIBS) == N_CRIBS, "Keystream string must have N_CRIBS chars"
+    _bks_derived = "".join(ALPH[v] for v in BEAUFORT_KEY_ENE + BEAUFORT_KEY_BC)
+    assert BEAUFORT_KEYSTREAM_AT_CRIBS == _bks_derived, "Keystream string must match numeric constants"
 
 _verify()
