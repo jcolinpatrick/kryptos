@@ -71,6 +71,13 @@ class TestNullPositionClassification:
         result = null_position_classification(CT, CONSENSUS_NULL_POSITIONS)
         assert result.status == "confirmed"
 
+    def test_p_value_is_sentinel(self):
+        """S4 p_value is a sentinel (-1.0), not a real p-value (no MC null model)."""
+        result = null_position_classification(CT, CONSENSUS_NULL_POSITIONS)
+        assert result.p_value == -1.0, (
+            "S4 p_value should be -1.0 sentinel (accuracy-based, no MC null model)"
+        )
+
 
 class TestPolybiusGeneration:
     """S5: KRYPTOS x SEVEN keywords generate palette via Polybius grid."""
