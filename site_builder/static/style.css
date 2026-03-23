@@ -1037,6 +1037,62 @@ figcaption {
 }
 
 
+/* --- Plain-English Summary (Elimination Page) --- */
+.plain-summary {
+  font-size: var(--text-lg);
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin: var(--sp-6) 0;
+  padding: var(--sp-4) var(--sp-5);
+  border-left: 3px solid var(--accent);
+  background: var(--bg-surface);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+.plain-summary strong {
+  color: var(--text-primary);
+}
+
+.score-explanation {
+  display: inline-block;
+  margin-left: var(--sp-2);
+  font-style: italic;
+  color: var(--text-secondary);
+}
+
+
+/* --- Field Guide (Elimination Page) --- */
+.field-guide-toggle {
+  margin: var(--sp-4) 0;
+}
+
+.field-guide-toggle summary {
+  cursor: pointer;
+  font-size: var(--text-sm);
+  color: var(--text-tertiary);
+}
+
+.field-guide-toggle summary:hover {
+  color: var(--accent);
+}
+
+.field-guide {
+  list-style: none;
+  padding: 0;
+  margin: var(--sp-4) 0 var(--sp-8);
+}
+
+.field-guide li {
+  padding: var(--sp-3) 0;
+  border-bottom: 1px solid var(--border-subtle);
+  line-height: 1.6;
+}
+
+.field-guide li:last-child {
+  border-bottom: none;
+}
+
+
 /* --- Verdict Row (Elimination Page) --- */
 .verdict-row {
   display: flex;

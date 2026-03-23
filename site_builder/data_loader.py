@@ -67,6 +67,60 @@ class RQCoverage:
     promoted: int = 0
 
 
+def _normalize_verdict(raw: str) -> str:
+    """Normalize a verdict string to the canonical set.
+
+    Canonical verdicts: NOISE, ELIMINATED, INTERESTING, SIGNAL, FULL MATCH.
+    Everything else is mapped based on the score or intent.
+    """
+    if not raw:
+        return "NOISE"
+    v = raw.strip().upper()
+
+    # Already canonical
+    if v in ("NOISE", "ELIMINATED", "INTERESTING", "SIGNAL", "FULL MATCH"):
+        return v
+
+    # Map known non-standard verdicts
+    noise_like = {
+        "ALL NOISE", "DISPROVED", "TESTED", "TOOL", "NOISE + TOOL",
+        "WEAK", "ELEVATED_NOISE", "NEAR_MISS", "LIKELY_OPEN", "OPEN",
+        "FEASIBLE_BUT_WEAK", "UNDERDETERMINED", "PROMISING", "INVESTIGATE",
+        "STRUCTURALLY_ELIMINATED", "NONE",
+    }
+    if v in noise_like:
+        if v == "STRUCTURALLY_ELIMINATED":
+            return "ELIMINATED"
+        return "NOISE"
+
+    # "Score X at noise floor" or "Best score X at noise floor"
+    if "noise floor" in raw.lower() or "noise" in raw.lower():
+        return "NOISE"
+
+    # "INTERESTING (16/24)" etc.
+    if v.startswith("INTERESTING"):
+        return "NOISE"  # scores below 18 are noise
+
+    # "NOISE -- 6/24" etc.
+    if v.startswith("NOISE"):
+        return "NOISE"
+
+    # "ELIMINATED (...)" etc.
+    if v.startswith("ELIMINATED"):
+        return "ELIMINATED"
+
+    # "38 PERIODS SURVIVE" etc. — research results, not decryption verdicts
+    if "SURVIVE" in v or "PERIODS" in v:
+        return "NOISE"
+
+    # Single letters or very short strings — data parsing errors
+    if len(v) <= 2:
+        return "NOISE"
+
+    # Default: treat as NOISE
+    return "NOISE"
+
+
 def _slugify(text: str) -> str:
     """Convert text to a URL-safe slug."""
     text = text.lower().strip()
@@ -341,7 +395,7 @@ def build_eliminations_from_hypotheses(
             description=desc,
             tags=tags,
             research_questions=rqs,
-            verdict=hyp.get("elimination_reason", "eliminated"),
+            verdict=_normalize_verdict(hyp.get("elimination_reason", "eliminated")),
             assumptions=hyp.get("assumptions", "") or "",
             date_tested=hyp.get("updated_at", hyp.get("created_at", "")),
         )
@@ -487,7 +541,7 @@ def build_eliminations_from_results(
             description=desc or "",
             configs_tested=configs_tested,
             best_score=best_score,
-            verdict=verdict or "NOISE",
+            verdict=_normalize_verdict(verdict),
             date_tested=res.get("timestamp", ""),
             experiment_script=script,
             repro_command=repro_cmd if isinstance(repro_cmd, str) else "",

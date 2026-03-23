@@ -15,6 +15,23 @@
 
 <p>{{ e.description }}</p>
 
+{% if e.configs_tested > 0 %}
+<div class="plain-summary">
+  We tested {{ "{:,}".format(e.configs_tested) }} configurations of {{ e.cipher_type or "this approach" }}.
+  {% if e.best_score is not none %}
+    The best result matched {{ e.best_score }} of 24 known letters:
+    {% if e.best_score >= 24 %}all known letters matched. Under active investigation.
+    {% elif e.best_score >= 18 %}worth investigating further, but not a solution.
+    {% elif e.best_score >= 10 %}slightly above random, but almost certainly coincidence.
+    {% else %}no better than random guessing.
+    {% endif %}
+  {% endif %}
+  {% if e.best_score is none or e.best_score < 24 %}
+    <strong>This approach is ruled out.</strong>
+  {% endif %}
+</div>
+{% endif %}
+
 <div class="verdict-row">
   <span class="verdict verdict-{{ e.verdict|lower if e.verdict else 'noise' }}">
     {{ e.verdict or "NOISE" }}
@@ -23,6 +40,18 @@
     <span class="tier-badge tier-{{ e.confidence_tier }}">Tier {{ e.confidence_tier }}</span>
   {% endif %}
 </div>
+
+<details class="field-guide-toggle">
+  <summary>How to read this record</summary>
+  <ul class="field-guide">
+    <li><strong>Verdict</strong> &ndash; NOISE (no better than random guessing), INTERESTING (slightly above random, almost certainly coincidence), SIGNAL (statistically unusual, warrants investigation), or FULL MATCH (all 24 known letters correct).</li>
+    <li><strong>Confidence Tier</strong> &ndash; Tier 1 = mathematical proof (permanent). Tier 2 = every possibility tested. Tier 3 = partially tested. Tier 4 = not yet tested.</li>
+    <li><strong>Configs Tested</strong> &ndash; How many different key/parameter combinations were tried.</li>
+    <li><strong>Best Score</strong> &ndash; How many of the 24 known plaintext letters the best attempt matched (out of 24).</li>
+    <li><strong>Keystream Consistency (Bean)</strong> &ndash; Whether the key values at different positions are mathematically consistent with each other.</li>
+    <li><strong>Scope Limitations</strong> &ndash; What this elimination does <em>not</em> rule out.</li>
+  </ul>
+</details>
 
 <dl class="detail-grid">
   {% if e.cipher_type %}
@@ -57,10 +86,17 @@
   <dd>
     {% if e.best_score is not none %}
       <span class="score-display {% if e.best_score >= 24 %}score-breakthrough{% elif e.best_score >= 18 %}score-signal{% elif e.best_score >= 10 %}score-store{% else %}score-noise{% endif %}">
-        {{ e.best_score }}/24
+        {{ e.best_score }} / 24
       </span>
+      <small class="score-explanation">known letters matched &middot;
+        {% if e.best_score >= 24 %}all known letters correct
+        {% elif e.best_score >= 18 %}worth investigating
+        {% elif e.best_score >= 10 %}above random, likely coincidence
+        {% else %}no better than random guessing
+        {% endif %}
+      </small>
       {% if e.expected_random is not none %}
-        <small style="margin-left:var(--sp-3)">random: {{ e.expected_random }}</small>
+        <small style="margin-left:var(--sp-3)" class="text-muted">(random expectation: {{ e.expected_random }})</small>
       {% endif %}
     {% else %}
       N/A
@@ -68,13 +104,14 @@
   </dd>
 
   {% if e.bean_passed is not none %}
-  <dt>Bean Constraint</dt>
+  <dt>Keystream Consistency (Bean)</dt>
   <dd>
     {% if e.bean_passed %}
       <span style="color:var(--green);font-weight:700">PASS</span>
     {% else %}
       <span style="color:var(--red);font-weight:700">FAIL</span>
     {% endif %}
+    <br><small class="text-muted">Checks whether the key values at different positions are mathematically consistent with each other.</small>
   </dd>
   {% endif %}
 
