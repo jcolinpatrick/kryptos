@@ -32,10 +32,10 @@ results/stego_mechanism/
   constraint_propagation.json    — C output
 ```
 
-Each script is self-contained with the standard 2-level bootstrap:
+Each script is self-contained with the standard 3-level bootstrap (scripts are 2 dirs deep):
 ```python
 import sys, os
-_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, os.path.join(_ROOT, "src"))
 ```
 
@@ -107,7 +107,7 @@ from collections import defaultdict
 from datetime import datetime, timezone
 from itertools import product
 
-_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, os.path.join(_ROOT, "src"))
 
 from kryptos.kernel.constants import (
@@ -402,7 +402,7 @@ from collections import defaultdict, Counter
 from datetime import datetime, timezone
 from multiprocessing import Pool, cpu_count
 
-_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, os.path.join(_ROOT, "src"))
 
 from kryptos.kernel.constants import (
@@ -458,18 +458,23 @@ print(f"Loaded {len(ENGLISH_5)} five-letter English words")
 
 
 def sweep_variant(variant_name):
-    """Sweep all 26^5 words for one cipher variant. Returns (variant, results_dict)."""
-    if "beaufort" in variant_name and "az" in variant_name:
-        kw = KW_AZ
+    """Sweep all 26^5 words for one cipher variant. Returns (variant, results_dict).
+
+    NOTE on KA variants: word indices are enumerated in AZ space (0-25 = A-Z)
+    for all variants. For KA variants, we use KA indices for KRYPTOS row values
+    but AZ indices for word columns. This is a mixed-space operation. The sweep
+    is still exhaustive (all 26^5 vectors tested), so perfect-word COUNTS are
+    correct, but word LABELS and partition VALUES for KA variants are in mixed
+    space. The primary finding (vigenere_az) is unaffected.
+    """
+    # Determine index space and operation
+    is_ka = "ka" in variant_name
+    alph_for_decode = KA if is_ka else ALPH
+    if "beaufort" in variant_name:
+        kw = KW_KA if is_ka else KW_AZ
         op = lambda a, b: (a - b) % MOD
-    elif "vigenere" in variant_name and "az" in variant_name:
-        kw = KW_AZ
-        op = lambda a, b: (a + b) % MOD
-    elif "beaufort" in variant_name and "ka" in variant_name:
-        kw = KW_KA
-        op = lambda a, b: (a - b) % MOD
-    else:  # vigenere_ka
-        kw = KW_KA
+    else:  # vigenere
+        kw = KW_KA if is_ka else KW_AZ
         op = lambda a, b: (a + b) % MOD
 
     # Pre-compute KRYPTOS row values for each pure cell
@@ -503,10 +508,10 @@ def sweep_variant(variant_name):
         score_hist[correct] += 1
 
         if correct == N_PURE:
-            word_str = "".join(ALPH[wi] for wi in word_indices)
+            word_str = "".join(alph_for_decode[wi] for wi in word_indices)
             perfect_words.append((word_str, tuple(sorted(null_values))))
         elif correct == N_PURE - 1:
-            word_str = "".join(ALPH[wi] for wi in word_indices)
+            word_str = "".join(alph_for_decode[wi] for wi in word_indices)
             near_perfect.append(word_str)
 
         if word_num % 2_000_000 == 0 and word_num > 0:
@@ -661,7 +666,7 @@ from collections import Counter
 from datetime import datetime, timezone
 from itertools import combinations
 
-_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, os.path.join(_ROOT, "src"))
 
 from kryptos.kernel.constants import (
@@ -827,28 +832,47 @@ def run_b3():
     # ── B3.4: Generative Tests ──────────────────────────────────────
     print("\n── B3.4: Generative Tests ──")
 
-    # Test: is null_set = Cipher(single_letter, each_null_letter)?
+    # NOTE: A single-key Beaufort/Vigenere is a bijection on Z/26, so
+    # EVERY key maps SOME 8-element input set onto the null set.
+    # That is trivially true and not a structural finding.
+    #
+    # The real test: does the null set have a RECOGNIZABLE preimage
+    # under a specific cipher+key? I.e., does Beaufort(key=K) map
+    # a meaningful word/set onto the null set?
     generative = {}
-    for key_letter_idx in range(MOD):
-        # Beaufort AZ: key_letter - input mod 26
-        beau_outputs = frozenset((key_letter_idx - v) % MOD for v in range(MOD)
-                                  if (key_letter_idx - v) % MOD in null_set)
-        if len(beau_outputs) == len(null_set):
-            # This key maps some set of inputs to exactly the null set
-            preimage = frozenset(v for v in range(MOD)
-                                 if (key_letter_idx - v) % MOD in null_set)
-            generative[f"beaufort_key_{ALPH[key_letter_idx]}"] = {
-                "preimage": sorted(preimage),
-                "preimage_letters": sorted(ALPH[v] for v in preimage),
-            }
+    test_keys = list("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+
+    for key_letter in test_keys:
+        ki = ALPH_IDX[key_letter]
+        # Beaufort AZ: preimage of null_set under key K
+        preimage_beau = frozenset((ki - v) % MOD for v in null_set)
+        preimage_vig = frozenset((v - ki) % MOD for v in null_set)
+
+        preimage_beau_letters = "".join(sorted(ALPH[v] for v in preimage_beau))
+        preimage_vig_letters = "".join(sorted(ALPH[v] for v in preimage_vig))
+
+        # Check if preimage contains a recognizable word (5+ letter substring)
+        for label, letters in [("beaufort", preimage_beau_letters),
+                                ("vigenere", preimage_vig_letters)]:
+            # Check against known keywords
+            for word in ["KRYPTOS", "SEVEN", "CHART", "CLOCK", "NORTH",
+                         "BERLIN", "TOWER", "LAYER", "SHADE", "LIGHT"]:
+                if all(c in letters for c in set(word)):
+                    gen_key = f"{label}_key_{key_letter}_contains_{word}"
+                    generative[gen_key] = {
+                        "preimage_letters": letters,
+                        "keyword_found": word,
+                        "keyword_coverage": f"{len(set(word))}/{len(letters)}",
+                    }
 
     results["B3_4_generative"] = generative
     if generative:
-        print(f"  Found {len(generative)} generative key mappings:")
-        for name, data in generative.items():
-            print(f"    {name}: preimage = {data['preimage_letters']}")
+        print(f"  Found {len(generative)} preimage-keyword matches:")
+        for name, data in sorted(generative.items()):
+            print(f"    {name}: preimage={data['preimage_letters']}, "
+                  f"keyword={data['keyword_found']}")
     else:
-        print("  No single-key generative mapping found.")
+        print("  No recognizable keyword found in any preimage.")
 
     # ── B3.5: Cross-Layer Test ──────────────────────────────────────
     print("\n── B3.5: Cross-Layer Test ──")
@@ -892,9 +916,12 @@ def run_b3():
         residues = set(v % m for v in null_list)
         if len(residues) <= m // 2:
             structured_signals.append(f"mod-{m}: only {len(residues)}/{m} residues")
-    # Check for generative mapping
+    # Check for meaningful preimage-keyword matches (not trivially true)
     if generative:
-        structured_signals.append(f"{len(generative)} generative key mappings found")
+        structured_signals.append(
+            f"Preimage contains recognizable keyword(s): "
+            f"{', '.join(set(v['keyword_found'] for v in generative.values()))}"
+        )
 
     results["structured_signals"] = structured_signals
 
@@ -992,7 +1019,7 @@ import sys, os, json
 from collections import defaultdict
 from datetime import datetime, timezone
 
-_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, os.path.join(_ROOT, "src"))
 
 from kryptos.kernel.constants import (
@@ -1180,7 +1207,7 @@ def run_b4():
         b4_4["real_text_length"] = len(real_text)
 
         # Bean EQ check
-        eq_pos_a, eq_pos_b = BEAN_EQ
+        eq_pos_a, eq_pos_b = BEAN_EQ[0]
         if eq_pos_a in predicted_nulls or eq_pos_b in predicted_nulls:
             b4_4["bean_eq"] = "N/A (one of EQ positions is null)"
         else:
@@ -1271,7 +1298,7 @@ Output: results/stego_mechanism/full_spec_test.json
 import sys, os, json
 from datetime import datetime, timezone
 
-_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, os.path.join(_ROOT, "src"))
 
 from kryptos.kernel.constants import CT, CT_LEN, ALPH, ALPH_IDX, MOD
@@ -1539,7 +1566,7 @@ from collections import Counter
 from datetime import datetime, timezone
 from itertools import permutations
 
-_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, os.path.join(_ROOT, "src"))
 
 from kryptos.kernel.constants import (
