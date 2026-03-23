@@ -33,12 +33,12 @@ OUTPUT_DIR = os.path.join(PROJECT_ROOT, "site")
 
 # Category descriptions for browse pages
 CATEGORY_DESCRIPTIONS = {
-    "substitution": "Classical substitution ciphers that replace plaintext letters via alphabetic mappings: Vigenere, Beaufort, Quagmire, Hill, and more.",
-    "transposition": "Ciphers that rearrange letter positions: columnar, double columnar, Myszkowski, AMSCO, rail fence, route ciphers, turning grilles.",
-    "fractionation": "Ciphers that split letters into components before rearranging: Bifid, Trifid, ADFGVX, Playfair, Two-Square, Four-Square.",
-    "multi-layer": "Combined approaches using multiple cipher steps: substitution + transposition, null extraction + re-encipherment, cascaded layers.",
-    "key-models": "Key generation strategies: running keys from known texts, autokey, progressive, date-derived, keyword-derived, mathematical sequences.",
-    "bespoke": "Non-standard methods inspired by the physical sculpture: DRYAD charts, NATO/COMSEC systems, Morse-derived parameters, coordinate-based approaches.",
+    "substitution": "Methods that replace each letter with a different letter using a key or pattern, like a secret alphabet. Includes Vigen\u00e8re, Beaufort, Quagmire, Hill, and more.",
+    "transposition": "Methods that scramble the order of letters without changing them, like writing a message into a grid and reading it back in a different order. Includes columnar, rail fence, route, and grille ciphers.",
+    "fractionation": "Methods that break each letter into smaller pieces (like grid coordinates), scramble those pieces, then reassemble them into new letters. Includes Bifid, Playfair, Four-Square, and ADFGVX.",
+    "multi-layer": "Combined approaches that stack multiple encryption steps. For example, replacing letters first, then scrambling their order. Includes null extraction, cascaded layers, and joint optimization.",
+    "key-models": "Different ways to generate the secret key: from a passage in a book, from a date, from a mathematical formula, or from the sculpture itself. Includes running keys, autokey, and keyword-derived approaches.",
+    "bespoke": "Non-standard methods inspired by the physical sculpture or military cipher systems. These approaches don't fit neatly into classical categories. Includes DRYAD charts, Morse code analysis, and coordinate-based approaches.",
     "uncategorized": "Eliminations not yet assigned to a specific category.",
 }
 
@@ -430,7 +430,7 @@ def _build_standalone_viewer(
       <span></span><span></span><span></span>
     </label>
     <ul class="nav-links">
-      <li><a href="/browse/">Browse</a></li>
+      <li><a href="/browse/">Eliminations</a></li>
       <li><a href="/methodology/">Methodology</a></li>
       <li><a href="/research-questions/">Research</a></li>
       <li><a href="/workbench/">Workbench</a></li>
@@ -563,7 +563,7 @@ def _build_cylinder_viewer(global_ctx: dict):
       <span></span><span></span><span></span>
     </label>
     <ul class="nav-links">
-      <li><a href="/browse/">Browse</a></li>
+      <li><a href="/browse/">Eliminations</a></li>
       <li><a href="/methodology/">Methodology</a></li>
       <li><a href="/research-questions/">Research</a></li>
       <li><a href="/workbench/">Workbench</a></li>
