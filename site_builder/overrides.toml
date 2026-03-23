@@ -39,11 +39,15 @@ verdict = "NOISE"
 # ("All autokey (all forms) + arbitrary transposition"). Score 11/24 is noise.
 [elimination.e_combined_ptct_autokey]
 verdict = "NOISE"
+[elimination.E-COMBINED-PTCT-AUTOKEY]
+verdict = "NOISE"
 
 # SIGNAL → NOISE: SA running key produces underdetermination artifacts
 # (Sessions 12, 16-17 in eliminations.md). SA achieves word-salad at 24/24
 # by construction — no score from SA is meaningful.
 [elimination.e_model_b_running_key_sa]
+verdict = "NOISE"
+[elimination.E-MODEL-B-RUNNING-KEY-SA]
 verdict = "NOISE"
 
 # INVESTIGATE → NOISE: Morse binary null mask tested in Session 7 (E-01)
@@ -119,18 +123,12 @@ verdict = "NOISE"
 # INTERESTING → NOISE: Gutenberg running key, 106B offset-checks,
 # best 10/24 = noise at that scale. Per MEMORY.md: "Running key from
 # 60,230 publicly available English texts... produced zero signal."
-[elimination.Gutenberg Running Key Scan (Phase 4)]
+[elimination."Gutenberg Running Key Scan (Phase 4)"]
 verdict = "NOISE"
 
-# NOISE variants → NOISE: Standardize non-canonical noise labels.
-[elimination.E-CFM-06]
-verdict = "NOISE"
-
-[elimination.E-K123-RUNNING-KEY]
-verdict = "NOISE"
-
-[elimination.E-NDYAHR-K123CT-UNIFIED]
-verdict = "NOISE"
+# NOISE variants → NOISE: E-K123-RUNNING-KEY and E-NDYAHR-K123CT-UNIFIED
+# had "NOISE -- 6/24" verdicts. Normalized by _normalize_verdict().
+# E-CFM-06 already has a full override entry below.
 
 [elimination.E-BESPOKE-02-ABSCISSA-LINEAR]
 title = "Abscissa-derived linear keys"
@@ -358,7 +356,7 @@ subcategory = "transposition-plus-substitution"
 scope_limitations = "Proves underdetermination — does not eliminate the model, shows it cannot be confirmed from 24 positions."
 assumptions = "Monoalphabetic substitution as one layer; Identity transposition for self-encryption analysis"
 confidence_tier = 3
-verdict = "UNDERDETERMINED"
+verdict = "NOISE"
 repro_command = "PYTHONPATH=src python3 -u scripts/running_key/e_cfm_02_mono_running_constrain.py"
 research_questions = ["RQ-1", "RQ-3"]
 
@@ -422,7 +420,7 @@ subcategory = "transposition-plus-substitution"
 scope_limitations = "Proves underdetermination — optimal transposition produces English-like key fragments by coincidence from C(97,24)≈5e21 assignment freedom."
 assumptions = "Model A: CT = Trans(Vig(PT, K)); Vigenere running key; Quadgram scoring of 24-char key fragments"
 confidence_tier = 3
-verdict = "UNDERDETERMINED"
+verdict = "NOISE"
 truth_tag = "[INTERNAL RESULT]"
 repro_command = "PYTHONPATH=src python3 -u scripts/cfm/e_cfm_08_trans_key_scoring.py"
 research_questions = ["RQ-1", "RQ-2", "RQ-3"]
