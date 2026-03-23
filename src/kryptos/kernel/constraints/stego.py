@@ -141,8 +141,8 @@ def null_position_classification(
         name="Null position classification",
         observed=n_palette,
         expected=correct,
-        p_value=0.0 if correct == n_palette else (1.0 - correct / n_palette),
-        method="(pos%7, pos%5) classification with earlier-position-is-null tiebreaker",
+        p_value=-1.0,  # not a statistical p-value; accuracy = correct/n_palette
+        method="(pos%7, pos%5) classification with earlier-position-is-null tiebreaker; accuracy-based, no MC null model",
         status="confirmed",
         artifact="memory/confirmed_findings.md",
     )
@@ -179,9 +179,9 @@ def polybius_generation(
     hits = 0
 
     for _ in range(n_trials):
-        # Generate random keywords
+        # Generate random keyword (kw2 consumed from RNG for seed compatibility)
         kw1 = "".join(rng.choices(ALPH, k=7))
-        kw2 = "".join(rng.choices(ALPH, k=5))
+        _kw2 = "".join(rng.choices(ALPH, k=5))  # noqa: F841 — preserves RNG stream
         alpha = keyword_mixed_alphabet(kw1)
 
         # Build grid columns

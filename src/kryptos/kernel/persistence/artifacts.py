@@ -80,8 +80,9 @@ class JsonlWriter:
         self._file = open(self.path, "a")
 
     def write(self, record: Dict[str, Any]) -> None:
-        """Write a single JSON record as one line."""
+        """Write a single JSON record as one line, flushed to OS immediately."""
         self._file.write(json.dumps(record, default=str) + "\n")
+        self._file.flush()
 
     def flush(self) -> None:
         self._file.flush()
