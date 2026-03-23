@@ -112,9 +112,9 @@ class SweepRunner:
                                 run_id=self.run_id,
                             )
 
+                        log.write(result)  # JSONL flushed before DB commit
                         db.checkpoint_job(self.run_id, job_id, result)
                         db.commit()
-                        log.write(result)
 
                         completed += 1
                         if score > global_best:
