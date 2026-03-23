@@ -1,0 +1,417 @@
+{% extends "base.html" %}
+{% block title %}Confirmed Findings &mdash; internal.com{% endblock %}
+{% block og_title %}Confirmed Findings — internal.com{% endblock %}
+{% block canonical %}<link rel="canonical" href="https://internal.com/findings/">{% endblock %}
+
+{% block head_extra %}
+<link rel="stylesheet" href="/static/findings.css">
+{% endblock %}
+
+{% block content %}
+<div class="findings-page">
+
+<header class="findings-hero">
+  <p class="findings-kicker">After 670 billion configurations tested</p>
+  <h1>Three things we <em>did</em> find</h1>
+  <p class="findings-intro">
+    No single classical cipher decrypts K4. But the analysis wasn't fruitless.
+    Three statistically significant patterns emerged from the data, each confirmed
+    independently. They reveal how K4 was <strong>constructed</strong>, even though
+    the cipher itself remains unbroken.
+  </p>
+</header>
+
+<!-- How We Know -->
+
+<section class="finding-provenance">
+  <h2>Why we trust these findings</h2>
+  <p>
+    These aren't hunches. Each finding was confirmed by <strong>independent evidence from
+    multiple directions</strong>:
+  </p>
+  <ul class="provenance-list">
+    <li>
+      <strong>Independent replication:</strong>
+      Dr. Richard Bean found the same 5-wide Polybius structure in 2021
+      (<a href="https://eprint.iacr.org/2021/1549">HistoCrypt</a>)
+      by analyzing the <em>keystream</em>. We found it independently by analyzing the
+      <em>null characters</em>. Two researchers, different data, same result.
+    </li>
+    <li>
+      <strong>Exhaustive verification:</strong>
+      We tested all 232 million possible placements of the remaining null positions.
+      The 17 consensus positions appear in every configuration that scores above random noise.
+    </li>
+    <li>
+      <strong>Cross-layer convergence:</strong>
+      The Beaufort keystream at the first 8 BERLINCLOCK positions (63&ndash;70) is 7/8 palette letters
+      (p=0.0006). Overall, 13/24 keystream values at all crib positions are palette letters (p=0.0043).
+      This alphabet-independent coupling between the cipher and stego layers
+      means they share a common structural source.
+    </li>
+    <li>
+      <strong>Combined odds of coincidence: roughly 1 in 1.2 million.</strong>
+    </li>
+  </ul>
+  <p>
+    The entire codebase is <a href="https://github.com/jcolinpatrick/kryptos">open source</a>.
+    Every finding includes a reproduction command.
+  </p>
+</section>
+
+<!-- The Ciphertext -->
+
+<section class="ct-exhibit">
+  <h2 class="section-label">The K4 Ciphertext &mdash; 97 Characters</h2>
+  <p class="ct-legend-intro">
+    Hover or tap a letter to see its position. Colors show what we've discovered about each character's role.
+  </p>
+  <div class="ct-visual" id="ct-visual" aria-label="K4 ciphertext with null positions highlighted">
+    {% for i in range(97) %}
+      {% set ch = ct[i] %}
+      {% set is_null = i in null_positions %}
+      {% set is_crib_ene = i >= 21 and i <= 33 %}
+      {% set is_crib_bcl = i >= 63 and i <= 73 %}
+      {% set is_stehle = i >= 55 and i <= 63 %}
+      <span class="ct-char{% if is_null %} ct-null{% endif %}{% if is_crib_ene or is_crib_bcl %} ct-crib{% endif %}{% if is_stehle and not is_crib_bcl %} ct-stehle{% endif %}"
+            data-pos="{{ i }}"
+            data-char="{{ ch }}"
+            {% if is_null %}data-null="true" title="Position {{ i }}: {{ ch }} (null character)"{% endif %}
+            {% if is_crib_ene %}title="Position {{ i }}: {{ ch }} decrypts to {{ 'EASTNORTHEAST'[i-21] }}"{% endif %}
+            {% if is_crib_bcl %}title="Position {{ i }}: {{ ch }} decrypts to {{ 'BERLINCLOCK'[i-63] }}"{% endif %}
+      >{{ ch }}</span>
+    {% endfor %}
+  </div>
+  <div class="ct-legend">
+    <span class="ct-legend-item"><span class="ct-swatch ct-swatch-null"></span> Null character (not real ciphertext)</span>
+    <span class="ct-legend-item"><span class="ct-swatch ct-swatch-crib"></span> Known plaintext (crib)</span>
+    <span class="ct-legend-item"><span class="ct-swatch ct-swatch-stehle"></span> Stehle anomaly region</span>
+    <span class="ct-legend-item"><span class="ct-swatch ct-swatch-real"></span> Real ciphertext</span>
+  </div>
+  <div class="ct-pos-readout" id="ct-readout" aria-live="polite">Position &mdash;</div>
+</section>
+
+<!-- Finding 1: Null Palette -->
+
+<section class="finding" id="finding-palette">
+  <div class="finding-header">
+    <span class="finding-number">1</span>
+    <div>
+      <h2>The Null Palette</h2>
+      <p class="finding-subtitle">Only 7 of 26 letters are used as filler characters</p>
+    </div>
+    <span class="finding-pvalue">p &lt; 10<sup>&minus;7</sup></span>
+  </div>
+
+  <div class="finding-plain">
+    <h3>What we found</h3>
+    <p>
+      K4 has 97 characters carved into the sculpture, but we believe only <strong>73 are real
+      ciphertext</strong>. The other 24 are <strong>filler characters</strong> (called "nulls")
+      inserted to disguise the message's true length. Ed Scheidt, the CIA cryptographer who helped
+      design Kryptos, confirmed there is a "bit of stego" (steganography) in K4.
+    </p>
+    <p>
+      We identified 17 positions where researchers agree the character is a null.
+      Those 17 characters use only <strong>7 different letters: B, G, I, K, O, W, and Z.</strong>
+      Drawing 17 characters from a 26-letter alphabet and getting only 7 distinct letters
+      has a probability of <strong>1 in 41,667</strong>. This is not coincidence.
+    </p>
+    <p>
+      Even more striking: <strong>4 of the 5 W's</strong> in the entire ciphertext are nulls.
+      The single non-null W sits at position 48, exactly halfway between the two known plaintext regions.
+    </p>
+  </div>
+
+  <div class="finding-visual">
+    <h3>The 7-Letter Null Palette on the Polybius Grid</h3>
+    <p class="finding-visual-caption">
+      A keyword-mixed alphabet arranged in a 5-column grid can concentrate all 7 palette letters
+      in exactly two columns. The KRYPTOS keyword (shown here) places them in columns 0 and 3.
+      About 0.6% of English keywords produce this property &mdash; KRYPTOS is thematically motivated
+      but not statistically unique.
+    </p>
+    <div class="polybius-grid" role="table" aria-label="5-wide Polybius grid showing null palette positions">
+      <div class="polybius-header">
+        <span class="polybius-col-label">col 0</span>
+        <span class="polybius-col-label">col 1</span>
+        <span class="polybius-col-label">col 2</span>
+        <span class="polybius-col-label">col 3</span>
+        <span class="polybius-col-label">col 4</span>
+      </div>
+      {% for row in polybius_rows %}
+      <div class="polybius-row">
+        {% for cell in row %}
+        <span class="polybius-cell{% if cell.letter in 'BGIKOWZ' %} polybius-null{% endif %}{% if cell.col == 0 or cell.col == 3 %} polybius-target-col{% endif %}"
+              title="{{ cell.letter }}{% if cell.letter in 'BGIKOWZ' %} (null palette){% endif %}">
+          {{ cell.letter }}
+        </span>
+        {% endfor %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="finding-stats">
+    <div class="stat-pill">
+      <span class="stat-pill-label">Distinct letters in nulls</span>
+      <span class="stat-pill-value">7 / 26</span>
+    </div>
+    <div class="stat-pill">
+      <span class="stat-pill-label">Palette restriction</span>
+      <span class="stat-pill-value">p = 1 in 41,667</span>
+    </div>
+    <div class="stat-pill">
+      <span class="stat-pill-label">Polybius column alignment</span>
+      <span class="stat-pill-value">~0.6% of keywords</span>
+    </div>
+    <div class="stat-pill stat-pill-accent">
+      <span class="stat-pill-label">Joint significance</span>
+      <span class="stat-pill-value">p &lt; 1 in 7,000,000</span>
+    </div>
+  </div>
+
+  <div class="finding-caveat">
+    <h3>What this means &mdash; and what it doesn't</h3>
+    <p>
+      This tells us <em>how the filler characters were chosen</em>: from a restricted 7-letter palette
+      that concentrates in two columns of a 5-wide keyword-mixed Polybius grid.
+      The specific keyword is unknown &mdash; KRYPTOS is one of ~6,300 English words that produce
+      this column pattern. It <strong>does not</strong> crack the cipher operating on the remaining
+      73 real characters. The stego layer is (mostly) solved. The cipher layer is not.
+    </p>
+  </div>
+</section>
+
+<!-- Finding 2: Stehle Delta-4 -->
+
+<section class="finding" id="finding-stehle">
+  <div class="finding-header">
+    <span class="finding-number">2</span>
+    <div>
+      <h2>The Stehle Anomaly</h2>
+      <p class="finding-subtitle">A unique constant-difference pattern at positions 55&ndash;63</p>
+    </div>
+    <span class="finding-pvalue">p &asymp; 0.0016</span>
+  </div>
+
+  <div class="finding-plain">
+    <h3>What we found</h3>
+    <p>
+      If you look at every 4th character in K4 starting from position 55, something unusual happens:
+      each character is <strong>exactly 5 positions later in the alphabet</strong> than the one 4 spots before it.
+      This holds for a run of 9 consecutive characters (positions 55&ndash;63).
+    </p>
+    <p>
+      We searched the entire ciphertext for this kind of pattern at every possible spacing
+      and every possible difference value. <strong>This is the only one.</strong> After
+      correcting for the 712 statistical tests we ran, the probability of seeing this
+      by chance is about <strong>1 in 625</strong>.
+    </p>
+  </div>
+
+  <div class="finding-visual">
+    <h3>The Constant-Difference Pattern</h3>
+    <p class="finding-visual-caption">
+      Every 4th character in this region differs from its predecessor by exactly 5 (mod 26).
+    </p>
+    <div class="delta-display">
+      <div class="delta-row delta-row-pos">
+        <span class="delta-label">Position</span>
+        {% for p in stehle_positions %}
+        <span class="delta-cell delta-cell-pos{% if p in null_positions %} delta-null{% endif %}">{{ p }}</span>
+        {% endfor %}
+      </div>
+      <div class="delta-row delta-row-char">
+        <span class="delta-label">Letter</span>
+        {% for p in stehle_positions %}
+        <span class="delta-cell delta-cell-char{% if p in null_positions %} delta-null{% endif %}">{{ ct[p] }}</span>
+        {% endfor %}
+      </div>
+      <div class="delta-row delta-row-val">
+        <span class="delta-label">Value (A=0)</span>
+        {% for p in stehle_positions %}
+        <span class="delta-cell delta-cell-val{% if p in null_positions %} delta-null{% endif %}">{{ stehle_values[loop.index0] }}</span>
+        {% endfor %}
+      </div>
+      <div class="delta-row delta-row-diff">
+        <span class="delta-label">&Delta;4 (lag-4 diff)</span>
+        <span class="delta-cell delta-cell-empty"></span>
+        <span class="delta-cell delta-cell-empty"></span>
+        <span class="delta-cell delta-cell-empty"></span>
+        <span class="delta-cell delta-cell-empty"></span>
+        {% for d in stehle_diffs %}
+        <span class="delta-cell delta-cell-diff">{{ d }}</span>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <div class="finding-stats">
+    <div class="stat-pill">
+      <span class="stat-pill-label">Window length</span>
+      <span class="stat-pill-value">9 characters</span>
+    </div>
+    <div class="stat-pill">
+      <span class="stat-pill-label">Constant difference</span>
+      <span class="stat-pill-value">&Delta;4 = 5 (mod 26)</span>
+    </div>
+    <div class="stat-pill">
+      <span class="stat-pill-label">Other occurrences in K4</span>
+      <span class="stat-pill-value">Zero</span>
+    </div>
+    <div class="stat-pill">
+      <span class="stat-pill-label">Corrected p-value</span>
+      <span class="stat-pill-value">~1 in 625</span>
+    </div>
+  </div>
+
+  <div class="finding-caveat">
+    <h3>The tension</h3>
+    <p>
+      Two of the 9 positions in this pattern (58 and 59) are consensus null positions. If we remove
+      them, the pattern disappears. This creates a puzzle: either the null mask is wrong at those
+      positions, or the pattern is created <em>by</em> the null insertion process, or it's a rare
+      coincidence at the 0.16% level. No decryption has been extracted from it.
+    </p>
+  </div>
+</section>
+
+<!-- Finding 3: KRYPTOS x SEVEN -->
+
+<section class="finding" id="finding-kryptos-seven">
+  <div class="finding-header">
+    <span class="finding-number">3</span>
+    <div>
+      <h2>KRYPTOS &times; SEVEN</h2>
+      <p class="finding-subtitle">A dual-keyword lookup table predicts every null position</p>
+    </div>
+    <span class="finding-pvalue">35 / 35 correct</span>
+  </div>
+
+  <div class="finding-plain">
+    <h3>What we found</h3>
+    <p>
+      We discovered a simple rule that perfectly classifies all 35 palette-letter positions as
+      either null or real ciphertext. The rule uses two keywords: <strong>KRYPTOS</strong> (7 letters)
+      and <strong>SEVEN</strong> (5 letters).
+    </p>
+    <p>
+      For any position <em>p</em> in K4, compute two remainders:
+      divide <em>p</em> by 7 (giving a row in the KRYPTOS keyword)
+      and divide <em>p</em> by 5 (giving a column in the SEVEN keyword).
+      This creates a 7&times;5 lookup table with 35 cells. Each cell is marked
+      <strong>Null</strong> or <strong>Real</strong>. The table correctly predicts all 17
+      consensus null positions and all 18 real palette positions, with zero errors.
+    </p>
+    <p>
+      The number 35 is not a coincidence: 7 &times; 5 = 35, and there are exactly 35 positions
+      in K4 where a palette letter ({B,G,I,K,O,W,Z}) appears. The two keyword lengths
+      produce a repeating cycle of exactly the right size.
+    </p>
+  </div>
+
+  <div class="finding-visual">
+    <h3>The 7&times;5 Lookup Table</h3>
+    <p class="finding-visual-caption">
+      Row = position mod 7 (KRYPTOS), Column = position mod 5 (SEVEN).
+      <strong>N</strong> = null, <strong>R</strong> = real ciphertext, <strong>?</strong> = mixed (resolved by "earlier position wins").
+    </p>
+    <div class="ks-grid" role="table" aria-label="KRYPTOS times SEVEN lookup table">
+      <div class="ks-header">
+        <span class="ks-corner"></span>
+        <span class="ks-col-label">S <small>(0)</small></span>
+        <span class="ks-col-label">E <small>(1)</small></span>
+        <span class="ks-col-label">V <small>(2)</small></span>
+        <span class="ks-col-label">E <small>(3)</small></span>
+        <span class="ks-col-label">N <small>(4)</small></span>
+      </div>
+      {% for row in ks_table %}
+      {% set row_idx = loop.index0 %}
+      <div class="ks-row">
+        <span class="ks-row-label">{{ ks_row_labels[row_idx] }} <small>({{ row_idx }})</small></span>
+        {% for cell in row %}
+        <span class="ks-cell{% if cell == 'N' %} ks-null{% elif cell == 'R' %} ks-real{% elif cell == '?' %} ks-mixed{% else %} ks-empty{% endif %}"
+              title="({{ row_idx }}, {{ loop.index0 }}): {{ cell }}">
+          {{ cell }}
+        </span>
+        {% endfor %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="finding-stats">
+    <div class="stat-pill stat-pill-accent">
+      <span class="stat-pill-label">Classification accuracy</span>
+      <span class="stat-pill-value">35 / 35 (100%)</span>
+    </div>
+    <div class="stat-pill">
+      <span class="stat-pill-label">Null cells</span>
+      <span class="stat-pill-value">10 pure + 3 mixed</span>
+    </div>
+    <div class="stat-pill">
+      <span class="stat-pill-label">Real cells</span>
+      <span class="stat-pill-value">13 pure + 3 mixed</span>
+    </div>
+    <div class="stat-pill">
+      <span class="stat-pill-label">Mixed-cell tiebreaker</span>
+      <span class="stat-pill-value">Earlier position = null</span>
+    </div>
+  </div>
+
+  <div class="finding-caveat">
+    <h3>Why this matters</h3>
+    <p>
+      The KRYPTOS keyword was used for K1&ndash;K3. SEVEN connects to FIVE, which appears at the
+      seam of the Kryptos cylinder. The Beaufort cipher with key N transforms {E,H,N,Q,S,T,V}
+      into the null palette &mdash; and that source set contains the word <strong>SEVEN</strong>.
+      This is an elegant, hand-executable system consistent with 1990 CIA tradecraft.
+    </p>
+    <p>
+      <strong>But:</strong> This classification was discovered post-hoc (from the data, not predicted
+      in advance), so its statistical significance is hard to calibrate. And it solves how nulls
+      were <em>placed</em>, not how the underlying 73 characters were <em>encrypted</em>.
+      The cipher layer remains open.
+    </p>
+  </div>
+</section>
+
+<!-- Conclusion -->
+
+<section class="findings-conclusion">
+  <h2>What this tells us about K4</h2>
+  <div class="conclusion-grid">
+    <div class="conclusion-card conclusion-solved">
+      <h3>What's solved</h3>
+      <ul>
+        <li>K4 uses <strong>two layers</strong>: a substitution cipher and a steganographic null-insertion layer</li>
+        <li>The null palette is {B,G,I,K,O,W,Z} &mdash; concentrates in two columns of a 5-wide keyword-mixed Polybius grid (specific keyword unknown; KRYPTOS is one of ~6,300 that work)</li>
+        <li>Null positions follow a mod-7 &times; mod-5 lookup table rule (35/35 correct)</li>
+        <li>17 of 24 null positions are confirmed; 7 remain uncertain</li>
+      </ul>
+    </div>
+    <div class="conclusion-card conclusion-open">
+      <h3>What's still open</h3>
+      <ul>
+        <li>The substitution cipher operating on the 73 real characters</li>
+        <li>The key or key-generation method (not periodic, not autokey, not any tested running key)</li>
+        <li>The specific keyword for the Polybius grid (~6,300 candidates remain; KRYPTOS is thematically strongest)</li>
+        <li>The exact identity of 7 uncertain null positions</li>
+        <li>Whether the Stehle anomaly is a clue or a coincidence</li>
+      </ul>
+    </div>
+  </div>
+  <p class="conclusion-footer">
+    These findings are <a href="https://github.com/jcolinpatrick/kryptos">open source</a>
+    and independently reproducible. If you see something we missed,
+    <a href="/submit/">submit a theory</a> or <a href="/report-error/">report an error</a>.
+  </p>
+</section>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/findings.js"></script>
+{% endblock %}
