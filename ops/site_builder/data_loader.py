@@ -691,7 +691,7 @@ def load_all(
     """
     db_path = os.path.join(project_root, "db", "novelty_ledger.sqlite")
     results_dir = os.path.join(project_root, "results")
-    overrides_path = os.path.join(project_root, "site_builder", "overrides.toml")
+    overrides_path = os.path.join(project_root, "ops", "site_builder", "overrides.toml")
     scripts_dir = os.path.join(project_root, "scripts")
     tiers_doc = os.path.join(project_root, "docs", "elimination_tiers.md")
     rq_doc = os.path.join(project_root, "docs", "research_questions.md")
