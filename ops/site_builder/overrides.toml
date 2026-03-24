@@ -44,7 +44,7 @@ verdict = "NOISE"
 
 # SIGNAL → NOISE: SA running key produces underdetermination artifacts
 # (Sessions 12, 16-17 in eliminations.md). SA achieves word-salad at 24/24
-# by construction — no score from SA is meaningful.
+# by construction, no score from SA is meaningful.
 [elimination.e_model_b_running_key_sa]
 verdict = "NOISE"
 [elimination.E-MODEL-B-RUNNING-KEY-SA]
@@ -298,7 +298,7 @@ repro_command = "PYTHONPATH=src python3 -u scripts/_uncategorized/e_s_152_nato_p
 title = "AMSCO + disrupted columnar transposition (Swapped, Nihilist)"
 category = "transposition"
 subcategory = "amsco"
-verdict = "NOISE — 15/24 at period 8 only; period 7 = 0/24; Bean FAIL"
+verdict = "NOISE: 15/24 at period 8 only; period 7 = 0/24; Bean FAIL"
 scope_limitations = "Single-layer only. Tests AMSCO (1-2 alternating), Nihilist transposition, and swapped columnar at widths 5-14."
 assumptions = "Direct positional correspondence; Periodic substitution (Vigenere/Beaufort) at periods tested; Standard AMSCO alternating fill pattern"
 confidence_tier = 2
@@ -308,7 +308,7 @@ repro_command = "PYTHONPATH=src python3 -u scripts/transposition/other/e_s_22_am
 title = "Expanded keyword columnar + Myszkowski sweep (293 thematic keywords)"
 category = "transposition"
 subcategory = "keyword-columnar"
-verdict = "NOISE — 18/24 at period 13 (expected random ~13.5 at p=13; false positive from underdetermination)"
+verdict = "NOISE: 18/24 at period 13 (expected random ~13.5 at p=13; false positive from underdetermination)"
 scope_limitations = "Single-layer only. Only tests 293 thematic keywords. Does not eliminate arbitrary keyword columnar."
 assumptions = "Direct positional correspondence; Periodic substitution (Vigenere/Beaufort/VB) at periods tested"
 confidence_tier = 2
@@ -340,7 +340,7 @@ repro_command = "PYTHONPATH=src python3 -u scripts/cfm/e_cfm_00_drusilla_hypothe
 research_questions = ["RQ-2"]
 
 [elimination.E-CFM-01]
-title = "Foreign language running keys — German and French historical texts"
+title = "Foreign language running keys: German and French historical texts"
 category = "key-models"
 subcategory = "running-key"
 scope_limitations = "Only tests 6 specific German/French texts. Does not eliminate all foreign language running keys."
@@ -353,7 +353,7 @@ research_questions = ["RQ-2", "RQ-3"]
 title = "Monoalphabetic + transposition + running key degrees of freedom analysis"
 category = "multi-layer"
 subcategory = "transposition-plus-substitution"
-scope_limitations = "Proves underdetermination — does not eliminate the model, shows it cannot be confirmed from 24 positions."
+scope_limitations = "Proves underdetermination, does not eliminate the model, shows it cannot be confirmed from 24 positions."
 assumptions = "Monoalphabetic substitution as one layer; Identity transposition for self-encryption analysis"
 confidence_tier = 3
 verdict = "NOISE"
@@ -371,7 +371,7 @@ repro_command = "PYTHONPATH=src python3 -u scripts/cfm/e_cfm_03_null_extraction.
 research_questions = ["RQ-1"]
 
 [elimination.E-CFM-04]
-title = "Homophonic substitution — structural impossibility proof (direct correspondence)"
+title = "Homophonic substitution: structural impossibility proof (direct correspondence)"
 category = "substitution"
 subcategory = "monoalphabetic"
 scope_limitations = "Only eliminates DIRECT homophonic substitution (CT[i]→PT[i]). OPEN with transposition layer that changes positional mapping."
@@ -382,7 +382,7 @@ repro_command = "PYTHONPATH=src python3 -u scripts/substitution/e_cfm_04_homopho
 research_questions = ["RQ-1"]
 
 [elimination.E-CFM-05]
-title = "Nomenclator (code+cipher) — structural impossibility proof (pure model)"
+title = "Nomenclator (code+cipher): structural impossibility proof (pure model)"
 category = "substitution"
 subcategory = "monoalphabetic"
 scope_limitations = "Only eliminates PURE nomenclator without superencipherment. OPEN with position-dependent superencipherment layer."
@@ -393,7 +393,7 @@ repro_command = "PYTHONPATH=src python3 -u scripts/cfm/e_cfm_05_nomenclator_mode
 research_questions = ["RQ-1"]
 
 [elimination.E-CFM-06]
-title = "EAST repetition constraint — gap-9 differential filter for running key identification"
+title = "EAST repetition constraint: gap-9 differential filter for running key identification"
 category = "key-models"
 subcategory = "running-key"
 scope_limitations = "Filter only works under identity transposition. Under arbitrary transposition, EAST diffs change per permutation."
@@ -417,7 +417,7 @@ research_questions = ["RQ-1", "RQ-2"]
 title = "Transposition-guided running key fragment scoring (28M Monte Carlo, 28 cores)"
 category = "multi-layer"
 subcategory = "transposition-plus-substitution"
-scope_limitations = "Proves underdetermination — optimal transposition produces English-like key fragments by coincidence from C(97,24)≈5e21 assignment freedom."
+scope_limitations = "Proves underdetermination, optimal transposition produces English-like key fragments by coincidence from C(97,24)≈5e21 assignment freedom."
 assumptions = "Model A: CT = Trans(Vig(PT, K)); Vigenere running key; Quadgram scoring of 24-char key fragments"
 confidence_tier = 3
 verdict = "NOISE"
@@ -428,7 +428,7 @@ research_questions = ["RQ-1", "RQ-2", "RQ-3"]
 # ── Egypt corpus experiments (2026-02-28) ────────────────────────────────
 
 [elimination.E-EGYPT-00]
-title = "Egyptological corpus pipeline — 18 sources, 9 transliteration variants, identity transposition"
+title = "Egyptological corpus pipeline: 18 sources, 9 transliteration variants, identity transposition"
 category = "key-models"
 subcategory = "running-key"
 scope_limitations = "Only tests identity transposition. Does not eliminate running key from Egyptian texts with non-identity transposition (see E-EGYPT-01 for columnar)."
@@ -439,7 +439,7 @@ repro_command = "PYTHONPATH=src python3 -u scripts/_uncategorized/e_egypt_00_cor
 research_questions = ["RQ-2", "RQ-3"]
 
 [elimination.E-EGYPT-01]
-title = "Egypt corpus x columnar transposition sweep — widths 5-11, 3 variants, 9 corpora"
+title = "Egypt corpus x columnar transposition sweep: widths 5-11, 3 variants, 9 corpora"
 category = "multi-layer"
 subcategory = "transposition-plus-substitution"
 tags = ["running-key", "columnar", "egyptian", "corpus", "transposition", "exhaustive"]
@@ -451,7 +451,7 @@ repro_command = "PYTHONPATH=src python3 -u scripts/transposition/columnar/e_egyp
 research_questions = ["RQ-2", "RQ-3"]
 
 [elimination.E-CFM-09]
-title = "Gutenberg-scale EAST constraint scan — 73 books, 47.4M characters"
+title = "Gutenberg-scale EAST constraint scan: 73 books, 47.4M characters"
 category = "key-models"
 subcategory = "running-key"
 scope_limitations = "Only tests 73 specific Gutenberg texts (English + German). Does not eliminate running key from untested texts or non-published sources."
@@ -466,7 +466,7 @@ research_questions = ["RQ-2", "RQ-3"]
 # ── Session 35 eliminations (2026-03-11, session 3) ──────────────────────
 
 [elimination.E-D13-COLUMNAR-ALL]
-title = "Columnar transposition (ANY width) + period-13 substitution — structural impossibility"
+title = "Columnar transposition (ANY width) + period-13 substitution: structural impossibility"
 description = "Proven structurally impossible: columnar transposition at ANY width (2-48) combined with period-13 substitution cannot satisfy K4's crib constraints. P(all 11 residues match) ≈ 2.5×10⁻¹⁶ per column ordering. 61.5M configurations tested across all widths."
 category = "multi-layer"
 subcategory = "transposition-plus-substitution"
@@ -474,11 +474,11 @@ scope_limitations = "Only eliminates columnar transposition + period-13 substitu
 assumptions = "Columnar transposition; Period-13 periodic substitution (Vig/Beau/VBeau); Cribs at positions 21-33 and 63-73"
 confidence_tier = 1
 truth_tag = "[DERIVED FACT]"
-verdict = "STRUCTURALLY IMPOSSIBLE — P≈2.5×10⁻¹⁶ per ordering, 0 hits in 61.5M configs"
+verdict = "STRUCTURALLY IMPOSSIBLE: P≈2.5×10⁻¹⁶ per ordering, 0 hits in 61.5M configs"
 configs_tested = 61500000
 
 [elimination.E-D13-WIDTH13-P13]
-title = "Width-13 columnar + period-13 substitution — algebraic impossibility proof"
+title = "Width-13 columnar + period-13 substitution: algebraic impossibility proof"
 description = "When width = period = 13, column swaps cannot move positions across residue classes. Backtracking proves zero solutions exist for ANY cipher variant or alphabet. Width-13 is special because 97 = 7×13 + 8 (close to 8 lines × 13 columns)."
 category = "multi-layer"
 subcategory = "transposition-plus-substitution"
@@ -486,22 +486,22 @@ scope_limitations = "Specific to width=period=13. Other width-13 transpositions 
 assumptions = "Width-13 columnar transposition; Period-13 substitution; Direct or transposed positional correspondence"
 confidence_tier = 1
 truth_tag = "[DERIVED FACT]"
-verdict = "ALGEBRAICALLY IMPOSSIBLE — zero solutions exist"
+verdict = "ALGEBRAICALLY IMPOSSIBLE: zero solutions exist"
 
 [elimination.E-D13-AUTOKEY-13]
 title = "Autokey cipher with ≤13-character primers + optional columnar transposition"
-description = "Tested autokey ciphers (PT/CT feedback × Vig/Beau/VBeau × AZ/KA) with primers up to 13 characters matching EASTNORTHEAST length, with and without columnar transposition. 7.9M configurations. Top result: 9/24 crib hits — exactly matches binomial expectation for volume tested."
+description = "Tested autokey ciphers (PT/CT feedback × Vig/Beau/VBeau × AZ/KA) with primers up to 13 characters matching EASTNORTHEAST length, with and without columnar transposition. 7.9M configurations. Top result: 9/24 crib hits, exactly matches binomial expectation for volume tested."
 category = "substitution"
 subcategory = "vigenere"
 scope_limitations = "Only tests primer lengths ≤13. Longer primers or non-standard autokey variants remain open (though autokey is structurally limited to max 21/24 per E-FRAC-37)."
 assumptions = "Autokey cipher with short primer; Optional columnar transposition; Standard crib positions"
 confidence_tier = 2
 truth_tag = "[INTERNAL RESULT]"
-verdict = "NOISE — max 9/24 = binomial expectation"
+verdict = "NOISE: max 9/24 = binomial expectation"
 configs_tested = 7900000
 
 [elimination.E-WCLUSTERING-TRANS]
-title = "W-clustering via single-layer transposition — ruled out"
+title = "W-clustering via single-layer transposition: ruled out"
 description = "Tested whether any transposition brings K4's 5 W positions [20,36,48,58,74] adjacent (suggesting they were separated by transposition). 62K+ columnar configs (widths 2-48), rail fence, serpentine, spiral. Best: cluster of 3 (width-10 only). Width-13 uniquely produces WWWW blocks (4 consecutive), but 5th W remains isolated. No transposition brings all 5 W's contiguous within a 10-char window."
 category = "transposition"
 subcategory = "columnar"
@@ -509,7 +509,7 @@ scope_limitations = "Only tests single-layer transpositions. Double transpositio
 assumptions = "W's were contiguous in original plaintext and separated by transposition"
 confidence_tier = 2
 truth_tag = "[INTERNAL RESULT]"
-verdict = "RULED OUT — no single-layer transposition clusters all 5 W's"
+verdict = "RULED OUT: no single-layer transposition clusters all 5 W's"
 configs_tested = 62000
 
 [elimination.E-PRODUCT-W9-EXHAUSTIVE]
@@ -521,19 +521,19 @@ scope_limitations = "Only width-9 columnar. Other widths tested in product_gener
 assumptions = "Width-9 columnar transposition; Periodic or autokey substitution; Standard alphabets"
 confidence_tier = 2
 truth_tag = "[INTERNAL RESULT]"
-verdict = "NO SIGNAL — best 9/24 (autokey noise)"
+verdict = "NO SIGNAL: best 9/24 (autokey noise)"
 configs_tested = 47174400
 
 [elimination.E-PRODUCT-GENERAL]
 title = "Product cipher: keyword-derived columnar (w4-14) × periodic substitution"
-description = "60 thematic keywords × widths 4-14 × Vig/Beau/VBeau × AZ/KA × periods 1-13. ALL 7,326 configurations scored -9999 with 0 crib hits — hard elimination."
+description = "60 thematic keywords × widths 4-14 × Vig/Beau/VBeau × AZ/KA × periods 1-13. ALL 7,326 configurations scored -9999 with 0 crib hits, hard elimination."
 category = "multi-layer"
 subcategory = "transposition-plus-substitution"
 scope_limitations = "Only keyword-derived column orderings. Arbitrary orderings require exhaustive search (done for w9)."
 assumptions = "Keyword-derived columnar transposition; Periodic substitution; Thematic keywords"
 confidence_tier = 2
 truth_tag = "[INTERNAL RESULT]"
-verdict = "HARD ELIMINATION — 0 crib hits across all configs"
+verdict = "HARD ELIMINATION: 0 crib hits across all configs"
 configs_tested = 7326
 
 [elimination.E-RUNKEY-CARTER]
@@ -545,7 +545,7 @@ scope_limitations = "Only tests Howard Carter's published works. Other running k
 assumptions = "Running key from Carter book text; Optional keyword-derived columnar transposition"
 confidence_tier = 2
 truth_tag = "[INTERNAL RESULT]"
-verdict = "NOISE — max 7/24 direct, 9/24 with transposition"
+verdict = "NOISE: max 7/24 direct, 9/24 with transposition"
 
 [elimination.E-RUNKEY-K123]
 title = "Running-key crib-drag on K1-K3 plaintext (with and without transposition)"
@@ -556,10 +556,10 @@ scope_limitations = "Only tests K1-K3 plaintext as running key. Does not elimina
 assumptions = "Running key from K1-K3 plaintext passages; Optional keyword-derived columnar transposition"
 confidence_tier = 2
 truth_tag = "[INTERNAL RESULT]"
-verdict = "NOISE — max 5/24 direct, 6/24 with transposition"
+verdict = "NOISE: max 5/24 direct, 6/24 with transposition"
 
 [elimination.E-NULLMASK-PERIODIC]
-title = "Null mask + periodic substitution (periods 1-23) — algebraic impossibility proof"
+title = "Null mask + periodic substitution (periods 1-23): algebraic impossibility proof"
 description = "Proven impossible for ANY choice of 24 null positions: consistency depends only on (n1,n2,n3) = null counts per crib segment. All ~325 valid triples fail for periods 1-23. 550K random masks confirm. Only periods 24-26 survive (trivially underdetermined)."
 category = "multi-layer"
 subcategory = "null-extraction"
@@ -567,33 +567,33 @@ scope_limitations = "Only eliminates periodic substitution after null removal. N
 assumptions = "24 null positions removed from 97-char CT; Periodic substitution on resulting 73 chars; Cribs at stated positions shift after null removal"
 confidence_tier = 1
 truth_tag = "[DERIVED FACT]"
-verdict = "ALGEBRAICALLY IMPOSSIBLE — all (n1,n2,n3) triples fail at periods 1-23"
+verdict = "ALGEBRAICALLY IMPOSSIBLE: all (n1,n2,n3) triples fail at periods 1-23"
 
 # ── Session 2026-03-12: 73-char column mask deep investigation ───────────
 
 [elimination.E-COLMASK-AUTOKEY]
 title = "Autokey cipher on 73-char column mask extract (all variants)"
-description = "Tested autokey (PT/CT feedback × Vig/Beau/VBeau × AZ/KA), progressive key, running key on 73-char column mask extracts from the 28×31 native grid null band. 46,170 configs across 9 keep-column variants. Max 6/24 = NOISE. This is a DIFFERENT test from autokey on raw 97 — shifted crib positions (ENE at 13-25, BC at 47-57) and different ciphertext."
+description = "Tested autokey (PT/CT feedback × Vig/Beau/VBeau × AZ/KA), progressive key, running key on 73-char column mask extracts from the 28×31 native grid null band. 46,170 configs across 9 keep-column variants. Max 6/24 = NOISE. This is a DIFFERENT test from autokey on raw 97, shifted crib positions (ENE at 13-25, BC at 47-57) and different ciphertext."
 category = "substitution"
 subcategory = "vigenere"
 scope_limitations = "Only tests autokey on column-mask-extracted 73-char text. Other null mask patterns untested with autokey. Running key from limited dictionary only."
 assumptions = "Column mask removes cols 8-16 minus one kept col; Shifted crib positions; Standard autokey PT/CT feedback"
 confidence_tier = 2
 truth_tag = "[INTERNAL RESULT]"
-verdict = "NOISE — max 6/24 across 46,170 configs"
+verdict = "NOISE: max 6/24 across 46,170 configs"
 configs_tested = 46170
 repro_command = "PYTHONPATH=src python3 -u scripts/grille/e_column_mask_autokey_01.py"
 
 [elimination.E-COLMASK-GRID-COORD]
 title = "Grid-coordinate-derived substitution keys on 73-char column mask extract"
-description = "Tested 150+ key derivation functions from (row, col) grid coordinates: row, col, row+col, row-col, |col-15|, modular keys, KRYPTOS keyword cycling, bearing-derived keys, triangular numbers, etc. Also exhaustive affine fit key=a*col+b*row+c mod 26 (17,576 combinations). 3,726 configs. Max 5/24 = NOISE. Required Vig keystream at crib positions (BLZCDCYYGCKAZ, MUYKLGKORNA) is completely irregular — no coordinate-based pattern fits."
+description = "Tested 150+ key derivation functions from (row, col) grid coordinates: row, col, row+col, row-col, |col-15|, modular keys, KRYPTOS keyword cycling, bearing-derived keys, triangular numbers, etc. Also exhaustive affine fit key=a*col+b*row+c mod 26 (17,576 combinations). 3,726 configs. Max 5/24 = NOISE. Required Vig keystream at crib positions (BLZCDCYYGCKAZ, MUYKLGKORNA) is completely irregular, no coordinate-based pattern fits."
 category = "bespoke"
 subcategory = "physical-sculpture"
 scope_limitations = "Only tests functions of (row, col). Does not test arbitrary position-dependent keys beyond coordinate derivation."
 assumptions = "28×31 grid coordinates; Column mask null removal; Key is a deterministic function of grid position"
 confidence_tier = 2
 truth_tag = "[INTERNAL RESULT]"
-verdict = "NOISE — max 5/24. Key ≠ f(row,col)"
+verdict = "NOISE: max 5/24. Key ≠ f(row,col)"
 configs_tested = 3726
 repro_command = "PYTHONPATH=src python3 -u scripts/grille/e_grid_coordinate_keys_01.py"
 
@@ -606,7 +606,7 @@ scope_limitations = "Only columnar, rail fence, and route transpositions. Other 
 assumptions = "Column mask null removal; Columnar/route transposition; Periodic substitution; Shifted crib positions (ENE 13-25, BC 47-57)"
 confidence_tier = 2
 truth_tag = "[INTERNAL RESULT]"
-verdict = "NOISE — best 18/24 at w9/p11 ≈ expected by chance (Monte Carlo: ~3.6 hits expected)"
+verdict = "NOISE: best 18/24 at w9/p11 ≈ expected by chance (Monte Carlo: ~3.6 hits expected)"
 configs_tested = 31800000
 repro_command = "PYTHONPATH=src python3 -u scripts/grille/e_mitm_trans_sub_73_01.py"
 
@@ -619,13 +619,13 @@ scope_limitations = "Only tests periodic substitution after grid reading transpo
 assumptions = "28×31 native grid layout; Column mask null removal; Reading order = transposition; Periodic substitution"
 confidence_tier = 2
 truth_tag = "[INTERNAL RESULT]"
-verdict = "NOISE — all high scores at high periods (underdetermined). Discriminating periods (≤7): max ~12/24"
+verdict = "NOISE: all high scores at high periods (underdetermined). Discriminating periods (≤7): max ~12/24"
 configs_tested = 2262
 repro_command = "PYTHONPATH=src python3 -u scripts/grille/e_native_grid_reading_01.py"
 
 [elimination.E-FLEISSNER-8X9-180]
 title = "Fleissner 8×9 turning grille (180° rotation) + periodic substitution"
-description = "Fleissner 8×9 turning grille on 72-char delimiter model (remove first O or last R → 96 chars, 24 nulls → 72 = 8×9). 180° rotation gives 36 position pairs, 2^36 ≈ 68.7B configs. P1: Periodic sub (p1-13) proven impossible under ANY null mask for BOTH delimiter models — 14 distinct Vig / 12 distinct Beau key values at crib positions are invariant to Fleissner configuration. P2: Keyword SA (8 keywords × Vig/Beau × 20 restarts × 100K steps): best quadgram -6.584 = NOISE. P3: Monte Carlo 500K random Fleissner trials: max 6/24 crib matches = NOISE."
+description = "Fleissner 8×9 turning grille on 72-char delimiter model (remove first O or last R → 96 chars, 24 nulls → 72 = 8×9). 180° rotation gives 36 position pairs, 2^36 ≈ 68.7B configs. P1: Periodic sub (p1-13) proven impossible under ANY null mask for BOTH delimiter models, 14 distinct Vig / 12 distinct Beau key values at crib positions are invariant to Fleissner configuration. P2: Keyword SA (8 keywords × Vig/Beau × 20 restarts × 100K steps): best quadgram -6.584 = NOISE. P3: Monte Carlo 500K random Fleissner trials: max 6/24 crib matches = NOISE."
 category = "multi-layer"
 subcategory = "turning-grille"
 scope_limitations = "Only tests periodic sub (p1-13) and keyword Vig/Beau after Fleissner transposition. Non-periodic ciphers (autokey, running key, custom tableau) with Fleissner remain OPEN."

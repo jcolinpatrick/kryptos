@@ -61,7 +61,7 @@
 <p>
   A critical subtlety: expected random score depends on the cipher&rsquo;s
   <em>period</em> (key length). At higher periods, random keys match more cribs
-  due to underdetermination &mdash; there are fewer constraints per key
+  due to underdetermination: there are fewer constraints per key
   position.
 </p>
 
@@ -71,11 +71,11 @@
       <tr><th>Period</th><th>Approx. Expected Random Score</th><th>Discriminative?</th></tr>
     </thead>
     <tbody>
-      <tr><td>2&ndash;7</td><td>&sim;8 / 24</td><td><strong>Yes</strong> &mdash; meaningful range</td></tr>
+      <tr><td>2&ndash;7</td><td>&sim;8 / 24</td><td><strong>Yes</strong>, meaningful range</td></tr>
       <tr><td>8</td><td>&sim;10 / 24</td><td>Marginally</td></tr>
       <tr><td>13</td><td>&sim;14 / 24</td><td>Weak</td></tr>
-      <tr><td>17</td><td>&sim;17 / 24</td><td>No &mdash; random matches 17+</td></tr>
-      <tr><td>24</td><td>&sim;19 / 24</td><td>No &mdash; random matches 19+</td></tr>
+      <tr><td>17</td><td>&sim;17 / 24</td><td>No (random matches 17+)</td></tr>
+      <tr><td>24</td><td>&sim;19 / 24</td><td>No (random matches 19+)</td></tr>
       <tr><td>26</td><td>&sim;20 / 24</td><td>No</td></tr>
     </tbody>
   </table>
@@ -101,16 +101,16 @@
       all C(24,2) = 276 crib pairs, minus 13 equalities and 21 mixed pairs.</li>
 </ul>
 <p>
-  These constraints are <em>variant-independent</em> &mdash; they hold whether the cipher
+  These constraints are <em>variant-independent</em>: they hold whether the cipher
   is Vigen&egrave;re, Beaufort, or Variant Beaufort. Any valid solution must satisfy all
   Bean constraints. The full 242-pair inequality set, combined with a fingerprint
   argument (the same keystream value appears at three crib positions whose pairwise
-  differences have gcd(39,45)=3, forcing any periodic key to have period dividing 3 &mdash;
+  differences have gcd(39,45)=3, forcing any periodic key to have period dividing 3,
   but the key has 12 distinct values, ruling out period &le; 3), proves that
-  <strong>no periodic key of any length</strong> &mdash; period 1 through infinity &mdash;
+  <strong>no periodic key of any length</strong> (period 1 through infinity)
   can produce the K4 crib decryptions. This is a complete mathematical proof, not a search
   result. (The proof is actually stronger: the gcd across all 13 equal-key pairs is 1,
-  meaning only period 1 is consistent &mdash; trivially impossible with 12+ distinct key values.)
+  meaning only period 1 is consistent, which is trivially impossible with 12+ distinct key values.)
 </p>
 
 <h2>Two-System Model</h2>
@@ -149,7 +149,7 @@
   <li><strong>All periodic substitution</strong> (Vig/Beau/VBeau &times; AZ/KA &times; all periods): mathematical proof</li>
   <li><strong>All autokey variants</strong> (PT/CT &times; all primers): structural impossibility proof via crib-to-crib feedback</li>
   <li><strong>All sub &times; transposition MITM</strong> (~1.2B evaluations): mono + periodic + autokey &times; 14 transposition families</li>
-  <li><strong>All VIC cipher models</strong>: generic, narrative, K2-derived, historical params &mdash; extensive testing across multiple model variants</li>
+  <li><strong>All VIC cipher models</strong>: generic, narrative, K2-derived, historical params (extensive testing across multiple model variants)</li>
   <li><strong>All digraphic ciphers</strong> (Four-Square, Playfair, Two-Square): single-layer ceiling 23/24 (overfitting)</li>
   <li><strong>All bespoke mechanisms</strong>: Gromark (8.74B), Feistel, Gronsfeld, Porta, fractionation, homophonic, Hill</li>
   <li><strong>Running key from 60K Gutenberg texts</strong> (106B offset-checks): zero signal</li>
@@ -162,7 +162,7 @@
 <h2>73-Character Hypothesis</h2>
 <p>
   Sanborn&rsquo;s yellow legal pad (auctioned in 2025) shows &ldquo;8 lines 73&rdquo; for K4.
-  The carved text has 97 characters &mdash; so <strong>24 characters may be nulls</strong>,
+  The carved text has 97 characters, so <strong>24 characters may be nulls</strong>,
   reinforced by the <em>Quadruple-24 Coincidence</em>:
 </p>
 <ol>
@@ -179,12 +179,12 @@
 
 <h3>The Null Palette</h3>
 <p>
-  Statistical analysis has identified a <strong>null palette</strong> &mdash; a set of 7 letters
+  Statistical analysis has identified a <strong>null palette</strong>, a set of 7 letters
   {B, G, I, K, O, W, Z} that appear disproportionately at null positions
   (p&asymp;3.0&times;10<sup>&minus;5</sup>, permutation test 10M trials, letter-shuffle null model).
   Under certain keyword-mixed alphabets (including KRYPTOS), these 7 letters concentrate
   in exactly two columns of a 5-wide Polybius grid. About 0.6% of English keywords produce
-  this column-concentration property &mdash; the specific keyword is not uniquely determined.
+  this column-concentration property; the specific keyword is not uniquely determined.
   Independently, 13/24 Beaufort keystream values at crib positions are themselves palette letters
   (p=0.0043). This alphabet-independent coupling between the stego and cipher layers is the
   strongest constraint on the key generation mechanism.
@@ -201,7 +201,7 @@
   <strong>Null mask + periodic substitution</strong> is proven impossible for ANY choice of
   24 null positions at ANY period (algebraic proof extended to CT73 via Bean inequalities
   across all 11,440 candidate masks). The cipher operating on the 73 extracted characters
-  must use a <strong>non-periodic key</strong> &mdash; a running key from an unknown source,
+  must use a <strong>non-periodic key</strong>: a running key from an unknown source,
   a bespoke procedural method, or a one-time key.
 </p>
 
@@ -235,15 +235,15 @@
 
 <h2>Confidence Tiers</h2>
 <dl>
-  <dt>Tier 1 &mdash; Mathematical Proof</dt>
+  <dt>Tier 1: Mathematical Proof</dt>
   <dd>Algebraic proof that the method cannot produce the known plaintext. Permanently valid
       unless crib positions or ciphertext transcription are wrong.</dd>
-  <dt>Tier 2 &mdash; Exhaustive Search</dt>
+  <dt>Tier 2: Exhaustive Search</dt>
   <dd>Every possible configuration was tested under stated assumptions. Solid for the specific
       model tested, but does not eliminate multi-layer variants.</dd>
-  <dt>Tier 3 &mdash; Partial/Statistical</dt>
+  <dt>Tier 3: Partial/Statistical</dt>
   <dd>Sampling-based or incomplete coverage. May warrant re-testing under different assumptions.</dd>
-  <dt>Tier 4 &mdash; Untested</dt>
+  <dt>Tier 4: Untested</dt>
   <dd>Never properly tested. Fully open.</dd>
 </dl>
 
