@@ -12,8 +12,8 @@ from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field, field_validator
 
-from api.classifier import classify_theory, load_elimination_index, ClassifyResult
-from api.queue import add_theory, init_db, record_request
+from ops.api.classifier import classify_theory, load_elimination_index, ClassifyResult
+from ops.api.queue import add_theory, init_db, record_request
 
 # ---------------------------------------------------------------------------
 # Global state
