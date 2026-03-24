@@ -413,7 +413,7 @@ def _build_standalone_viewer(
   <meta name="description" content="internal.com — The K4 Elimination Database.">
   <meta property="og:title" content="{title}">
   <meta property="og:site_name" content="internal.com">
-  <meta property="og:image" content="https://internal.com/static/internal.png">
+  <meta property="og:image" content="https://internal.com/static/internal-og.jpg">
   <link rel="icon" type="image/png" href="/static/internal.png">
   <link rel="stylesheet" href="/static/fonts/fonts.css">
   <link rel="stylesheet" href="/static/style.css">
