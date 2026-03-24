@@ -35,7 +35,7 @@ When we analyzed which characters appear at positions that are likely filler, a 
 
 Those seven letters are: **B, G, I, K, O, W, Z**
 
-Out of the 17 filler positions we're most confident about, every single one is one of these seven letters. The probability of that happening by chance — picking 17 random positions and getting only 7 distinct letter values — is about **1 in 15,000** (Monte Carlo, 50 million trials, p = 6.7 × 10⁻⁵).
+Out of the 17 filler positions we're most confident about, every single one is one of these seven letters. The probability of that happening by chance — shuffling K4's letters and finding only 7 distinct values at the 17 null positions — is about **1 in 33,000** (permutation test, 10M trials, p ≈ 3.0 × 10⁻⁵). Under a uniform model (Stirling numbers, exact): p = 7.78 × 10⁻⁵ (~1 in 12,859).
 
 These aren't random letters. On the KRYPTOS alphabet grid (the alphabet rearranged starting with K-R-Y-P-T-O-S), these seven letters sit in two specific columns:
 
