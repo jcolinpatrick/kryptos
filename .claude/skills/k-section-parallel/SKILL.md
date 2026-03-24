@@ -12,9 +12,7 @@ solved sections are strong predictors for K4.
 
 ## K0 — The Morse Code Foundation (Tableau Side)
 
-K0 is the Morse code text on the REVERSE side of the sculpture
-(the tableau side, which Sanborn says is the "right way" to view it).
-It is the FIRST section encountered from the correct viewing direction.
+K0 is the Morse code text on slabs outside the CIA entrance
 
 ### K0 Properties
 - **Medium**: Morse code, not alphabetic — different encoding layer
@@ -40,7 +38,7 @@ It is the FIRST section encountered from the correct viewing direction.
 
 ### K0 Position in Progressive Solve
 ```
-K0 (Morse, tableau side) → encoding/stego foundation
+K0 (Morse) → encoding/stego foundation
 K1 (KA Vigenère, PALIMPSEST) → substitution cipher
 K2 (KA Vigenère, ABSCISSA) → same cipher, different key + coordinates
 K3 (Double rotation) → transposition cipher

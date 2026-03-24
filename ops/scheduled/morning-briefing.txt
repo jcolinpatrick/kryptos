@@ -1,26 +1,31 @@
-Generate a morning briefing for the KryptosBot project.
+Generate a brief morning status for the KryptosBot project.
 
-1. Read CLAUDE.md — note the current primary hypothesis.
-2. Read MEMORY.md — note what was done most recently.
-3. Read the most recent nightly review in logs/ (if any).
-4. Check running processes: ps aux | grep python | grep -v grep
-5. Check disk usage: df -h ~ && du -sh results/
+This project helps the Kryptos community work toward solving K4.
+All standard computational approaches are exhausted (884B+ configs, ZERO breakthroughs).
+The system is in monitoring/readiness mode, not active search.
 
-Write a concise briefing to logs/briefing-$(date +%Y%m%d).md:
+1. Read the most recent nightly health report: ls -t logs/nightly-health-*.md | head -1
+   If none exists, note that the nightly job may not have run.
 
-## Current Hypothesis
-[One paragraph from CLAUDE.md]
+2. Quick checks:
+   - systemctl is-active internal-api.service
+   - curl -s -o /dev/null -w "%{http_code}" http://localhost:8000/ (expect 200)
+   - du -sh results/ site/
 
-## Yesterday's Progress
-[What was tested, what was found, what was eliminated]
+3. Check for any external developments:
+   - ls -lt results/ | head -5 (any new result files?)
+   - git log --oneline -5 (any recent commits?)
 
-## Active Compute
-[What's running right now, estimated completion]
+4. Write to logs/briefing-$(date +%Y%m%d).md:
 
-## Disk Status
-[Space remaining, results directory size]
+   ## KryptosBot — [date]
+   - Site: [up/down, HTTP status]
+   - API: [active/inactive]
+   - Last build: [from nightly report or file age]
+   - New results: [yes/no]
+   - Action needed: [yes/no — only if site is down or accuracy issue found]
 
-## Recommended Next Steps
-[Based on MEMORY.md's queued experiments and gaps in coverage]
+5. If everything is healthy, the report should be 5-10 lines.
+   Only elaborate if something needs attention.
 
-Keep it under 50 lines. This is a dashboard, not a research paper.
+Do NOT run attacks, modify code, or update MEMORY.md.
