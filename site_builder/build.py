@@ -413,7 +413,7 @@ def _build_standalone_viewer(
   <meta name="description" content="kryptosbot.com — The K4 Elimination Database.">
   <meta property="og:title" content="{title}">
   <meta property="og:site_name" content="kryptosbot.com">
-  <meta property="og:image" content="https://kryptosbot.com/static/kryptosbot.png">
+  <meta property="og:image" content="https://kryptosbot.com/static/kryptosbot-og.jpg">
   <link rel="icon" type="image/png" href="/static/kryptosbot.png">
   <link rel="stylesheet" href="/static/fonts/fonts.css">
   <link rel="stylesheet" href="/static/style.css">
