@@ -13,9 +13,9 @@ Usage:
 import sys
 import os
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
-from api.queue import init_db, get_pending, update_status, _get_connection, DB_PATH
+from ops.api.queue import init_db, get_pending, update_status, _get_connection, DB_PATH
 
 
 def list_pending():
