@@ -1,29 +1,45 @@
-You are running an automated nightly review of the KryptosBot project.
+You are running an automated nightly site health and accuracy check for kryptosbot.com.
+
+This project's mission is to help the Kryptos community solve K4 in Jim Sanborn's lifetime.
+The site must be ACCURATE — false eliminations or stale data erode community trust.
 
 1. Read CLAUDE.md and MEMORY.md completely.
 
-2. Find all results files modified in the last 24 hours:
-   find results/ -mtime -1 -type f
+2. Site health checks:
+   - Verify site/index.html exists and is recent (< 48 hours old)
+   - Count elimination pages: find site/elimination/ -name 'index.html' | wc -l
+   - Validate site/search-index.json is parseable JSON
+   - Check the API service: systemctl is-active kryptosbot-api.service
+   - Check disk: df -h /home/cpatrick | tail -1
 
-3. For each file:
-   - Parse the results in whatever format the file uses
-   - Count total configurations tested
-   - Identify the top 10 candidates by score
-   - Check each for crib alignment per CLAUDE.md's current crib positions
-   - Note if any are statistically anomalous
+3. Accuracy audit — spot-check 3 random elimination pages:
+   - Read the HTML and verify the verdict (ELIMINATED/INCONCLUSIVE) matches
+     what MEMORY.md and memory/elimination_ledger.md say
+   - Check that crib positions are stated as 0-indexed (21-33, 63-73)
+   - Check that CT matches the canonical 97-char string in CLAUDE.md
+   - Flag any page that claims a method is "possible" if MEMORY.md says ELIMINATED
 
-4. Write a summary to logs/nightly-review-$(date +%Y%m%d).md containing:
-   - Files reviewed and total configs tested today
-   - Top candidates with full parameters
-   - Any crib matches (even partial)
-   - Any statistical anomalies
-   - Which parameter ranges are now fully exhausted
+4. Check for breakthrough candidates:
+   - find results/ -mtime -1 -type f (anything new in last 24 hours)
+   - If any file exists, parse it and report the top 5 by score
+   - ONLY flag candidates scoring >= 18 (SIGNAL threshold)
 
-5. If anything is crib-positive or statistically exceptional, ALSO
-   append it to MEMORY.md under "## Hot Leads" with today's date.
+5. Write a short report to logs/nightly-health-$(date +%Y%m%d).md:
 
-6. If any attack type is now fully exhausted across its parameter space,
-   append a disproof entry to MEMORY.md with the date and parameters.
+   ## Site Health — [date]
+   - Build age: [hours since last build]
+   - Elimination pages: [count]
+   - API service: [active/inactive]
+   - Disk free: [amount]
+   - Accuracy issues: [list or "None"]
+   - New results: [count or "None"]
+   - Breakthrough candidates: [list or "None"]
 
-Do NOT modify CLAUDE.md — that's maintained separately.
-Do NOT re-run any attacks — this is a review-only session.
+6. If ANY accuracy issue is found, append it to logs/accuracy-issues.log
+   with the date, page path, and what's wrong.
+
+7. If a candidate scores >= 24 with Bean PASS, write BREAKTHROUGH to
+   logs/BREAKTHROUGH.txt with full details. This has never happened.
+
+Keep the report under 30 lines. This is a watchdog, not a research session.
+Do NOT run any attacks or modify any code.
