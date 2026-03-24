@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="site_builder/static/internal.png" alt="KryptosBot" width="180">
+  <img src="ops/site_builder/static/internal.png" alt="KryptosBot" width="180">
 </p>
 
 <h1 align="center">KryptosBot</h1>

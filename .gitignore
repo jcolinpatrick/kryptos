@@ -62,6 +62,7 @@ MEMORY.md
 RUNBOOK.md
 ops/scheduled/
 <internal>/
+memory/
 agent_analysis.json
 scripts/vm_capability_report.sh
 bootstrap_report.json
