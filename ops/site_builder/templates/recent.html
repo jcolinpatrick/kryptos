@@ -10,7 +10,7 @@
 {% if recent_eliminations %}
 {% for e in recent_eliminations %}
 <div class="feed-item">
-  <div class="feed-date">{{ e.date_tested|format_date if e.date_tested else "—" }}</div>
+  <div class="feed-date">{{ e.date_tested|format_date if e.date_tested else "N/A" }}</div>
   <div class="feed-content">
     <h3><a href="/elimination/{{ e.slug }}/">{{ e.title }}</a></h3>
     <div class="meta">
