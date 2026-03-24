@@ -286,7 +286,7 @@ def build():
     _build_standalone_viewer(
         src_name="polybius_walk.html",
         out_slug="polybius-walk",
-        title="Polybius Grid Walk — kryptosbot.com",
+        title="Polybius Grid Walk | kryptosbot.com",
         css_file="polybius_walk.css",
         js_file="polybius_walk.js",
         page_class="pw-page",
@@ -298,7 +298,7 @@ def build():
     _build_standalone_viewer(
         src_name="k3_jefferson_viewer.html",
         out_slug="k3-jefferson-viewer",
-        title="K3 Jefferson Viewer — kryptosbot.com",
+        title="K3 Jefferson Viewer | kryptosbot.com",
         css_file="k3_jefferson_viewer.css",
         js_file="k3_jefferson_viewer.js",
         page_class="jv-page",
@@ -410,7 +410,7 @@ def _build_standalone_viewer(
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="kryptosbot.com — The K4 Elimination Database.">
+  <meta name="description" content="kryptosbot.com | The K4 Elimination Database.">
   <meta property="og:title" content="{title}">
   <meta property="og:site_name" content="kryptosbot.com">
   <meta property="og:image" content="https://kryptosbot.com/static/kryptosbot-og.jpg">
@@ -493,12 +493,12 @@ def _build_cylinder_viewer(global_ctx: dict):
 
     # -- 1. Replace <head> internals: add site stylesheets before the inline <style>
     site_head = (
-        '<meta name="description" content="kryptosbot.com — The K4 Elimination Database.">\n'
+        '<meta name="description" content="kryptosbot.com | The K4 Elimination Database.">\n'
         '<link rel="stylesheet" href="/static/fonts/fonts.css">\n'
         '<link rel="stylesheet" href="/static/style.css">\n'
         '<link rel="icon" type="image/png" href="/static/kryptosbot.png">\n'
     )
-    html = html.replace('<title>Kryptos Cylinder Viewer</title>', f'<title>Cylinder Viewer — kryptosbot.com</title>\n{site_head}', 1)
+    html = html.replace('<title>Kryptos Cylinder Viewer</title>', f'<title>Cylinder Viewer | kryptosbot.com</title>\n{site_head}', 1)
 
     # -- 2. Externalise inline <style> and <script> for CSP
     html = re.sub(
