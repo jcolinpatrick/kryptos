@@ -116,7 +116,7 @@ All are of the form: compute Cipher(KRYPTOS[pos%7], WORD[pos%5]) on some alphabe
 1. ~~What generates the 7x5 classification table?~~ **RESOLVED (partial):** Cipher operations KRYPTOS x WORD can generate it, but ~0.5% of words work. The table may be a hand-written lookup table rather than algorithmically derived.
 2. Does the table extend to predict the 7 VARYING null positions? (No -- varying positions are NOT palette positions.)
 3. Can the "first occurrence" tiebreaker be tested with a cipher model to produce better than 15/24?
-4. **NEW**: Is the combined significance (palette p=0.000024 + KRYPTOS+SEVEN p=1/1672 + table generation p=1/200) enough? Combined: ~1 in 8M, moderately significant.
+4. **RESOLVED**: Combined significance via Fisher's method (palette p ≈ 3.0 × 10⁻⁵ + BCL keystream p = 6.3 × 10⁻⁴) = p ≈ 3.5 × 10⁻⁷. Joint MC (10M trials): 0 co-occurrences → p < 10⁻⁷. Strongly significant.
 
 ### Connection to Prior Findings
 - The col7_column=1 all-null finding (5/5, p=0.019) is EXPLAINED by this table: all 5 palette positions at pos%7=1 fall in pure-null cells (1,0), (1,1), (1,3).

@@ -73,7 +73,7 @@ The preimage also contains: TENSE, THESE, SHEET, TENS, NETS, NEST, SENT.
 ## Statistical Significance
 
 - **P(random 7-letter + 5-letter pair produces [0,B,3,0,3,0])**: ~1/1,672 (MC)
-- Combined with mod-5 column constraint (1/1,993) and palette itself (1/41,667):
+- Combined with mod-5 column constraint (1/1,993) and palette itself (~1/33,000 permutation):
   the full model has probability well below 1 in 10^8 by chance
 - **21 thematic keyword pairs** produce the pattern from our keyword list
   (KRYPTOS+SEVEN, KRYPTOS+MEDUSA, KRYPTOS+QUEST, etc.)

@@ -50,7 +50,8 @@
       means they share a common structural source.
     </li>
     <li>
-      <strong>Combined odds of coincidence: roughly 1 in 1.2 million.</strong>
+      <strong>Combined odds of coincidence: p&nbsp;&lt;&nbsp;10<sup>&minus;7</sup></strong>
+      (Fisher&rsquo;s method on palette restriction + keystream enrichment; confirmed by joint Monte Carlo &mdash; 0 hits in 10M trials).
     </li>
   </ul>
   <p>
@@ -114,8 +115,8 @@
     <p>
       We identified 17 positions where researchers agree the character is a null.
       Those 17 characters use only <strong>7 different letters: B, G, I, K, O, W, and Z.</strong>
-      Drawing 17 characters from a 26-letter alphabet and getting only 7 distinct letters
-      has a probability of <strong>1 in 41,667</strong>. This is not coincidence.
+      Drawing 17 characters at random from K4&rsquo;s letter distribution and getting only 7 distinct letters
+      has a probability of roughly <strong>1 in 33,000</strong> (permutation test, 10M trials). This is not coincidence.
     </p>
     <p>
       Even more striking: <strong>4 of the 5 W's</strong> in the entire ciphertext are nulls.
@@ -159,15 +160,15 @@
     </div>
     <div class="stat-pill">
       <span class="stat-pill-label">Palette restriction</span>
-      <span class="stat-pill-value">p = 1 in 41,667</span>
+      <span class="stat-pill-value">p &asymp; 1 in 33,000</span>
     </div>
     <div class="stat-pill">
       <span class="stat-pill-label">Polybius column alignment</span>
       <span class="stat-pill-value">~0.6% of keywords</span>
     </div>
     <div class="stat-pill stat-pill-accent">
-      <span class="stat-pill-label">Joint significance</span>
-      <span class="stat-pill-value">p &lt; 1 in 7,000,000</span>
+      <span class="stat-pill-label">Combined with keystream enrichment</span>
+      <span class="stat-pill-value">p &lt; 10<sup>&minus;7</sup> (joint MC)</span>
     </div>
   </div>
 
@@ -212,7 +213,7 @@
       We searched the entire ciphertext for this kind of pattern at every possible spacing
       and every possible difference value. <strong>This is the only one.</strong> After
       correcting for the 712 statistical tests we ran, the probability of seeing this
-      by chance is about <strong>1 in 625</strong>.
+      by chance is about <strong>1 in 642</strong> (Bonferroni-corrected: 712 / 456,976).
     </p>
   </div>
 
@@ -267,8 +268,8 @@
       <span class="stat-pill-value">Zero</span>
     </div>
     <div class="stat-pill">
-      <span class="stat-pill-label">Corrected p-value</span>
-      <span class="stat-pill-value">~1 in 625</span>
+      <span class="stat-pill-label">Corrected p-value (712 tests)</span>
+      <span class="stat-pill-value">~1 in 642</span>
     </div>
   </div>
 

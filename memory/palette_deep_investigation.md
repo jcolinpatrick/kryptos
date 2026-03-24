@@ -2,7 +2,7 @@
 
 ## Context
 
-The 17 consensus null characters in K4 use ONLY 7 distinct letters (p=0.000024).
+The 17 consensus null characters in K4 use ONLY 7 distinct letters (permutation test p ≈ 3.0 × 10⁻⁵, ~1/33K; Stirling analytical p = 7.78 × 10⁻⁵, ~1/12.9K).
 This file documents a comprehensive 18-test investigation into the generating rule.
 
 ## Three Major Discoveries
