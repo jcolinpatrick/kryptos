@@ -108,16 +108,17 @@
   differences have gcd(39,45)=3, forcing any periodic key to have period dividing 3,
   but the key has 12 distinct values, ruling out period &le; 3), proves that
   <strong>no periodic key of any length</strong> (period 1 through infinity)
-  can produce the K4 crib decryptions. This is a complete mathematical proof, not a search
-  result. (The proof is actually stronger: the gcd across all 13 equal-key pairs is 1,
+  can produce the K4 crib decryptions. This is a mathematical proof derived within this
+  project, reproducible from the codebase (not a search result). (The proof is actually stronger: the gcd across all 13 equal-key pairs is 1,
   meaning only period 1 is consistent, which is trivially impossible with 12+ distinct key values.)
 </p>
 
 <h2>Two-System Model</h2>
 <p>
   Jim Sanborn stated at the Kryptos dedication that <em>&ldquo;there are two systems
-  of enciphering the bottom text.&rdquo;</em> Ed Scheidt confirmed a <em>&ldquo;bit of stego&rdquo;</em>
-  and that the <em>&ldquo;masking technique may not be known.&rdquo;</em> Combined with the
+  of enciphering the bottom text.&rdquo;</em> Scheidt stated that he <em>&ldquo;masked the
+  English language so it&rsquo;s more of a challenge&rdquo;</em> and that solvers need to
+  <em>&ldquo;solve the technique first and then go for the puzzle.&rdquo;</em> Combined with the
   mathematical impossibility of periodic substitution at any period, this means K4 uses
   <strong>two layers</strong>: a steganographic layer (null mask) and a substitution cipher.
 </p>
