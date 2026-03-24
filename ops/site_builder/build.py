@@ -15,18 +15,18 @@ except ImportError:
     sys.exit(1)
 
 # Ensure both kryptos kernel and site_builder are importable
-_project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+_project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 sys.path.insert(0, os.path.join(_project_root, "src"))
 sys.path.insert(0, _project_root)
 
-from site_builder.data_loader import load_all, SiteElimination
-from site_builder.categorizer import categorize_all, get_category_stats
-from site_builder.search_index import write_search_index
+from ops.site_builder.data_loader import load_all, SiteElimination
+from ops.site_builder.categorizer import categorize_all, get_category_stats
+from ops.site_builder.search_index import write_search_index
 
 
 # --- Configuration ---
 
-PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 TEMPLATE_DIR = os.path.join(os.path.dirname(__file__), "templates")
 STATIC_DIR = os.path.join(os.path.dirname(__file__), "static")
 OUTPUT_DIR = os.path.join(PROJECT_ROOT, "site")
