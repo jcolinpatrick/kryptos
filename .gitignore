@@ -60,6 +60,8 @@ reference/carter_vol1_extract.txt
 CLAUDE.md
 MEMORY.md
 RUNBOOK.md
+ops/scheduled/
+<internal>/
 agent_analysis.json
 scripts/vm_capability_report.sh
 bootstrap_report.json
