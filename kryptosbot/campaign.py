@@ -738,10 +738,7 @@ def _null_mask_sa_worker(args: tuple) -> dict:
     seed, iterations, w_constrained = args
     rng.seed(seed)
 
-    K4 = "OBKRUOXOGHULBSOLIFBBWFLRVQQPRNGKSSOTWTQSJQSSEKZZWATJKLUDIAWINFBNYPVTTMZFPKWGDKZXTJCDIGKUHUAUEKCAR"
-    AZ = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    KA = "KRYPTOSABCDEFGHIJLMNQUVWXZ"
-    CRIBS = [(21, "EASTNORTHEAST"), (63, "BERLINCLOCK")]
+    from kryptosbot.constants import K4, AZ, KA, CRIBS
     TOP_KEYWORDS = ["KOMPASS", "KRYPTOS", "DEFECTOR", "COLOPHON", "KOLOPHON",
                     "PARALLAX", "KRYPTA", "KRYPTEIA", "KLEPSYDRA", "ABSCISSA"]
     W_POSITIONS = {20, 36, 48, 58, 74}
