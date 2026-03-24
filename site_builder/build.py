@@ -338,8 +338,8 @@ def build():
     os.makedirs(static_out, exist_ok=True)
     for fname in os.listdir(STATIC_DIR):
         src = os.path.join(STATIC_DIR, fname)
-        # robots.txt goes to site root, not /static/
-        if fname == "robots.txt":
+        # robots.txt and Google verification files go to site root, not /static/
+        if fname == "robots.txt" or fname.startswith("google") and fname.endswith(".html"):
             shutil.copy2(src, os.path.join(OUTPUT_DIR, fname))
             print(f"  {fname} (→ site root)")
             continue
