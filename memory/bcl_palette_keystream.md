@@ -107,7 +107,7 @@ The fact remains: (CT[i] + PT[i]) mod 26 at BCL = 7/8 palette regardless of mode
 
 4. **No palette propagation to nulls**: The raw-97 autokey model does NOT create palette PT at null positions. The palette-null connection is in the CIPHERTEXT layer (CT letters at null positions), not the plaintext layer.
 
-5. **Strongest single anomaly**: The BCL first-8 keystream palette enrichment (P=0.000627) is one of the strongest individual anomalies discovered, alongside the 7-letter palette itself (P=0.000024) and KA mod 5 (P=0.000502).
+5. **Strongest single anomaly**: The BCL first-8 keystream palette enrichment (P=0.000627) is one of the strongest individual anomalies discovered, alongside the 7-letter palette itself (P ≈ 3.0 × 10⁻⁵ permutation) and KA mod 5 (P=0.000502).
 
 ## Scripts and Results
 - Script: `scripts/campaigns/e_bcl_palette_keystream_v1.py`
