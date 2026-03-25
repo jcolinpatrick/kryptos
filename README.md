@@ -1,12 +1,12 @@
 <p align="center">
-  <img src="ops/site_builder/static/internal.png" alt="KryptosBot" width="180">
+  <img src="site_builder/static/internal.png" alt="KryptosBot" width="180">
 </p>
 
 <h1 align="center">KryptosBot</h1>
 
 <p align="center">
   <strong>An open-source computational analysis of Kryptos K4</strong><br>
-  668 billion+ configurations tested. 188 eliminations recorded. Zero breakthroughs yet.
+  668 billion+ configurations tested. 188 cipher families eliminated. Zero breakthroughs yet.
 </p>
 
 <p align="center">
@@ -20,7 +20,7 @@
 
 ## What is this?
 
-**Kryptos** is an encrypted sculpture at CIA headquarters in Langley, Virginia. Installed in 1990 by artist Jim Sanborn with cryptographic consultation from Ed Scheidt (retired Chairman of the CIA Cryptographic Center), it contains four encrypted messages. K1-K3 were solved by CIA analyst David Stein (1998) and independently by Jim Gillogly (1999). **K4 remains unsolved after over 35 years.**
+**Kryptos** is an encrypted sculpture at CIA headquarters in Langley, Virginia. Installed in 1990 by artist Jim Sanborn with the help of CIA cryptographer Ed Scheidt, it contains four encrypted messages. The first three (K1-K3) were solved in 1999. **The fourth, K4, remains unsolved after 35 years.**
 
 This repository is a systematic attempt to solve K4 — or at least to rigorously document what doesn't work.
 
@@ -39,12 +39,12 @@ This repository is a systematic attempt to solve K4 — or at least to rigorousl
 src/kryptos/          # Core library — cipher transforms, scoring, constraints
   kernel/             #   Pure computation: alphabets, transforms, Bean constraints
   pipeline/           #   Candidate evaluation and parallel sweep runner
-  kernel/scoring/     #   Crib scoring, n-gram analysis, IC
+  scoring/            #   Crib scoring, n-gram analysis, IC
   novelty/            #   Hypothesis generation and triage
   corpus/             #   Egyptological corpus for running-key testing
   cli/                #   Command-line tools (sweep, reproduce, novelty, report)
 
-scripts/              # 900+ experiment scripts organized by cipher family
+scripts/              # 600+ experiment scripts organized by cipher family
   substitution/       #   Vigenere, Beaufort, Hill, monoalphabetic, etc.
   transposition/      #   Columnar, rail fence, route, grid-based
   fractionation/      #   Bifid, Trifid, ADFGVX, Playfair
@@ -56,8 +56,9 @@ scripts/              # 900+ experiment scripts organized by cipher family
 
 tests/                # Unit, QA, and benchmark tests
 bench/                # Cipher-solving benchmark framework
-ops/site_builder/     # Static site generator for internal.com
-ops/api/              # FastAPI backend (theory classifier, submission queue)
+site_builder/         # Static site generator for internal.com
+api/                  # FastAPI backend (theory classifier, submission queue)
+<internal>/           # Multi-agent campaign runner (Agent SDK)
 ```
 
 ## Quick start
@@ -99,7 +100,7 @@ The score is based on crib consistency (do the known plaintext positions produce
 
 ## What's been eliminated
 
-The [internal.com](https://internal.com/browse/) site documents 188 elimination records across 7 categories:
+The [internal.com](https://internal.com/browse/) site documents 188 formal eliminations across 7 categories:
 
 - **Substitution** — Vigenere, Beaufort, Quagmire, Hill, Caesar, mixed alphabets
 - **Transposition** — Columnar, double-columnar, AMSCO, rail fence, route, grille
@@ -113,7 +114,7 @@ The [internal.com](https://internal.com/browse/) site documents 188 elimination 
 
 The leading working model (not proven):
 
-1. **Two systems stated** — Sanborn stated at the Kryptos dedication that K4 uses "two systems of enciphering," distinct from the Vigenere used for K1-K3
+1. **Two systems confirmed** — Sanborn's dedication speech states K4 uses "two systems of enciphering," distinct from the Vigenere used for K1-K3
 2. **73-character hypothesis** — Sanborn's working notes suggest K4 may be 73 characters with 24 nulls inserted
 3. **Cardan grille as selection mask** — The grille may identify which 73 of the 97 carved characters are real ciphertext
 4. **W-as-delimiter** — Five W's in the ciphertext bracket the known cribs, possibly acting as word separators
@@ -143,7 +144,7 @@ The whole point of open-sourcing this is to get more eyes on K4.
 
 Built by **Colin Patrick** (human lead) and **Claude** (computational partner, Anthropic).
 
-The sculpture *Kryptos* was created by **Jim Sanborn** with cryptographic assistance from **Ed Scheidt** (retired Chairman of the CIA Cryptographic Center).
+The sculpture *Kryptos* was created by **Jim Sanborn** with cryptographic assistance from **Ed Scheidt** (retired CIA Crypto Center chief).
 
 ---
 
