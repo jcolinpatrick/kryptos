@@ -95,12 +95,13 @@ Only periods {8, 13, 16, 19, 20, 23, 24, 26} are Bean-compatible for transpositi
 
 ### Stehle Delta4=5 Anomaly (2026-03-15)
 
-**Status: REAL ANOMALY (p~0.0016), NO EXPLOIT FOUND**
+**Status: LOCAL COINCIDENCE (p~0.0016), FULLY CHARACTERIZED**
 - Only constant-difference window in entire CT (pos 55-63, lag 4, delta=5)
-- Pattern DESTROYED by consensus null mask — positions 58,59 are essential
-- Resolved: Delta4=5 is artifact of null-insertion step (non-null positions force it; null values uniquely determined)
-- Does NOT yield decryption under any standard model
-- Script: `scripts/campaigns/e_stehle_delta4_comprehensive.py` | Result: `results/stehle_delta4_comprehensive.json`
+- **Anatomy**: cipher output produced Δ4=5 at two consecutive non-null pairs (56→60, 57→61) — one of only 3 such pairs in all of CT97 at lag 4. Null insertion at 58,59 extended this because both forced values (W,I) are palette letters.
+- Pos 59 is doubly constrained (D(55)+5=I AND N(63)-5=I). Pos 58 is singly constrained (B(62)-5=W).
+- **NOT a generative mechanism**: only 4/17 null positions are arithmetically constrained, count matches random expectation (MC p=0.59). No global constant-difference rule exists (1,248 tests, MC p=0.954).
+- Stehle and width-21 bigram anomaly are largely independent; only pos 59 satisfies both.
+- Scripts: `scripts/campaigns/e_stehle_delta4_comprehensive.py`, `scripts/analysis/e_null_arithmetic_census.py`, `scripts/analysis/e_global_delta_sweep.py`
 
 ### Null Insertion Mathematical Structure (2026-03-15)
 
@@ -121,7 +122,8 @@ Only periods {8, 13, 16, 19, 20, 23, 24, 26} are Bean-compatible for transpositi
 - Combined 24 cribs: 13/24 palette (p=0.004)
 - Keystream is model-independent at crib positions (CT+PT, no keyword assumption needed)
 - Three independent robust signals confirmed (Fisher combined p ~ 1.4e-8): palette diversity, BCL enrichment, DEFECTOR uniqueness
-- Interpretive layer (mod 5, SEVEN, mod 35 table) is consistent but NOT independently validated
+- Interpretive layer (mod 5, SEVEN) is consistent but NOT independently validated
+- **(pos%7, pos%5) mod-35 table: OVERFIT** — LOO cross-validation 47.1% accuracy (below 48.6% baseline). Predicts 0/14 candidate positions as null. Descriptive artifact, not a generative rule. Downgraded 2026-03-25.
 - Detail: `memory/palette_deep_investigation.md`, `memory/bcl_palette_keystream.md`
 
 ### Cardan Grille + Model 2 (2026-03-04)
@@ -312,3 +314,57 @@ All topic files in `.claude/memory/` unless otherwise noted.
 - Position 59 is the ONLY position where both anomalies agree and the actual value satisfies both
 - No evidence of joint optimization -- the two anomalies appear to be independent consequences of null insertion
 - Script: `scripts/analysis/e_stehle_width21_interaction.py` | Result: `results/stehle_width21_interaction.json`
+
+### E-CT80-CIPHER-ATTACK: CT80 (17-null) Cipher Attacks (2026-03-25)
+
+**Status: NOISE (2,010 configs, zero hits >= 6/24)**
+- Hypothesis: K4 has exactly 17 nulls (consensus positions), giving 80-char ciphertext; standard cipher attacks on CT80 with free-position crib search
+- CT80: RUXOHULSLIFBBFLRVQQPRNGKSSOTTQSJQSSEKZZWATJLUDIANFBNYPVTTMZFPKDKXTJCDKUHUAUEKCAR
+- Phase 1: Periodic Beaufort/Vigenere/VarBeau with 22 keywords x 2 alphabets (AZ, KA) -- 132 configs, zero hits
+- Phase 2: All 26 single-letter keys x 3 variants x 2 alphabets -- 156 configs, zero hits
+- Phase 3: Columnar untranspose (widths 5,7,8,10,16,20) + 22 keywords x 3 variants x 2 alphabets -- 792 configs, zero hits
+- Phase 4: Running key from K1/K2/K3 plaintext x 3 variants x 2 alphabets + col7 variants + offsets -- 930 configs, zero hits
+- All scored with score_candidate_free (free-position crib search since positions shift after null removal)
+- CT80 single-layer keyword attacks: ELIMINATED for these 22 keywords
+- Script: `scripts/analysis/e_ct80_cipher_attack.py` | Result: `results/ct80_cipher_attack.json`
+
+### Phase 1: Null Arithmetic Constraint Census (2026-03-25)
+
+**Status: NOT SIGNIFICANT (4/17 constrained, MC p=0.59)**
+- For each of 17 consensus null positions, checked all lags 1-48 for constant-difference chains through non-null neighbors
+- 4 positions are arithmetically forced: 36(W, 1 constraint), 52(K, 3 constraints), 59(I, 1 constraint), 74(W, 2 constraints)
+- All forced values are palette letters and uniquely determined
+- BUT: total constraint count (7) matches random expectation (MC mean=7.30, p=0.59)
+- Palette-random baseline is even higher (mean=8.85, p=0.78)
+- Local arithmetic is NOT a null-value generation mechanism
+- Script: `scripts/analysis/e_null_arithmetic_census.py` | Result: `results/null_arithmetic_constraint_census.json`
+
+### Phase 4: Mod-35 LOO Cross-Validation (2026-03-25)
+
+**Status: OVERFIT (LOO accuracy 47.1%, below 48.6% baseline)**
+- Held out each of 17 consensus nulls, rebuilt (pos%7, pos%5) table from remaining 16, predicted held-out
+- 8/17 correct (47.1%) — WORSE than naive "always predict NULL" baseline (48.6%)
+- 9 of 17 nulls occupy unique cells or cells shared with "real" positions — removing from training collapses prediction
+- The mod-35 table predicts ZERO additional nulls among 14 non-crib palette candidates
+- **Downgraded from "confirmed finding" to "descriptive artifact with zero predictive power"**
+
+### Phase 5: Width-21 Mask Resolution (2026-03-25)
+
+**Status: TOP MASKS IDENTIFIED, CIPHER ATTACKS NOISE**
+- Searched C(14,7) = 3,432 candidate 24-null masks (7 unknowns from 14 non-crib palette positions)
+- Width-21 bigram count on CT73 as primary metric; 3 masks achieve max w21=8
+- Core 5 positions in ALL top masks: {18(B), 19(B), 56(I), 62(B), 93(K)}
+- Ambiguous pair from {45,46,47,48} cluster (KZZW region)
+- All top-20 masks pass Bean constraints (242/242 inequalities)
+- Cipher attacks on top 3 CT73s: ALL NOISE (0 hits >= 6/24 across 29 keywords x 3 variants x 5 test types)
+- Script: `scripts/analysis/e_width21_mask_resolution.py`, `scripts/analysis/e_top3_mask_cipher_attack.py`
+
+### Phase 6: Null Value Sequence Analysis (2026-03-25)
+
+**Status: NO CLEAR PATTERN**
+- 17 null values in position order: OBKOGBOWWKWIWGZIG
+- All 7 palette letters used (W×4, O×3, G×3, B×2, K×2, I×2, Z×1)
+- Word fragments: "BOW" (pos 12,14,20), "ZIG" (pos 78,84,85), "OBK" (pos 0,1,2 = first 3 CT chars)
+- No arithmetic progression in AZ or KA indexing; no repeating period 2-8 pattern
+- 3/17 have (pos - AZ_val) ≡ 0 mod 26 (pos 1→B, pos 14→O, pos 74→W) — mildly interesting but p≈0.05
+- Null values do not obviously encode key material or a readable message
