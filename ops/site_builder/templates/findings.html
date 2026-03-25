@@ -46,9 +46,10 @@
     <li>
       <strong>Cross-layer convergence:</strong>
       The Beaufort keystream at the first 8 BERLINCLOCK positions (63&ndash;70) is 7/8 palette letters
-      (p=0.0006). Overall, 13/24 keystream values at all crib positions are palette letters (p=0.0043).
-      This alphabet-independent coupling between the cipher and stego layers
-      suggests they may share a common structural source.
+      (p=0.0006 unconditional). Overall, 13/24 keystream values at all crib positions are palette letters (p=0.0043).
+      Sub-patterns within this enrichment (boundary sharpness, letter repeats, spatial clustering)
+      are conditional on the base rate and do not carry independent significance.
+      The enrichment itself is alphabet-independent (a property of the carved text, not any cipher model).
     </li>
     <li>
       <strong>Combined odds of coincidence: p&nbsp;&lt;&nbsp;10<sup>&minus;7</sup></strong>
@@ -400,6 +401,17 @@
       so CHART is not statistically unique.
     </p>
     <p>
+      <strong>Additional tension (March 2025):</strong> The Beaufort keystream at crib positions shows
+      12/24 values from {G,K,O}, an arithmetic progression with step&nbsp;4 in standard alphabetic
+      indexing (p&nbsp;&lt;&nbsp;0.001). But under Beaufort KA with key=N,
+      <strong>zero source letters map to {G,K,O}</strong>. This creates a structural incompatibility:
+      the key=N/SEVEN palette generation mechanism and the GKO crib keystream concentration
+      cannot operate simultaneously. However, the GKO pattern was subsequently found to be
+      <strong>unique to standard (AZ) alphabetic indexing</strong> and does not appear under KA
+      or other variant/alphabet combinations, suggesting it is an indexing artifact rather than
+      a cipher mechanism signal.
+    </p>
+    <p>
       <strong>But:</strong> This classification was discovered post-hoc (from the data, not predicted
       in advance). More critically, <strong>leave-one-out cross-validation shows the table has
       zero predictive power</strong>: when each of the 17 consensus nulls is held out and predicted
@@ -437,7 +449,7 @@
       <h3>What's still open</h3>
       <ul>
         <li>The substitution cipher operating on the 73 real characters</li>
-        <li>The key or key-generation method (not periodic, not autokey, not any tested running key, not grid-derived)</li>
+        <li>The key or key-generation method (not periodic, not autokey, not any tested running key, not grid-derived, not null-sequence-derived, not position-dependent)</li>
         <li>The specific keyword for the Polybius grid (~6,300 candidates remain; KRYPTOS is thematically strongest)</li>
         <li>The exact identity of 7 uncertain null positions (the mod-35 table cannot predict them; width-21 optimization suggests {18,19,56,62,93} + 2 from {45,46,47,48}, but cipher attacks show no signal on any mask)</li>
         <li>Whether the true null count is 24 (as assumed from &ldquo;73&rdquo;) or 17 (the consensus set); CT80 (17-null extraction) also produces noise under all tested ciphers</li>
