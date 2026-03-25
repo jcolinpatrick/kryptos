@@ -280,3 +280,35 @@ All topic files in `.claude/memory/` unless otherwise noted.
 - 10 hits at score 8/24 (noise ceiling); zero hits >= 9
 - CKM credential-based M1 key construction with English keywords: ELIMINATED
 - Script: `scripts/two_system/e_ckm_credential_03b.py` | Result: `results/e_ckm_credential_03b.json`
+
+### E-GLOBAL-DELTA-SWEEP: Phase 2 Global Delta Rule Sweep (2026-03-25)
+
+**Status: NOT SIGNIFICANT (1,248 tests, max |z| = 2.729, MC p = 0.954)**
+- Hypothesis: A global constant-difference rule CT[i+d] - CT[i] ≡ v (mod 26) governs null placement
+- For each lag d in {1,...,48} and delta v in {0,...,25}: counted pairs by null-involvement category
+- Two-proportion z-test for enrichment at null-involved pairs vs non-null pairs
+- Zero (lag, delta) pairs significant after Bonferroni correction (k=1,248)
+- Highest observed z = 2.729 (lag=47, delta=7) -- well below MC median of 3.076
+- MC baseline (100K shuffles of 17 null positions): observed max |z| ranks at 95th percentile FROM THE BOTTOM (p=0.954)
+- Null positions show LESS delta structure than random placement, not more
+- No global constant-difference rule exists for null value selection
+- Script: `scripts/analysis/e_global_delta_sweep.py` | Result: `results/global_delta_rule_sweep.json`
+
+### Phase 3: Stehle delta4=5 and Width-21 Bigram Interaction (2026-03-25)
+
+**Status: WEAK INTERACTION -- no joint optimization detected**
+- Hypothesis: Delta4=5 anomaly (pos 55-63, lag 4) and width-21 bigram anomaly share the same null insertion mechanism
+- T3.1: 11 repeated width-21 bigrams found; 6 involve at least one null position. Key findings:
+  - Positions 36 and 74 (both null, both W) create TWO repeated bigrams (LW at 15/53, WA at 36/74)
+  - Position 59 (null, I) creates the IT bigram (matching pos 16)
+  - Position 52 (null, K) creates the KK bigram (matching pos 31 and 73)
+- T3.2: 12 of 17 null positions have constraints from BOTH delta4 and width-21 systems
+  - Position 59: UNIQUE -- delta4 forces I, width-21 also allows I. Overlap = {I}. Actual = I. Both satisfied.
+  - Position 58: delta4 allows {W, Z}, width-21 allows {I}. NO overlap. Actual = W (satisfies delta4, not w21).
+  - Positions 14 and 75 also have overlap but actual values don't match the overlap set
+- T3.3 MC (100K samples): p(W21 >= 11) = 0.015. CDW metric trivially achieved (CDW=4 in 100% of trials at lag=1).
+  - NOTE: CDW metric measured max-any-lag chain length, not the Stehle-specific 5-consecutive-positions-at-lag-4 metric. The CDW result is UNINFORMATIVE.
+  - Width-21 count alone is modestly significant (p=0.015) confirming prior finding (p=0.00016 on a different metric)
+- Position 59 is the ONLY position where both anomalies agree and the actual value satisfies both
+- No evidence of joint optimization -- the two anomalies appear to be independent consequences of null insertion
+- Script: `scripts/analysis/e_stehle_width21_interaction.py` | Result: `results/stehle_width21_interaction.json`
