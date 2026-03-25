@@ -119,8 +119,10 @@
   of enciphering the bottom text.&rdquo;</em> Scheidt stated that he <em>&ldquo;masked the
   English language so it&rsquo;s more of a challenge&rdquo;</em> and that solvers need to
   <em>&ldquo;solve the technique first and then go for the puzzle.&rdquo;</em> Combined with the
-  mathematical impossibility of periodic substitution at any period, this means K4 uses
-  <strong>two layers</strong>: a steganographic layer (null mask) and a substitution cipher.
+  mathematical impossibility of periodic substitution at any period, the leading hypothesis
+  is that K4 uses <strong>two layers</strong>: a steganographic layer (null mask) and a
+  substitution cipher. The &ldquo;two systems&rdquo; statement is a public fact; the specific
+  interpretation as null insertion plus substitution is our working model, not proven.
 </p>
 <p>
   Pure transposition is independently impossible: the ciphertext contains only
@@ -129,15 +131,18 @@
 </p>
 <pre>  PT (73 chars) &rarr; substitution cipher &rarr; null insertion (24 chars) &rarr; carved text (97 chars)</pre>
 <p>
-  The stego layer is partially characterized: the null palette (letters used as nulls)
-  is {B,G,I,K,O,W,Z}, which corresponds to columns 0 and 3 of a 5-wide Polybius grid
-  built from the KRYPTOS keyword-mixed alphabet (joint null probability p=1.4&times;10<sup>&minus;7</sup>,
-  50M Monte Carlo trials). 17 of 24 null positions are fixed by consensus; 7 remain uncertain.
+  If the null-mask model is correct, the candidate null palette (letters appearing at
+  null positions) is {B,G,I,K,O,W,Z}, which corresponds to columns 0 and 3 of a 5-wide
+  Polybius grid under certain keyword-mixed alphabets including KRYPTOS
+  (joint statistical significance p=1.4&times;10<sup>&minus;7</sup>,
+  50M Monte Carlo trials). 17 of 24 candidate null positions are identified by
+  consensus; 7 remain uncertain. The specific keyword is not uniquely determined.
 </p>
 <p>
-  The cipher layer remains open. Periodic keys are proven impossible at all periods.
+  The cipher layer remains open regardless of which two-layer model is correct.
+  Periodic keys are proven impossible at all periods.
   Running keys from 60,230 publicly available English texts (Project Gutenberg,
-  106 billion offset-checks) produced zero signal. The surviving possibilities are:
+  106 billion offset-checks) produced zero signal. The surviving possibilities include:
   a running key from a non-public source, a bespoke procedural cipher, or a one-time key.
 </p>
 <h3>What Has Been Exhaustively Tested</h3>
@@ -180,8 +185,8 @@
 
 <h3>The Null Palette</h3>
 <p>
-  Statistical analysis has identified a <strong>null palette</strong>, a set of 7 letters
-  {B, G, I, K, O, W, Z} that appear disproportionately at null positions
+  Statistical analysis has identified a <strong>candidate null palette</strong>, a set of 7 letters
+  {B, G, I, K, O, W, Z} that appear disproportionately at candidate null positions
   (p&asymp;3.0&times;10<sup>&minus;5</sup>, permutation test 10M trials, letter-shuffle null model).
   Under certain keyword-mixed alphabets (including KRYPTOS), these 7 letters concentrate
   in exactly two columns of a 5-wide Polybius grid. About 0.6% of English keywords produce
@@ -201,9 +206,9 @@
 <p>
   <strong>Null mask + periodic substitution</strong> is proven impossible for ANY choice of
   24 null positions at ANY period (algebraic proof extended to CT73 via Bean inequalities
-  across all 11,440 candidate masks). The cipher operating on the 73 extracted characters
-  must use a <strong>non-periodic key</strong>: a running key from an unknown source,
-  a bespoke procedural method, or a one-time key.
+  across all 11,440 candidate masks). If the 73-character model is correct, the cipher
+  operating on the extracted characters must use a <strong>non-periodic key</strong>:
+  a running key from an unknown source, a bespoke procedural method, or a one-time key.
 </p>
 
 <h2>Validation Criteria</h2>
