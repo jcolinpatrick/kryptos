@@ -9,7 +9,7 @@ from typing import Optional
 
 import os as _os
 
-DB_PATH = _os.path.join(_os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))), "db", "theory_queue.sqlite")
+DB_PATH = _os.path.join(_os.path.dirname(_os.path.dirname(_os.path.dirname(_os.path.abspath(__file__)))), "db", "theory_queue.sqlite")
 
 
 def _get_connection(db_path: Optional[str] = None) -> sqlite3.Connection:
