@@ -7,7 +7,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 You MUST complete ALL of these steps before executing any task:
 
 1. Read this entire CLAUDE.md
-2. Read `memory/elimination_ledger.md` — the complete elimination record by attack family.
+2. Read `.claude/projects/.../memory/elimination_ledger.md` — the complete elimination record by attack family.
+   (This is Claude Code session memory, not the repo `memory/` directory.)
    **This is the most-skipped step and the #1 cause of wasted computation.**
 3. Read MEMORY.md — the decision-support index (paradigm, constants, what's open).
    MEMORY.md is loaded automatically; individual topic files in `memory/` are on-demand — read only when relevant to the current task.
@@ -123,7 +124,7 @@ kernel/persistence/sqlite.py (results DB) + JsonlWriter (logs)
 
 ### Experiment scripts (`scripts/`)
 
-~950 attack scripts in ~49 subdirectories. Each has a metadata header; tracked in root `exhaustion_log.json` (authoritative — ignore `scripts/EXHAUSTION.json`). Infrastructure in `scripts/lib/` (header parsing, exhaustion log CRUD, discovery).
+~875 attack scripts in ~35 subdirectories (928 tracked in exhaustion log including deleted/renamed). Each has a metadata header; tracked in root `exhaustion_log.json` (authoritative — ignore `scripts/EXHAUSTION.json`). Infrastructure in `scripts/lib/` (header parsing, exhaustion log CRUD, discovery).
 
 **Discovery & dispatch** via `run_attack.py` (5 modes):
 ```bash
@@ -259,6 +260,7 @@ These are non-obvious pitfalls discovered through prior sessions. Check these fi
 - **High scores are almost always false signals**: See MEMORY.md "DO NOT TEST" section for proven-impossible hypotheses (autokey, DEFECTOR/PALIMPSEST 15/24, K2 numbers as keys, etc.). These are research eliminations, not dev bugs — consult MEMORY.md before investigating any "promising" score.
 - **Beaufort A=0 is the confirmed default**: Use A=0 indexing for all Beaufort operations unless explicitly testing A=1. Both conventions must be tested in positional experiments.
 - **Standalone script `_ROOT` depth**: The bootstrap snippet (`_ROOT = os.path.dirname(os.path.dirname(...))`) assumes the script is exactly 2 directories deep (e.g. `scripts/grille/e_foo.py`). Scripts at 3+ levels need additional `os.path.dirname()` wrappers or they'll get `ModuleNotFoundError`.
+- **Always import constants, never hardcode**: This includes `CONSENSUS_NULL_POSITIONS`, not just CT/cribs. A prior session generated a script with fabricated null positions that shared only 3/17 values with the consensus — the results were silently invalid. Import from `kryptos.kernel.constants`.
 
 ---
 
@@ -322,5 +324,5 @@ Two `memory/` directories exist — don't confuse them:
 
 ---
 
-*Last updated: 2026-03-24 — Mission: derive K4 method & solve. Volatile research state (best leads, eliminations, open hypotheses) maintained in MEMORY.md.*
+*Last updated: 2026-03-25 — Mission: derive K4 method & solve. Volatile research state (best leads, eliminations, open hypotheses) maintained in MEMORY.md.*
 *Primary author: Colin Patrick (human lead) + Claude (computational partner)*
