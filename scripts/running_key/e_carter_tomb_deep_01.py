@@ -3,7 +3,7 @@
 Cipher: running_key
 Family: running_key
 Status: active
-Keyspace: ~900K offsets x 3 texts x 3 variants + CT73 + key fragment English detection
+Keyspace: ~900K offsets x 3 texts x 3 variants + CT80 + key fragment English detection
 Last run:
 Best score:
 """
@@ -18,7 +18,7 @@ Phase 2: Direct running key (all offsets, all 3 variants)
 Phase 3: Bean constraint filter on Phase 2 hits
 Phase 4: Key fragment English detection (quadgram scoring of key at crib positions)
 Phase 5: K3 source passage focus (near "SLOWLY DESPERATELY SLOWLY")
-Phase 6: 73-char null-extracted CT analysis
+Phase 6: 80-char null-extracted CT analysis (17 consensus nulls removed)
 
 Output: results/e_carter_tomb_deep_01.json
 Repro: PYTHONPATH=src python3 -u scripts/running_key/e_carter_tomb_deep_01.py
@@ -34,7 +34,7 @@ import math
 _ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, os.path.join(_ROOT, "src"))
 
-from kryptos.kernel.constants import CT, CT_LEN, CRIB_DICT, ALPH_IDX, MOD, BEAN_EQ, BEAN_INEQ
+from kryptos.kernel.constants import CT, CT_LEN, CRIB_DICT, ALPH_IDX, MOD, BEAN_EQ, BEAN_INEQ, CONSENSUS_NULL_POSITIONS
 from kryptos.kernel.scoring.aggregate import score_candidate, score_candidate_free
 from kryptos.kernel.constraints.bean import verify_bean_simple
 
@@ -47,8 +47,8 @@ CRIB_PT = {pos: ALPH_IDX[ch] for pos, ch in CRIB_DICT.items()}
 ENE_RANGE = list(range(21, 34))  # 13 positions
 BC_RANGE = list(range(63, 74))   # 11 positions
 
-# Null positions (0-indexed) from consensus mask
-NULL_POS = sorted({2, 6, 9, 13, 17, 20, 34, 38, 42, 46, 50, 52, 53, 56, 60, 74, 77})
+# Null positions (0-indexed) from consensus mask (17 of 24 confirmed)
+NULL_POS = sorted(CONSENSUS_NULL_POSITIONS)
 
 # ── Load quadgrams ──
 QUADGRAM_PATH = os.path.join(_ROOT, "data", "english_quadgrams.json")
@@ -564,74 +564,74 @@ def phase5(texts):
 
 
 # ══════════════════════════════════════════════════════════════════════════
-# PHASE 6: 73-char null-extracted CT
+# PHASE 6: Null-extracted CT (17 consensus nulls removed → 80 chars)
 # ══════════════════════════════════════════════════════════════════════════
 def phase6(texts):
     print("\n" + "=" * 70)
-    print("PHASE 6: 73-CHAR NULL-EXTRACTED CT ANALYSIS")
+    print("PHASE 6: NULL-EXTRACTED CT ANALYSIS (17 consensus nulls removed)")
     print("=" * 70)
 
-    # Build CT73 by removing null positions
-    ct73 = ""
-    ct73_from_positions = []
+    # Build reduced CT by removing null positions
+    ct_reduced = ""
+    ct_reduced_from_positions = []
     for i in range(N):
         if i not in NULL_POS:
-            ct73 += CT[i]
-            ct73_from_positions.append(i)
+            ct_reduced += CT[i]
+            ct_reduced_from_positions.append(i)
 
-    ct73_nums = [ALPH_IDX[c] for c in ct73]
-    n73 = len(ct73)
-    print(f"  CT73 ({n73} chars): {ct73}")
+    ct_reduced_nums = [ALPH_IDX[c] for c in ct_reduced]
+    n_reduced = len(ct_reduced)
+    print(f"  reduced CT ({n_reduced} chars): {ct_reduced}")
     print(f"  Null positions removed: {NULL_POS}")
-    print(f"  Remaining positions: {ct73_from_positions[:20]}...")
+    print(f"  Remaining positions: {ct_reduced_from_positions[:20]}...")
 
-    # Map crib positions to CT73 indices
-    ct73_crib = {}
+    # Map crib positions to reduced CT indices
+    ct_reduced_crib = {}
     for orig_pos, ch in CRIB_DICT.items():
         if orig_pos not in NULL_POS:
-            new_idx = ct73_from_positions.index(orig_pos)
-            ct73_crib[new_idx] = ch
+            new_idx = ct_reduced_from_positions.index(orig_pos)
+            ct_reduced_crib[new_idx] = ch
 
-    print(f"  Cribs mapped to CT73 positions: {ct73_crib}")
-    print(f"  ({len(ct73_crib)} crib positions survive null removal)")
+    print(f"  Cribs mapped to reduced CT positions: {ct_reduced_crib}")
+    print(f"  ({len(ct_reduced_crib)} crib positions survive null removal)")
 
     VARIANTS = ["vigenere", "beaufort", "var_beaufort"]
     THRESHOLD = 6  # Lower threshold since fewer cribs
     all_hits = []
 
     for text_name, (clean, nums) in texts.items():
-        max_offset = len(nums) - n73
+        max_offset = len(nums) - n_reduced
         if max_offset <= 0:
             continue
 
-        print(f"\n  Scanning {text_name} against CT73 ({max_offset} offsets)...", flush=True)
+        print(f"\n  Scanning {text_name} against null-extracted CT ({max_offset} offsets)...", flush=True)
 
         for variant in VARIANTS:
-            # Compute required key values at CT73 crib positions
+            # Compute required key values at reduced CT crib positions
             key_required = {}
-            for ct73_idx, pt_ch in ct73_crib.items():
-                ct_val = ct73_nums[ct73_idx]
+            for ct_reduced_idx, pt_ch in ct_reduced_crib.items():
+                ct_val = ct_reduced_nums[ct_reduced_idx]
                 pt_val = ALPH_IDX[pt_ch]
                 if variant == "vigenere":
-                    key_required[ct73_idx] = (ct_val - pt_val) % MOD
+                    key_required[ct_reduced_idx] = (ct_val - pt_val) % MOD
                 elif variant == "beaufort":
-                    key_required[ct73_idx] = (ct_val + pt_val) % MOD
+                    key_required[ct_reduced_idx] = (ct_val + pt_val) % MOD
                 elif variant == "var_beaufort":
-                    key_required[ct73_idx] = (pt_val - ct_val) % MOD
+                    key_required[ct_reduced_idx] = (pt_val - ct_val) % MOD
 
             hits_this = 0
             for offset in range(max_offset):
                 match_count = 0
-                for ct73_idx, req_val in key_required.items():
-                    tp = ct73_idx + offset
+                for ct_reduced_idx, req_val in key_required.items():
+                    tp = ct_reduced_idx + offset
                     if tp < len(nums) and nums[tp] == req_val:
                         match_count += 1
 
                 if match_count >= THRESHOLD:
-                    key_slice = nums[offset:offset + n73]
-                    if len(key_slice) < n73:
+                    key_slice = nums[offset:offset + n_reduced]
+                    if len(key_slice) < n_reduced:
                         continue
-                    pt_nums = decrypt_full(ct73_nums, key_slice, variant)
+                    pt_nums = decrypt_full(ct_reduced_nums, key_slice, variant)
                     pt_str = nums_to_text(pt_nums)
 
                     fsb = score_candidate_free(pt_str)
@@ -641,7 +641,7 @@ def phase6(texts):
                         "variant": variant,
                         "offset": offset,
                         "match_count": match_count,
-                        "max_possible": len(ct73_crib),
+                        "max_possible": len(ct_reduced_crib),
                         "plaintext": pt_str,
                         "crib_score_free": fsb.crib_score,
                         "ngram_per_char": fsb.ngram_per_char,
@@ -707,7 +707,7 @@ def main():
     print(f"  Phase 3 Bean full pass: {sum(1 for b in p3_results if b.get('bean_full_pass'))}")
     print(f"  Phase 3 Bean eq pass: {sum(1 for b in p3_results if b.get('bean_eq_pass'))}")
     print(f"  Phase 5 passage hits (>= 5): {len(p5_hits)}")
-    print(f"  Phase 6 CT73 hits (>= 6): {len(p6_hits)}")
+    print(f"  Phase 6 null-extracted hits (>= 6): {len(p6_hits)}")
 
     # Determine verdict
     max_score = 0
@@ -768,7 +768,7 @@ def main():
             "top_5": p5_hits[:5],
         },
         "phase6": {
-            "ct73": "".join(CT[i] for i in range(N) if i not in NULL_POS),
+            "ct_reduced": "".join(CT[i] for i in range(N) if i not in NULL_POS),
             "threshold": 6,
             "total_hits": len(p6_hits),
             "top_10": p6_hits[:10],
