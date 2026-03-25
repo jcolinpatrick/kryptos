@@ -7,7 +7,7 @@ For project guidance, see [CLAUDE.md](CLAUDE.md).
 
 ## Project State
 
-- **320+ experiments complete**, 669B+ configurations scored
+- **286 experiments with results**, 670B+ configurations scored, ~950 scripts tracked
 - **0 genuine signals** — all scores within noise at discriminating periods
 - Computational work paused pending Antipodes physical inspection
 - Transitioned from custom 6-agent harness (170+ experiments) to official Claude Code agent teams
@@ -32,6 +32,7 @@ For project guidance, see [CLAUDE.md](CLAUDE.md).
 - K0 Morse text as running key → ELIMINATED (28,140 configs, best 5/24)
 - Progressive running key → ELIMINATED (1,059,708 configs, best 8/24)
 - Palette letters as cipher key material → DISPROVED (Gromark, columnar, index/mask, all ≤6/24)
+- CKM credential-based key construction (K1/K2/K3 PT × keywords, 6 models) → ELIMINATED (173M+ configs, best 10/24)
 
 ## DO NOT TEST (Proven Impossible / Exhausted)
 
@@ -49,6 +50,7 @@ For project guidance, see [CLAUDE.md](CLAUDE.md).
 - Cold War keywords, Operation Gold, Russian intelligence keywords → all NOISE
 - K1-K3 plaintext does NOT encode literal key values
 - Mailing list hypotheses: Wheatstone clock, Sawtooth, ITA-2, Morse reinterpretation → all NOISE
+- CKM mod-26 key construction from K1/K2/K3 PT + keywords → NOISE (all 6 models, 1000+ keywords)
 
 ## What Remains Open
 
@@ -183,6 +185,7 @@ Only periods {8, 13, 16, 19, 20, 23, 24, 26} are Bean-compatible for transpositi
 | 2026-03-22 | K0 Morse running key, progressive running key | ALL ELIMINATED | `elimination_ledger.md` |
 | 2026-03-23 | Palette as Gromark/columnar/index key | ALL DISPROVED | `elimination_ledger.md` |
 | 2026-03-24 | Mailing list hypotheses (4 tested) | ALL NOISE | `mbox_mining_results.md` |
+| 2026-03-25 | CKM credential key (K1/K2/K3 PT × keywords, 6 models, 173M+) | ALL NOISE | `elimination_ledger.md` |
 
 All topic files in `.claude/memory/` unless otherwise noted.
 
@@ -220,7 +223,7 @@ All topic files in `.claude/memory/` unless otherwise noted.
 
 ---
 
-*Last updated: 2026-03-24. Full history: topic files above. Volatile state maintained here.*
+*Last updated: 2026-03-25. Full history: topic files above. Volatile state maintained here.*
 
 ### Wilson Prime 1/p Masking Stream (2026-03-24)
 
@@ -266,3 +269,14 @@ All topic files in `.claude/memory/` unless otherwise noted.
 - Best: 6/24 from Model 3 (SHADOW/DEFECTOR alphabets, KRYPTOS key) -- well within noise
 - 1,981/3,108 configs scored >= 1/24 but distribution is typical random (score 1: 1099, score 2: 684, ...)
 - Script: `scripts/novel/e_sanborn_matrix_method_01.py`
+
+### E-CKM-03b: CKM M1 English Wordlist Expansion (2026-03-25)
+
+**Status: NOISE (1,920,000 configs, best 8/24)**
+- Hypothesis: K4 key constructed via M1 model: key[i] = f(section[(i+offset) % Ls], keyword[i % Lk]) mod 26, using common English words as keyword
+- Follow-up to E-CKM-03 (33 thematic keywords, zero hits >= 8)
+- ~1000 English words (lengths 3-13) evenly sampled from wordlists/english.txt (896K words)
+- 3 sections (K1, K2, K3) x 2 alphabets (AZ, KA) x 4 combiners (add, sub_AB, sub_BA, xor) x 20 offsets x 4 CT variants (CT97 + 3 CT73 masks)
+- 10 hits at score 8/24 (noise ceiling); zero hits >= 9
+- CKM credential-based M1 key construction with English keywords: ELIMINATED
+- Script: `scripts/two_system/e_ckm_credential_03b.py` | Result: `results/e_ckm_credential_03b.json`
