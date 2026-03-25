@@ -26,6 +26,7 @@
 }
 
 .findings-hero h1 {
+  font-family: var(--font-display);
   font-size: var(--text-3xl);
   font-weight: 800;
   line-height: 1.15;
@@ -224,6 +225,7 @@
 }
 
 .finding-header h2 {
+  font-family: var(--font-display);
   font-size: var(--text-2xl);
   font-weight: 800;
   line-height: 1.2;
@@ -277,6 +279,30 @@
 
 .finding-plain strong {
   color: var(--text-primary);
+}
+
+
+/* --- Progressive Disclosure --- */
+.finding-technical {
+  margin-bottom: var(--sp-8);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  padding: var(--sp-4) var(--sp-5);
+}
+
+.finding-technical summary {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.finding-technical p {
+  font-size: var(--text-sm);
+  line-height: 1.75;
+  color: var(--text-secondary);
+  margin-bottom: var(--sp-3);
 }
 
 
