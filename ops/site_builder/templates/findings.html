@@ -106,12 +106,38 @@
     <span class="finding-pvalue">p &lt; 10<sup>&minus;7</sup></span>
   </div>
 
+  <div class="confidence-indicator confidence-high">
+    <div class="confidence-bar confidence-high">
+      <span class="filled"></span><span class="filled"></span><span class="filled"></span>
+      <span class="filled"></span><span class="filled"></span><span class="filled"></span>
+      <span class="filled"></span><span class="filled"></span><span></span><span></span>
+    </div>
+    <span class="confidence-label">High confidence</span>
+  </div>
+
   <div class="finding-plain">
-    <h3>What we found</h3>
+    <h3>The short version</h3>
+    <p>
+      Someone chose exactly 7 letters &mdash; B, G, I, K, O, W, and Z &mdash; and scattered
+      them through K4 as filler characters. The odds of this restriction happening by chance
+      are about <strong>1 in 33,000</strong>. This means K4 probably isn&rsquo;t 97 characters of
+      real ciphertext &mdash; it&rsquo;s 73, with 24 decoys designed to make frequency analysis useless.
+    </p>
+  </div>
+
+  <div class="finding-callout">
+    <span class="callout-value">1 in 33,000</span>
+    <span class="callout-label">probability of seeing this palette restriction by chance</span>
+  </div>
+
+  <details class="finding-technical">
+    <summary>Technical detail</summary>
+    <div class="wb-details-body">
     <p>
       K4 has 97 characters carved into the sculpture, but our analysis suggests that only <strong>73 may be real
-      ciphertext</strong>. Under this hypothesis, the other 24 are <strong>filler characters</strong> (called "nulls")
-      inserted to disguise the message's true length. This is consistent with Ed Scheidt&rsquo;s
+      ciphertext</strong>. Under this hypothesis, the other 24 are <strong>filler characters</strong> (called
+      <span class="term" data-def="Characters inserted into ciphertext that carry no meaning, used to disguise message length or letter frequencies">nulls</span>)
+      inserted to disguise the message&rsquo;s true length. This is consistent with Ed Scheidt&rsquo;s
       public statement that he &ldquo;masked the English language&rdquo; in K4 so that frequency
       analysis would not help solvers, and with Sanborn&rsquo;s legal pad notation
       &ldquo;8 lines 73&rdquo; (auctioned publicly in 2025).
@@ -123,10 +149,11 @@
       has a probability of roughly <strong>1 in 33,000</strong> (permutation test, 10M trials). This is very unlikely to be coincidence.
     </p>
     <p>
-      Even more striking: <strong>4 of the 5 W's</strong> in the entire ciphertext are nulls.
+      Even more striking: <strong>4 of the 5 W&rsquo;s</strong> in the entire ciphertext are nulls.
       The single non-null W sits at position 48, exactly halfway between the two known plaintext regions.
     </p>
-  </div>
+    </div>
+  </details>
 
   <div class="finding-visual">
     <h3>The 7-Letter Null Palette on the Polybius Grid</h3>
@@ -206,8 +233,28 @@
     <span class="finding-pvalue">p &asymp; 0.0016</span>
   </div>
 
+  <div class="confidence-indicator confidence-moderate">
+    <div class="confidence-bar confidence-moderate">
+      <span class="filled"></span><span class="filled"></span><span class="filled"></span>
+      <span class="filled"></span><span class="filled"></span><span class="filled"></span>
+      <span></span><span></span><span></span><span></span>
+    </div>
+    <span class="confidence-label">Moderate confidence</span>
+  </div>
+
   <div class="finding-plain">
-    <h3>What we found</h3>
+    <h3>The short version</h3>
+    <p>
+      Every 4th character in one region of K4 (positions 55&ndash;63) differs from its predecessor
+      by exactly 5 in the alphabet. This pattern appears nowhere else in the ciphertext.
+      After correcting for 712 statistical tests, the odds of this happening by chance are about
+      <strong>1 in 642</strong>.
+    </p>
+  </div>
+
+  <details class="finding-technical">
+    <summary>Technical detail</summary>
+    <div class="wb-details-body">
     <p>
       If you look at every 4th character in K4 starting from position 55, something unusual happens:
       each character is <strong>exactly 5 positions later in the alphabet</strong> than the one 4 spots before it.
@@ -219,7 +266,8 @@
       correcting for the 712 statistical tests we ran, the probability of seeing this
       by chance is about <strong>1 in 642</strong> (Bonferroni-corrected: 712 / 456,976).
     </p>
-  </div>
+    </div>
+  </details>
 
   <div class="finding-visual">
     <h3>The Constant-Difference Pattern</h3>
@@ -311,8 +359,28 @@
     <span class="finding-pvalue">35 / 35 correct</span>
   </div>
 
+  <div class="confidence-indicator confidence-low">
+    <div class="confidence-bar confidence-low">
+      <span class="filled"></span><span class="filled"></span><span class="filled"></span>
+      <span class="filled"></span><span></span><span></span>
+      <span></span><span></span><span></span><span></span>
+    </div>
+    <span class="confidence-label">Suggestive only &mdash; discovered post-hoc</span>
+  </div>
+
   <div class="finding-plain">
-    <h3>What we found</h3>
+    <h3>The short version</h3>
+    <p>
+      A simple mathematical rule using the keywords KRYPTOS and SEVEN correctly classifies
+      all 35 palette-letter positions as null or real &mdash; 35 out of 35. But this was
+      discovered from the data, not predicted in advance, and cross-validation shows it has
+      <strong>zero predictive power</strong>.
+    </p>
+  </div>
+
+  <details class="finding-technical">
+    <summary>Technical detail</summary>
+    <div class="wb-details-body">
     <p>
       We discovered a simple rule that perfectly fits all 35 palette-letter positions,
       classifying each as either null or real ciphertext. The rule uses two keywords:
@@ -332,7 +400,8 @@
       in K4 where a palette letter ({B,G,I,K,O,W,Z}) appears. The two keyword lengths
       produce a repeating cycle of exactly the right size.
     </p>
-  </div>
+    </div>
+  </details>
 
   <div class="finding-visual">
     <h3>The 7&times;5 Lookup Table</h3>
