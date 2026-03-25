@@ -16,8 +16,7 @@ You MUST complete ALL of these steps before executing any task:
    TELL THE USER and do NOT run it again
 5. Search scripts/ for existing tools — do NOT write new code if a script exists
    `run_attack.py --list --verbose | grep KEYWORD`
-6. Check results/ for prior output matching the planned parameters
-   `ls results/ | grep KEYWORD` or search `exhaustion_log.json`
+   Also check `results/` and `exhaustion_log.json` for prior output matching your planned parameters.
 
 If you skip these steps and re-test an eliminated hypothesis, you are
 wasting 28 CPU cores and burning API tokens for zero value.
@@ -259,7 +258,7 @@ These are non-obvious pitfalls discovered through prior sessions. Check these fi
 - **Bifid 5×5 impossible for K4**: All 26 letters appear in K4 CT; any cipher requiring a 25-letter alphabet (I/J merged) is eliminated.
 - **High scores are almost always false signals**: See MEMORY.md "DO NOT TEST" section for proven-impossible hypotheses (autokey, DEFECTOR/PALIMPSEST 15/24, K2 numbers as keys, etc.). These are research eliminations, not dev bugs — consult MEMORY.md before investigating any "promising" score.
 - **Beaufort A=0 is the confirmed default**: Use A=0 indexing for all Beaufort operations unless explicitly testing A=1. Both conventions must be tested in positional experiments.
-- **Standalone script `_ROOT` depth**: The bootstrap snippet (`_ROOT = os.path.dirname(os.path.dirname(...))`) assumes the script is exactly 2 directories deep (e.g. `scripts/grille/e_foo.py`). Scripts at 3+ levels need additional `os.path.dirname()` wrappers or they'll get `ModuleNotFoundError`.
+- **Standalone script `_ROOT` depth**: The bootstrap snippet (`_ROOT = os.path.dirname(os.path.dirname(...))`) assumes the script is exactly 2 directories deep (e.g. `scripts/grille/e_foo.py`). Scripts at 3+ levels need additional `os.path.dirname()` wrappers or they'll get `ModuleNotFoundError`. Robust alternative: `_ROOT = os.path.dirname(os.path.abspath(__file__))` then `while not os.path.exists(os.path.join(_ROOT, 'src')): _ROOT = os.path.dirname(_ROOT)`.
 - **Always import constants, never hardcode**: This includes `CONSENSUS_NULL_POSITIONS`, not just CT/cribs. A prior session generated a script with fabricated null positions that shared only 3/17 values with the consensus — the results were silently invalid. Import from `kryptos.kernel.constants`.
 
 ---
@@ -316,10 +315,8 @@ Two `memory/` directories exist — don't confuse them:
 
 ## Multi-Agent Mode — Solve K4
 
-- Import constants from `kryptos.kernel.constants` — never hardcode CT/cribs
-- DO NOT re-run ANY hypothesis listed in MEMORY.md's "DO NOT TEST" section
-- **→ Full elimination list, current leads, and open attack surface: see MEMORY.md**
 - **KryptosBot runner:** `python3 kryptosbot/solve.py`. See `kryptosbot/RUNBOOK.md`.
+- **Campaign runner:** `PYTHONPATH=src python3 -u kryptosbot/campaign_v2.py` (supports `--local-only`, `--dry-run`).
 - **Historical reference:** `archive/legacy_harness/`, `archive/session_reports/`, [`reports/final_synthesis.md`](reports/final_synthesis.md).
 
 ---
