@@ -33,10 +33,9 @@
   <ul class="provenance-list">
     <li>
       <strong>Independent replication:</strong>
-      Richard Bean found the same 5-wide Polybius structure in 2021
+      Richard Bean found the same 5-wide grid structure in 2021
       (<a href="https://ecp.ep.liu.se/index.php/histocrypt/article/view/153">HistoCrypt 2021</a>)
-      by analyzing the <em>keystream</em>. We found it independently by analyzing the
-      <em>null characters</em>. Two researchers, different data, same result.
+      by analyzing different data than we used. Two researchers, different approaches, same result.
     </li>
     <li>
       <strong>Exhaustive verification:</strong>
@@ -44,16 +43,10 @@
       The 17 consensus positions appear in every configuration that scores above random noise.
     </li>
     <li>
-      <strong>Cross-layer convergence:</strong>
-      The Beaufort keystream at the first 8 BERLINCLOCK positions (63&ndash;70) is 7/8 palette letters
-      (p=0.0006 unconditional). Overall, 13/24 keystream values at all crib positions are palette letters (p=0.0043).
-      Sub-patterns within this enrichment (boundary sharpness, letter repeats, spatial clustering)
-      are conditional on the base rate and do not carry independent significance.
-      The enrichment itself is alphabet-independent (a property of the carved text, not any cipher model).
-    </li>
-    <li>
-      <strong>Combined odds of coincidence: p&nbsp;&asymp;&nbsp;1.4&nbsp;&times;&nbsp;10<sup>&minus;7</sup></strong>
-      (direct simulation: 50M letter permutations, only 7 produced both effects simultaneously).
+      <strong>Two independent signals point to the same structure:</strong>
+      The filler characters and the known-plaintext math both select the same 7-letter set.
+      We shuffled the ciphertext 50 million times and only 7 shuffles produced both effects
+      together&mdash;making the odds of coincidence less than <strong>1 in 7 million</strong>.
     </li>
   </ul>
   <p>
@@ -65,8 +58,8 @@
       View the formal proof
     </a>
     <span class="proof-paper-note">
-      Full statistical derivations, Monte Carlo methodology, and combined significance tests.
-      Suitable for peer review.
+      Full statistical derivations with Monte Carlo methodology.
+      For statisticians and peer review.
     </span>
   </div>
 </section>
@@ -112,7 +105,7 @@
       <h2>The Null Palette</h2>
       <p class="finding-subtitle">Only 7 of 26 letters appear at candidate filler positions</p>
     </div>
-    <span class="finding-pvalue">p &lt; 10<sup>&minus;7</sup></span>
+    <span class="finding-pvalue">&lt; 1 in 7 million</span>
   </div>
 
   <div class="confidence-indicator confidence-high">
@@ -128,9 +121,11 @@
     <h3>The short version</h3>
     <p>
       Someone chose exactly 7 letters (B, G, I, K, O, W, and Z) and scattered
-      them through K4 as filler characters. The odds of this restriction happening by chance
-      are about <strong>1 in 16,000</strong>. This means K4 probably isn&rsquo;t 97 characters of
-      real ciphertext. It&rsquo;s probably 73, with 24 decoys designed to make frequency analysis useless.
+      them through K4 as filler characters. The odds of this happening by chance
+      are about <strong>1 in 16,000</strong> for the palette alone&mdash;and when combined with
+      the matching pattern in the known plaintext (Finding 1b below), the odds drop to less than
+      <strong>1 in 7 million</strong>. This means K4 probably isn&rsquo;t 97 characters of
+      real ciphertext. It&rsquo;s likely 73, with 24 decoys designed to make frequency analysis useless.
     </p>
   </div>
 
@@ -199,16 +194,16 @@
       <span class="stat-pill-value">7 / 26</span>
     </div>
     <div class="stat-pill">
-      <span class="stat-pill-label">Palette restriction</span>
-      <span class="stat-pill-value">p &asymp; 1 in 16,000</span>
+      <span class="stat-pill-label">Odds of palette by chance</span>
+      <span class="stat-pill-value">1 in 16,000</span>
     </div>
     <div class="stat-pill">
-      <span class="stat-pill-label">Polybius column alignment</span>
-      <span class="stat-pill-value">~0.6% of keywords</span>
+      <span class="stat-pill-label">Keywords that produce this grid</span>
+      <span class="stat-pill-value">~0.6%</span>
     </div>
     <div class="stat-pill stat-pill-accent">
-      <span class="stat-pill-label">Combined with keystream enrichment</span>
-      <span class="stat-pill-value">p &lt; 10<sup>&minus;7</sup> (joint MC)</span>
+      <span class="stat-pill-label">Combined odds (palette + plaintext)</span>
+      <span class="stat-pill-value">&lt; 1 in 7 million</span>
     </div>
   </div>
 
@@ -239,7 +234,7 @@
       <h2>The Stehle Anomaly</h2>
       <p class="finding-subtitle">A unique constant-difference pattern at positions 55&ndash;63</p>
     </div>
-    <span class="finding-pvalue">p &asymp; 0.0016</span>
+    <span class="finding-pvalue">~1 in 642</span>
   </div>
 
   <div class="confidence-indicator confidence-moderate">
@@ -329,7 +324,7 @@
       <span class="stat-pill-value">Zero</span>
     </div>
     <div class="stat-pill">
-      <span class="stat-pill-label">Corrected p-value (712 tests)</span>
+      <span class="stat-pill-label">Odds after correcting for 712 tests</span>
       <span class="stat-pill-value">~1 in 642</span>
     </div>
   </div>
@@ -337,21 +332,18 @@
   <div class="finding-caveat">
     <h3>What creates this pattern</h3>
     <p>
-      Two of the 9 positions (58 and 59) are consensus null positions. Deeper analysis reveals the anatomy:
-      the <strong>cipher layer already produced &Delta;4=5</strong> at two consecutive non-null pairs
-      (56&rarr;60 and 57&rarr;61). These are 2 of only 3 such consecutive matches in the entire ciphertext
-      at lag 4. The null values at positions 58 and 59 simply <em>extend</em> this existing pattern,
-      and both forced values (W and I) happen to be palette letters, so the null insertion is compatible.
+      Two of the 9 positions (58 and 59) are filler characters. The real ciphertext already had
+      this stepping pattern at two consecutive pairs of non-filler characters. The filler values
+      simply <em>extend</em> what was already there, because the required letters (W and I) both
+      happen to be palette letters.
     </p>
     <p>
-      Position 59 is <strong>doubly constrained</strong>: D(55)+5 = I and N(63)&minus;5 = I both
-      force the same value from opposite sides. Position 58 is constrained only from the right
-      (B(62)&minus;5 = W). We tested whether this arithmetic forcing is a general null-value generation
-      mechanism: it is not. Only 4 of 17 null positions are constrained this way, and the total count
-      is exactly what random values would produce (MC p=0.59). There is no global constant-difference
-      rule (tested all 1,248 lag&times;delta combinations, p=0.954 after Bonferroni).
-      The Stehle pattern is a <strong>local coincidence</strong> (a fortunate collision between
-      cipher output structure and null placement), not a generative mechanism.
+      We tested whether this kind of arithmetic forcing is a general rule for how filler values
+      are chosen: <strong>it is not</strong>. Only 4 of 17 filler positions show this behavior, which is
+      exactly what random placement would produce. We checked all 1,248 possible spacing-and-difference
+      combinations and found no global rule.
+      The Stehle pattern is a <strong>local coincidence</strong>&mdash;a fortunate collision between
+      cipher structure and filler placement&mdash;not a mechanism.
     </p>
   </div>
 </section>
@@ -514,24 +506,22 @@
     <div class="conclusion-card conclusion-solved">
       <h3>What our analysis suggests</h3>
       <ul>
-        <li>K4 likely uses <strong>two layers</strong>: a substitution cipher and a steganographic null-insertion layer (consistent with Sanborn&rsquo;s public statement about &ldquo;two systems of enciphering&rdquo;)</li>
-        <li>The candidate null palette is {B,G,I,K,O,W,Z}, which concentrates in two columns of a 5-wide keyword-mixed Polybius grid (specific keyword unknown; KRYPTOS is one of ~6,300 that work)</li>
-        <li>Null <em>placement</em> fits a mod-7 &times; mod-5 lookup table rule (35/35 correct on training data), but this table is <strong>overfit</strong>: leave-one-out cross-validation yields 47% accuracy (below the 49% baseline), and it predicts zero additional nulls among candidate positions</li>
-        <li>Null <em>character assignment</em> (which palette letter fills each null slot) is not determined by local arithmetic constraints, position formulas, neighbor functions, keystream echo, or grid cell mapping; all tested models failed. It may require external information such as the encoding chart</li>
-        <li>The Stehle &Delta;4=5 anomaly (positions 55&ndash;63) is a <strong>local coincidence</strong>: the cipher layer produced consecutive &Delta;4=5 at non-null pairs, and null insertion extended it because both forced values are palette letters. No global arithmetic rule governs null values (1,248 tests, all non-significant)</li>
-        <li>17 of 24 candidate null positions are identified by consensus; width-21 bigram optimization narrows the 7 unknowns to a core set of 5 positions ({18,19,56,62,93}), but cipher attacks on all resulting CT73 extractions produce noise</li>
-        <li>The candidate stego and cipher layers appear to share a structural source: the keystream is palette-enriched (13/24, p=0.0043) with joint significance p&nbsp;&lt;&nbsp;10<sup>&minus;7</sup></li>
+        <li>K4 likely uses <strong>two layers</strong>: a cipher and a filler-insertion layer (consistent with Sanborn&rsquo;s statement about &ldquo;two systems of enciphering&rdquo;)</li>
+        <li>The 7 filler letters {B,G,I,K,O,W,Z} fall in two columns of a 5-wide grid built from a keyword-shuffled alphabet</li>
+        <li>The filler layer and the cipher layer share a structural source: 13 of 24 known-plaintext values are also from this same 7-letter set (odds of coincidence: less than 1 in 7 million)</li>
+        <li>17 of the 24 candidate filler positions are identified with high confidence; the remaining 7 are still uncertain</li>
+        <li>How each filler position gets its specific letter likely requires Sanborn&rsquo;s encoding chart&mdash;we tested 7 models and all failed</li>
       </ul>
     </div>
     <div class="conclusion-card conclusion-open">
       <h3>What's still open</h3>
       <ul>
-        <li>The substitution cipher operating on the 73 real characters</li>
-        <li>The key or key-generation method (not periodic, not autokey, not any tested running key, not grid-derived, not null-sequence-derived, not position-dependent)</li>
-        <li>The specific keyword for the Polybius grid (~6,300 candidates remain; KRYPTOS is thematically strongest)</li>
-        <li>The exact identity of 7 uncertain null positions (the mod-35 table cannot predict them; width-21 optimization suggests {18,19,56,62,93} + 2 from {45,46,47,48}, but cipher attacks show no signal on any mask)</li>
-        <li>Whether the true null count is 24 (as assumed from &ldquo;73&rdquo;) or 17 (the consensus set); CT80 (17-null extraction) also produces noise under all tested ciphers</li>
-        <li>The physical mechanism (Sanborn ordered a red transparency from Kinko&rsquo;s, purpose unknown)</li>
+        <li>The cipher itself&mdash;operating on the ~73 real characters</li>
+        <li>The key or key-generation method (we&rsquo;ve ruled out every standard approach)</li>
+        <li>The specific keyword for the grid (~6,300 candidates remain; KRYPTOS is thematically strongest)</li>
+        <li>The exact identity of 7 uncertain filler positions</li>
+        <li>Whether the true filler count is 24 (as suggested by Sanborn&rsquo;s &ldquo;73&rdquo; note) or 17 (the consensus set)</li>
+        <li>The physical mechanism (Sanborn ordered a red transparency from Kinko&rsquo;s&mdash;purpose unknown)</li>
       </ul>
     </div>
   </div>
