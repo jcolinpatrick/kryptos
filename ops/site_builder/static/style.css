@@ -2289,6 +2289,9 @@ main section + section {
 .text-mono { font-family: var(--font-mono); }
 .mt-0 { margin-top: 0; }
 
+.bean-pass { color: var(--green); font-weight: 700; }
+.bean-fail { color: var(--red); font-weight: 700; }
+
 
 /* ============================================================
    RESPONSIVE
@@ -2299,6 +2302,8 @@ main section + section {
   html { font-size: 17px; }
   .container { padding: 0 var(--sp-8); }
   nav .nav-links li a { padding: var(--sp-3) var(--sp-4); }
+  .two-paths { grid-template-columns: 1fr; }
+  .conclusion-grid { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 768px) {
