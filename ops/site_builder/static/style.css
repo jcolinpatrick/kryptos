@@ -1261,6 +1261,16 @@ figcaption {
 
 
 /* --- Submit Form --- */
+#submit-form {
+  max-width: var(--content-width);
+}
+
+.submit-actions {
+  display: flex;
+  gap: var(--sp-3);
+  align-items: center;
+}
+
 .char-counter {
   text-align: right;
   font-size: var(--text-xs);
@@ -1279,6 +1289,7 @@ figcaption {
   padding: var(--sp-4) var(--sp-5);
   border-radius: var(--radius-md);
   margin-top: var(--sp-4);
+  max-width: var(--content-width);
   display: none;
 }
 
@@ -1314,10 +1325,13 @@ figcaption {
   border-radius: var(--radius-md);
   padding: var(--sp-4) var(--sp-5);
   margin: var(--sp-6) 0;
+  max-width: var(--content-width);
   font-size: var(--text-sm);
   font-weight: 500;
   line-height: 1.6;
   color: var(--text-secondary);
+  text-align: center;
+  text-wrap: balance;
 }
 
 .credit-notice strong {
