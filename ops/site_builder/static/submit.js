@@ -11,12 +11,14 @@
   var submitBtn = document.getElementById("submit-btn");
   var resultBox = document.getElementById("submit-result");
 
+  var clearBtn = document.getElementById("clear-btn");
+
   var MIN_CHARS = 10;
   var MAX_CHARS = 2000;
 
   if (!form || !textarea) return;
 
-  // Character counter
+  // Character counter + clear button visibility
   function updateCounter() {
     var len = textarea.value.length;
     counter.textContent = len + " / " + MAX_CHARS;
@@ -31,10 +33,20 @@
       counter.className = "char-counter";
       submitBtn.disabled = false;
     }
+
+    clearBtn.style.display = len > 0 ? "" : "none";
   }
 
   textarea.addEventListener("input", updateCounter);
   updateCounter();
+
+  // Clear button
+  clearBtn.addEventListener("click", function () {
+    textarea.value = "";
+    hideResult();
+    updateCounter();
+    textarea.focus();
+  });
 
   // Form submission
   form.addEventListener("submit", function (e) {
@@ -86,19 +98,19 @@
           var feas = data.feasibility || "unknown";
           var html = "";
           if (feas === "infeasible") {
-            html += "<strong>This theory is computationally infeasible.</strong><br><br>";
-            html += escapeHtml(data.reason || "The search space is too large to test in any practical timeframe.");
-            html += "<br><br>Consider narrowing your theory to a specific, smaller parameter space.";
+            html += "<strong>This theory has too many possibilities to test.</strong><br><br>";
+            html += escapeHtml(data.reason || "There are more combinations to try than a computer could check in a lifetime.");
+            html += "<br><br>Try narrowing it down &mdash; a specific key word, a specific method, or a specific starting point helps us actually run the test.";
           } else if (feas === "impossible") {
-            html += "<strong>This theory violates known mathematical constraints.</strong><br><br>";
-            html += escapeHtml(data.reason || "The approach is structurally incompatible with K4.");
+            html += "<strong>This theory can't work on K4.</strong><br><br>";
+            html += escapeHtml(data.reason || "It conflicts with something we know for certain about how K4 is constructed.");
           } else if (feas === "untestable") {
-            html += "<strong>This theory needs more specificity.</strong><br><br>";
-            html += escapeHtml(data.reason || "Please describe the specific cipher method, key source, and parameters.");
-            html += "<br><br>For example, instead of \"maybe a substitution cipher\", try: \"Vigen&egrave;re cipher with keyword BERLIN and period 6, applied after a columnar transposition with width 9.\"";
+            html += "<strong>Interesting idea, but we need something more concrete to test.</strong><br><br>";
+            html += escapeHtml(data.reason || "We can only test theories that translate into a step-by-step procedure a computer can follow.");
+            html += "<br><br>The key question is: <em>could someone follow your instructions and get a single, definite answer?</em> Narrative ideas (\"the answer is hidden in the shadows\") are interesting but we need a mechanical process &mdash; which cipher, which key, which order of operations.";
           } else {
-            html += "<strong>This theory could not be evaluated.</strong><br><br>";
-            html += escapeHtml(data.reason || "Please try rephrasing with more detail.");
+            html += "<strong>We couldn't evaluate this one.</strong><br><br>";
+            html += escapeHtml(data.reason || "Try rephrasing with a bit more detail about the method you have in mind.");
           }
           showResult("error", html);
         } else if (data.status === "error") {
