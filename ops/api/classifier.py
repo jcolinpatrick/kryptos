@@ -36,7 +36,7 @@ MATCHING RULES:
 
 FEASIBILITY RULES (for novel theories only):
 Assess the theory against these criteria:
-- Is it specific enough to implement? Vague theories like "maybe it's something with numbers" are UNTESTABLE.
+- Is it specific enough to implement? A testable theory describes a MECHANICAL PROCESS — a step-by-step recipe a computer can follow to produce a single definite answer. Narrative or thematic ideas ("the shadows reveal the answer", "it's about the Cold War") are interesting observations but are UNTESTABLE because they don't specify a cipher operation.
 - Is it computationally feasible? K4 is 97 characters. Consider:
   * Brute-forcing all 97! (~10^152) permutations is IMPOSSIBLE.
   * Brute-forcing all 26^97 substitution keys is IMPOSSIBLE.
@@ -49,22 +49,32 @@ Assess the theory against these criteria:
   * Bean constraints: k[27] must equal k[65]; 21 specific inequality pairs.
 - Is it falsifiable? Can we define what "success" looks like (24/24 crib match)?
 
+TONE RULES — CRITICAL:
+- Most people submitting theories are NOT cryptographers or mathematicians. Write ALL responses in plain, friendly English.
+- Never use jargon without a brief explanation. For example, say "a method that swaps letters using a keyword" not "polyalphabetic substitution."
+- When a theory is untestable, be encouraging and explain the difference between a narrative idea and a testable recipe. Don't just say "needs more specificity" — explain WHAT KIND of specificity would make it testable.
+- Never use a condescending or dismissive tone. Every submission represents genuine curiosity.
+- Keep responses to 1-2 short sentences. NEVER use numbered lists like (1), (2), (3). NEVER use bullet points. Write flowing prose only — short, conversational sentences a non-technical person would find helpful.
+
 RESPONSE FORMAT — respond with ONLY valid JSON, no markdown fences:
 
 For a match:
-{"status": "matched", "elimination_id": "<exact ID from context>", "title": "<exact title from context>", "verdict": "<ELIMINATED or other verdict from context>", "summary": "<1 sentence explaining why this theory was already tested and the result>"}
+{"status": "matched", "elimination_id": "<exact ID from context>", "title": "<exact title from context>", "verdict": "<ELIMINATED or other verdict from context>", "summary": "<1 plain-English sentence explaining what was tested and why it didn't work>"}
 
 For a novel AND feasible theory:
-{"status": "novel", "feasibility": "feasible", "summary": "<1-2 sentences on what makes this worth testing and rough complexity estimate>"}
+{"status": "novel", "feasibility": "feasible", "summary": "<1-2 plain-English sentences on what makes this worth testing>"}
 
 For a novel but INFEASIBLE theory:
-{"status": "novel", "feasibility": "infeasible", "reason": "<1-2 sentences explaining why this cannot be practically tested>"}
+{"status": "novel", "feasibility": "infeasible", "reason": "<1-2 plain-English sentences explaining why there are too many possibilities to check>"}
 
 For a novel but UNTESTABLE (too vague) theory:
-{"status": "novel", "feasibility": "untestable", "reason": "<1 sentence explaining what additional specificity is needed>"}
+{"status": "novel", "feasibility": "untestable", "reason": "<1-2 plain-English sentences — NO numbered lists, NO jargon>"}
+
+GOOD untestable example: "That's an interesting observation, but to test it we'd need a specific step-by-step procedure — something like 'rearrange the letters in this specific order, then apply this specific operation.' What exact steps would turn the ciphertext into readable English?"
+BAD untestable example (DO NOT DO THIS): "To make this testable, you'd need to specify: (1) the grid dimensions, (2) the reading order, (3) the expected output format."
 
 For a novel but IMPOSSIBLE (violates known constraints) theory:
-{"status": "novel", "feasibility": "impossible", "reason": "<1 sentence explaining which constraint it violates>"}
+{"status": "novel", "feasibility": "impossible", "reason": "<1 plain-English sentence explaining what known fact it conflicts with>"}
 """
 
 # Comprehensive summary of what has been eliminated, keyed to index IDs
