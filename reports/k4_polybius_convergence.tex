@@ -4,6 +4,7 @@
 \usepackage{booktabs}
 \usepackage{array}
 \usepackage{hyperref}
+\usepackage{microtype}
 
 \newtheorem{theorem}{Theorem}
 \newtheorem{proposition}{Proposition}
@@ -46,16 +47,18 @@ Let $\mathcal{A} = \{A, B, \ldots, Z\}$ with standard indexing $A{=}0,
 \ldots, Z{=}25$.  All arithmetic modulo~26.
 
 \begin{definition}[Kryptos Alphabet]
-$\mathrm{KA} = \texttt{KRYPTOSABCDEFGHIJLMNQUVWXZ}$, with
-$\mathrm{KA}[0]{=}K, \mathrm{KA}[1]{=}R, \ldots, \mathrm{KA}[25]{=}Z$.
+$\mathrm{KA} = {}${\small\texttt{KRYPTOSABCDEFGHIJLMNQUVWXZ}}, with
+$\mathrm{KA}[0]{=}K$, $\mathrm{KA}[1]{=}R$, \ldots, $\mathrm{KA}[25]{=}Z$.
 All 26~letters appear exactly once.
 \end{definition}
 
 \begin{definition}[K4 Ciphertext and Cribs]
+{\small
 \begin{align*}
 C &= \texttt{OBKRUOXOGHULBSOLIFBBWFLRVQQPRNGKSSOTWTQSJQSSEKZZWAT} \\
   &\phantom{{}={}}\texttt{JKLUDIAWINFBNYPVTTMZFPKWGDKZXTJCDIGKUHUAUEKCAR}
 \end{align*}
+}
 with $|C| = 97$ and 0-indexed positions.  Known cribs (24~characters total):
 \begin{align*}
 P[21..33] &= \texttt{EASTNORTHEAST} \quad (13\text{ chars}), \\
@@ -89,9 +92,10 @@ $\Pi = \{\ell \in \mathcal{A} : \mathrm{col}(\ell) \in \{0, 3\}\}
 The 17~positions identified with 100\% agreement across 6~independently
 optimized null masks (each maximizing crib consistency via simulated
 annealing):
-\[
-\mathcal{N}_{17} = \{0, 1, 2, 5, 8, 12, 14, 20, 36, 52, 58, 59, 74, 75, 78, 84, 85\}.
-\]
+\begin{multline*}
+\mathcal{N}_{17} = \{0, 1, 2, 5, 8, 12, 14, 20, 36, \\
+52, 58, 59, 74, 75, 78, 84, 85\}.
+\end{multline*}
 \end{definition}
 
 %% ================================================================
@@ -241,7 +245,7 @@ Variant Beaufort gives 5/24.
 
 \begin{proposition}[Bean's Mod-5 Observation]\label{prop:bean}
 Define the reversed Kryptos Alphabet
-$\mathrm{rKA} = \texttt{ZXWVUQNMLJIHGFEDCBASOTPYRK}$ and compute:
+$\mathrm{rKA} = {}${\small\texttt{ZXWVUQNMLJIHGFEDCBASOTPYRK}} and compute:
 \[
 \beta[i] = (\mathrm{rKA\text{-}idx}(C[i]) - \mathrm{idx}(P[i])) \bmod 26
 \]
@@ -259,11 +263,11 @@ An earlier draft of this paper claimed that
 $\beta[i] \equiv 0 \pmod{5}$ is equivalent to
 $\mathrm{col}(C[i]) \equiv -\mathrm{idx}(P[i]) \pmod{5}$,
 which would directly select KA Polybius columns.
-This equivalence is \textbf{wrong}: it requires
-$(\mathrm{KA\text{-}idx}(C[i]) + \mathrm{idx}(P[i])) \bmod 26
-\equiv
-(\mathrm{KA\text{-}idx}(C[i]) + \mathrm{idx}(P[i])) \bmod 5$,
-which holds only when the intermediate sum is less than~26.
+This equivalence is \textbf{wrong}: it requires that
+$(x + y) \bmod 26 \equiv (x + y) \bmod 5$
+where $x = \mathrm{KA\text{-}idx}(C[i])$ and
+$y = \mathrm{idx}(P[i])$,
+which holds only when $x + y < 26$.
 Since $26 \equiv 1 \pmod{5}$, reducing mod~26 before mod~5
 introduces a $\pm 1$ shift for values $\geq 26$.  Empirically,
 only 9 of the 13 Bean mod-5 hits satisfy the column congruence.
@@ -292,7 +296,7 @@ question.
 
 \begin{proposition}[Keystream K-Sum Deficit]\label{prop:ksum}
 The Beaufort keystream at the 24~crib positions is
-$\texttt{JLJODEGKUKKKLOCGGBGOKTRU}$.
+{\small\texttt{JLJODEGKUKKKLOCGGBGOKTRU}}.
 Mapping each letter to its KA index and summing:
 \[
 \Sigma = \sum_{i \in \mathcal{C}} \mathrm{KA\text{-}idx}(k[i]) = 218.
@@ -340,13 +344,13 @@ In $N = 50{,}000{,}000$ random permutations of the 97 CT letters
 (seed \texttt{20260320}), we re-derive the palette from the null
 positions of each shuffled text and test keystream enrichment for
 that derived palette:
-\[
+\begin{multline*}
 P\bigl(\text{distinct} \leq 7 \;\wedge\;
        \text{ks\_palette} \geq 13
-       \mid \text{shuffled CT}\bigr)
+       \mid \text{shuffled CT}\bigr) \\
 = \frac{7}{50{,}000{,}000}
 = 1.4 \times 10^{-7},
-\]
+\end{multline*}
 with 95\% CI $[6.8 \times 10^{-8},\; 2.9 \times 10^{-7}]$.
 
 Among the $1{,}405$ shuffles that produced $\leq 7$ distinct null
@@ -440,12 +444,13 @@ layer under the correct (still unknown) decryption model?
 %% ================================================================
 
 All computations use the \texttt{kryptos} kernel
-(\texttt{src/kryptos/kernel/constants.py}, which self-verifies CT,
+({\small\texttt{src/kryptos/kernel/constants.py}}, which self-verifies CT,
 cribs, and Bean constraints at import time).
 Palette Monte Carlo: seed \texttt{20260320}, $N = 50{,}000{,}000$ trials.
-Joint null simulation: \texttt{scripts/statistical/e\_joint\_null\_simulation.py},
+Joint null simulation:
+{\small\texttt{scripts/statistical/e\_joint\_null\_simulation.py}},
 seed \texttt{20260320}, $N = 50{,}000{,}000$ trials per model.
-Source code: \texttt{github.com/jcolinpatrick/kryptos}.
+Source: {\small\texttt{github.com/jcolinpatrick/kryptos}}.
 
 \begin{thebibliography}{9}
 \bibitem{bean2021} R.~Bean, ``Cryptodiagnosis of Kryptos K4,''

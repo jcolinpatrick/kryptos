@@ -88,6 +88,19 @@
 
 
 /* --- Proof Paper CTA --- */
+.proof-paper-btn {
+  background: var(--accent) !important;
+  color: #fff !important;
+  border: none !important;
+  font-weight: 700;
+  padding: var(--sp-3) var(--sp-6);
+  flex-shrink: 0;
+}
+
+.proof-paper-btn:hover {
+  background: var(--accent-hover) !important;
+}
+
 .proof-paper-cta {
   display: flex;
   align-items: center;
