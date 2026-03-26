@@ -96,7 +96,7 @@
         {% endif %}
       </small>
       {% if e.expected_random is not none %}
-        <small style="margin-left:var(--sp-3)" class="text-muted">(random expectation: {{ e.expected_random }})</small>
+        <small class="text-muted" style="margin-left:var(--sp-3)">(random guess would score: {{ e.expected_random }})</small>
       {% endif %}
     {% else %}
       N/A
@@ -107,9 +107,9 @@
   <dt>Keystream Consistency (Bean)</dt>
   <dd>
     {% if e.bean_passed %}
-      <span style="color:var(--green);font-weight:700">PASS</span>
+      <span class="bean-pass">PASS</span>
     {% else %}
-      <span style="color:var(--red);font-weight:700">FAIL</span>
+      <span class="bean-fail">FAIL</span>
     {% endif %}
     <br><small class="text-muted">Checks whether the key values at different positions are mathematically consistent with each other.</small>
   </dd>
