@@ -87,6 +87,32 @@
 }
 
 
+/* --- Proof Paper CTA --- */
+.proof-paper-cta {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+  margin-top: var(--sp-5);
+  padding: var(--sp-4) var(--sp-5);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+}
+
+.proof-paper-note {
+  font-size: var(--text-sm);
+  color: var(--text-tertiary);
+  line-height: 1.5;
+}
+
+@media (max-width: 768px) {
+  .proof-paper-cta {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+
 /* --- Ciphertext Exhibit --- */
 .ct-exhibit {
   margin-bottom: var(--sp-16);
