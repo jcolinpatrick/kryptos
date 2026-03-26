@@ -30,10 +30,10 @@
   <summary>What approaches remain open?</summary>
   <p>
     All standard cipher families have been exhaustively eliminated,
-    including periodic substitution (complete mathematical proof at all periods),
-    all autokey variants (structural impossibility proof), running keys from
-    60,000+ publicly available English texts (106 billion offset-checks), and
-    every bespoke mechanism tested (Gromark, VIC, Feistel, digraphic, etc.).
+    including all repeating-key ciphers (proven mathematically impossible at every
+    key length), all self-keying ciphers (proven structurally impossible),
+    running keys from 60,000+ publicly available English texts (106 billion
+    position-checks), and every specialized cipher method we could find.
     The main surviving possibilities are:
     (1) a running key from a non-public source text;
     (2) a bespoke procedural cipher using Sanborn&rsquo;s encoding charts
@@ -92,11 +92,8 @@
     periodic keys. Sanborn stated K4 uses two systems of encipherment, and pure
     transposition is independently impossible (the ciphertext has 2 E&rsquo;s
     but the cribs require 3). The exact two-layer structure is unknown.
-    The information-theoretic deficit is estimated at roughly
-    138 bits, meaning on the order of 2<sup>138</sup> configurations
-    could satisfy the known constraints. (This is an order-of-magnitude estimate
-    that depends on assumptions about plaintext entropy and cipher structure;
-    it should not be treated as a precise bound.)
+    There are an astronomically large number of possible methods that could
+    produce the known letters&mdash;far too many to test one by one.
     Solving K4 requires identifying the specific <em>method</em>, not just
     trying all keys.
   </p>

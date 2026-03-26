@@ -18,7 +18,7 @@
 <div class="ct-display">{{ ct[:21] }}<span class="crib">{{ ct[21:34] }}</span>{{ ct[34:63] }}<span class="crib">{{ ct[63:74] }}</span>{{ ct[74:] }}</div>
 
 <p>
-  <strong>Known plaintext</strong> (0-indexed positions, confirmed by Jim Sanborn):
+  <strong>Known plaintext</strong> (positions numbered from 0, confirmed by Jim Sanborn):
 </p>
 <ul>
   <li>Positions 21&ndash;33: <code>EASTNORTHEAST</code> (13 characters)</li>
@@ -26,8 +26,8 @@
 </ul>
 <p>
   These 24 known characters are the foundation of our scoring system.
-  They also produce known <em>keystream</em> values at those positions,
-  which constrain what cipher methods and keys are possible.
+  They also reveal the internal key values the cipher uses at those positions,
+  which constrain what methods and keys are possible.
 </p>
 
 <h2>Scoring: Crib Matching (0&ndash;24)</h2>
@@ -51,18 +51,17 @@
   </table>
 </div>
 <p>
-  These thresholds are conservative operational choices. Under a random key with
-  a 26-letter alphabet, the expected crib score is &sim;0.92/24 (binomial with p=1/26).
-  A score of 6 is already far beyond random expectation. The SIGNAL threshold at 18
-  is set high to account for underdetermination at large periods (see below).
+  These thresholds are conservative. With a random key and a 26-letter alphabet,
+  you&rsquo;d expect fewer than 1 letter out of 24 to match by pure luck.
+  A score of 6 is already far beyond chance. The SIGNAL threshold at 18
+  is set high because longer keys can produce misleadingly high scores (see below).
 </p>
 
 <h2>Expected Random Scores by Period</h2>
 <p>
-  A critical subtlety: expected random score depends on the cipher&rsquo;s
-  <em>period</em> (key length). At higher periods, random keys match more cribs
-  due to underdetermination: there are fewer constraints per key
-  position.
+  A critical subtlety: how well a random key scores depends on the key&rsquo;s
+  length. Longer keys have fewer checks per key position, so random
+  matches become more common&mdash;inflating scores artificially.
 </p>
 
 <div class="table-wrap">
@@ -81,11 +80,11 @@
   </table>
 </div>
 <p>
-  These values are approximate and derived from the constraint structure at each period
-  (how many crib positions share each residue class). The key insight is structural:
-  at period &ge; 17, random keys routinely score above our SIGNAL threshold,
-  making high-period scores meaningless. Only scores at period &le; 7 are
-  reliable discriminators.
+  These values are approximate, based on how many known-letter positions share each
+  key position at a given key length. The key insight:
+  at key length 17 or above, random keys routinely score above our SIGNAL threshold,
+  making those scores meaningless. Only scores at key length 7 or below are
+  reliable.
 </p>
 
 <h2>Bean Constraints</h2>
@@ -95,22 +94,18 @@
   (both of which decrypt to R). This gives:
 </p>
 <ul>
-  <li><strong>Equality:</strong> k[27] = k[65] (the key values at these positions must be equal)</li>
-  <li><strong>242 Variant-Independent Inequalities:</strong> pairs of key positions that must differ
-      under all three cipher variants (Vigen&egrave;re, Beaufort, Variant Beaufort). Derived from
-      all C(24,2) = 276 crib pairs, minus 13 equalities and 21 mixed pairs.</li>
+  <li><strong>Equality:</strong> The key values at positions 27 and 65 must be equal</li>
+  <li><strong>242 inequalities:</strong> Hundreds of pairs of key positions that must differ,
+      regardless of which cipher variant is used</li>
 </ul>
 <p>
-  These constraints are <em>variant-independent</em>: they hold whether the cipher
-  is Vigen&egrave;re, Beaufort, or Variant Beaufort. Any valid solution must satisfy all
-  Bean constraints. The full 242-pair inequality set, combined with a fingerprint
-  argument (the same keystream value appears at three crib positions whose pairwise
-  differences have gcd(39,45)=3, forcing any periodic key to have period dividing 3,
-  but the key has 12 distinct values, ruling out period &le; 3), proves that
-  <strong>no periodic key of any length</strong> (period 1 through infinity)
-  can produce the K4 crib decryptions. This is a mathematical proof derived within this
-  project, reproducible from the codebase (not a search result). (The proof is actually stronger: the gcd across all 13 equal-key pairs is 1,
-  meaning only period 1 is consistent, which is trivially impossible with 12+ distinct key values.)
+  These constraints hold no matter which cipher variant is used (Vigen&egrave;re, Beaufort,
+  or Variant Beaufort). Any valid solution must satisfy all of them.
+</p>
+<p>
+  Combined with a mathematical argument about repeated key values, these constraints prove that
+  <strong>no repeating key of any length</strong> can produce the K4 plaintext.
+  This is not a search result&mdash;it is a mathematical proof, reproducible from the codebase.
 </p>
 
 <h2>Two-System Model</h2>
@@ -129,13 +124,13 @@
   2 E&rsquo;s, but the known cribs require 3. Therefore at least one layer must be
   substitution. The <strong>leading model</strong> is:
 </p>
-<pre>  PT (73 chars) &rarr; substitution cipher &rarr; null insertion (24 chars) &rarr; carved text (97 chars)</pre>
+<pre style="white-space:pre-wrap">PT (73 chars) &rarr; substitution cipher &rarr; filler insertion (24 chars) &rarr; carved text (97 chars)</pre>
 <p>
   If the null-mask model is correct, the candidate null palette (letters appearing at
   null positions) is {B,G,I,K,O,W,Z}, which corresponds to columns 0 and 3 of a 5-wide
   Polybius grid under certain keyword-mixed alphabets including KRYPTOS
-  (joint statistical significance p=1.4&times;10<sup>&minus;7</sup>,
-  50M Monte Carlo trials). 17 of 24 candidate null positions are identified by
+  (combined odds less than 1 in 7 million, verified with
+  50 million random simulations). 17 of 24 candidate filler positions are identified by
   consensus; 7 remain uncertain. The specific keyword is not uniquely determined.
 </p>
 <p>
@@ -152,17 +147,17 @@
   have been run (with overlaps across experiments), eliminating:
 </p>
 <ul>
-  <li><strong>All periodic substitution</strong> (Vig/Beau/VBeau &times; AZ/KA &times; all periods): mathematical proof</li>
-  <li><strong>All autokey variants</strong> (PT/CT &times; all primers): structural impossibility proof via crib-to-crib feedback</li>
-  <li><strong>All sub &times; transposition MITM</strong> (~1.2B evaluations): mono + periodic + autokey &times; 14 transposition families</li>
-  <li><strong>All VIC cipher models</strong>: generic, narrative, K2-derived, historical params (extensive testing across multiple model variants)</li>
-  <li><strong>All digraphic ciphers</strong> (Four-Square, Playfair, Two-Square): single-layer ceiling 23/24 (overfitting)</li>
-  <li><strong>All bespoke mechanisms</strong>: Gromark (8.74B), Feistel, Gronsfeld, Porta, fractionation, homophonic, Hill</li>
-  <li><strong>Running key from 60K Gutenberg texts</strong> (106B offset-checks): zero signal</li>
-  <li><strong>All transposition within CT73 + periodic/running key</strong>: 4.5M transpositions &times; 3 variants</li>
-  <li><strong>Sculpture reading paths as key</strong>: 10,777 paths &times; 976K tests, max 7/24 = noise</li>
-  <li><strong>Grid-position-dependent keying</strong>: key=f(row,col,keyword), zero signal</li>
-  <li><strong>Morse code hypotheses</strong>: Morse Indexed Alphabet + CT&rarr;Morse&rarr;Binary null mask, all noise</li>
+  <li><strong>All repeating-key ciphers</strong> (every variant, both alphabets, all key lengths): proven impossible</li>
+  <li><strong>All self-keying ciphers</strong> (every variant, all primers): proven structurally impossible</li>
+  <li><strong>All substitution + rearrangement combinations</strong> (~1.2 billion evaluations): 14 rearrangement families</li>
+  <li><strong>All Cold War-era cipher models</strong> (VIC family): extensively tested across multiple variants</li>
+  <li><strong>All letter-pair ciphers</strong> (Four-Square, Playfair, Two-Square): apparent high scores are overfitting artifacts</li>
+  <li><strong>Every specialized cipher we could find</strong>: Gromark (8.74 billion keys), plus Feistel, Gronsfeld, Porta, and more</li>
+  <li><strong>Running key from 60,000 public texts</strong> (106 billion position-checks): zero signal</li>
+  <li><strong>All rearrangements of the 73-character text</strong>: 4.5 million rearrangements tested with each cipher variant</li>
+  <li><strong>Sculpture reading paths as keys</strong>: 10,777 paths tested, all noise</li>
+  <li><strong>Grid-position-based keys</strong>: key derived from position on the grid, zero signal</li>
+  <li><strong>Morse code hypotheses</strong>: multiple Morse-based encoding schemes, all noise</li>
 </ul>
 
 <h2>73-Character Hypothesis</h2>
@@ -185,20 +180,19 @@
 
 <h3>The Null Palette</h3>
 <p>
-  Statistical analysis has identified a <strong>candidate null palette</strong>, a set of 7 letters
-  {B, G, I, K, O, W, Z} that appear disproportionately at candidate null positions
-  (p&asymp;3.0&times;10<sup>&minus;5</sup>, permutation test 10M trials, letter-shuffle null model).
-  Under certain keyword-mixed alphabets (including KRYPTOS), these 7 letters concentrate
-  in exactly two columns of a 5-wide Polybius grid. About 0.6% of English keywords produce
-  this column-concentration property; the specific keyword is not uniquely determined.
-  Independently, 13/24 Beaufort keystream values at crib positions are themselves palette letters
-  (p=0.0043). This alphabet-independent coupling between the stego and cipher layers is the
+  Statistical analysis has identified a <strong>candidate null palette</strong>: a set of 7 letters
+  {B, G, I, K, O, W, Z} that appear disproportionately at candidate filler positions.
+  The odds of this restriction happening by chance are roughly <strong>1 in 16,000</strong>.
+  Under certain keyword-shuffled alphabets (including KRYPTOS), these 7 letters concentrate
+  in exactly two columns of a 5-wide grid. About 0.6% of English keywords produce
+  this property; the specific keyword is not uniquely determined.
+  Independently, 13 of 24 known-plaintext key values are also from this same 7-letter set
+  (about a <strong>1 in 230</strong> chance). This coupling between the filler layer and the cipher layer is the
   strongest constraint on the key generation mechanism.
 </p>
 <p>
-  The <strong>joint significance</strong> of the palette existing AND producing 13/24
-  keystream enrichment at crib positions is p=1.4&times;10<sup>&minus;7</sup> (50M trials,
-  proper joint null model accounting for negative correlation between events).
+  The <strong>combined odds</strong> of both effects occurring together are less than
+  <strong>1 in 7 million</strong> (verified with 50 million random simulations).
   This is the strongest confirmed statistical finding in the K4 analysis.
 </p>
 
@@ -219,9 +213,9 @@
 <ul>
   <li>Crib score: 24/24</li>
   <li>Bean constraints: PASS</li>
-  <li>Quadgram log-probability: &gt; &minus;4.8 per character (English-like text quality)</li>
-  <li>Index of coincidence consistent with English (IC &approx; 0.067 expected)</li>
-  <li>Semantic coherence: reads as meaningful English with recognizable words (human review required)</li>
+  <li>Text quality: letter patterns must match normal English (measured by how common its 4-letter sequences are)</li>
+  <li>Letter frequency: must match the statistical profile of English text</li>
+  <li>Readability: must produce meaningful English with recognizable words (human review required)</li>
 </ul>
 
 <h2>Truth Taxonomy</h2>
