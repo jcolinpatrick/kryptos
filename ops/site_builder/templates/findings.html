@@ -52,14 +52,23 @@
       The enrichment itself is alphabet-independent (a property of the carved text, not any cipher model).
     </li>
     <li>
-      <strong>Combined odds of coincidence: p&nbsp;&lt;&nbsp;10<sup>&minus;7</sup></strong>
-      (Fisher&rsquo;s method on palette restriction + keystream enrichment; confirmed by joint Monte Carlo, 0 hits in 10M trials).
+      <strong>Combined odds of coincidence: p&nbsp;&asymp;&nbsp;1.4&nbsp;&times;&nbsp;10<sup>&minus;7</sup></strong>
+      (direct simulation: 50M letter permutations, only 7 produced both effects simultaneously).
     </li>
   </ul>
   <p>
     The entire codebase is <a href="https://github.com/jcolinpatrick/kryptos">open source</a>.
     Every finding includes a reproduction command.
   </p>
+  <div class="proof-paper-cta">
+    <a href="/static/k4_polybius_convergence.pdf" class="btn btn-secondary" target="_blank" rel="noopener">
+      View the formal proof (PDF, 6 pages)
+    </a>
+    <span class="proof-paper-note">
+      Full statistical derivations, Monte Carlo methodology, and combined significance tests.
+      Suitable for peer review.
+    </span>
+  </div>
 </section>
 
 <!-- The Ciphertext -->
@@ -120,13 +129,13 @@
     <p>
       Someone chose exactly 7 letters (B, G, I, K, O, W, and Z) and scattered
       them through K4 as filler characters. The odds of this restriction happening by chance
-      are about <strong>1 in 33,000</strong>. This means K4 probably isn&rsquo;t 97 characters of
+      are about <strong>1 in 16,000</strong>. This means K4 probably isn&rsquo;t 97 characters of
       real ciphertext. It&rsquo;s probably 73, with 24 decoys designed to make frequency analysis useless.
     </p>
   </div>
 
   <div class="finding-callout">
-    <span class="callout-value">1 in 33,000</span>
+    <span class="callout-value">1 in 16,000</span>
     <span class="callout-label">probability of seeing this palette restriction by chance</span>
   </div>
 
@@ -146,7 +155,7 @@
       We identified 17 positions where independent analyses converge on the character being a null.
       Those 17 characters use only <strong>7 different letters: B, G, I, K, O, W, and Z.</strong>
       Drawing 17 characters at random from K4&rsquo;s letter distribution and getting only 7 distinct letters
-      has a probability of roughly <strong>1 in 33,000</strong> (permutation test, 10M trials). This is very unlikely to be coincidence.
+      has a probability of roughly <strong>1 in 16,000</strong> (permutation test, 10M trials). This is very unlikely to be coincidence.
     </p>
     <p>
       Even more striking: <strong>4 of the 5 W&rsquo;s</strong> in the entire ciphertext are nulls.
@@ -191,7 +200,7 @@
     </div>
     <div class="stat-pill">
       <span class="stat-pill-label">Palette restriction</span>
-      <span class="stat-pill-value">p &asymp; 1 in 33,000</span>
+      <span class="stat-pill-value">p &asymp; 1 in 16,000</span>
     </div>
     <div class="stat-pill">
       <span class="stat-pill-label">Polybius column alignment</span>

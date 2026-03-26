@@ -14,24 +14,25 @@
 
 \title{Convergent Evidence for $5 \times 5$ Polybius Structure\\in Kryptos K4}
 \author{Colin Patrick \and Claude (Anthropic)}
-\date{March 19, 2026}
+\date{March 26, 2026 (revised)}
 
 \begin{document}
 \maketitle
 
 \begin{abstract}
-Three independent observations about Kryptos K4 converge on a single
+Two independent observations about Kryptos K4 converge on a single
 structure: the Kryptos Alphabet arranged as a $5$-wide Polybius grid.
 (1)~The 17~consensus null positions contain only letters from columns~0
 and~3 of this grid ($p \approx 6 \times 10^{-5}$, Monte Carlo).
 (2)~The Beaufort keystream at all 24~crib positions is enriched for the
 same column-$\{0,3\}$ letters ($p = 4.3 \times 10^{-3}$,
 cross-validated on disjoint position sets).
-(3)~Bean~(2021) independently found that 13/24 keystream values are
-multiples of~5 in the reversed KA indexing ($p \approx 9.5 \times 10^{-4}$),
-which selects column~0 of the same grid.
-Fisher's combined test on observations (1) and~(2) yields
-$p = 4.2 \times 10^{-6}$.
+Direct simulation of both observations jointly yields
+$p = 1.4 \times 10^{-7}$ ($N = 50{,}000{,}000$ letter permutations).
+A third observation---Bean~(2021) found that 13/24 keystream values are
+multiples of~5 in the reversed KA indexing ($p \approx 9.5 \times 10^{-4}$)---shares
+a mod-5 connection with the grid but does not cleanly reduce to a column
+selection (Section~\ref{sec:bean}).
 All three observations are model-independent: they depend only on the
 carved ciphertext and the known cribs, not on any cipher model, keyword,
 or null mask hypothesis.
@@ -170,23 +171,23 @@ Direct computation at all 24~crib positions.
 \toprule
 Pos & $C[i]$ & $P[i]$ & $k[i]$ & $\in \Pi$? \\
 \midrule
-21 & F & E & K\,(10) & Yes \\
+21 & F & E & J\,(9)  & No \\
 22 & L & A & L\,(11) & No \\
-23 & R & S & K\,(10) & Yes \\
+23 & R & S & J\,(9)  & No \\
 24 & V & T & O\,(14) & Yes \\
 25 & Q & N & D\,(3)  & No \\
-26 & Q & O & F\,(5)  & No \\
+26 & Q & O & E\,(4)  & No \\
 27 & P & R & G\,(6)  & Yes \\
 28 & R & T & K\,(10) & Yes \\
-29 & N & H & V\,(21) & No \\
-30 & G & E & L\,(11) & No \\
+29 & N & H & U\,(20) & No \\
+30 & G & E & K\,(10) & Yes \\
 31 & K & A & K\,(10) & Yes \\
-32 & S & S & Z\,(25) & Yes \\
+32 & S & S & K\,(10) & Yes \\
 33 & S & T & L\,(11) & No \\
 \bottomrule
 \end{tabular}
 \end{center}
-ENE palette hits: $7/13$.
+ENE palette hits: $6/13$.
 
 \medskip
 \noindent\textit{BERLINCLOCK} (positions 63--73):
@@ -209,7 +210,7 @@ Pos & $C[i]$ & $P[i]$ & $k[i]$ & $\in \Pi$? \\
 \bottomrule
 \end{tabular}
 \end{center}
-BCL palette hits: $6/11$.  Total: $13/24$.
+BCL palette hits: $7/11$.  Total: $13/24$.
 \end{proof}
 
 \paragraph{Statistical test.}
@@ -231,11 +232,11 @@ the palette definition and the enrichment test share zero
 data points.
 
 \paragraph{Variant specificity.}
-Only Beaufort ($A{=}0$) achieves 13/24.  Vigen\`ere gives 7/24;
-Variant Beaufort gives 6/24.
+Only Beaufort ($A{=}0$) achieves 13/24.  Vigen\`ere gives 9/24;
+Variant Beaufort gives 5/24.
 
 %% ================================================================
-\section{Convergence with Bean (2021)}
+\section{Bean's Mod-5 Observation (2021)}\label{sec:bean}
 %% ================================================================
 
 \begin{proposition}[Bean's Mod-5 Observation]\label{prop:bean}
@@ -253,28 +254,37 @@ Bean (2021, footnote~3).  We independently verify:
 $P(X \geq 13 \mid n{=}24,\; p{=}6/26) = 9.5 \times 10^{-4}$.
 \end{proof}
 
-\paragraph{Structural connection.}
-A value $\beta[i] \equiv 0 \pmod{5}$ means that
-$\mathrm{rKA\text{-}idx}(C[i]) \equiv \mathrm{idx}(P[i]) \pmod{5}$.
-Since $\mathrm{rKA\text{-}idx}(\ell) = 25 - \mathrm{KA\text{-}idx}(\ell)$
-and $25 \equiv 0 \pmod{5}$, we have:
-\[
-\beta[i] \equiv 0 \!\!\pmod{5}
-\;\;\Longleftrightarrow\;\;
-\mathrm{KA\text{-}idx}(C[i]) + \mathrm{idx}(P[i]) \equiv 0 \!\!\pmod{5}
-\;\;\Longleftrightarrow\;\;
-\mathrm{col}(C[i]) \equiv -\mathrm{idx}(P[i]) \!\!\pmod{5}.
-\]
-Thus Bean's mod-5 property selects ciphertext letters whose
-\textbf{KA Polybius column} satisfies a linear congruence with the
-plaintext---the same $5$-wide grid from Definition~\ref{def:grid}.
+\paragraph{Apparent structural connection (incorrect).}
+An earlier draft of this paper claimed that
+$\beta[i] \equiv 0 \pmod{5}$ is equivalent to
+$\mathrm{col}(C[i]) \equiv -\mathrm{idx}(P[i]) \pmod{5}$,
+which would directly select KA Polybius columns.
+This equivalence is \textbf{wrong}: it requires
+$(\mathrm{KA\text{-}idx}(C[i]) + \mathrm{idx}(P[i])) \bmod 26
+\equiv
+(\mathrm{KA\text{-}idx}(C[i]) + \mathrm{idx}(P[i])) \bmod 5$,
+which holds only when the intermediate sum is less than~26.
+Since $26 \equiv 1 \pmod{5}$, reducing mod~26 before mod~5
+introduces a $\pm 1$ shift for values $\geq 26$.  Empirically,
+only 9 of the 13 Bean mod-5 hits satisfy the column congruence.
+
+\paragraph{Relationship to the Polybius grid.}
+Bean's mod-5 and the palette enrichment share a surface
+connection: both involve divisibility by~5, and the KA Polybius
+grid has 5~columns.  However, the algebraic reduction from
+Bean's statistic to column selection does not hold exactly.
+Bean's observation is a genuine, independently significant
+anomaly ($p = 9.5 \times 10^{-4}$) that is \emph{related to}
+but not \emph{equivalent to} the Polybius column structure.
 
 \paragraph{Independence.}
 Bean's observation was published in 2021, before the palette
 $\Pi$ was identified.  The two findings were made by different
-researchers, from different starting points (keystream arithmetic
-vs.\ null-character identity), yet both implicate the $5$-wide
-KA Polybius grid.  Neither was derived from or informed by the other.
+researchers, from different starting points (reversed-KA
+keystream arithmetic vs.\ null-character identity).
+Whether the shared mod-5 structure reflects a common
+mechanism or a coincidence of the arithmetic remains an open
+question.
 
 %% ================================================================
 \section{K-Sum Bias}
@@ -300,6 +310,14 @@ and its immediate successors.  Indeed, 10/24 keystream letters
 (42\%) are in $\{K,R,Y,P,T,O,S\}$ versus 27\% expected
 ($7/26$).  This is a fourth signal pointing to KA structure
 in the keystream.
+
+\paragraph{Conditional status.}
+The K-sum deficit is largely a consequence of the palette enrichment
+(Proposition~\ref{prop:keystream}): palette letters $\Pi$ occupy
+early KA positions (mean KA-index 7.7 vs.\ 12.5 overall), so any
+keystream enriched for $\Pi$ will mechanically produce a low KA-sum.
+The K-sum is therefore a \emph{conditional redescription} of the
+palette signal, not an independent fourth observation.
 
 \paragraph{Note.}
 This observation was first noted by Bean in private correspondence
@@ -355,15 +373,17 @@ $4.2 \times 10^{-6}$) because the two statistics are negatively
 correlated under the null: shuffled texts that produce restricted
 palettes tend \emph{not} to enrich keystreams for those palettes.
 
-\paragraph{Three-way convergence.}
+\paragraph{Relationship to Bean's mod-5.}
 Bean's mod-5 observation (Proposition~\ref{prop:bean},
 $p = 9.5 \times 10^{-4}$) was made independently in 2021 by a
 different researcher using a different computation.
-We do not combine it via Fisher's method (its independence
-from our test statistics would need formal justification), but
-note that three separate analyses---Bean's reversed-KA mod-5,
-our null palette, and our keystream enrichment---all converge
-on the same $5$-wide KA Polybius grid.
+As discussed in Section~\ref{sec:bean}, Bean's statistic shares
+a mod-5 connection with the Polybius grid but does not reduce
+cleanly to a column selection.  The primary convergence is
+\emph{two-way}: null palette restriction and keystream enrichment
+both select the same 7-letter subset defined by the $5$-wide
+KA grid.  Bean's observation is a related but structurally
+distinct signal.
 
 %% ================================================================
 \section{Pre-Registered vs.\ Post-Hoc Status}
@@ -378,8 +398,8 @@ Palette $|\Pi| \leq 7$ & Post-hoc & MC $p$ valid for $\leq 7$ distinct \\
 Palette $= \{B,G,I,K,O,W,Z\}$ & Post-hoc & Specific letters from data \\
 Keystream 13/24 palette & \textbf{Cross-validated} & Disjoint position sets \\
 Beaufort $>$ other variants & Bonferroni-corrected & 3 variants tested \\
-Bean mod-5 (2021) & Independent & Different researcher, pre-2024 \\
-K-sum $= 218$ & Post-hoc & Noted by Bean (2026) \\
+Bean mod-5 (2021) & Independent & Related but not equivalent to grid \\
+K-sum $= 218$ & \textit{Conditional} & Driven by palette enrichment \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -395,13 +415,25 @@ ciphertext-distance clustering ($p \approx 1/240$).  Both depend on
 non-crib characters.
 
 \medskip
-\noindent\textbf{Question.}
+\noindent\textbf{Question 1.}
 Do these signals survive on the 73-character text after removing the
 17~consensus null positions?  The mod-5 signal is invariant (it depends
 only on crib positions, which are never nulls).  But width-21 and
 proximity observations use non-crib characters whose positions shift
 after null extraction.  If they weaken, the stego layer was generating
 them.  If they persist, they constrain the cipher layer.
+
+\medskip
+\noindent\textbf{Question 2.}
+The palette enrichment (Proposition~\ref{prop:keystream}) is measured
+on the raw 97-character carved text.  Under the best-known cipher model
+(null mask + columnar transposition + Beaufort), the keystream operates
+in a transposed intermediate space where palette enrichment drops to
+5/24---\emph{below} the random expectation of $6.46$.  This does not
+invalidate the raw-CT97 observation (which is model-independent), but
+raises the question: does the Polybius signal exist in the carved text
+as an artifact of the stego layer, or does it survive into the cipher
+layer under the correct (still unknown) decryption model?
 
 %% ================================================================
 \section*{Reproducibility}
