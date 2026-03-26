@@ -2294,8 +2294,15 @@ main section + section {
    RESPONSIVE
    ============================================================ */
 
+/* Tablet (iPad portrait ~768-1024px) — held at arm's length, needs bigger text */
+@media (max-width: 1024px) and (min-width: 769px) {
+  html { font-size: 17px; }
+  .container { padding: 0 var(--sp-8); }
+  nav .nav-links li a { padding: var(--sp-3) var(--sp-4); }
+}
+
 @media (max-width: 768px) {
-  html { font-size: 15px; }
+  html { font-size: 16px; }
 
   h1 { font-size: var(--text-xl); }
   h2 { font-size: var(--text-lg); }
