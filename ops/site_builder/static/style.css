@@ -720,6 +720,11 @@ details {
   padding: var(--sp-4) var(--sp-5);
   margin: var(--sp-3) 0;
   transition: background var(--transition);
+  max-width: var(--content-width);
+}
+
+details p {
+  max-width: none;
 }
 
 details:hover {
