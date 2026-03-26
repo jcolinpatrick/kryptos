@@ -21,7 +21,10 @@
     placeholder="Example: I think K4 uses a Playfair cipher with keyword KRYPTOS, followed by a columnar transposition with width 9..."></textarea>
   <div id="char-counter" class="char-counter">0 / 2000</div>
 
-  <button type="submit" id="submit-btn" disabled>Classify Theory</button>
+  <div class="submit-actions">
+    <button type="submit" id="submit-btn" disabled>Classify Theory</button>
+    <button type="button" id="clear-btn" class="btn-secondary" style="display:none">Clear</button>
+  </div>
 </form>
 
 <div id="submit-result" class="result-box"></div>
