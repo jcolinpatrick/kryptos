@@ -34,7 +34,7 @@
     <li>
       <strong>Independent replication:</strong>
       Richard Bean found the same 5-wide Polybius structure in 2021
-      (<a href="https://eprint.iacr.org/2021/1549">HistoCrypt</a>)
+      (<a href="https://ecp.ep.liu.se/index.php/histocrypt/article/view/153">HistoCrypt 2021</a>)
       by analyzing the <em>keystream</em>. We found it independently by analyzing the
       <em>null characters</em>. Two researchers, different data, same result.
     </li>
@@ -118,10 +118,10 @@
   <div class="finding-plain">
     <h3>The short version</h3>
     <p>
-      Someone chose exactly 7 letters &mdash; B, G, I, K, O, W, and Z &mdash; and scattered
+      Someone chose exactly 7 letters (B, G, I, K, O, W, and Z) and scattered
       them through K4 as filler characters. The odds of this restriction happening by chance
       are about <strong>1 in 33,000</strong>. This means K4 probably isn&rsquo;t 97 characters of
-      real ciphertext &mdash; it&rsquo;s 73, with 24 decoys designed to make frequency analysis useless.
+      real ciphertext. It&rsquo;s probably 73, with 24 decoys designed to make frequency analysis useless.
     </p>
   </div>
 
@@ -331,7 +331,7 @@
       Two of the 9 positions (58 and 59) are consensus null positions. Deeper analysis reveals the anatomy:
       the <strong>cipher layer already produced &Delta;4=5</strong> at two consecutive non-null pairs
       (56&rarr;60 and 57&rarr;61). These are 2 of only 3 such consecutive matches in the entire ciphertext
-      at lag 4. The null values at positions 58 and 59 simply <em>extend</em> this existing pattern &mdash;
+      at lag 4. The null values at positions 58 and 59 simply <em>extend</em> this existing pattern,
       and both forced values (W and I) happen to be palette letters, so the null insertion is compatible.
     </p>
     <p>
@@ -341,8 +341,8 @@
       mechanism: it is not. Only 4 of 17 null positions are constrained this way, and the total count
       is exactly what random values would produce (MC p=0.59). There is no global constant-difference
       rule (tested all 1,248 lag&times;delta combinations, p=0.954 after Bonferroni).
-      The Stehle pattern is a <strong>local coincidence</strong> &mdash; a fortunate collision between
-      cipher output structure and null placement &mdash; not a generative mechanism.
+      The Stehle pattern is a <strong>local coincidence</strong> (a fortunate collision between
+      cipher output structure and null placement), not a generative mechanism.
     </p>
   </div>
 </section>
@@ -365,14 +365,14 @@
       <span class="filled"></span><span></span><span></span>
       <span></span><span></span><span></span><span></span>
     </div>
-    <span class="confidence-label">Suggestive only &mdash; discovered post-hoc</span>
+    <span class="confidence-label">Suggestive only (discovered post-hoc)</span>
   </div>
 
   <div class="finding-plain">
     <h3>The short version</h3>
     <p>
       A simple mathematical rule using the keywords KRYPTOS and SEVEN correctly classifies
-      all 35 palette-letter positions as null or real &mdash; 35 out of 35. But this was
+      all 35 palette-letter positions as null or real (35 out of 35). But this was
       discovered from the data, not predicted in advance, and cross-validation shows it has
       <strong>zero predictive power</strong>.
     </p>
@@ -484,7 +484,7 @@
       <strong>But:</strong> This classification was discovered post-hoc (from the data, not predicted
       in advance). More critically, <strong>leave-one-out cross-validation shows the table has
       zero predictive power</strong>: when each of the 17 consensus nulls is held out and predicted
-      from the remaining 16, accuracy is only 47% &mdash; worse than the naive 49% baseline of
+      from the remaining 16, accuracy is only 47%, worse than the naive 49% baseline of
       always guessing &ldquo;null.&rdquo; Nine of 17 null positions occupy cells unique to them or
       shared with &ldquo;real&rdquo; positions; removing them from training collapses the prediction.
       The table is a <strong>descriptive fit, not a generative rule</strong>. It also predicts zero
