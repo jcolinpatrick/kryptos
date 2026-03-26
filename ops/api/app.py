@@ -182,7 +182,11 @@ async def classify(body: ClassifyRequest, request: Request):
 
     # Rate limiting (persistent — survives server restarts)
     ip = _client_ip(request)
-    retry_after = record_request(ip, RATE_LIMIT_WINDOW, RATE_LIMIT_MAX)
+    try:
+        retry_after = record_request(ip, RATE_LIMIT_WINDOW, RATE_LIMIT_MAX)
+    except Exception:
+        # DB unavailable — skip rate limiting rather than crashing the endpoint
+        retry_after = None
     if retry_after is not None:
         minutes = (retry_after + 59) // 60
         return JSONResponse(
