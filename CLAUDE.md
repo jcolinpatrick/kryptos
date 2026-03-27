@@ -7,8 +7,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 You MUST complete ALL of these steps before executing any task:
 
 1. Read this entire CLAUDE.md
-2. Read `.claude/projects/.../memory/elimination_ledger.md` — the complete elimination record by attack family.
-   (This is Claude Code session memory, not the repo `memory/` directory.)
+2. Read `elimination_ledger.md` from Claude Code session memory (`.claude/projects/…/memory/`) — the complete elimination record by attack family.
+   **Do NOT use a filesystem path** — access it via the memory system. This is session memory, not the repo `memory/` directory.
    **This is the most-skipped step and the #1 cause of wasted computation.**
 3. Read MEMORY.md — the decision-support index (paradigm, constants, what's open).
    MEMORY.md is loaded automatically; individual topic files in `memory/` are on-demand — read only when relevant to the current task.
@@ -31,7 +31,7 @@ This repo has one purpose: determine the **true plaintext** and the **full encry
 
 **Kryptos** is a sculpture at CIA headquarters containing four encrypted messages (K1–K4). K1–K3 were solved in 1999. **K4 (97 characters) has been unsolved since 1990.** Two encryption systems confirmed [PRIMARY SOURCE]. No single-layer classical cipher works (exhaustively tested).
 
-**→ CT, cribs, constants, eliminations, confirmed findings, and open attack surface are in MEMORY.md** (auto-loaded). CLAUDE.md has durable technical setup; MEMORY.md has volatile research state. See [`reports/final_synthesis.md`](reports/final_synthesis.md) for the elimination landscape.
+**→ CT, cribs, constants, eliminations, confirmed findings, open attack surface, and current leading hypotheses are in MEMORY.md** (auto-loaded). CLAUDE.md has durable technical setup; MEMORY.md has volatile research state. See [`reports/final_synthesis.md`](reports/final_synthesis.md) for the elimination landscape.
 
 ---
 
@@ -41,7 +41,7 @@ This repo has one purpose: determine the **true plaintext** and the **full encry
 
 **Common imports** (all require `PYTHONPATH=src`):
 ```python
-from kryptos.kernel.constants import CT, CRIB_POSITIONS, BEAN_EQ, BEAN_INEQ
+from kryptos.kernel.constants import CT, CRIB_POSITIONS, BEAN_EQ, BEAN_INEQ, CONSENSUS_NULL_POSITIONS
 from kryptos.kernel.alphabet import AZ, KA, keyword_mixed_alphabet
 from kryptos.kernel.text import sanitize, text_to_nums, nums_to_text
 from kryptos.kernel.scoring.aggregate import score_candidate, score_candidate_free
@@ -123,7 +123,7 @@ kernel/persistence/sqlite.py (results DB) + JsonlWriter (logs)
 
 ### Experiment scripts (`scripts/`)
 
-~875 attack scripts in ~35 subdirectories (928 tracked in exhaustion log including deleted/renamed). Each has a metadata header; tracked in root `exhaustion_log.json` (authoritative — ignore `scripts/EXHAUSTION.json`). Infrastructure in `scripts/lib/` (header parsing, exhaustion log CRUD, discovery).
+~950 attack scripts in ~35 subdirectories (928+ tracked in exhaustion log including deleted/renamed). Each has a metadata header; tracked in root `exhaustion_log.json` (authoritative — ignore `scripts/EXHAUSTION.json`). Infrastructure in `scripts/lib/` (header parsing, exhaustion log CRUD, discovery).
 
 **Discovery & dispatch** via `run_attack.py` (5 modes):
 ```bash
@@ -150,6 +150,8 @@ import sys, os
 _ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(_ROOT, "src"))
 ```
+
+**Adding a new script:** (1) Name it `e_<family>_<nn>_<description>.py` in the appropriate `scripts/<family>/` subdirectory. (2) Include a metadata header (see `scripts/examples/e_caesar_standard.py`). (3) Register it in root `exhaustion_log.json` (NOT `scripts/EXHAUSTION.json`). (4) Use the standalone bootstrap above (adjust `os.path.dirname()` depth if deeper than 2 levels — see "Key Gotchas"), import constants from `kryptos.kernel.constants` (never hardcode), and implement the `attack()` contract.
 
 ### Tests
 
@@ -240,6 +242,86 @@ Two scoring paths in `kernel/scoring/aggregate.py`: `score_candidate()` (anchore
 **False positive warning**: `period_consistency()` is underdetermined when `period >= (num_crib_positions / constraints_per_residue)`. At period 24, random configs score ~19.2/24; at period 17, ~17.3/24. Only period ≤7 gives meaningful discrimination (~8.2/24 expected). **All high scores at large periods are false positives.** With the full 242 Bean inequality set, ALL periods 1–26 are eliminated for periodic substitution on the raw 97-char carved text.
 
 ---
+## Short Layered Ciphertext Search Policy
+
+Applies whenever the target ciphertext is short (roughly <= 120 chars), partially masked, or plausibly multi-layer.
+
+### Core rule
+
+For short layered ciphertexts, early statistics are **advisory only**.
+IC peaks, Kasiski repeats, autocorrelation peaks, DFT peaks, hill-climber optima, and n-gram improvements may be artifacts of:
+- an outer transposition layer
+- padding geometry
+- null insertion/removal assumptions
+- wrong layer order
+- wrong alphabet convention
+- short-text variance
+
+Do **not** treat these signals as structural proof.
+
+### Mandatory search behavior
+
+- Never hard-prune a branch solely because final-ciphertext IC, period detection, or repeated-fragment evidence is weak, absent, or points elsewhere.
+- Always consider heterogeneous layering, including:
+  - transposition + periodic substitution
+  - transposition + digraphic substitution
+  - Polybius-derived layer + substitution/transposition
+  - mixed alphabets / keyed tableaux
+- For any two-layer hypothesis, test **both peel orders**:
+  1. undo transposition first, then test substitution/polyalphabetic families
+  2. undo substitution/polyalphabetic first, then test transposition families
+- Do not assume final-ciphertext period evidence reflects the real key period if transposition may still be present.
+- Do not assume absence of obvious digraphic signal rules out Playfair / Two-Square / Four-Square.
+- Preserve multiple structurally distinct branches in parallel.
+
+### Beam preservation policy
+
+Retain a diverse beam across:
+- layer order
+- cipher family
+- transposition width / rectangle shape
+- key length
+- alphabet convention
+- padding / null assumptions
+
+Do not let one statistic dominate the beam prematurely.
+
+### Structural-first policy
+
+Separate **structural search** from **keyword search**.
+
+1. First search for plausible decompositions:
+   - number of layers
+   - family combinations
+   - peel order
+   - transposition geometry
+   - masking / padding assumptions
+
+2. Only then spend major compute on keyword dictionaries inside the strongest structural branches.
+
+Do not burn compute on large keyword sweeps inside branches whose structure is still weakly supported.
+
+### Scoring policy
+
+Score candidates at three levels:
+- **family-likeness** — does the intermediate resemble the expected residue of a cipher family?
+- **plaintext-likeness** — does it resemble normalized English?
+- **context coherence** — does it fit public Kryptos/Sanborn constraints without overclaiming?
+
+A branch may remain alive if family-likeness improves sharply even when plaintext-likeness is still poor.
+
+### Failure-report policy
+
+When no solution is found, report:
+- which structural branches were tested
+- which were pruned and why
+- which signals may have been deceptive
+- which family/order combinations remain underexplored
+- what concrete next campaigns should run
+
+Do not give shallow “no signal” conclusions for short layered texts.
+On short ciphertexts, signal suppression is expected and is not evidence against a hand-executable multi-layer design.
+
 
 ## Key Gotchas
 
@@ -260,6 +342,7 @@ These are non-obvious pitfalls discovered through prior sessions. Check these fi
 - **Beaufort A=0 is the confirmed default**: Use A=0 indexing for all Beaufort operations unless explicitly testing A=1. Both conventions must be tested in positional experiments.
 - **Standalone script `_ROOT` depth**: The bootstrap snippet (`_ROOT = os.path.dirname(os.path.dirname(...))`) assumes the script is exactly 2 directories deep (e.g. `scripts/grille/e_foo.py`). Scripts at 3+ levels need additional `os.path.dirname()` wrappers or they'll get `ModuleNotFoundError`. Robust alternative: `_ROOT = os.path.dirname(os.path.abspath(__file__))` then `while not os.path.exists(os.path.join(_ROOT, 'src')): _ROOT = os.path.dirname(_ROOT)`.
 - **Always import constants, never hardcode**: This includes `CONSENSUS_NULL_POSITIONS`, not just CT/cribs. A prior session generated a script with fabricated null positions that shared only 3/17 values with the consensus — the results were silently invalid. Import from `kryptos.kernel.constants`.
+- **Two exhaustion logs — only one is authoritative**: Root `exhaustion_log.json` is the single source of truth. `scripts/EXHAUSTION.json` is stale — never read from or write to it.
 
 ---
 
@@ -321,5 +404,5 @@ Two `memory/` directories exist — don't confuse them:
 
 ---
 
-*Last updated: 2026-03-25 — Mission: derive K4 method & solve. Volatile research state (best leads, eliminations, open hypotheses) maintained in MEMORY.md.*
+*Last updated: 2026-03-26 — Mission: derive K4 method & solve. Volatile research state (best leads, eliminations, open hypotheses) maintained in MEMORY.md.*
 *Primary author: Colin Patrick (human lead) + Claude (computational partner)*
