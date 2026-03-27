@@ -2,24 +2,15 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## STOP. DO NOT SKIP THIS SECTION.
-
-You MUST complete ALL of these steps before executing any task:
+## Pre-flight (EVERY task — do NOT skip)
 
 1. Read this entire CLAUDE.md
-2. Read `elimination_ledger.md` from Claude Code session memory (`.claude/projects/…/memory/`) — the complete elimination record by attack family.
-   **Do NOT use a filesystem path** — access it via the memory system. This is session memory, not the repo `memory/` directory.
-   **This is the most-skipped step and the #1 cause of wasted computation.**
-3. Read MEMORY.md — the decision-support index (paradigm, constants, what's open).
-   MEMORY.md is loaded automatically; individual topic files in `memory/` are on-demand — read only when relevant to the current task.
-4. If the user's request matches ANYTHING already disproved or tested,
-   TELL THE USER and do NOT run it again
-5. Search scripts/ for existing tools — do NOT write new code if a script exists
-   `run_attack.py --list --verbose | grep KEYWORD`
-   Also check `results/` and `exhaustion_log.json` for prior output matching your planned parameters.
+2. Read `elimination_ledger.md` from session memory (`.claude/projects/…/memory/`, NOT a filesystem path) — **#1 most-skipped step, #1 cause of wasted compute**
+3. Read MEMORY.md (auto-loaded) — decision-support index; topic files in `memory/` are on-demand
+4. If the task matches anything already disproved or tested → **STOP, tell the user, do NOT re-run**
+5. `run_attack.py --list --verbose | grep KEYWORD` — search before writing new code; also check `results/` and `exhaustion_log.json`
 
-If you skip these steps and re-test an eliminated hypothesis, you are
-wasting 28 CPU cores and burning API tokens for zero value.
+Skipping these steps and re-testing an eliminated hypothesis wastes 28 CPU cores and burns API tokens for zero value.
 
 This repo has one purpose: determine the **true plaintext** and the **full encryption method** of **Kryptos K4**.
 
@@ -138,7 +129,11 @@ kernel/persistence/sqlite.py (results DB) + JsonlWriter (logs)
 
 ### Experiment scripts (`scripts/`)
 
-~950 attack scripts in ~35 subdirectories (928+ tracked in exhaustion log including deleted/renamed). Each has a metadata header; tracked in root `exhaustion_log.json` (authoritative — ignore `scripts/EXHAUSTION.json`). Infrastructure in `scripts/lib/` (header parsing, exhaustion log CRUD, discovery).
+~950 attack scripts in ~35 subdirectories (928+ tracked in exhaustion log including deleted/renamed). Each has a metadata header; tracked in root `exhaustion_log.json` (authoritative — ignore `scripts/EXHAUSTION.json`).
+
+**Subdirectories:** Run `ls scripts/` for the full list (~35 dirs). Key families: `substitution/`, `transposition/`, `fractionation/`, `grille/`, `polyalphabetic/`, `running_key/`, `encoding/`, `multi_layer/`, `novel/`, `blitz/` (fast hypothesis sweeps), `analysis/` (non-attack analytical scripts), `_infra/` (utilities).
+
+**`scripts/lib/`** — Shared infrastructure for experiment scripts: `header.py` (metadata header parsing), `exhaustion.py` (exhaustion log CRUD), `discover.py` (script discovery). Used by `run_attack.py`.
 
 **Discovery & dispatch** via `run_attack.py` (5 modes):
 ```bash
@@ -151,7 +146,7 @@ PYTHONPATH=src python3 run_attack.py --exhaustion-summary           # Summarize 
 # Filters: --family, --status (exhausted|active|promising), --min-score, --attack-only, --header-only, --timeout, --top-n
 ```
 
-**Naming:** `e_` = experiment, `f_` = formal campaign. Both live in `scripts/<family>/` subdirectories. `_infra/` = utilities, not attacks.
+**Naming:** `e_` = experiment, `f_` = formal campaign, `blitz_` = fast hypothesis sweep (some live at `scripts/` root level). Subdirectory scripts live in `scripts/<family>/`. `_infra/` = utilities, not attacks.
 
 **Standard contract** (see `scripts/examples/e_caesar_standard.py` for full template):
 ```python
@@ -171,6 +166,8 @@ sys.path.insert(0, os.path.join(_ROOT, "src"))
 ### Tests
 
 Three categories: **Unit** (`test_transforms.py`, `test_scoring.py`, etc.), **QA verification** (`test_qa_*.py`, `test_audit_*.py` — structural claims and audit assumptions), **Benchmark** (`test_bench*.py`).
+
+**Adding tests:** Place in `tests/test_<module>.py` matching the source module. QA tests go in `test_qa_*.py`. No test framework beyond `pytest` — use plain `assert`. Run single: `PYTHONPATH=src pytest tests/test_transforms.py::TestClass::test_name -v`.
 
 ### Key data files
 
@@ -283,6 +280,7 @@ These are non-obvious pitfalls discovered through prior sessions. Check these fi
 - **Standalone script `_ROOT` depth**: The bootstrap snippet (`_ROOT = os.path.dirname(os.path.dirname(...))`) assumes the script is exactly 2 directories deep (e.g. `scripts/grille/e_foo.py`). Scripts at 3+ levels need additional `os.path.dirname()` wrappers or they'll get `ModuleNotFoundError`. Robust alternative: `_ROOT = os.path.dirname(os.path.abspath(__file__))` then `while not os.path.exists(os.path.join(_ROOT, 'src')): _ROOT = os.path.dirname(_ROOT)`.
 - **Always import constants, never hardcode**: This includes `CONSENSUS_NULL_POSITIONS`, not just CT/cribs. A prior session generated a script with fabricated null positions that shared only 3/17 values with the consensus — the results were silently invalid. Import from `kryptos.kernel.constants`.
 - **Two exhaustion logs — only one is authoritative**: Root `exhaustion_log.json` is the single source of truth. `scripts/EXHAUSTION.json` is stale — never read from or write to it.
+- **Two `.env` files — don't mix them up**: `.env` (root) = `ANTHROPIC_API_KEY` + `KBOT_CLASSIFY_API_KEY` + `NTFY_TOPIC`. `<internal>` = Agent SDK API key (see `<internal>`). Loading the wrong one gives silent auth failures.
 
 ---
 
@@ -344,5 +342,5 @@ Two `memory/` directories exist — don't confuse them:
 
 ---
 
-*Last updated: 2026-03-26 — Mission: derive K4 method & solve. Volatile research state (best leads, eliminations, open hypotheses) maintained in MEMORY.md.*
+*Last updated: 2026-03-27 — Mission: derive K4 method & solve. Volatile research state (best leads, eliminations, open hypotheses) maintained in MEMORY.md.*
 *Primary author: Colin Patrick (human lead) + Claude (computational partner)*
