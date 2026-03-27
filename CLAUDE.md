@@ -25,6 +25,17 @@ This repo has one purpose: determine the **true plaintext** and the **full encry
 
 **Contents:** [K4 Quick Reference](#the-k4-problem--quick-reference) · [Dev Setup & Commands](#development-setup--commands) · [Architecture](#architecture) · [Operations](#operations--deployment) · [Scores](#interpreting-scores) · [Gotchas](#key-gotchas) · [Truth Taxonomy](#truth-taxonomy-mandatory) · [Reference Docs](#reference-documents) · [Multi-Agent](#multi-agent-mode--solve-k4)
 
+### Command Cheat Sheet
+
+```bash
+PYTHONPATH=src pytest tests/                                       # Run all 969 tests (~80s)
+PYTHONPATH=src pytest tests/test_transforms.py::TestClass::test -v # Single test
+PYTHONPATH=src python3 run_attack.py --list --verbose | grep KEY   # Find scripts by keyword
+PYTHONPATH=src python3 run_attack.py --exhaustion-summary          # Check what's been tested
+PYTHONPATH=src python3 -u scripts/<family>/e_<name>.py             # Run an experiment (-u = unbuffered)
+PYTHONPATH=src python3 -m kryptos doctor                           # Environment health check
+```
+
 ---
 
 ## The K4 Problem — Quick Reference
@@ -55,7 +66,7 @@ A `venv/` exists (gitignored) for non-core work. Activate with `source venv/bin/
 **Git workflow:** Development happens directly on `main`. No branch naming conventions or PR process — this is a solo research project with computational partners.
 
 ```bash
-# Run all tests
+# Run all tests (969 tests, ~80s, no expected failures)
 PYTHONPATH=src pytest tests/
 
 # Run a single test file or test
@@ -77,6 +88,10 @@ PYTHONPATH=src python3 -m kryptos reproduce <manifest.json>
 PYTHONPATH=src python3 -m kryptos novelty generate
 PYTHONPATH=src python3 -m kryptos novelty triage --limit 50
 PYTHONPATH=src python3 -m kryptos report <db.sqlite> top --limit 20 --min-score 10
+
+# Verify a hypothesis hasn't already been tested (check BEFORE running anything new)
+PYTHONPATH=src python3 run_attack.py --exhaustion-summary | grep -i FAMILY
+PYTHONPATH=src python3 run_attack.py --list --verbose | grep -i KEYWORD
 
 # Benchmark: PYTHONPATH=src python3 bench/cli.py run --suite bench/suites/tier0_smoke.jsonl
 # Site builder: source venv/bin/activate && python3 ops/site_builder/build.py
@@ -244,84 +259,9 @@ Two scoring paths in `kernel/scoring/aggregate.py`: `score_candidate()` (anchore
 ---
 ## Short Layered Ciphertext Search Policy
 
-Applies whenever the target ciphertext is short (roughly <= 120 chars), partially masked, or plausibly multi-layer.
+On short (<=120 char), masked, or multi-layer ciphertexts: surface statistics (IC, Kasiski, autocorrelation) are **advisory only** — they may be artifacts of an unseen layer. Never hard-prune branches based on weak/absent statistical signals. Test both peel orders for two-layer hypotheses. Separate structural search from keyword search.
 
-### Core rule
-
-For short layered ciphertexts, early statistics are **advisory only**.
-IC peaks, Kasiski repeats, autocorrelation peaks, DFT peaks, hill-climber optima, and n-gram improvements may be artifacts of:
-- an outer transposition layer
-- padding geometry
-- null insertion/removal assumptions
-- wrong layer order
-- wrong alphabet convention
-- short-text variance
-
-Do **not** treat these signals as structural proof.
-
-### Mandatory search behavior
-
-- Never hard-prune a branch solely because final-ciphertext IC, period detection, or repeated-fragment evidence is weak, absent, or points elsewhere.
-- Always consider heterogeneous layering, including:
-  - transposition + periodic substitution
-  - transposition + digraphic substitution
-  - Polybius-derived layer + substitution/transposition
-  - mixed alphabets / keyed tableaux
-- For any two-layer hypothesis, test **both peel orders**:
-  1. undo transposition first, then test substitution/polyalphabetic families
-  2. undo substitution/polyalphabetic first, then test transposition families
-- Do not assume final-ciphertext period evidence reflects the real key period if transposition may still be present.
-- Do not assume absence of obvious digraphic signal rules out Playfair / Two-Square / Four-Square.
-- Preserve multiple structurally distinct branches in parallel.
-
-### Beam preservation policy
-
-Retain a diverse beam across:
-- layer order
-- cipher family
-- transposition width / rectangle shape
-- key length
-- alphabet convention
-- padding / null assumptions
-
-Do not let one statistic dominate the beam prematurely.
-
-### Structural-first policy
-
-Separate **structural search** from **keyword search**.
-
-1. First search for plausible decompositions:
-   - number of layers
-   - family combinations
-   - peel order
-   - transposition geometry
-   - masking / padding assumptions
-
-2. Only then spend major compute on keyword dictionaries inside the strongest structural branches.
-
-Do not burn compute on large keyword sweeps inside branches whose structure is still weakly supported.
-
-### Scoring policy
-
-Score candidates at three levels:
-- **family-likeness** — does the intermediate resemble the expected residue of a cipher family?
-- **plaintext-likeness** — does it resemble normalized English?
-- **context coherence** — does it fit public Kryptos/Sanborn constraints without overclaiming?
-
-A branch may remain alive if family-likeness improves sharply even when plaintext-likeness is still poor.
-
-### Failure-report policy
-
-When no solution is found, report:
-- which structural branches were tested
-- which were pruned and why
-- which signals may have been deceptive
-- which family/order combinations remain underexplored
-- what concrete next campaigns should run
-
-Do not give shallow “no signal” conclusions for short layered texts.
-On short ciphertexts, signal suppression is expected and is not evidence against a hand-executable multi-layer design.
-
+**Full policy:** [`docs/search_policy.md`](docs/search_policy.md)
 
 ## Key Gotchas
 
