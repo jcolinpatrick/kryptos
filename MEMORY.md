@@ -7,10 +7,11 @@ For full history and experiment detail, see topic files listed in the reference 
 
 ## Project State (2026-03-28)
 
-- ~950 scripts, 670B+ configurations scored, ~286 experiments with recorded results
+- 992 scripts pushed to GitHub, 386 eliminations on kryptosbot.com, 670B+ configs scored
 - No credible decrypt path established
 - All positive findings are descriptive anomalies, not actionable decrypt levers
 - Computational attack surface is exhausted; remaining paths require external evidence or untested source texts
+- kryptosbot.com audited 2026-03-28: 4 HIGH issues found (see `reports/site_audit_2026-03-28.md`)
 
 ---
 
@@ -90,6 +91,13 @@ Detail: `archive_aaa_findings.md` in session memory.
 ## TICOM/Novel Campaign Summary (2026-03-28)
 
 14 scripts, 1.3B configs, ~75 min on 28 cores. RS44, VIC, Wheatstone, ITA-2, interrupted-key, Wilson, sawtooth, Baudot, Ubchi, Soviet three-step, Sanborn matrix: ALL NOISE. No forward progress on computational paths. Detail: `session_20260328_archive_campaigns.md`.
+
+## kryptosbot.com Audit (2026-03-28)
+
+**HIGH issues:** (1) Null palette p-value inconsistent across pages (1-in-33K vs 1-in-16K); (2) `e_varying_null_resolution` shows 24/24 NOISE — misleading; (3) LOO accuracy 47% vs 51.4% across sources; (4) Autokey 21/24 ELIMINATED needs structural proof context.
+**MEDIUM issues:** Homepage says "solved in 1999" (Stein solved 1998); RQ-3 shows 0/29 eliminated despite extensive transposition testing; 6 non-normalized verdict strings.
+**Infrastructure fixes applied:** Categorizer fixed (350→25 uncategorized, 93% reduction); title humanizer added (270 raw script-name titles auto-cleaned). Root cause: underscore/hyphen mismatch in tag matching + missing keyword patterns.
+Detail: `reports/site_audit_2026-03-28.md` (local, gitignored).
 
 ---
 
