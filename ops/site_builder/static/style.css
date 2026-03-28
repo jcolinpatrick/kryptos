@@ -2236,7 +2236,8 @@ main section + section {
 }
 
 .nav-dropdown {
-  display: none;
+  visibility: hidden;
+  opacity: 0;
   position: absolute;
   top: 100%;
   left: 0;
@@ -2248,12 +2249,27 @@ main section + section {
   padding: var(--sp-2) 0;
   z-index: 200;
   list-style: none;
-  margin: var(--sp-1) 0 0;
+  margin: 0;
+  padding-top: calc(var(--sp-2) + 8px);
+  transition: opacity 120ms ease, visibility 120ms ease;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* Invisible bridge so the mouse can cross the gap */
+.nav-dropdown::before {
+  content: "";
+  position: absolute;
+  top: -12px;
+  left: 0;
+  right: 0;
+  height: 12px;
 }
 
 .nav-group:hover .nav-dropdown,
 .nav-group:focus-within .nav-dropdown {
-  display: block;
+  visibility: visible;
+  opacity: 1;
 }
 
 .nav-dropdown li {
