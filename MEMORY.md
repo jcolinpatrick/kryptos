@@ -1,228 +1,151 @@
 # MEMORY.md — K4 Decision-Support Index
 
-Decision dashboard for agents working on K4.
-For durable repo setup, commands, validation rules, and operating doctrine, see `CLAUDE.md`.
-For full history, audits, and experiment detail, use the topic files listed below.
+Dashboard for agents working on K4. For repo setup and commands, see `CLAUDE.md`.
+For full history and experiment detail, see topic files listed in the reference index below.
 
 ---
 
-## Project State
+## Project State (2026-03-28)
 
-- ~286 experiments with recorded results; 670B+ configurations scored
-- No credible decrypt path established as of 2026-03-26
-- Positive findings to date are descriptive anomalies, not actionable decrypt levers
-- Critical blocker: the consensus 17-position null mask does not yet have a fully documented provenance chain
-- Computational work is constrained until null-mask provenance is re-established or replaced by first-principles derivation
-- Current environment has transitioned from custom harnessing to Claude Code agent teams
+- ~950 scripts, 670B+ configurations scored, ~286 experiments with recorded results
+- No credible decrypt path established
+- All positive findings are descriptive anomalies, not actionable decrypt levers
+- Computational attack surface is exhausted; remaining paths require external evidence or untested source texts
 
 ---
 
 ## Hard Blockers
 
-1. **Null-mask provenance gap** *(partially resolved 2026-03-27)*
-   - Null-mask validation shows IC is non-discriminative within the palette-consistent 24-null family; palette consistency remains the only strong independent evidentiary basis for the consensus 17-set
-   - 3,432 palette-consistent 24-null masks exist (consensus 17 + 7 of 14 extras); specific 24-null mask underdetermined by cipher statistics
-   - `f_running_key_73char_overnight_v1.py` mask violates palette constraint (0/7 extras are palette letters) — do not use without correction
-
-2. **Short-text underdetermination**
-   - K4 is only 97 chars
-   - Surface statistics are weak and frequently deceptive
-
-3. **Potential multi-layer ambiguity**
-   - Tier 2 single-layer eliminations do **not** eliminate those families as one layer of a multi-layer construction
-
-4. **External-information ceiling**
-   - Some plausible avenues may remain inaccessible without physical/chart/archive evidence
+1. **Null-mask provenance** *(partially resolved)* — IC is non-discriminative within the palette-consistent 24-null family (3,432 masks). Palette restriction (p~3e-5) IS the provenance. Open: which 7 of 14 extras complete the 24-null mask?
+2. **Short-text underdetermination** — 97 chars; surface statistics are weak and frequently deceptive
+3. **Multi-layer ambiguity** — Tier 2 single-layer eliminations do NOT eliminate those families as one layer of a multi-layer construction
+4. **External-information ceiling** — Some avenues require physical/chart/archive evidence
 
 ---
 
 ## What Is Eliminated (High Confidence)
 
-- Gronsfeld
-- Porta
-- All periodic polyalphabetic, direct-correspondence single-layer models
-- Fractionation families previously exhaustively tested
-- Hill cipher
-- Autokey families
-- Progressive/quadratic/Fibonacci periodic key models under tested assumptions
-- Structured transposition families + tested substitution models → noise
-- Known tested running-key sources → no result
-- Polybius fractionation + tested null-mask models → eliminated
-- VIC-family tested variants → eliminated
-- Gromark/Vimark on tested null-extracted forms → eliminated
-- MCMC quadgram attack on CT73 → noise
-- K0 Morse as tested running key source → eliminated
-- Progressive running key → eliminated
-- Palette-derived cipher key material → disproved
-- CKM credential-style tested constructions → eliminated
-- English running key + columnar transposition on all 3432 palette-consistent 73-char extracts → eliminated (61M configs, 0 English-like fragments; keystream frequencies structurally non-English)
-- Periodic polyalphabetic on keyword-mixed tableaux (ABSCISSA, PALIMPSEST, ECLIPSE, NORMANDY ×AZ/KA) → eliminated (14,460 configs, max 6/24; Bean EQ proven alphabet-invariant; zero consistent small periods for all 30 combos)
-- Mono + columnar(w1-10) + running-key Beaufort/Vigenère on keyword-mixed tableaux (AZ, KA, ABSCISSA×2, PALIMPSEST ×{std, bottom}) → eliminated via bijection discriminator (~47B checks, 0 survivors across 10 modes × 11 source texts × 1,385 trans configs; injectivity rejection is alphabet-invariant)
+All periodic polyalphabetic (all periods 1-26, all tested mixed tableaux) | Autokey (all variants, structural proof) | Gronsfeld | Porta | Hill | Fractionation (bifid, trifid, ADFGVX, four-square) | Gromark/Vimark (8.74B configs) | All tested running-key sources via bijection (47B checks, 10 alphabet modes, 11 texts) | English running-key + columnar on 3,432 palette-consistent extracts (61M configs) | VIC family (52M+ configs) | RS44 stencil-mask (905.6M configs) | Wheatstone clock (327M) | ITA-2 XOR | Interrupted-key Vigenere (14.7M) | Baudot mod-31 | Wilson prime mask | Sawtooth mask | Ubchi null insertion | Soviet three-step | Sanborn matrix | CKM credential (173M+) | NDYAHR (all 5 variants) | Cold War keywords | MCMC quadgram on CT73 | K0 Morse running key | Progressive running key | Palette-derived key material | 72+1 delimiter | Nomenclator (algebraically = running key)
 
-See `elimination_ledger.md` and topic files for exact evidence and scope.
+Full evidence: `elimination_ledger.md` in session memory.
 
 ---
 
-## DO NOT TEST
+## DO NOT TEST (without a materially new assumption)
 
-Do not re-run without a materially new assumption, proof, corpus, or mechanism:
-
-- Autokey variants already structurally eliminated
-- DEFECTOR + PALIMPSEST inherited-ceiling variants
-- K2 number-word key theories
-- YES WONDERFUL THINGS as fixed opening PT[0:18]
-- Positional lookup-table keying
-- CIA cryptonym digraph constraints
-- Leetspeak / palette-as-number ideas
-- K2 coordinate key generation
-- 72+1 delimiter theory
-- NDYAHR hidden/unified/directional reinterpretations
-- INCLINARE stacking null-mask theories
-- Cold War keyword families already searched
-- K1-K3 plaintext as literal key values
-- Mailing-list hypotheses already tested
-- CKM mod-26 constructions already searched
-- OBKOGBOWWKWIWGZIG as direct key material
-- CT80 single-layer keyword attacks already exhausted
-
-If revisiting any of these, state explicitly what new assumption breaks the prior elimination.
+Autokey variants | DEFECTOR/PALIMPSEST inherited-ceiling | K2 number-word keys | YES WONDERFUL THINGS as PT[0:18] | Positional lookup-table keying | CIA cryptonym digraphs | Leetspeak/palette-as-number | K2 coordinate keys | 72+1 delimiter | NDYAHR reinterpretations | INCLINARE stacking | Cold War keyword families | K1-K3 PT as literal keys | Mailing-list hypotheses already tested | CKM mod-26 constructions | OBKOGBOWWKWIWGZIG as key | CT80 single-layer keywords | RS44 grid-mask | Full VIC pipeline | Wheatstone | ITA-2/Baudot/Wilson/sawtooth | Interrupted-key Vigenere | Ubchi/Soviet three-step/Sanborn matrix
 
 ---
 
 ## What Remains Open
 
-1. ~~Re-derive the null mask from first principles~~ **Reframed:** IC/frequency/autocorrelation cannot discriminate within the palette family; the palette restriction (p≈3×10⁻⁵) IS the provenance. Open question narrows to: which 7 of 14 extra positions complete the 24-null mask?
-2. **Mono + trans + running key from UNTESTED sources** — model survives structurally (13 mono DOF defeat fragment analysis) but all tested source texts eliminated via bijection discriminator on all tested tableaux. Next discriminator: word-boundary test on surviving model class; expand source-text corpus with pre-1990 texts Sanborn demonstrably accessed.
-3. **Bespoke physical / procedural chart-based system** — the archive's "Code Breaker" overlay sketch and "actual coding charts" suggest mechanisms that do NOT reduce to standard Beaufort/Vigenère arithmetic. This is now the primary live archive branch after keyword-mixed tableau arithmetic was eliminated.
-4. **Unknown-source running-key models** — tested corpus (Carter ×3, CIA/intel docs, K2/K3 PT, Sanborn manuscript) is thematically motivated but not exhaustive. Priority acquisitions: Kahn's "The Codebreakers", Schliemann's Troy narrative, additional Egyptological texts.
-5. External evidence paths:
-   - K5 ciphertext
-   - Decoded or recovered coding charts (archive confirms they exist)
-   - Circled letters on handwritten tableau (IMG_1223-1235, unexplored)
-6. ~~ABSCISSA / Beaufort / KA-sigma style underdetermined constructions~~ **Strongly reduced:** periodic models eliminated on all tested mixed alphabets; running-key bijection eliminated on 10 alphabet modes × 11 sources. Live residual: ABSCISSA as procedural/physical chart clue (not standard arithmetic).
-7. Multi-layer hand-executable systems with non-obvious peel order
+1. **Running-key from UNTESTED sources** — model survives structurally (13 mono DOF). Priority: Kahn's "Codebreakers", Schliemann Troy, pre-1990 Egyptological texts.
+2. **Bespoke chart-based system** — archive's "Code Breaker" overlay and "actual coding charts" suggest non-standard mechanisms. Primary live branch after tableau arithmetic eliminated.
+3. **Multi-layer hand-executable systems** — untested peel orders, non-obvious layer combinations.
+4. **External evidence**: K5 ciphertext, recovered coding charts, circled letters on IMG_1223-1235, Sanborn's coding system (in private hands).
+5. **ABSCISSA as procedural/physical chart clue** (not standard arithmetic — that's eliminated).
 
 ---
 
 ## Immediate Next Actions
 
-1. **Expand source-text corpus** — priority: Kahn's "The Codebreakers" (Scheidt connection), Schliemann Troy narrative (Sanborn manuscript reference), additional Carter/Egyptological variants. Re-run bijection on new sources (~25 min/mode, deterministic).
-2. **Word-boundary discriminator on mono+trans+running-key** — the 13 mono DOF defeat frequency analysis but may not defeat dictionary word matching at boundaries.
-3. **Investigate bespoke chart mechanisms** — the archive's overlay sketch and "actual coding charts" reference suggest non-standard constructions. This requires either (a) forensic analysis of the handwritten tableau photos for non-obvious structure, or (b) hypothesis generation about hand-executable procedures Scheidt might have taught Sanborn.
-4. Treat early statistics as advisory only
-5. Test both peel orders for any two-layer hypothesis
-6. Preserve multiple structural branches instead of collapsing on IC/period alone
+1. Expand source-text corpus — re-run bijection on new sources (~25 min/mode)
+2. Word-boundary discriminator on mono+trans+running-key model
+3. Investigate bespoke chart mechanisms from archive photos
+4. Treat early statistics as advisory only; test both peel orders for two-layer hypotheses
+
+---
+
+## Confirmed Anomalies (Real but Unexploitable)
+
+- **Null palette {B,G,I,K,O,W,Z}** — 7 letters at 17 positions (p~3e-5). Mechanism unknown.
+- **KA mod 5 structure** — all 7 palette letters have KA index in {0,3} mod 5 (p=0.0005)
+- **BCL Beaufort keystream 7/8 palette** (p=0.0006) — unique to Beaufort A=0
+- **14-column grid asymmetry** — filler density 55% left vs 17% right (p~7e-5)
+- **Null insertion non-random** — IC=0.1103, 2.87x random (p=0.0008)
+
+All grade C or below (descriptive, post-hoc, mask-dependent). See `statistical_audit_20260326.md`.
 
 ---
 
 ## Critical Pitfalls
 
-- Positions are 0-indexed
-- Use imported constants only; never hardcode CT, cribs, or null positions
-- KA ordering is non-standard and must not be assumed
-- Vigenère / Beaufort sign conventions are easy to mix up
-- Scores on short texts are highly underdetermined
-- Period evidence can be a transposition artifact
+- Positions are 0-indexed (cribs at 21-33, 63-73)
+- Import constants; never hardcode CT, cribs, or null positions
+- KA ordering is non-standard (KRYPTOSABCDEFGHIJLMNQUVWXZ)
+- Vigenere: K=(CT-PT)%26 | Beaufort: K=(CT+PT)%26 | Variant Beaufort: K=(PT-CT)%26
+- High scores at large periods are always false positives
 - A promising score is not evidence until independently reproduced
 
 ---
 
-## Short-Layered-Cipher Doctrine
+## Archives of American Art — Key Findings (2026-03-27)
 
-For short ciphertexts, do not treat IC, Kasiski, autocorrelation, DFT, or hill-climber optima as structural proof.
+ABSCISSA confirmed as Sanborn research term | Beaufort cipher in handwritten list | "3 words most" | "He lied" (K2 coordinate change) | "I wrote the Plain Text to be enigmatic" | Physical overlay "Code Breaker" sketch | ATBASH on same page as ABSCISSA | "4, 8, 10, 26 = Col" | Antipodes completely absent from archive
 
-Mandatory:
-- preserve diverse branches
-- test both peel orders
-- separate structural search from keyword search
-- report deceptive signals explicitly when campaigns fail
+Detail: `archive_aaa_findings.md` in session memory.
 
 ---
 
-## Session Findings (2026-03-27)
+## TICOM/Novel Campaign Summary (2026-03-28)
 
-Null-mask validation shows IC is non-discriminative within the palette-consistent 24-null family; palette consistency remains the only strong independent evidentiary basis for the consensus 17-set. A 61M-configuration running-key fragment campaign found no English-like fragments across tested palette-consistent 73-char extracts under columnar-transposition models. The negative result appears structural rather than incidental: crib-derived keystream letter frequencies are profoundly non-English, and transposition cannot repair that. This strongly disfavors ordinary English running-key + columnar-transposition models, leaving mono + trans + running key as the main surviving structured family.
-
-See `results/session_20260326_structural_campaign.md` for full report.
-
-### Archives of American Art — Primary Source Findings (2026-03-27)
-
-532 photos from Jim Sanborn's papers at Smithsonian. KEY FINDINGS [PRIMARY SOURCE]:
-- **ABSCISSA** confirmed as Sanborn research term ("★ Definition of ABSCISSA" on to-do list)
-- **Beaufort cipher** explicitly listed in Sanborn's handwritten cipher types list, along with Compass cipher, Morse code, Alphabet code, **Overlay**, **Normandy**
-- **"3 words most"** — possibly 3 keywords (KRYPTOS, PALIMPSEST, ABSCISSA?)
-- **"He lied"** — deliberate K2 coordinate change from 38° to 37° (one degree south)
-- **"I wrote the Plain Text to be enigmatic"** — K4 PT is intentionally cryptic
-- **Physical overlay "Code Breaker"** sketch — grille/overlay decryption concept
-- **ATBASH** mentioned on same page as ABSCISSA
-- **"4, 8, 10, 26 = Col"** — possible cipher parameters
-- **Junction buoy** study with arrows similar to coding chart
-- **CIA cryptonym system** described: "2 letters determine general category or place, followed by letters that form a word with the first two"
-
-Full analysis: `archive_aaa_findings.md` in session memory. Photos at `reference/Pictures/Arichives of American Art/`.
-
-### Archive-Informed Tableau Campaign (2026-03-27)
-
-14,460 configs tested across 10 keyword-mixed tableau alphabets (ABSCISSA, PALIMPSEST, ECLIPSE, NORMANDY × AZ/KA). ALL NOISE (max 6/24). Key findings:
-- **Bean EQ is alphabet-invariant** — proven: when CT[i]=CT[j] and PT[i]=PT[j], the key equality holds for ANY alphabet. No "magic alphabet" can bypass Bean.
-- **Zero consistent small periods** for all 30 (alphabet, variant) combos — extends periodic elimination to all archive-derived mixed alphabets.
-- ABSCISSA as tableau-construction keyword (chart column addressing): ELIMINATED for periodic models.
-- Quagmire IV (split alphabets), indicator sweep, Atbash pre/post, reversed rows: ALL ELIMINATED.
-- **NOT eliminated:** Running-key Beaufort on non-standard tableaux, physical overlay/chart interaction.
-
-Doctrine memo: `docs/archive_aaa_doctrine.md`. Full report: `results/e_aaa_tableau_struct_06_report.md`.
-
-### Running-Key Bijection on Mixed Tableaux (2026-03-27)
-
-~47B checks across 10 alphabet modes × 1,385 transposition configs × 11 source texts × 2 directions × 2 variants. **ZERO survivors.** 4.8 hours runtime.
-- Bijection discriminator's injectivity rejection is alphabet-invariant: switching from AZ to ABSCISSA-mixed/KA/PALIMPSEST-mixed does NOT rescue any source-text offsets.
-- **ELIMINATED:** Mono + columnar(w1-10) + running-key Beaufort/Vigenère on tested mixed tableaux from all tested source texts.
-- **NOT eliminated:** Running-key from UNKNOWN source texts, non-mono outer substitution layers, physical chart constructions that don't reduce to standard Beaufort/Vigenère arithmetic.
-
-Full report: `results/e_aaa_runkey_bijection_08_report.md`.
+14 scripts, 1.3B configs, ~75 min on 28 cores. RS44, VIC, Wheatstone, ITA-2, interrupted-key, Wilson, sawtooth, Baudot, Ubchi, Soviet three-step, Sanborn matrix: ALL NOISE. No forward progress on computational paths. Detail: `session_20260328_archive_campaigns.md`.
 
 ---
 
-## Key Reference Files
+## Reference Index
 
-### Audit & Status
-- `statistical_audit_20260326.md`
-- `elimination_ledger.md`
+### Session Memory (`.claude/projects/.../memory/`)
 
-### Active Research
-- `grille_cardan_results.md`
-- `mbox_mining_results.md`
+**Elimination & Audit**
+- [Elimination Ledger](elimination_ledger.md) — Master record, 50+ experiments, all eliminated
+- [Statistical Audit](statistical_audit_20260326.md) — Evidence grading (A-E), multiplicity warnings
+- [Null Mask Validation](null_mask_validation_20260326.md) — IC non-discriminative, palette = provenance
 
-### Stego / Null Layer
-- `stego_null_mask_tests.md`
-- `memory/palette_deep_investigation.md`
-- `memory/bcl_palette_keystream.md`
-- `memory/palette_mod35_rule.md`
-- `memory/palette_null_separator.md`
-- `memory/polybius_row_selection.md`
+**Campaign Reports**
+- [Session 2026-03-28](session_20260328_archive_campaigns.md) — TICOM/novel campaign + archive photo forensics
+- [Session 2026-03-16](session_20260316_heavyweight.md) — Cold War keywords, Operation Gold, DEFECTOR+PALIMPSEST
+- [Campaign v3 Design](campaign_v3_design.md) — Multi-agent campaign architecture
 
-### Keystream Forensics
-- `memory/keystream_forensics_v2.md`
-- `memory/keystream_ap_investigation.md`
-- `memory/width10_17_deep_investigation.md`
-- `memory/width21_bigram_73char.md`
+**Cipher Family Deep Dives**
+- [VIC Family](vic_family_exhaustive.md) — 6 variants, all eliminated
+- [NDYAHR](ndyahr_exhaustive.md) — 5 variants, all disproved
+- [Grille/Cardan](grille_cardan_results.md) — Model 2, YES WONDERFUL THINGS disproved
+- [Mbox Mining](mbox_mining_results.md) — Mailing list hypothesis extraction
 
-### Historical Elimination
-- `vic_family_exhaustive.md`
-- `ndyahr_exhaustive.md`
-- `session_20260316_heavyweight.md`
+**Stego / Null Layer**
+- [Stego Null Mask Tests](stego_null_mask_tests.md) — Palette-constrained masks, INCLINARE, 396-mask filter
+- [Telegraph PT Model](telegraph_plaintext_model.md) — Plaintext structure hypothesis
 
-### External Research
-- `memory/ticom_archive_research.md`
-- `memory/bruteforce_7remaining.md`
-- `kubark_pdf_reference.md` — CIA KUBARK manual PDF (63pp scanned, needs OCR)
+**Primary Sources**
+- [Archive AAA Findings](archive_aaa_findings.md) — 532 photos, Sanborn's papers analysis
+- [Antipodes Absence](antipodes_archive_absence.md) — Antipodes missing from archive
+- [Dan Brown Analysis](dan_brown_lost_symbol_analysis.md) — Chapter 53, 37/38, attorney memo
+- [Sanborn Manuscript](sanborn_manuscript_revelations.md) — Manuscript-derived findings
+- [Coding Chart Sealed](coding_chart_sealed.md) — $962.5K auction, chart in private hands
 
-### Archives of American Art (PRIMARY SOURCE)
-- `archive_aaa_findings.md` — Full analysis of 532 photos from Sanborn's papers
-- `antipodes_archive_absence.md` — Antipodes completely absent from Sanborn's archive despite covering 1950-2023
-- `dan_brown_lost_symbol_analysis.md` — Chapter 53 circled by Sanborn, 37/38 match, attorney memo, layered architecture
-- `session_20260328_archive_campaigns.md` — Full session: tableau sweep, bijection, one-lie, Brown analysis, buoy sketch
+**User & Feedback**
+- [User Background](user_background.md) — User profile and preferences
+- [Feedback: Multi-layer Blindspot](feedback_multilayer_cipher_blindspot.md)
+- [Feedback: Statistical Posture](feedback_statistical_audit_posture.md)
+- [Feedback: Site Language](feedback_site_language.md)
+- [Feedback: Campaign v3](feedback_campaign_v3_no_utility.md)
+- [Feedback: Merge to Main](feedback_merge_to_main.md)
+- [Feedback: Tablet Responsive](feedback_tablet_responsive.md)
 
----
+**External References**
+- [KUBARK PDF](kubark_pdf_reference.md) — CIA manual (63pp scanned)
+- [Smithsonian Visit](smithsonian_visit.md) — Physical visit planning
+- [AAA Archive Visit](project_aaa_archive_visit.md) — Archive visit logistics
+- [Polybius Paper](project_polybius_paper.md) — Publication planning
+- [Classify Endpoint](project_classify_endpoint.md) — API classification service
+
+### Repo Memory (`memory/`)
+- `keystream_forensics_v2.md` | `keystream_ap_investigation.md` — Keystream structure
+- `palette_deep_investigation.md` | `bcl_palette_keystream.md` — Palette mechanisms
+- `palette_mod35_rule.md` | `palette_null_separator.md` — Palette position rules
+- `polybius_row_selection.md` — Polybius grid analysis
+- `width10_17_deep_investigation.md` | `width21_bigram_73char.md` — Width anomalies
+- `ticom_archive_research.md` | `bruteforce_7remaining.md` — External research
 
 Last updated: 2026-03-28

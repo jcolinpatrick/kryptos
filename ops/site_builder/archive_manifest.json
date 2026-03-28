@@ -1,0 +1,543 @@
+{
+  "generated": "2026-03-28",
+  "source": "Archives of American Art, Smithsonian Institution",
+  "collection": "Jim Sanborn papers, circa 1950-2023",
+  "visit_date": "2026-03-26",
+  "total_corpus": 532,
+  "total_selected": 47,
+  "methodology": "All 532 HEIC images converted to thumbnails, reviewed via contact sheets (6x5 grids) and individual inspection. High-value candidates verified at full resolution. Selection prioritized cipher/keyword evidence, steganographic evidence, primary source documents, and production materials with direct Kryptos relevance.",
+  "selections": [
+    {
+      "file": "IMG_1340.jpg",
+      "tier": 1,
+      "theme": "palimpsest_keywords",
+      "selected": true,
+      "prior_page": false,
+      "rationale": "CRITICAL: Notebook page explicitly containing PALIMPSEST and ABSCISSA together, with notes about keyword selection for their 'mysterious nature' and 'aesthetics'",
+      "manual_verified": true
+    },
+    {
+      "file": "IMG_1342.jpg",
+      "tier": 1,
+      "theme": "palimpsest_keywords",
+      "selected": true,
+      "prior_page": false,
+      "rationale": "Rotated closeup of PALIMPSEST/ABSCISSA page providing better legibility of key terms",
+      "manual_verified": true
+    },
+    {
+      "file": "IMG_1350.jpg",
+      "tier": 1,
+      "theme": "palimpsest_keywords",
+      "selected": true,
+      "prior_page": false,
+      "rationale": "To-do list with starred item 'Definition of ABSCISSA' — confirms Sanborn researched this term",
+      "manual_verified": true
+    },
+    {
+      "file": "IMG_1236.jpg",
+      "tier": 1,
+      "theme": "steganographic",
+      "selected": true,
+      "prior_page": true,
+      "rationale": "CRITICAL: Direct statement of steganographic principle — 'encrypted message is included within set of modern day font characters'",
+      "manual_verified": true
+    },
+    {
+      "file": "IMG_1223.jpg",
+      "tier": 1,
+      "theme": "cipher_materials",
+      "selected": true,
+      "prior_page": true,
+      "rationale": "Original KA Vigenere tableau — the physical working document for K1-K3 encryption",
+      "manual_verified": true
+    },
+    {
+      "file": "IMG_1224.jpg",
+      "tier": 1,
+      "theme": "cipher_materials",
+      "selected": true,
+      "prior_page": false,
+      "rationale": "Close-up of KA tableau showing circled H — may indicate specific encryption lookups",
+      "manual_verified": true
+    },
+    {
+      "file": "IMG_1225.jpg",
+      "tier": 1,
+      "theme": "cipher_materials",
+      "selected": true,
+      "prior_page": true,
+      "rationale": "Second copy of KA tableau labeled #2 — confirms multiple working copies",
+      "manual_verified": true
+    },
+    {
+      "file": "IMG_1212.jpg",
+      "tier": 1,
+      "theme": "cipher_materials",
+      "selected": true,
+      "prior_page": true,
+      "rationale": "26-squared grid labeled 'Kryptos Sculpture' with X marks and circled letters",
+      "manual_verified": true
+    },
+    {
+      "file": "IMG_1211.jpg",
+      "tier": 2,
+      "theme": "cipher_materials",
+      "selected": true,
+      "prior_page": true,
+      "rationale": "Repeating key pattern grid on graph paper — shows cipher key construction method",
+      "manual_verified": true
+    },
+    {
+      "file": "IMG_1571.jpg",
+      "tier": 1,
+      "theme": "cipher_materials",
+      "selected": true,
+      "prior_page": true,
+      "rationale": "Cipher reference list including Beaufort, Morse Code, frequency tables — confirms Sanborn's cipher research",
+      "manual_verified": true
+    },
+    {
+      "file": "IMG_1202.jpg",
+      "tier": 2,
+      "theme": "cipher_materials",
+      "selected": true,
+      "prior_page": true,
+      "rationale": "Working cipher grid with mixed scripts — shows multi-script cipher construction",
+      "manual_verified": true
+    },
+    {
+      "file": "IMG_1410.jpg",
+      "tier": 1,
+      "theme": "creation_process",
+      "selected": true,
+      "prior_page": false,
+      "rationale": "CRITICAL: Sanborn writes 'I wrote the plain text Kryptos & encrypted it' and 'Text to be enigmatic'",
+      "manual_verified": true
+    },
+    {
+      "file": "IMG_1247.jpg",
+      "tier": 2,
+      "theme": "creation_process",
+      "selected": true,
+      "prior_page": false,
+      "rationale": "CIA dedication ceremony transcript — physical document, content publicly available elsewhere",
+      "manual_verified": true
+    },
+    {
+      "file": "IMG_1248.jpg",
+      "tier": 2,
+      "theme": "creation_process",
+      "selected": true,
+      "prior_page": false,
+      "rationale": "Dedication transcript continuation with Sanborn's own remarks beginning",
+      "manual_verified": true
+    },
+    {
+      "file": "IMG_1249.jpg",
+      "tier": 1,
+      "theme": "creation_process",
+      "selected": true,
+      "prior_page": false,
+      "rationale": "Key passage: 'two systems of enciphering the bottom text' — publicly known quote but full physical context valuable",
+      "manual_verified": true
+    },
+    {
+      "file": "IMG_1250.jpg",
+      "tier": 2,
+      "theme": "creation_process",
+      "selected": true,
+      "prior_page": false,
+      "rationale": "Final page of dedication remarks — symbolism and site design context",
+      "manual_verified": true
+    },
+    {
+      "file": "IMG_1221.jpg",
+      "tier": 1,
+      "theme": "steganographic",
+      "selected": true,
+      "prior_page": true,
+      "rationale": "Transparent overlay/grille with grid patterns — possible physical Cardan grille",
+      "manual_verified": true
+    },
+    {
+      "file": "IMG_1237.jpg",
+      "tier": 2,
+      "theme": "steganographic",
+      "selected": true,
+      "prior_page": true,
+      "rationale": "Different view of transparent overlay with press article beneath",
+      "manual_verified": true
+    },
+    {
+      "file": "IMG_1551.jpg",
+      "tier": 2,
+      "theme": "steganographic",
+      "selected": true,
+      "prior_page": true,
+      "rationale": "Production spec with cutout area — physical grille mechanism for perforated panels",
+      "manual_verified": true
+    },
+    {
+      "file": "IMG_1246.jpg",
+      "tier": 1,
+      "theme": "production",
+      "selected": true,
+      "prior_page": false,
+      "rationale": "Multilingual text strips (English/Russian/Arabic) used for sculpture cutting — shows actual source text",
+      "manual_verified": true
+    },
+    {
+      "file": "IMG_1543.jpg",
+      "tier": 1,
+      "theme": "production",
+      "selected": true,
+      "prior_page": false,
+      "rationale": "Mirror-image waterjet invoice showing TEXT TO BE MIRROR IMAGE WORDS — confirms text reversal technique",
+      "manual_verified": true
+    },
+    {
+      "file": "IMG_1544.jpg",
+      "tier": 2,
+      "theme": "production",
+      "selected": true,
+      "prior_page": false,
+      "rationale": "Handwritten draft of mirror-image invoice with EAWEE (FUMEE reversed) circled",
+      "manual_verified": true
+    },
+    {
+      "file": "IMG_1238.jpg",
+      "tier": 2,
+      "theme": "production",
+      "selected": true,
+      "prior_page": true,
+      "rationale": "Stencil job order with '7x88 on a side' dimension — possible grid parameter",
+      "manual_verified": true
+    },
+    {
+      "file": "IMG_1219.jpg",
+      "tier": 2,
+      "theme": "production",
+      "selected": true,
+      "prior_page": true,
+      "rationale": "Stencil order with Phillips Collection text and small KA tableau",
+      "manual_verified": true
+    },
+    {
+      "file": "IMG_1220.jpg",
+      "tier": 2,
+      "theme": "production",
+      "selected": true,
+      "prior_page": true,
+      "rationale": "Phillips Collection text — running-key candidate (tested: noise for direct use)",
+      "manual_verified": true
+    },
+    {
+      "file": "IMG_1242.jpg",
+      "tier": 2,
+      "theme": "production",
+      "selected": true,
+      "prior_page": false,
+      "rationale": "FUMEE repeating stencil text from Laser Applications fax — shows fill text method",
+      "manual_verified": true
+    },
+    {
+      "file": "IMG_1540.jpg",
+      "tier": 2,
+      "theme": "production",
+      "selected": true,
+      "prior_page": true,
+      "rationale": "OBMAN (deception) repeating text — thematic fill text with tradecraft resonance",
+      "manual_verified": true
+    },
+    {
+      "file": "IMG_1541.jpg",
+      "tier": 2,
+      "theme": "production",
+      "selected": true,
+      "prior_page": true,
+      "rationale": "Waterjet cutting invoice with 'Russian decoding chart' reference",
+      "manual_verified": true
+    },
+    {
+      "file": "IMG_1222.jpg",
+      "tier": 3,
+      "theme": "production",
+      "selected": true,
+      "prior_page": true,
+      "rationale": "Russian source text as photographic negative — Cyrillic Projector source material",
+      "manual_verified": true
+    },
+    {
+      "file": "IMG_1383.jpg",
+      "tier": 1,
+      "theme": "concept_design",
+      "selected": true,
+      "prior_page": false,
+      "rationale": "UPGRADE: Much clearer version of 'He lied' page with coordinates — replaces IMG_1381",
+      "manual_verified": true
+    },
+    {
+      "file": "IMG_1385.jpg",
+      "tier": 1,
+      "theme": "concept_design",
+      "selected": true,
+      "prior_page": false,
+      "rationale": "UPGRADE: Clearest view of both coordinate pairs (38° and 37° variants) — replaces IMG_1382",
+      "manual_verified": true
+    },
+    {
+      "file": "IMG_1560.jpg",
+      "tier": 2,
+      "theme": "concept_design",
+      "selected": true,
+      "prior_page": true,
+      "rationale": "'Avoid the pitfall of the obvious' — design philosophy note",
+      "manual_verified": true
+    },
+    {
+      "file": "IMG_1561.jpg",
+      "tier": 2,
+      "theme": "concept_design",
+      "selected": true,
+      "prior_page": true,
+      "rationale": "TRUTH brainstorming page with dichotomy pairs and filter language names",
+      "manual_verified": true
+    },
+    {
+      "file": "IMG_1574.jpg",
+      "tier": 2,
+      "theme": "concept_design",
+      "selected": true,
+      "prior_page": true,
+      "rationale": "Thematic word list — secrecy, hiding, illusion, manipulation",
+      "manual_verified": true
+    },
+    {
+      "file": "IMG_1581.jpg",
+      "tier": 2,
+      "theme": "concept_design",
+      "selected": true,
+      "prior_page": true,
+      "rationale": "Lodestone/meteorite balance notes — connects to Kryptos installation elements",
+      "manual_verified": true
+    },
+    {
+      "file": "IMG_1556.jpg",
+      "tier": 2,
+      "theme": "concept_design",
+      "selected": true,
+      "prior_page": false,
+      "rationale": "Copper Plate Codes / Code Breaker sketch — shows overlapping text panel concept",
+      "manual_verified": true
+    },
+    {
+      "file": "IMG_1265.jpg",
+      "tier": 2,
+      "theme": "concept_design",
+      "selected": true,
+      "prior_page": false,
+      "rationale": "Notebook with 'Kryptos' reference and 'Fonts Arabic sector' — confirms concurrent work",
+      "manual_verified": true
+    },
+    {
+      "file": "IMG_1101.jpg",
+      "tier": 2,
+      "theme": "sculpture_context",
+      "selected": true,
+      "prior_page": false,
+      "rationale": "Full view of Kryptos sculpture from Sanborn's own photo collection",
+      "manual_verified": true
+    },
+    {
+      "file": "IMG_1100.jpg",
+      "tier": 2,
+      "theme": "sculpture_context",
+      "selected": true,
+      "prior_page": false,
+      "rationale": "Compass rose/pool element with alphabet perimeter — shows spatial design",
+      "manual_verified": true
+    },
+    {
+      "file": "IMG_1092.jpg",
+      "tier": 3,
+      "theme": "sculpture_context",
+      "selected": true,
+      "prior_page": true,
+      "rationale": "Archive setting with Kryptos folder label — establishes provenance",
+      "manual_verified": true
+    },
+    {
+      "file": "IMG_1492.jpg",
+      "tier": 3,
+      "theme": "sculpture_context",
+      "selected": true,
+      "prior_page": false,
+      "rationale": "Press article 'Coded Creations, Inside Messages' — contextual but informative",
+      "manual_verified": true
+    },
+    {
+      "file": "IMG_1192.jpg",
+      "tier": 3,
+      "theme": "sculpture_context",
+      "selected": true,
+      "prior_page": true,
+      "rationale": "President names installation showing same cut-lettering technique as Kryptos",
+      "manual_verified": true
+    },
+    {
+      "file": "IMG_1152.jpg",
+      "tier": 3,
+      "theme": "sculpture_context",
+      "selected": true,
+      "prior_page": true,
+      "rationale": "Installation description: 'perforated with descriptive text' and light projection — same method as Kryptos",
+      "manual_verified": true
+    },
+    {
+      "file": "IMG_1281.jpg",
+      "tier": 3,
+      "theme": "sculpture_context",
+      "selected": true,
+      "prior_page": true,
+      "rationale": "'Machine code used to cut out machine code' — self-referential production note",
+      "manual_verified": true
+    },
+    {
+      "file": "IMG_1240.jpg",
+      "tier": 2,
+      "theme": "sculpture_context",
+      "selected": true,
+      "prior_page": true,
+      "rationale": "'DO NOT SCAN' — restricted material marker in archive",
+      "manual_verified": true
+    },
+    {
+      "file": "IMG_1491.jpg",
+      "tier": 3,
+      "theme": "sculpture_context",
+      "selected": true,
+      "prior_page": true,
+      "rationale": "Congratulatory letter mentioning 'shadows and lights' and 'transparencies'",
+      "manual_verified": true
+    }
+  ],
+  "removed_from_prior_page": [
+    {
+      "file": "IMG_1381.jpg",
+      "reason": "Replaced by IMG_1383 — clearer version of same page"
+    },
+    {
+      "file": "IMG_1382.jpg",
+      "reason": "Replaced by IMG_1385 — clearer coordinate detail"
+    },
+    {
+      "file": "IMG_1213.jpg",
+      "reason": "Low information — sparse partially filled grid, adds little beyond IMG_1212"
+    },
+    {
+      "file": "IMG_1214.jpg",
+      "reason": "Low information — mixed grid without clear research value beyond what IMG_1212 provides"
+    },
+    {
+      "file": "IMG_1218.jpg",
+      "reason": "Dense text grid without clear Kryptos connection; Cyrillic Projector material"
+    },
+    {
+      "file": "IMG_1142.jpg",
+      "reason": "Generic sculpture rendering without specific Kryptos relevance"
+    },
+    {
+      "file": "IMG_1542.jpg",
+      "reason": "Handwritten version of IMG_1541 waterjet invoice — redundant"
+    },
+    {
+      "file": "IMG_1239.jpg",
+      "reason": "2005 runic sculpture proposal email — tangential to Kryptos research"
+    },
+    {
+      "file": "IMG_1291.jpg",
+      "reason": "Assembly line lettering practice — replaced by more research-relevant additions"
+    },
+    {
+      "file": "IMG_1591.jpg",
+      "reason": "Site plan sketch — low Kryptos research value"
+    }
+  ],
+  "added_to_new_page": [
+    "IMG_1340.jpg — PALIMPSEST/ABSCISSA keyword notes (CRITICAL NEW FIND)",
+    "IMG_1342.jpg — PALIMPSEST/ABSCISSA detail view",
+    "IMG_1350.jpg — 'Definition of ABSCISSA' to-do item",
+    "IMG_1410.jpg — 'I wrote the plain text' creation notes (CRITICAL NEW FIND)",
+    "IMG_1247.jpg — CIA dedication ceremony transcript",
+    "IMG_1248.jpg — Dedication transcript continuation",
+    "IMG_1249.jpg — 'Two systems' passage",
+    "IMG_1250.jpg — Dedication transcript final page",
+    "IMG_1246.jpg — Multilingual text strips",
+    "IMG_1242.jpg — FUMEE repeating stencil",
+    "IMG_1543.jpg — Mirror-image waterjet invoice",
+    "IMG_1544.jpg — Mirror-image handwritten draft",
+    "IMG_1383.jpg — Better 'He lied' image (upgrade)",
+    "IMG_1385.jpg — Better coordinate detail (upgrade)",
+    "IMG_1556.jpg — Copper Plate Codes sketch",
+    "IMG_1265.jpg — Kryptos/Arabic sector notebook",
+    "IMG_1224.jpg — KA tableau detail with circled H",
+    "IMG_1100.jpg — Kryptos compass rose/pool",
+    "IMG_1101.jpg — Kryptos full sculpture view",
+    "IMG_1492.jpg — Press article"
+  ],
+  "notable_omissions": [
+    {
+      "range": "IMG_1093-1099",
+      "reason": "Installation photo slides — generic sculpture views without cipher content"
+    },
+    {
+      "range": "IMG_1103-1139",
+      "reason": "Workshop photos, gallery installations, and architectural images without Kryptos specificity"
+    },
+    {
+      "range": "IMG_1153-1191",
+      "reason": "Construction photos and installation proposals for non-Kryptos projects"
+    },
+    {
+      "range": "IMG_1193-1210",
+      "reason": "Correspondence and printed text without clear cipher/Kryptos connection"
+    },
+    {
+      "range": "IMG_1215-1217",
+      "reason": "Additional Cyrillic Projector grids — show method but are redundant with IMG_1211-1212"
+    },
+    {
+      "range": "IMG_1252-1264",
+      "reason": "Business notebooks (to-do lists, phone numbers, contractor notes) without cipher content"
+    },
+    {
+      "range": "IMG_1270-1280",
+      "reason": "Construction/production notes without encryption relevance"
+    },
+    {
+      "range": "IMG_1292-1339",
+      "reason": "Notebook pages with design sketches, business notes, and supplier contacts"
+    },
+    {
+      "range": "IMG_1392-1451",
+      "reason": "Media appearance notes, business contacts, nautical diagrams, construction specs"
+    },
+    {
+      "range": "IMG_1453-1489",
+      "reason": "Business notebooks, supplier notes, and unrelated project documentation"
+    },
+    {
+      "range": "IMG_1500-1539",
+      "reason": "Maps, blueprints, material samples, and production specs for non-Kryptos projects"
+    },
+    {
+      "range": "IMG_1562-1570",
+      "reason": "Material lists and construction specs without cipher content"
+    },
+    {
+      "range": "IMG_1575-1580, 1582-1590, 1592-1623",
+      "reason": "Design sketches, conceptual drawings, and notebook pages for other installation projects"
+    }
+  ]
+}
