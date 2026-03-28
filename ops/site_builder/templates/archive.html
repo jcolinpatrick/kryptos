@@ -1,0 +1,930 @@
+{% extends "base.html" %}
+{% block title %}Sanborn Papers — Archive Research Collection | kryptosbot.com{% endblock %}
+{% block og_title %}Sanborn Papers — Archive Research Collection | kryptosbot.com{% endblock %}
+{% block og_url %}<meta property="og:url" content="https://kryptosbot.com/archive/">{% endblock %}
+{% block canonical %}<link rel="canonical" href="https://kryptosbot.com/archive/">{% endblock %}
+
+{% block head_extra %}
+<link rel="stylesheet" href="/static/archive.css">
+{% endblock %}
+
+{% block content %}
+<h1>Sanborn Papers: Archive Research Collection</h1>
+<p class="archive-intro">
+  In March 2026, we examined the
+  <a href="https://www.aaa.si.edu/collections/jim-sanborn-papers-22298">Jim Sanborn papers</a>
+  at the Archives of American Art, Smithsonian Institution. The collection spans
+  circa 1950&ndash;2023 and includes working cipher materials, design sketches,
+  correspondence, production documents, and conceptual notes from Sanborn's career.
+  This page presents a curated subset of photographs from our research visit,
+  selected for their relevance to Kryptos and the unsolved K4 cipher.
+  The selection prioritizes documents that reveal Sanborn's encryption thinking,
+  keyword choices, construction methods, and conceptual framework.
+</p>
+
+<div class="archive-legal">
+  <h3>Copyright &amp; Research Use Notice</h3>
+  <p>
+    All photographs depict materials from the Jim Sanborn papers held at the
+    Archives of American Art, Smithsonian Institution. <strong>Copyright in the
+    original works depicted remains with Jim Sanborn and/or other applicable
+    rights holders.</strong> No claim of ownership is made or implied.
+  </p>
+  <p>
+    These images are presented in good faith for purposes of <strong>non-commercial
+    research, scholarship, education, and commentary</strong> regarding the unsolved
+    Kryptos K4 cipher. The Archives of American Art is a public research repository
+    of the Smithsonian Institution; these materials were examined in person under
+    standard research access procedures, and photographs were taken in accordance
+    with the archive's research photography policies.
+  </p>
+  <p>
+    We believe this use is consistent with principles of fair use under
+    <a href="https://www.law.cornell.edu/uscode/text/17/107">17 U.S.C. &sect; 107</a>,
+    but we do not present this as a legal conclusion. In accordance with the
+    <a href="https://www.law.cornell.edu/uscode/text/17/512">Digital Millennium
+    Copyright Act (17 U.S.C. &sect; 512)</a>, if you are the rights holder and
+    believe any material here infringes your copyright, please send a written
+    notice to <a href="mailto:contact@kryptosbot.com">contact@kryptosbot.com</a>
+    identifying the specific material and we will promptly remove or disable
+    access to it.
+  </p>
+</div>
+
+<nav class="archive-toc">
+  <h2>Contents</h2>
+  <ol>
+    <li><a href="#he-lied">&ldquo;He Lied&rdquo; &amp; Coordinate Manipulation</a></li>
+    <li><a href="#palimpsest">PALIMPSEST, ABSCISSA &amp; Keyword Evidence</a></li>
+    <li><a href="#cipher-methods">Cipher Methods &amp; Process Notes</a></li>
+    <li><a href="#cipher-materials">Cipher Working Materials &amp; Tableaux</a></li>
+    <li><a href="#creation-process">Creation Process &amp; Sanborn's Own Words</a></li>
+    <li><a href="#steganographic">Steganographic Evidence</a></li>
+    <li><a href="#punctuation">Punctuation &amp; Letterform Anomalies</a></li>
+    <li><a href="#production">Production, Source Texts &amp; Stencils</a></li>
+    <li><a href="#navigation">Navigation &amp; Color Symbolism</a></li>
+    <li><a href="#concept">Concept, Design &amp; Themes</a></li>
+    <li><a href="#sculpture-context">Sculpture &amp; Broader Context</a></li>
+  </ol>
+</nav>
+
+<!-- ═══ SECTION 0: "HE LIED" & COORDINATE MANIPULATION ═══ -->
+<section id="he-lied" class="archive-section">
+  <h2>1. &ldquo;He Lied&rdquo; &amp; Coordinate Manipulation</h2>
+  <p class="section-intro">
+    Perhaps the most provocative single page in the entire collection: Sanborn's
+    handwritten coordinates with a deliberate alteration and an emphatic annotation.
+  </p>
+
+  <div class="archive-item archive-item-featured">
+    <div class="archive-img-wrap">
+      <a href="/static/archive/IMG_1384.jpg" target="_blank">
+        <img src="/static/archive/IMG_1384.jpg" alt="He lied circled in Sanborn's hand between two sets of geographic coordinates, the second with altered latitude and seconds" loading="lazy">
+      </a>
+    </div>
+    <div class="archive-caption">
+      <h3>&ldquo;He Lied&rdquo;: Coordinate Manipulation</h3>
+      <p class="archive-id">IMG_1384 (CRITICAL DOCUMENT)</p>
+      <p>
+        Two coordinate sets in Sanborn's hand with &ldquo;He lied&rdquo; circled
+        emphatically between them:
+      </p>
+      <blockquote>
+        38&deg; 57&prime; 6.5&Prime; N &nbsp;/&nbsp; 77&deg; 8&prime; 44&Prime; W<br>
+        37&deg; 57&prime; 6.5&Prime; N &nbsp;/&nbsp; 77&deg; 8&prime; 44&Prime; W
+      </blockquote>
+      <p>
+        The top set matches the <strong>K2 plaintext</strong> coordinates, pointing to
+        a location near CIA headquarters in Langley, Virginia. The bottom set changes
+        only the latitude degree: 38&deg;&rarr;37&deg;. Everything else (minutes,
+        seconds, and the entire longitude) is identical. This single-degree shift
+        moves the position approximately 69 miles south to <strong>central Virginia</strong>,
+        near Fredericksburg. Dan Brown later featured the 37&deg; variant on the jacket
+        of <em>The Lost Symbol</em>.
+      </p>
+      <p>
+        <strong>A note on precision:</strong> Both coordinate sets specify arc-seconds
+        to one decimal place (6.5&Prime;). One arc-second of latitude is approximately
+        101 feet (31 meters); a tenth of an arc-second is roughly 10 feet. Achieving this
+        level of positional accuracy in 1989&ndash;1990 would have required professional
+        surveying equipment (a theodolite or early GPS receiver), tools well beyond
+        what a sculptor would typically possess. This suggests Sanborn either obtained
+        these coordinates from an external source (the CIA? Ed Scheidt? a surveyor?) or
+        that the specific sub-second values are themselves part of the puzzle rather than
+        measured positions.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SECTION 1: PALIMPSEST, ABSCISSA & KEYWORD EVIDENCE ═══ -->
+<section id="palimpsest" class="archive-section">
+  <h2>2. PALIMPSEST, ABSCISSA &amp; Keyword Evidence</h2>
+  <p class="section-intro">
+    Among the most significant finds: Sanborn's notebook pages explicitly referencing
+    PALIMPSEST, ABSCISSA, and ECLIPSE, all terms central to Kryptos research.
+    These document his keyword selection process and his understanding of what
+    those words mean.
+  </p>
+
+  <div class="archive-item archive-item-featured">
+    <div class="archive-img-wrap">
+      <a href="/static/archive/IMG_1340.jpg" target="_blank">
+        <img src="/static/archive/IMG_1340.jpg" alt="Notebook page with PALIMPSEST, ABSCISSA, cipher process notes, and numbered items about code and keywords" loading="lazy">
+      </a>
+    </div>
+    <div class="archive-caption">
+      <h3>Keyword &amp; Cipher Process Notes</h3>
+      <p class="archive-id">IMG_1340 (CRITICAL DOCUMENT)</p>
+      <p>
+        A dense notebook page with multiple cryptographically significant elements:
+      </p>
+      <blockquote>
+        &ldquo;Code originally developed to keep things secret in the military&rdquo;
+      </blockquote>
+      <blockquote>
+        &ldquo;Keywords chosen for their mysterious nature AND how they fit into the Aesthetics&rdquo;
+      </blockquote>
+      <blockquote>
+        &ldquo;Palimpsest is to wr[ite over]&hellip;&rdquo; / &ldquo;ABSCISSA&rdquo;
+      </blockquote>
+      <p>
+        The bottom of the page contains what appears to be cipher process instructions:
+        &ldquo;Extra L at end of line, Bottom chart seeding&rdquo; combined with
+        &ldquo;ABSCISSA&rdquo; and possibly &ldquo;ATBA[SH].&rdquo; Numbers
+        &ldquo;4, 8, 10, 26 = Col&rdquo; also appear. If &ldquo;Col&rdquo; means column,
+        these could be grid dimensions or transposition parameters. A companion page
+        in the same notebook has &ldquo;&#9733; Definition of ABSCISSA&rdquo; as a
+        starred priority item, confirming Sanborn researched this term specifically.
+      </p>
+    </div>
+  </div>
+
+  <div class="archive-item archive-item-featured">
+    <div class="archive-img-wrap">
+      <a href="/static/archive/IMG_1566.jpg" target="_blank">
+        <img src="/static/archive/IMG_1566.jpg" alt="Page defining Eclipse and Palimpsest: Eclipse is blocked shaded from view, Palimpsest is to write or to erase" loading="lazy">
+      </a>
+    </div>
+    <div class="archive-caption">
+      <h3>ECLIPSE &amp; PALIMPSEST Defined</h3>
+      <p class="archive-id">IMG_1566</p>
+      <p>
+        Sanborn defining thematic vocabulary in his own hand:
+      </p>
+      <blockquote>
+        &ldquo;Eclipse &mdash; Blocked, shaded from view, Shadow of the moon,
+        Loss of Light&rdquo;
+      </blockquote>
+      <blockquote>
+        &ldquo;Palimpsest &mdash; to write or to erase&rdquo;
+      </blockquote>
+      <p>
+        ECLIPSE could be a keyword candidate or describes the concept of hiding
+        information. &ldquo;Blocked, shaded from view&rdquo; maps directly
+        to the steganographic principle described in IMG_1236. The PALIMPSEST
+        definition (&ldquo;to write or to erase&rdquo;) emphasizes the overwriting
+        aspect. The page also contains Italian marble supplier contact information
+        (Graniti e Marmi di Baveno), placing these notes in the material sourcing phase.
+      </p>
+    </div>
+  </div>
+
+  <div class="archive-item">
+    <div class="archive-img-wrap">
+      <a href="/static/archive/IMG_1567.jpg" target="_blank">
+        <img src="/static/archive/IMG_1567.jpg" alt="Page with A choice of 3 words most typified the way of life and CIA KGB references" loading="lazy">
+      </a>
+    </div>
+    <div class="archive-caption">
+      <h3>&ldquo;A Choice of 3 Words&rdquo;</h3>
+      <p class="archive-id">IMG_1567</p>
+      <p>
+        In the context of CIA/KGB/Top Secret culture, Sanborn writes:
+      </p>
+      <blockquote>
+        &ldquo;A choice of 3 words most typified the way of life&rdquo;
+      </blockquote>
+      <p>
+        This could refer to three keywords for the cipher (KRYPTOS, PALIMPSEST,
+        ABSCISSA?), three thematic concepts of espionage, or three words that
+        characterize the intelligence world. The page also references &ldquo;The
+        current acronym for CIA&rdquo; / &ldquo;KGB&rdquo; / &ldquo;Top Secret&rdquo;
+        and &ldquo;The most common type free [text] / Computer/Typewriter.&rdquo;
+        Faded pencil text including &ldquo;Palimpsest&rdquo; is visible in the
+        lower portion.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SECTION 2: CIPHER METHODS & PROCESS NOTES ═══ -->
+<section id="cipher-methods" class="archive-section">
+  <h2>3. Cipher Methods &amp; Process Notes</h2>
+  <p class="section-intro">
+    Sanborn's handwritten lists of cipher systems, intelligence terminology, and
+    encoding methods. These reveal what he was taught and what he studied.
+  </p>
+
+  <div class="archive-item archive-item-featured">
+    <div class="archive-img-wrap">
+      <a href="/static/archive/IMG_1569.jpg" target="_blank">
+        <img src="/static/archive/IMG_1569.jpg" alt="Handwritten list: Beaufort cipher, Compass cipher, Morse code, Alphabet code, Cryptonyms, Overload, Normandy" loading="lazy">
+      </a>
+    </div>
+    <div class="archive-caption">
+      <h3>Cipher Types List</h3>
+      <p class="archive-id">IMG_1569</p>
+      <p>
+        Sanborn's handwritten list of encoding methods:
+      </p>
+      <blockquote>
+        &ldquo;Beaufort cipher, Compass cipher, Morse code, Alphabet code&rdquo;
+      </blockquote>
+      <p>
+        Below: &ldquo;Cryptonyms&rdquo; with a note about how they work (see IMG_1570),
+        then &ldquo;Overload&rdquo; (underlined) followed by &ldquo;Normandy Invasion,
+        H Bo[mb]&hellip;&rdquo; The explicit listing of <strong>Beaufort cipher</strong>
+        confirms Ed Scheidt taught Sanborn this method (confirmed used in K1&ndash;K3).
+        &ldquo;Compass cipher&rdquo; may be Sanborn's own term for the compass rose element.
+      </p>
+    </div>
+  </div>
+
+  <div class="archive-item">
+    <div class="archive-img-wrap">
+      <a href="/static/archive/IMG_1570.jpg" target="_blank">
+        <img src="/static/archive/IMG_1570.jpg" alt="CIA cryptonym system description: 2 letters determine general category followed by letters forming a word" loading="lazy">
+      </a>
+    </div>
+    <div class="archive-caption">
+      <h3>CIA Cryptonym System</h3>
+      <p class="archive-id">IMG_1570</p>
+      <p>
+        Sanborn's description of how CIA cryptonyms work:
+      </p>
+      <blockquote>
+        &ldquo;2 letters determine general category or place, followed by letters that
+        form a word with the first two&rdquo;
+      </blockquote>
+      <p>
+        This is a precise description of the cryptonym system (e.g., KU = CIA internal
+        &rarr; KUBARK). Also visible: &ldquo;[Normandy Inva]sion, H Bomb, Bombing of
+        Dresden&rdquo; and &ldquo;[Blue] stripe access&rdquo; (Top Secret classification
+        marking), and &ldquo;[bu]rst transmitters.&rdquo;
+      </p>
+    </div>
+  </div>
+
+  <div class="archive-item archive-item-featured">
+    <div class="archive-img-wrap">
+      <a href="/static/archive/IMG_1571.jpg" target="_blank">
+        <img src="/static/archive/IMG_1571.jpg" alt="CIA tradecraft glossary page listing Kubark, Flutter, OSS, MI5, frequency tables, store house of magic wands" loading="lazy">
+      </a>
+    </div>
+    <div class="archive-caption">
+      <h3>CIA Tradecraft Glossary</h3>
+      <p class="archive-id">IMG_1571</p>
+      <p>
+        A complete intelligence vocabulary page:
+        &ldquo;CIA = Kubark&rdquo; (CIA's own cryptonym),
+        &ldquo;Top Secret = Blue Stripe Access,&rdquo;
+        &ldquo;Polygraph = Flutter,&rdquo;
+        &ldquo;OSS WWII Agency&rdquo; (CIA predecessor),
+        &ldquo;MI5&rdquo; (British intelligence),
+        &ldquo;condensed &amp; burst transmitters&rdquo; (covert communications),
+        &ldquo;Codes in the Shadows,&rdquo;
+        &ldquo;Smoke and Mirrors,&rdquo;
+        &ldquo;Secrecy &mdash; store house of the magic wands,&rdquo;
+        &ldquo;Frequency Tables forming.&rdquo;
+        The mention of <strong>Frequency Tables</strong> shows Sanborn knew about
+        frequency analysis. A sketch of a three-dimensional box appears alongside.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SECTION 3: CIPHER WORKING MATERIALS & TABLEAUX ═══ -->
+<section id="cipher-materials" class="archive-section">
+  <h2>4. Cipher Working Materials &amp; Tableaux</h2>
+  <p class="section-intro">
+    Sanborn's handwritten tableaux, grids, and encoding worksheets. Note: Kryptos
+    uses the Latin alphabet only. Some grids below were created for the separate
+    Cyrillic Projector installation but reveal Sanborn's cipher construction methods.
+  </p>
+
+  <div class="archive-item archive-item-featured">
+    <div class="archive-img-wrap">
+      <a href="/static/archive/IMG_1223.jpg" target="_blank">
+        <img src="/static/archive/IMG_1223.jpg" alt="Complete KRYPTOS-keyed Vigenere tableau with sculpture sketch above" loading="lazy">
+      </a>
+    </div>
+    <div class="archive-caption">
+      <h3>KRYPTOS-Keyed (KA) Vigen&egrave;re Tableau</h3>
+      <p class="archive-id">IMG_1223</p>
+      <p>
+        The physical 26&times;26 Vigen&egrave;re tableau using the KRYPTOS keyword-mixed
+        alphabet (KA). This is the encryption tableau for K1&ndash;K3 (Quagmire III
+        variant). The large letter &ldquo;A&rdquo; is visible at top, and a sketch of
+        the sculpture form appears above. The community has long known the
+        tableau structure from cryptanalysis; this is the original working document.
+      </p>
+    </div>
+  </div>
+
+  <div class="archive-item">
+    <div class="archive-img-wrap">
+      <a href="/static/archive/IMG_1224.jpg" target="_blank">
+        <img src="/static/archive/IMG_1224.jpg" alt="Close-up of KA tableau showing circled H and handwritten grid cells" loading="lazy">
+      </a>
+    </div>
+    <div class="archive-caption">
+      <h3>KA Tableau Detail: Circled Letters</h3>
+      <p class="archive-id">IMG_1224</p>
+      <p>
+        Close-up of the KA tableau showing individual handwritten letters. A circled
+        &ldquo;H&rdquo; is visible. Circled letters may mark specific lookup
+        operations performed during encryption.
+      </p>
+    </div>
+  </div>
+
+  <div class="archive-item">
+    <div class="archive-img-wrap">
+      <a href="/static/archive/IMG_1211.jpg" target="_blank">
+        <img src="/static/archive/IMG_1211.jpg" alt="Grid on graph paper with repeating character pattern in rows" loading="lazy">
+      </a>
+    </div>
+    <div class="archive-caption">
+      <h3>Repeating Key Pattern Grid</h3>
+      <p class="archive-id">IMG_1211</p>
+      <p>
+        A grid on graph paper with a repeating symbol sequence in the second row.
+        The regularity suggests a cipher key applied cyclically.
+      </p>
+    </div>
+  </div>
+
+  <div class="archive-item">
+    <div class="archive-img-wrap">
+      <a href="/static/archive/IMG_1202.jpg" target="_blank">
+        <img src="/static/archive/IMG_1202.jpg" alt="Working cipher grid showing mixed script entries alongside Arabic source text" loading="lazy">
+      </a>
+    </div>
+    <div class="archive-caption">
+      <h3>Working Cipher Grid (Mixed Scripts)</h3>
+      <p class="archive-id">IMG_1202</p>
+      <p>
+        A large working grid with mixed-script entries alongside Arabic source text.
+        Demonstrates Sanborn's multi-script cipher construction methodology.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SECTION 4: CREATION PROCESS & SANBORN'S OWN WORDS ═══ -->
+<section id="creation-process" class="archive-section">
+  <h2>5. Creation Process &amp; Sanborn's Own Words</h2>
+  <p class="section-intro">
+    Primary source documents in which Sanborn describes his creation process,
+    including working notes and the CIA dedication ceremony transcript (the
+    ceremony speech is publicly available through other sources; the physical
+    document provides context for surrounding annotations).
+  </p>
+
+  <div class="archive-item archive-item-featured">
+    <div class="archive-img-wrap">
+      <a href="/static/archive/IMG_1410.jpg" target="_blank">
+        <img src="/static/archive/IMG_1410.jpg" alt="Sanborn notebook page: I wrote the plain text to be deliberately enigmatic" loading="lazy">
+      </a>
+    </div>
+    <div class="archive-caption">
+      <h3>&ldquo;I Wrote the Plain Text to Be Enigmatic&rdquo;</h3>
+      <p class="archive-id">IMG_1410</p>
+      <p>
+        A notebook page (oriented sideways) where Sanborn writes about creating
+        Kryptos. Visible text is consistent with:
+      </p>
+      <blockquote>
+        &ldquo;I wrote the&hellip; plain&hellip; text&hellip; to be [deliberately]
+        enigmatic&rdquo;
+      </blockquote>
+      <p>
+        This has direct implications for solving K4: the decrypted plaintext will
+        <strong>not</strong> read as normal English prose. It is intentionally cryptic.
+        Scoring methods that expect high English quadgram scores may need adjustment.
+        Additional text references making the work &ldquo;challenging&rdquo; and
+        the year 1988 is visible on the page.
+      </p>
+    </div>
+  </div>
+
+  <div class="archive-item">
+    <div class="archive-img-wrap">
+      <a href="/static/archive/IMG_1249.jpg" target="_blank">
+        <img src="/static/archive/IMG_1249.jpg" alt="Dedication transcript: two systems of enciphering the bottom text" loading="lazy">
+      </a>
+    </div>
+    <div class="archive-caption">
+      <h3>Dedication: &ldquo;Two Systems of Enciphering&rdquo;</h3>
+      <p class="archive-id">IMG_1249</p>
+      <p>
+        From the November 5, 1990 dedication ceremony transcript (this passage is
+        publicly known from other sources). Sanborn states:
+      </p>
+      <blockquote>
+        &ldquo;There are two systems of enciphering the bottom text. No one really asked
+        me if there are two systems to encipher the bottom text until today at sort of
+        the eleventh hour; and yes, there are two separate systems and that is a major
+        clue in itself, apparently.&rdquo;
+      </blockquote>
+      <p>
+        The physical document provides full context for the surrounding remarks
+        about the petrified tree and installation symbolism. The &ldquo;bottom text&rdquo;
+        refers to the lower portion of the copper plate containing K3 and K4.
+      </p>
+    </div>
+  </div>
+
+
+</section>
+
+<!-- ═══ SECTION 5: STEGANOGRAPHIC EVIDENCE ═══ -->
+<section id="steganographic" class="archive-section">
+  <h2>6. Steganographic Evidence</h2>
+  <p class="section-intro">
+    Documents describing the principle of hiding the real message within a larger
+    set of characters, consistent with the null-mask / Cardan grille model
+    that researchers have hypothesized for K4.
+  </p>
+
+  <div class="archive-item archive-item-featured">
+    <div class="archive-img-wrap">
+      <a href="/static/archive/IMG_1236.jpg" target="_blank">
+        <img src="/static/archive/IMG_1236.jpg" alt="Sanborn sketch with note: encrypted message is included within set of modern day font characters, could be done to shade an area" loading="lazy">
+      </a>
+    </div>
+    <div class="archive-caption">
+      <h3>&ldquo;Encrypted Message Is Included Within&hellip;&rdquo;</h3>
+      <p class="archive-id">IMG_1236 (CRITICAL DOCUMENT)</p>
+      <p>
+        Sanborn's handwritten description of the Kryptos concept:
+      </p>
+      <blockquote>
+        &ldquo;encrypted message is included within set of modern day font characters.
+        Could be done to shade an area&rdquo;
+      </blockquote>
+      <p>
+        The encrypted message is <em>hidden within</em> a larger character set, and
+        a physical overlay (&ldquo;shade an area&rdquo;) reveals which characters
+        carry meaning. Compare to the ECLIPSE definition in IMG_1566: &ldquo;Blocked,
+        shaded from view.&rdquo; A sketch of a sculptural form appears above the text;
+        it is not certain whether this depicts Kryptos or another work.
+      </p>
+    </div>
+  </div>
+
+  <div class="archive-item">
+    <div class="archive-img-wrap">
+      <a href="/static/archive/IMG_1555.jpg" target="_blank">
+        <img src="/static/archive/IMG_1555.jpg" alt="Sketch showing Code Breaker template laid on top of Code panel" loading="lazy">
+      </a>
+    </div>
+    <div class="archive-caption">
+      <h3>&ldquo;Code Breaker&rdquo; Overlay Concept</h3>
+      <p class="archive-id">IMG_1555</p>
+      <p>
+        A sketch showing a &ldquo;Code Breaker&rdquo; template laid <strong>on top
+        of</strong> the &ldquo;Code&rdquo; panel: a physical overlay/grille
+        decryption concept. Combined with &ldquo;Overlay&rdquo; in the cipher types
+        list (IMG_1569), this reinforces the Cardan grille / physical mask approach
+        to extracting the message from the ciphertext.
+      </p>
+    </div>
+  </div>
+
+  <div class="archive-item">
+    <div class="archive-img-wrap">
+      <a href="/static/archive/IMG_1221.jpg" target="_blank">
+        <img src="/static/archive/IMG_1221.jpg" alt="Amber transparency showing Old Town Alexandria street grid with KA tableau visible beneath" loading="lazy">
+      </a>
+    </div>
+    <div class="archive-caption">
+      <h3>Old Town Alexandria Map Overlay</h3>
+      <p class="archive-id">IMG_1221</p>
+      <p>
+        A golden/amber transparency showing the street grid of Old Town Alexandria,
+        Virginia, with waterfront features visible. A printed KA tableau is visible
+        beneath it. The pointed landform at the bottom of the map may be
+        <strong>Jones Point</strong>, the historic survey marker where the first
+        boundary stone of the District of Columbia was placed in 1791. Jones Point
+        has significant surveying and geographic history. A lighthouse was
+        constructed there in 1855. The overlay technique (placing a map on a
+        transparency over cipher materials) may relate to the &ldquo;shade an
+        area&rdquo; concept described in IMG_1236.
+      </p>
+    </div>
+  </div>
+
+
+</section>
+
+<!-- ═══ SECTION 6: PUNCTUATION & LETTERFORM ANOMALIES ═══ -->
+<section id="punctuation" class="archive-section">
+  <h2>7. Punctuation &amp; Letterform Anomalies</h2>
+  <p class="section-intro">
+    The Kryptos sculpture contains four question marks at section boundaries.
+    A stencil template in the archive shows an anomaly worth examining.
+  </p>
+
+  <div class="archive-item archive-item-featured">
+    <div class="archive-img-wrap">
+      <a href="/static/archive/IMG_1531.jpg" target="_blank">
+        <img src="/static/archive/IMG_1531.jpg" alt="Punctuation stencil template showing question mark with pencil-drawn J overlaid on it" loading="lazy">
+      </a>
+    </div>
+    <div class="archive-caption">
+      <h3>Punctuation Stencil: J Drawn Over ?</h3>
+      <p class="archive-id">IMG_1531 (ANOMALY)</p>
+      <p>
+        A punctuation stencil template for Kryptos fabrication showing ! ? $
+        characters. On the bottom row, the question mark has a <strong>pencil-drawn
+        J overlaid on it</strong>. The J shape wraps around the ? curve with
+        the dot shared. Kryptos has four question marks at section boundaries (between
+        K1/K2, K2/K3, K3/K4, and after K4). If the question marks encode the letter J,
+        this would add hidden characters at section boundaries. The ? between K3 and K4
+        would be particularly significant.
+      </p>
+    </div>
+  </div>
+
+
+</section>
+
+<!-- ═══ SECTION 7: PRODUCTION, SOURCE TEXTS & STENCILS ═══ -->
+<section id="production" class="archive-section">
+  <h2>8. Production, Source Texts &amp; Stencils</h2>
+  <p class="section-intro">
+    Documents related to physical production: stencil orders, waterjet cutting
+    specifications, source texts, and material samples.
+  </p>
+
+  <div class="archive-item">
+    <div class="archive-img-wrap">
+      <a href="/static/archive/IMG_1543.jpg" target="_blank">
+        <img src="/static/archive/IMG_1543.jpg" alt="Waterjet cutting invoice specifying mirror image text and FUMEE letters, July 1994" loading="lazy">
+      </a>
+    </div>
+    <div class="archive-caption">
+      <h3>Mirror-Image Waterjet Invoice (July 1994)</h3>
+      <p class="archive-id">IMG_1543</p>
+      <p>
+        Invoice: &ldquo;Waterjet cutting of stainless steel mirror.&rdquo; Key spec:
+        &ldquo;TEXT TO BE MIRROR IMAGE WORDS&rdquo; with &ldquo;EAWEE&rdquo; shown
+        as mirrored FUMEE. Instruction: <strong>&ldquo;USE THE LETTERS FUMEE ENGLISH
+        ALPHABET.&rdquo;</strong> Confirms Sanborn used mirror-reversed text as a
+        technique. Dimensions: 14&Prime;&times;14&Prime;, letters 1/2&Prime; high.
+      </p>
+    </div>
+  </div>
+
+  <div class="archive-item">
+    <div class="archive-img-wrap">
+      <a href="/static/archive/IMG_1238.jpg" target="_blank">
+        <img src="/static/archive/IMG_1238.jpg" alt="Stencil production job order with 7x88 dimension specification" loading="lazy">
+      </a>
+    </div>
+    <div class="archive-caption">
+      <h3>Stencil Job Order (&ldquo;7&times;88&rdquo;)</h3>
+      <p class="archive-id">IMG_1238</p>
+      <p>
+        Job order specifying &ldquo;7x88 on a side.&rdquo; K4 has 97 characters;
+        a 7-row layout is consistent with the sculpture's physical row structure.
+        Phillips Collection and Anderson House source texts visible.
+      </p>
+    </div>
+  </div>
+
+  <div class="archive-item">
+    <div class="archive-img-wrap">
+      <a href="/static/archive/IMG_1242.jpg" target="_blank">
+        <img src="/static/archive/IMG_1242.jpg" alt="FUMEE repeating text on fax from Laser Applications Inc, August 1994" loading="lazy">
+      </a>
+    </div>
+    <div class="archive-caption">
+      <h3>FUMEE Repeating Stencil (Aug. 1994)</h3>
+      <p class="archive-id">IMG_1242</p>
+      <p>
+        Fax from Laser Applications, Inc. filled with repeating &ldquo;FUMEE&rdquo;
+        (French: &ldquo;smoke&rdquo;). A stencil cutting proof with thematic
+        fill text resonating with concealment themes.
+      </p>
+    </div>
+  </div>
+
+  <div class="archive-item">
+    <div class="archive-img-wrap">
+      <a href="/static/archive/IMG_1540.jpg" target="_blank">
+        <img src="/static/archive/IMG_1540.jpg" alt="Repeating Russian word OBMAN meaning deception filling entire page" loading="lazy">
+      </a>
+    </div>
+    <div class="archive-caption">
+      <h3>&ldquo;OBMAN&rdquo; (Deception) Repeating Text</h3>
+      <p class="archive-id">IMG_1540</p>
+      <p>
+        Stencil sheet with repeating Russian &ldquo;&#1054;&#1041;&#1052;&#1040;&#1053;&rdquo;
+        (OBMAN = &ldquo;deception&rdquo;). Handwritten notes: &ldquo;bowl exactly
+        same,&rdquo; &ldquo;SVET&rdquo; (light), &ldquo;FUME.&rdquo;
+        Deception as fill text alongside smoke.
+      </p>
+    </div>
+  </div>
+
+  <div class="archive-item">
+    <div class="archive-img-wrap">
+      <a href="/static/archive/IMG_1541.jpg" target="_blank">
+        <img src="/static/archive/IMG_1541.jpg" alt="Waterjet cutting invoice for copper plate with Russian decoding chart reference" loading="lazy">
+      </a>
+    </div>
+    <div class="archive-caption">
+      <h3>Waterjet Invoice: Copper Plate</h3>
+      <p class="archive-id">IMG_1541</p>
+      <p>
+        July 1994 invoice: &ldquo;Waterjet cutting of 3/16&Prime; Copper plate,&rdquo;
+        48&Prime; diameter, &ldquo;For lines of text use Russian decoding chart
+        enclosed.&rdquo;
+      </p>
+    </div>
+  </div>
+
+
+</section>
+
+<!-- ═══ SECTION 8: NAVIGATION & COLOR SYMBOLISM ═══ -->
+<section id="navigation" class="archive-section">
+  <h2>9. Navigation &amp; Color Symbolism</h2>
+  <p class="section-intro">
+    Sanborn's detailed study of junction buoys, navigation markers, and port/starboard
+    color systems. The Kryptos color scheme (green copper patina, red granite, blue water
+    pool) maps to navigation colors. Junction buoys mark bifurcations: choosing
+    which path to take.
+  </p>
+
+  <div class="archive-item">
+    <div class="archive-img-wrap">
+      <a href="/static/archive/IMG_1428.jpg" target="_blank">
+        <img src="/static/archive/IMG_1428.jpg" alt="Junction buoy study: CAN ODD number black green light, NUN EVEN number red light, port and starboard diagram" loading="lazy">
+      </a>
+    </div>
+    <div class="archive-caption">
+      <h3>Junction Buoy Study</h3>
+      <p class="archive-id">IMG_1428</p>
+      <p>
+        Detailed study of junction buoys (bifurcation buoys):
+        Left: &ldquo;CAN ODD#&rdquo; (Black buoy, Green Light Flash).
+        Right: &ldquo;NUN EVEN#&rdquo; (Red buoy, Red Light Flash).
+        Below: boat diagram with Port (Red Lt) and Starboard (Green Lt).
+        Junction buoys mark a <strong>bifurcation</strong>: choosing which
+        channel to take. The arrow patterns resemble coding chart conventions.
+      </p>
+    </div>
+  </div>
+
+  <div class="archive-item">
+    <div class="archive-img-wrap">
+      <a href="/static/archive/IMG_1614.jpg" target="_blank">
+        <img src="/static/archive/IMG_1614.jpg" alt="Ships! Why are they red and green, Port and Starboard, Navigation, Storms at Sea, False readings" loading="lazy">
+      </a>
+    </div>
+    <div class="archive-caption">
+      <h3>&ldquo;Ships! Why Are They Red &amp; Green&rdquo;</h3>
+      <p class="archive-id">IMG_1614</p>
+      <p>
+        Sanborn's notes: &ldquo;Ships!&rdquo; &ldquo;Why are they Red &amp; Green,&rdquo;
+        &ldquo;Port &amp; Starboard,&rdquo; &ldquo;Navigation,&rdquo;
+        &ldquo;Storms at Sea,&rdquo; &ldquo;false readings,&rdquo; &ldquo;uncharted.&rdquo;
+        The green (copper patina) and red (granite) of the Kryptos installation
+        map directly to navigation port/starboard colors.
+        &ldquo;False readings&rdquo; resonates with the cryptographic concept of
+        misleading signals.
+      </p>
+    </div>
+  </div>
+
+
+</section>
+
+<!-- ═══ SECTION 9: CONCEPT, DESIGN & THEMES ═══ -->
+<section id="concept" class="archive-section">
+  <h2>10. Concept, Design &amp; Themes</h2>
+  <p class="section-intro">
+    Conceptual notes, coordinate work, thematic brainstorming, and design sketches
+    revealing the intellectual framework behind Kryptos.
+  </p>
+
+  <div class="archive-item">
+    <div class="archive-img-wrap">
+      <a href="/static/archive/IMG_1560.jpg" target="_blank">
+        <img src="/static/archive/IMG_1560.jpg" alt="Design sketch with note: Avoid the pitfall of the obvious" loading="lazy">
+      </a>
+    </div>
+    <div class="archive-caption">
+      <h3>&ldquo;Avoid the Pitfall of the Obvious&rdquo;</h3>
+      <p class="archive-id">IMG_1560</p>
+      <p>
+        Sanborn's design maxim. Below: sketches of sculptural forms including
+        a cylinder and star/compass element.
+      </p>
+    </div>
+  </div>
+
+  <div class="archive-item">
+    <div class="archive-img-wrap">
+      <a href="/static/archive/IMG_1561.jpg" target="_blank">
+        <img src="/static/archive/IMG_1561.jpg" alt="TRUTH brainstorming page with thematic dichotomy pairs" loading="lazy">
+      </a>
+    </div>
+    <div class="archive-caption">
+      <h3>&ldquo;TRUTH&rdquo; Thematic Pairs</h3>
+      <p class="archive-id">IMG_1561</p>
+      <p>
+        Dichotomy pairs: Shadow/Light, Truth/Lies, Fact/Fiction, Life/Death,
+        Light/Dark, Blue/Yellow Dichroic, Red/Green. Also: &ldquo;Filter Names:
+        French, English, Russian, Arabic, Chinese, Malay.&rdquo;
+      </p>
+    </div>
+  </div>
+
+  <div class="archive-item">
+    <div class="archive-img-wrap">
+      <a href="/static/archive/IMG_1574.jpg" target="_blank">
+        <img src="/static/archive/IMG_1574.jpg" alt="Thematic word list: secrecy, hiding, illusion, manipulation" loading="lazy">
+      </a>
+    </div>
+    <div class="archive-caption">
+      <h3>Thematic Word List</h3>
+      <p class="archive-id">IMG_1574</p>
+      <p>
+        &ldquo;Invisible Forces, Listening Devices, Communication, Secrecy, Hiding,
+        Manipulation, Security, Illusion.&rdquo;
+      </p>
+    </div>
+  </div>
+
+  <div class="archive-item">
+    <div class="archive-img-wrap">
+      <a href="/static/archive/IMG_1581.jpg" target="_blank">
+        <img src="/static/archive/IMG_1581.jpg" alt="Notes: balance between lodestone and meteorite, codes, mystery novel the shadow" loading="lazy">
+      </a>
+    </div>
+    <div class="archive-caption">
+      <h3>&ldquo;Balance Between Lodestone / Meteorite&rdquo;</h3>
+      <p class="archive-id">IMG_1581</p>
+      <p>
+        &ldquo;Codes, mystery novel &lsquo;the shadow,&rsquo; meteorites
+        &lsquo;messages&rsquo; coded &lsquo;where it landed,&rsquo; Balance between
+        lodestone / meteorite.&rdquo;
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SECTION 10: SCULPTURE, SITE DESIGN & BROADER CONTEXT ═══ -->
+<section id="sculpture-context" class="archive-section">
+  <h2>11. Sculpture, Site Design &amp; Broader Context</h2>
+  <p class="section-intro">
+    Concept sketches for the CIA courtyard installation, compass studies,
+    and related contextual documents.
+  </p>
+
+  <div class="archive-item archive-item-featured">
+    <div class="archive-img-wrap">
+      <a href="/static/archive/IMG_1587.jpg" target="_blank">
+        <img src="/static/archive/IMG_1587.jpg" alt="Original concept drawing for CIA installation showing Morse code tables with color annotations Red Cu Black" loading="lazy">
+      </a>
+    </div>
+    <div class="archive-caption">
+      <h3>Morse Tables Concept Drawing</h3>
+      <p class="archive-id">IMG_1587</p>
+      <p>
+        Sanborn's original concept sketch for the CIA courtyard installation showing
+        the distinctive V-shaped/triangular Morse code table elements. A material
+        cross-section at the bottom labels the layers: &ldquo;Red&rdquo; (granite),
+        &ldquo;Cu&rdquo; (copper), &ldquo;Black&rdquo; (stone). These color assignments
+        appear deliberate and meaningful. They also map to navigation marker colors
+        (red = port, green/copper patina = starboard), reinforcing the nautical
+        symbolism found elsewhere in the archive (see IMG_1428, IMG_1614).
+      </p>
+    </div>
+  </div>
+
+  <div class="archive-item">
+    <div class="archive-img-wrap">
+      <a href="/static/archive/IMG_1591.jpg" target="_blank">
+        <img src="/static/archive/IMG_1591.jpg" alt="CIA courtyard site plan sketch showing S-curve, walkways, and annotations Cells WPA Kirkpatrick GO CIA" loading="lazy">
+      </a>
+    </div>
+    <div class="archive-caption">
+      <h3>CIA Courtyard Site Plan</h3>
+      <p class="archive-id">IMG_1591</p>
+      <p>
+        Conceptual site plan for the Kryptos courtyard installation at CIA headquarters.
+        The S-curve copper panel is visible in the center, surrounded by walkways
+        and landscape elements (circles may indicate petrified wood or stone placement).
+        Annotations read &ldquo;Cells: W.P.A. Kirkpatrick&rdquo; and &ldquo;GO:
+        C.I.A.&rdquo; This sketch shows the spatial relationships between the
+        installation components.
+      </p>
+    </div>
+  </div>
+
+  <div class="archive-item">
+    <div class="archive-img-wrap">
+      <a href="/static/archive/IMG_1518.jpg" target="_blank">
+        <img src="/static/archive/IMG_1518.jpg" alt="Three compass roses with directional arrows radiating at specific angles on graph paper" loading="lazy">
+      </a>
+    </div>
+    <div class="archive-caption">
+      <h3>Compass Rose Studies</h3>
+      <p class="archive-id">IMG_1518</p>
+      <p>
+        Three hand-drawn compass roses on graph paper, each with N/S/E/W markers
+        and directional lines radiating at specific angles. The lines suggest
+        bearings or sight-lines rather than simple cardinal directions. The compass
+        rose is a physical element of the Kryptos installation (surrounding the pool);
+        these studies may reflect the design process for that element or encode
+        directional information.
+      </p>
+    </div>
+  </div>
+
+  <div class="archive-item">
+    <div class="archive-img-wrap">
+      <a href="/static/archive/IMG_1100.jpg" target="_blank">
+        <img src="/static/archive/IMG_1100.jpg" alt="Kryptos compass rose pool with alphabet around perimeter" loading="lazy">
+      </a>
+    </div>
+    <div class="archive-caption">
+      <h3>Compass Rose &amp; Pool</h3>
+      <p class="archive-id">IMG_1100</p>
+      <p>
+        The compass rose/pool element of the completed installation, with the
+        alphabet visible around its perimeter.
+      </p>
+    </div>
+  </div>
+
+  <div class="archive-item">
+    <div class="archive-img-wrap">
+      <a href="/static/archive/IMG_1152.jpg" target="_blank">
+        <img src="/static/archive/IMG_1152.jpg" alt="Installation description: perforated copper with text, light projection" loading="lazy">
+      </a>
+    </div>
+    <div class="archive-caption">
+      <h3>&ldquo;Perforated with Descriptive Text&rdquo;</h3>
+      <p class="archive-id">IMG_1152</p>
+      <p>
+        Description of another Sanborn installation using the same method as Kryptos:
+        &ldquo;perforated with descriptive text... Light from the sun will
+        pass through this map and project an enlarged image.&rdquo;
+      </p>
+    </div>
+  </div>
+
+  <div class="archive-item">
+    <div class="archive-img-wrap">
+      <a href="/static/archive/IMG_1492.jpg" target="_blank">
+        <img src="/static/archive/IMG_1492.jpg" alt="Newspaper article: Coded Creations, Inside Messages about Sanborn's work" loading="lazy">
+      </a>
+    </div>
+    <div class="archive-caption">
+      <h3>&ldquo;Coded Creations, Inside Messages&rdquo;</h3>
+      <p class="archive-id">IMG_1492</p>
+      <p>
+        Press article by Paul Richard: &ldquo;From CIA Secrets to the Corcoran,
+        Jim Sanborn's Room-Size [installations]...&rdquo; Mentions &ldquo;Code
+        Room&rdquo; and &ldquo;Listening Post&rdquo; installations, collectively
+        called &ldquo;Covert Obsolescence.&rdquo;
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="archive-about">
+  <h2>About This Collection</h2>
+  <p>
+    The <a href="https://www.aaa.si.edu/collections/jim-sanborn-papers-22298">Jim Sanborn papers</a>
+    are held at the Archives of American Art, a bureau of the Smithsonian Institution.
+    The selection presented here focuses on materials with direct or indirect relevance
+    to Kryptos and its encryption. Many additional pages (business notes, unrelated
+    installation documentation, and near-duplicate photos) were reviewed and excluded
+    to maintain research density.
+  </p>
+  <p>
+    <strong>How to help:</strong> If you notice something in these images that we've missed,
+    can provide a better transcription of any handwritten text, or can identify the
+    source of any quoted material, please email
+    <a href="mailto:contact@kryptosbot.com">contact@kryptosbot.com</a>.
+  </p>
+</section>
+{% endblock %}
