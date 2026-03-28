@@ -467,6 +467,7 @@ def _build_standalone_viewer(
       Built by <a href="/about-me/">Colin Patrick</a> &amp; <a href="https://claude.ai">Claude</a>
       &middot; <a href="https://github.com/jcolinpatrick/kryptos">Source</a>
       &middot; <a href="/terms/">Terms</a>
+      &middot; <a href="mailto:contact@internal.com">Contact</a>
       &middot; <a href="/report-error/">Report error</a>
     </p>
     <p><small>Not affiliated with the CIA, Jim Sanborn, Ed Scheidt, or the Kryptos Keepers. This site does not know the solution.</small></p>
@@ -616,6 +617,7 @@ def _build_cylinder_viewer(global_ctx: dict):
       Built by <a href="/about-me/">Colin Patrick</a> &amp; <a href="https://claude.ai">Claude</a>
       &middot; <a href="https://github.com/jcolinpatrick/kryptos">Source</a>
       &middot; <a href="/terms/">Terms</a>
+      &middot; <a href="mailto:contact@internal.com">Contact</a>
       &middot; <a href="/report-error/">Report error</a>
     </p>
     <p><small>Not affiliated with the CIA, Jim Sanborn, Ed Scheidt, or the Kryptos Keepers. This site does not know the solution.</small></p>
