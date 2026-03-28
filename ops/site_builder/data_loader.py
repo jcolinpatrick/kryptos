@@ -762,6 +762,64 @@ def load_all(
         else:
             seen_slugs[base] = 0
 
+    # 10) Humanize raw script-name titles for public display
+    for elim in site_elims:
+        elim.title = _humanize_title(elim)
+
     total = len(site_elims)
     print(f"\nTotal eliminations loaded: {total}")
     return site_elims, rq_coverage, research_questions, tier_assignments
+
+
+def _humanize_title(elim: SiteElimination) -> str:
+    """Convert raw script-name titles into readable descriptions for the public site.
+
+    Only transforms titles that look like raw IDs (e.g. E-AUTOKEY-BOOTSTRAP-00,
+    BLITZ-V7/RESULTS, e_csp_p23_w15_beau_01). Titles that already contain spaces
+    and lowercase words are left alone.
+    """
+    title = elim.title
+
+    # If title already has a colon with human text after it, extract that part
+    if ": " in title:
+        prefix, human_part = title.split(": ", 1)
+        # If the human part is meaningful (has spaces, mixed case), use it
+        if " " in human_part and not human_part.isupper():
+            return human_part[0].upper() + human_part[1:]
+
+    # Skip titles that already look human-readable
+    if " " in title and not title.isupper() and not title.startswith(("e_", "f_")):
+        return title
+
+    # Build a readable title from the description if available
+    desc = elim.description or ""
+    if desc and desc != title and len(desc) > 10:
+        # Use description as the title (truncated sensibly)
+        clean = desc.split(". ")[0]  # First sentence
+        if len(clean) > 100:
+            clean = clean[:97] + "..."
+        return clean[0].upper() + clean[1:] if clean else title
+
+    # Fall back to cleaning up the raw ID
+    clean = title
+    # Strip common prefixes
+    clean = re.sub(r"^[eEfF][-_]", "", clean)
+    # Strip version suffixes
+    clean = re.sub(r"[-_][vV]?\d+$", "", clean)
+    # Strip /RESULTS suffix
+    clean = re.sub(r"/RESULTS$", "", clean, flags=re.IGNORECASE)
+    # Replace separators with spaces
+    clean = clean.replace("_", " ").replace("-", " ")
+    # Collapse multiple spaces
+    clean = re.sub(r"\s+", " ", clean).strip()
+    # Title case, but preserve known acronyms
+    acronyms = {"vic", "ckm", "sa", "bcl", "csp", "mcmc", "ndyahr", "ita", "otp",
+                "xor", "gko", "dmpq", "tkas", "rs44"}
+    words = clean.split()
+    result = []
+    for w in words:
+        if w.lower() in acronyms:
+            result.append(w.upper())
+        else:
+            result.append(w.capitalize())
+    return " ".join(result) if result else title
