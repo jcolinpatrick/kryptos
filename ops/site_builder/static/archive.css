@@ -1,0 +1,204 @@
+/* Archive Research Photos page styles */
+
+.archive-intro {
+  font-size: var(--text-lg);
+  color: var(--text-secondary);
+  max-width: var(--content-width);
+  margin-bottom: var(--sp-8);
+  line-height: 1.7;
+}
+
+/* Legal disclaimer box */
+.archive-legal {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--amber);
+  border-radius: var(--radius-md);
+  padding: var(--sp-6);
+  margin-bottom: var(--sp-10);
+  max-width: var(--content-width);
+}
+.archive-legal h3 {
+  margin-top: 0;
+  margin-bottom: var(--sp-3);
+  font-size: var(--text-base);
+  color: var(--amber);
+}
+.archive-legal p {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  margin-bottom: var(--sp-3);
+  line-height: 1.65;
+}
+.archive-legal p:last-child {
+  margin-bottom: 0;
+}
+
+/* Table of contents — override base nav sticky positioning */
+.archive-toc {
+  position: static;
+  z-index: auto;
+  height: auto;
+  display: block;
+  border-bottom: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--sp-6);
+  margin-bottom: var(--sp-12);
+  max-width: 480px;
+}
+.archive-toc h2 {
+  margin-top: 0;
+  margin-bottom: var(--sp-3);
+  font-size: var(--text-base);
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.archive-toc ol {
+  margin: 0;
+  padding-left: var(--sp-6);
+  display: block;
+  flex-direction: unset;
+}
+.archive-toc ul {
+  display: block;
+  list-style: none;
+}
+.archive-toc li {
+  margin-bottom: var(--sp-2);
+}
+.archive-toc a,
+.archive-toc a:visited {
+  color: var(--accent);
+  text-decoration: none;
+}
+.archive-toc a:hover {
+  text-decoration: underline;
+}
+
+/* Sections */
+.archive-section {
+  margin-bottom: var(--sp-16);
+}
+.archive-section h2 {
+  font-size: var(--text-2xl);
+  margin-bottom: var(--sp-2);
+  padding-bottom: var(--sp-3);
+  border-bottom: 1px solid var(--border);
+}
+.section-intro {
+  color: var(--text-secondary);
+  margin-bottom: var(--sp-8);
+  max-width: var(--content-width);
+  line-height: 1.65;
+}
+
+/* Individual archive items */
+.archive-item {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sp-8);
+  align-items: start;
+  margin-bottom: var(--sp-10);
+  padding-bottom: var(--sp-10);
+  border-bottom: 1px solid var(--border-subtle, rgba(255,255,255,0.06));
+}
+.archive-item:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+/* Featured items get a subtle highlight */
+.archive-item-featured {
+  background: var(--surface);
+  border: 1px solid var(--accent-muted, rgba(56, 189, 248, 0.2));
+  border-radius: var(--radius-lg);
+  padding: var(--sp-6);
+  margin-left: calc(-1 * var(--sp-6));
+  margin-right: calc(-1 * var(--sp-6));
+}
+
+/* Image wrapper */
+.archive-img-wrap {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+.archive-img-wrap a {
+  display: block;
+  cursor: zoom-in;
+}
+.archive-img-wrap img {
+  width: 100%;
+  height: auto;
+  display: block;
+  transition: transform var(--transition);
+}
+.archive-img-wrap img:hover {
+  transform: scale(1.02);
+}
+
+/* Caption */
+.archive-caption h3 {
+  margin-top: 0;
+  margin-bottom: var(--sp-2);
+  font-size: var(--text-lg);
+}
+.archive-id {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+  margin-bottom: var(--sp-3);
+}
+.archive-caption p {
+  color: var(--text-secondary);
+  line-height: 1.65;
+  margin-bottom: var(--sp-3);
+}
+.archive-caption blockquote {
+  border-left: 3px solid var(--accent);
+  padding-left: var(--sp-4);
+  margin: var(--sp-4) 0;
+  font-style: italic;
+  color: var(--text-primary);
+}
+
+/* About section at bottom */
+.archive-about {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--sp-8);
+  margin-top: var(--sp-12);
+  max-width: var(--content-width);
+}
+.archive-about h2 {
+  margin-top: 0;
+}
+.archive-about p {
+  color: var(--text-secondary);
+  line-height: 1.65;
+}
+
+/* Responsive: stack on mobile */
+@media (max-width: 768px) {
+  .archive-item {
+    grid-template-columns: 1fr;
+    gap: var(--sp-4);
+  }
+  .archive-item-featured {
+    margin-left: 0;
+    margin-right: 0;
+    padding: var(--sp-4);
+  }
+  .archive-section h2 {
+    font-size: var(--text-xl);
+  }
+}
