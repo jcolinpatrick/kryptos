@@ -306,6 +306,10 @@ def build():
     )
     pages_built += 1
 
+    # Archive Research Photos
+    _render(env, "archive.html", "archive/index.html", global_ctx)
+    pages_built += 1
+
     # Report error
     _render(env, "report_error.html", "report-error/index.html", global_ctx)
     pages_built += 1
@@ -446,6 +450,7 @@ def _build_standalone_viewer(
       <li><a href="/k3-jefferson-viewer/">K3 Jefferson</a></li>
       <li><a href="/submit/">Submit</a></li>
       <li><a href="/faq/">FAQ</a></li>
+      <li><a href="/archive/">Archive Photos</a></li>
       <li><a href="/about-kryptos/">About</a></li>
     </ul>
   </nav>
@@ -580,6 +585,7 @@ def _build_cylinder_viewer(global_ctx: dict):
       <li><a href="/k3-jefferson-viewer/">K3 Jefferson</a></li>
       <li><a href="/submit/">Submit</a></li>
       <li><a href="/faq/">FAQ</a></li>
+      <li><a href="/archive/">Archive Photos</a></li>
       <li><a href="/about-kryptos/">About</a></li>
     </ul>
   </nav>
@@ -758,6 +764,7 @@ def _write_sitemap(eliminations: list, tree: dict, output_dir: str):
         ("/cylinder-viewer/", "0.5", "monthly"),
         ("/faq/", "0.4", "monthly"),
         ("/about-kryptos/", "0.5", "monthly"),
+        ("/archive/", "0.7", "monthly"),
         ("/about-me/", "0.3", "monthly"),
         ("/terms/", "0.1", "yearly"),
     ]
