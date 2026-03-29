@@ -439,15 +439,20 @@ def _build_standalone_viewer(
       <span></span><span></span><span></span>
     </label>
     <ul class="nav-links">
-      <li><a href="/browse/">Eliminations</a></li>
-      <li><a href="/methodology/">Methodology</a></li>
-      <li><a href="/research-questions/">Research</a></li>
       <li><a href="/findings/">Findings</a></li>
-      <li><a href="/workbench/">Workbench</a></li>
-      <li><a href="/vic-workbench/">VIC Cipher</a></li>
-      <li><a href="/cylinder-viewer/">Cylinder</a></li>
-      <li><a href="/polybius-walk/">Polybius Walk</a></li>
-      <li><a href="/k3-jefferson-viewer/">K3 Jefferson</a></li>
+      <li><a href="/browse/">Eliminations</a></li>
+      <li><a href="/methodology/">How We Test</a></li>
+      <li><a href="/research-questions/">Open Questions</a></li>
+      <li class="nav-group">
+        <a href="/workbench/" class="nav-group-label">Tools</a>
+        <ul class="nav-dropdown">
+          <li><a href="/workbench/">Cipher Workbench</a></li>
+          <li><a href="/vic-workbench/">VIC Cipher</a></li>
+          <li><a href="/cylinder-viewer/">Cylinder Viewer</a></li>
+          <li><a href="/polybius-walk/">Polybius Walk</a></li>
+          <li><a href="/k3-jefferson-viewer/">K3 Jefferson</a></li>
+        </ul>
+      </li>
       <li><a href="/submit/">Submit</a></li>
       <li><a href="/faq/">FAQ</a></li>
       <li><a href="/archive/">Archive Photos</a></li>
@@ -575,15 +580,20 @@ def _build_cylinder_viewer(global_ctx: dict):
       <span></span><span></span><span></span>
     </label>
     <ul class="nav-links">
-      <li><a href="/browse/">Eliminations</a></li>
-      <li><a href="/methodology/">Methodology</a></li>
-      <li><a href="/research-questions/">Research</a></li>
       <li><a href="/findings/">Findings</a></li>
-      <li><a href="/workbench/">Workbench</a></li>
-      <li><a href="/vic-workbench/">VIC Cipher</a></li>
-      <li><a href="/cylinder-viewer/">Cylinder</a></li>
-      <li><a href="/polybius-walk/">Polybius Walk</a></li>
-      <li><a href="/k3-jefferson-viewer/">K3 Jefferson</a></li>
+      <li><a href="/browse/">Eliminations</a></li>
+      <li><a href="/methodology/">How We Test</a></li>
+      <li><a href="/research-questions/">Open Questions</a></li>
+      <li class="nav-group">
+        <a href="/workbench/" class="nav-group-label">Tools</a>
+        <ul class="nav-dropdown">
+          <li><a href="/workbench/">Cipher Workbench</a></li>
+          <li><a href="/vic-workbench/">VIC Cipher</a></li>
+          <li><a href="/cylinder-viewer/">Cylinder Viewer</a></li>
+          <li><a href="/polybius-walk/">Polybius Walk</a></li>
+          <li><a href="/k3-jefferson-viewer/">K3 Jefferson</a></li>
+        </ul>
+      </li>
       <li><a href="/submit/">Submit</a></li>
       <li><a href="/faq/">FAQ</a></li>
       <li><a href="/archive/">Archive Photos</a></li>
