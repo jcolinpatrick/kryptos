@@ -115,6 +115,11 @@ verdict = "NOISE"
 [elimination.E-PLAYFAIR-01]
 verdict = "ELIMINATED"
 
+# INTERESTING → NOISE: Berlin Clock Route only found 2-letter "CK"
+# fragment matches, which is pure noise for a 24-letter crib.
+[elimination.e_berlin_clock_route]
+verdict = "NOISE"
+
 # INTERESTING (16/24) → NOISE: E-HYBRID-02 score of 16/24 is below
 # the 18/24 SIGNAL threshold and consistent with noise at high periods.
 [elimination.E-HYBRID-02]
@@ -497,7 +502,7 @@ scope_limitations = "Only tests primer lengths ≤13. Longer primers or non-stan
 assumptions = "Autokey cipher with short primer; Optional columnar transposition; Standard crib positions"
 confidence_tier = 2
 truth_tag = "[INTERNAL RESULT]"
-verdict = "NOISE: max 9/24 = binomial expectation"
+verdict = "NOISE"
 configs_tested = 7900000
 
 [elimination.E-WCLUSTERING-TRANS]
@@ -509,7 +514,7 @@ scope_limitations = "Only tests single-layer transpositions. Double transpositio
 assumptions = "W's were contiguous in original plaintext and separated by transposition"
 confidence_tier = 2
 truth_tag = "[INTERNAL RESULT]"
-verdict = "RULED OUT: no single-layer transposition clusters all 5 W's"
+verdict = "NOISE"
 configs_tested = 62000
 
 [elimination.E-PRODUCT-W9-EXHAUSTIVE]
@@ -521,7 +526,7 @@ scope_limitations = "Only width-9 columnar. Other widths tested in product_gener
 assumptions = "Width-9 columnar transposition; Periodic or autokey substitution; Standard alphabets"
 confidence_tier = 2
 truth_tag = "[INTERNAL RESULT]"
-verdict = "NO SIGNAL: best 9/24 (autokey noise)"
+verdict = "NOISE"
 configs_tested = 47174400
 
 [elimination.E-PRODUCT-GENERAL]
@@ -533,7 +538,7 @@ scope_limitations = "Only keyword-derived column orderings. Arbitrary orderings 
 assumptions = "Keyword-derived columnar transposition; Periodic substitution; Thematic keywords"
 confidence_tier = 2
 truth_tag = "[INTERNAL RESULT]"
-verdict = "HARD ELIMINATION: 0 crib hits across all configs"
+verdict = "NOISE"
 configs_tested = 7326
 
 [elimination.E-RUNKEY-CARTER]
@@ -545,7 +550,7 @@ scope_limitations = "Only tests Howard Carter's published works. Other running k
 assumptions = "Running key from Carter book text; Optional keyword-derived columnar transposition"
 confidence_tier = 2
 truth_tag = "[INTERNAL RESULT]"
-verdict = "NOISE: max 7/24 direct, 9/24 with transposition"
+verdict = "NOISE"
 
 [elimination.E-RUNKEY-K123]
 title = "Running-key crib-drag on K1-K3 plaintext (with and without transposition)"
@@ -556,7 +561,7 @@ scope_limitations = "Only tests K1-K3 plaintext as running key. Does not elimina
 assumptions = "Running key from K1-K3 plaintext passages; Optional keyword-derived columnar transposition"
 confidence_tier = 2
 truth_tag = "[INTERNAL RESULT]"
-verdict = "NOISE: max 5/24 direct, 6/24 with transposition"
+verdict = "NOISE"
 
 [elimination.E-NULLMASK-PERIODIC]
 title = "Null mask + periodic substitution (periods 1-23): algebraic impossibility proof"
@@ -567,7 +572,7 @@ scope_limitations = "Only eliminates periodic substitution after null removal. N
 assumptions = "24 null positions removed from 97-char CT; Periodic substitution on resulting 73 chars; Cribs at stated positions shift after null removal"
 confidence_tier = 1
 truth_tag = "[DERIVED FACT]"
-verdict = "ALGEBRAICALLY IMPOSSIBLE: all (n1,n2,n3) triples fail at periods 1-23"
+verdict = "ELIMINATED"
 
 # ── Session 2026-03-12: 73-char column mask deep investigation ───────────
 
@@ -580,7 +585,7 @@ scope_limitations = "Only tests autokey on column-mask-extracted 73-char text. O
 assumptions = "Column mask removes cols 8-16 minus one kept col; Shifted crib positions; Standard autokey PT/CT feedback"
 confidence_tier = 2
 truth_tag = "[INTERNAL RESULT]"
-verdict = "NOISE: max 6/24 across 46,170 configs"
+verdict = "NOISE"
 configs_tested = 46170
 repro_command = "PYTHONPATH=src python3 -u scripts/grille/e_column_mask_autokey_01.py"
 
@@ -593,7 +598,7 @@ scope_limitations = "Only tests functions of (row, col). Does not test arbitrary
 assumptions = "28×31 grid coordinates; Column mask null removal; Key is a deterministic function of grid position"
 confidence_tier = 2
 truth_tag = "[INTERNAL RESULT]"
-verdict = "NOISE: max 5/24. Key ≠ f(row,col)"
+verdict = "NOISE"
 configs_tested = 3726
 repro_command = "PYTHONPATH=src python3 -u scripts/grille/e_grid_coordinate_keys_01.py"
 
