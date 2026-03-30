@@ -347,7 +347,7 @@ def build():
     for fname in os.listdir(STATIC_DIR):
         src = os.path.join(STATIC_DIR, fname)
         # robots.txt and Google verification files go to site root, not /static/
-        if fname == "robots.txt" or fname.startswith("google") and fname.endswith(".html"):
+        if fname in ("robots.txt", "favicon.ico") or fname.startswith("google") and fname.endswith(".html"):
             shutil.copy2(src, os.path.join(OUTPUT_DIR, fname))
             print(f"  {fname} (→ site root)")
             continue
@@ -422,7 +422,8 @@ def _build_standalone_viewer(
   <meta property="og:title" content="{title}">
   <meta property="og:site_name" content="kryptosbot.com">
   <meta property="og:image" content="https://kryptosbot.com/static/kryptosbot-og.jpg">
-  <link rel="icon" type="image/png" href="/static/kryptosbot.png">
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" type="image/webp" href="/static/kryptosbot.webp">
   <link rel="stylesheet" href="/static/fonts/fonts.css">
   <link rel="stylesheet" href="/static/style.css">
   <link rel="stylesheet" href="/static/{css_file}">
@@ -436,7 +437,7 @@ def _build_standalone_viewer(
 
   <nav>
     <ul>
-      <li><strong><a href="/" class="nav-brand"><img src="/static/kryptosbot.png" alt="" class="nav-logo">kryptosbot</a></strong></li>
+      <li><strong><a href="/" class="nav-brand"><img src="/static/kryptosbot.webp" alt="" class="nav-logo">kryptosbot</a></strong></li>
     </ul>
     <input type="checkbox" id="nav-toggle" class="nav-toggle" aria-label="Toggle navigation">
     <label for="nav-toggle" class="nav-toggle-label" aria-hidden="true">
@@ -511,7 +512,8 @@ def _build_cylinder_viewer(global_ctx: dict):
         '<meta name="description" content="kryptosbot.com | The K4 Elimination Database.">\n'
         '<link rel="stylesheet" href="/static/fonts/fonts.css">\n'
         '<link rel="stylesheet" href="/static/style.css">\n'
-        '<link rel="icon" type="image/png" href="/static/kryptosbot.png">\n'
+        '<link rel="icon" href="/favicon.ico" sizes="any">\n'
+        '<link rel="icon" type="image/webp" href="/static/kryptosbot.webp">\n'
     )
     html = html.replace('<title>Kryptos Cylinder Viewer</title>', f'<title>Cylinder Viewer | kryptosbot.com</title>\n{site_head}', 1)
 
@@ -577,7 +579,7 @@ def _build_cylinder_viewer(global_ctx: dict):
 
   <nav>
     <ul>
-      <li><strong><a href="/" class="nav-brand"><img src="/static/kryptosbot.png" alt="" class="nav-logo">kryptosbot</a></strong></li>
+      <li><strong><a href="/" class="nav-brand"><img src="/static/kryptosbot.webp" alt="" class="nav-logo">kryptosbot</a></strong></li>
     </ul>
     <input type="checkbox" id="nav-toggle" class="nav-toggle" aria-label="Toggle navigation">
     <label for="nav-toggle" class="nav-toggle-label" aria-hidden="true">

@@ -9,10 +9,66 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 3. Read MEMORY.md (auto-loaded) — decision-support index; topic files in `memory/` are on-demand
 4. If the task matches anything already disproved or tested → **STOP, tell the user, do NOT re-run**
 5. `run_attack.py --list --verbose | grep KEYWORD` — search before writing new code; also check `results/` and `exhaustion_log.json`
+6. **If the task involves CPU-bound work**: `bash scripts/vm_capability_report.sh` — establish runtime capabilities (see [Compute Environment](#compute-environment--high-power-vm-mandatory))
 
 Skipping these steps and re-testing an eliminated hypothesis wastes 28 CPU cores and burns API tokens for zero value.
 
 This repo has one purpose: determine the **true plaintext** and the **full encryption method** of **Kryptos K4**.
+
+---
+
+## Compute Environment — High-Power VM (MANDATORY)
+
+This project runs on a **dedicated high-capability VM**. All computational work must be planned accordingly. Do NOT write single-threaded scripts for parallelizable workloads.
+
+### Default runtime assumptions
+
+| Resource | Value |
+|----------|-------|
+| vCPUs | ~28 |
+| RAM | ~12 GB |
+| Swap | ~8 GB |
+| Disk | Fast local (check `df -h`) |
+| Python venv | `/home/cpatrick/kryptos/venv/` |
+| Capability report | `bash scripts/vm_capability_report.sh` |
+
+Treat this as the default runtime context. Do not behave as if this is a constrained laptop or sandbox unless a fresh capability check proves otherwise.
+
+### Session-start capability check
+
+At the beginning of each session involving CPU-bound work (brute force, Monte Carlo, SA, parameter sweeps, corpus processing, scoring, batch analysis), run:
+
+```bash
+bash scripts/vm_capability_report.sh
+```
+
+The report output is **authoritative session runtime state**, not informational text. Use the reported vCPU count, available RAM, and disk space to size worker pools, batch sizes, and checkpoint intervals.
+
+### Multi-core execution policy
+
+**[POLICY] For CPU-bound, safely parallelizable workloads, aggressive multi-core execution is the DEFAULT, not an optional enhancement.**
+
+- Use `multiprocessing.Pool` (or equivalent) for independent SA restarts, parameter sweeps, candidate evaluations, Monte Carlo trials, and corpus scans.
+- Worker count: `max(1, cpu_count() - 2)` is the standard default. Deviate only for documented reasons (memory pressure, I/O contention, algorithmic dependencies).
+- **Single-threaded execution of parallelizable work requires explicit justification.** "I forgot" or "it's simpler" are not justifications.
+
+### Compute planning (before writing heavy scripts)
+
+Before implementing any CPU-bound or batch script, produce an execution plan covering:
+
+1. **Workload type**: CPU-bound, I/O-bound, or mixed
+2. **Parallelization**: Is `multiprocessing` appropriate? If not, why?
+3. **Worker count**: Default and rationale for deviation
+4. **Batching**: How work is chunked for progress reporting
+5. **Checkpointing**: Can interrupted runs resume? (Required for jobs >10 min)
+6. **Memory**: Estimated per-worker footprint × worker count vs. available RAM
+7. **Storage**: Output format, estimated size, WAL mode for SQLite if applicable
+
+### What this policy does NOT mean
+
+- It does NOT mean "always use 28 workers." Overhead, memory, I/O bottlenecks, and algorithmic structure can justify fewer.
+- It does NOT apply to quick one-off tests, smoke tests, or scripts that complete in <30 seconds.
+- It does NOT override correctness. A parallel implementation that's buggy is worse than a correct serial one.
 
 **Contents:** [K4 Quick Reference](#the-k4-problem--quick-reference) · [Dev Setup & Commands](#development-setup--commands) · [Architecture](#architecture) · [Operations](#operations--deployment) · [Scores](#interpreting-scores) · [Gotchas](#key-gotchas) · [Truth Taxonomy](#truth-taxonomy-mandatory) · [Reference Docs](#reference-documents) · [Multi-Agent](#multi-agent-mode--solve-k4)
 
