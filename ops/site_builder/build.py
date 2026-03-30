@@ -214,6 +214,10 @@ def build():
     })
     pages_built += 1
 
+    # Submission Status
+    _render(env, "status.html", "status/index.html", global_ctx)
+    pages_built += 1
+
     # Methodology
     try:
         from kryptos.kernel.constants import CT
@@ -771,6 +775,7 @@ def _write_sitemap(eliminations: list, tree: dict, output_dir: str):
         ("/recent/", "0.8", "daily"),
         ("/search/", "0.5", "monthly"),
         ("/submit/", "0.6", "monthly"),
+        ("/status/", "0.3", "monthly"),
         ("/workbench/", "0.6", "monthly"),
         ("/vic-workbench/", "0.5", "monthly"),
         ("/cylinder-viewer/", "0.5", "monthly"),
