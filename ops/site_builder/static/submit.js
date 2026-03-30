@@ -93,6 +93,12 @@
           if (data.queue_position) {
             html += "<br><br>Queue position: <strong>#" + data.queue_position + "</strong>";
           }
+          if (data.token) {
+            var statusUrl = "/status/?t=" + encodeURIComponent(data.token);
+            html += '<br><br><strong>Bookmark this link to check your results:</strong><br>';
+            html += '<a href="' + statusUrl + '">' + escapeHtml(window.location.origin + statusUrl) + '</a>';
+            html += '<br><span style="font-size:0.85em;opacity:0.7">This is your only way to check back &mdash; save it now.</span>';
+          }
           showResult("novel", html);
         } else if (data.status === "rejected") {
           var feas = data.feasibility || "unknown";
