@@ -1,15 +1,21 @@
-# What We Found Hidden Inside Kryptos K4
+# Statistical Observations on Kryptos K4 Null Positions
 
 **By Colin Patrick & Claude (KryptosBot)**
-**March 2026**
+**March 2026 — Revised March 31, 2026 (evidence-hardening pass)**
+
+> **Evidentiary status:** This document describes model-conditional statistical observations.
+> All findings depend on a specific cipher model (KA-autokey Vigenère) and have not been
+> independently validated by a model-free method. The candidate null positions shift
+> dramatically across cipher models (Jaccard overlap 0.161). Nothing here is proven —
+> these are observations that may or may not reflect how K4 was actually constructed.
 
 ---
 
 ## The Short Version
 
-We've spent months computationally attacking Kryptos K4 — over 880 experiments, 669 billion configurations tested. We didn't crack it. But we found something nobody has published before: **strong evidence that K4 uses a hidden layer of filler characters, and we can identify most of them.**
+We've tested over 880 experiments and 669 billion configurations against K4. We didn't crack it. Under one specific cipher model (KA-autokey Vigenère), we found a statistically unusual pattern: candidate filler positions use only 7 of 26 possible letters (p ≈ 1/16,000). This pattern is specific to K4's actual letter ordering (shuffled-CT test: 0/500).
 
-If you care about solving K4, this matters. It means the 97 characters carved on the sculpture aren't all "real" — roughly 24 of them are decoys. We think we know which ones, and the pattern they follow has some surprising properties.
+However, the candidate positions are **model-dependent** — different cipher models produce different positions. We do not know whether K4 actually contains filler characters.
 
 ---
 
@@ -27,15 +33,15 @@ Jim Sanborn has said K4 uses "two systems of enciphering" — meaning it isn't j
 
 Imagine you write a secret message, encrypt it, and get 73 characters of ciphertext. Then you insert 24 extra "filler" characters at specific positions, bringing the total to 97. Someone trying to crack it would be working with 97 characters, not knowing that 24 of them are meaningless noise.
 
-That's what we believe K4 does. And the evidence is surprisingly strong.
+That's the working model for K4. The statistical evidence is unusual but model-dependent.
 
-## Finding #1: The Seven Letters
+## Observation #1: The Seven Letters
 
-When we analyzed which characters appear at positions that are likely filler, a striking pattern emerged: **the filler characters use only 7 of the 26 possible letters.**
+Under a KA-autokey Vigenère model, simulated annealing identifies 17 candidate filler positions that use only 7 of 26 letters: **B, G, I, K, O, W, Z**.
 
-Those seven letters are: **B, G, I, K, O, W, Z**
+The probability of this restriction under a permutation test (10M trials): **p ≈ 6.25 × 10⁻⁵ (~1 in 16,000)**. A shuffled-ciphertext test confirmed this depends on K4's actual letter ordering (0/500, p < 0.002).
 
-Out of the 17 filler positions we're most confident about, every single one is one of these seven letters. The probability of that happening by chance — shuffling K4's letters and finding only 7 distinct values at the 17 null positions — is about **1 in 33,000** (permutation test, 10M trials, p ≈ 3.0 × 10⁻⁵). Under a uniform model (Stirling numbers, exact): p = 7.78 × 10⁻⁵ (~1 in 12,859).
+**Critical caveat:** The 17 positions were identified using a specific cipher model. Different cipher models produce different candidate positions (average Jaccard overlap: 0.161). The palette restriction is real under this model but may not be intrinsic to K4.
 
 These aren't random letters. On the KRYPTOS alphabet grid (the alphabet rearranged starting with K-R-Y-P-T-O-S), these seven letters sit in two specific columns:
 
@@ -51,33 +57,29 @@ row 5:  [Z]
 
 The seven letters (marked in brackets) are exactly **columns 0 and 3** of this grid. This isn't something we went looking for — the grid connection emerged after we identified the seven letters from a completely different analysis.
 
-## Finding #2: Independent Confirmation from Dr. Richard Bean
+## Observation #2: Keystream Enrichment (Bean's Grid Structure)
 
-Here's where it gets interesting. Dr. Richard Bean, a mathematician at the University of Queensland, published a paper on K4 in 2021 (HistoCrypt conference). Working completely independently, he noticed something about the known crib positions: **13 out of 24 keystream values are divisible by 5** when computed using a reversed version of the KRYPTOS alphabet.
+Dr. Richard Bean (University of Queensland) published a 2021 HistoCrypt paper noting that 13 of 24 Beaufort keystream values at crib positions are divisible by 5 in the KA alphabet — i.e., they fall in column 0 of a 5-wide grid. This is the same grid structure observed in the null palette.
 
-"Divisible by 5" in an alphabet grid means "sitting in column 0." Bean was seeing the same column structure from a different angle — he was looking at the encryption layer, we were looking at the filler layer, and both point to the same five-column grid.
+A joint simulation (50M shuffled ciphertexts) found that both observations co-occurring has a probability of roughly 1 in 7 million (p ≈ 1.4 × 10⁻⁷).
 
-To measure the combined significance properly, we used direct simulation rather than statistical formulas. We shuffled the 97 ciphertext letters randomly 50 million times and checked: how often does a shuffled K4 produce BOTH a restricted filler palette (≤7 distinct letters) AND keystream enrichment for that palette (≥13/24 hits)?
+**Important caveats:**
+- Both the palette restriction and the keystream enrichment depend on the same family of cipher models (KA-mixed Beaufort/Vigenère). They are not fully independent observations.
+- Bean's observation is specific to Beaufort A=0 arithmetic. Vigenère gives 9/24, Variant Beaufort gives 5/24. This is consistent with Beaufort but does not prove it.
+- The joint p-value was computed post-hoc, after both observations were known. It was not a pre-registered test.
+- "Two researchers, same structure" does not mean independent confirmation — both are analyzing the same 97-character ciphertext with related mathematical operations.
 
-**Answer: 7 times out of 50 million.** That's a probability of about **1 in 7 million** (p = 1.4 × 10⁻⁷).
+## Observation #2a: Beaufort Specificity
 
-Crucially, among the 1,405 shuffles that DID produce a restricted palette, the average keystream enrichment was 6.6 out of 24 — essentially random chance. Only 7 of those 1,405 also produced keystream enrichment at the level we observe in K4. Having a restricted palette does NOT automatically create keystream enrichment. The two phenomena are genuinely independent in K4's ciphertext.
+The keystream enrichment is variant-specific: Beaufort (CT + PT mod 26) gives 13/24 palette hits, Vigenère (CT - PT mod 26) gives 9/24, Variant Beaufort (PT - CT mod 26) gives 5/24. Only Beaufort A=0 produces the concentration.
 
-Two researchers, different years, different methods, same structure. And the combined evidence is stronger than either finding alone.
+This is consistent with Beaufort but does not prove it. Sanborn told the New York Times in 2010 that he used "a tableaux slightly different from the one on Kryptos," which could refer to Beaufort but also to other modifications.
 
-## Finding #2.5: Only Beaufort, Not Vigenère
+Verification: compute (CT[i] + PT[i]) mod 26 at each crib position (A=0) and count palette hits.
 
-The keystream enrichment is highly specific to the cipher variant. K4's Beaufort keystream (CT + PT mod 26) gives 13/24 palette hits. The Vigenère keystream (CT - PT mod 26) gives only 9/24. Variant Beaufort (PT - CT mod 26) gives 5/24. Only Beaufort A=0 produces the concentration.
+## Observation #3: The 14-Column Grid (Exploratory)
 
-This strongly suggests the cipher layer uses Beaufort rather than Vigenère — a related cipher that uses the same tableau read in a different direction. Sanborn told the New York Times in 2010 that he used "a tableaux slightly different from the one on Kryptos," which is consistent with switching from Vigenère (used for K1–K2) to Beaufort.
-
-Anyone can verify this: compute (CT[i] + PT[i]) mod 26 at each crib position (A=0, B=1, ..., Z=25), and count how many results are in {B, G, I, K, O, W, Z}. Then try (CT[i] - PT[i]) mod 26 and compare.
-
-## Finding #3: The 14-Column Grid
-
-This is our newest finding and perhaps the most actionable.
-
-97 is a prime number — it doesn't divide neatly into a rectangle. But 98 does: **98 = 7 × 14**. If K4 has one delimiter character (bringing it to 98), it fits perfectly in a grid with 7 rows and 14 columns.
+97 is prime and doesn't divide neatly. 98 = 7 × 14. If K4 has one delimiter character (bringing it to 98), it fits in a 7 × 14 grid.
 
 Why 14? Because:
 - The K3 code chart (Sanborn's working sheet for section 3) has **14 columns**
@@ -89,20 +91,15 @@ When we arrange K4 in this 7×14 grid and look at where the filler letters fall,
 - Left 7 columns: **55% filler letters**
 - Right 7 columns: **17% filler letters**
 
-We tested every other possible grid width from 2 to 48. **Only width 14 shows this effect.** After correcting for testing all those widths, the probability of this happening by chance is still only about **1 in 13,500**.
+We tested grid widths from 2 to 48. Width 14 shows the strongest left-right asymmetry in palette-letter density (p ≈ 1/13,500 after Bonferroni correction for all widths tested).
 
-This tells us Sanborn almost certainly arranged K4 on a 14-column working sheet — matching the K3 chart. The filler characters cluster on the left side of that sheet.
+This is consistent with a 14-column working sheet but does not prove it. The observation is model-conditional (depends on which positions are "null") and was found by searching across all widths (post-hoc).
 
-## Finding #4: The Improved Classification Table
+## Observation #4: The 14×5 Classification Table (Exploratory, No Predictive Power)
 
-Using the 14-column grid, we can build a table that classifies almost every filler letter perfectly.
+A 14×5 lookup table (pos mod 14 × pos mod 5) classifies 28 of 29 palette-letter cells unambiguously as null or real, with only 1 mixed cell.
 
-The table uses two coordinates: the position's column within a 14-column grid (pos mod 14) and a secondary cycle of 5 (pos mod 5). Together they create a 14×5 lookup table. Of the 29 cells where filler letters appear:
-
-- **28 cells are unambiguous** — every filler letter in that cell is ALWAYS filler, or ALWAYS real
-- **Only 1 cell is mixed** (positions 0 and 70 — the very first character and one near the end)
-
-The previous best model (using a 7×5 table) had 3 ambiguous cells. The 14×5 model is strictly better.
+**Status:** Like the 7×5 KRYPTOS × SEVEN table, this is a post-hoc descriptive fit. Cross-validation has not been performed on this variant, but given that the simpler 7×5 table has zero predictive power, it is unlikely that the 14×5 table (which has more free parameters) would do better. This is retained as an exploratory observation, not a finding.
 
 ## What This Doesn't Tell Us
 
@@ -118,35 +115,23 @@ We want to be honest about the limits:
 
 5. **All findings are post-hoc.** Every pattern reported here was discovered through exploratory analysis of the data, not predicted in advance. The 50-million-trial simulation provides a rigorous combined significance, but the individual observations were not pre-registered. We have subjected every claim to adversarial statistical review (see the repository for the full audit), and the findings that survive are reported here.
 
-## What This Means for Solving K4
+## Implications (all conditional on the null model being correct)
 
-If our analysis is correct, the path forward looks like this:
+If — and this is a significant "if" — the null-insertion model is correct:
 
-1. **The cipher operates on about 73 characters**, not 97. This is a smaller, potentially more tractable problem.
+1. **The cipher would operate on about 73 characters**, not 97. The null positions and count remain uncertain.
 
-2. **The cipher is standard** — probably Beaufort (the same family used for K1–K3) with the KRYPTOS alphabet. We've eliminated every exotic cipher family: periodic substitution at all periods, autokey, running keys from dozens of text sources, Polybius-coordinate variants, Four-Square, VIC cipher, and many more.
+2. **The cipher type is unknown.** Periodic substitution is eliminated under direct correspondence. Running keys from 60,000+ public English texts produced no signal. The cipher could be Beaufort (consistent with Beaufort-specific keystream enrichment) but this is not proven.
 
-3. **The key is the bottleneck.** The cipher mechanism is likely simple, but the key is long (at least 24 characters) and high-entropy. It's probably not derived from a repeating keyword via any standard method. It may come from Sanborn's encoding chart — a physical artifact that shows the encryption procedure step by step.
+3. **The key is unknown.** If the cipher is non-periodic, the key is long and high-entropy. Its source is unknown.
 
-4. **The stego layer operates on a 14-column grid** using the KRYPTOS keyword (period 7) and a secondary keyword with period 5. The interaction of these two periods (7 × 5 = 35 = exactly the count of filler-letter positions) creates the filler pattern.
+4. **The 14-column grid observation** (Finding #3 in this document) is model-conditional and exploratory. The KRYPTOS × SEVEN table has zero cross-validated predictive power.
 
-5. **Sanborn's upcoming verification website** (mentioned in private communication, March 2026) could be the breakthrough. Even a simple yes/no checker, combined with our narrowed search space, could converge quickly.
+5. None of these observations have been confirmed by an external method or independent researcher working from different assumptions.
 
-## The Espionage Signature
+## Thematic Associations (Not Evidence)
 
-One final detail that's either a remarkable coincidence or an artist's hidden signature: the seven filler letters **B, G, I, K, O, W, Z** contain the acronym **KGB**. The full set reads as a Cold War intelligence cluster:
-
-- **K**GB — the Soviet intelligence service
-- **G**old — Operation Gold, the Berlin Tunnel
-- **B**erlin — the divided city at the heart of K4's plaintext
-- **I**ntelligence
-- **O**st — German for "East"
-- **W**est
-- **Z**ossen — Soviet military headquarters south of Berlin
-
-The German compass uses O for East and W for West (not E and W as in English). The filler letters contain the East-West axis of the Iron Curtain — but not North or South.
-
-Whether Sanborn chose these letters for their meaning or their grid position (or both), the thematic resonance with K4's Berlin/espionage content is striking.
+The seven palette letters {B,G,I,K,O,W,Z} can be read as containing Cold War references (KGB, Berlin, etc.). This is a post-hoc pattern-match on 7 letters and has no evidentiary value. Any set of 7 letters can be associated with thematic words if you look hard enough. This observation is noted only because it appears in community discussions — it should not be treated as supporting evidence for any hypothesis.
 
 ## How to Verify
 
@@ -161,7 +146,7 @@ The full analysis code is open source at [github.com/jcolinpatrick/kryptos](http
 3. **The cipher key** — if anyone has access to the encoding chart, or insights from the physical installation that could reveal the key source
 4. **Non-English running key sources** — we've tested English texts extensively, but German or Russian sources (matching K4's Berlin/Cold War theme) remain largely untested
 
-K4 has been unsolved for 35 years. We believe the stego layer is now largely understood. The cipher layer remains. If Jim Sanborn says it's solvable, the answer is within reach — we just need the right key.
+K4 has been unsolved for 35 years. Under one cipher model, we observe a statistically unusual palette restriction at candidate null positions. The cipher layer remains completely open. Whether the null model itself is correct is an open question.
 
 ---
 

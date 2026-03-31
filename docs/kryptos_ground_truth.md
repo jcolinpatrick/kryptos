@@ -16,7 +16,7 @@ OBKRUOXOGHULBSOLIFBBWFLRVQQPRNGKSSOTWTQSJQSSEKZZWATJKLUDIAWINFBNYPVTTMZFPKWGDKZX
 [DERIVED FACT] Length = 97
 [DERIVED FACT] Starts with `O`, ends with `R`
 
-[USER GROUND TRUTH, 2026-03-02] The carved text is SCRAMBLED — it is a permutation of the real ciphertext. The encryption model is: PT → simple substitution → REAL CT → transposition/scramble → carved text. The Cardan grille on the Vigenère tableau defines the unscrambling permutation. See `memory/cardan_grille.md`.
+[HYPOTHESIS, 2026-03-02] One working model proposes that the carved text may be a permutation of the real ciphertext: PT → simple substitution → REAL CT → transposition/scramble → carved text. The Cardan grille on the Vigenère tableau has been proposed as the unscrambling permutation. See `memory/cardan_grille.md`. **This is unproven and should not be treated as fact.**
 
 [DERIVED FACT] Index of Coincidence (IC) on full ciphertext:
 - IC(K4) ≈ 0.036082… (recompute via `tools/validate_public_invariants.py` or the snippet in Appendix)

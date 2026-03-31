@@ -75,6 +75,8 @@ def _normalize_verdict(raw: str) -> str:
     """
     if not raw:
         return "NOISE"
+    if not isinstance(raw, str):
+        return "NOISE"
     v = raw.strip().upper()
 
     # Already canonical

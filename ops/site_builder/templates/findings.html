@@ -1,6 +1,6 @@
 {% extends "base.html" %}
-{% block title %}Confirmed Findings | internal.com{% endblock %}
-{% block og_title %}Confirmed Findings | internal.com{% endblock %}
+{% block title %}Statistical Observations | internal.com{% endblock %}
+{% block og_title %}Statistical Observations | internal.com{% endblock %}
 {% block canonical %}<link rel="canonical" href="https://internal.com/findings/">{% endblock %}
 
 {% block head_extra %}
@@ -12,14 +12,14 @@
 
 <header class="findings-hero">
   <p class="findings-kicker">After {{ total_configs_disproven }} configurations tested</p>
-  <h1>Three things we <em>did</em> find</h1>
+  <h1>What the data shows</h1>
   <p class="findings-intro">
-    No single classical cipher decrypts K4. But the analysis wasn't fruitless.
-    Three notable patterns emerged from the data. All were discovered through
-    computational analysis and have genuine statistical significance, but their
-    interpretation depends on modeling assumptions that have not been independently
-    validated. Together they constrain how K4 may have been <strong>constructed</strong>,
-    even though the cipher itself remains unbroken.
+    No single classical cipher decrypts K4. Two statistical anomalies emerged from
+    the analysis. Both were discovered post-hoc (from the data, not predicted in advance),
+    both depend on a specific cipher model (KA-autokey Vigen&egrave;re) that has not been
+    independently validated, and neither has cracked the cipher.
+    We also document one exploratory pattern that has zero predictive power but is
+    retained for transparency.
   </p>
 </header>
 
@@ -28,8 +28,8 @@
 <section class="finding-provenance">
   <h2>How we found these &mdash; and what we can&rsquo;t yet prove</h2>
   <p>
-    Each finding is based on reproducible analysis, not speculation. However, recent
-    validation work has revealed important limitations that we want to be transparent about:
+    Each observation below is computationally reproducible. However, all were discovered
+    post-hoc, and validation work has revealed important limitations:
   </p>
   <ul class="provenance-list">
     <li>
@@ -42,7 +42,7 @@
       <strong>Shuffled-ciphertext validation:</strong>
       We shuffled K4&rsquo;s ciphertext 500 times and re-ran the same optimization.
       <strong>Zero</strong> shuffled versions produced a palette as restricted as 7 letters
-      (mean: 12.7, min: 9). This confirms the restriction depends on K4&rsquo;s
+      (mean: 12.7, min: 9). This indicates the restriction depends on K4&rsquo;s
       specific letter ordering, not an artifact of the optimizer (p&nbsp;&lt;&nbsp;0.002).
     </li>
     <li>
@@ -60,12 +60,12 @@
   </p>
   <div class="proof-paper-cta">
     <a href="/static/k4_polybius_convergence.pdf" class="btn proof-paper-btn" target="_blank" rel="noopener">
-      View the formal proof
+      View the statistical write-up (draft, under revision)
     </a>
     <span class="proof-paper-note">
-      Full statistical derivations with Monte Carlo methodology.
-      For statisticians and peer review. Note: the proof predates the model-dependence
-      finding and is under revision.
+      Monte Carlo methodology and derivations. <strong>Known issues:</strong>
+      Definition 4 contains an error, and the document predates the model-dependence
+      finding. Treat as a working draft, not a peer-reviewed proof.
     </span>
   </div>
 </section>
@@ -168,8 +168,8 @@
       <strong>model-conditional</strong>, not independently validated.
     </p>
     <p>
-      Even more striking: <strong>4 of the 5 W&rsquo;s</strong> in the entire ciphertext are nulls.
-      The single non-null W sits at position 48, exactly halfway between the two known plaintext regions.
+      <em>Post-hoc observation:</em> 4 of the 5 W&rsquo;s in the ciphertext fall at candidate null positions.
+      This is a consequence of the palette restriction, not independent evidence.
     </p>
     </div>
   </details>
@@ -375,28 +375,29 @@
   <div class="finding-header">
     <span class="finding-number">3</span>
     <div>
-      <h2>KRYPTOS &times; SEVEN</h2>
-      <p class="finding-subtitle">A dual-keyword lookup table that fits every null position (discovered post-hoc)</p>
+      <h2>KRYPTOS &times; SEVEN (Exploratory &mdash; No Predictive Power)</h2>
+      <p class="finding-subtitle">A post-hoc curve fit with zero cross-validated accuracy</p>
     </div>
-    <span class="finding-pvalue">35 / 35 correct</span>
+    <span class="finding-pvalue">0% predictive (LOO-CV)</span>
   </div>
 
-  <div class="confidence-indicator confidence-low">
-    <div class="confidence-bar confidence-low">
-      <span class="filled"></span><span class="filled"></span><span class="filled"></span>
-      <span class="filled"></span><span></span><span></span>
+  <div class="confidence-indicator confidence-very-low">
+    <div class="confidence-bar confidence-very-low">
+      <span class="filled"></span><span class="filled"></span>
+      <span></span><span></span><span></span><span></span>
       <span></span><span></span><span></span><span></span>
     </div>
-    <span class="confidence-label">Suggestive only (discovered post-hoc)</span>
+    <span class="confidence-label">Exploratory only &mdash; retained for transparency, not evidence</span>
   </div>
 
   <div class="finding-plain">
     <h3>The short version</h3>
     <p>
-      A simple mathematical rule using the keywords KRYPTOS and SEVEN correctly classifies
-      all 35 palette-letter positions as null or real (35 out of 35). But this was
-      discovered from the data, not predicted in advance, and cross-validation shows it has
-      <strong>zero predictive power</strong>.
+      A post-hoc search found a mod-7 &times; mod-5 lookup table that perfectly classifies
+      all 35 palette-letter positions as null or real. However, <strong>leave-one-out
+      cross-validation shows this table has zero predictive power</strong> (47% accuracy
+      vs. 49% baseline). This is a descriptive curve fit, not a discovered rule.
+      We retain it only for transparency &mdash; it is not evidence of a mechanism.
     </p>
   </div>
 
@@ -456,62 +457,46 @@
   </div>
 
   <div class="finding-stats">
-    <div class="stat-pill stat-pill-accent">
-      <span class="stat-pill-label">Classification accuracy</span>
-      <span class="stat-pill-value">35 / 35 (100%)</span>
+    <div class="stat-pill">
+      <span class="stat-pill-label">LOO cross-validation accuracy</span>
+      <span class="stat-pill-value">47% (below 49% baseline)</span>
     </div>
     <div class="stat-pill">
-      <span class="stat-pill-label">Null cells</span>
-      <span class="stat-pill-value">10 pure + 3 mixed</span>
+      <span class="stat-pill-label">In-sample fit</span>
+      <span class="stat-pill-value">35 / 35 (100% &mdash; post-hoc)</span>
     </div>
     <div class="stat-pill">
-      <span class="stat-pill-label">Real cells</span>
-      <span class="stat-pill-value">13 pure + 3 mixed</span>
+      <span class="stat-pill-label">Predictive power</span>
+      <span class="stat-pill-value">None</span>
     </div>
     <div class="stat-pill">
-      <span class="stat-pill-label">Mixed-cell tiebreaker</span>
-      <span class="stat-pill-value">Earlier position = null</span>
+      <span class="stat-pill-label">Status</span>
+      <span class="stat-pill-value">Descriptive fit only</span>
     </div>
   </div>
 
   <div class="finding-caveat">
-    <h3>Why this is interesting (but not proven)</h3>
+    <h3>Why this is not evidence</h3>
     <p>
-      The KRYPTOS keyword was used for K1&ndash;K3. SEVEN could connect to FIVE, which appears at the
-      seam of the Kryptos cylinder. The Beaufort cipher with key N transforms {E,H,N,Q,S,T,V}
-      into the null palette, and that source set contains the word <strong>SEVEN</strong>.
-      If real, this would be an elegant, hand-executable system consistent with 1990 CIA tradecraft.
+      <strong>Leave-one-out cross-validation shows this table has zero predictive power.</strong>
+      When each of the 17 consensus nulls is held out and predicted from the remaining 16,
+      accuracy is only 47% &mdash; worse than the naive 49% baseline of always guessing
+      &ldquo;null.&rdquo; Nine of 17 null positions occupy cells unique to them or shared with
+      &ldquo;real&rdquo; positions; removing any one from training collapses the prediction.
+      The table is a <strong>descriptive fit, not a generative rule</strong>.
     </p>
     <p>
-      The N/R cell assignments in the table can be generated by
-      <strong>Vigen&egrave;re(KRYPTOS, CHART)</strong> on the standard alphabet:
-      a 23/23 perfect match. However, ~0.5% of random 5-letter words also produce
-      perfect tables, so CHART is not statistically unique.
+      The table also predicts zero additional nulls among the 14 remaining palette candidates,
+      which is inconsistent with the 24-null model it was designed to explain.
     </p>
     <p>
-      <strong>Additional tension (March 2025):</strong> The Beaufort keystream at crib positions shows
-      12/24 values from {G,K,O}, an arithmetic progression with step&nbsp;4 in standard alphabetic
-      indexing (p&nbsp;&lt;&nbsp;0.001). But under Beaufort KA with key=N,
-      <strong>zero source letters map to {G,K,O}</strong>. This creates a structural incompatibility:
-      the key=N/SEVEN palette generation mechanism and the GKO crib keystream concentration
-      cannot operate simultaneously. However, the GKO pattern was subsequently found to be
-      <strong>unique to standard (AZ) alphabetic indexing</strong> and does not appear under KA
-      or other variant/alphabet combinations, suggesting it is an indexing artifact rather than
-      a cipher mechanism signal.
+      <strong>Thematic observations (not evidence):</strong> KRYPTOS was used for K1&ndash;K3.
+      ~0.5% of random 5-letter words produce equivalent tables, so no keyword is
+      statistically unique. The GKO keystream concentration (12/24 crib values from {G,K,O})
+      was found to be an indexing artifact that disappears under KA alphabet ordering.
     </p>
     <p>
-      <strong>But:</strong> This classification was discovered post-hoc (from the data, not predicted
-      in advance). More critically, <strong>leave-one-out cross-validation shows the table has
-      zero predictive power</strong>: when each of the 17 consensus nulls is held out and predicted
-      from the remaining 16, accuracy is only 47%, worse than the naive 49% baseline of
-      always guessing &ldquo;null.&rdquo; Nine of 17 null positions occupy cells unique to them or
-      shared with &ldquo;real&rdquo; positions; removing them from training collapses the prediction.
-      The table is a <strong>descriptive fit, not a generative rule</strong>. It also predicts zero
-      additional nulls among the 14 remaining palette candidates, suggesting the 7 unknown null
-      positions may use non-palette letters or that the 24-null model itself needs revision.
-    </p>
-    <p>
-      The cipher layer remains open.
+      This section is retained for transparency about what was explored, not as a finding.
     </p>
   </div>
 </section>
@@ -519,34 +504,33 @@
 <!-- Conclusion -->
 
 <section class="findings-conclusion">
-  <h2>What this tells us about K4</h2>
+  <h2>Summary</h2>
   <div class="conclusion-grid">
     <div class="conclusion-card conclusion-solved">
-      <h3>What our analysis suggests</h3>
+      <h3>What the analysis produced</h3>
       <ul>
-        <li>K4 likely uses <strong>two layers</strong>: a cipher and a filler-insertion layer (consistent with Sanborn&rsquo;s statement about &ldquo;two systems of enciphering&rdquo;)</li>
-        <li>Under the KA-autokey model, candidate filler positions use only 7 letters {B,G,I,K,O,W,Z}, which fall in two columns of a 5-wide keyword-mixed grid (p&nbsp;&asymp;&nbsp;1&nbsp;in&nbsp;16,000)</li>
-        <li>This palette restriction is specific to K4&rsquo;s actual ciphertext (shuffled-CT validation: 0/500, p&nbsp;&lt;&nbsp;0.002)</li>
-        <li>However, the 17 candidate positions are <strong>model-dependent</strong> (Jaccard 0.161 across 5 cipher models) &mdash; no model-free method has independently confirmed them</li>
-        <li>How each filler position gets its specific letter is unknown; we tested 7 models and all failed</li>
+        <li>Under one specific cipher model (KA-autokey Vigen&egrave;re), candidate filler positions use only 7 letters {B,G,I,K,O,W,Z}, which fall in two columns of a 5-wide keyword-mixed grid (p&nbsp;&asymp;&nbsp;1&nbsp;in&nbsp;16,000 under that model)</li>
+        <li>A shuffled-ciphertext test (0/500) confirmed this restriction depends on K4&rsquo;s actual letter ordering (p&nbsp;&lt;&nbsp;0.002)</li>
+        <li>The candidate positions are <strong>model-dependent</strong> (Jaccard 0.161 across 5 cipher models) &mdash; no model-free method has independently confirmed them</li>
+        <li>A local constant-difference pattern exists at positions 55&ndash;63 (the Stehle anomaly, p&nbsp;&asymp;&nbsp;1/642 after correction)</li>
+        <li>The KRYPTOS&nbsp;&times;&nbsp;SEVEN table has zero predictive power and is not evidence</li>
       </ul>
     </div>
     <div class="conclusion-card conclusion-open">
-      <h3>What's still open</h3>
+      <h3>What remains unknown</h3>
       <ul>
-        <li>The cipher itself, operating on the ~73 real characters</li>
-        <li>The key or key-generation method (we&rsquo;ve ruled out every standard approach)</li>
-        <li>The specific keyword for the grid (~6,300 candidates remain; KRYPTOS is thematically strongest)</li>
-        <li>The exact identity of 7 uncertain filler positions</li>
-        <li>Whether the true filler count is 24 (as suggested by Sanborn&rsquo;s &ldquo;73&rdquo; note) or 17 (the consensus set)</li>
-        <li>The physical mechanism behind the filler-insertion process</li>
+        <li>Whether K4 actually contains null characters (the model is plausible but unproven)</li>
+        <li>The cipher type and key (every standard approach has been eliminated)</li>
+        <li>Whether the 24-null model, the 17-null consensus, or neither is correct</li>
+        <li>The physical mechanism behind any filler-insertion process, if one exists</li>
+        <li>How each filler position gets its specific letter (7 tested models all failed)</li>
       </ul>
     </div>
   </div>
   <p class="conclusion-footer">
-    These findings are <a href="https://github.com/jcolinpatrick/kryptos">open source</a>
-    and independently reproducible. If you see something we missed,
-    <a href="/submit/">submit a theory</a> or <a href="/report-error/">report an error</a>.
+    All analysis is <a href="https://github.com/jcolinpatrick/kryptos">open source</a>
+    and independently reproducible. If you see an error,
+    <a href="/report-error/">report it</a>.
   </p>
 </section>
 

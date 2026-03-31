@@ -29,7 +29,7 @@ Skipping these steps and re-testing an eliminated hypothesis wastes 28 CPU cores
 
 **Kryptos** is a sculpture at CIA headquarters containing four encrypted messages (K1–K4). K1–K3 were solved in 1999. **K4 (97 characters) has been unsolved since 1990.** Two encryption systems confirmed [PRIMARY SOURCE]. No single-layer classical cipher works (exhaustively tested).
 
-**→ CT, cribs, constants, eliminations, confirmed findings, open attack surface, and current leading hypotheses are in MEMORY.md** (auto-loaded). CLAUDE.md has durable technical setup; MEMORY.md has volatile research state. See [`reports/final_synthesis.md`](reports/final_synthesis.md) for the elimination landscape.
+**→ CT, cribs, constants, eliminations, statistical observations, open attack surface, and current working hypotheses are in MEMORY.md** (auto-loaded). CLAUDE.md has durable technical setup; MEMORY.md has volatile research state. See [`reports/final_synthesis.md`](reports/final_synthesis.md) for the elimination landscape.
 
 ---
 
@@ -354,7 +354,7 @@ Two `memory/` directories exist — don't confuse them:
 - **`.claude/projects/.../memory/`** — Claude Code's session-persistent memory (120+ topic files). This is where `elimination_ledger.md`, `confirmed_findings.md`, etc. live. Referenced from MEMORY.md's topic index. Read via Claude Code's memory system (not filesystem paths).
 - **`memory/`** (repo root) — Checked-in research notes (11 files). Supplementary analysis documents (palette investigations, keystream forensics, etc.). These are regular repo files, not session memory.
 
-**MEMORY.md** (auto-loaded) is the decision-support index — paradigm, eliminations, confirmed findings, open attack surface. CLAUDE.md has durable technical setup; MEMORY.md has volatile research state.
+**MEMORY.md** (auto-loaded) is the decision-support index — paradigm, eliminations, statistical observations, open attack surface. CLAUDE.md has durable technical setup; MEMORY.md has volatile research state.
 
 ---
 
