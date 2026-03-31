@@ -115,8 +115,8 @@ The [internal.com](https://internal.com/browse/) site documents 389 formal elimi
 The leading working model (not proven):
 
 1. **Two systems confirmed** — Sanborn's 1990 dedication speech states K4 uses "two systems of enciphering," distinct from the Vigenere used for K1-K3
-2. **73-character hypothesis** — Sanborn's working notes suggest K4 may be 73 characters with 24 nulls inserted as steganographic filler
-3. **Null palette anomaly** — The 17 consensus null characters use only 7 of 26 possible letters ({B,G,I,K,O,W,Z}), with joint significance p ~ 10^-5 against a Polybius grid structure. This is the strongest confirmed statistical signal in K4
+2. **Null insertion hypothesis** — Sanborn's working notes contain the notation "8 Lines 73" next to K4 material, which may indicate 73 real characters among the 97 carved. The number of nulls (if any) and their positions are unknown; 24 is inferred from 97 − 73 but is not confirmed by any source
+3. **Null palette anomaly** — Under the 24-null model, the 17 highest-confidence null positions use only 7 of 26 possible letters ({B,G,I,K,O,W,Z}), corresponding to two columns of the KA Polybius grid (joint p ~ 10^-5). This is the strongest confirmed statistical signal in K4, though the null positions themselves are model-conditional
 4. **Running key from unknown source** — The only structured non-periodic key model surviving Bean constraints. Source text is unknown; English running key + columnar transposition is eliminated
 
 See [docs/research_questions.md](docs/research_questions.md) for the full list of open questions.
