@@ -466,6 +466,23 @@ truth_tag = "[INTERNAL RESULT]"
 repro_command = "PYTHONPATH=src python3 -u scripts/cfm/e_cfm_09_gutenberg_east_scan.py"
 research_questions = ["RQ-2", "RQ-3"]
 
+# --- 2026-03-31: Evidence-hardening pass ---
+
+# H2 fix: e_varying_null_resolution has best_score=24 in its JSON, but
+# this is NOT a decryption score — it measures crib preservation under null
+# masks (every mask trivially scores 24/24 because crib positions are always
+# preserved). Displaying "24/24 NOISE" is misleading to visitors.
+[elimination.e_varying_null_resolution]
+best_score = 0
+verdict = "NOISE"
+title = "Null mask crib preservation analysis (not a decryption test)"
+description = "Measures whether crib positions are preserved under varying null masks. All masks trivially score 24/24 because crib positions are always kept. This is a structural analysis tool, not a cipher attack."
+scope_limitations = "Score of 24/24 reflects crib preservation, not decryption success. Not comparable to cipher attack scores."
+
+# H4 fix: Autokey 21/24 needs context — structurally impossible
+[elimination.E-AUTOKEY-VIG-AZ]
+scope_limitations = "Autokey is proven structurally impossible (crib feedback contradiction). The 21/24 score is the maximum achievable before the contradiction manifests, not near-success. See E-FRAC-37."
+
 # ── Keyword enrichment for searchability ──────────────────────────────────
 
 # ── Session 35 eliminations (2026-03-11, session 3) ──────────────────────

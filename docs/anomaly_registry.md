@@ -89,9 +89,9 @@ Classification key:
   5. Y=24, A=0, R=17 in A=0 numbering â†’ possible position markers
   6. If DYARO: D=3, Y=24, A=0, R=17, O=14 â†’ five values, matches p=5 primer?
   
-  **Through our lens**: If "T IS YOUR POSITION" tells the agent where to start reading,
-  the superscript YAR could be a PHYSICAL MARKER saying "this row is special â€” the
-  transition point between K3 and K4 happens here."
+  **Speculation (not evidence)**: Various community interpretations exist (RAY reversed,
+  position markers, primer values). None have produced testable predictions that survived
+  evaluation. The physical anomaly is real; its cryptographic significance is unknown.
 
 ### A6. The "?" between K3 and K4
 - **What**: A question mark sits between K3 and K4. Without it, the cipher side would
@@ -130,9 +130,9 @@ Classification key:
   the Hill cipher as an encryption method for K4. The Hill cipher uses matrix
   multiplication â€” a fundamentally different cipher family from VigenÃ¨re.
   
-  **Through our lens**: If K4 uses a Hill cipher component, that would explain why
-  all VigenÃ¨re/Vimark-family attacks plateau at 15/24. A Hill cipher produces
-  digraph or trigraph substitutions that wouldn't follow periodic key patterns.
+  **Note**: Hill cipher is algebraically eliminated for n=2,3,4 under direct correspondence
+  (see elimination_tiers.md Tier 1). The "HILL" reading is a physical observation; it has
+  not led to a productive attack vector.
 
 ### B2. Tableau is intentionally flipped
 - **What**: The VigenÃ¨re tableau on the right side is engraved from the BACK of the
