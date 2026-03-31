@@ -7,6 +7,10 @@ Keyspace: see implementation
 Last run: 
 Best score: 
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """E-S-150: Howard Carter's tomb opening date (11/26/1922) as K4 key material.
 
 K3 paraphrases Carter's journal from November 26, 1922. The DATE itself

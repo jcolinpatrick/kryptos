@@ -15,6 +15,10 @@ This script determines:
 3. Whether 2-3 BC hits is statistically significant
 4. What plaintext the best configs produce
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 
 import sys
 sys.path.insert(0, 'src')

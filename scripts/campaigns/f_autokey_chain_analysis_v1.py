@@ -31,6 +31,10 @@ METHOD:
 3. For each: check which BCL configurations work
 4. Report the combined maximum
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 
 import sys, itertools, time, json
 sys.path.insert(0, 'src')

@@ -16,6 +16,10 @@ Also tests:
 For each candidate key text, test at various offsets and all 6 cipher variants.
 Report any result with ≥10/24 crib hits.
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 import sys
 sys.path.insert(0, 'src')
 from kryptos.kernel.constants import CT as CT_STR, CRIB_DICT, KRYPTOS_ALPHABET as KA

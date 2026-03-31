@@ -5,6 +5,10 @@ Starts from the best known 10/24 mask and runs intensive SA to push higher.
 Also: local neighborhood exhaustive search around best mask (±1, ±2 swaps).
 Tests all keywords, both variants, for the best nearby masks.
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 
 import sys, random, math, time, json, itertools
 sys.path.insert(0, 'src')

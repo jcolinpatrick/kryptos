@@ -39,6 +39,10 @@ Tests seven permutation families exploiting GF(97) structure and clock mechanics
 All permutations applied to CT, then decrypted with Vig/Beau/VBeau on AZ/KA
 (6 configs each). Scored with score_candidate_free() (position-free crib search).
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 from __future__ import annotations
 
 import sys

@@ -7,6 +7,10 @@ Keyspace: ~800 configs
 Last run:
 Best score:
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """E-AAA-HE-LIED-04: Tests derived from the "He lied" coordinate note.
 
 SOURCE: IMG_1389 — Sanborn wrote two coordinate sets with "He lied" circled:

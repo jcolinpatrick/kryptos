@@ -18,6 +18,10 @@ K1 row 0 ends (...FIV) and K3 row 0 starts (E...). This arrangement has:
 
 This script tests reading orders and decryptions on the TWO-PANEL cylinder.
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 from __future__ import annotations
 import sys, os, itertools
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', 'src'))

@@ -7,6 +7,10 @@ Keyspace: see implementation
 Last run: 
 Best score: 
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """E-FRAC-25: Transposition Effect on Apparent Key Entropy
 
 E-FRAC-16 found the apparent Beaufort key at crib positions has entropy at

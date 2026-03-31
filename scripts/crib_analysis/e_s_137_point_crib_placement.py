@@ -7,6 +7,10 @@ Keyspace: see implementation
 Last run: 
 Best score: 
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """E-S-137: Algebraic placement analysis for POINT / THEPOINT / WHATSTHEPOINT.
 
 Sanborn's August 2025 open letter contains: "(CLUE) what's the point?"

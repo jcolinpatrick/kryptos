@@ -11,6 +11,10 @@ Extended analysis: What if W positions are LITERAL boundaries (not encrypted)?
 If we REMOVE the 5 W's, we get a 92-char ciphertext that might decrypt cleanly.
 Also tests higher periods (14-26) with the original 97-char CT.
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 import sys
 import os
 import itertools

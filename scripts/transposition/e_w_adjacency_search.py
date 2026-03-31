@@ -12,6 +12,10 @@ Best score: n/a
 Search ALL transposition types for column/row orders that maximize
 W-adjacency (WW digraphs) after undoing the transposition on K4 CT.
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 
 import sys
 import os

@@ -7,6 +7,10 @@ Keyspace: ~2000 configs
 Last run:
 Best score:
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """E-AAA-KEYED-COLUMNAR-03: Keyword-ordered columnar + substitution.
 
 Unlike script 01 (simple columnar by width), this uses the KEYWORD ITSELF

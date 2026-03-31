@@ -7,6 +7,10 @@ Keyspace: follow-up analysis
 Last run: 2026-03-15
 Best score: TBD
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """E-K3-NDYAHR-FOLLOWUP: Deeper analysis of anomalous findings from Phase 1.
 
 Key anomaly discovered: After removing NDYAHR letters from K3 CT, the remaining

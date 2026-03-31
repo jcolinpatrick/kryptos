@@ -7,6 +7,10 @@ Keyspace: see implementation
 Last run: 
 Best score: 
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """E-BESPOKE-07: Systematic 1-indexed parameter variants for YAR, RQ, EQUAL, DYAR.
 
 AUDIT GAP: All 60+ prior experiments used 0-indexed values for sculpture

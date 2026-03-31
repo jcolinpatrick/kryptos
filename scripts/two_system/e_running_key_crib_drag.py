@@ -15,6 +15,10 @@ This is computationally trivial: O(book_length × 24) per variant.
 Also tests with transposition: for each promising column order (width 7-14),
 undo transposition first, then crib-drag on the intermediate text.
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 import re
 import sys
 import time

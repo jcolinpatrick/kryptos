@@ -23,6 +23,10 @@ Tests:
   7. Caesar shifts of extract (+1..+25) as keystream
   8. Critical diagnostic: check extract chars at crib positions
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 
 import sys
 from pathlib import Path

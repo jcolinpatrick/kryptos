@@ -7,6 +7,10 @@ Keyspace: ~50K configs across 6 phases
 Last run: 2026-03-15
 Best score: TBD
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """E-K3-NDYAHR-HIDDEN-MESSAGE: Test whether K3 CT contains a second hidden message.
 
 Hypothesis: The NDYAHR displaced letters at the K3/K4 boundary are EDITING INSTRUCTIONS

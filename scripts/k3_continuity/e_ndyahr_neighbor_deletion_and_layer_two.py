@@ -7,6 +7,10 @@ Keyspace: ~200K configs across 2 parts
 Last run: 2026-03-15
 Best score: TBD
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """
 PART A: NDYAHR Neighbor Deletion with CORRECTED Directions
   Apply corrected displacement directions to 28x31 master grid.

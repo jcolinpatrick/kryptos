@@ -6,6 +6,10 @@ Keyspace: 3^24 ≈ 282B (±1 shifts) — pruned via beam search
 Last run: 2026-03-19
 Best score: TBD
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 
 """
 K3 Jefferson Vertical Attack

@@ -7,6 +7,10 @@ Keyspace: ~500K+ configs
 Last run:
 Best score:
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """E-NDYAHR-BLIND-CRYPTANALYSIS: Blind cryptanalysis of K1+K2+K3 after NDYAHR removal.
 
 CRITICAL POINT: After NDYAHR letter removal, we treat these as COMPLETELY NEW

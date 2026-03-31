@@ -15,6 +15,10 @@ where KEY[i] is the i-th letter of the running text.
 SA strategy: optimise (null_mask) with fixed (source, offset, variant).
 Then: for each (source, offset, variant), inner SA over null_masks.
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 
 import sys, random, math, time, json
 sys.path.insert(0, 'src')

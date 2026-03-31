@@ -18,6 +18,10 @@ IBM Card Encoding:
   Group 11 (zone 11): J-R  (digit 1-9)
   Group 0  (zone 0):  S-Z  (digit 2-9)
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 
 import json
 import sys

@@ -19,6 +19,10 @@ Phase 2: Analytical constraint propagation
 Phase 3: Deep SA with fixed digraph constraints at viable positions (30 restarts/case)
 Phase 4: W-delimiter segment analysis
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 
 import sys, random, math, time, json
 from collections import defaultdict

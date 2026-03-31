@@ -14,6 +14,10 @@ architecture on letters. "Two systems" = S-box (sub) + P-box (trans).
 Morse clue "DIGETAL INTERPRETATION" = digital cipher structure.
 DES: 64-bit block - 8 parity = 56 effective. K4: 97 chars - 24 nulls = 73.
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 
 import json, math, random, sys, time
 from pathlib import Path

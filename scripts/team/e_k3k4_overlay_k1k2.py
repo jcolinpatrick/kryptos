@@ -7,6 +7,10 @@ Keyspace: see implementation
 Last run:
 Best score:
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """E-K3K4-OVERLAY: Test whether K3+K4 combined and mapped onto the K1-K2
 chart grid (14×31) produces K4's cipher key or reveals a second message.
 

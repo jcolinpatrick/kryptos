@@ -34,6 +34,10 @@ Optimization: Since segments are INDEPENDENT, we score each segment's quadgram
 quality separately, keep top-K candidates per segment, then combine. This is
 O(26^free_ene + 26^free_bcl) instead of O(26^(free_ene + free_bcl)).
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 
 import json
 import os

@@ -7,6 +7,10 @@ Keyspace: 5 models × 200 SA restarts × 300K steps = ~300M SA steps
 Last run:
 Best score:
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """E-CROSSMODEL-PALETTE-01: Cross-Model Palette Stability Test.
 
 QUESTION: Does the 7-letter null palette {B,G,I,K,O,W,Z} survive across

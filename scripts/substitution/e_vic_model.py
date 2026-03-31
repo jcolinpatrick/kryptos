@@ -22,6 +22,10 @@ Two sub-models:
   A) CT → undo trans(97) → intermediate → decode → PT(73)
   B) CT → decode → transposed(73) → undo trans(73) → PT(73)
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 
 import sys, time, math
 from pathlib import Path

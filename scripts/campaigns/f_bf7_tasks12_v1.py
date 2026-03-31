@@ -2,6 +2,10 @@
 """Tasks 1-2: Brute-force 7 remaining null positions (cluster-constrained + wider).
 Fast enough in pure Python (~12K masks total).
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 import sys, time, json
 from itertools import combinations
 sys.path.insert(0, 'src')

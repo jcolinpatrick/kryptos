@@ -7,6 +7,10 @@ Keyspace: see implementation
 Last run: 
 Best score: 
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """E-S-134: DDR-era (1989/1990) Weltzeituhr city list as K4 key material.
 
 Sanborn visited Berlin around 1989. The Urania Weltzeituhr was DIFFERENT then:

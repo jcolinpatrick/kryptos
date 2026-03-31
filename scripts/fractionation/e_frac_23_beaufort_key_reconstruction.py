@@ -7,6 +7,10 @@ Keyspace: see implementation
 Last run: 
 Best score: 
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """E-FRAC-23: Beaufort Key Reconstruction — Structured Non-Periodic Models
 
 Building on E-FRAC-16's finding that the Beaufort key entropy is significant (p=0.003),

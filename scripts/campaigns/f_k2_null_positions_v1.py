@@ -10,6 +10,10 @@ Also tests: expanded K2-derived sets (mod-97 arithmetic, digit splits, etc.)
 
 Script 2 of 2: focused on K2-coordinate null-position hypothesis.
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 
 import sys, random, math, time, json, itertools
 sys.path.insert(0, 'src')

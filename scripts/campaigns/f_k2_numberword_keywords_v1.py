@@ -36,6 +36,10 @@ Transposition: col7 ascending, col5, col8, no trans, col7 KRYPTOS-ordered.
 Model: CT97 -> remove 24 nulls -> 73 CT -> inv_trans -> autokey/periodic decrypt
 Scoring: cribs at shifted positions (Model A).
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 import sys, time, json
 sys.path.insert(0, 'src')
 from kryptos.kernel.constants import CT, CRIB_POSITIONS

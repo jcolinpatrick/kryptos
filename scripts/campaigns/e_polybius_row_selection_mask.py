@@ -7,6 +7,10 @@ Keyspace: analytical + exhaustive small searches
 Last run: never
 Best score: TBD
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """E-POLYBIUS-ROW-SELECTION-MASK: What generates the column-selection pattern in the KA 5-wide grid?
 
 DISCOVERY RECAP:

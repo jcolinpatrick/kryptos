@@ -14,6 +14,10 @@ We search over all simple rules derivable from installation parameters.
 
 Output: results/mod35_table_derivation.json
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 import sys
 import os
 import json

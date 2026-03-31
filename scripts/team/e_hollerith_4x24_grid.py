@@ -7,6 +7,10 @@ Keyspace: ~6M (keyword masks * decrypt keys * cipher types)
 Last run:
 Best score:
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """E-HOLLERITH-4x24-GRID: 4-row x 24-column punch card model for K4.
 
 Hypothesis: Arrange first 96 chars of K4 as 4 rows x 24 cols.

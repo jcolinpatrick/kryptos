@@ -22,6 +22,10 @@
 #   8. Every-Nth position in linear scan with grid-aware offsets
 #   9. Knight's move patterns from corners/centers
 #  10. Bit-based: position where bit k of row or col is set
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 from __future__ import annotations
 
 import os

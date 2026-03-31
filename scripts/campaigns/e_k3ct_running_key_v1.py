@@ -11,6 +11,10 @@ Key fingerprint (Beaufort A=0, crib positions):
   pos 21-33: J L J O D E G K U K K K L
   pos 63-73: O C G G B G O K T R U
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 import sys
 sys.path.insert(0, 'src')
 from kryptos.kernel.constants import CT as K4_CT, CRIB_WORDS, CRIB_DICT

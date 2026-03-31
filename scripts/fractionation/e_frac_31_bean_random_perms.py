@@ -7,6 +7,10 @@ Keyspace: see implementation
 Last run: 
 Best score: 
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """E-FRAC-31: Bean-Filtered Random Permutation Analysis.
 
 E-FRAC-29/30 showed ALL columnar widths 5-15 are NOISE at discriminating periods.

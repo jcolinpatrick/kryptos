@@ -15,6 +15,10 @@ Test several genuinely new cipher models:
 4. PORTA CIPHER: Each key letter pair selects one of 13 table rows.
    Test all periods 1-26 with the standard Porta table.
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 import sys
 sys.path.insert(0, 'src')
 from kryptos.kernel.constants import CT as CT_STR, CRIB_DICT, KRYPTOS_ALPHABET as KA

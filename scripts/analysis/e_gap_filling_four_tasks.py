@@ -14,6 +14,10 @@ Task 2: Verify (pos%7, pos%5) mod-35 table on ALL 97 positions
 Task 3: Width-6 periodic on CT73 (elevated column IC)
 Task 4: CT73 autocorrelation profile (does lag-7 survive null extraction?)
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 
 import sys, os, time, json, random, math
 from pathlib import Path

@@ -18,6 +18,10 @@ Does the same for ENE. Then intersect constraints.
 Focuses on DEFECTOR:beau (L=8) which was consistently best in SA runs.
 Also tests KRYPTOS:beau (L=7) and KOMPASS:beau (L=7).
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 
 import sys, itertools, json, time
 sys.path.insert(0, 'src')

@@ -19,6 +19,10 @@
 #   5. Reverse-engineered: for each keyword, compute which positions MUST be
 #      null for cribs to work at shifted positions
 #   6. Arithmetic sequences and other structured patterns
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 from __future__ import annotations
 
 import os

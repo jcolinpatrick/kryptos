@@ -7,6 +7,10 @@ Keyspace: see implementation
 Last run: 
 Best score: 
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """E-VIC-01: VIC-style chain addition key derivation from Cardan grille extract.
 
 Hypothesis: The 106-char grille extract is VIC-cipher-style key material that

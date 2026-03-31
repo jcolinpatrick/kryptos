@@ -8,6 +8,10 @@ Seeds collected from:
 Each seed: C(24,2) × C(49,2) = 276 × 1,176 = 324,576 evals
 6 seeds total: ~1.95M evals. Expected runtime: ~600s
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 
 import sys, math, time, json
 sys.path.insert(0, 'src')

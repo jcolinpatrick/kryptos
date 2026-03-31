@@ -14,6 +14,10 @@ Question: can k[i] be predicted from features of position i?
 This is a clean quantitative test of whether ANY model family we've tried
 actually explains the crib-position keystream better than random.
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 
 import sys
 sys.path.insert(0, 'src')

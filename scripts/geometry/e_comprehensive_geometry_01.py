@@ -19,6 +19,10 @@ Key installation points:
 - LOOMIS (destroyed 1984):  38°57'05.82"N 77°08'49.22"W
 - K2 TARGET:                38°57'06.50"N 77°08'44.00"W
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 import math
 import sys
 import os

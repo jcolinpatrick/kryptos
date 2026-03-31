@@ -23,6 +23,10 @@ For the 62 positions with known K1 partners, we try all simple binary rules:
 For each rule, count how many K4 positions are classified as nulls.
 If count ≈ 24 (and no crib conflicts), extract 73-char CT and test.
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 from __future__ import annotations
 import sys
 sys.path.insert(0, 'src')

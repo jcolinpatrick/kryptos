@@ -22,6 +22,10 @@ C) A1Z26 values as null-position indices
 D) Affine map (a,b) from A1Z26 values on raw 97-char CT (y=ax+b mod 97)
 E) A1Z26 values as periodic key (period = number of coordinate words)
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 import sys
 sys.path.insert(0, "src")
 from kryptos.kernel.constants import CT, CRIB_DICT, CRIB_POSITIONS, ALPH, ALPH_IDX

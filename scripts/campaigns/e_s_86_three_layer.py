@@ -7,6 +7,10 @@ Keyspace: see implementation
 Last run: 
 Best score: 
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """E-S-86: Three-Layer Cipher (Trans1 + Period-7 Vig + Trans2)
 
 Tests the model: CT = Trans2(Vig(Trans1(PT), period-7 key))

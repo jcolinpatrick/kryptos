@@ -14,6 +14,10 @@ with null-position probability in K4's consensus null mask. The null palette
 {B,G,I,K,O,W,Z} may correspond to letters whose physical projections
 through copper cutouts are least legible under angular illumination.
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 
 import json
 import math

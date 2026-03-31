@@ -7,6 +7,10 @@ Keyspace: 4^25 * 676 offsets * 6 variants ~= 4.6e18 (sampled)
 Last run:
 Best score:
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """
 E-FLEISSNER-KEYSTREAM: Fleissner Grille on Vigenère Tableau → Keystream
 

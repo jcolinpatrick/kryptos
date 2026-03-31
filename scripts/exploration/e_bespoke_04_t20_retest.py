@@ -7,6 +7,10 @@ Keyspace: see implementation
 Last run: 
 Best score: 
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """E-BESPOKE-04: Systematic T=20 retest (1-indexed alphabet: A=1, B=2, ... T=20).
 
 Prior experiments all used T=19 (0-indexed programmer convention). But Sanborn is

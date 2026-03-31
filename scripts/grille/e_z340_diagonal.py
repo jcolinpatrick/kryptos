@@ -7,6 +7,10 @@ Keyspace: ~650000
 Last run:
 Best score:
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """E-Z340-DIAGONAL: Z340-inspired bespoke reading orders for K4.
 
 The Zodiac Z340 cipher (solved Dec 2020) combined homophonic substitution

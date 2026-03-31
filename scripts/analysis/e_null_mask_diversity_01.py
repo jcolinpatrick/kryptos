@@ -23,6 +23,10 @@ FOUR ANALYSES:
   4. Palette identity (among low-diversity masks, how many use the specific
      palette {B,G,I,K,O,W,Z} vs. some other 7-letter set?)
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 
 import sys
 import os

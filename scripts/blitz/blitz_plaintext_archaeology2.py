@@ -6,6 +6,10 @@ Keyspace: see implementation
 Last run: 
 Best score: 
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """
 blitz_plaintext_archaeology2.py — Deep dive on the most promising K1-K3 instruction models.
 

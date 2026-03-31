@@ -7,6 +7,10 @@ Keyspace: see implementation
 Last run: 
 Best score: 
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """E-S-108: Column Statistics for Transposition Ordering Identification.
 
 HYPOTHESIS: If K4 uses width-7 columnar transposition (Model B: trans→sub),

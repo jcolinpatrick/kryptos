@@ -17,6 +17,10 @@ Follow-up to e_comprehensive_geometry_01.py. Deep dives into:
 6. Bearing-derived selection with DEFECTOR keyword
 7. Circular position mapping with lodestone deflection
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 import math
 import sys
 import os

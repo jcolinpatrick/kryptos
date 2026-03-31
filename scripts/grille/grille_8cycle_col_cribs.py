@@ -27,6 +27,10 @@ TWO VARIANTS TESTED:
              which 8 short cols are nulls to find a set of 8 cols (24 positions)
              that doesn't intersect the 24 cribs. (Very few options exist.)
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 from __future__ import annotations
 import sys
 from itertools import combinations

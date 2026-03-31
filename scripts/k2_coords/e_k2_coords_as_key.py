@@ -10,6 +10,10 @@
 Test whether K2 coordinate numbers encode cipher keys for K4.
 K2: 38°57'6.5"N 77°8'44"W
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 import sys
 import itertools
 from typing import List, Tuple, Dict

@@ -27,6 +27,10 @@ APPROACH:
 5. Bean constraint mapping: How many Bean inequalities survive
    when crib positions shift due to null removal?
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 
 import sys
 import os

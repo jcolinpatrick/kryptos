@@ -7,6 +7,10 @@ Keyspace: see implementation
 Last run: 
 Best score: 
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """E-S-144: Morse code K0 data as SECOND-ORDER structural parameters for K4.
 
 Previous experiments (E-01, E-S-112, E-S-143) tested K0 data as DIRECT key
