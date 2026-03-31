@@ -378,9 +378,9 @@ def main():
         bar = "#" * min(hist[count], 50)
         print(f"  {count:3d} exposed: {hist[count]:3d} configs  {bar}")
 
-    # ── Target filter: 60–85 exposed (near "8 Lines 73") ──
+    # ── Target filter: 60–85 exposed (near "3 Lines 93" (was misread as "3 Lines 93 [note: was misread as 8 Lines 73]")) ──
     print(f"\n{'─' * 72}")
-    print("Target filter: 60–85 exposed K4 chars (near Sanborn's '8 Lines 73')")
+    print("Target filter: 60–85 exposed K4 chars (near Sanborn's '3 Lines 93' (was misread as '3 Lines 93 [note: was misread as 8 Lines 73]'))")
     print(f"{'─' * 72}")
 
     target = [r for r in results if 60 <= r.k4_exposed_count <= 85]
@@ -820,7 +820,7 @@ def main():
 
   Key observations:
   - OFLNUXZ geometry validated (Phase 1: {'PASS' if oflnuxz_pass else 'FAIL'})
-  - Target range [60-85] has {target_count} configs: "8 Lines 73" is achievable
+  - Target range [60-85] has {target_count} configs: "3 Lines 93" (was misread as "3 Lines 93 [note: was misread as 8 Lines 73]") is achievable
   - YAR removal: {orig_base['holes']} holes (orig) / {corr_base['holes']} holes (corrected)
   - Antipodes correction (R→E at row 5 col 23) changes 1 hole — minimal impact
   - All extracted texts score 0/24 — consistent with random baseline

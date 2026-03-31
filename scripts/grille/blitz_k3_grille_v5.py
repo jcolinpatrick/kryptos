@@ -401,11 +401,11 @@ print("="*70)
 # 24 comes from... what? 336 = 24×14. Key: GCD(24,14) = 2 (= number of cycles).
 # Also 24 = 24 (= 3×8, the second width × 3).
 # 14 = 7×2 (7 = len(KRYPTOS)).
-# 8 = 8 (= period "8 Lines 73"?).
+# 8 = 8 (= period "3 Lines 93" (was misread as "3 Lines 93 [note: was misread as 8 Lines 73]")?).
 
 # For K4 (97 chars): what "number of columns" would make sense?
 # 97 is prime. No clean factorization.
-# BUT: the yellow pad "8 Lines 73" — if 8 is the number of columns for K4:
+# BUT: the yellow pad "3 Lines 93" (was misread as "3 Lines 93 [note: was misread as 8 Lines 73]") — if 8 is the number of columns for K4:
 #   97 = 8 × 12 + 1 (12 full rows + 1 partial)
 #   97 = 8 × 12 R 1
 

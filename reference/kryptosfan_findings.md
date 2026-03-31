@@ -209,7 +209,7 @@ Analysis date: 2026-03-01
 
 Boxed notations at top:
 - **"11 Lines 342"** (= K3? 336 cipher chars but 342 with spaces/punctuation?)
-- **"8 Lines 73"** (= K4 section? But K4 = 97 chars...)
+- **"3 Lines 93"** (originally misread as "3 Lines 93 [note: was misread as 8 Lines 73]" via OCR; corrected 2026-03-31)
 
 Then the K4 plaintext draft:
 
@@ -267,10 +267,10 @@ Another version of the K4 text:
 | Notation | Possible Interpretation |
 |----------|------------------------|
 | "11 Lines 342" | K3 text laid out in 11 rows? But K3=336 cipher chars. 342 could include spaces/X delimiters |
-| "8 Lines 73" | K4 in 8 rows of ~12 chars? 8×12=96≈97. But "73" is puzzling — maybe 73 chars of PT visible? |
+| "3 Lines 93 [note: was misread as 8 Lines 73]" | K4 in 8 rows of ~12 chars? 8×12=96≈97. But "73" is puzzling — maybe 73 chars of PT visible? |
 | "10.8" 4 rows | 10.8 chars per row × 4 rows ≈ 43 chars? Or grid dimension? |
 
-**CRITICAL**: "8 Lines 73" if this means 8 rows and 73 is a separate number, then 73 might be the number of PLAINTEXT characters excluding delimiters. 97 CT chars - 24 known crib chars = 73 unknown chars? OR the K4 section was originally shorter (73 chars) before being extended to 97?
+**CRITICAL**: "3 Lines 93 [note: was misread as 8 Lines 73]" if this means 8 rows and 73 is a separate number, then 73 might be the number of PLAINTEXT characters excluding delimiters. 97 CT chars - 24 known crib chars = 73 unknown chars? OR the K4 section was originally shorter (73 chars) before being extended to 97?
 
 ---
 
@@ -403,14 +403,14 @@ The $962,500 auction lot (November 20, 2025, RR Auction) contained:
 
 2. **The editing process is visible** — Sanborn was drafting and revising. Words were changed, spellings corrected. The "desparetly" and "debbris" misspellings appear to be deliberate or at least pre-existing in his working draft.
 
-3. **"8 Lines 73"** — If this refers to K4, the number 73 is extremely interesting. 97 - 24 (known crib chars) = 73. OR K4 was originally 73 chars. OR the plaintext before padding/delimiters is 73 chars.
+3. **"3 Lines 93 [note: was misread as 8 Lines 73]"** — If this refers to K4, the number 73 is extremely interesting. 97 - 24 (known crib chars) = 73. OR K4 was originally 73 chars. OR the plaintext before padding/delimiters is 73 chars.
 
 4. **The plaintext draft does NOT contain "EASTNORTHEAST" or "BERLINCLOCK"** — These cribs must come from the ENCRYPTED form or from a different layer/section that connects K4 to coordinates and Berlin.
 
 ### Open questions for further research:
 
 1. Who is the "prominent fiction writer" who co-wrote the plaintext?
-2. What is the significance of "8 Lines 73"?
+2. What is the significance of "3 Lines 93 [note: was misread as 8 Lines 73]"?
 3. Does "10.8" with "4 rows" describe a grid dimension for K4?
 4. Why does the plaintext draft not contain the known cribs?
 5. Are the ■ markers in the draft significant (delimiter positions)?
@@ -536,7 +536,7 @@ Sanborn's notes shown in NOVA video. Grid labeled with P and C designations. Key
 
 1. **"Prominent fiction writer" co-authored plaintext** — WHO? This is potentially identifiable. Sanborn worked with Scheidt on crypto, but the FICTION writer is someone else. Could be the person who helped craft the Carter-tomb narrative. Research needed.
 
-2. **"8 Lines 73"** on the yellow pad — If this is K4's structure, why 73? Possibilities:
+2. **"3 Lines 93 [note: was misread as 8 Lines 73]"** on the yellow pad — If this is K4's structure, why 73? Possibilities:
    - 73 = number of PT characters in original draft (before expansion to 97)
    - 73 = 97 - 24 (unknown chars after removing known crib chars)
    - 73 = a key number (prime, relates to grid dimensions)
@@ -640,7 +640,7 @@ Ranked by potential impact on solving K4:
 | 1 | K4 uses "an invention by Ed Scheidt that has never appeared in cryptographic literature" | Gillogly (kryptosfan) | **REDEFINES SEARCH SPACE** — standard ciphers futile |
 | 2 | "Two systems of enciphering the bottom text... a major clue in itself" | Sanborn oral history | Confirms multi-layer, the structure itself is meaningful |
 | 3 | "Prominent fiction writer" co-authored plaintext | Sanborn 1989 letter | Identifies unknown collaborator |
-| 4 | "8 Lines 73" on yellow pad | Auction lot photos | Unknown structural parameter |
+| 4 | "3 Lines 93 [note: was misread as 8 Lines 73]" on yellow pad | Auction lot photos | Unknown structural parameter |
 | 5 | "IDBYROWS/LAYERTWO may not be a mistake — in spycraft you deliberately do these things" | Scheidt ACA talk | Physical vs intent divergence is DELIBERATE |
 | 6 | USGS marker buried near sculpture, CIA removed it, "remains important to solving K4" | Sanborn ACA Q&A | Physical/geographic component |
 | 7 | "Receiver identity protection was built into the process" | Scheidt ACA talk | Authentication layer in cipher |

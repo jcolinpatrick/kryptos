@@ -97,7 +97,7 @@ for crib, start in [(CRIB_ENE, CRIB_ENE_START), (CRIB_BC, CRIB_BC_START)]:
         CRIB_POSITIONS.add(start + i)
 
 NON_CRIB_POSITIONS = [i for i in range(97) if i not in CRIB_POSITIONS]
-assert len(NON_CRIB_POSITIONS) == 73  # "73" from "8 Lines 73"
+assert len(NON_CRIB_POSITIONS) == 73  # "73" from "3 Lines 93" (was misread as "3 Lines 93 [note: was misread as 8 Lines 73]")
 
 # ─── The 28×31 cipher grid (exact) ────────────────────────────────────────────
 CIPHER_GRID = [

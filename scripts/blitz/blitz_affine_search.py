@@ -642,7 +642,7 @@ grille_params.append(("period8_bV", 8, 22))  # V is row 22
 grille_params.append(("97mod26", 19, 0))
 grille_params.append(("97mod8", 1, 0))  # = identity, skip
 grille_params.append(("26_a", 26, 0))
-grille_params.append(("8_13", 8, 13))  # "8 Lines 73" → 8, 13 (97-73-11=13)
+grille_params.append(("8_13", 8, 13))  # "3 Lines 93" (was misread as "3 Lines 93 [note: was misread as 8 Lines 73]") → 8, 13 (97-73-11=13)
 
 # G7: Cardan grille dimensions: 28×33
 grille_params.append(("28_a", 28, 0))

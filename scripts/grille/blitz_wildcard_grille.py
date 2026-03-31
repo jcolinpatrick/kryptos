@@ -439,10 +439,10 @@ test_approach("A4_tableau_in_C8", mask_A4)
 mask_A5 = make_mask(lambda r, c: (CIPHER[r][c] in C17) ^ (TABLEAU[r][c] in C17))
 test_approach("A5_C17_xor", mask_A5)
 
-# ─── APPROACH B: "8 Lines 73" Hypothesis ─────────────────────────────────────
+# ─── APPROACH B: "3 Lines 93" (was misread as "3 Lines 93 [note: was misread as 8 Lines 73]") Hypothesis ─────────────────────────────────────
 
 print("\n" + "="*70)
-print("APPROACH B: '8 Lines 73' Hypothesis")
+print("APPROACH B: '3 Lines 93' (was misread as '3 Lines 93 [note: was misread as 8 Lines 73]') Hypothesis")
 print("="*70)
 
 # B1: rows {0,7,14,21,24,25,26,27} all-hole (8 rows)
@@ -459,7 +459,7 @@ mask_B3 = make_mask(lambda r, c: r % 8 == 0)
 test_approach("B3_mod8_rows", mask_B3)
 
 # B4: column 73 special (col 73%31 = 11)
-# "73" in "8 Lines 73" → col 73 mod 31 = 11
+# "73" in "3 Lines 93" (was misread as "3 Lines 93 [note: was misread as 8 Lines 73]") → col 73 mod 31 = 11
 mask_B4 = make_mask(lambda r, c: c == (73 % 31))
 test_approach("B4_col73mod31", mask_B4)
 

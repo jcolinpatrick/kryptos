@@ -292,7 +292,7 @@ def generate_band_partitions() -> List[Tuple[str, List[List[int]]]]:
 
     # ── K4-inspired partitions ──
 
-    # K1: "8 Lines 73" — bands of 8 rows
+    # K1: "3 Lines 93" (was misread as "3 Lines 93 [note: was misread as 8 Lines 73]") — bands of 8 rows
     partitions.append(("8lines_73", [
         inner_rows[0:8],
         inner_rows[8:16],

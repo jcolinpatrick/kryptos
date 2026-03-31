@@ -15,7 +15,7 @@ New approaches:
   N2. Scaled Lehmer: d[i] = floor(g[i] * (97-i) / 26)
   N3. Polynomial over GF(97): p(x) = Σ g[i]·xⁱ mod 97 for x in 0..96
   N4. Running product chain: σ(i) = Π(g[j]+1, j=0..i) mod 97
-  N5. "8 Lines 73" block structure: K4 in 8 groups, intra-group perm from GE
+  N5. "3 Lines 93" (was misread as "3 Lines 93 [note: was misread as 8 Lines 73]") block structure: K4 in 8 groups, intra-group perm from GE
   N6. Double-rank: rank by GE_AZ then tie-break by GE_KA
   N7. Factoradic from GE pairs: pair(g[2i], g[2i+1]) → Lehmer digit
   N8. GF(97) sequence: start from g[0], apply recurrence mod 97
@@ -425,12 +425,12 @@ for alpha_name, ge_vals in [("AZ", GE_AZ), ("KA", GE_KA)]:
 
 print(f"N4 done: {count_n4} perms. Total: {COUNT}")
 
-# ── N5: "8 Lines 73" block structure ─────────────────────────────────────────
+# ── N5: "3 Lines 93" (was misread as "3 Lines 93 [note: was misread as 8 Lines 73]") block structure ─────────────────────────────────────────
 
 print("\n" + "=" * 72)
 print("N5: '8 LINES 73' BLOCK STRUCTURE")
 print("=" * 72)
-# "8 Lines 73": K4 has 8 lines and 73 non-crib chars (97 - 24 = 73).
+# "3 Lines 93" (was misread as "3 Lines 93 [note: was misread as 8 Lines 73]"): K4 has 8 lines and 73 non-crib chars (97 - 24 = 73).
 # Interpretation: K4 real_CT is written in 8 "lines" of varying widths.
 # The crib chars (24 total) are fixed; the 73 non-crib chars form 8 lines.
 

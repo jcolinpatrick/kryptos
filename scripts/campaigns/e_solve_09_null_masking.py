@@ -13,7 +13,7 @@ E-SOLVE-09: Null Insertion Masking Hypothesis
 THE STRONGEST STRUCTURAL HYPOTHESIS: K4 has 73 real characters + 24 nulls = 97.
 
 Evidence:
-  - Sanborn's yellow pad: "8 Lines 73" = 73-char plaintext
+  - Sanborn's yellow pad: "3 Lines 93" (was misread as "3 Lines 93 [note: was misread as 8 Lines 73]") = 73-char plaintext
   - 97 - 73 = 24 = exactly the number of known crib positions (coincidence?)
   - Scheidt: "I masked the English language" = null insertion destroys frequency
   - This INVALIDATES E-FRAC-35's Bean impossibility proof at periods 2-7
@@ -355,7 +355,7 @@ def generate_null_patterns():
             if len(nulls) == 24:
                 patterns[f"gap_{gap}_start{start_off}"] = nulls
 
-    # 8-row grid patterns (since "8 Lines 73")
+    # 8-row grid patterns (since "3 Lines 93" (was misread as "3 Lines 93 [note: was misread as 8 Lines 73]"))
     # In an 8-row grid with width 12-13:
     # Null the last position in each row, or specific columns
     for width in [12, 13]:
@@ -371,7 +371,7 @@ def generate_null_patterns():
 
         # Null bottom row(s) for grids that overflow
         if width == 13:  # 8*13=104, need to pick 97
-            # "8 Lines 73": maybe nulls are the extra 24 positions in a 97-char grid
+            # "3 Lines 93" (was misread as "3 Lines 93 [note: was misread as 8 Lines 73]"): maybe nulls are the extra 24 positions in a 97-char grid
             # arranged in 8 rows, with some rows shorter
             pass
 

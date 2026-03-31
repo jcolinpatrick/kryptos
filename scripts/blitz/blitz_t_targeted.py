@@ -14,7 +14,7 @@ Key new angles:
 1. T-hole K4 chars (B,F,S,A at positions 12,21,33,90) as keywords
 2. T-hole coordinates as VIC-style indicators for block keys
 3. Option-C tableau formula (letter=(c-r)%26) — only 2 T-hits, different permutations
-4. "8 Lines 73" with keyed columnar on segments
+4. "3 Lines 93" (was misread as "3 Lines 93 [note: was misread as 8 Lines 73]") with keyed columnar on segments
 5. Reverse composition with best known permutations
 6. Brute force short-key Vig on random permutations seeded by T-structure
 7. Direct GRILLE_EXTRACT as running key (various selections and directions)

@@ -1,7 +1,7 @@
 path	family	status	lines	description
 transposition/columnar/agent_k4_columnar7_nonen_scan.py	Columnar transposition attacks	unknown	387	agent_k4_columnar7_nonen_scan.py
 _uncategorized/agent_k4_keystream_language_scan.py	Uncategorized — needs manual review	unknown	497	agent_k4_keystream_language_scan.py
-blitz/blitz_8lines73.py	Blitz campaign — fast brute-force sweeps	unknown	1649	blitz_8lines73.py — Exhaustive test of "8 Lines 73" interpretations for K4.
+blitz/blitz_8lines73.py	Blitz campaign — fast brute-force sweeps	unknown	1649	blitz_8lines73.py — Exhaustive test of "3 Lines 93 [note: was misread as 8 Lines 73]" interpretations for K4.
 blitz/blitz_affine_search.py	Blitz campaign — fast brute-force sweeps	unknown	870	blitz_affine_search.py — Exhaustive Affine & Power Permutation Search for K4
 blitz/blitz_concealment.py	Blitz campaign — fast brute-force sweeps	unknown	964	blitz_concealment.py — Test concealment/stego pre-processing models for K4.
 blitz/blitz_constraint_solver.py	Blitz campaign — fast brute-force sweeps	unknown	529	blitz_constraint_solver.py — Constraint-based K4 permutation search.
@@ -249,7 +249,7 @@ grille/e_grille_16_t_extract_scoring.py	Grille, turning grille, and Cardan apert
 grille/e_grille_17_t_alternatives.py	Grille, turning grille, and Cardan aperture attacks	unknown	927	E-GRILLE-17: Alternative T-based grille constructions
 grille/e_grille_18_equal_misspelling_params.py	Grille, turning grille, and Cardan aperture attacks	unknown	863	E-GRILLE-18: EQUAL anagram + misspelling positions as grille parameters
 grille/e_grille_19_tableau_mask.py	Grille, turning grille, and Cardan aperture attacks	unknown	903	E-GRILLE-19: Tableau Geometry → Grille Mask Derivation
-grille/e_grille_20_period8_lines73.py	Grille, turning grille, and Cardan aperture attacks	unknown	497	E-GRILLE-20: Period-8 / "8 Lines 73" — Columnar Transposition Width 8
+grille/e_grille_20_period8_lines73.py	Grille, turning grille, and Cardan aperture attacks	unknown	497	E-GRILLE-20: Period-8 / "3 Lines 93 [note: was misread as 8 Lines 73]" — Columnar Transposition Width 8
 grille/e_grille_21_scramble_order.py	Grille, turning grille, and Cardan aperture attacks	unknown	818	E-GRILLE-21: Empirical tests to distinguish scramble order for K4.
 grille/e_grille_22_model2_sa.py	Grille, turning grille, and Cardan aperture attacks	unknown	635	E-GRILLE-22: Model 2 Simulated Annealing Permutation Search
 _uncategorized/e_grille_cipher_panel.py	Uncategorized — needs manual review	unknown	625	E-GRILLE-CIPHER-PANEL: Apply the Cardan grille to the ENTIRE cipher panel.

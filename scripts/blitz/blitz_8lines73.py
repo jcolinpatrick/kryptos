@@ -8,9 +8,9 @@ Last run:
 Best score: 
 """
 """
-blitz_8lines73.py — Exhaustive test of "8 Lines 73" interpretations for K4.
+blitz_8lines73.py — Exhaustive test of "3 Lines 93" (was misread as "3 Lines 93 [note: was misread as 8 Lines 73]") interpretations for K4.
 
-Sanborn's yellow legal pad notation: "8 Lines 73"
+Sanborn's yellow legal pad notation: "3 Lines 93" (was misread as "3 Lines 93 [note: was misread as 8 Lines 73]")
 This script tests EVERY plausible interpretation:
 
 A) 8-row grids: K4 laid out in 8 rows with various widths
@@ -812,7 +812,7 @@ def test_8x73():
     print("\n=== SECTION H: 8×73 from cipher panel ===")
 
     # Full K1-K4 (approximate: K1=63, K2=69-ish, K3=336, K4=97)
-    # The "8 lines 73" might refer to something on the 28×31=868 grid
+    # The "3 Lines 93 [note: was misread as 8 lines 73]" might refer to something on the 28×31=868 grid
     # 8 rows × 73 = 584, or 73 rows × 8 = 584
 
     # From the 28×31 grid, 8 rows = 8×31 = 248
@@ -995,7 +995,7 @@ def test_step_permutations():
     print(f"  Section K: {TOTAL_TESTED} candidates tested, best={BEST_SCORE:.2f}")
 
 
-# ── SECTION L: "8 Lines 73" as Nihilist/bifurcation ────────────────────────
+# ── SECTION L: "3 Lines 93" (was misread as "3 Lines 93 [note: was misread as 8 Lines 73]") as Nihilist/bifurcation ────────────────────────
 
 def test_bifurcation():
     """Split K4 at position 73 (or into groups of 73 and 24)."""
@@ -1237,7 +1237,7 @@ def test_amsco_8():
     print(f"  Section N: {TOTAL_TESTED} candidates tested, best={BEST_SCORE:.2f}")
 
 
-# ── SECTION O: "8 Lines 73" as grid coordinates ────────────────────────────
+# ── SECTION O: "3 Lines 93" (was misread as "3 Lines 93 [note: was misread as 8 Lines 73]") as grid coordinates ────────────────────────────
 
 def test_grid_coordinates():
     """'8' and '73' as coordinates or offsets on the 28×31 grid."""
@@ -1588,7 +1588,7 @@ def test_double_columnar():
 def main():
     start_time = time.time()
     print("=" * 70)
-    print("blitz_8lines73.py — Exhaustive test of '8 Lines 73' interpretations")
+    print("blitz_8lines73.py — Exhaustive test of '3 Lines 93' (was misread as '3 Lines 93 [note: was misread as 8 Lines 73]') interpretations")
     print(f"K4: {K4_CARVED}")
     print(f"Length: {K4_LEN}")
     print("=" * 70)
