@@ -68,7 +68,7 @@ All phases use these conventions unless explicitly stated otherwise.
 
 | Property | Value | Implication |
 |----------|-------|-------------|
-| 97 - 73 = 24 | Sanborn legal pad "8 lines 73" | 24 nulls total |
+| 97 - 73 = 24 | Sanborn legal pad "3 Lines 93 [note: was misread as 8 lines 73]" | 24 nulls total |
 | 35 palette positions = 5 * 7 | Grid structure echo | Width-5 x period-7 |
 | Width-21 bigram anomaly is stego artifact | Destroyed by null extraction | Null insertion creates CT97 structure |
 | Lag-7 autocorrelation is stego artifact | Destroyed by null extraction | Same |

@@ -741,7 +741,7 @@ def approach_V():
 
 # ─────────────────────────────────────────────────────────────────────────────
 # APPROACH W: "8 LINES 73" INTERPRETATION
-# kryptosfan: "Yellow pad: '8 Lines 73' (K4)"
+# kryptosfan: "Yellow pad: '3 Lines 93' (was misread as '3 Lines 93 [note: was misread as 8 Lines 73]') (K4)"
 # ─────────────────────────────────────────────────────────────────────────────
 def approach_W():
     print("\n" + "="*70, flush=True)

@@ -12,7 +12,7 @@ scripts/blitz_strip_route.py
 K4 strip/route cipher unscrambling — comprehensive search
 
 Approaches:
-  Part 1: "8 Lines 73" (Sanborn yellow pad clue)
+  Part 1: "3 Lines 93" (was misread as "3 Lines 93 [note: was misread as 8 Lines 73]") (Sanborn yellow pad clue)
   Part 2: Extended columnar W11-20, keyword-derived only
   Part 3: EXHAUSTIVE columnar W11 + W12 (numpy + multiprocessing)
   Part 4: Double transposition (keyword pairs)
@@ -428,7 +428,7 @@ def amsco_decrypt(ct_str, kw):
 
 # ─── PART 1: "8 LINES 73" ─────────────────────────────────────────────────────
 def part1_eight_lines():
-    print("\n=== PART 1: '8 Lines 73' (Sanborn yellow pad) ===", flush=True)
+    print("\n=== PART 1: '3 Lines 93' (was misread as '3 Lines 93 [note: was misread as 8 Lines 73]') (Sanborn yellow pad) ===", flush=True)
     n_tested = 0
     seen = set()
 

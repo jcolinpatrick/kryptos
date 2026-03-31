@@ -8,12 +8,12 @@ Last run:
 Best score: 
 """
 """
-E-GRILLE-20: Period-8 / "8 Lines 73" — Columnar Transposition Width 8
+E-GRILLE-20: Period-8 / "3 Lines 93" (was misread as "3 Lines 93 [note: was misread as 8 Lines 73]") — Columnar Transposition Width 8
 
 EVIDENCE CONVERGENCE:
   - Tableau anomalies: extra L (row N=14), extra T (row V=22), spacing = 8
   - N-L = V-T = 2, L+T = 30 (= body columns), V-N = T-L = 8
-  - "8 Lines 73" on Sanborn's yellow pad (K4 section)
+  - "3 Lines 93" (was misread as "3 Lines 93 [note: was misread as 8 Lines 73]") on Sanborn's yellow pad (K4 section)
   - 97 - 24 (known crib chars) = 73 (unknown chars)
   - 97 mod 8 = 1
   - Period 8 is Bean-compatible (FRAC analysis)
@@ -440,7 +440,7 @@ def sweep_widths_quick(ct, widths):
 
 def main():
     print("=" * 70)
-    print("  E-GRILLE-20: Period-8 / '8 Lines 73' Columnar Transposition")
+    print("  E-GRILLE-20: Period-8 / '3 Lines 93' (was misread as '3 Lines 93 [note: was misread as 8 Lines 73]') Columnar Transposition")
     print("=" * 70)
     print(f"\n  K4 CT: {K4_CT}")
     print(f"  Length: {len(K4_CT)}")

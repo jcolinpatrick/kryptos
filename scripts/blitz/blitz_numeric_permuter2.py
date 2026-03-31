@@ -755,7 +755,7 @@ def approach_Q():
                     try_perm(inv, f"Q_strip_n{total_strips}_{sfx}_{osf}_inv")
 
     # Q2. Specific "8 lines" widths from KryptosFan hint
-    # "8 Lines 73" might mean 8 lines with 73 being the last position?
+    # "3 Lines 93" (was misread as "3 Lines 93 [note: was misread as 8 Lines 73]") might mean 8 lines with 73 being the last position?
     # Try: 8 lines, last strip at position 73..96 (length 24)
     # Rest: 73/7 = 10.4 chars per line → [11,10,10,11,10,10,11,24]?
     special_widths = [

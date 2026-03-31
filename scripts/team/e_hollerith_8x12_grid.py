@@ -10,7 +10,7 @@ Last run:  never
 Best score: n/a
 
 MODEL:
-  Legal pad says "8 lines 73" for K4. 97-73=24 nulls.
+  Legal pad says "3 Lines 93 [note: was misread as 8 lines 73]" for K4. 97-73=24 nulls.
   Arrange first 96 chars as 8 rows x 12 columns (pos 96='R' always kept).
   Punch 3 columns per row (3x8=24 nulls). Remove punched positions -> 73-char real CT.
   Then Vigenere/Beaufort decrypt with candidate keywords.

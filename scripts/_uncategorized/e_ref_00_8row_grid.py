@@ -11,7 +11,7 @@ Best score:
 E-REF-00: 8-Row Grid Transposition Hypothesis
 
 Sanborn's handwritten plaintext notes (Picture_4.jpg from auction lot) show
-"8 Lines 73" next to the K3/K4 section. If "8 Lines" is the grid row count
+"3 Lines 93" (was misread as "3 Lines 93 [note: was misread as 8 Lines 73]") next to the K3/K4 section. If "8 Lines" is the grid row count
 for K4 encoding:
 
   97 chars / 8 rows => width 13 (7 full rows of 13 + 1 row of 6)
@@ -438,7 +438,7 @@ def main():
     artifact = {
         "experiment": "E-REF-00",
         "description": "8-row grid transposition from Sanborn handwritten notes",
-        "hypothesis": "Sanborn's '8 Lines 73' note indicates 8-row grid for K4",
+        "hypothesis": "Sanborn's '3 Lines 93' (was misread as '3 Lines 93 [note: was misread as 8 Lines 73]') note indicates 8-row grid for K4",
         "widths_tested": test_widths,
         "fill_modes": fill_modes,
         "total_configs": total_configs,

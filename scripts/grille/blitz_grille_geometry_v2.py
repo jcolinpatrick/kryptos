@@ -22,7 +22,7 @@ B. KA tableau structure of hole positions as key
 C. T-avoidance: anti-diagonal positions as constraint on permutation
 D. Two-step: grille as transposition, then KA Vigenère with KRYPTOS
 E. Grille extract letter positions → index into K4 (multiple interpretations)
-F. "8 Lines 73" physical layout variants
+F. "3 Lines 93" (was misread as "3 Lines 93 [note: was misread as 8 Lines 73]") physical layout variants
 G. Grille extract pairs/triples as base-25/26 numbers → K4 indices
 H. Apply grille extract as KEYWORD for the columnar transposition of K4
 I. Test ALL permutations definable by row-count sequences
@@ -325,11 +325,11 @@ for chunk in [2, 3, 4]:
     if p: report(f"C_ge_az_sum{chunk}_dedup", p)
 
 # ═══════════════════════════════════════════════════════════════
-# APPROACH D: "8 Lines 73" — K4 in 8 rows, grille overlay
+# APPROACH D: "3 Lines 93" (was misread as "3 Lines 93 [note: was misread as 8 Lines 73]") — K4 in 8 rows, grille overlay
 # ═══════════════════════════════════════════════════════════════
-print("\n=== APPROACH D: '8 Lines 73' layout variants ===")
+print("\n=== APPROACH D: '3 Lines 93' (was misread as '3 Lines 93 [note: was misread as 8 Lines 73]') layout variants ===")
 
-# Sanborn's yellow pad says "8 Lines 73" for K4
+# Sanborn's yellow pad says "3 Lines 93" (was misread as "3 Lines 93 [note: was misread as 8 Lines 73]") for K4
 # Interpretation 1: K4 in 8 lines, with special position at 73
 # Interpretation 2: K4 written in a grid where line 8 starts at position 73
 

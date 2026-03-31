@@ -1052,7 +1052,7 @@ print("\n" + "="*70)
 print("SECTION M: PERIOD-8 'LINES 73' ANALYSIS")
 print("="*70)
 
-# From memory: "8 Lines 73" from Sanborn's yellow pad, tableau anomalies V-N=T-L=8
+# From memory: "3 Lines 93" (was misread as "3 Lines 93 [note: was misread as 8 Lines 73]") from Sanborn's yellow pad, tableau anomalies V-N=T-L=8
 # 97 mod 8 = 1 (one extra position)
 # Period-8 key could mean ABSCISSA (8 chars)
 # 73 = 97 - 24 (free positions = 73 after fixing 24 cribs)
@@ -1061,7 +1061,7 @@ print("="*70)
 # If the scramble is period-8-structured...
 
 print(f"  97 = 8 × 12 + 1. Lines = 97/8 ≈ 12.125")
-print(f"  73 + 24 cribs = 97. '8 Lines 73' could mean 8-line by ? arrangement")
+print(f"  73 + 24 cribs = 97. '3 Lines 93' (was misread as '3 Lines 93 [note: was misread as 8 Lines 73]') could mean 8-line by ? arrangement")
 print(f"  If rows=8, cols=73/8≈9.125...")
 
 # What if K4's real CT has period-8 structure?

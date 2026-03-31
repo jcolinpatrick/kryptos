@@ -479,10 +479,10 @@ for xor_val in [12, 21, 33, 90, T_AZ_idx, T_KA_idx]:
         test_perm(perm_rank, f'xor_rank_{xor_val}', verbose=False)
 
 # ══════════════════════════════════════════════════════════════════════════════
-# SECTION 6: The "8 Lines 73" hint from KryptosFan
+# SECTION 6: The "3 Lines 93" (was misread as "3 Lines 93 [note: was misread as 8 Lines 73]") hint from KryptosFan
 # ══════════════════════════════════════════════════════════════════════════════
-print("\n═══ SECTION 6: '8 Lines 73' yellow pad hint ═══")
-# "8 Lines 73" suggests K4 is laid in 8 lines of ~12 chars each
+print("\n═══ SECTION 6: '3 Lines 93' (was misread as '3 Lines 93 [note: was misread as 8 Lines 73]') yellow pad hint ═══")
+# "3 Lines 93" (was misread as "3 Lines 93 [note: was misread as 8 Lines 73]") suggests K4 is laid in 8 lines of ~12 chars each
 # 8 lines × 12 cols = 96 chars + 1 leftover = 97 ✓
 # Or: some lines are 12, some are 13 → 8 × 12 + n × 1 = 97
 
@@ -495,7 +495,7 @@ for extra_on_line in range(9):  # which lines get extra char
 
 # Most natural: 8 lines × 12 = 96, + 1 = 97
 # Row widths: 7 rows of 12, 1 row of 13 → total 97
-# But "8 lines 73" might mean something else entirely
+# But "3 Lines 93 [note: was misread as 8 lines 73]" might mean something else entirely
 
 # Try: 8 and 73 as keys for specific columnar transpositions
 for W_8 in [8]:
@@ -518,7 +518,7 @@ for W_8 in [8]:
             if p:
                 test_perm(p, f'lines8_73_{two_col_key}', verbose=True)
 
-# The most promising "8 lines 73" interpretation:
+# The most promising "3 Lines 93 [note: was misread as 8 lines 73]" interpretation:
 # 97 = 24 + 73 → first 24 chars form one block, last 73 form another
 # Swap the two blocks
 perm_swap = list(range(24, 97)) + list(range(0, 24))  # last 73 first, then first 24

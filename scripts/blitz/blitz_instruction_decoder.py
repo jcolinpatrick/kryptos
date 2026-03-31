@@ -15,7 +15,7 @@ Sections:
   B. K3 PT instruction parsing (Carter's tomb)
   C. K2 "ID BY ROWS" — row-number key hypotheses
   D. Length factorizations
-  E. "8 Lines 73" grille spec
+  E. "3 Lines 93" (was misread as "3 Lines 93 [note: was misread as 8 Lines 73]") grille spec
   F. T-position mechanism
   G. 180-degree rotation Vigenere key test
   H. Tableau anomaly analysis (extra L, extra T)
@@ -911,14 +911,14 @@ r27 = [(i,ch) for i,ch,r,c,l in k4_grid_positions if r==27]
 print(f"  K4 row distribution: row24={len(r24)}, row25={len(r25)}, row26={len(r26)}, row27={len(r27)}")
 
 # ─────────────────────────────────────────────────────────────────────────────
-# SECTION E: "8 Lines 73" grille spec
+# SECTION E: "3 Lines 93" (was misread as "3 Lines 93 [note: was misread as 8 Lines 73]") grille spec
 # ─────────────────────────────────────────────────────────────────────────────
 sep()
 print("SECTION E: '8 LINES 73' GRILLE SPECIFICATION")
 sep()
 print()
 
-print("From KryptosFan: '8 Lines 73' — interpretation:")
+print("From KryptosFan: '3 Lines 93' (was misread as '3 Lines 93 [note: was misread as 8 Lines 73]') — interpretation:")
 print()
 print("  Total K4 chars: 97")
 print("  Crib positions (0-indexed):")

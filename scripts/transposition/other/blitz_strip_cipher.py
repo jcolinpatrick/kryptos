@@ -1025,9 +1025,9 @@ count_a10 = 0
 
 # Numerical keys from K4 metadata
 NUMERICAL_KEYS = [
-    [3, 8, 7, 3],             # "8 Lines 73" → 8,7,3
+    [3, 8, 7, 3],             # "3 Lines 93" (was misread as "3 Lines 93 [note: was misread as 8 Lines 73]") → 8,7,3
     [8, 7, 3],                # Just the digits
-    [8, 1, 7, 3],             # 8 lines 73
+    [8, 1, 7, 3],             # 3 Lines 93 (was misread as 3 Lines 93 [note: was misread as 8 Lines 73])
     [1, 9, 9, 0],             # Year of Kryptos
     [1, 9, 8, 9],             # Scheidt retired
     [9, 7],                   # Length of K4

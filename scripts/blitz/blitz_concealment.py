@@ -568,7 +568,7 @@ def test_interleaved_nulls():
             try_decrypt(ct_short, key, f"drop_double_{which}")
             tested += 1
 
-    # 9b: Remove positions matching "8 Lines 73" — if K4 is 8 rows,
+    # 9b: Remove positions matching "3 Lines 93" (was misread as "3 Lines 93 [note: was misread as 8 Lines 73]") — if K4 is 8 rows,
     # maybe 97-73=24 positions are nulls (same as crib count!)
     # Try removing various patterns of 24 positions
     # Hypothesis: null positions could be at row boundaries
@@ -863,7 +863,7 @@ def test_numeric_keys():
         "19221126",     # Carter opens tomb Nov 26 1922
         "1126",
         "1922",
-        "8073",         # "8 Lines 73"
+        "8073",         # "3 Lines 93" (was misread as "3 Lines 93 [note: was misread as 8 Lines 73]")
         "873",
         "831",          # 8×31 grid
         "2831",         # 28×31 grid
@@ -960,7 +960,7 @@ Key findings:
 11. AUTOKEY: PT-autokey, CT-autokey, Beaufort autokey.
 12. PROGRESSIVE KEY: Keyword + linear step per position.
 13. STEGO K1-K3: Keys extracted from K1-K3 plaintext via skips/acrostics.
-14. NUMERIC KEYS: Gronsfeld with coordinates, dates, "8 Lines 73".
+14. NUMERIC KEYS: Gronsfeld with coordinates, dates, "3 Lines 93" (was misread as "3 Lines 93 [note: was misread as 8 Lines 73]").
 
 If Scheidt's 'concealment' refers to the scrambling/transposition layer itself
 (not a PT pre-processing step), then this entire model class is moot and

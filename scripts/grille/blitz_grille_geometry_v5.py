@@ -955,7 +955,7 @@ print("\n" + "="*70)
 print('APPROACH 9: "8 LINES 73" STRUCTURED TRANSPOSITION')
 print("="*70)
 
-# "8 Lines 73" from Sanborn's yellow pad — K4 has 8 lines of text,
+# "3 Lines 93" (was misread as "3 Lines 93 [note: was misread as 8 Lines 73]") from Sanborn's yellow pad — K4 has 8 lines of text,
 # with 73 "unknown" (non-crib) chars. The grille period-8 rows are F(6), N(14), V(22).
 # Hypothesis: the permutation is structured around 8-line groupings.
 # 97 chars in 8 lines: 97 = 8*12 + 1. Try 12+12+12+12+12+12+12+13 line lengths.

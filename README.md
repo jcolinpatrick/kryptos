@@ -115,7 +115,7 @@ The [kryptosbot.com](https://kryptosbot.com/browse/) site documents 389 formal e
 The leading working model (not proven):
 
 1. **Two systems confirmed** — Sanborn's 1990 dedication speech states K4 uses "two systems of enciphering," distinct from the Vigenere used for K1-K3
-2. **Null insertion hypothesis** — Sanborn's working notes contain the notation "8 Lines 73" next to K4 material, which may indicate 73 real characters among the 97 carved. The number of nulls (if any) and their positions are unknown; 24 is inferred from 97 − 73 but is not confirmed by any source
+2. **Null insertion hypothesis** — Some positions in K4 may be steganographic filler. The number of nulls (if any) and their positions are unknown. Earlier analyses assumed 24 nulls (97 − 73 = 24) based on a misread of Sanborn's working notes; the actual notation reads "3 Lines 93," whose meaning is unclear
 3. **Null palette anomaly** — Under the 24-null model, the 17 highest-confidence null positions use only 7 of 26 possible letters ({B,G,I,K,O,W,Z}), corresponding to two columns of the KA Polybius grid (joint p ~ 10^-5). This is the strongest confirmed statistical signal in K4, though the null positions themselves are model-conditional
 4. **Running key from unknown source** — The only structured non-periodic key model surviving Bean constraints. Source text is unknown; English running key + columnar transposition is eliminated
 

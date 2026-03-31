@@ -772,7 +772,7 @@ print("APPROACH 10: Creative Lateral Approaches")
 print("="*70)
 t10 = time.time()
 
-# 10a: "8 Lines 73" — 8 physical lines, permute them
+# 10a: "3 Lines 93" (was misread as "3 Lines 93 [note: was misread as 8 Lines 73]") — 8 physical lines, permute them
 K4_LINES = [list(range(s, min(s + 12, N))) for s in range(0, N, 12)]
 # Adjust last line
 while K4_LINES and not K4_LINES[-1]:

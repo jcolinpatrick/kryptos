@@ -15,7 +15,7 @@ PARADIGM: PT → Cipher(key) → real_CT → SCRAMBLE(σ) → K4_CARVED
 
 NEW APPROACHES:
   A. KA cycle partition (17+8+1) — use cycle membership as binary grille mask
-  B. "8 Lines 73" — literal 8-row × ~9-hole grille over K4+context rows
+  B. "3 Lines 93" (was misread as "3 Lines 93 [note: was misread as 8 Lines 73]") — literal 8-row × ~9-hole grille over K4+context rows
   C. Prime/Fibonacci/modular — position-based mask patterns (enhanced)
   D. KRYPTOS/ABSCISSA period-7/8 — keyword period masks
   E. K4 self-referential — K4 letter's KA index determines its own sigma pos
@@ -649,7 +649,7 @@ print()
 
 # ─── SECTION B: "8 LINES 73" LITERAL ─────────────────────────────────────────
 print("=" * 70)
-print("APPROACH B: '8 Lines 73' Literal Interpretation")
+print("APPROACH B: '3 Lines 93' (was misread as '3 Lines 93 [note: was misread as 8 Lines 73]') Literal Interpretation")
 print("=" * 70)
 print("'8 Lines' = 8 rows with holes; '73' = total hole count")
 print("K4 spans rows 24-27 (4 rows). '8 Lines' might extend to rows 20-27.\n")

@@ -20,7 +20,7 @@ Tests the 180-degree rotation hypothesis with NEW approaches:
  F. Bean equality/inequality constraints on sigma
  G. Crib-constrained permutation search (enumerate sigmas from crib positions)
  H. Antisymmetric half-selection — mathematical proof of what's reachable
- I. Period-8 "8 Lines 73" and tableau anomalies (V-N=T-L=8)
+ I. Period-8 "3 Lines 93" (was misread as "3 Lines 93 [note: was misread as 8 Lines 73]") and tableau anomalies (V-N=T-L=8)
  J. ALL grille readings with K3-calibrated mask
 
 Structural claim being tested:
@@ -929,11 +929,11 @@ print(f"\nValid (SE-compatible) crib cases: {len(crib_valid_cases)}")
 # ─────────────────────────────────────────────────────────────────────────────
 
 print("\n" + "═"*72)
-print("PART H: Period-8 Analysis ('8 Lines 73' Signal)")
+print("PART H: Period-8 Analysis ('3 Lines 93' (was misread as '3 Lines 93 [note: was misread as 8 Lines 73]') Signal)")
 print("═"*72)
 
 print("""
-Sanborn's yellow pad: '8 Lines 73'
+Sanborn's yellow pad: '3 Lines 93' (was misread as '3 Lines 93 [note: was misread as 8 Lines 73]')
 73 + 24 = 97 (cribs span 24 chars, 73 remaining)
 V-N = T-L = 8 (tableau anomalies at rows 22 and 14)
 L+T = 30 (tableau body width)
@@ -1542,5 +1542,5 @@ print(f"""
    a) Constraint propagation from SE + cribs → enumerate valid sigma subsets
    b) Search for reading orders that are consistent with K3's known structure
    c) Explore non-rectangular/non-standard grille geometries
-   d) Investigate "8 Lines 73" as a direct construction instruction
+   d) Investigate "3 Lines 93" (was misread as "3 Lines 93 [note: was misread as 8 Lines 73]") as a direct construction instruction
 """)

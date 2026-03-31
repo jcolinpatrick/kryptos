@@ -654,7 +654,7 @@ print("─" * 70)
 EXTENDED_KEYWORDS = list(KEYWORDS) + [
     "NORTHEASTERNORTHEAST",  # repeated crib
     "CLOCK", "EAST", "NORTH", "BERLINCLOCK",
-    "ABSCISSA",  # period 8 — "8 lines 73"
+    "ABSCISSA",  # period 8 — "3 Lines 93 [note: was misread as 8 lines 73]"
     "KRYPTOSABSCISSA", "ABSCISSAKRYPTOS",
     "A", "B", "K", "Y", "Z",  # single-char keys
     "SHADOW", "SANBORN", "SCHEIDT",
