@@ -56,7 +56,13 @@ Pos 73: K
 Under Vigenere: k[27] = k[65] = 24 (= Y)
 Under Beaufort: k[27] = k[65] = 6 (= G)
 
-### Inequalities (21):
+### Inequalities (242 total, 21 shown below):
+
+The full set contains 242 pairs derived from all C(24,2) = 276 crib position pairs where
+the key values differ under all three cipher variants. The authoritative count is in
+`kryptos.kernel.constants.BEAN_INEQ` (len = 242). The 21 shown here are a representative
+subset — the full set is used in all computational tests.
+
 ```
 k[24] != k[28]    k[28] != k[33]    k[24] != k[33]    k[21] != k[30]
 k[21] != k[64]    k[30] != k[64]    k[68] != k[25]    k[22] != k[31]

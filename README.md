@@ -20,7 +20,7 @@
 
 ## What is this?
 
-**Kryptos** is an encrypted sculpture at CIA headquarters in Langley, Virginia. Installed in 1990 by artist Jim Sanborn with cryptographic assistance from Ed Scheidt (retired Chairman of the CIA Cryptographic Center), it contains four encrypted messages. The first three (K1–K3) were solved by 1999. **The fourth, K4, remains unsolved after 35 years.**
+**Kryptos** is an encrypted sculpture at CIA headquarters in Langley, Virginia. Installed in 1990 by artist Jim Sanborn with cryptographic assistance from Ed Scheidt (retired Chairman of the CIA Cryptographic Center), it contains four encrypted messages. The first three (K1–K3) were solved in 1998–1999. **The fourth, K4, remains unsolved after 35 years.**
 
 This repository is a systematic attempt to solve K4 — or at least to rigorously document what doesn't work.
 
@@ -44,7 +44,7 @@ src/kryptos/          # Core library — cipher transforms, scoring, constraints
   corpus/             #   Egyptological corpus for running-key testing
   cli/                #   Command-line tools (sweep, reproduce, novelty, report)
 
-scripts/              # ~1,000 experiment scripts organized by cipher family
+scripts/              # ~900 experiment scripts organized by cipher family
   substitution/       #   Vigenere, Beaufort, Hill, monoalphabetic, etc.
   transposition/      #   Columnar, rail fence, route, grid-based
   fractionation/      #   Bifid, Trifid, ADFGVX, Playfair

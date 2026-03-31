@@ -27,7 +27,7 @@ Skipping these steps and re-testing an eliminated hypothesis wastes 28 CPU cores
 
 ## The K4 Problem — Quick Reference
 
-**Kryptos** is a sculpture at CIA headquarters containing four encrypted messages (K1–K4). K1–K3 were solved in 1999. **K4 (97 characters) has been unsolved since 1990.** Two encryption systems confirmed [PRIMARY SOURCE]. No single-layer classical cipher works (exhaustively tested).
+**Kryptos** is a sculpture at CIA headquarters containing four encrypted messages (K1–K4). K1–K3 were solved in 1998–1999. **K4 (97 characters) has been unsolved since 1990.** Two encryption systems confirmed [PRIMARY SOURCE]. No single-layer classical cipher works (exhaustively tested).
 
 **→ CT, cribs, constants, eliminations, statistical observations, open attack surface, and current working hypotheses are in MEMORY.md** (auto-loaded). CLAUDE.md has durable technical setup; MEMORY.md has volatile research state. See [`reports/final_synthesis.md`](reports/final_synthesis.md) for the elimination landscape.
 
