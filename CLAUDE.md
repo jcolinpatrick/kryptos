@@ -326,6 +326,25 @@ Domain knowledge, public facts, and detailed operating policies live in separate
 - **`docs/anomaly_registry.md`** — Physical anomalies in the Kryptos sculpture (misspellings, alignments, narrative anomaly allocation)
 - **`docs/operations.md`** — Supporting systems, deployment, service management, environment files
 
+### External primary references
+
+- [Bean 2021](https://eprint.iacr.org/2021/1549) — Constraint analysis of K4 keystream (source of Bean equality/inequality constraints)
+- [Elonka Dunin's Kryptos page](https://elonka.com/kryptos/) — Community hub, authoritative CT transcription
+- [`reference/ed_scheidt_dossier.md`](reference/ed_scheidt_dossier.md) — What the co-creator has revealed publicly
+- [`reference/sanborn_open_letter_aug2025.md`](reference/sanborn_open_letter_aug2025.md) — AI verification, K5 confirmed
+
+### Operations quick-reference
+
+The live site (`internal.com`) runs on this machine. Full details in [`docs/operations.md`](docs/operations.md).
+
+```bash
+sudo systemctl status|restart internal-api.service   # API on 127.0.0.1:8321
+journalctl -u internal-api -f                         # API logs
+source venv/bin/activate && python3 ops/site_builder/build.py  # Rebuild site
+python3 ops/api/admin.py list|test|publish|reject <id>         # Theory admin
+ops/deploy/cron_update.sh --force                              # Force deploy
+```
+
 ---
 
 ## Persistent Memory (`.claude/` and `memory/`)
@@ -347,5 +366,5 @@ Two `memory/` directories exist — don't confuse them:
 
 ---
 
-*Last updated: 2026-03-30 — Mission: derive K4 method & solve. Volatile research state (best leads, eliminations, open hypotheses) maintained in MEMORY.md.*
+*Last updated: 2026-03-31 — Mission: derive K4 method & solve. Volatile research state (best leads, eliminations, open hypotheses) maintained in MEMORY.md.*
 *Primary author: Colin Patrick (human lead) + Claude (computational partner)*
