@@ -6,7 +6,7 @@
 
 <p align="center">
   <strong>An open-source computational analysis of Kryptos K4</strong><br>
-  671 billion+ configurations tested. 389 eliminations recorded. Zero breakthroughs yet.
+  671 billion+ configurations tested. 390 eliminations recorded. Zero breakthroughs yet.
 </p>
 
 <p align="center">
@@ -100,7 +100,7 @@ The score is based on crib consistency (do the known plaintext positions produce
 
 ## What's been eliminated
 
-The [kryptosbot.com](https://kryptosbot.com/browse/) site documents 389 formal eliminations across 7 categories:
+The [kryptosbot.com](https://kryptosbot.com/browse/) site documents 390 formal eliminations across 7 categories:
 
 - **Substitution** — Vigenere, Beaufort, Quagmire, Hill, Caesar, mixed alphabets
 - **Transposition** — Columnar, double-columnar, AMSCO, Myszkowski, rail fence, route, grille
