@@ -6,7 +6,7 @@
 
 <p align="center">
   <strong>An open-source computational analysis of Kryptos K4</strong><br>
-  670 billion+ configurations tested. 286 eliminations recorded. Zero breakthroughs yet.
+  671 billion+ configurations tested. 389 eliminations recorded. Zero breakthroughs yet.
 </p>
 
 <p align="center">
@@ -44,7 +44,7 @@ src/kryptos/          # Core library — cipher transforms, scoring, constraints
   corpus/             #   Egyptological corpus for running-key testing
   cli/                #   Command-line tools (sweep, reproduce, novelty, report)
 
-scripts/              # ~950 experiment scripts organized by cipher family
+scripts/              # ~1,000 experiment scripts organized by cipher family
   substitution/       #   Vigenere, Beaufort, Hill, monoalphabetic, etc.
   transposition/      #   Columnar, rail fence, route, grid-based
   fractionation/      #   Bifid, Trifid, ADFGVX, Playfair
@@ -96,27 +96,28 @@ Every candidate decryption is scored against known constraints:
 
 The score is based on crib consistency (do the known plaintext positions produce a valid keystream?), Bean constraints (equality/inequality relationships between key positions), index of coincidence, and n-gram quality.
 
-**After 670 billion+ configurations: the best score achieved is noise-level.** No single-layer classical cipher produces a meaningful result on K4.
+**After 671 billion+ configurations: the best score achieved is noise-level.** No single-layer classical cipher produces a meaningful result on K4.
 
 ## What's been eliminated
 
-The [kryptosbot.com](https://kryptosbot.com/browse/) site documents 286 formal eliminations across 6 categories:
+The [kryptosbot.com](https://kryptosbot.com/browse/) site documents 389 formal eliminations across 7 categories:
 
 - **Substitution** — Vigenere, Beaufort, Quagmire, Hill, Caesar, mixed alphabets
-- **Transposition** — Columnar, double-columnar, AMSCO, rail fence, route, grille
-- **Fractionation** — Bifid, Trifid, ADFGVX, Playfair, two-square, four-square
-- **Multi-layer** — Substitution + transposition combinations, null extraction, cascades
-- **Key models** — Running keys, autokey, progressive, date-derived, sculpture-derived
-- **Bespoke** — Morse-derived parameters, Weltzeituhr, DRYAD charts, NATO/COMSEC
+- **Transposition** — Columnar, double-columnar, AMSCO, Myszkowski, rail fence, route, grille
+- **Fractionation** — Bifid, Trifid, ADFGVX, Playfair, four-square (all structurally eliminated)
+- **Multi-layer** — Substitution + transposition combinations, null extraction, three-layer cascades
+- **Key models** — Running keys, autokey (structurally eliminated), progressive, Fibonacci, date-derived
+- **Bespoke** — RS44, VIC, Wheatstone, Weltzeituhr, DRYAD charts, NATO/COMSEC
+- **Uncategorized** — Morse-derived, encoding schemes, sculpture-physical hypotheses
 
 ## Current hypotheses
 
 The leading working model (not proven):
 
-1. **Two systems confirmed** — Sanborn's dedication speech states K4 uses "two systems of enciphering," distinct from the Vigenere used for K1-K3
-2. **73-character hypothesis** — Sanborn's working notes suggest K4 may be 73 characters with 24 nulls inserted
-3. **Cardan grille as selection mask** — The grille may identify which 73 of the 97 carved characters are real ciphertext
-4. **W-as-delimiter** — Five W's in the ciphertext bracket the known cribs, possibly acting as word separators
+1. **Two systems confirmed** — Sanborn's 1990 dedication speech states K4 uses "two systems of enciphering," distinct from the Vigenere used for K1-K3
+2. **73-character hypothesis** — Sanborn's working notes suggest K4 may be 73 characters with 24 nulls inserted as steganographic filler
+3. **Null palette anomaly** — The 17 consensus null characters use only 7 of 26 possible letters ({B,G,I,K,O,W,Z}), with joint significance p ~ 10^-5 against a Polybius grid structure. This is the strongest confirmed statistical signal in K4
+4. **Running key from unknown source** — The only structured non-periodic key model surviving Bean constraints. Source text is unknown; English running key + columnar transposition is eliminated
 
 See [docs/research_questions.md](docs/research_questions.md) for the full list of open questions.
 
