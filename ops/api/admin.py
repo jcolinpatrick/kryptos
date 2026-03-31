@@ -15,7 +15,7 @@ import os
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
-from ops.api.queue import init_db, get_pending, update_status, _get_connection, DB_PATH
+from ops.api.queue import init_db, get_pending, update_status, get_by_token, _get_connection, DB_PATH
 
 
 def list_pending():
@@ -34,6 +34,10 @@ def list_pending():
         if len(t['theory_text']) > 200:
             print(f"           ...({len(t['theory_text'])} chars total)")
         print(f"  Status: {t['status']}")
+        if t.get('token'):
+            print(f"  Status URL: /status/?t={t['token']}")
+        else:
+            print(f"  Status URL: (no token — submitted before tracking)")
         print(f"  {'-'*60}")
 
 
@@ -71,26 +75,28 @@ def count_pending():
     print(len(theories))
 
 
-def mark_testing(theory_id: int):
+def mark_testing(theory_id: int, note: str = ""):
     """Mark a theory as being tested."""
-    update_status(theory_id, "testing")
+    update_status(theory_id, "testing", note=note)
     print(f"Theory #{theory_id} marked as TESTING.")
-
-
-def mark_published(theory_id: int, note: str = ""):
-    """Mark a theory as published (tested and added to site)."""
-    update_status(theory_id, "published")
-    print(f"Theory #{theory_id} marked as PUBLISHED.")
     if note:
         print(f"  Note: {note}")
 
 
+def mark_published(theory_id: int, note: str = ""):
+    """Mark a theory as published (tested and added to site)."""
+    update_status(theory_id, "published", note=note)
+    print(f"Theory #{theory_id} marked as PUBLISHED.")
+    if note:
+        print(f"  Note (visible to submitter): {note}")
+
+
 def mark_rejected(theory_id: int, reason: str = ""):
     """Reject a theory."""
-    update_status(theory_id, "rejected")
+    update_status(theory_id, "rejected", note=reason)
     print(f"Theory #{theory_id} REJECTED.")
     if reason:
-        print(f"  Reason: {reason}")
+        print(f"  Reason (visible to submitter): {reason}")
 
 
 def main():

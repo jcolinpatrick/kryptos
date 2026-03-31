@@ -15,20 +15,21 @@
   <h1>Three things we <em>did</em> find</h1>
   <p class="findings-intro">
     No single classical cipher decrypts K4. But the analysis wasn't fruitless.
-    Three notable patterns emerged from the data. The first two were confirmed
-    independently; the third was discovered post-hoc and requires further validation.
-    Together they constrain how K4 was <strong>constructed</strong>, even though
-    the cipher itself remains unbroken.
+    Three notable patterns emerged from the data. All were discovered through
+    computational analysis and have genuine statistical significance, but their
+    interpretation depends on modeling assumptions that have not been independently
+    validated. Together they constrain how K4 may have been <strong>constructed</strong>,
+    even though the cipher itself remains unbroken.
   </p>
 </header>
 
 <!-- How We Know -->
 
 <section class="finding-provenance">
-  <h2>Why we trust these findings</h2>
+  <h2>How we found these &mdash; and what we can&rsquo;t yet prove</h2>
   <p>
-    Each finding is based on reproducible analysis, not speculation. Findings 1 and 2
-    were confirmed by <strong>independent evidence from multiple directions</strong>:
+    Each finding is based on reproducible analysis, not speculation. However, recent
+    validation work has revealed important limitations that we want to be transparent about:
   </p>
   <ul class="provenance-list">
     <li>
@@ -38,15 +39,19 @@
       by analyzing different data than we used. Two researchers, different approaches, same result.
     </li>
     <li>
-      <strong>Exhaustive verification:</strong>
-      We tested all 232 million possible placements of the remaining null positions.
-      The 17 consensus positions appear in every configuration that scores above random noise.
+      <strong>Shuffled-ciphertext validation:</strong>
+      We shuffled K4&rsquo;s ciphertext 500 times and re-ran the same optimization.
+      <strong>Zero</strong> shuffled versions produced a palette as restricted as 7 letters
+      (mean: 12.7, min: 9). This confirms the restriction depends on K4&rsquo;s
+      specific letter ordering, not an artifact of the optimizer (p&nbsp;&lt;&nbsp;0.002).
     </li>
     <li>
-      <strong>Two independent signals point to the same structure:</strong>
-      The filler characters and the known-plaintext math both select the same 7-letter set.
-      We shuffled the ciphertext 50 million times and only 7 shuffles produced both effects
-      together, making the odds of coincidence less than <strong>1 in 7 million</strong>.
+      <strong>Model-dependence caveat:</strong>
+      The 17 candidate null positions were identified using a KA-autokey Vigen&egrave;re model.
+      When we re-ran the same process with 4 other cipher models, the positions shifted
+      dramatically (average overlap: Jaccard&nbsp;0.161). This means the positions are
+      <strong>model-conditional</strong>, not independently validated. The palette restriction
+      is real under the KA-autokey model but may not be intrinsic to K4 itself.
     </li>
   </ul>
   <p>
@@ -59,7 +64,8 @@
     </a>
     <span class="proof-paper-note">
       Full statistical derivations with Monte Carlo methodology.
-      For statisticians and peer review.
+      For statisticians and peer review. Note: the proof predates the model-dependence
+      finding and is under revision.
     </span>
   </div>
 </section>
@@ -105,33 +111,35 @@
       <h2>The Null Palette</h2>
       <p class="finding-subtitle">Only 7 of 26 letters appear at candidate filler positions</p>
     </div>
-    <span class="finding-pvalue">&lt; 1 in 7 million</span>
+    <span class="finding-pvalue">~1 in 16,000 (model-conditional)</span>
   </div>
 
-  <div class="confidence-indicator confidence-high">
-    <div class="confidence-bar confidence-high">
+  <div class="confidence-indicator confidence-moderate">
+    <div class="confidence-bar confidence-moderate">
       <span class="filled"></span><span class="filled"></span><span class="filled"></span>
       <span class="filled"></span><span class="filled"></span><span class="filled"></span>
-      <span class="filled"></span><span class="filled"></span><span></span><span></span>
+      <span></span><span></span><span></span><span></span>
     </div>
-    <span class="confidence-label">High confidence</span>
+    <span class="confidence-label">Moderate confidence (model-conditional)</span>
   </div>
 
   <div class="finding-plain">
     <h3>The short version</h3>
     <p>
-      Someone chose exactly 7 letters (B, G, I, K, O, W, and Z) and scattered
-      them through K4 as filler characters. The odds of this happening by chance
-      are about <strong>1 in 16,000</strong> for the palette alone, and when combined with
-      the matching pattern in the known plaintext (Finding 1b below), the odds drop to less than
-      <strong>1 in 7 million</strong>. This means K4 probably isn&rsquo;t 97 characters of
-      real ciphertext. It&rsquo;s likely 73, with 24 decoys designed to make frequency analysis useless.
+      Under a specific cipher model (KA-autokey Vigen&egrave;re), simulated annealing
+      identifies 17 candidate filler positions that use only 7 letters
+      (B, G, I, K, O, W, and Z). The odds of this restriction happening by chance
+      are about <strong>1 in 16,000</strong>. A shuffled-ciphertext test confirmed this
+      is specific to K4&rsquo;s letter ordering (p&nbsp;&lt;&nbsp;0.002), not an optimizer artifact.
+      However, the 17 positions are <strong>model-dependent</strong>: different cipher models
+      produce different candidate positions (average overlap: Jaccard&nbsp;0.161).
+      If the palette is real, K4 may be 73 characters of real ciphertext with 24 decoys.
     </p>
   </div>
 
   <div class="finding-callout">
     <span class="callout-value">1 in 16,000</span>
-    <span class="callout-label">probability of seeing this palette restriction by chance</span>
+    <span class="callout-label">probability of this palette restriction by chance (under KA-autokey model)</span>
   </div>
 
   <details class="finding-technical">
@@ -146,10 +154,18 @@
       analysis would not help solvers.
     </p>
     <p>
-      We identified 17 positions where independent analyses converge on the character being a null.
+      Using simulated annealing with a KA-autokey Vigen&egrave;re model, we identified 17 candidate positions.
       Those 17 characters use only <strong>7 different letters: B, G, I, K, O, W, and Z.</strong>
       Drawing 17 characters at random from K4&rsquo;s letter distribution and getting only 7 distinct letters
-      has a probability of roughly <strong>1 in 16,000</strong> (permutation test, 10M trials). This is very unlikely to be coincidence.
+      has a probability of roughly <strong>1 in 16,000</strong> (permutation test, 10M trials).
+    </p>
+    <p>
+      <strong>Validation (March 2026):</strong> We shuffled K4&rsquo;s ciphertext 500 times and
+      re-ran the same SA process. Zero shuffled versions produced &le;7 distinct letters
+      (mean: 12.7, min: 9), confirming the restriction is specific to K4&rsquo;s actual letter
+      ordering (p&nbsp;&lt;&nbsp;0.002). However, when we tested 4 other cipher models, the candidate
+      positions shifted dramatically (average Jaccard overlap: 0.161). The positions are
+      <strong>model-conditional</strong>, not independently validated.
     </p>
     <p>
       Even more striking: <strong>4 of the 5 W&rsquo;s</strong> in the entire ciphertext are nulls.
@@ -197,29 +213,35 @@
       <span class="stat-pill-value">1 in 16,000</span>
     </div>
     <div class="stat-pill">
-      <span class="stat-pill-label">Keywords that produce this grid</span>
-      <span class="stat-pill-value">~0.6%</span>
+      <span class="stat-pill-label">Shuffled-CT validation</span>
+      <span class="stat-pill-value">0 / 500 (p &lt; 0.002)</span>
     </div>
-    <div class="stat-pill stat-pill-accent">
-      <span class="stat-pill-label">Combined odds (palette + plaintext)</span>
-      <span class="stat-pill-value">&lt; 1 in 7 million</span>
+    <div class="stat-pill">
+      <span class="stat-pill-label">Cross-model position overlap</span>
+      <span class="stat-pill-value">Jaccard 0.161 (low)</span>
     </div>
   </div>
 
   <div class="finding-caveat">
     <h3>What this means, and what it doesn't</h3>
     <p>
-      This tells us <em>which letters can appear as filler</em>: only {B,G,I,K,O,W,Z}, drawn from
-      two columns of a 5-wide keyword-mixed Polybius grid. It does <strong>not</strong> tell us
-      which specific palette letter fills each null position. We tested 7 models (position
-      formulas, neighbor functions, keystream echo, grid cell mapping, cipher determination,
-      delta constraints) and <strong>all failed</strong> (best: 6/17). The character assignment
-      requires information not present in the ciphertext alone.
+      <strong>Under the KA-autokey model</strong>, only {B,G,I,K,O,W,Z} appear at the 17 candidate
+      filler positions, and these letters fall in two columns of a 5-wide keyword-mixed Polybius grid.
+      This is statistically significant and specific to K4&rsquo;s actual letter ordering (confirmed
+      by shuffled-ciphertext test, p&nbsp;&lt;&nbsp;0.002).
     </p>
     <p>
-      The specific keyword is unknown; KRYPTOS is one of ~6,300 English words that produce
-      this column pattern. It <strong>does not</strong> crack the cipher operating on the remaining
-      73 real characters.
+      However, the 17 positions themselves change when a different cipher model is used
+      (Jaccard overlap averages only 0.161 across 5 models). This means we cannot rule out
+      that the palette restriction is a property of the KA-autokey model&rsquo;s interaction with K4,
+      rather than an intrinsic feature of the encryption. <strong>No model-free method has
+      independently recovered these positions.</strong>
+    </p>
+    <p>
+      We tested 7 models for character assignment (position formulas, neighbor functions,
+      keystream echo, grid cell mapping, cipher determination, delta constraints)
+      and <strong>all failed</strong> (best: 6/17). The specific keyword is unknown;
+      KRYPTOS is one of ~6,300 English words that produce this column pattern.
     </p>
   </div>
 </section>
@@ -503,9 +525,9 @@
       <h3>What our analysis suggests</h3>
       <ul>
         <li>K4 likely uses <strong>two layers</strong>: a cipher and a filler-insertion layer (consistent with Sanborn&rsquo;s statement about &ldquo;two systems of enciphering&rdquo;)</li>
-        <li>The 7 filler letters {B,G,I,K,O,W,Z} fall in two columns of a 5-wide grid built from a keyword-shuffled alphabet</li>
-        <li>The filler layer and the cipher layer share a structural source: 13 of 24 known-plaintext values are also from this same 7-letter set (odds of coincidence: less than 1 in 7 million)</li>
-        <li>17 of the 24 candidate filler positions are identified with high confidence; the remaining 7 are still uncertain</li>
+        <li>Under the KA-autokey model, candidate filler positions use only 7 letters {B,G,I,K,O,W,Z}, which fall in two columns of a 5-wide keyword-mixed grid (p&nbsp;&asymp;&nbsp;1&nbsp;in&nbsp;16,000)</li>
+        <li>This palette restriction is specific to K4&rsquo;s actual ciphertext (shuffled-CT validation: 0/500, p&nbsp;&lt;&nbsp;0.002)</li>
+        <li>However, the 17 candidate positions are <strong>model-dependent</strong> (Jaccard 0.161 across 5 cipher models) &mdash; no model-free method has independently confirmed them</li>
         <li>How each filler position gets its specific letter is unknown; we tested 7 models and all failed</li>
       </ul>
     </div>
