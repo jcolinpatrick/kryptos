@@ -179,7 +179,7 @@ PYTHONPATH=src pytest tests/test_stego.py tests/test_coupling.py tests/test_comp
 
 ## References
 
-- Bean, R. (2021). "Cryptodiagnosis of Kryptos K4." HistoCrypt 2021. [IACR ePrint 2021/1549]
+- Bean, R. (2021). "Cryptodiagnosis of Kryptos K4." HistoCrypt 2021. [https://ecp.ep.liu.se/index.php/histocrypt/article/view/153]
 - Patrick, C. & Claude (2026). KryptosBot computational analysis. [github.com/jcolinpatrick/kryptos]
 
 ---
