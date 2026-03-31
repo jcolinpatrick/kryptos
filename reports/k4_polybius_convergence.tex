@@ -13,33 +13,32 @@
 \theoremstyle{remark}
 \newtheorem*{remark}{Remark}
 
-\title{Convergent Evidence for $5 \times 5$ Polybius Structure\\in Kryptos K4}
+\title{Beaufort Keystream Anomalies in Kryptos K4}
 \author{Colin Patrick \and Claude (Anthropic)}
-\date{March 30, 2026 (revised)}
+\date{March 31, 2026 (revised)}
 
 \begin{document}
 \maketitle
 
 \begin{abstract}
-Two independent observations about Kryptos K4 converge on a single
-structure: the Kryptos Alphabet arranged as a $5$-wide Polybius grid.
-(1)~The 17~consensus null positions contain only letters from columns~0
-and~3 of this grid ($p \approx 6 \times 10^{-5}$, Monte Carlo).
-(2)~The Beaufort keystream at all 24~crib positions is enriched for the
-same column-$\{0,3\}$ letters ($p = 4.3 \times 10^{-3}$,
-cross-validated on disjoint position sets).
-Direct simulation of both observations jointly yields
-$p = 1.4 \times 10^{-7}$ ($N = 50{,}000{,}000$ letter permutations).
-A third observation---Bean~(2021) found that 13/24 keystream values are
-multiples of~5 in the reversed KA indexing ($p \approx 9.5 \times 10^{-4}$)---shares
-a mod-5 connection with the grid but does not cleanly reduce to a column
-selection (Section~\ref{sec:bean}).
-The keystream enrichment and Bean's mod-5 are model-independent: they
-depend only on the carved ciphertext and the known cribs.
-The null palette, however, is \emph{model-conditional}: the 17~consensus
-positions were derived under a specific cipher model, and positions shift
-when the model changes (Jaccard similarity~$0.161$ across models;
-Section~\ref{sec:model-conditional}).
+We report model-independent statistical anomalies in the Beaufort
+keystream of Kryptos K4 at its 24~known crib positions.
+The keystream values $k[i] = (C[i] + P[i]) \bmod 26$ are enriched
+for the 7-letter set $\Pi = \{B,G,I,K,O,W,Z\}$: 13/24 overall
+($p = 4.3 \times 10^{-3}$), with extreme concentration at
+BERLINCLOCK positions 63--70 (7/8, $p = 6.3 \times 10^{-4}$).
+These letters correspond to columns~0 and~3 of the Kryptos Alphabet
+arranged as a $5$-wide Polybius grid.
+Bean~(2021) independently found that 13/24 keystream values are
+multiples of~5 in a reversed-KA indexing ($p \approx 9.5 \times 10^{-4}$),
+sharing a mod-5 connection with the grid.
+All keystream findings depend only on the carved ciphertext and the
+known cribs---no cipher model, keyword, or null mask is assumed.
+A previously reported null-palette restriction (7~distinct letters at
+17~consensus null positions) has been \textbf{downgraded}: cross-model
+testing shows the restriction is an artifact of the iterative
+optimization procedure, not a model-invariant property of K4
+(Section~\ref{sec:downgrade}).
 \end{abstract}
 
 %% ================================================================
@@ -91,69 +90,8 @@ $\Pi = \{\ell \in \mathcal{A} : \mathrm{col}(\ell) \in \{0, 3\}\}
      = \{B, G, I, K, O, W, Z\}$.
 \end{definition}
 
-\begin{definition}[Consensus Null Positions]
-The 17~positions identified with 100\% agreement across 6~independently
-optimized null masks (each maximizing crib consistency via simulated
-annealing):
-\begin{multline*}
-\mathcal{N}_{17} = \{0, 1, 2, 5, 8, 12, 14, 20, 36, \\
-52, 58, 59, 74, 75, 78, 84, 85\}.
-\end{multline*}
-\end{definition}
-
 %% ================================================================
-\section{Proposition 1: Null Palette Restriction}
-%% ================================================================
-
-\begin{proposition}[Null Palette]\label{prop:palette}
-The characters at the 17 consensus null positions use only
-letters from $\Pi$:
-\[
-\{C[i] : i \in \mathcal{N}_{17}\} = \{B, G, I, K, O, W, Z\} = \Pi.
-\]
-\end{proposition}
-
-\begin{proof}
-Direct enumeration.  The 17~characters are
-$O, B, K, O, G, B, O, W, W, K, W, I, W, G, Z, I, G$,
-with multiplicities $B^2 G^3 I^2 K^2 O^3 W^4 Z^1$.
-All 7~letters belong to~$\Pi$, and conversely every element
-of~$\Pi$ appears at least once.
-\end{proof}
-
-\paragraph{Statistical test.}
-Under $H_0$, the 17~null positions are a random subset of the
-73~non-crib positions in~$C$.
-We estimate $P(\text{distinct letters} \leq 7)$ by Monte Carlo
-($N = 2{,}000{,}000$ trials for the marginal test, sampling 17 from the
-73~non-crib positions without replacement; the joint simulation in
-Theorem~\ref{thm:combined} uses $N = 50{,}000{,}000$ trials):
-\[
-p = 6.3 \times 10^{-5}.
-\]
-Expected distinct count: $12.41 \pm 1.32$;
-observed: $7$; $z = -4.09$.
-
-\paragraph{Post-hoc status.}
-The palette $\Pi$ was identified from the data.  The Monte Carlo
-$p$-value tests the well-defined statistic ``number of distinct letters
-in 17~randomly chosen non-crib positions,'' which is the appropriate
-post-hoc test.  The specific identity of the 7~letters is a separate,
-unquantified observation.
-
-\paragraph{Circularity defense.}
-The 17~positions were identified by SA optimization of \emph{positional
-alignment} (which positions to remove so that cribs land correctly).
-The palette is a property of which \emph{letters} sit at those
-positions---an unoptimized quantity.  Position selection depends on
-alignment geometry, not on letter identity.
-A direct test confirms this: of 40{,}000 SA-optimized null masks at
-varying score tiers, \emph{zero} have $\leq 7$ distinct letters at
-their null positions.  The palette restriction is a property of K4
-specifically, not an artifact of the SA procedure.
-
-%% ================================================================
-\section{Proposition 2: Beaufort Keystream Enrichment}
+\section{Proposition 1: Beaufort Keystream Enrichment}
 %% ================================================================
 
 \begin{definition}[Beaufort Keystream at Crib Positions]
@@ -166,7 +104,7 @@ carved text and the known plaintext, not on any cipher model,
 keyword, or null mask.
 \end{definition}
 
-\begin{proposition}[Cross-Validated Palette Enrichment]\label{prop:keystream}
+\begin{proposition}[Palette Enrichment]\label{prop:keystream}
 Of the 24 Beaufort keystream values at crib positions, 13 are
 members of~$\Pi$:
 \[
@@ -232,23 +170,23 @@ $P(\text{palette letter}) = |\Pi|/26 = 7/26 \approx 0.269$.
 \[
 P(X \geq 13 \mid n{=}24,\; p{=}7/26) = 4.3 \times 10^{-3}.
 \]
-
-\paragraph{Cross-validation.}
-The palette $\Pi$ was derived from positions
-$\mathcal{N}_{17} = \{0, 1, 2, 5, 8, \ldots, 85\}$.
-The enrichment is measured at crib positions
-$\mathcal{C} = \{21, \ldots, 33, 63, \ldots, 73\}$.
-These sets are \textbf{strictly disjoint}:
-$\mathcal{N}_{17} \cap \mathcal{C} = \emptyset$.
-This constitutes disjoint-position validation:
-the palette definition and the enrichment test share zero
-data points.  (Both statistics are, however, functions of the
-same 97-character ciphertext realization; see
-Theorem~\ref{thm:combined} for proper joint calibration.)
+For the BCL first 8 positions specifically:
+\[
+P(X \geq 7 \mid n{=}8,\; p{=}7/26) = 6.3 \times 10^{-4}.
+\]
 
 \paragraph{Variant specificity.}
 Only Beaufort ($A{=}0$) achieves 13/24.  Vigen\`ere gives 9/24;
 Variant Beaufort gives 5/24.
+
+\paragraph{Search burden.}
+Three cipher variants were tested.  After Bonferroni correction
+($\times 3$), the BCL first-8 result gives $p = 1.9 \times 10^{-3}$,
+still significant.  The palette $\Pi$ was identified from the
+null-position analysis (Section~\ref{sec:downgrade}), making the
+keystream test partially pre-specified (the palette was defined
+before the keystream was examined, on disjoint positions) but
+ultimately derived from the same ciphertext.
 
 %% ================================================================
 \section{Bean's Mod-5 Observation (2021)}\label{sec:bean}
@@ -275,9 +213,7 @@ $\beta[i] \equiv 0 \pmod{5}$ is equivalent to
 $\mathrm{col}(C[i]) \equiv -\mathrm{idx}(P[i]) \pmod{5}$,
 which would directly select KA Polybius columns.
 This equivalence is \textbf{wrong}: it requires that
-$(x + y) \bmod 26 \equiv (x + y) \bmod 5$
-where $x = \mathrm{KA\text{-}idx}(C[i])$ and
-$y = \mathrm{idx}(P[i])$,
+$(x + y) \bmod 26 \equiv (x + y) \bmod 5$,
 which holds only when $x + y < 26$.
 Since $26 \equiv 1 \pmod{5}$, reducing mod~26 before mod~5
 introduces a $\pm 1$ shift for values $\geq 26$.  Empirically,
@@ -297,9 +233,6 @@ Bean's observation was published in 2021, before the palette
 $\Pi$ was identified.  The two findings were made by different
 researchers, from different starting points (reversed-KA
 keystream arithmetic vs.\ null-character identity).
-Whether the shared mod-5 structure reflects a common
-mechanism or a coincidence of the arithmetic remains an open
-question.
 
 %% ================================================================
 \section{K-Sum Bias}
@@ -318,21 +251,13 @@ The deficit is $82$, giving $z = -2.23$ ($p \approx 0.013$,
 one-tailed).
 \end{proposition}
 
-\paragraph{Interpretation.}
-A low KA-sum means the keystream is biased toward
-\emph{early} KA letters---i.e., the keyword \texttt{KRYPTOS}
-and its immediate successors.  Indeed, 10/24 keystream letters
-(42\%) are in $\{K,R,Y,P,T,O,S\}$ versus 27\% expected
-($7/26$).  This is a fourth signal pointing to KA structure
-in the keystream.
-
 \paragraph{Conditional status.}
 The K-sum deficit is largely a consequence of the palette enrichment
 (Proposition~\ref{prop:keystream}): palette letters $\Pi$ occupy
 early KA positions (mean KA-index 7.7 vs.\ 12.5 overall), so any
 keystream enriched for $\Pi$ will mechanically produce a low KA-sum.
 The K-sum is therefore a \emph{conditional redescription} of the
-palette signal, not an independent fourth observation.
+palette signal, not an independent observation.
 
 \paragraph{Note.}
 This observation was first noted by Bean in private correspondence
@@ -340,183 +265,126 @@ This observation was first noted by Bean in private correspondence
 thing about that key.''
 
 %% ================================================================
-\section{Model-Conditional Caveat}\label{sec:model-conditional}
+\section{Downgraded: Null Palette Restriction}\label{sec:downgrade}
 %% ================================================================
 
-\paragraph{Null positions depend on the cipher model.}
-The 17~consensus null positions $\mathcal{N}_{17}$ were derived by
-optimizing crib alignment under a specific cipher model (Beaufort on
-the null-extracted text).  When the cipher model changes---e.g.,
-Vigen\`ere, or a different transposition width---the SA optimizer
-converges to a \emph{different} set of null positions.  Across models,
-the Jaccard similarity between position sets is only~$0.161$, indicating
-substantial disagreement.
+An earlier version of this paper presented the null palette
+restriction as a co-equal finding alongside the keystream enrichment.
+Cross-model testing has revealed this claim to be \textbf{substantially
+weaker than originally reported}.
 
-\paragraph{What is and is not model-dependent.}
-\begin{itemize}
-\item \textbf{Model-dependent:} The specific 17~positions $\mathcal{N}_{17}$,
-  and therefore Proposition~\ref{prop:palette} (which letters appear at
-  those positions).
-\item \textbf{Model-independent:} Propositions \ref{prop:keystream},
-  \ref{prop:bean}, and~\ref{prop:ksum} (all depend only on CT and cribs
-  at fixed positions).
-\end{itemize}
+\paragraph{Original claim.}
+The 17~consensus null positions (identified by simulated annealing
+under a KA autokey Vigen\`ere model) contain only 7~distinct letters,
+all from $\Pi$.  Monte Carlo testing gave $p \approx 6.3 \times 10^{-5}$.
 
-\paragraph{Implication for joint significance.}
-The joint simulation (Theorem~\ref{thm:combined}) uses the fixed
-$\mathcal{N}_{17}$ positions.  If those positions are incorrect under
-the true cipher model, the palette restriction
-(Proposition~\ref{prop:palette}) would need re-evaluation at the
-model-correct positions.  The keystream enrichment
-(Proposition~\ref{prop:keystream}) would remain valid regardless.
+\paragraph{What went wrong.}
+The 7-distinct result was produced by a two-phase optimization:
+(1)~200~SA restarts identify high-frequency positions;
+(2)~those positions are \emph{fixed}, and SA optimizes the remaining
+positions subject to that constraint.  Phase~2 mechanically restricts
+which letters can appear, because fixing early-selected positions
+removes letter diversity that would otherwise accumulate.
 
-\paragraph{What survives across models.}
-The \emph{palette identity} $\Pi = \{B,G,I,K,O,W,Z\}$ is remarkably
-stable: even when SA optimizes under different cipher models, the
-resulting null positions---though different---still use letters
-predominantly from~$\Pi$.  This suggests the palette itself is a
-genuine property of K4, even if the specific positions are
-model-conditional.
-
-%% ================================================================
-\section{Combined Evidence}
-%% ================================================================
-
-\begin{theorem}[Cross-Validated Polybius Structure]\label{thm:combined}
-Propositions \ref{prop:palette} and~\ref{prop:keystream} are measured
-on strictly disjoint position sets ($\mathcal{N}_{17}$ vs.\
-$\mathcal{C}$).  However, both statistics are deterministic functions
-of the same 97-character ciphertext, so Fisher's method
-(which assumes independence) is not formally valid.
-
-We instead compute the joint significance by direct simulation.
-In $N = 50{,}000{,}000$ random permutations of the 97 CT letters
-(seed \texttt{20260320}), we re-derive the palette from the null
-positions of each shuffled text and test keystream enrichment for
-that derived palette:
-\begin{multline*}
-P\bigl(\text{distinct} \leq 7 \;\wedge\;
-       \text{ks\_palette} \geq 13
-       \mid \text{shuffled CT}\bigr) \\
-= \frac{7}{50{,}000{,}000}
-= 1.4 \times 10^{-7},
-\end{multline*}
-with 95\% CI $[6.8 \times 10^{-8},\; 2.9 \times 10^{-7}]$.
-
-Among the $1{,}405$ shuffles that produced $\leq 7$ distinct null
-letters, the mean keystream enrichment for the derived palette was
-$6.64/24$ (random expectation: $6.46$).  Only $7/1{,}405 = 0.50\%$
-also achieved $\geq 13/24$ keystream enrichment.  This confirms
-that palette restriction does not automatically produce keystream
-enrichment---the cross-validation is genuine.
-\end{theorem}
-
-\paragraph{Interpretation.}
-Two properties of the K4 ciphertext---the letter identity at null
-positions and the Beaufort keystream at crib positions---both select
-for the same 7-letter subset defined by columns 0 and~3 of the
-$5$-wide KA Polybius grid, with joint significance $p \approx
-1.4 \times 10^{-7}$ under letter-permutation null (before
-search-breadth correction; $\sim 1.7 \times 10^{-5}$ after).
-
-\paragraph{Note on Fisher's method.}
-The Fisher combined $p = 4.2 \times 10^{-6}$ reported in an earlier
-draft of this paper is not valid because the component statistics
-share the same ciphertext realization.  The direct simulation above
-yields a \emph{stronger} result ($1.4 \times 10^{-7}$ vs.\
-$4.2 \times 10^{-6}$) because the two statistics are negatively
-correlated under the null: shuffled texts that produce restricted
-palettes tend \emph{not} to enrich keystreams for those palettes.
-
-\paragraph{Search-breadth disclosure.}
-The Polybius grid width~5 and column subset $\{0,3\}$ were identified
-from the data.  A conservative accounting of the researcher degrees of
-freedom---approximately $2$~alphabets $\times$ $4$~widths $\times$
-$15$~column subsets $= 120$ effective parameter
-choices---yields a search-corrected joint significance of
-$\sim 120 \times 1.4 \times 10^{-7} = 1.7 \times 10^{-5}$,
-which remains well below conventional significance thresholds.
-
-\paragraph{Relationship to Bean's mod-5.}
-Bean's mod-5 observation (Proposition~\ref{prop:bean},
-$p = 9.5 \times 10^{-4}$) was made independently in 2021 by a
-different researcher using a different computation.
-As discussed in Section~\ref{sec:bean}, Bean's statistic shares
-a mod-5 connection with the Polybius grid but does not reduce
-cleanly to a column selection.  The primary convergence is
-\emph{two-way}: null palette restriction and keystream enrichment
-both select the same 7-letter subset defined by the $5$-wide
-KA grid.  Bean's observation is a related but structurally
-distinct signal.
-
-%% ================================================================
-\section{Pre-Registered vs.\ Post-Hoc Status}
-%% ================================================================
+When the full 200-restart protocol is run \emph{without} the
+bootstrapping phase, even the original discovery model (KA autokey
+Vigen\`ere) produces 13~distinct letters at its consensus positions
+---not~7.  Across 5~cipher models tested:
 
 \begin{center}
-\begin{tabular}{lll}
+\begin{tabular}{lcc}
 \toprule
-Observation & Status & Note \\
+Model & Distinct & $|\Pi \cap \text{palette}|$ \\
 \midrule
-Palette $|\Pi| \leq 7$ & Post-hoc & MC $p$ valid for $\leq 7$ distinct \\
-Palette $= \{B,G,I,K,O,W,Z\}$ & Post-hoc & Specific letters from data \\
-Keystream 13/24 palette & \textbf{Cross-validated} & Disjoint position sets \\
-Beaufort $>$ other variants & Bonferroni-corrected & 3 variants tested \\
-Bean mod-5 (2021) & Independent & Related but not equivalent to grid \\
-K-sum $= 218$ & \textit{Conditional} & Driven by palette enrichment \\
+KA autokey Vigen\`ere & 13 & 6/7 \\
+KA autokey Beaufort & 10 & 3/7 \\
+KA periodic Beaufort & 10 & 6/7 \\
+AZ periodic Vigen\`ere & 13 & 4/7 \\
+AZ periodic Beaufort & 14 & 4/7 \\
 \bottomrule
 \end{tabular}
 \end{center}
 
+Zero models produce $\leq 7$ distinct letters.  The mean position
+Jaccard similarity across models is $0.152$, confirming that
+positions are heavily model-dependent.
+
+\paragraph{What survives.}
+The 0/500 shuffled-CT result remains valid: when K4's letter
+arrangement is randomly permuted, SA-optimized masks produce
+$9$--$17$ distinct letters (mean $12.7$), never $\leq 7$.
+This means real K4 is unusual in \emph{permitting} low-diversity
+subsets under aggressive optimization---but the optimization
+procedure itself is responsible for driving diversity below~10.
+
+\paragraph{Implication for the joint significance.}
+The previously reported joint $p = 1.4 \times 10^{-7}$ (combining
+palette restriction and keystream enrichment) is \textbf{no longer
+valid}, because the palette restriction component has been
+invalidated.  The keystream enrichment
+(Proposition~\ref{prop:keystream}, $p = 4.3 \times 10^{-3}$;
+BCL first-8: $p = 6.3 \times 10^{-4}$) stands on its own as
+the primary surviving signal.
+
 %% ================================================================
-\section{Open Questions and Resolved Observations}
+\section{Summary of Evidence}
 %% ================================================================
 
-Bean~(2021) reported two further observations on the raw 97-character
-ciphertext: (a)~width-21 vertical bigram repeats
-($11/76$, $p \approx 1/6{,}750$) and (b)~same-plaintext-letter
-ciphertext-distance clustering ($p \approx 1/240$).  Both depend on
-non-crib characters.
+\begin{center}
+\begin{tabular}{llll}
+\toprule
+Observation & Status & $p$-value & Model-free? \\
+\midrule
+Keystream 13/24 $\in \Pi$ & \textbf{Active} & $4.3 \times 10^{-3}$ & Yes \\
+BCL first 8: 7/8 $\in \Pi$ & \textbf{Active} & $6.3 \times 10^{-4}$ & Yes \\
+Bean mod-5 (2021) & \textbf{Active} & $9.5 \times 10^{-4}$ & Yes \\
+K-sum $= 218$ & Conditional & $0.013$ & Yes (but not independent) \\
+Beaufort $>$ other variants & \textbf{Active} & Bonferroni $\times 3$ & Yes \\
+\midrule
+Null palette $\leq 7$ distinct & \textbf{Downgraded} & was $6.3 \times 10^{-5}$ & No \\
+Joint $p = 1.4 \times 10^{-7}$ & \textbf{Retracted} & --- & No \\
+\bottomrule
+\end{tabular}
+\end{center}
 
-\medskip
+The surviving evidence is moderate: three model-independent signals
+(keystream palette enrichment, BCL concentration, Bean mod-5) all
+point toward a mod-5 / KA-column structure in the Beaufort keystream.
+None individually reaches $p < 10^{-4}$ after search-breadth
+correction, and none produces a decryption.  These are descriptive
+anomalies that constrain the mechanism but do not identify it.
+
+%% ================================================================
+\section{Open Questions}
+%% ================================================================
+
 \noindent\textbf{Resolved: Width-21 bigram is a stego artifact.}
 The width-21 bigram signal ($p = 1.6 \times 10^{-4}$) is present in
 the raw 97-character text but \emph{disappears completely} after
-removing the 17~consensus null positions.  This confirms it is
-generated by the steganographic layer, not the cipher layer.
+removing the 17~consensus null positions.
 
 \medskip
-\noindent\textbf{Resolved: Width-10/17 bigrams are cipher-layer signals.}
-On the 73-character null-extracted text, bigram enrichment at widths~10
-and~17 reaches $p = 6 \times 10^{-3}$ and $p = 8 \times 10^{-3}$
-respectively.  These signals are destroyed by undoing a column-7
-transposition, suggesting col-7 structure is a mathematical artifact
-of the extraction rather than a cipher-layer feature.
+\noindent\textbf{Resolved: Width-10/17 bigrams are cipher-layer artifacts.}
+On the null-extracted text, bigram enrichment at widths~10
+and~17 ($p = 6$--$8 \times 10^{-3}$) is destroyed by undoing a
+column-7 transposition, suggesting mathematical artifact rather
+than cipher-layer structure.
+
+\medskip
+\noindent\textbf{Open: Why is the Beaufort keystream enriched for $\Pi$?}
+The enrichment is a property of the carved ciphertext at crib
+positions.  Any correct theory of K4 must explain why
+$(C[i] + P[i]) \bmod 26$ lands in $\Pi$ at 7/8 BERLINCLOCK
+positions.  Under Beaufort, this means the operational key at
+those positions is almost entirely drawn from~$\Pi$.
 
 \medskip
 \noindent\textbf{Open: Running-key source identification.}
-Running key (Beaufort/Vigen\`ere/Variant Beaufort) is the only
-structured non-periodic key model surviving Bean constraints.
-However, keystream fragments at crib positions do not resemble
-English under any tested transposition: identity and columnar widths
-6, 8, 9 were evaluated (17{,}124 Bean-compatible orderings; all
-eliminated either by Bean inequalities or by English-likelihood
-scoring at the 36th--82nd percentile of the null distribution).
-Running key \emph{with} a monoalphabetic inner layer remains
-underdetermined (13~mono degrees of freedom saturate fragment
-analysis).
-
-\medskip
-\noindent\textbf{Open: Stego--cipher coupling.}
-The palette enrichment (Proposition~\ref{prop:keystream}) is measured
-on the raw 97-character carved text.  Under the best-known cipher model
-(null mask + columnar transposition + Beaufort), the keystream operates
-in a transposed intermediate space where palette enrichment drops to
-5/24---\emph{below} the random expectation of $6.46$.  This does not
-invalidate the raw-CT97 observation (which is model-independent), but
-raises the question: does the Polybius signal exist in the carved text
-as an artifact of the stego layer, or does it survive into the cipher
-layer under the correct (still unknown) decryption model?
+Running key is the only structured non-periodic key model surviving
+Bean constraints.  Keystream fragments at crib positions do not
+resemble English under identity or columnar transposition (widths
+6, 8, 9).  Running key with a monoalphabetic inner layer remains
+underdetermined.
 
 %% ================================================================
 \section*{Reproducibility}
@@ -525,15 +393,14 @@ layer under the correct (still unknown) decryption model?
 All computations use the \texttt{kryptos} kernel
 ({\small\texttt{src/kryptos/kernel/constants.py}}, which self-verifies CT,
 cribs, and Bean constraints at import time).
-Palette Monte Carlo: seed \texttt{20260320}, $N = 50{,}000{,}000$ trials.
-Joint null simulation:
-{\small\texttt{scripts/statistical/e\_joint\_null\_simulation.py}},
-seed \texttt{20260320}, $N = 50{,}000{,}000$ trials per model.
+Cross-model palette stability:
+{\small\texttt{scripts/statistical/e\_cross\_model\_palette\_stability\_01.py}},
+5 models $\times$ 200 SA restarts $\times$ 300K steps.
 Running-key English-likelihood test:
 {\small\texttt{scripts/statistical/e\_keystream\_english\_likelihood\_01.py}},
 seed \texttt{42}, $N = 1{,}000{,}000$ null fragments, 17{,}124 columnar orderings.
 Source: {\small\texttt{github.com/jcolinpatrick/kryptos}}.
-As of March~30, 2026: 940~scripts tracked, 389~eliminations,
+As of March~31, 2026: 940~scripts tracked, 390~eliminations,
 $671 \times 10^9$+ configurations tested.
 
 \begin{thebibliography}{9}
