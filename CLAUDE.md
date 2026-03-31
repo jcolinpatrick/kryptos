@@ -2,86 +2,26 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Pre-flight (EVERY task — do NOT skip)
-
-1. Read this entire CLAUDE.md
-2. Read `elimination_ledger.md` from session memory (`.claude/projects/…/memory/`, NOT a filesystem path) — **#1 most-skipped step, #1 cause of wasted compute**
-3. Read MEMORY.md (auto-loaded) — decision-support index; topic files in `memory/` are on-demand
-4. If the task matches anything already disproved or tested → **STOP, tell the user, do NOT re-run**
-5. `run_attack.py --list --verbose | grep KEYWORD` — search before writing new code; also check `results/` and `exhaustion_log.json`
-6. **If the task involves CPU-bound work**: `bash scripts/vm_capability_report.sh` — establish runtime capabilities (see [Compute Environment](#compute-environment--high-power-vm-mandatory))
-
-Skipping these steps and re-testing an eliminated hypothesis wastes 28 CPU cores and burns API tokens for zero value.
-
 This repo has one purpose: determine the **true plaintext** and the **full encryption method** of **Kryptos K4**.
+
+**Contents:** [Pre-flight](#pre-flight-every-task--do-not-skip) · [K4 Problem](#the-k4-problem--quick-reference) · [Dev Setup](#development-setup--commands) · [Architecture](#architecture) · [Gotchas](#key-gotchas) · [Scores](#interpreting-scores) · [Compute](#compute-environment--high-power-vm) · [Truth Taxonomy](#truth-taxonomy-mandatory) · [Reference Docs](#reference-documents) · [Memory](#persistent-memory-claude-and-memory) · [Multi-Agent](#multi-agent-mode--solve-k4)
 
 ---
 
-## Compute Environment — High-Power VM (MANDATORY)
+## Pre-flight (EVERY task — do NOT skip)
 
-This project runs on a **dedicated high-capability VM**. All computational work must be planned accordingly. Do NOT write single-threaded scripts for parallelizable workloads.
+1. Read this entire CLAUDE.md
+2. **Run the session briefing** — the single most important step:
+   ```bash
+   PYTHONPATH=src python3 scripts/_infra/session_briefing.py
+   ```
+   This reads `exhaustion_log.json` (939 entries), `results/*.json` (309 files), and `docs/elimination_tiers.md` to produce a current elimination landscape, confirmed anomalies, open attack surface, and DO NOT TEST list. **It replaces all hand-maintained elimination ledgers** — the data is always fresh.
+3. Read MEMORY.md (auto-loaded) — volatile strategic state, hard blockers, next actions
+4. If the task matches anything in the briefing's TIER 1 or DO NOT TEST sections → **STOP, tell the user, do NOT re-run**
+5. `run_attack.py --list --verbose | grep KEYWORD` — search before writing new code
+6. **If the task involves CPU-bound work**: `bash scripts/vm_capability_report.sh` — establish runtime capabilities (see [Compute Environment](#compute-environment--high-power-vm))
 
-### Default runtime assumptions
-
-| Resource | Value |
-|----------|-------|
-| vCPUs | ~28 |
-| RAM | ~12 GB |
-| Swap | ~8 GB |
-| Disk | Fast local (check `df -h`) |
-| Python venv | `/home/cpatrick/kryptos/venv/` |
-| Capability report | `bash scripts/vm_capability_report.sh` |
-
-Treat this as the default runtime context. Do not behave as if this is a constrained laptop or sandbox unless a fresh capability check proves otherwise.
-
-### Session-start capability check
-
-At the beginning of each session involving CPU-bound work (brute force, Monte Carlo, SA, parameter sweeps, corpus processing, scoring, batch analysis), run:
-
-```bash
-bash scripts/vm_capability_report.sh
-```
-
-The report output is **authoritative session runtime state**, not informational text. Use the reported vCPU count, available RAM, and disk space to size worker pools, batch sizes, and checkpoint intervals.
-
-### Multi-core execution policy
-
-**[POLICY] For CPU-bound, safely parallelizable workloads, aggressive multi-core execution is the DEFAULT, not an optional enhancement.**
-
-- Use `multiprocessing.Pool` (or equivalent) for independent SA restarts, parameter sweeps, candidate evaluations, Monte Carlo trials, and corpus scans.
-- Worker count: `max(1, cpu_count() - 2)` is the standard default. Deviate only for documented reasons (memory pressure, I/O contention, algorithmic dependencies).
-- **Single-threaded execution of parallelizable work requires explicit justification.** "I forgot" or "it's simpler" are not justifications.
-
-### Compute planning (before writing heavy scripts)
-
-Before implementing any CPU-bound or batch script, produce an execution plan covering:
-
-1. **Workload type**: CPU-bound, I/O-bound, or mixed
-2. **Parallelization**: Is `multiprocessing` appropriate? If not, why?
-3. **Worker count**: Default and rationale for deviation
-4. **Batching**: How work is chunked for progress reporting
-5. **Checkpointing**: Can interrupted runs resume? (Required for jobs >10 min)
-6. **Memory**: Estimated per-worker footprint × worker count vs. available RAM
-7. **Storage**: Output format, estimated size, WAL mode for SQLite if applicable
-
-### What this policy does NOT mean
-
-- It does NOT mean "always use 28 workers." Overhead, memory, I/O bottlenecks, and algorithmic structure can justify fewer.
-- It does NOT apply to quick one-off tests, smoke tests, or scripts that complete in <30 seconds.
-- It does NOT override correctness. A parallel implementation that's buggy is worse than a correct serial one.
-
-**Contents:** [K4 Quick Reference](#the-k4-problem--quick-reference) · [Dev Setup & Commands](#development-setup--commands) · [Architecture](#architecture) · [Operations](#operations--deployment) · [Scores](#interpreting-scores) · [Gotchas](#key-gotchas) · [Truth Taxonomy](#truth-taxonomy-mandatory) · [Reference Docs](#reference-documents) · [Multi-Agent](#multi-agent-mode--solve-k4)
-
-### Command Cheat Sheet
-
-```bash
-PYTHONPATH=src pytest tests/                                       # Run all 969 tests (~80s)
-PYTHONPATH=src pytest tests/test_transforms.py::TestClass::test -v # Single test
-PYTHONPATH=src python3 run_attack.py --list --verbose | grep KEY   # Find scripts by keyword
-PYTHONPATH=src python3 run_attack.py --exhaustion-summary          # Check what's been tested
-PYTHONPATH=src python3 -u scripts/<family>/e_<name>.py             # Run an experiment (-u = unbuffered)
-PYTHONPATH=src python3 -m kryptos doctor                           # Environment health check
-```
+Skipping these steps and re-testing an eliminated hypothesis wastes 28 CPU cores and burns API tokens for zero value.
 
 ---
 
@@ -141,11 +81,9 @@ PYTHONPATH=src python3 run_attack.py --exhaustion-summary | grep -i FAMILY
 PYTHONPATH=src python3 run_attack.py --list --verbose | grep -i KEYWORD
 
 # Benchmark: PYTHONPATH=src python3 bench/cli.py run --suite bench/suites/tier0_smoke.jsonl
-# Site builder: source venv/bin/activate && python3 ops/site_builder/build.py
-# API server: source venv/bin/activate && python3 ops/site_builder/serve.py
-# Theory admin: python3 ops/api/admin.py list|test|publish|reject <id>
-# Service: sudo systemctl status|restart kryptosbot-api.service
 ```
+
+For site builder, API server, and deployment commands, see [`docs/operations.md`](docs/operations.md).
 
 ---
 
@@ -185,9 +123,9 @@ kernel/persistence/sqlite.py (results DB) + JsonlWriter (logs)
 
 ### Experiment scripts (`scripts/`)
 
-~950 attack scripts in ~35 subdirectories (928+ tracked in exhaustion log including deleted/renamed). Each has a metadata header; tracked in root `exhaustion_log.json` (authoritative — ignore `scripts/EXHAUSTION.json`).
+~1,000 attack scripts across ~50 entries in `scripts/` (939 tracked in exhaustion log including deleted/renamed). Each has a metadata header; tracked in root `exhaustion_log.json` (authoritative — ignore `scripts/EXHAUSTION.json`). Some scripts live at the `scripts/` root level (e.g. `blitz_*.py`, `geometric_null_mask_*.py`) rather than in subdirectories.
 
-**Subdirectories:** Run `ls scripts/` for the full list (~35 dirs). Key families: `substitution/`, `transposition/`, `fractionation/`, `grille/`, `polyalphabetic/`, `running_key/`, `encoding/`, `multi_layer/`, `novel/`, `blitz/` (fast hypothesis sweeps), `analysis/` (non-attack analytical scripts), `_infra/` (utilities).
+**Subdirectories:** Run `ls scripts/` for the full list. Key families: `substitution/`, `transposition/`, `fractionation/`, `grille/`, `polyalphabetic/`, `running_key/`, `encoding/`, `multi_layer/`, `novel/`, `blitz/` (fast hypothesis sweeps), `analysis/` (non-attack analytical scripts), `_infra/` (utilities). Additional research threads: `antipodes/`, `archive_evidence/`, `crib_analysis/`, `exploration/`, `geodetic/`, `geometry/`, `k2_coords/`, `k3_continuity/`, `mirror_ka/`, `overlay/`.
 
 **`scripts/lib/`** — Shared infrastructure for experiment scripts: `header.py` (metadata header parsing), `exhaustion.py` (exhaustion log CRUD), `discover.py` (script discovery). Used by `run_attack.py`.
 
@@ -233,24 +171,6 @@ Three categories: **Unit** (`test_transforms.py`, `test_scoring.py`, etc.), **QA
 - `docs/crypto_field_manual/` — Durable cryptographic knowledge base
 - `memory/` (repo root) — Checked-in research notes: keystream forensics, palette investigations, width analysis
 
-### Supporting systems
-
-- **`ops/site_builder/`** — Builds `kryptosbot.com` → `site/` (gitignored). Config: `overrides.toml`.
-- **`ops/api/`** — FastAPI backend: theory classifier (`classifier.py`), submission queue (`queue.py`), admin CLI (`admin.py`). Mounts `site/` as static. Requires `venv/`.
-- **`kryptosbot/`** — Claude Agent SDK multi-agent runner. Ops guide: `RUNBOOK.md` (root). Has its own `pyproject.toml` with `claude-agent-sdk` dependency.
-  - `solve.py` — Original entry point (single-agent).
-  - `campaign_v2.py` — **Active campaign runner**: Phases 1–5 (free compute: row key forensics, fractionation, state machines), Phase 6+ (Opus-guided, API budget). Entry: `PYTHONPATH=src python3 -u kryptosbot/campaign_v2.py`. Supports `--local-only`, `--dry-run`.
-  - `monitor.py` — Live campaign dashboard: `python3 kryptosbot/monitor.py [--interval 1]`. Scans `results/campaigns/` for active sessions.
-  - `polybius_scorer.py` — Polybius coordinate extraction and crib scoring.
-- **`bench/`** — Benchmark suite (tier0–tier3). CLI: `bench/cli.py run|score|generate`. Tests: `tests/test_bench*.py`.
-- **`reports/`** — 45+ synthesis files from experiment campaigns. Summary JSONs (`*.summary.json`), audit matrices, synthesis markdown. Key file: [`reports/final_synthesis.md`](reports/final_synthesis.md).
-- **`archive/`** — `legacy_harness/` (old agent code), `session_reports/` (historical outputs).
-- **`ops/deploy/`** — Production deployment: systemd unit, nginx config, setup script, 30-min cron CI/CD loop.
-- **`ops/scheduled/`** — Non-interactive Claude Code prompts (nightly review) + shell health check via `health-check.sh`.
-- **`ops/tools/`** — Ops utilities: `analyze_traffic.sh` (nginx log analysis, bot detection), `generate_quadgrams.py`.
-- **`bin/`** — Specialized cipher engines (antipodes, cylinder rotation) — historical hypothesis testing.
-- **`external/`** — Imported external research (enigmator, patrickkellogg-Kryptos) — not maintained.
-
 ### Data persistence & symlinks
 
 Data directories are **symlinked** to a separate data partition:
@@ -260,61 +180,11 @@ Data directories are **symlinked** to a separate data partition:
 - `checkpoints/` — Campaign checkpointing for resumable runs
 - `exhaustion_log.json` — **Authoritative** experiment log (root level — ignore `scripts/EXHAUSTION.json`)
 
-### Operations & deployment
+### Supporting systems & operations
 
-The live site (`kryptosbot.com`) runs on this same machine:
-
-```bash
-# Service management
-sudo systemctl status|restart kryptosbot-api.service   # API on 127.0.0.1:8321
-journalctl -u kryptosbot-api -f                         # API logs (live tail)
-
-# Nginx (reverse proxy, SSL via Let's Encrypt, rate limiting: 10 req/s per IP)
-sudo nginx -t && sudo systemctl reload nginx
-
-# 30-min CI/CD cron (flock prevents overlap, checksum-based rebuild)
-# Crontab: */30 * * * * flock -n /tmp/kryptosbot-cron.lock ops/deploy/cron_update.sh
-ops/deploy/cron_update.sh --force    # Force rebuild
-ops/deploy/cron_update.sh --dry-run  # Skip git commit
-
-# Scheduled prompts and health checks
-ops/scheduled/run-prompt.sh ops/scheduled/nightly-review.txt
-ops/scheduled/health-check.sh     # Zero-cost morning health check (replaces Claude briefing)
-
-# Traffic analysis
-ops/tools/analyze_traffic.sh      # Bot vs human breakdown from nginx logs
-```
-
-**Log locations:**
-- API: `journalctl -u kryptosbot-api`
-- Cron: `logs/cron_update.log`
-- Scheduled prompts: `logs/scheduler.log`, `logs/scheduled_output_*.log`
-
-**Environment files** (TWO `.env` files — don't confuse them):
-- `.env` (root) — `ANTHROPIC_API_KEY`, `KBOT_CLASSIFY_API_KEY`, `NTFY_TOPIC` (push notifications for theory submissions)
-- `kryptosbot/.env` — API key for Agent SDK campaigns (see `kryptosbot/.env.template`)
+Supporting systems (site builder, API, campaign runner, benchmarks, deployment) are documented in [`docs/operations.md`](docs/operations.md).
 
 ---
-
-## Interpreting Scores
-
-Two scoring paths in `kernel/scoring/aggregate.py`: `score_candidate()` (anchored cribs at fixed positions) and `score_candidate_free()` (cribs searched anywhere — for scrambled-CT work). Both return a breakdown with `crib_score` (0–24), `bean_passed`, `ic_value`, `ngram_score`, and `crib_classification`.
-
-| Score | Classification | Stored? | Meaning |
-|-------|---------------|---------|---------|
-| 0–9   | noise         | No (≤9) | Expected random performance |
-| 10–17 | interesting   | Yes     | Worth logging, likely noise |
-| 18–23 | signal        | Yes     | Statistically significant, investigate |
-| 24    | breakthrough  | Yes     | All cribs match — potential solution (requires Bean PASS) |
-
-**False positive warning**: `period_consistency()` is underdetermined when `period >= (num_crib_positions / constraints_per_residue)`. At period 24, random configs score ~19.2/24; at period 17, ~17.3/24. Only period ≤7 gives meaningful discrimination (~8.2/24 expected). **All high scores at large periods are false positives.** With the full 242 Bean inequality set, ALL periods 1–26 are eliminated for periodic substitution on the raw 97-char carved text.
-
----
-## Short Layered Ciphertext Search Policy
-
-On short (<=120 char), masked, or multi-layer ciphertexts: surface statistics (IC, Kasiski, autocorrelation) are **advisory only** — they may be artifacts of an unseen layer. Never hard-prune branches based on weak/absent statistical signals. Test both peel orders for two-layer hypotheses. Separate structural search from keyword search.
-
-**Full policy:** [`docs/search_policy.md`](docs/search_policy.md)
 
 ## Key Gotchas
 
@@ -337,6 +207,84 @@ These are non-obvious pitfalls discovered through prior sessions. Check these fi
 - **Always import constants, never hardcode**: This includes `CONSENSUS_NULL_POSITIONS`, not just CT/cribs. A prior session generated a script with fabricated null positions that shared only 3/17 values with the consensus — the results were silently invalid. Import from `kryptos.kernel.constants`.
 - **Two exhaustion logs — only one is authoritative**: Root `exhaustion_log.json` is the single source of truth. `scripts/EXHAUSTION.json` is stale — never read from or write to it.
 - **Two `.env` files — don't mix them up**: `.env` (root) = `ANTHROPIC_API_KEY` + `KBOT_CLASSIFY_API_KEY` + `NTFY_TOPIC`. `kryptosbot/.env` = Agent SDK API key (see `kryptosbot/.env.template`). Loading the wrong one gives silent auth failures.
+
+---
+
+## Interpreting Scores
+
+Two scoring paths in `kernel/scoring/aggregate.py`: `score_candidate()` (anchored cribs at fixed positions) and `score_candidate_free()` (cribs searched anywhere — for scrambled-CT work). Both return a breakdown with `crib_score` (0–24), `bean_passed`, `ic_value`, `ngram_score`, and `crib_classification`.
+
+| Score | Classification | Stored? | Meaning |
+|-------|---------------|---------|---------|
+| 0–9   | noise         | No (≤9) | Expected random performance |
+| 10–17 | interesting   | Yes     | Worth logging, likely noise |
+| 18–23 | signal        | Yes     | Statistically significant, investigate |
+| 24    | breakthrough  | Yes     | All cribs match — potential solution (requires Bean PASS) |
+
+**False positive warning**: `period_consistency()` is underdetermined when `period >= (num_crib_positions / constraints_per_residue)`. At period 24, random configs score ~19.2/24; at period 17, ~17.3/24. Only period ≤7 gives meaningful discrimination (~8.2/24 expected). **All high scores at large periods are false positives.** With the full 242 Bean inequality set, ALL periods 1–26 are eliminated for periodic substitution on the raw 97-char carved text.
+
+---
+
+## Short Layered Ciphertext Search Policy
+
+On short (<=120 char), masked, or multi-layer ciphertexts: surface statistics (IC, Kasiski, autocorrelation) are **advisory only** — they may be artifacts of an unseen layer. Never hard-prune branches based on weak/absent statistical signals. Test both peel orders for two-layer hypotheses. Separate structural search from keyword search.
+
+**Full policy:** [`docs/search_policy.md`](docs/search_policy.md)
+
+---
+
+## Compute Environment — High-Power VM
+
+This project runs on a **dedicated high-capability VM**. All computational work must be planned accordingly. Do NOT write single-threaded scripts for parallelizable workloads.
+
+### Default runtime assumptions
+
+| Resource | Value |
+|----------|-------|
+| vCPUs | ~28 |
+| RAM | ~12 GB |
+| Swap | ~8 GB |
+| Disk | Fast local (check `df -h`) |
+| Python venv | `/home/cpatrick/kryptos/venv/` |
+| Capability report | `bash scripts/vm_capability_report.sh` |
+
+Treat this as the default runtime context. Do not behave as if this is a constrained laptop or sandbox unless a fresh capability check proves otherwise.
+
+### Session-start capability check
+
+At the beginning of each session involving CPU-bound work (brute force, Monte Carlo, SA, parameter sweeps, corpus processing, scoring, batch analysis), run:
+
+```bash
+bash scripts/vm_capability_report.sh
+```
+
+The report output is **authoritative session runtime state**, not informational text. Use the reported vCPU count, available RAM, and disk space to size worker pools, batch sizes, and checkpoint intervals.
+
+### Multi-core execution policy
+
+**[POLICY] For CPU-bound, safely parallelizable workloads, aggressive multi-core execution is the DEFAULT, not an optional enhancement.**
+
+- Use `multiprocessing.Pool` (or equivalent) for independent SA restarts, parameter sweeps, candidate evaluations, Monte Carlo trials, and corpus scans.
+- Worker count: `max(1, cpu_count() - 2)` is the standard default. Deviate only for documented reasons (memory pressure, I/O contention, algorithmic dependencies).
+- **Single-threaded execution of parallelizable work requires explicit justification.** "I forgot" or "it's simpler" are not justifications.
+
+### Compute planning (before writing heavy scripts)
+
+Before implementing any CPU-bound or batch script, produce an execution plan covering:
+
+1. **Workload type**: CPU-bound, I/O-bound, or mixed
+2. **Parallelization**: Is `multiprocessing` appropriate? If not, why?
+3. **Worker count**: Default and rationale for deviation
+4. **Batching**: How work is chunked for progress reporting
+5. **Checkpointing**: Can interrupted runs resume? (Required for jobs >10 min)
+6. **Memory**: Estimated per-worker footprint × worker count vs. available RAM
+7. **Storage**: Output format, estimated size, WAL mode for SQLite if applicable
+
+### What this policy does NOT mean
+
+- It does NOT mean "always use 28 workers." Overhead, memory, I/O bottlenecks, and algorithmic structure can justify fewer.
+- It does NOT apply to quick one-off tests, smoke tests, or scripts that complete in <30 seconds.
+- It does NOT override correctness. A parallel implementation that's buggy is worse than a correct serial one.
 
 ---
 
@@ -376,6 +324,7 @@ Domain knowledge, public facts, and detailed operating policies live in separate
 - **`docs/research_questions.md`** — Prioritized unknowns (RQ-1 through RQ-13) with current state and next steps
 - **`docs/two_ground_truths.md`** — Physical sculpture vs Sanborn's intent: two distinct ground truths for K4 analysis
 - **`docs/anomaly_registry.md`** — Physical anomalies in the Kryptos sculpture (misspellings, alignments, narrative anomaly allocation)
+- **`docs/operations.md`** — Supporting systems, deployment, service management, environment files
 
 ---
 
@@ -398,5 +347,5 @@ Two `memory/` directories exist — don't confuse them:
 
 ---
 
-*Last updated: 2026-03-27 — Mission: derive K4 method & solve. Volatile research state (best leads, eliminations, open hypotheses) maintained in MEMORY.md.*
+*Last updated: 2026-03-30 — Mission: derive K4 method & solve. Volatile research state (best leads, eliminations, open hypotheses) maintained in MEMORY.md.*
 *Primary author: Colin Patrick (human lead) + Claude (computational partner)*
