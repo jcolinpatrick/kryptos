@@ -103,9 +103,11 @@
   or Variant Beaufort). Any valid solution must satisfy all of them.
 </p>
 <p>
-  Combined with a mathematical argument about repeated key values, these constraints prove that
-  <strong>no repeating key of any length</strong> can produce the K4 plaintext.
-  This is not a search result&mdash;it is a mathematical proof, reproducible from the codebase.
+  Combined with a counting argument about repeated key values, these constraints show that
+  <strong>no repeating key of any length</strong> can produce the K4 plaintext under direct
+  positional correspondence (CT[i] &rarr; PT[i]).
+  This is a deterministic proof, reproducible from the codebase. It does not apply
+  if a transposition layer reorders positions before substitution.
 </p>
 
 <h2>Two-System Model</h2>
@@ -122,7 +124,7 @@
 <p>
   Pure transposition is independently impossible: the ciphertext contains only
   2 E&rsquo;s, but the known cribs require 3. Therefore at least one layer must be
-  substitution. The <strong>leading model</strong> is:
+  substitution. The <strong>working model</strong> (not proven) is:
 </p>
 <pre style="white-space:pre-wrap">PT (73 chars) &rarr; substitution cipher &rarr; filler insertion (24 chars) &rarr; carved text (97 chars)</pre>
 <p>
@@ -165,22 +167,23 @@
 
 <h2>73-Character Hypothesis</h2>
 <p>
-  The carved text has 97 characters, but <strong>24 characters may be nulls</strong> (97 &minus; 24 = 73 real ciphertext characters).
-  This is reinforced by the <em>Quadruple-24 Coincidence</em>:
+  The carved text has 97 characters. One working model proposes that <strong>24 characters
+  are nulls</strong> (97 &minus; 24 = 73 real ciphertext characters). This is a hypothesis,
+  not a proven fact.
 </p>
-<ol>
-  <li>97 &minus; 73 = <strong>24</strong> nulls</li>
-  <li>EASTNORTHEAST (13) + BERLINCLOCK (11) = <strong>24</strong> crib characters</li>
-  <li>The Weltzeituhr (Berlin Clock) has exactly <strong>24</strong> facets</li>
-  <li>K3&rsquo;s encoding chart has exactly <strong>24</strong> rows (verified from worksheets)</li>
-</ol>
 <p>
-  <em>Note: The Quadruple-24 is suggestive, not proof. The recurrence of 24 across
-  independent dimensions of the puzzle is striking but could be coincidence.
-  The primary evidence for this model is the palette restriction (p&nbsp;&asymp;&nbsp;1&nbsp;in&nbsp;16,000),
-  confirmed as K4-specific by shuffled-ciphertext testing (p&nbsp;&lt;&nbsp;0.002).
-  However, the candidate null positions are model-conditional (identified via KA-autokey
-  Vigen&egrave;re) and have not been independently validated by a second method.</em>
+  The primary quantitative support for this model is the palette restriction: under
+  KA-autokey Vigen&egrave;re, candidate null positions use only 7 of 26 letters
+  (p&nbsp;&asymp;&nbsp;1&nbsp;in&nbsp;16,000). A shuffled-ciphertext test confirmed this depends
+  on K4&rsquo;s actual letter ordering (0/500, p&nbsp;&lt;&nbsp;0.002). However, the 17 candidate
+  positions are <strong>model-dependent</strong> (Jaccard 0.161 across 5 cipher models)
+  and have not been independently validated by a second method.
+</p>
+<p>
+  <em>Note: The number 24 also appears in other K4 contexts (24 crib characters,
+  Berlin Clock has 24 facets, K3 chart has 24 rows). These coincidences are not
+  evidence &mdash; many small integers recur naturally. They are documented
+  here only because they are frequently mentioned in community discussions.</em>
 </p>
 
 <h3>The Null Palette</h3>
@@ -195,12 +198,11 @@
   this property; the specific keyword is not uniquely determined.
 </p>
 <p>
-  Independently, 13 of 24 known-plaintext Beaufort key values are also from this same
-  7-letter set (about a <strong>1 in 230</strong> chance). This coupling is suggestive but
-  should be interpreted cautiously: both the palette and the keystream enrichment depend on
-  the KA-autokey model, so they are not fully independent.
-  The candidate positions are <strong>model-conditional</strong> (Jaccard overlap of 0.161
-  across 5 cipher models), meaning different analytical models produce different positions.
+  Separately, 13 of 24 known-plaintext Beaufort key values fall in this same 7-letter set.
+  However, <strong>both the palette and the keystream enrichment depend on the same
+  cipher model</strong> (KA-autokey Vigen&egrave;re / Beaufort), so they are not independent
+  tests. The candidate positions are <strong>model-conditional</strong> (Jaccard overlap of
+  0.161 across 5 cipher models), meaning different models produce different positions.
 </p>
 
 <h3>What Remains</h3>

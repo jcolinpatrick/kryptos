@@ -13,7 +13,7 @@
         Built by a human and an AI who find this problem genuinely fascinating.
       </p>
       <div class="hero-cta-row">
-        <a href="/findings/" class="btn">See what we found</a>
+        <a href="/findings/" class="btn">See what we observed</a>
         <a href="/workbench/" class="btn btn-secondary">Try a theory yourself</a>
         <a href="/submit/" class="btn btn-secondary">Submit a theory</a>
       </div>
@@ -46,7 +46,7 @@
       organized by type, with confidence ratings and full methodology.
     </p>
     <ul class="path-links">
-      <li><a href="/findings/">Confirmed findings</a></li>
+      <li><a href="/findings/">Statistical observations</a></li>
       <li><a href="/browse/">Eliminations by category</a></li>
       <li><a href="/methodology/">How we test</a></li>
       <li><a href="/research-questions/">Open questions</a></li>
@@ -72,32 +72,32 @@
   </div>
 </div>
 
-<div class="section-label">What we found</div>
+<div class="section-label">Statistical observations</div>
 <div class="findings-preview">
   <div class="finding-preview-card">
-    <span class="finding-preview-num">Finding 1</span>
+    <span class="finding-preview-num">Observation 1</span>
     <h3>The Null Palette</h3>
     <p>
-      Only 7 of 26 letters appear at candidate filler positions.
-      The odds of this restriction happening by chance: about 1 in 16,000.
+      Under one cipher model, candidate filler positions use only 7 of 26 letters
+      (p&nbsp;&asymp;&nbsp;1/16,000). Model-dependent &mdash; positions shift across models.
     </p>
     <a href="/findings/#finding-palette" class="entry-arrow">Read more &rarr;</a>
   </div>
   <div class="finding-preview-card">
-    <span class="finding-preview-num">Finding 2</span>
+    <span class="finding-preview-num">Observation 2</span>
     <h3>The Stehle Anomaly</h3>
     <p>
-      A unique constant-difference pattern at positions 55&ndash;63.
-      Every 4th character differs by exactly 5, and nowhere else in K4.
+      A constant-difference pattern at positions 55&ndash;63.
+      Every 4th character differs by exactly 5. Unique in K4 (p&nbsp;&asymp;&nbsp;1/642).
     </p>
     <a href="/findings/#finding-stehle" class="entry-arrow">Read more &rarr;</a>
   </div>
   <div class="finding-preview-card">
-    <span class="finding-preview-num">Finding 3</span>
+    <span class="finding-preview-num">Exploratory</span>
     <h3>KRYPTOS &times; SEVEN</h3>
     <p>
-      A dual-keyword lookup table that fits every null position (35 out of 35 correct).
-      Found after the fact; not yet proven to predict anything new.
+      A post-hoc lookup table that fits all null positions in-sample but has
+      zero predictive power under cross-validation. Not evidence.
     </p>
     <a href="/findings/#finding-kryptos-seven" class="entry-arrow">Read more &rarr;</a>
   </div>
@@ -135,8 +135,8 @@
     This is not a solution claim. We don&rsquo;t know how K4 was encrypted,
     and we don&rsquo;t know the plaintext. What we do know &mdash; rigorously and
     reproducibly &mdash; is a large number of approaches that <em>don&rsquo;t</em> work.
-    The three statistical findings documented here constrain how K4 was
-    <strong>constructed</strong>, but they don&rsquo;t crack the cipher.
+    The statistical observations documented here are model-conditional and
+    do not independently prove how K4 was constructed.
     We are not affiliated with Jim Sanborn, Ed Scheidt, the CIA, or
     the Kryptos Keepers.
   </p>
