@@ -13,6 +13,10 @@ Investigates the strongest signals from v1:
 
 Uses the 35 palette positions only (17 null, 18 non-null).
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 import sys
 import json
 import os

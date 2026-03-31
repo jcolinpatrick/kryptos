@@ -23,6 +23,10 @@ Usage:
     PYTHONPATH=src python3 -u scripts/running_key/e_gutenberg_sweep_01.py --cached-only
     PYTHONPATH=src python3 -u scripts/running_key/e_gutenberg_sweep_01.py --model-a-only --limit 100
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 from __future__ import annotations
 
 import csv

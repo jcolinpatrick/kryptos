@@ -16,6 +16,10 @@ Two data sources:
   A) Message letters only (VIRTUALLY INVISIBLE DIGETAL INTERPRETATIU ...)
   B) Full token stream including extra E padding characters
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 
 import sys
 import os

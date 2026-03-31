@@ -7,6 +7,10 @@ Keyspace: ~2000 configs
 Last run:
 Best score:
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """E-AAA-EXTRA-L-05: Extra L on tableau + Bottom chart seeding + ABSCISSA.
 
 SOURCE: Archives of American Art:

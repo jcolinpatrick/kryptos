@@ -6,6 +6,10 @@ Keyspace: see implementation
 Last run: 
 Best score: 
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """E-DISPROOF-01: Caesar Cipher (ROT-1 through ROT-25) Disproof for K4.
 
 Applies all 25 Caesar shifts to K4 and checks:

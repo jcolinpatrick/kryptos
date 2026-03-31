@@ -26,6 +26,10 @@ Models tested:
   F. Quagmire I/II/III consistency check
   G. Trans + mono sub (constraint propagation on permutation)
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 
 import json, sys, time
 from pathlib import Path

@@ -38,6 +38,10 @@ Usage:
 Output:
     results/bean_keystream/
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 
 from __future__ import annotations
 

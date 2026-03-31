@@ -14,6 +14,10 @@ This is a CONTENT-BASED tiebreaker, not position-based. Can we extend it?
 Key question: Is there a unified rule that combines the (pos%7, pos%5) cell
 classification with a KA-row-based criterion, without needing the table?
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 import sys
 import os
 import json

@@ -15,6 +15,10 @@ That's fast enough to be exhaustive.
 
 Tests both KRYPTOS:KA_vig (corrected) and DEFECTOR:beau (AZ) simultaneously.
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 
 import sys, random, math, time, json, itertools
 sys.path.insert(0, 'src')

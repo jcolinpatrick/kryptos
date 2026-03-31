@@ -31,6 +31,10 @@ Search strategy:
 6. Try the key fragment as the keyword for alphabet generation
 7. Try XOR / modular combinations of known texts
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 
 import sys, os, time, json, glob
 from pathlib import Path

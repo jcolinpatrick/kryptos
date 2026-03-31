@@ -22,6 +22,10 @@
 # (or the reverse mapping). SA searches for the null mask.
 #
 # Also tests: Porta cipher, Atbash, affine, and Caesar shifts.
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 from __future__ import annotations
 
 import bisect

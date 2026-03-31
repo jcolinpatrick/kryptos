@@ -14,6 +14,10 @@ APPROACH:
 
 Also: if two different 13/24 masks share K positions, those K are highly likely correct.
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 
 import sys, random, math, time, json, collections
 sys.path.insert(0, 'src')

@@ -27,6 +27,10 @@ TESTS:
 
 Output: results/mod35_positional_keying.json
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 
 import json
 import sys

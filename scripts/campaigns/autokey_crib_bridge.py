@@ -12,6 +12,10 @@ If m links the two constraint sets perfectly, we may have found the structure.
 
 Also tests CT autokey and all alphabet/variant combos.
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 import sys
 sys.path.insert(0, 'src')
 from kryptos.kernel.constants import CT as CT_STR, CRIB_DICT, KRYPTOS_ALPHABET as KA

@@ -7,6 +7,10 @@ Keyspace: see implementation
 Last run: 
 Best score: 
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """E-ROMAN-02: Exhaustive transposition sweeps with Roman numeral keys.
 
 Follow-up to E-ROMAN-01 (all NOISE at 66K configs). This test runs the

@@ -7,6 +7,10 @@ Keyspace: see implementation
 Last run: 
 Best score: 
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """E-S-93: Autokey Cipher Family + Width-7 Columnar
 
 Tests autokey Vigenère/Beaufort (both plaintext-autokey and ciphertext-autokey)

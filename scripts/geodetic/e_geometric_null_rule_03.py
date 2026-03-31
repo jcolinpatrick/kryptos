@@ -16,6 +16,10 @@ to the 73-char extract.
 Key insight: 73 mod 26 = 21 = EASTNORTHEAST crib start position.
 The geometry encodes the 73-char model AND the crib location.
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 import math
 import sys
 import os

@@ -7,6 +7,10 @@ Keyspace: see implementation
 Last run: 
 Best score: 
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """E-CFM-09: Gutenberg-scale EAST constraint scan.
 
 [HYPOTHESIS] If K4 uses a running key from a published text, the source text

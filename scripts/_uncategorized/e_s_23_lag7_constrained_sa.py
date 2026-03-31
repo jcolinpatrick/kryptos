@@ -7,6 +7,10 @@ Keyspace: see implementation
 Last run: 
 Best score: 
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """E-S-23: Lag-7 Constrained SA over Transpositions
 
 Key insight: the lag-7 autocorrelation (z=3.036) is the strongest

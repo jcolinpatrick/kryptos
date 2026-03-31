@@ -7,6 +7,10 @@ Keyspace: see implementation
 Last run: 
 Best score: 
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """Solve K1 using ONLY what K0 (the Vigenère tableau) reveals.
 
 This script walks through the cryptanalysis step by step, as an analyst

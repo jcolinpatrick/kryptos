@@ -26,6 +26,10 @@ Tests performed:
   5. C-position analysis in K0
   6. Various truncations and orderings
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 
 import sys
 import os

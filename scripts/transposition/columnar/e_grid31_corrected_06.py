@@ -7,6 +7,10 @@ Keyspace: see implementation
 Last run: 
 Best score: 
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """Corrected 28×31 grid with the 3rd K2 ? squeezed (doesn't occupy a grid position).
 
 KEY INSIGHT (Colin, 2026-03-03):

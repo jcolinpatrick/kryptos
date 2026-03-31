@@ -7,6 +7,10 @@ Model: extract 73 -> inv_col7 -> DEFECTOR:AZ_beau autokey -> score cribs.
 Uses 24 worker processes (leaves 4 cores for system/run_lean).
 Partitions by first element of the 7-combination.
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 
 import sys, time, json, os
 from itertools import combinations

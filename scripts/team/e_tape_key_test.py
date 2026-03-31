@@ -7,6 +7,10 @@ Keyspace: ~15,000 configs across 5 batteries
 Last run:
 Best score:
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """E-TAPE-KEY-TEST: Test letters found on scotch tape on K1-K2 encoding chart.
 
 Discovery: User identified letters written ON TOP OF SCOTCH TAPE in the

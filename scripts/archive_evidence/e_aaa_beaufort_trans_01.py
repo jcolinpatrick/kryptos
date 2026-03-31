@@ -7,6 +7,10 @@ Keyspace: 4 keywords x 4 widths x 2 peel orders x 3 variants x 2 CT forms = 192 
 Last run:
 Best score:
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """E-AAA-BEAUFORT-TRANS-01: Archive-evidenced Beaufort + columnar transposition.
 
 SOURCE: Archives of American Art, Jim Sanborn papers (2026-03-27).

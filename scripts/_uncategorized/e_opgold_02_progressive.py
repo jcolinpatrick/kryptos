@@ -7,6 +7,10 @@ Keyspace: see implementation
 Last run: 
 Best score: 
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """E-OPGOLD-02: K2-Derived Words + YAR Superscript as K4 Cipher Keys
 
 Tests the progressive-solve hypothesis: understanding K2's meaning (Operation Gold,

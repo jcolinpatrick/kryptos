@@ -7,6 +7,10 @@ Keyspace: see implementation
 Last run: 
 Best score: 
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """E-S-20: Algebraic Transposition Constraint Propagation
 
 For a model CT = σ(Vig(PT, periodic_key)), the 24 known crib positions

@@ -12,6 +12,10 @@ Also: tries KOMPASS more intensively (d=7 anomaly suggests period-7 / KOMPASS=7 
 The KOMPASS:vig result was 10/24 in v1 (competitive with DEFECTOR:beau at 12/24).
 KOMPASS = German for COMPASS = lodestone reference.
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 
 import sys, random, math, time, json
 sys.path.insert(0, 'src')

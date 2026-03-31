@@ -7,6 +7,10 @@ Keyspace: see implementation
 Last run: 
 Best score: 
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """E-CHART-07: Width-9 grid with inserted characters (CC hypothesis).
 
 Theory: K4's chart is a 9×11 grid (99 cells). The sculpture has 97 chars,

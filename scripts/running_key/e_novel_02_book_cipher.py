@@ -7,6 +7,10 @@ Keyspace: see implementation
 Last run: 
 Best score: 
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """Novel Method B: Book Cipher Using Carter's Tomb Text.
 
 Try treating K4 as a book cipher with various encoding schemes:

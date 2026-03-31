@@ -12,6 +12,10 @@ For a period-K Beaufort key: key[i] = key[j] whenever i ≡ j (mod K).
 A Bean inequality (a,b) says key[a] ≠ key[b] (because CT[a]=CT[b] but PT[a]≠PT[b]).
 Contradiction: (a,b) in BEAN_INEQ AND a≡b (mod K) → period K IMPOSSIBLE.
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 import sys
 sys.path.insert(0, 'src')
 from kryptos.kernel.constants import CT, CRIB_WORDS, CRIB_DICT

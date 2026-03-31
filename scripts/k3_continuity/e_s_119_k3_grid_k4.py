@@ -7,6 +7,10 @@ Keyspace: see implementation
 Last run: 
 Best score: 
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """E-S-119: K3-derived grid rotation tests for K4.
 
 K3 uses a 42×8 grid rotation. K4 has 97 chars (prime).

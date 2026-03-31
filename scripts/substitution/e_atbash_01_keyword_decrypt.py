@@ -6,6 +6,10 @@ Keyspace: see implementation
 Last run: 
 Best score: 
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """E-ATBASH-01: Atbash hypothesis — the carved K4 is Atbash of the real CT.
 
 Hypothesis: PT -> simple substitution -> REAL CT -> Atbash -> carved text.

@@ -28,6 +28,10 @@ Explores how CYLINDRICAL PROJECTION could define the 24-null mask:
 
 For each candidate mask: test DEFECTOR:AZ_beau + col7 transposition.
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 
 import sys
 import os

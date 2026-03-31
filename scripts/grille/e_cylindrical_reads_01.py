@@ -29,6 +29,10 @@ Grid layout (bottom half, 14 rows × 31 cols):
     (12,0-30)=TWTQSJQSSEKZZWATJKLUDIAWINFBNYP
     (13,0-30)=VTTMZFPKWGDKZXTJCDIGKUHUAUEKCAR
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 from __future__ import annotations
 
 import sys

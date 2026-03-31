@@ -25,6 +25,10 @@ Keyspace: 47 widths × 48 periods × 3 variants = 6,768 configs
 Last run: never
 Best score: n/a
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 
 import sys, os
 _ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))

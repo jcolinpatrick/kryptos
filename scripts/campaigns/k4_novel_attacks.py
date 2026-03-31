@@ -6,6 +6,10 @@ Keyspace: see implementation
 Last run: 
 Best score: 
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """
 Novel K4 attack vectors:
 1. Self-keyed cipher: key[i] = CT[f(i)] for all affine f over Z_97

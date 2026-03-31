@@ -7,6 +7,10 @@ Keyspace: ~500K (addressing schemes * keywords * cipher variants)
 Last run:
 Best score:
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """E-COORDINATE-PUNCH: Test K2 coordinate digits as K4 null-position selectors.
 
 Hypothesis: K2 coordinates (38°57'6.5"N 77°8'44"W) encode numbers that specify

@@ -24,6 +24,10 @@ Phase 5: DEFECT as col6 transposition keyword
 Consensus nulls (17): {0,1,2,5,8,12,14,20,36,52,58,59,74,75,78,84,85}
 Palette-but-real (18): {7,16,18,19,30,31,34,45,46,47,48,56,62,70,73,77,86,93}
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 
 import sys, os, random, math, time, json
 from itertools import permutations

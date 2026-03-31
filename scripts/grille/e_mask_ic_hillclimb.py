@@ -22,6 +22,10 @@ from the 73 non-crib positions (0-20, 34-62, 74-96).
 
 Usage: cd /home/cpatrick/kryptos && PYTHONPATH=src python3 -u scripts/grille/e_mask_ic_hillclimb.py
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 from __future__ import annotations
 
 import json

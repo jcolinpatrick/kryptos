@@ -17,6 +17,10 @@ ANALYSIS:
   4. Test whether row-only operations with simple keys produce crib matches
   5. Check cross-coordinate relationships (does row-key depend on col-PT?)
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 
 import sys
 import os

@@ -7,6 +7,10 @@ Keyspace: see implementation
 Last run: 
 Best score: 
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """E-FRAC-15: Linear/Polynomial Key Model Test
 
 E-FRAC-14 found that k[i] = 4i + 20 (mod 26) matches 7/24 crib positions

@@ -12,6 +12,10 @@ This script:
 4. 2-swap exhaustive from ALL 15+/24 seeds found
 5. Reports frequency of 15/24 hits to assess statistical significance
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 
 import sys, random, math, time, json
 sys.path.insert(0, 'src')

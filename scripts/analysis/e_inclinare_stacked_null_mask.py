@@ -26,6 +26,10 @@ Keyspace: ~50K+ configs across 7 phases
 Last run: never
 Best score: TBD
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 
 import sys
 import os

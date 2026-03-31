@@ -22,6 +22,10 @@ Known geometric anchors:
 
 Key discovery: LOOMIS→ABBOTT azimuth (45.58°) mod 26 = 20 → position 20 = W (first delimiter)
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 import math
 import sys
 import os

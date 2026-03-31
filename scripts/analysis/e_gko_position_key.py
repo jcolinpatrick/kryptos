@@ -19,6 +19,10 @@ Attack-type: analysis
 Family: keystream-review
 Status: active
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 
 import sys, os, json
 from datetime import datetime, timezone

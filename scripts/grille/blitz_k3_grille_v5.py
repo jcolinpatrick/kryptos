@@ -6,6 +6,10 @@ Keyspace: see implementation
 Last run: 
 Best score: 
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """
 blitz_k3_grille_v5.py — Fix pure-transposition impossibility; search Model 2 + generalised K3 formula.
 

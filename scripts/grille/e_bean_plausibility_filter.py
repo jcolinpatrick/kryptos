@@ -15,6 +15,10 @@ aggressive constructor-plausibility filtering per Sanborn's known aesthetic.
 Usage:
     PYTHONPATH=src python3 -u scripts/grille/e_bean_plausibility_filter.py
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 import csv
 import json
 import os

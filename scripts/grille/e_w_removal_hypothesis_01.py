@@ -15,6 +15,10 @@ Beaufort/VarBeaufort with various keywords and alphabets.
 Also tries columnar transposition reads of the 92-char text (92=4x23, 2x46)
 and Caesar pre-shifts before keyword decryption.
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 import sys
 import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', 'src'))

@@ -7,6 +7,10 @@ Keyspace: see implementation
 Last run: 
 Best score: 
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """E-S-124: Palimpsest-as-method — K1-K3 texts as running key masks for K4.
 
 A palimpsest is a document where earlier text shows through overwriting.

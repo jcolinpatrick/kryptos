@@ -7,6 +7,10 @@ Keyspace: N/A (analytical)
 Last run: 2026-03-15
 Best score: N/A
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """E-KEYSTREAM-FORENSICS: Deep analysis of the 24 Beaufort keystream values.
 
 Uses the consensus null mask + col7 transposition to extract 73-char CT,

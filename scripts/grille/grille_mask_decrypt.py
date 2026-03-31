@@ -7,6 +7,10 @@ Keyspace: see implementation
 Last run: 
 Best score: 
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """Parse the user's corrected binary mask, extract from tableau, decrypt K4.
 
 Binary mask: 0=VISIBLE (hole), 1=MASKED, ~=no mask no letter (off-grid)

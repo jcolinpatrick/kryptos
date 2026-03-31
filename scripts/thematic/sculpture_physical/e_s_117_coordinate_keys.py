@@ -7,6 +7,10 @@ Keyspace: see implementation
 Last run: 
 Best score: 
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """E-S-117: Coordinate-derived key tests for K4.
 
 Tests K2 coordinates [38, 57, 6, 5, 77, 8, 44] as K4 key material.

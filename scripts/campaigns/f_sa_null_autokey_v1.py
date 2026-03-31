@@ -11,6 +11,10 @@ Two SA modes:
 
 Scoring: IC (fast, smooth gradient) guides SA; quadgram + crib at checkpoints.
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 
 import sys, random, math, time, json
 sys.path.insert(0, 'src')

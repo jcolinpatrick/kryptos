@@ -11,6 +11,10 @@ Keyspace: ~10K configs per text
 Last run: 2026-03-11
 Best score: TBD
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 import sys
 import os
 

@@ -7,6 +7,10 @@ Keyspace: ~5000 configs × 10 alphabet modes × ~1.6M offsets
 Last run:
 Best score:
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """E-AAA-RUNKEY-BIJECTION-08: Running-key bijection discriminator on keyword-mixed tableaux.
 
 SOURCE: Archives of American Art + prior campaign E-AAA-TABLEAU-STRUCT-06.

@@ -26,6 +26,10 @@
 #
 # Search space: ~500 (a,b) pairs x 36 periods x 6 variants = ~108K checks.
 # Runtime: < 1 second.
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 from __future__ import annotations
 
 import os

@@ -7,6 +7,10 @@ Keyspace: see implementation
 Last run: 
 Best score: 
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """
 blitz_8lines73.py — Exhaustive test of "3 Lines 93" (was misread as "3 Lines 93 [note: was misread as 8 Lines 73]") interpretations for K4.
 

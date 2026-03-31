@@ -7,6 +7,10 @@ Keyspace: see implementation
 Last run: 
 Best score: 
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """E-GRILLE-08 / E-YAR-05: Tableau-specific null model for Kasiski signals.
 
 CRITICAL TEST: Are the Kasiski IC peaks (periods 5, 7, 10, 14) in the YAR

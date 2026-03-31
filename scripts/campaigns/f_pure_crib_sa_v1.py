@@ -14,6 +14,10 @@ KA = KRYPTOSABCDEFGHIJLMNQUVWXZ
 The KA Beaufort: PT_ka = (KEY_ka - CT_ka) % 26 where subscript _ka
 means index in the KA alphabet (not standard AZ).
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 
 import sys, random, math, time, json
 sys.path.insert(0, 'src')

@@ -27,6 +27,10 @@ PT-CT pairs (cribs), we can analytically recover round keys by:
 This is ANALYTICAL key recovery, not search. Runs in milliseconds
 per structural hypothesis.
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 
 import json, math, sys, time
 from itertools import combinations

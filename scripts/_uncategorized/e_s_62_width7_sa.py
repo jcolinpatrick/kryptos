@@ -7,6 +7,10 @@ Keyspace: see implementation
 Last run: 
 Best score: 
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """E-S-62: Width-7 Model B — Joint SA Attack on Key + Plaintext.
 
 HYPOTHESIS: K4 uses width-7 columnar transposition (Model B: trans→sub)

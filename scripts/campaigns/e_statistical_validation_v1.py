@@ -14,6 +14,10 @@ Claims validated:
 Each claim gets: in-sample fit, degrees of freedom, proper p-value,
 overfitting risk, and a verdict.
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 
 import json
 import random

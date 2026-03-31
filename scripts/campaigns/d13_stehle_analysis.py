@@ -8,6 +8,10 @@ Three angles:
   B. Stehle Δ^4(lag=5)=5 — locate anomalous positions, test cipher hypotheses
   C. EASTNORTHEAST as period key — rotation/offset tests
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 import sys
 sys.path.insert(0, 'src')
 from kryptos.kernel.constants import CT

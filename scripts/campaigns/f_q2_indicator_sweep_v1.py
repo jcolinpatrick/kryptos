@@ -40,6 +40,10 @@ MODEL: CT97 → remove 24 nulls → CT73 → Q2-indicator autokey decrypt → PT
 PHASE 1: All 26 indicators × 5 keywords × 3 variants × 20 SA restarts (4000 steps)
 PHASE 2: Top 10 configs tested with col7 transposition (20 restarts × 6000 steps)
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 
 import sys, random, math, time, json
 sys.path.insert(0, 'src')

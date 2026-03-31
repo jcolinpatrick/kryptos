@@ -24,6 +24,10 @@ Interpretations of "five" as start position:
 The helix is read from the TABLEAU cylinder (Code Room = tableau as cylinder)
 and used as a running key to decrypt K4.
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 from __future__ import annotations
 import sys, os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', 'src'))

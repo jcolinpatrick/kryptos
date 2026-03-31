@@ -7,6 +7,10 @@ Keyspace: see implementation
 Last run: 
 Best score: 
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """E-RUNKEY-002: Running key from K1/K2/K3 plaintexts.
 
 Tests whether K4's key is a substring of the concatenated K1+K2+K3

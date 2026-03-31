@@ -4,6 +4,10 @@
 Verifies the consistency check is correct and measures HOW badly masks fail.
 Also tests: is it MATHEMATICALLY IMPOSSIBLE for ANY mask to be consistent?
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 from __future__ import annotations
 
 import random

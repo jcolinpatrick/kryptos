@@ -13,6 +13,10 @@ Chain(x) = x, x², x⁴, x⁸, ... (mod 73), then mod 26 as cipher key.
 
 Also tests: chain as null-position selector.
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 import sys
 sys.path.insert(0, "src")
 from kryptos.kernel.constants import CT, CRIB_DICT, CRIB_POSITIONS, N_CRIBS, ALPH, ALPH_IDX

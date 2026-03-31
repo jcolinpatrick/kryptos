@@ -9,6 +9,10 @@ In the verification: compares predicted_null to actual null-ish status.
 
 Let me trace through TOWER AZ_vig step by step.
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 import sys, os
 from collections import defaultdict
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', 'src'))

@@ -10,6 +10,10 @@ uses CHART:vigenere_az partition {3,8,12,15,16,19,20,24}.
 
 Output: results/stego_mechanism/partition_analysis.json
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 import sys, os, json
 from collections import Counter
 from datetime import datetime, timezone

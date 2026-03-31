@@ -7,6 +7,10 @@ Keyspace: see implementation
 Last run: 
 Best score: 
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """E-AUDIT-05: Test YAR superscript values as cipher initialization parameters.
 
 Tests Y=24, A=0, R=17 (standard) and Y=2, A=7, R=1 (KA) as cipher init params:

@@ -7,6 +7,10 @@ Keyspace: see implementation
 Last run: 
 Best score: 
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """E-S-127: Urania Weltzeituhr (World Time Clock) tests for K4.
 
 The BERLINCLOCK in K4 plaintext refers to the Urania Weltzeituhr at
