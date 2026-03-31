@@ -13,7 +13,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field, field_validator
 
 from ops.api.classifier import classify_theory, load_elimination_index, ClassifyResult
-from ops.api.queue import add_theory, init_db, record_request
+from ops.api.queue import add_theory, get_by_token, init_db, record_request
 
 # ---------------------------------------------------------------------------
 # Global state
@@ -171,6 +171,25 @@ async def health():
     return {"status": "ok", "index_loaded": _index_context is not None}
 
 
+@app.get("/api/status/{token}")
+async def theory_status(token: str):
+    """Look up a submission's status by its token."""
+    if not token or len(token) != 32 or not all(c in "0123456789abcdef" for c in token):
+        return JSONResponse(status_code=400, content={"detail": "Invalid token format."})
+    theory = get_by_token(token)
+    if theory is None:
+        return JSONResponse(status_code=404, content={"detail": "No submission found for this token."})
+    # Return status info without exposing internal IDs or IP hashes
+    response = {
+        "status": theory["status"],
+        "submitted": theory["timestamp"],
+        "theory_preview": theory["theory_text"][:200],
+    }
+    if theory.get("result_note"):
+        response["note"] = theory["result_note"]
+    return response
+
+
 @app.post("/api/classify")
 async def classify(body: ClassifyRequest, request: Request):
     # Check that the index is loaded
@@ -214,9 +233,10 @@ async def classify(body: ClassifyRequest, request: Request):
 
     # Only queue genuinely feasible novel theories
     if result.status == "novel" and result.feasibility == "feasible":
-        queue_pos = add_theory(body.theory, ip)
+        queue_pos, token = add_theory(body.theory, ip)
         result.message = "This theory hasn't been tested yet. It has been logged for evaluation."
         result.queue_position = queue_pos
+        result.token = token
         # Fire notification (best-effort, never block the response)
         try:
             _notify_novel_theory(body.theory, queue_pos)

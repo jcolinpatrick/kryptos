@@ -149,6 +149,7 @@ class ClassifyResult:
     queue_position: Optional[int] = None
     feasibility: Optional[str] = None  # "feasible", "infeasible", "untestable", "impossible"
     reason: Optional[str] = None
+    token: Optional[str] = None
 
     def to_dict(self) -> dict:
         """Return dict with None values removed."""

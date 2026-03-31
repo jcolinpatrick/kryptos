@@ -129,9 +129,12 @@
   If the null-mask model is correct, the candidate null palette (letters appearing at
   null positions) is {B,G,I,K,O,W,Z}, which corresponds to columns 0 and 3 of a 5-wide
   Polybius grid under certain keyword-mixed alphabets including KRYPTOS
-  (combined odds less than 1 in 7 million, verified with
-  50 million random simulations). 17 of 24 candidate filler positions are identified by
-  consensus; 7 remain uncertain. The specific keyword is not uniquely determined.
+  (palette restriction p&nbsp;&asymp;&nbsp;1&nbsp;in&nbsp;16,000). A shuffled-ciphertext test (500 trials, 0 hits)
+  confirmed this restriction is specific to K4&rsquo;s letter ordering (p&nbsp;&lt;&nbsp;0.002).
+  However, the 17 candidate positions are <strong>model-dependent</strong>: they were identified
+  using KA-autokey Vigen&egrave;re, and different cipher models produce different positions
+  (Jaccard overlap averaging 0.161). 7 of the 24 candidate positions remain uncertain.
+  The specific keyword is not uniquely determined.
 </p>
 <p>
   The cipher layer remains open regardless of which two-layer model is correct.
@@ -174,26 +177,30 @@
 <p>
   <em>Note: The Quadruple-24 is suggestive, not proof. The recurrence of 24 across
   independent dimensions of the puzzle is striking but could be coincidence.
-  The primary evidence for this model is the palette restriction (p &asymp; 1 in 16,000)
-  and the convergence of independent simulated-annealing runs on the same null positions.</em>
+  The primary evidence for this model is the palette restriction (p&nbsp;&asymp;&nbsp;1&nbsp;in&nbsp;16,000),
+  confirmed as K4-specific by shuffled-ciphertext testing (p&nbsp;&lt;&nbsp;0.002).
+  However, the candidate null positions are model-conditional (identified via KA-autokey
+  Vigen&egrave;re) and have not been independently validated by a second method.</em>
 </p>
 
 <h3>The Null Palette</h3>
 <p>
-  Statistical analysis has identified a <strong>candidate null palette</strong>: a set of 7 letters
-  {B, G, I, K, O, W, Z} that appear disproportionately at candidate filler positions.
+  Statistical analysis using KA-autokey Vigen&egrave;re has identified a <strong>candidate null palette</strong>:
+  a set of 7 letters {B, G, I, K, O, W, Z} that appear at 17 candidate filler positions.
   The odds of this restriction happening by chance are roughly <strong>1 in 16,000</strong>.
+  A shuffled-ciphertext test (500 trials) confirmed this is specific to K4&rsquo;s letter
+  ordering (p&nbsp;&lt;&nbsp;0.002), not an optimizer artifact.
   Under certain keyword-shuffled alphabets (including KRYPTOS), these 7 letters concentrate
   in exactly two columns of a 5-wide grid. About 0.6% of English keywords produce
   this property; the specific keyword is not uniquely determined.
-  Independently, 13 of 24 known-plaintext key values are also from this same 7-letter set
-  (about a <strong>1 in 230</strong> chance). This coupling between the filler layer and the cipher layer is the
-  strongest constraint on the key generation mechanism.
 </p>
 <p>
-  The <strong>combined odds</strong> of both effects occurring together are less than
-  <strong>1 in 7 million</strong> (verified with 50 million random simulations).
-  This is the strongest confirmed statistical finding in the K4 analysis.
+  Independently, 13 of 24 known-plaintext Beaufort key values are also from this same
+  7-letter set (about a <strong>1 in 230</strong> chance). This coupling is suggestive but
+  should be interpreted cautiously: both the palette and the keystream enrichment depend on
+  the KA-autokey model, so they are not fully independent.
+  The candidate positions are <strong>model-conditional</strong> (Jaccard overlap of 0.161
+  across 5 cipher models), meaning different analytical models produce different positions.
 </p>
 
 <h3>What Remains</h3>

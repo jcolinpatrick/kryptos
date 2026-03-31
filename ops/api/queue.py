@@ -1,6 +1,7 @@
 """SQLite-backed queue for novel theories awaiting evaluation."""
 
 import hashlib
+import secrets
 import sqlite3
 import time
 from datetime import datetime, timezone
@@ -31,7 +32,9 @@ def init_db(db_path: Optional[str] = None) -> None:
                 theory_text TEXT NOT NULL,
                 ip_hash TEXT NOT NULL,
                 timestamp TEXT NOT NULL,
-                status TEXT NOT NULL DEFAULT 'pending'
+                status TEXT NOT NULL DEFAULT 'pending',
+                token TEXT,
+                result_note TEXT
             )
         """)
         conn.execute("""
@@ -43,6 +46,17 @@ def init_db(db_path: Optional[str] = None) -> None:
         conn.execute("""
             CREATE INDEX IF NOT EXISTS idx_rate_limits_ip_ts
             ON rate_limits (ip_hash, ts)
+        """)
+        # Migrate existing tables: add token and result_note if missing
+        cols = {row[1] for row in conn.execute("PRAGMA table_info(theories)").fetchall()}
+        if "token" not in cols:
+            conn.execute("ALTER TABLE theories ADD COLUMN token TEXT")
+        if "result_note" not in cols:
+            conn.execute("ALTER TABLE theories ADD COLUMN result_note TEXT")
+        # Index must be created after migration ensures column exists
+        conn.execute("""
+            CREATE UNIQUE INDEX IF NOT EXISTS idx_theories_token
+            ON theories (token)
         """)
         conn.commit()
     finally:
@@ -97,25 +111,27 @@ def record_request(ip: str, window: int, max_requests: int,
         conn.close()
 
 
-def add_theory(theory_text: str, ip_address: str, db_path: Optional[str] = None) -> int:
-    """Insert a new pending theory and return its queue position.
+def add_theory(theory_text: str, ip_address: str, db_path: Optional[str] = None) -> tuple[int, str]:
+    """Insert a new pending theory and return (queue_position, token).
 
     The IP address is SHA-256 hashed before storage.
     Queue position is the count of pending theories after insertion.
+    Token is a 16-byte random hex string for status lookups.
     """
     ip_hash = hashlib.sha256(ip_address.encode()).hexdigest()
     now = datetime.now(timezone.utc).isoformat()
+    token = secrets.token_hex(16)
 
     conn = _get_connection(db_path)
     try:
         conn.execute(
-            "INSERT INTO theories (theory_text, ip_hash, timestamp, status) VALUES (?, ?, ?, 'pending')",
-            (theory_text, ip_hash, now),
+            "INSERT INTO theories (theory_text, ip_hash, timestamp, status, token) VALUES (?, ?, ?, 'pending', ?)",
+            (theory_text, ip_hash, now, token),
         )
         conn.commit()
 
         row = conn.execute("SELECT COUNT(*) FROM theories WHERE status = 'pending'").fetchone()
-        return row[0]
+        return row[0], token
     finally:
         conn.close()
 
@@ -125,22 +141,45 @@ def get_pending(db_path: Optional[str] = None) -> list[dict]:
     conn = _get_connection(db_path)
     try:
         rows = conn.execute(
-            "SELECT id, theory_text, ip_hash, timestamp, status FROM theories WHERE status = 'pending' ORDER BY timestamp ASC"
+            "SELECT id, theory_text, ip_hash, timestamp, status, token FROM theories WHERE status = 'pending' ORDER BY timestamp ASC"
         ).fetchall()
         return [dict(row) for row in rows]
     finally:
         conn.close()
 
 
-def update_status(theory_id: int, new_status: str, db_path: Optional[str] = None) -> None:
-    """Update the status of a theory. Valid statuses: pending, testing, published, rejected."""
+def update_status(theory_id: int, new_status: str, note: str = "",
+                   db_path: Optional[str] = None) -> None:
+    """Update the status of a theory. Valid statuses: pending, testing, published, rejected.
+
+    An optional note is stored in result_note (visible to the submitter via their token).
+    """
     valid = {"pending", "testing", "published", "rejected"}
     if new_status not in valid:
         raise ValueError(f"Invalid status '{new_status}'. Must be one of: {valid}")
 
     conn = _get_connection(db_path)
     try:
-        conn.execute("UPDATE theories SET status = ? WHERE id = ?", (new_status, theory_id))
+        if note:
+            conn.execute(
+                "UPDATE theories SET status = ?, result_note = ? WHERE id = ?",
+                (new_status, note, theory_id),
+            )
+        else:
+            conn.execute("UPDATE theories SET status = ? WHERE id = ?", (new_status, theory_id))
         conn.commit()
+    finally:
+        conn.close()
+
+
+def get_by_token(token: str, db_path: Optional[str] = None) -> Optional[dict]:
+    """Look up a theory by its submission token. Returns None if not found."""
+    conn = _get_connection(db_path)
+    try:
+        row = conn.execute(
+            "SELECT id, theory_text, timestamp, status, result_note FROM theories WHERE token = ?",
+            (token,),
+        ).fetchone()
+        return dict(row) if row else None
     finally:
         conn.close()

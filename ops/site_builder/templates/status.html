@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Submission Status | internal.com{% endblock %}
+
+{% block content %}
+<h1>Check Submission Status</h1>
+<p>
+  Enter the token you received when you submitted your theory.
+</p>
+
+<form id="status-form">
+  <label for="token-input">Submission token</label>
+  <input type="text" id="token-input" placeholder="e.g. a1b2c3d4e5f6..." maxlength="32"
+    autocomplete="off" spellcheck="false" style="font-family:monospace">
+  <div class="submit-actions">
+    <button type="submit" id="status-btn">Check Status</button>
+  </div>
+</form>
+
+<div id="status-result" class="result-box"></div>
+
+<hr>
+<p>
+  Don't have a token? <a href="/submit/">Submit a theory</a> to get one.
+</p>
+
+<noscript>
+  <p>The status checker requires JavaScript.</p>
+</noscript>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/status.js"></script>
+{% endblock %}

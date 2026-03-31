@@ -5,19 +5,22 @@ For full history and experiment detail, see topic files listed in the reference 
 
 ---
 
-## Project State (2026-03-28)
+## Project State (2026-03-30)
 
-- 992 scripts pushed to GitHub, 386 eliminations on internal.com, 670B+ configs scored
+- 993 scripts pushed to GitHub, 386 eliminations on internal.com, 671B+ configs scored
 - No credible decrypt path established
 - All positive findings are descriptive anomalies, not actionable decrypt levers
 - Computational attack surface is exhausted; remaining paths require external evidence or untested source texts
-- internal.com audited 2026-03-28: 4 HIGH issues found (see `reports/site_audit_2026-03-28.md`)
+- **Null mask positions proven model-dependent** (Jaccard 0.161 across 5 cipher models)
+- **Shuffled-CT test confirms palette is K4-specific** (0/500 shuffled CTs hit ≤7 distinct, p<0.002) — but model-conditional, not proven intrinsic
+- internal.com: submission feedback loop live (token-based status page)
+- GitHub: 2,945 clones (113 unique) in 14 days ending 2026-03-30; daily polling set up
 
 ---
 
 ## Hard Blockers
 
-1. **Null-mask provenance** *(partially resolved)* — IC is non-discriminative within the palette-consistent 24-null family (3,432 masks). Palette restriction (p~3e-5) IS the provenance. Open: which 7 of 14 extras complete the 24-null mask?
+1. **Null-mask provenance** *(model-dependent, K4-specific)* — Shuffled-CT test (0/500, p<0.002) confirms palette restriction is real for K4's letter order, not an SA artifact. But positions shift with cipher model (Jaccard 0.161). Palette is "anomalous under KA-autokey" not "intrinsic to K4."
 2. **Short-text underdetermination** — 97 chars; surface statistics are weak and frequently deceptive
 3. **Multi-layer ambiguity** — Tier 2 single-layer eliminations do NOT eliminate those families as one layer of a multi-layer construction
 4. **External-information ceiling** — Some avenues require physical/chart/archive evidence
@@ -59,7 +62,7 @@ Autokey variants | DEFECTOR/PALIMPSEST inherited-ceiling | K2 number-word keys |
 
 ## Confirmed Anomalies (Real but Unexploitable)
 
-- **Null palette {B,G,I,K,O,W,Z}** — 7 letters at 17 positions (p~3e-5). Mechanism unknown.
+- **Null palette {B,G,I,K,O,W,Z}** — 7 letters at 17 positions (p~3e-5 nominal). **Model-conditional**: positions shift with cipher model (Jaccard 0.161). Shuffled-CT: 0/500 hit ≤7 distinct (p<0.002), confirming K4-specificity but NOT model-independence. Grade C.
 - **KA mod 5 structure** — all 7 palette letters have KA index in {0,3} mod 5 (p=0.0005)
 - **BCL Beaufort keystream 7/8 palette** (p=0.0006) — unique to Beaufort A=0
 - **14-column grid asymmetry** — filler density 55% left vs 17% right (p~7e-5)
@@ -88,16 +91,11 @@ Detail: `archive_aaa_findings.md` in session memory.
 
 ---
 
-## TICOM/Novel Campaign Summary (2026-03-28)
+## Campaign & Audit Summaries
 
-14 scripts, 1.3B configs, ~75 min on 28 cores. RS44, VIC, Wheatstone, ITA-2, interrupted-key, Wilson, sawtooth, Baudot, Ubchi, Soviet three-step, Sanborn matrix: ALL NOISE. No forward progress on computational paths. Detail: `session_20260328_archive_campaigns.md`.
-
-## internal.com Audit (2026-03-28)
-
-**HIGH issues:** (1) Null palette p-value inconsistent across pages (1-in-33K vs 1-in-16K); (2) `e_varying_null_resolution` shows 24/24 NOISE — misleading; (3) LOO accuracy 47% vs 51.4% across sources; (4) Autokey 21/24 ELIMINATED needs structural proof context.
-**MEDIUM issues:** Homepage says "solved in 1999" (Stein solved 1998); RQ-3 shows 0/29 eliminated despite extensive transposition testing; 6 non-normalized verdict strings.
-**Infrastructure fixes applied:** Categorizer fixed (350→25 uncategorized, 93% reduction); title humanizer added (270 raw script-name titles auto-cleaned). Root cause: underscore/hyphen mismatch in tag matching + missing keyword patterns.
-Detail: `reports/site_audit_2026-03-28.md` (local, gitignored).
+- **TICOM/Novel (2026-03-28):** 14 scripts, 1.3B configs, ~75 min. RS44, VIC, Wheatstone, ITA-2, interrupted-key, Wilson, sawtooth, Baudot, Ubchi, Soviet three-step, Sanborn matrix: ALL NOISE.
+- **Site audit (2026-03-28):** p-value inconsistency fixed; categorizer 350→25 uncategorized (93% reduction); title humanizer added.
+- **Extra L (2026-03-29):** "Extra L at end of line" = tableau anomaly or transposition padding. 97+1=98=2×7×7. All tested hypotheses NOISE. UNTESTED: CT98 at width 7/14 with keyword column orders.
 
 ---
 
@@ -106,54 +104,35 @@ Detail: `reports/site_audit_2026-03-28.md` (local, gitignored).
 ### Session Memory (`.claude/projects/.../memory/`)
 
 **Elimination & Audit**
-- [Elimination Ledger](elimination_ledger.md) — Master record, 50+ experiments, all eliminated
-- [Statistical Audit](statistical_audit_20260326.md) — Evidence grading (A-E), multiplicity warnings
+- [Elimination Ledger](elimination_ledger.md) — Master record, 50+ experiments
+- [Statistical Audit](statistical_audit_20260326.md) — Evidence grading (A-E)
 - [Null Mask Validation](null_mask_validation_20260326.md) — IC non-discriminative, palette = provenance
+- [Null Mask Model Dependence](null_mask_model_dependence.md) — SA positions shift with cipher model, shuffled-CT confirms K4-specificity
 
 **Campaign Reports**
-- [Session 2026-03-28](session_20260328_archive_campaigns.md) — TICOM/novel campaign + archive photo forensics
-- [Session 2026-03-16](session_20260316_heavyweight.md) — Cold War keywords, Operation Gold, DEFECTOR+PALIMPSEST
-- [Campaign v3 Design](campaign_v3_design.md) — Multi-agent campaign architecture
+- [Session 2026-03-28](session_20260328_archive_campaigns.md) — TICOM/novel + archive forensics
+- [Session 2026-03-16](session_20260316_heavyweight.md) — Cold War keywords, DEFECTOR+PALIMPSEST
+- [Campaign v3 Design](campaign_v3_design.md) — Multi-agent architecture
 
 **Cipher Family Deep Dives**
-- [VIC Family](vic_family_exhaustive.md) — 6 variants, all eliminated
-- [NDYAHR](ndyahr_exhaustive.md) — 5 variants, all disproved
-- [Grille/Cardan](grille_cardan_results.md) — Model 2, YES WONDERFUL THINGS disproved
-- [Mbox Mining](mbox_mining_results.md) — Mailing list hypothesis extraction
+- [VIC Family](vic_family_exhaustive.md) | [NDYAHR](ndyahr_exhaustive.md) | [Grille/Cardan](grille_cardan_results.md) | [Mbox Mining](mbox_mining_results.md)
 
 **Stego / Null Layer**
-- [Stego Null Mask Tests](stego_null_mask_tests.md) — Palette-constrained masks, INCLINARE, 396-mask filter
-- [Telegraph PT Model](telegraph_plaintext_model.md) — Plaintext structure hypothesis
+- [Stego Null Mask Tests](stego_null_mask_tests.md) | [Telegraph PT Model](telegraph_plaintext_model.md)
 
 **Primary Sources**
-- [Archive AAA Findings](archive_aaa_findings.md) — 532 photos, Sanborn's papers analysis
-- [Antipodes Absence](antipodes_archive_absence.md) — Antipodes missing from archive
-- [Dan Brown Analysis](dan_brown_lost_symbol_analysis.md) — Chapter 53, 37/38, attorney memo
-- [Sanborn Manuscript](sanborn_manuscript_revelations.md) — Manuscript-derived findings
-- [Coding Chart Sealed](coding_chart_sealed.md) — $962.5K auction, chart in private hands
+- [Archive AAA](archive_aaa_findings.md) | [Antipodes Absence](antipodes_archive_absence.md) | [Dan Brown](dan_brown_lost_symbol_analysis.md) | [Sanborn Manuscript](sanborn_manuscript_revelations.md) | [Coding Chart Sealed](coding_chart_sealed.md)
 
 **User & Feedback**
-- [User Background](user_background.md) — User profile and preferences
-- [Feedback: Multi-layer Blindspot](feedback_multilayer_cipher_blindspot.md)
-- [Feedback: Statistical Posture](feedback_statistical_audit_posture.md)
-- [Feedback: Site Language](feedback_site_language.md)
-- [Feedback: Campaign v3](feedback_campaign_v3_no_utility.md)
-- [Feedback: Merge to Main](feedback_merge_to_main.md)
-- [Feedback: Tablet Responsive](feedback_tablet_responsive.md)
+- [User Background](user_background.md) | [Multi-layer Blindspot](feedback_multilayer_cipher_blindspot.md) | [Statistical Posture](feedback_statistical_audit_posture.md) | [Site Language](feedback_site_language.md) | [Campaign v3](feedback_campaign_v3_no_utility.md) | [Merge to Main](feedback_merge_to_main.md) | [Tablet Responsive](feedback_tablet_responsive.md)
 
 **External References**
-- [KUBARK PDF](kubark_pdf_reference.md) — CIA manual (63pp scanned)
-- [Smithsonian Visit](smithsonian_visit.md) — Physical visit planning
-- [AAA Archive Visit](project_aaa_archive_visit.md) — Archive visit logistics
-- [Polybius Paper](project_polybius_paper.md) — Publication planning
-- [Classify Endpoint](project_classify_endpoint.md) — API classification service
+- [KUBARK PDF](kubark_pdf_reference.md) | [Smithsonian Visit](smithsonian_visit.md) | [AAA Archive Visit](project_aaa_archive_visit.md) | [Polybius Paper](project_polybius_paper.md) | [Classify Endpoint](project_classify_endpoint.md)
+
+**Session 2026-03-30**
+- [Null Mask Model Dependence](null_mask_model_dependence.md) | [NYT vs Null Mask](nyt_article_null_mask_impact.md) | [Reddit Audit](reddit_statistical_audit.md) | [Proof Doc Audit](proof_document_audit.md) | [Submission Feedback](submission_feedback_loop.md) | [GitHub Traffic](github_traffic_polling.md)
 
 ### Repo Memory (`memory/`)
-- `keystream_forensics_v2.md` | `keystream_ap_investigation.md` — Keystream structure
-- `palette_deep_investigation.md` | `bcl_palette_keystream.md` — Palette mechanisms
-- `palette_mod35_rule.md` | `palette_null_separator.md` — Palette position rules
-- `polybius_row_selection.md` — Polybius grid analysis
-- `width10_17_deep_investigation.md` | `width21_bigram_73char.md` — Width anomalies
-- `ticom_archive_research.md` | `bruteforce_7remaining.md` — External research
+- `keystream_forensics_v2.md` | `palette_deep_investigation.md` | `bcl_palette_keystream.md` | `palette_mod35_rule.md` | `palette_null_separator.md` | `polybius_row_selection.md` | `width10_17_deep_investigation.md` | `width21_bigram_73char.md` | `ticom_archive_research.md` | `bruteforce_7remaining.md`
 
-Last updated: 2026-03-28
+Last updated: 2026-03-30
