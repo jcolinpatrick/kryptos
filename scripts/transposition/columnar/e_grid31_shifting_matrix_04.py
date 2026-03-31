@@ -344,9 +344,9 @@ for width in WIDTHS:
 
 print(f"  Tested {count2:,} configurations")
 
-# ─── SECTION 3: "8 Lines 73" interpretation ─────────────────────────────────
+# ─── SECTION 3: "3 Lines 93" (was misread as "3 Lines 93 [note: was misread as 8 Lines 73]") interpretation ─────────────────────────────────
 
-print("\nSECTION 3: '8 Lines 73' — width 8 with all shift patterns from 7-letter keywords")
+print("\nSECTION 3: '3 Lines 93' (was misread as '3 Lines 93 [note: was misread as 8 Lines 73]') — width 8 with all shift patterns from 7-letter keywords")
 count3 = 0
 
 # If "8 Lines" = 8 columns and "73" = some other parameter...

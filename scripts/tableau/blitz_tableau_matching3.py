@@ -425,5 +425,5 @@ CONFIRMED:
    These letters EK appear together at K4[91:93] = "EK" — near K4's end.
 
 6. PERIOD ANALYSIS: k_diff sequence shows no perfect periodicity, but period-8
-   chi2=12.12 is elevated (p≈0.14 — not significant, but matches "8 Lines 73" clue).
+   chi2=12.12 is elevated (p≈0.14 — not significant, but matches "3 Lines 93" (was misread as "3 Lines 93 [note: was misread as 8 Lines 73]") clue).
 """)

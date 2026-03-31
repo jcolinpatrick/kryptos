@@ -15,7 +15,7 @@
     "family": "blitz",
     "status": "unknown",
     "lines": 1649,
-    "description": "blitz_8lines73.py \u2014 Exhaustive test of \"8 Lines 73\" interpretations for K4."
+    "description": "blitz_8lines73.py \u2014 Exhaustive test of \"3 Lines 93 [note: was misread as 8 Lines 73]\" interpretations for K4."
   },
   "blitz_affine_search": {
     "family": "blitz",
@@ -1503,7 +1503,7 @@
     "family": "grille",
     "status": "unknown",
     "lines": 497,
-    "description": "E-GRILLE-20: Period-8 / \"8 Lines 73\" \u2014 Columnar Transposition Width 8"
+    "description": "E-GRILLE-20: Period-8 / \"3 Lines 93 [note: was misread as 8 Lines 73]\" \u2014 Columnar Transposition Width 8"
   },
   "e_grille_21_scramble_order": {
     "family": "grille",

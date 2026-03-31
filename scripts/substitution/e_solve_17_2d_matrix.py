@@ -19,7 +19,7 @@ a key that depends on BOTH the row and column, then read off as ciphertext.
 This is:
   - "Two separate systems" = row key + column key
   - "IDBYROWS" = literal instruction
-  - "8 Lines 73" = 8-row grid
+  - "3 Lines 93" (was misread as "3 Lines 93 [note: was misread as 8 Lines 73]") = 8-row grid
   - "Shifting matrices" / "matrix codes" = 2D grid operation
   - CKM key-split combiner = two independent key components
 

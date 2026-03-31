@@ -47,7 +47,7 @@ F. GRILLE-BASED KEYWORD EXTRACTION:
    Keywords: (holes sorted by col, then row) → extract their row indices → key.
 
 G. 73-POSITION SUBSETS:
-   "8 Lines 73" from Sanborn yellow pad.
+   "3 Lines 93" (was misread as "3 Lines 93 [note: was misread as 8 Lines 73]") from Sanborn yellow pad.
    73 = 97 - 24 non-crib positions.
    Maybe grille defines exactly which 73 positions are "scrambled."
    The other 24 (crib positions) might be UNscrambled (sigma=identity there).
@@ -840,7 +840,7 @@ print(f"  Row 5 holes: {p8_by_row[5]}")
 print(f"  Row 13 holes: {p8_by_row[13]}")
 print(f"  Row 21 holes: {p8_by_row[21]}")
 
-# J2: "8 Lines 73" → interpret as 8 rows with SPECIFIC hole pattern
+# J2: "3 Lines 93" (was misread as "3 Lines 93 [note: was misread as 8 Lines 73]") → interpret as 8 rows with SPECIFIC hole pattern
 # If K4 is in 8 lines, and the grille covers those 8 lines with ~73 holes:
 # The 73 holes over K4's 73 non-crib positions define the scramble.
 # (Speculative)

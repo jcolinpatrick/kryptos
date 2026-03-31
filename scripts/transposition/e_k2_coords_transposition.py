@@ -874,7 +874,7 @@ for nrails in set([3, 4, 5, 6, 7, 8, 11, 14, 38, 44, 57]):
 
 print()
 
-# ── 10. Specific grid: 8 lines × ~12 cols (from legal pad "8 lines 73") ─
+# ── 10. Specific grid: 8 lines × ~12 cols (from legal pad "3 Lines 93 [note: was misread as 8 lines 73]") ─
 print("=" * 80)
 print("10. GRID CONFIGS INSPIRED BY LEGAL PAD + COORDINATES")
 print("=" * 80)
