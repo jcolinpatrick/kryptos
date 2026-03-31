@@ -137,7 +137,7 @@ The whole point of open-sourcing this is to get more eyes on K4.
 
 ## Key references
 
-- [Bean 2021](https://eprint.iacr.org/2021/1549) — Constraint analysis of K4 keystream
+- [Bean 2021](https://ecp.ep.liu.se/index.php/histocrypt/article/view/153) — "Cryptodiagnosis of Kryptos K4," HistoCrypt 2021
 - [Elonka Dunin's Kryptos page](https://elonka.com/kryptos/) — Community hub and transcription
 - [Ed Scheidt dossier](reference/ed_scheidt_dossier.md) — What the co-creator has revealed
 - [Sanborn's open letter (Aug 2025)](reference/sanborn_open_letter_aug2025.md) — AI verification, K5 confirmed

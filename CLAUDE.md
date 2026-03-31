@@ -15,7 +15,7 @@ This repo has one purpose: determine the **true plaintext** and the **full encry
    ```bash
    PYTHONPATH=src python3 scripts/_infra/session_briefing.py
    ```
-   This reads `exhaustion_log.json` (939 entries), `results/*.json` (309 files), and `docs/elimination_tiers.md` to produce a current elimination landscape, confirmed anomalies, open attack surface, and DO NOT TEST list. **It replaces all hand-maintained elimination ledgers** — the data is always fresh.
+   This reads `exhaustion_log.json` (944 entries), `results/*.json` (314 files), and `docs/elimination_tiers.md` to produce a current elimination landscape, anomalies, open attack surface, and DO NOT TEST list. **It replaces all hand-maintained elimination ledgers** — the data is always fresh.
 3. Read MEMORY.md (auto-loaded) — volatile strategic state, hard blockers, next actions
 4. If the task matches anything in the briefing's TIER 1 or DO NOT TEST sections → **STOP, tell the user, do NOT re-run**
 5. `run_attack.py --list --verbose | grep KEYWORD` — search before writing new code
@@ -328,7 +328,7 @@ Domain knowledge, public facts, and detailed operating policies live in separate
 
 ### External primary references
 
-- [Bean 2021](https://eprint.iacr.org/2021/1549) — Constraint analysis of K4 keystream (source of Bean equality/inequality constraints)
+- [Bean 2021](https://ecp.ep.liu.se/index.php/histocrypt/article/view/153) — "Cryptodiagnosis of Kryptos K4," HistoCrypt 2021 (source of Bean equality/inequality constraints)
 - [Elonka Dunin's Kryptos page](https://elonka.com/kryptos/) — Community hub, authoritative CT transcription
 - [`reference/ed_scheidt_dossier.md`](reference/ed_scheidt_dossier.md) — What the co-creator has revealed publicly
 - [`reference/sanborn_open_letter_aug2025.md`](reference/sanborn_open_letter_aug2025.md) — AI verification, K5 confirmed
