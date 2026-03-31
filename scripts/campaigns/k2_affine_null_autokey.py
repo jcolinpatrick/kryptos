@@ -17,6 +17,10 @@ encode K4 structure AND have crib-safe null masks.
 
 Also tests: valid maps where slope/intercept ∈ K2 numbers {3,5,6,7,8,11,13,24,38,44,57,77}
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 import sys, time
 from math import gcd
 sys.path.insert(0, "src")

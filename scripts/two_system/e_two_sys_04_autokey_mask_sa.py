@@ -17,6 +17,10 @@
 #
 # This is the strongest untested combination: autokey is historically plausible
 # (Scheidt era), and SA with free-crib scoring catches cribs at ANY position.
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 from __future__ import annotations
 
 import math

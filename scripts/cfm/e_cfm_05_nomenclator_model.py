@@ -7,6 +7,10 @@ Keyspace: see implementation
 Last run: 
 Best score: 
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """E-CFM-05: Nomenclator / code+cipher hybrid structural analysis.
 
 [HYPOTHESIS] K4 may use a nomenclator — a hybrid system where common words

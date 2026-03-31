@@ -7,6 +7,10 @@ Keyspace: SA sampling (26^P periodic, 26^73 long-key, 2^73 mask)
 Last run: never
 Best score: n/a
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """
 Fresh quadgram-guided MCMC/SA attack on K4.
 

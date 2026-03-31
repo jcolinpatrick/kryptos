@@ -9,6 +9,10 @@ Generates:
 3. Bayesian model comparison: P(model | observed data)
 4. Overfitting diagnostics (cross-validation, AIC/BIC)
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 
 import sys
 import json

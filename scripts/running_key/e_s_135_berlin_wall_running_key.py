@@ -7,6 +7,10 @@ Keyspace: see implementation
 Last run: 
 Best score: 
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """E-S-135: Berlin Wall speech texts as running key sources.
 
 Sanborn's 2025 open letter mentions 1989 Berlin Wall. Running key from

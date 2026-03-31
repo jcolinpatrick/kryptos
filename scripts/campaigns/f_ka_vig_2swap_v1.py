@@ -20,6 +20,10 @@ CROSS-CONSTRAINT THEORETICAL MAX FOR KRYPTOS:KA_vig (L=7):
 - Total theoretical max = 14/24 (tight bound)
 - SA achieves 13/24 reliably → 2-swap may find the last point
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 
 import sys, random, math, time, json, itertools
 sys.path.insert(0, 'src')

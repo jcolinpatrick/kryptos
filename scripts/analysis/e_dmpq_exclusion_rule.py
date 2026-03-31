@@ -17,6 +17,10 @@ Conventions:
 
 Usage: PYTHONPATH=src python3 -u scripts/analysis/e_dmpq_exclusion_rule.py
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 
 import sys
 import os

@@ -17,6 +17,10 @@ Six tests:
   T5: Consecutive palette runs significance
   T6: Periodic structure explaining palette positions
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 
 import sys, os, json, random, datetime
 from collections import Counter

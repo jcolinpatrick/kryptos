@@ -9,6 +9,10 @@ TASK 4: Variant testing on best masks from Tasks 1-3
 
 Model: extract 73 -> inv col7 -> DEFECTOR:AZ_beau autokey -> score cribs
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 
 import sys, time, json
 from itertools import combinations

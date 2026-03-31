@@ -7,6 +7,10 @@ Keyspace: ~10^12 (variable-width block permutations, greedy optimization)
 Last run:
 Best score:
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """Attack #1: Morse E-Group Block Permutation on K4.
 
 Hypothesis: The 26 extra E's in Kryptos Morse code (K0) appear in groups of

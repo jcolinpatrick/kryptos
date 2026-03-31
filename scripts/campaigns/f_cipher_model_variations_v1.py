@@ -13,6 +13,10 @@ Tests 8 categories of variations on the DEFECTOR:AZ_beau+col7+null-mask model:
 
 Known baseline: DEFECTOR:AZ_beau+col7 = 15/24 (ene=7/13, bcl=8/11)
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 
 import sys, time, json
 sys.path.insert(0, 'src')

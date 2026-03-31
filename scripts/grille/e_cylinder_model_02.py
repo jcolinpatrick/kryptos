@@ -27,6 +27,10 @@ The 28x31 cipher grid:
   K4 positions: row 24 cols 27-30 (4 chars) + rows 25-27 full (93 chars)
   Full grid: K1(63) + ?(1) + K2(369) + ?(1) + K3(336) + ?(1) + K4(97) = 868
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 from __future__ import annotations
 
 import sys

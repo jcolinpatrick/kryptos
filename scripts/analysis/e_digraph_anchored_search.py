@@ -29,6 +29,10 @@ PHASES:
   2. For top masks with digraphs: try ALL keywords x periods x variants x col6/col7.
   3. Extended: check positions 9-12 (4 chars before ENE) and 49-50 (before BCL).
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 
 import sys, os, json, time, math
 from itertools import combinations

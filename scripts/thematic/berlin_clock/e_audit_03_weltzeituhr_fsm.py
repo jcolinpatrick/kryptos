@@ -7,6 +7,10 @@ Keyspace: see implementation
 Last run: 
 Best score: 
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """E-AUDIT-03: Weltzeituhr-Driven Finite-State Cipher.
 
 [HYPOTHESIS] The Weltzeituhr (World Clock at Alexanderplatz, Berlin) is a

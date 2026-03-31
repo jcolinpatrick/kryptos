@@ -14,6 +14,10 @@ LOW same-column letter coincidence across the 28×31 grid.
 Also provides a definitive geometric analysis of whether the consensus
 null positions have ANY interpretable pattern on the cylinder.
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 
 import sys, os, math
 from collections import Counter

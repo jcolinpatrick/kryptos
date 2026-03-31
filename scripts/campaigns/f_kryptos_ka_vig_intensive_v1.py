@@ -29,6 +29,10 @@ Tests:
 
 For each candidate, run 80 SA restarts × 400K steps to search null mask space.
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 
 import sys, random, math, time, json
 sys.path.insert(0, 'src')

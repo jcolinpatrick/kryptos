@@ -21,6 +21,10 @@ PHASES:
   3. Diagonal/systematic patterns (shifts, checkerboard, evenly spaced)
   4. W-position constraint: 5 W's forced as nulls, systematic remainder
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 
 import json
 import math

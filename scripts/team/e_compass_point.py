@@ -7,6 +7,10 @@ Keyspace: ~15000 configs
 Last run: 2026-03-09
 Best score:
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """E-COMPASS-POINT: Test the compass-point interpretation of POINT from K2 plaintext.
 
 The lodestone on Kryptos points ENE (East-Northeast) = EASTNORTHEAST crib.

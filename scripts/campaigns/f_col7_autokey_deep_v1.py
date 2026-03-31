@@ -19,6 +19,10 @@ Key model:
   CT97 → remove 24 nulls → CT73 → col7-transpose → CT73' → autokey-decrypt → PT73
   Crib positions in PT73 computed from null mask (n1, n2).
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 
 import sys, random, math, time, json
 sys.path.insert(0, 'src')

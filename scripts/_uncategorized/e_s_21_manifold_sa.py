@@ -7,6 +7,10 @@ Keyspace: see implementation
 Last run: 
 Best score: 
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """E-S-21: SA on the 24/24 Crib-Consistent Transposition Manifold
 
 Key insight from E-S-20: there are ~3×10^23 valid partial transpositions at

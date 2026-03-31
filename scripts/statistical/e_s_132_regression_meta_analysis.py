@@ -7,6 +7,10 @@ Keyspace: see implementation
 Last run: 
 Best score: 
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """E-S-132: Multiple Linear Regression Meta-Analysis of All K4 Experiments.
 
 Encodes all 130+ experiments as feature vectors, runs MLR with crib_matches

@@ -7,6 +7,10 @@ Keyspace: see implementation
 Last run: 
 Best score: 
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """E-W9-POLY-01b: Baseline — expected random score at period 10 with 24 cribs.
 
 Quick Monte Carlo: for random permutations of CT, what score does the

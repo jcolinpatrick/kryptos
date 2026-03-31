@@ -7,6 +7,10 @@ Keyspace: see implementation
 Last run: 
 Best score: 
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """E-S-146: Anomaly-derived width-7 transposition keys with running key SA.
 
 Tests the hypothesis that deliberate anomalies in K0/K1 encode a width-7

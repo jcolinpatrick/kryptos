@@ -7,6 +7,10 @@ Keyspace: ~1500 configs (atbash layer + sub + trans combinations)
 Last run:
 Best score:
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """E-AAA-ATBASH-LAYER-02: Atbash as one layer of multi-layer system.
 
 SOURCE: Archives of American Art, IMG_1340 mentions "ATBA[SH]" on same page as ABSCISSA.

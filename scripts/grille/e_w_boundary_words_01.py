@@ -19,6 +19,10 @@ User-specified segments (include boundary position):
   Seg5: pos 59-74  (16 chars) — 4 unknown (59-62) + BERLINCLOCK (63-73) + 1 unknown (74)
   Seg6: pos 75-96  (22 chars) — unknown
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 import sys
 import os
 import itertools

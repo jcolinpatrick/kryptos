@@ -91,7 +91,7 @@ Every candidate decryption is scored against known constraints:
 |-------|---------------|---------|
 | 0-9   | Noise         | Expected random performance |
 | 10-17 | Interesting   | Worth logging, likely noise |
-| 18-23 | Signal        | Statistically significant |
+| 18-23 | Signal        | Unusual at short periods; likely false positive at periods >7 |
 | 24    | Breakthrough  | All cribs match — potential solution |
 
 The score is based on crib consistency (do the known plaintext positions produce a valid keystream?), Bean constraints (equality/inequality relationships between key positions), index of coincidence, and n-gram quality.
@@ -104,20 +104,22 @@ The [kryptosbot.com](https://kryptosbot.com/browse/) site documents 390 formal e
 
 - **Substitution** — Vigenere, Beaufort, Quagmire, Hill, Caesar, mixed alphabets
 - **Transposition** — Columnar, double-columnar, AMSCO, Myszkowski, rail fence, route, grille
-- **Fractionation** — Bifid, Trifid, ADFGVX, Playfair, four-square (all structurally eliminated)
+- **Fractionation** — Bifid, Trifid, ADFGVX, Playfair, four-square (structurally eliminated under direct correspondence)
 - **Multi-layer** — Substitution + transposition combinations, null extraction, three-layer cascades
 - **Key models** — Running keys, autokey (structurally eliminated), progressive, Fibonacci, date-derived
 - **Bespoke** — RS44, VIC, Wheatstone, Weltzeituhr, DRYAD charts, NATO/COMSEC
 - **Uncategorized** — Morse-derived, encoding schemes, sculpture-physical hypotheses
 
-## Current hypotheses
+**Important caveat:** Single-layer eliminations do not rule out the same cipher family as one layer of a multi-layer construction.
 
-The leading working model (not proven):
+## Working hypotheses
 
-1. **Two systems confirmed** — Sanborn's 1990 dedication speech states K4 uses "two systems of enciphering," distinct from the Vigenere used for K1-K3
-2. **Null insertion hypothesis** — Some positions in K4 may be steganographic filler. The number of nulls (if any) and their positions are unknown. Earlier analyses assumed 24 nulls (97 − 73 = 24) based on a misread of Sanborn's working notes; the actual notation reads "3 Lines 93," whose meaning is unclear
-3. **Null palette anomaly** — Under the 24-null model, the 17 highest-confidence null positions use only 7 of 26 possible letters ({B,G,I,K,O,W,Z}), corresponding to two columns of the KA Polybius grid (joint p ~ 10^-5). This is the strongest confirmed statistical signal in K4, though the null positions themselves are model-conditional
-4. **Running key from unknown source** — The only structured non-periodic key model surviving Bean constraints. Source text is unknown; English running key + columnar transposition is eliminated
+None of these are proven. They represent the current working model.
+
+1. **Two systems** — Sanborn's 1990 dedication speech states K4 uses "two systems of enciphering," distinct from the Vigenere used for K1-K3. [PUBLIC FACT] The specific interpretation (null insertion + substitution) is our model, not confirmed.
+2. **Null insertion hypothesis** — Some positions in K4 may be steganographic filler. The number of nulls (if any) and their positions are unknown. This is a hypothesis, not a confirmed finding.
+3. **Null palette observation** — Under one cipher model (KA-autokey Vigenere), 17 candidate null positions use only 7 of 26 letters ({B,G,I,K,O,W,Z}), p ≈ 1/16,000. This is model-conditional: different cipher models produce different positions (Jaccard overlap 0.161). No model-free method has independently recovered these positions.
+4. **Running key from unknown source** — The only structured non-periodic key model surviving Bean constraints under direct correspondence. Source text is unknown.
 
 See [docs/research_questions.md](docs/research_questions.md) for the full list of open questions.
 

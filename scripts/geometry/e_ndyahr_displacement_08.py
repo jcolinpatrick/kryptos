@@ -7,6 +7,10 @@ Keyspace: ~10K configs across 8 hypothesis classes
 Last run: 2026-03-14
 Best score: TBD
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """E-NDYAHR-DISPLACEMENT-08: Test directional displacement hypotheses for NDYAHR.
 
 Six letters at the K3/K4 boundary (NDYAHR from ENDYAHROHN) are physically

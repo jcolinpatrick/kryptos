@@ -15,6 +15,10 @@ Mode 2: Strip leading W from segments 1-5, giving 92 chars.
 
 All 720 permutations tested x 7 keywords x 3 cipher variants.
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 import sys
 import os
 import itertools

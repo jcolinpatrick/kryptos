@@ -12,6 +12,10 @@ this gives 42 known PT positions.
 For each cipher variant × period, derive required key letters and check consistency.
 If consistent, decrypt full CT and show plaintext.
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 import sys
 sys.path.insert(0, 'src')
 

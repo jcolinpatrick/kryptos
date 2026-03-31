@@ -18,6 +18,10 @@ encode EXACTLY the K4 cipher parameters:
 This script exhaustively explores ALL modular reductions of K2 coordinate
 components against known cipher parameters to find the complete mapping.
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 import math
 import sys
 import os

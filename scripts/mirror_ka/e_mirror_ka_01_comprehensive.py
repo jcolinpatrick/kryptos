@@ -22,6 +22,10 @@ Test categories:
 6. Mirror-KA periodic (periods 2-13) with keywords
 7. Bean reversed-KA mod-5 constraint analysis
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 
 import sys
 import os

@@ -7,6 +7,10 @@ Keyspace: see implementation
 Last run: 
 Best score: 
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """E-EXPLORER-02: Expanded grid rotation + running key search.
 
 Building on E-EXPLORER-01 finding: 9/24 at w=8 rot=90.

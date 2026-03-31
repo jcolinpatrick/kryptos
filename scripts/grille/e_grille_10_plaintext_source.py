@@ -7,6 +7,10 @@ Keyspace: see implementation
 Last run: 
 Best score: 
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """E-GRILLE-10: Cardan Grille Applied to K1+K2+K3 Plaintext.
 
 NOVEL APPROACH: Tests the hypothesis that the physical Cardan grille was

@@ -15,6 +15,10 @@ Scoring: quadgrams on full 97-char decryption. Cribs are always correct
 since the 24 fixed key slots are derived directly from cribs.
 Report any combo with score > -3.8/char (well above noise floor of -4.2).
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 import sys, itertools, math
 sys.path.insert(0, 'src')
 from kryptos.kernel.constants import CT, CRIB_WORDS

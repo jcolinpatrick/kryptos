@@ -13,6 +13,10 @@ Two approaches:
 (B) SA over all null masks: for each mask, find the best period-24 key via crib
     constraints (may be consistent or contradictory), score resulting PT.
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 
 import sys, random, math, time, json, itertools
 sys.path.insert(0, 'src')

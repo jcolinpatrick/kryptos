@@ -9,6 +9,10 @@ B4.4: Validate predicted varying nulls against Bean constraints.
 
 Output: results/stego_mechanism/mixed_cell_varying.json
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 import sys, os, json
 from collections import defaultdict
 from datetime import datetime, timezone

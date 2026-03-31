@@ -7,6 +7,10 @@ Keyspace: see implementation
 Last run: 
 Best score: 
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """E-GRILLE-05: 5x5 Grid Cipher Attacks on YAR Grille CT.
 
 The YAR grille CT has exactly 25 unique letters (T missing) — a perfect fit

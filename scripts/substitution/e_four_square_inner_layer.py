@@ -19,6 +19,10 @@ Uses consensus null mask from DEFECTOR:AZ_beau+col7 15/24 result.
 Tests with and without col7 transposition.
 Both parities (start=0 proven consistent, start=1 for completeness).
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 
 import sys
 import time

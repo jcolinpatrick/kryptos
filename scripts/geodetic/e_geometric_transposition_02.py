@@ -18,6 +18,10 @@ Key discovery from e_geometric_keys_01.py:
 - LOOMIS→Sculpture = 64.7m ≈ 65 = Bean equality position k[27]=k[65]
 - CR→SCULPTURE bearing = 45.16° ≈ LOOMIS→ABBOTT published azimuth (45.58°)
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 import math
 import sys
 import os

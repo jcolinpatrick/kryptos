@@ -7,6 +7,10 @@ Keyspace: see implementation
 Last run: 
 Best score: 
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """E-FRAC-49: Running Key + Structured Columnar Transposition (DEFINITIVE TEST)
 
 HYPOTHESIS: Does any combination of columnar transposition ordering (widths 6, 8, 9)

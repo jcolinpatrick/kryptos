@@ -7,6 +7,10 @@ Keyspace: see implementation
 Last run: 
 Best score: 
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """E-AUDIT-06: K3's ACTUAL Method Applied to K4.
 
 [HYPOTHESIS] K4 uses K3-style double rotational transposition combined with

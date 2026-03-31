@@ -30,6 +30,10 @@ This script does NOT search for new masks. Instead it:
 5. Tests whether the 24 Weltzeituhr facets (from BERLINCLOCK) map to
    24 angular sectors on the cylinder, and if one sector per row = 24 nulls.
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 
 import sys, os, math
 from itertools import combinations, product

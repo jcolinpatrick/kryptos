@@ -7,6 +7,10 @@ Keyspace: see implementation
 Last run: 
 Best score: 
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """E-CHART-04: K0 Morse E-group pattern as tableau row selector / key generator.
 
 Theory: The 26 extra E's in K0 Morse code provide a structural pattern for K4.

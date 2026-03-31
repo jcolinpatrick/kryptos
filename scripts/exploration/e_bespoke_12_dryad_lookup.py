@@ -7,6 +7,10 @@ Keyspace: see implementation
 Last run: 
 Best score: 
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """E-BESPOKE-12: 2D DRYAD lookup from K1/K2/K3 plaintext and ciphertext.
 
 Hypothesis: Fill a grid with K1/K2/K3 text, then decrypt K4 by looking up

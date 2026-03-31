@@ -7,6 +7,10 @@ Keyspace: see implementation
 Last run: 
 Best score: 
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """E-ROMAN-03b: ABSCISSA/PALIMPSEST/KRYPTOS coordinate-based triple transposition.
 
 Supplementary to E-ROMAN-03. Key insight: ABSCISSA literally means "x-coordinate."

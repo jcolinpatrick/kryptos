@@ -16,6 +16,10 @@ Extends e_morse_reflection_01 with:
   - Period analysis of reflection key
   - Systematic period testing (periods 2-26) using reflected K0 fragments
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 
 import sys
 import os

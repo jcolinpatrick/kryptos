@@ -27,6 +27,10 @@ Models tested:
   F: Offset keying — K3 PT offset by crib length (13/11) as running key
   G: Row-pair keying — use 2 K3 rows (stacked) for Polybius-like coordinates
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 
 import sys
 import os

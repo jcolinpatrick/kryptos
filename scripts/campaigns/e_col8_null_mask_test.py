@@ -10,6 +10,10 @@ Key observation from separator analysis:
 This script tests whether col%8 in {0,1} defines the full 24-null mask,
 and evaluates it against all known cipher configurations.
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 import sys
 import os
 import json

@@ -6,6 +6,10 @@ C(24,3) × C(49,3) = 2,024 × 18,424 = 37,289,776 evals per seed.
 At ~31μs/eval → ~1160s ≈ 19 min per seed.
 We run the canonical seed first, then as many others as time permits.
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 
 import sys, itertools, time, json
 sys.path.insert(0, 'src')

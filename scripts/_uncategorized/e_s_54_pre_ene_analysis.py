@@ -7,6 +7,10 @@ Keyspace: see implementation
 Last run: 
 Best score: 
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """E-S-54: Pre-ENE Segment Deep Analysis (RQ-7).
 
 Positions 0-20 of K4 (OBKRUOXOGHULBSOLIFBBW) have IC=0.0667, which matches

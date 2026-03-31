@@ -7,6 +7,10 @@ Keyspace: see implementation
 Last run: 
 Best score: 
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """blitz_csp_focused.py — Deep CSP analysis for all 18 multiset-feasible configs.
 
 Key finding from blitz_wildcard: Only 18/56 key configs have enough characters

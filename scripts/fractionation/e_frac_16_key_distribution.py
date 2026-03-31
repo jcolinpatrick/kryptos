@@ -7,6 +7,10 @@ Keyspace: see implementation
 Last run: 
 Best score: 
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """E-FRAC-16: Key Value Distribution Analysis
 
 The Beaufort key at crib positions has value K(=10) at 5 out of 24 positions

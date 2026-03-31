@@ -22,6 +22,10 @@
 #
 # Bonus: 3 of 5 W positions (20, 48, 74) fall on crib-free columns
 # (16, 13, 8). If those columns are null, those W's are nulls!
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 from __future__ import annotations
 
 import itertools

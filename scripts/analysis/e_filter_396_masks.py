@@ -20,6 +20,10 @@ Filters applied:
   f) Letter frequency chi-squared vs English
   g) Which 9 cribs fail (and whether they're the same across all masks)
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 
 import sys, json, time, math, os
 from itertools import combinations

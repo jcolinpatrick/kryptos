@@ -7,6 +7,10 @@ Keyspace: ~50K configs across 10 hypothesis classes
 Last run: 2026-03-15
 Best score: TBD
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """E-NDYAHR-PAIRED-FORCES-10: Test NDYAHR as three pairs of directional forces.
 
 Hypothesis: The 6 displaced NDYAHR letters operate in THREE PAIRS:

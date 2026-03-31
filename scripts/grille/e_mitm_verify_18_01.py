@@ -5,6 +5,10 @@ Tests: w9/vigenere/p11/key@ct with the 4 column orderings that scored 18/24.
 Also runs a null hypothesis test: how often does a random w9 permutation
 score 18+ at period 11?
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 import sys
 import os
 import random

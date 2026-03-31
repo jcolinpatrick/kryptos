@@ -13,6 +13,10 @@ Steps:
   4. If count == 24 (or another small number), extract 73-char CT and test
   5. Also test inverse: cipher!=tableau as holes (different count)
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 from __future__ import annotations
 import sys
 sys.path.insert(0, 'src')

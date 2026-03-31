@@ -4,6 +4,10 @@ scripts/campaigns/d13_stehle_summary.py
 Comprehensive summary of d=13 anomaly and Stehle Δ^4=5 analysis.
 Key findings ready for record.
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 import sys
 sys.path.insert(0, 'src')
 from kryptos.kernel.constants import CT

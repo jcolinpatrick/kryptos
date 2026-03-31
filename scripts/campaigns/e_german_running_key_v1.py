@@ -10,6 +10,10 @@ The Gutenberg sweep tests ~60K English texts. This script targets:
 Key insight: source text[21:34] = JLJODEGKUKKKL and source[63:74] = OCGGBGOKTRU
 These are the LITERAL characters that must appear at those positions in the source.
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 import sys, math, urllib.request, urllib.error, re, json
 from pathlib import Path
 sys.path.insert(0, 'src')

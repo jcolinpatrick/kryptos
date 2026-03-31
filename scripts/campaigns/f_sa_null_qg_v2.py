@@ -8,6 +8,10 @@ Fewer restarts, more focused on top keywords (KRYPTOS, KOMPASS, DEFECTOR).
 Also adds: Quagmire I (monoalphabetic keyword sub) after null removal —
 distinct from periodic sub and not yet tested in null-extraction model.
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 
 import sys, random, math, time, json
 sys.path.insert(0, 'src')

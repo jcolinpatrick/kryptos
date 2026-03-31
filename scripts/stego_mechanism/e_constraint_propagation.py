@@ -10,6 +10,10 @@ C5: Mask-conditioned cipher re-test (compare mechanism mask vs consensus)
 
 Output: results/stego_mechanism/constraint_propagation.json
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 import sys, os, json
 from collections import Counter
 from datetime import datetime, timezone

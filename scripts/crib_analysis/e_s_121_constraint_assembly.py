@@ -7,6 +7,10 @@ Keyspace: see implementation
 Last run: 
 Best score: 
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 """E-S-121: Full constraint assembly pipeline — ALL K0-K3 parameters × ALL models.
 
 Combines every parameter extracted from K0–K3 into a constrained product space:

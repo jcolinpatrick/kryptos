@@ -15,6 +15,10 @@ If no: confirmed elimination.
 
 Also tests the other top ENE pre-configs found in exhaustive analysis.
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 
 import sys, random, math, time, json
 sys.path.insert(0, 'src')

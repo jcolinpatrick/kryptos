@@ -23,6 +23,10 @@ K3 PARALLEL:
   K3 used double columnar transposition with keywords KRYPTOS and ABSCISSA.
   K4 may use a similar transposition as one of its two systems.
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 from __future__ import annotations
 
 import sys

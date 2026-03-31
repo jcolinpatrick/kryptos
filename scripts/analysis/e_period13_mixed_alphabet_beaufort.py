@@ -27,6 +27,10 @@ constraint depends on W. We search for keywords that satisfy it at each residue.
 If all 11 residues can be satisfied (possibly with same or different keywords),
 we have a valid period-13 cipher model. Decrypt all 97 chars and score by quadgrams.
 """
+# DEPRECATED: This script is retained as a historical artifact.
+# Superseded by newer analysis. Do not cite results as current.
+# See docs/SCRIPT_RIGOR_STANDARD.md
+
 
 import sys, os, time, json, itertools
 from pathlib import Path
