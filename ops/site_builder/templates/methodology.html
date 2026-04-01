@@ -128,15 +128,14 @@
 </p>
 <pre style="white-space:pre-wrap">PT (73 chars) &rarr; substitution cipher &rarr; filler insertion (24 chars) &rarr; carved text (97 chars)</pre>
 <p>
-  If the null-mask model is correct, the candidate null palette (letters appearing at
-  null positions) is {B,G,I,K,O,W,Z}, which corresponds to columns 0 and 3 of a 5-wide
-  Polybius grid under certain keyword-mixed alphabets including KRYPTOS
-  (palette restriction p&nbsp;&asymp;&nbsp;1&nbsp;in&nbsp;16,000). A shuffled-ciphertext test (500 trials, 0 hits)
-  confirmed this restriction is specific to K4&rsquo;s letter ordering (p&nbsp;&lt;&nbsp;0.002).
-  However, the 17 candidate positions are <strong>model-dependent</strong>: they were identified
-  using KA-autokey Vigen&egrave;re, and different cipher models produce different positions
-  (Jaccard overlap averaging 0.161). 7 of the 24 candidate positions remain uncertain.
-  The specific keyword is not uniquely determined.
+  Under one cipher model (KA-autokey Vigen&egrave;re), a candidate null palette {B,G,I,K,O,W,Z}
+  was identified at 17 positions (p&nbsp;&asymp;&nbsp;1&nbsp;in&nbsp;16,000 under that model).
+  However, <strong>matched controls (April 2026) showed this palette is not
+  privileged</strong>: nearly every random 7-letter palette produces equal or better
+  cross-model mask agreement. The convergence improvement from palette constraints is a
+  generic combinatorial property, not evidence for these specific letters.
+  The palette identity has been <strong>retired as a finding</strong>.
+  Palette constraints remain useful as a search regularizer.
 </p>
 <p>
   The cipher layer remains open regardless of which two-layer model is correct.
@@ -172,12 +171,12 @@
   not a proven fact.
 </p>
 <p>
-  The primary quantitative support for this model is the palette restriction: under
-  KA-autokey Vigen&egrave;re, candidate null positions use only 7 of 26 letters
-  (p&nbsp;&asymp;&nbsp;1&nbsp;in&nbsp;16,000). A shuffled-ciphertext test confirmed this depends
-  on K4&rsquo;s actual letter ordering (0/500, p&nbsp;&lt;&nbsp;0.002). However, the 17 candidate
-  positions are <strong>model-dependent</strong> (Jaccard 0.161 across 5 cipher models)
-  and have not been independently validated by a second method.
+  The primary quantitative support was the palette restriction (7 of 26 letters at
+  candidate null positions under KA-autokey Vigen&egrave;re). However, <strong>matched
+  controls (April 2026) retired this as evidence</strong>: the convergence effect is
+  generic to palette-constrained search, not specific to {B,G,I,K,O,W,Z}. The
+  73-character model remains an open hypothesis but currently lacks quantitative
+  support beyond Sanborn&rsquo;s statement that K4 uses two systems.
 </p>
 <p>
   <em>Note: The number 24 also appears in other K4 contexts (24 crib characters,
@@ -186,23 +185,26 @@
   here only because they are frequently mentioned in community discussions.</em>
 </p>
 
-<h3>The Null Palette</h3>
+<h3>The Null Palette (Retired April 2026)</h3>
 <p>
-  Statistical analysis using KA-autokey Vigen&egrave;re has identified a <strong>candidate null palette</strong>:
-  a set of 7 letters {B, G, I, K, O, W, Z} that appear at 17 candidate filler positions.
-  The odds of this restriction happening by chance are roughly <strong>1 in 16,000</strong>.
-  A shuffled-ciphertext test (500 trials) confirmed this is specific to K4&rsquo;s letter
-  ordering (p&nbsp;&lt;&nbsp;0.002), not an optimizer artifact.
-  Under certain keyword-shuffled alphabets (including KRYPTOS), these 7 letters concentrate
-  in exactly two columns of a 5-wide grid. About 0.6% of English keywords produce
-  this property; the specific keyword is not uniquely determined.
+  Under KA-autokey Vigen&egrave;re, simulated annealing identified 17 candidate filler
+  positions using only 7 letters {B,G,I,K,O,W,Z} (p&nbsp;&asymp;&nbsp;1/16,000 under that model).
+  This was initially treated as a key observation.
 </p>
 <p>
-  Separately, 13 of 24 known-plaintext Beaufort key values fall in this same 7-letter set.
-  However, <strong>both the palette and the keystream enrichment depend on the same
-  cipher model</strong> (KA-autokey Vigen&egrave;re / Beaufort), so they are not independent
-  tests. The candidate positions are <strong>model-conditional</strong> (Jaccard overlap of
-  0.161 across 5 cipher models), meaning different models produce different positions.
+  <strong>Matched controls disproved the palette&rsquo;s specificity.</strong>
+  Among 100 random 7-letter palettes, BGIKOWZ ranked near the bottom for cross-model
+  mask agreement (1st percentile). The convergence improvement from palette constraints
+  is generic and largely combinatorial &mdash; any sufficiently restrictive palette
+  produces similar or better cross-model agreement. 76 of 133 single-letter-swap
+  neighbors also outperformed BGIKOWZ.
+</p>
+<p>
+  Palette constraints remain useful as a <strong>computational technique</strong>
+  (they make mask-inference problems tractable and exhaustively solvable), but
+  BGIKOWZ is not a privileged signal. The Beaufort keystream enrichment (13/24 palette
+  letters at crib positions) is a separate observation that stands on its own
+  but can no longer borrow credibility from the convergence claim.
 </p>
 
 <h3>What Remains</h3>
