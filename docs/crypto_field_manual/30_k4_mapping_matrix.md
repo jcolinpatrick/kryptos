@@ -66,7 +66,7 @@ Legend for **Elimination Status**:
 
 **Status:** PARTIALLY-TESTED
 **What's untested:** Running key from non-English texts (German, French, Latin, Arabic -- relevant to Egypt/Berlin themes), and from Sanborn-associated texts beyond the 7 already tested. [INTERNAL RESULT] English running key + columnar is eliminated (E-FRAC-51), but non-English key texts and bespoke transpositions remain open.
-**Why it matters:** [INTERNAL RESULT] Running key is the ONLY structured non-periodic key model surviving Bean (E-FRAC-38). Sanborn's clues reference Berlin (German) and Egypt (potentially Arabic/French archaeological texts).
+**Why it matters:** [INTERNAL RESULT] Running key is the only structured non-periodic key model surviving Bean constraints under additive-key assumptions (E-FRAC-38, Level A). Sanborn's clues reference Berlin (German) and Egypt (potentially Arabic/French archaeological texts).
 
 **Minimal experiment outline:**
 - Script name: `scripts/running_key/e_cfm_01_running_key_foreign.py`
