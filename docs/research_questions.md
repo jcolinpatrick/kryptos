@@ -50,7 +50,7 @@ how much resolving them would shrink the remaining search space.
 **If resolved**: Directly produces the plaintext.
 
 **FRAC findings (E-FRAC-38/39/49/50/51/52/53/54):**
-- Running key is the ONLY structured non-periodic key model surviving Bean constraints (E-FRAC-38)
+- Running key is the only structured non-periodic key model surviving Bean constraints under additive-key assumptions (E-FRAC-38, Level A)
 - Running key + ALL structured transposition families (columnar w6/8/9, identity, cyclic, affine, rail fence, block reversal, double columnar) produce ZERO matches from 7 known reference texts (E-FRAC-49/50)
 - Running key from UNKNOWN English text + columnar: ZERO configs produce English-like key fragments (E-FRAC-51)
 - Running key + arbitrary transposition is massively underdetermined (~700-2000 feasible offsets per text, E-FRAC-39)

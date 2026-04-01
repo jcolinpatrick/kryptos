@@ -21,7 +21,10 @@
     Over {{ total_experiments }} experiments covering {{ total_configs_disproven }}+
     configurations have been run, testing every major classical cipher family:
     Vigen&egrave;re, Beaufort, columnar transposition, Playfair, Bifid, running
-    keys, and more. All single-layer classical ciphers have been eliminated.
+    keys, and more. All single-layer classical ciphers have been eliminated
+    under direct positional correspondence (where ciphertext position N maps
+    directly to plaintext position N). These eliminations do not rule out the
+    same families as one layer of a multi-layer construction.
     <a href="/browse/">Browse the full database</a> to see what has been tested.
   </p>
 </details>
@@ -30,11 +33,12 @@
   <summary>What approaches remain open?</summary>
   <p>
     All standard single-layer cipher families have been eliminated under direct
-    positional correspondence, including all repeating-key ciphers (proven impossible
-    at every key length), all autokey ciphers (proven structurally impossible),
-    and running keys from 60,000+ publicly available English texts (106 billion
-    position-checks). These eliminations do not rule out the same families as one
-    layer of a multi-layer construction.
+    positional correspondence and additive-key assumptions, including all
+    repeating-key ciphers (proven impossible at every key length), all autokey
+    ciphers (proven structurally impossible), and running keys from 60,000+
+    publicly available English texts (106 billion position-checks). These
+    eliminations do not rule out the same families as one layer of a multi-layer
+    construction, nor do they apply if K4 uses a non-additive cipher mechanism.
     The main surviving possibilities are:
     (1) a running key from a non-public source text;
     (2) a bespoke procedural cipher using Sanborn&rsquo;s encoding charts
