@@ -10,9 +10,16 @@
 - `scripts/analysis/e_mod35_table_verification.py` (verification + significance)
 - `scripts/analysis/e_mod35_debug_discrepancy.py` (debug trace)
 
-## DISCOVERY: (pos%7, pos%5) Cell Table Classifies All 17 Consensus Null Palette Positions
+## IN-SAMPLE POST-HOC FIT: (pos%7, pos%5) Cell Table Classifies All 17 Consensus Null Palette Positions
 
-### The Rule (35/35 PERFECT)
+> **Audit note (2026-04-01):** This is a Level C descriptive anomaly — a post-hoc
+> in-sample fit discovered by searching the data. Leave-one-out cross-validation on the
+> public site shows 47% accuracy (below 49% baseline), meaning this table has zero
+> predictive power. The "35/35" classification is descriptive, not generative. The
+> (7,5) moduli are thematically motivated (KRYPTOS/SEVEN) but the null calibration
+> for how often random labels produce perfect separation under some mod pair is pending.
+
+### The Rule (35/35 in-sample fit — no holdout validation)
 A palette position p (where CT[p] in {B,G,I,K,O,W,Z}) is a consensus null if and only if:
 
 1. The (p%7, p%5) cell is classified as "null" in the 7x5 table below, OR
@@ -99,7 +106,20 @@ All are of the form: compute Cipher(KRYPTOS[pos%7], WORD[pos%5]) on some alphabe
 
 **Near misses (dist=1):** SOUTH (AZ_beau), HEAST (AZ_beau) -- 25/26.
 
-### STATISTICAL SIGNIFICANCE: WEAK
+### NULL CALIBRATION (2026-04-01): NOT SIGNIFICANT
+
+**500K random 17/35 labelings tested: 100% achieve perfect separation under SOME
+mod pair with product ≤ 97.** The specific pair (7,5) achieves 0/500K, but since
+the search was over all 268 mod pairs, the relevant null is "any pair works" —
+and this is trivially true. The 35/35 in-sample fit is expected, not unusual.
+
+Combined with LOO-CV accuracy of 47% (below 49% baseline), the KRYPTOS×SEVEN
+table has zero evidential value. It is retained as a Level D exploratory pattern
+for transparency only.
+
+Script: `scripts/analysis/e_mod35_null_calibration.py`
+
+### STATISTICAL SIGNIFICANCE: NONE (confirmed by null calibration)
 - **Exhaustive enumeration**: ~58,682 / 11,881,376 AZ words (0.49%) produce perfect separation
 - For KA: ~41,444 / 11,881,376 (0.35%)
 - Many English words match each variant (hundreds)

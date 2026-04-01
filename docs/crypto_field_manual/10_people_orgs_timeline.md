@@ -190,7 +190,7 @@ A chronological reference of the people, organizations, and milestones that shap
 
 **Why it matters:** SIGSALY demonstrated information-theoretic security in practice. Hand-cipher systems approximate this with running keys from long texts -- non-repeating, hard to reconstruct.
 
-**K4 relevance:** [HYPOTHESIS] Running key from unknown text is the closest hand-cipher analogue to a one-time pad, and the only structured key model surviving Bean constraints (E-FRAC-38). See `docs/elimination_tiers.md`, Tier 2.
+**K4 relevance:** [HYPOTHESIS] Running key from unknown text is the closest hand-cipher analogue to a one-time pad, and the only structured key model surviving Bean constraints under additive-key assumptions (E-FRAC-38, Level A). See `docs/elimination_tiers.md`.
 
 ---
 
