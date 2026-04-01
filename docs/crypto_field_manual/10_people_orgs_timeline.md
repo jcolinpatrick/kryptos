@@ -244,7 +244,7 @@ A chronological reference of the people, organizations, and milestones that shap
 
 **Why it matters:** Running-key ciphers are among the strongest hand-executable systems -- non-repeating keys with minimal distribution overhead. Their weakness (natural-language statistics) is minimal at 97 characters.
 
-**K4 relevance:** [PUBLIC FACT] Sanborn's 2025 clues reference his 1986 Egypt trip and 1989 Berlin Wall fall. [HYPOTHESIS] A reference text related to Egypt or Berlin could be a running-key source. Running key from unknown text is the only structured model surviving Bean constraints (E-FRAC-38). Known texts eliminated (E-FRAC-49/50, E-JTS-12); unknown sources remain open. See `docs/elimination_tiers.md`, Tier 2.
+**K4 relevance:** [PUBLIC FACT] Sanborn's 2025 clues reference his 1986 Egypt trip and 1989 Berlin Wall fall. [HYPOTHESIS] A reference text related to Egypt or Berlin could be a running-key source. Running key from unknown text is the only structured model surviving Bean constraints under additive-key assumptions (E-FRAC-38, Level A). Known texts eliminated (E-FRAC-49/50, E-JTS-12); unknown sources remain open. See `docs/elimination_tiers.md`.
 
 ---
 
