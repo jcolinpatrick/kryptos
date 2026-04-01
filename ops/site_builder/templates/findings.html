@@ -108,38 +108,48 @@
   <div class="finding-header">
     <span class="finding-number">1</span>
     <div>
-      <h2>The Null Palette</h2>
-      <p class="finding-subtitle">Only 7 of 26 letters appear at candidate filler positions</p>
+      <h2>The Null Palette <span style="color: #dc3545; font-size: 0.7em;">(RETIRED)</span></h2>
+      <p class="finding-subtitle">Palette identity failed specificity controls &mdash; convergence is generic</p>
     </div>
-    <span class="finding-pvalue">~1 in 16,000 (model-conditional)</span>
+    <span class="finding-pvalue" style="background: #dc3545;">Retired</span>
   </div>
 
-  <div class="confidence-indicator confidence-moderate">
-    <div class="confidence-bar confidence-moderate">
-      <span class="filled"></span><span class="filled"></span><span class="filled"></span>
-      <span class="filled"></span><span class="filled"></span><span class="filled"></span>
-      <span></span><span></span><span></span><span></span>
+  <div class="confidence-indicator confidence-low">
+    <div class="confidence-bar confidence-low">
+      <span class="filled"></span><span class="filled"></span>
+      <span></span><span></span><span></span>
+      <span></span><span></span><span></span><span></span><span></span>
     </div>
-    <span class="confidence-label">Moderate confidence (model-conditional)</span>
+    <span class="confidence-label">Retired as a finding &mdash; controls failed (April 2026)</span>
   </div>
 
-  <div class="finding-plain">
-    <h3>The short version</h3>
+  <div class="finding-plain" style="border-left: 3px solid #dc3545; padding-left: 1rem;">
+    <h3>Status: Retired</h3>
     <p>
       Under a specific cipher model (KA-autokey Vigen&egrave;re), simulated annealing
       identifies 17 candidate filler positions that use only 7 letters
       (B, G, I, K, O, W, and Z). The odds of this restriction happening by chance
-      are about <strong>1 in 16,000</strong>. A shuffled-ciphertext test confirmed this
-      is specific to K4&rsquo;s letter ordering (p&nbsp;&lt;&nbsp;0.002), not an optimizer artifact.
-      However, the 17 positions are <strong>model-dependent</strong>: different cipher models
-      produce different candidate positions (average overlap: Jaccard&nbsp;0.161).
-      If the palette is real, K4 may be 73 characters of real ciphertext with 24 decoys.
+      are about <strong>1 in 16,000</strong> under that model.
+    </p>
+    <p>
+      <strong>However, matched controls (April 2026) showed this is not specific
+      to BGIKOWZ.</strong> Among 100 random 7-letter palettes, BGIKOWZ ranked near
+      the bottom for cross-model mask agreement (1st percentile on Jaccard-17,
+      3rd percentile on Jaccard-24). The cross-model convergence improvement
+      from palette constraints is a <strong>generic combinatorial property</strong>
+      of constraining the search space, not evidence that these particular
+      7&nbsp;letters reflect a real steganographic alphabet.
+    </p>
+    <p>
+      Palette constraints remain useful as a <strong>search regularizer</strong>
+      (they make mask-inference problems tractable and exhaustively solvable),
+      but the identity of BGIKOWZ as a privileged K4 signal is retired.
     </p>
   </div>
 
   <div class="finding-callout">
-    <span class="callout-value">1 in 16,000</span>
-    <span class="callout-label">probability of this palette restriction by chance (under KA-autokey model)</span>
+    <span class="callout-value">Retired</span>
+    <span class="callout-label">palette identity failed matched controls &mdash; convergence is generic, not BGIKOWZ-specific</span>
   </div>
 
   <details class="finding-technical">
@@ -205,43 +215,48 @@
 
   <div class="finding-stats">
     <div class="stat-pill">
-      <span class="stat-pill-label">Distinct letters in nulls</span>
-      <span class="stat-pill-value">7 / 26</span>
+      <span class="stat-pill-label">BGIKOWZ rank among random palettes</span>
+      <span class="stat-pill-value">100 / 101 (bottom)</span>
     </div>
     <div class="stat-pill">
-      <span class="stat-pill-label">Odds of palette by chance</span>
-      <span class="stat-pill-value">1 in 16,000</span>
+      <span class="stat-pill-label">Neighbors that beat BGIKOWZ</span>
+      <span class="stat-pill-value">76 / 133</span>
     </div>
     <div class="stat-pill">
-      <span class="stat-pill-label">Shuffled-CT validation</span>
-      <span class="stat-pill-value">0 / 500 (p &lt; 0.002)</span>
+      <span class="stat-pill-label">Status</span>
+      <span class="stat-pill-value">Retired (April 2026)</span>
     </div>
     <div class="stat-pill">
-      <span class="stat-pill-label">Cross-model position overlap</span>
-      <span class="stat-pill-value">Jaccard 0.161 (low)</span>
+      <span class="stat-pill-label">Verdict</span>
+      <span class="stat-pill-value">Generic, not K4-specific</span>
     </div>
   </div>
 
   <div class="finding-caveat">
-    <h3>What this means, and what it doesn't</h3>
+    <h3>Why this was retired</h3>
     <p>
-      <strong>Under the KA-autokey model</strong>, only {B,G,I,K,O,W,Z} appear at the 17 candidate
-      filler positions, and these letters fall in two columns of a 5-wide keyword-mixed Polybius grid.
-      This is statistically significant and specific to K4&rsquo;s actual letter ordering (confirmed
-      by shuffled-ciphertext test, p&nbsp;&lt;&nbsp;0.002).
+      <strong>The original observation was real but not specific.</strong>
+      Under KA-autokey, only {B,G,I,K,O,W,Z} appear at the 17 candidate filler positions,
+      and the shuffled-ciphertext test (p&nbsp;&lt;&nbsp;0.002) confirmed this isn&rsquo;t an optimizer artifact.
     </p>
     <p>
-      However, the 17 positions themselves change when a different cipher model is used
-      (Jaccard overlap averages only 0.161 across 5 models). This means we cannot rule out
-      that the palette restriction is a property of the KA-autokey model&rsquo;s interaction with K4,
-      rather than an intrinsic feature of the encryption. <strong>No model-free method has
-      independently recovered these positions.</strong>
+      However, <strong>four matched controls</strong> (April 2026) showed that the
+      cross-model convergence effect is generic:
     </p>
+    <ul style="margin: 0.5rem 0; padding-left: 1.5rem;">
+      <li><strong>Random palettes:</strong> 99 of 100 random 7-letter palettes
+          produced better cross-model agreement than BGIKOWZ.</li>
+      <li><strong>Near neighbors:</strong> 76 of 133 single-letter-swap variants beat BGIKOWZ.</li>
+      <li><strong>Shuffled K4:</strong> convergence on shuffled ciphertexts was comparable,
+          suggesting the effect is methodological rather than structural.</li>
+      <li><strong>Objective sensitivity:</strong> autokey and periodic scoring agreed on 19/24
+          mask positions (Jaccard&nbsp;0.655), but the optimum scores differed substantially.</li>
+    </ul>
     <p>
-      We tested 7 models for character assignment (position formulas, neighbor functions,
-      keystream echo, grid cell mapping, cipher determination, delta constraints)
-      and <strong>all failed</strong> (best: 6/17). The specific keyword is unknown;
-      KRYPTOS is one of ~6,300 English words that produce this column pattern.
+      The correct interpretation: <strong>palette-constrained search is a useful computational
+      technique</strong> (it makes mask problems tractable), but the specific palette BGIKOWZ
+      is not a privileged signal from K4&rsquo;s encryption. Any sufficiently restrictive palette
+      produces similar or better cross-model agreement.
     </p>
   </div>
 </section>
