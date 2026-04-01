@@ -24,7 +24,7 @@
 - **Bean impossibility proof (E-FRAC-35):** ALL periods 2-12, 14, 15, 17, 18, 21, 22, 25 eliminated for ANY transposition + periodic key. Only 8 of 25 periods (2-26) survive: {8, 13, 16, 19, 20, 23, 24, 26}. This is a UNIVERSAL PROOF holding for all 97! permutations.
 - **Bean-surviving period validation (E-FRAC-36):** Hill-climbing at periods 8 and 13 (first two Bean-surviving periods) with Bean as HARD constraint. 175 false 24/24+Bean solutions found; ALL have quadgram < -5.0/char (best: -6.171). Multi-objective oracle discriminates at Bean-surviving periods too.
 - **Autokey structural elimination (E-FRAC-37):** Autokey (PT/CT × Vig/Beau) + arbitrary transposition CANNOT reach 24/24. PT-autokey max=16/24, CT-autokey max=21/24. Autokey is MORE constrained than periodic keying. This is a structural elimination, not just noise.
-- **Comprehensive key model Bean analysis (E-FRAC-38):** Progressive key BEAN-ELIMINATED (δ∈{0,13} only). Quadratic key BEAN-ELIMINATED (0/676 survive full Bean). Fibonacci key BEAN-ELIMINATED (0/676 survive). Running key is the ONLY structured model surviving Bean constraints.
+- **Comprehensive key model Bean analysis (E-FRAC-38):** Progressive key BEAN-ELIMINATED (δ∈{0,13} only). Quadratic key BEAN-ELIMINATED (0/676 survive full Bean). Fibonacci key BEAN-ELIMINATED (0/676 survive). Running key is the only structured model surviving Bean constraints under additive-key assumptions (Level A).
 - **Running key + structured columnar: ELIMINATED for known reference texts** (E-FRAC-49)
   - Widths 6, 8, 9 exhaustive: 16,597 Bean-passing configs × 7 texts × 3 variants, 8.4B checks, ZERO matches
 - **Running key + ALL structured families: ELIMINATED for known reference texts** (E-FRAC-50)
@@ -58,9 +58,14 @@ Read these tiers carefully before deciding what is and isn't worth testing.
 
 ---
 
-## Tier 1: Mathematical Proofs (confidence: ~99.9%)
+## Tier 1: Mathematical Proofs (Level A — proven within stated assumptions)
 
 These are algebraic proofs, not search results. They are permanently valid unless the crib positions or ciphertext transcription are wrong. **Do not re-test these under their stated conditions.**
+
+**Assumptions (apply to ALL Tier 1 results):**
+1. The ciphertext transcription is correct (97 characters as in `constants.py`)
+2. The crib positions are correct (0-indexed: ENE at 21-33, BCL at 63-73)
+3. **The cipher uses an additive key model** — i.e., CT[i] = f(PT[i], K[i]) mod 26 for some fixed function f (Vigenère, Beaufort, or Variant Beaufort). If K4 uses a non-additive cipher (lookup table, physical overlay, grid-based system, or any mechanism where Bean's keystream derivation does not apply), ALL Bean-based eliminations are invalidated.
 
 | Proof | What It Actually Eliminates | Conditions |
 |-------|----------------------------|------------|

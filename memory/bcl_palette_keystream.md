@@ -1,4 +1,11 @@
-# BCL Palette Keystream Deep Investigation — 2026-03-15
+# BCL Palette Keystream Deep Investigation — 2026-03-15 (Updated 2026-04-01)
+
+> **Audit note (2026-04-01):** This document describes a Level C descriptive anomaly
+> (see `docs/claims_ladder.md`). The Beaufort keystream values at crib positions are
+> deterministic given CT and cribs, but interpreting them as "keystream" is specific
+> to the Beaufort A=0 convention. The term "model-independent" used in earlier versions
+> has been corrected to "ciphertext-intrinsic under Beaufort A=0." The raw p-values
+> are uncorrected for the search breadth that led to this investigation.
 
 ## Context
 
@@ -32,9 +39,14 @@ Beaufort A=0 keystream at all 24 crib positions:
 
 The enrichment is concentrated at BCL, specifically the first 8 BCL positions (63-70). ENE is mildly enriched but not individually significant.
 
-### 3. BCL KEYSTREAM = CT + PT IS MODEL-INDEPENDENT [DERIVED FACT]
+### 3. BCL KEYSTREAM VALUES ARE CIPHERTEXT-INTRINSIC UNDER BEAUFORT A=0 [DERIVED FACT]
 
-**CRITICAL INSIGHT**: The Beaufort keystream k[i] = (CT[i] + PT[i]) mod 26 at crib positions is determined ENTIRELY by the ciphertext and the known plaintext. It does NOT depend on any cipher model, keyword, or autokey chain. The 7/8 palette enrichment is a property of the CIPHERTEXT AT BCL POSITIONS, not of any particular decryption method. Any theory of K4 must explain this pattern.
+The quantity k[i] = (CT[i] + PT[i]) mod 26 at crib positions is determined entirely by
+the ciphertext and the known plaintext. It does not depend on any keyword or autokey chain.
+However, this quantity is only interpretable as a "keystream" under the Beaufort convention
+(C = K - P mod 26, so K = C + P mod 26). Under Vigenère (K = C - P), the keystream values
+are different letters and the palette enrichment disappears (4/8, p=0.142 — see §1 table).
+The 7/8 enrichment is therefore specific to the Beaufort A=0 convention, not model-invariant.
 
 ### 4. AUTOKEY BACKWARD CHAIN: PT[55-62] = OCGGBGOK [DERIVED FACT, MODEL-DEPENDENT]
 
@@ -107,7 +119,7 @@ The fact remains: (CT[i] + PT[i]) mod 26 at BCL = 7/8 palette regardless of mode
 
 4. **No palette propagation to nulls**: The raw-97 autokey model does NOT create palette PT at null positions. The palette-null connection is in the CIPHERTEXT layer (CT letters at null positions), not the plaintext layer.
 
-5. **Strongest single anomaly**: The BCL first-8 keystream palette enrichment (P=0.000627) is one of the strongest individual anomalies discovered, alongside the 7-letter palette itself (P ≈ 3.0 × 10⁻⁵ permutation) and KA mod 5 (P=0.000502).
+5. **Lowest uncorrected p-value**: The BCL first-8 keystream palette enrichment (uncorrected P=0.000627 under binomial null with p=7/26) has one of the lowest individual p-values among tested anomalies, alongside the palette diversity (uncorrected P ≈ 2.4 × 10⁻⁵ under positional null) and KA mod 5 (P=0.000502). These p-values are NOT corrected for the search breadth (~1000 experiments, hundreds of sub-hypotheses) that led to their discovery.
 
 ## Scripts and Results
 - Script: `scripts/campaigns/e_bcl_palette_keystream_v1.py`

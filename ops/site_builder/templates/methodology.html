@@ -100,14 +100,18 @@
 </ul>
 <p>
   These constraints hold no matter which cipher variant is used (Vigen&egrave;re, Beaufort,
-  or Variant Beaufort). Any valid solution must satisfy all of them.
+  or Variant Beaufort). Any valid solution must satisfy all of them, <strong>provided the
+  cipher uses an additive key model</strong> (CT[i] = f(PT[i], K[i]) mod 26). If K4 uses
+  a non-additive cipher (lookup table, physical overlay, or grid-based system), Bean
+  constraints do not apply.
 </p>
 <p>
   Combined with a counting argument about repeated key values, these constraints show that
   <strong>no repeating key of any length</strong> can produce the K4 plaintext under direct
-  positional correspondence (CT[i] &rarr; PT[i]).
-  This is a deterministic proof, reproducible from the codebase. It does not apply
-  if a transposition layer reorders positions before substitution.
+  positional correspondence (CT[i] &rarr; PT[i]) and additive-key assumptions.
+  This is a deterministic proof (Level A), reproducible from the codebase. It does not apply
+  if a transposition layer reorders positions before substitution, or if the cipher is
+  non-additive.
 </p>
 
 <h2>Two-System Model</h2>
@@ -151,8 +155,8 @@
   have been run (with overlaps across experiments), eliminating:
 </p>
 <ul>
-  <li><strong>All repeating-key ciphers</strong> (every variant, both alphabets, all key lengths): proven impossible under direct positional correspondence</li>
-  <li><strong>All self-keying ciphers</strong> (every variant, all primers): proven structurally impossible</li>
+  <li><strong>All repeating-key ciphers</strong> (every variant, both alphabets, all key lengths): proven impossible under direct positional correspondence and additive-key assumptions (Level A)</li>
+  <li><strong>All self-keying ciphers</strong> (every variant, all primers): proven structurally impossible under additive-key assumptions (Level A)</li>
   <li><strong>All substitution + rearrangement combinations</strong> (~1.2 billion evaluations): 14 rearrangement families</li>
   <li><strong>All Cold War-era cipher models</strong> (VIC family): extensively tested across multiple variants</li>
   <li><strong>All letter-pair ciphers</strong> (Four-Square, Playfair, Two-Square): apparent high scores are overfitting artifacts</li>
@@ -202,9 +206,10 @@
 <p>
   Palette constraints remain useful as a <strong>computational technique</strong>
   (they make mask-inference problems tractable and exhaustively solvable), but
-  BGIKOWZ is not a privileged signal. The Beaufort keystream enrichment (13/24 palette
-  letters at crib positions) is a separate observation that stands on its own
-  but can no longer borrow credibility from the convergence claim.
+  BGIKOWZ is not a privileged signal. The Beaufort A=0 keystream enrichment (7/8 palette
+  letters at BCL crib positions, uncorrected p&nbsp;=&nbsp;0.0006) is a separate
+  Level&nbsp;C observation that is ciphertext-intrinsic under the Beaufort convention
+  but does not survive correction for the project&rsquo;s full search breadth.
 </p>
 
 <h3>What Remains</h3>
@@ -228,6 +233,34 @@
   <li>Letter frequency: must match the statistical profile of English text</li>
   <li>Readability: must produce meaningful English with recognizable words (human review required)</li>
 </ul>
+
+<h2 id="how-to-read-claims">How to Read Claims on This Site</h2>
+<p>
+  We classify every claim by its evidence strength. When reading results on this site:
+</p>
+<dl>
+  <dt>Level A &mdash; Proven within stated assumptions</dt>
+  <dd>Mathematical proof or complete enumeration. Always conditioned on explicit assumptions
+    (e.g., correct cribs, additive key model). If you disagree with the assumptions,
+    the proof does not apply.</dd>
+  <dt>Level B &mdash; Exhaustively negative within tested scope</dt>
+  <dd>Every configuration in a defined parameter space was tested and produced noise.
+    Does <strong>not</strong> extend to untested variants or multi-layer combinations.
+    &ldquo;Ruled out within tested scope&rdquo; means exactly that.</dd>
+  <dt>Level C &mdash; Descriptive anomaly</dt>
+  <dd>A pattern discovered post-hoc (from the data, not predicted in advance).
+    P-values are uncorrected for search breadth unless stated otherwise.
+    Does not prove how K4 was encrypted.</dd>
+  <dt>Level D &mdash; Hypothesis</dt>
+  <dd>A plausible conjecture without quantitative support. Labeled
+    &ldquo;hypothesis&rdquo; or &ldquo;open question.&rdquo;</dd>
+</dl>
+<p>
+  All p-values on this site are uncorrected for the project&rsquo;s full search
+  breadth (~1000 experiments) unless explicitly stated. Over that many tests,
+  individually &ldquo;significant&rdquo; results are expected by chance. We document
+  them for transparency, not as proof.
+</p>
 
 <h2>Truth Taxonomy</h2>
 <p>
