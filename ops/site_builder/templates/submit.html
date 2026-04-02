@@ -4,17 +4,40 @@
 {% block content %}
 <h1>Submit a Theory</h1>
 <p>
-  Describe your theory about how K4 is encrypted. The classifier
-  will check whether it matches any of the {{ total_experiments }}
-  eliminations already recorded.
+  Have an idea about how K4 works? We want to hear it. Every novel theory
+  submitted here is read by a human and tested on a 28-core server
+  against the actual ciphertext. If your idea hasn't been tried before,
+  we will run it.
 </p>
 
 <div class="credit-notice">
-  If your submission leads to the solution of Kryptos K4, you will receive
-  <strong>full credit</strong> for the discovery. This site exists solely to
-  support the K4 community. You retain all rights to your submissions.
+  <strong>Your idea stays yours.</strong> If your submission leads to the
+  solution of Kryptos K4, you will receive <strong>full credit</strong>
+  for the discovery. You retain all rights to your submissions. This site
+  exists solely to support the K4 community.
   See our <a href="/terms/">Terms and Conditions</a> for details.
 </div>
+
+<details class="how-it-works">
+  <summary><strong>How it works</strong></summary>
+  <ol>
+    <li><strong>Submit</strong> your theory in plain English below.</li>
+    <li><strong>Instant check</strong> &mdash; we'll tell you immediately if
+      this exact approach has already been tested ({{ total_experiments }}
+      have been so far). No guessing, no gatekeeping &mdash; you'll see the
+      specific results.</li>
+    <li><strong>Novel ideas get queued</strong> &mdash; if your theory is new,
+      you'll receive a private status link. Bookmark it.</li>
+    <li><strong>We test it</strong> &mdash; a real person reviews your
+      submission and runs it through our framework. You can check your
+      status link anytime to see: pending, testing, or completed with
+      detailed results.</li>
+  </ol>
+  <p>
+    Your submission is anonymous. We don't collect names or emails &mdash;
+    just the theory and a private token so you can check back.
+  </p>
+</details>
 
 <form id="submit-form">
   <label for="theory-input">Your theory (plain English)</label>
@@ -23,7 +46,7 @@
   <div id="char-counter" class="char-counter">0 / 2000</div>
 
   <div class="submit-actions">
-    <button type="submit" id="submit-btn" disabled>Classify Theory</button>
+    <button type="submit" id="submit-btn" disabled>Test My Theory</button>
     <button type="button" id="clear-btn" class="btn-secondary" style="display:none">Clear</button>
   </div>
 </form>
@@ -32,8 +55,9 @@
 
 <hr>
 <p>
-  <strong>Not sure what to search for?</strong>
-  <a href="/browse/">Browse our elimination database</a> to see what has already been tested.
+  <strong>Want to see what's already been tried?</strong>
+  <a href="/browse/">Browse the elimination database</a> &mdash; it might
+  spark a new idea.
 </p>
 
 <noscript>
