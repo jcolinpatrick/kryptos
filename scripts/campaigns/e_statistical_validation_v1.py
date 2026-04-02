@@ -885,8 +885,9 @@ for variant_name, key_vals in [
     p_this = sum(binom_pmf(8, k, p_palette) for k in range(pal_ct, 9))
     print(f"    {variant_name}: {''.join(letters)} -> {pal_ct}/8 palette (p_ge={p_this:.6f})")
 
-# Also: the BEAUFORT keystream at BCL is MODEL-INDEPENDENT (it's just CT+PT mod 26).
-# So the claim is really: "(CT[i]+PT[i]) mod 26 for i in BCL_first_8 is mostly palette."
+# Note: (CT[i]+PT[i]) mod 26 is ciphertext-intrinsic under Beaufort A=0 convention.
+# The quantity is deterministic given CT and cribs, but its interpretation as "keystream"
+# is Beaufort-specific (Vigenere gives different values). See audit remediation 2026-04-01.
 # The palette was derived from null positions. The keystream was derived from cribs.
 # These are DIFFERENT positions. This is genuinely a cross-validation of sorts.
 print()

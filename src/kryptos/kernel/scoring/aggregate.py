@@ -136,7 +136,8 @@ def score_candidate(
         try:
             ngram_total = ngram_scorer.score(plaintext)
             ngram_pc = ngram_scorer.score_per_char(plaintext)
-        except Exception:
+        except (ValueError, TypeError, IndexError, KeyError, AttributeError):
+            # Optional enrichment — don't block scoring for bad input or missing data
             pass
 
     # Word-level scoring (optional)
@@ -151,7 +152,8 @@ def score_candidate(
             w_score = wr.weighted_score
             w_count = wr.word_count
             w_longest = wr.longest
-        except Exception:
+        except (ValueError, TypeError, IndexError, KeyError, AttributeError):
+            # Optional enrichment — don't block scoring for bad input or missing data
             pass
 
     return ScoreBreakdown(
@@ -295,7 +297,7 @@ def score_candidate_free(
         try:
             ngram_total = ngram_scorer.score(text)
             ngram_pc = ngram_scorer.score_per_char(text)
-        except Exception:
+        except (ValueError, TypeError, IndexError, KeyError, AttributeError):
             pass
 
     # Word-level scoring (optional)
@@ -310,7 +312,7 @@ def score_candidate_free(
             w_score = wr.weighted_score
             w_count = wr.word_count
             w_longest = wr.longest
-        except Exception:
+        except (ValueError, TypeError, IndexError, KeyError, AttributeError):
             pass
 
     # Classification

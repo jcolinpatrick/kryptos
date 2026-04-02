@@ -251,6 +251,13 @@
           suggesting the effect is methodological rather than structural.</li>
       <li><strong>Objective sensitivity:</strong> autokey and periodic scoring agreed on 19/24
           mask positions (Jaccard&nbsp;0.655), but the optimum scores differed substantially.</li>
+      <li><strong>Score-conditioned null (April 2026):</strong> The actual SA discovery process
+          was run on K4 and 300 null ciphertexts (3 families &times; 100 each). K4&rsquo;s
+          SA-discovered consensus used <strong>11 distinct letters</strong>, placing it at the
+          29th percentile of the null distribution (p&nbsp;=&nbsp;0.30). The original
+          &ldquo;7&nbsp;distinct&rdquo; was traced to a post-hoc selection from positions
+          already containing palette letters &mdash; a circular observation.
+          (<a href="https://github.com/jcolinpatrick/kryptos/blob/main/docs/a1_score_conditioned_null_report.md">full report</a>)</li>
     </ul>
     <p>
       The correct interpretation: <strong>palette-constrained search is a useful computational
@@ -524,21 +531,25 @@
     <div class="conclusion-card conclusion-solved">
       <h3>What the analysis produced</h3>
       <ul>
-        <li>Under one specific cipher model (KA-autokey Vigen&egrave;re), candidate filler positions use only 7 letters {B,G,I,K,O,W,Z}, which fall in two columns of a 5-wide keyword-mixed grid (p&nbsp;&asymp;&nbsp;1&nbsp;in&nbsp;16,000 under that model)</li>
-        <li>A shuffled-ciphertext test (0/500) confirmed this restriction depends on K4&rsquo;s actual letter ordering (p&nbsp;&lt;&nbsp;0.002)</li>
-        <li>The candidate positions are <strong>model-dependent</strong> (Jaccard 0.161 across 5 cipher models) &mdash; no model-free method has independently confirmed them</li>
+        <li><strong>Palette identity retired (April 2026):</strong> The 7-letter palette
+            {B,G,I,K,O,W,Z} was the project&rsquo;s strongest statistical claim.
+            A score-conditioned null experiment showed that the SA discovery process produces
+            11 distinct letters on real K4, indistinguishable from shuffled controls (p&nbsp;=&nbsp;0.30).
+            The original &ldquo;7 distinct&rdquo; observation was a post-hoc selection artifact.
+            All downstream claims (BCL enrichment, KA mod-5, AP enrichment) are also retired.</li>
         <li>A local constant-difference pattern exists at positions 55&ndash;63 (the Stehle anomaly, p&nbsp;&asymp;&nbsp;1/642 after correction)</li>
         <li>The KRYPTOS&nbsp;&times;&nbsp;SEVEN table has zero predictive power and is not evidence</li>
+        <li><strong>671 billion+ configurations tested with zero signal above noise</strong> across all classical single-layer cipher families</li>
       </ul>
     </div>
     <div class="conclusion-card conclusion-open">
       <h3>What remains unknown</h3>
       <ul>
-        <li>Whether K4 actually contains null characters (the model is plausible but unproven)</li>
+        <li>Whether K4 actually contains null characters (the two-system model is plausible but unproven, and the palette evidence for it has been retired)</li>
         <li>The cipher type and key (every standard single-layer classical cipher has been eliminated under direct correspondence)</li>
-        <li>Whether the 24-null model, the 17-null consensus, or neither is correct</li>
-        <li>The physical mechanism behind any filler-insertion process, if one exists</li>
-        <li>How each filler position gets its specific letter (7 tested models all failed)</li>
+        <li>Whether any null-insertion model is correct &mdash; the 17-position consensus and the BGIKOWZ palette were retired as artifacts in April 2026</li>
+        <li>The source text for a running-key cipher, if that model is correct (the only structured non-periodic model surviving Bean constraints)</li>
+        <li>Whether the answer requires external evidence (physical investigation, unreleased documents, K5) rather than further computation</li>
       </ul>
     </div>
   </div>

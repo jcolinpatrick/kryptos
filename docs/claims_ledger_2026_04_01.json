@@ -1,0 +1,179 @@
+[
+  {
+    "claim_id": "A1",
+    "description": "17 consensus null positions use only 7 distinct letters {B,G,I,K,O,W,Z}",
+    "location": "MEMORY.md, memory/palette_deep_investigation.md, constants.py:106-109",
+    "type": "descriptive_anomaly",
+    "raw_p": 2.4e-5,
+    "null_model": "positional: draw 17 from 97 CT positions",
+    "corrected_p_bonferroni": 0.025,
+    "corrected_p_holm": "pass",
+    "corrected_p_bh": "pass",
+    "rival_critiques": {
+      "frequentist": "Positional null is mismatched to SA discovery process. IC-greedy proxy shows 0/10K shuffled at <=7 distinct (mean 10.78), suggesting 7 IS anomalous under score-conditioned null.",
+      "bayesian": "Model-dependent (Jaccard 0.161). Prior for stego is low. Posterior odds <1:1.",
+      "optimization_forensics": "0/40K SA masks achieve <=7. But SA covers vanishing fraction of C(73,17). Not a proper null.",
+      "null_model_engineer": "Correct null is score-conditioned positional. Never constructed. IC-greedy is a weak proxy.",
+      "heretic": "If cipher model is wrong, positions are meaningless and palette is coincidence."
+    },
+    "effect_size": "observed 7 distinct vs expected 12.84 (5.84 below mean)",
+    "robustness": "0/40K SA, 0/10K IC-greedy, 0/500 shuffled-CT SA all fail to reproduce",
+    "discriminating_power": "none — does not point to specific cipher",
+    "verdict": "WEAK_ANOMALY",
+    "action": "KEEP but construct score-conditioned null before further investment"
+  },
+  {
+    "claim_id": "A2",
+    "description": "BCL Beaufort keystream 7/8 palette letters at positions 63-70",
+    "location": "memory/bcl_palette_keystream.md, results/bcl_palette_keystream.json",
+    "type": "descriptive_anomaly",
+    "raw_p": 6.3e-4,
+    "null_model": "binomial: P(palette)=7/26 at each of 8 positions",
+    "corrected_p_bonferroni": 0.65,
+    "corrected_p_holm": "fail",
+    "corrected_p_bh": "fail",
+    "rival_critiques": {
+      "frequentist": "Cherry-picked window (first 8 of 11). Corrected for 4 windows: p=2.5e-3. Still fails global correction.",
+      "bayesian": "DEPENDENT on A1 palette definition. Not an independent test.",
+      "optimization_forensics": "Not optimizer-derived; computed directly from CT and cribs.",
+      "null_model_engineer": "P(random 7-palette gets >=7/8 BCL) = 0.64%. Higher baseline than claimed.",
+      "heretic": "Beaufort-specific. If K4 is not Beaufort, claim is void."
+    },
+    "effect_size": "7/8 vs expected 2.15 (4.85 above)",
+    "robustness": "Beaufort-specific only (Vig: 4/8, VarBeau: 2/8). Shuffled-CT: p=4.1e-4.",
+    "discriminating_power": "weak — supports Beaufort but does not survive correction",
+    "verdict": "DEAD",
+    "action": "RETIRE as independent signal. Note as dependent observation under A1."
+  },
+  {
+    "claim_id": "A3",
+    "description": "All 7 palette letters in KA columns {0,3} of 5-wide grid",
+    "location": "memory/palette_deep_investigation.md",
+    "type": "descriptive_anomaly",
+    "raw_p": 5.0e-4,
+    "null_model": "hypergeometric: 7 from 26 all in 11-letter superset",
+    "corrected_p_bonferroni": 0.52,
+    "rival_critiques": {
+      "all": "DEPENDENT on A1 palette. Fails all corrections. Post-hoc."
+    },
+    "verdict": "DEAD",
+    "action": "RETIRE"
+  },
+  {
+    "claim_id": "A4",
+    "description": "Stehle constant-difference pattern (lag-4 = 5 at positions 55-63)",
+    "location": "docs/anomaly_registry.md, Bean 2021",
+    "type": "descriptive_anomaly",
+    "raw_p": 1.6e-3,
+    "null_model": "pre-corrected for 712 (spacing, difference) combinations",
+    "corrected_p_bonferroni": 1.0,
+    "rival_critiques": {
+      "frequentist": "Already corrected locally. Global correction kills it.",
+      "heretic": "From 2000. If it were exploitable, it would have been exploited by now."
+    },
+    "verdict": "DEAD",
+    "action": "DEMOTE to historical curiosity"
+  },
+  {
+    "claim_id": "A5",
+    "description": "Mod-35 table (pos%7, pos%5) classifies 35/35 null positions",
+    "location": "memory/palette_mod35_rule.md",
+    "type": "model_fit",
+    "raw_p": null,
+    "null_model": "LOO-CV: 47% accuracy (below 49% random baseline)",
+    "rival_critiques": {
+      "all": "Zero predictive power. 100% of random labelings achieve perfect fit under some mod pair."
+    },
+    "verdict": "DEAD",
+    "action": "RETIRE immediately"
+  },
+  {
+    "claim_id": "A6",
+    "description": "Width-21 bigram anomaly on CT97",
+    "location": "memory/width21_bigram_73char.md",
+    "type": "artifact",
+    "raw_p": 1.6e-4,
+    "null_model": "MC shuffled CT at width 21",
+    "rival_critiques": {
+      "all": "INVALIDATED by ablation: disappears after null extraction (p=0.25 on CT73). Correctly identified as stego-layer artifact."
+    },
+    "verdict": "DOCUMENTED_ARTIFACT",
+    "action": "Keep as evidence that null extraction changes width structure. Not a signal."
+  },
+  {
+    "claim_id": "A7",
+    "description": "Col7/col8 structural patterns in palette positions",
+    "location": "Palette investigation notes",
+    "type": "descriptive_anomaly",
+    "raw_p": 1.0e-3,
+    "null_model": "various modular tests",
+    "corrected_p_bonferroni": 1.0,
+    "rival_critiques": {
+      "all": "Fails all corrections. Subset of A1 palette."
+    },
+    "verdict": "DEAD",
+    "action": "RETIRE"
+  },
+  {
+    "claim_id": "A8",
+    "description": "Keystream AP {6,10,14} has 12/24 hits under Beaufort",
+    "location": "memory/keystream_ap_investigation.md",
+    "type": "descriptive_anomaly",
+    "raw_p": 3.9e-6,
+    "look_elsewhere_p": 9.0e-4,
+    "null_model": "specific AP: binomial. Corrected: max over 312 APs via MC.",
+    "corrected_p_bonferroni": 0.93,
+    "rival_critiques": {
+      "frequentist": "Uncorrected p inflated 230x by ignoring search over 312 APs.",
+      "null_model_engineer": "Expected max-AP-hits for random 24-sequence: 7.44. Observed 12 is ~3sigma before look-elsewhere but noise after."
+    },
+    "verdict": "DEAD",
+    "action": "RETIRE"
+  },
+  {
+    "claim_id": "A9",
+    "description": "Beaufort keystream unlike English (chi-sq p=4e-6 vs English)",
+    "location": "results/agent_k4_keystream_language_scan.json",
+    "type": "descriptive_anomaly",
+    "raw_p": 4e-6,
+    "null_model": "chi-square vs English letter frequencies, df=25, n=24",
+    "rival_critiques": {
+      "frequentist": "Survives Bonferroni at face value. But the original claim P(Z>=2 AND K>=3)=1.1e-7 is cherry-picked.",
+      "bayesian": "Uninformative: keystream SHOULD differ from English under most cipher models.",
+      "null_model_engineer": "Chi-sq vs UNIFORM: p=0.0048. Keystream only modestly concentrated.",
+      "heretic": "With n=24 and df=25, chi-square has negligible power. Any short cipher output will fail English chi-sq."
+    },
+    "effect_size": "chi2=277.9 vs English, 49.7 vs uniform",
+    "discriminating_power": "none — expected for any cipher output",
+    "verdict": "STATISTICALLY_REAL_BUT_UNINFORMATIVE",
+    "action": "DEMOTE. Note as 'keystream differs from English' but this is expected, not diagnostic."
+  },
+  {
+    "claim_id": "S1",
+    "description": "Running-key from untested source texts survives Bean constraints",
+    "location": "MEMORY.md open attack surface",
+    "type": "open_avenue",
+    "raw_p": null,
+    "null_model": "structural: 13 mono DOF, only model surviving Bean under additive assumption",
+    "rival_critiques": {
+      "constraint_auditor": "Valid. Running key has enough DOF to satisfy Bean by construction.",
+      "heretic": "Requires additive-key assumption. If K4 is non-additive, this avenue is irrelevant.",
+      "bayesian": "Prior for correct source text identification from infinite possibilities is very low."
+    },
+    "verdict": "OPEN",
+    "action": "Test focused set of candidate source texts before large sweep"
+  },
+  {
+    "claim_id": "S2",
+    "description": "Bespoke chart-based system (archive evidence)",
+    "location": "MEMORY.md, memory/ticom_archive_research.md",
+    "type": "open_avenue",
+    "raw_p": null,
+    "rival_critiques": {
+      "heretic": "Requires physical evidence not in the repo. Computational testing limited.",
+      "constraint_auditor": "No testable constraints derived from this hypothesis."
+    },
+    "verdict": "OPEN_BUT_UNTESTABLE",
+    "action": "Await external evidence (K5, coding charts)"
+  }
+]
