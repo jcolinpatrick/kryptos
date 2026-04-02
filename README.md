@@ -96,7 +96,7 @@ Every candidate decryption is scored against known constraints:
 
 The score is based on crib consistency (do the known plaintext positions produce a valid keystream?), Bean constraints (equality/inequality relationships between key positions), index of coincidence, and n-gram quality.
 
-**After 671 billion+ configurations: the best score achieved is noise-level.** No single-layer classical cipher produces a meaningful result on K4.
+**After 671 billion+ configurations: the best score achieved is noise-level within tested families and parameter ranges.** No single-layer classical cipher produces a meaningful result on K4 under direct positional correspondence.
 
 ## What's been eliminated
 
@@ -118,8 +118,8 @@ None of these are proven. They represent the current working model.
 
 1. **Two systems** — Sanborn's 1990 dedication speech states K4 uses "two systems of enciphering," distinct from the Vigenere used for K1-K3. [PUBLIC FACT] The specific interpretation (null insertion + substitution) is our model, not confirmed.
 2. **Null insertion hypothesis** — Some positions in K4 may be steganographic filler. The number of nulls (if any) and their positions are unknown. This is a hypothesis, not a confirmed finding.
-3. **Null palette observation** — Under one cipher model (KA-autokey Vigenere), 17 candidate null positions use only 7 of 26 letters ({B,G,I,K,O,W,Z}), p ≈ 1/16,000. This is model-conditional: different cipher models produce different positions (Jaccard overlap 0.161). No model-free method has independently recovered these positions.
-4. **Running key from unknown source** — The only structured non-periodic key model surviving Bean constraints under direct correspondence. Source text is unknown.
+3. ~~**Null palette observation**~~ **(RETIRED, April 2026)** — Under one cipher model (KA-autokey Vigenere), 17 candidate null positions appeared to use only 7 of 26 letters ({B,G,I,K,O,W,Z}). A score-conditioned null experiment (April 2026) showed this was a post-hoc selection artifact: the SA discovery process produces 11 distinct letters on real K4, indistinguishable from shuffled controls (p=0.30). The original 17 positions were selected from spots already containing palette letters, making the "7 distinct" observation circular. See [full report](docs/a1_score_conditioned_null_report.md). All downstream claims (BCL enrichment, KA mod-5 structure, mod-35 table, AP enrichment) are also retired.
+4. **Running key from unknown source** — The only structured non-periodic key model surviving Bean constraints under additive-key assumptions and direct correspondence. Source text is unknown. If K4 uses a non-additive cipher, this constraint does not apply.
 
 See [docs/research_questions.md](docs/research_questions.md) for the full list of open questions.
 

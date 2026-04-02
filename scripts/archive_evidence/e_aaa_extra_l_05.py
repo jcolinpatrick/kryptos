@@ -2,14 +2,16 @@
 """
 Cipher: two_system
 Family: archive_evidence
-Status: active
+Status: superseded
 Keyspace: ~2000 configs
 Last run:
 Best score:
 """
-# DEPRECATED: This script is retained as a historical artifact.
-# Superseded by newer analysis. Do not cite results as current.
-# See docs/SCRIPT_RIGOR_STANDARD.md
+# DEPRECATED + SUPERSEDED by e_aaa_extra_l_07_corrected.py (2026-04-01).
+# CRITICAL BUG: beaufort_decrypt_tableau() performs VIGENERE, not Beaufort.
+# Both "Beaufort" and "Vigenere" branches produce identical Vigenere results.
+# True Beaufort on misaligned row N was NEVER tested by this script.
+# See e_aaa_extra_l_07_corrected.py for correct implementation with all 3 variants.
 
 """E-AAA-EXTRA-L-05: Extra L on tableau + Bottom chart seeding + ABSCISSA.
 

@@ -260,29 +260,41 @@ def section_results_verdicts(results):
 
 
 def section_confirmed_anomalies():
-    """Anomalies that are real but unexploitable."""
-    print("── CONFIRMED ANOMALIES (real but not yet exploitable) ─────────────")
+    """Anomalies — separating surviving from retired."""
+    print("── SURVIVING ANOMALIES (real but not yet exploitable) ───────────")
     print()
-    anomalies = [
-        ("Null palette {B,G,I,K,O,W,Z}", "p~3e-5 nominal",
-         "Model-conditional (positions shift w/ cipher model, Jaccard 0.161)"),
-        ("SA does NOT create palette", "0/40K SA masks have ≤7 distinct",
-         "Palette is K4-specific, not optimizer artifact"),
-        ("KA mod-5 column structure", "p=0.0005",
-         "All 7 palette letters in KA cols {0,3} of 5-wide grid"),
-        ("BCL Beaufort keystream 7/8 palette", "p=0.0006",
-         "Unique to Beaufort A=0; model-independent computation"),
-        ("Beaufort keystream AP {G,K,O} 12/24", "p=3.9e-6",
-         "Strongest single keystream signal; intrinsic to (CT,cribs) under Beaufort"),
+    surviving = [
         ("Width-21 bigram on CT97", "p=1.6e-4",
-         "STEGO artifact — disappears after null extraction"),
+         "STEGO artifact — disappears after null extraction (documented, not actionable)"),
         ("Width-10/17 bigrams on CT73", "p=6e-3/8e-3",
          "CIPHER layer — destroyed by col7 undo (col7 mathematical artifact)"),
-        ("14-col grid asymmetry", "p~7e-5",
-         "Filler density 55% left vs 17% right"),
+        ("Stehle constant-difference (pos 55-63)", "p~1/642 (corrected)",
+         "Unique in K4; local coincidence, not a mechanism"),
     ]
-    for name, pval, note in anomalies:
+    for name, pval, note in surviving:
         print(f"  • {name} ({pval})")
+        print(f"    {note}")
+    print()
+    print("── RETIRED ANOMALIES (April 2026 audit) ────────────────────────")
+    print()
+    retired = [
+        ("Null palette {B,G,I,K,O,W,Z}", "RETIRED",
+         "Score-conditioned null: SA produces 11 distinct on K4 (p=0.30 vs shuffled)"),
+        ("SA palette provenance (0/40K)", "RETIRED",
+         "Moot — the palette claim itself is circular (post-hoc position selection)"),
+        ("KA mod-5 column structure", "RETIRED",
+         "Dependent on palette definition; fails all corrections"),
+        ("BCL Beaufort keystream 7/8 palette", "RETIRED",
+         "Dependent on palette; does not survive Bonferroni (corrected p=0.65)"),
+        ("Beaufort keystream AP {G,K,O} 12/24", "RETIRED",
+         "Look-elsewhere: 312 APs tested, corrected p=0.001 → Bonferroni dead"),
+        ("14-col grid asymmetry", "RETIRED",
+         "Dependent on palette positions; fails correction"),
+        ("Mod-35 KRYPTOS×SEVEN table", "RETIRED",
+         "LOO-CV accuracy 47% (below 49% baseline); zero predictive power"),
+    ]
+    for name, status, note in retired:
+        print(f"  ✗ {name} — {status}")
         print(f"    {note}")
     print()
 

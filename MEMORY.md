@@ -19,7 +19,7 @@ This file covers volatile strategic state that the briefing script doesn't gener
 
 ## Hard Blockers
 
-1. **Null-mask provenance** — Palette {B,G,I,K,O,W,Z} is K4-specific (0/40K SA masks have ≤7 distinct), NOT an optimizer artifact. But positions shift with cipher model (Jaccard 0.161). Palette is model-conditional, not proven intrinsic.
+1. ~~**Null-mask provenance**~~ **RETIRED (April 2026)** — Score-conditioned null experiment showed SA produces 11 distinct letters on K4, indistinguishable from shuffled controls (p=0.30). The "7 letters at 17 positions" was a post-hoc selection artifact. See `docs/a1_score_conditioned_null_report.md`. All palette-dependent claims (BCL enrichment, KA mod-5, AP enrichment, mod-35 table) are also retired.
 2. **Short-text underdetermination** — 97 chars; surface statistics are weak and frequently deceptive
 3. **Multi-layer ambiguity** — Single-layer eliminations do NOT eliminate those families as one layer of a multi-layer construction
 4. **External-information ceiling** — Some avenues require physical/chart/archive evidence
@@ -46,9 +46,9 @@ Detail: `archive_aaa_findings.md` in session memory.
 
 ## Campaign & Audit Summaries
 
-- **TICOM/Novel (2026-03-28):** 14 scripts, 1.3B configs, ~75 min. RS44, VIC, Wheatstone, ITA-2, interrupted-key, Wilson, sawtooth, Baudot, Ubchi, Soviet three-step, Sanborn matrix: ALL NOISE.
-- **Null mask diversity (2026-03-30):** SA does NOT drive toward low diversity (r=+0.05). 0/40K masks at any score tier have ≤7 distinct. Palette is genuinely anomalous.
-- **Extra L (2026-03-29):** 97+1=98=2x7x7. All tested hypotheses NOISE.
+- **TICOM/Novel (2026-03-28):** 14 scripts, 1.3B configs, ~75 min. RS44, VIC, Wheatstone, ITA-2, interrupted-key, Wilson, sawtooth, Baudot, Ubchi, Soviet three-step, Sanborn matrix: all noise within tested scope (Level B).
+- **Null mask diversity (2026-03-30 → RETIRED 2026-04-01):** Original positional null p=2.4e-5 invalidated by score-conditioned null. SA on K4 produces 11 distinct letters (p=0.30 vs shuffled controls). Post-hoc selection artifact.
+- **Extra L (2026-03-29):** 97+1=98=2x7x7. All tested hypotheses noise within tested scope (Level B).
 
 ---
 
@@ -60,6 +60,7 @@ Detail: `archive_aaa_findings.md` in session memory.
 - Beaufort A=0 is the confirmed default
 - High scores at large periods are always false positives
 - Null positions are MODEL-DEPENDENT — always state which model
+- **Palette {B,G,I,K,O,W,Z} is RETIRED** — post-hoc selection artifact (April 2026 audit)
 
 ---
 
@@ -79,7 +80,7 @@ Detail: `archive_aaa_findings.md` in session memory.
 
 - `keystream_forensics_v2.md` — Corrected keystream, DEFECTOR autokey structurally impossible
 - `palette_deep_investigation.md` — 18-test investigation, mod-5, Beaufort key=N
-- `bcl_palette_keystream.md` — BCL 7/8 palette enrichment (model-independent)
+- `bcl_palette_keystream.md` — BCL 7/8 palette enrichment (ciphertext-intrinsic under Beaufort A=0; Level C anomaly)
 - `palette_mod35_rule.md` — (pos%7,pos%5) table classifies all 17 consensus nulls
 - `polybius_row_selection.md` — KRYPTOS×SEVEN dual-keyword model
 - `width10_17_deep_investigation.md` — Cipher-layer bigrams, col7 artifacts
