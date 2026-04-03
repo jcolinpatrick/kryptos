@@ -1,0 +1,132 @@
+{
+  "test1_yar_positions": {
+    "Y": [
+      64
+    ],
+    "A": [
+      49,
+      57,
+      90,
+      95
+    ],
+    "R": [
+      3,
+      23,
+      28,
+      96
+    ]
+  },
+  "test2_crib_yar": [
+    {
+      "pos": 23,
+      "ct": "R",
+      "pt": "S",
+      "ks_beaufort": 9,
+      "ks_letter": "J"
+    },
+    {
+      "pos": 28,
+      "ct": "R",
+      "pt": "T",
+      "ks_beaufort": 10,
+      "ks_letter": "K"
+    },
+    {
+      "pos": 64,
+      "ct": "Y",
+      "pt": "E",
+      "ks_beaufort": 2,
+      "ks_letter": "C"
+    }
+  ],
+  "test3_ks_at_yar": [
+    {
+      "pos": 64,
+      "ct": "Y",
+      "ks": 2,
+      "ks_letter": "C"
+    },
+    {
+      "pos": 23,
+      "ct": "R",
+      "ks": 9,
+      "ks_letter": "J"
+    },
+    {
+      "pos": 28,
+      "ct": "R",
+      "ks": 10,
+      "ks_letter": "K"
+    }
+  ],
+  "test4_ndyahr_in_ks": {
+    "overlap_count": 2,
+    "overlap_values": [
+      3,
+      17
+    ],
+    "matching_positions": [
+      {
+        "pos": 25,
+        "ct": "Q",
+        "pt": "N",
+        "ks": 3,
+        "ndyahr_letter": [
+          "D"
+        ]
+      },
+      {
+        "pos": 72,
+        "ct": "P",
+        "pt": "C",
+        "ks": 17,
+        "ndyahr_letter": [
+          "R"
+        ]
+      }
+    ]
+  },
+  "test5_correlation": {
+    "yar_positions": [
+      3,
+      23,
+      28,
+      49,
+      57,
+      64,
+      90,
+      95,
+      96
+    ],
+    "yar_in_nulls": [],
+    "yar_in_cribs": [
+      23,
+      28,
+      64
+    ],
+    "expected_null_overlap": 1.58,
+    "expected_crib_overlap": 2.23,
+    "yar_in_null_palette": false
+  },
+  "test6_bean": {
+    "eq_involves_yar": false,
+    "ineq_involving_yar": 58,
+    "expected_ineq": 42.8
+  },
+  "test7_ks_spelling": {
+    "yar_ct_crib_ks": "JKC",
+    "full_crib_ks": "JLJODEGKUKKKLOCGGBGOKTRU"
+  },
+  "test8_sum64": {
+    "ndyahr_sum": 64,
+    "ct_at_64": "Y",
+    "pos_64_in_crib": true
+  },
+  "summary": {
+    "runtime_s": 0.0,
+    "findings": [
+      "Y/A/R completely avoid consensus null positions",
+      "Y/A/R are NOT in the null palette {BGIKOWZ}"
+    ]
+  }
+}
