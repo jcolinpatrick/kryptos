@@ -3,6 +3,18 @@
 
 {% block content %}
 <h1>VIC Cipher Workbench</h1>
+
+<div class="finding-caveat" style="margin-bottom: 1.5rem;">
+  <h3>Elimination status: Fully tested</h3>
+  <p>
+    The VIC cipher and its variants have been comprehensively tested against K4.
+    Over 52 million configurations were scored across standard VIC, non-standard
+    key schedules, and straddling checkerboard variants &mdash; all produced noise-level
+    results. This tool is retained for educational and historical reference.
+    See the <a href="/browse/bespoke/">bespoke eliminations</a> for details.
+  </p>
+</div>
+
 <p>
   Full implementation of the VIC cipher (a sophisticated Soviet hand cipher) with optional
   layering of classical techniques. All computation runs locally in your browser
