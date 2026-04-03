@@ -15,7 +15,7 @@ This repo has one purpose: determine the **true plaintext** and the **full encry
    ```bash
    PYTHONPATH=src python3 scripts/_infra/session_briefing.py
    ```
-   This reads `exhaustion_log.json` (944 entries), `results/*.json` (314 files), and `docs/elimination_tiers.md` to produce a current elimination landscape, anomalies, open attack surface, and DO NOT TEST list. **It replaces all hand-maintained elimination ledgers** — the data is always fresh.
+   This reads `exhaustion_log.json` (~950 entries), `results/*.json` (~380 files), and `docs/elimination_tiers.md` to produce a current elimination landscape, anomalies, open attack surface, and DO NOT TEST list. **It replaces all hand-maintained elimination ledgers** — the data is always fresh.
 3. Read MEMORY.md (auto-loaded) — volatile strategic state, hard blockers, next actions
 4. If the task matches anything in the briefing's TIER 1 or DO NOT TEST sections → **STOP, tell the user, do NOT re-run**
 5. `run_attack.py --list --verbose | grep KEYWORD` — search before writing new code
@@ -53,7 +53,7 @@ A `venv/` exists (gitignored) for non-core work. Activate with `source venv/bin/
 **Git workflow:** Development happens directly on `main`. No branch naming conventions or PR process — this is a solo research project with computational partners.
 
 ```bash
-# Run all tests (969 tests, ~80s, no expected failures)
+# Run all tests (~1050 tests, ~80s, no expected failures)
 PYTHONPATH=src pytest tests/
 
 # Run a single test file or test
@@ -123,7 +123,7 @@ kernel/persistence/sqlite.py (results DB) + JsonlWriter (logs)
 
 ### Experiment scripts (`scripts/`)
 
-~1,000 attack scripts across ~50 entries in `scripts/` (939 tracked in exhaustion log including deleted/renamed). Each has a metadata header; tracked in root `exhaustion_log.json` (authoritative — ignore `scripts/EXHAUSTION.json`). Some scripts live at the `scripts/` root level (e.g. `blitz_*.py`, `geometric_null_mask_*.py`) rather than in subdirectories.
+~840 attack scripts across ~45 subdirectories in `scripts/` (~950 tracked in exhaustion log including deleted/renamed). Each has a metadata header; tracked in root `exhaustion_log.json` (authoritative — ignore `scripts/EXHAUSTION.json`). Some scripts live at the `scripts/` root level (e.g. `blitz_*.py`, `geometric_null_mask_*.py`) rather than in subdirectories.
 
 **Subdirectories:** Run `ls scripts/` for the full list. Key families: `substitution/`, `transposition/`, `fractionation/`, `grille/`, `polyalphabetic/`, `running_key/`, `encoding/`, `multi_layer/`, `novel/`, `blitz/` (fast hypothesis sweeps), `analysis/` (non-attack analytical scripts), `_infra/` (utilities). Additional research threads: `antipodes/`, `archive_evidence/`, `crib_analysis/`, `exploration/`, `geodetic/`, `geometry/`, `k2_coords/`, `k3_continuity/`, `mirror_ka/`, `overlay/`.
 
@@ -167,7 +167,7 @@ Three categories: **Unit** (`test_transforms.py`, `test_scoring.py`, etc.), **QA
 
 - `data/english_quadgrams.json` — Quadgram log-probabilities (2 MB, `{"THAN": -3.776, ...}`)
 - `wordlists/english.txt` — 1M+ words; `wordlists/thematic_keywords.txt` — thematic keywords
-- `reference/` — Primary sources (525 files: Carter book, Sanborn correspondence, NSA docs, Ed Scheidt dossier, video transcripts, PDFs)
+- `reference/` — Primary sources (Carter book, Sanborn correspondence, NSA docs, Ed Scheidt dossier, video transcripts, PDFs)
 - `docs/crypto_field_manual/` — Durable cryptographic knowledge base
 - `memory/` (repo root) — Checked-in research notes: keystream forensics, palette investigations, width analysis
 
@@ -351,7 +351,7 @@ ops/deploy/cron_update.sh --force                              # Force deploy
 
 Two `memory/` directories exist — don't confuse them:
 
-- **`.claude/projects/.../memory/`** — Claude Code's session-persistent memory (120+ topic files). This is where `elimination_ledger.md`, `confirmed_findings.md`, etc. live. Referenced from MEMORY.md's topic index. Read via Claude Code's memory system (not filesystem paths).
+- **`.claude/projects/.../memory/`** — Claude Code's session-persistent memory. This is where `elimination_ledger.md`, `confirmed_findings.md`, etc. live. Referenced from MEMORY.md's topic index. Read via Claude Code's memory system (not filesystem paths).
 - **`memory/`** (repo root) — Checked-in research notes (11 files). Supplementary analysis documents (palette investigations, keystream forensics, etc.). These are regular repo files, not session memory.
 
 **MEMORY.md** (auto-loaded) is the decision-support index — paradigm, eliminations, statistical observations, open attack surface. CLAUDE.md has durable technical setup; MEMORY.md has volatile research state.
@@ -366,5 +366,5 @@ Two `memory/` directories exist — don't confuse them:
 
 ---
 
-*Last updated: 2026-03-31 — Mission: derive K4 method & solve. Volatile research state (best leads, eliminations, open hypotheses) maintained in MEMORY.md.*
+*Last updated: 2026-04-03 — Mission: derive K4 method & solve. Volatile research state (best leads, eliminations, open hypotheses) maintained in MEMORY.md.*
 *Primary author: Colin Patrick (human lead) + Claude (computational partner)*
