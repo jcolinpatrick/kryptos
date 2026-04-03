@@ -286,30 +286,6 @@ def build():
     _build_cylinder_viewer(global_ctx)
     pages_built += 1
 
-    # Polybius Walk Viewer (standalone → CSP-compliant with site chrome)
-    _build_standalone_viewer(
-        src_name="polybius_walk.html",
-        out_slug="polybius-walk",
-        title="Polybius Grid Walk | kryptosbot.com",
-        css_file="polybius_walk.css",
-        js_file="polybius_walk.js",
-        page_class="pw-page",
-        global_ctx=global_ctx,
-    )
-    pages_built += 1
-
-    # K3 Jefferson Viewer (standalone → CSP-compliant with site chrome)
-    _build_standalone_viewer(
-        src_name="k3_jefferson_viewer.html",
-        out_slug="k3-jefferson-viewer",
-        title="K3 Jefferson Viewer | kryptosbot.com",
-        css_file="k3_jefferson_viewer.css",
-        js_file="k3_jefferson_viewer.js",
-        page_class="jv-page",
-        global_ctx=global_ctx,
-    )
-    pages_built += 1
-
     # Archive Research Photos
     _render(env, "archive.html", "archive/index.html", global_ctx)
     pages_built += 1
@@ -454,8 +430,6 @@ def _build_standalone_viewer(
           <li><a href="/workbench/">Cipher Workbench</a></li>
           <li><a href="/vic-workbench/">VIC Cipher</a></li>
           <li><a href="/cylinder-viewer/">Cylinder Viewer</a></li>
-          <li><a href="/polybius-walk/">Polybius Walk</a></li>
-          <li><a href="/k3-jefferson-viewer/">K3 Jefferson</a></li>
         </ul>
       </li>
       <li><a href="/submit/">Submit</a></li>
@@ -596,8 +570,6 @@ def _build_cylinder_viewer(global_ctx: dict):
           <li><a href="/workbench/">Cipher Workbench</a></li>
           <li><a href="/vic-workbench/">VIC Cipher</a></li>
           <li><a href="/cylinder-viewer/">Cylinder Viewer</a></li>
-          <li><a href="/polybius-walk/">Polybius Walk</a></li>
-          <li><a href="/k3-jefferson-viewer/">K3 Jefferson</a></li>
         </ul>
       </li>
       <li><a href="/submit/">Submit</a></li>
@@ -651,49 +623,19 @@ def _build_cylinder_viewer(global_ctx: dict):
 
 
 def _build_findings_context(ct: str, global_ctx: dict) -> dict:
-    """Build template context for the Confirmed Findings page."""
-    # Consensus null positions (17 positions where researchers agree)
-    null_positions = {0, 1, 2, 5, 8, 12, 14, 20, 36, 52, 58, 59, 74, 75, 78, 84, 85}
-
-    # KA Polybius grid (KRYPTOS keyword-mixed alphabet in 5 columns)
-    ka = "KRYPTOSABCDEFGHIJLMNQUVWXZ"
-    polybius_rows = []
-    for r in range(6):
-        row = []
-        for c in range(5):
-            idx = r * 5 + c
-            if idx < len(ka):
-                row.append({"letter": ka[idx], "row": r, "col": c})
-        polybius_rows.append(row)
-
+    """Build template context for the findings page."""
     # Stehle anomaly: positions 55-63, lag-4 difference = 5
     stehle_positions = list(range(55, 64))
     stehle_values = [ord(ct[p]) - ord('A') for p in stehle_positions]
     stehle_diffs = [(stehle_values[i] - stehle_values[i - 4]) % 26
                     for i in range(4, len(stehle_values))]
 
-    # KRYPTOS x SEVEN lookup table
-    ks_table = [
-        ["?", "R", "R", "-", "N"],   # K (0)
-        ["N", "N", "-", "N", "-"],   # R (1)
-        ["R", "R", "N", "?", "-"],   # Y (2)
-        ["R", "R", "N", "R", "N"],   # P (3)
-        ["-", "R", "-", "R", "N"],   # T (4)
-        ["N", "-", "?", "-", "R"],   # O (5)
-        ["N", "-", "R", "R", "R"],   # S (6)
-    ]
-    ks_row_labels = list("KRYPTOS")
-
     return {
         **global_ctx,
         "ct": ct,
-        "null_positions": null_positions,
-        "polybius_rows": polybius_rows,
         "stehle_positions": stehle_positions,
         "stehle_values": stehle_values,
         "stehle_diffs": stehle_diffs,
-        "ks_table": ks_table,
-        "ks_row_labels": ks_row_labels,
     }
 
 

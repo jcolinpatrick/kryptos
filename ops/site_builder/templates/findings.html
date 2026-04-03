@@ -1,6 +1,6 @@
 {% extends "base.html" %}
-{% block title %}Statistical Observations | kryptosbot.com{% endblock %}
-{% block og_title %}Statistical Observations | kryptosbot.com{% endblock %}
+{% block title %}What We've Learned | kryptosbot.com{% endblock %}
+{% block og_title %}What We've Learned | kryptosbot.com{% endblock %}
 {% block canonical %}<link rel="canonical" href="https://kryptosbot.com/findings/">{% endblock %}
 
 {% block head_extra %}
@@ -12,262 +12,98 @@
 
 <header class="findings-hero">
   <p class="findings-kicker">After {{ total_configs_disproven }} configurations tested</p>
-  <h1>What the data shows</h1>
+  <h1>What we&rsquo;ve learned</h1>
   <p class="findings-intro">
-    No single classical cipher decrypts K4. Two statistical anomalies emerged from
-    the analysis. Both were discovered post-hoc (from the data, not predicted in advance),
-    both depend on a specific cipher model (KA-autokey Vigen&egrave;re) that has not been
-    independently validated, and neither has cracked the cipher.
-    We also document one exploratory pattern that has zero predictive power but is
-    retained for transparency.
+    No single classical cipher decrypts K4. Every standard cipher family has been
+    eliminated under direct positional correspondence. One statistical anomaly
+    survived correction. Several promising leads were rigorously tested and retired.
+    This page documents both.
   </p>
 </header>
-
-<!-- How We Know -->
-
-<section class="finding-provenance">
-  <h2>How we found these &mdash; and what we can&rsquo;t yet prove</h2>
-  <p>
-    Each observation below is computationally reproducible. However, all were discovered
-    post-hoc, and validation work has revealed important limitations:
-  </p>
-  <ul class="provenance-list">
-    <li>
-      <strong>Independent replication:</strong>
-      Richard Bean found the same 5-wide grid structure in 2021
-      (<a href="https://ecp.ep.liu.se/index.php/histocrypt/article/view/153">HistoCrypt 2021</a>)
-      by analyzing different data than we used. Two researchers, different approaches, same result.
-    </li>
-    <li>
-      <strong>Shuffled-ciphertext validation:</strong>
-      We shuffled K4&rsquo;s ciphertext 500 times and re-ran the same optimization.
-      <strong>Zero</strong> shuffled versions produced a palette as restricted as 7 letters
-      (mean: 12.7, min: 9). This indicates the restriction depends on K4&rsquo;s
-      specific letter ordering, not an artifact of the optimizer (p&nbsp;&lt;&nbsp;0.002).
-    </li>
-    <li>
-      <strong>Model-dependence caveat:</strong>
-      The 17 candidate null positions were identified using a KA-autokey Vigen&egrave;re model.
-      When we re-ran the same process with 4 other cipher models, the positions shifted
-      dramatically (average overlap: Jaccard&nbsp;0.161). This means the positions are
-      <strong>model-conditional</strong>, not independently validated. The palette restriction
-      is real under the KA-autokey model but may not be intrinsic to K4 itself.
-    </li>
-  </ul>
-  <p>
-    The entire codebase is <a href="https://github.com/jcolinpatrick/kryptos">open source</a>.
-    Every finding includes a reproduction command.
-  </p>
-  <!-- Statistical write-up removed April 2026: the headline claims (null palette,
-       BCL enrichment, combined Bayes factor) were invalidated by the score-conditioned
-       null experiment. See docs/a1_score_conditioned_null_report.md for details.
-       Surviving results (autokey impossibility, Stehle anomaly) are documented
-       in the findings below and in the elimination database. -->
-</section>
 
 <!-- The Ciphertext -->
 
 <section class="ct-exhibit">
   <h2 class="section-label">The K4 Ciphertext (97 Characters)</h2>
   <p class="ct-legend-intro">
-    Hover or tap a letter to see its position. Colors show what we've discovered about each character's role.
+    Hover or tap a letter to see its position. Colors show known plaintext regions
+    and the Stehle anomaly zone.
   </p>
-  <div class="ct-visual" id="ct-visual" aria-label="K4 ciphertext with null positions highlighted">
+  <div class="ct-visual" id="ct-visual" aria-label="K4 ciphertext with regions highlighted">
     {% for i in range(97) %}
       {% set ch = ct[i] %}
-      {% set is_null = i in null_positions %}
       {% set is_crib_ene = i >= 21 and i <= 33 %}
       {% set is_crib_bcl = i >= 63 and i <= 73 %}
       {% set is_stehle = i >= 55 and i <= 63 %}
-      <span class="ct-char{% if is_null %} ct-null{% endif %}{% if is_crib_ene or is_crib_bcl %} ct-crib{% endif %}{% if is_stehle and not is_crib_bcl %} ct-stehle{% endif %}"
+      <span class="ct-char{% if is_crib_ene or is_crib_bcl %} ct-crib{% endif %}{% if is_stehle and not is_crib_bcl %} ct-stehle{% endif %}"
             data-pos="{{ i }}"
             data-char="{{ ch }}"
-            {% if is_null %}data-null="true" title="Position {{ i }}: {{ ch }} (null character)"{% endif %}
             {% if is_crib_ene %}title="Position {{ i }}: {{ ch }} decrypts to {{ 'EASTNORTHEAST'[i-21] }}"{% endif %}
             {% if is_crib_bcl %}title="Position {{ i }}: {{ ch }} decrypts to {{ 'BERLINCLOCK'[i-63] }}"{% endif %}
       >{{ ch }}</span>
     {% endfor %}
   </div>
   <div class="ct-legend">
-    <span class="ct-legend-item"><span class="ct-swatch ct-swatch-null"></span> Candidate null character</span>
     <span class="ct-legend-item"><span class="ct-swatch ct-swatch-crib"></span> Known plaintext (crib)</span>
     <span class="ct-legend-item"><span class="ct-swatch ct-swatch-stehle"></span> Stehle anomaly region</span>
-    <span class="ct-legend-item"><span class="ct-swatch ct-swatch-real"></span> Real ciphertext</span>
+    <span class="ct-legend-item"><span class="ct-swatch ct-swatch-real"></span> Ciphertext</span>
   </div>
   <div class="ct-pos-readout" id="ct-readout" aria-live="polite">Position:</div>
 </section>
 
-<!-- Finding 1: Null Palette -->
+<!-- The Elimination Story -->
 
-<section class="finding" id="finding-palette">
-  <div class="finding-header">
-    <span class="finding-number">1</span>
-    <div>
-      <h2>The Null Palette <span style="color: #dc3545; font-size: 0.7em;">(RETIRED)</span></h2>
-      <p class="finding-subtitle">Palette identity failed specificity controls &mdash; convergence is generic</p>
-    </div>
-    <span class="finding-pvalue" style="background: #dc3545;">Retired</span>
-  </div>
-
-  <div class="confidence-indicator confidence-low">
-    <div class="confidence-bar confidence-low">
-      <span class="filled"></span><span class="filled"></span>
-      <span></span><span></span><span></span>
-      <span></span><span></span><span></span><span></span><span></span>
-    </div>
-    <span class="confidence-label">Retired as a finding &mdash; controls failed (April 2026)</span>
-  </div>
-
-  <div class="finding-plain" style="border-left: 3px solid #dc3545; padding-left: 1rem;">
-    <h3>Status: Retired</h3>
-    <p>
-      Under a specific cipher model (KA-autokey Vigen&egrave;re), simulated annealing
-      identifies 17 candidate filler positions that use only 7 letters
-      (B, G, I, K, O, W, and Z). The odds of this restriction happening by chance
-      are about <strong>1 in 16,000</strong> under that model.
-    </p>
-    <p>
-      <strong>However, matched controls (April 2026) showed this is not specific
-      to BGIKOWZ.</strong> Among 100 random 7-letter palettes, BGIKOWZ ranked near
-      the bottom for cross-model mask agreement (1st percentile on Jaccard-17,
-      3rd percentile on Jaccard-24). The cross-model convergence improvement
-      from palette constraints is a <strong>generic combinatorial property</strong>
-      of constraining the search space, not evidence that these particular
-      7&nbsp;letters reflect a real steganographic alphabet.
-    </p>
-    <p>
-      Palette constraints remain useful as a <strong>search regularizer</strong>
-      (they make mask-inference problems tractable and exhaustively solvable),
-      but the identity of BGIKOWZ as a privileged K4 signal is retired.
-    </p>
-  </div>
-
-  <div class="finding-callout">
-    <span class="callout-value">Retired</span>
-    <span class="callout-label">palette identity failed matched controls &mdash; convergence is generic, not BGIKOWZ-specific</span>
-  </div>
-
-  <details class="finding-technical">
-    <summary>Technical detail</summary>
-    <div class="wb-details-body">
-    <p>
-      K4 has 97 characters carved into the sculpture, but our analysis suggests that only <strong>73 may be real
-      ciphertext</strong>. Under this hypothesis, the other 24 are <strong>filler characters</strong> (called
-      <span class="term" data-def="Characters inserted into ciphertext that carry no meaning, used to disguise message length or letter frequencies">nulls</span>)
-      inserted to disguise the message&rsquo;s true length. This is consistent with Ed Scheidt&rsquo;s
-      public statement that he &ldquo;masked the English language&rdquo; in K4 so that frequency
-      analysis would not help solvers.
-    </p>
-    <p>
-      Using simulated annealing with a KA-autokey Vigen&egrave;re model, we identified 17 candidate positions.
-      Those 17 characters use only <strong>7 different letters: B, G, I, K, O, W, and Z.</strong>
-      Drawing 17 characters at random from K4&rsquo;s letter distribution and getting only 7 distinct letters
-      has a probability of roughly <strong>1 in 16,000</strong> (permutation test, 10M trials).
-    </p>
-    <p>
-      <strong>Validation (March 2026):</strong> We shuffled K4&rsquo;s ciphertext 500 times and
-      re-ran the same SA process. Zero shuffled versions produced &le;7 distinct letters
-      (mean: 12.7, min: 9), confirming the restriction is specific to K4&rsquo;s actual letter
-      ordering (p&nbsp;&lt;&nbsp;0.002). However, when we tested 4 other cipher models, the candidate
-      positions shifted dramatically (average Jaccard overlap: 0.161). The positions are
-      <strong>model-conditional</strong>, not independently validated.
-    </p>
-    <p>
-      <em>Post-hoc observation:</em> 4 of the 5 W&rsquo;s in the ciphertext fall at candidate null positions.
-      This is a consequence of the palette restriction, not independent evidence.
-    </p>
-    </div>
-  </details>
-
-  <div class="finding-visual">
-    <h3>The 7-Letter Null Palette on the Polybius Grid</h3>
-    <p class="finding-visual-caption">
-      A keyword-mixed alphabet arranged in a 5-column grid can concentrate all 7 palette letters
-      in exactly two columns. The KRYPTOS keyword (shown here) places them in columns 0 and 3.
-      About 0.6% of English keywords produce this property; KRYPTOS is thematically motivated
-      but not statistically unique.
-    </p>
-    <div class="polybius-grid" role="table" aria-label="5-wide Polybius grid showing null palette positions">
-      <div class="polybius-header">
-        <span class="polybius-col-label">col 0</span>
-        <span class="polybius-col-label">col 1</span>
-        <span class="polybius-col-label">col 2</span>
-        <span class="polybius-col-label">col 3</span>
-        <span class="polybius-col-label">col 4</span>
-      </div>
-      {% for row in polybius_rows %}
-      <div class="polybius-row">
-        {% for cell in row %}
-        <span class="polybius-cell{% if cell.letter in 'BGIKOWZ' %} polybius-null{% endif %}{% if cell.col == 0 or cell.col == 3 %} polybius-target-col{% endif %}"
-              title="{{ cell.letter }}{% if cell.letter in 'BGIKOWZ' %} (null palette){% endif %}">
-          {{ cell.letter }}
-        </span>
-        {% endfor %}
-      </div>
-      {% endfor %}
-    </div>
-  </div>
-
-  <div class="finding-stats">
-    <div class="stat-pill">
-      <span class="stat-pill-label">BGIKOWZ rank among random palettes</span>
-      <span class="stat-pill-value">100 / 101 (bottom)</span>
-    </div>
-    <div class="stat-pill">
-      <span class="stat-pill-label">Neighbors that beat BGIKOWZ</span>
-      <span class="stat-pill-value">76 / 133</span>
-    </div>
-    <div class="stat-pill">
-      <span class="stat-pill-label">Status</span>
-      <span class="stat-pill-value">Retired (April 2026)</span>
-    </div>
-    <div class="stat-pill">
-      <span class="stat-pill-label">Verdict</span>
-      <span class="stat-pill-value">Generic, not K4-specific</span>
-    </div>
-  </div>
-
-  <div class="finding-caveat">
-    <h3>Why this was retired</h3>
-    <p>
-      <strong>The original observation was real but not specific.</strong>
-      Under KA-autokey, only {B,G,I,K,O,W,Z} appear at the 17 candidate filler positions,
-      and the shuffled-ciphertext test (p&nbsp;&lt;&nbsp;0.002) confirmed this isn&rsquo;t an optimizer artifact.
-    </p>
-    <p>
-      However, <strong>four matched controls</strong> (April 2026) showed that the
-      cross-model convergence effect is generic:
-    </p>
-    <ul style="margin: 0.5rem 0; padding-left: 1.5rem;">
-      <li><strong>Random palettes:</strong> 99 of 100 random 7-letter palettes
-          produced better cross-model agreement than BGIKOWZ.</li>
-      <li><strong>Near neighbors:</strong> 76 of 133 single-letter-swap variants beat BGIKOWZ.</li>
-      <li><strong>Shuffled K4:</strong> convergence on shuffled ciphertexts was comparable,
-          suggesting the effect is methodological rather than structural.</li>
-      <li><strong>Objective sensitivity:</strong> autokey and periodic scoring agreed on 19/24
-          mask positions (Jaccard&nbsp;0.655), but the optimum scores differed substantially.</li>
-      <li><strong>Score-conditioned null (April 2026):</strong> The actual SA discovery process
-          was run on K4 and 300 null ciphertexts (3 families &times; 100 each). K4&rsquo;s
-          SA-discovered consensus used <strong>11 distinct letters</strong>, placing it at the
-          29th percentile of the null distribution (p&nbsp;=&nbsp;0.30). The original
-          &ldquo;7&nbsp;distinct&rdquo; was traced to a post-hoc selection from positions
-          already containing palette letters &mdash; a circular observation.
-          (<a href="https://github.com/jcolinpatrick/kryptos/blob/main/docs/a1_score_conditioned_null_report.md">full report</a>)</li>
-    </ul>
-    <p>
-      The correct interpretation: <strong>palette-constrained search is a useful computational
-      technique</strong> (it makes mask problems tractable), but the specific palette BGIKOWZ
-      is not a privileged signal from K4&rsquo;s encryption. Any sufficiently restrictive palette
-      produces similar or better cross-model agreement.
-    </p>
-  </div>
+<section class="finding-provenance">
+  <h2>What {{ total_configs_disproven }} configurations told us</h2>
+  <p>
+    Every standard classical cipher family has been tested against K4
+    under direct positional correspondence (where ciphertext position N maps
+    to plaintext position N). The results:
+  </p>
+  <ul class="provenance-list">
+    <li>
+      <strong>All periodic polyalphabetic ciphers</strong> (Vigen&egrave;re, Beaufort,
+      Variant Beaufort) at every key length 1&ndash;26: mathematically impossible
+      (Bean constraint proof).
+    </li>
+    <li>
+      <strong>All autokey variants</strong> (PT-autokey, CT-autokey, both Vigen&egrave;re
+      and Beaufort): structurally impossible, even composed with arbitrary transposition.
+    </li>
+    <li>
+      <strong>All fractionation families</strong> (Bifid, Trifid, Playfair, Four-Square, ADFGVX):
+      eliminated by structural proofs (K4 uses all 26 letters; Bifid requires 25).
+    </li>
+    <li>
+      <strong>All simple transposition families</strong> combined with periodic substitution:
+      maximum 13/24 crib matches (noise).
+    </li>
+    <li>
+      <strong>Running keys from 60,000+ English texts</strong> combined with structured
+      transposition: zero candidates across 106 billion position checks.
+    </li>
+    <li>
+      <strong>Bespoke systems</strong> (VIC, RS44, Wheatstone, interrupted-key, DRYAD):
+      all noise within tested scope.
+    </li>
+  </ul>
+  <p>
+    These eliminations do not rule out the same families as one layer of a multi-layer
+    construction, nor do they apply if K4 uses a non-additive cipher mechanism.
+    See the <a href="/browse/">elimination database</a> for the full inventory, and the
+    <a href="/research-questions/">open questions</a> for what remains.
+  </p>
+  <p>
+    The entire codebase is <a href="https://github.com/jcolinpatrick/kryptos">open source</a>.
+    Every elimination includes a reproduction command.
+  </p>
 </section>
 
-<!-- Finding 2: Stehle Delta-4 -->
+<!-- The Stehle Anomaly -->
 
 <section class="finding" id="finding-stehle">
   <div class="finding-header">
-    <span class="finding-number">2</span>
+    <span class="finding-number">1</span>
     <div>
       <h2>The Stehle Anomaly</h2>
       <p class="finding-subtitle">A unique constant-difference pattern at positions 55&ndash;63</p>
@@ -281,7 +117,7 @@
       <span class="filled"></span><span class="filled"></span><span class="filled"></span>
       <span></span><span></span><span></span><span></span>
     </div>
-    <span class="confidence-label">Moderate confidence</span>
+    <span class="confidence-label">Moderate confidence &mdash; real pattern, unexploited</span>
   </div>
 
   <div class="finding-plain">
@@ -320,19 +156,19 @@
       <div class="delta-row delta-row-pos">
         <span class="delta-label">Position</span>
         {% for p in stehle_positions %}
-        <span class="delta-cell delta-cell-pos{% if p in null_positions %} delta-null{% endif %}">{{ p }}</span>
+        <span class="delta-cell delta-cell-pos">{{ p }}</span>
         {% endfor %}
       </div>
       <div class="delta-row delta-row-char">
         <span class="delta-label">Letter</span>
         {% for p in stehle_positions %}
-        <span class="delta-cell delta-cell-char{% if p in null_positions %} delta-null{% endif %}">{{ ct[p] }}</span>
+        <span class="delta-cell delta-cell-char">{{ ct[p] }}</span>
         {% endfor %}
       </div>
       <div class="delta-row delta-row-val">
         <span class="delta-label">Value (A=0)</span>
         {% for p in stehle_positions %}
-        <span class="delta-cell delta-cell-val{% if p in null_positions %} delta-null{% endif %}">{{ stehle_values[loop.index0] }}</span>
+        <span class="delta-cell delta-cell-val">{{ stehle_values[loop.index0] }}</span>
         {% endfor %}
       </div>
       <div class="delta-row delta-row-diff">
@@ -368,152 +204,49 @@
   </div>
 
   <div class="finding-caveat">
-    <h3>What creates this pattern</h3>
+    <h3>What we know and don&rsquo;t know</h3>
     <p>
-      Two of the 9 positions (58 and 59) are filler characters. The real ciphertext already had
-      this stepping pattern at two consecutive pairs of non-filler characters. The filler values
-      simply <em>extend</em> what was already there, because the required letters (W and I) both
-      happen to be palette letters.
-    </p>
-    <p>
-      We tested whether this kind of arithmetic forcing is a general rule for how filler values
-      are chosen: <strong>it is not</strong>. Only 4 of 17 filler positions show this behavior, which is
-      exactly what random placement would produce. We checked all 1,248 possible spacing-and-difference
-      combinations and found no global rule.
-      The Stehle pattern is a <strong>local coincidence</strong> (a fortunate collision between
-      cipher structure and filler placement), not a mechanism.
+      The pattern is real and survives multiple-testing correction. However, we have not
+      been able to exploit it: no cipher mechanism we&rsquo;ve tested produces this
+      pattern as a consequence of its key schedule. It may be a local coincidence
+      in the cipher structure, not a clue to the method. It remains the only
+      statistically significant anomaly in K4 that survived rigorous correction.
     </p>
   </div>
 </section>
 
-<!-- Finding 3: KRYPTOS x SEVEN -->
+<!-- Retired Claims -->
 
-<section class="finding" id="finding-kryptos-seven">
+<section class="finding" id="finding-retired">
   <div class="finding-header">
-    <span class="finding-number">3</span>
+    <span class="finding-number" style="background: #dc3545;">&#x2717;</span>
     <div>
-      <h2>KRYPTOS &times; SEVEN (Exploratory &mdash; No Predictive Power)</h2>
-      <p class="finding-subtitle">A post-hoc curve fit with zero cross-validated accuracy</p>
+      <h2>Retired Claims</h2>
+      <p class="finding-subtitle">Promising leads that did not survive matched controls</p>
     </div>
-    <span class="finding-pvalue">0% predictive (LOO-CV)</span>
-  </div>
-
-  <div class="confidence-indicator confidence-very-low">
-    <div class="confidence-bar confidence-very-low">
-      <span class="filled"></span><span class="filled"></span>
-      <span></span><span></span><span></span><span></span>
-      <span></span><span></span><span></span><span></span>
-    </div>
-    <span class="confidence-label">Exploratory only &mdash; retained for transparency, not evidence</span>
   </div>
 
   <div class="finding-plain">
-    <h3>The short version</h3>
     <p>
-      A post-hoc search found a mod-7 &times; mod-5 lookup table that perfectly classifies
-      all 35 palette-letter positions as null or real. However, <strong>leave-one-out
-      cross-validation shows this table has zero predictive power</strong> (47% accuracy
-      vs. 49% baseline). This is a descriptive curve fit, not a discovered rule.
-      We retain it only for transparency &mdash; it is not evidence of a mechanism.
+      Science progresses by testing and discarding hypotheses. Several observations
+      initially appeared statistically significant but were retired after more rigorous
+      controls. We document them here because intellectual honesty matters more than
+      looking right.
     </p>
-  </div>
 
-  <details class="finding-technical">
-    <summary>Technical detail</summary>
-    <div class="wb-details-body">
+    <h3>The Null Palette (retired April 2026)</h3>
     <p>
-      We discovered a simple rule that perfectly fits all 35 palette-letter positions,
-      classifying each as either null or real ciphertext. The rule uses two keywords:
-      <strong>KRYPTOS</strong> (7 letters) and <strong>SEVEN</strong> (5 letters).
-      This was found by searching the data (post-hoc), not predicted in advance.
-    </p>
-    <p>
-      For any position <em>p</em> in K4, compute two remainders:
-      divide <em>p</em> by 7 (giving a row in the KRYPTOS keyword)
-      and divide <em>p</em> by 5 (giving a column in the SEVEN keyword).
-      This creates a 7&times;5 lookup table with 35 cells. Each cell is marked
-      <strong>Null</strong> or <strong>Real</strong>. The table correctly predicts all 17
-      consensus null positions and all 18 real palette positions, with zero errors.
-    </p>
-    <p>
-      The number 35 is not a coincidence: 7 &times; 5 = 35, and there are exactly 35 positions
-      in K4 where a palette letter ({B,G,I,K,O,W,Z}) appears. The two keyword lengths
-      produce a repeating cycle of exactly the right size.
-    </p>
-    </div>
-  </details>
-
-  <div class="finding-visual">
-    <h3>The 7&times;5 Lookup Table</h3>
-    <p class="finding-visual-caption">
-      Row = position mod 7 (KRYPTOS), Column = position mod 5 (SEVEN).
-      <strong>N</strong> = null, <strong>R</strong> = real ciphertext, <strong>?</strong> = mixed (resolved by "earlier position wins").
-    </p>
-    <div class="ks-grid" role="table" aria-label="KRYPTOS times SEVEN lookup table">
-      <div class="ks-header">
-        <span class="ks-corner"></span>
-        <span class="ks-col-label">S <small>(0)</small></span>
-        <span class="ks-col-label">E <small>(1)</small></span>
-        <span class="ks-col-label">V <small>(2)</small></span>
-        <span class="ks-col-label">E <small>(3)</small></span>
-        <span class="ks-col-label">N <small>(4)</small></span>
-      </div>
-      {% for row in ks_table %}
-      {% set row_idx = loop.index0 %}
-      <div class="ks-row">
-        <span class="ks-row-label">{{ ks_row_labels[row_idx] }} <small>({{ row_idx }})</small></span>
-        {% for cell in row %}
-        <span class="ks-cell{% if cell == 'N' %} ks-null{% elif cell == 'R' %} ks-real{% elif cell == '?' %} ks-mixed{% else %} ks-empty{% endif %}"
-              title="({{ row_idx }}, {{ loop.index0 }}): {{ cell }}">
-          {{ cell }}
-        </span>
-        {% endfor %}
-      </div>
-      {% endfor %}
-    </div>
-  </div>
-
-  <div class="finding-stats">
-    <div class="stat-pill">
-      <span class="stat-pill-label">LOO cross-validation accuracy</span>
-      <span class="stat-pill-value">47% (below 49% baseline)</span>
-    </div>
-    <div class="stat-pill">
-      <span class="stat-pill-label">In-sample fit</span>
-      <span class="stat-pill-value">35 / 35 (100% &mdash; post-hoc)</span>
-    </div>
-    <div class="stat-pill">
-      <span class="stat-pill-label">Predictive power</span>
-      <span class="stat-pill-value">None</span>
-    </div>
-    <div class="stat-pill">
-      <span class="stat-pill-label">Status</span>
-      <span class="stat-pill-value">Descriptive fit only</span>
-    </div>
-  </div>
-
-  <div class="finding-caveat">
-    <h3>Why this is not evidence</h3>
-    <p>
-      <strong>Leave-one-out cross-validation shows this table has zero predictive power.</strong>
-      When each of the 17 consensus nulls is held out and predicted from the remaining 16,
-      accuracy is only 47% &mdash; worse than the naive 49% baseline of always guessing
-      &ldquo;null.&rdquo; Nine of 17 null positions occupy cells unique to them or shared with
-      &ldquo;real&rdquo; positions; removing any one from training collapses the prediction.
-      The table is a <strong>descriptive fit, not a generative rule</strong>.
-    </p>
-    <p>
-      The table also predicts zero additional nulls among the 14 remaining palette candidates,
-      which is inconsistent with the 24-null model it was designed to explain.
-    </p>
-    <p>
-      <strong>Thematic observations (not evidence):</strong> KRYPTOS was used for K1&ndash;K3.
-      ~0.5% of random 5-letter words produce equivalent tables, so no keyword is
-      statistically unique. The GKO keystream concentration (12/24 crib values from {G,K,O})
-      was found to be an indexing artifact that disappears under KA alphabet ordering.
-    </p>
-    <p>
-      This section is retained for transparency about what was explored, not as a finding.
+      Under a KA-autokey Vigen&egrave;re model, simulated annealing identified 17 candidate
+      filler positions that used only 7 letters (B, G, I, K, O, W, Z) &mdash; odds of
+      roughly 1 in 16,000. This was our strongest statistical claim for months. However,
+      a score-conditioned null experiment showed that the SA process produces 11 distinct
+      letters on real K4, indistinguishable from shuffled controls (p&nbsp;=&nbsp;0.30).
+      The original &ldquo;7 distinct&rdquo; observation was traced to post-hoc selection
+      from positions already containing palette letters &mdash; a circular observation.
+      All downstream claims (BCL keystream enrichment, KA mod-5 column structure,
+      arithmetic progression patterns, KRYPTOS&nbsp;&times;&nbsp;SEVEN lookup table) were
+      also retired.
+      <a href="https://github.com/jcolinpatrick/kryptos/blob/main/docs/a1_score_conditioned_null_report.md">Full report.</a>
     </p>
   </div>
 </section>
@@ -524,27 +257,26 @@
   <h2>Summary</h2>
   <div class="conclusion-grid">
     <div class="conclusion-card conclusion-solved">
-      <h3>What the analysis produced</h3>
+      <h3>What we established</h3>
       <ul>
-        <li><strong>Palette identity retired (April 2026):</strong> The 7-letter palette
-            {B,G,I,K,O,W,Z} was the project&rsquo;s strongest statistical claim.
-            A score-conditioned null experiment showed that the SA discovery process produces
-            11 distinct letters on real K4, indistinguishable from shuffled controls (p&nbsp;=&nbsp;0.30).
-            The original &ldquo;7 distinct&rdquo; observation was a post-hoc selection artifact.
-            All downstream claims (BCL enrichment, KA mod-5, AP enrichment) are also retired.</li>
-        <li>A local constant-difference pattern exists at positions 55&ndash;63 (the Stehle anomaly, p&nbsp;&asymp;&nbsp;1/642 after correction)</li>
-        <li>The KRYPTOS&nbsp;&times;&nbsp;SEVEN table has zero predictive power and is not evidence</li>
-        <li><strong>671 billion+ configurations tested with zero signal above noise</strong> across all classical single-layer cipher families</li>
+        <li><strong>{{ total_configs_disproven }}+ configurations tested</strong> with zero signal
+            above noise across all classical single-layer cipher families</li>
+        <li>One surviving anomaly: the Stehle constant-difference pattern (p&nbsp;&asymp;&nbsp;1/642)</li>
+        <li>Multiple promising leads rigorously tested and retired when controls failed</li>
+        <li>Every result is <a href="https://github.com/jcolinpatrick/kryptos">open source</a>
+            and independently reproducible</li>
       </ul>
     </div>
     <div class="conclusion-card conclusion-open">
       <h3>What remains unknown</h3>
       <ul>
-        <li>Whether K4 actually contains null characters (the two-system model is plausible but unproven, and the palette evidence for it has been retired)</li>
-        <li>The cipher type and key (every standard single-layer classical cipher has been eliminated under direct correspondence)</li>
-        <li>Whether any null-insertion model is correct &mdash; the 17-position consensus and the BGIKOWZ palette were retired as artifacts in April 2026</li>
-        <li>The source text for a running-key cipher, if that model is correct (the only structured non-periodic model surviving Bean constraints)</li>
-        <li>Whether the answer requires external evidence (physical investigation, unreleased documents, K5) rather than further computation</li>
+        <li>The cipher type and key (every standard single-layer classical cipher eliminated
+            under direct correspondence)</li>
+        <li>Whether K4 contains null characters (plausible but unproven &mdash; the statistical
+            evidence was retired)</li>
+        <li>The source text for a running-key cipher, if that model is correct</li>
+        <li>Whether the answer requires external evidence (physical investigation,
+            unreleased documents, K5) rather than further computation</li>
       </ul>
     </div>
   </div>
