@@ -1,0 +1,185 @@
+{
+  "experiment": "YAR_ANOMALY_AUDIT",
+  "date": "2026-04-03",
+  "method": "internal review adversarial investigation (7 parallel agents)",
+
+  "anomalous_letters": {
+    "verified_core": {
+      "letters": ["Y", "A", "R"],
+      "confidence": "HIGH",
+      "evidence": "Elonka Dunin physical rubbings, October 2002",
+      "displacement_type": "raised several centimeters above baseline",
+      "sculpture_row": 14,
+      "sculpture_cols": [3, 4, 6],
+      "ciphertext_sequence": "ENDYAHROHN"
+    },
+    "extended_5_letter": {
+      "letters": ["D", "Y", "A", "H", "R"],
+      "confidence": "MEDIUM",
+      "evidence": "Elonka PN26 (2025) reporting Sanborn said 'important'",
+      "note": "Conflicts with solvingkryptos.com DYARO variant (O vs H as 5th letter)"
+    },
+    "extended_6_letter": {
+      "letters": ["N", "D", "Y", "A", "H", "R"],
+      "confidence": "LOW",
+      "evidence": "Project computational analysis (ndyahr_displacement.md, 2026-03-14)",
+      "note": "No independent physical verification beyond YAR core",
+      "directional_vectors": {
+        "N": {"dx": -1, "dy": 0, "compass": "West"},
+        "D": {"dx": 1, "dy": 0, "compass": "East"},
+        "Y": {"dx": 0, "dy": -1, "compass": "North"},
+        "A": {"dx": 0, "dy": -1, "compass": "North"},
+        "H": {"dx": 1, "dy": 0, "compass": "East"},
+        "R": {"dx": -1, "dy": -1, "compass": "Northwest"}
+      }
+    }
+  },
+
+  "candidate_sequences": [
+    {"seq": "YAR", "confidence": "HIGH", "source": "Elonka rubbings 2002"},
+    {"seq": "DYAHR", "confidence": "MEDIUM", "source": "Elonka PN26 2025"},
+    {"seq": "DYARO", "confidence": "LOW", "source": "solvingkryptos.com"},
+    {"seq": "NDYAHR", "confidence": "LOW", "source": "project analysis"},
+    {"seq": "ENDYAHR", "confidence": "SPECULATIVE", "source": "project col-7 mapping"}
+  ],
+
+  "hypotheses": [
+    {
+      "name": "Direct primer/key",
+      "confidence": "ELIMINATED",
+      "best_score": "4/24",
+      "scripts_tested": 10,
+      "falsified_by": "Bean cycle feasibility + universal noise scores"
+    },
+    {
+      "name": "Grille registration marks",
+      "confidence": "ELIMINATED",
+      "best_score": "0 crib hits",
+      "scripts_tested": 18,
+      "falsified_by": "Exhaustive 511-subset test: zero crib hits"
+    },
+    {
+      "name": "Null/deletion markers",
+      "confidence": "ELIMINATED (simple removal)",
+      "best_score": "6/24",
+      "scripts_tested": 5,
+      "falsified_by": "Resulting lengths unhelpful; high IC is trivial artifact"
+    },
+    {
+      "name": "Route cipher turning points",
+      "confidence": "ELIMINATED",
+      "best_score": "0/24",
+      "scripts_tested": 2,
+      "falsified_by": "Grid navigation tests produce no signal"
+    },
+    {
+      "name": "Transposition anchors (standalone)",
+      "confidence": "ELIMINATED (without null mask)",
+      "best_score": "4/24",
+      "scripts_tested": 5,
+      "falsified_by": "All col-7 orderings tested; noise without null mask"
+    },
+    {
+      "name": "Structural signpost",
+      "confidence": "FAVORED but UNFALSIFIABLE",
+      "best_score": "N/A (interpretive)",
+      "supporting": "ENDYAHR-to-KRYPTOS column mapping; sum=64=2^6; horizontal symmetry",
+      "risk": "Post-hoc pattern matching; would only be confirmed if width-7 solve succeeds"
+    },
+    {
+      "name": "Transposition anchors (coupled with null mask)",
+      "confidence": "UNTESTED",
+      "note": "NDYAHR directions + correct null mask from 15/24 model never tested together"
+    },
+    {
+      "name": "Verification mechanism (output check, not input)",
+      "confidence": "UNTESTED",
+      "note": "Test whether YAR positions have special property in CORRECT plaintext"
+    },
+    {
+      "name": "Fabrication artifact (no intentional meaning)",
+      "confidence": "WEAKENED",
+      "falsified_by": "Elonka physical rubbings (several cm displacement too large for normal variation); Sanborn 'important'"
+    }
+  ],
+
+  "evidence_sources": [
+    {"source": "Elonka Dunin physical rubbings", "date": "2002-10", "type": "first-hand physical", "reliability": "HIGH"},
+    {"source": "Elonka PhreakNIC 26 talk", "date": "2025-11", "type": "second-hand report", "reliability": "MEDIUM"},
+    {"source": "solvingkryptos.com community", "date": "2003-2010", "type": "community observation", "reliability": "LOW"},
+    {"source": "YouTube community video", "date": "2006+", "type": "secondary", "reliability": "LOW"},
+    {"source": "ndyahr_displacement.md (project)", "date": "2026-03-14", "type": "computational analysis", "reliability": "MEDIUM (measurement basis unclear)"},
+    {"source": "anomaly_registry.md (project)", "date": "2026", "type": "synthesis", "reliability": "MEDIUM"}
+  ],
+
+  "contradictions": [
+    {
+      "what": "Letter count",
+      "values": ["3 (YAR)", "5 (DYAHR or DYARO)", "6 (NDYAHR)", "7 (ENDYAHR)"],
+      "resolution": "Only YAR physically verified; others are scope creep"
+    },
+    {
+      "what": "5th letter identity",
+      "values": ["H (Elonka PN26)", "O (solvingkryptos.com)"],
+      "resolution": "Unresolved — different observers"
+    },
+    {
+      "what": "Antipodes YAR absence",
+      "values": ["Absent (project scripts)", "No photographic verification"],
+      "resolution": "ASSUMED, not confirmed"
+    },
+    {
+      "what": "Internal script consistency",
+      "values": ["e_ndyahr_blind_cryptanalysis.py says '5' but lists 7", "Same file uses 3, 4, and 5 interchangeably"],
+      "resolution": "Terminology debt in codebase"
+    }
+  ],
+
+  "next_steps": [
+    {
+      "priority": "HIGH",
+      "action": "Pixel-level character position measurement from K3/K4 boundary photos",
+      "rationale": "Resolves 3/5/6 letter ambiguity; establishes measurement basis",
+      "files": ["reference/Pictures/cipherlowerleft.jpg", "reference/Pictures/cipherlowermiddle.jpg", "reference/Pictures/obkr.jpg"]
+    },
+    {
+      "priority": "HIGH",
+      "action": "Full-sculpture baseline survey of letter positions",
+      "rationale": "Without normal-variation baseline, cannot distinguish signal from fabrication noise"
+    },
+    {
+      "priority": "HIGH",
+      "action": "Verify Antipodes YAR absence with photographs",
+      "rationale": "Antipodes comparison is currently assumed, not confirmed"
+    },
+    {
+      "priority": "MEDIUM",
+      "action": "Test NDYAHR directions coupled WITH 15/24 null mask model",
+      "rationale": "Col-7 directions + col-7 transposition + null mask never tested as a unit"
+    },
+    {
+      "priority": "MEDIUM",
+      "action": "Test YAR as verification (output property) rather than input",
+      "rationale": "Inverts hypothesis direction — has the anomaly been tested wrong?"
+    }
+  ],
+
+  "do_not_repeat": [
+    "YAR values as Vimark/Gromark primer",
+    "YAR selective substitution (tableau chars at YAR positions)",
+    "NDYAHR removal from K1+K2+K3 as running key",
+    "NDYAHR directional vectors as transposition offsets (standalone)",
+    "NDYAHR mod-30 null mask generator",
+    "K3 with NDYAHR removed as hidden message",
+    "All 10 hypotheses from ndyahr_displacement.md cipher testing",
+    "Hill cipher with YART matrix parameters"
+  ],
+
+  "verdict": {
+    "anomaly_real": "YES (YAR core verified by physical rubbings)",
+    "anomaly_intentional": "VERY LIKELY (Sanborn 'important'; 'no mistakes with 1800 letters')",
+    "anomaly_cryptographic": "UNDETERMINED (all direct-mechanism tests fail; may be structural signpost or require coupling with undiscovered mechanism)",
+    "sequence_stable": "NO (only YAR verified; extensions DYAHR/NDYAHR are unverified scope creep)",
+    "antipodes_control_valid": "NOT CONFIRMED (YAR absence on Antipodes is assumed, not verified)"
+  }
+}

@@ -1,3 +1,46 @@
+# Core build tools
 packaging==26.0
 setuptools==82.0.0
 wheel==0.46.3
+
+# Testing
+pytest==9.0.2
+
+# Scientific computing (core)
+numpy==2.4.3
+scipy==1.17.1
+sympy==1.14.0
+
+# Performance acceleration
+numba==0.65.0
+
+# Constraint solving
+z3-solver==4.16.0.0
+ortools==9.15.6755
+
+# Statistical testing
+statsmodels==0.14.6
+resample==1.10.2
+
+# Optimization / search
+simanneal==0.5.0
+
+# Parallelism
+joblib==1.5.3
+
+# Combinatorics
+more-itertools==11.0.1
+
+# Web / API (internal.com)
+fastapi==0.132.0
+uvicorn==0.41.0
+jinja2==3.1.6
+python-dotenv==1.2.1
+
+# Document processing
+PyMuPDF==1.27.1
+pillow==12.1.1
+
+# AI / Agent SDK
+anthropic==0.83.0
+agent-sdk==0.1.44
