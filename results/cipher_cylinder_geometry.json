@@ -1,0 +1,101 @@
+{
+  "experiment": "E-CYLINDER-GEOM-01",
+  "description": "Cipher cylinder geometry \u2014 pool as mandrel, progressive offset from width/radius mismatch",
+  "pool_diameter_inches": 66,
+  "total_configs": 10638,
+  "best_score": 6,
+  "verdict": "NOISE",
+  "runtime_s": 0.4,
+  "top10": [
+    {
+      "score": 6,
+      "delta": -1.5,
+      "offset": 24,
+      "variant": "var_beaufort",
+      "row_width": 29,
+      "hypothesis": "H1_progressive",
+      "pt_preview": "MAKSWRBTMOCULDAYWURSOYFMRNOORKEJSTQWAYWZRZCDQXNOMR"
+    },
+    {
+      "score": 6,
+      "delta": -1.0,
+      "offset": 24,
+      "variant": "var_beaufort",
+      "row_width": 29,
+      "hypothesis": "H1_progressive",
+      "pt_preview": "MAKSWRBTMOCULDAYWURSOYFMRNOORKEJSTQWAYWZRZCDQXNOMR"
+    },
+    {
+      "score": 6,
+      "delta": -0.5,
+      "offset": 24,
+      "variant": "var_beaufort",
+      "row_width": 30,
+      "hypothesis": "H1_progressive",
+      "pt_preview": "MAKSWRBTMOCULDAYWURSOYFMRNOOROEJSTQWAYWZRZCDQXNOMR"
+    },
+    {
+      "score": 6,
+      "width": 27,
+      "variant": "beaufort",
+      "keyword": "KRYPTOS",
+      "sub_keyword": "KRYPTOS",
+      "nullmask": false,
+      "hypothesis": "H3_cylinder_trans+sub",
+      "pt_preview": "WBFJSWZAGCKJUFQUNQEDJVRSXXLRUIVOPCQJYXVFIPRACFLYXQ"
+    },
+    {
+      "score": 6,
+      "width": 27,
+      "variant": "beaufort",
+      "keyword": "KRYPTOS",
+      "sub_keyword": "KRYPTOS",
+      "nullmask": false,
+      "hypothesis": "H3_cylinder_trans+sub",
+      "pt_preview": "WBFJSWZAGCKJUFQUNQEDJVRSXXLRUIVOPCQJYXVFIPRACFLYXQ"
+    },
+    {
+      "score": 6,
+      "width": 27,
+      "variant": "beaufort",
+      "keyword": "KRYPTOS",
+      "sub_keyword": "KRYPTOS",
+      "nullmask": false,
+      "hypothesis": "H3_cylinder_trans+sub",
+      "pt_preview": "WBFJSWZAGCKJUFQUNQEDJVRSXXLRUIVOPCQJYXVFIPRACFLYXQ"
+    },
+    {
+      "score": 6,
+      "width": 36,
+      "variant": "beaufort",
+      "keyword": "PALIMPSEST",
+      "sub_keyword": "KRYPTOS",
+      "nullmask": false,
+      "hypothesis": "H3_cylinder_trans+sub",
+      "pt_preview": "TLYMXPWDVLVWWFAQGUPAHVZEDKORTHFAJYINXOTLJWEXFRTAEF"
+    },
+    {
+      "score": 6,
+      "width": 36,
+      "variant": "beaufort",
+      "keyword": "PALIMPSEST",
+      "sub_keyword": "KRYPTOS",
+      "nullmask": false,
+      "hypothesis": "H3_cylinder_trans+sub",
+      "pt_preview": "TLYMXPWDVLVWWFAQGUPAHVZEDKORTHFAJYINXOTLJWEXFRTAEF"
+    },
+    {
+      "score": 6,
+      "width": 36,
+      "variant": "beaufort",
+      "keyword": "PALIMPSEST",
+      "sub_keyword": "KRYPTOS",
+      "nullmask": false,
+      "hypothesis": "H3_cylinder_trans+sub",
+      "pt_preview": "TLYMXPWDVLVWWFAQGUPAHVZEDKORTHFAJYINXOTLJWEXFRTAEF"
+    }
+  ],
+  "h1_jobs": 7800,
+  "h2_jobs": 2574,
+  "h3_jobs": 264
+}
