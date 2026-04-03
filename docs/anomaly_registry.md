@@ -376,9 +376,10 @@ E, U (from Morse-side). The "EQUAL" anagram is therefore INVALID.
 - **A1** (LAYER TWO): Confirmed instruction. Compound encipherment.
 - **D1** (Compass/lodestone): Physical calibration. Points to EASTNORTHEAST.
 - **C5** (T IS YOUR POSITION): Operational instruction from Scheidt's world.
-- **A5** (YAR superscript): Most conspicuous physical anomaly. On the K3/K4 boundary.
+  *(A5/YAR downgraded to Tier 2 on 2026-04-03 — see below)*
 
 ### Tier 2: Probably operative (Sanborn evasive = likely intentional)
+- **A5** (YAR superscript): Physical displacement confirmed (Elonka rubbings 2002). Sanborn reportedly said "important." Downgraded from Tier 1 (2026-04-03 audit): 50 scripts zero cipher signal; hand-jigsaw fabrication makes baseline displacement expected; no full-sculpture baseline survey; quote provenance weak. Likely structural signpost, not direct key material. See `reports/yar_anomaly_audit_2026_04_03.md`.
 - **A3** (UNDERGRUUND): Transcription-phase change. Sculpture â‰  coding chart.
 - **A4** (DESPARATLY): Sanborn's REFUSAL to answer is the loudest signal.
 - **B1** (Extra L / HILL): Creates a cipher name on the tableau. Same line as YAR.
