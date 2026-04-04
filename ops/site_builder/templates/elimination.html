@@ -15,7 +15,14 @@
 
 <p>{{ e.description }}</p>
 
-{% if e.configs_tested > 0 %}
+{% if e.plain_summary %}
+<div class="plain-summary">
+  <strong>In plain English:</strong> {{ e.plain_summary }}
+  {% if e.best_score is not none and e.best_score < 24 %}
+    <strong>This approach is ruled out within the tested scope.</strong>
+  {% endif %}
+</div>
+{% elif e.configs_tested > 0 %}
 <div class="plain-summary">
   We tested {{ "{:,}".format(e.configs_tested) }} configurations of {{ e.cipher_type or "this approach" }}.
   {% if e.best_score is not none %}

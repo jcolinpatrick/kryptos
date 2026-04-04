@@ -47,6 +47,9 @@ class SiteElimination:
     # Searchable keywords tested in this experiment
     keywords_tested: list[str] = field(default_factory=list)
 
+    # Plain-English summary for non-technical readers
+    plain_summary: str = ""
+
     # Extra fields from results JSON (unstructured)
     extra: dict[str, Any] = field(default_factory=dict)
 
@@ -589,7 +592,7 @@ def apply_overrides(
             "period_range", "key_model", "transposition_family", "alphabet",
             "confidence_tier", "scope_limitations", "assumptions",
             "repro_command", "truth_tag", "verdict",
-            "configs_tested", "best_score",
+            "configs_tested", "best_score", "plain_summary",
         ):
             if attr in ovr:
                 setattr(elim, attr, ovr[attr])
@@ -768,6 +771,9 @@ def load_all(
     for elim in site_elims:
         elim.title = _humanize_title(elim)
 
+    # Note: plain-English summaries are generated AFTER categorization in build.py
+    # (since they depend on category/subcategory assignments)
+
     total = len(site_elims)
     print(f"\nTotal eliminations loaded: {total}")
     return site_elims, rq_coverage, research_questions, tier_assignments
@@ -825,3 +831,202 @@ def _humanize_title(elim: SiteElimination) -> str:
         else:
             result.append(w.capitalize())
     return " ".join(result) if result else title
+
+
+# ---------------------------------------------------------------------------
+# Plain-English summary generation
+# ---------------------------------------------------------------------------
+
+# Maps category/subcategory → plain-English descriptions of the cipher type
+_PLAIN_CIPHER_DESCRIPTIONS: dict[str, str] = {
+    # Substitution
+    "vigenere": "a method that replaces each letter using a repeating keyword (Vigenère cipher)",
+    "beaufort": "a method that replaces each letter using a repeating keyword with reversed arithmetic (Beaufort cipher)",
+    "quagmire": "a method that uses a scrambled alphabet with a repeating keyword (Quagmire cipher)",
+    "gromark-vimark": "a method that generates key numbers using Fibonacci-like sequences (Gromark/Vimark cipher)",
+    "porta": "a method that uses 13 paired-letter alphabets selected by a keyword (Porta cipher)",
+    "gronsfeld": "a method that uses a numeric key (digits only) to shift letters (Gronsfeld cipher)",
+    "hill": "a method that encrypts groups of letters using matrix multiplication (Hill cipher)",
+    "caesar-affine": "a simple letter-shifting method (Caesar/ROT cipher or affine substitution)",
+    "monoalphabetic": "a method that replaces each letter with a fixed substitute (simple substitution)",
+    "mixed-alphabet": "a method using a scrambled alphabet for substitution",
+    "keystream-analysis": "analysis of the internal key values the cipher would need to produce",
+    # Transposition
+    "columnar": "a method that writes text into a grid and reads columns in a keyword-determined order (columnar transposition)",
+    "double-columnar": "two rounds of columnar transposition applied back-to-back",
+    "myszkowski": "a columnar transposition variant where repeated keyword letters create tied columns",
+    "amsco": "a columnar transposition variant that alternates between 1 and 2 characters per cell",
+    "nihilist-transposition": "a transposition variant with swapped or modified column reading",
+    "rail-fence": "a method that writes text in a zigzag pattern across rows (rail fence cipher)",
+    "route-cipher": "a method that writes text into a grid and reads it along a path (spiral, zigzag, etc.)",
+    "turning-grille": "a method using a physical card with holes that rotates to select letters (grille cipher)",
+    "grid-rotation": "a method that reads text from a grid in various rotated arrangements",
+    "cyclic-affine": "simple rearrangements like shifting all letters by a fixed amount or reversing blocks",
+    "reading-order": "alternative ways of reading the carved text (backwards, alternating rows, etc.)",
+    "sa-optimization": "computer-optimized letter rearrangement using simulated annealing",
+    # Fractionation
+    "bifid": "a method that breaks letters into grid coordinates, mixes them, and reassembles (Bifid cipher)",
+    "trifid": "a method that breaks letters into three-part coordinates and recombines them (Trifid cipher)",
+    "adfgvx": "a WWI German cipher that converts letters to pairs of 6 symbols then transposes them (ADFGVX)",
+    "playfair": "a method that encrypts pairs of letters using a 5×5 grid (Playfair cipher)",
+    "two-square": "a method that encrypts letter pairs using two 5×5 grids (Two-Square cipher)",
+    "four-square": "a method that encrypts letter pairs using four 5×5 grids (Four-Square cipher)",
+    "polybius": "a method that converts letters to number pairs using a grid (Polybius square)",
+    "straddling-checkerboard": "a method that encodes letters as variable-length digit sequences",
+    # Multi-layer
+    "transposition-plus-substitution": "a combined approach: scramble the letter order AND replace each letter",
+    "null-extraction": "the hypothesis that some letters in the carved text are meaningless filler (nulls) inserted to disguise the real message",
+    "cascade": "multiple encryption steps applied one after another",
+    "three-layer": "three encryption steps: substitute, scramble, then substitute again",
+    "joint-transposition": "simultaneous optimization of letter rearrangement and substitution",
+    "constraint-propagation": "backward reasoning from known constraints to narrow possibilities",
+    "homophonic-hybrid": "a method where each letter can be represented by multiple different symbols",
+    # Key models
+    "running-key": "using a passage from a book or document as the encryption key",
+    "autokey": "a method where the key starts with a short word, then extends using the message itself",
+    "progressive": "a key that increases by a fixed amount at each position",
+    "date-derived": "a key derived from a date (like when Kryptos was built)",
+    "keyword-derived": "a key derived from a thematic word or phrase",
+    "fibonacci-polynomial": "a key generated by a mathematical formula (Fibonacci, polynomial, etc.)",
+    "sculpture-derived": "a key derived from the physical position of letters on the sculpture",
+    "thematic": "a key based on themes from the sculpture (Egypt, CIA, Berlin, etc.)",
+    "k123-derived": "a key derived from the solutions to K1, K2, or K3",
+    # Bespoke
+    "physical-sculpture": "methods based on the physical properties of the sculpture itself",
+    "nato-comsec": "military or Cold War era cipher systems (VIC, DRYAD, one-time pads, etc.)",
+    "tableau-methods": "non-standard encryption tables or lookup charts",
+}
+
+# Maps category → high-level plain-English description
+_PLAIN_CATEGORY_DESCRIPTIONS: dict[str, str] = {
+    "substitution": "replacing each letter with a different letter",
+    "transposition": "rearranging the order of letters",
+    "fractionation": "breaking letters into pieces, scrambling, and reassembling",
+    "multi-layer": "combining multiple encryption methods",
+    "key-models": "different ways of generating the secret key",
+    "bespoke": "non-standard or physically-inspired methods",
+}
+
+
+def _format_count(n: int) -> str:
+    """Format a large number into a readable string."""
+    if n >= 1_000_000_000:
+        return f"{n / 1_000_000_000:.1f} billion"
+    elif n >= 1_000_000:
+        return f"{n / 1_000_000:.1f} million"
+    elif n >= 1_000:
+        return f"{n / 1_000:,.0f} thousand"
+    return f"{n:,}"
+
+
+def _extract_specific_detail(elim: SiteElimination) -> str:
+    """Extract the distinguishing detail from an elimination's title/description.
+
+    The goal is to find what makes THIS test different from others in the same
+    category — the specific texts tested, the specific parameters, the specific
+    twist on the idea. Returns a lowercase phrase suitable for embedding in a
+    sentence like "Specifically, we tested ___."
+    """
+    # Use description first (usually more detailed), fall back to title
+    text = elim.description or elim.title or ""
+    if not text:
+        return ""
+
+    # Clean up common prefixes that don't add information
+    import re
+    # Strip experiment ID prefixes like "E-FOO-01: "
+    text = re.sub(r'^[Ee]-[\w-]+:\s*', '', text)
+    # Strip "Running key from " — we'll provide our own framing
+    text = re.sub(r'^Running key from\s+', '', text, flags=re.IGNORECASE)
+
+    # If the remaining text is very short or matches title exactly, use title
+    if len(text) < 5:
+        text = elim.title or ""
+        text = re.sub(r'^[Ee]-[\w-]+:\s*', '', text)
+
+    # Truncate to first sentence if long
+    first_sentence = text.split('. ')[0].split('; ')[0]
+    if len(first_sentence) > 200:
+        first_sentence = first_sentence[:197] + "..."
+
+    return first_sentence.strip().rstrip('.')
+
+
+def _generate_plain_summary(elim: SiteElimination) -> str:
+    """Generate a plain-English summary from the technical fields of an elimination.
+
+    Produces 1-3 sentences that a non-cryptographer can understand, covering:
+    - What SPECIFICALLY was tested (from title/description, not just category)
+    - The technique category (in plain language) for context
+    - How thoroughly and what the result was
+    """
+    parts = []
+
+    # 1. What SPECIFICALLY was tested — the distinguishing detail
+    specific = _extract_specific_detail(elim)
+
+    # Get the category-level technique description for context
+    technique = ""
+    if elim.subcategory:
+        technique = _PLAIN_CIPHER_DESCRIPTIONS.get(elim.subcategory, "")
+    if not technique and elim.category:
+        cat_desc = _PLAIN_CATEGORY_DESCRIPTIONS.get(elim.category, "")
+        if cat_desc:
+            technique = f"a method based on {cat_desc}"
+
+    # Build the opening sentence combining specifics + technique
+    if specific and technique:
+        # Specific detail exists — lead with it, add technique as context
+        # Avoid "using using" when technique already starts with "using"
+        connector = "—" if technique.startswith("using") else "— using"
+        parts.append(f"{specific} {connector} {technique}.")
+    elif specific:
+        # Only specifics, no technique mapping
+        parts.append(f"{specific}.")
+    elif technique:
+        # Only technique, no specifics — generic fallback
+        parts.append(f"We tested {technique}.")
+    elif elim.cipher_type:
+        parts.append(f"We tested {elim.cipher_type}.")
+    else:
+        parts.append("We tested this encryption approach.")
+
+    # 2. How thoroughly + result combined
+    if elim.configs_tested > 0:
+        count_str = _format_count(elim.configs_tested)
+
+        if elim.confidence_tier == 1:
+            parts.append("Mathematically proven impossible — no key or setting can make it work.")
+        elif elim.confidence_tier == 2:
+            parts.append(f"Every possible combination was tested ({count_str} configurations) — none produced a valid solution.")
+        else:
+            parts.append(f"{count_str} key/parameter combinations were tested.")
+
+    elif elim.confidence_tier == 1:
+        parts.append("Mathematically proven impossible — no key or setting can make it work.")
+
+    # 3. Score context (only if it adds useful info)
+    if elim.best_score is not None and elim.best_score > 0:
+        if elim.best_score >= 24:
+            parts.append("The best result matched all 24 known letters — under investigation.")
+        elif elim.best_score >= 18:
+            parts.append(
+                f"Best match: {elim.best_score}/24 known letters "
+                f"(statistically expected at this key length, not a real signal)."
+            )
+        elif elim.best_score >= 10:
+            parts.append(
+                f"Best match: {elim.best_score}/24 known letters — "
+                f"slightly above random, almost certainly coincidence."
+            )
+        # Skip mentioning low scores — "no better than random" is obvious
+        # and just adds noise to the summary
+
+    return " ".join(parts)
+
+
+def generate_all_plain_summaries(eliminations: list[SiteElimination]) -> None:
+    """Generate plain-English summaries for all eliminations that don't already have one."""
+    for elim in eliminations:
+        if not elim.plain_summary:
+            elim.plain_summary = _generate_plain_summary(elim)

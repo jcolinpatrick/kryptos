@@ -30,6 +30,64 @@
 </details>
 
 <details>
+  <summary>Did you try scrambling the letters AND using a keyed substitution?</summary>
+  <p>
+    Yes. This is one of the most common suggestions we receive, and we&rsquo;ve tested
+    it extensively. We combined <strong>14 different letter-rearrangement methods</strong>
+    (columnar grids at all widths, rail fence, spiral, zigzag, double columnar, and more)
+    with <strong>keyed substitution</strong> (Vigen&egrave;re, Beaufort, and Variant Beaufort
+    with every possible key length). Over <strong>1.2 billion combinations</strong> were tested.
+    None produced a solution.
+  </p>
+  <p>
+    We also <strong>mathematically proved</strong> that for 17 out of 25 possible key lengths,
+    no rearrangement of any kind &mdash; not just the structured ones &mdash; can produce a valid
+    solution with a repeating-key cipher. This proof holds for all 97! possible letter orderings
+    (a number with 152 digits).
+  </p>
+  <p>
+    However, some combinations remain open: if the substitution uses a <strong>non-repeating key</strong>
+    (like a passage from a book), the rearrangement + substitution model is still possible. This is
+    one of the leading hypotheses. See the
+    <a href="/browse/multi-layer/">multi-layer category</a> for full details.
+  </p>
+</details>
+
+<details>
+  <summary>Why can&rsquo;t you just try every possible letter rearrangement?</summary>
+  <p>
+    K4 has 97 characters. The number of possible rearrangements of 97 characters
+    is 97! (97 factorial), which equals approximately 10<sup>152</sup>. For comparison,
+    there are roughly 10<sup>80</sup> atoms in the observable universe. Even if every
+    atom in the universe were a computer testing one billion rearrangements per second,
+    running for the entire age of the universe, you&rsquo;d barely scratch the surface.
+  </p>
+  <p>
+    This is why we test <strong>structured</strong> rearrangement methods &mdash; methods a
+    human could describe with a rule (like &ldquo;write into 8 columns, read them in
+    this order&rdquo;). A human encryptor like Sanborn would have used a describable
+    method, not a random shuffling.
+  </p>
+</details>
+
+<details>
+  <summary>What about [specific keyword] as the key?</summary>
+  <p>
+    We&rsquo;ve tested hundreds of thematic keywords including KRYPTOS, PALIMPSEST,
+    ABSCISSA, BERLIN, TUTANKHAMUN, SANBORN, SCHEIDT, COMPASS, SHADOW, SPHINX, and
+    many more. But more importantly: <strong>the specific keyword doesn&rsquo;t matter</strong>
+    for most cipher types we&rsquo;ve tested, because we tested <em>every possible key
+    of every possible length</em>, which includes any keyword you could name.
+  </p>
+  <p>
+    The exception is <strong>running keys</strong> (where a long passage of text is the key).
+    For those, the specific source text matters, and we&rsquo;ve only tested texts that are
+    publicly available. If Sanborn used a private or unpublished text, we wouldn&rsquo;t have
+    tested it.
+  </p>
+</details>
+
+<details>
   <summary>What approaches remain open?</summary>
   <p>
     All standard single-layer cipher families have been eliminated under direct
