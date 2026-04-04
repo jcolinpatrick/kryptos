@@ -420,7 +420,7 @@ def _build_standalone_viewer(
       <span></span><span></span><span></span>
     </label>
     <ul class="nav-links">
-      <li><a href="/findings/">Findings</a></li>
+      <li><a href="/findings/">What We Learned</a></li>
       <li><a href="/browse/">Eliminations</a></li>
       <li><a href="/methodology/">How We Test</a></li>
       <li><a href="/research-questions/">Open Questions</a></li>
@@ -560,7 +560,7 @@ def _build_cylinder_viewer(global_ctx: dict):
       <span></span><span></span><span></span>
     </label>
     <ul class="nav-links">
-      <li><a href="/findings/">Findings</a></li>
+      <li><a href="/findings/">What We Learned</a></li>
       <li><a href="/browse/">Eliminations</a></li>
       <li><a href="/methodology/">How We Test</a></li>
       <li><a href="/research-questions/">Open Questions</a></li>
