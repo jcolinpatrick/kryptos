@@ -1,0 +1,2495 @@
+[
+  {
+    "num": 1251,
+    "file": "IMG_1251.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 2167785,
+    "mean_luminance": 170.4,
+    "std_luminance": 34.4
+  },
+  {
+    "num": 1252,
+    "file": "IMG_1252.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1914439,
+    "mean_luminance": 158.0,
+    "std_luminance": 43.8
+  },
+  {
+    "num": 1253,
+    "file": "IMG_1253.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1839222,
+    "mean_luminance": 166.2,
+    "std_luminance": 44.0
+  },
+  {
+    "num": 1254,
+    "file": "IMG_1254.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1988729,
+    "mean_luminance": 166.0,
+    "std_luminance": 41.5
+  },
+  {
+    "num": 1255,
+    "file": "IMG_1255.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1595637,
+    "mean_luminance": 161.2,
+    "std_luminance": 38.3
+  },
+  {
+    "num": 1256,
+    "file": "IMG_1256.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1713326,
+    "mean_luminance": 161.2,
+    "std_luminance": 34.9
+  },
+  {
+    "num": 1257,
+    "file": "IMG_1257.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 2473636,
+    "mean_luminance": 161.0,
+    "std_luminance": 40.1
+  },
+  {
+    "num": 1258,
+    "file": "IMG_1258.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1928527,
+    "mean_luminance": 163.2,
+    "std_luminance": 41.6
+  },
+  {
+    "num": 1259,
+    "file": "IMG_1259.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 2406552,
+    "mean_luminance": 161.5,
+    "std_luminance": 40.8
+  },
+  {
+    "num": 1260,
+    "file": "IMG_1260.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 2172429,
+    "mean_luminance": 166.6,
+    "std_luminance": 39.1
+  },
+  {
+    "num": 1261,
+    "file": "IMG_1261.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 2489417,
+    "mean_luminance": 156.3,
+    "std_luminance": 41.0
+  },
+  {
+    "num": 1262,
+    "file": "IMG_1262.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 2128100,
+    "mean_luminance": 166.8,
+    "std_luminance": 33.4
+  },
+  {
+    "num": 1263,
+    "file": "IMG_1263.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 2266146,
+    "mean_luminance": 166.8,
+    "std_luminance": 39.2
+  },
+  {
+    "num": 1264,
+    "file": "IMG_1264.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1526088,
+    "mean_luminance": 162.9,
+    "std_luminance": 31.4
+  },
+  {
+    "num": 1265,
+    "file": "IMG_1265.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 2144456,
+    "mean_luminance": 164.8,
+    "std_luminance": 38.0
+  },
+  {
+    "num": 1266,
+    "file": "IMG_1266.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 2297690,
+    "mean_luminance": 160.3,
+    "std_luminance": 36.6
+  },
+  {
+    "num": 1267,
+    "file": "IMG_1267.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1993505,
+    "mean_luminance": 168.1,
+    "std_luminance": 36.7
+  },
+  {
+    "num": 1268,
+    "file": "IMG_1268.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1793837,
+    "mean_luminance": 171.2,
+    "std_luminance": 40.0
+  },
+  {
+    "num": 1269,
+    "file": "IMG_1269.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 2309762,
+    "mean_luminance": 170.9,
+    "std_luminance": 39.6
+  },
+  {
+    "num": 1270,
+    "file": "IMG_1270.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1918745,
+    "mean_luminance": 168.1,
+    "std_luminance": 38.7
+  },
+  {
+    "num": 1271,
+    "file": "IMG_1271.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1420641,
+    "mean_luminance": 163.1,
+    "std_luminance": 33.3
+  },
+  {
+    "num": 1272,
+    "file": "IMG_1272.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1867178,
+    "mean_luminance": 168.8,
+    "std_luminance": 36.9
+  },
+  {
+    "num": 1273,
+    "file": "IMG_1273.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 2189720,
+    "mean_luminance": 166.3,
+    "std_luminance": 37.2
+  },
+  {
+    "num": 1274,
+    "file": "IMG_1274.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1977731,
+    "mean_luminance": 169.8,
+    "std_luminance": 42.0
+  },
+  {
+    "num": 1275,
+    "file": "IMG_1275.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 2065798,
+    "mean_luminance": 159.2,
+    "std_luminance": 44.9
+  },
+  {
+    "num": 1276,
+    "file": "IMG_1276.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1773868,
+    "mean_luminance": 157.0,
+    "std_luminance": 38.9
+  },
+  {
+    "num": 1277,
+    "file": "IMG_1277.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 2361857,
+    "mean_luminance": 166.2,
+    "std_luminance": 43.1
+  },
+  {
+    "num": 1278,
+    "file": "IMG_1278.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 2077435,
+    "mean_luminance": 165.2,
+    "std_luminance": 33.1
+  },
+  {
+    "num": 1279,
+    "file": "IMG_1279.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1994188,
+    "mean_luminance": 170.1,
+    "std_luminance": 37.0
+  },
+  {
+    "num": 1280,
+    "file": "IMG_1280.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 2050530,
+    "mean_luminance": 163.5,
+    "std_luminance": 36.8
+  },
+  {
+    "num": 1281,
+    "file": "IMG_1281.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 2060914,
+    "mean_luminance": 163.2,
+    "std_luminance": 37.3
+  },
+  {
+    "num": 1282,
+    "file": "IMG_1282.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 2084904,
+    "mean_luminance": 160.3,
+    "std_luminance": 40.0
+  },
+  {
+    "num": 1283,
+    "file": "IMG_1283.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 2296532,
+    "mean_luminance": 164.6,
+    "std_luminance": 45.1
+  },
+  {
+    "num": 1284,
+    "file": "IMG_1284.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 2199618,
+    "mean_luminance": 164.4,
+    "std_luminance": 43.1
+  },
+  {
+    "num": 1285,
+    "file": "IMG_1285.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 2100807,
+    "mean_luminance": 167.6,
+    "std_luminance": 35.5
+  },
+  {
+    "num": 1286,
+    "file": "IMG_1286.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 2129224,
+    "mean_luminance": 164.9,
+    "std_luminance": 35.2
+  },
+  {
+    "num": 1287,
+    "file": "IMG_1287.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1834113,
+    "mean_luminance": 166.3,
+    "std_luminance": 39.7
+  },
+  {
+    "num": 1288,
+    "file": "IMG_1288.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1762612,
+    "mean_luminance": 167.3,
+    "std_luminance": 35.8
+  },
+  {
+    "num": 1289,
+    "file": "IMG_1289.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 2247308,
+    "mean_luminance": 167.7,
+    "std_luminance": 37.7
+  },
+  {
+    "num": 1290,
+    "file": "IMG_1290.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 2015182,
+    "mean_luminance": 160.8,
+    "std_luminance": 40.5
+  },
+  {
+    "num": 1291,
+    "file": "IMG_1291.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1709419,
+    "mean_luminance": 166.4,
+    "std_luminance": 38.2
+  },
+  {
+    "num": 1292,
+    "file": "IMG_1292.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1891584,
+    "mean_luminance": 165.6,
+    "std_luminance": 32.2
+  },
+  {
+    "num": 1293,
+    "file": "IMG_1293.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1813867,
+    "mean_luminance": 164.6,
+    "std_luminance": 32.8
+  },
+  {
+    "num": 1294,
+    "file": "IMG_1294.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1782099,
+    "mean_luminance": 165.4,
+    "std_luminance": 46.8
+  },
+  {
+    "num": 1295,
+    "file": "IMG_1295.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 2320839,
+    "mean_luminance": 165.4,
+    "std_luminance": 49.4
+  },
+  {
+    "num": 1296,
+    "file": "IMG_1296.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1906773,
+    "mean_luminance": 164.8,
+    "std_luminance": 30.0
+  },
+  {
+    "num": 1297,
+    "file": "IMG_1297.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1837565,
+    "mean_luminance": 164.6,
+    "std_luminance": 42.7
+  },
+  {
+    "num": 1298,
+    "file": "IMG_1298.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 2325982,
+    "mean_luminance": 165.6,
+    "std_luminance": 44.8
+  },
+  {
+    "num": 1299,
+    "file": "IMG_1299.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 2127034,
+    "mean_luminance": 162.6,
+    "std_luminance": 52.0
+  },
+  {
+    "num": 1300,
+    "file": "IMG_1300.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 2311053,
+    "mean_luminance": 159.7,
+    "std_luminance": 49.8
+  },
+  {
+    "num": 1301,
+    "file": "IMG_1301.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 2248901,
+    "mean_luminance": 165.4,
+    "std_luminance": 48.1
+  },
+  {
+    "num": 1302,
+    "file": "IMG_1302.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 2297675,
+    "mean_luminance": 166.1,
+    "std_luminance": 43.1
+  },
+  {
+    "num": 1303,
+    "file": "IMG_1303.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 2358056,
+    "mean_luminance": 157.2,
+    "std_luminance": 53.3
+  },
+  {
+    "num": 1304,
+    "file": "IMG_1304.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 2257886,
+    "mean_luminance": 163.7,
+    "std_luminance": 50.7
+  },
+  {
+    "num": 1305,
+    "file": "IMG_1305.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1539429,
+    "mean_luminance": 168.3,
+    "std_luminance": 28.0
+  },
+  {
+    "num": 1306,
+    "file": "IMG_1306.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1897922,
+    "mean_luminance": 166.9,
+    "std_luminance": 27.5
+  },
+  {
+    "num": 1307,
+    "file": "IMG_1307.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 2417393,
+    "mean_luminance": 159.5,
+    "std_luminance": 55.7
+  },
+  {
+    "num": 1308,
+    "file": "IMG_1308.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 2031053,
+    "mean_luminance": 167.9,
+    "std_luminance": 41.6
+  },
+  {
+    "num": 1309,
+    "file": "IMG_1309.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1851213,
+    "mean_luminance": 166.4,
+    "std_luminance": 35.5
+  },
+  {
+    "num": 1310,
+    "file": "IMG_1310.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 2275993,
+    "mean_luminance": 166.9,
+    "std_luminance": 37.2
+  },
+  {
+    "num": 1311,
+    "file": "IMG_1311.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 2448295,
+    "mean_luminance": 159.5,
+    "std_luminance": 43.8
+  },
+  {
+    "num": 1312,
+    "file": "IMG_1312.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1948005,
+    "mean_luminance": 163.1,
+    "std_luminance": 40.4
+  },
+  {
+    "num": 1313,
+    "file": "IMG_1313.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 2413751,
+    "mean_luminance": 165.2,
+    "std_luminance": 44.0
+  },
+  {
+    "num": 1314,
+    "file": "IMG_1314.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1468543,
+    "mean_luminance": 157.8,
+    "std_luminance": 40.7
+  },
+  {
+    "num": 1315,
+    "file": "IMG_1315.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1256184,
+    "mean_luminance": 157.7,
+    "std_luminance": 54.4
+  },
+  {
+    "num": 1316,
+    "file": "IMG_1316.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1383670,
+    "mean_luminance": 156.2,
+    "std_luminance": 54.9
+  },
+  {
+    "num": 1317,
+    "file": "IMG_1317.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1502544,
+    "mean_luminance": 157.3,
+    "std_luminance": 41.3
+  },
+  {
+    "num": 1318,
+    "file": "IMG_1318.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 2280789,
+    "mean_luminance": 164.5,
+    "std_luminance": 43.0
+  },
+  {
+    "num": 1319,
+    "file": "IMG_1319.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1433369,
+    "mean_luminance": 163.1,
+    "std_luminance": 43.2
+  },
+  {
+    "num": 1320,
+    "file": "IMG_1320.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1495142,
+    "mean_luminance": 162.0,
+    "std_luminance": 41.9
+  },
+  {
+    "num": 1321,
+    "file": "IMG_1321.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1938173,
+    "mean_luminance": 166.9,
+    "std_luminance": 38.3
+  },
+  {
+    "num": 1322,
+    "file": "IMG_1322.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 2027160,
+    "mean_luminance": 157.4,
+    "std_luminance": 41.4
+  },
+  {
+    "num": 1323,
+    "file": "IMG_1323.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1749864,
+    "mean_luminance": 171.3,
+    "std_luminance": 36.2
+  },
+  {
+    "num": 1324,
+    "file": "IMG_1324.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1410866,
+    "mean_luminance": 166.0,
+    "std_luminance": 44.0
+  },
+  {
+    "num": 1325,
+    "file": "IMG_1325.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1610977,
+    "mean_luminance": 163.4,
+    "std_luminance": 39.9
+  },
+  {
+    "num": 1326,
+    "file": "IMG_1326.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 2031133,
+    "mean_luminance": 165.0,
+    "std_luminance": 39.6
+  },
+  {
+    "num": 1327,
+    "file": "IMG_1327.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 2361205,
+    "mean_luminance": 164.6,
+    "std_luminance": 41.4
+  },
+  {
+    "num": 1328,
+    "file": "IMG_1328.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1995744,
+    "mean_luminance": 165.0,
+    "std_luminance": 39.3
+  },
+  {
+    "num": 1329,
+    "file": "IMG_1329.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 2354379,
+    "mean_luminance": 165.6,
+    "std_luminance": 44.4
+  },
+  {
+    "num": 1330,
+    "file": "IMG_1330.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 2432233,
+    "mean_luminance": 156.2,
+    "std_luminance": 46.2
+  },
+  {
+    "num": 1331,
+    "file": "IMG_1331.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1524193,
+    "mean_luminance": 160.0,
+    "std_luminance": 52.0
+  },
+  {
+    "num": 1332,
+    "file": "IMG_1332.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1492522,
+    "mean_luminance": 168.7,
+    "std_luminance": 38.1
+  },
+  {
+    "num": 1333,
+    "file": "IMG_1333.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1764347,
+    "mean_luminance": 151.8,
+    "std_luminance": 43.5
+  },
+  {
+    "num": 1334,
+    "file": "IMG_1334.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1664240,
+    "mean_luminance": 156.4,
+    "std_luminance": 47.8
+  },
+  {
+    "num": 1335,
+    "file": "IMG_1335.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1833145,
+    "mean_luminance": 163.5,
+    "std_luminance": 42.1
+  },
+  {
+    "num": 1336,
+    "file": "IMG_1336.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 2332672,
+    "mean_luminance": 159.5,
+    "std_luminance": 46.1
+  },
+  {
+    "num": 1337,
+    "file": "IMG_1337.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 2434712,
+    "mean_luminance": 158.4,
+    "std_luminance": 49.2
+  },
+  {
+    "num": 1338,
+    "file": "IMG_1338.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 2047109,
+    "mean_luminance": 163.6,
+    "std_luminance": 44.1
+  },
+  {
+    "num": 1339,
+    "file": "IMG_1339.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 2181978,
+    "mean_luminance": 167.9,
+    "std_luminance": 38.0
+  },
+  {
+    "num": 1340,
+    "file": "IMG_1340.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 2551919,
+    "mean_luminance": 158.1,
+    "std_luminance": 47.1
+  },
+  {
+    "num": 1341,
+    "file": "IMG_1341.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1889378,
+    "mean_luminance": 157.9,
+    "std_luminance": 45.2
+  },
+  {
+    "num": 1342,
+    "file": "IMG_1342.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1409787,
+    "mean_luminance": 156.8,
+    "std_luminance": 52.5
+  },
+  {
+    "num": 1343,
+    "file": "IMG_1343.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1399218,
+    "mean_luminance": 162.4,
+    "std_luminance": 48.7
+  },
+  {
+    "num": 1344,
+    "file": "IMG_1344.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1627383,
+    "mean_luminance": 158.3,
+    "std_luminance": 45.4
+  },
+  {
+    "num": 1345,
+    "file": "IMG_1345.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1357421,
+    "mean_luminance": 160.5,
+    "std_luminance": 55.0
+  },
+  {
+    "num": 1346,
+    "file": "IMG_1346.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1323188,
+    "mean_luminance": 162.6,
+    "std_luminance": 47.4
+  },
+  {
+    "num": 1347,
+    "file": "IMG_1347.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1373989,
+    "mean_luminance": 155.9,
+    "std_luminance": 48.6
+  },
+  {
+    "num": 1348,
+    "file": "IMG_1348.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1411523,
+    "mean_luminance": 162.0,
+    "std_luminance": 48.8
+  },
+  {
+    "num": 1349,
+    "file": "IMG_1349.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1516804,
+    "mean_luminance": 160.3,
+    "std_luminance": 48.6
+  },
+  {
+    "num": 1350,
+    "file": "IMG_1350.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1591286,
+    "mean_luminance": 162.0,
+    "std_luminance": 44.7
+  },
+  {
+    "num": 1351,
+    "file": "IMG_1351.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1605791,
+    "mean_luminance": 156.2,
+    "std_luminance": 50.0
+  },
+  {
+    "num": 1352,
+    "file": "IMG_1352.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1370925,
+    "mean_luminance": 163.0,
+    "std_luminance": 45.0
+  },
+  {
+    "num": 1353,
+    "file": "IMG_1353.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1696567,
+    "mean_luminance": 161.8,
+    "std_luminance": 42.3
+  },
+  {
+    "num": 1354,
+    "file": "IMG_1354.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1589536,
+    "mean_luminance": 166.3,
+    "std_luminance": 43.1
+  },
+  {
+    "num": 1355,
+    "file": "IMG_1355.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1948305,
+    "mean_luminance": 166.2,
+    "std_luminance": 41.4
+  },
+  {
+    "num": 1356,
+    "file": "IMG_1356.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 2101782,
+    "mean_luminance": 164.0,
+    "std_luminance": 40.9
+  },
+  {
+    "num": 1357,
+    "file": "IMG_1357.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1947836,
+    "mean_luminance": 161.0,
+    "std_luminance": 43.5
+  },
+  {
+    "num": 1358,
+    "file": "IMG_1358.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1483740,
+    "mean_luminance": 165.3,
+    "std_luminance": 39.5
+  },
+  {
+    "num": 1359,
+    "file": "IMG_1359.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 2045701,
+    "mean_luminance": 164.9,
+    "std_luminance": 42.0
+  },
+  {
+    "num": 1360,
+    "file": "IMG_1360.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 2307877,
+    "mean_luminance": 169.8,
+    "std_luminance": 41.2
+  },
+  {
+    "num": 1361,
+    "file": "IMG_1361.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1923810,
+    "mean_luminance": 167.6,
+    "std_luminance": 42.9
+  },
+  {
+    "num": 1362,
+    "file": "IMG_1362.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 2070534,
+    "mean_luminance": 163.3,
+    "std_luminance": 45.0
+  },
+  {
+    "num": 1363,
+    "file": "IMG_1363.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 2292767,
+    "mean_luminance": 163.3,
+    "std_luminance": 42.3
+  },
+  {
+    "num": 1364,
+    "file": "IMG_1364.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 2338730,
+    "mean_luminance": 167.3,
+    "std_luminance": 40.0
+  },
+  {
+    "num": 1365,
+    "file": "IMG_1365.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1846709,
+    "mean_luminance": 158.1,
+    "std_luminance": 33.3
+  },
+  {
+    "num": 1366,
+    "file": "IMG_1366.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 2052770,
+    "mean_luminance": 162.3,
+    "std_luminance": 31.5
+  },
+  {
+    "num": 1367,
+    "file": "IMG_1367.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 2447826,
+    "mean_luminance": 162.3,
+    "std_luminance": 41.7
+  },
+  {
+    "num": 1368,
+    "file": "IMG_1368.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 2102045,
+    "mean_luminance": 162.5,
+    "std_luminance": 35.6
+  },
+  {
+    "num": 1369,
+    "file": "IMG_1369.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 2180219,
+    "mean_luminance": 162.4,
+    "std_luminance": 36.3
+  },
+  {
+    "num": 1370,
+    "file": "IMG_1370.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 2076925,
+    "mean_luminance": 161.6,
+    "std_luminance": 48.6
+  },
+  {
+    "num": 1371,
+    "file": "IMG_1371.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 2459780,
+    "mean_luminance": 163.5,
+    "std_luminance": 41.2
+  },
+  {
+    "num": 1372,
+    "file": "IMG_1372.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1676436,
+    "mean_luminance": 160.4,
+    "std_luminance": 36.1
+  },
+  {
+    "num": 1373,
+    "file": "IMG_1373.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 2390439,
+    "mean_luminance": 162.8,
+    "std_luminance": 45.0
+  },
+  {
+    "num": 1374,
+    "file": "IMG_1374.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1981413,
+    "mean_luminance": 164.2,
+    "std_luminance": 41.5
+  },
+  {
+    "num": 1375,
+    "file": "IMG_1375.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1871686,
+    "mean_luminance": 166.1,
+    "std_luminance": 38.9
+  },
+  {
+    "num": 1376,
+    "file": "IMG_1376.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 2154233,
+    "mean_luminance": 156.8,
+    "std_luminance": 47.3
+  },
+  {
+    "num": 1377,
+    "file": "IMG_1377.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 2318242,
+    "mean_luminance": 158.6,
+    "std_luminance": 41.1
+  },
+  {
+    "num": 1378,
+    "file": "IMG_1378.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1884307,
+    "mean_luminance": 165.4,
+    "std_luminance": 39.9
+  },
+  {
+    "num": 1379,
+    "file": "IMG_1379.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 2039029,
+    "mean_luminance": 168.6,
+    "std_luminance": 32.8
+  },
+  {
+    "num": 1380,
+    "file": "IMG_1380.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 2178694,
+    "mean_luminance": 165.6,
+    "std_luminance": 49.4
+  },
+  {
+    "num": 1381,
+    "file": "IMG_1381.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1434662,
+    "mean_luminance": 164.5,
+    "std_luminance": 26.7
+  },
+  {
+    "num": 1382,
+    "file": "IMG_1382.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1931157,
+    "mean_luminance": 164.2,
+    "std_luminance": 29.8
+  },
+  {
+    "num": 1383,
+    "file": "IMG_1383.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1955583,
+    "mean_luminance": 161.8,
+    "std_luminance": 32.8
+  },
+  {
+    "num": 1384,
+    "file": "IMG_1384.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1762479,
+    "mean_luminance": 167.1,
+    "std_luminance": 32.0
+  },
+  {
+    "num": 1385,
+    "file": "IMG_1385.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1345853,
+    "mean_luminance": 169.6,
+    "std_luminance": 26.6
+  },
+  {
+    "num": 1386,
+    "file": "IMG_1386.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1913202,
+    "mean_luminance": 162.8,
+    "std_luminance": 38.0
+  },
+  {
+    "num": 1387,
+    "file": "IMG_1387.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 2268094,
+    "mean_luminance": 165.7,
+    "std_luminance": 47.2
+  },
+  {
+    "num": 1388,
+    "file": "IMG_1388.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1502185,
+    "mean_luminance": 156.7,
+    "std_luminance": 36.5
+  },
+  {
+    "num": 1389,
+    "file": "IMG_1389.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1535092,
+    "mean_luminance": 166.9,
+    "std_luminance": 30.4
+  },
+  {
+    "num": 1390,
+    "file": "IMG_1390.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 2070305,
+    "mean_luminance": 157.9,
+    "std_luminance": 42.9
+  },
+  {
+    "num": 1391,
+    "file": "IMG_1391.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 2016205,
+    "mean_luminance": 164.6,
+    "std_luminance": 55.8
+  },
+  {
+    "num": 1392,
+    "file": "IMG_1392.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1658641,
+    "mean_luminance": 167.8,
+    "std_luminance": 37.6
+  },
+  {
+    "num": 1393,
+    "file": "IMG_1393.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 2043976,
+    "mean_luminance": 158.3,
+    "std_luminance": 40.6
+  },
+  {
+    "num": 1394,
+    "file": "IMG_1394.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 2071169,
+    "mean_luminance": 170.2,
+    "std_luminance": 37.6
+  },
+  {
+    "num": 1395,
+    "file": "IMG_1395.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1826685,
+    "mean_luminance": 163.8,
+    "std_luminance": 44.8
+  },
+  {
+    "num": 1396,
+    "file": "IMG_1396.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1904736,
+    "mean_luminance": 164.1,
+    "std_luminance": 41.8
+  },
+  {
+    "num": 1397,
+    "file": "IMG_1397.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 2149417,
+    "mean_luminance": 170.1,
+    "std_luminance": 35.4
+  },
+  {
+    "num": 1398,
+    "file": "IMG_1398.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1912133,
+    "mean_luminance": 157.1,
+    "std_luminance": 32.9
+  },
+  {
+    "num": 1399,
+    "file": "IMG_1399.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1377313,
+    "mean_luminance": 158.0,
+    "std_luminance": 59.1
+  },
+  {
+    "num": 1400,
+    "file": "IMG_1400.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1376384,
+    "mean_luminance": 169.5,
+    "std_luminance": 35.0
+  },
+  {
+    "num": 1401,
+    "file": "IMG_1401.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1764655,
+    "mean_luminance": 161.1,
+    "std_luminance": 42.8
+  },
+  {
+    "num": 1402,
+    "file": "IMG_1402.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 2311944,
+    "mean_luminance": 167.5,
+    "std_luminance": 46.9
+  },
+  {
+    "num": 1403,
+    "file": "IMG_1403.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1833380,
+    "mean_luminance": 164.6,
+    "std_luminance": 42.6
+  },
+  {
+    "num": 1404,
+    "file": "IMG_1404.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1712695,
+    "mean_luminance": 165.1,
+    "std_luminance": 42.6
+  },
+  {
+    "num": 1405,
+    "file": "IMG_1405.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1683003,
+    "mean_luminance": 165.1,
+    "std_luminance": 42.8
+  },
+  {
+    "num": 1406,
+    "file": "IMG_1406.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1510176,
+    "mean_luminance": 168.2,
+    "std_luminance": 38.7
+  },
+  {
+    "num": 1407,
+    "file": "IMG_1407.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1619290,
+    "mean_luminance": 160.6,
+    "std_luminance": 45.6
+  },
+  {
+    "num": 1408,
+    "file": "IMG_1408.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1501581,
+    "mean_luminance": 160.0,
+    "std_luminance": 42.6
+  },
+  {
+    "num": 1409,
+    "file": "IMG_1409.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1635805,
+    "mean_luminance": 163.2,
+    "std_luminance": 47.1
+  },
+  {
+    "num": 1410,
+    "file": "IMG_1410.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1632205,
+    "mean_luminance": 161.8,
+    "std_luminance": 51.6
+  },
+  {
+    "num": 1411,
+    "file": "IMG_1411.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1346672,
+    "mean_luminance": 158.2,
+    "std_luminance": 56.9
+  },
+  {
+    "num": 1412,
+    "file": "IMG_1412.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1198305,
+    "mean_luminance": 161.6,
+    "std_luminance": 57.5
+  },
+  {
+    "num": 1413,
+    "file": "IMG_1413.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1259508,
+    "mean_luminance": 162.3,
+    "std_luminance": 51.6
+  },
+  {
+    "num": 1414,
+    "file": "IMG_1414.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1142427,
+    "mean_luminance": 162.2,
+    "std_luminance": 54.3
+  },
+  {
+    "num": 1415,
+    "file": "IMG_1415.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1273791,
+    "mean_luminance": 164.3,
+    "std_luminance": 52.0
+  },
+  {
+    "num": 1416,
+    "file": "IMG_1416.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1336997,
+    "mean_luminance": 157.3,
+    "std_luminance": 48.5
+  },
+  {
+    "num": 1417,
+    "file": "IMG_1417.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1549918,
+    "mean_luminance": 157.1,
+    "std_luminance": 48.6
+  },
+  {
+    "num": 1418,
+    "file": "IMG_1418.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 2170388,
+    "mean_luminance": 165.3,
+    "std_luminance": 42.3
+  },
+  {
+    "num": 1419,
+    "file": "IMG_1419.HEIC",
+    "width": 4032,
+    "height": 3024,
+    "file_size": 1591356,
+    "mean_luminance": 163.0,
+    "std_luminance": 46.2
+  },
+  {
+    "num": 1420,
+    "file": "IMG_1420.HEIC",
+    "width": 4032,
+    "height": 3024,
+    "file_size": 1701378,
+    "mean_luminance": 162.4,
+    "std_luminance": 41.4
+  },
+  {
+    "num": 1421,
+    "file": "IMG_1421.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1540980,
+    "mean_luminance": 177.4,
+    "std_luminance": 37.3
+  },
+  {
+    "num": 1422,
+    "file": "IMG_1422.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1362063,
+    "mean_luminance": 166.8,
+    "std_luminance": 43.3
+  },
+  {
+    "num": 1423,
+    "file": "IMG_1423.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1452282,
+    "mean_luminance": 170.3,
+    "std_luminance": 45.1
+  },
+  {
+    "num": 1424,
+    "file": "IMG_1424.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1720772,
+    "mean_luminance": 172.6,
+    "std_luminance": 45.7
+  },
+  {
+    "num": 1425,
+    "file": "IMG_1425.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1487423,
+    "mean_luminance": 172.6,
+    "std_luminance": 41.7
+  },
+  {
+    "num": 1426,
+    "file": "IMG_1426.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1438146,
+    "mean_luminance": 174.4,
+    "std_luminance": 39.9
+  },
+  {
+    "num": 1427,
+    "file": "IMG_1427.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1331542,
+    "mean_luminance": 174.3,
+    "std_luminance": 38.9
+  },
+  {
+    "num": 1428,
+    "file": "IMG_1428.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1148242,
+    "mean_luminance": 179.4,
+    "std_luminance": 33.4
+  },
+  {
+    "num": 1429,
+    "file": "IMG_1429.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1274206,
+    "mean_luminance": 175.0,
+    "std_luminance": 46.4
+  },
+  {
+    "num": 1430,
+    "file": "IMG_1430.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1274984,
+    "mean_luminance": 177.0,
+    "std_luminance": 40.4
+  },
+  {
+    "num": 1431,
+    "file": "IMG_1431.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1474365,
+    "mean_luminance": 172.2,
+    "std_luminance": 36.6
+  },
+  {
+    "num": 1432,
+    "file": "IMG_1432.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1422158,
+    "mean_luminance": 178.0,
+    "std_luminance": 32.1
+  },
+  {
+    "num": 1433,
+    "file": "IMG_1433.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1470728,
+    "mean_luminance": 171.7,
+    "std_luminance": 40.4
+  },
+  {
+    "num": 1434,
+    "file": "IMG_1434.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1263290,
+    "mean_luminance": 179.5,
+    "std_luminance": 41.0
+  },
+  {
+    "num": 1435,
+    "file": "IMG_1435.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1343995,
+    "mean_luminance": 168.4,
+    "std_luminance": 36.9
+  },
+  {
+    "num": 1436,
+    "file": "IMG_1436.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1283926,
+    "mean_luminance": 168.5,
+    "std_luminance": 43.5
+  },
+  {
+    "num": 1437,
+    "file": "IMG_1437.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1258732,
+    "mean_luminance": 171.3,
+    "std_luminance": 43.1
+  },
+  {
+    "num": 1438,
+    "file": "IMG_1438.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1476962,
+    "mean_luminance": 178.2,
+    "std_luminance": 41.2
+  },
+  {
+    "num": 1439,
+    "file": "IMG_1439.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1582811,
+    "mean_luminance": 170.7,
+    "std_luminance": 39.9
+  },
+  {
+    "num": 1440,
+    "file": "IMG_1440.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1436731,
+    "mean_luminance": 175.3,
+    "std_luminance": 33.6
+  },
+  {
+    "num": 1441,
+    "file": "IMG_1441.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1211263,
+    "mean_luminance": 178.3,
+    "std_luminance": 37.1
+  },
+  {
+    "num": 1442,
+    "file": "IMG_1442.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1353023,
+    "mean_luminance": 173.8,
+    "std_luminance": 31.2
+  },
+  {
+    "num": 1443,
+    "file": "IMG_1443.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1308340,
+    "mean_luminance": 168.3,
+    "std_luminance": 30.3
+  },
+  {
+    "num": 1444,
+    "file": "IMG_1444.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1419534,
+    "mean_luminance": 170.3,
+    "std_luminance": 33.0
+  },
+  {
+    "num": 1445,
+    "file": "IMG_1445.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1282644,
+    "mean_luminance": 175.3,
+    "std_luminance": 39.6
+  },
+  {
+    "num": 1446,
+    "file": "IMG_1446.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1340585,
+    "mean_luminance": 177.0,
+    "std_luminance": 30.0
+  },
+  {
+    "num": 1447,
+    "file": "IMG_1447.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1197323,
+    "mean_luminance": 167.5,
+    "std_luminance": 30.0
+  },
+  {
+    "num": 1448,
+    "file": "IMG_1448.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1221970,
+    "mean_luminance": 176.1,
+    "std_luminance": 28.1
+  },
+  {
+    "num": 1449,
+    "file": "IMG_1449.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1299545,
+    "mean_luminance": 170.4,
+    "std_luminance": 24.5
+  },
+  {
+    "num": 1450,
+    "file": "IMG_1450.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1555660,
+    "mean_luminance": 172.2,
+    "std_luminance": 29.9
+  },
+  {
+    "num": 1451,
+    "file": "IMG_1451.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1624137,
+    "mean_luminance": 173.0,
+    "std_luminance": 33.0
+  },
+  {
+    "num": 1452,
+    "file": "IMG_1452.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1820393,
+    "mean_luminance": 173.1,
+    "std_luminance": 39.4
+  },
+  {
+    "num": 1453,
+    "file": "IMG_1453.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1204117,
+    "mean_luminance": 176.7,
+    "std_luminance": 38.1
+  },
+  {
+    "num": 1454,
+    "file": "IMG_1454.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1145556,
+    "mean_luminance": 176.7,
+    "std_luminance": 39.1
+  },
+  {
+    "num": 1455,
+    "file": "IMG_1455.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1050127,
+    "mean_luminance": 174.0,
+    "std_luminance": 32.4
+  },
+  {
+    "num": 1456,
+    "file": "IMG_1456.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1123334,
+    "mean_luminance": 174.1,
+    "std_luminance": 30.1
+  },
+  {
+    "num": 1457,
+    "file": "IMG_1457.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1097622,
+    "mean_luminance": 174.0,
+    "std_luminance": 46.3
+  },
+  {
+    "num": 1458,
+    "file": "IMG_1458.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 960373,
+    "mean_luminance": 164.5,
+    "std_luminance": 26.7
+  },
+  {
+    "num": 1459,
+    "file": "IMG_1459.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1105367,
+    "mean_luminance": 175.0,
+    "std_luminance": 30.4
+  },
+  {
+    "num": 1460,
+    "file": "IMG_1460.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1506920,
+    "mean_luminance": 171.0,
+    "std_luminance": 36.5
+  },
+  {
+    "num": 1461,
+    "file": "IMG_1461.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1234611,
+    "mean_luminance": 172.4,
+    "std_luminance": 30.1
+  },
+  {
+    "num": 1462,
+    "file": "IMG_1462.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1185091,
+    "mean_luminance": 176.1,
+    "std_luminance": 34.9
+  },
+  {
+    "num": 1463,
+    "file": "IMG_1463.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1227124,
+    "mean_luminance": 176.3,
+    "std_luminance": 32.1
+  },
+  {
+    "num": 1464,
+    "file": "IMG_1464.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1308384,
+    "mean_luminance": 171.7,
+    "std_luminance": 30.2
+  },
+  {
+    "num": 1465,
+    "file": "IMG_1465.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1398171,
+    "mean_luminance": 172.4,
+    "std_luminance": 30.7
+  },
+  {
+    "num": 1466,
+    "file": "IMG_1466.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1282814,
+    "mean_luminance": 172.7,
+    "std_luminance": 31.1
+  },
+  {
+    "num": 1467,
+    "file": "IMG_1467.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1300198,
+    "mean_luminance": 172.7,
+    "std_luminance": 29.9
+  },
+  {
+    "num": 1468,
+    "file": "IMG_1468.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1370946,
+    "mean_luminance": 174.0,
+    "std_luminance": 28.9
+  },
+  {
+    "num": 1469,
+    "file": "IMG_1469.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1217069,
+    "mean_luminance": 174.3,
+    "std_luminance": 34.6
+  },
+  {
+    "num": 1470,
+    "file": "IMG_1470.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1274348,
+    "mean_luminance": 174.2,
+    "std_luminance": 36.7
+  },
+  {
+    "num": 1471,
+    "file": "IMG_1471.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1112945,
+    "mean_luminance": 171.8,
+    "std_luminance": 29.3
+  },
+  {
+    "num": 1472,
+    "file": "IMG_1472.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1257854,
+    "mean_luminance": 173.4,
+    "std_luminance": 30.6
+  },
+  {
+    "num": 1473,
+    "file": "IMG_1473.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1549639,
+    "mean_luminance": 174.7,
+    "std_luminance": 33.2
+  },
+  {
+    "num": 1474,
+    "file": "IMG_1474.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1479299,
+    "mean_luminance": 180.4,
+    "std_luminance": 34.7
+  },
+  {
+    "num": 1475,
+    "file": "IMG_1475.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1240666,
+    "mean_luminance": 174.3,
+    "std_luminance": 38.8
+  },
+  {
+    "num": 1565,
+    "file": "IMG_1565.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1623641,
+    "mean_luminance": 172.9,
+    "std_luminance": 33.7
+  },
+  {
+    "num": 1566,
+    "file": "IMG_1566.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1406542,
+    "mean_luminance": 168.5,
+    "std_luminance": 28.1
+  },
+  {
+    "num": 1567,
+    "file": "IMG_1567.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1304731,
+    "mean_luminance": 162.7,
+    "std_luminance": 26.8
+  },
+  {
+    "num": 1568,
+    "file": "IMG_1568.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1318007,
+    "mean_luminance": 164.2,
+    "std_luminance": 27.0
+  },
+  {
+    "num": 1569,
+    "file": "IMG_1569.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1285667,
+    "mean_luminance": 169.8,
+    "std_luminance": 31.4
+  },
+  {
+    "num": 1570,
+    "file": "IMG_1570.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1310088,
+    "mean_luminance": 176.8,
+    "std_luminance": 31.8
+  },
+  {
+    "num": 1571,
+    "file": "IMG_1571.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1449420,
+    "mean_luminance": 174.3,
+    "std_luminance": 39.4
+  },
+  {
+    "num": 1572,
+    "file": "IMG_1572.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1178349,
+    "mean_luminance": 178.8,
+    "std_luminance": 34.8
+  },
+  {
+    "num": 1573,
+    "file": "IMG_1573.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1357922,
+    "mean_luminance": 170.3,
+    "std_luminance": 28.9
+  },
+  {
+    "num": 1574,
+    "file": "IMG_1574.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1269058,
+    "mean_luminance": 168.1,
+    "std_luminance": 31.0
+  },
+  {
+    "num": 1575,
+    "file": "IMG_1575.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1471494,
+    "mean_luminance": 170.0,
+    "std_luminance": 41.0
+  },
+  {
+    "num": 1576,
+    "file": "IMG_1576.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1425335,
+    "mean_luminance": 179.1,
+    "std_luminance": 31.2
+  },
+  {
+    "num": 1577,
+    "file": "IMG_1577.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1256408,
+    "mean_luminance": 179.7,
+    "std_luminance": 32.6
+  },
+  {
+    "num": 1578,
+    "file": "IMG_1578.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1517952,
+    "mean_luminance": 171.7,
+    "std_luminance": 39.0
+  },
+  {
+    "num": 1579,
+    "file": "IMG_1579.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1243226,
+    "mean_luminance": 164.3,
+    "std_luminance": 25.8
+  },
+  {
+    "num": 1580,
+    "file": "IMG_1580.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1277211,
+    "mean_luminance": 171.4,
+    "std_luminance": 33.9
+  },
+  {
+    "num": 1581,
+    "file": "IMG_1581.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1334996,
+    "mean_luminance": 175.7,
+    "std_luminance": 26.7
+  },
+  {
+    "num": 1582,
+    "file": "IMG_1582.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1305522,
+    "mean_luminance": 173.3,
+    "std_luminance": 27.4
+  },
+  {
+    "num": 1583,
+    "file": "IMG_1583.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1264991,
+    "mean_luminance": 164.1,
+    "std_luminance": 23.2
+  },
+  {
+    "num": 1584,
+    "file": "IMG_1584.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1335838,
+    "mean_luminance": 166.2,
+    "std_luminance": 29.4
+  },
+  {
+    "num": 1585,
+    "file": "IMG_1585.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1357568,
+    "mean_luminance": 169.3,
+    "std_luminance": 42.2
+  },
+  {
+    "num": 1586,
+    "file": "IMG_1586.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1325415,
+    "mean_luminance": 167.2,
+    "std_luminance": 30.6
+  },
+  {
+    "num": 1587,
+    "file": "IMG_1587.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1466475,
+    "mean_luminance": 169.9,
+    "std_luminance": 31.1
+  },
+  {
+    "num": 1588,
+    "file": "IMG_1588.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1331974,
+    "mean_luminance": 173.0,
+    "std_luminance": 27.5
+  },
+  {
+    "num": 1589,
+    "file": "IMG_1589.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1131902,
+    "mean_luminance": 173.4,
+    "std_luminance": 36.9
+  },
+  {
+    "num": 1590,
+    "file": "IMG_1590.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1528757,
+    "mean_luminance": 172.3,
+    "std_luminance": 42.4
+  },
+  {
+    "num": 1591,
+    "file": "IMG_1591.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1303364,
+    "mean_luminance": 168.3,
+    "std_luminance": 28.7
+  },
+  {
+    "num": 1592,
+    "file": "IMG_1592.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1255677,
+    "mean_luminance": 168.8,
+    "std_luminance": 24.4
+  },
+  {
+    "num": 1593,
+    "file": "IMG_1593.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1233965,
+    "mean_luminance": 168.7,
+    "std_luminance": 27.5
+  },
+  {
+    "num": 1594,
+    "file": "IMG_1594.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1297638,
+    "mean_luminance": 165.2,
+    "std_luminance": 27.9
+  },
+  {
+    "num": 1595,
+    "file": "IMG_1595.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1432900,
+    "mean_luminance": 166.1,
+    "std_luminance": 41.1
+  },
+  {
+    "num": 1596,
+    "file": "IMG_1596.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1523303,
+    "mean_luminance": 160.6,
+    "std_luminance": 35.7
+  },
+  {
+    "num": 1597,
+    "file": "IMG_1597.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1495562,
+    "mean_luminance": 172.3,
+    "std_luminance": 35.7
+  },
+  {
+    "num": 1598,
+    "file": "IMG_1598.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1289144,
+    "mean_luminance": 166.3,
+    "std_luminance": 27.2
+  },
+  {
+    "num": 1599,
+    "file": "IMG_1599.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1352494,
+    "mean_luminance": 168.4,
+    "std_luminance": 35.4
+  },
+  {
+    "num": 1600,
+    "file": "IMG_1600.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1308074,
+    "mean_luminance": 170.1,
+    "std_luminance": 26.5
+  },
+  {
+    "num": 1601,
+    "file": "IMG_1601.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1369934,
+    "mean_luminance": 172.5,
+    "std_luminance": 34.4
+  },
+  {
+    "num": 1602,
+    "file": "IMG_1602.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1281519,
+    "mean_luminance": 171.3,
+    "std_luminance": 41.6
+  },
+  {
+    "num": 1603,
+    "file": "IMG_1603.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1335892,
+    "mean_luminance": 171.5,
+    "std_luminance": 39.4
+  },
+  {
+    "num": 1604,
+    "file": "IMG_1604.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1335816,
+    "mean_luminance": 167.3,
+    "std_luminance": 24.8
+  },
+  {
+    "num": 1605,
+    "file": "IMG_1605.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1388146,
+    "mean_luminance": 167.6,
+    "std_luminance": 45.1
+  },
+  {
+    "num": 1606,
+    "file": "IMG_1606.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1166070,
+    "mean_luminance": 169.6,
+    "std_luminance": 26.0
+  },
+  {
+    "num": 1607,
+    "file": "IMG_1607.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1282293,
+    "mean_luminance": 169.5,
+    "std_luminance": 38.5
+  },
+  {
+    "num": 1608,
+    "file": "IMG_1608.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1865186,
+    "mean_luminance": 168.4,
+    "std_luminance": 48.5
+  },
+  {
+    "num": 1609,
+    "file": "IMG_1609.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1345657,
+    "mean_luminance": 180.5,
+    "std_luminance": 36.4
+  },
+  {
+    "num": 1610,
+    "file": "IMG_1610.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1662419,
+    "mean_luminance": 167.6,
+    "std_luminance": 42.3
+  },
+  {
+    "num": 1611,
+    "file": "IMG_1611.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1565894,
+    "mean_luminance": 171.6,
+    "std_luminance": 36.1
+  },
+  {
+    "num": 1612,
+    "file": "IMG_1612.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1533898,
+    "mean_luminance": 168.1,
+    "std_luminance": 35.0
+  },
+  {
+    "num": 1613,
+    "file": "IMG_1613.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 2050788,
+    "mean_luminance": 169.8,
+    "std_luminance": 46.8
+  },
+  {
+    "num": 1614,
+    "file": "IMG_1614.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1366324,
+    "mean_luminance": 169.9,
+    "std_luminance": 29.4
+  },
+  {
+    "num": 1615,
+    "file": "IMG_1615.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1359721,
+    "mean_luminance": 167.0,
+    "std_luminance": 31.5
+  },
+  {
+    "num": 1616,
+    "file": "IMG_1616.HEIC",
+    "width": 3024,
+    "height": 4032,
+    "file_size": 1608620,
+    "mean_luminance": 178.4,
+    "std_luminance": 37.6
+  }
+]

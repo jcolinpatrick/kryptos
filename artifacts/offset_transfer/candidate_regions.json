@@ -1,0 +1,16 @@
+{
+  "investigation": "forensic_offset_transfer_analysis",
+  "date": "2026-04-04",
+  "status": "UNTESTABLE — null result due to source imagery limitations",
+  "total_images_analyzed": 77,
+  "total_facing_page_comparisons": 11,
+  "confirmed_candidates": [],
+  "tentative_candidates": [],
+  "unconfirmed_candidates_note": "1040 raw candidate regions detected in box-16 (printed material — irrelevant), 180 in box-9 (printed material — irrelevant). AAA HEIC handwriting pages produced no candidates surviving adversarial review. All persistent marks attributed to paper texture (H6), lighting artifacts (H5), or compression artifacts (H4).",
+  "synthetic_validation": {
+    "minimum_detectable_opacity": 0.01,
+    "false_positive_rate": "~100% — paper texture produces candidate counts equivalent to genuine transfer at all opacity levels",
+    "conclusion": "Pipeline has sensitivity but zero specificity for smartphone-captured lined notebook pages"
+  },
+  "acquisition_recommendation": "Re-image with raking light, 600 DPI minimum, 16-bit RAW, recto+verso"
+}
