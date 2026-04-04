@@ -15,6 +15,7 @@ def build_search_documents(eliminations: list[SiteElimination]) -> list[dict]:
             "id": elim.slug,
             "title": elim.title,
             "description": elim.description[:500],
+            "plain_summary": elim.plain_summary,
             "category": elim.category,
             "subcategory": elim.subcategory,
             "cipher_type": elim.cipher_type,
@@ -45,6 +46,7 @@ def build_search_index(eliminations: list[SiteElimination]) -> dict:
         "fields": [
             "title",
             "description",
+            "plain_summary",
             "category",
             "subcategory",
             "cipher_type",

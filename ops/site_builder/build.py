@@ -19,7 +19,7 @@ _project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".
 sys.path.insert(0, os.path.join(_project_root, "src"))
 sys.path.insert(0, _project_root)
 
-from ops.site_builder.data_loader import load_all, SiteElimination
+from ops.site_builder.data_loader import load_all, SiteElimination, generate_all_plain_summaries
 from ops.site_builder.categorizer import categorize_all, get_category_stats
 from ops.site_builder.search_index import write_search_index
 
@@ -41,6 +41,56 @@ CATEGORY_DESCRIPTIONS = {
     "bespoke": "Non-standard methods inspired by the physical sculpture or military cipher systems. These approaches don't fit neatly into classical categories. Includes DRYAD charts, Morse code analysis, and coordinate-based approaches.",
     "uncategorized": "Eliminations not yet assigned to a specific category.",
 }
+
+# Plain-English "Have you thought of this?" guides per category.
+# These address the most common community questions for each category.
+CATEGORY_PLAIN_GUIDES = {
+    "substitution": (
+        "Every possible repeating keyword at every possible "
+        "length has been mathematically proven impossible for K4 — not just searched, "
+        "but proven with algebra. This includes Vigen\u00e8re, Beaufort, and all their "
+        "variants with any keyword. Even a specific keyword you have in mind cannot work "
+        "as a simple repeating-key cipher on K4."
+    ),
+    "transposition": (
+        "Every standard letter-rearrangement method has been tested: columnar grids at all "
+        "widths, rail fence, spiral, zigzag, route ciphers, and more — 14 different "
+        "families, over 1.2 billion combinations. None produced a solution. Pure "
+        "rearrangement alone is also independently impossible: the ciphertext has 2 E's "
+        "but the known plaintext needs 3, so some letter-replacement must also be involved."
+    ),
+    "fractionation": (
+        "Bifid, Playfair, ADFGVX, and related ciphers are all impossible for K4 because "
+        "they require merging I and J into a single letter (using a 25-letter alphabet), "
+        "but all 26 letters appear in K4's ciphertext. This is a permanent mathematical "
+        "impossibility, not just a search result."
+    ),
+    "multi-layer": (
+        "Combining letter-rearrangement with substitution is the leading hypothesis for K4. "
+        "We've tested thousands of combinations (over 1.2 billion configs) covering "
+        "all structured rearrangement methods paired with keyed substitution. "
+        "What remains open: the possibility that the rearrangement follows "
+        "a pattern not yet identified, or that the substitution key comes from an "
+        "unknown source text."
+    ),
+    "key-models": (
+        "Running keys from over 60,000 publicly available texts have been tested "
+        "(106 billion position-checks) including the Bible, Shakespeare, Carter's "
+        "\"Tomb of Tutankhamun,\" and the full Project Gutenberg library. Zero signal. "
+        "A running key from a non-public source remains one of the strongest surviving "
+        "hypotheses."
+    ),
+    "bespoke": (
+        "VIC ciphers, DRYAD military charts, Morse code interpretations, "
+        "coordinate-based approaches, and many other non-standard ideas have all been "
+        "tested. The evidence increasingly points toward something outside textbook "
+        "cipher families. Sanborn stated the method is "
+        "\"bespoke but hand-executable.\" The surviving possibilities include a procedural "
+        "cipher using Sanborn's own encoding charts (the original was sold at auction "
+        "in 2025 for $962,500)."
+    ),
+}
+
 
 
 def format_configs(n: int) -> str:
@@ -70,6 +120,12 @@ def build():
     print(f"  Categories: {len(tree)}")
     for cs in cat_stats:
         print(f"    {cs['display_name']}: {cs['count']} eliminations")
+
+    # 2b) Generate plain-English summaries (after categorization so subcategory is available)
+    print("\nGenerating plain-English summaries...")
+    generate_all_plain_summaries(eliminations)
+    summaries_generated = sum(1 for e in eliminations if e.plain_summary)
+    print(f"  Summaries generated: {summaries_generated}/{len(eliminations)}")
 
     # 3) Compute aggregate stats
     total_configs = sum(e.configs_tested for e in eliminations)
@@ -175,6 +231,7 @@ def build():
             "category": {
                 "name": display_name,
                 "description": CATEGORY_DESCRIPTIONS.get(cat_name, ""),
+                "plain_guide": CATEGORY_PLAIN_GUIDES.get(cat_name, ""),
             },
             "eliminations": all_elims_in_cat,
         })
