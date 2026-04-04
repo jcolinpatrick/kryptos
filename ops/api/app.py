@@ -13,7 +13,10 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field, field_validator
 
 from ops.api.classifier import classify_theory, load_elimination_index, ClassifyResult
-from ops.api.queue import add_theory, get_by_token, init_db, record_request
+from ops.api.queue import (
+    add_theory, get_by_token, init_db, record_request,
+    log_classification, get_classification_stats,
+)
 
 # ---------------------------------------------------------------------------
 # Global state
@@ -190,6 +193,24 @@ async def theory_status(token: str):
     return response
 
 
+@app.get("/api/classify/stats")
+async def classify_stats():
+    """Return classification analytics: how often theories match existing eliminations.
+
+    Useful for measuring whether the site is effectively communicating what's
+    been tested — a high matched:novel ratio means people are proposing things
+    we've already tried.
+    """
+    try:
+        stats = get_classification_stats()
+        return stats
+    except Exception:
+        return JSONResponse(
+            status_code=500,
+            content={"detail": "Failed to load classification stats."},
+        )
+
+
 @app.post("/api/classify")
 async def classify(body: ClassifyRequest, request: Request):
     # Check that the index is loaded
@@ -230,6 +251,18 @@ async def classify(body: ClassifyRequest, request: Request):
             status_code=502,
             content={"detail": "Classification service temporarily unavailable."},
         )
+
+    # Log every classification for analytics (best-effort)
+    try:
+        log_classification(
+            ip_address=ip,
+            theory_text=body.theory,
+            status=result.status,
+            elimination_id=result.elimination_id,
+            feasibility=result.feasibility,
+        )
+    except Exception:
+        pass  # Never let logging failure affect the response
 
     # Only queue genuinely feasible novel theories
     if result.status == "novel" and result.feasibility == "feasible":

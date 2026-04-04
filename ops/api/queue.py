@@ -44,6 +44,17 @@ def init_db(db_path: Optional[str] = None) -> None:
             )
         """)
         conn.execute("""
+            CREATE TABLE IF NOT EXISTS classification_log (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                timestamp TEXT NOT NULL,
+                ip_hash TEXT NOT NULL,
+                theory_preview TEXT NOT NULL,
+                status TEXT NOT NULL,
+                elimination_id TEXT,
+                feasibility TEXT
+            )
+        """)
+        conn.execute("""
             CREATE INDEX IF NOT EXISTS idx_rate_limits_ip_ts
             ON rate_limits (ip_hash, ts)
         """)
@@ -168,6 +179,75 @@ def update_status(theory_id: int, new_status: str, note: str = "",
         else:
             conn.execute("UPDATE theories SET status = ? WHERE id = ?", (new_status, theory_id))
         conn.commit()
+    finally:
+        conn.close()
+
+
+def log_classification(
+    ip_address: str,
+    theory_text: str,
+    status: str,
+    elimination_id: Optional[str] = None,
+    feasibility: Optional[str] = None,
+    db_path: Optional[str] = None,
+) -> None:
+    """Log a classification result for analytics.
+
+    Tracks all submissions — matched, novel, rejected — so we can measure
+    how often users propose already-tested ideas (site effectiveness metric).
+    """
+    ip_hash = hashlib.sha256(ip_address.encode()).hexdigest()
+    now = datetime.now(timezone.utc).isoformat()
+    preview = theory_text[:300]
+
+    conn = _get_connection(db_path)
+    try:
+        conn.execute(
+            "INSERT INTO classification_log (timestamp, ip_hash, theory_preview, status, elimination_id, feasibility) "
+            "VALUES (?, ?, ?, ?, ?, ?)",
+            (now, ip_hash, preview, status, elimination_id or "", feasibility or ""),
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+
+def get_classification_stats(db_path: Optional[str] = None) -> dict:
+    """Return aggregate classification statistics.
+
+    Returns counts by status (matched, novel, rejected) and the most
+    frequently matched elimination IDs.
+    """
+    conn = _get_connection(db_path)
+    try:
+        # Overall counts by status
+        rows = conn.execute(
+            "SELECT status, COUNT(*) as cnt FROM classification_log GROUP BY status"
+        ).fetchall()
+        by_status = {row["status"]: row["cnt"] for row in rows}
+
+        # Top matched elimination IDs
+        top_matched = conn.execute(
+            "SELECT elimination_id, COUNT(*) as cnt FROM classification_log "
+            "WHERE status = 'matched' AND elimination_id != '' "
+            "GROUP BY elimination_id ORDER BY cnt DESC LIMIT 20"
+        ).fetchall()
+
+        # Recent matched submissions (last 50)
+        recent = conn.execute(
+            "SELECT timestamp, theory_preview, status, elimination_id, feasibility "
+            "FROM classification_log ORDER BY id DESC LIMIT 50"
+        ).fetchall()
+
+        return {
+            "total": sum(by_status.values()),
+            "by_status": by_status,
+            "top_matched_eliminations": [
+                {"elimination_id": r["elimination_id"], "count": r["cnt"]}
+                for r in top_matched
+            ],
+            "recent": [dict(r) for r in recent],
+        }
     finally:
         conn.close()
 
