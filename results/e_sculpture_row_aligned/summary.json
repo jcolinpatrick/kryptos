@@ -1,0 +1,144 @@
+{
+  "experiment": "E-SCULPTURE-ROW-ALIGNED",
+  "hypothesis": "Row-aligned sculpture text as key under KA Vigen\u00e8re (Kimmo hypothesis)",
+  "total_configs": 7508088,
+  "best_score": 6,
+  "best_result": {
+    "alphabet": "AZ",
+    "variant": "Var_Beaufort",
+    "strategy": "kimmo_row3",
+    "key_rows": [
+      3,
+      8,
+      2,
+      4
+    ],
+    "key_align": "end",
+    "crib_score": 6
+  },
+  "above_noise_count": 513,
+  "above_noise_top10": [
+    {
+      "alphabet": "AZ",
+      "variant": "Var_Beaufort",
+      "strategy": "kimmo_row3",
+      "key_rows": [
+        3,
+        8,
+        2,
+        4
+      ],
+      "score": 6
+    },
+    {
+      "alphabet": "AZ",
+      "variant": "Var_Beaufort",
+      "strategy": "kimmo_row3",
+      "key_rows": [
+        3,
+        8,
+        2,
+        12
+      ],
+      "score": 6
+    },
+    {
+      "alphabet": "AZ",
+      "variant": "Var_Beaufort",
+      "strategy": "kimmo_row3",
+      "key_rows": [
+        3,
+        8,
+        2,
+        26
+      ],
+      "score": 6
+    },
+    {
+      "alphabet": "AZ",
+      "variant": "Var_Beaufort",
+      "strategy": "kimmo_row3",
+      "key_rows": [
+        3,
+        8,
+        3,
+        4
+      ],
+      "score": 6
+    },
+    {
+      "alphabet": "AZ",
+      "variant": "Var_Beaufort",
+      "strategy": "kimmo_row3",
+      "key_rows": [
+        3,
+        8,
+        3,
+        12
+      ],
+      "score": 6
+    },
+    {
+      "alphabet": "AZ",
+      "variant": "Var_Beaufort",
+      "strategy": "kimmo_row3",
+      "key_rows": [
+        3,
+        8,
+        3,
+        26
+      ],
+      "score": 6
+    },
+    {
+      "alphabet": "AZ",
+      "variant": "Var_Beaufort",
+      "strategy": "kimmo_row3",
+      "key_rows": [
+        3,
+        8,
+        17,
+        4
+      ],
+      "score": 6
+    },
+    {
+      "alphabet": "AZ",
+      "variant": "Var_Beaufort",
+      "strategy": "kimmo_row3",
+      "key_rows": [
+        3,
+        8,
+        17,
+        12
+      ],
+      "score": 6
+    },
+    {
+      "alphabet": "AZ",
+      "variant": "Var_Beaufort",
+      "strategy": "kimmo_row3",
+      "key_rows": [
+        3,
+        8,
+        17,
+        26
+      ],
+      "score": 6
+    },
+    {
+      "alphabet": "AZ",
+      "variant": "Var_Beaufort",
+      "strategy": "exhaustive",
+      "key_rows": [
+        0,
+        8,
+        2,
+        4
+      ],
+      "score": 6
+    }
+  ],
+  "elapsed_seconds": 165.90596413612366,
+  "verified_claim": "OBKR + QRLG (KA Vig) = EACH"
+}
