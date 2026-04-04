@@ -6,6 +6,13 @@
 
 <h1>{{ category.name }}</h1>
 <p>{{ category.description }}</p>
+
+{% if category.plain_guide %}
+<div class="plain-summary">
+  <strong>What we tested:</strong> {{ category.plain_guide }}
+</div>
+{% endif %}
+
 <p><small class="text-muted">{{ eliminations|length }} elimination{{ "s" if eliminations|length != 1 else "" }} recorded.</small></p>
 
 <div class="table-wrap">
@@ -22,7 +29,12 @@
     <tbody>
       {% for e in eliminations %}
       <tr>
-        <td><a href="/elimination/{{ e.slug }}/">{{ e.title }}</a></td>
+        <td>
+          <a href="/elimination/{{ e.slug }}/">{{ e.title }}</a>
+          {% if e.plain_summary %}
+            <br><small class="text-muted">{{ e.plain_summary[:150] }}{% if e.plain_summary|length > 150 %}&hellip;{% endif %}</small>
+          {% endif %}
+        </td>
         <td class="text-mono">{{ "{:,}".format(e.configs_tested) if e.configs_tested else "N/A" }}</td>
         <td>
           {% if e.best_score is not none %}
