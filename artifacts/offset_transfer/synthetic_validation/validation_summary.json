@@ -1,0 +1,192 @@
+{
+  "test_text": "SHADOW IN THE\nDARKNESS OF\nMIDNIGHT",
+  "opacities_tested": [
+    0.15,
+    0.1,
+    0.05,
+    0.03,
+    0.01
+  ],
+  "results": [
+    {
+      "opacity": 0.15,
+      "classification": "content",
+      "ink_density": 0.020624755954705195,
+      "ground_truth_regions": 17,
+      "total_candidate_detections": 3935,
+      "best_transforms": [
+        [
+          "diff_R-G",
+          1453
+        ],
+        [
+          "diff_G-B",
+          521
+        ],
+        [
+          "diff_R-B",
+          514
+        ],
+        [
+          "clahe_mild",
+          321
+        ],
+        [
+          "channel_blue",
+          265
+        ]
+      ],
+      "detected": true
+    },
+    {
+      "opacity": 0.1,
+      "classification": "sparse",
+      "ink_density": 0.017966419367434597,
+      "ground_truth_regions": 17,
+      "total_candidate_detections": 4087,
+      "best_transforms": [
+        [
+          "diff_R-G",
+          1428
+        ],
+        [
+          "diff_G-B",
+          767
+        ],
+        [
+          "diff_R-B",
+          476
+        ],
+        [
+          "clahe_mild",
+          286
+        ],
+        [
+          "channel_blue",
+          267
+        ]
+      ],
+      "detected": true
+    },
+    {
+      "opacity": 0.05,
+      "classification": "content",
+      "ink_density": 0.023180788754392816,
+      "ground_truth_regions": 17,
+      "total_candidate_detections": 4052,
+      "best_transforms": [
+        [
+          "diff_R-G",
+          1461
+        ],
+        [
+          "diff_G-B",
+          756
+        ],
+        [
+          "diff_R-B",
+          485
+        ],
+        [
+          "channel_blue",
+          308
+        ],
+        [
+          "clahe_mild",
+          261
+        ]
+      ],
+      "detected": true
+    },
+    {
+      "opacity": 0.03,
+      "classification": "content",
+      "ink_density": 0.023468957438500585,
+      "ground_truth_regions": 17,
+      "total_candidate_detections": 3690,
+      "best_transforms": [
+        [
+          "diff_R-G",
+          1580
+        ],
+        [
+          "diff_R-B",
+          507
+        ],
+        [
+          "diff_G-B",
+          401
+        ],
+        [
+          "clahe_mild",
+          291
+        ],
+        [
+          "channel_blue",
+          260
+        ]
+      ],
+      "detected": true
+    },
+    {
+      "opacity": 0.01,
+      "classification": "content",
+      "ink_density": 0.023509566575556425,
+      "ground_truth_regions": 17,
+      "total_candidate_detections": 3536,
+      "best_transforms": [
+        [
+          "diff_R-G",
+          1478
+        ],
+        [
+          "diff_G-B",
+          503
+        ],
+        [
+          "diff_R-B",
+          474
+        ],
+        [
+          "clahe_mild",
+          282
+        ],
+        [
+          "channel_blue",
+          244
+        ]
+      ],
+      "detected": true
+    }
+  ],
+  "sensitivity_curve": [
+    {
+      "opacity": 0.15,
+      "detected": true,
+      "candidates": 3935
+    },
+    {
+      "opacity": 0.1,
+      "detected": true,
+      "candidates": 4087
+    },
+    {
+      "opacity": 0.05,
+      "detected": true,
+      "candidates": 4052
+    },
+    {
+      "opacity": 0.03,
+      "detected": true,
+      "candidates": 3690
+    },
+    {
+      "opacity": 0.01,
+      "detected": true,
+      "candidates": 3536
+    }
+  ],
+  "minimum_detectable_opacity": 0.01,
+  "false_negative_opacities": [],
+  "timestamp": "2026-04-04T14:24:23Z"
+}
