@@ -6,7 +6,7 @@ Status: active
 Keyspace: ~1M words × 6 configs (deduped to ~200K-500K unique alphabets)
 Last run: 2026-04-05
 Best score: 0.0 (key_word_coverage)
-Credit: Kimmo (community) — generate keyed alphabets from full wordlist,
+Credit: community contribution — generate keyed alphabets from full wordlist,
         recover key at crib positions, check if key fragment is English
 """
 import sys
@@ -340,7 +340,7 @@ def attack(ciphertext: str = CT, **params):
 def main():
     print("=" * 70)
     print("KEYED ALPHABET SWEEP — Full English wordlist as alphabet keywords")
-    print("Credit: Kimmo (community idea)")
+    print("Credit: community contribution")
     print("=" * 70)
 
     results = attack()
