@@ -6,7 +6,7 @@ Status: active
 Keyspace: corpus_texts × offsets × 3_variants × 26_constants
 Last run: 2026-04-05
 Best score: 0.0 (crib_score)
-Credit: Kimmo (community) — constant-term extension to running key,
+Credit: community contribution — constant-term extension to running key,
         Section 151B (Words of Isis, Tut death mask) as running key text
 """
 import sys
@@ -67,7 +67,7 @@ BEAN_POS_A, BEAN_POS_B = BEAN_EQ[0]
 ENE_POSITIONS = [p for p in CRIB_POS_SORTED if 21 <= p <= 33]
 BC_POSITIONS = [p for p in CRIB_POS_SORTED if 63 <= p <= 73]
 
-# ── Egyptian Section 151B — Words of Isis (Kimmo's suggestion) ─────────────
+# ── Egyptian Section 151B — Words of Isis (Community's suggestion) ─────────────
 # Transliterated hieroglyphic text from Tutankhamun's golden death mask
 # Manuel de Codage transliteration, alpha characters only
 
@@ -246,8 +246,8 @@ def attack(ciphertext: str = CT, **params):
     min_crib_match = params.get("min_crib_match", 8)
     n_workers = params.get("workers", max(1, cpu_count() - 2))
 
-    # Phase 1: Test Kimmo's specific texts (quick)
-    print("Phase 1: Testing Kimmo's specific texts...")
+    # Phase 1: Test Community's specific texts (quick)
+    print("Phase 1: Testing Community's specific texts...")
     all_hits = []
 
     for text_name, text_str in KIMMO_TEXTS:
@@ -317,11 +317,11 @@ def attack(ciphertext: str = CT, **params):
 def main():
     print("=" * 70)
     print("EXTENDED DIANA — Running key with constant term + Egyptian texts")
-    print("Credit: Kimmo (community idea)")
+    print("Credit: Community (community idea)")
     print("=" * 70)
 
     # Show the test texts
-    print("\nKimmo's texts:")
+    print("\nCommunity's texts:")
     for name, text in KIMMO_TEXTS:
         print(f"  {name}: {len(text)} chars — {text[:50]}...")
 

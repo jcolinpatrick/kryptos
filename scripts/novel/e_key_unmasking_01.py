@@ -6,7 +6,7 @@ Status: active
 Keyspace: ~28K compositions × 3 variants × ~48 output alphabets
 Last run: 2026-04-05
 Best score: 0.0 (key_word_coverage)
-Credit: Kimmo (community) — idea that the key itself may be encrypted
+Credit: community contribution — idea that the key itself may be encrypted
 """
 import sys
 import os
@@ -189,7 +189,7 @@ def attack(ciphertext: str = CT, **params):
 def main():
     print("=" * 70)
     print("KEY UNMASKING — Systematic transforms on known keystream")
-    print("Credit: Kimmo (community idea)")
+    print("Credit: community contribution")
     print("=" * 70)
 
     # Show baseline keystream (no transform)
