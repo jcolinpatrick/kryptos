@@ -347,6 +347,10 @@ def build():
     _render(env, "archive.html", "archive/index.html", global_ctx)
     pages_built += 1
 
+    # Challenge K4
+    _render(env, "challenge.html", "challenge/index.html", global_ctx)
+    pages_built += 1
+
     # Report error
     _render(env, "report_error.html", "report-error/index.html", global_ctx)
     pages_built += 1
@@ -783,6 +787,7 @@ def _write_sitemap(eliminations: list, tree: dict, output_dir: str):
         ("/faq/", "0.4", "monthly"),
         ("/about-kryptos/", "0.5", "monthly"),
         ("/archive/", "0.7", "monthly"),
+        ("/challenge/", "0.7", "weekly"),
         ("/about-me/", "0.3", "monthly"),
         ("/terms/", "0.1", "yearly"),
     ]
