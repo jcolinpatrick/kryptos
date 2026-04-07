@@ -399,6 +399,14 @@ nav a:visited:hover {
   color: var(--text-primary);
 }
 
+nav a.nav-new,
+nav a.nav-new:visited {
+  color: var(--accent-warm);
+}
+nav a.nav-new:hover {
+  color: var(--accent-warm-hover);
+}
+
 nav strong a,
 nav strong a.nav-brand {
   font-size: var(--text-base);
