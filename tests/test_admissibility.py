@@ -111,8 +111,28 @@ class TestCorpusPolicy:
     def test_known_source_ids_present(self):
         assert "k1_plaintext" in CORPUS_ALLOWLIST
         assert "carter_tomb_vol1" in CORPUS_ALLOWLIST
-        assert "kahn_codebreakers" in CORPUS_ALLOWLIST
         assert "panel_ciphertext" in CORPUS_ALLOWLIST
+
+    def test_kahn_is_not_allowlisted(self):
+        """kahn_codebreakers was revoked 2026-04-08.
+
+        Scheidt reading Kahn during cipher design is a fact about
+        cipher MECHANICS, not about KEY MATERIAL. Nothing in Kryptos
+        itself points a solver at Kahn as a running-key source, so the
+        license fails the derivation-pointer requirement documented in
+        the CorpusJustification docstring. See docs/admissibility_architecture.md
+        §"Revoked licenses" for the full policy note.
+        """
+        assert "kahn_codebreakers" not in CORPUS_ALLOWLIST
+        # The revocation must also be visible through the gate: a script
+        # attempting to declare SOURCE_ID="kahn_codebreakers" should be
+        # rejected with a CORPUS_POLICY_VIOLATION certificate.
+        ok, cert = check_corpus_source(
+            "kahn_codebreakers", family="running_key", is_source_id=True,
+        )
+        assert ok is False
+        assert cert is not None
+        assert cert.reason is EliminationReason.CORPUS_POLICY_VIOLATION
 
     def test_panel_ciphertext_license_shape(self):
         """panel_ciphertext must be CLUE_SURFACE and evidence-ref'd."""

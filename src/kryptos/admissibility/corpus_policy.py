@@ -52,26 +52,77 @@ class CorpusPolicyError(Exception):
 
 
 class CorpusJustification(str, Enum):
-    """Closed taxonomy of reasons a source may be admitted."""
+    """Closed taxonomy of reasons a source may be admitted.
+
+    ── The derivation-pointer requirement (2026-04-08) ─────────────────
+
+    Every admitted source MUST satisfy the following test: *a solver
+    working only from Kryptos itself and its public record should be
+    able to derive a pointer to this source text as a plausible
+    running-key candidate*.  It is NOT sufficient that a creator once
+    read, cited, or used the text during cipher design — that is a fact
+    about cipher MECHANICS (how K4 was built), not about KEY MATERIAL
+    (what text the key was derived from).  These are different things,
+    and the allowlist must only admit the latter.
+
+    Example of a valid derivation pointer:
+      K3 plaintext literally paraphrases a passage from Carter's
+      *Tomb of Tut-ankh-Amen*.  A solver reading K3 can discover
+      Carter via a straightforward reference lookup.  Carter is
+      admissible under ARTIST_STATEMENT because Sanborn's own archive
+      (AAA "Carter" correspondence, K3 source text) points at it.
+
+    Example of an INVALID derivation basis (revoked 2026-04-08):
+      Ed Scheidt publicly acknowledged reading Kahn's *Codebreakers*
+      while designing the K4 cipher.  This is a fact about cipher
+      mechanics consultation.  Nothing in Kryptos itself points at
+      Kahn as a running-key source.  A solver could not derive
+      "try Kahn" from Kryptos alone — they would need access to
+      Scheidt's extra-Kryptos reading list.  Kahn was allowlisted
+      under CREATOR_STATEMENT and revoked when this distinction
+      was made explicit.
+
+    See docs/admissibility_architecture.md §"Revoked licenses" for the
+    full reasoning and audit trail.
+    """
 
     CLUE_SURFACE = "clue_surface"
     """Derived from the literal clue surface of the Kryptos installation
-    (K1/K2/K3 text, sculpture geometry, engraved plaques)."""
+    (K1/K2/K3 text, sculpture geometry, engraved plaques).  The source
+    text's relevance must be readable directly from the sculpture or
+    from its published plaintexts — no extra-Kryptos knowledge
+    required."""
 
     ARTIST_STATEMENT = "artist_statement"
-    """Publicly attested by Jim Sanborn (interviews, letters, archives)."""
+    """Publicly attested by Jim Sanborn AS KEY MATERIAL or as a text
+    embedded in Kryptos.  A Sanborn statement about cipher methods
+    (e.g., "I used Vigenère") is NOT sufficient; the statement must
+    point at the source text specifically and in a way a solver could
+    reasonably discover from the public record."""
 
     CREATOR_STATEMENT = "creator_statement"
-    """Publicly attested by Ed Scheidt or other documented creators."""
+    """Publicly attested by Ed Scheidt or other documented creators
+    AS KEY MATERIAL.  A Scheidt statement that he READ a book during
+    cipher design is NOT sufficient (that concerns mechanics, not key
+    material).  The creator's statement must name the text as the
+    running-key source or as a text Sanborn embedded in the puzzle.
+    This tier is deliberately narrower than ARTIST_STATEMENT because
+    Scheidt was a technical consultant on how K4 works, not on what
+    K4 contains."""
 
     ARCHIVE_EVIDENCE = "archive_evidence"
     """Sourced from a primary-record archive (Archives of American Art,
-    NSA declassified material, documented correspondence)."""
+    NSA declassified material, documented correspondence).  The archive
+    record must point at the source text as KEY MATERIAL, not as a
+    design reference.  Archive-surfaced cipher-method notes (e.g.,
+    Sanborn's "4,8,10,26=Col" notation) are not corpus justifications;
+    they belong to a separate cipher-procedure admissibility track."""
 
     ANOMALY_DERIVED = "anomaly_derived"
     """Retrieved via a documented anomaly-exploitation procedure whose
     retrieval logic is public and reproducible.  Narrative anomalies
-    are NOT sufficient — the derivation must be a fixed function."""
+    are NOT sufficient — the derivation must be a fixed function
+    operating on Kryptos-internal state."""
 
 
 @dataclass(frozen=True)
@@ -187,23 +238,54 @@ DEFAULT_ALLOWLIST: Tuple[CorpusLicense, ...] = (
             "is a defensible hypothesis class, not arbitrary book-guessing."
         ),
     ),
-    CorpusLicense(
-        source_id="kahn_codebreakers",
-        title="The Codebreakers",
-        author="David Kahn",
-        justification=CorpusJustification.CREATOR_STATEMENT,
-        provenance_uri="reference/running_key_texts/kahn_codebreakers_1967.txt",
-        evidence_refs=(
-            "reference/ed_scheidt_dossier.md",
-        ),
-        sha256_hash=None,
-        added_at="2026-04-08T00:00:00+00:00",
-        notes=(
-            "Ed Scheidt is publicly documented as having used Kahn's "
-            "The Codebreakers during K4 design consultation.  "
-            "Admissible as a CREATOR_STATEMENT source."
-        ),
-    ),
+    # REVOKED 2026-04-08: kahn_codebreakers
+    #
+    # Previous entry:
+    #   CorpusLicense(
+    #       source_id="kahn_codebreakers",
+    #       title="The Codebreakers",
+    #       author="David Kahn",
+    #       justification=CorpusJustification.CREATOR_STATEMENT,
+    #       provenance_uri="reference/running_key_texts/kahn_codebreakers_1967.txt",
+    #       evidence_refs=("reference/ed_scheidt_dossier.md",),
+    #       notes="Ed Scheidt is publicly documented as having used Kahn's
+    #              The Codebreakers during K4 design consultation..."
+    #   )
+    #
+    # Revocation reasoning:
+    #   The original CREATOR_STATEMENT justification conflated two
+    #   different things Scheidt could do with a text: (a) "the creator
+    #   read this book while designing the cipher MECHANICS" vs. (b)
+    #   "the creator embedded this text as KEY MATERIAL".  Only (b)
+    #   should justify a running-key corpus license.  Scheidt's public
+    #   record about Kahn is strictly (a): he cited it as a reference
+    #   for cipher design ideas, not as a text Sanborn would have
+    #   expected a solver to use as the running-key source.
+    #
+    #   Crucially, nothing in Kryptos ITSELF points at Kahn.  A solver
+    #   working from K1-K4, the sculpture, and the published archive
+    #   record has no derivation path to Kahn without access to
+    #   Scheidt's extra-Kryptos reading list.  This fails the
+    #   derivation-pointer requirement documented in the
+    #   CorpusJustification docstring.
+    #
+    # Empirical status at time of revocation:
+    #   C2 (f_final_checklist_c1_c2.py, 2026-04-08 14:18) already ran
+    #   Kahn under columnar w6/8/9 × 3 variants and produced verdict
+    #   EMPTY via the Bean pre-filter.  The elimination is
+    #   source-independent ("no source text can produce a solution...
+    #   independent of Carter, Kahn, or any other corpus" —
+    #   docs/exhaustion_certificate_2026_04_08.md §5), so this
+    #   revocation does not weaken the exhaustion certificate's
+    #   downgrade of running-key to bin B.  What it does is clean up a
+    #   license that should never have been added in the first place.
+    #
+    # Test coverage:
+    #   tests/test_admissibility.py::TestCorpusPolicy::
+    #     test_kahn_is_not_allowlisted  (asserts revocation holds)
+    #
+    # See docs/admissibility_architecture.md §"Revoked licenses" for
+    # the full policy note.
     CorpusLicense(
         source_id="panel_ciphertext",
         title="Kryptos Engraved Cipher Panel (K1-K4 Ciphertext in Row Layout)",
