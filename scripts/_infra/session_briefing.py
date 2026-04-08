@@ -326,30 +326,141 @@ def section_do_not_test():
     print()
 
 
+def _bin_c_status(campaign_id):
+    """Detect the actual closure state of a bin-C campaign.
+
+    Returns (status, verdict, artifact_path) where status is one of
+    {'CLOSED', 'TESTABLE', 'DEFERRED', 'UNKNOWN'}.  Reads result JSONs
+    directly so the briefing never lies about already-closed work.
+
+    Closure detection order (for each campaign):
+      1. Campaign-specific result JSON with a `verdict` field
+      2. Combined multi-campaign JSON where an entry's `campaign` == id
+      3. Fall through to TESTABLE/DEFERRED per static hardcoded policy
+    """
+    # Map campaign id → list of (path, optional inner-campaign key)
+    # relative to the repo root.  First match wins.
+    artifact_map = {
+        "C7": [
+            # C7 closure comes from the admissibility sweep result.
+            # Presence of this file with no UNCLEAR entries implies C7
+            # work is done; for safety we also fall back to the
+            # exhaustion certificate's existence.
+            (os.path.join("results", "admissibility_elimination_v1",
+                          "running_key_policy.json"), None),
+            (os.path.join("docs", "exhaustion_certificate_2026_04_08.md"), None),
+        ],
+        "C1": [
+            (os.path.join("results", "f_final_checklist_c1_c2.json"), "C1"),
+            (os.path.join("results", "c1_carter_columnar_admissibility_v1",
+                          "result.json"), None),
+        ],
+        "C2": [
+            (os.path.join("results", "f_final_checklist_c1_c2.json"), "C2"),
+            (os.path.join("results", "c2_kahn_columnar_admissibility_v1",
+                          "result.json"), None),
+        ],
+        "C6": [
+            (os.path.join("results", "f_final_checklist_c6.json"), None),
+        ],
+    }
+    deferred = {"C3", "C4", "C5", "C8"}
+    if campaign_id in deferred:
+        return ("DEFERRED", None, None)
+
+    for rel_path, inner_key in artifact_map.get(campaign_id, []):
+        full_path = os.path.join(_ROOT, rel_path)
+        if not os.path.exists(full_path):
+            continue
+
+        # Non-JSON fallback: existence of the exhaustion certificate
+        # markdown is itself a closure signal for C7.
+        if full_path.endswith(".md"):
+            return ("CLOSED", "CERTIFIED", rel_path)
+
+        try:
+            with open(full_path) as f:
+                data = json.load(f)
+        except (OSError, json.JSONDecodeError):
+            continue
+
+        # Combined multi-campaign JSON: look for nested entry.
+        if inner_key and isinstance(data, dict) and "campaigns" in data:
+            for entry in data["campaigns"]:
+                if isinstance(entry, dict) and entry.get("campaign") == inner_key:
+                    return ("CLOSED", entry.get("verdict", "UNKNOWN"), rel_path)
+
+        # Flat single-campaign JSON.
+        verdict = data.get("verdict") if isinstance(data, dict) else None
+        if verdict:
+            return ("CLOSED", str(verdict).upper(), rel_path)
+
+    return ("TESTABLE", None, None)
+
+
 def section_open_attack_surface():
-    """What remains viable. Bins from docs/exhaustion_audit_2026_04_08.md."""
-    print("── FINAL CHECKLIST — BIN C (testable now, execute then stop) ──────")
+    """What remains viable. Bins from docs/exhaustion_audit_2026_04_08.md.
+
+    Bin-C items are annotated with their actual closure state as detected
+    from artifact files on disk (see `_bin_c_status`).  Closed items stay
+    in the listing for audit continuity but are marked ✓ with their
+    verdict and a pointer to the result JSON.
+    """
+    print("── FINAL CHECKLIST — BIN C (execution state) ──────────────────────")
     print()
+    # (id, name, detail) — status is resolved at runtime
     bin_c = [
-        ("C7  Admissibility backlog (16 scripts)",
+        ("C7", "Admissibility backlog",
          "Manual provenance review of ASSUMPTION_UNMET running-key scripts. "
-         "Declare source, add license, or archive. ~1 eng day."),
-        ("C1  Carter Vol 1 + columnar w6/8/9 × 3 variants",
-         "Admissibility-gated. ~150K configs. "
+         "Declare source, add license, or archive."),
+        ("C1", "Carter Vol 1 + columnar w6/8/9 × 3 variants",
+         "Admissibility-gated. Source: carter_tomb_vol1 (ARTIST_STATEMENT). "
          "Pre-registered thresholds: docs/preregistered_thresholds_2026_04_08.md"),
-        ("C2  Kahn Codebreakers + columnar w6/8/9 × 3 variants",
-         "Admissibility-gated. ~150K configs. Same thresholds."),
-        ("C6  Non-columnar 3-layer enumeration",
-         "Only bin-C item with a real architectural argument. "
-         "{additive, periodic} × {route, myszkowski, rail_fence, block} × {additive, periodic}"),
-        ("C3/C4  Bifid / four-square as composition OUTER (DEFERRED)",
-         "Only run if C1/C2/C6 escalates — otherwise priors are too low"),
-        ("C5/C8  Homophonic outer / stateful seed expansion (DEFERRED)",
-         "Only run if earlier bin-C campaigns escalate"),
+        ("C2", "Kahn Codebreakers + columnar w6/8/9 × 3 variants",
+         "Admissibility-gated. Source: kahn_codebreakers (CREATOR_STATEMENT). "
+         "Same thresholds."),
+        ("C6", "Non-columnar 3-layer enumeration",
+         "{additive,vig,beau} outer × {myszkowski,rail_fence,route,block} middle "
+         "× {additive,vig,beau} inner."),
+        ("C3", "Bifid as composition OUTER (DEFERRED)",
+         "Only run if C1/C2/C6 escalates — priors too low otherwise."),
+        ("C4", "Four-square as composition OUTER (DEFERRED)",
+         "Only run if C1/C2/C6 escalates — priors too low otherwise."),
+        ("C5", "Homophonic as composition OUTER (DEFERRED)",
+         "Only run if earlier bin-C campaigns escalate."),
+        ("C8", "Stateful seed-space expansion (DEFERRED)",
+         "Only run if earlier bin-C campaigns escalate."),
     ]
-    for name, detail in bin_c:
-        print(f"  → {name}")
-        print(f"    {detail}")
+
+    n_closed = 0
+    n_testable = 0
+    n_deferred = 0
+    for cid, name, detail in bin_c:
+        status, verdict, artifact = _bin_c_status(cid)
+        if status == "CLOSED":
+            n_closed += 1
+            marker = "✓"
+            tag = f"CLOSED ({verdict})" if verdict else "CLOSED"
+        elif status == "DEFERRED":
+            n_deferred += 1
+            marker = "⊘"
+            tag = "DEFERRED"
+        else:
+            n_testable += 1
+            marker = "→"
+            tag = "TESTABLE NOW"
+        print(f"  {marker} {cid:<3s} {name} — {tag}")
+        print(f"      {detail}")
+        if artifact:
+            print(f"      artifact: {artifact}")
+    print()
+    print(f"  Summary: {n_closed} closed, {n_testable} testable, "
+          f"{n_deferred} deferred")
+    if n_testable == 0 and n_closed > 0:
+        print(f"  ⚠ All non-deferred bin-C campaigns are CLOSED. Running-key "
+              f"and/or non-columnar 3-layer may already be downgraded — "
+              f"consult docs/exhaustion_certificate_*.md before starting "
+              f"new compute in these families.")
     print()
     print("── BIN D — weakly testable (engineering, not compute) ─────────────")
     print()
