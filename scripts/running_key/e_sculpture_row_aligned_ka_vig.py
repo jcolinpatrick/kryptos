@@ -42,6 +42,13 @@ sys.path.insert(0, os.path.join(_ROOT, 'src'))
 from kryptos.kernel.constants import CT
 from kryptos.kernel.scoring.crib_score import score_cribs
 
+# Corpus policy declaration — this script uses the engraved K1-K4
+# ciphertext panel (in physical row layout) as the running-key source
+# for K4 decryption under KA Vigenere. Allowlisted as clue-surface under
+# source_id `panel_ciphertext` (added 2026-04-08 as part of C7 review).
+# See src/kryptos/admissibility/corpus_policy.py::DEFAULT_ALLOWLIST.
+SOURCE_ID = "panel_ciphertext"
+
 # ── Panel rows (from cylinder_viewer.js, ? marks removed) ──────────────
 
 PANEL_ROWS_RAW = [

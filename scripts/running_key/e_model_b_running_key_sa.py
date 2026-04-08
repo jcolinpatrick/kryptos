@@ -41,6 +41,16 @@ from collections import Counter
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'src'))
 from kryptos.kernel.constants import CT
 
+# Corpus policy opt-out — this script is the E-FRAC-54 "key-as-English"
+# architecture: simulated annealing searches the 73 free key positions
+# directly to maximise quadgram log-probability under the constraint that
+# the 24 pinned crib positions produce correct plaintext. The hypothesis
+# is "the key is ANY 97-char English-looking string", not "the key is a
+# specific book". No external corpus is consumed; the only data files are
+# the quadgram frequency table (data/english_quadgrams.json) and a
+# wordlist used post-hoc for word search analysis of the best results.
+NO_CORPUS_SOURCE = True
+
 # ── Constants ──────────────────────────────────────────────────────────────
 AZ = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 KA = "KRYPTOSABCDEFGHIJLMNQUVWXZ"

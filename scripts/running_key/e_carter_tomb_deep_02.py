@@ -49,6 +49,12 @@ sys.path.insert(0, os.path.join(_ROOT, "src"))
 from kryptos.kernel.constants import CT, CT_LEN, CRIB_DICT, ALPH, ALPH_IDX, MOD
 from kryptos.kernel.alphabet import KA
 
+# Corpus policy declaration — this script consumes Carter Vol 1 as a
+# running key, which is on the default allowlist as `carter_tomb_vol1`.
+# See src/kryptos/admissibility/corpus_policy.py::DEFAULT_ALLOWLIST and
+# docs/admissibility_architecture.md.
+SOURCE_ID = "carter_tomb_vol1"
+
 # ── Constants ──────────────────────────────────────────────────────────────
 N = CT_LEN  # 97
 CT_AZ = [ALPH_IDX[c] for c in CT]
@@ -79,8 +85,8 @@ def load_text(path):
     ka = [KA_IDX[c] for c in clean]
     return clean, az, ka
 
-print("Loading Carter_Tomb.txt...", flush=True)
-CARTER_PATH = os.path.join(_ROOT, "reference", "Carter_Tomb.txt")
+print("Loading carter_vol1.txt (canonical allowlist path)...", flush=True)
+CARTER_PATH = os.path.join(_ROOT, "reference", "carter_vol1.txt")
 carter_str, carter_az, carter_ka = load_text(CARTER_PATH)
 CARTER_LEN = len(carter_az)
 print(f"  Carter text: {CARTER_LEN} alpha chars", flush=True)

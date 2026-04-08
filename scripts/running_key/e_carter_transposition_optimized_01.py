@@ -49,6 +49,9 @@ sys.path.insert(0, os.path.join(_ROOT, "src"))
 
 from kryptos.kernel.constants import CT, CT_LEN, CRIB_DICT, ALPH, ALPH_IDX, N_CRIBS
 
+# Corpus policy declaration — Carter Vol 1 (allowlisted as `carter_tomb_vol1`).
+SOURCE_ID = "carter_tomb_vol1"
+
 N = CT_LEN
 CT_IDX = [ALPH_IDX[c] for c in CT]
 CRIB_LIST = sorted(CRIB_DICT.items())  # (pos, char) sorted by pos
@@ -360,8 +363,8 @@ def main():
     print("E-CARTER-TRANS-OPT-01: Pair-Index Carter + Columnar Transposition", flush=True)
     print("=" * 72, flush=True)
 
-    # Load Carter text (use the largest file)
-    carter_path = os.path.join(_ROOT, "reference", "Carter_Tomb.txt")
+    # Load Carter text (canonical allowlist path)
+    carter_path = os.path.join(_ROOT, "reference", "carter_vol1.txt")
     print(f"Loading Carter text from {carter_path}...", flush=True)
     carter_idx = load_carter(carter_path)
     carter_name = "Carter_Tomb"

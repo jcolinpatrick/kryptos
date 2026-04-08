@@ -30,6 +30,9 @@ from kryptos.kernel.constants import CT, CRIB_POSITIONS
 from kryptos.kernel.scoring.aggregate import score_candidate
 from kryptos.kernel.text import sanitize
 
+# Corpus policy declaration — Carter Vol 1 (allowlisted as `carter_tomb_vol1`).
+SOURCE_ID = "carter_tomb_vol1"
+
 # ── Helpers ──────────────────────────────────────────────────────────────
 
 def alpha_only(text):
@@ -37,7 +40,7 @@ def alpha_only(text):
     return re.sub(r'[^A-Za-z]', '', text).upper()
 
 def load_carter():
-    path = os.path.join(_ROOT, "reference", "Carter_Tomb.txt")
+    path = os.path.join(_ROOT, "reference", "carter_vol1.txt")
     with open(path, 'r', encoding='utf-8', errors='replace') as f:
         return f.read()
 

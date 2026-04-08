@@ -29,6 +29,11 @@ from kryptos.kernel.constants import (
     KRYPTOS_ALPHABET,
 )
 
+# Corpus policy declaration — K1/K2/K3 plaintexts are allowlisted
+# clue-surface sources. This script uses all three; declaring k1_plaintext
+# as primary since that matches the allowlist lookup.
+SOURCE_ID = "k1_plaintext"
+
 CT_NUM = [ALPH_IDX[c] for c in CT]
 CRIB_PT_NUM = {pos: ALPH_IDX[ch] for pos, ch in CRIB_DICT.items()}
 
