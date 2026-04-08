@@ -64,6 +64,11 @@ from collections import defaultdict
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
 from kryptos.kernel.constants import CT, CT_LEN, CRIB_DICT, ALPH, ALPH_IDX
 
+# Corpus policy opt-out — same architecture as e_model_b_running_key_sa.py.
+# Dual SA optimises σ for joint PT+KEY English-word coverage using a
+# wordlist, not an external text corpus. Not a guess-a-book attack.
+NO_CORPUS_SOURCE = True
+
 N = CT_LEN
 
 # Load dictionary

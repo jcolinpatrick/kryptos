@@ -41,6 +41,12 @@ from kryptos.kernel.constants import (
 )
 from kryptos.kernel.transforms.vigenere import vig_recover_key
 
+# Corpus policy opt-out — this script is a DOF/constraint analysis, not a
+# running-key attack. It reasons about the Mono+Trans+RK model's degrees
+# of freedom via self-encrypting positions and crib-letter pairing; it
+# does not load or consume any external text as a key source.
+NO_CORPUS_SOURCE = True
+
 
 def main():
     print("=" * 70)
