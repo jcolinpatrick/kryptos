@@ -80,13 +80,32 @@
     </li>
     <li>
       <strong>Running keys from 60,000+ English texts</strong> combined with structured
-      transposition: zero candidates across 106 billion position checks.
+      transposition: zero candidates across 106 billion position checks. A later check
+      (April 2026) found that running-key combined with columnar transposition at
+      widths 6/8/9 is also blocked by the current 242-inequality Bean constraint set
+      regardless of which source text is used. This does not rule out running keys from
+      non-English or non-standard texts under other transposition types.
+    </li>
+    <li>
+      <strong>Two-layer and three-layer compositions tested so far</strong>: 105,692
+      two-layer branches (additive &times; transposition, transposition &times; periodic
+      substitution, 6 stateful families) and 838,350 non-columnar three-layer branches.
+      Max crib score 7/24 across the three-layer enumeration. All noise within the
+      registered layer families and default keyword sets.
     </li>
     <li>
       <strong>Bespoke systems</strong> (VIC, RS44, Wheatstone, interrupted-key, DRYAD):
       all noise within tested scope.
     </li>
   </ul>
+  <p>
+    These eliminations describe the scope of what we have tested under specific assumptions.
+    They do not claim that K4 cannot be solved by classical cryptanalysis; classical cipher
+    space has infinite variation, and any bespoke procedure, non-standard transposition, or
+    combination outside our tested scope remains open. We document concrete negatives so
+    the community does not have to re-test approaches that are already known to fail, not
+    to suggest the problem is closed.
+  </p>
   <p>
     These eliminations do not rule out the same families as one layer of a multi-layer
     construction, nor do they apply if K4 uses a non-additive cipher mechanism.
@@ -238,15 +257,27 @@
     <p>
       Under a KA-autokey Vigen&egrave;re model, simulated annealing identified 17 candidate
       filler positions that used only 7 letters (B, G, I, K, O, W, Z), with odds of
-      roughly 1 in 16,000. This was our strongest statistical claim for months. However,
-      a score-conditioned null experiment showed that the SA process produces 11 distinct
-      letters on real K4, indistinguishable from shuffled controls (p&nbsp;=&nbsp;0.30).
-      The original &ldquo;7 distinct&rdquo; observation was traced to post-hoc selection
-      from positions already containing palette letters, a circular observation.
-      All downstream claims (BCL keystream enrichment, KA mod-5 column structure,
-      arithmetic progression patterns, KRYPTOS&nbsp;&times;&nbsp;SEVEN lookup table) were
-      also retired.
+      roughly 1 in 16,000 under the cipher model at the time. This was our strongest
+      statistical claim for months. However, a score-conditioned null experiment showed
+      that the SA process produces 11 distinct letters on real K4, indistinguishable from
+      shuffled controls (p&nbsp;=&nbsp;0.30). The original &ldquo;7 distinct&rdquo;
+      observation was traced to post-hoc selection from positions already containing
+      palette letters, a circular observation. All downstream claims (BCL keystream
+      enrichment, KA mod-5 column structure, arithmetic progression patterns,
+      KRYPTOS&nbsp;&times;&nbsp;SEVEN lookup table) were also retired.
       <a href="https://github.com/jcolinpatrick/kryptos/blob/main/docs/a1_score_conditioned_null_report.md">Full report.</a>
+    </p>
+    <p>
+      <strong>Follow-up audit (2026-04-08):</strong> An adversarial internal review
+      reclassified 19 additional &ldquo;interesting&rdquo; results as eliminated once
+      their dependence on the retired palette or on structural disqualifiers (autokey
+      family, VIC family, period underdetermination) was identified. We also ran a
+      pre-registered checklist: Carter Vol&nbsp;1 and Kahn Codebreakers as running-key
+      sources against columnar widths 6/8/9, and a non-columnar three-layer enumeration
+      of 838,350 compositions. All returned zero candidates under pre-committed
+      conjunctive thresholds. Full records are in the
+      <a href="https://github.com/jcolinpatrick/kryptos/blob/main/docs/exhaustion_audit_2026_04_08.md">internal
+      status audit</a> (which is deliberately adversarial about our own claims).
     </p>
   </div>
 </section>
@@ -270,13 +301,21 @@
     <div class="conclusion-card conclusion-open">
       <h3>What remains unknown</h3>
       <ul>
-        <li>The cipher type and key (every standard single-layer classical cipher eliminated
-            under direct correspondence)</li>
+        <li>The cipher type and key. Every standard single-layer classical cipher is
+            eliminated under direct correspondence, but non-standard and bespoke ciphers
+            are an open-ended space that we cannot claim to have exhausted.</li>
         <li>Whether K4 contains null characters (plausible but unproven; the statistical
             evidence was retired)</li>
-        <li>The source text for a running-key cipher, if that model is correct</li>
-        <li>Whether the answer requires external evidence (physical investigation,
-            unreleased documents, K5) rather than further computation</li>
+        <li>Running keys from non-public or non-English sources, or combined with
+            monoalphabetic substitution + non-standard transposition (this last case is
+            detection-underdetermined under current quadgram scoring)</li>
+        <li>Bespoke procedural mechanisms using Sanborn&rsquo;s encoding charts or
+            physical installation features</li>
+        <li>Whether K5, archive photographs, or other primary-source evidence would
+            reveal new constraints</li>
+        <li>Anything we haven&rsquo;t thought of.
+            <a href="/submit/">If you have an idea we haven&rsquo;t tested, tell us</a>
+            &mdash; that is exactly why this site exists.</li>
       </ul>
     </div>
   </div>
