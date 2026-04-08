@@ -43,6 +43,13 @@ from kryptos.kernel.constants import (
 from kryptos.kernel.scoring.aggregate import score_candidate
 from kryptos.kernel.constraints.bean import verify_bean
 
+# Corpus policy declaration — this script uses K1/K2/K3 plaintexts (with
+# their Sanborn-preserved misspellings) as the running-key source. All three
+# are allowlisted as clue-surface (k1_plaintext, k2_plaintext, k3_plaintext).
+# The primary declared source is k1_plaintext; the other two are consumed
+# in the same execution and are each independently allowlisted.
+SOURCE_ID = "k1_plaintext"
+
 # ── Alphabet setup ─────────────────────────────────────────────────────
 
 AZ = ALPH
