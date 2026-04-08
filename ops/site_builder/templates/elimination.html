@@ -13,7 +13,9 @@
 
 <h1>{{ e.title }}</h1>
 
+{% if e.description %}
 <p>{{ e.description }}</p>
+{% endif %}
 
 {% if e.plain_summary %}
 <div class="plain-summary">

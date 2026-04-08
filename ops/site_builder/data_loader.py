@@ -965,6 +965,50 @@ def _generate_plain_summary(elim: SiteElimination) -> str:
     # 1. What SPECIFICALLY was tested — the distinguishing detail
     specific = _extract_specific_detail(elim)
 
+    # Avoid duplicating the title. The title is already rendered next to
+    # the summary on category browse pages and as <h1> on detail pages, so
+    # repeating it produces visible redundancy.
+    #
+    # If `specific` is equal to the title, drop it entirely.
+    # If `specific` starts with the title but adds meaningful suffix info
+    # (e.g. "Abscissa-derived linear keys from physical sculpture layout"),
+    # strip the title portion and keep only the trailing additional context.
+    def _norm(s: str) -> str:
+        return "".join(ch.lower() for ch in s if ch.isalnum())
+
+    title_raw = (elim.title or "").strip()
+    title_norm = _norm(title_raw)
+    specific_norm = _norm(specific)
+    if specific_norm and title_norm:
+        if specific_norm == title_norm:
+            specific = ""
+        elif title_norm.startswith(specific_norm) and len(title_norm) - len(specific_norm) < 10:
+            specific = ""
+        elif specific_norm.startswith(title_norm):
+            # Strip the title prefix from the specific detail, keeping only
+            # the additional context that follows.
+            # Walk character-by-character to find where the title ends in
+            # the original (non-normalized) `specific` string.
+            i = 0
+            j = 0
+            while i < len(specific) and j < len(title_raw):
+                if specific[i].isalnum():
+                    if title_raw[j].isalnum():
+                        if specific[i].lower() == title_raw[j].lower():
+                            i += 1
+                            j += 1
+                        else:
+                            break
+                    else:
+                        j += 1
+                else:
+                    i += 1
+            # i is now the index in `specific` just past where title ended
+            if j == len(title_raw):
+                suffix = specific[i:].lstrip(" ,-—–:;")
+                # Preserve suffix only if it adds meaningful content (>3 chars)
+                specific = suffix if len(suffix) > 3 else ""
+
     # Get the category-level technique description for context
     technique = ""
     if elim.subcategory:
@@ -985,11 +1029,11 @@ def _generate_plain_summary(elim: SiteElimination) -> str:
         parts.append(f"{specific}.")
     elif technique:
         # Only technique, no specifics — generic fallback
-        parts.append(f"We tested {technique}.")
+        parts.append(f"Tested {technique}.")
     elif elim.cipher_type:
-        parts.append(f"We tested {elim.cipher_type}.")
+        parts.append(f"Tested {elim.cipher_type}.")
     else:
-        parts.append("We tested this encryption approach.")
+        parts.append("Tested this encryption approach.")
 
     # 2. How thoroughly + result combined
     if elim.configs_tested > 0:
@@ -1025,8 +1069,75 @@ def _generate_plain_summary(elim: SiteElimination) -> str:
     return " ".join(parts)
 
 
+def _clear_redundant_description(elim: SiteElimination) -> None:
+    """Normalize elim.description to avoid visual duplication with the title.
+
+    Many eliminations have description == title (or a near-equivalent), or
+    description == "title + suffix with extra info". Rendering both produces
+    visible redundancy: the title shown as <h1> and then immediately repeated
+    as a description paragraph. This function:
+
+    - Clears description entirely when it is identical to or a near-exact
+      truncation of the title.
+    - Strips the title prefix from description when description starts with
+      the title but adds meaningful trailing context, keeping only the new
+      information (e.g. "Abscissa-derived linear keys from physical
+      sculpture layout" → "From physical sculpture layout").
+
+    Applied in the data layer so it benefits all downstream consumers:
+    the detail template's <p>{{ e.description }}</p>, the category browse
+    table's summary column, and the plain-summary generator.
+    """
+    if not elim.description or not elim.title:
+        return
+
+    def _norm(s: str) -> str:
+        return "".join(ch.lower() for ch in s if ch.isalnum())
+
+    title_raw = elim.title.strip()
+    desc_raw = elim.description.strip()
+    title_norm = _norm(title_raw)
+    desc_norm = _norm(desc_raw)
+    if not title_norm or not desc_norm:
+        return
+
+    # Exact match (or near-exact truncation)
+    if title_norm == desc_norm:
+        elim.description = ""
+        return
+    if title_norm.startswith(desc_norm) and len(title_norm) - len(desc_norm) < 10:
+        elim.description = ""
+        return
+
+    # Description starts with title and adds trailing context: strip the
+    # title prefix and keep only the extension.
+    if desc_norm.startswith(title_norm):
+        i = 0
+        j = 0
+        while i < len(desc_raw) and j < len(title_raw):
+            if desc_raw[i].isalnum():
+                if title_raw[j].isalnum():
+                    if desc_raw[i].lower() == title_raw[j].lower():
+                        i += 1
+                        j += 1
+                    else:
+                        return  # mismatch: leave description alone
+                else:
+                    j += 1
+            else:
+                i += 1
+        if j == len(title_raw):
+            suffix = desc_raw[i:].lstrip(" ,-—–:;")
+            if len(suffix) > 3:
+                # Capitalize first character if it was lowercased mid-sentence
+                elim.description = suffix[0].upper() + suffix[1:]
+            else:
+                elim.description = ""
+
+
 def generate_all_plain_summaries(eliminations: list[SiteElimination]) -> None:
     """Generate plain-English summaries for all eliminations that don't already have one."""
     for elim in eliminations:
+        _clear_redundant_description(elim)
         if not elim.plain_summary:
             elim.plain_summary = _generate_plain_summary(elim)
