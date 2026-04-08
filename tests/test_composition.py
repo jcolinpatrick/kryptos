@@ -771,3 +771,232 @@ class TestWorker:
         })
         assert result["branch_id"] == "test_br2"
         assert "score" in result
+
+
+# ══════════════════════════════════════════════════════════════════════════
+# C6 regression: non-columnar middle layer scoring path
+# ══════════════════════════════════════════════════════════════════════════
+#
+# Guards against the bug class caught in 2026-04 (phantom scoring on
+# substitution scripts; anchored-scoring length mismatch in the null-Beaufort
+# campaign). A 3-layer stack with a non-position-preserving middle MUST route
+# through `score_candidate_free` (via `select_scoring_mode → "both"` or
+# `"free"`) so cribs are located in PT space wherever they end up, not
+# anchored at 97-char-CT positions.
+#
+# Construction: build a 97-char plant PT with EASTNORTHEAST at 21–33 and
+# BERLINCLOCK at 63–73, encrypt through outer Vigenère / non-columnar middle /
+# inner Vigenère, feed through `_worker_evaluate`, and assert the plant is
+# recovered at 24/24 with the correct keys, rejected with a wrong inner key,
+# and rejected on shuffled CT. Derived from the 2026-04-08 C6 scoring-path
+# audit documented in the session results.
+
+
+def _build_c6_plant_pt() -> str:
+    """Construct a 97-char plant with the canonical cribs at their positions."""
+    pt_chars = ["A"] * 97
+    for i, c in enumerate("EASTNORTHEAST"):
+        pt_chars[21 + i] = c
+    for i, c in enumerate("BERLINCLOCK"):
+        pt_chars[63 + i] = c
+    filler = "THEQUICKBROWNFOXJUMPSOVERTHELAZYDOG"
+    for i in range(97):
+        if pt_chars[i] == "A" and i < 21:
+            pt_chars[i] = filler[i % len(filler)]
+        elif pt_chars[i] == "A" and 34 <= i < 63:
+            pt_chars[i] = filler[(i - 34) % len(filler)]
+        elif pt_chars[i] == "A" and i >= 74:
+            pt_chars[i] = filler[(i - 74) % len(filler)]
+    plant = "".join(pt_chars)
+    assert len(plant) == 97
+    assert plant[21:34] == "EASTNORTHEAST"
+    assert plant[63:74] == "BERLINCLOCK"
+    return plant
+
+
+def _encrypt_through_stack(plant_pt: str, stack: CompositionStack) -> str:
+    """Encrypt by applying each layer's forward transform in reverse order.
+
+    OUTER_FIRST peel order decrypts as inner→middle→outer (wait: layers[0]
+    is applied first via inv during peel). Matching `_worker_evaluate`'s
+    peel semantics, forward encryption applies layers in reverse index order.
+    """
+    layer_transforms = [build_transforms(layer) for layer in stack.layers]
+    text = plant_pt
+    for i in range(len(layer_transforms) - 1, -1, -1):
+        fwd, _ = layer_transforms[i]
+        text = fwd(text)
+    return text
+
+
+# Middle-layer configurations to audit. Each is a non-position-preserving
+# transposition with parameters known to round-trip cleanly on 97 chars.
+_C6_MIDDLE_FAMILIES = [
+    pytest.param(
+        LayerFamily.TRANSPOSITION_RAIL_FENCE,
+        {"depth": 3},
+        id="rail_fence_d3",
+    ),
+    pytest.param(
+        LayerFamily.TRANSPOSITION_MYSZKOWSKI,
+        {"keyword": "SEVEN"},
+        id="myszkowski_SEVEN",
+    ),
+    pytest.param(
+        LayerFamily.TRANSPOSITION_ROUTE,
+        {"rows": 7, "cols": 14, "route_type": "spiral", "clockwise": True},
+        id="route_spiral_7x14",
+    ),
+]
+
+
+class TestC6NonColumnarMiddleRegression:
+    """Regression suite for the C6 scoring-path correctness property.
+
+    Bug class guarded against:
+    * non-columnar middle layer + anchored scoring = crib position misalignment
+    * phantom scoring (filter-by-crib then score-against-same-crib)
+
+    All three checks must pass for every middle family:
+      (1) plant recovered at 24/24 with correct keys
+      (2) wrong inner key rejected (< STORE threshold of 10)
+      (3) shuffled CT with correct keys rejected (< STORE threshold of 10)
+    """
+
+    @pytest.mark.parametrize("middle_family,middle_params", _C6_MIDDLE_FAMILIES)
+    def test_scoring_mode_selects_free_path(self, middle_family, middle_params):
+        """`select_scoring_mode` must route non-columnar middles to free or both."""
+        outer = make_instance(LayerFamily.VIGENERE, {"keyword": "KRYPTOS"})
+        middle = make_instance(middle_family, middle_params)
+        inner = make_instance(LayerFamily.VIGENERE, {"keyword": "PALIMPSEST"})
+        stack = CompositionStack(
+            layers=(outer, middle, inner),
+            peel_order=PeelOrder.OUTER_FIRST,
+            description=f"C6 regression: vig/{middle_family.name}/vig",
+        )
+        mode = select_scoring_mode(stack)
+        assert mode in ("free", "both"), (
+            f"Non-columnar middle {middle_family.name} must use free-scoring; "
+            f"select_scoring_mode returned {mode!r}"
+        )
+
+    @pytest.mark.parametrize("middle_family,middle_params", _C6_MIDDLE_FAMILIES)
+    def test_plant_round_trips(self, middle_family, middle_params):
+        """Sanity: the 3-layer plant must decrypt back to the original PT."""
+        plant_pt = _build_c6_plant_pt()
+        outer = make_instance(LayerFamily.VIGENERE, {"keyword": "KRYPTOS"})
+        middle = make_instance(middle_family, middle_params)
+        inner = make_instance(LayerFamily.VIGENERE, {"keyword": "PALIMPSEST"})
+        stack = CompositionStack(
+            layers=(outer, middle, inner),
+            peel_order=PeelOrder.OUTER_FIRST,
+        )
+        plant_ct = _encrypt_through_stack(plant_pt, stack)
+        assert len(plant_ct) == 97
+
+        # Peel through the stack the same way _worker_evaluate does.
+        text = plant_ct
+        for layer in stack.layers:
+            _, inv = build_transforms(layer)
+            text = inv(text)
+        assert text == plant_pt, (
+            f"Round-trip failed for middle={middle_family.name}: "
+            f"recovered != original"
+        )
+
+    @pytest.mark.parametrize("middle_family,middle_params", _C6_MIDDLE_FAMILIES)
+    def test_plant_recovered_with_correct_keys(self, middle_family, middle_params):
+        """Correct-key run must score 24/24 via the free-scoring path."""
+        from kryptos.composition.orchestrator import _worker_evaluate
+
+        plant_pt = _build_c6_plant_pt()
+        outer = make_instance(LayerFamily.VIGENERE, {"keyword": "KRYPTOS"})
+        middle = make_instance(middle_family, middle_params)
+        inner = make_instance(LayerFamily.VIGENERE, {"keyword": "PALIMPSEST"})
+        stack = CompositionStack(
+            layers=(outer, middle, inner),
+            peel_order=PeelOrder.OUTER_FIRST,
+        )
+        plant_ct = _encrypt_through_stack(plant_pt, stack)
+
+        result = _worker_evaluate({
+            "branch_id": f"c6_regr_{middle_family.name}",
+            "stack": stack.to_dict(),
+            "ciphertext": plant_ct,
+            "aggressive_pruning": False,
+            "score_threshold": 10,
+        })
+        assert result.get("score") == 24, (
+            f"C6 plant not fully recovered for middle={middle_family.name}: "
+            f"score={result.get('score')} "
+            f"breakdown={result.get('score_breakdown')}"
+        )
+        # Decrypted PT should contain both cribs at their canonical positions.
+        pt = result.get("plaintext", "")
+        assert "EASTNORTHEAST" in pt
+        assert "BERLINCLOCK" in pt
+
+    @pytest.mark.parametrize("middle_family,middle_params", _C6_MIDDLE_FAMILIES)
+    def test_plant_rejected_with_wrong_inner_key(self, middle_family, middle_params):
+        """Wrong inner key must score well below STORE threshold (not 24/24)."""
+        from kryptos.composition.orchestrator import _worker_evaluate
+
+        plant_pt = _build_c6_plant_pt()
+        outer = make_instance(LayerFamily.VIGENERE, {"keyword": "KRYPTOS"})
+        middle = make_instance(middle_family, middle_params)
+        inner_right = make_instance(LayerFamily.VIGENERE, {"keyword": "PALIMPSEST"})
+        stack_right = CompositionStack(
+            layers=(outer, middle, inner_right),
+            peel_order=PeelOrder.OUTER_FIRST,
+        )
+        plant_ct = _encrypt_through_stack(plant_pt, stack_right)
+
+        inner_wrong = make_instance(LayerFamily.VIGENERE, {"keyword": "ABSCISSA"})
+        stack_wrong = CompositionStack(
+            layers=(outer, middle, inner_wrong),
+            peel_order=PeelOrder.OUTER_FIRST,
+        )
+        result = _worker_evaluate({
+            "branch_id": f"c6_regr_wrong_{middle_family.name}",
+            "stack": stack_wrong.to_dict(),
+            "ciphertext": plant_ct,
+            "aggressive_pruning": False,
+            "score_threshold": 10,
+        })
+        assert result.get("score", 0) < 18, (
+            f"Wrong inner key scored too high for middle={middle_family.name}: "
+            f"score={result.get('score')} — possible phantom scoring"
+        )
+
+    @pytest.mark.parametrize("middle_family,middle_params", _C6_MIDDLE_FAMILIES)
+    def test_plant_rejected_on_shuffled_ct(self, middle_family, middle_params):
+        """Shuffled CT with correct keys must score low (scorer reads real CT)."""
+        import random
+        from kryptos.composition.orchestrator import _worker_evaluate
+
+        plant_pt = _build_c6_plant_pt()
+        outer = make_instance(LayerFamily.VIGENERE, {"keyword": "KRYPTOS"})
+        middle = make_instance(middle_family, middle_params)
+        inner = make_instance(LayerFamily.VIGENERE, {"keyword": "PALIMPSEST"})
+        stack = CompositionStack(
+            layers=(outer, middle, inner),
+            peel_order=PeelOrder.OUTER_FIRST,
+        )
+        plant_ct = _encrypt_through_stack(plant_pt, stack)
+
+        rng = random.Random(1337)
+        ct_list = list(plant_ct)
+        rng.shuffle(ct_list)
+        shuffled_ct = "".join(ct_list)
+
+        result = _worker_evaluate({
+            "branch_id": f"c6_regr_shuffled_{middle_family.name}",
+            "stack": stack.to_dict(),
+            "ciphertext": shuffled_ct,
+            "aggressive_pruning": False,
+            "score_threshold": 10,
+        })
+        assert result.get("score", 0) < 18, (
+            f"Shuffled CT scored too high for middle={middle_family.name}: "
+            f"score={result.get('score')} — scorer is ignoring the CT"
+        )
