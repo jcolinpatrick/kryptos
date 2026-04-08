@@ -7,7 +7,7 @@ This file covers volatile strategic state that the briefing script doesn't gener
 
 ---
 
-## Project State (2026-04-06)
+## Project State (2026-04-08)
 
 - 993+ scripts, 386 eliminations on internal.com, 671B+ configs scored
 - No credible decrypt path. All positive findings are descriptive anomalies.
@@ -74,7 +74,8 @@ Detail: `archive_aaa_findings.md` in session memory.
 
 ## Campaign & Audit Summaries
 
-- **Composition v1+v2+v3 (2026-04-06):** 105K+ compositions across 37 campaigns. v1: additive+transposition. v2: Vigenere/Beaufort inner, 80-char CT. v3: 6 stateful/architecture families (band offset, polarity switch, progressive key, state alphabet, band polarity, compass offset). Max 6/24 = noise. Bean inequality pruning confirms periodic single-layer elimination. Reports: `reports/composition_campaign_v{1,2,3}.md`.
+- **Null-mask + Beaufort exhaustive (2026-04-08):** Admissibility-framework Phase 2 proof via `f_null_beaufort_exhaustive_v1.py`. All 44,400 (ene_start × bcl_start × period 1-8) CSPs are formally UNSAT (`phase2_verdict: formal_unsat`, `phase2_is_exact: true`). This closes the null-mask + periodic-Beaufort thread entirely, extending the earlier E-NULLMASK-PERIODIC algebraic proof to the sliding-crib-window framing. Certificate: `results/admissibility_elimination_v1/null_beaufort_phase2.json`. Note: Phase 1/4 `score_candidate` calls were misaligned (anchored 97-char crib positions applied to 73-char extracted PT), but the canonical Phase 2 UNSAT proof used `score_candidate_free` and is unaffected.
+- **Composition v1+v2+v3 (2026-04-06):** 105K+ compositions across 37 campaigns. v1: additive+transposition. v2: Vigenere/Beaufort inner, 80-char CT. v3: 6 stateful/architecture families (band offset, polarity switch, progressive key, state alphabet, band polarity, compass offset). Max 6/24 = noise. Bean inequality pruning confirms periodic single-layer elimination. `stateful.py` kernel module audited clean (2026-04-08). Reports: `reports/composition_campaign_v{1,2,3}.md`.
 - **TICOM/Novel (2026-03-28):** 14 scripts, 1.3B configs, ~75 min. RS44, VIC, Wheatstone, ITA-2, interrupted-key, Wilson, sawtooth, Baudot, Ubchi, Soviet three-step, Sanborn matrix: all noise (Level B).
 - **Null mask diversity (→ RETIRED 2026-04-01):** Original positional null p=2.4e-5 invalidated by score-conditioned null. Post-hoc selection artifact.
 - **Extra L (2026-03-29):** 97+1=98=2x7x7. All noise (Level B).
@@ -110,9 +111,9 @@ Detail: `archive_aaa_findings.md` in session memory.
 ### Repo Memory (`memory/`)
 
 - `keystream_forensics_v2.md` — Corrected keystream, DEFECTOR autokey structurally impossible
-- `palette_deep_investigation.md` — 18-test investigation, mod-5, Beaufort key=N
-- `bcl_palette_keystream.md` — BCL 7/8 palette enrichment (ciphertext-intrinsic under Beaufort A=0; Level C anomaly)
-- `palette_mod35_rule.md` — (pos%7,pos%5) table classifies all 17 consensus nulls
+- `palette_deep_investigation.md` — [RETIRED 2026-04-01 — post-hoc selection artifact; see Hard Blockers §1] 18-test investigation, mod-5, Beaufort key=N
+- `bcl_palette_keystream.md` — [RETIRED 2026-04-01 — post-hoc selection artifact; see Hard Blockers §1] BCL 7/8 palette enrichment (ciphertext-intrinsic under Beaufort A=0)
+- `palette_mod35_rule.md` — [RETIRED 2026-04-01 — post-hoc selection artifact; see Hard Blockers §1] (pos%7,pos%5) table classifies all 17 consensus nulls
 - `polybius_row_selection.md` — KRYPTOS×SEVEN dual-keyword model
 - `width10_17_deep_investigation.md` — Cipher-layer bigrams, col7 artifacts
 - `width21_bigram_73char.md` — Stego-layer artifact, disappears after null extraction
