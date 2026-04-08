@@ -210,9 +210,108 @@ scoring at the cost of blurring the admissibility/search distinction.
 **New orchestration / dispatch system.**  `run_attack.py` is adequate.
 A new dispatch layer would be prestige-tool sprawl.
 
+## Revoked licenses
+
+The default allowlist is intentionally mutable: licenses can be
+**revoked** as well as added, and the revocation reasoning must be
+preserved in version control (not silently dropped) so future auditors
+can trace why a previously-admitted source is no longer accepted.
+The in-tree record lives in two places:
+
+1. `src/kryptos/admissibility/corpus_policy.py` — the revoked entry
+   is retained as a comment block immediately above the position
+   where it used to live, with the original `CorpusLicense(...)`
+   fields reproduced verbatim and a multi-paragraph reasoning note.
+2. `tests/test_admissibility.py::TestCorpusPolicy` — an explicit
+   `test_<id>_is_not_allowlisted` test that asserts both allowlist
+   absence and gate rejection.
+
+### 2026-04-08: `kahn_codebreakers` revoked (CREATOR_STATEMENT overreach)
+
+**Original entry.** Kahn's *The Codebreakers* (1967) was admitted under
+`CREATOR_STATEMENT` on the grounds that Ed Scheidt publicly
+acknowledged reading it while designing the K4 cipher, with the
+`evidence_refs` tuple pointing at `reference/ed_scheidt_dossier.md`.
+
+**Why the original admission was wrong.** The `CREATOR_STATEMENT`
+justification conflated two very different things a creator can do
+with a text:
+
+| Usage | What it tells us | Corpus-license implication |
+|---|---|---|
+| Creator used the text as a **design reference** | Informs cipher MECHANICS (how K4 was built) | **Not sufficient** to admit as a running-key source |
+| Creator embedded the text as **key material** | Tells us what K4 CONTAINS | Sufficient — the text is derivable as a solver pointer |
+
+Scheidt's public record about Kahn is strictly the first: he cited
+*The Codebreakers* as a reference for cipher design choices, not as a
+text Sanborn would have expected a solver to use as the running-key
+source.  The leap from "the consultant read it" to "therefore the
+running key is inside it" is exactly the guess-a-book pattern that
+this entire admissibility framework exists to reject.
+
+**The derivation-pointer test.** The operational question for any
+corpus license is: *could a solver, working only from Kryptos and the
+public record of Kryptos, reasonably derive that this text is the
+running-key source?*
+
+For Carter Vol 1, yes — K3's plaintext literally paraphrases a
+passage from Carter's tomb-opening description, and Sanborn's AAA
+archive contains "Carter" correspondence.  A solver discovers Carter
+by reading K3 and following the reference.
+
+For Kahn, **no** — nothing in Kryptos itself points at it.  The only
+path from K4 to Kahn runs through Scheidt's extra-Kryptos reading
+list, which a solver working from the puzzle alone cannot access.
+The `kahn_codebreakers` license therefore fails the derivation-pointer
+test and has been removed from `DEFAULT_ALLOWLIST`.
+
+**The `CorpusJustification` docstring was updated in the same
+commit** to make the derivation-pointer requirement explicit as
+policy, not just convention.  All five justification tiers
+(`CLUE_SURFACE`, `ARTIST_STATEMENT`, `CREATOR_STATEMENT`,
+`ARCHIVE_EVIDENCE`, `ANOMALY_DERIVED`) now require a solver-derivable
+pointer from Kryptos itself, and the `CREATOR_STATEMENT` entry in
+particular now explicitly distinguishes "creator read this text as a
+design reference" (not sufficient) from "creator named this text as
+key material or as a text Sanborn embedded in the puzzle"
+(sufficient).
+
+**Empirical status at revocation.** C2
+(`scripts/campaigns/f_final_checklist_c1_c2.py`, run 2026-04-08 14:18)
+had already run Kahn under columnar w6/8/9 × 3 variants and produced
+verdict EMPTY via the Bean pre-filter.  Critically, the underlying
+elimination is **source-independent**: no running-key source can
+satisfy the Bean constraint at those widths regardless of content
+(see `docs/exhaustion_certificate_2026_04_08.md` §5, "No source text
+can produce a solution in this family regardless of length or
+content").
+
+This means **the revocation does not weaken the exhaustion
+certificate's downgrade of running-key to bin B**.  The certificate's
+downgrade rested on a source-independent Bean-impossibility argument,
+not on a source-specific empirical null for Kahn.  Narrowing the
+allowlist from 2 running-key sources to 1 (Carter only) is a policy
+correction that leaves the empirical conclusions intact.  It does
+affect what future C2-like campaigns would be admitted.
+
+**Effect on the pre-registered thresholds document.**
+`docs/preregistered_thresholds_2026_04_08.md` is a frozen commitment
+artifact and is **not modified** by this revocation.  The downgrade
+criterion stated there requires "C1 AND C2 both EMPTY"; that
+condition was met by the combined C1+C2 run before the revocation.
+The revocation affects what future C2-like campaigns would be
+admitted, not the retrospective validity of the already-committed
+downgrade.
+
+**Test coverage.**
+`tests/test_admissibility.py::TestCorpusPolicy::test_kahn_is_not_allowlisted`
+asserts both the allowlist absence and that the `check_corpus_source`
+gate rejects `kahn_codebreakers` with a `CORPUS_POLICY_VIOLATION`
+certificate.
+
 ## Test coverage
 
-`tests/test_admissibility.py` (21 tests) covers:
+`tests/test_admissibility.py` (32 tests) covers:
 
 - Certificate JSON roundtrip for both types
 - Legacy plain-string backward compatibility
