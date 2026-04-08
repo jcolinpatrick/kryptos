@@ -7,13 +7,15 @@ This file covers volatile strategic state that the briefing script doesn't gener
 
 ---
 
-## Project State (2026-03-30)
+## Project State (2026-04-06)
 
-- 993 scripts, 386 eliminations on internal.com, 671B+ configs scored
+- 993+ scripts, 386 eliminations on internal.com, 671B+ configs scored
 - No credible decrypt path. All positive findings are descriptive anomalies.
-- Computational attack surface is exhausted for classical single-layer ciphers
-- internal.com: submission feedback loop live (token-based status page)
-- GitHub: 2,945 clones (113 unique) in 14 days ending 2026-03-30
+- Single-layer AND two-layer classical cipher space now systematically tested
+- Composition framework operational: 105K+ branches tested (v1+v2+v3), max 6/24 = noise
+- v3 adds 6 stateful/architecture-specific families: band offset, polarity switch, progressive key, state alphabet, band polarity, compass offset — all noise
+- internal.com: submission feedback loop live, community cipher challenge deployed
+- Archive page updated: 7 new images (Copper "Veil" plaintext, SECRET PAST gallery list, concept sketches, Sanborn CIA letter, press clippings)
 
 ---
 
@@ -26,13 +28,39 @@ This file covers volatile strategic state that the briefing script doesn't gener
 
 ---
 
-## What Remains Open
+## Research Phase — FINAL CHECKLIST
 
-1. **Running-key from UNTESTED sources** — model survives structurally (13 mono DOF). Priority: Kahn's "Codebreakers", Schliemann Troy, pre-1990 Egyptological texts.
-2. **Bespoke chart-based system** — archive's "Code Breaker" overlay and "actual coding charts" suggest non-standard mechanisms.
-3. **Multi-layer hand-executable systems** — Mono+Trans+Running key is UNDERDETERMINED (E-FRAC-54).
-4. **Model-free null mask search** — score CT73 by intermediate statistics, not cipher-model cribs.
-5. **External evidence**: K5 ciphertext, recovered coding charts, circled letters on IMG_1223-1235.
+Per `docs/exhaustion_audit_2026_04_08.md` (internal review board, 2026-04-08), the project is in its final honest search window. Running-key has been **demoted from #1 open family to residual admissible family** — finite checklist, not a leading hypothesis. Thresholds pre-registered in `docs/preregistered_thresholds_2026_04_08.md`.
+
+### Bin C — Testable now (execute, then stop)
+
+1. **C7 — Admissibility backlog cleanup** — Review 16 `ASSUMPTION_UNMET` running-key scripts; declare source, add license, or archive. ~1 engineering day.
+2. **C1 — Carter Vol 1 + columnar w6/8/9 × 3 variants, admissibility-gated.** ~150K configs. Pre-registered escalation criterion.
+3. **C2 — Kahn Codebreakers + columnar w6/8/9 × 3 variants, admissibility-gated.** ~150K configs.
+4. **C6 — Non-columnar 3-layer enumeration** (route / Myszkowski / rail-fence / block as middle layer) via extended composition framework. Only bin-C item with a real architectural argument.
+5. **C3/C4 — Bifid/four-square as composition outer** — DEFERRED; only run if C1/C2/C6 produce an ESCALATED candidate that justifies continued registry expansion.
+6. **C5/C8 — Homophonic composition outer / stateful seed expansion** — Deferred; run only if earlier bin-C campaigns escalate.
+
+**Stop condition:** all of C7/C1/C2/C6 complete AND no ESCALATED candidate → publish `exhaustion_certificate_2026_04_08.md` and transition to waiting-list phase.
+
+### Bin D — Weakly testable (engineering, not compute)
+
+- Mono+Trans+Running-key — detection-underdetermined (E-FRAC-54). Needs a new detection apparatus, not more sweeps.
+- Running-key from unknown non-English text — E-FRAC-51 bound is English-specific. Needs pre-declared language + new CorpusLicense.
+- Berlin Clock / Weltzeituhr time-dependent permutations — needs archive-derived clock-state argument.
+- Pre-ENE (0-20) as separate sub-cipher — no crib/constraint available.
+- Archive-term operationalization (ABSCISSA, ATBASH, "4, 8, 10, 26 = Col") — needs a parametric mapping from term to cipher family.
+
+### Bin E — Untestable under current clues (waiting list)
+
+- Bespoke chart-based cipher procedures — needs public chart reproduction OR a `CipherProcedureLicense` schema.
+- Model-free null mask search — no defined statistic; palette version retired (post-hoc artifact).
+- K5 ciphertext — not published.
+- Circled letters IMG_1223-1235 — needs forensic extraction of archive photos.
+- Photogrammetric sculpture data — needs primary-source field measurement.
+- Sanborn's private coding system — not public.
+
+**These are prerequisites for being able to test anything new, not testable hypotheses.**
 
 ---
 
@@ -46,9 +74,10 @@ Detail: `archive_aaa_findings.md` in session memory.
 
 ## Campaign & Audit Summaries
 
-- **TICOM/Novel (2026-03-28):** 14 scripts, 1.3B configs, ~75 min. RS44, VIC, Wheatstone, ITA-2, interrupted-key, Wilson, sawtooth, Baudot, Ubchi, Soviet three-step, Sanborn matrix: all noise within tested scope (Level B).
-- **Null mask diversity (2026-03-30 → RETIRED 2026-04-01):** Original positional null p=2.4e-5 invalidated by score-conditioned null. SA on K4 produces 11 distinct letters (p=0.30 vs shuffled controls). Post-hoc selection artifact.
-- **Extra L (2026-03-29):** 97+1=98=2x7x7. All tested hypotheses noise within tested scope (Level B).
+- **Composition v1+v2+v3 (2026-04-06):** 105K+ compositions across 37 campaigns. v1: additive+transposition. v2: Vigenere/Beaufort inner, 80-char CT. v3: 6 stateful/architecture families (band offset, polarity switch, progressive key, state alphabet, band polarity, compass offset). Max 6/24 = noise. Bean inequality pruning confirms periodic single-layer elimination. Reports: `reports/composition_campaign_v{1,2,3}.md`.
+- **TICOM/Novel (2026-03-28):** 14 scripts, 1.3B configs, ~75 min. RS44, VIC, Wheatstone, ITA-2, interrupted-key, Wilson, sawtooth, Baudot, Ubchi, Soviet three-step, Sanborn matrix: all noise (Level B).
+- **Null mask diversity (→ RETIRED 2026-04-01):** Original positional null p=2.4e-5 invalidated by score-conditioned null. Post-hoc selection artifact.
+- **Extra L (2026-03-29):** 97+1=98=2x7x7. All noise (Level B).
 
 ---
 
@@ -68,6 +97,7 @@ Detail: `archive_aaa_findings.md` in session memory.
 
 ### Session Memory (`.claude/projects/.../memory/`)
 
+- [Composition Campaigns](composition_campaigns_v1v2.md) — 105K+ compositions (v1+v2+v3), max 6/24 = noise
 - [Null Mask Model Dependence](null_mask_model_dependence.md) — SA positions shift with cipher model
 - [NYT vs Null Mask](nyt_article_null_mask_impact.md) — Article does not invalidate null hypothesis
 - [Reddit Audit](reddit_statistical_audit.md) — Multiple testing survives, wrong null model 2x weaker
@@ -75,6 +105,7 @@ Detail: `archive_aaa_findings.md` in session memory.
 - [Submission Feedback](submission_feedback_loop.md) — Token-based status tracking implemented
 - [GitHub Traffic](github_traffic_polling.md) — Daily cron in logs/github_traffic/
 - [Mbox Mining](mbox_mining_results.md) — 18,766 K4-relevant posts from kryptos.groups.io
+- [Community Challenge](challenge_page.md) — Cipher challenge: Quagmire III + null insertion, ntfy on solve
 
 ### Repo Memory (`memory/`)
 
@@ -87,4 +118,4 @@ Detail: `archive_aaa_findings.md` in session memory.
 - `width21_bigram_73char.md` — Stego-layer artifact, disappears after null extraction
 - `ticom_archive_research.md` — RS44, VIC, Ubchi parallels to K4
 
-Last updated: 2026-03-30
+Last updated: 2026-04-08 (exhaustion audit; running-key demoted to residual checklist)

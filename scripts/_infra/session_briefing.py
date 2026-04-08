@@ -327,31 +327,60 @@ def section_do_not_test():
 
 
 def section_open_attack_surface():
-    """What remains viable."""
-    print("── OPEN ATTACK SURFACE ────────────────────────────────────────────")
+    """What remains viable. Bins from docs/exhaustion_audit_2026_04_08.md."""
+    print("── FINAL CHECKLIST — BIN C (testable now, execute then stop) ──────")
     print()
-    open_items = [
-        ("Running key from UNTESTED source texts",
-         "Model survives Bean. 13 mono DOF make detection hard. "
-         "Priority: Kahn, Schliemann, pre-1990 Egyptological texts"),
-        ("Bespoke chart-based system",
-         "Archive shows 'Code Breaker' overlay, 'actual coding charts'. "
-         "Non-standard mechanisms outside classical cipher families"),
-        ("Multi-layer hand-executable systems",
-         "Untested peel orders, non-obvious layer combinations. "
-         "Mono+Trans+Running key is UNDERDETERMINED (E-FRAC-54)"),
-        ("Model-free null mask search",
-         "Palette confirmed not SA artifact (0/40K). "
-         "Search for masks satisfying palette constraint scored by intermediate statistics"),
-        ("External evidence",
-         "K5 ciphertext, recovered coding charts, circled letters on IMG_1223-1235, "
-         "Sanborn's coding system (in private hands)"),
-        ("ABSCISSA as procedural/physical chart clue",
-         "Not standard arithmetic (that's eliminated)"),
+    bin_c = [
+        ("C7  Admissibility backlog (16 scripts)",
+         "Manual provenance review of ASSUMPTION_UNMET running-key scripts. "
+         "Declare source, add license, or archive. ~1 eng day."),
+        ("C1  Carter Vol 1 + columnar w6/8/9 × 3 variants",
+         "Admissibility-gated. ~150K configs. "
+         "Pre-registered thresholds: docs/preregistered_thresholds_2026_04_08.md"),
+        ("C2  Kahn Codebreakers + columnar w6/8/9 × 3 variants",
+         "Admissibility-gated. ~150K configs. Same thresholds."),
+        ("C6  Non-columnar 3-layer enumeration",
+         "Only bin-C item with a real architectural argument. "
+         "{additive, periodic} × {route, myszkowski, rail_fence, block} × {additive, periodic}"),
+        ("C3/C4  Bifid / four-square as composition OUTER (DEFERRED)",
+         "Only run if C1/C2/C6 escalates — otherwise priors are too low"),
+        ("C5/C8  Homophonic outer / stateful seed expansion (DEFERRED)",
+         "Only run if earlier bin-C campaigns escalate"),
     ]
-    for name, detail in open_items:
+    for name, detail in bin_c:
         print(f"  → {name}")
         print(f"    {detail}")
+    print()
+    print("── BIN D — weakly testable (engineering, not compute) ─────────────")
+    print()
+    bin_d = [
+        ("Mono+Trans+Running-key",
+         "E-FRAC-54: 13 mono DOF saturate detection. Needs new detector, not more sweeps."),
+        ("Running-key from unknown NON-English text",
+         "E-FRAC-51 bound is English-specific. Needs pre-declared language + CorpusLicense."),
+        ("Archive-term operationalization (ABSCISSA, ATBASH, '4,8,10,26=Col')",
+         "Needs parametric mapping from archive term to cipher family."),
+        ("Pre-ENE (0-20) as separate sub-cipher",
+         "E-FRAC-19: IC 'anomaly' Bonferroni p=1.0. No crib at 0-20."),
+    ]
+    for name, detail in bin_d:
+        print(f"  → {name}")
+        print(f"    {detail}")
+    print()
+    print("── BIN E — untestable under current clues (waiting list) ──────────")
+    print()
+    bin_e = [
+        "Bespoke chart-based cipher — needs public chart OR CipherProcedureLicense schema",
+        "Model-free null mask search — no defined statistic; palette retired April 2026",
+        "K5 ciphertext cross-constraint — not published",
+        "Circled letters IMG_1223-1235 — needs forensic archive extraction",
+        "Photogrammetric sculpture data — needs primary-source field measurement",
+        "Sanborn's private coding system — not public",
+    ]
+    for item in bin_e:
+        print(f"  ⊘ {item}")
+    print()
+    print("  These are prerequisites for new testable hypotheses, not open families.")
     print()
 
 
