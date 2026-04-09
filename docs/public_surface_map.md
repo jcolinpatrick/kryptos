@@ -41,10 +41,18 @@ Ordered by visibility (most-seen first).
 
 | Surface | File/URL | Audit Risk | Status |
 |---------|----------|------------|--------|
-| BCL palette keystream | `memory/bcl_palette_keystream.md` | "MODEL-INDEPENDENT" in title and §3 — audit's #1 complaint | **Must fix** |
-| Palette deep investigation | `memory/palette_deep_investigation.md` | "Strongest single anomaly" without search context; inconsistent p-values | Needs fixes |
-| Palette mod35 rule | `memory/palette_mod35_rule.md` | "35/35 PERFECT" / "Classifies All" — post-hoc fit language | Needs relabeling |
+| BCL palette keystream | `memory/retired/bcl_palette_keystream.md` (moved 2026-04-09; stub at `memory/bcl_palette_keystream.md`) | RETIRED 2026-04-01 (score-conditioned null). Formerly "MODEL-INDEPENDENT" in title and §3. | **RETIRED** — no longer a live surface |
+| Palette deep investigation | `memory/retired/palette_deep_investigation.md` (moved 2026-04-09; stub at `memory/palette_deep_investigation.md`) | RETIRED 2026-04-01 (post-hoc selection artifact). | **RETIRED** |
+| Palette mod35 rule | `memory/retired/palette_mod35_rule.md` (moved 2026-04-09; stub at `memory/palette_mod35_rule.md`) | RETIRED 2026-04-01 (in-sample post-hoc fit; LOO-CV ~47%). | **RETIRED** |
+| Palette null separator | `memory/retired/palette_null_separator.md` (moved 2026-04-09) | RETIRED 2026-04-01 (inherits retired palette). | **RETIRED** |
+| Polybius row-selection | `memory/retired/polybius_row_selection.md` (moved 2026-04-09) | RETIRED 2026-04-01 (depends on retired palette). | **RETIRED** |
 | Keystream forensics v2 | `memory/keystream_forensics_v2.md` | Documents v1 bug correction — actually good epistemic practice | OK |
+
+**Note (2026-04-09):** this surface-map document is itself a 2026-04-01 audit
+artifact. The tier-4 rows above have been updated in place to reflect the
+2026-04-09 quarantine of the palette family under `memory/retired/`. The rest
+of the document is preserved for traceability. See `memory/retired/README.md`
+and `docs/a1_score_conditioned_null_report.md` for the retirement record.
 
 ## Tier 5: LaTeX/PDF documents
 

@@ -15,7 +15,7 @@ This repo has one purpose: determine the **true plaintext** and the **full encry
    ```bash
    PYTHONPATH=src python3 scripts/_infra/session_briefing.py
    ```
-   Reads `exhaustion_log.json`, `results/*.json`, and `docs/elimination_tiers.md` to produce a current elimination landscape, anomalies, open attack surface, and DO NOT TEST list. **It replaces all hand-maintained elimination ledgers.**
+   Reads `exhaustion_log.json`, `results/*.json`, and `docs/elimination_tiers.md` to produce a current elimination landscape, anomalies, open attack surface, and DO NOT TEST list. **It replaces all hand-maintained elimination ledgers.** If the briefing errors or is unusably slow, fall back to reading `MEMORY.md` §1–5 and `docs/elimination_tiers.md` directly, and tell the user the briefing failed so the failure doesn't go silent.
 3. Read **`MEMORY.md`** (auto-loaded) — live control document: current state, hard blockers, active bins, open audits, do-not-revive list. Short by design.
 4. Read **`docs/README_current_state.md`** — canonical entry index for the live path (claim registry, methodological audits, historical/retired quarantines).
 5. Check **`docs/methodological_audits.md`** for any open audit that touches your task. Disputed claims block new compute until their audit closes.
@@ -62,7 +62,8 @@ A `venv/` exists (gitignored) for non-core work. Activate with `source venv/bin/
 **Git workflow:** Development happens directly on `main`. No branch naming conventions or PR process — this is a solo research project with computational partners.
 
 ```bash
-# Run all tests (~1210 tests, ~80s, no expected failures)
+# Run all tests (~1290 tests, ~80s, no expected failures).
+# Current count drifts; authoritative: `PYTHONPATH=src pytest tests/ --collect-only -q | tail -1`
 PYTHONPATH=src pytest tests/
 
 # Run a single test file or test
@@ -114,6 +115,8 @@ Four layers with strict dependency direction: **kernel → pipeline → novelty 
 - **corpus/** — Egyptological corpus pipeline for running-key testing: `schema.py` (dataclasses), `normalize.py` (transliteration rules), `variants.py` (controlled variant expansion), `ingest.py` (local + Gutenberg ingestion).
 - **cli/** — Thin wrappers for `doctor`, `sweep`, `reproduce`, `novelty`, `report`.
 
+**`<internal>/` (separate subproject, NOT under `src/kryptos/`)** — Research runner built on the Agent SDK. Has its own `pyproject.toml`, its own `.env` (see `<internal>`), its own runbook (`<internal>`), and depends on `agent-sdk`. **Do not confuse with the core `kryptos` package** — they have independent dependency trees and different API key env vars. Core kryptos must stay stdlib-only; internalmay use anything in its own venv.
+
 ### Data flow
 
 ```
@@ -132,7 +135,7 @@ kernel/persistence/sqlite.py (results DB) + JsonlWriter (logs)
 
 ### Experiment scripts (`scripts/`)
 
-~960 attack scripts across ~45 subdirectories in `scripts/` (~955 tracked in exhaustion log including deleted/renamed). Each has a metadata header; tracked in root `exhaustion_log.json` (authoritative — ignore `scripts/EXHAUSTION.json`). Some scripts live at the `scripts/` root level (e.g. `blitz_*.py`, `geometric_null_mask_*.py`) rather than in subdirectories.
+Several hundred attack scripts across ~45 subdirectories in `scripts/`. For current counts and exhaustion state, run `PYTHONPATH=src python3 run_attack.py --exhaustion-summary` — **do not cite hardcoded numbers**, they drift. Each script has a metadata header; tracked in root `exhaustion_log.json` (authoritative — ignore `scripts/EXHAUSTION.json`). Some scripts live at the `scripts/` root level (e.g. `blitz_*.py`, `geometric_null_mask_*.py`) rather than in subdirectories.
 
 **Subdirectories:** Run `ls scripts/` for the full list. Key families: `substitution/`, `transposition/`, `fractionation/`, `grille/`, `polyalphabetic/`, `running_key/`, `encoding/`, `multi_layer/`, `novel/`, `blitz/` (fast hypothesis sweeps), `analysis/` (non-attack analytical scripts), `_infra/` (utilities). Additional research threads: `antipodes/`, `archive_evidence/`, `crib_analysis/`, `exploration/`, `geodetic/`, `geometry/`, `k2_coords/`, `k3_continuity/`, `mirror_ka/`, `overlay/`.
 
@@ -264,10 +267,11 @@ Treat this as the default runtime context. Do not behave as if this is a constra
 At the beginning of each session involving CPU-bound work (brute force, Monte Carlo, SA, parameter sweeps, corpus processing, scoring, batch analysis), run:
 
 ```bash
-bash scripts/vm_capability_report.sh
+bash scripts/vm_capability_report.sh       # writes results/vm_capability.txt
+bash scripts/vm_capability_report.sh --json # also writes results/vm_capability.json
 ```
 
-The report output is **authoritative session runtime state**, not informational text. Use the reported vCPU count, available RAM, and disk space to size worker pools, batch sizes, and checkpoint intervals.
+The report output is **authoritative session runtime state**, not informational text. It writes to `results/vm_capability.txt` (human-readable sections: OS / CPU / MEMORY / DISK / PYTHON / GPU) and optionally `results/vm_capability.json`. Parse `vCPUs:` from the CPU section for worker pool sizing, `Avail:` from MEMORY for per-worker footprint budgeting, and the DISK section for checkpoint / SQLite space planning. Prefer the `--json` variant when scripting downstream sizing logic.
 
 ### Multi-core execution policy
 
@@ -347,6 +351,7 @@ Results are not trusted until they pass:
 - **`reports/final_synthesis.md`** — 2026-02-20 synthesis, kept at original path for link stability, in-file HISTORICAL SNAPSHOT banner
 - **`memory/retired/`** — Retired research notes (palette/null-mask family, retired 2026-04-01)
 - **`docs/retired_claims/`** — Landing page for retired claims
+- **`<historical-planning>/`** — Historical March 2026 research planning (specs/plans). Demoted 2026-04-09; many stego plans rest on the retired palette construct. **Not current doctrine** — see the directory's own `README.md` banner before citing anything under it.
 
 ### External primary references
 
@@ -390,3 +395,5 @@ Two `memory/` directories exist — don't confuse them:
 
 *Last updated: 2026-04-09 — Epistemic control-plane refactor. CLAUDE.md is operational doctrine only. Live research state in MEMORY.md; structured claims in docs/claims_registry.json; open audits in docs/methodological_audits.md; canonical entry index in docs/README_current_state.md.*
 *Primary author: Colin Patrick (human lead) + Claude (computational partner)*
+
+*Precedence rule for conflicts: verify freshness with `git log -1 --format=%cd CLAUDE.md MEMORY.md`. If CLAUDE.md is older than MEMORY.md and the two conflict on research state (not operational doctrine), trust MEMORY.md and flag the drift. Operational doctrine in CLAUDE.md is always authoritative regardless of date.*
