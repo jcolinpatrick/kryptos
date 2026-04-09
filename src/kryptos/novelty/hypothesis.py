@@ -86,6 +86,25 @@ class Hypothesis:
     estimated_configs: int = 0  # How many configs to test
     estimated_seconds: float = 0.0  # Rough compute estimate
 
+    # Admissibility — procedure policy (bin D2)
+    #
+    # `bespoke=True` declares that this hypothesis makes a Kryptos-specific
+    # provenance claim about its cipher construction (archive notation,
+    # solved-section continuity, anomaly-derived procedure). When bespoke,
+    # `procedure_id` MUST be set to a canonical identifier on the procedure
+    # allowlist; the triage gate rejects bespoke hypotheses without a
+    # licensed procedure_id.
+    #
+    # `bespoke=False` (default) is for hypotheses that test standard kernel
+    # ciphers without any Kryptos-specific claim (e.g., "generic Vigenere
+    # with keyword FOOBAR"). These bypass the procedure gate because the
+    # kernel's standard transforms are not subject to the procedure policy.
+    #
+    # See docs/admissibility_architecture.md and
+    # src/kryptos/admissibility/procedure_policy.py for the policy model.
+    bespoke: bool = False
+    procedure_id: Optional[str] = None
+
     # Lifecycle
     status: HypothesisStatus = HypothesisStatus.PROPOSED
     triage_score: float = 0.0  # Set after triage (0-1)
