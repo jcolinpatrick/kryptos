@@ -25,6 +25,67 @@ from kryptos.admissibility.corpus_policy import (
     check_corpus_source,
     resolve_license_path,
 )
+from kryptos.admissibility.procedure_policy import check_cipher_procedure
+
+
+def _gate_bespoke_procedure(hyp: Hypothesis) -> Optional[Hypothesis]:
+    """Procedure-policy gate for bespoke hypotheses.
+
+    If `hyp.bespoke` is False this is a no-op and returns None (the caller
+    should proceed with normal triage). If `hyp.bespoke` is True, the
+    hypothesis is rejected unless `hyp.procedure_id` names a procedure on
+    the allowlist.
+
+    Returns:
+        None if the hypothesis is not bespoke (proceed normally), or if
+        the bespoke hypothesis passes the gate.
+
+        A modified `Hypothesis` with status=ELIMINATED and a JSON
+        certificate in `elimination_reason` if the bespoke hypothesis is
+        rejected.
+    """
+    if not hyp.bespoke:
+        return None
+
+    if not hyp.procedure_id:
+        cert = EliminationCertificate(
+            family="bespoke_cipher",
+            reason=EliminationReason.PROCEDURE_POLICY_VIOLATION,
+            summary=(
+                "Bespoke cipher hypothesis declared bespoke=True but did "
+                "not provide a procedure_id. Every bespoke hypothesis "
+                "must name a licensed procedure on the allowlist."
+            ),
+            assumptions=[
+                "Bespoke cipher hypotheses require an admissible procedure",
+                "procedure_id must be set when bespoke=True",
+            ],
+            evidence={
+                "hypothesis_id": hyp.hypothesis_id,
+                "description": hyp.description[:200],
+                "bespoke": True,
+                "procedure_id": None,
+            },
+            solver="manual",
+            is_exact=False,
+        )
+        hyp.status = HypothesisStatus.ELIMINATED
+        hyp.triage_score = 0.0
+        hyp.triage_detail = cert.summary
+        hyp.elimination_reason = certificate_to_json(cert)
+        return hyp
+
+    ok, cert = check_cipher_procedure(
+        hyp.procedure_id, family="bespoke_cipher"
+    )
+    if not ok and cert is not None:
+        hyp.status = HypothesisStatus.ELIMINATED
+        hyp.triage_score = 0.0
+        hyp.triage_detail = cert.summary
+        hyp.elimination_reason = certificate_to_json(cert)
+        return hyp
+
+    return None
 
 
 def triage_running_key(hyp: Hypothesis) -> Hypothesis:
@@ -190,6 +251,14 @@ def triage_simple_key(hyp: Hypothesis) -> Hypothesis:
 
 def triage_hypothesis(hyp: Hypothesis) -> Hypothesis:
     """Route a hypothesis to the appropriate triage function."""
+    # Procedure-policy gate for bespoke-cipher hypotheses. Runs BEFORE
+    # any other check so an unlicensed bespoke hypothesis is eliminated
+    # cleanly with a PROCEDURE_POLICY_VIOLATION certificate even if its
+    # transform_stack is malformed or empty.
+    gated = _gate_bespoke_procedure(hyp)
+    if gated is not None:
+        return gated
+
     if not hyp.transform_stack:
         hyp.status = HypothesisStatus.ELIMINATED
         hyp.triage_score = 0.0
