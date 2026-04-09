@@ -15,6 +15,16 @@ from kryptos.kernel.transforms.vigenere import (
 from kryptos.kernel.constraints.crib import crib_score
 from kryptos.kernel.scoring.ic import ic
 from kryptos.novelty.hypothesis import Hypothesis, HypothesisStatus
+from kryptos.admissibility.certificate import (
+    EliminationCertificate,
+    EliminationReason,
+    certificate_to_json,
+)
+from kryptos.admissibility.corpus_policy import (
+    _path_to_source_id,
+    check_corpus_source,
+    resolve_license_path,
+)
 
 
 def triage_running_key(hyp: Hypothesis) -> Hypothesis:
@@ -26,15 +36,76 @@ def triage_running_key(hyp: Hypothesis) -> Hypothesis:
     import random
 
     params = hyp.transform_stack[0].get("params", {})
-    source_path = params.get("source_path", "")
+    caller_source_path = params.get("source_path", "")
+    source_id = params.get("source_id", "")
     variant_name = hyp.transform_stack[0].get("type", "vigenere")
 
-    try:
-        raw = Path(source_path).read_text(errors="replace")
-    except FileNotFoundError:
+    # ── Corpus admissibility gate (admissibility-first) ─────────────────
+    # Step 1: determine a canonical source_id.  If the caller passed one
+    # we use it directly; otherwise we heuristically map the supplied
+    # path to a known source_id.  Either way, the caller's source_path
+    # is only a *hint* for mapping — it is never used to read bytes.
+    if source_id:
+        ok, cert = check_corpus_source(
+            source_id, family="running_key", is_source_id=True,
+        )
+        resolved_source_id: Optional[str] = source_id if ok else None
+    else:
+        ok, cert = check_corpus_source(
+            caller_source_path, family="running_key", is_source_id=False,
+        )
+        resolved_source_id = (
+            _path_to_source_id(caller_source_path) if ok else None
+        )
+
+    if not ok and cert is not None:
         hyp.status = HypothesisStatus.ELIMINATED
         hyp.triage_score = 0.0
-        hyp.triage_detail = f"Source file not found: {source_path}"
+        hyp.triage_detail = cert.summary
+        hyp.elimination_reason = certificate_to_json(cert)
+        return hyp
+
+    # Step 2: resolve the bytes from the *license*, never from the
+    # caller-supplied path.  This closes the source_id/source_path
+    # bypass where a valid source_id could be paired with an arbitrary
+    # source_path to smuggle unlicensed bytes through the gate.
+    license_path = (
+        resolve_license_path(resolved_source_id)
+        if resolved_source_id else None
+    )
+    if license_path is None:
+        miss_cert = EliminationCertificate(
+            family="running_key",
+            reason=EliminationReason.ASSUMPTION_UNMET,
+            summary=(
+                f"Source id {resolved_source_id!r} is allowlisted but its "
+                f"provenance URI cannot be resolved to a concrete readable "
+                f"file — licensed sources must be file-backed for the "
+                f"admissibility gate to attest the bytes consumed."
+            ),
+            assumptions=[
+                "Licensed sources must have a resolvable provenance_uri",
+                "Caller-supplied source_path is a mapping hint, not a data source",
+            ],
+            evidence={
+                "resolved_source_id": resolved_source_id,
+                "caller_source_path": caller_source_path,
+            },
+            solver="manual",
+            is_exact=False,
+        )
+        hyp.status = HypothesisStatus.ELIMINATED
+        hyp.triage_score = 0.0
+        hyp.triage_detail = miss_cert.summary
+        hyp.elimination_reason = certificate_to_json(miss_cert)
+        return hyp
+
+    try:
+        raw = license_path.read_text(errors="replace")
+    except (FileNotFoundError, OSError):
+        hyp.status = HypothesisStatus.ELIMINATED
+        hyp.triage_score = 0.0
+        hyp.triage_detail = f"Licensed source unreadable: {license_path}"
         return hyp
 
     clean = sanitize(raw)
