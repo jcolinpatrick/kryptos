@@ -5,11 +5,12 @@ EXHAUSTIVE NULL-MASK + BEAUFORT CAMPAIGN v1
 =================================================================
 Cipher:     Null masking (stego) + Beaufort A=0
 Family:     null_mask_beaufort
-Status:     active
+Status:     exhausted
 Keyspace:   Phase1: C(56,7)=232M masks; Phase2: 26^1..26^8 keys;
             Phase3: ~425 thematic + ~1M English keywords; Phase4: ~200 anomaly masks
-Last run:   never
-Best score: TBD
+Last run:   2026-04-08
+Best score: 0.0 (Phase 2 formally UNSAT, all 44,400 CSPs unsatisfiable;
+            certificate at results/admissibility_elimination_v1/null_beaufort_phase2.json)
 
 HYPOTHESIS
 ----------
