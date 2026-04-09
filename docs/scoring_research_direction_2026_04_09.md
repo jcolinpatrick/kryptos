@@ -1,7 +1,7 @@
 # Scoring research direction — bin D1 reframed
 
 **Date:** 2026-04-09
-**Status:** Research memo. **§5 step 5(b) WOUNDED by red-team 2026-04-09; see §10 below before implementing.**
+**Status:** **D1a KILLED by power calculation 2026-04-09. See §11 below. Do not implement.** §5 is retained for historical context; §10 is the WOUND; §11 is the KILL.
 **Prerequisite:** Anyone building a non-quadgram K4 scorer should read this first.
 
 ---
@@ -442,3 +442,65 @@ red-team pass caught it where the first memo did not.
 
 Full red-team transcript is preserved in session memory at
 `memory/d1a_junction_scorer_wounded_2026_04_09.md`.
+
+---
+
+## 11. Power calculation KILL verdict (2026-04-09)
+
+The red-team WOUND in §10 required a pre-implementation power calculation
+as change-condition #2. That calculation was run in
+`scripts/analysis/e_d1a_power_calculation.py` and the verdict is KILL.
+
+### 11.1 Setup
+
+- Corpus: `reference/carter_vol1.txt` + `reference/running_key_texts/kahn_codebreakers_1967.txt`, concatenated and normalized to A-Z uppercase. 2,835,184 characters total (below the red-team's 10M ideal, sufficient for an order-of-magnitude decision).
+- 6-gram LM: Laplace smoothing alpha=0.1 on 90% of the corpus. Laplace is deliberately conservative (over-smooths, inflating sigma and thus MDE), biasing the calculation toward BUILD.
+- Sigma estimated by scoring 2,000 random 97-char strips from the held-out 10%.
+
+### 11.2 Numbers
+
+| Quantity | Value |
+|----------|-------|
+| Mean per-char log-prob of English under the LM | -1.8070 nats/char |
+| Sigma per-char, strip-length-97 | 0.3399 nats/char |
+| Sigma per single 6-gram (back-solved via sqrt(92)) | **3.2600 nats/char** |
+| Signal upper bound (red-team KL estimate) | **0.3 nats/char** |
+| 3-sigma MDE at N=4 (one 6-gram per window) | **4.890 nats/char** |
+| 3-sigma MDE at N=12 (three overlapping per window) | **2.823 nats/char** |
+| signal / MDE at N=4 | 0.061x |
+| signal / MDE at N=12 | 0.106x |
+
+D1a needs signal >= MDE. It has signal ~10-16x *smaller* than MDE. The
+scorer cannot achieve its own verdict criterion at any N choice.
+
+### 11.3 Sensitivity analysis
+
+Three optimistic rescues, each quantified:
+
+1. **Upgrade corpus 2.8M -> 10M chars.** Sigma /= sqrt(3.5) ~ 1.9x. MDE at N=12 -> ~1.5 nats/char. Still 5x too large. Does NOT rescue.
+2. **Kneser-Ney instead of Laplace.** Sigma *= 0.85 typically. MDE at N=12 -> ~2.5 nats/char. Does NOT rescue.
+3. **Signal 3x higher than estimated (0.9 instead of 0.3).** signal/MDE at N=12 -> 0.32x. Still not 1.0. Does NOT rescue.
+
+**Combined best case** (all three at once): MDE at N=12 ~ 1.2 nats/char, signal ~ 0.9, ratio 0.75. Still below 1.0 detection. **Even under best-case assumptions across three independent dimensions, D1a cannot reach 3-sigma detection.**
+
+### 11.4 Structural lesson for bin D1
+
+The root cause is variance, not signal. Junction scoring has 4-12 samples per candidate regardless of scorer choice, and sigma per 6-gram on English is ~3 nats/char. Standard error on L_junction is ~0.8 nats/char at best; plausible signal is bounded at ~0.3 nats/char. No parameter tuning changes these numbers.
+
+**Any scorer concentrated at a small number of positions hits the same variance wall at n=97.** Future bin D1 proposals must use scorers operating on the full 97-char text, not ones focused at junctions or other small position sets.
+
+### 11.5 Implications for D1b
+
+D1b (composite junction + word-boundary density) is NOT automatically killed. Its word-boundary density component operates on the full 97-char plaintext, so it has a fundamentally different sample count than the junction component. But before implementing D1b:
+
+1. Power-analyze the word-boundary density component alone against conditionally-sampled Markov-3. The signal bound for word-boundary density is NOT KL(M5||M3); it is the rate at which Markov-3 happens to produce dictionary words vs real English.
+2. If the word-boundary component survives, the junction component is dead weight and D1b reduces to a pure word-boundary scorer. Call this D1c.
+3. If neither component survives individually, the composite cannot rescue either of them and bin D1 needs a different approach entirely.
+
+### 11.6 Do NOT re-propose D1a
+
+The KILL is derived from concrete numbers and survives sensitivity analysis on three independent dimensions. Any future D1a-class proposal must first demonstrate a scorer whose sample count exceeds ~100 at n=97, which junction-based scoring structurally cannot provide.
+
+Artifacts:
+- `scripts/analysis/e_d1a_power_calculation.py` — reproducible script (~30s runtime)
+- `memory/d1a_power_calc_kill_2026_04_09.md` — durable session memory
