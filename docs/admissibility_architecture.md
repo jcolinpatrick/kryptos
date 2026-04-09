@@ -279,20 +279,26 @@ key material or as a text Sanborn embedded in the puzzle"
 **Empirical status at revocation.** C2
 (`scripts/campaigns/f_final_checklist_c1_c2.py`, run 2026-04-08 14:18)
 had already run Kahn under columnar w6/8/9 × 3 variants and produced
-verdict EMPTY via the Bean pre-filter.  Critically, the underlying
-elimination is **source-independent**: no running-key source can
-satisfy the Bean constraint at those widths regardless of content
-(see `docs/exhaustion_certificate_2026_04_08.md` §5, "No source text
-can produce a solution in this family regardless of length or
-content").
+verdict EMPTY via the Bean pre-filter.  The underlying elimination is
+**running-key-source-independent within the analyzed cipher class**
+(columnar w6/8/9 × Vig/Beau/VarBeau on the carved CT under direct
+positional crib mapping): no running-key source can satisfy the Bean
+constraint at those widths regardless of content, because the Bean
+pre-filter empties before any source is consulted. See
+`docs/exhaustion_certificate_2026_04_08.md` §5 (scope-corrected
+2026-04-09 under AUDIT-1) for the precise statement. The
+source-independence claim is **not** a universal impossibility claim
+for composed ciphers that precede the columnar step with an outer
+layer.
 
 This means **the revocation does not weaken the exhaustion
 certificate's downgrade of running-key to bin B**.  The certificate's
-downgrade rested on a source-independent Bean-impossibility argument,
-not on a source-specific empirical null for Kahn.  Narrowing the
-allowlist from 2 running-key sources to 1 (Carter only) is a policy
-correction that leaves the empirical conclusions intact.  It does
-affect what future C2-like campaigns would be admitted.
+downgrade rested on a Bean-impossibility argument that holds for every
+running-key source *within the analyzed class*, not on a source-specific
+empirical null for Kahn.  Narrowing the allowlist from 2 running-key
+sources to 1 (Carter only) is a policy correction that leaves the
+empirical conclusions intact within that class.  It does affect what
+future C2-like campaigns would be admitted.
 
 **Effect on the pre-registered thresholds document.**
 `docs/preregistered_thresholds_2026_04_08.md` is a frozen commitment

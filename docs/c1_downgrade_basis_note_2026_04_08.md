@@ -19,7 +19,8 @@ running-key to bin B remains valid despite the allowlist change.
      both C1 and C2 as a single combined campaign. Result:
      zero Bean-passing orderings at widths {6,8,9} across all 3
      variants. Verdict EMPTY for both. Empirical basis was
-     **source-independent** (see below).
+     **running-key-source-independent within the analyzed cipher
+     class** (see below).
   2. 14:23 — C6 runs separately, also EMPTY.
   3. Exhaustion certificate written
      (`docs/exhaustion_certificate_2026_04_08.md`) declaring
@@ -67,15 +68,19 @@ policy note.
 
 ## Why the downgrade remains valid
 
-The downgrade of running-key to bin B is **source-independent at the
-empirical level**. Direct quote from
-`docs/exhaustion_certificate_2026_04_08.md` §4:
+The downgrade of running-key to bin B rests on a
+**running-key-source-independent Bean argument within the analyzed
+cipher class**: columnar w6/8/9 × {Vig, Beau, VarBeau} on the carved
+CT under direct positional crib mapping. Scope-corrected quote from
+`docs/exhaustion_certificate_2026_04_08.md` §4 (updated 2026-04-09
+under AUDIT-1 in `docs/methodological_audits.md`):
 
-> **Running-key + columnar w6/8/9 × {Vigenère, Beaufort, Variant
-> Beaufort} is Bean-impossible under the full 242-inequality
-> constraint. No source text can produce a solution in this family
-> regardless of length or content. The result is independent of
-> Carter, Kahn, or any other corpus.
+> **Within the analyzed cipher class — running-key + columnar w6/8/9
+> × {Vigenère, Beaufort, Variant Beaufort}, applied to the carved
+> 97-character CT under direct positional crib mapping — the full
+> 242-inequality Bean constraint is violated by every (ordering,
+> variant) pair.** No running-key source text can produce a solution
+> *in that class*, regardless of length or content.
 
 The Bean pre-filter eliminates all 403,920 orderings × 3 variants
 before any running-key scan occurs. Carter, Kahn, and every
@@ -85,10 +90,14 @@ corrected allowlist (Carter only), the same Bean pre-filter applies
 and the same conclusion holds.
 
 In other words: **the exhaustion certificate's downgrade rested on a
-structural proof, not on a source-specific empirical null**. Removing
-Kahn from the allowlist narrows the set of admissible running-key
-hypotheses but does not change which of them can satisfy the Bean
-constraint — the answer remains zero.
+structural proof within a stated cipher class, not on a source-specific
+empirical null**. Removing Kahn from the allowlist narrows the set of
+admissible running-key hypotheses but does not change which of them can
+satisfy the Bean constraint *in that class* — the answer remains zero.
+The downgrade does **not** claim elimination of composed ciphers where
+an outer layer precedes the columnar step; such compositions break the
+direct positional crib mapping assumption and lie outside the analyzed
+class.
 
 ## What the pre-reg document says vs. what we're doing
 
@@ -133,9 +142,12 @@ If you are starting a new running-key campaign after 2026-04-08:
    `panel_ciphertext` are currently admissible as running-key
    sources. Kahn is **not**.
 2. **Check the exhaustion certificate.** Running-key + columnar
-   w6/8/9 × 3 variants is already closed (source-independently) and
-   requires a RE-OPENING criterion to touch again. See the pre-reg
-   document for what counts.
+   w6/8/9 × {Vig, Beau, VarBeau} on the carved CT under direct
+   positional crib mapping is already closed (running-key-source-
+   independently, within that class) and requires a RE-OPENING
+   criterion to touch again. See the pre-reg document for what
+   counts. This does *not* close running-key composed with an
+   outer layer that breaks the direct positional crib mapping.
 3. **Check the session briefing.** The bin-C checklist renderer in
    `scripts/_infra/session_briefing.py` now reads result JSONs
    directly and will show C1/C2/C6/C7 as CLOSED if their artifacts
