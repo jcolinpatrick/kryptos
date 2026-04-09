@@ -1,3 +1,23 @@
+---
+status: HISTORICAL research plan — not authoritative
+authored: 2026-03-23 (pre-dates palette retirement)
+palette_dependency: yes — this plan materially depends on the retired {B,G,I,K,O,W,Z} palette construct and/or its derived null-mask rules
+retired_on: 2026-04-01 (palette retirement); banner added 2026-04-09 (AUDIT-2 closure)
+superseded_by: docs/a1_score_conditioned_null_report.md, memory/retired/README.md, MEMORY.md
+---
+
+> # HISTORICAL / PALETTE-DEPENDENT — NOT LIVE DOCTRINE
+>
+> This research plan was authored 2026-03-23 on top of the palette
+> `{B,G,I,K,O,W,Z}` construct. That construct was **retired on 2026-04-01**
+> as a post-hoc selection artifact (score-conditioned null; SA produces 11
+> distinct letters on K4, indistinguishable from shuffled controls p=0.30).
+> Any conclusion, predicted signal, or test plan in this file that depends
+> on the palette, the mod-35 rule, BCL enrichment, or the Polybius
+> row-selection model is **historical only** and must not be used to drive
+> live research. See `memory/retired/README.md`, `docs/superpowers/README.md`,
+> and `docs/a1_score_conditioned_null_report.md`.
+
 # Stego Backward Propagation Pipeline — Design Spec
 
 **Date:** 2026-03-23

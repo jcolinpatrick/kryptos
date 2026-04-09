@@ -74,9 +74,9 @@ E-FRAC-49 (the prior large-scale "running-key + columnar × 7 reference texts" c
 
 **Under the current full 242-inequality Bean constraint, the Bean-passing count across widths {6,8,9} × {Vig, Beau, VarBeau} is ZERO.** I verified this directly by re-running the Bean equality + inequality check over all 403,920 orderings at widths 6/8/9 against the current `BEAN_INEQ` constant. 17,124 orderings pass the Bean equality `k[27]=k[65]` but *every single one of them* violates at least one of the 242 variant-independent inequalities under all three cipher variants.
 
-**This is a strictly stronger Tier 1 elimination than what E-FRAC-49 documented.** The upgraded statement is:
+**This is a strictly stronger Tier 1 elimination than what E-FRAC-49 documented, within its stated scope.** The upgraded statement is (scope-corrected 2026-04-09 to close AUDIT-1 in `docs/methodological_audits.md`):
 
-> **Running-key + columnar w6/8/9 × {Vigenère, Beaufort, Variant Beaufort} is Bean-impossible under the full 242-inequality constraint.** No source text can produce a solution in this family regardless of length or content. The result is independent of Carter, Kahn, or any other corpus.
+> **Within the analyzed cipher class — running-key + columnar w6/8/9 × {Vigenère, Beaufort, Variant Beaufort}, applied to the carved 97-character CT under direct positional crib mapping — the full 242-inequality Bean constraint is violated by every (ordering, variant) pair.** No running-key source text can produce a solution *in that class*, regardless of length or content: the Bean pre-filter empties before any source is consulted, so the result is independent of Carter, Kahn, or any other corpus *as a choice of running key*. The statement does **not** claim elimination of composed ciphers with an outer layer preceding the columnar step, of non-additive keystreams, or of cipher classes that break the direct positional crib mapping — those remain open.
 
 Under the pre-registered ESCALATION criterion, C1 records:
 
@@ -232,7 +232,7 @@ Per the pre-registered DOWNGRADE criteria (Section 3 of `preregistered_threshold
 
 **New status:** Running-key is moved from the "residual admissible family" position in MEMORY.md (already demoted from "#1 open") to **bin B — empirically saturated**. The only subfamily that can re-open it is one backed by a new primary-source finding (new CorpusLicense with public justification) or a new detection apparatus that exceeds the current crib + quadgram + word-hit conjunction.
 
-**What this NEW finding adds beyond E-FRAC-49:** Under the full 242-inequality Bean constraint, **columnar w6/8/9 × {Vig, Beau, VarBeau} is Bean-impossible for every source**, not just for the 7 texts E-FRAC-49 actually tested. This is a Tier 1 (mathematical) elimination, not an empirical one. It should be added to `docs/elimination_tiers.md` as part of the next normal update to that document.
+**What this NEW finding adds beyond E-FRAC-49:** Under the full 242-inequality Bean constraint, **columnar w6/8/9 × {Vig, Beau, VarBeau} on the carved CT under direct positional crib mapping is Bean-impossible for every running-key source** — not just for the 7 texts E-FRAC-49 actually tested. This is a Tier 1 algebraic elimination *within that stated cipher class*, not a universal impossibility claim. It has been added to `docs/elimination_tiers.md` Tier 1 (scope-corrected 2026-04-09 to close AUDIT-1).
 
 ### 9.2 Non-columnar 3-layer composition → bin B
 
@@ -258,7 +258,7 @@ The exhaustion audit was careful to distinguish "empirically saturated" from "fo
 
 Per the audit's final recommendation, the project is now formally in the **"awaiting new evidence" phase**. The concrete transitions are:
 
-1. **Remove running-key from the open-families list.** Update `docs/elimination_tiers.md` to reflect the stronger Tier 1 finding (columnar w6/8/9 × 3 variants is Bean-impossible under full 242-ineq set, independent of source). [routine update, not executed in this session to preserve the audit/certificate separation.]
+1. **Remove running-key from the open-families list *within the analyzed cipher class*.** `docs/elimination_tiers.md` Tier 1 has been updated (2026-04-09) with the scope-corrected finding: columnar w4/6/8/9 × {Vig, Beau, VarBeau} on the carved CT under direct positional crib mapping is Bean-impossible under the full 242-ineq set, independent of the choice of running-key source *within that class*. Running-key composed with an outer layer that breaks the direct positional crib mapping is **not** eliminated by this finding.
 2. **Stop funding compute on anything in bin B.** The April 2026 palette retirement + this April 8 audit established a pattern: every week of unfocused sweeping produces ~2-3 new "interesting" items that the next audit has to retire. Compute policy: no new sweeps in bin B without a pre-registered null model and a written justification.
 3. **Start engineering work in bin D.** The highest-leverage bin-D items are:
    - A detection apparatus that can handle the mono+trans+running-key case (E-FRAC-54 detection gap).

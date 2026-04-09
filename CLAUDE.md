@@ -10,16 +10,18 @@ This repo has one purpose: determine the **true plaintext** and the **full encry
 
 ## Pre-flight (EVERY task — do NOT skip)
 
-1. Read this entire CLAUDE.md
-2. **Run the session briefing** — the single most important step:
+1. Read this entire CLAUDE.md (operational doctrine only — not research state).
+2. **Run the session briefing** — authoritative derived state:
    ```bash
    PYTHONPATH=src python3 scripts/_infra/session_briefing.py
    ```
-   This reads `exhaustion_log.json` (~950 entries), `results/*.json` (~380 files), and `docs/elimination_tiers.md` to produce a current elimination landscape, anomalies, open attack surface, and DO NOT TEST list. **It replaces all hand-maintained elimination ledgers** — the data is always fresh.
-3. Read MEMORY.md (auto-loaded) — volatile strategic state, hard blockers, next actions
-4. If the task matches anything in the briefing's TIER 1 or DO NOT TEST sections → **STOP, tell the user, do NOT re-run**
-5. `run_attack.py --list --verbose | grep KEYWORD` — search before writing new code
-6. **If the task involves CPU-bound work**: `bash scripts/vm_capability_report.sh` — establish runtime capabilities (see [Compute Environment](#compute-environment--high-power-vm))
+   Reads `exhaustion_log.json`, `results/*.json`, and `docs/elimination_tiers.md` to produce a current elimination landscape, anomalies, open attack surface, and DO NOT TEST list. **It replaces all hand-maintained elimination ledgers.**
+3. Read **`MEMORY.md`** (auto-loaded) — live control document: current state, hard blockers, active bins, open audits, do-not-revive list. Short by design.
+4. Read **`docs/README_current_state.md`** — canonical entry index for the live path (claim registry, methodological audits, historical/retired quarantines).
+5. Check **`docs/methodological_audits.md`** for any open audit that touches your task. Disputed claims block new compute until their audit closes.
+6. If the task matches anything in the briefing's TIER 1 / DO NOT TEST sections or the `MEMORY.md` do-not-revive list → **STOP, tell the user, do NOT re-run**.
+7. `run_attack.py --list --verbose | grep KEYWORD` — search before writing new code.
+8. **If the task involves CPU-bound work**: `bash scripts/vm_capability_report.sh` — establish runtime capabilities (see [Compute Environment](#compute-environment--high-power-vm)).
 
 Skipping these steps and re-testing an eliminated hypothesis wastes 28 CPU cores and burns API tokens for zero value.
 
@@ -27,9 +29,16 @@ Skipping these steps and re-testing an eliminated hypothesis wastes 28 CPU cores
 
 ## The K4 Problem — Quick Reference
 
-**Kryptos** is a sculpture at CIA headquarters containing four encrypted messages (K1–K4). K1–K3 were solved in 1998–1999. **K4 (97 characters) has been unsolved since 1990.** Two encryption systems confirmed [PRIMARY SOURCE]. No single-layer classical cipher works (exhaustively tested).
+**Kryptos** is a sculpture at CIA headquarters containing four encrypted messages (K1–K4). K1–K3 were solved in 1998–1999. **K4 (97 characters) has been unsolved since 1990.** Two encryption systems are reported by the creator; treat such statements as Tier-3 community hearsay unless independently corroborated (see `feedback_sanborn_epistemic_weight.md`).
 
-**→ CT, cribs, constants, eliminations, statistical observations, open attack surface, and current working hypotheses are in MEMORY.md** (auto-loaded). CLAUDE.md has durable technical setup; MEMORY.md has volatile research state. See [`reports/final_synthesis.md`](reports/final_synthesis.md) for the elimination landscape.
+CLAUDE.md is **operational doctrine only**: how to work, where truth lives, how to classify claims, how to avoid re-testing dead hypotheses. It does **not** describe the current favorite theory, what the project is "close" to, or any leading hypothesis framing. For that see:
+
+- **`MEMORY.md`** — live control document (current state, bins, audits, do-not-revive).
+- **`docs/README_current_state.md`** — canonical entry index.
+- **`docs/claims_registry.json`** — structured seed registry of live / disputed / retired / historical-snapshot claims.
+- **`docs/methodological_audits.md`** — open epistemic audits.
+
+Historical strategy snapshots live in `docs/history/` and `reports/final_synthesis.md` (both banner-labelled HISTORICAL SNAPSHOT). Retired research notes live in `memory/retired/`. Do not cite either as current doctrine.
 
 ---
 
@@ -169,7 +178,7 @@ Three categories: **Unit** (`test_transforms.py`, `test_scoring.py`, etc.), **QA
 - `wordlists/english.txt` — 1M+ words; `wordlists/thematic_keywords.txt` — thematic keywords
 - `reference/` — Primary sources (Carter book, Sanborn correspondence, NSA docs, Ed Scheidt dossier, video transcripts, PDFs)
 - `docs/crypto_field_manual/` — Durable cryptographic knowledge base
-- `memory/` (repo root) — Checked-in research notes: keystream forensics, palette investigations, width analysis
+- `memory/` (repo root) — Checked-in live research notes (keystream forensics, width analysis, TICOM). **Retired notes live under `memory/retired/`** — do not cite them as evidence. See `memory/retired/README.md`.
 
 ### Data persistence & symlinks
 
@@ -201,7 +210,7 @@ These are non-obvious pitfalls discovered through prior sessions. Check these fi
 - **constants.py self-verifies at import**: If you modify CT, cribs, or Bean values incorrectly, the import itself will raise an assertion error.
 - **Unbuffered output for background tasks**: Always use `python3 -u` when running scripts in background. Without `-u`, Python buffers stdout and you see no output until the process ends.
 - **Bifid 5×5 impossible for K4**: All 26 letters appear in K4 CT; any cipher requiring a 25-letter alphabet (I/J merged) is eliminated.
-- **High scores are almost always false signals**: See MEMORY.md "DO NOT TEST" section for proven-impossible hypotheses (autokey, DEFECTOR/PALIMPSEST 15/24, K2 numbers as keys, etc.). These are research eliminations, not dev bugs — consult MEMORY.md before investigating any "promising" score.
+- **High scores are almost always false signals**: See `MEMORY.md` §5 "Do-Not-Revive List" and the `BREAKTHROUGH` label caveat in `docs/README_current_state.md` §4. The `BREAKTHROUGH` label (`crib_score == 24 && bean_passed`) is an **input to validation**, not an output of it — historical emission has been dominated by post-hoc overfits. Treat it as a candidate for investigation, not a solution. See `docs/methodological_audits.md` AUDIT-3.
 - **Beaufort A=0 is the confirmed default**: Use A=0 indexing for all Beaufort operations unless explicitly testing A=1. Both conventions must be tested in positional experiments.
 - **Standalone script `_ROOT` depth**: The bootstrap snippet (`_ROOT = os.path.dirname(os.path.dirname(...))`) assumes the script is exactly 2 directories deep (e.g. `scripts/grille/e_foo.py`). Scripts at 3+ levels need additional `os.path.dirname()` wrappers or they'll get `ModuleNotFoundError`. Robust alternative: `_ROOT = os.path.dirname(os.path.abspath(__file__))` then `while not os.path.exists(os.path.join(_ROOT, 'src')): _ROOT = os.path.dirname(_ROOT)`.
 - **Always import constants, never hardcode**: This includes `CONSENSUS_NULL_POSITIONS`, not just CT/cribs. A prior session generated a script with fabricated null positions that shared only 3/17 values with the consensus — the results were silently invalid. Import from `kryptos.kernel.constants`.
@@ -316,15 +325,28 @@ Results are not trusted until they pass:
 
 ## Reference Documents
 
-Domain knowledge, public facts, and detailed operating policies live in separate files:
+### Canonical live path (read these for current state)
 
-- **`docs/kryptos_ground_truth.md`** — Public facts (CT, cribs, 2025 disclosures), internal results policy, hypothesis classes, creativity doctrine
+- **`docs/README_current_state.md`** — canonical entry index; read after CLAUDE.md + session briefing + MEMORY.md
+- **`docs/claims_registry.json`** — structured registry of major live / disputed / retired / historical claims
+- **`docs/methodological_audits.md`** — open epistemic audits; disputed claims block new compute until their audit closes
+
+### Durable domain & invariant docs
+
+- **`docs/kryptos_ground_truth.md`** — Public facts (CT, cribs, 2025 disclosures), internal results policy, hypothesis classes
 - **`docs/invariants.md`** — Verified computational invariants (keystream, Bean constraints, alphabets, eliminated hypotheses)
-- **`docs/elimination_tiers.md`** — Elimination confidence tiers (Tier 1–4) with full tables of what has/hasn't been tested. Tier 1 = mathematically proven eliminated; Tier 2 = exhaustively searched (single-layer only — **OPEN as one layer of multi-layer**); Tier 4 = untested bespoke methods. **Critical framing:** All Tier 2 eliminations assume direct positional correspondence (CT[i] → PT[i]).
-- **`docs/research_questions.md`** — Prioritized unknowns (RQ-1 through RQ-13) with current state and next steps
-- **`docs/two_ground_truths.md`** — Physical sculpture vs Sanborn's intent: two distinct ground truths for K4 analysis
-- **`docs/anomaly_registry.md`** — Physical anomalies in the Kryptos sculpture (misspellings, alignments, narrative anomaly allocation)
-- **`docs/operations.md`** — Supporting systems, deployment, service management, environment files
+- **`docs/elimination_tiers.md`** — Elimination confidence tiers. Tier 1 = proven under stated assumptions; Tier 2 = exhaustively searched (single-layer only — **OPEN as one layer of multi-layer**); Tier 4 = untested bespoke methods. **Critical framing:** All Tier 1/2 eliminations assume direct positional correspondence `CT[i] → PT[i]`. The "SOURCE-INDEPENDENT" wording on Tier 1 columnar rows is currently **disputed** — see `docs/methodological_audits.md` AUDIT-1 before citing.
+- **`docs/research_questions.md`** — Prioritized unknowns (RQ-1 through RQ-13)
+- **`docs/two_ground_truths.md`** — Physical sculpture vs creator intent
+- **`docs/anomaly_registry.md`** — Physical anomalies in the sculpture
+- **`docs/operations.md`** — Supporting systems, deployment, service management
+
+### Historical / retired (not authoritative — do not cite as current)
+
+- **`docs/history/`** — Historical strategy snapshots, demoted status reports (each banner-labelled)
+- **`reports/final_synthesis.md`** — 2026-02-20 multi-agent synthesis, kept at original path for link stability, in-file HISTORICAL SNAPSHOT banner
+- **`memory/retired/`** — Retired research notes (palette/null-mask family, retired 2026-04-01)
+- **`docs/retired_claims/`** — Landing page for retired claims
 
 ### External primary references
 
@@ -351,10 +373,10 @@ ops/deploy/cron_update.sh --force                              # Force deploy
 
 Two `memory/` directories exist — don't confuse them:
 
-- **`.claude/projects/.../memory/`** — Claude Code's session-persistent memory. This is where `elimination_ledger.md`, `confirmed_findings.md`, etc. live. Referenced from MEMORY.md's topic index. Read via Claude Code's memory system (not filesystem paths).
-- **`memory/`** (repo root) — Checked-in research notes (11 files). Supplementary analysis documents (palette investigations, keystream forensics, etc.). These are regular repo files, not session memory.
+- **`.claude/projects/.../memory/`** — Claude Code's session-persistent memory. Read via Claude Code's memory system (not filesystem paths).
+- **`memory/`** (repo root) — Checked-in research notes. Live notes at `memory/*.md`. **Retired notes quarantined under `memory/retired/`** — do not cite as evidence; each file carries a RETIRED banner and the old path carries a stub pointer. See `memory/retired/README.md`.
 
-**MEMORY.md** (auto-loaded) is the decision-support index — paradigm, eliminations, statistical observations, open attack surface. CLAUDE.md has durable technical setup; MEMORY.md has volatile research state.
+**`MEMORY.md`** (auto-loaded) is the **live control document**: current state, hard blockers, active bins, open audits, do-not-revive list. Short by design. CLAUDE.md holds durable operational doctrine; MEMORY.md holds volatile live state. Structured claims live in `docs/claims_registry.json`; open audits in `docs/methodological_audits.md`; historical snapshots in `docs/history/`.
 
 ---
 
@@ -362,9 +384,9 @@ Two `memory/` directories exist — don't confuse them:
 
 - **KryptosBot runner:** `python3 kryptosbot/solve.py`. See `kryptosbot/RUNBOOK.md`.
 - **Campaign runner:** `PYTHONPATH=src python3 -u kryptosbot/campaign_v2.py` (supports `--local-only`, `--dry-run`).
-- **Historical reference:** `archive/legacy_harness/`, `archive/session_reports/`, [`reports/final_synthesis.md`](reports/final_synthesis.md).
+- **Historical reference:** `archive/legacy_harness/`, `archive/session_reports/`, `docs/history/`, [`reports/final_synthesis.md`](reports/final_synthesis.md) (banner-labelled HISTORICAL SNAPSHOT).
 
 ---
 
-*Last updated: 2026-04-03 — Mission: derive K4 method & solve. Volatile research state (best leads, eliminations, open hypotheses) maintained in MEMORY.md.*
+*Last updated: 2026-04-09 — Epistemic control-plane refactor. CLAUDE.md is operational doctrine only. Live research state in MEMORY.md; structured claims in docs/claims_registry.json; open audits in docs/methodological_audits.md; canonical entry index in docs/README_current_state.md.*
 *Primary author: Colin Patrick (human lead) + Claude (computational partner)*
