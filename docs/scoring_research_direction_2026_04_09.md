@@ -1,7 +1,7 @@
 # Scoring research direction — bin D1 reframed
 
 **Date:** 2026-04-09
-**Status:** Research memo. No compute commitment yet.
+**Status:** Research memo. **§5 step 5(b) WOUNDED by red-team 2026-04-09; see §10 below before implementing.**
 **Prerequisite:** Anyone building a non-quadgram K4 scorer should read this first.
 
 ---
@@ -324,3 +324,121 @@ Before any session commits to building experiment D1a or D1b:
 
 *Memo by Claude Opus 4.6 during 2026-04-09 autonomous session.
 No compute committed by this memo; it is a design document only.*
+
+---
+
+## 10. Red-team WOUND verdict (2026-04-09, second commission)
+
+Shortly after this memo was written, the red-team-disprover evaluated
+the D1a experiment proposal per the memo's own §8 pre-flight rule. The
+verdict was WOUND, convertible to SURVIVES with specific fixes. **Do not
+implement D1a under the specification in §5 above.** The load-bearing
+failure is in step 5(b) of the experiment design.
+
+### 10.1 Wrong null model (critical fix required)
+
+§5 step 5(b) defines the adversary as a "Markov-3 surrogate with the crib
+letters force-overlaid at the crib positions". This is **not** the
+adversary D1a needs to beat. Force-overlaying crib letters onto a naively
+sampled Markov-3 surrogate creates a seam discontinuity at the crib
+boundary (the character at position 21 was drawn from M3(prev3) and then
+overwritten to "E", producing a 4-gram that is almost never an M3-sampled
+output). Any n-gram scorer ≥2 will trivially flag this seam, giving a
+false "signal" that dissolves on first audit.
+
+The correct adversary is a **conditionally-sampled** Markov-3 surrogate
+with the cribs pinned (standard constrained sampling: forward-backward
+over the Markov chain with cribs as boundary conditions). Under this
+correct null, the test reduces to "does the 6-gram distribution
+conditioned on a pinned crib differ from the 3rd-order Markov chain
+conditioned on the same pinned crib at crib-adjacent positions?" — which
+is the question D1a was supposed to be asking all along.
+
+### 10.2 Variance budget (order-of-magnitude shortfall)
+
+Under the correct null (§10.1), the mean gap between real English and
+conditionally-sampled Markov-3 at crib-adjacent positions is bounded by
+KL(Markov-5 || Markov-3) restricted to those positions. Empirically this
+KL is ≤0.3 nats/char on general English and is likely smaller where the
+crib already supplies most of the conditioning information.
+
+With 4-12 6-gram samples per candidate (depending on window-counting
+choice) and σ_6gram ≈ 2-3 nats/char on a sparsely-sampled 6-gram LM,
+the standard error on L_junction is ~0.8 nats/char. SNR is therefore
+roughly 0.2 / 0.8 ≈ 0.25. A 3-beta Gumbel gap requires SNR ≈ 3. **The
+variance budget is off by an order of magnitude.**
+
+The memo's earlier claim that "concentration at high-signal positions
+buys back the variance" has no quantitative support. Running D1a without
+a power calculation would produce a noise-limited negative result that
+cannot distinguish "the scorer is blind to the signal" from "the signal
+is not there".
+
+### 10.3 Infrastructure risk
+
+No 6-gram LM exists in the repo. Building one from carter_vol1.txt
+(287K chars of topical Egyptology) would give ~280K 6-grams in a
+99.9%-sparse 309M-cell state space. Smoothing choice would shift
+per-6-gram log-probabilities by ≥1 nat for unseen 6-grams, and crib-
+adjacent 6-grams are dominated by unseen 6-grams in a corpus that small.
+The verdict under the 3-beta criterion would be determined by the
+smoothing choice, not by the junction signal.
+
+A stable 6-gram LM for this purpose needs a representative corpus of
+≥10M characters (e.g., Gutenberg-01 sanitized uppercase), not a single
+topical 287K-char text.
+
+### 10.4 Six under-specified choices that must be pinned
+
+The §5 specification leaves all of these open; each materially changes
+the experiment's result:
+
+1. **Window offset.** "6-char window at boundary 20/21" — exact character
+   indices not specified. [18,19,20,21,22,23]? [17,..,22]? [19,..,24]?
+2. **Crib-letter inclusion.** Do scored 6-grams include crib characters,
+   or only flank-flank? Including crib chars partly scores fixed text.
+3. **Smoothing method and discount.** Kneser-Ney / Witten-Bell / Laplace;
+   specific parameter values.
+4. **Training corpus.** Must be representative and ≥10M chars.
+5. **Window counting.** 1 center 6-gram per window vs 3 overlapping
+   6-grams vs weighted sum. Changes N from 4 to 12.
+6. **Quadgram-vs-6-gram disagreement protocol.** §5 step 2 says score
+   under both but does not say which wins when they disagree.
+
+### 10.5 Three conditions to convert WOUND → SURVIVES
+
+Before any session begins implementing D1a, all three of the following
+must be true:
+
+1. **Adversary fix:** §5 step 5(b) rewritten to use conditionally-sampled
+   Markov-3 with the exact constrained-sampling procedure pre-registered.
+2. **Power calculation committed BEFORE code:** compute the minimum
+   detectable effect size (MDE) for a 3-beta Gumbel gap, given σ_6gram
+   on the chosen corpus and N samples per candidate. If MDE > 0.3 nats/
+   char, kill D1a and skip to D1b without running. This is the single
+   calculation that decides whether D1a is worth building at all.
+3. **Six-item pin:** all six choices in §10.4 committed to a pre-
+   registration document at `docs/preregistered_d1a_<date>.md` before
+   any code is written.
+
+### 10.6 Implication for D1b
+
+D1b (composite junction + word-density) is a separate proposal and is
+not automatically wounded by the D1a verdict. Word-boundary density is
+a different signal with a different null behaviour; a composite scorer
+could in principle survive where the junction-only version does not.
+However, D1b inherits the same power-calculation requirement: before
+implementing, compute the MDE under the correct conditional-sampling
+null and verify it is below the plausible signal size.
+
+### 10.7 Do not re-propose
+
+Do not propose D1a implementation without satisfying all three
+change-conditions in §10.5. A session that tries to implement §5 as
+currently written will produce a false-positive seam-detection result
+that dissolves on audit. That is exactly the failure mode
+`feedback_red_team_before_swings.md` exists to catch, and the second
+red-team pass caught it where the first memo did not.
+
+Full red-team transcript is preserved in session memory at
+`memory/d1a_junction_scorer_wounded_2026_04_09.md`.
