@@ -99,6 +99,7 @@ class TestDefaultProcedureAllowlist:
         assert "quagmire_iii_family" in PROCEDURE_ALLOWLIST
         assert "k3_columnar_transposition" in PROCEDURE_ALLOWLIST
         assert "abscissa_as_keyword" in PROCEDURE_ALLOWLIST
+        assert "palimpsest_as_keyword" in PROCEDURE_ALLOWLIST
         assert "atbash_substitution_layer" in PROCEDURE_ALLOWLIST
 
     def test_clue_surface_entries_have_kryptos_uri(self):

@@ -286,13 +286,40 @@ DEFAULT_PROCEDURE_ALLOWLIST: Tuple[ProcedureLicense, ...] = (
         added_at="2026-04-09T00:00:00+00:00",
         notes=(
             "ABSCISSA appears as a research term in Sanborn's AAA "
-            "archive notebooks (circa 1988-1990). A solver with access "
-            "to the public archive can derive ABSCISSA as a candidate "
-            "keyword. The license covers using ABSCISSA as the key for "
-            "any standard polyalphabetic substitution (Vigenere, "
-            "Beaufort, Variant Beaufort, Quagmire III). It does NOT "
-            "cover ad-hoc bespoke constructions that merely cite "
-            "ABSCISSA as inspiration."
+            "archive notebooks (circa 1988-1990) AND is literally the "
+            "published K2 indicator keyword (Quagmire III with "
+            "KRYPTOS-mixed alphabet). A solver with access to the "
+            "public archive or the K2 solve can derive ABSCISSA as a "
+            "candidate keyword. The license covers using ABSCISSA as "
+            "the key for any standard polyalphabetic substitution "
+            "(Vigenere, Beaufort, Variant Beaufort, Quagmire III). It "
+            "does NOT cover ad-hoc bespoke constructions that merely "
+            "cite ABSCISSA as inspiration."
+        ),
+    ),
+    ProcedureLicense(
+        procedure_id="palimpsest_as_keyword",
+        name="PALIMPSEST as Vigenere/Beaufort/Quagmire keyword",
+        family="substitution",
+        justification=ProcedureJustification.CLUE_SURFACE,
+        provenance_uri="kryptos://k1_cipher_keyword",
+        evidence_refs=(
+            "docs/kryptos_ground_truth.md",
+            "docs/invariants.md",
+        ),
+        parametric_spec="src/kryptos/kernel/transforms/vigenere.py",
+        added_at="2026-04-09T00:00:00+00:00",
+        notes=(
+            "PALIMPSEST is the published K1 Quagmire III indicator "
+            "keyword. A solver reading K1 discovers PALIMPSEST as the "
+            "keyword directly. Admitted as CLUE_SURFACE: the solve "
+            "continuity argument is that if K4 uses a keyed "
+            "polyalphabetic layer, K1's keyword is one of the "
+            "highest-prior candidates by solved-section continuity. "
+            "The license covers PALIMPSEST as the key for any standard "
+            "polyalphabetic substitution (Vigenere, Beaufort, Variant "
+            "Beaufort, Quagmire III). Like ABSCISSA it does NOT cover "
+            "ad-hoc bespoke constructions."
         ),
     ),
     ProcedureLicense(
