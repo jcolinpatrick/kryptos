@@ -287,6 +287,112 @@ async def classify(body: ClassifyRequest, request: Request):
 # ---------------------------------------------------------------------------
 
 NTFY_TOPIC = os.environ.get("NTFY_TOPIC", "")
+NTFY_CHALLENGE_TOPIC = os.environ.get("NTFY_CHALLENGE_TOPIC", "kbot-challenge-k4")
+
+# Challenge K4 verification
+CHALLENGE_K4_HASH = "ab491ee62d455cf627859b836591c355643b7da738ce4f6a55aacf6743fdae51"
+
+
+class ChallengeSubmission(BaseModel):
+    answer: str = Field(..., min_length=10, max_length=200)
+
+
+@app.post("/api/challenge/verify")
+async def verify_challenge(submission: ChallengeSubmission, request: Request):
+    """Verify a Challenge K4 submission against the known hash."""
+    import hashlib
+    cleaned = submission.answer.upper().strip().replace(" ", "")
+    h = hashlib.sha256(cleaned.encode()).hexdigest()
+    correct = h == CHALLENGE_K4_HASH
+
+    if correct:
+        _notify_challenge_solved(cleaned, str(request.client.host))
+
+    return JSONResponse({
+        "correct": correct,
+        "hash": h,
+        "expected_hash": CHALLENGE_K4_HASH,
+    })
+
+
+def _notify_challenge_solved(answer: str, ip: str) -> None:
+    """URGENT notification when someone solves Challenge K4."""
+    topic = NTFY_CHALLENGE_TOPIC or NTFY_TOPIC
+    if not topic:
+        return
+    try:
+        data = f"SOLVED! Answer: {answer[:50]}... from {ip}".encode("utf-8")
+        req = urllib.request.Request(
+            f"https://ntfy.sh/{topic}",
+            data=data,
+            headers={
+                "Title": "Challenge K4 SOLVED!",
+                "Priority": "urgent",
+                "Tags": "trophy,tada,kryptos",
+                "Click": "https://internal.com/challenge/",
+            },
+        )
+        urllib.request.urlopen(req, timeout=5)
+    except Exception:
+        pass
+
+
+# Challenge attempt counter (simple file-based, no DB needed)
+CHALLENGE_STATS_FILE = os.path.join(
+    os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
+    "logs", "challenge_attempts.json"
+)
+
+
+class ChallengeAttempt(BaseModel):
+    length: int = Field(..., ge=1, le=500)
+    correct: bool = False
+    ts: int = 0
+
+
+@app.post("/api/challenge/attempt")
+async def log_challenge_attempt(attempt: ChallengeAttempt):
+    """Log an anonymous challenge attempt (no personal data, just a counter)."""
+    import json
+    os.makedirs(os.path.dirname(CHALLENGE_STATS_FILE), exist_ok=True)
+
+    stats = {"total": 0, "correct": 0, "by_length": {}}
+    if os.path.exists(CHALLENGE_STATS_FILE):
+        try:
+            with open(CHALLENGE_STATS_FILE) as f:
+                stats = json.load(f)
+        except Exception:
+            pass
+
+    stats["total"] = stats.get("total", 0) + 1
+    if attempt.correct:
+        stats["correct"] = stats.get("correct", 0) + 1
+    lk = str(attempt.length)
+    by_len = stats.get("by_length", {})
+    by_len[lk] = by_len.get(lk, 0) + 1
+    stats["by_length"] = by_len
+
+    try:
+        with open(CHALLENGE_STATS_FILE, "w") as f:
+            json.dump(stats, f)
+    except Exception:
+        pass
+
+    return JSONResponse({"ok": True})
+
+
+@app.get("/api/challenge/stats")
+async def challenge_stats():
+    """Return anonymous challenge attempt statistics."""
+    import json
+    stats = {"total": 0, "correct": 0, "by_length": {}}
+    if os.path.exists(CHALLENGE_STATS_FILE):
+        try:
+            with open(CHALLENGE_STATS_FILE) as f:
+                stats = json.load(f)
+        except Exception:
+            pass
+    return JSONResponse(stats)
 
 
 def _notify_novel_theory(theory: str, queue_pos: int) -> None:

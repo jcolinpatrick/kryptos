@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+{% block title %}Community Cipher Challenge | internal.com{% endblock %}
+{% block og_title %}Community Cipher Challenge | internal.com{% endblock %}
+{% block og_url %}<meta property="og:url" content="https://internal.com/challenge/">{% endblock %}
+{% block canonical %}<link rel="canonical" href="https://internal.com/challenge/">{% endblock %}
+
+{% block head_extra %}
+<link rel="stylesheet" href="/static/challenge-page.css">
+{% endblock %}
+
+{% block content %}
+<div class="ch-page">
+
+<header class="ch-hero">
+  <p class="ch-kicker">Community puzzle</p>
+  <h1>Cipher Challenge</h1>
+  <p class="ch-intro">
+    A two-system puzzle built with the same <strong>hand-executable</strong> methods
+    available to Sanborn and Scheidt in&nbsp;1989.
+  </p>
+  <div class="ch-badge">Unsolved / April 2026</div>
+</header>
+
+<section class="ch-section">
+  <h2 class="ch-section-label">The Ciphertext</h2>
+  <p class="ch-section-desc">
+    97 characters. Two classical systems. Pencil and paper&nbsp;only.
+  </p>
+  <div class="ct-display">ZOOEWBKHKZBMCYMZHUOWJTHKUGGMKCGBVHJGNIHEZRGWIBZEEWZWPTNZTUOPXZJRJBNSZCXTNIQQBIMUBZHBRBEQRMBYUOUGS</div>
+  <div class="ch-stats">
+    <div class="stat-pill">
+      <span class="stat-pill-label">Length</span>
+      <span class="stat-pill-value">97 characters</span>
+    </div>
+    <div class="stat-pill">
+      <span class="stat-pill-label">Systems</span>
+      <span class="stat-pill-value">2</span>
+    </div>
+    <div class="stat-pill">
+      <span class="stat-pill-label">Tools required</span>
+      <span class="stat-pill-value">Pencil &amp; paper</span>
+    </div>
+    <div class="stat-pill">
+      <span class="stat-pill-label">Method families</span>
+      <span class="stat-pill-value">Classical</span>
+    </div>
+  </div>
+</section>
+
+<section class="ch-section">
+  <h3 class="ch-sub-label">Rules</h3>
+  <ul>
+    <li><strong>Both systems are classical.</strong> No electronic computation was used
+      in the encryption. Everything can be done with pencil, paper, and&nbsp;a&nbsp;tableau.</li>
+    <li><strong>The methods are from the historical toolkit:</strong> the same
+      families available to a cryptographer in&nbsp;1989.</li>
+    <li><strong>The plaintext is English.</strong> Uppercase letters only, no spaces
+      or punctuation. Deliberately somewhat enigmatic in&nbsp;style.</li>
+    <li><strong>A complete solution identifies:</strong> the full plaintext,
+      the nature of both systems, and the key material for&nbsp;each.</li>
+  </ul>
+</section>
+
+<section class="ch-section">
+  <h3 class="ch-sub-label">Hints</h3>
+
+  <div class="ch-hint">
+    <div class="ch-hint-label">Hint 1</div>
+    <p>&ldquo;The message uses two systems, as&nbsp;confirmed.&rdquo;</p>
+  </div>
+
+  <div class="ch-hint">
+    <div class="ch-hint-label">Hint 2</div>
+    <p>&ldquo;One system hides. The other&nbsp;transforms.&rdquo;</p>
+  </div>
+
+  <div class="ch-hint">
+    <div class="ch-hint-label">Hint 3</div>
+    <p>
+      Two words in the plaintext serve as confirmation cribs.
+      One is <strong>8 letters</strong> and relates to <em>direction</em>.
+      The other is <strong>8 letters</strong> and relates to&nbsp;<em>vision</em>.
+    </p>
+  </div>
+</section>
+
+<!-- Future hints:
+<div class="ch-hint">
+  <div class="ch-hint-label">Hint 4</div>
+  <p>&ldquo;The hiding pattern is regular and&nbsp;arithmetic.&rdquo;</p>
+</div>
+<div class="ch-hint">
+  <div class="ch-hint-label">Hint 5</div>
+  <p>&ldquo;Not everything at regular intervals belongs to the&nbsp;message.&rdquo;</p>
+</div>
+<div class="ch-hint">
+  <div class="ch-hint-label">Hint 6</div>
+  <p>&ldquo;The transformation uses a tableau that is not standard&nbsp;A&ndash;Z.&rdquo;</p>
+</div>
+<div class="ch-hint">
+  <div class="ch-hint-label">Hint 7</div>
+  <p>&ldquo;Every fifth position starting from zero is not what it&nbsp;seems.&rdquo;</p>
+</div>
+-->
+
+<section class="ch-verify-section">
+  <h3 class="ch-sub-label">Verify your answer</h3>
+  <p>
+    Enter your proposed plaintext to check it instantly.
+    Correct answers trigger a notification to the puzzle&nbsp;creators.
+  </p>
+  <div class="ch-verify-form">
+    <textarea id="ch-answer" class="ch-input" rows="3"
+              placeholder="Enter your plaintext guess here (uppercase, no spaces)"
+              maxlength="200" autocomplete="off" spellcheck="false"></textarea>
+    <button id="ch-btn" class="ch-btn">Verify</button>
+  </div>
+  <div id="ch-result" class="ch-result"></div>
+
+  <details class="ch-technical">
+    <summary>Offline verification</summary>
+    <p>
+      <strong>SHA-256 of plaintext:</strong>
+      <code>ab491ee62d455cf627859b836591c355643b7da738ce4f6a55aacf6743fdae51</code>
+    </p>
+    <p>
+      Verify locally: <code>echo -n "YOURANSWER" | sha256sum</code>
+    </p>
+  </details>
+</section>
+
+<section class="ch-section ch-why">
+  <h3 class="ch-sub-label">Why this puzzle exists</h3>
+  <p>
+    After testing over <strong>671 billion configurations</strong>, enumerating
+    <strong>105,692 two-layer compositions</strong>, and adding another
+    <strong>838,350 non-columnar three-layer compositions</strong>, we wanted to
+    test something different: can a puzzle built with the same classical toolkit
+    resist our automated framework while remaining solvable by skilled
+    human&nbsp;cryptanalysts?
+  </p>
+  <p>
+    If you solve this using a technique we haven&rsquo;t tried on the real
+    problem, <a href="mailto:contact@internal.com">we want to know about&nbsp;it</a>.
+  </p>
+</section>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/challenge.js"></script>
+{% endblock %}
