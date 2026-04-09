@@ -1,0 +1,227 @@
+/* ============================================================
+   challenge-page.css — Community Cipher Challenge
+   Follows the findings.css pattern: content-width constraint,
+   kicker/intro typography, section labels, stat pills.
+   ============================================================ */
+
+/* --- Page wrapper: constrain to readable width --- */
+.ch-page {
+  max-width: var(--content-width);
+  margin: 0 auto;
+}
+
+/* --- Hero --- */
+.ch-hero {
+  padding: var(--sp-12) 0 var(--sp-8);
+  border-bottom: 1px solid var(--border-default);
+  margin-bottom: var(--sp-12);
+  text-align: center;
+}
+
+.ch-kicker {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--accent-warm);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: var(--sp-3);
+}
+
+.ch-hero h1 {
+  font-family: var(--font-display);
+  font-size: var(--text-3xl);
+  font-weight: 800;
+  line-height: 1.15;
+  margin-bottom: var(--sp-5);
+}
+
+.ch-intro {
+  font-size: var(--text-lg);
+  color: var(--text-secondary);
+  line-height: 1.7;
+  max-width: 50ch;
+  margin: 0 auto var(--sp-6);
+  text-wrap: balance;
+}
+
+.ch-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--amber);
+  background: var(--amber-bg);
+  border: 1px solid var(--amber-border);
+  padding: var(--sp-2) var(--sp-4);
+  border-radius: var(--radius-sm);
+}
+
+/* --- Sections --- */
+.ch-section {
+  margin-bottom: var(--sp-12);
+  padding-bottom: var(--sp-8);
+  border-bottom: 1px solid var(--border-default);
+}
+
+.ch-section:last-child {
+  border-bottom: none;
+}
+
+.ch-section-label {
+  font-size: var(--text-xl);
+  font-weight: 700;
+  margin-bottom: var(--sp-2);
+}
+
+.ch-section-desc {
+  font-size: var(--text-sm);
+  color: var(--text-tertiary);
+  margin-bottom: var(--sp-4);
+}
+
+.ch-sub-label {
+  font-size: var(--text-base);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-tertiary);
+  margin-bottom: var(--sp-4);
+}
+
+/* --- Stats (reuse findings stat-pill pattern) --- */
+.ch-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-3);
+  margin-top: var(--sp-6);
+}
+
+/* --- Hints --- */
+.ch-hint {
+  border: 1px solid var(--border-default);
+  border-left: 3px solid var(--accent-warm);
+  border-radius: var(--radius-md);
+  padding: var(--sp-4) var(--sp-5);
+  margin-bottom: var(--sp-3);
+}
+
+.ch-hint-label {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--accent-warm);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: var(--sp-2);
+}
+
+.ch-hint p {
+  margin: 0;
+  max-width: none;
+}
+
+/* --- Verify form --- */
+.ch-verify-section {
+  margin-bottom: var(--sp-12);
+  padding-bottom: var(--sp-8);
+  border-bottom: 1px solid var(--border-default);
+}
+
+.ch-verify-form {
+  margin: var(--sp-4) 0;
+}
+
+.ch-input {
+  display: block;
+  width: 100%;
+  min-height: 5em;
+  padding: var(--sp-3) var(--sp-4);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  line-height: 1.8;
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  transition: border-color var(--transition);
+  resize: vertical;
+}
+.ch-input:focus {
+  border-color: var(--accent-warm);
+  outline: none;
+  box-shadow: 0 0 0 3px var(--accent-warm-faint);
+}
+.ch-input::placeholder { color: var(--text-quaternary); }
+
+.ch-btn {
+  display: inline-block;
+  margin-top: var(--sp-3);
+  padding: var(--sp-2) var(--sp-6);
+  background: var(--accent-warm);
+  color: var(--bg-root);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--transition);
+  white-space: nowrap;
+}
+.ch-btn:hover { background: var(--accent-warm-hover); }
+.ch-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* --- Result feedback --- */
+.ch-result {
+  display: none;
+  padding: var(--sp-3) var(--sp-4);
+  border-radius: var(--radius-sm);
+  margin-top: var(--sp-3);
+  font-size: var(--text-sm);
+  line-height: 1.6;
+}
+.ch-result a { color: inherit; }
+.ch-result.ok  { display: block; background: var(--green-bg); border: 1px solid var(--green-border); color: var(--green); }
+.ch-result.no  { display: block; background: var(--red-bg); border: 1px solid var(--red-border); color: var(--red); }
+.ch-result.wrn { display: block; background: var(--amber-bg); border: 1px solid var(--amber-border); color: var(--amber); }
+
+/* --- Technical details (offline verify) --- */
+.ch-technical {
+  margin-top: var(--sp-4);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  padding: var(--sp-4) var(--sp-5);
+  max-width: none;
+}
+.ch-technical summary {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.ch-technical p {
+  font-size: var(--text-sm);
+  line-height: 1.75;
+  color: var(--text-secondary);
+  margin-bottom: var(--sp-3);
+  max-width: none;
+}
+
+/* --- Why section --- */
+.ch-why p {
+  line-height: 1.75;
+}
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+  .ch-hero h1 {
+    font-size: var(--text-2xl);
+  }
+  .ch-stats {
+    flex-direction: column;
+  }
+  .ch-verify-form {
+    margin: var(--sp-3) 0;
+  }
+}
