@@ -2,7 +2,7 @@
 """
 Cipher: mono_trans_runkey
 Family: archive_evidence
-Status: active
+Status: exhausted
 Keyspace: 1385 configs × 10 modes × 2 variants × 11 texts × 2 dirs
 Last run:
 Best score:

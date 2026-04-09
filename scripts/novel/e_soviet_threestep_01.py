@@ -2,7 +2,7 @@
 """
 Cipher:  Soviet three-step agent cipher analog
 Family:  novel
-Status:  active
+Status:  exhausted
 Keyspace: ~15 seeds x 50 chain lengths x 10 widths x 3 variants x 2 peel orders = ~45K configs
 Last run:
 Best score:

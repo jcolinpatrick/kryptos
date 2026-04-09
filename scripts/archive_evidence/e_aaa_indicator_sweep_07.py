@@ -2,7 +2,7 @@
 """
 Cipher: quagmire_indicator
 Family: archive_evidence
-Status: active
+Status: exhausted
 Keyspace: ~5000 configs
 Last run:
 Best score:

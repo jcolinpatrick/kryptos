@@ -1,7 +1,7 @@
 """
 Cipher: Wilson prime masking stream
 Family: novel
-Status: active
+Status: exhausted
 Keyspace: 562 offsets x 3 variants x 6 models = ~10K configs
 Last run:
 Best score:

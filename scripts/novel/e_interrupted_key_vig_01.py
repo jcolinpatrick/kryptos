@@ -1,7 +1,7 @@
 """
 Cipher: Interrupted-key Vigenere
 Family: novel
-Status: active
+Status: exhausted
 Keyspace: ~8 keywords x 5 models x variants = ~120+ configs per model
 Last run:
 Best score:

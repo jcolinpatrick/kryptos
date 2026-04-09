@@ -2,7 +2,7 @@
 """
 Cipher: columnar transposition
 Family: transposition/columnar
-Status: promising
+Status: active
 Keyspace: see implementation
 Last run: 
 Best score: 

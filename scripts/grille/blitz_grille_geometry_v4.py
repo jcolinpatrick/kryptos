@@ -2,7 +2,7 @@
 """
 Cipher: Cardan grille
 Family: grille
-Status: promising
+Status: exhausted
 Keyspace: see implementation
 Last run: 
 Best score: 

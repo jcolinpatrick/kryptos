@@ -2,7 +2,7 @@
 """
 Cipher: physical/coordinate
 Family: thematic/sculpture_physical
-Status: active
+Status: exhausted
 Keyspace: see implementation
 Last run: 
 Best score: 

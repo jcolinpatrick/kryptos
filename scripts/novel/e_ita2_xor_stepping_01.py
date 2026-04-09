@@ -2,7 +2,7 @@
 """
 Cipher: ITA-2 XOR with key-stepping
 Family: novel
-Status: active
+Status: exhausted
 Keyspace: 3 encodings x ~425 key sources x 26 starting offsets x 2 interpretations
 Last run:
 Best score:

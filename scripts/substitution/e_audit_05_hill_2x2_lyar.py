@@ -1,7 +1,7 @@
 """
 Cipher: Hill cipher
 Family: substitution
-Status: promising
+Status: exhausted
 Keyspace: see implementation
 Last run: 
 Best score: 

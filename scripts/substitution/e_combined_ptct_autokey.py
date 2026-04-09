@@ -4,7 +4,7 @@ Combined PT+CT autokey cipher from Callimahos (Military Cryptanalytics Part III,
 
 Cipher:  combined PT+CT autokey (Callimahos Chapter XII)
 Family:  substitution
-Status:  active
+Status:  exhausted
 Keyspace: ~93K configs (exhaustive short primers + named keywords) x 2 models x 2 feedback x 2 cipher x 2 alpha
 Last run: never
 Best score: N/A

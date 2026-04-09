@@ -2,7 +2,7 @@
 """
 Cipher: statistical analysis
 Family: statistical
-Status: promising
+Status: active
 Keyspace: see implementation
 Last run: 
 Best score: 

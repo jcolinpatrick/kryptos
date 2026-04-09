@@ -2,7 +2,7 @@
 """
 Cipher: Keyed alphabet sweep — full English wordlist as alphabet keywords
 Family: novel
-Status: active
+Status: exhausted
 Keyspace: ~1M words × 6 configs (deduped to ~200K-500K unique alphabets)
 Last run: 2026-04-05
 Best score: 0.0 (key_word_coverage)
