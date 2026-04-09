@@ -2,7 +2,7 @@
 """
 Cipher: Key unmasking — systematic transforms on derived keystream
 Family: novel
-Status: active
+Status: exhausted
 Keyspace: ~28K compositions × 3 variants × ~48 output alphabets
 Last run: 2026-04-05
 Best score: 0.0 (key_word_coverage)

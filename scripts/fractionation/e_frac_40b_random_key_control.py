@@ -2,7 +2,7 @@
 """
 Cipher: fractionation analysis
 Family: fractionation
-Status: promising
+Status: active
 Keyspace: see implementation
 Last run: 
 Best score: 

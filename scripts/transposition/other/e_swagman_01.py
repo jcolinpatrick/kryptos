@@ -2,7 +2,7 @@
 """
 Cipher: Swagman (Latin Square Transposition)
 Family: transposition/other
-Status: active
+Status: exhausted
 Keyspace: Latin squares of order 4-10, all row-rotation variants
 Last run: 2026-03-31
 Best score: 0.0 (crib_score)

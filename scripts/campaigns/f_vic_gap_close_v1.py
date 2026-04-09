@@ -5,7 +5,7 @@ VIC GAP-CLOSING TEST v1 — Three Untested VIC Angles
 =================================================================
 Cipher:     VIC cipher variants
 Family:     campaigns
-Status:     active
+Status:     exhausted
 
 Tests three genuinely untested VIC angles to close the gap:
 

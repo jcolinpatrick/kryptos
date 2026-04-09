@@ -2,7 +2,7 @@
 """
 Cipher: Fractionated Morse
 Family: fractionation
-Status: active
+Status: exhausted
 Keyspace: ~425 thematic keywords × 2 alphabets + 1M dictionary words (top 10K)
 Last run: 2026-03-31
 Best score: 0.0 (crib_score)

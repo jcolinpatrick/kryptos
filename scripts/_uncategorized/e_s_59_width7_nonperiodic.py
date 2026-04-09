@@ -2,7 +2,7 @@
 """
 Cipher: uncategorized
 Family: _uncategorized
-Status: active
+Status: exhausted
 Keyspace: see implementation
 Last run: 
 Best score: 

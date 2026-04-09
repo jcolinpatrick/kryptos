@@ -1,7 +1,7 @@
 """
 Cipher: Wheatstone clock
 Family: novel
-Status: active
+Status: exhausted
 Keyspace: ~425 keywords x 425 keywords x 27 x 26 x 2 alphabets x 3 modes = ~327M configs
 Last run:
 Best score:

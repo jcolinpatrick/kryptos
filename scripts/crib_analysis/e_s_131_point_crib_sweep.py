@@ -2,7 +2,7 @@
 """
 Cipher: crib-based constraint
 Family: crib_analysis
-Status: promising
+Status: active
 Keyspace: see implementation
 Last run: 
 Best score: 

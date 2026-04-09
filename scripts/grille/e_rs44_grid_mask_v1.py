@@ -4,7 +4,7 @@ RS 44-style grid mask + keyed column reading for K4.
 
 Cipher:  RS 44 variant (grid mask selects open cells, read by keyed column order)
 Family:  grille
-Status:  active
+Status:  exhausted
 Keyspace: ~50M+ configs (widths x masks x column orders x substitutions)
 Last run: never
 Best score: N/A

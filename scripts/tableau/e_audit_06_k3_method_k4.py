@@ -2,7 +2,7 @@
 """
 Cipher: tableau analysis
 Family: tableau
-Status: promising
+Status: active
 Keyspace: see implementation
 Last run: 
 Best score: 

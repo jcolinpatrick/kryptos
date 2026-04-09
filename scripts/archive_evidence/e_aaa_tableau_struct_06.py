@@ -2,7 +2,7 @@
 """
 Cipher: quagmire_multi
 Family: archive_evidence
-Status: active
+Status: exhausted
 Keyspace: ~18000 configs (8 tableau alphas x 10 keys x 3 variants x 2 orientations x 2 CTs x 5 trans options)
 Last run:
 Best score:

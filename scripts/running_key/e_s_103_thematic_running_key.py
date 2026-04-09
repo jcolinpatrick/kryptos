@@ -2,7 +2,7 @@
 """
 Cipher: columnar transposition
 Family: running_key
-Status: promising
+Status: exhausted
 Keyspace: see implementation
 Last run: 
 Best score: 

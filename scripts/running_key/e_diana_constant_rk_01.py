@@ -2,7 +2,7 @@
 """
 Cipher: Extended Diana (Beaufort+constant) + Egyptian Section 151B
 Family: running_key
-Status: active
+Status: exhausted
 Keyspace: corpus_texts × offsets × 3_variants × 26_constants
 Last run: 2026-04-05
 Best score: 0.0 (crib_score)

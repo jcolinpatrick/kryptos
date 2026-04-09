@@ -2,7 +2,7 @@
 """
 Cipher:   Operation Gold / Berlin Tunnel thematic sweep
 Family:   campaigns
-Status:   active
+Status:   exhausted
 Keyspace: ~50 keywords × 12 periodic configs + ~30 numeric keys × 6 + col7 SA + running keys
 Last run: 2026-03-16
 Best score: TBD

@@ -2,7 +2,7 @@
 """
 Cipher: mono_trans_runkey
 Family: archive_evidence
-Status: active
+Status: exhausted
 Keyspace: Phase 1: 20 triples × 10 modes × 2 variants × ~1.6M offsets; Phase 2: +1385 trans configs if needed
 Last run:
 Best score:

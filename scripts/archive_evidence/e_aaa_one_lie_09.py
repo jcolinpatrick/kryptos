@@ -2,7 +2,7 @@
 """
 Cipher: meta_perturbation
 Family: archive_evidence
-Status: active
+Status: exhausted
 Keyspace: see implementation
 Last run:
 Best score:

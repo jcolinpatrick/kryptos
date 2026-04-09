@@ -2,7 +2,7 @@
 """
 Cipher: Compass-Rose Route Transposition
 Family: transposition/other
-Status: active
+Status: exhausted
 Keyspace: grid widths 7-14 × 8 compass directions × 4 start corners × 2 read modes
 Last run: 2026-03-31
 Best score: 0.0 (crib_score)
