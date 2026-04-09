@@ -2,7 +2,7 @@
 """
 Cipher: running key discriminator
 Family: statistical
-Status: active
+Status: exhausted
 Keyspace: ~58K transpositions (identity + columnar w6/8/9)
 Last run:
 Best score:

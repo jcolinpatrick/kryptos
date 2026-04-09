@@ -2,7 +2,7 @@
 """
 Cipher:  Ubchi-style double transposition with null insertion between layers
 Family:  novel
-Status:  active
+Status:  exhausted
 Keyspace: ~5K keyword pairs x 3 null counts x 2 insertion modes x 2 peel orders = ~60K configs
 Last run:
 Best score:

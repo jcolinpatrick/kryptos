@@ -4,7 +4,7 @@ VIC cipher with NON-STANDARD key schedule variant for K4.
 
 Cipher:  VIC variant (personal_no as offset, CB alphabet from chain-add sort)
 Family:  campaigns
-Status:  active
+Status:  exhausted
 Keyspace: ~120M configs (100K keygroups x phrases x dates x top-rows x variants)
 Last run: never
 Best score: N/A

@@ -2,7 +2,7 @@
 """
 Cipher: autokey
 Family: polyalphabetic
-Status: promising
+Status: exhausted
 Keyspace: see implementation
 Last run: 
 Best score: 

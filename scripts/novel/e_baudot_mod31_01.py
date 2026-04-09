@@ -2,7 +2,7 @@
 """
 Cipher: ITA-2/Baudot mod-31 reflective encoding
 Family: novel
-Status: active
+Status: exhausted
 Keyspace: ~9 keywords x 6 models x 3 widths = ~162 base configs + grid permutations
 Last run:
 Best score:

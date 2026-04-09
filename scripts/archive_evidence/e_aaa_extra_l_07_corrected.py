@@ -2,7 +2,7 @@
 """
 Cipher: two_system
 Family: archive_evidence
-Status: active
+Status: exhausted
 Keyspace: ~12000 configs
 Last run:
 Best score:

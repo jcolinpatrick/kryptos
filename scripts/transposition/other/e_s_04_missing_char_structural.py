@@ -2,7 +2,7 @@
 """
 Cipher: non-columnar transposition
 Family: transposition/other
-Status: promising
+Status: exhausted
 Keyspace: see implementation
 Last run: 
 Best score: 

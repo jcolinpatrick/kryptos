@@ -4,7 +4,7 @@ RS 44 authentic dimensions (24 rows) on the Kryptos cipher panel.
 
 Cipher:  RS 44 (24-row grid, 10 open cells/row, keyed column reading)
 Family:  grille
-Status:  active
+Status:  exhausted
 Keyspace: ~100M+ configs
 Last run: never
 Best score: N/A

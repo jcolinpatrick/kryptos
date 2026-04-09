@@ -2,7 +2,7 @@
 """
 Cipher: running key
 Family: running_key
-Status: promising
+Status: active
 Keyspace: see implementation
 Last run:
 Best score:

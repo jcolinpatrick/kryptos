@@ -2,7 +2,7 @@
 """
 Cipher: transposition/grid
 Family: antipodes
-Status: active
+Status: exhausted
 Keyspace: ~50,000 configs
 Last run:
 Best score:

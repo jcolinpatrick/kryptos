@@ -2,7 +2,7 @@
 """
 Cipher: Sanborn matrix method
 Family: novel
-Status: active
+Status: exhausted
 Keyspace: ~6 keywords x 5 models x keyword combos = ~1000+ configs
 Last run:
 Best score:

@@ -2,7 +2,7 @@
 """
 Cipher: K3-method extension
 Family: k3_continuity
-Status: promising
+Status: exhausted
 Keyspace: see implementation
 Last run: 
 Best score: 

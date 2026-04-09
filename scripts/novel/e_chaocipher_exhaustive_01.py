@@ -2,7 +2,7 @@
 """
 Cipher: Chaocipher (proper dual-alphabet implementation)
 Family: novel
-Status: active
+Status: exhausted
 Keyspace: ~10K keyword pairs × 2 zenith choices = ~200M alphabet states
 Last run: 2026-03-31
 Best score: 0.0 (crib_score)

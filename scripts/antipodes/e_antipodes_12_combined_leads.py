@@ -2,7 +2,7 @@
 """
 Cipher: polyalphabetic/insertion
 Family: antipodes
-Status: active
+Status: exhausted
 Keyspace: ~500,000 configs
 Last run:
 Best score:

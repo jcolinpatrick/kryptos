@@ -1,7 +1,7 @@
 """
 Cipher: sawtooth mask + periodic polyalphabetic
 Family: novel
-Status: active
+Status: exhausted
 Keyspace: amplitudes 1-13 x phases 0-2A x periods 1-26 x 3 variants x 2 alphabets
 Last run:
 Best score:

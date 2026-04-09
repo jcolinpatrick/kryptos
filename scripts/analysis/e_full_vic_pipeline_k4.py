@@ -4,7 +4,7 @@ Full VIC Cipher Decryption Pipeline for K4.
 
 Cipher:  VIC cipher (full key generation + straddling checkerboard + double transposition)
 Family:  analysis
-Status:  active
+Status:  exhausted
 Keyspace: ~10 phrases x ~13 dates x ~9 personal_numbers x ~6 top-row configs = ~7,020 base + variants
 Last run: never
 Best score: N/A

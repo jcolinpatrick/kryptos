@@ -2,7 +2,7 @@
 """
 Cipher: Fleissner turning grille + Q2 autokey
 Family: campaigns
-Status: active
+Status: exhausted
 Keyspace: C(73,24) null masks (SA-sampled) x random Fleissner grilles x 5 keywords
 Last run:
 Best score:

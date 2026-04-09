@@ -2,7 +2,7 @@
 """
 Cipher: multi-vector campaign
 Family: campaigns
-Status: promising
+Status: active
 Keyspace: see implementation
 Last run: 
 Best score: 
