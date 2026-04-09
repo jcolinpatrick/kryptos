@@ -1,3 +1,20 @@
+---
+status: RETIRED
+retired_on: 2026-04-01
+retired_reason: post-hoc selection artifact; SA produces 11 distinct letters on K4 indistinguishable from shuffled controls (p=0.30)
+superseded_by: docs/a1_score_conditioned_null_report.md
+epistemic_class: retired_claim (was descriptive Level-C anomaly)
+notes: Do NOT cite as evidence. Do NOT build new hypotheses on top. See memory/retired/README.md.
+---
+
+> # RETIRED DOCUMENT — NOT AUTHORITATIVE
+>
+> This file is preserved for historical traceability only. The palette {B,G,I,K,O,W,Z}
+> construct it depends on was **retired on 2026-04-01** as a post-hoc selection artifact.
+> See `docs/a1_score_conditioned_null_report.md` for the score-conditioned null result
+> that invalidated the 7-distinct-letter signal. Do not treat any claim in this file as
+> a live finding. Do not use it to justify new compute.
+
 # Palette Null Position Selection Rule — (pos%7, pos%5) Table
 
 ## Date: 2026-03-15, UPDATED 2026-03-16
