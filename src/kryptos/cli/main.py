@@ -230,6 +230,10 @@ def main() -> int:
     bench_gen_p.add_argument("--out", default="bench/suites/",
                               help="Output directory (default: bench/suites/)")
 
+    # composition
+    from kryptos.composition.cli import add_composition_subparser
+    add_composition_subparser(sub)
+
     # report
     report_p = sub.add_parser("report", help="Report on results")
     report_p.add_argument("db", help="Path to SQLite database")
@@ -267,6 +271,28 @@ def main() -> int:
             return cmd_generate(args)
         else:
             bench_p.print_help()
+            return 1
+    elif args.command == "composition":
+        from kryptos.composition.cli import (
+            cmd_composition_preview,
+            cmd_composition_run,
+            cmd_composition_report,
+            cmd_composition_coverage,
+        )
+        if args.comp_cmd == "preview":
+            return cmd_composition_preview(args)
+        elif args.comp_cmd == "run":
+            return cmd_composition_run(args)
+        elif args.comp_cmd == "report":
+            return cmd_composition_report(args)
+        elif args.comp_cmd == "coverage":
+            return cmd_composition_coverage(args)
+        else:
+            # Find the composition subparser and print its help
+            for action in sub._group_actions:
+                if hasattr(action, '_parser_class'):
+                    pass
+            print("Usage: kryptos composition {preview|run|report|coverage}")
             return 1
     elif args.command == "report":
         if args.action == "top":
