@@ -62,6 +62,11 @@ class EliminationReason(str, Enum):
     """A running-key or text-derived hypothesis references a corpus source
     that is not on the public-provenance allowlist."""
 
+    PROCEDURE_POLICY_VIOLATION = "procedure_policy_violation"
+    """A bespoke-cipher hypothesis references a procedure that is not on
+    the public-provenance procedure allowlist. See
+    `kryptos.admissibility.procedure_policy`."""
+
     ASSUMPTION_UNMET = "assumption_unmet"
     """The hypothesis relies on a prerequisite that has not been established
     (e.g. needs mask inference but no model is specified)."""

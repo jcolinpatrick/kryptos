@@ -88,6 +88,7 @@ class TestCertificateRoundtrip:
             "empty_parameter_space",
             "topology_contradiction",
             "corpus_policy_violation",
+            "procedure_policy_violation",
             "assumption_unmet",
             "no_hits_full_enum",
             "no_hits_under_budget",
