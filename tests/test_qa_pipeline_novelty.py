@@ -527,56 +527,98 @@ class TestTriageSimpleKey:
 
 
 class TestTriageRunningKey:
-    """Tests for triage_running_key — running-key hypothesis triage."""
+    """Tests for triage_running_key — running-key hypothesis triage.
 
-    def _make_hyp(self, source_path, variant="vigenere"):
+    These tests exercise post-corpus-policy behaviour (file handling,
+    scoring, determinism).  Since the admissibility gate now reads bytes
+    exclusively from the license (never from the caller-supplied path),
+    each test installs a test-only license pointing at a tmp file and
+    passes its source_id.  This preserves the original intent — testing
+    the scoring machinery — without relying on the legacy source_path
+    bypass.
+    """
+
+    @staticmethod
+    def _install_test_license(monkeypatch, source_id, path):
+        from kryptos.admissibility import corpus_policy as cp
+        lic = cp.CorpusLicense(
+            source_id=source_id,
+            title="test fixture",
+            author="test",
+            justification=cp.CorpusJustification.ARCHIVE_EVIDENCE,
+            provenance_uri=str(path),
+            evidence_refs=("test_only",),
+            sha256_hash=None,
+            added_at="test",
+        )
+        monkeypatch.setitem(cp.CORPUS_ALLOWLIST, source_id, lic)
+
+    @staticmethod
+    def _make_hyp(source_path, *, source_id, variant="vigenere"):
         from kryptos.novelty.hypothesis import Hypothesis
         return Hypothesis(
             description="Test running key",
             transform_stack=[{
                 "type": variant,
-                "params": {"key_source": "running_key", "source_path": str(source_path)},
+                "params": {
+                    "key_source": "running_key",
+                    "source_id": source_id,
+                    "source_path": str(source_path),
+                },
             }],
         )
 
-    def test_missing_file_eliminated(self):
-        """Missing source file should eliminate hypothesis."""
+    def test_missing_licensed_file_eliminated(self, tmp_path, monkeypatch):
+        """License points at a file that does not exist on disk.
+
+        The post-fix semantics: `resolve_license_path` returns None for a
+        non-existent provenance_uri, so the gate emits ASSUMPTION_UNMET.
+        """
         from kryptos.novelty.triage import triage_running_key
         from kryptos.novelty.hypothesis import HypothesisStatus
-        hyp = self._make_hyp("/nonexistent/file.txt")
+        from kryptos.admissibility import (
+            certificate_from_json, EliminationCertificate, EliminationReason,
+        )
+        missing = tmp_path / "does_not_exist.txt"
+        self._install_test_license(monkeypatch, "test_missing", missing)
+        hyp = self._make_hyp(tmp_path / "anything.txt", source_id="test_missing")
         result = triage_running_key(hyp)
         assert result.status == HypothesisStatus.ELIMINATED
-        assert "not found" in result.triage_detail
+        cert = certificate_from_json(result.elimination_reason or "")
+        assert isinstance(cert, EliminationCertificate)
+        assert cert.reason is EliminationReason.ASSUMPTION_UNMET
 
-    def test_short_file_eliminated(self, tmp_path):
-        """Source text shorter than CT should be eliminated."""
+    def test_short_licensed_file_eliminated(self, tmp_path, monkeypatch):
+        """Licensed source shorter than CT_LEN is eliminated post-gate."""
         from kryptos.novelty.triage import triage_running_key
         from kryptos.novelty.hypothesis import HypothesisStatus
         short_file = tmp_path / "short.txt"
         short_file.write_text("TOOSHORT")
-        hyp = self._make_hyp(short_file)
+        self._install_test_license(monkeypatch, "test_short", short_file)
+        hyp = self._make_hyp(short_file, source_id="test_short")
         result = triage_running_key(hyp)
         assert result.status == HypothesisStatus.ELIMINATED
         assert "too short" in result.triage_detail.lower()
 
-    def test_valid_source_produces_scores(self, tmp_path):
-        """A valid source file should produce triage scores."""
+    def test_valid_licensed_source_produces_scores(self, tmp_path, monkeypatch):
+        """Licensed source longer than CT_LEN is scored normally."""
         from kryptos.novelty.triage import triage_running_key
-        # Create a file long enough
         source = tmp_path / "source.txt"
-        source.write_text("A" * 500)  # All A's, 500 chars
-        hyp = self._make_hyp(source)
+        source.write_text("A" * 500)
+        self._install_test_license(monkeypatch, "test_valid", source)
+        hyp = self._make_hyp(source, source_id="test_valid")
         result = triage_running_key(hyp)
         assert result.triage_score >= 0
         assert "Sampled" in result.triage_detail
 
-    def test_deterministic_seed(self, tmp_path):
-        """Same input should produce same triage result."""
+    def test_deterministic_seed(self, tmp_path, monkeypatch):
+        """Same licensed source should produce identical triage scores."""
         from kryptos.novelty.triage import triage_running_key
         source = tmp_path / "source.txt"
         source.write_text("ABCDEFGHIJ" * 100)
-        hyp1 = self._make_hyp(source)
-        hyp2 = self._make_hyp(source)
+        self._install_test_license(monkeypatch, "test_det", source)
+        hyp1 = self._make_hyp(source, source_id="test_det")
+        hyp2 = self._make_hyp(source, source_id="test_det")
         r1 = triage_running_key(hyp1)
         r2 = triage_running_key(hyp2)
         assert r1.triage_score == r2.triage_score
@@ -606,9 +648,22 @@ class TestTriageHypothesis:
         assert "Score:" in result.triage_detail
 
     def test_routes_to_running_key(self, tmp_path):
-        """Hypothesis with running_key source should route correctly."""
+        """Hypothesis with running_key source should route correctly.
+
+        The admissibility layer intercepts unlicensed sources at the
+        corpus-policy gate (see kryptos.admissibility.corpus_policy), so
+        the expected elimination reason for an unmapped path is a
+        CORPUS_POLICY_VIOLATION certificate, not a file-not-found error.
+        Verifying the corpus-policy outcome still proves that routing
+        landed in triage_running_key.
+        """
         from kryptos.novelty.triage import triage_hypothesis
         from kryptos.novelty.hypothesis import Hypothesis, HypothesisStatus
+        from kryptos.admissibility import (
+            certificate_from_json,
+            EliminationCertificate,
+            EliminationReason,
+        )
         hyp = Hypothesis(
             description="Running key test",
             transform_stack=[{
@@ -618,7 +673,9 @@ class TestTriageHypothesis:
         )
         result = triage_hypothesis(hyp)
         assert result.status == HypothesisStatus.ELIMINATED
-        assert "not found" in result.triage_detail
+        cert = certificate_from_json(result.elimination_reason or "")
+        assert isinstance(cert, EliminationCertificate)
+        assert cert.reason is EliminationReason.CORPUS_POLICY_VIOLATION
 
     def test_default_triage_path(self):
         """Hypothesis without key or running_key gets default triage."""
