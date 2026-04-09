@@ -38,6 +38,15 @@ from kryptos.admissibility.corpus_policy import (
     load_allowlist_override,
     resolve_license_path,
 )
+from kryptos.admissibility.procedure_policy import (
+    PROCEDURE_ALLOWLIST,
+    ProcedureJustification,
+    ProcedureLicense,
+    ProcedurePolicyError,
+    check_cipher_procedure,
+    get_procedure_license,
+    load_procedure_allowlist_override,
+)
 from kryptos.admissibility.periodic_admissibility import (
     check_periodic_additive,
     sweep_periodic_additive,
@@ -57,6 +66,13 @@ __all__ = [
     "get_license",
     "load_allowlist_override",
     "resolve_license_path",
+    "PROCEDURE_ALLOWLIST",
+    "ProcedureJustification",
+    "ProcedureLicense",
+    "ProcedurePolicyError",
+    "check_cipher_procedure",
+    "get_procedure_license",
+    "load_procedure_allowlist_override",
     "check_periodic_additive",
     "sweep_periodic_additive",
 ]
