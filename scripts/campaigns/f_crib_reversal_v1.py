@@ -2,7 +2,7 @@
 """
 Cipher: Crib position reversal — cribs in PT73 space, not CT97 space
 Family: campaigns
-Status: eliminated
+Status: exhausted
 Keyspace: SA optimization of 24-null mask × 6 keywords × 4 cipher types × 2 alphabets
 Last run: 2026-03-14
 Best score: 17/24 (PALIMPSEST:AZ_autokey_beau, ENE@21, BCL@62) — NOISE (control=16/24)
