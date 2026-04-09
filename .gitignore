@@ -97,6 +97,15 @@ reference/*.xlsx
 reference/*.jpg
 reference/*.png
 reference/*.xml
+reference/*.mbox
 wordlists/kaikki_english.txt
 forensic_output/
 challenge_k4_solution.md
+
+# External clones / community material kept locally but not tracked here
+claude-plugins-official/
+Reddit/
+
+# Personal research notes: on-disk but not tracked
+reference/Notes/
+reference/parse_stats.txt
