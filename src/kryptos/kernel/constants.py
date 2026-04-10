@@ -80,6 +80,49 @@ def _derive_bean_ineq() -> Tuple[Tuple[int, int], ...]:
 
 BEAN_INEQ: Tuple[Tuple[int, int], ...] = _derive_bean_ineq()
 
+
+def _derive_bean_linear() -> Tuple[Tuple[int, int, int, int], ...]:
+    """Derive variant-independent 4-position linear constraints on keystream.
+
+    For each 4-tuple of crib positions (a, b, c, d), check whether
+    k[a] - k[b] - k[c] + k[d] ≡ 0 (mod 26) holds under ALL three
+    additive cipher variants (Vigenère, Beaufort, Variant Beaufort).
+
+    These constraints encode that key DIFFERENCES at crib positions are
+    fully determined (up to the global additive constant). Together with
+    the pairwise equality/inequality constraints, they reduce the valid
+    keystream space from 26^24 to exactly 624 solutions.
+
+    Derived from the Gröbner basis of the crib system (cf. Bean's
+    kryptos-k4-sage.txt, HistoCrypt 2021). The full set has 101
+    constraints; only 22 are independent (rank 22 over Z, plus the
+    1 equality = rank 23 total, leaving 1 free variable over Q).
+    """
+    positions = sorted(CRIB_DICT.keys())
+    n = len(positions)
+    constraints: list[tuple[int, int, int, int]] = []
+
+    for i in range(n):
+        for j in range(i + 1, n):
+            for k in range(j + 1, n):
+                for l in range(k + 1, n):
+                    a, b, c, d = positions[i], positions[j], positions[k], positions[l]
+                    for p1, p2, p3, p4 in ((a, b, c, d), (a, c, b, d), (a, d, b, c)):
+                        ca, pa = ALPH_IDX[CT[p1]], ALPH_IDX[CRIB_DICT[p1]]
+                        cb, pb = ALPH_IDX[CT[p2]], ALPH_IDX[CRIB_DICT[p2]]
+                        cc, pc = ALPH_IDX[CT[p3]], ALPH_IDX[CRIB_DICT[p3]]
+                        cd, pd = ALPH_IDX[CT[p4]], ALPH_IDX[CRIB_DICT[p4]]
+                        vig = ((ca - pa) - (cb - pb) - (cc - pc) + (cd - pd)) % MOD
+                        beau = ((ca + pa) - (cb + pb) - (cc + pc) + (cd + pd)) % MOD
+                        vbeau = ((pa - ca) - (pb - cb) - (pc - cc) + (pd - cd)) % MOD
+                        if vig == 0 and beau == 0 and vbeau == 0:
+                            constraints.append((p1, p2, p3, p4))
+
+    return tuple(constraints)
+
+
+BEAN_LINEAR: Tuple[Tuple[int, int, int, int], ...] = _derive_bean_linear()
+
 # ── Known keystream values (verified at crib positions) ───────────────────
 
 VIGENERE_KEY_ENE: Tuple[int, ...] = (1, 11, 25, 2, 3, 2, 24, 24, 6, 2, 10, 0, 25)
@@ -127,6 +170,7 @@ def _verify() -> None:
     assert set(KRYPTOS_ALPHABET) == set(ALPH), "KA and ALPH char sets differ"
     assert len(BEAN_EQ) == 1, "Expected 1 Bean equality"
     assert len(BEAN_INEQ) == 242, f"Expected 242 Bean inequalities, got {len(BEAN_INEQ)}"
+    assert len(BEAN_LINEAR) == 101, f"Expected 101 Bean linear constraints, got {len(BEAN_LINEAR)}"
     assert len(NULL_PALETTE) == 7, f"NULL_PALETTE should have 7 letters, got {len(NULL_PALETTE)}"
     assert all(c in ALPH for c in NULL_PALETTE), "NULL_PALETTE must be uppercase A-Z"
     assert len(CONSENSUS_NULL_POSITIONS) == 17, f"Expected 17 consensus nulls, got {len(CONSENSUS_NULL_POSITIONS)}"

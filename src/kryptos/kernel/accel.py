@@ -56,12 +56,16 @@ def _build_crib_arrays():
 
 def _build_bean_arrays():
     """Build numpy arrays from Bean constraints."""
-    from kryptos.kernel.constants import BEAN_EQ, BEAN_INEQ
+    from kryptos.kernel.constants import BEAN_EQ, BEAN_INEQ, BEAN_LINEAR
     eq_a = np.array([a for a, b in BEAN_EQ], dtype=np.int32)
     eq_b = np.array([b for a, b in BEAN_EQ], dtype=np.int32)
     ineq_a = np.array([a for a, b in BEAN_INEQ], dtype=np.int32)
     ineq_b = np.array([b for a, b in BEAN_INEQ], dtype=np.int32)
-    return eq_a, eq_b, ineq_a, ineq_b
+    lin_a = np.array([a for a, b, c, d in BEAN_LINEAR], dtype=np.int32)
+    lin_b = np.array([b for a, b, c, d in BEAN_LINEAR], dtype=np.int32)
+    lin_c = np.array([c for a, b, c, d in BEAN_LINEAR], dtype=np.int32)
+    lin_d = np.array([d for a, b, c, d in BEAN_LINEAR], dtype=np.int32)
+    return eq_a, eq_b, ineq_a, ineq_b, lin_a, lin_b, lin_c, lin_d
 
 
 # ── Pure-Python fallbacks ───────────────────────────────────────────────
@@ -104,13 +108,21 @@ def _py_score_cribs(pt: np.ndarray, crib_pos: np.ndarray, crib_vals: np.ndarray)
 
 def _py_bean_simple(keystream: np.ndarray,
                     eq_a: np.ndarray, eq_b: np.ndarray,
-                    ineq_a: np.ndarray, ineq_b: np.ndarray) -> bool:
+                    ineq_a: np.ndarray, ineq_b: np.ndarray,
+                    lin_a: np.ndarray = None, lin_b: np.ndarray = None,
+                    lin_c: np.ndarray = None, lin_d: np.ndarray = None) -> bool:
     for i in range(len(eq_a)):
         if keystream[eq_a[i]] != keystream[eq_b[i]]:
             return False
     for i in range(len(ineq_a)):
         if keystream[ineq_a[i]] == keystream[ineq_b[i]]:
             return False
+    if lin_a is not None:
+        for i in range(len(lin_a)):
+            val = (int(keystream[lin_a[i]]) - int(keystream[lin_b[i]])
+                   - int(keystream[lin_c[i]]) + int(keystream[lin_d[i]])) % 26
+            if val != 0:
+                return False
     return True
 
 
@@ -249,13 +261,19 @@ def fast_bean_simple(keystream: np.ndarray,
                      eq_a: Optional[np.ndarray] = None,
                      eq_b: Optional[np.ndarray] = None,
                      ineq_a: Optional[np.ndarray] = None,
-                     ineq_b: Optional[np.ndarray] = None) -> bool:
-    """Fast Bean verification. Returns True if all constraints pass."""
+                     ineq_b: Optional[np.ndarray] = None,
+                     lin_a: Optional[np.ndarray] = None,
+                     lin_b: Optional[np.ndarray] = None,
+                     lin_c: Optional[np.ndarray] = None,
+                     lin_d: Optional[np.ndarray] = None) -> bool:
+    """Fast Bean verification. Returns True if all constraints pass.
+
+    Checks pairwise eq/ineq AND linear (Gröbner) constraints.
+    """
     if eq_a is None:
-        eq_a, eq_b, ineq_a, ineq_b = _build_bean_arrays()
-    if HAS_NUMBA:
-        return bool(_nb_bean_simple(keystream, eq_a, eq_b, ineq_a, ineq_b))
-    return _py_bean_simple(keystream, eq_a, eq_b, ineq_a, ineq_b)
+        eq_a, eq_b, ineq_a, ineq_b, lin_a, lin_b, lin_c, lin_d = _build_bean_arrays()
+    return _py_bean_simple(keystream, eq_a, eq_b, ineq_a, ineq_b,
+                           lin_a, lin_b, lin_c, lin_d)
 
 
 def fast_decrypt_and_score(ct: np.ndarray, key: np.ndarray,

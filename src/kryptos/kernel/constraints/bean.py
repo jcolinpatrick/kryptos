@@ -16,6 +16,7 @@ from kryptos.kernel.constants import (
     ALPH_IDX,
     BEAN_EQ,
     BEAN_INEQ,
+    BEAN_LINEAR,
     CRIB_DICT,
     CT,
     CT_LEN,
@@ -31,18 +32,27 @@ class BeanResult:
     eq_total: int
     ineq_satisfied: int
     ineq_total: int
+    linear_satisfied: int
+    linear_total: int
     eq_failures: List[Tuple[int, int, int, int]]  # (posA, posB, valA, valB)
     ineq_failures: List[Tuple[int, int, int]]  # (posA, posB, shared_val)
+    linear_failures: List[Tuple[int, int, int, int, int]]  # (a, b, c, d, residue)
 
     @property
     def summary(self) -> str:
         if self.passed:
-            return f"PASS: {self.eq_satisfied}/{self.eq_total} eq, {self.ineq_satisfied}/{self.ineq_total} ineq"
+            return (
+                f"PASS: {self.eq_satisfied}/{self.eq_total} eq, "
+                f"{self.ineq_satisfied}/{self.ineq_total} ineq, "
+                f"{self.linear_satisfied}/{self.linear_total} linear"
+            )
         parts = []
         if self.eq_failures:
             parts.append(f"eq fail: {self.eq_failures}")
         if self.ineq_failures:
             parts.append(f"ineq fail: {self.ineq_failures}")
+        if self.linear_failures:
+            parts.append(f"linear fail: {len(self.linear_failures)} of {self.linear_total}")
         return f"FAIL: {'; '.join(parts)}"
 
 
@@ -52,10 +62,20 @@ def verify_bean(keystream: List[int]) -> BeanResult:
     The keystream must be indexed such that keystream[pos] gives the key
     value at position pos. Must be at least CT_LEN long.
 
+    Checks three constraint types:
+    1. Equality: k[27] == k[65]  (1 pair)
+    2. Inequality: k[a] != k[b]  (242 pairs)
+    3. Linear: k[a] - k[b] - k[c] + k[d] ≡ 0 mod 26  (101 constraints)
+
+    The linear constraints (derived from the Gröbner basis of the crib
+    system) are INDEPENDENT of the pairwise constraints. Together they
+    reduce valid keystreams at crib positions from 26^24 to exactly 624.
+
     Returns detailed BeanResult with diagnostic information.
     """
     eq_failures: list[tuple[int, int, int, int]] = []
     ineq_failures: list[tuple[int, int, int]] = []
+    linear_failures: list[tuple[int, int, int, int, int]] = []
 
     for a, b in BEAN_EQ:
         if a < len(keystream) and b < len(keystream):
@@ -67,17 +87,31 @@ def verify_bean(keystream: List[int]) -> BeanResult:
             if keystream[a] == keystream[b]:
                 ineq_failures.append((a, b, keystream[a]))
 
+    for a, b, c, d in BEAN_LINEAR:
+        if (a < len(keystream) and b < len(keystream)
+                and c < len(keystream) and d < len(keystream)):
+            residue = (keystream[a] - keystream[b]
+                       - keystream[c] + keystream[d]) % MOD
+            if residue != 0:
+                linear_failures.append((a, b, c, d, residue))
+
     eq_sat = len(BEAN_EQ) - len(eq_failures)
     ineq_sat = len(BEAN_INEQ) - len(ineq_failures)
+    linear_sat = len(BEAN_LINEAR) - len(linear_failures)
 
     return BeanResult(
-        passed=(len(eq_failures) == 0 and len(ineq_failures) == 0),
+        passed=(len(eq_failures) == 0
+                and len(ineq_failures) == 0
+                and len(linear_failures) == 0),
         eq_satisfied=eq_sat,
         eq_total=len(BEAN_EQ),
         ineq_satisfied=ineq_sat,
         ineq_total=len(BEAN_INEQ),
+        linear_satisfied=linear_sat,
+        linear_total=len(BEAN_LINEAR),
         eq_failures=eq_failures,
         ineq_failures=ineq_failures,
+        linear_failures=linear_failures,
     )
 
 
@@ -85,6 +119,7 @@ def verify_bean_simple(keystream: List[int]) -> bool:
     """Fast Bean verification — returns True/False only.
 
     Use this as a prefilter when you don't need diagnostics.
+    Checks all three constraint types: equality, inequality, and linear.
     """
     for a, b in BEAN_EQ:
         if a < len(keystream) and b < len(keystream):
@@ -93,6 +128,12 @@ def verify_bean_simple(keystream: List[int]) -> bool:
     for a, b in BEAN_INEQ:
         if a < len(keystream) and b < len(keystream):
             if keystream[a] == keystream[b]:
+                return False
+    for a, b, c, d in BEAN_LINEAR:
+        if (a < len(keystream) and b < len(keystream)
+                and c < len(keystream) and d < len(keystream)):
+            if (keystream[a] - keystream[b]
+                    - keystream[c] + keystream[d]) % MOD != 0:
                 return False
     return True
 
@@ -226,7 +267,7 @@ def verify_bean_from_implied(implied_keys: Dict[int, int]) -> bool:
     have crib data).
 
     Returns True if all Bean constraints that CAN be checked are satisfied.
-    Constraints where either position is missing from implied_keys are skipped.
+    Constraints where any required position is missing are skipped.
     """
     for a, b in BEAN_EQ:
         if a in implied_keys and b in implied_keys:
@@ -235,5 +276,11 @@ def verify_bean_from_implied(implied_keys: Dict[int, int]) -> bool:
     for a, b in BEAN_INEQ:
         if a in implied_keys and b in implied_keys:
             if implied_keys[a] == implied_keys[b]:
+                return False
+    for a, b, c, d in BEAN_LINEAR:
+        if (a in implied_keys and b in implied_keys
+                and c in implied_keys and d in implied_keys):
+            if (implied_keys[a] - implied_keys[b]
+                    - implied_keys[c] + implied_keys[d]) % MOD != 0:
                 return False
     return True
