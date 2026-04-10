@@ -48,7 +48,7 @@ from kryptos.kernel.scoring.aggregate import score_candidate, score_candidate_fr
 # Precompute arrays (module-level for multiprocessing fork inheritance)
 CT_NUMS = text_to_int8(CT)
 CRIB_POS, CRIB_VALS = _build_crib_arrays()
-EQ_A, EQ_B, INEQ_A, INEQ_B = _build_bean_arrays()
+EQ_A, EQ_B, INEQ_A, INEQ_B, LIN_A, LIN_B, LIN_C, LIN_D = _build_bean_arrays()
 QG_TABLE = None  # Will be built after fork
 
 

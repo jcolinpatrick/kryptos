@@ -12,10 +12,17 @@ see `docs/README_current_state.md`. For historical strategy snapshots see
 
 ---
 
-## 1. Current Project State (2026-04-09)
+## 1. Current Project State (2026-04-10)
 
 - **No credible decrypt path.** All positive findings are descriptive
   anomalies, not solution candidates. (registry: `C-STATE-01`)
+- **Bean linear constraints added (2026-04-10):** 101 Groebner-derived
+  4-position linear constraints (`BEAN_LINEAR` in `constants.py`). Combined
+  with pairwise eq+ineq, exactly **624 valid keystreams** at the 24 crib
+  positions under any additive cipher variant. All prior eliminations
+  strictly strengthened; no new signal opened. Bean's "mod-5 test" (13/24,
+  p~1/1468 under reversed-KA) demoted to structural artifact of crib
+  placement, not a cipher signature.
 - Single-layer and two-layer classical cipher space systematically tested
   under the direct-positional crib mapping. Three-layer space partially
   explored. (registry: `C-STATE-02`)

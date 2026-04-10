@@ -100,10 +100,11 @@ def test_bean_simple_matches_pass():
     ks[27] = ks[65] = 5  # force equality
 
     ks_arr = np.array(ks, dtype=np.int8)
-    eq_a, eq_b, ineq_a, ineq_b = _build_bean_arrays()
+    eq_a, eq_b, ineq_a, ineq_b, lin_a, lin_b, lin_c, lin_d = _build_bean_arrays()
 
     expected = verify_bean_simple(ks)
-    result = fast_bean_simple(ks_arr, eq_a, eq_b, ineq_a, ineq_b)
+    result = fast_bean_simple(ks_arr, eq_a, eq_b, ineq_a, ineq_b,
+                              lin_a, lin_b, lin_c, lin_d)
 
     assert result == expected
 
@@ -112,10 +113,11 @@ def test_bean_simple_matches_fail():
     """Test Bean verification with a known-failing keystream."""
     ks = [0] * 97  # All zeros — equality passes but many inequalities fail
     ks_arr = np.array(ks, dtype=np.int8)
-    eq_a, eq_b, ineq_a, ineq_b = _build_bean_arrays()
+    eq_a, eq_b, ineq_a, ineq_b, lin_a, lin_b, lin_c, lin_d = _build_bean_arrays()
 
     expected = verify_bean_simple(ks)
-    result = fast_bean_simple(ks_arr, eq_a, eq_b, ineq_a, ineq_b)
+    result = fast_bean_simple(ks_arr, eq_a, eq_b, ineq_a, ineq_b,
+                              lin_a, lin_b, lin_c, lin_d)
 
     assert result == expected
     assert result is False  # All-zeros should fail Bean inequalities
