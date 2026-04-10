@@ -495,6 +495,51 @@ def section_open_attack_surface():
     print()
 
 
+def load_claims_registry():
+    """Load docs/claims_registry.json, return [] on any error (briefing
+    must not fail if the registry is absent or malformed)."""
+    path = os.path.join(_ROOT, "docs", "claims_registry.json")
+    try:
+        with open(path) as f:
+            data = json.load(f)
+        return data.get("claims", [])
+    except (FileNotFoundError, json.JSONDecodeError, OSError):
+        return []
+
+
+def section_registry_flags():
+    """Surface disputed and retired claim IDs from the canonical claims
+    registry so that a session-start reader cannot silently inherit
+    retired or disputed claims as live signal."""
+    claims = load_claims_registry()
+    if not claims:
+        return
+    disputed = [c for c in claims if c.get("status") == "disputed"]
+    retired = [c for c in claims if c.get("status") == "retired"]
+    superseded = [c for c in claims if c.get("status") == "superseded"]
+    if not (disputed or retired or superseded):
+        return
+    print("── CLAIM REGISTRY — DISPUTED / RETIRED / SUPERSEDED ───────────────")
+    print()
+    print("  From docs/claims_registry.json. Do NOT cite these as live")
+    print("  evidence without first checking docs/methodological_audits.md.")
+    print()
+    for bucket_name, bucket in (
+        ("DISPUTED", disputed),
+        ("RETIRED", retired),
+        ("SUPERSEDED", superseded),
+    ):
+        if not bucket:
+            continue
+        print(f"  {bucket_name}:")
+        for c in bucket:
+            cid = c.get("claim_id", "?")
+            stmt = c.get("statement", "")
+            short = (stmt[:120] + "…") if len(stmt) > 120 else stmt
+            print(f"    • {cid}: {short}")
+        print()
+
+
 def section_critical_constants():
     """Key constants every session needs."""
     print("── CRITICAL CONSTANTS ─────────────────────────────────────────────")
@@ -505,7 +550,9 @@ def section_critical_constants():
     print(f"  Bean equality: k[{BEAN_EQ[0][0]}] = k[{BEAN_EQ[0][1]}]  "
           f"(242 variant-independent inequalities)")
     print(f"  Null palette: {sorted(NULL_PALETTE)}  "
-          f"({len(CONSENSUS_NULL_POSITIONS)} consensus positions)")
+          f"({len(CONSENSUS_NULL_POSITIONS)} consensus positions)  "
+          f"[RETIRED 2026-04-01 as live signal — post-hoc selection artifact; "
+          f"see memory/retired/README.md]")
     print(f"  Self-encrypting: CT[32]=PT[32]=S, CT[73]=PT[73]=K")
     print(f"  IC: 0.0361 (below random 0.0385, NOT significant for n=97)")
     print()
@@ -541,6 +588,7 @@ def main():
 
     section_header()
     section_critical_constants()
+    section_registry_flags()
     section_exhaustion_summary(elog)
     section_tier1_proofs()
     section_do_not_test()
