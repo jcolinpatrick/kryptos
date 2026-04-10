@@ -6,7 +6,7 @@
 
 <p align="center">
   <strong>An open-source computational analysis of Kryptos K4</strong><br>
-  671 billion+ configurations tested. 390 eliminations recorded. Zero breakthroughs yet.
+  671 billion+ configurations tested. 486 eliminations recorded. Zero breakthroughs yet.
 </p>
 
 <p align="center">
