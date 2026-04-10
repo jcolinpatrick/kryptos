@@ -12,7 +12,15 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Dict, List, Optional, Tuple
 
-from kryptos.kernel.constants import BEAN_EQ, BEAN_INEQ, CT_LEN, MOD
+from kryptos.kernel.constants import (
+    ALPH_IDX,
+    BEAN_EQ,
+    BEAN_INEQ,
+    CRIB_DICT,
+    CT,
+    CT_LEN,
+    MOD,
+)
 
 
 @dataclass
@@ -112,6 +120,100 @@ def verify_bean_from_primer(
     """Expand primer to keystream and verify Bean constraints."""
     ks = expand_keystream_vimark(primer, length)
     return verify_bean(ks)
+
+
+def rederive_bean_for_transposition(
+    pt_to_ct: List[int],
+    alph_idx: Optional[Dict[str, int]] = None,
+) -> Tuple[Tuple[Tuple[int, int], ...], Tuple[Tuple[int, int], ...]]:
+    """Re-derive Bean equality and inequality constraints under a
+    transposition-first cipher model.
+
+    Encryption model:
+        carved_CT[i] = substitute(intermediate[i], key[i])
+        intermediate = transpose(PT)  applied BEFORE substitution
+        pt_to_ct[k]  = position in carved CT where plaintext position k lands
+
+    Under this model, the crib letter at plaintext position k appears at
+    carved CT position pt_to_ct[k], paired with the (known) carved CT letter
+    CT[pt_to_ct[k]]. The implied keystream value at that CT position is:
+
+        Vigenère:        key = (CT[pt_to_ct[k]] - PT[k]) mod 26
+        Beaufort:        key = (CT[pt_to_ct[k]] + PT[k]) mod 26
+        Variant Beaufort: key = (PT[k] - CT[pt_to_ct[k]]) mod 26
+
+    Bean constraints compare implied keys at pairs of crib positions. Under
+    the direct-positional model (pt_to_ct[i] = i) with the default standard
+    alphabet indexing, this must reproduce the canonical BEAN_EQ (1 pair)
+    and BEAN_INEQ (242 pairs) exactly — enforced by the
+    identity-reproduction test.
+
+    The returned pairs are in **carved CT coordinate space**, NOT plaintext
+    coordinate space. Downstream filters check the implied keystream at
+    those CT positions directly, without further T application.
+
+    Args:
+        pt_to_ct: Length-97 permutation. pt_to_ct[k] is the position in the
+            carved CT where plaintext position k's letter lands after the
+            outer transposition is applied at encryption time.
+        alph_idx: Optional character-to-index mapping for the substitution
+            alphabet. Defaults to the standard A-Z indexing. For KA
+            (KRYPTOS-keyed) alphabet work, pass `{c: i for i, c in
+            enumerate(KRYPTOS_ALPHABET)}` — the eq/ineq sets will differ
+            because the variant-independence predicate is computed in the
+            new indexing. Identity T with the default AZ mapping must
+            always reproduce the canonical BEAN_EQ/BEAN_INEQ; identity T
+            with a KA mapping produces a DIFFERENT but equally valid
+            constraint set.
+
+    Returns:
+        (eq_pairs, ineq_pairs) where each pair (ca, cb) has ca < cb and is
+        a pair of CT coordinates. An EQ pair means the implied key values
+        at those two CT positions MUST be equal under every additive
+        variant under the chosen alphabet. An INEQ pair means they MUST
+        be unequal under every variant. Pairs that are variant-dependent
+        (equal under some, unequal under others) are dropped from both sets.
+
+    Raises:
+        ValueError: if pt_to_ct is not a valid length-97 permutation.
+    """
+    if len(pt_to_ct) != CT_LEN:
+        raise ValueError(
+            f"pt_to_ct must be length {CT_LEN}, got {len(pt_to_ct)}"
+        )
+    if set(pt_to_ct) != set(range(CT_LEN)):
+        raise ValueError("pt_to_ct must be a permutation of 0..96")
+
+    idx = alph_idx if alph_idx is not None else ALPH_IDX
+
+    positions = sorted(CRIB_DICT.keys())
+    eq_pairs: list[tuple[int, int]] = []
+    ineq_pairs: list[tuple[int, int]] = []
+
+    for i in range(len(positions)):
+        for j in range(i + 1, len(positions)):
+            a, b = positions[i], positions[j]
+            ta, tb = pt_to_ct[a], pt_to_ct[b]
+
+            ca = idx[CT[ta]]
+            pa = idx[CRIB_DICT[a]]
+            cb = idx[CT[tb]]
+            pb = idx[CRIB_DICT[b]]
+
+            vig_eq = (ca - pa) % MOD == (cb - pb) % MOD
+            beau_eq = (ca + pa) % MOD == (cb + pb) % MOD
+            vbeau_eq = (pa - ca) % MOD == (pb - cb) % MOD
+
+            # Normalize ordering so downstream set comparisons are stable
+            ct_pair = (ta, tb) if ta < tb else (tb, ta)
+
+            if vig_eq and beau_eq and vbeau_eq:
+                eq_pairs.append(ct_pair)
+            elif not vig_eq and not beau_eq and not vbeau_eq:
+                ineq_pairs.append(ct_pair)
+            # else: variant-dependent — cannot be used as a pre-filter
+
+    return tuple(eq_pairs), tuple(ineq_pairs)
 
 
 def verify_bean_from_implied(implied_keys: Dict[int, int]) -> bool:

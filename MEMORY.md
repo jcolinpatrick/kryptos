@@ -1,128 +1,206 @@
-# MEMORY.md — K4 Strategic Context
+# MEMORY.md — Live Control Document
 
-For elimination landscape, anomalies, DO NOT TEST, and results verdicts:
-**`PYTHONPATH=src python3 scripts/_infra/session_briefing.py`** (CLAUDE.md step 2)
-
-This file covers volatile strategic state that the briefing script doesn't generate from data.
-
----
-
-## Project State (2026-04-08)
-
-- 993+ scripts, 386 eliminations on internal.com, 671B+ configs scored
-- No credible decrypt path. All positive findings are descriptive anomalies.
-- Single-layer AND two-layer classical cipher space now systematically tested
-- Composition framework operational: 105K+ branches tested (v1+v2+v3), max 6/24 = noise
-- v3 adds 6 stateful/architecture-specific families: band offset, polarity switch, progressive key, state alphabet, band polarity, compass offset — all noise
-- internal.com: submission feedback loop live, community cipher challenge deployed
-- Archive page updated: 7 new images (Copper "Veil" plaintext, SECRET PAST gallery list, concept sketches, Sanborn CIA letter, press clippings)
+**This file is volatile live state only.** For derived state (eliminations,
+exhaustion, anomalies) run the session briefing:
+```bash
+PYTHONPATH=src python3 scripts/_infra/session_briefing.py
+```
+For structured claims see `docs/claims_registry.json`. For open epistemic
+audits see `docs/methodological_audits.md`. For the canonical entry index
+see `docs/README_current_state.md`. For historical strategy snapshots see
+`docs/history/`. For retired research notes see `memory/retired/`.
 
 ---
 
-## Hard Blockers
+## 1. Current Project State (2026-04-09)
 
-1. ~~**Null-mask provenance**~~ **RETIRED (April 2026)** — Score-conditioned null experiment showed SA produces 11 distinct letters on K4, indistinguishable from shuffled controls (p=0.30). The "7 letters at 17 positions" was a post-hoc selection artifact. See `docs/a1_score_conditioned_null_report.md`. All palette-dependent claims (BCL enrichment, KA mod-5, AP enrichment, mod-35 table) are also retired.
-2. **Short-text underdetermination** — 97 chars; surface statistics are weak and frequently deceptive
-3. **Multi-layer ambiguity** — Single-layer eliminations do NOT eliminate those families as one layer of a multi-layer construction
-4. **External-information ceiling** — Some avenues require physical/chart/archive evidence
+- **No credible decrypt path.** All positive findings are descriptive
+  anomalies, not solution candidates. (registry: `C-STATE-01`)
+- Single-layer and two-layer classical cipher space systematically tested
+  under the direct-positional crib mapping. Three-layer space partially
+  explored. (registry: `C-STATE-02`)
+- Composition framework v1+v2+v3: 105K+ branches across 37 campaigns,
+  max 6/24 = noise. (registry: `C-COMP-01`)
+- **TABP series exhausted 2026-04-09**: five campaigns completed
+  testing the encryption model `CT = substitute(transpose(PT), key)`
+  across (AZ/KA alphabet) × (single/two-layer outer) × (period 1-50).
+  All clean null:
+  - **v1** (AZ, single-layer, period 1-26): best non-crib ngram = **-5.953**
+  - **v2a** (KA, single-layer, period 1-26): best = **-5.904** (best of 5)
+  - **v2b** (AZ, two-layer, 252,840 composed Ts, period 1-26): best = **-6.012**
+  - **v2c** (KA, two-layer, 252,840 composed Ts, period 1-26): best = **-6.046**
+  - **v3** (AZ, extended period 27-50, determined-subset scoring):
+    best = **-5.581** (35-char subset), NOT significant after Bonferroni
+    correction across ~2000 tests (expected 0.08 false positives at this
+    level, observed 1)
+
+  Reference: English prose ≈ -4.96, random 97-char ≈ -6.39. No variant
+  rose significantly above noise floor after multiplicity correction.
+  Extends `C-BEAN-01` from widths {4,6,8,9} direct-positional to:
+  6 new columnar widths, Myszkowski, rail fence, spiral/serpentine
+  routes, two-layer compositions thereof, and both alphabets — all
+  eliminated under the TABP encryption model. **Partial resolution of
+  Hard Blocker #3** (crib-mapping assumption): the outer-transposition-
+  at-encryption subcase is now exhausted. Grilles, multi-layer mixed
+  families, non-additive inner ciphers, and other crib-mapping-break
+  mechanisms remain untested. See
+  `results/f_tabp_transposition_outer_v1.md` and
+  `results/tabp_series_summary.md`.
+- Project is in a **final honest search window** (see
+  `docs/exhaustion_audit_2026_04_08.md`), not an active breakthrough hunt.
+- Running-key has been **demoted** from a leading hypothesis to a residual
+  admissible family for documentation closure only. (registry: `C-RUNKEY-01`)
 
 ---
 
-## Research Phase — FINAL CHECKLIST
+## 2. Hard Blockers
 
-Per `docs/exhaustion_audit_2026_04_08.md` (internal review board, 2026-04-08), the project is in its final honest search window. Running-key has been **demoted from #1 open family to residual admissible family** — finite checklist, not a leading hypothesis. Thresholds pre-registered in `docs/preregistered_thresholds_2026_04_08.md`.
+1. **Short-text underdetermination.** 97 characters; surface statistics are
+   weak and frequently deceptive.
+2. **Multi-layer ambiguity.** Single-layer eliminations do not eliminate
+   those families as one layer of a multi-layer construction.
+3. **Crib-mapping assumption.** All Tier 1 / Tier 2 eliminations assume
+   direct positional correspondence `CT[i] → PT[i]` on the carved CT.
+   Anything that breaks that assumption — outer transposition before the
+   analyzed layers, a position-dependent selector, a physical-overlay
+   remap — is **partially** explored as of 2026-04-09. TABP v1 tested the
+   **outer-transposition-at-encryption** variant (one specific mechanism)
+   across 6,165 transpositions × periodic Vig/Beau/VarBeau at periods 1-26
+   and found clean null. Still unexplored: multi-layer transpositions,
+   grille/selector mechanisms, non-periodic inner ciphers under TABP,
+   KA-alphabet inner substitution under TABP. See
+   `results/f_tabp_transposition_outer_v1.md`. The full assumption is
+   stated in `docs/elimination_tiers.md` Tier 1 (AUDIT-1 closed 2026-04-09).
+4. **External-information ceiling.** Some avenues require physical,
+   chart, or archive evidence (see Bin E below).
+5. **Scoring ceiling at n=97.** Quadgram-class scorers provably cannot beat
+   FM-1 (Markov-3 adversarial null) at 97 characters. (registry:
+   `C-EFRAC54-01`)
+
+---
+
+## 3. Open Methodological Audits
+
+See `docs/methodological_audits.md` for full text. Summary:
+
+- **AUDIT-1** — CLOSED 2026-04-09. "SOURCE-INDEPENDENT" wording in
+  Tier 1 columnar rows was scope-corrected to "running-key-source-
+  independent within the analyzed cipher class". Registry: `C-BEAN-01`
+  (now `live`, narrower scope).
+- **AUDIT-2** — CLOSED 2026-04-09. Downstream palette citations banner-
+  demoted or tagged retired; session briefing tightened.
+- **AUDIT-3** — OPEN (`documentation only`). `BREAKTHROUGH` label
+  semantics. Minimal fix pending.
+
+---
+
+## 4. Active Research Bins
 
 ### Bin C — Testable now (execute, then stop)
 
-Red-team review (2026-04-08) downgraded C1/C2 from compute campaigns to documentation closure. See `feedback_red_team_before_swings.md` for the operational rule these downgrades follow.
+Red-team review (2026-04-08) downgraded C1/C2 from Opus compute to cheap
+documentation closure. See `feedback_red_team_before_swings.md`.
 
-1. **C7 — Admissibility backlog cleanup** — Review 16 `ASSUMPTION_UNMET` running-key scripts; declare source, add license, or archive. ~1 engineering day.
-2. **C1 — Carter Vol 1 + columnar w6/8/9 × 3 variants** — **DOWNGRADED (2026-04-08):** red-team verdict KILL as Opus-compute work. Same null distribution as v1/v2/v3 (which returned max 6/24 at 105K+ configs); running-key with a specific book label does not draw from a materially different null. Execute as **cheap background compute only** for documentation closure; do not spend Opus budget. ~150K configs, admissibility-gated.
-3. **C2 — Kahn Codebreakers + columnar w6/8/9 × 3 variants** — **DOWNGRADED (2026-04-08):** same red-team verdict as C1. Cheap closure only. ~150K configs.
-4. **C6 — Non-columnar 3-layer enumeration** (route / Myszkowski / rail-fence / block as middle layer) via extended composition framework. Only bin-C item with a real architectural argument. **Scoring path audited clean (2026-04-08, commit a72d2e3):** `select_scoring_mode` correctly routes non-columnar middles through `score_candidate_free`; 15 regression tests in `tests/test_composition.py::TestC6NonColumnarMiddleRegression` lock this in. **Campaign script does not yet exist** — `enumerate_stacks` in `composition/orchestrator.py:265` hard-codes 2-layer stacks. To run C6, extend the enumerator to triple-loop or write a custom campaign script that builds 3-layer `CompositionStack` objects directly and dispatches via `_worker_evaluate` (which already handles arbitrary depth). Engineering task, ~1 day; no Opus budget needed.
-5. **C3/C4 — Bifid/four-square as composition outer** — DEFERRED; only run if C6 (when written) produces an ESCALATED candidate that justifies continued registry expansion.
-6. **C5/C8 — Homophonic composition outer / stateful seed expansion** — Deferred; run only if earlier bin-C campaigns escalate. **Stateful proposals must clear `stateful_attack_requirements.md`** — the 8-condition pre-flight checklist — before any compute is committed. Tier C1 Chaocipher-class crib-chain attack was killed 2026-04-08 for failing conditions 8 (initial state unspecifiable) and 4 (29-position gap between ENE/BCL cribs breaks state propagation).
+1. **C7** — Admissibility backlog cleanup. Review 16 `ASSUMPTION_UNMET`
+   running-key scripts; declare source, add license, or archive.
+2. **C1/C2** — Carter Vol 1 and Kahn Codebreakers against columnar
+   w6/8/9 × 3 variants. **Cheap background compute only**, not Opus budget.
+3. **C6** — Non-columnar 3-layer enumeration (route / Myszkowski /
+   rail-fence / block as middle layer). Scoring path audited clean
+   (commit a72d2e3). Campaign script does **not yet exist** — extend
+   `enumerate_stacks` in `composition/orchestrator.py:265` or write a
+   custom 3-layer driver. Engineering, not compute.
+4. **C3/C4/C5/C8** — Deferred; run only if C6 escalates. Any stateful
+   proposal must clear `stateful_attack_requirements.md` first.
 
-**Stop condition:** C7 complete AND C6 campaign script written+run AND no ESCALATED candidate AND C1/C2 closure docs published → publish `exhaustion_certificate_2026_04_08.md` and transition to waiting-list phase. (C1/C2 execution on cheap compute is a documentation requirement, not a research criterion.)
+**Stop condition:** C7 complete AND C6 campaign written and run AND no
+ESCALATED candidate AND C1/C2 closure docs published → publish
+`exhaustion_certificate_2026_04_08.md` v2 and transition to waiting-list
+phase.
 
 ### Bin D — Weakly testable (engineering, not compute)
 
-- Mono+Trans+Running-key — **search_fn build KILLED by red-team (2026-04-09, see `efrac54_search_fn_killed_2026_04_09.md`)**: the joint detector at `src/kryptos/detectors/efrac54_joint.py` (commit 18d90dc) is a scoring function, not a search algorithm. Its `_score_nats` (lines 142-168) is pure quadgram on both PT and K_hat sides, and the module's own test suite already certifies that quadgram cannot distinguish real English from Markov-3 surrogate at n=97 (FM-1). Therefore no search over this scorer can clear FM-1, regardless of search engineering quality. The "joint scoring escapes FM-1 because mono DOF that improve PT necessarily damage K_hat" claim is rhetorical, not mathematical — both sides inherit FM-1 independently and the composition has enough degrees of freedom to supply two Markov-3-plausible strings that chain through it. **Re-classified from "engineering blocked on missing search_fn" to "structurally blocked on a scorer that beats FM-1 at n=97".** The correct next move is scoring research, not search engineering. Three concrete deliverables would change the verdict: (1) a recovery test from random sigma init (not round-trip, not planted), (2) a scorer upgrade beyond quadgram that provably beats the adversarial-blind FM-1 test, or (3) a proof that the gradient of T under single-letter sigma swaps exceeds the noise floor at n=97. Absent any of these, do NOT re-propose the search build.
-- Running-key from unknown non-English text — E-FRAC-51 bound is English-specific. Needs pre-declared language + new CorpusLicense.
-- Berlin Clock / Weltzeituhr time-dependent permutations — needs archive-derived clock-state argument.
-- Pre-ENE (0-20) as separate sub-cipher — no crib/constraint available.
-- Archive-term operationalization (ABSCISSA, ATBASH, "4, 8, 10, 26 = Col") — needs a parametric mapping from term to cipher family.
+- **D1 — Mono+Trans+Running-key search:** re-classified 2026-04-09 from
+  "engineering blocked" to "structurally blocked on a scorer beating FM-1
+  at n=97". See registry `C-EFRAC54-01`. The correct next move is scoring
+  research, not search engineering. Do not re-propose the search build
+  without (a) a scorer proven to beat FM-1 at n=97, (b) a recovery test
+  from random sigma init, or (c) a gradient-above-noise-floor proof.
+- Running-key from pre-declared non-English text (needs new
+  `CorpusLicense`).
+- Berlin Clock / Weltzeituhr time-dependent permutations (needs
+  archive-derived clock-state argument).
+- Pre-ENE (0–20) as separate sub-cipher (no crib/constraint available).
+- Archive-term operationalization (ABSCISSA, ATBASH, "4, 8, 10, 26 = Col")
+  — needs a parametric mapping from term to cipher family.
 
 ### Bin E — Untestable under current clues (waiting list)
 
-- Bespoke chart-based cipher procedures — needs public chart reproduction OR a `CipherProcedureLicense` schema.
-- Model-free null mask search — no defined statistic; palette version retired (post-hoc artifact).
-- K5 ciphertext — not published.
-- Circled letters IMG_1223-1235 — needs forensic extraction of archive photos.
-- Photogrammetric sculpture data — needs primary-source field measurement.
-- Sanborn's private coding system — not public.
+- Bespoke chart-based cipher procedures (needs public chart reproduction
+  or a `CipherProcedureLicense` schema).
+- Model-free null mask search (no defined statistic; palette version
+  retired — see `memory/retired/`).
+- K5 ciphertext (not published).
+- Circled letters IMG_1223-1235 (needs archive forensic extraction).
+- Photogrammetric sculpture data (needs field measurement).
+- Sanborn's private coding system (not public).
 
-**These are prerequisites for being able to test anything new, not testable hypotheses.**
-
----
-
-## Archives of American Art — Key Findings (2026-03-27)
-
-ABSCISSA confirmed as Sanborn research term | Beaufort cipher in handwritten list | "3 words most" | "He lied" (K2 coordinate change) | "I wrote the Plain Text to be enigmatic" | Physical overlay "Code Breaker" sketch | ATBASH on same page as ABSCISSA | "4, 8, 10, 26 = Col" | Antipodes completely absent from archive
-
-Detail: `archive_aaa_findings.md` in session memory.
+These are **prerequisites for being able to test anything new**, not
+testable hypotheses.
 
 ---
 
-## Campaign & Audit Summaries
+## 5. Do-Not-Revive List
 
-- **E-FRAC-54 joint detector built (2026-04-08, commit 18d90dc):** New statistical apparatus for mono→trans→running-key detection. Scores candidate PT and implied running-key K_hat jointly (T = L_PT + L_K), calibrated via Gumbel on shuffled-CT surrogates. Module: `src/kryptos/detectors/efrac54_joint.py` (446 lines). Tests: `tests/test_efrac54_detector.py` (13/13 passing). Pre-flight for real K4 run requires a `search_fn` callable (not yet written). See Bin D entry and commit message for full caveats; FM-1 (Markov-3 adversarial running keys) is a hard information-theoretic limit at n=97, confirmed in code.
-- **Null-mask + Beaufort exhaustive (2026-04-08):** Admissibility-framework Phase 2 proof via `f_null_beaufort_exhaustive_v1.py`. All 44,400 (ene_start × bcl_start × period 1-8) CSPs are formally UNSAT (`phase2_verdict: formal_unsat`, `phase2_is_exact: true`). This closes the null-mask + periodic-Beaufort thread entirely, extending the earlier E-NULLMASK-PERIODIC algebraic proof to the sliding-crib-window framing. Certificate: `results/admissibility_elimination_v1/null_beaufort_phase2.json`. Note: Phase 1/4 `score_candidate` calls were misaligned (anchored 97-char crib positions applied to 73-char extracted PT), but the canonical Phase 2 UNSAT proof used `score_candidate_free` and is unaffected.
-- **Composition v1+v2+v3 (2026-04-06):** 105K+ compositions across 37 campaigns. v1: additive+transposition. v2: Vigenere/Beaufort inner, 80-char CT. v3: 6 stateful/architecture families (band offset, polarity switch, progressive key, state alphabet, band polarity, compass offset). Max 6/24 = noise. Bean inequality pruning confirms periodic single-layer elimination. `stateful.py` kernel module audited clean (2026-04-08). Reports: `reports/composition_campaign_v{1,2,3}.md`.
-- **TICOM/Novel (2026-03-28):** 14 scripts, 1.3B configs, ~75 min. RS44, VIC, Wheatstone, ITA-2, interrupted-key, Wilson, sawtooth, Baudot, Ubchi, Soviet three-step, Sanborn matrix: all noise (Level B).
-- **Null mask diversity (→ RETIRED 2026-04-01):** Original positional null p=2.4e-5 invalidated by score-conditioned null. Post-hoc selection artifact.
-- **Extra L (2026-03-29):** 97+1=98=2x7x7. All noise (Level B).
+Do not re-propose, re-run, or re-cite these without a rehabilitation entry
+in `docs/claims_registry.json` and a new audit close.
 
----
-
-## Critical Pitfalls
-
-- Positions are 0-indexed (cribs at 21-33, 63-73)
-- Import constants; never hardcode CT, cribs, or null positions
-- KA ordering is non-standard (KRYPTOSABCDEFGHIJLMNQUVWXZ)
-- Beaufort A=0 is the confirmed default
-- High scores at large periods are always false positives
-- Null positions are MODEL-DEPENDENT — always state which model
-- **Palette {B,G,I,K,O,W,Z} is RETIRED** — post-hoc selection artifact (April 2026 audit)
-- **Sanborn statements carry no special weight** — treat as Tier-3 community hearsay, not [PUBLIC FACT]. The sculpture is ground truth, not the artist. See `feedback_sanborn_epistemic_weight.md`.
-- **Any proposed stateful/Chaocipher-class attack MUST clear `stateful_attack_requirements.md`** (8-condition pre-flight checklist) before compute commitment. Original Tier C1 proposal killed 2026-04-08 for failing conditions 4 and 8.
-- **Any Opus-compute swing ≥$25 MUST be red-teamed before pitching** — see `feedback_red_team_before_swings.md`. Pattern-matching plausibility is not tractability analysis.
+- The palette family {B,G,I,K,O,W,Z} and all derived null-mask constructs
+  (mod-35, BCL enrichment, Polybius row-selection, palette null separator).
+  Registry: `C-PALETTE-01` (retired).
+- Autokey variants (PT / CT / Quagmire-II) on the carved CT under direct
+  positional mapping. Registry: `C-AUTOKEY-01`.
+- DEFECTOR / PALIMPSEST 15/24 framings (post-hoc artifacts).
+- K2 numeric sequences as keystream.
+- Tier C1 Chaocipher-class crib-chain attack (killed 2026-04-08 for
+  failing `stateful_attack_requirements.md` conditions 4 and 8).
+- E-FRAC-54 quadgram-based search engineering (killed 2026-04-09; see
+  `C-EFRAC54-01`).
 
 ---
 
-## Reference Index
+## 6. Discipline Rules
 
-### Session Memory (`.claude/projects/.../memory/`)
+- Any Opus-compute swing estimated ≥$25 must be red-teamed before
+  pitching. (registry: `C-RED-01`)
+- Any stateful/Chaocipher-class attack must clear
+  `stateful_attack_requirements.md` (8 conditions) before compute commit.
+- Sanborn quotes are Tier-3 community hearsay, not [PUBLIC FACT].
+  (registry: `C-SANBORN-01`)
+- Positions are 0-indexed (cribs at 21–33 and 63–73). Import constants;
+  never hardcode CT, cribs, or null positions.
+- Null positions are model-dependent — always state the model.
+- High scores at large periods are false positives. Bean-based
+  "source-independent" eliminations in `docs/elimination_tiers.md` Tier 1
+  are precisely scoped to running-key source choice within the analyzed
+  cipher class (see AUDIT-1, closed) — they do **not** cover composed
+  ciphers with an outer layer preceding the analyzed step.
 
-- [Composition Campaigns](composition_campaigns_v1v2.md) — 105K+ compositions (v1+v2+v3), max 6/24 = noise
-- [Null Mask Model Dependence](null_mask_model_dependence.md) — SA positions shift with cipher model
-- [NYT vs Null Mask](nyt_article_null_mask_impact.md) — Article does not invalidate null hypothesis
-- [Reddit Audit](reddit_statistical_audit.md) — Multiple testing survives, wrong null model 2x weaker
-- [Proof Doc Audit](proof_document_audit.md) — Definition 4 wrong, K-sum error, core arithmetic OK
-- [Submission Feedback](submission_feedback_loop.md) — Token-based status tracking implemented
-- [GitHub Traffic](github_traffic_polling.md) — Daily cron in logs/github_traffic/
-- [Mbox Mining](mbox_mining_results.md) — 18,766 K4-relevant posts from kryptos.groups.io
-- [Community Challenge](challenge_page.md) — Cipher challenge: Quagmire III + null insertion, ntfy on solve
+---
 
-### Repo Memory (`memory/`)
+## 7. Pointers
 
-- `keystream_forensics_v2.md` — Corrected keystream, DEFECTOR autokey structurally impossible
-- `palette_deep_investigation.md` — [RETIRED 2026-04-01 — post-hoc selection artifact; see Hard Blockers §1] 18-test investigation, mod-5, Beaufort key=N
-- `bcl_palette_keystream.md` — [RETIRED 2026-04-01 — post-hoc selection artifact; see Hard Blockers §1] BCL 7/8 palette enrichment (ciphertext-intrinsic under Beaufort A=0)
-- `palette_mod35_rule.md` — [RETIRED 2026-04-01 — post-hoc selection artifact; see Hard Blockers §1] (pos%7,pos%5) table classifies all 17 consensus nulls
-- `polybius_row_selection.md` — KRYPTOS×SEVEN dual-keyword model
-- `width10_17_deep_investigation.md` — Cipher-layer bigrams, col7 artifacts
-- `width21_bigram_73char.md` — Stego-layer artifact, disappears after null extraction
-- `ticom_archive_research.md` — RS44, VIC, Ubchi parallels to K4
+- **Canonical entry index:** `docs/README_current_state.md`
+- **Structured claims:** `docs/claims_registry.json`
+- **Open audits:** `docs/methodological_audits.md`
+- **Historical snapshots:** `docs/history/`, `reports/final_synthesis.md`
+- **Retired notes:** `memory/retired/`
+- **Live research notes (repo `memory/`):** `keystream_forensics_v2.md`,
+  `ticom_archive_research.md`, `width10_17_deep_investigation.md`,
+  `width21_bigram_73char.md`, `bruteforce_7remaining.md`,
+  `keystream_ap_investigation.md`
 
-Last updated: 2026-04-09 (E-FRAC-54 search_fn build KILLED by red-team — bin D1 re-classified from engineering-blocked to structurally-blocked-on-scorer-beating-FM-1; running-key + columnar w6/8/9 strengthened to source-independent Tier 1 in elimination_tiers.md after independent fresh-process re-verification of certificate §4-5)
+Last updated: 2026-04-09 (AUDIT-1 + AUDIT-2 closed: Bean-columnar
+"source-independent" wording scope-corrected across load-bearing docs;
+downstream palette citations banner-demoted or tagged retired; session
+briefing now surfaces disputed/retired claim IDs from the registry).
