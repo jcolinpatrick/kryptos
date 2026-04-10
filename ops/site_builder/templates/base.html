@@ -7,12 +7,12 @@
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="internal.com">
   <meta property="og:title" content="{% block og_title %}internal.com | Kryptos K4 Research Archive{% endblock %}">
-  <meta property="og:description" content="An open-source research archive documenting 670B+ tested configurations. Rigorous, reproducible cryptanalysis of Kryptos K4.">
+  <meta property="og:description" content="An open-source research archive documenting {{ total_configs_disproven }} tested configurations. Rigorous, reproducible cryptanalysis of Kryptos K4.">
   <meta property="og:image" content="https://internal.com/static/internal-og.jpg">
   {% block og_url %}<meta property="og:url" content="https://internal.com/">{% endblock %}
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="{% block twitter_title %}internal.com | Kryptos K4 Research Archive{% endblock %}">
-  <meta name="twitter:description" content="Open-source research archive. 670B+ configurations tested, documented, and reproducible.">
+  <meta name="twitter:description" content="Open-source research archive. {{ total_configs_disproven }} configurations tested, documented, and reproducible.">
   <meta name="twitter:image" content="https://internal.com/static/internal-og.jpg">
   {% block canonical %}{% endblock %}
   <title>{% block title %}internal.com{% endblock %}</title>
