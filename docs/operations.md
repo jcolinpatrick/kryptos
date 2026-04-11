@@ -6,7 +6,7 @@ Full operational reference for `kryptosbot.com` and supporting systems. Referenc
 
 - **`ops/site_builder/`** — Builds `kryptosbot.com` → `site/` (gitignored). Config: `overrides.toml`.
 - **`ops/api/`** — FastAPI backend: theory classifier (`classifier.py`), submission queue (`queue.py`), admin CLI (`admin.py`). Mounts `site/` as static. Requires `venv/`.
-- **`kryptosbot/`** — Claude Agent SDK multi-agent runner. Ops guide: `RUNBOOK.md` (root). Has its own `pyproject.toml` with `claude-agent-sdk` dependency.
+- **`kryptosbot/`** — Claude Agent SDK multi-agent runner. Ops guide: `ops/RUNBOOK.md`. Has its own `pyproject.toml` with `claude-agent-sdk` dependency.
   - `solve.py` — Original entry point (single-agent).
   - `campaign_v2.py` — **Active campaign runner**: Phases 1–5 (free compute: row key forensics, fractionation, state machines), Phase 6+ (Opus-guided, API budget). Entry: `PYTHONPATH=src python3 -u kryptosbot/campaign_v2.py`. Supports `--local-only`, `--dry-run`.
   - `monitor.py` — Live campaign dashboard: `python3 kryptosbot/monitor.py [--interval 1]`. Scans `results/campaigns/` for active sessions.
