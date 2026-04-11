@@ -188,7 +188,6 @@ Three categories: **Unit** (`test_transforms.py`, `test_scoring.py`, etc.), **QA
 Data directories are **symlinked** to a separate data partition:
 - `db/` → `/data/db` — SQLite databases (novelty ledger, results)
 - `artifacts/` → `/data/artifacts` — Result artifacts (JSONL logs)
-- `internal_results.db` — Main results database (project root, ~1.8 GB)
 - `checkpoints/` — Campaign checkpointing for resumable runs
 - `exhaustion_log.json` — **Authoritative** experiment log (root level — ignore `scripts/EXHAUSTION.json`)
 
