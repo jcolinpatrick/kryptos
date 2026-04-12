@@ -645,7 +645,7 @@ print(f"  Exhaustive keyword done. Tried={COUNT}")
 # ─────────────────────────────────────────────────────────────────────────────
 # SAVE
 # ─────────────────────────────────────────────────────────────────────────────
-out_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "blitz_results", "numeric_permuter")
+out_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "results", "blitz", "numeric_permuter")
 os.makedirs(out_dir, exist_ok=True)
 summary = {"wave": 4, "total_tried": COUNT, "crib_hits": len(RESULTS),
            "best_score": BEST_SCORE, "hits": RESULTS}

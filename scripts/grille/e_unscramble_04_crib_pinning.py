@@ -430,7 +430,7 @@ else:
     print("\n[no results with both cribs confirmed by SA]", flush=True)
 
 # ── Save ──────────────────────────────────────────────────────────────────────
-os.makedirs('kbot_results', exist_ok=True)
+os.makedirs('results/kbot', exist_ok=True)
 save = {
     'experiment':    'E-UNSCRAMBLE-04',
     'description':   'Crib-pinning SA: 24 crib positions fixed, 73 free positions optimized',
@@ -441,6 +441,6 @@ save = {
     'crib_hits':     [{k: v for k, v in r.items() if k != 'perm'} for r in crib_hits[:50]],
     'top_100':       [{k: v for k, v in r.items() if k != 'perm'} for r in all_results[:100]],
 }
-with open('kbot_results/unscramble_04.json', 'w') as f:
+with open('results/kbot/unscramble_04.json', 'w') as f:
     json.dump(save, f, indent=2)
-print(f"\nSaved {len(all_results)} results to kbot_results/unscramble_04.json", flush=True)
+print(f"\nSaved {len(all_results)} results to results/kbot/unscramble_04.json", flush=True)

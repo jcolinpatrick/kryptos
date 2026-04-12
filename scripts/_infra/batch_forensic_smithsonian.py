@@ -15,8 +15,8 @@ from datetime import datetime, timezone
 
 PROJECT_ROOT = Path(__file__).parent.parent.parent
 SMITHSONIAN_DIR = PROJECT_ROOT / "reference" / "Pictures" / "Smithsonian"
-OUTPUT_BASE = PROJECT_ROOT / "forensic_output" / "smithsonian_batch"
-ANALYZER = PROJECT_ROOT / "tools" / "photo_analysis" / "forensic_photo_analyzer.py"
+OUTPUT_BASE = PROJECT_ROOT / "results" / "forensic" / "smithsonian_batch"
+ANALYZER = PROJECT_ROOT / "ops" / "tools" / "photo_analysis" / "forensic_photo_analyzer.py"
 
 # Full pipeline minus OCR (slow) — add ocr for text-heavy images separately
 MODULES = "ela,fft,chi_square,noise_residual,channel,statistical,lsb,metadata"

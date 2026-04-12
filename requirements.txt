@@ -41,6 +41,9 @@ python-dotenv==1.2.1
 PyMuPDF==1.27.1
 pillow==12.1.1
 
+# Terminal display
+rich==14.3.4
+
 # AI / Agent SDK
 anthropic==0.83.0
 claude-agent-sdk==0.1.44

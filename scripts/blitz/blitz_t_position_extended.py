@@ -44,7 +44,7 @@ KEYWORDS = ['KRYPTOS','PALIMPSEST','ABSCISSA','SHADOW','SANBORN','SCHEIDT',
             'BERLIN','CLOCK','EAST','NORTH','LIGHT','ANTIPODES','MEDUSA','ENIGMA',
             'LAYER','ILLUSION','IQLUSION','SHADOW','EAST','NORTH','BERLIN']
 
-OUT_DIR = 'blitz_results/t_position'
+OUT_DIR = 'results/blitz/t_position'
 os.makedirs(OUT_DIR, exist_ok=True)
 
 qg = json.load(open('data/english_quadgrams.json'))

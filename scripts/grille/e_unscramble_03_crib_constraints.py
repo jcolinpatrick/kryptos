@@ -581,7 +581,7 @@ if strip_best:
     print(f"Best strip score: {strip_best[0][0]:.4f} at W={strip_best[0][1]} perm={strip_best[0][2]}")
 
 # Save
-os.makedirs('kbot_results', exist_ok=True)
+os.makedirs('results/kbot', exist_ok=True)
 output = {
     'experiment': 'E-UNSCRAMBLE-03',
     'date': '2026-03-02',
@@ -595,6 +595,6 @@ output = {
     'top_rotation': {'offset': rotation_scores[0][1], 'score': rotation_scores[0][0],
                       'pt': rotation_scores[0][5][:80]} if rotation_scores else None,
 }
-with open('kbot_results/unscramble_analysis.json', 'w') as f:
+with open('results/kbot/unscramble_analysis.json', 'w') as f:
     json.dump(output, f, indent=2)
-print("\nResults saved → kbot_results/unscramble_analysis.json")
+print("\nResults saved → results/kbot/unscramble_analysis.json")

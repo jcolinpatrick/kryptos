@@ -514,7 +514,7 @@ def main():
             print(f"     {r['text'][:80]}")
 
     # Save
-    outdir = os.path.join(os.path.dirname(__file__), '..', 'kbot_results')
+    outdir = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'results', 'kbot')
     os.makedirs(outdir, exist_ok=True)
     outfile = os.path.join(outdir, 'grid31_columnar_phase2_results.json')
     save_data = {

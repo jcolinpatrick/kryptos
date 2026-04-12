@@ -944,7 +944,7 @@ def main():
             print(f"       {r['decrypted'][:70]}...")
 
     # Save results
-    outdir = os.path.join(os.path.dirname(__file__), '..', 'kbot_results')
+    outdir = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'results', 'kbot')
     os.makedirs(outdir, exist_ok=True)
     outfile = os.path.join(outdir, 'grid31_columnar_results.json')
 

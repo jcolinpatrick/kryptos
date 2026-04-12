@@ -569,7 +569,7 @@ def main():
             print(f"       {r['text'][:80]}")
 
     # Save results
-    outfile = os.path.join(os.path.dirname(__file__), '..', 'kbot_results', 'k4_double_columnar_rtl_results.json')
+    outfile = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'results', 'kbot', 'k4_double_columnar_rtl_results.json')
     os.makedirs(os.path.dirname(outfile), exist_ok=True)
     save_data = {
         "total_tested": total,

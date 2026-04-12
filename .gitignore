@@ -34,7 +34,7 @@ db
 results/
 artifacts
 checkpoints/
-blitz_results/
+# (blitz_results symlink removed — output now goes to results/blitz/)
 
 # Third-party reference projects
 external/
@@ -57,7 +57,7 @@ reference/carter_vol1_extract.txt
 
 # Personal / infrastructure (not needed for community)
 .claude/
-RUNBOOK.md
+ops/RUNBOOK.md
 ops/scheduled/
 kryptosbot/
 memory/
@@ -77,7 +77,7 @@ data/experiment_prose_backfill.json
 deploy/
 
 # Personal results and session reports
-kbot_results/
+# (kbot_results/ moved to results/kbot/)
 kryptosbot/kbot_results/
 kryptosbot/split_results/
 kryptosbot/kryptosbot_results.db
@@ -99,12 +99,12 @@ reference/*.png
 reference/*.xml
 reference/*.mbox
 wordlists/kaikki_english.txt
-forensic_output/
-challenge_k4_solution.md
+# (forensic_output symlink removed — output now goes to results/forensic/)
+docs/challenge_k4_solution.md
 
-# External clones / community material kept locally but not tracked here
-claude-plugins-official/
-Reddit/
+# External clones / community material (moved into external/ and archive/)
+# claude-plugins-official/ now at external/claude-plugins-official/
+# Reddit/ now at archive/reddit/
 
 # Personal research notes: on-disk but not tracked
 reference/Notes/
