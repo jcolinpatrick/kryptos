@@ -175,10 +175,15 @@ def capture_kernel_constants_hash() -> dict:
 def render_canonical_claim(run: dict) -> str:
     """Render the canonical, citation-grade wording for the result.
 
-    The wording is mode-specific. A FULL-CARTESIAN null gets the strongest
-    language; an EXPLORATORY result gets explicitly weak language. The text
-    here is the version that should be quoted in any future writeup,
-    paper, or external claim. Do not change it casually.
+    The wording is mode-specific. The language is deliberately bounded:
+    no run, however large, is treated as definitive or as the strongest
+    possible negative result. Every claim is scoped to (a) the explicit
+    parameter space the campaign expresses, (b) the joint-success
+    criterion, and (c) the H1 modeling assumptions where they apply.
+
+    The text here is the version that should be quoted in any future
+    writeup or external claim. Do not change it casually, and do not
+    add language that the underlying run does not support.
     """
     mode = run.get("sampling_mode", "unknown")
     n = run.get("total_profiles_tested", 0)
@@ -196,41 +201,56 @@ def render_canonical_claim(run: dict) -> str:
 
     if mode == "full_cartesian" and run.get("plan_is_complete_for_mode"):
         return (
-            f"FULL-CARTESIAN NULL. The complete constrained two-layer "
-            f"hypothesis class — every one of {n_outer} outer parameterized "
-            f"instances composed with every one of {n_inner} inner "
-            f"parameterized instances, totalling {n:,} (outer × inner) profiles "
-            f"— was enumerated under blind evaluation. Zero candidates met the "
-            f"joint anomaly success criterion (crib_score >= 18, Bean compatible "
-            f"or H1 legitimately disabled, width-21 z >= 3 with no cherry-pick, "
-            f"Stehle local pattern present, weak identity preservation >= 0.4, "
-            f"English likeness above noise floor, zero overfit flags). Within "
-            f"the constrained low-complexity two-layer hypothesis space the "
-            f"campaign expresses, the architecture has produced no positive "
-            f"signal. This is the strongest negative result the project has "
-            f"published for this hypothesis class."
+            f"FULL-CARTESIAN NULL within the parameterized two-layer search "
+            f"space the campaign expresses. Every one of {n_outer} outer "
+            f"parameterized instances was composed with every one of "
+            f"{n_inner} inner parameterized instances, totalling {n:,} "
+            f"(outer × inner) profiles, and each composition was scored "
+            f"under blind evaluation. Zero candidates met the joint anomaly "
+            f"success criterion (crib_score >= 18, Bean compatible or "
+            f"legitimately H1-disabled, width-21 z >= 3 with no cherry-pick, "
+            f"Stehle local pattern present, weak identity preservation "
+            f">= 0.4, English likeness above noise floor, zero overfit "
+            f"flags). SCOPE: this result applies only to the specific "
+            f"outer and inner families enumerated by this campaign at the "
+            f"specific code revision pinned in this freeze. It does not "
+            f"address (a) outer or inner families outside the parameterized "
+            f"set, (b) compositions of more than two layers, (c) procedural "
+            f"or physical mechanisms not expressible in the framework, "
+            f"(d) cipher classes that break the H1 direct-positional "
+            f"alignment assumption beyond what the framework already "
+            f"models. The result is a bounded negative within a bounded "
+            f"search space; it is not a proof that no two-layer mechanism "
+            f"can solve K4."
         )
 
     if mode == "stratified_family_cover" and run.get("plan_is_complete_for_mode"):
         n_outers_in_run = cov.get("distinct_outer_instances", n_outer)
         return (
-            f"FAMILY-COVER NULL. Every one of {n_outers_in_run} eligible outer "
-            f"parameterized instances was paired with at least one representative "
-            f"from every inner family class ({n:,} total evaluations under blind "
-            f"evaluation). Zero candidates met the joint anomaly success criterion. "
-            f"Every constrained outer instance × every inner family class has "
-            f"been tested under the project's strict joint-success bar with no "
-            f"positive signal."
+            f"FAMILY-COVER NULL within the parameterized search space. "
+            f"Every one of {n_outers_in_run} eligible outer parameterized "
+            f"instances was paired with at least one representative from "
+            f"every inner family class ({n:,} total evaluations under "
+            f"blind evaluation). Zero candidates met the joint anomaly "
+            f"success criterion. SCOPE: this result rules out the "
+            f"family-class-level cross-product within the parameterized "
+            f"set at the joint-success bar. It does not enumerate every "
+            f"inner instance per outer, and it does not address mechanisms "
+            f"outside the framework's outer/inner family generators."
         )
 
     if mode == "stratified_low_complexity_bias":
         low = cov.get("low_complexity_eval_count", 0)
         return (
-            f"LOW-COMPLEXITY-EMPHASIZED NULL. {n:,} profiles evaluated under "
-            f"blind evaluation, with {low:,} of them in the low-complexity "
-            f"band (oversampled relative to medium and high). The simplest, "
-            f"most epistemically informative end of the constrained two-layer "
-            f"search space was probed deeply with no joint anomaly success."
+            f"LOW-COMPLEXITY-EMPHASIZED NULL within the parameterized "
+            f"search space. {n:,} profiles evaluated under blind "
+            f"evaluation, with {low:,} of them in the low-complexity band "
+            f"(oversampled relative to medium and high). The lower-complexity "
+            f"end of the constrained two-layer search space was probed at a "
+            f"materially elevated rate with no joint anomaly success. "
+            f"SCOPE: applies only to the parameterized outer and inner "
+            f"families at the complexity bound used; does not address "
+            f"higher-complexity profiles or mechanisms outside the framework."
         )
 
     if mode == "exploratory_stride":

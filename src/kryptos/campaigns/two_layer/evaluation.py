@@ -303,10 +303,12 @@ def render_summary(results_dict: dict, coverage=None) -> str:
         )
     if mode == "full_cartesian" and coverage.qualifies_as_full_cartesian_complete:
         return (
-            f"FULL-CARTESIAN null over {n} profiles. The complete constrained "
-            f"outer x inner space was enumerated with no joint anomaly success. "
-            f"Within the constrained low-complexity hypothesis class, the "
-            f"two-layer architecture has not produced a positive signal."
+            f"FULL-CARTESIAN null over {n} profiles within the parameterized "
+            f"two-layer search space. Every outer x inner pair the framework "
+            f"expresses was scored under blind evaluation with no joint "
+            f"anomaly success. SCOPE: applies only to the parameterized "
+            f"outer/inner generators; not a proof that no two-layer mechanism "
+            f"can solve K4."
         )
     return (
         f"PARTIAL null over {n} profiles in mode {mode}. Coverage shape did "
