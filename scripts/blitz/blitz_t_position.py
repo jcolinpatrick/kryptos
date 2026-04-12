@@ -47,7 +47,7 @@ assert len(KA) == 26
 assert 'T' not in GRILLE_EXTRACT, "T should be absent from extract!"
 
 # Output dir
-OUT_DIR = 'blitz_results/t_position'
+OUT_DIR = 'results/blitz/t_position'
 os.makedirs(OUT_DIR, exist_ok=True)
 
 # ── Load quadgrams ────────────────────────────────────────────────────────────

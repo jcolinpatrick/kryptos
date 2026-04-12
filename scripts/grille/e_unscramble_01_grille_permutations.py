@@ -810,7 +810,7 @@ if all_results:
         print()
 
 # Save results
-os.makedirs('kbot_results', exist_ok=True)
+os.makedirs('results/kbot', exist_ok=True)
 output = {
     'experiment': 'E-UNSCRAMBLE-01',
     'date': '2026-03-02',
@@ -835,6 +835,6 @@ output = {
         for i, (sc, label, ct, kw, fn, aname, pt) in enumerate(top_scores[:20])
     ],
 }
-with open('kbot_results/unscramble_analysis.json', 'w') as f:
+with open('results/kbot/unscramble_analysis.json', 'w') as f:
     json.dump(output, f, indent=2)
-print(f"\nResults saved → kbot_results/unscramble_analysis.json")
+print(f"\nResults saved → results/kbot/unscramble_analysis.json")

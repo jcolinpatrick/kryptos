@@ -73,7 +73,7 @@ def columnar_perm(key, n=97):
     cols = sorted(range(nc), key=lambda i: (key[i],i))
     return [r*nc+c for c in cols for r in range(nr) if r*nc+c < n]
 
-RESULTS_DIR = "blitz_results/grille_geometry"
+RESULTS_DIR = "results/blitz/grille_geometry"
 os.makedirs(RESULTS_DIR, exist_ok=True)
 all_results = []; crib_hits = []; tested = set()
 

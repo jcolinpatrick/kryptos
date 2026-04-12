@@ -35,8 +35,8 @@ from collections import defaultdict
 from numpy.lib.stride_tricks import sliding_window_view
 
 sys.path.insert(0, 'src')
-os.makedirs('blitz_results/strip_route', exist_ok=True)
-RESULTS_DIR = 'blitz_results/strip_route'
+os.makedirs('results/blitz/strip_route', exist_ok=True)
+RESULTS_DIR = 'results/blitz/strip_route'
 
 # ─── CONSTANTS ────────────────────────────────────────────────────────────────
 K4 = "OBKRUOXOGHULBSOLIFBBWFLRVQQPRNGKSSOTWTQSJQSSEKZZWATJKLUDIAWINFBNYPVTTMZFPKWGDKZXTJCDIGKUHUAUEKCAR"

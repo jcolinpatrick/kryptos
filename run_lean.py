@@ -183,8 +183,8 @@ def parse_args() -> argparse.Namespace:
         help="CPU workers for local compute (default: auto-detect)",
     )
     parser.add_argument(
-        "--output", type=str, default="kbot_results",
-        help="Output directory for results (default: kbot_results)",
+        "--output", type=str, default="results/kbot",
+        help="Output directory for results (default: results/kbot)",
     )
     parser.add_argument(
         "--attack", type=str, default="all",

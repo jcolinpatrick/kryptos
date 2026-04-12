@@ -30,8 +30,8 @@ import multiprocessing as mp
 from itertools import permutations
 
 sys.path.insert(0, 'src')
-os.makedirs('blitz_results/strip_route', exist_ok=True)
-RESULTS_DIR = 'blitz_results/strip_route'
+os.makedirs('results/blitz/strip_route', exist_ok=True)
+RESULTS_DIR = 'results/blitz/strip_route'
 
 # ─── CONSTANTS ────────────────────────────────────────────────────────────────
 K4 = "OBKRUOXOGHULBSOLIFBBWFLRVQQPRNGKSSOTWTQSJQSSEKZZWATJKLUDIAWINFBNYPVTTMZFPKWGDKZXTJCDIGKUHUAUEKCAR"

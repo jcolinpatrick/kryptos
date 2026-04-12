@@ -56,7 +56,7 @@ def beau_dec(ct, key, alpha=AZ):
 def crib_check(pt):
     return pt.find("EASTNORTHEAST"), pt.find("BERLINCLOCK")
 
-RESULTS_DIR = "blitz_results/grille_geometry"
+RESULTS_DIR = "results/blitz/grille_geometry"
 os.makedirs(RESULTS_DIR, exist_ok=True)
 hits = []
 

@@ -48,7 +48,7 @@ def vig_dec(ct, key, alpha=AZ):
 def beau_dec(ct, key, alpha=AZ):
     return ''.join(alpha[(alpha.index(key[i%len(key)])-alpha.index(ct[i]))%26] for i in range(len(ct)))
 
-RESULTS_DIR = "blitz_results/grille_geometry"
+RESULTS_DIR = "results/blitz/grille_geometry"
 os.makedirs(RESULTS_DIR, exist_ok=True)
 hits = []; all_results = []
 

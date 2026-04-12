@@ -516,7 +516,7 @@ def main():
         print(f"      PT: {pt_prefix}...")
 
     # Save results
-    out_path = os.path.join(os.path.dirname(__file__), "..", "kbot_results", "e_vic_01_chain_addition.json")
+    out_path = os.path.join(os.path.dirname(__file__), "..", "..", "results", "kbot", "e_vic_01_chain_addition.json")
     result = {
         "experiment": "E-VIC-01",
         "description": "VIC-style chain addition key derivation from Cardan grille extract",

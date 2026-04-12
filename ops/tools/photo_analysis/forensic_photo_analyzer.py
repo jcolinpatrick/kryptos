@@ -1022,7 +1022,7 @@ MODULE_FUNCTIONS = {
 
 def analyze_image(
     image_path: str,
-    output_dir: str = "./forensic_output",
+    output_dir: str = "./results/forensic",
     modules: list[str] | None = None,
 ) -> dict[str, Any]:
     """Run the forensic analysis pipeline on a single image.
@@ -1472,8 +1472,8 @@ def main() -> None:
     )
     p_analyze.add_argument("image", help="Path to the image file")
     p_analyze.add_argument(
-        "-o", "--output-dir", default="./forensic_output",
-        help="Directory for output artifacts (default: ./forensic_output)",
+        "-o", "--output-dir", default="./results/forensic",
+        help="Directory for output artifacts (default: ./results/forensic)",
     )
     p_analyze.add_argument(
         "-m", "--modules", default=None,

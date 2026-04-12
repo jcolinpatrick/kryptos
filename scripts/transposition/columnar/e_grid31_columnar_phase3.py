@@ -390,7 +390,7 @@ def main():
             print(f"  {i+1}. QG={r['qg']:.4f} canon={r['canon']}/24 | {r['desc']}")
             print(f"     {r['text'][:80]}")
 
-    outfile = os.path.join(os.path.dirname(__file__), '..', 'kbot_results', 'grid31_columnar_phase3_results.json')
+    outfile = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'results', 'kbot', 'grid31_columnar_phase3_results.json')
     os.makedirs(os.path.dirname(outfile), exist_ok=True)
     save_data = {
         "total_tested": total,

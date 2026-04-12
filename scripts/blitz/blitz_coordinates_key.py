@@ -1266,8 +1266,8 @@ def main():
         "top_results": sorted(results, key=lambda x: x.get("score", -99999), reverse=True)[:50],
     }
 
-    os.makedirs("kbot_results", exist_ok=True)
-    out_path = Path("kbot_results/coordinates_key_results.json")
+    os.makedirs("results/kbot", exist_ok=True)
+    out_path = Path("results/kbot/coordinates_key_results.json")
     with open(out_path, "w") as f:
         json.dump(output, f, indent=2, default=str)
     print(f"\nResults saved to {out_path}")

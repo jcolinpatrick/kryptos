@@ -752,8 +752,8 @@ def main():
         print(f"      PT: {pt_prefix}...")
 
     # Save results
-    out_path = os.path.join(os.path.dirname(__file__), "..",
-                            "kbot_results", "e_mengen_grille_01.json")
+    out_path = os.path.join(os.path.dirname(__file__), "..", "..",
+                            "results", "kbot", "e_mengen_grille_01.json")
     os.makedirs(os.path.dirname(out_path), exist_ok=True)
     result = {
         "experiment": "E-MENGEN-GRILLE-01",

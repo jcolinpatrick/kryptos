@@ -670,8 +670,8 @@ if all_crib_hits:
         print(f"  CT: {r['ct']}")
         print(f"  PT: {r['pt']}")
 
-os.makedirs('kbot_results', exist_ok=True)
-with open('kbot_results/unscramble_analysis.json', 'w') as f:
+os.makedirs('results/kbot', exist_ok=True)
+with open('results/kbot/unscramble_analysis.json', 'w') as f:
     json.dump({
         'experiment': 'E-UNSCRAMBLE-02',
         'date': '2026-03-02',
@@ -683,4 +683,4 @@ with open('kbot_results/unscramble_analysis.json', 'w') as f:
                     'ct': ct, 'kw': kw, 'cipher': fn, 'alpha': aname, 'pt': pt}
                    for i,(sc,label,ct,kw,fn,aname,pt) in enumerate(top_scores[:20])],
     }, f, indent=2)
-print(f"\nResults saved → kbot_results/unscramble_analysis.json")
+print(f"\nResults saved → results/kbot/unscramble_analysis.json")

@@ -41,7 +41,7 @@ import numpy as np
 
 sys.path.insert(0, 'src')
 
-OUTDIR = 'blitz_results/constraint_solver'
+OUTDIR = 'results/blitz/constraint_solver'
 os.makedirs(OUTDIR, exist_ok=True)
 
 def log(msg):

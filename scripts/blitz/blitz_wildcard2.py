@@ -119,8 +119,8 @@ CIPHERS = [
     ("beau_KA", lambda ct, kw: ''.join(KA[(KAI.get(kw[i%len(kw)], 0) - KAI[ct[i]]) % 26] for i in range(len(ct)))),
 ]
 
-os.makedirs('blitz_results/wildcard2', exist_ok=True)
-RF = open('blitz_results/wildcard2/results.jsonl', 'a')
+os.makedirs('results/blitz/wildcard2', exist_ok=True)
+RF = open('results/blitz/wildcard2/results.jsonl', 'a')
 HITS = []
 _tested = set()
 total_tested = 0
@@ -1144,4 +1144,4 @@ if __name__ == '__main__':
                 print(f"    PT: {r.get('pt','?')}", flush=True)
 
     RF.close()
-    print(f"\nResults saved to blitz_results/wildcard2/results.jsonl", flush=True)
+    print(f"\nResults saved to results/blitz/wildcard2/results.jsonl", flush=True)
