@@ -276,6 +276,14 @@ def run_campaign(
     print(f"[campaign] JSON: {output}")
     print(f"[campaign] MD:   {report}")
 
+    # Write campaign manifest so the controller's family registry picks
+    # up the result automatically on next launch. This is the structural
+    # bridge between this external campaign and the internalcontroller.
+    try:
+        _write_campaign_manifest(out, coverage)
+    except Exception as exc:
+        print(f"[campaign] WARNING: failed to write campaign manifest: {exc}")
+
     # Clean up checkpoint on successful completion
     if os.path.exists(CHECKPOINT_PATH):
         try:
@@ -284,6 +292,134 @@ def run_campaign(
             pass
 
     return out
+
+
+def _write_campaign_manifest(out: dict, coverage) -> None:
+    """Write a campaign manifest that the internalcontroller can read.
+
+    This is the structural bridge between external campaign work and the
+    controller's family registry. See src/kryptos/campaigns/manifest.py
+    for the schema.
+    """
+    from pathlib import Path
+    from kryptos.campaigns.manifest import (
+        CampaignVerdict, write_manifest, quick_manifest,
+    )
+    import subprocess
+
+    # Capture git commit if available
+    git_commit = ""
+    try:
+        result = subprocess.run(
+            ["git", "rev-parse", "--short", "HEAD"],
+            cwd=str(_PROJECT_ROOT) if "_PROJECT_ROOT" in globals() else ".",
+            capture_output=True, text=True, timeout=5,
+        )
+        if result.returncode == 0:
+            git_commit = result.stdout.strip()
+    except Exception:
+        pass
+
+    # Determine verdict from the run output
+    n_successes = len(out.get("joint_anomaly_successes", []))
+    plan_complete = out.get("plan_is_complete_for_mode", False)
+    mode = out.get("sampling_mode", "exploratory_stride")
+
+    if n_successes > 0:
+        verdict = CampaignVerdict.UNEXPECTED_HIT
+        verdict_summary = (
+            f"UNEXPECTED HIT: {n_successes} candidate(s) met joint anomaly "
+            f"success criterion. Requires independent verification before any "
+            f"further claim."
+        )
+    elif mode == "full_cartesian" and plan_complete:
+        verdict = CampaignVerdict.BOUNDED_NULL
+        verdict_summary = (
+            f"FULL-CARTESIAN BOUNDED NULL within parameterized two-layer "
+            f"search space. Every {out.get('outer_families_count', '?')} "
+            f"outer x {out.get('inner_families_count', '?')} inner = "
+            f"{out.get('total_profiles_tested', '?'):,} profiles enumerated. "
+            f"Zero joint anomaly successes. Bounded negative within bounded "
+            f"search space; not a proof that no two-layer mechanism can "
+            f"solve K4."
+        )
+    else:
+        verdict = CampaignVerdict.OPEN
+        verdict_summary = (
+            f"Exploratory run, mode {mode}, "
+            f"{out.get('total_profiles_tested', 0):,} profiles, "
+            f"no joint anomaly successes. Coverage approximate; this run is "
+            f"NOT a definitive negative result."
+        )
+
+    family_updates = {}
+    if mode == "full_cartesian" and plan_complete and n_successes == 0:
+        family_updates = {
+            "stego_layer": {
+                "tier": 3,
+                "evidence": (
+                    "f_two_layer_stego_cipher_v1 full-cartesian null over "
+                    f"{out.get('total_profiles_tested', 206448):,} profiles "
+                    "within mask/projection outer x near-identity additive "
+                    "inner architectural slice. Bounded negative within "
+                    "tested slice."
+                ),
+            },
+            "multi_layer": {
+                "tier": 3,
+                "evidence": (
+                    f"f_two_layer_stego_cipher_v1: full cartesian of "
+                    f"{out.get('outer_families_count', '?')}x"
+                    f"{out.get('inner_families_count', '?')}="
+                    f"{out.get('total_profiles_tested', '?'):,} two-layer "
+                    f"profiles, zero joint anomaly successes."
+                ),
+            },
+        }
+
+    manifest = quick_manifest(
+        campaign_id="f_two_layer_stego_cipher_v1",
+        campaign_name="Two-layer stego/cipher campaign",
+        verdict=verdict,
+        verdict_summary=verdict_summary,
+        family_updates=family_updates,
+        scope_caveats=[
+            "H1 conditional (direct positional crib mapping)",
+            "Joint-success criterion only catches multi-feature signal",
+            "Bean compatible additive variants only",
+        ],
+        scope_does_not_cover=[
+            "Strongly-mixing inner ciphers (excluded by design)",
+            "Substitution as outer layer",
+            "Compositions deeper than two layers",
+            "Procedural / physical mechanisms outside the framework",
+            "Non-additive cipher classes",
+        ],
+        evidence_pointer=output if isinstance(output := out.get("output_path", ""), str) else "",
+        total_profiles_evaluated=out.get("total_profiles_tested", 0),
+        joint_anomaly_successes=n_successes,
+        populations_tested=[mode],
+        variants_tested=["vig", "beau", "vbeau"],
+        git_commit=git_commit,
+        notes=(
+            f"Mode: {mode}. Workers: {out.get('workers', '?')}. "
+            f"Plan complete for mode: {plan_complete}."
+        ),
+    )
+
+    project_root = _project_root_for_manifest()
+    path = write_manifest(manifest, project_root)
+    print(f"[campaign] manifest: {path}")
+
+
+def _project_root_for_manifest() -> Path:
+    """Find the project root for the manifest write."""
+    p = Path(__file__).resolve()
+    while p != p.parent:
+        if (p / "src" / "kryptos").exists():
+            return p
+        p = p.parent
+    return Path(".")
 
 
 def _render_markdown(out: dict, coverage) -> str:

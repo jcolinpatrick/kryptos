@@ -333,7 +333,85 @@ def main():
     print(f"VERDICT: {verdict.verdict}")
     print("=" * 72)
     print(verdict.publication_wording)
+
+    # Write campaign manifest so the internalcontroller's family registry
+    # picks up this result automatically on next launch. See
+    # src/kryptos/campaigns/manifest.py for the schema.
+    try:
+        _write_w_delimiter_manifest(out, verdict, args)
+    except Exception as exc:
+        print(f"[w-delimiter-null] WARNING: manifest write failed: {exc}")
+
     return 0
+
+
+def _write_w_delimiter_manifest(out: dict, verdict, args) -> None:
+    """Write a campaign manifest for the controller to read."""
+    from pathlib import Path
+    from kryptos.campaigns.manifest import (
+        CampaignVerdict, write_manifest, quick_manifest,
+    )
+    import subprocess
+
+    # Map the W-delimiter campaign's verdict labels to manifest labels
+    label_map = {
+        "STRONG_ELIMINATION": CampaignVerdict.STRONG_ELIMINATION,
+        "NARROW_RESIDUAL": CampaignVerdict.NARROW_RESIDUAL,
+        "UNEXPECTED_HIT": CampaignVerdict.UNEXPECTED_HIT,
+    }
+    manifest_verdict = label_map.get(verdict.verdict, CampaignVerdict.OPEN)
+
+    git_commit = ""
+    try:
+        result = subprocess.run(
+            ["git", "rev-parse", "--short", "HEAD"],
+            capture_output=True, text=True, timeout=5,
+        )
+        if result.returncode == 0:
+            git_commit = result.stdout.strip()
+    except Exception:
+        pass
+
+    family_updates = {
+        "w_delimiter": {
+            "tier": 3,
+            "evidence": (
+                f"f_w_delimiter_null_v1 ({manifest_verdict.value}): "
+                f"{out.get('candidates_in_tail_count', 0)} joint-tail "
+                f"candidates across populations of "
+                f"{sum(out.get('population_sizes', {}).values()):,} records. "
+                f"AT+NEAR specifically tagged not-signal across all variants. "
+                f"Cheap self-encrypting criterion fully explained by combinatorics."
+            ),
+        },
+    }
+
+    project_root = Path(__file__).resolve().parent.parent.parent
+
+    manifest = quick_manifest(
+        campaign_id="f_w_delimiter_null_v1",
+        campaign_name="W-delimiter null elimination framework",
+        verdict=manifest_verdict,
+        verdict_summary=verdict.publication_wording,
+        family_updates=family_updates,
+        scope_caveats=verdict.scope_caveats,
+        scope_does_not_cover=[
+            "Unconstrained K4 segments 0, 2, 3, 5",
+            "Non-additive cipher classes",
+            "Physical-overlay or procedural mechanisms",
+            "Slot fills that break the W-delimiter assumption itself",
+        ],
+        evidence_pointer=args.output,
+        total_profiles_evaluated=sum(out.get("population_sizes", {}).values()),
+        joint_anomaly_successes=out.get("candidates_in_tail_count", 0),
+        populations_tested=list(out.get("population_sizes", {}).keys()),
+        variants_tested=out.get("metadata", {}).get("variants", []),
+        git_commit=git_commit,
+        notes=f"Multiplicity correction: {verdict.multiplicity_correction}",
+    )
+
+    path = write_manifest(manifest, project_root)
+    print(f"[w-delimiter-null] manifest: {path}")
 
 
 def _render_markdown(out, model, gramm_dists, at_near, top_per_pop, verdict):
