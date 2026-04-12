@@ -113,7 +113,8 @@ is oversampled at weight 5 vs medium 2 vs high 1.
 - **Coverage guarantee:** low-complexity band sampled at 5× the rate
   of the high-complexity band.
 - **What it can claim on null:** LOW-COMPLEXITY-EMPHASIZED null — the
-  cleanest region of the hypothesis space is dead.
+  lower-complexity end of the parameterized space was probed at an
+  elevated rate with no joint success.
 - **Use for:** probing the theoretically-cleanest region deeply.
 
 ### `full_cartesian`
@@ -122,10 +123,17 @@ Enumerate the full constrained cartesian product (optionally filtered by
 complexity bound or family).
 
 - **Coverage guarantee:** complete enumeration within filters.
-- **What it can claim on null:** FULL-CARTESIAN null — the entire
-  constrained two-layer hypothesis class is dead within the
-  parameterized space.
-- **Use for:** definitive null.
+- **What it can claim on null:** FULL-CARTESIAN null *within the
+  parameterized two-layer search space the campaign expresses* — every
+  outer instance × every inner instance was scored under blind
+  evaluation with no joint success. The result is bounded by the
+  outer/inner generators, the H1 modeling assumptions where they apply,
+  and the joint-success criterion. It is **NOT** a proof that no
+  two-layer mechanism can solve K4; it is a bounded negative within a
+  bounded search space.
+- **Use for:** the strongest *bounded* negative result the parameterized
+  framework can produce. Always cite with scope: "within the
+  parameterized two-layer search space at the joint-success bar".
 
 ## Multiprocessing
 
