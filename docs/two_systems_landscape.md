@@ -206,6 +206,48 @@ It does NOT cover:
 
 ---
 
+## Soft-prior helper: K4 grammar tool
+
+A separate tool at `src/kryptos/language/` and `scripts/tools/k4_grammar_probe.py`
+provides a constrained grammar / register prior for short phrase candidates around
+the known anchor cribs (EASTNORTHEAST, BERLINCLOCK). It is **NOT** in this matrix
+and **does NOT change any cell above**.
+
+What it is: a hand-curated POS-tagged inventory + 4 register models (directive,
+status_report, telegraphic, hybrid) + 9 phrase templates + a transparent linear
+score with per-component breakdown. Useful for ranking candidate slot fills by
+grammatical plausibility before any cryptanalytic test.
+
+What it is NOT:
+- not a decoder
+- not a theory generator
+- not evidence
+- not a basis for promoting any candidate to crib status
+- not a hard filter
+- soft prior only
+
+Example use: when proposing a slot-fill hypothesis, query the tool first to see
+what the grammar prior thinks the most plausible candidates are. Then test those
+candidates with the cryptanalytic framework. The grammar prior must never replace
+the cryptanalytic test, only inform candidate selection.
+
+**Initial findings** (for reference, not as evidence):
+- Most plausible 2-letter PREP before BERLINCLOCK: AT (0.907) > TO (0.871)
+- Most plausible 4-letter before BERLINCLOCK: MEET (0.931) > FIND/SEEK (0.907) > NEAR (0.895)
+- Most plausible 2-letter after EASTNORTHEAST: TO (0.807) dominates
+- "GO EASTNORTHEAST" (0.950) clearly beats "AT EASTNORTHEAST" (0.757)
+- "ASSET COMPROMISED" scores higher under status_report register (0.864) than
+  directive (0.743)
+
+These are SOFT PRIORS. The W-delimiter null framework (NARROW_RESIDUAL verdict)
+already evaluated 100K dictionary candidates per variant; the grammar prior
+helps explain WHY certain candidates rank higher under English plausibility but
+does not change the underlying cryptanalytic conclusion.
+
+See `src/kryptos/language/README.md` for full documentation.
+
+---
+
 ## Cross-references
 
 - Frozen artifact: `results/null_reports/two_layer_full_cartesian_20260412_1ada68c_dirty.{json,md}`
@@ -215,6 +257,7 @@ It does NOT cover:
 - E-BEAN-01: `docs/exhaustion_certificate_2026_04_08.md` §4-5
 - TABP series summary: `results/tabp_series_summary.md`
 - Procedural recipes (recipes-format hypotheses): `docs/procedural_anomaly_recipes.md`
+- Grammar prior tool (soft prior, not evidence): `src/kryptos/language/README.md` and `scripts/tools/k4_grammar_probe.py`
 - The retired palette: `memory/retired/` and `docs/a1_score_conditioned_null_report.md`
 
 ---
