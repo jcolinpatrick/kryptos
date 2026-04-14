@@ -62,7 +62,7 @@ A `venv/` exists (gitignored) for non-core work. Activate with `source venv/bin/
 **Git workflow:** Development happens directly on `main`. No branch naming conventions or PR process — this is a solo research project with computational partners.
 
 ```bash
-# Run all tests (~1290 tests, ~80s, no expected failures).
+# Run all tests (~80s, no expected failures).
 # Current count drifts; authoritative: `PYTHONPATH=src pytest tests/ --collect-only -q | tail -1`
 PYTHONPATH=src pytest tests/
 
@@ -215,7 +215,7 @@ These are non-obvious pitfalls discovered through prior sessions. Check these fi
 - **High scores are almost always false signals**: See `MEMORY.md` §5 "Do-Not-Revive List" and the `BREAKTHROUGH` label caveat in `docs/README_current_state.md` §4. The `BREAKTHROUGH` label (`crib_score == 24 && bean_passed`) is an **input to validation**, not an output of it — historical emission has been dominated by post-hoc overfits. Treat it as a candidate for investigation, not a solution. See `docs/methodological_audits.md` AUDIT-3.
 - **Beaufort A=0 is the confirmed default**: Use A=0 indexing for all Beaufort operations unless explicitly testing A=1. Both conventions must be tested in positional experiments.
 - **Standalone script `_ROOT` depth**: The bootstrap snippet (`_ROOT = os.path.dirname(os.path.dirname(...))`) assumes the script is exactly 2 directories deep (e.g. `scripts/grille/e_foo.py`). Scripts at 3+ levels need additional `os.path.dirname()` wrappers or they'll get `ModuleNotFoundError`. Robust alternative: `_ROOT = os.path.dirname(os.path.abspath(__file__))` then `while not os.path.exists(os.path.join(_ROOT, 'src')): _ROOT = os.path.dirname(_ROOT)`.
-- **Always import constants, never hardcode**: This includes `CONSENSUS_NULL_POSITIONS`, not just CT/cribs. A prior session generated a script with fabricated null positions that shared only 3/17 values with the consensus — the results were silently invalid. Import from `kryptos.kernel.constants`.
+- **Always import constants, never hardcode**: For CT/cribs/Bean values, import from `kryptos.kernel.constants`. A prior session generated a script with fabricated null positions that shared only 3/17 values with the consensus — the results were silently invalid. **Caveat on `CONSENSUS_NULL_POSITIONS`**: the 17-position null mask in `kernel/constants.py` is pending retraction — it was derived from the retired palette hypothesis and has no independent verification. Do not cite it as established fact in new theories. See `memory/project_consensus_nulls_epistemic_status_2026_04_14.md`.
 - **Two exhaustion logs — only one is authoritative**: Root `exhaustion_log.json` is the single source of truth. `scripts/EXHAUSTION.json` is stale — never read from or write to it.
 - **Two `.env` files — don't mix them up**: `.env` (root) = `ANTHROPIC_API_KEY` + `KBOT_CLASSIFY_API_KEY` + `NTFY_TOPIC`. `<internal>` = Agent SDK API key (see `<internal>`). Loading the wrong one gives silent auth failures.
 
@@ -388,11 +388,12 @@ Two `memory/` directories exist — don't confuse them:
 
 - **KryptosBot runner:** `python3 <internal>/solve.py`. See `<internal>`.
 - **Campaign runner:** `PYTHONPATH=src python3 -u <internal>/campaign_v2.py` (supports `--local-only`, `--dry-run`).
+- **internal review system (current research system):** candidate generators + adversarial review + statistical-review gate + lead evaluator. Live state and day-by-day build notes in `MEMORY.md` under "Project (current state)" — read those, not this section, for what's actually running. Two cycle loops exist (`controller.run` and `run_controller.do_run`); any phase addition must patch **both**.
 - **Historical reference:** `archive/legacy_harness/`, `archive/session_reports/`, `docs/history/`, [`reports/final_synthesis.md`](reports/final_synthesis.md) (banner-labelled HISTORICAL SNAPSHOT).
 
 ---
 
-*Last updated: 2026-04-09 — Epistemic control-plane refactor. CLAUDE.md is operational doctrine only. Live research state in MEMORY.md; structured claims in docs/claims_registry.json; open audits in docs/methodological_audits.md; canonical entry index in docs/README_current_state.md.*
+*Last updated: 2026-04-14 — CONSENSUS_NULL_POSITIONS retraction flagged, internal review system pointer added, stale test-count dropped. CLAUDE.md is operational doctrine only. Live research state in MEMORY.md; structured claims in docs/claims_registry.json; open audits in docs/methodological_audits.md; canonical entry index in docs/README_current_state.md.*
 *Primary author: Colin Patrick (human lead) + Claude (computational partner)*
 
 *Precedence rule for conflicts: verify freshness with `git log -1 --format=%cd CLAUDE.md MEMORY.md`. If CLAUDE.md is older than MEMORY.md and the two conflict on research state (not operational doctrine), trust MEMORY.md and flag the drift. Operational doctrine in CLAUDE.md is always authoritative regardless of date.*
