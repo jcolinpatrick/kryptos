@@ -17,7 +17,7 @@ Classification per project truth taxonomy.
 
 5. **Physical overlay "Code Breaker" concept** sketched (IMG_1555). Overlay placed ON TOP of code.
 
-6. **"4, 8, 10, 26 = Col"** on the ABSCISSA to-do page (IMG_1340). Possibly column widths.
+6. ~~**"4, 8, 10, 26 = Col"** on the ABSCISSA to-do page (IMG_1340). Possibly column widths.~~ **[RETRACTED 2026-04-14]** Colin re-examined the primary source: "4, 8, 10, 26" are the positions of the four question marks Sanborn drew to indicate those positions are NOT enciphered (i.e. literal unknowns in his working copy), and "Col" is an OCR misread of something else. This is bookkeeping, not a cipher hint. Do not cite this finding. Do not generate theories from it. See `memory/feedback_archive_col_notation_is_ocr_phantom.md`. The prior `f_archive_col_notation_v1` campaign that tested the columnar-widths interpretation returned EMPTY and is preserved for its cipher-family closure value (w4/w6/w7/w8/w9 Bean-impossibility, w10 four-survivor enumeration) but the *archival justification* for running it is retracted.
 
 7. **"3 words most"** (IMG_1568). Context: "A choice of 3 words most typified the way of life." Could refer to 3 keywords.
 
@@ -45,7 +45,7 @@ H-AAA-5: ATBASH applied as a pre- or post-processing step in combination with a 
 
 H-AAA-6: The circled letters on the handwritten tableau encode additional information (indicator positions, key material, or a secondary message).
 
-H-AAA-7: "4, 8, 10, 26 = Col" are column widths for a transposition grid applied before or after substitution.
+~~H-AAA-7: "4, 8, 10, 26 = Col" are column widths for a transposition grid applied before or after substitution.~~ **[RETRACTED 2026-04-14]** The underlying notation is OCR-misread bookkeeping (question-mark positions), not a cipher instruction. See finding #6 above and `memory/feedback_archive_col_notation_is_ocr_phantom.md`. Do not generate hypotheses that cite this as archival support.
 
 ---
 
