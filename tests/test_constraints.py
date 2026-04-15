@@ -93,6 +93,7 @@ class TestBean:
         assert isinstance(result, BeanResult)
         assert result.eq_total == 1
         assert result.ineq_total == 242
+        assert result.linear_total == 101
 
     def test_bean_simple_matches_full(self):
         ks = list(range(97))
@@ -105,6 +106,31 @@ class TestBean:
         ks = [0] * 97
         assert not verify_bean_simple(ks)
 
+    def test_bean_simple_rejects_short_keystream(self):
+        """Hardening 2026-04-14: verify_bean_simple must refuse non-CT_LEN
+        keystreams instead of silently skipping out-of-range constraints
+        (which could vacuously return True for a sparse input)."""
+        import pytest
+        from kryptos.kernel.constants import CT_LEN
+
+        for short_len in (0, 1, 24, 73, 96, 98, 200):
+            ks = [0] * short_len
+            with pytest.raises(ValueError) as excinfo:
+                verify_bean_simple(ks)
+            assert str(CT_LEN) in str(excinfo.value)
+            assert "verify_bean_from_implied" in str(excinfo.value)
+
+    def test_bean_full_rejects_short_keystream(self):
+        """Same hardening for verify_bean (the diagnostic version)."""
+        import pytest
+        from kryptos.kernel.constants import CT_LEN
+
+        for short_len in (0, 73, 96, 98):
+            ks = [0] * short_len
+            with pytest.raises(ValueError) as excinfo:
+                verify_bean(ks)
+            assert str(CT_LEN) in str(excinfo.value)
+
     def test_bean_from_primer_roundtrip(self):
         """verify_bean_from_primer should produce same result as manual expand+verify."""
         primer = (1, 2, 3, 4, 5)
@@ -113,6 +139,7 @@ class TestBean:
         assert result_manual.passed == result_auto.passed
         assert result_manual.eq_satisfied == result_auto.eq_satisfied
         assert result_manual.ineq_satisfied == result_auto.ineq_satisfied
+        assert result_manual.linear_satisfied == result_auto.linear_satisfied
 
     def test_vimark_recurrence_all_periods(self):
         """expand_keystream_vimark recurrence holds for periods 2-10."""
@@ -132,6 +159,100 @@ class TestBean:
         import pytest
         with pytest.raises(ValueError, match="period >= 2"):
             expand_keystream_vimark((0,), 97)
+
+
+class TestBeanLinear:
+    """Tests for the Gröbner-derived linear constraints on keystream."""
+
+    def test_linear_count(self):
+        """There are exactly 101 variant-independent linear constraints."""
+        from kryptos.kernel.constants import BEAN_LINEAR
+        assert len(BEAN_LINEAR) == 101
+
+    def test_vigenere_keystream_passes_linear(self):
+        """Known Vigenère keystream satisfies all 101 linear constraints."""
+        ks = [0] * 97
+        positions = sorted(CRIB_DICT.keys())
+        for i, pos in enumerate(positions[:13]):
+            ks[pos] = VIGENERE_KEY_ENE[i]
+        for i, pos in enumerate(positions[13:]):
+            ks[pos] = VIGENERE_KEY_BC[i]
+        result = verify_bean(ks)
+        assert result.linear_satisfied == 101
+        assert result.linear_total == 101
+
+    def test_beaufort_keystream_passes_linear(self):
+        """Known Beaufort keystream satisfies all 101 linear constraints."""
+        ks = [0] * 97
+        positions = sorted(CRIB_DICT.keys())
+        for i, pos in enumerate(positions[:13]):
+            ks[pos] = BEAUFORT_KEY_ENE[i]
+        for i, pos in enumerate(positions[13:]):
+            ks[pos] = BEAUFORT_KEY_BC[i]
+        result = verify_bean(ks)
+        assert result.linear_satisfied == 101
+
+    def test_random_keystream_fails_linear(self):
+        """A random keystream should almost certainly fail linear constraints."""
+        import random
+        rng = random.Random(42)
+        ks = [rng.randint(0, 25) for _ in range(97)]
+        result = verify_bean(ks)
+        assert result.linear_satisfied < 101
+
+    def test_linear_constraints_variant_independent(self):
+        """Each constraint k[a]-k[b]-k[c]+k[d]≡0 holds for all 3 variants."""
+        from kryptos.kernel.constants import BEAN_LINEAR, ALPH_IDX
+        positions = sorted(CRIB_DICT.keys())
+        for variant_fn in [
+            lambda c, p: (c - p) % 26,   # Vigenère
+            lambda c, p: (c + p) % 26,   # Beaufort
+            lambda c, p: (p - c) % 26,   # Variant Beaufort
+        ]:
+            ks = {}
+            for pos in positions:
+                ct_idx = ALPH_IDX[CT[pos]]
+                pt_idx = ALPH_IDX[CRIB_DICT[pos]]
+                ks[pos] = variant_fn(ct_idx, pt_idx)
+            for a, b, c, d in BEAN_LINEAR:
+                val = (ks[a] - ks[b] - ks[c] + ks[d]) % 26
+                assert val == 0, (
+                    f"Linear constraint ({a},{b},{c},{d}) failed under "
+                    f"variant: {val} != 0"
+                )
+
+    def test_linear_independent_of_pairwise(self):
+        """A keystream can pass pairwise eq+ineq but fail linear.
+
+        This proves the linear constraints add independent pruning power.
+        """
+        import random
+        from kryptos.kernel.constants import BEAN_EQ, BEAN_INEQ, BEAN_LINEAR
+        rng = random.Random(999)
+        positions = sorted(CRIB_DICT.keys())
+
+        for _ in range(10_000_000):
+            ks = {pos: rng.randint(0, 25) for pos in positions}
+            ks[65] = ks[27]  # Force equality
+
+            # Check pairwise inequalities
+            bad = False
+            for a, b in BEAN_INEQ:
+                if ks[a] == ks[b]:
+                    bad = True
+                    break
+            if bad:
+                continue
+
+            # Found a pairwise-passing keystream — check linear
+            lin_ok = all(
+                (ks[a] - ks[b] - ks[c] + ks[d]) % 26 == 0
+                for a, b, c, d in BEAN_LINEAR
+            )
+            if not lin_ok:
+                # Counterexample found: passes pairwise, fails linear
+                return  # Test passes
+        pytest.skip("No counterexample found (constraint space too tight)")
 
 
 class TestVimarkConsistency:

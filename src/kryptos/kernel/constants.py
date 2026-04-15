@@ -80,6 +80,49 @@ def _derive_bean_ineq() -> Tuple[Tuple[int, int], ...]:
 
 BEAN_INEQ: Tuple[Tuple[int, int], ...] = _derive_bean_ineq()
 
+
+def _derive_bean_linear() -> Tuple[Tuple[int, int, int, int], ...]:
+    """Derive variant-independent 4-position linear constraints on keystream.
+
+    For each 4-tuple of crib positions (a, b, c, d), check whether
+    k[a] - k[b] - k[c] + k[d] ≡ 0 (mod 26) holds under ALL three
+    additive cipher variants (Vigenère, Beaufort, Variant Beaufort).
+
+    These constraints encode that key DIFFERENCES at crib positions are
+    fully determined (up to the global additive constant). Together with
+    the pairwise equality/inequality constraints, they reduce the valid
+    keystream space from 26^24 to exactly 624 solutions.
+
+    Derived from the Gröbner basis of the crib system (cf. Bean's
+    kryptos-k4-sage.txt, HistoCrypt 2021). The full set has 101
+    constraints; only 22 are independent (rank 22 over Z, plus the
+    1 equality = rank 23 total, leaving 1 free variable over Q).
+    """
+    positions = sorted(CRIB_DICT.keys())
+    n = len(positions)
+    constraints: list[tuple[int, int, int, int]] = []
+
+    for i in range(n):
+        for j in range(i + 1, n):
+            for k in range(j + 1, n):
+                for l in range(k + 1, n):
+                    a, b, c, d = positions[i], positions[j], positions[k], positions[l]
+                    for p1, p2, p3, p4 in ((a, b, c, d), (a, c, b, d), (a, d, b, c)):
+                        ca, pa = ALPH_IDX[CT[p1]], ALPH_IDX[CRIB_DICT[p1]]
+                        cb, pb = ALPH_IDX[CT[p2]], ALPH_IDX[CRIB_DICT[p2]]
+                        cc, pc = ALPH_IDX[CT[p3]], ALPH_IDX[CRIB_DICT[p3]]
+                        cd, pd = ALPH_IDX[CT[p4]], ALPH_IDX[CRIB_DICT[p4]]
+                        vig = ((ca - pa) - (cb - pb) - (cc - pc) + (cd - pd)) % MOD
+                        beau = ((ca + pa) - (cb + pb) - (cc + pc) + (cd + pd)) % MOD
+                        vbeau = ((pa - ca) - (pb - cb) - (pc - cc) + (pd - cd)) % MOD
+                        if vig == 0 and beau == 0 and vbeau == 0:
+                            constraints.append((p1, p2, p3, p4))
+
+    return tuple(constraints)
+
+
+BEAN_LINEAR: Tuple[Tuple[int, int, int, int], ...] = _derive_bean_linear()
+
 # ── Known keystream values (verified at crib positions) ───────────────────
 
 VIGENERE_KEY_ENE: Tuple[int, ...] = (1, 11, 25, 2, 3, 2, 24, 24, 6, 2, 10, 0, 25)
@@ -103,6 +146,29 @@ IC_PRE_ENE: float = 0.0667    # Positions 0-20, suspiciously English-like
 
 # ── Stego layer constants ──────────────────────────────────────────────
 
+# ── RETIRED: null palette / consensus null positions ──────────────────────
+#
+# RETIRED 2026-04-14 (claim_id: null_palette_retired). See:
+#   memory/project_consensus_nulls_epistemic_status_2026_04_14.md
+#   docs/a1_score_conditioned_null_report.md
+#   docs/claims_registry.json → C-PALETTE-01
+#
+# The 7-letter palette and the 17-position consensus null mask were
+# retired after matched controls (April 2026) disproved the palette's
+# specificity. The symbols remain importable for historical
+# reproducibility only — archived scripts that depend on them continue
+# to work, but their OUTPUT is no longer treated as live evidence (see
+# kryptos.kernel.constraints.stego, which now returns status="retired"
+# on every StegoProperty, and kryptos.kernel.scoring.compliance, which
+# requires an explicit palette parameter on CxS-1 / CxS-3).
+#
+# The _verify() assertions below are relaxed to accept either the
+# historical length (7 / 17) or an empty set, so a future physical
+# removal can land without crashing every import. Physical removal is
+# NOT in scope for the 2026-04-14 quarantine per Colin's constraint.
+#
+# DO NOT USE THESE CONSTANTS IN LIVE CODE PATHS. Any new caller should
+# be reviewed against the retirement doctrine before import.
 NULL_PALETTE: FrozenSet[str] = frozenset("BGIKOWZ")
 CONSENSUS_NULL_POSITIONS: FrozenSet[int] = frozenset(
     {0, 1, 2, 5, 8, 12, 14, 20, 36, 52, 58, 59, 74, 75, 78, 84, 85}
@@ -127,9 +193,19 @@ def _verify() -> None:
     assert set(KRYPTOS_ALPHABET) == set(ALPH), "KA and ALPH char sets differ"
     assert len(BEAN_EQ) == 1, "Expected 1 Bean equality"
     assert len(BEAN_INEQ) == 242, f"Expected 242 Bean inequalities, got {len(BEAN_INEQ)}"
-    assert len(NULL_PALETTE) == 7, f"NULL_PALETTE should have 7 letters, got {len(NULL_PALETTE)}"
+    assert len(BEAN_LINEAR) == 101, f"Expected 101 Bean linear constraints, got {len(BEAN_LINEAR)}"
+    # RETIRED: relaxed to accept 0 (future physical removal) OR historical
+    # lengths (7 / 17). See the retirement block above NULL_PALETTE.
+    assert len(NULL_PALETTE) in (0, 7), (
+        f"NULL_PALETTE should have 0 (retired, physically removed) or 7 "
+        f"(retired, historical length); got {len(NULL_PALETTE)}"
+    )
     assert all(c in ALPH for c in NULL_PALETTE), "NULL_PALETTE must be uppercase A-Z"
-    assert len(CONSENSUS_NULL_POSITIONS) == 17, f"Expected 17 consensus nulls, got {len(CONSENSUS_NULL_POSITIONS)}"
+    assert len(CONSENSUS_NULL_POSITIONS) in (0, 17), (
+        f"CONSENSUS_NULL_POSITIONS should have 0 (retired, physically "
+        f"removed) or 17 (retired, historical length); got "
+        f"{len(CONSENSUS_NULL_POSITIONS)}"
+    )
     assert all(0 <= p < CT_LEN for p in CONSENSUS_NULL_POSITIONS), "Null positions must be in [0, CT_LEN)"
     assert not CONSENSUS_NULL_POSITIONS & CRIB_POSITIONS, "Null positions must not overlap crib positions"
     assert len(BEAUFORT_KEYSTREAM_AT_CRIBS) == N_CRIBS, "Keystream string must have N_CRIBS chars"

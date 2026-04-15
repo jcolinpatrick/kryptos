@@ -1,4 +1,23 @@
-"""Tests for stego layer proof module — S2, S4, S5, S6."""
+"""Tests for stego layer proof module — S2, S4, S5, S6.
+
+RETIRED 2026-04-14: the underlying null-palette / consensus-null-mask
+construct is retired (claim_id: null_palette_retired). These tests pin
+TWO distinct invariants and must continue to pass green:
+
+  1. The MATH invariants (observed counts, p-values, classification
+     accuracies, hypergeometric results) are unchanged — they are
+     correct computations of what they compute, regardless of whether
+     the underlying claim is live or retired. Archived scripts and
+     reproducibility fixtures still need these to be stable.
+
+  2. The LABEL invariant has flipped: every StegoProperty returned by
+     kryptos.kernel.constraints.stego now carries status="retired"
+     instead of status="confirmed". These tests assert status=="retired"
+     to pin the retirement at the kernel layer and prevent silent
+     re-promotion.
+
+See memory/project_consensus_nulls_epistemic_status_2026_04_14.md.
+"""
 import pytest
 
 from kryptos.kernel.constants import (
@@ -41,9 +60,10 @@ class TestPaletteRestriction:
                 f"CT[{pos}]={CT[pos]} not in NULL_PALETTE"
             )
 
-    def test_status_is_confirmed(self):
+    def test_status_is_retired(self):
+        """Retired 2026-04-14; see module docstring."""
         result = palette_restriction(CT, CONSENSUS_NULL_POSITIONS)
-        assert result.status == "confirmed"
+        assert result.status == "retired"
 
 
 class TestNullPositionClassification:
@@ -67,9 +87,10 @@ class TestNullPositionClassification:
         result = null_position_classification(CT, CONSENSUS_NULL_POSITIONS)
         assert result.expected == 35
 
-    def test_status_is_confirmed(self):
+    def test_status_is_retired(self):
+        """Retired 2026-04-14; see module docstring."""
         result = null_position_classification(CT, CONSENSUS_NULL_POSITIONS)
-        assert result.status == "confirmed"
+        assert result.status == "retired"
 
     def test_p_value_is_sentinel(self):
         """S4 p_value is a sentinel (-1.0), not a real p-value (no MC null model)."""
@@ -98,9 +119,10 @@ class TestPolybiusGeneration:
         result = polybius_generation(NULL_PALETTE, "KRYPTOS", "SEVEN")
         assert result.p_value < 0.01
 
-    def test_status_is_confirmed(self):
+    def test_status_is_retired(self):
+        """Retired 2026-04-14; see module docstring."""
         result = polybius_generation(NULL_PALETTE, "KRYPTOS", "SEVEN")
-        assert result.status == "confirmed"
+        assert result.status == "retired"
 
 
 class TestCribNullAvoidance:
@@ -135,12 +157,13 @@ class TestCribNullAvoidance:
         assert result.p_value < 1.0
         assert result.p_value > 0.0
 
-    def test_status_is_confirmed(self):
+    def test_status_is_retired(self):
+        """Retired 2026-04-14; see module docstring."""
         result = crib_null_avoidance(
             CONSENSUS_NULL_POSITIONS,
             [(21, 34), (63, 74)],
         )
-        assert result.status == "confirmed"
+        assert result.status == "retired"
 
 
 class TestFullStegoProof:
@@ -164,7 +187,15 @@ class TestFullStegoProof:
         for r in results:
             assert isinstance(r, StegoProperty)
 
-    def test_all_confirmed(self):
+    def test_all_retired(self):
+        """Retired 2026-04-14. Every StegoProperty returned by
+        full_stego_proof now carries status='retired'. This test pins
+        the retirement at the kernel layer — any regression that
+        restores status='confirmed' will fail here.
+        """
         results = full_stego_proof(CT)
         for r in results:
-            assert r.status == "confirmed"
+            assert r.status == "retired", (
+                f"StegoProperty {r.id} has status={r.status!r}; "
+                f"must be 'retired' per quarantine doctrine"
+            )

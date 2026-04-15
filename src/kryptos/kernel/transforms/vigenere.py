@@ -133,7 +133,17 @@ def recover_key_at_positions(
 
     If pa/ca alphabets are provided, uses their index tables for lookup.
     Otherwise uses standard A-Z (ord - 65).
+
+    Raises:
+        ValueError: if the alphabet arguments are incomplete, a requested
+            position is outside the ciphertext, or a plaintext/ciphertext
+            character is not A-Z. Known-plaintext recovery must fail closed:
+            silently dropping malformed positions creates partial key maps
+            that can look like valid evidence.
     """
+    if (pa is None) != (ca is None):
+        raise ValueError("pa and ca must be provided together or both omitted")
+
     fn = KEY_RECOVERY[variant]
     result: dict[int, int] = {}
 
@@ -141,16 +151,34 @@ def recover_key_at_positions(
         pa_idx = pa.index_table
         ca_idx = ca.index_table
         for pos, pt_ch in pt_positions.items():
-            if pos < len(ct):
-                c = ca_idx[ord(ct[pos]) - 65]
-                p = pa_idx[ord(pt_ch) - 65]
-                result[pos] = fn(c, p)
+            if pos < 0 or pos >= len(ct):
+                raise ValueError(
+                    f"known-plaintext position {pos} is outside ciphertext "
+                    f"length {len(ct)}"
+                )
+            if ct[pos] not in ALPH or pt_ch not in ALPH:
+                raise ValueError(
+                    f"known-plaintext recovery requires uppercase A-Z at "
+                    f"position {pos}: ct={ct[pos]!r}, pt={pt_ch!r}"
+                )
+            c = ca_idx[ord(ct[pos]) - 65]
+            p = pa_idx[ord(pt_ch) - 65]
+            result[pos] = fn(c, p)
     else:
         for pos, pt_ch in pt_positions.items():
-            if pos < len(ct):
-                c = ord(ct[pos]) - 65
-                p = ord(pt_ch) - 65
-                result[pos] = fn(c, p)
+            if pos < 0 or pos >= len(ct):
+                raise ValueError(
+                    f"known-plaintext position {pos} is outside ciphertext "
+                    f"length {len(ct)}"
+                )
+            if ct[pos] not in ALPH or pt_ch not in ALPH:
+                raise ValueError(
+                    f"known-plaintext recovery requires uppercase A-Z at "
+                    f"position {pos}: ct={ct[pos]!r}, pt={pt_ch!r}"
+                )
+            c = ord(ct[pos]) - 65
+            p = ord(pt_ch) - 65
+            result[pos] = fn(c, p)
 
     return result
 

@@ -82,9 +82,29 @@ def score_composition(
 
 
 def extract_nulls(ct: str) -> str:
-    """Extract null positions from ciphertext, returning cipher-layer text."""
-    from kryptos.kernel.constants import CONSENSUS_NULL_POSITIONS
-    return "".join(c for i, c in enumerate(ct) if i not in CONSENSUS_NULL_POSITIONS)
+    """RETIRED 2026-04-14.
+
+    This helper previously stripped CONSENSUS_NULL_POSITIONS from the
+    ciphertext by default, implicitly anchoring any downstream composition
+    analysis to the retired null-palette / null-mask construct. It has
+    zero live callers as of the 2026-04-14 quarantine audit. Raising here
+    loudly instead of deleting, so any future revival (including a rebased
+    branch that expected this function to exist) fails fast with a
+    pointer to the retirement doctrine rather than silently producing a
+    retired-mask-conditioned result.
+
+    See: memory/project_consensus_nulls_epistemic_status_2026_04_14.md
+    Claim ID: null_palette_retired
+    """
+    raise NotImplementedError(
+        "extract_nulls() is retired (2026-04-14). It depended on the "
+        "retired null-palette / null-mask construct (claim_id: "
+        "null_palette_retired). See "
+        "memory/project_consensus_nulls_epistemic_status_2026_04_14.md. "
+        "If you need to strip positions from the ciphertext, pass the "
+        "position set explicitly as a function parameter rather than "
+        "relying on a kernel-level default."
+    )
 
 
 def quick_crib_check(text: str, threshold: int = 3) -> bool:

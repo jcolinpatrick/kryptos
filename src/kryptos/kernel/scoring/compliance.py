@@ -28,6 +28,8 @@ from __future__ import annotations
 from collections import defaultdict
 from dataclasses import dataclass, field
 
+import warnings
+
 from kryptos.kernel.constants import (
     ALPH,
     BEAUFORT_KEYSTREAM_AT_CRIBS,
@@ -36,8 +38,14 @@ from kryptos.kernel.constants import (
     CT,
     MOD,
     N_CRIBS,
-    NULL_PALETTE,
 )
+# NULL_PALETTE is intentionally NOT imported here.
+# Quarantine 2026-04-14: compliance scoring must not implicitly use the
+# retired null palette. Callers that still need palette-based enrichment
+# (CxS-1, CxS-3) must pass an explicit palette parameter into
+# check_coupling_constraints and score_mechanism_compliance. Callers that
+# pass palette=None get CxS-1=0.0 / CxS-3=0.0 and a DeprecationWarning.
+# See memory/project_consensus_nulls_epistemic_status_2026_04_14.md.
 from kryptos.kernel.constraints.coupling import (
     ap_palette_containment,
     dual_alphabet_structure,
@@ -151,33 +159,62 @@ def check_hard_constraints(
 def check_coupling_constraints(
     keystream_at_cribs: list[int],
     mechanism: MechanismDescription,
+    palette: "frozenset[str] | None" = None,
 ) -> dict[str, float]:
     """Evaluate stego-cipher coupling constraints (CxS-1 through CxS-4).
 
-    These quantify the statistical relationship between the stego layer
-    (null palette) and the cipher layer (keystream). Scores are normalized
-    to [0.0, 1.0].
+    These quantify the statistical relationship between a proposed stego
+    layer (null palette) and the cipher layer (keystream). Scores are
+    normalized to [0.0, 1.0].
+
+    QUARANTINE 2026-04-14: CxS-1 and CxS-3 require an explicit `palette`
+    parameter. Previously this function silently used
+    kryptos.kernel.constants.NULL_PALETTE as an implicit default, which
+    anchored every compliance evaluation to the retired null-palette /
+    null-mask construct (claim_id: null_palette_retired). When `palette`
+    is None (the new default), CxS-1 and CxS-3 are returned as 0.0 and a
+    DeprecationWarning is emitted. CxS-2 and CxS-4 are unaffected because
+    they do not depend on any palette. Historical / regression callers
+    that still want the real palette-enrichment math must pass the
+    palette explicitly, e.g. `palette=frozenset("BGIKOWZ")`.
 
     Args:
         keystream_at_cribs: List of 24 integers (A=0) at crib positions.
         mechanism: Structural description of the candidate mechanism.
+        palette: Explicit palette to use for CxS-1 and CxS-3. If None,
+            the palette-dependent terms return 0.0. There is no implicit
+            default — any caller that wants palette-enrichment scoring
+            must name the palette itself.
 
     Returns:
         Dict mapping constraint IDs to normalized scores in [0.0, 1.0].
     """
     results: dict[str, float] = {}
 
-    # CxS-1: Keystream palette enrichment — normalized by 13 (K4's observed)
-    cxs1 = keystream_palette_enrichment(keystream_at_cribs, NULL_PALETTE)
-    results["CxS-1"] = min(cxs1.observed / 13.0, 1.0)
+    if palette is None:
+        warnings.warn(
+            "check_coupling_constraints called with palette=None: CxS-1 and "
+            "CxS-3 will be reported as 0.0. These terms were previously "
+            "anchored to the retired kryptos.kernel.constants.NULL_PALETTE "
+            "(claim_id: null_palette_retired, retired 2026-04-14). Pass an "
+            "explicit palette if you need the historical palette-enrichment "
+            "math. See memory/project_consensus_nulls_epistemic_status_2026_04_14.md.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        results["CxS-1"] = 0.0
+        results["CxS-3"] = 0.0
+    else:
+        # CxS-1: Keystream palette enrichment — normalized by 13
+        cxs1 = keystream_palette_enrichment(keystream_at_cribs, palette)
+        results["CxS-1"] = min(cxs1.observed / 13.0, 1.0)
+        # CxS-3: AP palette containment — normalized by 12
+        cxs3 = ap_palette_containment(keystream_at_cribs, palette)
+        results["CxS-3"] = min(cxs3.observed / 12.0, 1.0)
 
-    # CxS-2: Mod-5 KA structure — normalized by 14 (K4's observed)
+    # CxS-2: Mod-5 KA structure — normalized by 14 (palette-independent)
     cxs2 = mod5_ka_structure(keystream_at_cribs)
     results["CxS-2"] = min(cxs2.observed / 14.0, 1.0)
-
-    # CxS-3: AP palette containment — normalized by 12 (K4's observed)
-    cxs3 = ap_palette_containment(keystream_at_cribs, NULL_PALETTE)
-    results["CxS-3"] = min(cxs3.observed / 12.0, 1.0)
 
     # CxS-4: Dual alphabet structure — binary from mechanism description
     results["CxS-4"] = 1.0 if (mechanism.uses_ka and mechanism.uses_az) else 0.0
@@ -291,6 +328,7 @@ def check_structural_constraints(
 def score_mechanism_compliance(
     keystream_at_cribs: list[int],
     mechanism: MechanismDescription,
+    palette: "frozenset[str] | None" = None,
 ) -> ComplianceScore:
     """Evaluate a candidate mechanism against the full constraint hierarchy.
 
@@ -302,16 +340,26 @@ def score_mechanism_compliance(
       - coupling_score >= 2.5 → COMPLIANT
       - Otherwise → PARTIAL
 
+    QUARANTINE 2026-04-14: the `palette` parameter is plumbed through to
+    check_coupling_constraints. When palette is None (the default), the
+    palette-dependent CxS-1 and CxS-3 terms are 0.0, which typically
+    drops the total coupling_score below 2.5 and pushes the verdict to
+    PARTIAL. This is intentional — the previous implicit use of
+    NULL_PALETTE was the reason every compliance evaluation silently
+    anchored to the retired null-palette construct.
+
     Args:
         keystream_at_cribs: List of 24 integers (A=0) at crib positions.
         mechanism: Structural description of the candidate mechanism.
+        palette: Explicit palette for CxS-1 / CxS-3. See
+            check_coupling_constraints for quarantine semantics.
 
     Returns:
         ComplianceScore with full breakdown and verdict.
     """
     # Run all checkers
     hard = check_hard_constraints(keystream_at_cribs, mechanism)
-    coupling = check_coupling_constraints(keystream_at_cribs, mechanism)
+    coupling = check_coupling_constraints(keystream_at_cribs, mechanism, palette=palette)
     bean = check_bean_constraints(keystream_at_cribs)
     structural = check_structural_constraints(mechanism)
 
