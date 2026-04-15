@@ -6,6 +6,7 @@ never be selected by sweeping over an evaluation metric.
 """
 from __future__ import annotations
 
+import hashlib
 import math
 import random
 from typing import Dict, List, Optional
@@ -48,13 +49,27 @@ def _width_bigram_repeat_count(text: str, width: int) -> int:
     return sum(v for v in bigrams.values() if v >= 2)
 
 
+def _stable_text_seed(text: str) -> int:
+    """Cross-process-stable integer derived from `text`.
+
+    Python's built-in `hash()` is salted per-interpreter under the default
+    PYTHONHASHSEED=random setting, so seeding an RNG with `hash(text)`
+    produces different sequences across processes — silently breaking
+    determinism in any campaign that runs across multiple workers or
+    multiple invocations. blake2b with a fixed digest size gives a
+    deterministic 64-bit integer regardless of interpreter session.
+    """
+    digest = hashlib.blake2b(text.encode("utf-8"), digest_size=8).digest()
+    return int.from_bytes(digest, "big")
+
+
 def _width21_zscore(
     text: str,
     repeat_count: int,
     n_trials: int = 200,
     seed: int = 20260411,
 ) -> float:
-    rng = random.Random(seed ^ hash(text) & 0xFFFFFFFF)
+    rng = random.Random(seed ^ (_stable_text_seed(text) & 0xFFFFFFFF))
     chars = list(text)
     samples: List[int] = []
     for _ in range(n_trials):
