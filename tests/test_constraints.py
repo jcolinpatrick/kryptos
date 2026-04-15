@@ -106,6 +106,31 @@ class TestBean:
         ks = [0] * 97
         assert not verify_bean_simple(ks)
 
+    def test_bean_simple_rejects_short_keystream(self):
+        """Hardening 2026-04-14: verify_bean_simple must refuse non-CT_LEN
+        keystreams instead of silently skipping out-of-range constraints
+        (which could vacuously return True for a sparse input)."""
+        import pytest
+        from kryptos.kernel.constants import CT_LEN
+
+        for short_len in (0, 1, 24, 73, 96, 98, 200):
+            ks = [0] * short_len
+            with pytest.raises(ValueError) as excinfo:
+                verify_bean_simple(ks)
+            assert str(CT_LEN) in str(excinfo.value)
+            assert "verify_bean_from_implied" in str(excinfo.value)
+
+    def test_bean_full_rejects_short_keystream(self):
+        """Same hardening for verify_bean (the diagnostic version)."""
+        import pytest
+        from kryptos.kernel.constants import CT_LEN
+
+        for short_len in (0, 73, 96, 98):
+            ks = [0] * short_len
+            with pytest.raises(ValueError) as excinfo:
+                verify_bean(ks)
+            assert str(CT_LEN) in str(excinfo.value)
+
     def test_bean_from_primer_roundtrip(self):
         """verify_bean_from_primer should produce same result as manual expand+verify."""
         primer = (1, 2, 3, 4, 5)
