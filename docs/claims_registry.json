@@ -82,18 +82,18 @@
     },
     {
       "claim_id": "C-PALETTE-01",
-      "statement": "The 7-letter palette {B,G,I,K,O,W,Z} and all derived constructs (BCL enrichment, KA mod-5, AP enrichment, mod-35 table, Polybius row-selection, palette null separator) are retired as post-hoc selection artifacts.",
+      "statement": "The 7-letter palette {B,G,I,K,O,W,Z}, the 17-position CONSENSUS_NULL_POSITIONS mask, and all derived constructs (BCL enrichment, KA mod-5, AP enrichment, mod-35 table, Polybius row-selection, palette null separator, stego S2/S4/S5/S6 properties) are retired as post-hoc selection artifacts.",
       "class": "retired_claim",
       "status": "retired",
-      "scope": "entire palette/null-mask descriptive-anomaly family",
+      "scope": "entire palette/null-mask descriptive-anomaly family, including NULL_PALETTE and CONSENSUS_NULL_POSITIONS kernel constants",
       "depends_on": [],
       "supersedes": [],
       "superseded_by": [],
-      "artifact": "docs/a1_score_conditioned_null_report.md",
+      "artifact": "docs/a1_score_conditioned_null_report.md, memory/project_consensus_nulls_epistemic_status_2026_04_14.md",
       "repro_reference": "score-conditioned null experiment: SA produces 11 distinct letters on K4, p=0.30 vs shuffled controls",
       "owner_doc": "memory/retired/README.md",
-      "red_team_status": "retired by audit 2026-04-01",
-      "notes": "Original positional-null p=2.4e-5 was an artifact of using a null that did not match the SA discovery process. Retired files live under memory/retired/ with banners and stubs."
+      "red_team_status": "retired by audit 2026-04-01; quarantine mechanic landed 2026-04-14 (canonical_facts drop, stego.py status retired, compliance.py palette gated, critic retired-revival matcher)",
+      "notes": "Original positional-null p=2.4e-5 was an artifact of using a null that did not match the SA discovery process. Retired files live under memory/retired/ with banners and stubs. As of the 2026-04-14 quarantine: (a) NULL_PALETTE and CONSENSUS_NULL_POSITIONS are removed from canonical_facts and the get_canonical_facts MCP tool; (b) src/kryptos/kernel/constraints/stego.py StegoProperty status returns 'retired' not 'confirmed'; (c) src/kryptos/kernel/scoring/compliance.py CxS-1 and CxS-3 require an explicit palette argument and warn on palette=None; (d) kryptosbot/constants.py __getattr__ emits DeprecationWarning on palette shim access; (e) kryptosbot/critic.py has a belt-and-suspenders retired-palette revival matcher that rejects theories containing >=5 of {B,G,I,K,O,W,Z} near stego-related tokens. The kernel constants themselves remain importable for historical reproducibility per Colin's explicit constraint; physical removal is not in scope. Claim ID alias in kryptosbot/claims_registry.py: null_palette_retired."
     },
     {
       "claim_id": "C-AUTOKEY-01",
