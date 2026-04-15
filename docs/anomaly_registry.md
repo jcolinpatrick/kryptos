@@ -1,6 +1,18 @@
 # KRYPTOS PHYSICAL ANOMALY REGISTRY
 ## Cataloged from primary sources: Elonka Dunin visits, Gillogly photos, Wikipedia, community observations
 
+> [!WARNING]
+> Historical working document only. This file is **not authoritative** for controller prompting,
+> provenance policy, or canonical anomaly facts.
+>
+> It contains older language, community observations, hearsay-adjacent summaries, and
+> superseded interpretations that may overstate what the evidence supports.
+>
+> For the controller's canonical anomaly surface, use
+> [kryptosbot/registries.py](/home/cpatrick/kryptos/kryptosbot/registries.py).
+> For archive evidence doctrine, use
+> [docs/archive_aaa_doctrine.md](/home/cpatrick/kryptos/docs/archive_aaa_doctrine.md).
+
 Classification key:
 - **ADMITTED ERROR**: Sanborn explicitly called it a mistake
 - **CLAIMED INTENTIONAL**: Sanborn said it was deliberate  
