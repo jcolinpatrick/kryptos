@@ -1059,6 +1059,7 @@ class Campaign:
     notes: list[str] = field(default_factory=list)
     # Resume state:
     completed_mask_indices: list[int] = field(default_factory=list)
+    completed_chunk_ids: dict[str, list[int]] = field(default_factory=dict)
 
     def to_dict(self) -> dict:
         return asdict(self)
@@ -1323,6 +1324,10 @@ def run_campaign(
                 camp.audit_counters = dict(prior.get("audit_counters", {}))
                 camp.per_worker_audit = list(prior.get("per_worker_audit", []))
                 camp.near_misses = list(prior.get("near_misses", []))
+                camp.completed_chunk_ids = {
+                    str(k): list(v)
+                    for k, v in prior.get("completed_chunk_ids", {}).items()
+                }
                 camp.started_at = prior.get("started_at", camp.started_at)
                 camp.notes.append(
                     f"resumed from checkpoint with {len(camp.completed_mask_indices)} "
@@ -1374,9 +1379,13 @@ def run_campaign(
         )
 
     completed_set = set(camp.completed_mask_indices)
+    completed_chunks: dict[int, set[int]] = {
+        int(mi): {int(ci) for ci in chunk_ids}
+        for mi, chunk_ids in camp.completed_chunk_ids.items()
+    }
     rej_counter: Counter = Counter(camp.rejection_counts)
 
-    tested = len(completed_set) * len(keys) * len(variants)
+    tested = int(camp.audit_counters.get("processed_count", 0))
     max_cfg = max_configs if max_configs is not None else total_configs
 
     # Prepare tasks (mask-scoped; one task per mask * key_chunk).
@@ -1392,6 +1401,8 @@ def run_campaign(
         if mi in completed_set:
             continue
         for ci, ch in enumerate(chunks_per_mask):
+            if ci in completed_chunks.get(mi, set()):
+                continue
             pending_payloads.append((mi, ci, m, tuple(variants), ch))
 
     if not pending_payloads:
@@ -1432,9 +1443,15 @@ def run_campaign(
                 "worker result missing mask_idx; parallel identity contract broken"
             )
         processed = int(out.get("processed_count", 0))
+        ci = int(out.get("chunk_id", -1))
+        if ci < 0:
+            raise RuntimeError(
+                "worker result missing chunk_id; parallel identity contract broken"
+            )
         mask_task_done[mi] += 1
         _absorb_chunk(out, rej_counter, camp)
-        if mask_task_done[mi] == mask_task_count[mi]:
+        completed_chunks.setdefault(mi, set()).add(ci)
+        if len(completed_chunks.get(mi, set())) == len(chunks_per_mask):
             completed_set.add(mi)
         return processed
 
@@ -1449,7 +1466,7 @@ def run_campaign(
                 results_received += 1
                 if results_received % 8 == 0 or tested >= max_cfg:
                     _persist_checkpoint(
-                        checkpoint_path, camp, completed_set, rej_counter
+                        checkpoint_path, camp, completed_set, completed_chunks, rej_counter
                     )
                 if tested >= max_cfg:
                     break
@@ -1462,7 +1479,7 @@ def run_campaign(
                 camp.coverage["coverage_fraction"] = tested / total_configs
                 if (idx + 1) % 8 == 0 or tested >= max_cfg:
                     _persist_checkpoint(
-                        checkpoint_path, camp, completed_set, rej_counter
+                        checkpoint_path, camp, completed_set, completed_chunks, rej_counter
                     )
                 if tested >= max_cfg:
                     break
@@ -1519,7 +1536,10 @@ def run_campaign(
             f"vs processed={global_processed}"
         )
 
-    _persist_checkpoint(checkpoint_path, camp, completed_set, rej_counter)
+    camp.completed_chunk_ids = {
+        str(mi): sorted(chunks) for mi, chunks in sorted(completed_chunks.items())
+    }
+    _persist_checkpoint(checkpoint_path, camp, completed_set, completed_chunks, rej_counter)
     write_json_atomic(output_path, camp.to_dict())
     render_markdown_report(camp, output_path.with_suffix(".md"), cmd_line)
     return camp
@@ -1604,10 +1624,14 @@ def _persist_checkpoint(
     checkpoint_path: Path,
     camp: Campaign,
     completed_set: set[int],
+    completed_chunks: dict[int, set[int]],
     rej_counter: Counter,
 ) -> None:
     doc = camp.to_dict()
     doc["completed_mask_indices"] = sorted(completed_set)
+    doc["completed_chunk_ids"] = {
+        str(mi): sorted(chunks) for mi, chunks in sorted(completed_chunks.items())
+    }
     doc["rejection_counts"] = dict(rej_counter)
     write_json_atomic(checkpoint_path, doc)
 
