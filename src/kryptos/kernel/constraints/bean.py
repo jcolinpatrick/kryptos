@@ -57,43 +57,53 @@ class BeanResult:
 
 
 def verify_bean(keystream: List[int]) -> BeanResult:
-    """Verify Bean constraints on a keystream.
+    """Verify Bean constraints on a full-length CT97 keystream.
 
-    The keystream must be indexed such that keystream[pos] gives the key
-    value at position pos. Must be at least CT_LEN long.
+    The keystream must be exactly CT_LEN (97) long; positions are indexed
+    such that keystream[pos] gives the key value at CT position `pos`.
+    Passing a shorter keystream raises ValueError — the prior permissive
+    behavior (silently skipping out-of-range constraints) was identified
+    as a hardening risk by the 2026-04-14 audit. For sparse / partial
+    keystream verification, use `verify_bean_from_implied(dict)`, which
+    is explicitly partial-safe by design.
 
     Checks three constraint types:
     1. Equality: k[27] == k[65]  (1 pair)
     2. Inequality: k[a] != k[b]  (242 pairs)
-    3. Linear: k[a] - k[b] - k[c] + k[d] ≡ 0 mod 26  (101 constraints)
+    3. Linear: k[a] - k[b] - k[c] + k[d] == 0 mod 26  (101 constraints)
 
     The linear constraints (derived from the Gröbner basis of the crib
     system) are INDEPENDENT of the pairwise constraints. Together they
     reduce valid keystreams at crib positions from 26^24 to exactly 624.
 
     Returns detailed BeanResult with diagnostic information.
+
+    Raises:
+        ValueError: if len(keystream) != CT_LEN.
     """
+    if len(keystream) != CT_LEN:
+        raise ValueError(
+            f"verify_bean requires a length-{CT_LEN} keystream, got {len(keystream)}. "
+            f"For sparse / partial keystreams use verify_bean_from_implied(dict)."
+        )
+
     eq_failures: list[tuple[int, int, int, int]] = []
     ineq_failures: list[tuple[int, int, int]] = []
     linear_failures: list[tuple[int, int, int, int, int]] = []
 
     for a, b in BEAN_EQ:
-        if a < len(keystream) and b < len(keystream):
-            if keystream[a] != keystream[b]:
-                eq_failures.append((a, b, keystream[a], keystream[b]))
+        if keystream[a] != keystream[b]:
+            eq_failures.append((a, b, keystream[a], keystream[b]))
 
     for a, b in BEAN_INEQ:
-        if a < len(keystream) and b < len(keystream):
-            if keystream[a] == keystream[b]:
-                ineq_failures.append((a, b, keystream[a]))
+        if keystream[a] == keystream[b]:
+            ineq_failures.append((a, b, keystream[a]))
 
     for a, b, c, d in BEAN_LINEAR:
-        if (a < len(keystream) and b < len(keystream)
-                and c < len(keystream) and d < len(keystream)):
-            residue = (keystream[a] - keystream[b]
-                       - keystream[c] + keystream[d]) % MOD
-            if residue != 0:
-                linear_failures.append((a, b, c, d, residue))
+        residue = (keystream[a] - keystream[b]
+                   - keystream[c] + keystream[d]) % MOD
+        if residue != 0:
+            linear_failures.append((a, b, c, d, residue))
 
     eq_sat = len(BEAN_EQ) - len(eq_failures)
     ineq_sat = len(BEAN_INEQ) - len(ineq_failures)
@@ -120,21 +130,34 @@ def verify_bean_simple(keystream: List[int]) -> bool:
 
     Use this as a prefilter when you don't need diagnostics.
     Checks all three constraint types: equality, inequality, and linear.
+
+    The keystream must be exactly CT_LEN (97) long. Passing a shorter
+    keystream raises ValueError — the prior permissive behavior
+    (silently skipping out-of-range constraints, which could vacuously
+    return True for short or sparse inputs) was identified as a
+    hardening risk by the 2026-04-14 audit. For sparse / partial
+    keystream verification, use `verify_bean_from_implied(dict)`, which
+    is explicitly partial-safe by design.
+
+    Raises:
+        ValueError: if len(keystream) != CT_LEN.
     """
+    if len(keystream) != CT_LEN:
+        raise ValueError(
+            f"verify_bean_simple requires a length-{CT_LEN} keystream, "
+            f"got {len(keystream)}. For sparse / partial keystreams use "
+            f"verify_bean_from_implied(dict)."
+        )
     for a, b in BEAN_EQ:
-        if a < len(keystream) and b < len(keystream):
-            if keystream[a] != keystream[b]:
-                return False
+        if keystream[a] != keystream[b]:
+            return False
     for a, b in BEAN_INEQ:
-        if a < len(keystream) and b < len(keystream):
-            if keystream[a] == keystream[b]:
-                return False
+        if keystream[a] == keystream[b]:
+            return False
     for a, b, c, d in BEAN_LINEAR:
-        if (a < len(keystream) and b < len(keystream)
-                and c < len(keystream) and d < len(keystream)):
-            if (keystream[a] - keystream[b]
-                    - keystream[c] + keystream[d]) % MOD != 0:
-                return False
+        if (keystream[a] - keystream[b]
+                - keystream[c] + keystream[d]) % MOD != 0:
+            return False
     return True
 
 
