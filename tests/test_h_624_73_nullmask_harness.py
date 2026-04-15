@@ -709,3 +709,6 @@ def test_parallel_resume_after_partial_completion(tmp_path: Path):
     # Second run must finish everything.
     assert completed_after_run2 == set(range(4))
     assert doc2["coverage"]["tested"] == doc2["coverage"]["total"]
+    assert doc2["audit_counters"]["processed_count"] == doc2["coverage"]["tested"]
+    for note in doc2.get("notes", []):
+        assert "audit mismatch" not in note, f"audit mismatch after resume: {note}"
