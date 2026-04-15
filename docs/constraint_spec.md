@@ -1,6 +1,24 @@
-# K4 Constraint Specification
+# K4 Constraint Specification — Retired Coupling Draft
 
-**Derived from stego-cipher coupling analysis. Any proposed K4 solution must satisfy these constraints.**
+**RETIREMENT NOTICE (2026-04-15): This is a historical coupling draft, not
+a live constraint checklist. Do not use this document to eliminate or promote
+candidate K4 mechanisms.**
+
+The palette/null-mask foundation used by this draft (`NULL_PALETTE` =
+`{B,G,I,K,O,W,Z}` and `CONSENSUS_NULL_POSITIONS`) was retired on
+2026-04-14 as `null_palette_retired` / `C-PALETTE-01` after matched
+controls showed the palette family was not specific. The numerical
+computations below may still be useful as historical regression fixtures,
+but CxS-1/CxS-3 and S2/S4/S5/S6 are not live evidence and are not mandatory
+constraints for proposed K4 solutions. Current kernel behavior reflects
+this retirement: `kryptos.kernel.constraints.stego` returns
+`status="retired"`, and `kryptos.kernel.scoring.compliance` requires an
+explicit palette parameter before computing palette-dependent terms.
+
+Live hard constraints remain those independently derived from the canonical
+CT, known crib assumptions, and Bean/admissibility math. See
+`memory/project_consensus_nulls_epistemic_status_2026_04_14.md`,
+`docs/a1_score_conditioned_null_report.md`, and `docs/claims_registry.json`.
 
 **Authors:** Colin Patrick + Claude (KryptosBot)
 **Date:** 2026-03-23 (revised: keyword-independence audit)
@@ -10,30 +28,45 @@
 
 ## Overview
 
-This document formalizes the constraints that any K4 decipherment mechanism must satisfy, derived from two independent sources: (1) Bean's 2021 cryptodiagnostic analysis of the ciphertext and known plaintext, and (2) our confirmed stego layer properties. The novel contribution is the **coupling constraints** — properties where the stego and cipher layers share structure.
+This historical draft formalized constraints that were believed to follow
+from two sources: (1) Bean's 2021 cryptodiagnostic analysis of the
+ciphertext and known plaintext, and (2) project-internal stego-layer
+properties that were then treated as confirmed. Source (2) is now retired.
+The coupling constraints below therefore record a superseded hypothesis
+family, not requirements that any K4 decipherment mechanism must satisfy.
 
-**Important: Keyword-independence.** The strongest coupling constraints (C×S-1, C×S-3) are properties of the ciphertext and known plaintext. They do NOT depend on which keyed alphabet is used for the Polybius grid. A sweep of 980K English keywords found 6,309 that concentrate the palette in ≤2 grid columns — KRYPTOS is one, but not statistically distinguishable from the others. The alphabet-independent constraints are the real signal.
+**Retired framing:** Earlier versions called C×S-1/C×S-3
+"alphabet-independent constraints" and "the real signal." That language is
+no longer valid. Those checks are palette-conditioned descriptive
+observations over a retired palette/null-mask construct.
 
-These constraints are organized into four tiers, from strongest to weakest.
+The sections below are retained to preserve historical context and test
+reproducibility, but only the Bean/crib-derived hard-constraint material
+should be treated as active.
 
 ---
 
-## Tier 0 — Hard Constraints (violation = mechanism eliminated)
+## Tier 0 — Bean/Crib-Derived Constraints (active only under stated assumptions)
 
 | ID | Constraint | Value | Source |
 |----|-----------|-------|--------|
 | HC-1 | Beaufort A=0 keystream at 24 crib positions | `JLJODEGKUKKKLOCGGBGOKTRU` (numeric: 9,11,9,14,3,4,6,10,20,10,10,10,11,14,2,6,6,1,6,14,10,19,17,20) | Derived from CT + known PT under Beaufort C=(K-P)%26, A=0 |
 | HC-2 | Bean equality: k[27] = k[65] | Both = G(6) under Beaufort A=0. Variant-independent: equality holds under all three cipher variants. | Bean 2021, mathematical |
 | HC-3 | 242 Bean inequalities | All satisfied. Variant-independent (hold under Vigenere, Beaufort, and Variant Beaufort simultaneously). | Bean 2021, mathematical |
-| HC-4 | Non-periodic keystream | Proven for all periods 1-∞ on CT97 via Bean inequalities. | Mathematical proof |
+| HC-4 | Non-periodic keystream | Historical wording claimed all periods 1-∞; use current admissibility certificates / harness assumption bundles before citing any period elimination. | Mathematical proof / project rerun as applicable |
 
-**How to check:** Given a proposed keystream of 24 values at crib positions (0-indexed: 21-33 for EASTNORTHEAST, 63-73 for BERLINCLOCK), verify exact match against HC-1. If the mechanism claims periodicity, it is eliminated by HC-4.
+**How to check:** Given a proposed keystream of 24 values at crib positions
+(0-indexed: 21-33 for EASTNORTHEAST, 63-73 for BERLINCLOCK), verify exact
+match against HC-1 within the candidate's declared cipher variant,
+coordinate system, and assumption bundle. Do not convert a failed check into
+a global K4 elimination.
 
 ---
 
-## Tier 1 — Coupling Constraints (PRIMARY — novel contribution)
+## Tier 1 — Coupling Constraints (RETIRED — historical only)
 
-These derive from the intersection of confirmed stego properties and cipher layer properties.
+These derived from the intersection of retired stego properties and cipher
+layer properties. They must not be used as live gates.
 
 ### C×S-1: Keystream palette enrichment [ALPHABET-INDEPENDENT]
 
@@ -42,7 +75,10 @@ These derive from the intersection of confirmed stego properties and cipher laye
 - **p-value:** 0.0043 (binomial tail)
 - **Joint significance with palette restriction:** p = 1.4e-7 (MC 50M, proper joint simulation)
 - **Alphabet-independent:** This is a property of the ciphertext at crib positions under Beaufort A=0. It holds regardless of which keyed alphabet (if any) is used for the Polybius grid. No keyword assumption required.
-- **Implication:** The key generator preferentially produces values from the 7-letter null palette. The stego and cipher layers share a structural connection — the same set of letters is significant in both.
+- **Retired interpretation:** Earlier versions inferred that the key
+  generator preferentially produced values from the 7-letter null palette.
+  That inference is no longer load-bearing because the palette family is
+  retired.
 
 ### C×S-2: Column concentration [ALPHABET-DEPENDENT — NOT INDEPENDENTLY SIGNIFICANT]
 
@@ -64,7 +100,9 @@ These derive from the intersection of confirmed stego properties and cipher laye
 ### C×S-4: Stego-cipher structural coupling [ALPHABET-INDEPENDENT]
 
 - **Observation:** The cipher keystream is enriched with the SAME 7 letters that form the stego null palette. This is not a coincidence (joint p = 1.4e-7). The two systems share structural parameters.
-- **Implication:** Whatever process generates the null mask and whatever process generates the keystream draw on a common source — likely the same physical artifact (encoding chart). This is the "two systems, one grid" model.
+- **Retired interpretation:** Earlier versions inferred a common source for
+  null mask and keystream generation. That inference is no longer
+  load-bearing.
 - **What this does NOT tell us:** Which specific keyed alphabet, keyword, or grid layout is used. The coupling is between the LETTER SETS, not between specific grid coordinates.
 
 ---
@@ -95,9 +133,9 @@ These derive from the intersection of confirmed stego properties and cipher laye
 
 ---
 
-## Stego Layer Proof (Foundation)
+## Stego Layer Proof (RETIRED Foundation)
 
-The coupling constraints rest on four confirmed stego properties:
+The coupling constraints rested on four properties that are now retired:
 
 | ID | Property | Observed | p-value | Method |
 |----|----------|----------|---------|--------|
@@ -106,9 +144,14 @@ The coupling constraints rest on four confirmed stego properties:
 | S5 | Palette generated by KRYPTOS×SEVEN on 5-wide grid | One of ~6,300 keywords that work; thematically motivated but not unique | 0.0032 (for any keyword pair) | MC 50K trials |
 | S6 | Zero nulls in crib ranges [21-33] and [63-73] | 0 overlap (17 nulls, 24 crib positions) | 0.0047 | Hypergeometric exact |
 
-**S6 is the critical bridge:** Because no null positions overlap with crib positions, Bean constraints (which assume direct CT↔PT correspondence at crib positions) remain valid regardless of the stego model.
+**Current status:** These rows are historical regression targets only. They
+do not confirm a stego layer and do not make Bean constraints valid
+"regardless of the stego model." Bean constraints are valid only under the
+assumption bundle actually used by a given harness or proof.
 
-**S5 keyword-independence note:** KRYPTOS is the most thematically resonant keyword (it's the sculpture's name), but 6,309 other keywords produce the same column-concentration property. The palette itself {B,G,I,K,O,W,Z} is confirmed (S2); the specific keyword that generates it is not uniquely determined.
+**S5 keyword-independence note (retired):** KRYPTOS is thematically
+resonant, but many keywords produce the same column-concentration property.
+The palette itself is not confirmed as live evidence.
 
 ---
 
@@ -126,35 +169,40 @@ A sweep of 980,332 English keywords tested which keyed alphabets place the palet
 
 **Key finding:** KRYPTOS achieves 14/24 keystream-in-palette-columns — BELOW the expected ~15.3 given that 13/24 are already palette letters. The "extra" column coupling for top-performing keywords (19/24) arises because they place frequent non-palette keystream letters {J,L,D,E,U,C,T,R} in the palette columns by construction. This is a structural coincidence of keyword choice, not a cipher signal.
 
-**Conclusion:** The real signal is C×S-1 (palette membership, p=0.0043) and C×S-3 (AP containment, p=3.9e-6). Column placement adds no independent information. The specific keyed alphabet remains unknown.
+**Current conclusion:** This analysis is superseded by the 2026-04-14
+retirement. C×S-1 and C×S-3 are palette-conditioned historical
+observations, not live signals.
 
 ---
 
-## Mechanism Compliance Checklist
+## Historical Mechanism Compliance Checklist
 
-Use this to evaluate any proposed K4 solution:
+This checklist is retained for historical context only. Use current kernel
+APIs and current claim policy when evaluating proposed K4 solutions.
 
-### Step 1: Hard Gates (all must pass)
+### Step 1: Bean/Crib Checks (scope-limited)
 - [ ] Does the mechanism produce keystream `JLJODEGKUKKKLOCGGBGOKTRU` at the 24 crib positions under Beaufort A=0?
 - [ ] Does k[27] = k[65]?
 - [ ] Do all 242 Bean inequality pairs have distinct key values?
 - [ ] Is the mechanism non-periodic?
 
-### Step 2: Coupling Properties (primary scoring — alphabet-independent)
+### Step 2: Coupling Properties (retired; do not use as live scoring)
 - [ ] Do ≥13/24 keystream values fall in {B,G,I,K,O,W,Z}? (palette enrichment)
 - [ ] Do ≥12/24 keystream values fall in {G,K,O}? (step-4 AP containment)
 - [ ] Does the mechanism explain WHY keystream values are palette-biased? (structural coupling)
 
-### Step 3: Supporting Evidence
+### Step 3: Supporting Evidence (advisory)
 - [ ] Is the minor differences sum ≤ 21? (Bean)
 - [ ] Is the same-PT clustering mean ≤ 3.7? (Bean)
 - [ ] Is the mechanism hand-executable?
 - [ ] Does the key come from a shared source with the null mask?
 
 ### Scoring
-- Any Step 1 failure → **ELIMINATED**
-- Step 1 all pass + all Step 2 checks → **COMPLIANT**
-- Step 1 all pass + some Step 2 checks → **PARTIAL** (investigate further)
+- Any Step 1 failure → potentially **ELIMINATED**, but only within the
+  exact assumption bundle being checked.
+- Step 2 must not promote a candidate to **COMPLIANT** unless a caller
+  explicitly opts into a palette-conditioned historical/regression
+  calculation and labels it that way.
 
 ---
 
