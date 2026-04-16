@@ -27,6 +27,48 @@ class Checkpoint:
     last_updated_at: str = ""
     filters: dict = field(default_factory=dict)
 
+    def __post_init__(self) -> None:
+        self._validate()
+
+    def _validate(self) -> None:
+        if not isinstance(self.campaign_id, str) or not self.campaign_id:
+            raise ValueError("campaign_id must be a non-empty string")
+        if not isinstance(self.sampling_mode, str) or not self.sampling_mode:
+            raise ValueError("sampling_mode must be a non-empty string")
+        if not isinstance(self.sampling_seed, int):
+            raise ValueError("sampling_seed must be an int")
+        if not isinstance(self.target_evals, int) or self.target_evals < 0:
+            raise ValueError("target_evals must be a non-negative int")
+        if not isinstance(self.completed_pair_indices, list):
+            raise ValueError("completed_pair_indices must be a list")
+        if not all(isinstance(i, int) for i in self.completed_pair_indices):
+            raise ValueError("completed_pair_indices must contain only ints")
+        if any(i < 0 or i >= self.target_evals for i in self.completed_pair_indices):
+            raise ValueError("completed_pair_indices must lie within [0, target_evals)")
+        if len(set(self.completed_pair_indices)) != len(self.completed_pair_indices):
+            raise ValueError("completed_pair_indices must be unique")
+        if self.completed_pair_indices != sorted(self.completed_pair_indices):
+            raise ValueError("completed_pair_indices must be sorted")
+        if not isinstance(self.results, list):
+            raise ValueError("results must be a list")
+        if len(self.results) > len(self.completed_pair_indices):
+            raise ValueError("results cannot outnumber completed_pair_indices")
+        if not isinstance(self.filters, dict):
+            raise ValueError("filters must be a dict")
+        indexed_results = [r for r in self.results if isinstance(r, dict) and "idx" in r]
+        if indexed_results:
+            seen: set[int] = set()
+            completed = set(self.completed_pair_indices)
+            for row in indexed_results:
+                idx = row["idx"]
+                if not isinstance(idx, int):
+                    raise ValueError("result idx values must be ints")
+                if idx not in completed:
+                    raise ValueError("result idx must be present in completed_pair_indices")
+                if idx in seen:
+                    raise ValueError("result idx values must be unique")
+                seen.add(idx)
+
     def save(self, path) -> None:
         self.last_updated_at = datetime.now(timezone.utc).isoformat()
         path = Path(path)

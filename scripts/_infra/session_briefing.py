@@ -27,7 +27,7 @@ _ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__
 sys.path.insert(0, os.path.join(_ROOT, "src"))
 
 from kryptos.kernel.constants import (
-    CT, CT_LEN, N_CRIBS, CONSENSUS_NULL_POSITIONS, NULL_PALETTE,
+    CT, CT_LEN, N_CRIBS,
     BEAN_EQ, BEAN_INEQ, BEAN_LINEAR, CRIB_WORDS,
 )
 
@@ -550,10 +550,11 @@ def section_critical_constants():
     print(f"  Bean equality: k[{BEAN_EQ[0][0]}] = k[{BEAN_EQ[0][1]}]  "
           f"({len(BEAN_INEQ)} inequalities + {len(BEAN_LINEAR)} linear constraints; "
           f"624 valid keystreams at crib positions)")
-    print(f"  Null palette: {sorted(NULL_PALETTE)}  "
-          f"({len(CONSENSUS_NULL_POSITIONS)} consensus positions)  "
-          f"[RETIRED 2026-04-01 as live signal — post-hoc selection artifact; "
-          f"see memory/retired/README.md]")
+    # Null-palette / consensus-null-positions intentionally NOT printed.
+    # That family is retired (claim_id: null_palette_retired,
+    # memory/project_consensus_nulls_epistemic_status_2026_04_14.md).
+    # Surfacing it on every session start was a prompt-embedded poison
+    # per the 2026-04-14 audit. Do not re-add.
     print(f"  Self-encrypting: CT[32]=PT[32]=S, CT[73]=PT[73]=K")
     print(f"  IC: 0.0361 (below random 0.0385, NOT significant for n=97)")
     print()

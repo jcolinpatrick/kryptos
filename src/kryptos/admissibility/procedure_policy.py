@@ -347,27 +347,34 @@ DEFAULT_PROCEDURE_ALLOWLIST: Tuple[ProcedureLicense, ...] = (
     ),
     ProcedureLicense(
         procedure_id="col_notation_4_8_10_26",
-        name="Columnar widths {4, 8, 10, 26} per Sanborn archive notation",
+        name="[RETRACTED 2026-04-14] Columnar widths {4, 8, 10, 26} per Sanborn archive notation",
         family="transposition",
         justification=ProcedureJustification.ARCHIVE_EVIDENCE,
         provenance_uri="reference/Notes/Archives Visit.txt",
         evidence_refs=(
-            "MEMORY.md",  # cites the notation 4,8,10,26=Col
+            "memory/feedback_archive_col_notation_is_ocr_phantom.md",
         ),
         parametric_spec="src/kryptos/kernel/transforms/transposition.py",
         added_at="2026-04-09T00:00:00+00:00",
         notes=(
-            "Sanborn's AAA notebook contains the notation "
-            "'4, 8, 10, 26 = Col' on a working page. The license "
-            "covers columnar transposition tests at these four specific "
-            "widths (not all widths). Widths 4 and 26 have not been "
-            "exhaustively tested under the current 242-ineq Bean "
-            "constraint; widths 8 and 10 are covered by the "
-            "source-independent Tier 1 elimination in "
-            "elimination_tiers.md only for columnar combined with "
-            "ADDITIVE keys, not for columnar combined with mono inner "
-            "layers, so the license remains meaningful for "
-            "multi-layer compositions."
+            "RETRACTED 2026-04-14. The underlying archival notation "
+            "'4, 8, 10, 26 = Col' on IMG_1340 is an OCR artifact, NOT "
+            "a cipher instruction. Colin re-examined the primary source "
+            "and confirmed: the four numbers are positions of question "
+            "marks Sanborn drew to indicate those positions are NOT "
+            "enciphered (literal unknowns in his working copy), and "
+            "'Col' is an OCR misread of something else. The license is "
+            "preserved in-place (not deleted) only because two historical "
+            "campaigns reference it by procedure_id — deleting the entry "
+            "would break re-run audits of f_archive_col_notation_v1 "
+            "(EMPTY result, 2026-04-09) and f_w10_quagmire_iii_v1. Do NOT "
+            "author new campaigns that request this license. The Bean "
+            "closures from the v1 campaign (w4/w6/w7/w8/w9 "
+            "Bean-impossibility, w10 four Bean-survivors) remain valid "
+            "as cipher-family findings but have no archival support. See "
+            "feedback_archive_col_notation_is_ocr_phantom.md for the "
+            "full retraction rationale and the exact primary-source "
+            "reading."
         ),
     ),
     ProcedureLicense(

@@ -138,17 +138,18 @@ def _english_likeness(breakdown) -> float:
 # ── Pad / align candidate to full 97-char frame ────────────────────────
 
 def pad_candidate_to_ct(candidate_fragment: str, profile: CompositionProfile) -> str:
-    """Place a candidate fragment back into a 97-char frame when the outer
-    layer reduced the stream length (masks, partial projections).
+    """Return the original fragment without inventing synthetic suffixes.
 
-    For non-length-preserving outer layers we pad with '.' placeholders,
-    but evaluation metrics that depend on position alignment (Bean, cribs)
-    can only be trusted when len(candidate_fragment) == CT_LEN AND the
-    outer layer did NOT break positional alignment.
+    Earlier versions padded shortened candidates with literal 'A' values
+    before scoring. That silently injected structure into crib, width,
+    IC, and English-likeness metrics, creating false positives for
+    non-length-preserving outers. The downstream scorers already handle
+    short texts safely, so the fail-closed behavior is to keep the
+    fragment as-is and let length-sensitive metrics degrade naturally.
     """
     if len(candidate_fragment) >= CT_LEN:
         return candidate_fragment[:CT_LEN]
-    return candidate_fragment + "A" * (CT_LEN - len(candidate_fragment))
+    return candidate_fragment
 
 
 # ── Known-elimination ledger (local) ────────────────────────────────────
@@ -180,11 +181,11 @@ def evaluate_composition(
     """
     flags: List[str] = []
 
-    # Pad to 97 for crib alignment if needed; note the scope implication.
+    # Keep shortened candidates raw; note the scope implication.
     original_len = len(candidate_text)
     aligned = pad_candidate_to_ct(candidate_text, profile)
     if original_len != CT_LEN:
-        flags.append(f"length_mismatch_{original_len}_padded_to_{CT_LEN}")
+        flags.append(f"length_mismatch_{original_len}_not_padded")
 
     # Crib compatibility — always H1_CONDITIONAL (requires direct alignment).
     sb = score_candidate(aligned, ngram_scorer=ngram_scorer)

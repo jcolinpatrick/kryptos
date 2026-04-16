@@ -146,6 +146,29 @@ IC_PRE_ENE: float = 0.0667    # Positions 0-20, suspiciously English-like
 
 # ── Stego layer constants ──────────────────────────────────────────────
 
+# ── RETIRED: null palette / consensus null positions ──────────────────────
+#
+# RETIRED 2026-04-14 (claim_id: null_palette_retired). See:
+#   memory/project_consensus_nulls_epistemic_status_2026_04_14.md
+#   docs/a1_score_conditioned_null_report.md
+#   docs/claims_registry.json → C-PALETTE-01
+#
+# The 7-letter palette and the 17-position consensus null mask were
+# retired after matched controls (April 2026) disproved the palette's
+# specificity. The symbols remain importable for historical
+# reproducibility only — archived scripts that depend on them continue
+# to work, but their OUTPUT is no longer treated as live evidence (see
+# kryptos.kernel.constraints.stego, which now returns status="retired"
+# on every StegoProperty, and kryptos.kernel.scoring.compliance, which
+# requires an explicit palette parameter on CxS-1 / CxS-3).
+#
+# The _verify() assertions below are relaxed to accept either the
+# historical length (7 / 17) or an empty set, so a future physical
+# removal can land without crashing every import. Physical removal is
+# NOT in scope for the 2026-04-14 quarantine per Colin's constraint.
+#
+# DO NOT USE THESE CONSTANTS IN LIVE CODE PATHS. Any new caller should
+# be reviewed against the retirement doctrine before import.
 NULL_PALETTE: FrozenSet[str] = frozenset("BGIKOWZ")
 CONSENSUS_NULL_POSITIONS: FrozenSet[int] = frozenset(
     {0, 1, 2, 5, 8, 12, 14, 20, 36, 52, 58, 59, 74, 75, 78, 84, 85}
@@ -171,9 +194,18 @@ def _verify() -> None:
     assert len(BEAN_EQ) == 1, "Expected 1 Bean equality"
     assert len(BEAN_INEQ) == 242, f"Expected 242 Bean inequalities, got {len(BEAN_INEQ)}"
     assert len(BEAN_LINEAR) == 101, f"Expected 101 Bean linear constraints, got {len(BEAN_LINEAR)}"
-    assert len(NULL_PALETTE) == 7, f"NULL_PALETTE should have 7 letters, got {len(NULL_PALETTE)}"
+    # RETIRED: relaxed to accept 0 (future physical removal) OR historical
+    # lengths (7 / 17). See the retirement block above NULL_PALETTE.
+    assert len(NULL_PALETTE) in (0, 7), (
+        f"NULL_PALETTE should have 0 (retired, physically removed) or 7 "
+        f"(retired, historical length); got {len(NULL_PALETTE)}"
+    )
     assert all(c in ALPH for c in NULL_PALETTE), "NULL_PALETTE must be uppercase A-Z"
-    assert len(CONSENSUS_NULL_POSITIONS) == 17, f"Expected 17 consensus nulls, got {len(CONSENSUS_NULL_POSITIONS)}"
+    assert len(CONSENSUS_NULL_POSITIONS) in (0, 17), (
+        f"CONSENSUS_NULL_POSITIONS should have 0 (retired, physically "
+        f"removed) or 17 (retired, historical length); got "
+        f"{len(CONSENSUS_NULL_POSITIONS)}"
+    )
     assert all(0 <= p < CT_LEN for p in CONSENSUS_NULL_POSITIONS), "Null positions must be in [0, CT_LEN)"
     assert not CONSENSUS_NULL_POSITIONS & CRIB_POSITIONS, "Null positions must not overlap crib positions"
     assert len(BEAUFORT_KEYSTREAM_AT_CRIBS) == N_CRIBS, "Keystream string must have N_CRIBS chars"

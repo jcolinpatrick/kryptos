@@ -1,7 +1,24 @@
-"""Stego layer proof module — quantified evidence for K4's steganographic layer.
+"""Stego layer proof module — RETIRED.
 
-Each function tests one property (S2, S4, S5, S6) and returns a StegoProperty
-dataclass with observed value, expected value, p-value, and method description.
+RETIRED 2026-04-14. This module previously reported each of S2, S4, S5,
+and S6 with status="confirmed" as quantified evidence for K4's
+steganographic layer. Matched controls (April 2026) disproved the
+specificity of the underlying null palette {B,G,I,K,O,W,Z} and the
+17-position consensus null mask — both are now tracked as retired
+(claim_id: null_palette_retired). See:
+
+  - memory/project_consensus_nulls_epistemic_status_2026_04_14.md
+  - docs/a1_score_conditioned_null_report.md
+
+The functions remain importable for historical reproducibility. They
+still compute the same numerical values (observed counts, hypergeometric
+p-values, classification accuracies) so that archived scripts and
+regression tests continue to exercise the math. However, every
+StegoProperty returned by this module now carries status="retired"
+regardless of the numerical result. "retired" means: the math is
+correct but the claim is no longer treated as live evidentiary support
+for the stego layer. Do not cite the output as confirmation of K4's
+stego structure.
 
 All Monte Carlo simulations use deterministic seeds for reproducibility.
 """
@@ -69,8 +86,8 @@ def palette_restriction(ct: str, null_positions: frozenset[int]) -> StegoPropert
         expected=f"<= {observed_distinct} distinct letters in {n_draws} draws from 26",
         p_value=p_value,
         method=f"MC {n_trials} trials, seed=42, {n_draws} draws from 26-letter alphabet",
-        status="confirmed",
-        artifact="memory/confirmed_findings.md",
+        status="retired",
+        artifact="memory/project_consensus_nulls_epistemic_status_2026_04_14.md",
     )
 
 
@@ -143,8 +160,8 @@ def null_position_classification(
         expected=correct,
         p_value=-1.0,  # not a statistical p-value; accuracy = correct/n_palette
         method="(pos%7, pos%5) classification with earlier-position-is-null tiebreaker; accuracy-based, no MC null model",
-        status="confirmed",
-        artifact="memory/confirmed_findings.md",
+        status="retired",
+        artifact="memory/project_consensus_nulls_epistemic_status_2026_04_14.md",
     )
 
 
@@ -204,8 +221,8 @@ def polybius_generation(
         expected=f"palette in <= 2 columns of 5-wide grid from {keyword1}",
         p_value=p_value,
         method=f"MC {n_trials} trials, seed=42, random 7+5 letter keyword pairs",
-        status="confirmed" if observed_match else "failed",
-        artifact="memory/confirmed_findings.md",
+        status="retired",  # palette family retired 2026-04-14; math still correct
+        artifact="memory/project_consensus_nulls_epistemic_status_2026_04_14.md",
     )
 
 
@@ -244,8 +261,8 @@ def crib_null_avoidance(
         expected=0,
         p_value=p_value,
         method=f"Hypergeometric: P(X=0) with N={N}, k={k}, n={n}",
-        status="confirmed" if overlap == 0 else "failed",
-        artifact="memory/confirmed_findings.md",
+        status="retired",  # palette family retired 2026-04-14; math still correct
+        artifact="memory/project_consensus_nulls_epistemic_status_2026_04_14.md",
     )
 
 

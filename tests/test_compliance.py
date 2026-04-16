@@ -4,8 +4,22 @@ Verifies that the compliance framework correctly evaluates candidate
 mechanisms against the full constraint hierarchy: hard constraints (HC),
 coupling constraints (CxS), Bean structural constraints (SC), and
 extra-cryptographic constraints (XC).
+
+QUARANTINE 2026-04-14: `check_coupling_constraints` and
+`score_mechanism_compliance` now take an explicit `palette` parameter
+instead of silently importing NULL_PALETTE from the kernel. Tests that
+want to exercise the historical palette-specific CxS-1 / CxS-3 math
+must import NULL_PALETTE directly and pass it in. This is intentional:
+the compliance scorer has zero live callers outside this test file, so
+the math continues to be exercised as a regression fixture without the
+live pipeline inheriting any implicit anchor to the retired palette.
+Tests that do NOT pass `palette=` will get CxS-1=0.0 / CxS-3=0.0, which
+drops the coupling score below COMPLIANT and flips the verdict to
+PARTIAL. See memory/project_consensus_nulls_epistemic_status_2026_04_14.md.
 """
 from __future__ import annotations
+
+import warnings
 
 import pytest
 
@@ -13,6 +27,7 @@ from kryptos.kernel.constants import (
     ALPH,
     BEAUFORT_KEYSTREAM_AT_CRIBS,
     N_CRIBS,
+    NULL_PALETTE,  # retired; see module docstring. Used ONLY as a test fixture.
 )
 from kryptos.kernel.scoring.compliance import (
     MechanismDescription,
@@ -156,15 +171,48 @@ class TestHardConstraints:
         result = check_hard_constraints(REAL_KS, _full_mechanism())
         assert set(result.keys()) == {"HC-1", "HC-2", "HC-3", "HC-4"}
 
+    def test_short_keystream_rejected(self):
+        with pytest.raises(ValueError, match="exactly 24 values"):
+            check_hard_constraints(REAL_KS[:-1], _full_mechanism())
+
+    def test_out_of_range_keystream_rejected(self):
+        bad = list(REAL_KS)
+        bad[0] = 26
+        with pytest.raises(ValueError, match=r"\[0, 26\)"):
+            check_hard_constraints(bad, _full_mechanism())
+
 
 class TestCouplingConstraints:
     """CxS-1 through CxS-4: coupling score components."""
 
     def test_real_keystream_high_cxs1(self):
-        """Real keystream has 13/13 palette enrichment → normalized 1.0."""
+        """Real keystream has 13/13 palette enrichment → normalized 1.0.
+
+        Passes the retired NULL_PALETTE as an explicit test fixture.
+        The math is still correct; the retirement is about not letting
+        the live pipeline inherit this palette implicitly.
+        """
         m = _full_mechanism()
-        result = check_coupling_constraints(REAL_KS, m)
+        result = check_coupling_constraints(REAL_KS, m, palette=NULL_PALETTE)
         assert result["CxS-1"] == 1.0
+
+    def test_palette_none_gives_zero_cxs1_cxs3_with_warning(self):
+        """Quarantine regression: palette=None must zero the palette-dependent
+        terms and emit a DeprecationWarning. This is the gate that prevents
+        the live pipeline from silently anchoring to the retired palette."""
+        m = _full_mechanism()
+        with warnings.catch_warnings(record=True) as caught:
+            warnings.simplefilter("always")
+            result = check_coupling_constraints(REAL_KS, m)  # no palette arg
+        assert result["CxS-1"] == 0.0
+        assert result["CxS-3"] == 0.0
+        # CxS-2 and CxS-4 are palette-independent and should be unchanged
+        assert result["CxS-4"] == 1.0
+        assert any(
+            issubclass(w.category, DeprecationWarning)
+            and "null_palette_retired" in str(w.message)
+            for w in caught
+        ), "Expected DeprecationWarning mentioning null_palette_retired"
 
     def test_cxs4_dual_alphabet(self):
         """Mechanism with both KA and AZ should score 1.0 on CxS-4."""
@@ -192,6 +240,10 @@ class TestCouplingConstraints:
         result = check_coupling_constraints(REAL_KS, _full_mechanism())
         for key, val in result.items():
             assert 0.0 <= val <= 1.0, f"{key} = {val} out of range"
+
+    def test_short_keystream_rejected_before_scoring(self):
+        with pytest.raises(ValueError, match="exactly 24 values"):
+            check_coupling_constraints(REAL_KS[:-1], _full_mechanism())
 
 
 class TestBeanConstraints:
@@ -224,6 +276,10 @@ class TestBeanConstraints:
         """Result dict should contain SC-4 and SC-5."""
         result = check_bean_constraints(REAL_KS)
         assert set(result.keys()) == {"SC-4", "SC-5"}
+
+    def test_malformed_keystream_rejected(self):
+        with pytest.raises(ValueError, match="exactly 24 values"):
+            check_bean_constraints(REAL_KS[:-1])
 
 
 class TestStructuralConstraints:
@@ -295,9 +351,26 @@ class TestFullCompliance:
     """End-to-end: score_mechanism_compliance() integration tests."""
 
     def test_real_keystream_proper_mechanism_compliant(self):
-        """Real keystream + full mechanism → COMPLIANT."""
-        score = score_mechanism_compliance(REAL_KS, _full_mechanism())
+        """Real keystream + full mechanism → COMPLIANT (with explicit palette).
+
+        Must pass palette=NULL_PALETTE explicitly so the CxS-1 and CxS-3
+        terms fire; palette=None would yield PARTIAL under quarantine.
+        """
+        score = score_mechanism_compliance(
+            REAL_KS, _full_mechanism(), palette=NULL_PALETTE
+        )
         assert score.verdict == "COMPLIANT"
+
+    def test_real_keystream_no_palette_is_partial_not_compliant(self):
+        """Quarantine regression: without an explicit palette, the real
+        keystream + full mechanism is PARTIAL, not COMPLIANT. This pins
+        the gate — a future regression that re-introduces the implicit
+        NULL_PALETTE default would make this test fail."""
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", DeprecationWarning)
+            score = score_mechanism_compliance(REAL_KS, _full_mechanism())
+        assert score.verdict != "COMPLIANT"
+        assert score.verdict in ("PARTIAL", "ELIMINATED")
 
     def test_random_keystream_bare_mechanism_not_compliant(self):
         """Random-ish keystream + bare mechanism → PARTIAL or ELIMINATED."""
@@ -306,15 +379,20 @@ class TestFullCompliance:
         assert score.verdict in ("PARTIAL", "ELIMINATED")
 
     def test_periodic_true_eliminated(self):
-        """Any mechanism with periodic=True → ELIMINATED."""
+        """Any mechanism with periodic=True → ELIMINATED (HC fail overrides palette)."""
         m = _full_mechanism()
         m.periodic = True
-        score = score_mechanism_compliance(REAL_KS, m)
+        # HC failure eliminates regardless of palette gating
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", DeprecationWarning)
+            score = score_mechanism_compliance(REAL_KS, m)
         assert score.verdict == "ELIMINATED"
 
     def test_compliance_score_fields(self):
         """ComplianceScore should have all expected fields."""
-        score = score_mechanism_compliance(REAL_KS, _full_mechanism())
+        score = score_mechanism_compliance(
+            REAL_KS, _full_mechanism(), palette=NULL_PALETTE
+        )
         assert isinstance(score.hard_pass, int)
         assert isinstance(score.hard_fail, int)
         assert isinstance(score.hard_unknown, int)
@@ -326,15 +404,22 @@ class TestFullCompliance:
         assert isinstance(score.verdict, str)
 
     def test_compliant_has_positive_scores(self):
-        """COMPLIANT mechanism should have positive coupling and structural scores."""
-        score = score_mechanism_compliance(REAL_KS, _full_mechanism())
+        """COMPLIANT mechanism should have positive coupling and structural scores.
+
+        Requires explicit palette; see module docstring.
+        """
+        score = score_mechanism_compliance(
+            REAL_KS, _full_mechanism(), palette=NULL_PALETTE
+        )
         assert score.coupling_score >= 2.5
         assert score.structural_score > 0.0
         assert score.hard_fail == 0
 
     def test_details_contains_all_sections(self):
         """Details dict should contain results from all four checkers."""
-        score = score_mechanism_compliance(REAL_KS, _full_mechanism())
+        score = score_mechanism_compliance(
+            REAL_KS, _full_mechanism(), palette=NULL_PALETTE
+        )
         assert "hard" in score.details
         assert "coupling" in score.details
         assert "bean" in score.details
@@ -343,6 +428,13 @@ class TestFullCompliance:
     def test_wrong_keystream_fails_hc1(self):
         """Wrong keystream should cause HC-1 fail → ELIMINATED."""
         wrong_ks = [0] * N_CRIBS
-        score = score_mechanism_compliance(wrong_ks, _full_mechanism())
+        # HC failure overrides palette gating
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", DeprecationWarning)
+            score = score_mechanism_compliance(wrong_ks, _full_mechanism())
         assert score.verdict == "ELIMINATED"
         assert score.hard_fail >= 1
+
+    def test_malformed_keystream_rejected(self):
+        with pytest.raises(ValueError, match="exactly 24 values"):
+            score_mechanism_compliance(REAL_KS[:-1], _full_mechanism())
