@@ -1,0 +1,552 @@
+"""
+Tests for Day 6 of the Pantheon integration.
+
+Covers:
+  P1  — bounded_search_max_configurations ControllerConfig field flows
+        into _build_worker_prompt when a CONCERNED theory is dispatched.
+  P2  — Lead-pursuit plumbing:
+          - PursuitLead dataclass round-trip
+          - pursuit_leads ledger schema + CRUD (insert, get_open,
+            close, auto_close_stale, count_by_status)
+          - PursuitVerdict normalization (pursue/skip/alias paths)
+          - _close_referenced_pursuit_leads closes by tag convention
+          - _render_pursuit_leads_for_prompt surfaces open leads and
+            omits (none) when empty
+          - get_open_pursuit_leads is picked up in _assess_landscape
+            output
+  P4  — CycleSynthesis.budget_risky_count is wired into the synthesis
+        formatter and landscape block.
+  P6  — Stat-audit REJECTED verdict downgrades PROMISING → COMPLETED
+        and annotates failure_reason.
+"""
+
+from __future__ import annotations
+
+import sys
+from pathlib import Path
+from unittest.mock import MagicMock
+
+import pytest
+
+_ROOT = Path(__file__).resolve().parent.parent.parent
+sys.path.insert(0, str(_ROOT))
+sys.path.insert(0, str(_ROOT / "src"))
+
+from kryptosbot.models import (
+    TheoryRecord, TheoryStatus,
+    WorkerContract, WorkerStatus,
+    PursuitLead, PursuitLeadStatus,
+)
+from kryptosbot.pantheon_siblings import RedTeamVerdict
+from kryptosbot.theory_ledger import TheoryLedger
+
+
+def _concerned_verdict(risk: str, reason: str) -> RedTeamVerdict:
+    """Build a CONCERNED RedTeamVerdict with a Priority-5 risk value."""
+    return RedTeamVerdict(
+        verdict="concerned",
+        confidence=0.7,
+        reasons=[reason],
+        search_space_risk=risk,
+    )
+
+
+# ---------------------------------------------------------------------------
+# Helpers
+# ---------------------------------------------------------------------------
+
+def _make_minimal_controller(tmp_path):
+    """Bypass __init__ so tests don't need a real roster / DB / tools."""
+    from kryptosbot.controller import ResearchController, ControllerConfig
+    cfg = ControllerConfig(
+        project_root=tmp_path,
+        ledger_db_path=tmp_path / "ledger.sqlite",
+    )
+    ctrl = ResearchController.__new__(ResearchController)
+    ctrl.config = cfg
+    ctrl.ledger = TheoryLedger(cfg.ledger_db_path)
+    ctrl.state = MagicMock()
+    ctrl.state.recent_outcomes = []
+    ctrl.state.cycle_number = 10
+    ctrl._cycle_redteam_verdicts = {}
+    ctrl._cycle_stat_audit_verdicts = {}
+    ctrl._cycle_alert_summaries = []
+    ctrl._cycle_pursuit_verdicts = {}
+    ctrl._cycle_pursuit_leads_opened = []
+    return ctrl
+
+
+# ---------------------------------------------------------------------------
+# P1: bounded_search_max_configurations flows into worker prompt
+# ---------------------------------------------------------------------------
+
+class TestBoundedSearchConfigField:
+    def test_default_value_renders_in_prompt(self, tmp_path):
+        ctrl = _make_minimal_controller(tmp_path)
+        ctrl._cycle_redteam_verdicts["abc123"] = _concerned_verdict(
+            "unbounded_search",
+            "Free parameters with no stated budget.",
+        )
+        theory = TheoryRecord(
+            hypothesis_id="abc123", title="t", core_claim="c",
+            mechanism="m", family="f", kill_criteria=["k"],
+            expected_signal="s",
+        )
+        prompt = ctrl._build_worker_prompt(theory)
+        # Default is 5000
+        assert "5000" in prompt
+        assert "BOUNDED-SEARCH POLICY" in prompt
+
+    def test_custom_value_overrides_hardcode(self, tmp_path):
+        ctrl = _make_minimal_controller(tmp_path)
+        ctrl.config.bounded_search_max_configurations = 250
+        ctrl._cycle_redteam_verdicts["abc123"] = _concerned_verdict(
+            "unbounded_search", "Free parameters.",
+        )
+        theory = TheoryRecord(
+            hypothesis_id="abc123", title="t", core_claim="c",
+            mechanism="m", family="f", kill_criteria=["k"],
+            expected_signal="s",
+        )
+        prompt = ctrl._build_worker_prompt(theory)
+        assert "250" in prompt
+        # The old hardcoded literal must NOT appear when the custom
+        # cap is used.
+        assert "exceeds 5000" not in prompt
+
+
+# ---------------------------------------------------------------------------
+# P2: PursuitLead dataclass + ledger CRUD
+# ---------------------------------------------------------------------------
+
+class TestPursuitLeadDataclass:
+    def test_round_trip_to_dict(self):
+        lead = PursuitLead(
+            lead_id="pl-abc-c5",
+            source_theory_id="abcdef123456",
+            source_cycle=5,
+            crib_score=12,
+            rationale="because",
+            suggested_variants=["try width 11", "swap Beaufort"],
+            status=PursuitLeadStatus.OPEN,
+        )
+        d = lead.to_dict()
+        assert d["status"] == "open"
+        assert d["suggested_variants"] == ["try width 11", "swap Beaufort"]
+        reloaded = PursuitLead.from_dict(d)
+        assert reloaded.status == PursuitLeadStatus.OPEN
+        assert reloaded.lead_id == "pl-abc-c5"
+
+
+class TestPursuitLeadsLedger:
+    def test_insert_get_and_status_count(self, tmp_path):
+        ledger = TheoryLedger(tmp_path / "ledger.sqlite")
+        lead = PursuitLead(
+            lead_id="pl-1", source_theory_id="t1", source_cycle=1,
+            crib_score=10, rationale="r1",
+            suggested_variants=["v1"], status=PursuitLeadStatus.OPEN,
+        )
+        ledger.insert_pursuit_lead(lead)
+        got = ledger.get_pursuit_lead("pl-1")
+        assert got is not None
+        assert got.source_theory_id == "t1"
+        assert got.crib_score == 10
+        assert got.suggested_variants == ["v1"]
+        open_leads = ledger.get_open_pursuit_leads(limit=10)
+        assert len(open_leads) == 1
+        counts = ledger.count_pursuit_leads_by_status()
+        assert counts.get("open") == 1
+
+    def test_close_pursued(self, tmp_path):
+        ledger = TheoryLedger(tmp_path / "ledger.sqlite")
+        ledger.insert_pursuit_lead(PursuitLead(
+            lead_id="pl-2", source_theory_id="t2", source_cycle=2,
+            crib_score=8, status=PursuitLeadStatus.OPEN,
+        ))
+        ledger.close_pursuit_lead(
+            "pl-2",
+            status=PursuitLeadStatus.PURSUED,
+            closed_cycle=3,
+        )
+        got = ledger.get_pursuit_lead("pl-2")
+        assert got.status == PursuitLeadStatus.PURSUED
+        assert got.closed_cycle == 3
+        # OPEN list should now be empty
+        assert ledger.get_open_pursuit_leads() == []
+
+    def test_close_open_status_rejected(self, tmp_path):
+        ledger = TheoryLedger(tmp_path / "ledger.sqlite")
+        ledger.insert_pursuit_lead(PursuitLead(
+            lead_id="pl-3", source_theory_id="t3", source_cycle=1,
+            crib_score=7, status=PursuitLeadStatus.OPEN,
+        ))
+        with pytest.raises(ValueError):
+            ledger.close_pursuit_lead(
+                "pl-3",
+                status=PursuitLeadStatus.OPEN,
+                closed_cycle=2,
+            )
+
+    def test_auto_close_stale(self, tmp_path):
+        ledger = TheoryLedger(tmp_path / "ledger.sqlite")
+        for i, cyc in enumerate([1, 2, 5, 8]):
+            ledger.insert_pursuit_lead(PursuitLead(
+                lead_id=f"pl-{i}",
+                source_theory_id=f"t{i}",
+                source_cycle=cyc,
+                crib_score=10,
+                status=PursuitLeadStatus.OPEN,
+            ))
+        # current_cycle=10, stale_after=3 → close leads opened at <= 7
+        closed = ledger.auto_close_stale_pursuit_leads(
+            current_cycle=10, stale_after_cycles=3,
+        )
+        assert set(closed) == {"pl-0", "pl-1", "pl-2"}
+        # pl-3 (cycle 8) should still be OPEN
+        assert ledger.get_pursuit_lead("pl-3").status == PursuitLeadStatus.OPEN
+        # closed ones should now be STALE
+        for lid in closed:
+            assert ledger.get_pursuit_lead(lid).status == PursuitLeadStatus.STALE
+
+    def test_auto_close_disabled_with_zero(self, tmp_path):
+        ledger = TheoryLedger(tmp_path / "ledger.sqlite")
+        ledger.insert_pursuit_lead(PursuitLead(
+            lead_id="pl-z", source_theory_id="t", source_cycle=1,
+            crib_score=10, status=PursuitLeadStatus.OPEN,
+        ))
+        closed = ledger.auto_close_stale_pursuit_leads(
+            current_cycle=100, stale_after_cycles=0,
+        )
+        assert closed == []
+        assert ledger.get_pursuit_lead("pl-z").status == PursuitLeadStatus.OPEN
+
+
+# ---------------------------------------------------------------------------
+# PursuitVerdict normalization
+# ---------------------------------------------------------------------------
+
+class TestPursuitVerdictNormalization:
+    def test_pursue_path(self):
+        from kryptosbot.pantheon_siblings import _normalize_pursuit_dict
+        v = _normalize_pursuit_dict({
+            "verdict": "pursue",
+            "confidence": 0.8,
+            "rationale": "worth it",
+            "suggested_variants": ["a", "b", "c", "d"],
+        })
+        assert v.verdict == "pursue"
+        assert v.worth_pursuing is True
+        # At-most-3 cap
+        assert len(v.suggested_variants) == 3
+
+    def test_skip_alias_yes_becomes_pursue(self):
+        from kryptosbot.pantheon_siblings import _normalize_pursuit_dict
+        v = _normalize_pursuit_dict({"verdict": "yes"})
+        assert v.verdict == "pursue"
+
+    def test_unknown_defaults_to_skip(self):
+        from kryptosbot.pantheon_siblings import _normalize_pursuit_dict
+        v = _normalize_pursuit_dict({"verdict": "lol"})
+        assert v.verdict == "skip"
+        assert v.worth_pursuing is False
+
+    def test_confidence_clamped(self):
+        from kryptosbot.pantheon_siblings import _normalize_pursuit_dict
+        high = _normalize_pursuit_dict({"verdict": "pursue", "confidence": 99})
+        assert high.confidence == 1.0
+        low = _normalize_pursuit_dict({"verdict": "pursue", "confidence": -1})
+        assert low.confidence == 0.0
+
+    def test_rationale_trimmed_to_500(self):
+        from kryptosbot.pantheon_siblings import _normalize_pursuit_dict
+        v = _normalize_pursuit_dict({
+            "verdict": "pursue",
+            "rationale": "x" * 2000,
+        })
+        assert len(v.rationale) == 500
+
+
+# ---------------------------------------------------------------------------
+# _close_referenced_pursuit_leads
+# ---------------------------------------------------------------------------
+
+class TestCloseReferencedLeads:
+    def test_tagged_theory_closes_lead(self, tmp_path):
+        ctrl = _make_minimal_controller(tmp_path)
+        lead = PursuitLead(
+            lead_id="pl-close-1", source_theory_id="src", source_cycle=5,
+            crib_score=10, status=PursuitLeadStatus.OPEN,
+        )
+        ctrl.ledger.insert_pursuit_lead(lead)
+
+        approved = [
+            TheoryRecord(
+                hypothesis_id="follower1", title="variant",
+                core_claim="c", mechanism="m", family="f",
+                tags=["pursuit_lead:pl-close-1", "other"],
+            )
+        ]
+        ctrl._close_referenced_pursuit_leads(approved)
+
+        reloaded = ctrl.ledger.get_pursuit_lead("pl-close-1")
+        assert reloaded.status == PursuitLeadStatus.PURSUED
+        assert reloaded.closed_cycle == ctrl.state.cycle_number
+
+    def test_untagged_theory_does_not_close(self, tmp_path):
+        ctrl = _make_minimal_controller(tmp_path)
+        ctrl.ledger.insert_pursuit_lead(PursuitLead(
+            lead_id="pl-untouched", source_theory_id="src", source_cycle=5,
+            crib_score=10, status=PursuitLeadStatus.OPEN,
+        ))
+        approved = [
+            TheoryRecord(
+                hypothesis_id="unrelated", title="t", core_claim="c",
+                mechanism="m", family="f",
+                tags=["noise", "crib_analysis"],
+            )
+        ]
+        ctrl._close_referenced_pursuit_leads(approved)
+        assert ctrl.ledger.get_pursuit_lead("pl-untouched").status == PursuitLeadStatus.OPEN
+
+    def test_reference_to_already_closed_lead_is_noop(self, tmp_path):
+        ctrl = _make_minimal_controller(tmp_path)
+        ctrl.ledger.insert_pursuit_lead(PursuitLead(
+            lead_id="pl-already", source_theory_id="src", source_cycle=5,
+            crib_score=10, status=PursuitLeadStatus.OPEN,
+        ))
+        ctrl.ledger.close_pursuit_lead(
+            "pl-already",
+            status=PursuitLeadStatus.STALE,
+            closed_cycle=7,
+        )
+        approved = [
+            TheoryRecord(
+                hypothesis_id="t", title="t", core_claim="c",
+                mechanism="m", family="f",
+                tags=["pursuit_lead:pl-already"],
+            )
+        ]
+        # Must not raise and must not revive a stale lead
+        ctrl._close_referenced_pursuit_leads(approved)
+        assert ctrl.ledger.get_pursuit_lead("pl-already").status == PursuitLeadStatus.STALE
+
+
+# ---------------------------------------------------------------------------
+# Landscape / theorist prompt integration
+# ---------------------------------------------------------------------------
+
+class TestPursuitLeadsPromptRendering:
+    def test_empty_block_shows_none_open(self, tmp_path):
+        ctrl = _make_minimal_controller(tmp_path)
+        block = ctrl._render_pursuit_leads_for_prompt([])
+        assert "PRIORITY PURSUIT LEADS" in block
+        assert "(none open)" in block
+
+    def test_populated_block_lists_leads_and_variants(self, tmp_path):
+        ctrl = _make_minimal_controller(tmp_path)
+        leads = [
+            {
+                "lead_id": "pl-x",
+                "source_theory_id": "abcdef123456",
+                "source_cycle": 42,
+                "crib_score": 8,
+                "rationale": "worker identified width 11 as next step",
+                "suggested_variants": ["try width 11", "swap Beaufort"],
+            }
+        ]
+        block = ctrl._render_pursuit_leads_for_prompt(leads)
+        assert "pl-x" in block
+        assert "width 11" in block
+        assert "opened_in_cycle=42" in block
+        assert "pursuit_lead:<lead_id>" in block  # tag convention hint
+
+    def test_safe_get_open_leads_returns_empty_on_error(self, tmp_path):
+        ctrl = _make_minimal_controller(tmp_path)
+        ctrl.ledger = MagicMock()
+        ctrl.ledger.get_open_pursuit_leads.side_effect = RuntimeError("boom")
+        assert ctrl._safe_get_open_pursuit_leads() == []
+
+
+# ---------------------------------------------------------------------------
+# P4 (rewritten under Priority 5): CycleSynthesis.risk_breakdown
+# ---------------------------------------------------------------------------
+
+class TestSynthesisRiskBreakdown:
+    def test_dataclass_default_is_empty_dict(self):
+        from kryptosbot.pantheon_siblings import CycleSynthesis
+        s = CycleSynthesis()
+        assert s.risk_breakdown == {}
+
+    def test_landscape_block_shows_risk_breakdown_when_present(self):
+        from kryptosbot.pantheon_siblings import CycleSynthesis
+        s = CycleSynthesis(
+            headline="test",
+            recommended_next_focus="shift",
+            risk_breakdown={
+                "unbounded_search": 2,
+                "exhausted_source_material": 1,
+                "none": 7,  # must be suppressed
+            },
+        )
+        block = s.to_landscape_block()
+        assert "risk-flagged dispatches" in block
+        assert "unbounded_search=2" in block
+        assert "exhausted_source_material=1" in block
+        # "none" is not a risk and must not appear
+        assert "none=" not in block
+
+    def test_landscape_block_hides_when_empty(self):
+        from kryptosbot.pantheon_siblings import CycleSynthesis
+        s = CycleSynthesis(
+            headline="test",
+            recommended_next_focus="shift",
+            risk_breakdown={},
+        )
+        block = s.to_landscape_block()
+        assert "risk-flagged" not in block
+
+    def test_landscape_block_hides_when_only_none_bucket(self):
+        from kryptosbot.pantheon_siblings import CycleSynthesis
+        s = CycleSynthesis(
+            headline="test",
+            recommended_next_focus="shift",
+            risk_breakdown={"none": 5},
+        )
+        block = s.to_landscape_block()
+        assert "risk-flagged" not in block
+
+    def test_format_risk_breakdown_helper(self):
+        from kryptosbot.pantheon_siblings import (
+            _format_risk_breakdown_for_synthesis,
+        )
+        inline, block, breakdown = _format_risk_breakdown_for_synthesis({
+            "abcdef123456": ("unbounded_search", "Free parameters."),
+            "fedcba654321": ("exhausted_source_material", "Already mined."),
+        })
+        assert breakdown == {
+            "unbounded_search": 1,
+            "exhausted_source_material": 1,
+        }
+        assert "unbounded_search=1" in inline
+        assert "exhausted_source_material=1" in inline
+        assert "abcdef12" in block
+        assert "fedcba65" in block
+
+    def test_format_risk_breakdown_helper_empty(self):
+        from kryptosbot.pantheon_siblings import (
+            _format_risk_breakdown_for_synthesis,
+        )
+        inline, block, breakdown = _format_risk_breakdown_for_synthesis({})
+        assert breakdown == {}
+        assert inline == "none=0"
+        assert "no risk-flagged" in block
+
+    def test_format_risk_breakdown_helper_skips_none_bucket(self):
+        from kryptosbot.pantheon_siblings import (
+            _format_risk_breakdown_for_synthesis,
+        )
+        # A "none" entry should not make it into the breakdown — only
+        # dispatched theories with an actual risk should be passed in,
+        # but the helper defends against a stray "none" just in case.
+        inline, block, breakdown = _format_risk_breakdown_for_synthesis({
+            "a" * 12: ("none", "cleared"),
+        })
+        assert breakdown == {}
+
+
+# ---------------------------------------------------------------------------
+# P6 / D6-FU-7: stat-audit REJECTED downgrades theory.status
+# ---------------------------------------------------------------------------
+
+class TestStatAuditDowngradesPromising:
+    def test_promising_gets_downgraded(self, tmp_path):
+        ctrl = _make_minimal_controller(tmp_path)
+        theory = TheoryRecord(
+            hypothesis_id="fakebreak", title="crib-paste fabrication",
+            core_claim="c", mechanism="m", family="f",
+            status=TheoryStatus.PROMISING,
+        )
+        ctrl.ledger.upsert_theory(theory)
+
+        # Stub stat-audit verdict
+        from kryptosbot.pantheon_siblings import StatAuditVerdict
+        ctrl._cycle_stat_audit_verdicts["fakebreak"] = StatAuditVerdict(
+            verdict="rejected",
+            confidence=0.97,
+            methodology_concerns=["crib-pasting fingerprint detected"],
+        )
+
+        contract = WorkerContract(
+            hypothesis_id="fakebreak",
+            status=WorkerStatus.SUCCESS,
+            crib_score=24,
+            score=24.0,
+            bean_passed=True,
+            best_plaintext="A" * 97,
+        )
+
+        ctrl._run_alerts([theory], [contract])
+
+        reloaded = ctrl.ledger.get_theory("fakebreak")
+        assert reloaded.status == TheoryStatus.COMPLETED
+        assert "stat-audit rejected" in reloaded.failure_reason
+
+    def test_promising_gets_downgraded_when_alerts_disabled(self, tmp_path):
+        ctrl = _make_minimal_controller(tmp_path)
+        ctrl.config.alert_threshold = "none"
+        theory = TheoryRecord(
+            hypothesis_id="noalertfake", title="crib-paste fabrication",
+            core_claim="c", mechanism="m", family="f",
+            status=TheoryStatus.PROMISING,
+        )
+        ctrl.ledger.upsert_theory(theory)
+
+        from kryptosbot.pantheon_siblings import StatAuditVerdict
+        ctrl._cycle_stat_audit_verdicts["noalertfake"] = StatAuditVerdict(
+            verdict="rejected",
+            confidence=0.97,
+            methodology_concerns=["crib-pasting fingerprint detected"],
+        )
+
+        contract = WorkerContract(
+            hypothesis_id="noalertfake",
+            status=WorkerStatus.SUCCESS,
+            crib_score=24,
+            score=24.0,
+            bean_passed=True,
+            best_plaintext="A" * 97,
+        )
+
+        ctrl._run_alerts([theory], [contract])
+
+        reloaded = ctrl.ledger.get_theory("noalertfake")
+        assert reloaded.status == TheoryStatus.COMPLETED
+        assert "stat-audit rejected" in reloaded.failure_reason
+
+    def test_non_rejected_does_not_downgrade(self, tmp_path):
+        ctrl = _make_minimal_controller(tmp_path)
+        theory = TheoryRecord(
+            hypothesis_id="realsig", title="real signal",
+            core_claim="c", mechanism="m", family="f",
+            status=TheoryStatus.PROMISING,
+        )
+        ctrl.ledger.upsert_theory(theory)
+
+        from kryptosbot.pantheon_siblings import StatAuditVerdict
+        ctrl._cycle_stat_audit_verdicts["realsig"] = StatAuditVerdict(
+            verdict="confirmed",
+            confidence=0.9,
+        )
+
+        contract = WorkerContract(
+            hypothesis_id="realsig",
+            status=WorkerStatus.SUCCESS,
+            crib_score=22,
+            score=22.0,
+            bean_passed=False,
+            best_plaintext="B" * 97,
+        )
+
+        ctrl._run_alerts([theory], [contract])
+        reloaded = ctrl.ledger.get_theory("realsig")
+        assert reloaded.status == TheoryStatus.PROMISING
