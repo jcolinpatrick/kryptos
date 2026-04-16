@@ -1,0 +1,42 @@
+{
+  "phases": {
+    "1seg": {
+      "tested": 676,
+      "bean_passes": 0,
+      "time": 0.002140045166015625
+    },
+    "2seg": {
+      "tested": 2706704,
+      "bean_passes": 0,
+      "time": 13.180284023284912
+    },
+    "3seg_stehle_vig": {
+      "tested": 719789928,
+      "bean_passes": 0,
+      "time": 3690.6340072155
+    },
+    "3seg_stehle_beau": {
+      "tested": 719789928,
+      "bean_passes": 0,
+      "time": 3660.199193954468
+    },
+    "2seg_full": {
+      "tested": 0,
+      "bean_passes": 0,
+      "time": 0,
+      "note": "covered by phase 2"
+    },
+    "3seg_vig_sample": {
+      "tested": 297034400,
+      "bean_passes": 0,
+      "time": 337.6114468574524
+    }
+  },
+  "total_tested": 1739321636,
+  "total_bean_passes": 0,
+  "best_bigram": 0,
+  "best_crib": 0,
+  "best_plaintext": "",
+  "best_config": null,
+  "bean_configs_count": 0
+}

@@ -79,6 +79,11 @@ def compute_coverage_report(
     all_inner_fams = {i.family_id for i in inners}
 
     n_inner_fams_touched = len(inner_fam_classes)
+    expected_outers_for_family_cover = (
+        plan.target_evals // n_inner_fams_touched
+        if n_inner_fams_touched and plan.target_evals % n_inner_fams_touched == 0
+        else 0
+    )
     per_outer_counts = [len(s) for s in per_outer_inner_fams.values()]
     per_outer_counts_sorted = sorted(per_outer_counts)
     if per_outer_counts_sorted:
@@ -94,6 +99,7 @@ def compute_coverage_report(
     outers_one = sum(1 for c in per_outer_counts if c == 1)
 
     cross_total = len(all_outer_fams) * len(all_inner_fams)
+    full_instance_total = len(outers) * len(inners)
 
     # Per-outer family class count map (index -> fam-class count)
     per_outer_map: Dict[str, List[int]] = {}
@@ -108,7 +114,9 @@ def compute_coverage_report(
         plan.mode == SamplingMode.STRATIFIED_FAMILY_COVER
         and plan.is_complete_for_mode
         and n_inner_fams_touched > 0
-        and outers_all == touched_outer_count
+        and len(plan.pairs) == plan.target_evals == plan.achieved_evals
+        and touched_outer_count == expected_outers_for_family_cover
+        and outers_all == expected_outers_for_family_cover
     )
 
     qualifies_low_complex = (
@@ -120,6 +128,9 @@ def compute_coverage_report(
     qualifies_full_cart = (
         plan.mode == SamplingMode.FULL_CARTESIAN
         and plan.is_complete_for_mode
+        and len(plan.pairs) == full_instance_total
+        and len(distinct_outer_idx) == len(outers)
+        and len(distinct_inner_idx) == len(inners)
     )
 
     return CoverageReport(

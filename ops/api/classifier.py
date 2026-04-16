@@ -149,8 +149,10 @@ WHAT REMAINS OPEN (leading hypotheses — do NOT match these to eliminations):
 - Running key from UNTESTED source texts (model survives Bean, 13 mono degrees of freedom). Priority sources: Kahn's "Codebreakers", Schliemann Troy texts, pre-1990 Egyptological texts.
 - Bespoke chart-based system — Sanborn archive shows "Code Breaker" overlay sketch and "actual coding charts." Physical overlay cipher mechanism outside classical families.
 - Multi-layer hand-executable systems — single-layer eliminations do NOT eliminate those families as one layer of a multi-layer construction. Mono+Trans+Running key is UNDERDETERMINED.
-- Model-free null mask search — null palette {B,G,I,K,O,W,Z} confirmed anomalous (p~3e-5), not an optimizer artifact.
 - External evidence: K5 ciphertext, recovered coding charts, circled letters on sculpture photos.
+
+RETIRED HYPOTHESES (do NOT treat as live evidence, but classify matching submissions as "matched to retired claim"):
+- Null palette {B,G,I,K,O,W,Z} anomaly — RETIRED 2026-04. Matched controls (April 2026) disproved specificity: among 100 random 7-letter palettes, BGIKOWZ ranked in the 1st percentile for cross-model mask agreement, and 76 of 133 single-letter-swap neighbors outperformed it. The convergence improvement from palette constraints is a generic combinatorial property, not evidence for these letters. Palette constraints remain useful as a computational technique but BGIKOWZ is not a privileged signal. The earlier p~3e-5 claim was post-hoc and traced to selection from positions already containing palette letters. The 17-position CONSENSUS_NULL_POSITIONS mask derived from this construct is likewise unsupported and should not be cited as ground truth.
 
 OPEN RESEARCH QUESTIONS (RQ-1 through RQ-13):
 - RQ-1: What cipher type? Not any standard single-layer classical cipher.

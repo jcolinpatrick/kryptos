@@ -100,9 +100,20 @@ def evaluate_pairs_parallel(
             raw = pool.map(_worker_evaluate_one, indexed, chunksize=chunksize)
 
     raw.sort(key=lambda r: r[0])
+    errors = [
+        f"idx={idx} profile_id={profile.profile_id}: {err}"
+        for (idx, profile, result, err) in raw
+        if result is None
+    ]
+    if errors:
+        preview = "; ".join(errors[:5])
+        extra = "" if len(errors) <= 5 else f"; ... {len(errors) - 5} more"
+        raise RuntimeError(
+            "two-layer worker evaluation failed; refusing to drop failed "
+            f"profiles from coverage accounting: {preview}{extra}"
+        )
+
     out: List[Tuple[CompositionProfile, EvaluationResult]] = []
     for (_idx, profile, result, err) in raw:
-        if result is None:
-            continue
         out.append((profile, result))
     return out

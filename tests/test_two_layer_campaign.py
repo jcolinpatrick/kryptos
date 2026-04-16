@@ -7,6 +7,7 @@ from kryptos.campaigns.two_layer.families import (
     CompositionProfile,
     EvaluationResult,
     InnerMixingClass,
+    OuterFamily,
     ProvenanceClass,
 )
 from kryptos.campaigns.two_layer import (
@@ -50,6 +51,19 @@ def test_outer_mask_breaks_alignment_disables_bean_gate():
     r = ev.evaluate_composition(p, cand)
     assert r.bean_compatibility is None
     assert "H1 disabled" in r.bean_compatibility_scope_note
+
+
+def test_short_candidates_are_not_synthetically_padded():
+    outer = _first_mask_outer()
+    inner = _first_caesar_inner()
+    p = _pair(outer, inner)
+    short = "Z" * 20
+    r = ev.evaluate_composition(p, short)
+    assert r.candidate_text == short
+    assert "length_mismatch_20_not_padded" in r.flags
+    assert r.crib_compatibility_score == 0
+    assert r.stehle_position_55_63_match is False
+    assert r.weak_identity_preservation == 0.0
 
 
 def test_width21_is_evaluation_not_generation():
@@ -279,6 +293,28 @@ def test_parallel_results_match_serial():
         assert rs.width21_repeat_count == rp.width21_repeat_count
 
 
+def test_parallel_worker_errors_fail_closed():
+    """Worker failures must not be dropped from coverage accounting."""
+    bad_outer = OuterFamily(
+        family_id="OUTER-BOGUS",
+        name="bogus_outer",
+        description="synthetic invalid outer for fail-closed regression",
+        parameters={},
+        parameter_space_size=1,
+        complexity_score=1.0,
+        breaks_direct_positional_alignment=True,
+        is_post_hoc_selected=False,
+        selection_pool_size=1,
+        provenance=ProvenanceClass.EXPLORATORY,
+    )
+    with pytest.raises(RuntimeError, match="refusing to drop failed profiles"):
+        evaluate_pairs_parallel(
+            [(bad_outer, _first_caesar_inner())],
+            workers=1,
+            use_ngram=False,
+        )
+
+
 def test_parallel_workers_zero_uses_default():
     assert default_worker_count() >= 1
 
@@ -309,6 +345,78 @@ def test_checkpoint_roundtrip():
         assert c2.completed_pair_indices == [0, 1, 2]
         assert c2.filters == {"k": "v"}
         assert len(c2.results) == 3
+
+
+def test_checkpoint_load_rejects_duplicate_completed_indices():
+    with tempfile.TemporaryDirectory() as td:
+        path = os.path.join(td, "ckpt.json")
+        payload = {
+            "campaign_id": "f_x",
+            "sampling_mode": "full_cartesian",
+            "sampling_seed": 42,
+            "target_evals": 10,
+            "completed_pair_indices": [0, 1, 1],
+            "results": [],
+        }
+        with open(path, "w") as f:
+            import json
+            json.dump(payload, f)
+        with pytest.raises(ValueError, match="unique"):
+            Checkpoint.load(path)
+
+
+def test_checkpoint_load_rejects_out_of_range_indices():
+    with tempfile.TemporaryDirectory() as td:
+        path = os.path.join(td, "ckpt.json")
+        payload = {
+            "campaign_id": "f_x",
+            "sampling_mode": "full_cartesian",
+            "sampling_seed": 42,
+            "target_evals": 2,
+            "completed_pair_indices": [0, 2],
+            "results": [],
+        }
+        with open(path, "w") as f:
+            import json
+            json.dump(payload, f)
+        with pytest.raises(ValueError, match=r"\[0, target_evals\)"):
+            Checkpoint.load(path)
+
+
+def test_checkpoint_load_rejects_result_idx_not_completed():
+    with tempfile.TemporaryDirectory() as td:
+        path = os.path.join(td, "ckpt.json")
+        payload = {
+            "campaign_id": "f_x",
+            "sampling_mode": "full_cartesian",
+            "sampling_seed": 42,
+            "target_evals": 10,
+            "completed_pair_indices": [0, 1],
+            "results": [{"idx": 3}],
+        }
+        with open(path, "w") as f:
+            import json
+            json.dump(payload, f)
+        with pytest.raises(ValueError, match="present in completed_pair_indices"):
+            Checkpoint.load(path)
+
+
+def test_checkpoint_load_rejects_unsorted_completed_indices():
+    with tempfile.TemporaryDirectory() as td:
+        path = os.path.join(td, "ckpt.json")
+        payload = {
+            "campaign_id": "f_x",
+            "sampling_mode": "full_cartesian",
+            "sampling_seed": 42,
+            "target_evals": 10,
+            "completed_pair_indices": [1, 0],
+            "results": [],
+        }
+        with open(path, "w") as f:
+            import json
+            json.dump(payload, f)
+        with pytest.raises(ValueError, match="sorted"):
+            Checkpoint.load(path)
 
 
 def test_checkpoint_resume_skips_completed():
@@ -348,6 +456,56 @@ def test_render_summary_does_not_overclaim_partial_runs():
     plan.is_complete_for_mode = False
     cov = compute_coverage_report(plan, outers, inners)
     out = {"total_profiles_tested": len(plan.pairs), "joint_anomaly_successes": []}
+    s = ev.render_summary(out, coverage=cov)
+    assert "FAMILY-COVER null" not in s
+    assert "PARTIAL" in s
+
+
+def test_malformed_full_cartesian_plan_fails_closed():
+    """Coverage must not trust a completeness flag without pair-count proof."""
+    outers, inners = _outers_inners()
+    plan = smp.sample_full_cartesian(outers, inners, seed=0)
+    malformed = smp.SamplingPlan(
+        pairs=plan.pairs[:-1],  # drop one pair but keep the original claim
+        mode=plan.mode,
+        seed=plan.seed,
+        target_evals=plan.target_evals,
+        achieved_evals=len(plan.pairs) - 1,
+        coverage_guarantees=plan.coverage_guarantees,
+        is_complete_for_mode=True,
+        notes=plan.notes,
+        filters=plan.filters,
+    )
+    cov = compute_coverage_report(malformed, outers, inners)
+    assert cov.qualifies_as_full_cartesian_complete is False
+
+    out = {"total_profiles_tested": len(malformed.pairs), "joint_anomaly_successes": []}
+    s = ev.render_summary(out, coverage=cov)
+    assert "FULL-CARTESIAN null" not in s
+    assert "PARTIAL" in s
+
+
+def test_malformed_family_cover_plan_fails_closed():
+    """Dropping an outer instance must void the family-cover warrant."""
+    outers, inners = _outers_inners()
+    plan = smp.sample_stratified_family_cover(outers, inners, seed=0)
+    dropped_outer = plan.pairs[0][0]
+    malformed_pairs = [pair for pair in plan.pairs if pair[0] != dropped_outer]
+    malformed = smp.SamplingPlan(
+        pairs=malformed_pairs,
+        mode=plan.mode,
+        seed=plan.seed,
+        target_evals=plan.target_evals,
+        achieved_evals=len(malformed_pairs),
+        coverage_guarantees=plan.coverage_guarantees,
+        is_complete_for_mode=True,
+        notes=plan.notes,
+        filters=plan.filters,
+    )
+    cov = compute_coverage_report(malformed, outers, inners)
+    assert cov.qualifies_as_family_cover_complete is False
+
+    out = {"total_profiles_tested": len(malformed.pairs), "joint_anomaly_successes": []}
     s = ev.render_summary(out, coverage=cov)
     assert "FAMILY-COVER null" not in s
     assert "PARTIAL" in s

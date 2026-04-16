@@ -309,6 +309,24 @@ class TestRecoverKeyAtPositions:
         for pos in result_az:
             assert result_az[pos] == result_plain[pos], f"Mismatch at pos {pos}"
 
+    def test_rejects_out_of_range_positions(self):
+        """Known-plaintext recovery must not silently drop malformed cribs."""
+        with pytest.raises(ValueError, match="outside ciphertext"):
+            recover_key_at_positions(CT, {len(CT): "A"}, CipherVariant.VIGENERE)
+        with pytest.raises(ValueError, match="outside ciphertext"):
+            recover_key_at_positions(CT, {-1: "A"}, CipherVariant.VIGENERE)
+
+    def test_rejects_partial_alphabet_arguments(self):
+        """Plain/cipher alphabets must be supplied as an explicit pair."""
+        from kryptos.kernel.alphabet import AZ
+        with pytest.raises(ValueError, match="provided together"):
+            recover_key_at_positions(CT, {0: "A"}, CipherVariant.VIGENERE, AZ, None)
+
+    def test_rejects_non_alphabet_characters(self):
+        """Malformed known plaintext should fail closed, not produce a key."""
+        with pytest.raises(ValueError, match="uppercase A-Z"):
+            recover_key_at_positions(CT, {0: "."}, CipherVariant.VIGENERE)
+
 
 class TestQuagmire:
     """Tests for Quagmire cipher (mixed-alphabet periodic substitution)."""

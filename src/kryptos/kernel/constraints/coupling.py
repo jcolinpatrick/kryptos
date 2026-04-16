@@ -1,12 +1,22 @@
 """Stego-cipher coupling constraints (CxS-1 through CxS-4).
 
-Quantifies statistical relationships between the stego layer (null palette)
-and the cipher layer (Beaufort keystream at crib positions). These are
-DERIVED FACTs — deterministic consequences of the confirmed null palette
-{B,G,I,K,O,W,Z} and the Beaufort keystream JLJODEGKUKKKLOCGGBGOKTRU.
+Quantifies statistical relationships between a proposed stego layer
+(null palette) and the cipher layer (Beaufort keystream at crib positions).
 
-Each constraint is a DerivedConstraint with an exact binomial p-value,
-allowing falsifiability testing and cross-layer dependency tracking.
+RETIRED FRAMING (2026-04-14): the original docstring described these
+constraints as "DERIVED FACTs — deterministic consequences of the
+confirmed null palette {B,G,I,K,O,W,Z}". That framing is retired. The
+specific palette was disproved by matched controls (April 2026) and is
+tracked in claims_registry as claim_id null_palette_retired. See
+memory/project_consensus_nulls_epistemic_status_2026_04_14.md.
+
+The functions below still compute correct binomial p-values as a function
+of whatever palette is passed in — they are generic palette-enrichment
+utilities and take `palette` as a parameter. They must NOT be called with
+the historical BGIKOWZ palette as if it were confirmed ground truth. Any
+live caller should either (a) pass a palette that is part of an active
+(non-retired) hypothesis, or (b) use these functions purely as historical
+reproducibility / regression-test fixtures.
 """
 from __future__ import annotations
 
