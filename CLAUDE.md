@@ -62,7 +62,7 @@ A `venv/` exists (gitignored) for non-core work. Activate with `source venv/bin/
 **Git workflow:** Development happens directly on `main`. No branch naming conventions or PR process — this is a solo research project with computational partners.
 
 ```bash
-# Run all tests (~80s, no expected failures).
+# Run all tests (~107s, no expected failures).
 # Current count drifts; authoritative: `PYTHONPATH=src pytest tests/ --collect-only -q | tail -1`
 PYTHONPATH=src pytest tests/
 
@@ -113,6 +113,9 @@ Four layers with strict dependency direction: **kernel → pipeline → novelty 
 - **pipeline/** — `evaluate_candidate()` is the primary entry point. `SweepRunner` handles parallel execution with checkpointing and resume.
 - **novelty/** — Hypothesis-driven search: `Hypothesis` dataclass → `triage_batch()` → `NoveltyLedger` (SQLite). Wired to 13 research questions (RQ-1..RQ-13). See `src/kryptos/novelty/generators.py` for adding new hypotheses.
 - **corpus/** — Egyptological corpus pipeline for running-key testing: `schema.py` (dataclasses), `normalize.py` (transliteration rules), `variants.py` (controlled variant expansion), `ingest.py` (local + Gutenberg ingestion).
+- **campaigns/** — Campaign runners for structured multi-layer searches. `two_layer/` handles substitution+transposition sweeps with checkpoint/resume (`checkpoint.py`), coverage tracking (`coverage.py`), parallel dispatch (`parallel.py`), and evaluation (`evaluation.py`). `w_delimiter/` is a second campaign family. `manifest.py` and `historical_eliminations.py` track what's been tested.
+- **admissibility/** — Pre-flight feasibility gates: `periodic_admissibility.py` (period-based filtering), `procedure_policy.py` (procedural constraint enforcement), `corpus_policy.py` (running-key source validation), `certificate.py` (admissibility certificates for audit trails).
+- **composition/** — Orchestrator for multi-step cipher compositions: `orchestrator.py` drives multi-layer pipelines, `scoring_bridge.py` adapts kernel scoring for composed candidates, `constraints.py` enforces cross-layer constraints, `registry.py`/`ledger.py` track composition families and results.
 - **cli/** — Thin wrappers for `doctor`, `sweep`, `reproduce`, `novelty`, `report`.
 
 **`kryptosbot/` (separate subproject, NOT under `src/kryptos/`)** — Multi-agent runner built on the Claude Agent SDK. Has its own `pyproject.toml`, its own `.env` (see `kryptosbot/.env.template`), its own runbook (`kryptosbot/RUNBOOK.md`), and depends on `claude-agent-sdk`. **Do not confuse with the core `kryptos` package** — they have independent dependency trees and different API key env vars. Core kryptos must stay stdlib-only; kryptosbot may use anything in its own venv.
@@ -389,11 +392,12 @@ Two `memory/` directories exist — don't confuse them:
 - **KryptosBot runner:** `python3 kryptosbot/solve.py`. See `kryptosbot/RUNBOOK.md`.
 - **Campaign runner:** `PYTHONPATH=src python3 -u kryptosbot/campaign_v2.py` (supports `--local-only`, `--dry-run`).
 - **Pantheon (current multi-agent system):** persona-routed theorists + sibling red-team-disprover + statistical-audit gate + lead-pursuit evaluator. Live state and day-by-day build notes in `MEMORY.md` under "Project (current state)" — read those, not this section, for what's actually running. Two cycle loops exist (`controller.run` and `run_controller.do_run`); any phase addition must patch **both**.
+- **AGENTS.md** — Codex operating instructions (`AGENTS.md` at repo root). Codex performs debugging, troubleshooting, and hardening passes as an independent auditor. Defines hard constraints (free text never drives control flow, worker scores never trusted, timeout means inconclusive), autonomous fix scope (off-by-one, resume bugs, weak tests, misleading docs), and areas requiring extra caution (kernel constants, Bean logic, elimination semantics). Codex treats prior Claude Code conclusions as hypotheses to verify, not facts.
 - **Historical reference:** `archive/legacy_harness/`, `archive/session_reports/`, `docs/history/`, [`reports/final_synthesis.md`](reports/final_synthesis.md) (banner-labelled HISTORICAL SNAPSHOT).
 
 ---
 
-*Last updated: 2026-04-14 — CONSENSUS_NULL_POSITIONS retraction flagged, Pantheon pointer added, stale test-count dropped. CLAUDE.md is operational doctrine only. Live research state in MEMORY.md; structured claims in docs/claims_registry.json; open audits in docs/methodological_audits.md; canonical entry index in docs/README_current_state.md.*
+*Last updated: 2026-04-16 — Added campaigns/, admissibility/, composition/ to architecture; AGENTS.md pointer for Codex; test runtime updated to ~107s. CLAUDE.md is operational doctrine only. Live research state in MEMORY.md; structured claims in docs/claims_registry.json; open audits in docs/methodological_audits.md; canonical entry index in docs/README_current_state.md.*
 *Primary author: Colin Patrick (human lead) + Claude (computational partner)*
 
 *Precedence rule for conflicts: verify freshness with `git log -1 --format=%cd CLAUDE.md MEMORY.md`. If CLAUDE.md is older than MEMORY.md and the two conflict on research state (not operational doctrine), trust MEMORY.md and flag the drift. Operational doctrine in CLAUDE.md is always authoritative regardless of date.*
