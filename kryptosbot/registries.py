@@ -343,8 +343,53 @@ KNOWN_ANOMALIES: list[dict[str, Any]] = [
                         "(route reading, overlay, fold) would produce exactly this kind of columnar structure. "
                         "Recipe P-E0e-2: test non-standard-modulus Fibonacci (mod 10, mod 21) at width 21. "
                         "INDEPENDENTLY VERIFIED 2026-04-12: 100K MC permutations of K4 confirm z=4.47, "
-                        "p≈0.0002. Repeats: AZ BS IT KK LS LW PK QZ SN WA ZT.",
+                        "p≈0.0002. Repeats: AZ BS IT KK LS LW PK QZ SN WA ZT. "
+                        "CRITICAL UPDATE 2026-04-17 [DERIVED FACT]: removing the 5 W characters from K4 "
+                        "yields a 92-char text with ZERO repeated vertical bigrams at width 21. The entire "
+                        "width-21 anomaly is attributable to W placement. This implies the 5 W's (positions "
+                        "20,36,48,58,74 in 0-indexed CT97) are structural delimiters, not ciphertext. "
+                        "See anomaly w_delimiter_segments.",
         "source": "Hannon (2010), LaTurner (2016), Bean 2021 Section 2.1",
+        "priority": 1,
+        "status": "open",
+    },
+    {
+        "anomaly_id": "w_delimiter_segments",
+        "title": "5 W's divide K4 into 6 segments (20,15,11,9,15,22); removing W's kills the width-21 bigram anomaly",
+        "description": "[DERIVED FACT — computed 2026-04-17 from CT by python3 analysis] "
+                        "K4 contains exactly 5 W characters at 0-indexed positions [20, 36, 48, 58, 74]. "
+                        "Removing all 5 W's from CT97 yields a 92-character string with ZERO repeated "
+                        "vertical bigrams at width 21 (vs 11 in CT97, p≈1/6750). The width-21 bigram "
+                        "anomaly is entirely explained by the W positions — it is not a property of the "
+                        "underlying 92-char text. "
+                        "The 5 W's divide K4 into 6 variable-length segments: "
+                        "seg0=20 chars (pos 0-19), seg1=15 (pos 21-35), seg2=11 (pos 37-47), "
+                        "seg3=9 (pos 49-57), seg4=15 (pos 59-73), seg5=22 (pos 75-96). "
+                        "Segment lengths: [20, 15, 11, 9, 15, 22], sum=92. "
+                        "FIRST INTERPRETATION: W's are physical row-end delimiters — Sanborn wrote the "
+                        "ciphertext in 6 rows of irregular length on graph paper or a stencil, using W "
+                        "to mark end-of-row before carving. The underlying cipher operates on the "
+                        "92 non-W characters; the W positions are a layout artifact. "
+                        "SECOND INTERPRETATION: W's are null insertions placed at positions that generate "
+                        "the width-21 bigram anomaly as a structural signature. "
+                        "CRIB WARNING — DO NOT RE-INDEX: Sanborn has confirmed the cribs map 1:1 "
+                        "to the carved CT97. EASTNORTHEAST is at positions 21-33 and BERLINCLOCK "
+                        "at positions 63-73 (0-indexed) in the full 97-character text. These positions "
+                        "are FIXED. Any cipher test must honour CT97 crib positions regardless of "
+                        "whether W's are treated as delimiters or nulls. Stripping W's and shifting "
+                        "cribs to CT92 positions silently invalidates the only confirmed ground truth. "
+                        "The W-delimiter hypothesis is about LAYOUT and CONSTRUCTION of the cipher, "
+                        "not about what text the cipher operates on. "
+                        "KEY TEST: what layout procedure operating on a 6-segment variable-width "
+                        "physical grid (segments 20,15,11,9,15,22) with W as row-end marker produces "
+                        "a ciphertext that, when read linearly as CT97, decrypts to known cribs at "
+                        "their fixed positions? "
+                        "NOTE: the 5 W positions are distinct from the CONSENSUS_NULL_POSITIONS "
+                        "(retracted palette-era construct); this finding is independent. "
+                        "NOTE: CT73 (consensus-null-stripped) also shows p=0.247 at width 21, "
+                        "confirming the anomaly is in the null/delimiter layer, not the cipher layer.",
+        "source": "[DERIVED FACT] python3 in-session analysis 2026-04-17; "
+                  "cross-check: CT73 result from red-team cycle 81 (2026-04-17)",
         "priority": 1,
         "status": "open",
     },
@@ -848,6 +893,7 @@ ADMISSIBLE_PROMPT_ANOMALY_IDS: frozenset[str] = frozenset({
     "aaa_coordinate_lie",
     "aaa_compass_cipher",
     "width21_vertical_bigrams",
+    "w_delimiter_segments",
 })
 
 

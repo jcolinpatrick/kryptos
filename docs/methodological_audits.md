@@ -117,26 +117,11 @@ artifacts still reference it as if it were evidence:
 
 ## AUDIT-3 — `BREAKTHROUGH` / `bean_ok` label semantics
 
-**Status:** OPEN — `documentation only`
+**Status:** CLOSED 2026-04-17
+
 **Raised:** 2026-04-09 (this refactor)
 
-The scoring pipeline classifies `crib_score == 24 && bean_passed` as
-`BREAKTHROUGH`. That label reads like *"potential solution."* In practice, on
-this codebase, it has meant post-hoc overfit artifacts as often as genuine
-candidates (see `MEMORY.md` DO NOT TEST list and `docs/claim_inventory.md`).
-
-**What would close this audit:**
-
-- Add a short note in `docs/invariants.md` and in
-  `docs/README_current_state.md` explaining that the `BREAKTHROUGH` label is
-  an *input to validation*, not an output of validation; it triggers the
-  validation gates in CLAUDE.md §"Validation gates", it does not satisfy
-  them.
-- Optionally rename the label in `kernel/scoring/aggregate.py` to
-  `ALL_CRIBS_MATCH` and keep `BREAKTHROUGH` as an alias.
-
-The renaming is optional; the documentation note is mandatory for this
-audit to close.
+Moved to Closed section below.
 
 ---
 

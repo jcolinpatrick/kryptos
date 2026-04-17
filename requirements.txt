@@ -45,5 +45,5 @@ pillow==12.1.1
 rich==14.3.4
 
 # AI / Agent SDK
-anthropic==0.83.0
-claude-agent-sdk==0.1.44
+anthropic==0.96.0
+claude-agent-sdk==0.1.61

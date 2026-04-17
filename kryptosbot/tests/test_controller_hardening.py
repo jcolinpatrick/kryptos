@@ -618,7 +618,7 @@ class TestDisplayStageTransitions:
         old_status = display._theorist_status
         try:
             display._theorist_status = status
-            display.print_redteam_start("red-team-disprover", "claude-opus-4-6", 2)
+            display.print_redteam_start("red-team-disprover", "claude-opus-4-7", 2)
             status.stop.assert_called_once()
             assert display._theorist_status is None
         finally:

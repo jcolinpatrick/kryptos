@@ -893,7 +893,7 @@ class ResearchController:
                 "Output ONLY a JSON array of hypothesis objects. No prose."
             )
             # Pre-Pantheon default: Opus on the theorist for creative reasoning
-            model, fallback_model = "claude-opus-4-6", "claude-sonnet-4-6"
+            model, fallback_model = "claude-opus-4-7", "claude-sonnet-4-6"
             persona_name = "generic"
 
         # Attribution line — Colin's Day 2 spec requirement. Makes

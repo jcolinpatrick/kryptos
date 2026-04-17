@@ -921,6 +921,7 @@ class TestRegistries:
             "aaa_coordinate_lie",
             "aaa_compass_cipher",
             "width21_vertical_bigrams",
+            "w_delimiter_segments",
         }
 
     def test_canonical_anomaly_text_does_not_depend_on_site_alt_text(self):

@@ -9,6 +9,7 @@ Options:
     --cycles N          Max controller cycles (default: 10)
     --theories N        Theories per cycle (default: 5)
     --workers N         Max concurrent workers (default: 4)
+    --timeout N         Worker timeout in minutes (default: 30)
     --dry-run           Generate + critic only, no dispatch
     --skip-critic       Skip the critic stage
     --status            Print current controller status and exit
@@ -56,6 +57,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--cycles", type=int, default=10, help="Max controller cycles")
     parser.add_argument("--theories", type=int, default=5, help="Theories per cycle")
     parser.add_argument("--workers", type=int, default=4, help="Max concurrent workers")
+    parser.add_argument("--timeout", type=int, default=30, help="Worker timeout in minutes (default: 30)")
     parser.add_argument("--dry-run", action="store_true", help="Generate + critic only")
     parser.add_argument("--skip-critic", action="store_true", help="Skip critic stage")
     parser.add_argument("--status", action="store_true", help="Print status and exit")
@@ -428,6 +430,7 @@ async def main() -> None:
         max_cycles=args.cycles,
         theories_per_cycle=args.theories,
         max_concurrent_workers=args.workers,
+        worker_timeout_minutes=args.timeout,
         dry_run=args.dry_run,
         skip_critic=args.skip_critic,
         alert_threshold=args.alert_on,

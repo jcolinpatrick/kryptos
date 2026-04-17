@@ -1079,7 +1079,7 @@ def load_roster(agents_dir: Path = DEFAULT_AGENTS_DIR) -> dict[str, AgentSpec]:
 
 
 # Model names as the Claude Agent SDK expects them.
-_SDK_OPUS = "claude-opus-4-6"
+_SDK_OPUS = "claude-opus-4-7"
 _SDK_SONNET = "claude-sonnet-4-6"
 _SDK_HAIKU = "claude-haiku-4-5"
 

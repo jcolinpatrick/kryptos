@@ -66,7 +66,7 @@ class CampaignState:
     version: str = "3.0"
     budget_total: float = 100.0
     budget_spent: float = 0.0
-    model: str = "claude-opus-4-6"
+    model: str = "claude-opus-4-7"
     started_at: str = ""
     last_round_at: str = ""
 
@@ -562,7 +562,7 @@ def _load_api_key() -> str | None:
 def run_campaign(
     *,
     budget: float = 100.0,
-    model: str = "claude-opus-4-6",
+    model: str = "claude-opus-4-7",
     local_only: bool = False,
     dry_run: bool = False,
     phase: str = "",
@@ -716,7 +716,7 @@ def main() -> None:
     parser.add_argument("--budget", type=float, default=100.0,
                         help="Total API budget in USD (default: $100)")
     parser.add_argument("--model", type=str, default="claude-opus-4-6",
-                        choices=["claude-sonnet-4-6", "claude-opus-4-6"],
+                        choices=["claude-sonnet-4-6", "claude-opus-4-6", "claude-opus-4-7"],
                         help="Model for reasoning")
     parser.add_argument("--local-only", action="store_true",
                         help="No API calls — load evidence and test Oracle only")
