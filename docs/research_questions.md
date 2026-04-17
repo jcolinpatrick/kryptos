@@ -9,7 +9,7 @@ how much resolving them would shrink the remaining search space.
 
 ### RQ-1: What is the cipher TYPE?
 
-**Current state**: Unknown. It is non-periodic (proven under direct correspondence), and NOT a simple linear recurrence keystream (orders 1-8 eliminated). [HYPOTHESIS] It may be position-dependent (not state-dependent) based on the K5 shared-positions inference (see `docs/kryptos_ground_truth.md` C5), but this inference is unproven.
+**Current state**: Unknown. It is non-periodic within the repo's direct-positional correspondence model, and NOT a simple linear recurrence keystream (orders 1-8 eliminated in-project). [HYPOTHESIS] It may be position-dependent (not state-dependent) based on the K5 shared-positions inference (see `docs/kryptos_ground_truth.md` C5), but this inference is unproven.
 
 **What's been eliminated**:
 - Standard Vigenere with periodic key

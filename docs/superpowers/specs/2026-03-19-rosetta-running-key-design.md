@@ -25,7 +25,7 @@ Signal Classification + Bean Filtering
 ## Phase 1: Verification Baseline (sanity checks only)
 
 ### Rationale
-Phase 1 is NOT novel exploration — it reproduces prior results as a sanity check for the scoring pipeline. Most sculpture-derived running keys have already been tested in `e_antipodes_04_sculpture_running_key.py` (K1/K2/K3 CT and concatenations) and periodic keywords are proven impossible by Bean inequalities.
+Phase 1 is NOT novel exploration — it reproduces prior results as a sanity check for the scoring pipeline. Most sculpture-derived running keys have already been tested in `e_antipodes_04_sculpture_running_key.py` (K1/K2/K3 CT and concatenations) and periodic keywords are already conditionally eliminated in the direct-positional Bean model.
 
 ### What this phase does
 1. **Reproduce** K3 PT as running key → confirm max 7/24 (matches prior result)
@@ -34,7 +34,7 @@ Phase 1 is NOT novel exploration — it reproduces prior results as a sanity che
 4. **Synthetic positive test**: generate a fake K4 CT using a known German text + Beaufort → verify the pipeline finds it
 
 ### What this phase does NOT do
-- Does NOT re-test cycling keywords (PALIMPSEST, ABSCISSA, KRYPTOS) — these are periodic substitution, proven impossible
+- Does NOT re-test cycling keywords (PALIMPSEST, ABSCISSA, KRYPTOS) — these are periodic substitution and are already conditionally eliminated in the direct-positional model
 - Does NOT re-test tableau rows/columns as running keys — covered by `e_antipodes_04` and `e_chart_01`
 - Does NOT re-test K2 coordinate texts — covered by elimination ledger entry 9
 

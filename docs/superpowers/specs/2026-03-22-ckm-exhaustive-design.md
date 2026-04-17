@@ -27,7 +27,10 @@ Where:
 - d is a phase offset (0 to L_B-1)
 - f is a simple two-input function
 
-The combined key has period lcm(L_A, L_B). On CT97, ALL periodic keys are proven impossible. On CT73, only periods 1-23 are eliminated — periods ≥24 remain open. This experiment primarily targets CT73 at periods ≥24.
+The combined key has period lcm(L_A, L_B). On CT97, periodic keys are already
+conditionally eliminated under direct positional crib mapping. On CT73, only
+periods 1-23 are eliminated in the tested harness scope; periods ≥24 remain
+open. This experiment primarily targets CT73 at periods ≥24.
 
 ## Combination Functions (6)
 
