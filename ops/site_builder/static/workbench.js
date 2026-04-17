@@ -20,6 +20,9 @@
   // W positions that bracket the cribs
   var W_POSITIONS = [20, 36, 48, 58, 74];
 
+  // W-delimiter segment lengths (sum = 92): chars between the 5 W's
+  var W_SEGS = [20, 15, 11, 9, 15, 22];
+
   // Bean constraints: k[27] = k[65], plus variant-independent inequalities.
   var BEAN_EQ = [27, 65];
   var BEAN_INEQ = (function () {
@@ -110,6 +113,7 @@
   var transRoute = document.getElementById("trans-opts-route");
   var transDoubleColumnar = document.getElementById("trans-opts-double-columnar");
   var transManual = document.getElementById("trans-opts-manual");
+  var transWseg = document.getElementById("trans-opts-wseg");
   var subMethod = document.getElementById("sub-method");
   var subKey = document.getElementById("sub-key");
   var subKeyGroup = document.getElementById("sub-key-group");
@@ -368,6 +372,7 @@
     if (method === "route") return routeTranspose(text);
     if (method === "double-columnar") return doubleColumnarTranspose(text);
     if (method === "manual") return manualTranspose(text);
+    if (method === "w-segment") return wSegmentTranspose(text);
     return text;
   }
 
@@ -716,6 +721,60 @@
       result += text[idx];
     }
     return result;
+  }
+
+  function wSegmentTranspose(text) {
+    // W-segment transposition: lay the 92-char text in a variable-width grid
+    // where each row is one W-delimited segment [20,15,11,9,15,22], then read
+    // by columns (top-down per column) to undo the transposition.
+    // Requires a 92-char input (use "W positions only" null mask first).
+    var segs = W_SEGS;
+    var total = 0;
+    for (var s = 0; s < segs.length; s++) total += segs[s];
+    if (text.length !== total) {
+      // If text isn't 92 chars, passthrough -- wrong configuration
+      return text;
+    }
+
+    // Row start offsets
+    var starts = [0];
+    for (var s2 = 0; s2 < segs.length - 1; s2++) starts.push(starts[s2] + segs[s2]);
+
+    // Optional column order (keyword or explicit indices)
+    var colOrderStr = (document.getElementById("trans-wseg-colorder") || {}).value || "";
+    colOrderStr = colOrderStr.trim();
+    var maxLen = 0;
+    for (var s3 = 0; s3 < segs.length; s3++) if (segs[s3] > maxLen) maxLen = segs[s3];
+
+    var colOrder;
+    if (colOrderStr) {
+      // Try as keyword first, then as explicit integers
+      var asAlpha = colOrderStr.toUpperCase().replace(/[^A-Z]/g, "");
+      if (asAlpha.length >= maxLen) {
+        colOrder = keywordToOrder(asAlpha, maxLen);
+      } else {
+        var asNums = colOrderStr.split(",").map(function (s) { return parseInt(s.trim()); });
+        if (asNums.length === maxLen) colOrder = asNums;
+      }
+    }
+    if (!colOrder) {
+      colOrder = [];
+      for (var c = 0; c < maxLen; c++) colOrder.push(c);
+    }
+
+    // Build reading-order permutation: iterate columns in colOrder,
+    // within each column top-down (only rows that have that column)
+    var perm = [];
+    for (var ci = 0; ci < colOrder.length; ci++) {
+      var col = colOrder[ci];
+      for (var row = 0; row < segs.length; row++) {
+        if (col < segs[row]) {
+          perm.push(starts[row] + col);
+        }
+      }
+    }
+
+    return undoPermutation(text, perm);
   }
 
   // --- Substitution implementations ---
@@ -1338,7 +1397,7 @@
 
     var html = '<table class="keystream-table"><thead><tr><th>Period</th><th>Conflicts</th><th>Verdict</th></tr></thead><tbody>';
 
-    for (var period = 2; period <= 13; period++) {
+    for (var period = 2; period <= 26; period++) {
       // Group crib positions by residue class mod period
       var residueGroups = {};
       for (var j = 0; j < positions.length; j++) {
@@ -1498,6 +1557,20 @@
         subKey.value = "DEFECTOR";
         subAlphabet.value = "AZ";
         break;
+      case "w-delimiter":
+        // W-delimiter hypothesis: treat 5 W's as structural separators.
+        // Extract the 92 non-W chars (null mask: w-only, model A),
+        // then lay them out in the variable-width W-segment grid.
+        nullMode.value = "w-only";
+        nullCribModel.value = "A";
+        updateNullOptions();
+        transMethod.value = "w-segment";
+        var wsegColOrder = document.getElementById("trans-wseg-colorder");
+        if (wsegColOrder) wsegColOrder.value = "";
+        subMethod.value = "vigenere";
+        subKey.value = "";
+        subAlphabet.value = "AZ";
+        break;
       case "blank":
         transMethod.value = "none";
         subMethod.value = "vigenere";
@@ -1527,6 +1600,7 @@
     if (transRoute) showHide(transRoute, m === "route");
     if (transDoubleColumnar) showHide(transDoubleColumnar, m === "double-columnar");
     showHide(transManual, m === "manual");
+    if (transWseg) showHide(transWseg, m === "w-segment");
   }
 
   function updateSubOptions() {
@@ -1615,12 +1689,14 @@
     // Step 1: Transposition
     var showTrans = transMethod.value !== "none";
     if (nullPos.length > 0 && nullCribModel.value === "B" && showTrans) {
-      // Model B assumes no transposition layer — skip and warn
-      showTrans = false;
-      showHide(transResult, false);
-      eliminationWarning.className = "wb-warning wb-warning-exhausted";
-      eliminationWarning.innerHTML = "<strong>NOTE</strong> Model B assumes no transposition layer. Transposition setting ignored.";
-    } else {
+      // Model B: crib positions fixed at CT97 positions. Transposition is
+      // allowed but note that the pipeline still runs on full CT97 with
+      // null slots included -- crib scoring ignores null positions.
+      // Show a soft advisory rather than blocking.
+      eliminationWarning.className = "wb-warning wb-warning-open";
+      eliminationWarning.innerHTML = "<strong>NOTE</strong> Model B: cribs fixed at CT97 positions. Transposition applies to the full 97-char text (including nulls). Crib positions are not remapped. If this is unintended, switch to Model A.";
+    }
+    {
       workingCT = applyTransposition(workingCT);
     }
 
@@ -1780,6 +1856,36 @@
   if (gromarkPrimer) gromarkPrimer.addEventListener("input", onInput);
   if (gromarkBase) gromarkBase.addEventListener("input", onInput);
   if (bifidPeriod) bifidPeriod.addEventListener("input", onInput);
+  var wsegColOrderInput = document.getElementById("trans-wseg-colorder");
+  if (wsegColOrderInput) wsegColOrderInput.addEventListener("input", onInput);
+
+  // Copy PT button
+  var copyPtBtn = document.getElementById("copy-pt-btn");
+  if (copyPtBtn) {
+    copyPtBtn.addEventListener("click", function () {
+      var ptEl = document.getElementById("plaintext-display");
+      if (!ptEl) return;
+      var text = ptEl.textContent || ptEl.innerText || "";
+      navigator.clipboard.writeText(text).then(function () {
+        var orig = copyPtBtn.textContent;
+        copyPtBtn.textContent = "Copied!";
+        setTimeout(function () { copyPtBtn.textContent = orig; }, 1500);
+      }).catch(function () {
+        // Fallback for older browsers
+        var ta = document.createElement("textarea");
+        ta.value = text;
+        ta.style.position = "fixed";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        document.body.removeChild(ta);
+        var orig = copyPtBtn.textContent;
+        copyPtBtn.textContent = "Copied!";
+        setTimeout(function () { copyPtBtn.textContent = orig; }, 1500);
+      });
+    });
+  }
 
   // W-highlight toggle
   wHighlight.addEventListener("change", function () {
@@ -1842,6 +1948,8 @@
     if (resetDcWidth2) resetDcWidth2.value = "9";
     if (resetDcKw1) resetDcKw1.value = "";
     if (resetDcKw2) resetDcKw2.value = "";
+    var resetWsegColOrder = document.getElementById("trans-wseg-colorder");
+    if (resetWsegColOrder) resetWsegColOrder.value = "";
     updateTransOptions();
     // Step 2
     subMethod.value = "vigenere";

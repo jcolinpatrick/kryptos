@@ -54,6 +54,10 @@
       <li>Autokey / running key after undoing transposition</li>
       <li>Custom or Quagmire tableaux</li>
       <li>73-char hypothesis with non-periodic cipher after null removal</li>
+      <li><strong>W-delimiter hypothesis (2026-04-17):</strong> the 5 W characters at positions 20, 36, 48, 58, 74
+        divide K4 into 6 segments of 20|15|11|9|15|22 chars. Removing them eliminates the width-21 vertical
+        bigram anomaly entirely, suggesting they are structural separators rather than ciphertext. Use the
+        &ldquo;W-segment&rdquo; transposition and &ldquo;W positions only&rdquo; null mask to explore this.</li>
     </ul>
     <p class="wb-mb2"><strong>Watch for 23/24</strong></p>
     <p><small class="text-muted">
@@ -92,6 +96,10 @@
   <div class="preset-card" data-preset="best-lead" title="DEFECTOR:AZ_beau + col7 + null mask (15/24) — historically notable, since disproven">
     <h4>DEFECTOR 15/24</h4>
     <p>Historic high score <span class="verdict verdict-eliminated wb-verdict-inline">disproven</span></p>
+  </div>
+  <div class="preset-card" data-preset="w-delimiter" title="W-delimiter hypothesis (2026-04-17): 5 W's are row-end markers dividing K4 into 6 segments of 20/15/11/9/15/22 chars. Removing W's eliminates the width-21 bigram anomaly entirely.">
+    <h4>W-delimiter (92-char)</h4>
+    <p>New finding <span class="verdict verdict-survived wb-verdict-inline">open</span></p>
   </div>
   <div class="preset-card" data-preset="blank" title="Clear all settings">
     <h4>Try your own</h4>
@@ -169,6 +177,7 @@
           <option value="route">Route Cipher</option>
           <option value="myszkowski">Myszkowski</option>
           <option value="manual">Manual Permutation</option>
+          <option value="w-segment">W-segment (variable-width grid)</option>
         </select>
 
         <div id="trans-opts-columnar" class="hidden">
@@ -229,6 +238,15 @@
         <div id="trans-opts-manual" class="hidden">
           <label for="trans-perm">Permutation <small class="text-muted">(97 comma-sep 0-based)</small></label>
           <textarea id="trans-perm" rows="2" placeholder="0,4,8,1,5,9,..."></textarea>
+        </div>
+
+        <div id="trans-opts-wseg" class="hidden">
+          <p><small class="text-muted">
+            6 W-delimited segments as grid rows: <strong>20 | 15 | 11 | 9 | 15 | 22</strong> chars (sum = 92).
+            Set null mask to &ldquo;W positions only&rdquo; first to extract the 92-char text.
+          </small></p>
+          <label for="trans-wseg-colorder">Column order <small class="text-muted">(optional keyword or 0-based indices)</small></label>
+          <input type="text" id="trans-wseg-colorder" placeholder="Natural order if blank">
         </div>
       </div>
 
@@ -353,6 +371,7 @@
       <div class="ct-display ct-display-compact" id="plaintext-display"></div>
       <div class="pt-legend">
         <small><span class="crib-legend-match"></span> Match &nbsp; <span class="crib-legend-miss"></span> Miss</small>
+        <button id="copy-pt-btn" type="button" class="wb-copy-btn" title="Copy plaintext to clipboard">Copy PT</button>
       </div>
 
       <details>
@@ -385,5 +404,5 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="/static/workbench.js?v=6"></script>
+<script src="/static/workbench.js?v=7"></script>
 {% endblock %}
