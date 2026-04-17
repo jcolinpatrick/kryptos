@@ -2633,6 +2633,8 @@ main section + section {
 .wb-mt8 { margin-top: var(--sp-8); }
 .wb-reset-wrap { margin: var(--sp-3) 0; text-align: right; }
 .wb-reset-btn { padding: var(--sp-2) var(--sp-4); font-size: var(--text-sm); cursor: pointer; border: 1px solid var(--border-default); border-radius: 6px; background: var(--bg-surface); color: var(--text-secondary); }
+.wb-copy-btn { padding: 2px var(--sp-2); font-size: var(--text-xs); cursor: pointer; border: 1px solid var(--border-subtle); border-radius: 4px; background: var(--bg-surface); color: var(--text-tertiary); margin-left: auto; }
+.wb-copy-btn:hover { color: var(--text-secondary); border-color: var(--border-default); }
 .wb-result-heading { margin: var(--sp-2) 0; }
 .wb-history-scroll { max-height: 300px; overflow-y: auto; }
 .wb-odds-kicker { color: var(--text-quaternary); font-style: italic; }
