@@ -21,6 +21,13 @@ Usage:
     PYTHONPATH=src python3 -u scripts/campaigns/f_gutenberg_running_key_scan_v1.py
     PYTHONPATH=src python3 -u scripts/campaigns/f_gutenberg_running_key_scan_v1.py --limit 3
     PYTHONPATH=src python3 -u scripts/campaigns/f_gutenberg_running_key_scan_v1.py --category cryptography_codes
+
+QUARANTINE 2026-04-17
+---------------------
+This script depends on a retired consensus-null extraction model and also
+performs network access to Project Gutenberg. It is retained only as a
+historical / reproducibility artifact and now requires
+`--allow-retired-construct`.
 """
 
 import sys
@@ -494,6 +501,14 @@ def main():
     parser = argparse.ArgumentParser(
         description="Gutenberg Running Key Scan for K4 (Phase 4)"
     )
+    parser.add_argument(
+        "--allow-retired-construct",
+        action="store_true",
+        help=(
+            "Acknowledge that this script uses a retired consensus-null "
+            "model and is historical only"
+        ),
+    )
     parser.add_argument("--limit", type=int, default=None,
                         help="Only scan first N texts (for testing)")
     parser.add_argument("--category", type=str, default=None,
@@ -503,6 +518,15 @@ def main():
     parser.add_argument("--workers", type=int, default=None,
                         help="Number of parallel workers (default: min(cpu_count, 28))")
     args = parser.parse_args()
+
+    if not args.allow_retired_construct:
+        print(
+            "Refusing to run: this campaign depends on a retired consensus-null "
+            "model and is quarantined as a historical artifact. Re-run only "
+            "with --allow-retired-construct for explicit reproducibility work.",
+            file=sys.stderr,
+        )
+        raise SystemExit(2)
 
     # Determine worker count
     n_workers = args.workers or min(multiprocessing.cpu_count(), 28)

@@ -288,7 +288,7 @@ def sample_stratified_low_complexity_bias(
         target_evals=target_evals,
         achieved_evals=len(chosen),
         coverage_guarantees=guarantees,
-        is_complete_for_mode=low_ct > 0,
+        is_complete_for_mode=(low_ct > 0 and len(chosen) == target_evals),
         notes=f"low={low_ct}/{len(chosen)} evals in low-complexity band",
         filters={
             "max_complexity": max_complexity,

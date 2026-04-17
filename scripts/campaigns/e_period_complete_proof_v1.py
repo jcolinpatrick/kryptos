@@ -1,16 +1,19 @@
 #!/usr/bin/env python3
-"""Complete period impossibility proof for all periods 1-97.
+"""Historical crib-only period contradiction analysis.
 
-Prior proofs:
-- CT97: periods 1-26 via mathematical key conflicts at crib positions
-- CT73: periods 1-23 via Bean inequalities (all 11,440 null masks)
+DEPRECATED historical artifact. This script does NOT prove period
+impossibility for all periods 1-97 and must not be cited as current
+evidence. It performs a crib-only contradiction analysis and explicitly
+leaves higher periods unresolved without the full Bean framework.
 
-This script extends via Bean inequalities across ALL 97 positions.
-Uses BEAN_INEQ from constants (242 variant-independent inequalities).
+Prior proofs cited here were narrower:
+- CT97: periods 1-26 within the direct-positional additive model
+- CT73: periods 1-23 within the tested null-mask/Bean harness families
 
 For a period-K Beaufort key: key[i] = key[j] whenever i ≡ j (mod K).
 A Bean inequality (a,b) says key[a] ≠ key[b] (because CT[a]=CT[b] but PT[a]≠PT[b]).
-Contradiction: (a,b) in BEAN_INEQ AND a≡b (mod K) → period K IMPOSSIBLE.
+Contradiction: (a,b) in BEAN_INEQ AND a≡b (mod K) eliminates that period
+WITHIN the stated model, not globally.
 """
 # DEPRECATED: This script is retained as a historical artifact.
 # Superseded by newer analysis. Do not cite results as current.
@@ -23,7 +26,7 @@ from kryptos.kernel.constants import CT, CRIB_WORDS, CRIB_DICT
 AZ = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 KA = "KRYPTOSABCDEFGHIJLMNQUVWXZ"
 
-print("=== Complete Period Impossibility Proof ===\n")
+print("=== Historical Crib-Only Period Contradiction Analysis ===\n")
 
 # --- Build Bean inequalities from scratch ---
 # Bean EQ/INEQ: for positions a,b in cribs where CT[a]=CT[b]:
@@ -183,9 +186,11 @@ print("For these periods, the key slots at crib positions are all DISTINCT,")
 print("so no internal contradiction. But Bean inequalities from non-crib CT pairs")
 print("(loaded from BEAN_INEQ in constants) would close these gaps.")
 print()
-print("CONFIRMED: Periods 1-26 are mathematically impossible (prior proof).")
+print("CONFIRMED: Periods 1-26 are eliminated in the prior direct-positional")
+print("single-layer periodic-additive proof.")
 print("CONFIRMED: For periods 27-97, all crib residues are distinct, so")
-print("crib-only analysis cannot eliminate them. The prior CT73 proof covers 1-23.")
+print("this crib-only analysis cannot eliminate them. The prior CT73 proof covers 1-23")
+print("only within its null-mask/Bean harness scope.")
 print("Periods 24-97 require the full Bean inequality framework from all 97 positions.")
 print()
 print("KEY INSIGHT: Periods 27-97 survive because no two crib positions share")

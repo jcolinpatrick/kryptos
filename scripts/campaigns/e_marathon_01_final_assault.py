@@ -287,7 +287,32 @@ class Checkpoint:
     total_configs: int = 0
     start_time: float = 0.0
 
+    def _validate(self) -> None:
+        if not isinstance(self.phases_done, list) or not all(
+            isinstance(p, int) for p in self.phases_done
+        ):
+            raise ValueError("phases_done must be a list of ints")
+        if len(set(self.phases_done)) != len(self.phases_done):
+            raise ValueError("phases_done must be unique")
+        if any(p not in (0, 1, 2, 3) for p in self.phases_done):
+            raise ValueError("phases_done must only contain phases 0..3")
+        if self.phases_done != sorted(self.phases_done):
+            raise ValueError("phases_done must be sorted")
+        if not isinstance(self.sa_seeds_done, int) or self.sa_seeds_done < 0:
+            raise ValueError("sa_seeds_done must be a non-negative int")
+        if not isinstance(self.phase1_done, bool):
+            raise ValueError("phase1_done must be a bool")
+        if not isinstance(self.total_configs, int) or self.total_configs < 0:
+            raise ValueError("total_configs must be a non-negative int")
+        if not isinstance(self.start_time, (int, float)) or self.start_time < 0:
+            raise ValueError("start_time must be a non-negative number")
+        if not isinstance(self.top_candidates, list):
+            raise ValueError("top_candidates must be a list")
+        if not all(isinstance(c, dict) for c in self.top_candidates):
+            raise ValueError("top_candidates must contain only dict rows")
+
     def save(self) -> None:
+        self._validate()
         CHECKPOINT_PATH.parent.mkdir(parents=True, exist_ok=True)
         tmp = CHECKPOINT_PATH.with_suffix(".tmp")
         with open(tmp, "w") as f:
@@ -299,8 +324,12 @@ class Checkpoint:
         if CHECKPOINT_PATH.exists():
             with open(CHECKPOINT_PATH) as f:
                 d = json.load(f)
-            return cls(**d)
-        return cls(start_time=time.time())
+            ckpt = cls(**d)
+            ckpt._validate()
+            return ckpt
+        ckpt = cls(start_time=time.time())
+        ckpt._validate()
+        return ckpt
 
     def add_candidate(self, cand: Dict[str, Any]) -> None:
         self.top_candidates.append(cand)

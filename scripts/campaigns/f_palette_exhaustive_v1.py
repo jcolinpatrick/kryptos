@@ -26,10 +26,25 @@ Status: active
 Keyspace: 3,432 masks x 8 cipher configs = 27,456 primary; top-5 x 72 = 360 secondary
 Last run: never
 Best score: TBD
+
+QUARANTINE 2026-04-17
+---------------------
+This script depends on the retired palette / consensus-null construct and is
+retained only as a historical artifact. It must not be used as live evidence.
+Execution now requires `--allow-retired-construct`.
 """
 
 import sys, time, json
 from itertools import combinations
+if "--allow-retired-construct" not in sys.argv:
+    print(
+        "Refusing to run: this campaign depends on the retired palette / "
+        "consensus-null construct and is quarantined as a historical artifact. "
+        "Re-run only with --allow-retired-construct for explicit "
+        "reproducibility work.",
+        file=sys.stderr,
+    )
+    raise SystemExit(2)
 sys.path.insert(0, 'src')
 from kryptos.kernel.constants import CT, CRIB_POSITIONS, KRYPTOS_ALPHABET
 

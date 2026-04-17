@@ -8,8 +8,9 @@ Keyspace: ~1M+ words x 4 variants x 2 trans = ~8M+
 Last run: never
 Best score: N/A
 
-Autokey is dead. Periodic sub on RAW 97 is proven impossible (all 26 periods).
-BUT: on the 73-char null-extracted text where the stego layer is removed, periodic
+Standard autokey is structurally eliminated in-project. Periodic substitution on
+RAW 97 is conditionally eliminated for all 26 periods under direct positional
+crib mapping. BUT: on the 73-char null-extracted text where the stego layer is removed, periodic
 sub has NOT been exhaustively tested with the full 1M+ wordlist.
 
 Prior null-mask + periodic sub proof (2026-03-11) showed impossibility for ANY mask

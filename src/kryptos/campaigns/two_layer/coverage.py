@@ -123,6 +123,9 @@ def compute_coverage_report(
 
     qualifies_low_complex = (
         plan.mode == SamplingMode.STRATIFIED_LOW_COMPLEXITY_BIAS
+        and plan.is_complete_for_mode
+        and len(plan.pairs) == plan.achieved_evals
+        and len(plan.pairs) == plan.target_evals
         and complexity_hist["low"] > 0
         and complexity_hist["low"] >= complexity_hist["high"]
     )

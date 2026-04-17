@@ -21,6 +21,12 @@ Metadata:
   status: active
   attack_type: multi-layer composition search
   description: Two-system hypothesis testing with Vig/Beaufort inner layers
+
+QUARANTINE 2026-04-17
+---------------------
+This script depends on the retired `CONSENSUS_NULL_POSITIONS` construct via
+its 80-char extracted-text branch. It is retained for historical /
+reproducibility work only and now requires `--allow-retired-construct`.
 """
 import sys
 import os
@@ -235,6 +241,16 @@ def run_campaign_g(workers: int) -> dict:
 
 
 def main():
+    if "--allow-retired-construct" not in sys.argv:
+        print(
+            "Refusing to run: this campaign depends on the retired "
+            "CONSENSUS_NULL_POSITIONS construct and is quarantined as a "
+            "historical artifact. Re-run only with --allow-retired-construct "
+            "for explicit reproducibility work.",
+            file=sys.stderr,
+        )
+        raise SystemExit(2)
+
     import multiprocessing as mp
     workers = max(1, mp.cpu_count() - 2)
     print(f"Using {workers} workers on {mp.cpu_count()} CPUs")

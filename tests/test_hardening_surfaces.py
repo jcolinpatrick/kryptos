@@ -1,11 +1,16 @@
 from __future__ import annotations
 
 import ast
+import re
 from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parent.parent
 RETIRED_SYMBOLS = {"NULL_PALETTE", "CONSENSUS_NULL_POSITIONS"}
+RETIRED_CONSTRUCT_RE = re.compile(
+    r"CONSENSUS_NULL_POSITIONS|NULL_PALETTE|consensus null|null palette",
+    re.IGNORECASE,
+)
 
 
 def _direct_retired_imports() -> list[tuple[str, str, tuple[str, ...]]]:
@@ -65,3 +70,23 @@ def test_active_nullmask_results_do_not_overclaim_global_elimination():
             assert needle not in text, f"{path} contains forbidden phrase {needle!r}"
         for needle in required:
             assert needle in text, f"{path} missing required caution phrase {needle!r}"
+
+
+def test_nondeprecated_f_campaigns_with_retired_constructs_are_quarantined():
+    targets = []
+    for path in (ROOT / "scripts" / "campaigns").glob("f_*.py"):
+        text = path.read_text(encoding="utf-8")
+        if not RETIRED_CONSTRUCT_RE.search(text):
+            continue
+        if "DEPRECATED:" in text:
+            continue
+        targets.append(path)
+
+    assert targets, "expected at least one quarantined retired-construct f_* campaign"
+
+    for path in targets:
+        text = path.read_text(encoding="utf-8")
+        assert "--allow-retired-construct" in text, f"{path} missing explicit opt-in"
+        assert (
+            "historical artifact" in text or "historical / reproducibility artifact" in text
+        ), f"{path} missing historical quarantine warning"

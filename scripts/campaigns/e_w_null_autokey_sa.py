@@ -20,7 +20,9 @@ KEY DIFFERENCE from e_two_sys_04_autokey_mask_sa.py:
   - This script ANCHORS 5 of 24 nulls at W positions
 
 Autokey hides English statistics (matches Scheidt 'masking technique').
-Null mask + PERIODIC sub proven impossible (Bean). Autokey is non-periodic → OPEN.
+Null-mask + periodic substitution is conditionally eliminated in the repo's
+Bean/direct-positional model. Autokey is non-periodic, so this specific family
+remains open unless additional constraints kill it.
 """
 
 import math, os, random, sys, time

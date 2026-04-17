@@ -55,19 +55,21 @@ class Checkpoint:
             raise ValueError("results cannot outnumber completed_pair_indices")
         if not isinstance(self.filters, dict):
             raise ValueError("filters must be a dict")
-        indexed_results = [r for r in self.results if isinstance(r, dict) and "idx" in r]
-        if indexed_results:
-            seen: set[int] = set()
-            completed = set(self.completed_pair_indices)
-            for row in indexed_results:
-                idx = row["idx"]
-                if not isinstance(idx, int):
-                    raise ValueError("result idx values must be ints")
-                if idx not in completed:
-                    raise ValueError("result idx must be present in completed_pair_indices")
-                if idx in seen:
-                    raise ValueError("result idx values must be unique")
-                seen.add(idx)
+        if not all(isinstance(r, dict) for r in self.results):
+            raise ValueError("results must contain only dict rows")
+        seen: set[int] = set()
+        completed = set(self.completed_pair_indices)
+        for row in self.results:
+            if "idx" not in row:
+                raise ValueError("every result row must include idx")
+            idx = row["idx"]
+            if not isinstance(idx, int):
+                raise ValueError("result idx values must be ints")
+            if idx not in completed:
+                raise ValueError("result idx must be present in completed_pair_indices")
+            if idx in seen:
+                raise ValueError("result idx values must be unique")
+            seen.add(idx)
 
     def save(self, path) -> None:
         self.last_updated_at = datetime.now(timezone.utc).isoformat()
