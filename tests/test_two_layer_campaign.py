@@ -411,6 +411,42 @@ def test_checkpoint_load_rejects_result_idx_not_completed():
             Checkpoint.load(path)
 
 
+def test_checkpoint_load_rejects_result_row_missing_idx():
+    with tempfile.TemporaryDirectory() as td:
+        path = os.path.join(td, "ckpt.json")
+        payload = {
+            "campaign_id": "f_x",
+            "sampling_mode": "full_cartesian",
+            "sampling_seed": 42,
+            "target_evals": 10,
+            "completed_pair_indices": [0, 1],
+            "results": [{"score": 1.0}],
+        }
+        with open(path, "w") as f:
+            import json
+            json.dump(payload, f)
+        with pytest.raises(ValueError, match="must include idx"):
+            Checkpoint.load(path)
+
+
+def test_checkpoint_load_rejects_non_dict_result_rows():
+    with tempfile.TemporaryDirectory() as td:
+        path = os.path.join(td, "ckpt.json")
+        payload = {
+            "campaign_id": "f_x",
+            "sampling_mode": "full_cartesian",
+            "sampling_seed": 42,
+            "target_evals": 10,
+            "completed_pair_indices": [0],
+            "results": ["not-a-dict"],
+        }
+        with open(path, "w") as f:
+            import json
+            json.dump(payload, f)
+        with pytest.raises(ValueError, match="only dict rows"):
+            Checkpoint.load(path)
+
+
 def test_checkpoint_load_rejects_unsorted_completed_indices():
     with tempfile.TemporaryDirectory() as td:
         path = os.path.join(td, "ckpt.json")
@@ -469,6 +505,43 @@ def test_render_summary_does_not_overclaim_partial_runs():
     s = ev.render_summary(out, coverage=cov)
     assert "FAMILY-COVER null" not in s
     assert "PARTIAL" in s
+
+
+def test_low_complexity_bias_missing_completion_fails_closed():
+    """A truncated low-complexity plan must not earn the stronger null warrant."""
+    outers, inners = _outers_inners()
+    plan = smp.sample_stratified_low_complexity_bias(
+        outers, inners, target_evals=200, seed=0
+    )
+    malformed = smp.SamplingPlan(
+        pairs=plan.pairs[:20],
+        mode=plan.mode,
+        seed=plan.seed,
+        target_evals=plan.target_evals,
+        achieved_evals=20,
+        coverage_guarantees=plan.coverage_guarantees,
+        is_complete_for_mode=True,
+        notes=plan.notes,
+        filters=plan.filters,
+    )
+    cov = compute_coverage_report(malformed, outers, inners)
+    assert cov.qualifies_as_low_complexity_emphasized is False
+
+    out = {"total_profiles_tested": len(malformed.pairs), "joint_anomaly_successes": []}
+    s = ev.render_summary(out, coverage=cov)
+    assert "LOW-COMPLEXITY-EMPHASIZED null" not in s
+    assert "PARTIAL" in s
+
+
+def test_low_complexity_bias_plan_not_complete_when_target_not_met():
+    """The sampler must not claim completion if it returned fewer pairs than requested."""
+    outers, inners = _outers_inners()
+    total_pairs = len(outers) * len(inners)
+    plan = smp.sample_stratified_low_complexity_bias(
+        outers, inners, target_evals=total_pairs + 1000, seed=0
+    )
+    assert plan.achieved_evals < plan.target_evals
+    assert plan.is_complete_for_mode is False
 
 
 def test_malformed_full_cartesian_plan_fails_closed():
