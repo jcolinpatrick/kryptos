@@ -79,9 +79,10 @@ def compute_coverage_report(
     all_inner_fams = {i.family_id for i in inners}
 
     n_inner_fams_touched = len(inner_fam_classes)
+    n_inner_fams_expected = len(all_inner_fams)
     expected_outers_for_family_cover = (
-        plan.target_evals // n_inner_fams_touched
-        if n_inner_fams_touched and plan.target_evals % n_inner_fams_touched == 0
+        plan.target_evals // n_inner_fams_expected
+        if n_inner_fams_expected and plan.target_evals % n_inner_fams_expected == 0
         else 0
     )
     per_outer_counts = [len(s) for s in per_outer_inner_fams.values()]
@@ -113,7 +114,8 @@ def compute_coverage_report(
     qualifies_family_cover = (
         plan.mode == SamplingMode.STRATIFIED_FAMILY_COVER
         and plan.is_complete_for_mode
-        and n_inner_fams_touched > 0
+        and n_inner_fams_expected > 0
+        and n_inner_fams_touched == n_inner_fams_expected
         and len(plan.pairs) == plan.target_evals == plan.achieved_evals
         and touched_outer_count == expected_outers_for_family_cover
         and outers_all == expected_outers_for_family_cover

@@ -59,7 +59,6 @@ reference/carter_vol1_extract.txt
 .claude/
 ops/RUNBOOK.md
 ops/scheduled/
-<internal>/
 memory/
 agent_analysis.json
 scripts/vm_capability_report.sh
