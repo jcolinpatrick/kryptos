@@ -236,7 +236,7 @@ IC near random. Non-periodic; Kasiski fails.
 | K4 constraint compatibility | 1 | Cannot reach 24/24 cribs (E-FRAC-37) |
 
 **Elimination status:** STRUCTURALLY ELIMINATED — PT-autokey max 16/24, CT-autokey max 21/24, even with arbitrary transposition (Tier 1, E-FRAC-37).
-**Quick K4 test:** Already proven impossible; do not re-test.
+**Quick K4 test:** Already structurally eliminated for standard autokey rules in this repo (`autokey_eliminated`). Re-test only if you are changing the autokey update rule or scope.
 
 ---
 
@@ -294,7 +294,7 @@ IC near random. Linear algebra attack: crib-derived key values can solve recurre
 | K4 constraint compatibility | 1 | Bean-eliminated (E-FRAC-38) |
 
 **Elimination status:** ELIMINATED — Progressive, Fibonacci, quadratic keys all Bean-eliminated (E-FRAC-38). Vimark: 0 consistent primers via linear algebra (E-JTS-08/11). Tier 1.
-**Quick K4 test:** Already proven impossible; do not re-test.
+**Quick K4 test:** Already conditionally eliminated for the standard periodic-key setup under direct positional crib mapping. Re-test only if your mechanism changes that scope.
 
 ---
 
@@ -354,7 +354,7 @@ IC near English. No letter encrypts to itself within a digraph. Reversed digraph
 | K4 constraint compatibility | 1 | ALPHA-26 eliminates standard 5x5 |
 
 **Elimination status:** STRUCTURALLY ELIMINATED — ALPHA-26 (all 26 letters in K4 CT, but Playfair needs 25 with I/J merge). Also E-FRAC-21.
-**Quick K4 test:** Already proven impossible; do not re-test.
+**Quick K4 test:** Already structurally eliminated for standard 5x5 Playfair because K4 uses all 26 letters. Re-test only if your variant changes the alphabet model.
 
 ---
 
@@ -385,7 +385,7 @@ IC flattened (near random). Block period detectable via column IC.
 | K4 constraint compatibility | 1 | ALPHA-26 eliminates 5x5 Bifid; Trifid parity fails |
 
 **Elimination status:** STRUCTURALLY ELIMINATED — Bifid: ALPHA-26. Trifid: parity impossibility. E-FRAC-21 proofs hold with/without transposition. Tier 1.
-**Quick K4 test:** Already proven impossible; do not re-test.
+**Quick K4 test:** Already structurally eliminated for standard Bifid/Trifid variants covered here. Re-test only if your construction changes the stated structural assumptions.
 
 ---
 
@@ -414,7 +414,7 @@ IC very flat. Output is always even length.
 | K4 constraint compatibility | 1 | Output always even; K4=97 (odd) = impossible |
 
 **Elimination status:** STRUCTURALLY ELIMINATED — Output length 2N (even), K4=97 (odd). Parity proof holds unconditionally. E-FRAC-21. Tier 1.
-**Quick K4 test:** Already proven impossible; do not re-test.
+**Quick K4 test:** Already structurally eliminated for canonical ADFGX/ADFGVX because output length is even while K4 length is 97. Re-test only if your mechanism changes the output model.
 
 ---
 
@@ -533,7 +533,7 @@ IC same as plaintext. Period 2(r-1). Trivially brute-forced.
 | K4 constraint compatibility | 1 | Bean-incompatible (E-FRAC-32) |
 
 **Elimination status:** ELIMINATED — 19 rail counts, zero Bean passes. Structurally Bean-incompatible. Tier 1.
-**Quick K4 test:** Already proven impossible; do not re-test.
+**Quick K4 test:** Already structurally eliminated for pure transposition by the letter-count invariant. Re-test only if you are testing a multi-layer system rather than pure permutation.
 
 ---
 
