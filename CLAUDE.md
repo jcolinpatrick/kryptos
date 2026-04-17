@@ -64,8 +64,8 @@ A `venv/` exists (gitignored) for non-core work. Activate with `source venv/bin/
 **Git workflow:** Development happens directly on `main`. No branch naming conventions or PR process — this is a solo research project with computational partners.
 
 ```bash
-# Run all tests (~107s, no expected failures).
-# Current count drifts; authoritative: `PYTHONPATH=src pytest tests/ --collect-only -q | tail -1`
+# Run all tests (~2 minutes, 1500+ tests, no expected failures).
+# Exact count drifts; authoritative: `PYTHONPATH=src pytest tests/ --collect-only -q | tail -1`
 PYTHONPATH=src pytest tests/
 
 # Run a single test file or test
@@ -74,9 +74,6 @@ PYTHONPATH=src pytest tests/test_transforms.py::TestVigenereFamily::test_text_ro
 
 # Run an experiment script (always use -u for unbuffered output)
 PYTHONPATH=src python3 -u scripts/_uncategorized/e_nsa_01_interval7.py
-
-# Dispatch runner — full documentation in "Experiment scripts" section below
-PYTHONPATH=src python3 run_attack.py --list --verbose | grep KEYWORD
 
 # Environment health check
 PYTHONPATH=src python3 -m kryptos doctor
@@ -147,7 +144,7 @@ kernel/persistence/sqlite.py (results DB) + JsonlWriter (logs)
 
 ### Experiment scripts (`scripts/`)
 
-Several hundred attack scripts across ~45 subdirectories in `scripts/`. For current counts and exhaustion state, run `PYTHONPATH=src python3 run_attack.py --exhaustion-summary` — **do not cite hardcoded numbers**, they drift. Each script has a metadata header; tracked in root `exhaustion_log.json` (authoritative — ignore `scripts/EXHAUSTION.json`). Some scripts live at the `scripts/` root level (e.g. `blitz_*.py`, `geometric_null_mask_*.py`) rather than in subdirectories.
+Several hundred attack scripts across ~40 subdirectories in `scripts/` (run `ls scripts/` for the current list). For current counts and exhaustion state, run `PYTHONPATH=src python3 run_attack.py --exhaustion-summary` — **do not cite hardcoded numbers**, they drift. Each script has a metadata header; tracked in root `exhaustion_log.json` (authoritative — ignore `scripts/EXHAUSTION.json`). Some scripts live at the `scripts/` root level (e.g. `blitz_*.py`, `geometric_null_mask_*.py`) rather than in subdirectories.
 
 **Subdirectories:** Run `ls scripts/` for the full list. Key families: `substitution/`, `transposition/`, `fractionation/`, `grille/`, `polyalphabetic/`, `running_key/`, `encoding/`, `multi_layer/`, `novel/`, `blitz/` (fast hypothesis sweeps), `analysis/` (non-attack analytical scripts), `_infra/` (utilities), `hypothesis_tests/` (harness scripts — h_* prefix), `stego_mechanism/`, `tableau/`, `statistical/`, `cfm/` (crypto field manual hypotheses), `two_system/`, `yar/`, `team/`. Additional research threads: `antipodes/`, `archive_evidence/`, `crib_analysis/`, `exploration/`, `geodetic/`, `geometry/`, `k2_coords/`, `k3_continuity/`, `mirror_ka/`, `overlay/`, `thematic/` (subdirs: `berlin_clock/`, `sculpture_physical/`).
 
