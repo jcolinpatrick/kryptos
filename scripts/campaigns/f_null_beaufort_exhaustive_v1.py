@@ -30,6 +30,16 @@ PHASES
 4. Anomaly-guided mask construction: mod-5, width-21, interval-4, etc.
 5. Reverse validation for any hit >= 18/24
 =================================================================
+
+QUARANTINE 2026-04-17
+---------------------
+This script is retained only as a historical / reproducibility artifact.
+It is anchored to the retired `CONSENSUS_NULL_POSITIONS` construct and must
+not be used as live evidence or launched casually during controller-era work.
+
+Default behavior is now fail-closed: execution requires an explicit
+`--allow-retired-construct` flag acknowledging that the run is historical
+and non-authoritative.
 """
 
 import sys
@@ -737,7 +747,26 @@ def main():
     parser.add_argument("--smoke", action="store_true", help="Quick smoke test (limited search)")
     parser.add_argument("--phase", type=int, choices=[1, 2, 3, 4], help="Run single phase")
     parser.add_argument("--max-period", type=int, default=8, help="Max period for Phase 2 (default: 8)")
+    parser.add_argument(
+        "--allow-retired-construct",
+        action="store_true",
+        help=(
+            "Acknowledge that this script depends on the retired "
+            "CONSENSUS_NULL_POSITIONS construct and is historical only"
+        ),
+    )
     args = parser.parse_args()
+
+    if not args.allow_retired_construct:
+        print(
+            "Refusing to run: this campaign depends on the retired "
+            "CONSENSUS_NULL_POSITIONS construct and is quarantined as a "
+            "historical artifact. Re-run only with "
+            "--allow-retired-construct if you are doing explicit "
+            "reproducibility work.",
+            file=sys.stderr,
+        )
+        raise SystemExit(2)
 
     print(f"Exhaustive Null-Mask + Beaufort Campaign v1")
     print(f"  CT: {CT[:50]}...")

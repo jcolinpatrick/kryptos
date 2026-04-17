@@ -17,9 +17,21 @@ Also: if two different 13/24 masks share K positions, those K are highly likely 
 # DEPRECATED: This script is retained as a historical artifact.
 # Superseded by newer analysis. Do not cite results as current.
 # See docs/SCRIPT_RIGOR_STANDARD.md
+#
+# QUARANTINE 2026-04-17: this script depends on the retired consensus-null
+# construct. It may be run only for explicit historical reproduction with
+# --allow-retired-construct.
 
 
 import sys, random, math, time, json, collections
+if "--allow-retired-construct" not in sys.argv:
+    print(
+        "Refusing to run: this campaign depends on the retired consensus-null "
+        "construct and is quarantined as a historical artifact. Re-run only "
+        "with --allow-retired-construct for explicit reproducibility work.",
+        file=sys.stderr,
+    )
+    raise SystemExit(2)
 sys.path.insert(0, 'src')
 from kryptos.kernel.constants import CT, CRIB_POSITIONS
 

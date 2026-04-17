@@ -22,6 +22,12 @@ non-palette null positions, tested against:
   - 24 crib positions (MUST predict real)
   - Predict exactly 24 nulls total (7 remaining TBD)
 =================================================================
+
+QUARANTINE 2026-04-17
+---------------------
+This script depends on the retired palette / consensus-null construct and is
+retained only as a historical artifact. Execution requires
+`--allow-retired-construct`.
 """
 
 import sys
@@ -29,6 +35,16 @@ import os
 import json
 import time
 from itertools import combinations
+
+if "--allow-retired-construct" not in sys.argv:
+    print(
+        "Refusing to run: this campaign depends on the retired palette / "
+        "consensus-null construct and is quarantined as a historical "
+        "artifact. Re-run only with --allow-retired-construct for "
+        "explicit reproducibility work.",
+        file=sys.stderr,
+    )
+    raise SystemExit(2)
 
 _ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, os.path.join(_ROOT, "src"))
