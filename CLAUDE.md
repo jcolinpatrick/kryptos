@@ -57,6 +57,8 @@ from kryptos.kernel.transforms.vigenere import decrypt_vigenere, decrypt_beaufor
 
 A `venv/` exists (gitignored) for non-core work. Activate with `source venv/bin/activate`. Packages: `numpy`, `pymupdf` (PDF), `jinja2` (site builder), `fastapi`, `uvicorn`, `python-dotenv`, `anthropic` (API server), `agent-sdk` (KryptosBot SDK). Core code uses stdlib only.
 
+**Pin file:** `requirements.txt` (root) is the canonical venv pin list (pytest, numpy, scipy, z3-solver, ortools, statsmodels, simanneal, rich, anthropic, agent-sdk, etc.). Install with `pip install -r requirements.txt` inside `venv/`. None of this is imported by core `kryptos` code — only by supporting scripts, the API server, and internal.
+
 **Code style:** No linter or formatter configured. No enforced style conventions beyond stdlib-only for core code.
 
 **Git workflow:** Development happens directly on `main`. No branch naming conventions or PR process — this is a solo research project with computational partners.
@@ -123,6 +125,10 @@ Four layers with strict dependency direction: **kernel → pipeline → novelty 
 
 **`<internal>/` (separate subproject, NOT under `src/kryptos/`)** — Research runner built on the Agent SDK. Has its own `pyproject.toml`, its own `.env` (see `<internal>`), its own runbook (`<internal>`), and depends on `agent-sdk`. **Do not confuse with the core `kryptos` package** — they have independent dependency trees and different API key env vars. Core kryptos must stay stdlib-only; internalmay use anything in its own venv.
 
+**`external/` (repo root, NOT under `src/`)** — Third-party reference material checked into the tree:
+- `external/bean_k4testing/` — Bean's reference C / SageMath implementation of the K4 constraints (`k4-bean3.c`, `k4-perm-test.c`, `kryptos-k4-sage.txt`, `k4testing.py`). This is the **authoritative cross-check** for `kernel/constants.py` Bean equality/inequality values. When debugging constraint semantics or verifying a new Bean-derived claim, diff against this reference, do not re-derive from the paper.
+- `external/claude-plugins-official/` — Unpinned plugin source, reference only.
+
 ### Data flow
 
 ```
@@ -159,6 +165,8 @@ PYTHONPATH=src python3 run_attack.py --exhaustion-summary           # Summarize 
 ```
 
 **Naming:** `e_` = experiment, `f_` = formal campaign, `h_` = harness (structured multi-config evaluator, lives in `scripts/hypothesis_tests/`), `blitz_` = fast hypothesis sweep (some live at `scripts/` root level). Subdirectory scripts live in `scripts/<family>/`. `_infra/` = utilities, not attacks.
+
+**Second runner — `run_lean.py`** (root, separate from `run_attack.py`): two-phase runner — Phase A does local multiprocessing compute with zero tokens (statistical profiling, simple-cipher disproof, keyword sweeps, columnar brute-force), then Phase B spends tokens on an Agent SDK synthesis pass over Phase A outputs. Use `run_lean.py` for token-efficient hypothesis sweeps where the LLM only adds value at the synthesis step; use `run_attack.py` for script-family dispatch against the ~45 `scripts/*/` subdirectories. Do not confuse the two — they have overlapping names but distinct purposes.
 
 **Standard contract** (see `scripts/examples/e_caesar_standard.py` for full template):
 ```python
@@ -401,7 +409,7 @@ Two `memory/` directories exist — don't confuse them:
 
 ---
 
-*Last updated: 2026-04-16 — Added campaigns/, admissibility/, composition/ to architecture; AGENTS.md pointer for Codex; test runtime updated to ~107s. CLAUDE.md is operational doctrine only. Live research state in MEMORY.md; structured claims in docs/claims_registry.json; open audits in docs/methodological_audits.md; canonical entry index in docs/README_current_state.md.*
+*Last updated: 2026-04-17 — Added `run_lean.py` disambiguation, `requirements.txt` pointer, and `external/` (Bean reference C/SageMath impl) to Source Layout. 2026-04-16 prior edit added campaigns/, admissibility/, composition/ and AGENTS.md pointer. CLAUDE.md is operational doctrine only. Live research state in MEMORY.md; structured claims in docs/claims_registry.json; open audits in docs/methodological_audits.md; canonical entry index in docs/README_current_state.md.*
 *Primary author: Colin Patrick (human lead) + Claude (computational partner)*
 
 *Precedence rule for conflicts: verify freshness with `git log -1 --format=%cd CLAUDE.md MEMORY.md`. If CLAUDE.md is older than MEMORY.md and the two conflict on research state (not operational doctrine), trust MEMORY.md and flag the drift. Operational doctrine in CLAUDE.md is always authoritative regardless of date.*
