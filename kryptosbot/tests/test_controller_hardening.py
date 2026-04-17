@@ -121,6 +121,65 @@ class TestErrorContractHypothesisId:
         assert experiments[0].result.status == WorkerStatus.ERROR
         assert "ValueError" in experiments[0].result.error
 
+    def test_record_experiment_and_link_updates_theory_backlink(self, tmp_ledger):
+        """Recording an experiment must also update theory.experiment_ids."""
+        theory = _make_theory("hyp-exp-link", status=TheoryStatus.RUNNING)
+        tmp_ledger.upsert_theory(theory)
+
+        controller = ResearchController(
+            ControllerConfig(project_root=Path("."), ledger_db_path=tmp_ledger.db_path),
+        )
+        controller.ledger = tmp_ledger
+
+        exp = ExperimentRecord(
+            experiment_id="exp-link-001",
+            hypothesis_id=theory.hypothesis_id,
+            worker_role="agent_sdk",
+            completed_at="2026-04-16T00:00:00+00:00",
+            result=WorkerContract(
+                hypothesis_id=theory.hypothesis_id,
+                worker_role="agent_sdk",
+                status=WorkerStatus.ERROR,
+                error="synthetic failure",
+            ),
+        )
+
+        controller._record_experiment_and_link(exp)
+
+        refreshed = tmp_ledger.get_theory(theory.hypothesis_id)
+        assert refreshed is not None
+        assert "exp-link-001" in refreshed.experiment_ids
+
+    def test_record_experiment_and_link_is_idempotent_for_same_experiment(self, tmp_ledger):
+        """Re-recording the same experiment must not duplicate backlinks."""
+        theory = _make_theory("hyp-exp-link-dup", status=TheoryStatus.RUNNING)
+        tmp_ledger.upsert_theory(theory)
+
+        controller = ResearchController(
+            ControllerConfig(project_root=Path("."), ledger_db_path=tmp_ledger.db_path),
+        )
+        controller.ledger = tmp_ledger
+
+        exp = ExperimentRecord(
+            experiment_id="exp-link-dup-001",
+            hypothesis_id=theory.hypothesis_id,
+            worker_role="agent_sdk",
+            completed_at="2026-04-16T00:00:00+00:00",
+            result=WorkerContract(
+                hypothesis_id=theory.hypothesis_id,
+                worker_role="agent_sdk",
+                status=WorkerStatus.ERROR,
+                error="synthetic failure",
+            ),
+        )
+
+        controller._record_experiment_and_link(exp)
+        controller._record_experiment_and_link(exp)
+
+        refreshed = tmp_ledger.get_theory(theory.hypothesis_id)
+        assert refreshed is not None
+        assert refreshed.experiment_ids.count("exp-link-dup-001") == 1
+
 
 # ---------------------------------------------------------------------------
 # Concern 2: Status reflects persisted truth
@@ -447,6 +506,35 @@ class TestRetiredPaletteCriticHardening:
         assert verdict.decision == "reject_eliminated" or verdict.decision.value == "reject_eliminated"
         assert any("Retired palette revival" in reason for reason in verdict.reasons)
 
+    def test_theorist_prompt_uses_current_retired_palette_date(self, tmp_path):
+        from kryptosbot.controller import ResearchController, ControllerConfig
+
+        cfg = ControllerConfig(
+            project_root=tmp_path,
+            ledger_db_path=tmp_path / "ledger.sqlite",
+        )
+        ctrl = ResearchController.__new__(ResearchController)
+        ctrl.config = cfg
+        ctrl.ledger = TheoryLedger(cfg.ledger_db_path)
+        ctrl.state = ControllerState()
+
+        prompt = ctrl._build_theorist_prompt({
+            "open_anomalies": [],
+            "unaddressed_anomalies": [],
+            "underexplored_families": [],
+            "standing_constraints": [],
+            "status_counts": {},
+            "cycle_delta": {},
+            "active_families": [],
+            "recent_outcomes": [],
+            "pursuit_leads": [],
+            "previous_synthesis": None,
+        })
+        assert "retired 2026-04-14" in prompt
+        assert "retired 2026-04-01" not in prompt
+        assert "b g i k o w z" not in prompt.lower()
+        assert "b,g,i,k,o,w,z" not in prompt.lower()
+
     def test_theorist_prompt_names_reset_anomaly_allowlist(self, tmp_path):
         from kryptosbot.controller import ResearchController, ControllerConfig
 
@@ -476,6 +564,10 @@ class TestRetiredPaletteCriticHardening:
         assert "aaa_compass_cipher" in prompt
         assert "width21_vertical_bigrams" in prompt
         assert "Only the following investigable anomalies are admissible" in prompt
+        assert "Treat width21 as a" in prompt
+        assert "project-verified anomaly / ranking feature" in prompt
+        assert "not as a mandatory constraint" in prompt
+        assert "Other historical anomalies remain in the ledger for audit" in prompt
         assert "MANUAL PRIORITY FOCUS" in prompt
         assert "finite physical reassembly hypotheses" in prompt
         assert "Do NOT use W-delimiters as a standalone clue surface" in prompt
@@ -531,6 +623,47 @@ class TestDisplayStageTransitions:
             assert display._theorist_status is None
         finally:
             display._theorist_status = old_status
+
+
+class TestWorkerPromptPolicyGuards:
+    """Worker prompt policy blocks should preserve scratch and verification rules."""
+
+    def test_worker_prompt_pins_scratch_and_kernel_verification_rules(self, tmp_path):
+        from kryptosbot.controller import ResearchController, ControllerConfig
+
+        cfg = ControllerConfig(
+            project_root=tmp_path,
+            ledger_db_path=tmp_path / "ledger.sqlite",
+        )
+        ctrl = ResearchController.__new__(ResearchController)
+        ctrl.config = cfg
+        ctrl.ledger = TheoryLedger(cfg.ledger_db_path)
+        ctrl.state = ControllerState()
+        ctrl._cycle_redteam_verdicts = {}
+
+        theory = _make_theory(
+            "worker001",
+            title="Worker prompt policy test",
+            family="test_family",
+            kill_criteria=["No verified signal above preregistered threshold"],
+            expected_signal="Kernel-verified crib signal only",
+            minimal_test_spec={"method": "bounded_probe", "parameters": {"limit": 10}},
+        )
+
+        prompt = ctrl._build_worker_prompt(theory)
+        scratch_rel = str(ctrl._worker_scratch_dir(theory).relative_to(cfg.project_root))
+
+        assert "SCRATCH FILES — IMPORTANT:" in prompt
+        assert f"{scratch_rel}/" in prompt
+        assert "DO NOT write scratch files to:" in prompt
+        assert "- scripts/" in prompt
+        assert "- tests/" in prompt
+        assert "- src/" in prompt
+        assert "score fields are recomputed by the controller" in prompt
+        assert "score_cribs" in prompt
+        assert "verify_bean_simple" in prompt
+        assert "will be DISCARDED" in prompt
+        assert "kernel's values" in prompt
 
 
 class TestFatalTheoristFailures:

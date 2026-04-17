@@ -9,6 +9,7 @@ concurrent access from controller + workers.
 from __future__ import annotations
 
 import json
+import logging
 import sqlite3
 from contextlib import contextmanager
 from datetime import datetime, timezone
@@ -28,6 +29,8 @@ from .provenance import (
     ProvenanceClaim, EpistemicClass, VerificationStatus,
     ReproducibilityStatus, AllowedUse, ScopeConditions,
 )
+
+logger = logging.getLogger("kryptosbot.theory_ledger")
 
 
 def _now_iso() -> str:
@@ -251,6 +254,32 @@ class TheoryLedger:
 
     def upsert_theory(self, theory: TheoryRecord) -> None:
         """Insert or update a theory. Deduplicates on hypothesis_id."""
+        outcome_statuses = {
+            TheoryStatus.COMPLETED,
+            TheoryStatus.ELIMINATED,
+            TheoryStatus.PROMISING,
+        }
+        if theory.status in outcome_statuses:
+            with self._connect() as conn:
+                row = conn.execute(
+                    "SELECT 1 FROM experiments WHERE hypothesis_id = ? LIMIT 1",
+                    (theory.hypothesis_id,),
+                ).fetchone()
+            has_experiment_trail = bool(theory.experiment_ids) or row is not None
+            if not has_experiment_trail:
+                audit_note = (
+                    "[AUDIT] Outcome-state direct upsert without experiment trail."
+                )
+                if audit_note not in theory.notes:
+                    theory.notes = (
+                        f"{audit_note} {theory.notes}".strip()
+                        if theory.notes else audit_note
+                    )
+                logger.warning(
+                    "Theory %s upserted directly to outcome state '%s' without "
+                    "experiment trail; annotated for audit",
+                    theory.hypothesis_id, theory.status.value,
+                )
         theory.touch()
         with self._connect() as conn:
             conn.execute("""
@@ -358,6 +387,22 @@ class TheoryLedger:
         **extra_fields: Any,
     ) -> None:
         """Update theory status and optional extra fields atomically."""
+        outcome_statuses = {
+            TheoryStatus.COMPLETED,
+            TheoryStatus.ELIMINATED,
+            TheoryStatus.PROMISING,
+        }
+        if status in outcome_statuses:
+            with self._connect() as conn:
+                row = conn.execute(
+                    "SELECT 1 FROM experiments WHERE hypothesis_id = ? LIMIT 1",
+                    (hypothesis_id,),
+                ).fetchone()
+            if row is None:
+                raise ValueError(
+                    f"Refusing to set {status.value} for {hypothesis_id} without "
+                    "a recorded experiment trail"
+                )
         fields = {"status": status.value, "updated_at": _now_iso()}
         fields.update(extra_fields)
         set_clause = ", ".join(f"{k} = ?" for k in fields)

@@ -151,6 +151,58 @@ class TestSuccessPromotionGate:
         reloaded = ctrl.ledger.get_theory("t2")
         assert reloaded.status == TheoryStatus.PROMISING
 
+    def test_rejected_stat_audit_downgrades_and_suppresses_alerts_end_to_end(self, tmp_path, monkeypatch):
+        """Smoke the full post-result path: absorb -> downgrade -> alert gate."""
+        ctrl = self._make_minimal_controller(tmp_path)
+        ctrl._cycle_stat_audit_verdicts = {}
+
+        theory = TheoryRecord(
+            hypothesis_id="t3", title="t", core_claim="c",
+            mechanism="m", family="f",
+        )
+        ctrl.ledger.upsert_theory(theory)
+
+        contract = WorkerContract(
+            hypothesis_id="t3",
+            status=WorkerStatus.SUCCESS,
+            crib_score=24,
+            score=24.0,
+            bean_passed=True,
+            best_plaintext="A" * 97,
+        )
+
+        ctrl._absorb_outcomes([contract])
+        assert ctrl.ledger.get_theory("t3").status == TheoryStatus.PROMISING
+        assert ctrl.state.recent_outcomes[-1]["status"] == TheoryStatus.PROMISING.value
+
+        from kryptosbot.pantheon_siblings import StatAuditVerdict
+        ctrl._cycle_stat_audit_verdicts["t3"] = StatAuditVerdict(
+            verdict="rejected",
+            confidence=0.97,
+            methodology_concerns=["crib-pasting fingerprint detected"],
+        )
+
+        seen = {}
+
+        def _fake_process_alerts(*, outcomes, threshold, cycle_number, results_dir, theory_lookup):
+            seen["hypothesis_ids"] = [o.hypothesis_id for o in outcomes]
+            seen["threshold"] = threshold.value
+            seen["cycle_number"] = cycle_number
+            return []
+
+        from kryptosbot import alerts
+        monkeypatch.setattr(alerts, "process_alerts", _fake_process_alerts)
+
+        reloaded_theory = ctrl.ledger.get_theory("t3")
+        ctrl._run_alerts([reloaded_theory], [contract])
+
+        reloaded = ctrl.ledger.get_theory("t3")
+        assert reloaded.status == TheoryStatus.COMPLETED
+        assert "stat-audit rejected" in reloaded.failure_reason
+        assert ctrl.state.recent_outcomes[-1]["status"] == TheoryStatus.COMPLETED.value
+        assert seen["hypothesis_ids"] == []
+        assert seen["threshold"] == ctrl.config.alert_threshold
+
 
 # ---------------------------------------------------------------------------
 # 6. Defensive artifact scan canonical preservation

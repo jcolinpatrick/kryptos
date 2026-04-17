@@ -233,6 +233,24 @@ async def update_hypothesis_status_tool(args: dict[str, Any]) -> dict[str, Any]:
             "error": f"Invalid status '{status_str}'. Valid: {[s.value for s in TheoryStatus]}"
         })}]}
 
+    # Outcome-bearing and execution-state transitions must flow through the
+    # controller or record_experiment_result_tool so they cannot bypass kernel
+    # verification, timeout semantics, or PROMISING/ELIMINATED policy gates.
+    blocked_statuses = {
+        TheoryStatus.RUNNING,
+        TheoryStatus.COMPLETED,
+        TheoryStatus.ELIMINATED,
+        TheoryStatus.PROMISING,
+    }
+    if status in blocked_statuses:
+        return {"content": [{"type": "text", "text": json.dumps({
+            "error": (
+                f"Status '{status.value}' is controller-managed. "
+                "Use record_experiment_result for worker outcomes; do not "
+                "mutate execution/outcome states directly."
+            )
+        }, indent=2)}]}
+
     extra: dict[str, Any] = {}
     if "outcome_summary" in args:
         extra["outcome_summary"] = args["outcome_summary"]

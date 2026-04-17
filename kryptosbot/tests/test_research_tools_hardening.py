@@ -79,6 +79,28 @@ def _call_tool(args: dict) -> dict:
     return json.loads(text)
 
 
+def _call_status_tool(args: dict) -> dict:
+    """Invoke the async status-update tool synchronously and parse the JSON result."""
+    handler = research_tools.update_hypothesis_status_tool.handler
+    envelope = asyncio.run(handler(args))
+    text = envelope["content"][0]["text"]
+    return json.loads(text)
+
+
+def _call_summary_tool(limit: int = 20) -> dict:
+    handler = research_tools.summarize_recent_learnings_tool.handler
+    envelope = asyncio.run(handler({"limit": limit}))
+    text = envelope["content"][0]["text"]
+    return json.loads(text)
+
+
+def _call_ledger_summary_tool() -> dict:
+    handler = research_tools.get_ledger_summary_tool.handler
+    envelope = asyncio.run(handler({}))
+    text = envelope["content"][0]["text"]
+    return json.loads(text)
+
+
 # ---------------------------------------------------------------------------
 # Regression tests for the audit backdoor
 # ---------------------------------------------------------------------------
@@ -229,6 +251,49 @@ class TestRecordExperimentResultHardening:
         persisted = tmp_ledger.get_theory(theory.hypothesis_id)
         assert persisted.status == TheoryStatus.ELIMINATED
 
+
+class TestUpdateHypothesisStatusHardening:
+    """update_hypothesis_status must not bypass the verified outcome path."""
+
+    @pytest.mark.parametrize(
+        "blocked_status",
+        [
+            TheoryStatus.RUNNING.value,
+            TheoryStatus.COMPLETED.value,
+            TheoryStatus.ELIMINATED.value,
+            TheoryStatus.PROMISING.value,
+        ],
+    )
+    def test_execution_and_outcome_statuses_are_rejected(self, tmp_ledger, blocked_status):
+        theory = _seed_theory(tmp_ledger, "hyp-status-block")
+
+        result = _call_status_tool({
+            "hypothesis_id": theory.hypothesis_id,
+            "status": blocked_status,
+        })
+
+        assert "error" in result
+        assert "controller-managed" in result["error"]
+
+        persisted = tmp_ledger.get_theory(theory.hypothesis_id)
+        assert persisted.status == TheoryStatus.RUNNING
+
+    def test_bookkeeping_statuses_still_allowed(self, tmp_ledger):
+        theory = _seed_theory(tmp_ledger, "hyp-status-allowed")
+
+        result = _call_status_tool({
+            "hypothesis_id": theory.hypothesis_id,
+            "status": TheoryStatus.WITHDRAWN.value,
+            "failure_reason": "manual quarantine",
+        })
+
+        assert result["status"] == "updated"
+        assert result["new_status"] == TheoryStatus.WITHDRAWN.value
+
+        persisted = tmp_ledger.get_theory(theory.hypothesis_id)
+        assert persisted.status == TheoryStatus.WITHDRAWN
+        assert persisted.failure_reason == "manual quarantine"
+
     def test_timeout_does_not_eliminate(self, tmp_ledger):
         """
         TIMEOUT must not be treated as elimination. The audit's related
@@ -254,3 +319,54 @@ class TestRecordExperimentResultHardening:
             "best_plaintext": "",
         })
         assert "error" in result
+
+
+class TestVerifiedOutcomeIntegration:
+    """Finite end-to-end checks from verified tool result into summaries."""
+
+    def test_verified_signal_flows_into_ledger_and_recent_learnings(self, tmp_ledger):
+        theory = _seed_theory(tmp_ledger, "hyp-summary-signal")
+
+        filler = ["X"] * 97
+        for i, c in enumerate("EASTNORTHEAST"):
+            filler[21 + i] = c
+        for i, c in enumerate("BERLINCLOCK"):
+            filler[63 + i] = c
+        pt = "".join(filler)
+
+        recorded = _call_tool({
+            "hypothesis_id": theory.hypothesis_id,
+            "status": "success",
+            "best_plaintext": pt,
+            "narrative_summary": "verified crib-anchored candidate",
+        })
+        assert recorded["theory_status"] == TheoryStatus.PROMISING.value
+        assert recorded["verified_crib_score"] == 24
+
+        recent = _call_summary_tool(limit=10)
+        assert recent["total_recent"] >= 1
+        assert any(item["title"] == theory.title for item in recent["promising"])
+
+        dashboard = _call_ledger_summary_tool()
+        assert dashboard["total_experiments"] >= 1
+        assert dashboard["theories_by_status"].get(TheoryStatus.PROMISING.value, 0) >= 1
+        assert any(
+            item["hypothesis_id"] == theory.hypothesis_id
+            for item in dashboard["top_scoring"]
+        )
+
+    def test_verified_timeout_does_not_pollute_promising_summary(self, tmp_ledger):
+        theory = _seed_theory(tmp_ledger, "hyp-summary-timeout")
+
+        recorded = _call_tool({
+            "hypothesis_id": theory.hypothesis_id,
+            "status": "timeout",
+            "narrative_summary": "finite timeout smoke",
+        })
+        assert recorded["theory_status"] == TheoryStatus.COMPLETED.value
+
+        recent = _call_summary_tool(limit=10)
+        assert all(item["title"] != theory.title for item in recent["promising"])
+
+        dashboard = _call_ledger_summary_tool()
+        assert dashboard["theories_by_status"].get(TheoryStatus.COMPLETED.value, 0) >= 1

@@ -1303,7 +1303,7 @@ BEAN_REPORTED_NOT_RERUN or PROJECT_REVERIFIED_STATISTICAL_ANOMALY item.
 
 DO NOT propose theories involving the retired null-palette / null-mask
 family (claim_id: null_palette_retired). A specific 7-letter subset was
-investigated and retired 2026-04-01 after matched controls disproved its
+investigated and retired 2026-04-14 after matched controls disproved its
 specificity; the letter set is intentionally not named here to avoid
 re-anchoring. Do not attempt to infer it. Any theory proposing a fixed
 small-alphabet null set at a fixed position mask should be treated as a
@@ -1453,7 +1453,7 @@ Output ONLY the JSON array. No commentary."""
                     completed_at=_now_iso(),
                     result=error_contract,
                 )
-                self.ledger.record_experiment(exp)
+                self._record_experiment_and_link(exp)
                 # Even when the worker raised before _run_worker could clean
                 # up, we still scan for any artifacts it left behind.
                 try:
@@ -1710,7 +1710,7 @@ Output ONLY the JSON array. No commentary."""
             # Record experiment
             exp.completed_at = _now_iso()
             exp.result = contract
-            self.ledger.record_experiment(exp)
+            self._record_experiment_and_link(exp)
 
             # Clean up worker artifacts. Two passes:
             # 1. Remove the worker's designated scratch directory entirely
@@ -1721,6 +1721,16 @@ Output ONLY the JSON array. No commentary."""
             self._cleanup_worker_artifacts(theory, contract)
 
             return contract
+
+    def _record_experiment_and_link(self, exp: ExperimentRecord) -> None:
+        """Persist an experiment and mirror its ID onto the parent theory."""
+        self.ledger.record_experiment(exp)
+        theory = self.ledger.get_theory(exp.hypothesis_id)
+        if theory is None:
+            return
+        if exp.experiment_id not in theory.experiment_ids:
+            theory.experiment_ids.append(exp.experiment_id)
+            self.ledger.upsert_theory(theory)
 
     def _cleanup_worker_artifacts(
         self, theory: TheoryRecord, contract: WorkerContract,
@@ -2244,6 +2254,10 @@ field empty. The controller will record the verification gap and your status
                     "(stat-audit rejected)",
                     c.hypothesis_id[:8],
                 )
+                for outcome in self.state.recent_outcomes:
+                    if outcome.get("hypothesis_id") == c.hypothesis_id:
+                        outcome["status"] = TheoryStatus.COMPLETED.value
+                        break
 
     def _run_alerts(
         self,

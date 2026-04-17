@@ -314,6 +314,15 @@ class TestTheoryLedger:
 
     def test_status_update(self, tmp_ledger, sample_theory):
         tmp_ledger.upsert_theory(sample_theory)
+        tmp_ledger.record_experiment(ExperimentRecord(
+            experiment_id="exp-status-update",
+            hypothesis_id=sample_theory.hypothesis_id,
+            worker_role="agent_sdk",
+            result=WorkerContract(
+                hypothesis_id=sample_theory.hypothesis_id,
+                status=WorkerStatus.DISPROVED,
+            ),
+        ))
         tmp_ledger.update_theory_status(
             sample_theory.hypothesis_id,
             TheoryStatus.ELIMINATED,
@@ -322,6 +331,56 @@ class TestTheoryLedger:
         retrieved = tmp_ledger.get_theory(sample_theory.hypothesis_id)
         assert retrieved.status == TheoryStatus.ELIMINATED
         assert retrieved.failure_reason == "Crib score 0/24"
+
+    def test_outcome_status_update_requires_experiment_trail(self, tmp_ledger, sample_theory):
+        tmp_ledger.upsert_theory(sample_theory)
+        with pytest.raises(ValueError, match="without a recorded experiment trail"):
+            tmp_ledger.update_theory_status(
+                sample_theory.hypothesis_id,
+                TheoryStatus.ELIMINATED,
+            )
+
+    def test_bookkeeping_status_update_does_not_require_experiment_trail(self, tmp_ledger, sample_theory):
+        tmp_ledger.upsert_theory(sample_theory)
+        tmp_ledger.update_theory_status(
+            sample_theory.hypothesis_id,
+            TheoryStatus.WITHDRAWN,
+            failure_reason="manual quarantine",
+        )
+        retrieved = tmp_ledger.get_theory(sample_theory.hypothesis_id)
+        assert retrieved.status == TheoryStatus.WITHDRAWN
+        assert retrieved.failure_reason == "manual quarantine"
+
+    def test_direct_outcome_upsert_without_experiment_is_audit_annotated(self, tmp_ledger):
+        theory = TheoryRecord(
+            hypothesis_id="audit-upsert-1",
+            title="direct eliminated theory",
+            core_claim="bootstrap direct outcome",
+            mechanism="manual import",
+            family="test_family",
+            status=TheoryStatus.ELIMINATED,
+        )
+        tmp_ledger.upsert_theory(theory)
+        retrieved = tmp_ledger.get_theory(theory.hypothesis_id)
+        assert retrieved is not None
+        assert retrieved.status == TheoryStatus.ELIMINATED
+        assert "Outcome-state direct upsert without experiment trail" in retrieved.notes
+
+    def test_direct_outcome_upsert_with_experiment_ids_is_not_annotated(self, tmp_ledger):
+        theory = TheoryRecord(
+            hypothesis_id="audit-upsert-2",
+            title="direct promising theory",
+            core_claim="imported outcome",
+            mechanism="manual import",
+            family="test_family",
+            status=TheoryStatus.PROMISING,
+            experiment_ids=["exp-imported-1"],
+        )
+        tmp_ledger.upsert_theory(theory)
+        retrieved = tmp_ledger.get_theory(theory.hypothesis_id)
+        assert retrieved is not None
+        assert retrieved.status == TheoryStatus.PROMISING
+        assert "Outcome-state direct upsert without experiment trail" not in retrieved.notes
 
     def test_get_by_status(self, tmp_ledger):
         for i in range(3):
