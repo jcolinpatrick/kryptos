@@ -131,7 +131,28 @@ A permutation maps output position to input position. Inverse via `invert_perm()
 - **If this hypothesis holds, it eliminates**: Chaocipher, Enigma, and any cipher where key depends on preceding ciphertext/plaintext
 - **Implication (conditional)**: cipher is polyalphabetic substitution with non-periodic, position-dependent key
 
-## 9. Eliminated Hypotheses (verified — do not re-test)
+## 9. Scoring Pipeline Labels
+
+### `BREAKTHROUGH` label semantics (AUDIT-3 resolution)
+
+The scoring pipeline in `kernel/scoring/aggregate.py` emits the label `BREAKTHROUGH`
+when `crib_score == 24 && bean_passed == True`. **This label is an INPUT to the
+validation gates in `CLAUDE.md` §"Validation gates", not an output of them.**
+
+A `BREAKTHROUGH`-labelled result that has not passed all validation gates is a
+**candidate for investigation**, not a solution. On this codebase, the label has
+historically been emitted by algebraic identities and post-hoc overfits as often
+as by genuine candidates (see `docs/claims_registry.json` and `MEMORY.md`
+DO NOT TEST list).
+
+**Do not cite `BREAKTHROUGH` as evidence of a solution.** Cite it as a trigger
+for the four-step validation sequence. See also `docs/README_current_state.md §4`.
+
+Optionally the label could be renamed to `ALL_CRIBS_MATCH` in a future refactor
+with `BREAKTHROUGH` kept as an alias — but the documentation note above is the
+mandatory closure of AUDIT-3 in `docs/methodological_audits.md`.
+
+## 10. Eliminated Hypotheses (verified — do not re-test)
 
 | Hypothesis | Status | Evidence |
 |-----------|--------|---------|
