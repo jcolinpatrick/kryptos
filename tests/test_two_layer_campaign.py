@@ -66,6 +66,16 @@ def test_short_candidates_are_not_synthetically_padded():
     assert r.weak_identity_preservation == 0.0
 
 
+def test_short_aligned_candidates_remain_h1_conditional():
+    outer = next(o for o in outer_mod.generate_instances()
+                 if not o.breaks_direct_positional_alignment)
+    inner = _first_caesar_inner()
+    p = _pair(outer, inner)
+    r = ev.evaluate_composition(p, "Z" * 20)
+    assert r.crib_compatibility_score == 0
+    assert r.provenance == ProvenanceClass.H1_CONDITIONAL
+
+
 def test_width21_is_evaluation_not_generation():
     # All profiles get a width spectrum, regardless of outer width
     outer = _first_mask_outer()
@@ -496,6 +506,35 @@ def test_malformed_family_cover_plan_fails_closed():
         mode=plan.mode,
         seed=plan.seed,
         target_evals=plan.target_evals,
+        achieved_evals=len(malformed_pairs),
+        coverage_guarantees=plan.coverage_guarantees,
+        is_complete_for_mode=True,
+        notes=plan.notes,
+        filters=plan.filters,
+    )
+    cov = compute_coverage_report(malformed, outers, inners)
+    assert cov.qualifies_as_family_cover_complete is False
+
+    out = {"total_profiles_tested": len(malformed.pairs), "joint_anomaly_successes": []}
+    s = ev.render_summary(out, coverage=cov)
+    assert "FAMILY-COVER null" not in s
+    assert "PARTIAL" in s
+
+
+def test_family_cover_missing_inner_family_fails_closed():
+    """Dropping an inner family class must void the family-cover warrant."""
+    outers, inners = _outers_inners()
+    plan = smp.sample_stratified_family_cover(outers, inners, seed=0)
+    dropped_family = inners[plan.pairs[0][1]].family_id
+    malformed_pairs = [
+        pair for pair in plan.pairs
+        if inners[pair[1]].family_id != dropped_family
+    ]
+    malformed = smp.SamplingPlan(
+        pairs=malformed_pairs,
+        mode=plan.mode,
+        seed=plan.seed,
+        target_evals=len(malformed_pairs),
         achieved_evals=len(malformed_pairs),
         coverage_guarantees=plan.coverage_guarantees,
         is_complete_for_mode=True,

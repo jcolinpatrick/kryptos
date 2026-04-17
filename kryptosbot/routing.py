@@ -76,7 +76,9 @@ def select_theorist(
         )
 
     n = len(THEORIST_ROTATION)
-    idx = cycle_number % n
+    # Cycle numbering is 1-based in the controller/logs. Slot 0 should
+    # therefore be used for cycle 1, not cycle 0.
+    idx = max(cycle_number - 1, 0) % n
     preferred = THEORIST_ROTATION[idx]
 
     spec = roster.get(preferred)

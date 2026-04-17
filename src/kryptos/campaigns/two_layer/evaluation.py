@@ -243,10 +243,11 @@ def evaluate_composition(
         and len(flags) == 0
     )
 
-    # Provenance: H1_CONDITIONAL if we relied on anchored cribs/alignment
+    # Provenance: anchored crib scoring remains H1-conditional whenever the
+    # evaluator is reasoning in direct positional space, even for nulls.
+    # A zero crib score under preserved alignment does NOT become structural;
+    # it is still conditional on the direct-mapping assumption.
     prov = ProvenanceClass.H1_CONDITIONAL
-    if not profile.outer.breaks_direct_positional_alignment and crib_sc == 0:
-        prov = ProvenanceClass.STRUCTURAL
 
     return EvaluationResult(
         profile_id=profile.profile_id,
