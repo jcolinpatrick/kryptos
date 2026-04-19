@@ -208,7 +208,24 @@ def load_results_json(results_dir: str) -> list[dict[str, Any]]:
     Scans both top-level .json files and results.json inside immediate
     subdirectories (e.g. results/tableau_keystream/results.json).
     """
-    results = []
+    results: list[dict[str, Any]] = []
+
+    def _append_payload(payload: Any, source_file: str) -> None:
+        """Normalize loaded JSON payloads into dict-like result entries."""
+        if isinstance(payload, dict):
+            payload["_source_file"] = source_file
+            results.append(payload)
+            return
+        if isinstance(payload, list):
+            for idx, item in enumerate(payload):
+                if not isinstance(item, dict):
+                    continue
+                normalized = dict(item)
+                normalized["_source_file"] = f"{source_file}#{idx}"
+                results.append(normalized)
+            return
+        raise TypeError(f"Unsupported JSON payload type: {type(payload).__name__}")
+
     if not os.path.isdir(results_dir):
         print(f"  [WARN] Results directory not found: {results_dir}")
         return results
@@ -218,8 +235,7 @@ def load_results_json(results_dir: str) -> list[dict[str, Any]]:
             try:
                 with open(entry_path) as f:
                     data = json.load(f)
-                data["_source_file"] = entry
-                results.append(data)
+                _append_payload(data, entry)
             except Exception as e:
                 print(f"  [WARN] Failed to load {entry_path}: {e}")
         elif os.path.isdir(entry_path):
@@ -229,8 +245,7 @@ def load_results_json(results_dir: str) -> list[dict[str, Any]]:
                 try:
                     with open(sub_results) as f:
                         data = json.load(f)
-                    data["_source_file"] = f"{entry}/results.json"
-                    results.append(data)
+                    _append_payload(data, f"{entry}/results.json")
                 except Exception as e:
                     print(f"  [WARN] Failed to load {sub_results}: {e}")
     return results
@@ -509,6 +524,11 @@ def build_eliminations_from_results(
     for res in results:
         exp_id = res.get("experiment", res.get("experiment_id", ""))
         if not exp_id:
+            if "#" in str(res.get("_source_file", "")):
+                # Ancillary list-record payloads (ledgers, score tables, etc.)
+                # are flattened during load to avoid parse warnings, but they are
+                # not elimination records unless they carry an explicit experiment id.
+                continue
             # Try to derive from filename
             fname = res.get("_source_file", "")
             if fname:

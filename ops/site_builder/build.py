@@ -6,6 +6,7 @@ from __future__ import annotations
 import os
 import shutil
 import sys
+import time
 from pathlib import Path
 
 try:
@@ -103,6 +104,41 @@ def format_configs(n: int) -> str:
     return str(n)
 
 
+def _prepare_output_dir(output_dir: str) -> None:
+    """Prepare the output directory for a site rebuild.
+
+    If old root-owned content blocks cleanup, rotate the whole tree aside and
+    create a fresh output directory owned by the current user.
+    """
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir, exist_ok=True)
+        return
+
+    try:
+        for entry in os.listdir(output_dir):
+            if entry in ("stats", "static"):
+                continue
+            entry_path = os.path.join(output_dir, entry)
+            if os.path.isdir(entry_path):
+                shutil.rmtree(entry_path)
+            else:
+                os.remove(entry_path)
+        return
+    except PermissionError:
+        parent_dir = os.path.dirname(output_dir)
+        base_name = os.path.basename(output_dir.rstrip(os.sep))
+        rotated = os.path.join(parent_dir, f"{base_name}.stale-{int(time.time())}")
+        print(
+            f"  [WARN] Output directory contains unwritable entries; "
+            f"rotating {output_dir} -> {rotated}"
+        )
+        os.rename(output_dir, rotated)
+        os.makedirs(output_dir, exist_ok=True)
+        stale_stats = os.path.join(rotated, "stats")
+        if os.path.isdir(stale_stats):
+            shutil.copytree(stale_stats, os.path.join(output_dir, "stats"), dirs_exist_ok=True)
+
+
 def build():
     """Run the full site build pipeline."""
     print("=" * 60)
@@ -176,15 +212,7 @@ def build():
     #    Preserve stats/ (GoAccess) and static/ (avoid transient 404s for
     #    fonts/CSS/JS while HTML pages are being regenerated — static assets
     #    are overwritten in step 10 anyway).
-    if os.path.exists(OUTPUT_DIR):
-        for entry in os.listdir(OUTPUT_DIR):
-            if entry in ("stats", "static"):
-                continue
-            entry_path = os.path.join(OUTPUT_DIR, entry)
-            if os.path.isdir(entry_path):
-                shutil.rmtree(entry_path)
-            else:
-                os.remove(entry_path)
+    _prepare_output_dir(OUTPUT_DIR)
 
     # 7) Build category browse data
     categories_for_browse = []
