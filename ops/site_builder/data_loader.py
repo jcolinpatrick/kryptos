@@ -595,7 +595,10 @@ def apply_overrides(
             "configs_tested", "best_score", "plain_summary",
         ):
             if attr in ovr:
-                setattr(elim, attr, ovr[attr])
+                value = ovr[attr]
+                if attr == "verdict":
+                    value = _normalize_verdict(str(value))
+                setattr(elim, attr, value)
 
         if "tags" in ovr:
             # Merge, don't replace

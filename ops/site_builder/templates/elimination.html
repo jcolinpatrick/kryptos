@@ -21,7 +21,7 @@
 <div class="plain-summary">
   <strong>In plain English:</strong> {{ e.plain_summary }}
   {% if e.best_score is not none and e.best_score < 24 %}
-    <strong>This approach is ruled out within the tested scope.</strong>
+    <strong>This record is negative within the tested scope.</strong>
   {% endif %}
 </div>
 {% elif e.configs_tested > 0 %}
@@ -36,7 +36,7 @@
     {% endif %}
   {% endif %}
   {% if e.best_score is none or e.best_score < 24 %}
-    <strong>This approach is ruled out within the tested scope.</strong>
+    <strong>This record is negative within the tested scope.</strong>
   {% endif %}
 </div>
 {% endif %}

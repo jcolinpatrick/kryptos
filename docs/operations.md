@@ -29,6 +29,11 @@ journalctl -u kryptosbot-api -f                         # API logs (live tail)
 # Nginx (reverse proxy, SSL via Let's Encrypt, rate limiting: 10 req/s per IP)
 sudo nginx -t && sudo systemctl reload nginx
 
+# Notes:
+# - /api/ has a tighter per-IP rate limit than static pages.
+# - Common exploit-path families (WordPress/PHP/admin/backups/.env probes) are
+#   short-circuited at nginx based on hostile scan traffic observed in April 2026.
+
 # 30-min CI/CD cron (flock prevents overlap, checksum-based rebuild)
 # Crontab: */30 * * * * flock -n /tmp/kryptosbot-cron.lock ops/deploy/cron_update.sh
 ops/deploy/cron_update.sh --force    # Force rebuild

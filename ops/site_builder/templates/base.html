@@ -3,16 +3,16 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="kryptosbot.com | Kryptos K4 Research Archive. Open-source cryptanalysis documenting what has been tried and eliminated.">
+  <meta name="description" content="kryptosbot.com | Kryptos K4 Research Archive. Open-source research archive documenting tested Kryptos K4 hypotheses, eliminations, and open questions.">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="kryptosbot.com">
   <meta property="og:title" content="{% block og_title %}kryptosbot.com | Kryptos K4 Research Archive{% endblock %}">
-  <meta property="og:description" content="An open-source research archive documenting {{ total_configs_disproven }} tested configurations. Rigorous, reproducible cryptanalysis of Kryptos K4.">
+  <meta property="og:description" content="An open-source research archive documenting {{ total_configs_disproven }} configurations evaluated across recorded Kryptos K4 experiments.">
   <meta property="og:image" content="https://kryptosbot.com/static/kryptosbot-og.jpg">
   {% block og_url %}<meta property="og:url" content="https://kryptosbot.com/">{% endblock %}
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="{% block twitter_title %}kryptosbot.com | Kryptos K4 Research Archive{% endblock %}">
-  <meta name="twitter:description" content="Open-source research archive. {{ total_configs_disproven }} configurations tested, documented, and reproducible.">
+  <meta name="twitter:description" content="Open-source research archive. {{ total_configs_disproven }} configurations evaluated across recorded Kryptos K4 experiments.">
   <meta name="twitter:image" content="https://kryptosbot.com/static/kryptosbot-og.jpg">
   {% block canonical %}{% endblock %}
   <title>{% block title %}kryptosbot.com{% endblock %}</title>
@@ -25,7 +25,7 @@
 <body>
   <div class="disproven-banner">
     <span class="disproven-count">{{ total_configs_disproven }}</span>
-    <span class="disproven-label">configurations tested and eliminated</span>
+    <span class="disproven-label">configurations evaluated across recorded experiments</span>
   </div>
 
   <nav>
