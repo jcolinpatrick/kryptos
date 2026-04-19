@@ -24,8 +24,8 @@
       crack the last unsolved message at CIA headquarters. That&rsquo;s cryptanalysis.
     </p>
     <p class="wb-odds-kicker">
-      Over 668 billion configs have been formally eliminated by this project.
-      Only 10<sup>35</sup> minus 668 billion to go.
+      Over {{ total_configs_disproven }} configs have been evaluated by this project.
+      Most of the remaining space is not honestly enumerable.
     </p>
   </div>
 </details>
@@ -36,9 +36,9 @@
     <p>
       Sanborn stated K4 uses <strong>two systems of encipherment</strong>.
       Pure transposition is impossible (CT has 2 E&rsquo;s, cribs need 3),
-      so at least one layer is substitution. The leading model assumes:
-      <code>plaintext &rarr; transposition &rarr; substitution &rarr; carved text</code>
-      (reverse order not yet ruled out).
+      so at least one layer is substitution. Beyond that, the architecture is open:
+      the live questions are about ordering, segmentation, and whether any procedural
+      layer is present.
     </p>
     <p class="wb-mb2"><strong>Eliminated</strong> <span class="verdict verdict-eliminated">proven impossible</span></p>
     <ul>
@@ -56,16 +56,17 @@
       <li>73-char hypothesis with non-periodic cipher after null removal</li>
       <li><strong>W-delimiter hypothesis (2026-04-17):</strong> the 5 W characters at positions 20, 36, 48, 58, 74
         divide K4 into 6 segments of 20|15|11|9|15|22 chars. Removing them eliminates the width-21 vertical
-        bigram anomaly entirely, suggesting they are structural separators rather than ciphertext. Use the
+        bigram anomaly entirely, making them a live structural hypothesis surface. Use the
         &ldquo;W-segment&rdquo; transposition and &ldquo;W positions only&rdquo; null mask to explore this.</li>
     </ul>
     <p class="wb-mb2"><strong>Watch for 23/24</strong></p>
     <p><small class="text-muted">
-      K2 ends with an X separator, K3 ends with a stray Q. If K4 has a similar delimiter,
-      one crib position would mismatch even with the correct key, capping the score
-      at 23/24. Also: 73 is prime (no clean grid), but 72 = 8&times;9, matching Sanborn&rsquo;s
-      &ldquo;8 lines.&rdquo; A 72+1 message with delimiter would give a perfect grid.
-      If you hit 23/24, check which single position missed; it may be the delimiter.
+      Some researchers explore whether K4 could use a delimiter convention analogous to
+      marker-like characters elsewhere in Kryptos. That is a hypothesis, not a fact. If
+      you hit 23/24, inspect whether a single site behaves like a marker rather than
+      assuming the miss is random. One concrete variant: carved <code>W</code> may decrypt
+      to a rare plaintext letter such as <code>X</code>, <code>Q</code>, or <code>Z</code>
+      serving a punctuation-like role.
     </small></p>
     <p><a href="/methodology/">Full methodology and elimination landscape &rarr;</a></p>
   </div>
@@ -97,7 +98,7 @@
     <h4>DEFECTOR 15/24</h4>
     <p>Historic high score <span class="verdict verdict-eliminated wb-verdict-inline">disproven</span></p>
   </div>
-  <div class="preset-card" data-preset="w-delimiter" title="W-delimiter hypothesis (2026-04-17): 5 W's are row-end markers dividing K4 into 6 segments of 20/15/11/9/15/22 chars. Removing W's eliminates the width-21 bigram anomaly entirely.">
+  <div class="preset-card" data-preset="w-delimiter" title="W-delimiter hypothesis (2026-04-17): 5 W's may be row-end markers dividing K4 into 6 segments of 20/15/11/9/15/22 chars. Removing W's eliminates the width-21 bigram anomaly entirely.">
     <h4>W-delimiter (92-char)</h4>
     <p>New finding <span class="verdict verdict-survived wb-verdict-inline">open</span></p>
   </div>

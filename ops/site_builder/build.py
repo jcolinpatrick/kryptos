@@ -66,28 +66,27 @@ CATEGORY_PLAIN_GUIDES = {
         "impossibility, not just a search result."
     ),
     "multi-layer": (
-        "Combining letter-rearrangement with substitution is the leading hypothesis for K4. "
-        "We've tested thousands of combinations (over 1.2 billion configs) covering "
-        "all structured rearrangement methods paired with keyed substitution. "
-        "What remains open: the possibility that the rearrangement follows "
-        "a pattern not yet identified, or that the substitution key comes from an "
-        "unknown source text."
+        "Structured multi-layer combinations are one of the main remaining search areas for K4. "
+        "We have already tested a large bounded slice of that space, including many "
+        "structured rearrangement methods paired with keyed substitution, and found no signal. "
+        "What remains open are combinations outside the registered layer families, "
+        "non-standard procedures, or source/key models we cannot yet bound cleanly."
     ),
     "key-models": (
         "Running keys from over 60,000 publicly available texts have been tested "
         "(106 billion position-checks) including the Bible, Shakespeare, Carter's "
         "\"Tomb of Tutankhamun,\" and the full Project Gutenberg library. Zero signal. "
-        "A running key from a non-public source remains one of the strongest surviving "
-        "hypotheses."
+        "A running key from a non-public or non-English source remains an open residual "
+        "family, but the April 2026 audit treats it as a checklist item rather than the "
+        "project's leading hypothesis."
     ),
     "bespoke": (
         "VIC ciphers, DRYAD military charts, Morse code interpretations, "
         "coordinate-based approaches, and many other non-standard ideas have all been "
         "tested. The evidence increasingly points toward something outside textbook "
-        "cipher families. Sanborn stated the method is "
-        "\"bespoke but hand-executable.\" The surviving possibilities include a procedural "
-        "cipher using Sanborn's own encoding charts (the original was sold at auction "
-        "in 2025 for $962,500)."
+        "cipher families. Public clue surfaces and the surviving anomaly landscape keep "
+        "procedural or physically guided methods in play, but the site treats those as "
+        "hypotheses to test, not as established facts."
     ),
 }
 
@@ -168,6 +167,9 @@ def build():
     # Global context available to all templates
     global_ctx = {
         "total_configs_disproven": total_configs_disproven,
+        "total_configs_exact": total_configs,
+        "total_experiments_exact": total_experiments,
+        "total_scripts": total_scripts,
     }
 
     # 6) Prepare output directory
@@ -469,7 +471,7 @@ def _build_standalone_viewer(
 <body>
   <div class="disproven-banner">
     <span class="disproven-count">{counter}</span>
-    <span class="disproven-label">configurations tested and eliminated</span>
+    <span class="disproven-label">configurations evaluated across recorded experiments</span>
   </div>
 
   <nav>
@@ -609,7 +611,7 @@ def _build_cylinder_viewer(global_ctx: dict):
     nav_html = f"""
   <div class="disproven-banner">
     <span class="disproven-count">{configs}</span>
-    <span class="disproven-label">configurations tested and eliminated</span>
+    <span class="disproven-label">configurations evaluated across recorded experiments</span>
   </div>
 
   <nav>

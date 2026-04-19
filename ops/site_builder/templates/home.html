@@ -9,7 +9,7 @@
         <span class="hero-emphasis">Here&rsquo;s everything we&rsquo;ve ruled out.</span></h1>
       <p class="hero-sub">
         An open-source research archive documenting {{ total_configs }} tested configurations
-        across {{ total_experiments }} experiments, with reproduction commands for every one.
+        across {{ total_experiments }} recorded experiments, with scope notes and reproduction commands.
         Built by a human and an AI who find this problem genuinely fascinating.
       </p>
       <div class="hero-cta-row">
@@ -42,8 +42,8 @@
     <div class="path-label">Research</div>
     <h3>What&rsquo;s been eliminated</h3>
     <p>
-      Detailed records of every encryption method we&rsquo;ve tested and ruled out,
-      organized by type, with confidence ratings and full methodology.
+      Detailed records of what we tested, what failed within scope,
+      and which claims were later retired after better controls.
     </p>
     <ul class="path-links">
       <li><a href="/findings/">What we&rsquo;ve learned</a></li>
@@ -73,23 +73,23 @@
 <div class="section-label">What we&rsquo;ve learned</div>
 <div class="findings-preview">
   <div class="finding-preview-card">
-    <span class="finding-preview-num">Surviving anomaly</span>
-    <h3>The Stehle Anomaly</h3>
+    <span class="finding-preview-num">Live structural lead</span>
+    <h3>The W-Delimiter Hypothesis</h3>
     <p>
-      A constant-difference pattern at positions 55&ndash;63.
-      Every 4th character differs by exactly 5. Unique in K4 (p&nbsp;&asymp;&nbsp;1/642 after correction).
+      The five carved <code>W</code>s explain the old width-21 anomaly and may act as
+      enciphered delimiters or row-end markers. That is a live hypothesis surface,
+      not an established fact.
     </p>
-    <a href="/findings/#finding-stehle" class="entry-arrow">Read more &rarr;</a>
+    <a href="/findings/#finding-w-delimiter" class="entry-arrow">Read more &rarr;</a>
   </div>
   <div class="finding-preview-card">
     <span class="finding-preview-num">Key result</span>
-    <h3>Every Classical Cipher Eliminated</h3>
+    <h3>Standard Bounded Classical Families Saturated</h3>
     <p>
-      All standard single-layer cipher families have been tested and eliminated
-      under direct positional correspondence. We have also enumerated 105,692
-      two-layer and 838,350 non-columnar three-layer compositions with no signal
-      above noise. Non-standard approaches and community-proposed ideas remain
-      very much open.
+      Standard single-layer classical families are eliminated under direct
+      positional correspondence and additive-key assumptions, and large bounded
+      two-layer and three-layer slices have returned no signal. What remains open
+      is narrower, more procedural, and much less standard than the early project framing.
     </p>
     <a href="/findings/" class="entry-arrow">Read more &rarr;</a>
   </div>
@@ -104,10 +104,10 @@
     hit the same walls, alone, with no way to know someone else already tried it.
   </p>
   <p>
-    This site is an attempt to fix that. Every approach we&rsquo;ve tested is documented
-    with its parameters, its score, and a command you can run to verify the result
-    yourself. If an idea has already been eliminated, you&rsquo;ll know before you spend
-    a week on it. If it hasn&rsquo;t, you&rsquo;ll know that too.
+    This site is an attempt to fix that. Every recorded approach is documented
+    with its parameters, score, scope limits, and a command you can run to verify
+    the result yourself. If an idea has already failed inside a bounded test
+    envelope, you&rsquo;ll know that before you spend a week on it.
   </p>
   <p>
     The project started as one person&rsquo;s obsession with a sculpture and grew into

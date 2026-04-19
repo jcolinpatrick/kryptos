@@ -14,10 +14,12 @@
   <p class="findings-kicker">After {{ total_configs_disproven }} configurations tested</p>
   <h1>What we&rsquo;ve learned</h1>
   <p class="findings-intro">
-    No single classical cipher decrypts K4. Every standard cipher family has been
-    eliminated under direct positional correspondence. One statistical anomaly
-    survived correction. Several promising leads were rigorously tested and retired.
-    This page documents both.
+    No standard single-layer classical cipher has survived against K4 under the
+    project&rsquo;s direct-positional, additive-key test frame. Large bounded slices of
+    two-layer and three-layer classical space are also saturated. A few anomaly
+    surfaces remain live, led by the <code>W</code>-delimiter interpretation and the
+    local Stehle regularity, while several earlier &ldquo;signals&rdquo; were retired after
+    stricter controls.
   </p>
 </header>
 
@@ -56,15 +58,15 @@
 <section class="finding-provenance">
   <h2>What {{ total_configs_disproven }} configurations told us</h2>
   <p>
-    Every standard classical cipher family has been tested against K4
-    under direct positional correspondence (where ciphertext position N maps
-    to plaintext position N). The results:
+    The site has accumulated a large negative map of bounded classical search space.
+    Under direct positional correspondence (where ciphertext position N maps to
+    plaintext position N), the current repo state supports the following:
   </p>
   <ul class="provenance-list">
     <li>
-      <strong>All periodic polyalphabetic ciphers</strong> (Vigen&egrave;re, Beaufort,
+      <strong>All repeating-key polyalphabetic ciphers</strong> (Vigen&egrave;re, Beaufort,
       Variant Beaufort) at every key length 1&ndash;26: mathematically impossible
-      (Bean constraint proof).
+      within the direct-positional additive-key model.
     </li>
     <li>
       <strong>All autokey variants</strong> (PT-autokey, CT-autokey, both Vigen&egrave;re
@@ -75,11 +77,11 @@
       eliminated by structural proofs (K4 uses all 26 letters; Bifid requires 25).
     </li>
     <li>
-      <strong>All simple transposition families</strong> combined with periodic substitution:
-      maximum 13/24 crib matches (noise).
+      <strong>Many structured transposition + periodic substitution combinations</strong>:
+      exhaustively negative or algebraically blocked within their tested families.
     </li>
     <li>
-      <strong>Running keys from 60,000+ English texts</strong> combined with structured
+      <strong>Running keys from 60,000+ public English texts</strong> combined with structured
       transposition: zero candidates across 106 billion position checks. A later check
       (April 2026) found that running-key combined with columnar transposition at
       widths 6/8/9 is also blocked by the current 242-inequality Bean constraint set
@@ -94,8 +96,8 @@
       registered layer families and default keyword sets.
     </li>
     <li>
-      <strong>Bespoke systems</strong> (VIC, RS44, Wheatstone, interrupted-key, DRYAD):
-      all noise within tested scope.
+      <strong>Many bespoke or historical systems</strong> (VIC, RS44, Wheatstone,
+      interrupted-key, DRYAD): all noise within tested scope.
     </li>
   </ul>
   <p>
@@ -118,11 +120,51 @@
   </p>
 </section>
 
+<section class="finding" id="finding-w-delimiter">
+  <div class="finding-header">
+    <span class="finding-number">1</span>
+    <div>
+      <h2>The W-Delimiter Structural Lead</h2>
+      <p class="finding-subtitle">A live layout hypothesis, not a settled claim</p>
+    </div>
+    <span class="finding-pvalue">structural</span>
+  </div>
+
+  <div class="finding-plain">
+    <h3>The short version</h3>
+    <p>
+      The five carved <code>W</code>s at positions 20, 36, 48, 58, and 74 explain the old
+      width-21 vertical-bigram anomaly: remove those five letters and the anomaly disappears.
+      That makes the <code>W</code>s a live structural hypothesis surface. The current public
+      reading is not &ldquo;the Ws are proven delimiters,&rdquo; but rather &ldquo;if K4 has a
+      delimiter or row-end mechanism, the W positions are now the cleanest bounded place to test it.&rdquo;
+    </p>
+  </div>
+
+  <div class="finding-caveat">
+    <h3>What we know and don&rsquo;t know</h3>
+    <p>
+      We know the width-21 effect is largely explained by <code>W</code> placement. We do
+      <strong>not</strong> know whether the <code>W</code>s are ciphertext, nulls, row-end markers,
+      or some other procedural feature. The live value of this anomaly is that it creates a
+      finite structural test surface: six segments with fixed crib geometry, including only
+      two characters after <code>EASTNORTHEAST</code> and four before <code>BERLINCLOCK</code>.
+    </p>
+    <p>
+      One live interpretation worth testing is a <strong>punctuation or marker convention</strong>:
+      after decryption, some or all carved <code>W</code>s may correspond to plaintext letters such
+      as <code>X</code>, <code>Q</code>, or <code>Z</code> used as separators or punctuation-like markers,
+      analogous to delimiter behavior seen elsewhere in Kryptos. The site treats that as a
+      bounded hypothesis surface, not as a recovered fact about the plaintext.
+    </p>
+  </div>
+</section>
+
 <!-- The Stehle Anomaly -->
 
 <section class="finding" id="finding-stehle">
   <div class="finding-header">
-    <span class="finding-number">1</span>
+    <span class="finding-number">2</span>
     <div>
       <h2>The Stehle Anomaly</h2>
       <p class="finding-subtitle">A unique constant-difference pattern at positions 55&ndash;63</p>
@@ -228,8 +270,8 @@
       The pattern is real and survives multiple-testing correction. However, we have not
       been able to exploit it: no cipher mechanism we&rsquo;ve tested produces this
       pattern as a consequence of its key schedule. It may be a local coincidence
-      in the cipher structure, not a clue to the method. It remains the only
-      statistically significant anomaly in K4 that survived rigorous correction.
+      in the cipher structure, not a clue to the method. It remains a live local
+      anomaly, but it is no longer the site&rsquo;s sole or dominant public lead.
     </p>
   </div>
 </section>
@@ -255,16 +297,11 @@
 
     <h3>The Null Palette (retired April 2026)</h3>
     <p>
-      Under a KA-autokey Vigen&egrave;re model, simulated annealing identified 17 candidate
-      filler positions that used only 7 letters (B, G, I, K, O, W, Z), with odds of
-      roughly 1 in 16,000 under the cipher model at the time. This was our strongest
-      statistical claim for months. However, a score-conditioned null experiment showed
-      that the SA process produces 11 distinct letters on real K4, indistinguishable from
-      shuffled controls (p&nbsp;=&nbsp;0.30). The original &ldquo;7 distinct&rdquo;
-      observation was traced to post-hoc selection from positions already containing
-      palette letters, a circular observation. All downstream claims (BCL keystream
-      enrichment, KA mod-5 column structure, arithmetic progression patterns,
-      KRYPTOS&nbsp;&times;&nbsp;SEVEN lookup table) were also retired.
+      The project previously centered a score-conditioned null-palette story as its
+      strongest signal. That claim did not survive matched controls and is now retired.
+      The underlying lesson is methodological rather than cryptographic: post-hoc
+      anomaly selection can manufacture persuasive-looking structure unless the null
+      model is explicit and adversarially checked.
       <a href="https://github.com/jcolinpatrick/kryptos/blob/main/docs/a1_score_conditioned_null_report.md">Full report.</a>
     </p>
     <p>
@@ -290,10 +327,10 @@
     <div class="conclusion-card conclusion-solved">
       <h3>What we established</h3>
       <ul>
-        <li><strong>{{ total_configs_disproven }}+ configurations tested</strong> with zero signal
-            above noise across all classical single-layer cipher families</li>
-        <li>One surviving anomaly: the Stehle constant-difference pattern (p&nbsp;&asymp;&nbsp;1/642)</li>
-        <li>Multiple promising leads rigorously tested and retired when controls failed</li>
+        <li><strong>{{ total_configs_disproven }} configurations evaluated</strong> across recorded experiments, with no solution-grade signal in the bounded classical slices tested so far</li>
+        <li>Standard single-layer classical families are saturated within the project&rsquo;s direct-positional additive-key frame</li>
+        <li>A few anomaly surfaces remain live, especially the W-delimiter structural hypothesis and the Stehle local regularity</li>
+        <li>Multiple earlier signals were retired when controls failed</li>
         <li>Every result is <a href="https://github.com/jcolinpatrick/kryptos">open source</a>
             and independently reproducible</li>
       </ul>
@@ -301,14 +338,10 @@
     <div class="conclusion-card conclusion-open">
       <h3>What remains unknown</h3>
       <ul>
-        <li>The cipher type and key. Every standard single-layer classical cipher is
-            eliminated under direct correspondence, but non-standard and bespoke ciphers
-            are an open-ended space that we cannot claim to have exhausted.</li>
-        <li>Whether K4 contains null characters (plausible but unproven; the statistical
-            evidence was retired)</li>
-        <li>Running keys from non-public or non-English sources, or combined with
-            monoalphabetic substitution + non-standard transposition (this last case is
-            detection-underdetermined under current quadgram scoring)</li>
+        <li>The cipher type and key. The site cannot claim to have exhausted non-standard or bespoke space.</li>
+        <li>Whether the carved <code>W</code>s are ciphertext or delimiters, and whether any physical or procedural segmentation rule is real</li>
+        <li>Whether K4 contains null characters under any independently justified rule; the old statistical null palette is retired</li>
+        <li>Running keys from non-public or non-English sources, or combined with monoalphabetic substitution + non-standard transposition</li>
         <li>Bespoke procedural mechanisms using Sanborn&rsquo;s encoding charts or
             physical installation features</li>
         <li>Whether K5, archive photographs, or other primary-source evidence would

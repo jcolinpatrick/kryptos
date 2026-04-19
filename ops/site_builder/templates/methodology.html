@@ -119,44 +119,27 @@
   Jim Sanborn stated at the Kryptos dedication that <em>&ldquo;there are two systems
   of enciphering the bottom text.&rdquo;</em> Scheidt stated that he <em>&ldquo;masked the
   English language so it&rsquo;s more of a challenge&rdquo;</em> and that solvers need to
-  <em>&ldquo;solve the technique first and then go for the puzzle.&rdquo;</em> Combined with the
-  mathematical impossibility of periodic substitution at any period, the leading hypothesis
-  is that K4 uses <strong>two layers</strong>: a steganographic layer (null mask) and a
-  substitution cipher. The &ldquo;two systems&rdquo; statement is a public fact; the specific
-  interpretation as null insertion plus substitution is our working model, not proven.
+  <em>&ldquo;solve the technique first and then go for the puzzle.&rdquo;</em> The
+  &ldquo;two systems&rdquo; quote is public evidence. Any specific interpretation of that quote
+  is a hypothesis, not a fact.
 </p>
 <p>
   Pure transposition is independently impossible: the ciphertext contains only
   2 E&rsquo;s, but the known cribs require 3. Therefore at least one layer must be
-  substitution. The <strong>working model</strong> (not proven) is:
+  substitution. Beyond that, the architecture remains open. Current live project
+  surfaces include:
 </p>
-<pre style="white-space:pre-wrap">PT (73 chars) &rarr; substitution cipher &rarr; filler insertion (24 chars) &rarr; carved text (97 chars)</pre>
+<ul>
+  <li><strong>Layered classical models</strong>: heavily tested in bounded structured families, but not globally exhausted.</li>
+  <li><strong>Procedural or physical constructions</strong>: still live, but only as explicit, finite, testable procedures.</li>
+  <li><strong>W-delimiter segmentation</strong>: a current structural hypothesis because the five carved W positions explain the old width-21 anomaly; the interpretation remains open.</li>
+  <li><strong>Null extraction</strong>: still possible in principle, but the old score-conditioned null-palette result is retired and cannot be cited as evidence.</li>
+</ul>
 <p>
-  Under one cipher model (KA-autokey Vigen&egrave;re), a candidate null palette {B,G,I,K,O,W,Z}
-  was identified at 17 positions with odds of roughly 1&nbsp;in&nbsp;16,000 under the cipher
-  model and Bean constraint set in effect at the time. However, <strong>matched
-  controls (April 2026) showed this palette is not privileged</strong>: nearly every
-  random 7-letter palette produces equal or better cross-model mask agreement. The
-  convergence improvement from palette constraints is a generic combinatorial property,
-  not evidence for these specific letters. The palette identity has been
-  <strong>retired as a finding</strong>. Palette constraints remain useful as a search
-  regularizer.
-</p>
-<p>
-  The cipher layer remains open regardless of which two-layer model is correct.
-  Periodic keys are proven impossible at all periods under direct positional correspondence.
-  Running keys from 60,230 publicly available English texts (Project Gutenberg,
-  106 billion offset-checks) produced zero signal. On 2026-04-08 we also ran an
-  admissibility-gated running-key checklist against the current 242-inequality Bean
-  constraint: Carter Vol&nbsp;1 and Kahn Codebreakers tested at columnar widths 6/8/9
-  &times; {Vig&eacute;nere, Beaufort, Variant Beaufort}. Under this stricter constraint
-  set, every ordering at these three widths is blocked before the source text is
-  scanned, independent of which text is used. (The earlier running-key results were
-  computed under a less strict 21-pair Bean constraint; the 2026-03-09 constraint
-  upgrade makes this narrower running-key/columnar family impossible regardless of
-  source.) This says nothing about non-columnar transpositions, non-English source
-  texts, compositions with a monoalphabetic inner layer, or any bespoke procedural
-  method. Those spaces remain open.
+  The April 2026 audit explicitly rejected treating any single two-system story as the
+  project&rsquo;s established model. The correct public stance is: K4 likely involves a
+  technique beyond straightforward single-layer classical encryption, but the exact
+  composition is unknown.
 </p>
 <h3>What Has Been Exhaustively Tested</h3>
 <p>
@@ -167,11 +150,11 @@
 <ul>
   <li><strong>All repeating-key ciphers</strong> (every variant, both alphabets, all key lengths): proven impossible under direct positional correspondence and additive-key assumptions (Level A)</li>
   <li><strong>All self-keying ciphers</strong> (every variant, all primers): proven structurally impossible under additive-key assumptions (Level A)</li>
-  <li><strong>All substitution + rearrangement combinations</strong> (~1.2 billion evaluations): 14 rearrangement families</li>
+  <li><strong>Many structured substitution + rearrangement combinations</strong> (~1.2 billion evaluations): 14 rearrangement families under the registered bounded search programs</li>
   <li><strong>All Cold War-era cipher models</strong> (VIC family): extensively tested across multiple variants</li>
   <li><strong>All letter-pair ciphers</strong> (Four-Square, Playfair, Two-Square): apparent high scores are overfitting artifacts</li>
   <li><strong>Every specialized cipher we could find</strong>: Gromark (8.74 billion keys), plus Feistel, Gronsfeld, Porta, and more</li>
-  <li><strong>Running key from 60,000 public texts</strong> (106 billion position-checks): zero signal. A narrower follow-up (April 2026) found that running-key &times; columnar widths 6/8/9 is blocked by the current 242-inequality Bean constraint set regardless of source text; other transposition families and non-English sources are not covered by that result.</li>
+  <li><strong>Running key from 60,000+ public texts</strong> (106 billion position-checks): zero signal. A narrower follow-up (April 2026) found that running-key &times; columnar widths 6/8/9 is blocked by the current 242-inequality Bean constraint set regardless of source text; other transposition families and non-English sources are not covered by that result.</li>
   <li><strong>Two-layer compositions tested</strong> (105,692 branches): additive &times; transposition, transposition &times; periodic substitution, 6 stateful families &mdash; zero Bean passes, max crib score 6/24 within the registered layer families and default keyword sets</li>
   <li><strong>Three-layer non-columnar compositions tested</strong> (838,350 branches, April 2026): {additive, Vig, Beau} &times; {myszkowski, rail fence, route, block transposition} &times; {additive, Vig, Beau} &mdash; max crib score 7/24. This covers the enumerated layer registry with default parameter generators; non-registered outer families (e.g., homophonic, bifid, four-square as composition outer) are not included.</li>
   <li><strong>All rearrangements of the 73-character text</strong>: 4.5 million rearrangements tested with each cipher variant</li>
@@ -187,12 +170,11 @@
   not a proven fact.
 </p>
 <p>
-  The primary quantitative support was the palette restriction (7 of 26 letters at
-  candidate null positions under KA-autokey Vigen&egrave;re). However, <strong>matched
-  controls (April 2026) retired this as evidence</strong>: the convergence effect is
-  generic to palette-constrained search, not specific to {B,G,I,K,O,W,Z}. The
-  73-character model remains an open hypothesis but currently lacks quantitative
-  support beyond Sanborn&rsquo;s statement that K4 uses two systems.
+  The strongest current public support is not the old null-palette result; that evidence
+  was retired in April 2026. The cleaner live structural observation is that the five
+  carved <code>W</code>s create a bounded segmentation hypothesis. Even that does not prove
+  nulls. The 73-character idea remains open, but it currently lacks independent,
+  model-neutral quantitative support.
 </p>
 <p>
   <em>Note: The number 24 also appears in other K4 contexts (24 crib characters,
@@ -203,25 +185,18 @@
 
 <h3>The Null Palette (Retired April 2026)</h3>
 <p>
-  Under KA-autokey Vigen&egrave;re, simulated annealing identified 17 candidate filler
-  positions using only 7 letters {B,G,I,K,O,W,Z} (p&nbsp;&asymp;&nbsp;1/16,000 under that model).
-  This was initially treated as a key observation.
+  A score-conditioned null-palette result was once treated as a key observation.
+  It is retained in the repo only as a cautionary historical case.
 </p>
 <p>
   <strong>Matched controls disproved the palette&rsquo;s specificity.</strong>
-  Among 100 random 7-letter palettes, BGIKOWZ ranked near the bottom for cross-model
-  mask agreement (1st percentile). The convergence improvement from palette constraints
-  is generic and largely combinatorial. Any sufficiently restrictive palette
-  produces similar or better cross-model agreement. 76 of 133 single-letter-swap
-  neighbors also outperformed BGIKOWZ.
+  The apparent convergence advantage was generic to restrictive palette-constrained
+  search and did not justify treating that letter set as real evidence about K4.
 </p>
 <p>
   Palette constraints remain useful as a <strong>computational technique</strong>
-  (they make mask-inference problems tractable and exhaustively solvable), but
-  BGIKOWZ is not a privileged signal. The Beaufort A=0 keystream enrichment (7/8 palette
-  letters at BCL crib positions, uncorrected p&nbsp;=&nbsp;0.0006) is a separate
-  Level&nbsp;C observation that is ciphertext-intrinsic under the Beaufort convention
-  but does not survive correction for the project&rsquo;s full search breadth.
+  in some search programs, but the site no longer treats any retired palette identity
+  as a cryptographic clue.
 </p>
 
 <h3>What Remains</h3>
