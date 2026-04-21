@@ -251,11 +251,130 @@ _SUPPORTED_KINDS: frozenset[str] = frozenset({
     "variant_beaufort",
     "columnar",
     "atbash",
+    # R3-0.5-1: procedural layers are expanded to their recipe template
+    # pipeline in execute() BEFORE enumeration / translation. The
+    # _translate_layer case below is a defensive guard — procedural
+    # layers should never reach it.
+    "procedural",
 })
 
 
 def _kind_has_translation(kind: str) -> bool:
     return kind in _SUPPORTED_KINDS
+
+
+# ─── Procedural expansion (R3-0.5-1) ─────────────────────────────────────────
+
+def _load_recipes_by_id(path: Optional[Path] = None) -> dict[str, Any]:
+    """Return a ``{recipe_id: ProceduralRecipe}`` mapping from the catalogue.
+
+    Thin wrapper over ``procedural_enumerator.load_recipes`` to provide
+    O(1) lookup by ``recipe_id``. Not memoized — callers in the happy
+    path build it once per ``execute()`` invocation. Tests can override
+    ``path`` to supply a fixture catalogue.
+    """
+    from .procedural_enumerator import load_recipes
+    return {r.recipe_id: r for r in load_recipes(path=path)}
+
+
+def _expand_procedural_layers(
+    spec: HypothesisSpec,
+    recipes_by_id: Optional[dict[str, Any]] = None,
+) -> HypothesisSpec:
+    """Replace every ``kind='procedural'`` layer with its recipe template pipeline.
+
+    A procedural layer carries a ``recipe_id`` pointing at
+    ``docs/procedural_recipes.json``. The recipe's ``dsl_template``
+    already describes a complete HypothesisSpec (see
+    ``procedural_enumerator.recipe_to_spec``). Expansion replaces the
+    placeholder layer with the template's own pipeline layers in-place,
+    so downstream enumeration and translation see only primitive cipher
+    kinds.
+
+    Expansion runs BEFORE admissibility and BEFORE ``_enumerate_bindings``
+    so the expanded spec's ``expected_cardinality`` reflects the real
+    parameter universe — a recipe carrying a 5-keyword param sweep
+    contributes 5 configs, not 1.
+
+    Raises ``DispatcherError`` when:
+      - ``recipe_id`` is missing or empty
+      - ``recipe_id`` is not in the catalogue
+      - the recipe is ``physical_only`` (no DSL realization)
+      - ``recipe_to_spec`` returns None (malformed ``dsl_template``)
+
+    Specs without any procedural layer are returned unchanged (identity
+    short-circuit). Specs with at least one procedural layer return a
+    new ``HypothesisSpec`` whose pipeline reflects the expansion; other
+    fields are preserved verbatim so the spec_hash path downstream still
+    sees the theorist's originally-declared scoring, null_baseline, etc.
+    """
+    if not any(layer.kind == "procedural" for layer in spec.pipeline):
+        return spec
+
+    from .procedural_enumerator import recipe_to_spec
+
+    if recipes_by_id is None:
+        recipes_by_id = _load_recipes_by_id()
+
+    new_pipeline: list[CipherLayer] = []
+    for i, layer in enumerate(spec.pipeline):
+        if layer.kind != "procedural":
+            new_pipeline.append(layer)
+            continue
+
+        recipe_id = layer.recipe_id
+        if not recipe_id:
+            raise DispatcherError(
+                f"pipeline[{i}]: procedural layer requires recipe_id"
+            )
+        if recipe_id not in recipes_by_id:
+            available = sorted(recipes_by_id)
+            preview = ", ".join(available[:10])
+            more = (
+                "" if len(available) <= 10
+                else f" (+{len(available) - 10} more)"
+            )
+            raise DispatcherError(
+                f"pipeline[{i}]: recipe_id {recipe_id!r} not in "
+                f"procedural_recipes.json catalogue; "
+                f"available: [{preview}]{more}"
+            )
+        recipe = recipes_by_id[recipe_id]
+        if getattr(recipe, "physical_only", False):
+            raise DispatcherError(
+                f"pipeline[{i}]: recipe {recipe_id} is physical_only; "
+                "no DSL realization (physical-procedure-only recipes "
+                "are filtered by the enumerator)"
+            )
+        template_spec = recipe_to_spec(recipe)
+        if template_spec is None:
+            raise DispatcherError(
+                f"pipeline[{i}]: recipe {recipe_id} produced no valid "
+                "HypothesisSpec (dsl_template missing or malformed); "
+                "see kryptosbot.procedural_enumerator.recipe_to_spec"
+            )
+        # The template's pipeline layers replace this one. A multi-layer
+        # template expands to multiple primitive layers; a single-layer
+        # template contributes exactly one primitive layer.
+        new_pipeline.extend(template_spec.pipeline)
+
+    expanded = HypothesisSpec(
+        hypothesis_id=spec.hypothesis_id,
+        pipeline=new_pipeline,
+        crib_alignment=spec.crib_alignment,
+        scoring=spec.scoring,
+        null_baseline=spec.null_baseline,
+        information_gain_bits_estimate=spec.information_gain_bits_estimate,
+        success_criteria=dict(spec.success_criteria),
+        kill_criteria=dict(spec.kill_criteria),
+        compute_budget_cpu_minutes=spec.compute_budget_cpu_minutes,
+        checkpoint_every_sec=spec.checkpoint_every_sec,
+        assumption_bundle=list(spec.assumption_bundle),
+        notes=spec.notes,
+        override_exhaustion=spec.override_exhaustion,
+        override_justification=spec.override_justification,
+    )
+    return expanded
 
 
 def _resolve_alphabet_sequence(
@@ -452,6 +571,19 @@ def _translate_layer(layer: CipherLayer, binding: dict[str, Any]) -> dict[str, A
             },
         }
 
+    if kind == "procedural":
+        # R3-0.5-1: procedural layers must be expanded in execute() before
+        # translation runs. Reaching _translate_layer with a procedural
+        # layer means _expand_procedural_layers was skipped — a bug worth
+        # shouting about rather than silently limping.
+        raise DispatcherError(
+            f"procedural layer with recipe_id={layer.recipe_id!r} reached "
+            "_translate_layer without being expanded. Callers must use "
+            "execute() (which runs _expand_procedural_layers) rather than "
+            "invoking translation directly on a spec that contains "
+            "procedural layers."
+        )
+
     raise DispatcherError(
         f"CipherLayer.kind {kind!r} has no dispatcher translation; "
         f"allowed: {sorted(_SUPPORTED_KINDS)}"
@@ -612,6 +744,25 @@ def execute(
     """
     t_wall_start = time.monotonic()
     t_cpu_start = time.process_time()
+
+    # R3-0.5-1: expand any procedural layers before admissibility so the
+    # cardinality check sees the real parameter universe. A bad recipe
+    # reference (missing id, physical-only, malformed template) surfaces
+    # here as an admissibility rejection with the DispatcherError
+    # message preserved in reasons.
+    try:
+        spec = _expand_procedural_layers(spec)
+    except DispatcherError as exc:
+        return JobResult(
+            hypothesis_id=spec.hypothesis_id,
+            spec_hash=spec.spec_hash,
+            universe_hash="",
+            admissibility_verdict="rejected",
+            admissibility_reasons=[f"procedural expansion: {exc}"],
+            wall_time_sec=time.monotonic() - t_wall_start,
+            cpu_time_sec=time.process_time() - t_cpu_start,
+            assumption_bundle=list(spec.assumption_bundle),
+        )
 
     # Admissibility check.
     admissible, reasons = check_admissibility(spec, exhaustion_log=exhaustion_log)
@@ -884,4 +1035,7 @@ __all__ = [
     "job_result_to_worker_contract",
     "_SUPPORTED_KINDS",
     "_kind_has_translation",
+    # R3-0.5-1
+    "_expand_procedural_layers",
+    "_load_recipes_by_id",
 ]

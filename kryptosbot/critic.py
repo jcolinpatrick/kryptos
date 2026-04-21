@@ -47,6 +47,24 @@ TIER_2_FAMILIES = frozenset({
     "columnar_single", "rail_fence",
 })
 
+# Families that are methodological or investigative rather than
+# cipher-computational. Theories in these families do not describe a
+# decrypt operation; they describe evidence gathering, spatial analysis,
+# or cross-sculpture relationships. The hybrid fallback policy routes
+# them through the legacy SDK-worker path (worker_role=
+# "agent_sdk_non_dsl_category") while cipher theories route through the
+# DSL dispatcher. Defined by R3-1 Option γ; landed by R3-0.5-1 for the
+# R3-2 cutover to consume. Additions require a separate brief.
+NON_DSL_FAMILIES: frozenset[str] = frozenset({
+    "geometry",
+    "k2_coords",
+    "geodetic",
+    "antipodes",
+    "archive_evidence",
+    "crib_analysis",
+    "k3_continuity",
+})
+
 # Minimum fields required for a theory to be testable
 REQUIRED_FIELDS = {"core_claim", "mechanism", "family"}
 
