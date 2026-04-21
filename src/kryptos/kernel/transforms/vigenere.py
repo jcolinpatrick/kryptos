@@ -98,12 +98,32 @@ def decrypt_text(
     ct: str,
     key: List[int],
     variant: CipherVariant = CipherVariant.VIGENERE,
+    alphabet: Optional[Alphabet] = None,
 ) -> str:
-    """Decrypt ciphertext with a (possibly repeating) numeric key."""
+    """Decrypt ciphertext with a (possibly repeating) numeric key.
+
+    When ``alphabet`` is None (default), uses standard A-Z indexing via
+    ``ord(c) - 65``. When provided, both CT index lookup and PT emission
+    are routed through ``alphabet`` — this is how KA-based Quagmire III
+    and other keyword-mixed tableaux reduce to Vigenère arithmetic in
+    index space.
+
+    ``key`` values are assumed to be indices in the same alphabet; for
+    KA that means the caller encodes the keyword via ``KA.encode(keyword)``
+    BEFORE passing it in. R2-2 dispatcher translation handles this
+    encoding.
+    """
     fn = DECRYPT_FN[variant]
     klen = len(key)
+    if alphabet is None:
+        return "".join(
+            chr(fn(ord(c) - 65, key[i % klen]) + 65)
+            for i, c in enumerate(ct)
+        )
+    idx = alphabet.index_table
+    seq = alphabet.sequence
     return "".join(
-        chr(fn(ord(c) - 65, key[i % klen]) + 65)
+        seq[fn(idx[ord(c) - 65], key[i % klen])]
         for i, c in enumerate(ct)
     )
 
@@ -112,12 +132,23 @@ def encrypt_text(
     pt: str,
     key: List[int],
     variant: CipherVariant = CipherVariant.VIGENERE,
+    alphabet: Optional[Alphabet] = None,
 ) -> str:
-    """Encrypt plaintext with a (possibly repeating) numeric key."""
+    """Encrypt plaintext with a (possibly repeating) numeric key.
+
+    See ``decrypt_text`` for alphabet semantics.
+    """
     fn = ENCRYPT_FN[variant]
     klen = len(key)
+    if alphabet is None:
+        return "".join(
+            chr(fn(ord(p) - 65, key[i % klen]) + 65)
+            for i, p in enumerate(pt)
+        )
+    idx = alphabet.index_table
+    seq = alphabet.sequence
     return "".join(
-        chr(fn(ord(p) - 65, key[i % klen]) + 65)
+        seq[fn(idx[ord(p) - 65], key[i % klen])]
         for i, p in enumerate(pt)
     )
 

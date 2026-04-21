@@ -236,11 +236,56 @@ def _kind_has_translation(kind: str) -> bool:
     return kind in _SUPPORTED_KINDS
 
 
-def _keyword_to_key_ints(keyword: str, alphabet: str) -> list[int]:
-    """Convert a keyword string into a list of 0-25 key indices.
+def _resolve_alphabet_sequence(
+    alphabet: str,
+    binding: dict[str, Any],
+) -> Optional[str]:
+    """Resolve the 26-char alphabet sequence for a layer.
 
-    Phase 4 supports only 'AZ' alphabet. KA and keyword_mixed raise
-    ``DispatcherError`` (Phase-5 work: Quagmire III keyword mapping).
+    Returns None for alphabet="AZ" (the default; compose.py's VIGENERE
+    path uses its AZ fast path). Returns a 26-char string for "KA" or
+    "keyword_mixed". Raises DispatcherError if the binding is incomplete
+    for "keyword_mixed".
+
+    R2-2 (2026-04-21): added KA and keyword_mixed support. Phase 4 was
+    AZ-only.
+    """
+    if alphabet == "AZ":
+        return None
+    if alphabet == "KA":
+        from kryptos.kernel.constants import KRYPTOS_ALPHABET
+        return KRYPTOS_ALPHABET
+    if alphabet == "keyword_mixed":
+        alph_kw = binding.get("alphabet_keyword")
+        if alph_kw is None or not isinstance(alph_kw, str) or not alph_kw:
+            raise DispatcherError(
+                "alphabet='keyword_mixed' requires a ParamRange named "
+                f"'alphabet_keyword' with a non-empty string value; got "
+                f"binding={binding}"
+            )
+        if not alph_kw.isalpha():
+            raise DispatcherError(
+                f"alphabet_keyword {alph_kw!r} must contain only A-Z letters"
+            )
+        from kryptos.kernel.alphabet import keyword_mixed_alphabet
+        return keyword_mixed_alphabet(alph_kw.upper())
+    raise DispatcherError(
+        f"alphabet {alphabet!r} not supported; expected one of "
+        "'AZ' | 'KA' | 'keyword_mixed'"
+    )
+
+
+def _keyword_to_key_ints(
+    keyword: str,
+    alphabet: str,
+    alphabet_sequence: Optional[str] = None,
+) -> list[int]:
+    """Convert a keyword string into a list of key indices.
+
+    For alphabet='AZ' this is `[ord(c) - 65 for c in keyword]`. For
+    alphabet='KA' or 'keyword_mixed' the indices are positions within the
+    ALPHABET'S OWN ORDERING — e.g., 'K' in KRYPTOS-alphabet has index 0,
+    not ord('K')-65 = 10. R2-2 added this path; Phase 4 was AZ-only.
     """
     keyword = keyword.strip().upper()
     if not keyword.isalpha():
@@ -249,10 +294,21 @@ def _keyword_to_key_ints(keyword: str, alphabet: str) -> list[int]:
         )
     if alphabet == "AZ":
         return [ord(c) - 65 for c in keyword]
-    raise DispatcherError(
-        f"alphabet {alphabet!r} not supported in Phase 4 dispatcher "
-        f"(KA / keyword_mixed are Phase-5 work)"
-    )
+    if alphabet not in ("KA", "keyword_mixed"):
+        raise DispatcherError(
+            f"alphabet {alphabet!r} not supported; expected one of "
+            "'AZ' | 'KA' | 'keyword_mixed'"
+        )
+    if alphabet_sequence is None:
+        raise DispatcherError(
+            f"alphabet={alphabet!r} requires alphabet_sequence — "
+            "caller must resolve via _resolve_alphabet_sequence first"
+        )
+    # Build lookup: ord(c) - 65 -> position in alphabet_sequence.
+    idx_table = [0] * 26
+    for i, ch in enumerate(alphabet_sequence):
+        idx_table[ord(ch) - 65] = i
+    return [idx_table[ord(c) - 65] for c in keyword]
 
 
 def _build_pipeline_config(
@@ -308,18 +364,26 @@ def _translate_layer(layer: CipherLayer, binding: dict[str, Any]) -> dict[str, A
                 f"{kind} layer requires a 'keyword' parameter (str); "
                 f"got binding={binding}"
             )
-        key = _keyword_to_key_ints(keyword, layer.alphabet)
+        # R2-2: resolve alphabet sequence first (None for AZ; 26-char str
+        # for KA/keyword_mixed). The key must then be indexed in that
+        # same alphabet.
+        alph_seq = _resolve_alphabet_sequence(layer.alphabet, binding)
+        key = _keyword_to_key_ints(keyword, layer.alphabet, alph_seq)
         tt_map = {
             "vigenere": "vigenere",
             "beaufort": "beaufort",
             "variant_beaufort": "var_beaufort",
         }
+        params: dict[str, Any] = {
+            "key": key,
+            "direction": "decrypt",
+        }
+        if alph_seq is not None:
+            params["alphabet_sequence"] = alph_seq
+            params["alphabet_label"] = layer.alphabet
         return {
             "type": tt_map[kind],
-            "params": {
-                "key": key,
-                "direction": "decrypt",
-            },
+            "params": params,
         }
 
     if kind == "columnar":

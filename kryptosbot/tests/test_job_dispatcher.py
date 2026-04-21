@@ -160,12 +160,22 @@ class TestLayerTranslation:
         assert step["params"]["key"] == [0, 1, 2]
         assert step["params"]["direction"] == "decrypt"
 
-    def test_vigenere_ka_alphabet_not_supported_phase4(self):
-        with pytest.raises(DispatcherError, match="not supported in Phase 4"):
-            _translate_layer(
-                CipherLayer(kind="vigenere", alphabet="KA"),
-                {"keyword": "ABC"},
-            )
+    def test_vigenere_ka_alphabet_translates_after_r2_2(self):
+        """R2-2 (2026-04-21) added KA alphabet support. The keyword's
+        key-indices are resolved in KA's ordering, not AZ's. 'K' in KA
+        has index 0; 'R' has index 1; 'A' has index 7 (first letter
+        after KRYPTOS)."""
+        step = _translate_layer(
+            CipherLayer(kind="vigenere", alphabet="KA"),
+            {"keyword": "KRA"},
+        )
+        assert step["type"] == "vigenere"
+        # K -> 0, R -> 1, A -> 7 in KRYPTOSABCD...
+        assert step["params"]["key"] == [0, 1, 7]
+        assert step["params"]["alphabet_sequence"] == (
+            "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+        )
+        assert step["params"]["alphabet_label"] == "KA"
 
     def test_beaufort_and_variant_beaufort_translate(self):
         for kind in ("beaufort", "variant_beaufort"):
