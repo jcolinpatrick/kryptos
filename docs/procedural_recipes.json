@@ -1,0 +1,596 @@
+{
+  "schema_version": 1,
+  "source_document": "docs/procedural_anomaly_recipes.md",
+  "updated_at": "2026-04-21",
+  "notes": [
+    "Structured port of a subset of the recipes catalogued in",
+    "docs/procedural_anomaly_recipes.md. Each entry has an optional",
+    "dsl_template that the procedural_enumerator translates into a",
+    "HypothesisSpec. Recipes with physical_only=true require physical",
+    "access to the sculpture and have no DSL translation; the enumerator",
+    "surfaces them in its physical_only list but does not dispatch them.",
+    "",
+    "New recipes should be added directly to this JSON; the markdown",
+    "document is the human-readable narrative source and may lag."
+  ],
+  "recipes": [
+    {
+      "recipe_id": "P-BASELINE-1",
+      "title": "Identity baseline \u2014 test the raw CT",
+      "anomaly_id": "baseline",
+      "procedure": "Pass K4 CT through the scoring path unchanged. Establishes the null: CT self-encrypts at 2 positions (32, 73), so crib_score=2 is the expected floor.",
+      "tested_status": "tested_control",
+      "priority": "baseline",
+      "physical_only": false,
+      "dsl_template": {
+        "pipeline": [
+          {
+            "kind": "identity",
+            "alphabet": "AZ",
+            "params": []
+          }
+        ],
+        "assumption_bundle": [
+          "H1_direct_positional",
+          "baseline_control"
+        ],
+        "compute_budget_cpu_minutes": 1,
+        "information_gain_bits_estimate": 0.0,
+        "scoring": "composite"
+      }
+    },
+    {
+      "recipe_id": "P-BASELINE-2",
+      "title": "Atbash baseline \u2014 trivial reciprocal substitution",
+      "anomaly_id": "baseline",
+      "procedure": "Atbash (A\u2194Z reflection) over the 97-char carved CT. Trivial to test; if it yielded anything, it would be noticed in minutes.",
+      "tested_status": "tested_control",
+      "priority": "baseline",
+      "physical_only": false,
+      "dsl_template": {
+        "pipeline": [
+          {
+            "kind": "atbash",
+            "alphabet": "AZ",
+            "params": []
+          }
+        ],
+        "assumption_bundle": [
+          "H1_direct_positional"
+        ],
+        "compute_budget_cpu_minutes": 1,
+        "information_gain_bits_estimate": 0.0,
+        "scoring": "composite"
+      }
+    },
+    {
+      "recipe_id": "P-F1-1",
+      "title": "Misspelling-derived Vigenere key (Vig arithmetic)",
+      "anomaly_id": "F1",
+      "procedure": "Each misspelling substitution (PALIMPCEST S->C, IQLUSION L->Q, UNDERGRUUND O->U, DESPARATLY E->A, DIGETAL I->E) treated as a worked-example encryption. Extract implied Vigenere key values [K, F, G, W, W] from those pairs. Test as a 5-char repeating key.",
+      "tested_status": "tested_noise",
+      "priority": "low",
+      "physical_only": false,
+      "known_eliminations": [
+        "misspelling_key_extraction_sweep_2026_04"
+      ],
+      "dsl_template": {
+        "pipeline": [
+          {
+            "kind": "vigenere",
+            "alphabet": "AZ",
+            "params": [
+              {
+                "name": "keyword",
+                "values": [
+                  "KFGWW",
+                  "GFKWW",
+                  "WWGFK",
+                  "KFGW",
+                  "KFG"
+                ]
+              }
+            ]
+          }
+        ],
+        "assumption_bundle": [
+          "H1_direct_positional",
+          "misspelling_key_derivation"
+        ],
+        "compute_budget_cpu_minutes": 1,
+        "information_gain_bits_estimate": 1.5,
+        "scoring": "composite"
+      }
+    },
+    {
+      "recipe_id": "P-F1-2",
+      "title": "Misspelling-derived Beaufort key (Beau arithmetic)",
+      "anomaly_id": "F1",
+      "procedure": "Same five misspelling substitutions treated as worked examples under Beaufort derivation: K=(CT+PT)%26 yields [U, B, I, E, M].",
+      "tested_status": "tested_noise",
+      "priority": "low",
+      "physical_only": false,
+      "known_eliminations": [
+        "misspelling_key_extraction_sweep_2026_04"
+      ],
+      "dsl_template": {
+        "pipeline": [
+          {
+            "kind": "beaufort",
+            "alphabet": "AZ",
+            "params": [
+              {
+                "name": "keyword",
+                "values": [
+                  "UBIEM",
+                  "MEIBU",
+                  "UBIE",
+                  "BIEM"
+                ]
+              }
+            ]
+          }
+        ],
+        "assumption_bundle": [
+          "H1_direct_positional",
+          "misspelling_key_derivation"
+        ],
+        "compute_budget_cpu_minutes": 1,
+        "information_gain_bits_estimate": 1.2,
+        "scoring": "composite"
+      }
+    },
+    {
+      "recipe_id": "P-F1-4",
+      "title": "Original-letters as Vigenere primer",
+      "anomaly_id": "F1",
+      "procedure": "The correct letters replaced by the misspellings {S, L, O, E, I} as values (18, 11, 14, 4, 8). Test as key fragment under Vigenere.",
+      "tested_status": "untested",
+      "priority": "low",
+      "physical_only": false,
+      "dsl_template": {
+        "pipeline": [
+          {
+            "kind": "vigenere",
+            "alphabet": "AZ",
+            "params": [
+              {
+                "name": "keyword",
+                "values": [
+                  "SLOEI",
+                  "ILEOS",
+                  "SIEOL",
+                  "LSOEI"
+                ]
+              }
+            ]
+          }
+        ],
+        "assumption_bundle": [
+          "H1_direct_positional",
+          "misspelling_inverse_derivation"
+        ],
+        "compute_budget_cpu_minutes": 1,
+        "information_gain_bits_estimate": 1.2,
+        "scoring": "composite"
+      }
+    },
+    {
+      "recipe_id": "P-A5-4",
+      "title": "DYARO as Beaufort primer",
+      "anomaly_id": "A5",
+      "procedure": "The physically-raised letters DYARO (near K3/K4 boundary) as a 5-char Beaufort repeating key.",
+      "tested_status": "tested_partial",
+      "priority": "medium",
+      "physical_only": false,
+      "known_eliminations": [
+        "vimark_gromark_primer_sweeps"
+      ],
+      "dsl_template": {
+        "pipeline": [
+          {
+            "kind": "beaufort",
+            "alphabet": "AZ",
+            "params": [
+              {
+                "name": "keyword",
+                "values": [
+                  "DYARO",
+                  "DYAR",
+                  "YARO",
+                  "DYA",
+                  "YAR"
+                ]
+              }
+            ]
+          }
+        ],
+        "assumption_bundle": [
+          "H1_direct_positional",
+          "yar_as_primer"
+        ],
+        "compute_budget_cpu_minutes": 1,
+        "information_gain_bits_estimate": 1.5,
+        "scoring": "composite"
+      }
+    },
+    {
+      "recipe_id": "P-A5-4b",
+      "title": "DYARO as Vigenere primer",
+      "anomaly_id": "A5",
+      "procedure": "Same as P-A5-4 but under Vigenere arithmetic.",
+      "tested_status": "tested_partial",
+      "priority": "medium",
+      "physical_only": false,
+      "known_eliminations": [
+        "vimark_gromark_primer_sweeps"
+      ],
+      "dsl_template": {
+        "pipeline": [
+          {
+            "kind": "vigenere",
+            "alphabet": "AZ",
+            "params": [
+              {
+                "name": "keyword",
+                "values": [
+                  "DYARO",
+                  "DYAR",
+                  "YARO",
+                  "DYA",
+                  "YAR"
+                ]
+              }
+            ]
+          }
+        ],
+        "assumption_bundle": [
+          "H1_direct_positional",
+          "yar_as_primer"
+        ],
+        "compute_budget_cpu_minutes": 1,
+        "information_gain_bits_estimate": 1.5,
+        "scoring": "composite"
+      }
+    },
+    {
+      "recipe_id": "P-E0e-1a",
+      "title": "Width-21 columnar with natural-order read",
+      "anomaly_id": "E0e",
+      "procedure": "Write K4 at width 21, read columns in [0..20] order. Reverses the carved text's implicit vertical-bigram pattern.",
+      "tested_status": "tested_partial",
+      "priority": "medium",
+      "physical_only": false,
+      "dsl_template": {
+        "pipeline": [
+          {
+            "kind": "columnar",
+            "alphabet": "AZ",
+            "params": [
+              {
+                "name": "width",
+                "values": [
+                  21
+                ]
+              },
+              {
+                "name": "col_order",
+                "values": [
+                  [
+                    0,
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7,
+                    8,
+                    9,
+                    10,
+                    11,
+                    12,
+                    13,
+                    14,
+                    15,
+                    16,
+                    17,
+                    18,
+                    19,
+                    20
+                  ],
+                  [
+                    20,
+                    19,
+                    18,
+                    17,
+                    16,
+                    15,
+                    14,
+                    13,
+                    12,
+                    11,
+                    10,
+                    9,
+                    8,
+                    7,
+                    6,
+                    5,
+                    4,
+                    3,
+                    2,
+                    1,
+                    0
+                  ]
+                ]
+              }
+            ]
+          }
+        ],
+        "assumption_bundle": [
+          "width_21_grid",
+          "single_layer_transposition"
+        ],
+        "compute_budget_cpu_minutes": 1,
+        "information_gain_bits_estimate": 2.0,
+        "scoring": "composite"
+      }
+    },
+    {
+      "recipe_id": "P-E0e-1b",
+      "title": "Width-21 columnar with YAR-derived column order",
+      "anomaly_id": "E0e",
+      "procedure": "Width-21 columnar read where the column-read order is derived from YAR letter indices modulo 21: start at col 3 (Y=24%21), then 0 (A), then 17 (R), then fill remaining 18 columns in ascending order.",
+      "tested_status": "untested",
+      "priority": "medium",
+      "physical_only": false,
+      "dsl_template": {
+        "pipeline": [
+          {
+            "kind": "columnar",
+            "alphabet": "AZ",
+            "params": [
+              {
+                "name": "width",
+                "values": [
+                  21
+                ]
+              },
+              {
+                "name": "col_order",
+                "values": [
+                  [
+                    3,
+                    0,
+                    17,
+                    1,
+                    2,
+                    4,
+                    5,
+                    6,
+                    7,
+                    8,
+                    9,
+                    10,
+                    11,
+                    12,
+                    13,
+                    14,
+                    15,
+                    16,
+                    18,
+                    19,
+                    20
+                  ],
+                  [
+                    3,
+                    17,
+                    0,
+                    1,
+                    2,
+                    4,
+                    5,
+                    6,
+                    7,
+                    8,
+                    9,
+                    10,
+                    11,
+                    12,
+                    13,
+                    14,
+                    15,
+                    16,
+                    18,
+                    19,
+                    20
+                  ]
+                ]
+              }
+            ]
+          }
+        ],
+        "assumption_bundle": [
+          "width_21_grid",
+          "yar_as_ordering"
+        ],
+        "compute_budget_cpu_minutes": 1,
+        "information_gain_bits_estimate": 2.0,
+        "scoring": "composite"
+      }
+    },
+    {
+      "recipe_id": "P-KRYPTOS-KW",
+      "title": "KRYPTOS-themed vocabulary as Vigenere keyword",
+      "anomaly_id": "baseline",
+      "procedure": "The brute-force Kryptos-thematic keyword sweep over Vigenere. Listed as a recipe because candidate generators consistently propose it; having it in the procedural source makes its inclusion / exclusion explicit.",
+      "tested_status": "tested_exhaustive",
+      "priority": "baseline",
+      "physical_only": false,
+      "known_eliminations": [
+        "thematic_keyword_vigenere_az_sweep",
+        "polyalphabetic_vigenere_exhaustion"
+      ],
+      "dsl_template": {
+        "pipeline": [
+          {
+            "kind": "vigenere",
+            "alphabet": "AZ",
+            "params": [
+              {
+                "name": "keyword",
+                "values": [
+                  "KRYPTOS",
+                  "LANGLEY",
+                  "BERLIN",
+                  "CLOCK",
+                  "COMPASS",
+                  "BEARING",
+                  "MAGNETIC",
+                  "INVISIBLE",
+                  "SUBTLE",
+                  "SHADING"
+                ]
+              }
+            ]
+          }
+        ],
+        "assumption_bundle": [
+          "H1_direct_positional",
+          "thematic_keyword"
+        ],
+        "compute_budget_cpu_minutes": 1,
+        "information_gain_bits_estimate": 0.3,
+        "scoring": "composite"
+      }
+    },
+    {
+      "recipe_id": "P-SANBORN-VOCAB",
+      "title": "Sanborn-quote-derived keywords",
+      "anomaly_id": "baseline",
+      "procedure": "Keywords drawn from published Sanborn interviews (IMAGERY, BEARING, CLOCK, BERLIN, etc.) under Vigenere.",
+      "tested_status": "tested_partial",
+      "priority": "low",
+      "physical_only": false,
+      "dsl_template": {
+        "pipeline": [
+          {
+            "kind": "vigenere",
+            "alphabet": "AZ",
+            "params": [
+              {
+                "name": "keyword",
+                "values": [
+                  "IMAGERY",
+                  "LEGEND",
+                  "LEGIBLE",
+                  "ILLUMINATION",
+                  "PALIMPSEST",
+                  "ABSCISSA",
+                  "ORDINATE",
+                  "TABLEAU"
+                ]
+              }
+            ]
+          }
+        ],
+        "assumption_bundle": [
+          "H1_direct_positional",
+          "thematic_keyword"
+        ],
+        "compute_budget_cpu_minutes": 1,
+        "information_gain_bits_estimate": 0.3,
+        "scoring": "composite"
+      }
+    },
+    {
+      "recipe_id": "P-BC-KW",
+      "title": "BERLIN / CLOCK / Uhr as Vigenere keyword",
+      "anomaly_id": "D1",
+      "procedure": "BERLIN and CLOCK are the 2010 Sanborn-disclosed cribs. A natural first-pass candidate generator hypothesis tests them as keywords as well.",
+      "tested_status": "tested_noise",
+      "priority": "low",
+      "physical_only": false,
+      "known_eliminations": [
+        "thematic_keyword_vigenere_az_sweep"
+      ],
+      "dsl_template": {
+        "pipeline": [
+          {
+            "kind": "vigenere",
+            "alphabet": "AZ",
+            "params": [
+              {
+                "name": "keyword",
+                "values": [
+                  "BERLIN",
+                  "CLOCK",
+                  "UHR",
+                  "BERLINCLOCK",
+                  "CLOCKBERLIN"
+                ]
+              }
+            ]
+          }
+        ],
+        "assumption_bundle": [
+          "H1_direct_positional",
+          "crib_as_keyword"
+        ],
+        "compute_budget_cpu_minutes": 1,
+        "information_gain_bits_estimate": 0.3,
+        "scoring": "composite"
+      }
+    },
+    {
+      "recipe_id": "P-A1-3",
+      "title": "Second layer = literal second copper layer (read through cutouts)",
+      "anomaly_id": "A1",
+      "procedure": "The sculpture has two copper sides. 'LAYER TWO' literally. Procedure requires looking through the cipher panel's cutout letters from behind with the tableau visible through them.",
+      "tested_status": "untested_physical",
+      "priority": "low",
+      "physical_only": true,
+      "dsl_template": null
+    },
+    {
+      "recipe_id": "P-B1-3",
+      "title": "Misaligned-tableau overlay with row-N offset",
+      "anomaly_id": "B1",
+      "procedure": "Row N of the tableau has 27 chars (extra L) while all others have 26. Using the tableau as a physical overlay on the cipher panel, row N is offset by 1 character relative to all other rows.",
+      "tested_status": "untested_physical",
+      "priority": "medium",
+      "physical_only": true,
+      "dsl_template": null
+    },
+    {
+      "recipe_id": "P-D1-3",
+      "title": "Compass points through the pool",
+      "anomaly_id": "D1",
+      "procedure": "The compass-deflection doesn't point to a letter; it points to the reflecting pool. Requires physical measurement to determine the ENE-direction character correspondence.",
+      "tested_status": "untested_physical",
+      "priority": "low",
+      "physical_only": true,
+      "dsl_template": null
+    },
+    {
+      "recipe_id": "P-A5-2",
+      "title": "RAY = shine light through sculpture cutouts",
+      "anomaly_id": "A5",
+      "procedure": "YAR reversed = RAY. Shine a light through the cipher panel cutouts at the YAR position. The pattern on the wall reveals reading order.",
+      "tested_status": "untested_physical",
+      "priority": "low",
+      "physical_only": true,
+      "dsl_template": null
+    },
+    {
+      "recipe_id": "P-B2-2",
+      "title": "Read tableau from behind the sculpture",
+      "anomaly_id": "B2",
+      "procedure": "Tableau is engraved from the back. Physical act of looking through cipher cutouts from behind with tableau visible through them IS the decryption.",
+      "tested_status": "untested_physical",
+      "priority": "low",
+      "physical_only": true,
+      "dsl_template": null
+    }
+  ]
+}
