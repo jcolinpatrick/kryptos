@@ -2221,14 +2221,44 @@ HYPOTHESIS:
   Test Spec: {json.dumps(theory.minimal_test_spec, indent=2)}
 
 INSTRUCTIONS:
-1. Use the available tools (search_theory_ledger, get_canonical_facts, get_family_status, etc.) to gather context
-2. Execute the test specified in the test spec
-3. Evaluate against kill criteria
-4. Report results in the structured JSON format below
+1. Use the available tools (search_theory_ledger, get_canonical_facts, get_family_status, etc.) to gather context.
+2. Prefer the DSL-driven path for cryptanalytic computation: submit the test as a
+   kryptosbot.hypothesis_dsl.HypothesisSpec via submit_hypothesis_spec, then poll_job.
+3. Evaluate against kill criteria.
+4. Report results in the structured JSON format below.
+
+DSL-FIRST EXECUTION (PREFERRED PATH, Phase 5):
+The dispatcher has access to kernel infrastructure you do not: the 28-core
+multiprocessing pool, the canonical score_candidate scoring path (which
+already incorporates the kernel-overrule guarantee on crib_score and
+bean_passed), deterministic universe_hash deduplication, and admissibility
+checks against the compute budget and exhaustion log.
+
+When your theory has a clean translation into the DSL:
+  1. Call enumerate_admissible_transforms to see which cipher kinds are supported.
+  2. Call request_compute_budget_estimate to right-size the spec.
+  3. Call query_exhaustion to verify you're not re-running eliminated territory.
+  4. Call submit_hypothesis_spec with the full HypothesisSpec JSON.
+  5. Call poll_job (possibly more than once) until state == "completed".
+  6. Read the JobResult, interpret, and report structured results below.
+
+For candidate-level scoring (e.g. to verify a single plaintext outside a
+full sweep), use score_candidate_canonical. Never implement your own
+crib-scoring or Bean-checking — they will be overruled by the kernel
+either way, so doing your own is wasted effort.
+
+If the theory genuinely cannot be translated to the DSL (e.g. a novel
+procedural recipe not in the DSL vocabulary yet, or a mechanism that
+fundamentally requires agent reasoning inside the loop), fall back to
+scratch scripts per the policy below. In your narrative_summary, briefly
+explain why the DSL path wasn't viable.
 
 SCRATCH FILES — IMPORTANT:
-If you need to write any intermediate test scripts, helper modules, JSON
-result files, or other working files, write them ONLY to:
+Phase 5 narrowed policy: scratch is for INTERPRETATION ONLY (plots,
+summaries, diff inspections), NOT for running ciphers. The DSL-first
+path above handles cipher execution via kernel-verified dispatch.
+
+If you need scratch for interpretation, write ONLY to:
 
     {scratch_dir_rel}/
 

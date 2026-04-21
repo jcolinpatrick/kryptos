@@ -5,6 +5,15 @@ Exposes K4 computational functions as @tool-decorated functions that
 ClaudeSDKClient agents can call directly during persistent sessions.
 This replaces the old generate-then-batch-test workflow with interactive
 agent-driven exploration.
+
+NOTE (framework maturation Phase 5, 2026-04-21): three tools in this
+module — ``try_keyword_sweep``, ``swap_and_test``, ``hill_climb`` — are
+deprecated. They survive ``@tool`` registration for backward-compat but
+each emits a ``DeprecationWarning`` on invocation. Workers should prefer
+the DSL-oriented tools in ``kryptosbot.dsl_tools`` which dispatch
+through ``kryptosbot.job_dispatcher`` and benefit from the Phase 3
+kernel-overrule guarantee AND the 28-core compute pool. See
+``docs/maturation/phase_05_report.md`` for the before/after inventory.
 """
 
 from __future__ import annotations
@@ -12,6 +21,7 @@ from __future__ import annotations
 import json
 import logging
 import random
+import warnings
 from typing import Any
 
 from claude_agent_sdk import tool, create_sdk_mcp_server, SdkMcpTool
@@ -188,6 +198,16 @@ async def test_permutation_tool(args: dict[str, Any]) -> dict[str, Any]:
     {"keyword": str},
 )
 async def try_keyword_sweep_tool(args: dict[str, Any]) -> dict[str, Any]:
+    warnings.warn(
+        "try_keyword_sweep is deprecated (identity-permutation-only "
+        "sweep; already exhausted at the kernel level). Use "
+        "kryptosbot.dsl_tools.submit_hypothesis_spec with a Vigenere "
+        "layer and enumerated keywords instead — the dispatcher runs "
+        "on 28 cores and every candidate is kernel-verified via "
+        "score_candidate. See docs/maturation/phase_05_report.md.",
+        DeprecationWarning,
+        stacklevel=2,
+    )
     keyword = args["keyword"].upper()
     identity = list(range(K4_LEN))
     results = []
@@ -231,6 +251,15 @@ async def try_keyword_sweep_tool(args: dict[str, Any]) -> dict[str, Any]:
     },
 )
 async def swap_and_test_tool(args: dict[str, Any]) -> dict[str, Any]:
+    warnings.warn(
+        "swap_and_test is deprecated (toy tool not tied to any admissible "
+        "search). Use kryptosbot.dsl_tools.submit_hypothesis_spec with an "
+        "explicit columnar or transposition layer instead — the dispatcher "
+        "admissibility-checks against exhaustion_log and the compute "
+        "budget. See docs/maturation/phase_05_report.md.",
+        DeprecationWarning,
+        stacklevel=2,
+    )
     swaps = args["swaps"]
     keyword = args.get("keyword", "KRYPTOS")
     cipher = args.get("cipher", "vig")
@@ -275,6 +304,18 @@ async def swap_and_test_tool(args: dict[str, Any]) -> dict[str, Any]:
     },
 )
 async def hill_climb_tool(args: dict[str, Any]) -> dict[str, Any]:
+    warnings.warn(
+        "hill_climb is deprecated (its acceptance criterion — crib_hits + IC — "
+        "burns compute without calibration against a null baseline, so any "
+        "'improvement' is dominated by search-breadth artifacts). Use "
+        "kryptosbot.dsl_tools.submit_hypothesis_spec with a bounded DSL "
+        "enumeration and score_candidate_canonical for per-candidate scoring. "
+        "Phase 6's null baselines will make p-value-gated hill-climb viable; "
+        "until then this tool should not be used. See "
+        "docs/maturation/phase_05_report.md.",
+        DeprecationWarning,
+        stacklevel=2,
+    )
     seed = args.get("seed_perm", list(range(K4_LEN)))
     keyword = args.get("keyword", "KRYPTOS")
     cipher = args.get("cipher", "vig")
