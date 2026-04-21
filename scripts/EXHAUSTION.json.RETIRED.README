@@ -1,0 +1,8 @@
+The file `scripts/EXHAUSTION.json.RETIRED` is a stale snapshot of the experiment
+exhaustion log from 2026-03-31 and is NOT read by any current code path.
+
+Authoritative exhaustion log: `exhaustion_log.json` at the repo root.
+
+Retained (not deleted) so that any stale importer still fails visibly instead
+of silently loading outdated data. Retired 2026-04-20 as part of framework
+internal phase 1 (see `<internal>`).

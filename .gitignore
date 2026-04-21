@@ -81,7 +81,6 @@ deploy/
 <internal>/kbot_results/
 <internal>/split_results/
 <internal>/internal_results.db
-<internal>
 <internal>/english_quadgrams.txt
 <internal>/horologe_deep.py
 jobs/done/
