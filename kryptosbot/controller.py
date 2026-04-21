@@ -1523,9 +1523,18 @@ OUTPUT FORMAT (JSON array):
     "minimal_test_spec": {{
       "method": "How to test this hypothesis",
       "parameters": {{}}
-    }}
+    }},
+    "dsl_spec": null
   }}
 ]
+
+OPTIONAL: "dsl_spec" may contain a kryptosbot.hypothesis_dsl.HypothesisSpec
+JSON object describing a bounded, kernel-executable translation of this
+theory. When populated, the dispatcher in kryptosbot.job_dispatcher can
+run the spec directly on the 28-core compute infrastructure, bypassing
+the per-worker scratch-code path. Phase 4 accepts null here; leave null
+when no clean DSL translation exists (e.g. novel procedural recipes not
+in the DSL vocabulary yet).
 
 Output ONLY the JSON array. No commentary."""
 
