@@ -414,6 +414,54 @@ class TheoryParseReport:
     errors: list[str] = field(default_factory=list)
 
 
+def _normalize_anomaly_id(raw: str) -> str:
+    """Extract the canonical anomaly_id prefix from a theorist-supplied string.
+
+    Post-K4-cycle-1 hygiene (2026-04-21, commit 2). The 2026-04-21 run
+    surfaced that the theorist frequently writes anomaly references as
+    "<canonical_id> <free-form commentary>" or
+    "<canonical_id> (<parenthetical>)", e.g.
+
+      "aaa_compass_cipher (tie to physical sculpture geometry specifically)"
+      "k3_continuity as under-explored source material"
+      "mirror_ka is listed as underexplored (0 tested)"
+
+    The pre-fix validator did exact-match on the whole string and
+    rejected 4 of 5 cycle-1 theories for this cosmetic issue. The R3
+    validator was structurally correct ("canonical ids only") but too
+    strict about form.
+
+    This normalizer takes everything up to the first whitespace or '('
+    character and strips trailing punctuation. It does NOT prefix-match
+    against the canonical set — the downstream exact-match check still
+    enforces canonicality. This is purely a trailing-commentary
+    stripper.
+
+    Examples:
+        "aaa_compass_cipher (tie to ...)" → "aaa_compass_cipher"
+        "k3_continuity as under-explored" → "k3_continuity"
+        "mirror_ka is listed..."          → "mirror_ka"
+        "archive-attested K3 misspellings" → "archive-attested"
+          (and if 'archive-attested' is not canonical, the exact-match
+          check downstream rejects it — appropriate)
+
+    Empty/whitespace-only input returns "" (downstream rejects empty).
+    """
+    s = (raw or "").strip()
+    if not s:
+        return ""
+    # Cut at first whitespace or '('. Any trailing punctuation (commas,
+    # semicolons, trailing underscores) is stripped — but NOT hyphens or
+    # underscores within the id itself, which are valid characters.
+    end = len(s)
+    for i, ch in enumerate(s):
+        if ch.isspace() or ch == "(":
+            end = i
+            break
+    head = s[:end].rstrip(",.;:")
+    return head
+
+
 def validate_theory_proposals(raw: str) -> TheoryParseReport:
     """
     Parse and validate theory proposals from theorist output.
@@ -545,9 +593,19 @@ def validate_theory_proposals(raw: str) -> TheoryParseReport:
                 if not isinstance(value, str) or not value.strip():
                     invalid_anomaly_entries.append(repr(value))
                     continue
-                normalized = value.strip()
-                if normalized not in known_anomaly_ids:
-                    invalid_anomaly_entries.append(normalized)
+                # Post-K4-cycle-1 hygiene (2026-04-21, commit 2): strip
+                # trailing free-form commentary before exact-match. The
+                # normalizer takes the first whitespace/paren-split token;
+                # see _normalize_anomaly_id. This recovers theories
+                # where the theorist wrote e.g. "aaa_compass_cipher (tie
+                # to physical sculpture)" instead of the bare id. The
+                # canonical-exact-match check still enforces that the
+                # normalized head is a known anomaly.
+                normalized = _normalize_anomaly_id(value)
+                if not normalized or normalized not in known_anomaly_ids:
+                    invalid_anomaly_entries.append(
+                        normalized or value.strip()
+                    )
             if invalid_anomaly_entries:
                 type_errors.append(
                     "'anomalies_exploited' must contain only canonical anomaly_ids; "

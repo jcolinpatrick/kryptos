@@ -1291,15 +1291,44 @@ class TestFailClosedTheoryProposals:
         assert len(report.invalid) == 1
         assert "'tags' must be a list" in report.invalid[0]["error"]
 
-    def test_anomalies_exploited_rejects_freeform_prose(self):
-        """Freeform anomaly prose must not be admitted as anomaly IDs."""
+    def test_anomalies_exploited_accepts_prose_trail_after_canonical_id(self):
+        """Policy revision (post-K4-cycle-1, 2026-04-21): the
+        anomaly-id validator now normalizes to the first
+        whitespace/paren-split token via _normalize_anomaly_id and
+        then applies exact-match against the canonical set. A canonical
+        id followed by a free-form commentary clause (the theorist's
+        natural prose shape) is accepted; the commentary is ignored.
+        This was the pre-K4-cycle-1 strict-rejection policy's cost —
+        it dropped 4 of 5 theorist cycle-1 theories for cosmetic
+        reasons. See K4_RUN_CYCLE1_DIAGNOSTIC.md."""
         raw = json.dumps([
             {
                 "core_claim": "c",
                 "mechanism": "m",
-                "family": "f",
+                "family": "novel",
                 "anomalies_exploited": [
                     "width21_vertical_bigrams: same-column positions share identical shifts",
+                ],
+            },
+        ])
+        report = validate_theory_proposals(raw)
+        assert len(report.valid) == 1, (
+            f"prose trail after canonical id should be accepted; "
+            f"got invalid={report.invalid}"
+        )
+
+    def test_anomalies_exploited_rejects_non_canonical_first_token(self):
+        """The normalizer strips commentary, NOT canonicality. If the
+        first token isn't a canonical anomaly_id, the theory is still
+        rejected — this is what guards against the theorist inventing
+        new anomaly names."""
+        raw = json.dumps([
+            {
+                "core_claim": "c",
+                "mechanism": "m",
+                "family": "novel",
+                "anomalies_exploited": [
+                    "some_made_up_anomaly: freeform description follows",
                 ],
             },
         ])

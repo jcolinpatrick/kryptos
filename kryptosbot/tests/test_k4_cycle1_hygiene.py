@@ -210,15 +210,21 @@ def test_replay_cycle1_textblock_path():
         f"got valid={len(fixed_report.valid)} invalid={len(fixed_report.valid)} "
         f"errors={fixed_report.errors}"
     )
-    # Document the exact current yield — this number will change in
-    # commit 2 from 1 → 5 as _normalize_anomaly_id lands.
-    assert len(fixed_report.valid) == 1, (
-        f"commit 1 expected exactly 1 valid theory (the 'CT perturbation' "
-        f"theory, the only one with a bare canonical anomaly_id); the "
-        f"rest fail anomaly-id exact match. Commit 2's "
-        f"_normalize_anomaly_id raises this to 5. Got "
-        f"valid={len(fixed_report.valid)} — if this increased, commit 2 "
-        f"has already landed or the canonical anomaly set has grown."
+    # Observed yield after commits 1 + 2: 2 valid theories.
+    # - Theory #0 (archive_evidence / Cat-B): anomalies_exploited=['ct_perturbation']
+    #   passes directly (canonical bare id).
+    # - Theory #3 (grille / Cat-A): 'aaa_compass_cipher (tie to ...)' is
+    #   normalized to 'aaa_compass_cipher' which exact-matches canonical.
+    # The other 3 theories reference family names in anomalies_exploited
+    # (k3_continuity, k2_coords, mirror_ka) that are NOT canonical
+    # anomaly_ids. That's a theorist-prompt clarity issue for a future
+    # hygiene pass; see test_k4_cycle1_anomaly_id_normalization.py
+    # test_replay_cycle1_post_both_fixes_yields_two_valid for the
+    # definitive post-fix replay assertion.
+    assert len(fixed_report.valid) == 2, (
+        f"post-fix yield: 2 valid (ct_perturbation + grille/compass); "
+        f"got {len(fixed_report.valid)}. If this drifts, check the "
+        f"canonical KNOWN_ANOMALIES set or theorist fixture shape."
     )
 
 
