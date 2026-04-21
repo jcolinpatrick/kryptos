@@ -94,10 +94,16 @@ Consolidated from all Round 1 and Round 2 phase reports. Each item classified by
 
 ## 3. K4 run protocol
 
-### 3.1 Duration caps
+### 3.1 Duration caps (first-run defaults)
 
-- **Cycle cap:** operator-chosen; default suggested `max_cycles = 25` for a first run.
-- **USD cap:** operator-chosen; default suggested `$50.00` for a first run. The TokenAccountant from R2-5 can enforce this if wired into the controller's API call path (operator may need to do this wiring or use the existing `controller.ConfigConfig.budget_usd` field if already present).
+- **Cycle cap:** `max_cycles = 15` for the first run. Deliberately tight.
+- **USD cap:** `$25.00` for the first run. Deliberately half the "natural" cap.
+
+**Why half:** the most likely outcome of a first K4 run is **outcome (1) below** — 15 cycles complete, nothing signals. Under that outcome the post-run mortality table (§6.1) will tell us where the framework is under-performing. Burning $50 on a first pass that turns out to be dominated by easy-to-diagnose issues (theorist concentrating on eliminated families, say) is wasted compute; the diagnostic value plateaus quickly once the failure mode is evident.
+
+Keeping $25 of budget in reserve allows a second informed run with prompt adjustments driven by the §6.1 post-mortem, rather than spending the full budget on a first pass that is about to be superseded. If the first run does fire a SIGNAL, §4 handles it and the reserve is unused.
+
+The TokenAccountant from R2-5 can enforce the cap if wired into the controller's API call path (operator may need to do this wiring or use the existing `controller.ConfigConfig.budget_usd` field if already present).
 
 ### 3.2 Theorist rotation
 
@@ -154,15 +160,32 @@ Phase 6's p-value gate at `p ≤ 1e-6` is the last line of defense against false
 
 ---
 
-## 5. Halt conditions (pre-committed)
+## 5. Halt / terminal conditions (pre-committed)
 
-The operator commits to halting the K4 run **immediately** on any of:
+The K4 run ends in exactly one of the following states. Four are **mid-run halts** (the controller stops early); one is the **natural terminal state** (the run completes cleanly without firing a SIGNAL). The operator commits to all five handlings in advance.
+
+### 5.1 Mid-run halts — stop immediately
+
+The operator halts the run **immediately** on any of:
 
 1. **Budget exhausted.** TokenAccountant's `exceeded()` returns True, OR the operator-selected USD cap is reached.
-2. **Cycle cap reached.** `max_cycles` hit without a SIGNAL alert.
-3. **Three consecutive cycles with all proposals rejected at critic.** This indicates either a collapsed theorist (needs manual intervention) or a theorist proposing only eliminated ideas (prompt drift — operator must refresh the elimination ledger into the prompt).
-4. **Kernel-overrule event where `fields_overwritten=true` AND worker's self-reported claim was `crib_score=24`.** One such event is strong evidence the kernel-overrule path itself has regressed — pending audit, the run must stop so we don't chase a worker artifact.
-5. **Any verified `crib_score=24` with `p ≤ 1e-6`.** Halt, run §4 battery, do NOT celebrate until §4 passes.
+2. **Three consecutive cycles with all proposals rejected at critic.** This indicates either a collapsed theorist (needs manual intervention) or a theorist proposing only eliminated ideas (prompt drift — operator must refresh the elimination ledger into the prompt).
+3. **Kernel-overrule event where `fields_overwritten=true` AND worker's self-reported claim was `crib_score=24`.** One such event is strong evidence the kernel-overrule path itself has regressed — pending audit, the run must stop so we don't chase a worker artifact.
+4. **Any verified `crib_score=24` with `p ≤ 1e-6`.** Halt, run §4 battery, do NOT celebrate until §4 passes.
+
+### 5.2 Natural terminal state — expected most likely outcome
+
+5. **Run completes cleanly at `max_cycles` without a SIGNAL.** The `theories_per_cycle × max_cycles = 5 × 15 = 75` proposals all went through critic / red-team / dispatcher / scoring without any candidate reaching `crib_score >= 18` at `p <= 1e-6`.
+
+This is **outcome (1) — the expected most likely outcome** of a first K4 run under this protocol. It is NOT a failure state; it is the designed behavior for "the framework ran, nothing crossed the SIGNAL threshold, now we learn from what was tested."
+
+When outcome (5) occurs:
+
+- Do NOT treat it as "the run ended" and stop thinking.
+- Do NOT immediately launch a second run with tweaked parameters.
+- Do NOT conclude "K4 is unsolvable by this framework."
+- DO execute §6.1 — the post-run analysis procedure — in full. The proposal-mortality table is the diagnostic signal; skipping it wastes the first run's information.
+- DO hold the $25 reserve until the §6.1 post-mortem classifies the failure mode. The classification informs whether a second run (with a prompt adjustment derived from the mortality table) is likely to be productive or whether a new brief is warranted.
 
 ---
 
