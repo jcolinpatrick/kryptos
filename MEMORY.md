@@ -202,12 +202,17 @@ in `docs/claims_registry.json` and a new audit close.
 - **Open audits:** `docs/methodological_audits.md`
 - **Historical snapshots:** `docs/history/`, `reports/final_synthesis.md`
 - **Retired notes:** `memory/retired/`
+- **Internal framework (2026-04-20 / 04-21):** Phases 1-9 completed;
+  see `<internal>` for full handoff. `<internal>`
+  is the one-page operator onboarding. dispatcher + calibrated
+  null baselines + Phase 7 self-test added.
 - **Live research notes (repo `memory/`):** `keystream_forensics_v2.md`,
   `ticom_archive_research.md`, `width10_17_deep_investigation.md`,
   `width21_bigram_73char.md`, `bruteforce_7remaining.md`,
   `keystream_ap_investigation.md`
 
-Last updated: 2026-04-09 (AUDIT-1 + AUDIT-2 closed: Bean-columnar
-"source-independent" wording scope-corrected across load-bearing docs;
-downstream palette citations banner-demoted or tagged retired; session
-briefing now surfaces disputed/retired claim IDs from the registry).
+Last updated: 2026-04-21 (framework internal phases 1-9 complete:
+legacy quarantine, retired-constant relocation, kernel-overrule
+adversarial tests, hypothesis DSL + dispatcher, MCP tool redesign,
+calibrated null baselines, self-test harness with K1/K2 pass,
+procedural enumerator, documentation refresh).
