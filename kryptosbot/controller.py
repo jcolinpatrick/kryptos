@@ -245,6 +245,22 @@ class ControllerConfig:
     # cap hard to avoid prompt sludge.
     soft_pursuit_leads_prompt_cap: int = 3
 
+    # R2-5 (2026-04-21): self-test mode. When set, the controller
+    # routes scoring through kryptosbot.panel_cribs instead of the
+    # K4-specific kernel constants, caps cycles and USD spend, and
+    # tags ledger entries with panel:<id> so they're segregated from
+    # real K4 research. None = normal K4 operation.
+    #
+    # The brief's §6.1 policy:
+    #   - ``self_test_mode`` is the single switch that enables real-
+    #     API K1/K2/K3 runs.
+    #   - ``self_test_max_cycles`` hard-caps the cycle count.
+    #   - ``self_test_max_usd`` hard-caps API spend.
+    #   - Whichever trips first halts with an explicit status.
+    self_test_mode: Optional[str] = None  # None | "k1" | "k2" | "k3"
+    self_test_max_cycles: int = 20
+    self_test_max_usd: float = 5.00
+
     # Day 6 hardening priority #1: bounded-search policy total-
     # configuration cap. When red-team flags a theory as
     # unbounded_search, the worker prompt requires the worker to bound
