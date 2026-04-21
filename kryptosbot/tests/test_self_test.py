@@ -80,13 +80,17 @@ class TestKernelSanity:
         )
         assert v["recovered_prefix"].startswith("ITWASTOT")
 
-    def test_k3_reports_not_single_call(self):
-        """K3 double columnar transposition can't be decrypted in a single
-        kernel call; the sanity check correctly reports that."""
+    def test_k3_kernel_decrypt_matches_known_plaintext(self):
+        """K3 double columnar transposition IS decryptable in the
+        kernel — R2-1 added the (width=14, reversed) ∘ (width=42, reversed)
+        sanity check. Prior to R2-1 this returned None with a 'not
+        expressible' note; R2-1 replaced that stub with a real check."""
         v = verify_known_answer_contained(_K3)
-        assert v["direct_kernel_decrypt_works"] is None
-        assert "double-columnar" in v["note"].lower() or \
-               "not expressible" in v["note"].lower()
+        assert v["direct_kernel_decrypt_works"] is True, (
+            f"kernel regression for K3: {v}"
+        )
+        assert v["recovered_prefix"].startswith("SLOWLY")
+        assert "decomposition" in v
 
 
 # ─── Per-panel scoring ──────────────────────────────────────────────────────

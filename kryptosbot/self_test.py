@@ -111,16 +111,26 @@ _K2 = Panel(
     known_keyword="ABSCISSA",
 )
 
-# K3 — canonical 337 chars with a keyed double columnar transposition.
-# We keep the known_plaintext for post-hoc comparison only.
+# K3 — canonical 336 chars, double columnar transposition.
+# Source: Elonka Dunin's reverse-engineered transcription (reference/
+# ElonkaKryptosPart3Solution.doc), normalized to 7 rows × 48 cols.
+#
+# Historical note: prior to maturation R2-1, this field carried a 281-char
+# truncation; the Phase 7 self-test never surfaced the mismatch because the
+# K3 strategy always missed. R2-1 repairs the CT to 336 chars and adds a
+# real kernel-sanity check via columnar_perm + apply_perm on the published
+# (width=14, reversed) ∘ (width=42, reversed) decomposition (see
+# verify_known_answer_contained).
 _K3 = Panel(
     name="k3",
     ciphertext=(
-        "ENDYAHROHNLSRHEOCPTEOIBIDYSHNAIACHTNREYULDSLLSLLNOHSNOSMRWXMNE"
-        "TPRNGATIHNRARPESLNNELEBLPIIACAEWMTWNDITEENRAHCTENEUDRETNHAEOE"
-        "TFOLSEDTIWENHAEIOYTEYQHEENCTAYCREIFTBRSPAMHHEWENATAMATEGYEERLB"
-        "TEEFOASFIOTUETUAEOTOARMAEERTNRTIBSEDDNIAAHTTMSTEWPIEROAGRIEWFEB"
-        "AECTDDHILCEIHSITEGOEAOSDDRYDLORIT"
+        "ENDYAHROHNLSRHEOCPTEOIBIDYSHNAIACHTNREYULDSLLSLL"   # row 0, 48 chars
+        "NOHSNOSMRWXMNETPRNGATIHNRARPESLNNELEBLPIIACAEWMT"   # row 1, 48 chars
+        "WNDITEENRAHCTENEUDRETNHAEOETFOLSEDTIWENHAEIOYTEY"   # row 2, 48 chars
+        "QHEENCTAYCREIFTBRSPAMHHEWENATAMATEGYEERLBTEEFOAS"   # row 3, 48 chars
+        "FIOTUETUAEOTOARMAEERTNRTIBSEDDNIAAHTTMSTEWPIEROA"   # row 4, 48 chars
+        "GRIEWFEBAECTDDHILCEIHSITEGOEAOSDDRYDLORITRKLMLEH"   # row 5, 48 chars
+        "AGTDHARDPNEOHMGFMFEUHEECDMRIPFEIMEHNLSSTTRTVDOHW"   # row 6, 48 chars
     ),
     method_family="keyed_columnar_double",
     known_plaintext=(
@@ -287,15 +297,210 @@ def _columnar_single_candidates(panel: Panel) -> Iterator[dict[str, Any]]:
             }
 
 
+def _k3_width_schedule() -> list[int]:
+    """Width schedule for the double-columnar strategy.
+
+    Brief R2-1 §2.2 suggested widths 4-12, but K3's decomposition under
+    this kernel's columnar primitive is (width=14, reversed) ∘
+    (width=42, reversed) — empirically derived in pre-flight (see
+    docs/maturation/round2/phase_R2_00_preflight.md). The schedule must
+    CONTAIN K3's true widths without the strategy generator HARDCODING
+    them. We emit every integer in [4, 50]. 336's factors ≤ 50 are
+    {4, 6, 7, 8, 12, 14, 16, 21, 24, 28, 42, 48} — these carry route
+    structure for a 336-char text; non-factor widths leave trailing
+    short-column residues but are still valid columnar configs and are
+    enumerated because the framework does NOT know the CT length factors
+    at spec-authorship time.
+    """
+    return list(range(4, 51))
+
+
+# Ordering RECIPES: a recipe takes a width and returns a list[int] ordering.
+# The strategy iterates recipe-pair × width-pair, placing motivated
+# recipes first so structurally-meaningful configs appear in the earliest
+# candidates. This is a breadth-first search by motivation tier, not a
+# depth-first search by width.
+
+def _recipe_identity(W: int) -> list[int]:
+    return list(range(W))
+
+
+def _recipe_reversed(W: int) -> list[int]:
+    return list(range(W - 1, -1, -1))
+
+
+def _recipe_reversed_halves(W: int) -> list[int]:
+    half = W // 2
+    return list(range(half - 1, -1, -1)) + list(range(W - 1, half - 1, -1))
+
+
+def _recipe_swap_at(i: int) -> Callable[[int], Optional[list[int]]]:
+    def f(W: int) -> Optional[list[int]]:
+        if i + 1 >= W:
+            return None
+        order = list(range(W))
+        order[i], order[i + 1] = order[i + 1], order[i]
+        return order
+    return f
+
+
+def _recipe_random(seed: int) -> Callable[[int], list[int]]:
+    import random
+
+    def f(W: int) -> list[int]:
+        rng = random.Random(seed * 1000 + W)
+        order = list(range(W))
+        rng.shuffle(order)
+        return order
+    return f
+
+
+def _ordered_recipe_pairs() -> list[tuple[str, Callable[[int], Optional[list[int]]],
+                                          str, Callable[[int], Optional[list[int]]]]]:
+    """Recipe pairs in priority order (most motivated first).
+
+    The double-columnar search space is a Cartesian product of two
+    orderings. If we iterated the recipes independently the
+    motivation-ranked outer recipe would be paired with every possible
+    inner recipe BEFORE the outer moves on — so (identity, random_9)
+    would run before (reversed, identity). That buries meaningful
+    structural pairs deep in the enumeration.
+
+    Instead we enumerate PAIRS: first, every pair of 'motivated' recipes
+    (identity / reversed / reversed_halves / small-i swap_at), then
+    combinations with one random side, then both-random. This keeps the
+    K3-class (reversed, reversed) pair at position ≈ 4 × widths^2 ≈ 8.8 K
+    configs.
+    """
+    # Tier 0: fully-motivated pairs — every combination of:
+    #   identity / reversed / reversed_halves.
+    motivated_recipes = [
+        ("identity", _recipe_identity),
+        ("reversed", _recipe_reversed),
+        ("reversed_halves", _recipe_reversed_halves),
+    ]
+    # Tier 1: motivated × swap_at_{0..6}.
+    swap_recipes = [(f"swap_at_{i}", _recipe_swap_at(i)) for i in range(7)]
+    # Tier 2: motivated × random, random × motivated.
+    random_recipes = [(f"random_{s}", _recipe_random(s + 1)) for s in range(10)]
+
+    pairs: list[tuple[str, Callable, str, Callable]] = []
+    # Tier 0 — motivated × motivated, 3² = 9 pairs.
+    for o_name, o_fn in motivated_recipes:
+        for i_name, i_fn in motivated_recipes:
+            pairs.append((o_name, o_fn, i_name, i_fn))
+    # Tier 1 — motivated × swap, swap × motivated. 3×7 + 7×3 = 42 pairs.
+    for o_name, o_fn in motivated_recipes:
+        for i_name, i_fn in swap_recipes:
+            pairs.append((o_name, o_fn, i_name, i_fn))
+    for o_name, o_fn in swap_recipes:
+        for i_name, i_fn in motivated_recipes:
+            pairs.append((o_name, o_fn, i_name, i_fn))
+    # Tier 2 — motivated × random, random × motivated. 3×10 + 10×3 = 60 pairs.
+    for o_name, o_fn in motivated_recipes:
+        for i_name, i_fn in random_recipes:
+            pairs.append((o_name, o_fn, i_name, i_fn))
+    for o_name, o_fn in random_recipes:
+        for i_name, i_fn in motivated_recipes:
+            pairs.append((o_name, o_fn, i_name, i_fn))
+    # Tier 3 — swap × swap. 7² = 49 pairs.
+    for o_name, o_fn in swap_recipes:
+        for i_name, i_fn in swap_recipes:
+            pairs.append((o_name, o_fn, i_name, i_fn))
+    # Tier 4 — random × random. 10² = 100 pairs.
+    for o_name, o_fn in random_recipes:
+        for i_name, i_fn in random_recipes:
+            pairs.append((o_name, o_fn, i_name, i_fn))
+    # Tier 5 — swap × random, random × swap. 140 pairs.
+    for o_name, o_fn in swap_recipes:
+        for i_name, i_fn in random_recipes:
+            pairs.append((o_name, o_fn, i_name, i_fn))
+    for o_name, o_fn in random_recipes:
+        for i_name, i_fn in swap_recipes:
+            pairs.append((o_name, o_fn, i_name, i_fn))
+    return pairs
+
+
+def _columnar_double_candidates(panel: Panel) -> Iterator[dict[str, Any]]:
+    """Enumerate two-layer columnar candidates by (recipe-pair × width-pair).
+
+    Semantics: the strategy treats the candidate as two sequential columnar
+    transpositions applied DURING ENCRYPTION. perm_outer is applied LAST
+    during encryption (outermost layer); perm_inner is applied FIRST.
+    Decryption inverts outer first, then inner — matching
+    verify_known_answer_contained. Under this convention K3's decomposition
+    is (outer=42, reversed) ∘ (inner=14, reversed).
+
+    Schedule properties:
+      - Outermost loop: (recipe_outer, recipe_inner) — motivation tier first.
+      - Inner loop: (w_outer, w_inner) over widths 4..50.
+      - Per recipe-pair this emits at most 47 × 47 = 2,209 configs.
+      - With ~20 recipes per side (10 structural + 10 random), the full
+        schedule is ~20² × 2209 ≈ 883 K configs per panel.
+
+    The structural tier (identity × reversed) emits ~4 × 2209 = 8,836
+    configs; K3's (reversed, reversed) pair is covered within the first
+    ~6,700 configs, well inside any 'bounded cycles' budget.
+    """
+    from kryptos.kernel.transforms.transposition import (
+        columnar_perm, apply_perm, invert_perm,
+    )
+    ct = panel.ciphertext
+    N = len(ct)
+    widths = _k3_width_schedule()
+    pairs = _ordered_recipe_pairs()
+
+    # Dedup guard: different recipes can emit the same ordering at a given
+    # width (e.g., swap_at_0 on W=2 equals reversed). Emit each unique
+    # (w_outer, order_outer, w_inner, order_inner) tuple at most once.
+    seen: set[tuple] = set()
+
+    for o_name, o_fn, i_name, i_fn in pairs:
+        for w_outer in widths:
+            order_outer = o_fn(w_outer)
+            if order_outer is None:
+                continue
+            try:
+                perm_outer = columnar_perm(w_outer, order_outer, N)
+                inv_outer = invert_perm(perm_outer)
+            except Exception:
+                continue
+            step1 = apply_perm(ct, inv_outer)   # undo outer first
+            for w_inner in widths:
+                order_inner = i_fn(w_inner)
+                if order_inner is None:
+                    continue
+                key = (w_outer, tuple(order_outer), w_inner, tuple(order_inner))
+                if key in seen:
+                    continue
+                seen.add(key)
+                try:
+                    perm_inner = columnar_perm(w_inner, order_inner, N)
+                    inv_inner = invert_perm(perm_inner)
+                except Exception:
+                    continue
+                pt = apply_perm(step1, inv_inner)
+                yield {
+                    "method": "columnar_double",
+                    "outer_width": w_outer,
+                    "outer_col_order": list(order_outer),
+                    "outer_recipe": o_name,
+                    "inner_width": w_inner,
+                    "inner_col_order": list(order_inner),
+                    "inner_recipe": i_name,
+                    "plaintext": pt,
+                }
+
+
 def _strategies_for_panel(panel: Panel) -> list[Callable[[Panel], Iterable[dict]]]:
     """Which candidate generators apply to this panel."""
     if panel.method_family == "quagmire_iii":
         return [_quagmire_iii_candidates]
     if panel.method_family == "keyed_columnar_double":
-        # K3 truly needs double-layer; the single-layer pass is partial
-        # coverage. We enumerate both so the report can truthfully show
-        # the framework attempts it even if it can't solve end-to-end.
-        return [_columnar_single_candidates, _quagmire_iii_candidates]
+        # Double columnar is the canonical K3 family. The single-layer pass
+        # remains as a warm-up in case an operator sets the panel's CT length
+        # to something that happens to admit a single-layer solution.
+        return [_columnar_double_candidates, _columnar_single_candidates]
     return []
 
 
@@ -430,12 +635,37 @@ def verify_known_answer_contained(panel: Panel) -> dict[str, Any]:
             "recovered_prefix": pt[:40],
             "expected_prefix": panel.known_plaintext[:40],
         }
-    # K3 keyed columnar double is not implemented in a single kernel call.
+    if panel.method_family == "keyed_columnar_double":
+        # K3 is expressible as columnar(w=14, reversed) ∘ columnar(w=42, reversed)
+        # applied to the plaintext. Decryption inverts each layer in reverse
+        # order: CT -> (invert w=42, reversed) -> intermediate -> (invert
+        # w=14, reversed) -> PT. This is the published Gillogly / Elonka
+        # decomposition, used here ONLY for kernel-sanity.
+        from kryptos.kernel.transforms.transposition import (
+            columnar_perm, apply_perm, invert_perm,
+        )
+        N = len(panel.ciphertext)
+        w1, w2 = 14, 42
+        order1 = list(range(w1 - 1, -1, -1))  # reversed
+        order2 = list(range(w2 - 1, -1, -1))  # reversed
+        perm1 = columnar_perm(w1, order1, N)
+        perm2 = columnar_perm(w2, order2, N)
+        step1 = apply_perm(panel.ciphertext, invert_perm(perm2))
+        pt = apply_perm(step1, invert_perm(perm1))
+        matches = (pt == panel.known_plaintext)
+        return {
+            "panel": panel.name,
+            "direct_kernel_decrypt_works": matches,
+            "recovered_prefix": pt[:40],
+            "expected_prefix": panel.known_plaintext[:40],
+            "decomposition": (
+                f"columnar(w={w1}, reversed) ∘ columnar(w={w2}, reversed)"
+            ),
+        }
     return {
         "panel": panel.name,
         "direct_kernel_decrypt_works": None,
-        "note": "K3 double-columnar transposition not expressible in a "
-                "single kernel call; manual two-pass required.",
+        "note": f"No kernel-sanity path for method_family={panel.method_family!r}",
     }
 
 
