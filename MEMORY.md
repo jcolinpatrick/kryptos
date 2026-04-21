@@ -202,17 +202,27 @@ in `docs/claims_registry.json` and a new audit close.
 - **Open audits:** `docs/methodological_audits.md`
 - **Historical snapshots:** `docs/history/`, `reports/final_synthesis.md`
 - **Retired notes:** `memory/retired/`
-- **Internal framework (2026-04-20 / 04-21):** Phases 1-9 completed;
+- **Internal framework Round 1 (2026-04-20 / 04-21):** Phases 1-9 completed;
   see `<internal>` for full handoff. `<internal>`
   is the one-page operator onboarding. dispatcher + calibrated
   null baselines + Phase 7 self-test added.
+- **Internal framework Round 2 (2026-04-21):** R2-1 through R2-6 completed;
+  see `<internal>/SUMMARY.md` for full handoff. K3 dry-run gap
+  closed (cycle 9345 with double-columnar strategy). KA alphabet + keyword_mixed
+  supported in dispatcher — K1 Quagmire III reduces to one-layer Vigenère-on-KA.
+  Exhaustion-overlap override mechanism + critic duplicate guard. Matched nulls
+  for 4 additional cipher families. **Real-API K1 self-test: PASSED** in one call
+  for $0.0282 (`results/self_test/r2_5_real_k1.json`). Pre-K4 readiness protocol
+  at `<internal>/K4_RUN_PROTOCOL.md` — operator review required before
+  any K4 run.
 - **Live research notes (repo `memory/`):** `keystream_forensics_v2.md`,
   `ticom_archive_research.md`, `width10_17_deep_investigation.md`,
   `width21_bigram_73char.md`, `bruteforce_7remaining.md`,
   `keystream_ap_investigation.md`
 
-Last updated: 2026-04-21 (framework internal phases 1-9 complete:
-legacy quarantine, retired-constant relocation, kernel-overrule
-adversarial tests, hypothesis DSL + dispatcher, MCP tool redesign,
-calibrated null baselines, self-test harness with K1/K2 pass,
-procedural enumerator, documentation refresh).
+Last updated: 2026-04-21 (internal framework Round 1 Phases 1-9 +
+Round 2 Phases R2-1 through R2-6 complete: K3 dry-run gap closed,
+KA alphabet in dispatcher, exhaustion-overlap override, matched
+nulls for columnar + variant families, real-API K1 self-test passed
+$0.0282 one-shot, K4_RUN_PROTOCOL.md authored awaiting operator
+review).
