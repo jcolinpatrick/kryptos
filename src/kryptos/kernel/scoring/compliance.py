@@ -32,13 +32,19 @@ import warnings
 
 from kryptos.kernel.constants import (
     ALPH,
-    BEAUFORT_KEYSTREAM_AT_CRIBS,
     BEAN_INEQ,
     CRIB_DICT,
     CT,
     MOD,
     N_CRIBS,
 )
+# BEAUFORT_KEYSTREAM_AT_CRIBS moved to kryptos.kernel.retired in framework
+# internal phase 2 (2026-04-20). Imported from retired/ below because
+# this module is a historical-compliance anchor: CxS-2 pins the expected
+# Beaufort keystream at crib positions as a *reference* for mechanism
+# comparison, not as live evidence. This file is on the retired-namespace
+# allow-list in tests/test_retired_usage.py.
+#
 # NULL_PALETTE is intentionally NOT imported here.
 # Quarantine 2026-04-14: compliance scoring must not implicitly use the
 # retired null palette. Callers that still need palette-based enrichment
@@ -46,6 +52,7 @@ from kryptos.kernel.constants import (
 # check_coupling_constraints and score_mechanism_compliance. Callers that
 # pass palette=None get CxS-1=0.0 / CxS-3=0.0 and a DeprecationWarning.
 # See memory/project_consensus_nulls_epistemic_status_2026_04_14.md.
+from kryptos.kernel.retired import BEAUFORT_KEYSTREAM_AT_CRIBS
 from kryptos.kernel.constraints.coupling import (
     ap_palette_containment,
     dual_alphabet_structure,

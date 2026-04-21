@@ -30,21 +30,24 @@ def _direct_retired_imports() -> list[tuple[str, str, tuple[str, ...]]]:
 
 
 def test_retired_palette_constants_only_imported_in_quarantined_modules():
+    """No live file may import retired symbols from kryptos.kernel.constants
+    or <internal>.
+
+    Retired constants moved to kryptos.kernel.retired in internal framework
+    Phase 2 (2026-04-20). Legitimate historical-reproducibility importers go
+    through the retired namespace and are enumerated in
+    tests/test_retired_usage.py's allow-list; any attempt to import them from
+    the old path is a regression (the symbols no longer exist there, so the
+    import would fail at runtime, but this check catches it at collection
+    time instead).
+    """
     hits = _direct_retired_imports()
-    allowed = {
-        (
-            "src/kryptos/kernel/constraints/stego.py",
-            "kryptos.kernel.constants",
-        ),
-        (
-            "<internal>/polybius_scorer.py",
-            "kryptos.kernel.constants",
-        ),
-    }
-    observed = {(path, module) for path, module, _ in hits}
-    assert observed == allowed, (
-        "Retired palette/null-mask constants leaked into unexpected live import paths: "
-        f"{sorted(observed - allowed)}"
+    assert not hits, (
+        "Retired symbols still imported from the pre-Phase-2 paths "
+        "(kryptos.kernel.constants / <internal>). "
+        f"Offending files: {[h[0] for h in hits]}. "
+        "Switch the imports to `from kryptos.kernel.retired import ...` "
+        "and add the file to the allow-list in tests/test_retired_usage.py."
     )
 
 

@@ -8,12 +8,11 @@ from __future__ import annotations
 
 import pytest
 
-from kryptos.kernel.constants import (
-    ALPH,
-    BEAUFORT_KEYSTREAM_AT_CRIBS,
-    KRYPTOS_ALPHABET,
-    NULL_PALETTE,
-)
+from kryptos.kernel.constants import ALPH, KRYPTOS_ALPHABET
+# Retired imports (moved from constants to retired/ in Phase 2, 2026-04-20).
+# Used as test fixtures for the historical CxS-1..CxS-4 coupling math, which
+# is itself retired. On allow-list in tests/test_retired_usage.py.
+from kryptos.kernel.retired import BEAUFORT_KEYSTREAM_AT_CRIBS, NULL_PALETTE
 from kryptos.kernel.constraints.coupling import (
     DerivedConstraint,
     ap_palette_containment,

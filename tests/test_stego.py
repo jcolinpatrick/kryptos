@@ -20,10 +20,11 @@ See memory/project_consensus_nulls_epistemic_status_2026_04_14.md.
 """
 import pytest
 
-from kryptos.kernel.constants import (
-    CT, CT_LEN, CONSENSUS_NULL_POSITIONS, NULL_PALETTE, CRIB_POSITIONS,
-    KRYPTOS_ALPHABET,
-)
+from kryptos.kernel.constants import CT, CT_LEN, CRIB_POSITIONS, KRYPTOS_ALPHABET
+# Retired imports (moved from constants to retired/ in Phase 2, 2026-04-20).
+# This test exercises the retired kryptos.kernel.constraints.stego module;
+# on allow-list in tests/test_retired_usage.py.
+from kryptos.kernel.retired import CONSENSUS_NULL_POSITIONS, NULL_PALETTE
 from kryptos.kernel.constraints.stego import (
     StegoProperty,
     palette_restriction,

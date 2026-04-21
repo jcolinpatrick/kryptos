@@ -1,8 +1,13 @@
 """Regression tests for stego layer solve pipeline."""
 import pytest
-from kryptos.kernel.constants import (
-    CT, CT_LEN, CONSENSUS_NULL_POSITIONS, NULL_PALETTE,
-    CRIB_POSITIONS, BEAUFORT_KEYSTREAM_AT_CRIBS, ALPH,
+from kryptos.kernel.constants import CT, CT_LEN, CRIB_POSITIONS, ALPH
+# Retired imports (moved from constants to retired/ in Phase 2, 2026-04-20).
+# This test regression-guards the historical null-mask + Beaufort-keystream
+# pipeline; on allow-list in tests/test_retired_usage.py.
+from kryptos.kernel.retired import (
+    BEAUFORT_KEYSTREAM_AT_CRIBS,
+    CONSENSUS_NULL_POSITIONS,
+    NULL_PALETTE,
 )
 
 # The 17 consensus null characters in position order

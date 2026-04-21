@@ -7,9 +7,12 @@ of post-hoc position selection.
 """
 
 import pytest
-from kryptos.kernel.constants import (
-    CT, CT_LEN, CRIB_POSITIONS, CONSENSUS_NULL_POSITIONS, NULL_PALETTE,
-)
+from kryptos.kernel.constants import CT, CT_LEN, CRIB_POSITIONS
+# Retired imports (moved from constants to retired/ in Phase 2, 2026-04-20).
+# This test IS the palette-provenance regression guard — it documents that
+# the hardcoded CONSENSUS_NULL_POSITIONS cannot be reproduced. Legitimate
+# historical-reproducibility use; on allow-list in tests/test_retired_usage.py.
+from kryptos.kernel.retired import CONSENSUS_NULL_POSITIONS, NULL_PALETTE
 
 
 class TestA1PaletteProvenance:

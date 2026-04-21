@@ -146,34 +146,20 @@ IC_PRE_ENE: float = 0.0667    # Positions 0-20, suspiciously English-like
 
 # ── Stego layer constants ──────────────────────────────────────────────
 
-# ── RETIRED: null palette / consensus null positions ──────────────────────
+# ── Retired palette / null-mask constants ────────────────────────────────
+# NULL_PALETTE, CONSENSUS_NULL_POSITIONS, and BEAUFORT_KEYSTREAM_AT_CRIBS
+# moved to `kryptos.kernel.retired` on 2026-04-20 as part of framework
+# internal phase 2 (see `<internal>phase_02_report.md`).
 #
-# RETIRED 2026-04-14 (claim_id: null_palette_retired). See:
-#   memory/project_consensus_nulls_epistemic_status_2026_04_14.md
-#   docs/a1_score_conditioned_null_report.md
-#   docs/claims_registry.json → C-PALETTE-01
+# Retirement claim: claim_id `null_palette_retired` / C-PALETTE-01 (see
+# `docs/claims_registry.json`), retired 2026-04-14 after matched controls
+# disproved the palette's specificity.
 #
-# The 7-letter palette and the 17-position consensus null mask were
-# retired after matched controls (April 2026) disproved the palette's
-# specificity. The symbols remain importable for historical
-# reproducibility only — archived scripts that depend on them continue
-# to work, but their OUTPUT is no longer treated as live evidence (see
-# kryptos.kernel.constraints.stego, which now returns status="retired"
-# on every StegoProperty, and kryptos.kernel.scoring.compliance, which
-# requires an explicit palette parameter on CxS-1 / CxS-3).
+# Historical-reproducibility importers: from kryptos.kernel.retired import ...
+# The allow-list in `tests/test_retired_usage.py` enumerates every file
+# permitted to depend on the retired namespace.
 #
-# The _verify() assertions below are relaxed to accept either the
-# historical length (7 / 17) or an empty set, so a future physical
-# removal can land without crashing every import. Physical removal is
-# NOT in scope for the 2026-04-14 quarantine per Colin's constraint.
-#
-# DO NOT USE THESE CONSTANTS IN LIVE CODE PATHS. Any new caller should
-# be reviewed against the retirement doctrine before import.
-NULL_PALETTE: FrozenSet[str] = frozenset("BGIKOWZ")
-CONSENSUS_NULL_POSITIONS: FrozenSet[int] = frozenset(
-    {0, 1, 2, 5, 8, 12, 14, 20, 36, 52, 58, 59, 74, 75, 78, 84, 85}
-)
-BEAUFORT_KEYSTREAM_AT_CRIBS: str = "JLJODEGKUKKKLOCGGBGOKTRU"
+# DO NOT IMPORT into new live code. See `kryptos.kernel.retired` for detail.
 
 # ── Import-time verification ─────────────────────────────────────────────
 
@@ -194,22 +180,8 @@ def _verify() -> None:
     assert len(BEAN_EQ) == 1, "Expected 1 Bean equality"
     assert len(BEAN_INEQ) == 242, f"Expected 242 Bean inequalities, got {len(BEAN_INEQ)}"
     assert len(BEAN_LINEAR) == 101, f"Expected 101 Bean linear constraints, got {len(BEAN_LINEAR)}"
-    # RETIRED: relaxed to accept 0 (future physical removal) OR historical
-    # lengths (7 / 17). See the retirement block above NULL_PALETTE.
-    assert len(NULL_PALETTE) in (0, 7), (
-        f"NULL_PALETTE should have 0 (retired, physically removed) or 7 "
-        f"(retired, historical length); got {len(NULL_PALETTE)}"
-    )
-    assert all(c in ALPH for c in NULL_PALETTE), "NULL_PALETTE must be uppercase A-Z"
-    assert len(CONSENSUS_NULL_POSITIONS) in (0, 17), (
-        f"CONSENSUS_NULL_POSITIONS should have 0 (retired, physically "
-        f"removed) or 17 (retired, historical length); got "
-        f"{len(CONSENSUS_NULL_POSITIONS)}"
-    )
-    assert all(0 <= p < CT_LEN for p in CONSENSUS_NULL_POSITIONS), "Null positions must be in [0, CT_LEN)"
-    assert not CONSENSUS_NULL_POSITIONS & CRIB_POSITIONS, "Null positions must not overlap crib positions"
-    assert len(BEAUFORT_KEYSTREAM_AT_CRIBS) == N_CRIBS, "Keystream string must have N_CRIBS chars"
-    _bks_derived = "".join(ALPH[v] for v in BEAUFORT_KEY_ENE + BEAUFORT_KEY_BC)
-    assert BEAUFORT_KEYSTREAM_AT_CRIBS == _bks_derived, "Keystream string must match numeric constants"
+    # Retired constants (palette, consensus null positions, Beaufort
+    # crib keystream) live in `kryptos.kernel.retired` and self-verify
+    # at their own import time.
 
 _verify()
