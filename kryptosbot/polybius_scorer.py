@@ -45,8 +45,17 @@ if os.path.join(_ROOT, "src") not in sys.path:
 
 from kryptos.kernel.constants import (
     CT, CT_LEN, CRIB_DICT, CRIB_POSITIONS, KRYPTOS_ALPHABET,
-    NULL_PALETTE, CONSENSUS_NULL_POSITIONS, BEAUFORT_KEYSTREAM_AT_CRIBS,
     BEAN_EQ, BEAN_INEQ, N_CRIBS, ALPH, ALPH_IDX,
+)
+# NULL_PALETTE, CONSENSUS_NULL_POSITIONS, BEAUFORT_KEYSTREAM_AT_CRIBS
+# moved to kryptos.kernel.retired in framework maturation Phase 2
+# (2026-04-20). This module is retired (see module docstring: "RETIRED
+# 2026-04-14") and kept for historical reproducibility only; imports are
+# on the retired-namespace allow-list in tests/test_retired_usage.py.
+from kryptos.kernel.retired import (
+    BEAUFORT_KEYSTREAM_AT_CRIBS,
+    CONSENSUS_NULL_POSITIONS,
+    NULL_PALETTE,
 )
 
 # ── KA Polybius grid constants ───────────────────────────────────────────

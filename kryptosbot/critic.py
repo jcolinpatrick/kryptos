@@ -134,9 +134,16 @@ def _detect_retired_palette_revival(text: str) -> Optional[str]:
     revival of the retired null-palette / null-mask family, else None.
 
     See module-level comment above for matching logic. This is a
-    belt-and-suspenders check; the primary retirement infrastructure is
-    the null_palette_retired claim in claims_registry.py and the
-    claim_policy.py gates that enforce RETIRED_CLAIM semantics.
+    belt-and-suspenders check against *textual* revival in theorist output;
+    the primary retirement infrastructure is the null_palette_retired
+    claim in claims_registry.py and the claim_policy.py gates that enforce
+    RETIRED_CLAIM semantics.
+
+    Import-level revival (i.e. a module adding
+    `from kryptos.kernel.retired import NULL_PALETTE` outside the
+    allow-list) is caught by `tests/test_retired_usage.py`, not here.
+    The constants themselves moved to `kryptos.kernel.retired` in
+    framework maturation Phase 2 (2026-04-20).
     """
     if not text:
         return None
@@ -205,6 +212,12 @@ def _detect_consensus_null_positions_revival(text: str) -> Optional[str]:
     The palette matcher above handles the 7-letter letter-set revival. This
     matcher handles theories that invoke the position mask without the
     letter subset.
+
+    Import-level revival (i.e. a module adding
+    `from kryptos.kernel.retired import CONSENSUS_NULL_POSITIONS` outside
+    the allow-list) is caught by `tests/test_retired_usage.py`, not here.
+    The constant itself moved to `kryptos.kernel.retired` in framework
+    maturation Phase 2 (2026-04-20).
     """
     if not text:
         return None

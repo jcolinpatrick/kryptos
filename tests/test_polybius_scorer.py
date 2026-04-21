@@ -14,8 +14,12 @@ from kryptosbot.polybius_scorer import (
 )
 from kryptos.kernel.constants import (
     CT, CT_LEN, CRIB_DICT, N_CRIBS, KRYPTOS_ALPHABET,
-    BEAUFORT_KEYSTREAM_AT_CRIBS, BEAN_EQ, BEAN_INEQ,
+    BEAN_EQ, BEAN_INEQ,
 )
+# Retired import (moved from constants to retired/ in Phase 2, 2026-04-20).
+# This test exercises the retired kryptosbot.polybius_scorer module; on
+# allow-list in tests/test_retired_usage.py.
+from kryptos.kernel.retired import BEAUFORT_KEYSTREAM_AT_CRIBS
 
 
 class TestConstants:

@@ -16,9 +16,13 @@ Tests cover:
 import pytest
 from kryptos.kernel.constants import (
     CT, CT_LEN, CRIB_DICT, CRIB_POSITIONS,
-    CONSENSUS_NULL_POSITIONS, NULL_PALETTE,
     ALPH_IDX, MOD, BEAN_EQ, BEAN_INEQ,
 )
+# Retired imports (moved from constants to retired/ in Phase 2, 2026-04-20).
+# This test exercises null-mask removal / crib-position shifting mechanics
+# against the historical consensus mask. On allow-list in
+# tests/test_retired_usage.py.
+from kryptos.kernel.retired import CONSENSUS_NULL_POSITIONS, NULL_PALETTE
 from kryptos.kernel.scoring.crib_score import score_cribs
 
 
@@ -191,8 +195,12 @@ class TestBeanAcrossLayers:
             assert mapped_a == a and mapped_b == b
 
     def test_beaufort_keystream_at_cribs(self):
-        """Verify the BEAUFORT_KEYSTREAM_AT_CRIBS constant."""
-        from kryptos.kernel.constants import BEAUFORT_KEYSTREAM_AT_CRIBS, BEAUFORT_KEY_ENE, BEAUFORT_KEY_BC
+        """Verify the BEAUFORT_KEYSTREAM_AT_CRIBS constant matches the
+        unretired numeric Beaufort keys."""
+        from kryptos.kernel.constants import BEAUFORT_KEY_ENE, BEAUFORT_KEY_BC
+        # BEAUFORT_KEYSTREAM_AT_CRIBS moved to kryptos.kernel.retired in
+        # framework maturation Phase 2 (2026-04-20).
+        from kryptos.kernel.retired import BEAUFORT_KEYSTREAM_AT_CRIBS
         expected = "".join(chr(65 + v) for v in BEAUFORT_KEY_ENE + BEAUFORT_KEY_BC)
         assert BEAUFORT_KEYSTREAM_AT_CRIBS == expected
 

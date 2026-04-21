@@ -23,12 +23,11 @@ import warnings
 
 import pytest
 
-from kryptos.kernel.constants import (
-    ALPH,
-    BEAUFORT_KEYSTREAM_AT_CRIBS,
-    N_CRIBS,
-    NULL_PALETTE,  # retired; see module docstring. Used ONLY as a test fixture.
-)
+from kryptos.kernel.constants import ALPH, N_CRIBS
+# Retired imports (moved from constants to retired/ in Phase 2, 2026-04-20).
+# Used ONLY as test fixtures here — see module docstring for why. On allow-list
+# in tests/test_retired_usage.py.
+from kryptos.kernel.retired import BEAUFORT_KEYSTREAM_AT_CRIBS, NULL_PALETTE
 from kryptos.kernel.scoring.compliance import (
     MechanismDescription,
     ComplianceScore,

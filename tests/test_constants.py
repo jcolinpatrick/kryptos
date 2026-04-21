@@ -8,7 +8,15 @@ from kryptos.kernel.constants import (
     SELF_ENCRYPTING,
     VIGENERE_KEY_ENE, VIGENERE_KEY_BC,
     BEAUFORT_KEY_ENE, BEAUFORT_KEY_BC,
-    NULL_PALETTE, CONSENSUS_NULL_POSITIONS, BEAUFORT_KEYSTREAM_AT_CRIBS,
+)
+# Retired imports (moved from constants to retired/ in Phase 2, 2026-04-20).
+# These tests assert the shape of the retired constants as a regression guard
+# on the move itself — see TestNullPalette / TestConsensusNullPositions /
+# TestBeaufortKeystream below. On allow-list in tests/test_retired_usage.py.
+from kryptos.kernel.retired import (
+    BEAUFORT_KEYSTREAM_AT_CRIBS,
+    CONSENSUS_NULL_POSITIONS,
+    NULL_PALETTE,
 )
 
 

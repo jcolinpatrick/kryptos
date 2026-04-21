@@ -35,10 +35,15 @@ from kryptos.kernel.constants import (
     ALPH,
     KRYPTOS_ALPHABET,
     MOD,
-    CONSENSUS_NULL_POSITIONS,
-    NULL_PALETTE,
     CRIB_POSITIONS,
 )
+# CONSENSUS_NULL_POSITIONS and NULL_PALETTE moved to kryptos.kernel.retired
+# in framework maturation Phase 2 (2026-04-20). This module IS the retired
+# stego-proof module — every StegoProperty it returns carries status="retired"
+# regardless of the numerical result, per the module docstring above.
+# Import from retired/ is legitimate historical-reproducibility usage; this
+# file is on the retired-namespace allow-list in tests/test_retired_usage.py.
+from kryptos.kernel.retired import CONSENSUS_NULL_POSITIONS, NULL_PALETTE
 from kryptos.kernel.alphabet import keyword_mixed_alphabet
 
 
