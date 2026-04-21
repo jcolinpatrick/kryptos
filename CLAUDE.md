@@ -22,6 +22,8 @@ This repo has one purpose: determine the **true plaintext** and the **full encry
 6. If the task matches anything in the briefing's TIER 1 / DO NOT TEST sections or the `MEMORY.md` do-not-revive list → **STOP, tell the user, do NOT re-run**.
 7. `run_attack.py --list --verbose | grep KEYWORD` — search before writing new code.
 8. **If the task involves CPU-bound work**: `bash scripts/vm_capability_report.sh` — establish runtime capabilities (see [Compute Environment](#compute-environment--high-power-vm)).
+9. **If the task involves the kryptosbot loop**: read `kryptosbot/ORIENT.md` (~5 min) — one-page operator onboarding for the multi-agent runner. Covers the three commands, where truth lives, and 5 common failure modes.
+10. **If the task modifies the kernel's scoring or transforms**: run `PYTHONPATH=src python3 kryptosbot/self_test.py --panel all --mode dry-run` — falsification test that K1/K2 are still rediscoverable. Takes ~1 second. Added in framework maturation Phase 7 (2026-04-21) as the project's standing fitness check.
 
 Skipping these steps and re-testing an eliminated hypothesis wastes 28 CPU cores and burns API tokens for zero value.
 
@@ -242,7 +244,9 @@ Two scoring paths in `kernel/scoring/aggregate.py`: `score_candidate()` (anchore
 | 0–9   | noise         | No (≤9) | Expected random performance |
 | 10–17 | interesting   | Yes     | Worth logging, likely noise |
 | 18–23 | signal        | Yes     | Statistically significant, investigate |
-| 24    | breakthrough  | Yes     | All cribs match — potential solution (requires Bean PASS) |
+| 24    | breakthrough  | Yes     | All cribs match — potential solution (requires Bean PASS AND ngram floor AND p-value gate) |
+
+**Phase 6 p-value gate (2026-04-21):** Alerts now gate on `p_value_vs_null <= 1e-6` in addition to crib_score. Under the random_text null, crib_score >= 18 gives `p ≈ 3.7e-21` (exact Binomial tail) — 15 orders of magnitude below the gate, so the gate is effectively a no-op on real signal but suppresses false SIGNAL alerts at lower crib scores under tighter nulls (shuffled_ct, matched_variant_family). When the null cache is missing, the gate fails open to legacy crib-only gating with a WARNING — the framework never goes silent on a high score. To rebuild the cache: `PYTHONPATH=src python3 -u scripts/_infra/calibrate_null_baselines.py` (~18 seconds).
 
 **False positive warning**: `period_consistency()` is underdetermined when `period >= (num_crib_positions / constraints_per_residue)`. At period 24, random configs score ~19.2/24; at period 17, ~17.3/24. Only period ≤7 gives meaningful discrimination (~8.2/24 expected). **All high scores at large periods are false positives.** With the full 242 Bean inequality set, ALL periods 1–26 are eliminated for periodic substitution on the raw 97-char carved text.
 
@@ -355,6 +359,9 @@ Results are not trusted until they pass:
 - **`docs/two_ground_truths.md`** — Physical sculpture vs creator intent
 - **`docs/anomaly_registry.md`** — Physical anomalies in the sculpture
 - **`docs/operations.md`** — Supporting systems, deployment, service management
+- **`kryptosbot/ORIENT.md`** — One-page operator onboarding for the multi-agent runner. Start here for any task that touches the kryptosbot loop. Authored in framework maturation Phase 9 (2026-04-21).
+- **`kryptosbot/ARCHITECTURE.md`** — Full architecture: controller cycle, DSL + dispatcher, null baselines, alert path. Updated 2026-04-21 for Phases 4-6.
+- **`docs/maturation/SUMMARY.md`** — Phases 1-9 handoff summary. Every phase, every artifact, every test delta, every behavior change.
 
 ### Historical / retired (not authoritative — do not cite as current)
 

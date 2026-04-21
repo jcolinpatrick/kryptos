@@ -77,6 +77,15 @@ Free text never drives control flow.**
 | `claim_rendering.py` | Auto-hedging renderers (`render_claim`, `render_claim_inline`, `render_inventory`) |
 | `claim_policy.py` | Policy gates (`can_use_as_hard_constraint`, `can_use_as_elimination_basis`, `can_promote_to_must_explain`, ...) |
 | `EPISTEMIC_PROVENANCE.md` | Operational doctrine for the provenance layer |
+| `hypothesis_dsl.py` | **Phase 4**: structured DSL for bounded cryptanalytic hypotheses. `HypothesisSpec`, `CipherLayer`, `ParamRange`, `NullBaselineSpec` dataclasses with fail-closed JSON validation |
+| `job_dispatcher.py` | **Phase 4**: translates HypothesisSpec → kernel transforms → multiprocessing dispatch → kernel-verified `JobResult`. Admissibility pre-flight checks budget + translation coverage + exhaustion overlap |
+| `dsl_tools.py` | **Phase 5**: 8 MCP tools exposing the DSL pipeline to agents (`submit_hypothesis_spec`, `poll_job`, `query_exhaustion`, `compute_null_baseline`, `score_candidate_canonical`, `get_procedural_recipe`, `enumerate_admissible_transforms`, `request_compute_budget_estimate`) |
+| `null_baselines.py` | **Phase 6**: calibrated Monte Carlo null distributions with hybrid empirical + parametric tails (exact Binomial for crib_score, normal-approx for ngram_score). Powers the p-value gate in `alerts.py` |
+| `procedural_enumerator.py` | **Phase 8**: parses `docs/procedural_recipes.json`, converts recipes into HypothesisSpecs, dispatches admissible ones as a batch (`--mode procedural_sweep` equivalent) |
+| `self_test.py` | **Phase 7**: falsification test — K1/K2/K3 rediscovery benchmark. Dry-run mode directly enumerates Quagmire III candidates against kernel transforms |
+| `alerts.py` | Contradiction-detector with Phase-3 ngram-floor + **Phase-6 p-value gate** (`p_value <= 1e-6`) |
+| `contracts.py` | **Phase 3**: kernel-overrule verifier. Every worker output re-scored through `kryptos.kernel.scoring.aggregate.score_candidate`; adversarial 35-test battery at 100% line coverage |
+| `ORIENT.md` | **Phase 9**: one-page operator onboarding — mission, three commands, where truth lives, failure modes |
 
 ## Provenance / Epistemic-Status Layer
 
@@ -110,14 +119,96 @@ Key invariants enforced at the code level:
 
 | File | Role |
 |------|------|
-| `k4_tools.py` | MCP tools for K4 computation (permutations, hill climb, scoring) |
+| `k4_tools.py` | MCP tools for K4 computation. **Phase 5**: `hill_climb`, `try_keyword_sweep`, `swap_and_test` emit `DeprecationWarning`; callers should use `dsl_tools` instead |
 | `sdk_wrapper.py` | Agent SDK error handling and cleanup |
 | `oracle.py` | Local compute dispatcher (no API calls) |
 | `database.py` | Legacy ResultsDB (backward compatible) |
 | `config.py` | Runtime configuration and hypothesis status |
-| `constants.py` | Bridge to kernel constants |
+| `constants.py` | Bridge to kernel constants. **Phase 2**: retired palette symbols (`NULL_PALETTE`, `CONSENSUS_NULL_POSITIONS`, `BEAUFORT_KEYSTREAM_AT_CRIBS`) moved to `kryptos.kernel.retired` |
 | `agent_runner.py` | Session launcher and output extraction |
-| `worker.py` | Agent SDK worker management (legacy; controller uses its own dispatch) |
+| `_archive/` | **Phase 1**: quarantined legacy code (`campaign_v2.py`, `worker.py`). Imports broken; stubs at original paths raise `ImportError` with pointers |
+
+
+## DSL + Dispatcher + Null Baselines (Phases 4-6)
+
+The core architectural shift of the 2026 maturation: worker agents no longer
+write cryptanalytic code in scratch directories. They specify **bounded
+hypotheses** in a structured DSL (`hypothesis_dsl.py`); the dispatcher
+(`job_dispatcher.py`) translates those specs into multiprocessing jobs
+against `src/kryptos/kernel`, kernel-verifies every candidate, and returns
+structured `JobResult` payloads.
+
+```
+Theorist → HypothesisSpec (JSON)
+                │
+                ▼
+      validate_hypothesis_spec()  [fail-closed]
+                │
+                ▼
+      check_admissibility()
+                │ ├── translation coverage  (_SUPPORTED_KINDS)
+                │ ├── compute budget        (cardinality × minute cap)
+                │ └── exhaustion overlap    (exhaustion_log.json)
+                ▼
+      execute()
+                │ ├── enumerate cartesian params across layers
+                │ ├── multiprocessing.Pool(cpu_count()-2)
+                │ ├── score_candidate() ← kernel overrule
+                │ └── aggregate → JobResult {spec_hash, universe_hash, ...}
+                ▼
+      job_result_to_worker_contract()
+                │
+                ▼
+      _verify_against_kernel()  [Phase 3 re-check]
+                │
+                ▼
+      WorkerContract ready for ledger ingestion
+```
+
+### DSL coverage (Phase 4 + 8)
+
+| Cipher kind | Dispatcher support | Notes |
+|---|---|---|
+| `identity`, `vigenere`, `beaufort`, `variant_beaufort`, `columnar`, `atbash` | ✅ AZ alphabet | Phase 4 |
+| `rail_fence`, `route`, `myszkowski`, `polybius`, `quagmire` | ✅ DSL-valid, ❌ no dispatcher translation yet | Admissibility rejects with clear pointer |
+| KA alphabet for Vigenère-family | ❌ not in dispatcher | Phase 7 self-test went around dispatcher for K1/K2 |
+| `procedural` with `recipe_id` | ✅ via procedural_enumerator.py | Phase 8 |
+
+### Null-baseline calibration (Phase 6)
+
+`null_baselines.py` holds the Monte Carlo null distributions used to
+gate alerts on `p_value <= 1e-6`. Manifest committed at
+`null_baselines/manifest.json`; full cache (multi-MB) gitignored under
+`results/null_baselines/`.
+
+| Scorer × Method | Tail computation |
+|---|---|
+| `crib_score × random_text` | **Exact Binomial(24, 1/26)** — closed-form, reliable below the 1/N empirical floor |
+| `ngram_score × *` | Normal-approximation (CLT on ~94 quadgram log-probs) |
+| `composite × *` | Empirical tail with 1/N upper bound |
+
+On a cache miss, alerts fail open to legacy crib-score-only gating with
+a visible `WARNING` — the framework never goes silent on a high score.
+
+### Procedural recipe enumerator (Phase 8)
+
+`procedural_enumerator.py` reads `docs/procedural_recipes.json` (~17
+entries as of 2026-04-21: 12 DSL-translatable, 5 physical-only) and
+converts admissible recipes into `HypothesisSpec` specs. Admissibility
+filters:
+
+- Physical-only recipes never dispatch (have no DSL template).
+- Closed-anomaly recipes filtered when `open_anomaly_ids` is set.
+- `known_eliminations` substring-match against the current
+  assumption bundle.
+- Total cardinality capped at `max_cost_minutes × 200_000`.
+
+CLI:
+
+```bash
+PYTHONPATH=src python3 -m kryptosbot.procedural_enumerator --dry-run
+PYTHONPATH=src python3 -m kryptosbot.procedural_enumerator --sweep --report-path RESULT.json
+```
 
 ## Controller Cycle
 
