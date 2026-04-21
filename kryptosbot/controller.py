@@ -1554,7 +1554,10 @@ OUTPUT FORMAT (JSON array):
       "method": "How to test this hypothesis",
       "parameters": {{}}
     }},
-    "dsl_spec": null
+    "dsl_spec": {{ /* REQUIRED for cipher families — see DSL_SPEC CONTRACT below.
+                     Copy Example A/B/C shape. Set null ONLY if family is in
+                     {{geometry, k2_coords, geodetic, antipodes, archive_evidence,
+                      crib_analysis, k3_continuity}}. */ }}
   }}
 ]
 

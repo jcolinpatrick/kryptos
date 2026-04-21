@@ -505,7 +505,17 @@ class TheoryCritic:
                     ],
                 )
 
-            parsed = validate_hypothesis_spec(theory.dsl_spec)
+            # R3-2: if the theorist omitted hypothesis_id or used a
+            # placeholder, substitute the theory's hypothesis_id (which
+            # was derived from core_claim by TheoryRecord.__post_init__).
+            # This preserves the spec's semantic content while ensuring
+            # the validator has a legal id to check against.
+            spec_for_validation = dict(theory.dsl_spec)
+            existing_id = str(spec_for_validation.get("hypothesis_id", "")).strip()
+            if not existing_id or existing_id.startswith("<"):
+                spec_for_validation["hypothesis_id"] = theory.hypothesis_id
+
+            parsed = validate_hypothesis_spec(spec_for_validation)
             if not parsed.is_valid:
                 return CriticVerdict(
                     decision=CriticDecision.REJECT_UNDERCONSTRAINED,

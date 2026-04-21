@@ -580,24 +580,19 @@ def validate_theory_proposals(raw: str) -> TheoryParseReport:
             })
             continue
 
-        # R3-2: if dsl_spec is a dict, validate it structurally via
-        # validate_hypothesis_spec. The validator returns ParseResult;
-        # failure lands the whole theory in `invalid` with the concrete
-        # errors rather than constructing a TheoryRecord that won't
-        # dispatch. null / missing dsl_spec is acceptable at boundary
-        # time (the critic enforces Category-A/B/C semantics).
+        # R3-2: store the dsl_spec verbatim at boundary time; structural
+        # validation runs in the critic's Category-A/C check where it
+        # can produce the canonical "dsl_untranslatable" rejection
+        # reason. Rejecting at boundary-parse time for minor schema
+        # variance (e.g., a theorist-placeholder hypothesis_id the
+        # controller would have filled in later) would drop otherwise-
+        # fixable theories.
+        #
+        # The null/dict type check above is preserved: a theorist
+        # emitting a string or array where a dict is expected is a
+        # structural error worth rejecting at boundary time.
         dsl_spec_dict: dict[str, Any] = {}
-        if isinstance(dsl_spec_raw, dict) and dsl_spec_raw:
-            from .hypothesis_dsl import validate_hypothesis_spec
-            parsed = validate_hypothesis_spec(dsl_spec_raw)
-            if not parsed.is_valid:
-                report.invalid.append({
-                    "index": i, "raw": json.dumps(item)[:500],
-                    "error": "dsl_spec invalid: " + "; ".join(parsed.errors),
-                })
-                continue
-            # Preserve the original dict (not the parsed dataclass) so
-            # the ledger stores what the theorist emitted verbatim.
+        if isinstance(dsl_spec_raw, dict):
             dsl_spec_dict = dsl_spec_raw
 
         # Step 4: Construct validated TheoryRecord

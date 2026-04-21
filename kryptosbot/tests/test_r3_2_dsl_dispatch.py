@@ -172,19 +172,26 @@ def test_validate_theory_proposals_rejects_non_dict_dsl_spec():
     assert "dsl_spec" in report.invalid[0]["error"]
 
 
-def test_validate_theory_proposals_rejects_structurally_invalid_dsl_spec():
-    """A dict that fails HypothesisSpec.validate() lands in invalid."""
-    bad_spec = {
-        "hypothesis_id": "",  # empty — violates validator
-        "pipeline": [],
+def test_validate_theory_proposals_passes_loose_dsl_spec_to_critic():
+    """R3-2 design: boundary validation is lenient on dsl_spec shape
+    (accepts any dict). Structural validation runs in the critic's
+    Category-A/C check, which produces the canonical 'dsl_untranslatable'
+    reason. This keeps minor schema variance (theorist-placeholder
+    hypothesis_id, missing optional fields) from dropping the whole
+    theory at parse time."""
+    loose_spec = {
+        "pipeline": [{"kind": "vigenere", "alphabet": "AZ",
+                      "params": [{"name": "keyword", "values": ["K"]}]}],
+        # hypothesis_id deliberately missing — critic will substitute
     }
     raw = json.dumps([{
         "title": "t", "core_claim": "c", "mechanism": "m", "family": "vigenere",
-        "dsl_spec": bad_spec,
+        "dsl_spec": loose_spec,
     }])
     report = validate_theory_proposals(raw)
-    assert not report.valid
-    assert any("dsl_spec invalid" in inv["error"] for inv in report.invalid)
+    assert report.valid and not report.invalid
+    # Spec stored verbatim — no mutation at boundary time.
+    assert report.valid[0].dsl_spec == loose_spec
 
 
 # ═══════════════════════════════════════════════════════════════════════════
