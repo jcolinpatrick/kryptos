@@ -73,6 +73,20 @@ _VALID_METHODS = frozenset(
     {"random_text", "shuffled_ct", "matched_variant_family"}
 )
 _VALID_ALPHABETS = frozenset({"AZ", "KA"})
+# R2-4 (2026-04-21): families the matched_variant_family method can
+# sample from. "" is the legacy default (Phase 6 — Vigenère AZ). Adding
+# a new family requires (a) extending _sample_one_matched_family and
+# (b) adding the family name here. Columnar families produce distinct
+# null distributions from additive families because the transposition
+# is compositionally independent of the CT's letter distribution.
+_VALID_FAMILIES = frozenset({
+    "",                 # Phase 6 legacy (Vigenère AZ)
+    "vigenere",         # explicit alias for the legacy case
+    "beaufort",         # R2-4
+    "variant_beaufort", # R2-4
+    "columnar_single",  # R2-4
+    "columnar_double",  # R2-4
+})
 
 
 def _compute_kernel_commit() -> str:
@@ -134,12 +148,24 @@ class NullDistribution:
     stdev: float = 0.0
     parametric_model: Optional[str] = None
     p_value_tail_method: str = "empirical"
+    # R2-4 (2026-04-21): cipher family when method=matched_variant_family.
+    # Empty string means "legacy Phase 6 Vigenère default"; the new
+    # R2-4 entries carry explicit family names like "beaufort" or
+    # "columnar_single". Other methods ignore this field.
+    family: str = ""
 
     @property
     def cache_key(self) -> str:
-        """Deterministic identifier for the manifest."""
-        payload = f"{self.scorer_name}__{self.method}__{self.alphabet}__n{self.n_chars}"
-        return payload
+        """Deterministic identifier for the manifest.
+
+        R2-4: matched_variant_family entries include the ``family`` tag
+        so ``beaufort`` and ``variant_beaufort`` get distinct cache slots
+        rather than overwriting each other.
+        """
+        base = f"{self.scorer_name}__{self.method}__{self.alphabet}__n{self.n_chars}"
+        if self.method == "matched_variant_family" and self.family:
+            base += f"__{self.family}"
+        return base
 
     # ── Computational interface ──────────────────────────────────────────────
 
@@ -195,6 +221,7 @@ class NullDistribution:
             "method": self.method,
             "n_chars": self.n_chars,
             "alphabet": self.alphabet,
+            "family": self.family,
             "n_samples": self.n_samples,
             "seed": self.seed,
             "kernel_commit": self.kernel_commit,
@@ -229,6 +256,7 @@ class NullDistribution:
             stdev=float(d.get("stdev", 0.0)),
             parametric_model=d.get("parametric_model"),
             p_value_tail_method=str(d.get("p_value_tail_method", "empirical")),
+            family=str(d.get("family", "") or ""),
         )
 
 
@@ -270,8 +298,15 @@ def _sample_one(
     alphabet_chars: str,
     n_chars: int,
     rng: random.Random,
+    family: str = "",
 ) -> str:
-    """Draw one plaintext sample from the null."""
+    """Draw one plaintext-like sample from the null.
+
+    The returned string is what the scorer sees — for random_text and
+    shuffled_ct methods, this is the candidate directly. For
+    matched_variant_family, this is the K4 CT decrypted under a randomly-
+    drawn member of the named cipher family (per brief R2-4 §5.2).
+    """
     if method == "random_text":
         return "".join(rng.choice(alphabet_chars) for _ in range(n_chars))
     if method == "shuffled_ct":
@@ -280,18 +315,87 @@ def _sample_one(
         rng.shuffle(chars)
         return "".join(chars)
     if method == "matched_variant_family":
-        # Phase 6 supports Vigenere-AZ only as a demonstrator. The caller
-        # is expected to know the family ahead of time and build a
-        # separate cache per family; the alphabet field encodes it.
-        # For alphabet="AZ" we sample a random keyword of random length
-        # 5..11 and encrypt a random PT with it.
-        from kryptos.kernel.constants import ALPH
-        from kryptos.kernel.transforms.vigenere import encrypt_text, CipherVariant
+        return _sample_one_matched_family(family, n_chars, rng)
+    raise ValueError(f"unknown method {method!r}")
+
+
+def _sample_one_matched_family(
+    family: str,
+    n_chars: int,
+    rng: random.Random,
+) -> str:
+    """Draw one candidate from the matched_variant_family null.
+
+    For additive families (vigenere / beaufort / variant_beaufort):
+      random keyword of length 5..11 drawn uniformly from A-Z; decrypt
+      the real K4 CT under the resulting key. The candidate is what
+      that decryption produces.
+
+    For transposition families:
+      random (width, col_order) — for columnar_single — or two of them
+      composed — for columnar_double. Each width is drawn uniformly
+      from [4, 14]; each order is a random permutation. Invert both
+      and apply to the real K4 CT.
+
+    The semantics deliberately match brief §5.2: we test "what does a
+    randomly-drawn member of this family produce when applied to the
+    actual carved CT?" — NOT the Phase-6 "random-PT-encrypted-with-
+    random-key" baseline (which is effectively just the scorer's noise
+    floor on random text).
+
+    The empty family string "" falls through to the Phase-6 Vigenère
+    semantic for backward compatibility with pre-R2-4 caches.
+    """
+    from kryptos.kernel.constants import ALPH, CT
+    # Legacy path: preserve the Phase 6 Vigenère-AZ cache semantics.
+    if family == "":
+        from kryptos.kernel.transforms.vigenere import (
+            encrypt_text, CipherVariant,
+        )
         kw_len = rng.randint(5, 11)
         key = [rng.randint(0, 25) for _ in range(kw_len)]
         pt = "".join(rng.choice(ALPH) for _ in range(n_chars))
         return encrypt_text(pt, key, CipherVariant.VIGENERE)
-    raise ValueError(f"unknown method {method!r}")
+
+    if family in ("vigenere", "beaufort", "variant_beaufort"):
+        from kryptos.kernel.transforms.vigenere import (
+            decrypt_text, CipherVariant,
+        )
+        variant_map = {
+            "vigenere": CipherVariant.VIGENERE,
+            "beaufort": CipherVariant.BEAUFORT,
+            "variant_beaufort": CipherVariant.VAR_BEAUFORT,
+        }
+        kw_len = rng.randint(5, 11)
+        key = [rng.randint(0, 25) for _ in range(kw_len)]
+        return decrypt_text(CT[:n_chars], key, variant_map[family])
+
+    if family in ("columnar_single", "columnar_double"):
+        from kryptos.kernel.transforms.transposition import (
+            columnar_perm, apply_perm, invert_perm,
+        )
+        def _random_layer(ct_len: int) -> tuple[int, list[int]]:
+            w = rng.randint(4, 14)
+            order = list(range(w))
+            rng.shuffle(order)
+            return w, order
+
+        ct = CT[:n_chars]
+        # Decrypt the OUTER layer first (as if it was applied LAST during
+        # encryption). For columnar_single there's only one layer.
+        w1, o1 = _random_layer(n_chars)
+        inv1 = invert_perm(columnar_perm(w1, o1, n_chars))
+        step1 = apply_perm(ct, inv1)
+        if family == "columnar_single":
+            return step1
+        w2, o2 = _random_layer(n_chars)
+        inv2 = invert_perm(columnar_perm(w2, o2, n_chars))
+        return apply_perm(step1, inv2)
+
+    raise ValueError(
+        f"matched_variant_family: unknown family {family!r}. Valid: "
+        f"{sorted(_VALID_FAMILIES)}"
+    )
 
 
 # ─── Parametric tail helpers ─────────────────────────────────────────────────
@@ -328,13 +432,18 @@ def build_null_distribution(
     alphabet: str = "AZ",
     n_samples: int = _DEFAULT_SAMPLES,
     seed: int = _DEFAULT_SEED,
+    family: str = "",
 ) -> NullDistribution:
     """Monte Carlo the null distribution for the given combo.
 
-    Deterministic given (method, n_chars, alphabet, n_samples, seed) +
-    the kernel commit.
+    Deterministic given (method, n_chars, alphabet, n_samples, seed,
+    family) + the kernel commit.
 
-    Raises ValueError on unknown scorer/method/alphabet.
+    R2-4 (2026-04-21): ``family`` is required for
+    ``method='matched_variant_family'`` when the family is not the
+    legacy Vigenère default. Must be one of ``_VALID_FAMILIES``.
+
+    Raises ValueError on unknown scorer / method / alphabet / family.
     """
     if scorer_name not in _VALID_SCORERS:
         raise ValueError(
@@ -348,6 +457,10 @@ def build_null_distribution(
         raise ValueError(
             f"alphabet {alphabet!r} not in {sorted(_VALID_ALPHABETS)}"
         )
+    if family not in _VALID_FAMILIES:
+        raise ValueError(
+            f"family {family!r} not in {sorted(_VALID_FAMILIES)}"
+        )
     if n_samples <= 0:
         raise ValueError("n_samples must be positive")
 
@@ -357,7 +470,7 @@ def build_null_distribution(
 
     scores: list[float] = []
     for _ in range(n_samples):
-        text = _sample_one(method, alpha, n_chars, rng)
+        text = _sample_one(method, alpha, n_chars, rng, family=family)
         scores.append(scorer(text))
     scores.sort()
 
@@ -372,7 +485,12 @@ def build_null_distribution(
     if scorer_name == "crib_score" and method == "random_text":
         parametric_model = "binomial"
         p_value_tail_method = "exact"
-    elif scorer_name == "ngram_score":
+    elif scorer_name == "ngram_score" and method != "matched_variant_family":
+        # R2-4: ngram_score on transposition nulls is empirical only —
+        # the output is a permutation of the K4 CT and carries the
+        # empirical letter-frequency structure of the carved text, not
+        # a Gaussian-behaving noise process. The brief §5.4 documents
+        # this 1/N floor explicitly; do not pretend normality.
         parametric_model = "normal"
         p_value_tail_method = "normal_approx"
 
@@ -389,6 +507,7 @@ def build_null_distribution(
         stdev=stdev,
         parametric_model=parametric_model,
         p_value_tail_method=p_value_tail_method,
+        family=family,
     )
 
 
@@ -396,9 +515,20 @@ def build_null_distribution(
 
 def _full_cache_path(
     scorer_name: str, method: str, alphabet: str, n_chars: int,
+    family: str = "",
 ) -> Path:
+    """Return the on-disk path for the full null-distribution JSON.
+
+    R2-4: the ``family`` suffix distinguishes matched_variant_family
+    caches by cipher family (columnar_single vs columnar_double vs
+    beaufort vs ...). Empty family preserves the Phase-6 legacy filename
+    for backward compatibility.
+    """
     _FULL_CACHE_DIR.mkdir(parents=True, exist_ok=True)
-    fname = f"{scorer_name}__{method}__{alphabet}__n{n_chars}__v1.json"
+    fname = f"{scorer_name}__{method}__{alphabet}__n{n_chars}"
+    if method == "matched_variant_family" and family:
+        fname += f"__{family}"
+    fname += "__v1.json"
     return _FULL_CACHE_DIR / fname
 
 
@@ -411,6 +541,7 @@ def save_to_cache(dist: NullDistribution) -> Path:
     """
     full_path = _full_cache_path(
         dist.scorer_name, dist.method, dist.alphabet, dist.n_chars,
+        family=dist.family,
     )
     full_path.parent.mkdir(parents=True, exist_ok=True)
     full_path.write_text(json.dumps(dist.to_full_dict()))
@@ -438,13 +569,19 @@ def get_cached(
     method: str = "random_text",
     n_chars: int = 97,
     alphabet: str = "AZ",
+    family: str = "",
 ) -> Optional[NullDistribution]:
     """Load a cached null distribution from disk, or return None on miss.
 
     Does NOT rebuild on miss — caller decides whether to call
     ``build_null_distribution`` + ``save_to_cache``.
+
+    R2-4: ``family`` identifies the matched_variant_family sub-cache.
+    Empty family falls back to the Phase 6 legacy cache slot.
     """
-    full_path = _full_cache_path(scorer_name, method, alphabet, n_chars)
+    full_path = _full_cache_path(
+        scorer_name, method, alphabet, n_chars, family=family,
+    )
     if not full_path.exists():
         return None
     try:
@@ -462,13 +599,14 @@ def get_or_build(
     alphabet: str = "AZ",
     n_samples: int = _DEFAULT_SAMPLES,
     seed: int = _DEFAULT_SEED,
+    family: str = "",
 ) -> NullDistribution:
     """Cache-first lookup; builds + caches on miss. Rebuilds on staleness."""
-    cached = get_cached(scorer_name, method, n_chars, alphabet)
+    cached = get_cached(scorer_name, method, n_chars, alphabet, family=family)
     if cached is not None and not calibration_stale(cached):
         return cached
     dist = build_null_distribution(
-        scorer_name, method, n_chars, alphabet, n_samples, seed,
+        scorer_name, method, n_chars, alphabet, n_samples, seed, family=family,
     )
     save_to_cache(dist)
     return dist
