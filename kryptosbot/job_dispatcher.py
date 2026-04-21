@@ -256,6 +256,11 @@ _SUPPORTED_KINDS: frozenset[str] = frozenset({
     # _translate_layer case below is a defensive guard — procedural
     # layers should never reach it.
     "procedural",
+    # R3-0.5-2: Cardano-grille gather under the permutation-only
+    # interpretation. Mask length must equal CT_LEN; translator delegates
+    # to TransformType.GRILLE in compose.py, which calls
+    # apply_grille_permutation.
+    "grille",
 })
 
 
@@ -568,6 +573,38 @@ def _translate_layer(layer: CipherLayer, binding: dict[str, Any]) -> dict[str, A
             "params": {
                 "key": [25],
                 "direction": "decrypt",
+            },
+        }
+
+    if kind == "grille":
+        # R3-0.5-2: Cardano-grille gather. Binding must carry a
+        # "hole_mask" parameter whose value is a length-CT_LEN
+        # permutation of range(CT_LEN). Mask validation runs here (not
+        # in the kernel hot path) per the kernel's "validate once, apply
+        # many" convention. Turning grilles, partial grilles, and mask
+        # discovery from anomalies are explicitly out of R3-0.5-2 scope.
+        mask_raw = binding.get("hole_mask")
+        if mask_raw is None:
+            raise DispatcherError(
+                "grille layer requires 'hole_mask' parameter "
+                "(a length-CT_LEN list of distinct 0-indexed positions)"
+            )
+        if not isinstance(mask_raw, (list, tuple)):
+            raise DispatcherError(
+                f"grille hole_mask must be list/tuple; "
+                f"got {type(mask_raw).__name__}"
+            )
+        from kryptos.kernel.constants import CT_LEN
+        from kryptos.kernel.transforms.grille import validate_grille_mask
+        errors = validate_grille_mask(mask_raw, CT_LEN)
+        if errors:
+            raise DispatcherError(
+                f"grille hole_mask invalid: {'; '.join(errors)}"
+            )
+        return {
+            "type": "grille",
+            "params": {
+                "mask_order": list(mask_raw),
             },
         }
 

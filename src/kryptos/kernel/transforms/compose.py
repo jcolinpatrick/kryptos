@@ -22,6 +22,12 @@ class TransformType(str, Enum):
     VAR_BEAUFORT = "var_beaufort"
     BIFID = "bifid"
     TRIFID = "trifid"
+    # R3-0.5-2: Cardano-grille gather under the permutation-only
+    # interpretation. Shape-identical to TRANSPOSITION_FULL with
+    # direction="apply" but kept as its own enum value so step dicts
+    # record the grille semantics explicitly. Dispatches to
+    # kryptos.kernel.transforms.grille.apply_grille_permutation.
+    GRILLE = "grille"
     IDENTITY = "identity"
     CUSTOM = "custom"
 
@@ -184,6 +190,15 @@ def build_transform(config: TransformConfig) -> TransformFn:
             return lambda text, g=grid, per=period: bifid_decrypt(text, g, per)
         else:
             return lambda text, g=grid, per=period: bifid_encrypt(text, g, per)
+
+    elif t == TransformType.GRILLE:
+        # R3-0.5-2: Cardano-grille gather. Mask order is a permutation
+        # of range(CT_LEN); output[i] = input[mask_order[i]]. Validated
+        # by the dispatcher translator; reaching this point means the
+        # mask is well-formed.
+        from kryptos.kernel.transforms.grille import apply_grille_permutation
+        mask_order = p["mask_order"]
+        return lambda text, m=mask_order: apply_grille_permutation(text, m)
 
     elif t == TransformType.CUSTOM:
         raise ValueError("Custom transforms must be provided as functions, not configs")
