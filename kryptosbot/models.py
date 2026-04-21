@@ -257,6 +257,16 @@ class WorkerContract:
     fields_overwritten: bool = False
     worker_self_report: dict[str, Any] = field(default_factory=dict)
     verification_error: str = ""
+    # Which additive cipher variant produced the Bean PASS when
+    # bean_passed is True. None when bean_passed is False or when
+    # verification could not run. Valid values: "vigenere", "beaufort",
+    # "variant_beaufort", None. Added in framework maturation Phase 3
+    # (2026-04-21) so downstream auditing can distinguish which of the
+    # three additive variants the kernel accepted — the variant matters
+    # for interpreting the derived keystream, even though Bean validity
+    # itself is variant-independent at correct cribs (see
+    # kryptos.kernel.constants._derive_bean_ineq).
+    bean_variant: Optional[str] = None
 
     def to_dict(self) -> dict[str, Any]:
         d = asdict(self)

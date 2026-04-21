@@ -43,6 +43,41 @@ logger = logging.getLogger("kryptosbot.contracts")
 # against the kernel. If the worker's plaintext is the wrong length, mark the
 # contract unverifiable and zero the score fields so no alert can fire.
 
+# Additive cipher variants tried during Bean verification, in the order
+# they are tested. The first variant that yields a Bean-PASS keystream
+# wins and its name is recorded on the contract's bean_variant field.
+# Order is fixed so test assertions (and audit logs) can rely on it.
+_BEAN_VARIANTS: tuple[tuple[str, Any], ...] = (
+    ("vigenere",         lambda c, p: (c - p) % 26),  # K = CT - PT
+    ("beaufort",         lambda c, p: (c + p) % 26),  # K = CT + PT
+    ("variant_beaufort", lambda c, p: (p - c) % 26),  # K = PT - CT
+)
+
+
+def _safe_int(val: Any) -> int:
+    """Best-effort coercion of a worker-supplied value to int.
+
+    WorkerContract is sometimes constructed outside validate_worker_contract
+    (e.g. by tests, by direct from_dict, by older stored data). A field
+    that holds a non-numeric string would cause int(val or 0) to crash
+    unhandled, taking the whole verifier with it. This helper fails closed
+    to 0 on any TypeError/ValueError, which is consistent with the
+    verifier's "refuse to trust garbage" posture.
+    """
+    try:
+        return int(val or 0)
+    except (TypeError, ValueError):
+        return 0
+
+
+def _safe_float(val: Any) -> float:
+    """Best-effort coercion of a worker-supplied value to float. See _safe_int."""
+    try:
+        return float(val or 0.0)
+    except (TypeError, ValueError):
+        return 0.0
+
+
 def _verify_against_kernel(contract: WorkerContract) -> None:
     """Recompute crib_score, bean_passed, and score from best_plaintext.
 
@@ -51,17 +86,27 @@ def _verify_against_kernel(contract: WorkerContract) -> None:
     fields_overwritten=True. If verification cannot run (wrong length,
     import failure), sets verification_error and zeroes the score fields.
 
+    Also populates ``bean_variant`` with one of "vigenere" / "beaufort" /
+    "variant_beaufort" when Bean passes, or None otherwise. The variant
+    recorded is the FIRST one that satisfies Bean in the fixed order
+    declared by ``_BEAN_VARIANTS``.
+
     Always overrules the worker — this is the project's epistemic posture.
     """
     pt = (contract.best_plaintext or "").strip().upper()
 
     # Snapshot worker's claims before any mutation, so we can compare and
-    # preserve them even when verification cannot run.
+    # preserve them even when verification cannot run. Uses _safe_* helpers
+    # so a pathological non-numeric value cannot crash the verifier.
     worker_claim = {
-        "crib_score": int(contract.crib_score or 0),
+        "crib_score": _safe_int(contract.crib_score),
         "bean_passed": bool(contract.bean_passed),
-        "score": float(contract.score or 0.0),
+        "score": _safe_float(contract.score),
     }
+
+    # Default to None; any branch that successfully identifies a passing
+    # variant will overwrite this below.
+    contract.bean_variant = None
 
     # Empty plaintext is a legitimate "I have no candidate" — accept worker
     # claim of zero/false; flag any non-zero claim as a hallucination.
@@ -110,17 +155,17 @@ def _verify_against_kernel(contract: WorkerContract) -> None:
         # variants (Vigenere, Beaufort, Variant Beaufort) and accept Bean
         # PASS if any of them satisfies the constraints. The worker doesn't
         # tell us which variant they used, so we charitably try all three.
+        # Order is fixed by _BEAN_VARIANTS — the first passing variant wins
+        # and its name is recorded on contract.bean_variant.
         ct_nums = text_to_nums(CT)
         pt_nums = text_to_nums(pt)
         verified_bean = False
-        for derive in (
-            lambda c, p: (c - p) % 26,   # Vigenere:        K = CT - PT
-            lambda c, p: (c + p) % 26,   # Beaufort:        K = CT + PT
-            lambda c, p: (p - c) % 26,   # Variant Beaufort: K = PT - CT
-        ):
+        verified_variant: Optional[str] = None
+        for variant_name, derive in _BEAN_VARIANTS:
             keystream = [derive(c, p) for c, p in zip(ct_nums, pt_nums)]
             if verify_bean_simple(keystream):
                 verified_bean = True
+                verified_variant = variant_name
                 break
 
         # Mirror crib_score into the score field. The display surfaces it,
@@ -150,6 +195,7 @@ def _verify_against_kernel(contract: WorkerContract) -> None:
     contract.crib_score = verified_crib
     contract.bean_passed = verified_bean
     contract.score = verified_score
+    contract.bean_variant = verified_variant
 
 T = TypeVar("T")
 

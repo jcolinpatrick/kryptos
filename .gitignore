@@ -43,6 +43,12 @@ external/
 site/
 site.stale-*/
 
+# Coverage.py artifacts
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+
 # Environment
 .env
 
