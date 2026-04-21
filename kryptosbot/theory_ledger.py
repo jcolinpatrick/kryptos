@@ -121,7 +121,8 @@ class TheoryLedger:
                     best_score      REAL NOT NULL DEFAULT 0.0,
                     best_plaintext  TEXT NOT NULL DEFAULT '',
                     generalization_strength TEXT NOT NULL DEFAULT '',
-                    notes           TEXT NOT NULL DEFAULT ''
+                    notes           TEXT NOT NULL DEFAULT '',
+                    override_justification TEXT NOT NULL DEFAULT ''
                 );
 
                 CREATE INDEX IF NOT EXISTS idx_theories_status ON theories(status);
@@ -256,6 +257,13 @@ class TheoryLedger:
                     "ALTER TABLE theories ADD COLUMN "
                     "estimated_compute_minutes INTEGER NOT NULL DEFAULT 0"
                 )
+            if "override_justification" not in cols:
+                # R2-3 (2026-04-21): additive migration for the
+                # exhaustion-override justification field.
+                conn.execute(
+                    "ALTER TABLE theories ADD COLUMN "
+                    "override_justification TEXT NOT NULL DEFAULT ''"
+                )
 
             pl_cols = {row[1] for row in conn.execute("PRAGMA table_info(pursuit_leads)")}
             if "source_verdict" not in pl_cols:
@@ -308,8 +316,8 @@ class TheoryLedger:
                     status, created_at, updated_at,
                     critic_verdict, experiment_ids, outcome_summary,
                     failure_reason, best_score, best_plaintext,
-                    generalization_strength, notes
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    generalization_strength, notes, override_justification
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 ON CONFLICT(hypothesis_id) DO UPDATE SET
                     title=excluded.title, core_claim=excluded.core_claim,
                     mechanism=excluded.mechanism, family=excluded.family,
@@ -331,7 +339,8 @@ class TheoryLedger:
                     best_score=excluded.best_score,
                     best_plaintext=excluded.best_plaintext,
                     generalization_strength=excluded.generalization_strength,
-                    notes=excluded.notes
+                    notes=excluded.notes,
+                    override_justification=excluded.override_justification
             """, self._theory_to_row(theory))
 
     def get_theory(self, hypothesis_id: str) -> Optional[TheoryRecord]:
@@ -716,6 +725,7 @@ class TheoryLedger:
             t.outcome_summary, t.failure_reason,
             t.best_score, t.best_plaintext,
             t.generalization_strength, t.notes,
+            t.override_justification or "",
         )
 
     def _row_to_theory(self, row: sqlite3.Row) -> TheoryRecord:
@@ -750,6 +760,10 @@ class TheoryLedger:
             best_plaintext=row["best_plaintext"],
             generalization_strength=row["generalization_strength"],
             notes=row["notes"],
+            override_justification=(
+                row["override_justification"]
+                if "override_justification" in row.keys() else ""
+            ),
         )
 
     def _row_to_experiment(self, row: sqlite3.Row) -> ExperimentRecord:

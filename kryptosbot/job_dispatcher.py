@@ -96,6 +96,14 @@ class JobResult:
     eliminated_claim: Optional[str] = None      # populated when job runs to completion with no signal
     admissibility_verdict: str = ""             # "ok" | "rejected: <reason>"
     admissibility_reasons: list[str] = field(default_factory=list)
+    # R2-3 (2026-04-21): when the spec carried override_exhaustion=True,
+    # propagate the justification string into the result so the ledger
+    # preserves WHY the override was claimed. Empty string when override
+    # was not invoked.
+    override_justification: str = ""
+    # R2-3: list of exhaustion-log script_ids this run overrode. Empty
+    # when override was not invoked OR when the spec had no overlap.
+    override_exhaustion_overlap: list[str] = field(default_factory=list)
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -177,16 +185,30 @@ def check_admissibility(
             f"{_CONFIGS_PER_CPU_MINUTE_CAP} configs/min = {budget}"
         )
 
-    # Exhaustion-log overlap check (advisory — flag but do not hard-fail,
-    # because the log's granularity is by-script not by-spec).
+    # Exhaustion-log overlap check. R2-3 (2026-04-21) introduced an
+    # override mechanism: if the spec carries override_exhaustion=True
+    # with a non-empty justification, overlap is logged but NOT added to
+    # reasons. Validation guarantees the justification is non-empty when
+    # override=True, so we can trust it here.
     log = exhaustion_log if exhaustion_log is not None else _load_exhaustion_log()
     overlap = _exhaustion_overlap(spec, log)
     if overlap:
-        reasons.append(
-            f"exhaustion overlap: {len(overlap)} prior entr{'y' if len(overlap) == 1 else 'ies'} "
-            f"already cover this spec's assumption bundle + family "
-            f"(first 3: {overlap[:3]})"
-        )
+        if getattr(spec, "override_exhaustion", False):
+            logger.info(
+                "admissibility: exhaustion overlap (%d entries) present on "
+                "spec %s, overridden with justification: %s",
+                len(overlap),
+                spec.hypothesis_id,
+                (spec.override_justification or "")[:120],
+            )
+        else:
+            reasons.append(
+                f"exhaustion overlap: {len(overlap)} prior entr{'y' if len(overlap) == 1 else 'ies'} "
+                f"already cover this spec's assumption bundle + family "
+                f"(first 3: {overlap[:3]}). If this spec genuinely "
+                "adds information beyond the overlap, re-submit with "
+                "override_exhaustion=True and an override_justification."
+            )
 
     return (not reasons, reasons)
 
@@ -674,6 +696,15 @@ def execute(
     wall_time = time.monotonic() - t_wall_start
     cpu_time = time.process_time() - t_cpu_start
 
+    # R2-3: propagate override metadata into the result so the ledger
+    # preserves WHY a prior-exhaustion spec was run anyway.
+    override_overlap_list: list[str] = []
+    if getattr(spec, "override_exhaustion", False):
+        override_overlap_list = list(_exhaustion_overlap(
+            spec,
+            exhaustion_log if exhaustion_log is not None else _load_exhaustion_log(),
+        ))
+
     result = JobResult(
         hypothesis_id=spec.hypothesis_id,
         spec_hash=spec.spec_hash,
@@ -688,6 +719,11 @@ def execute(
         artifact_path=str(artifact_path),
         assumption_bundle=list(spec.assumption_bundle),
         admissibility_verdict="ok",
+        override_justification=(
+            spec.override_justification
+            if getattr(spec, "override_exhaustion", False) else ""
+        ),
+        override_exhaustion_overlap=override_overlap_list,
     )
 
     # An elimination claim is earned only when the job ran to completion

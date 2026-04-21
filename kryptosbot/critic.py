@@ -406,6 +406,26 @@ class TheoryCritic:
                     f"(not all tested): {sim_titles[0]}"
                 )
 
+        # --- Check 3b (R2-3): override-justification duplicate check ---
+        # If this theory claims an exhaustion-override, its justification
+        # must be genuinely new — not a rephrasing of a prior theory's
+        # justification. Prevents the override from becoming a bypass
+        # mechanism for re-running noise under new wording.
+        override_dup = self._check_override_duplicate(theory)
+        if override_dup is not None:
+            dup_id, dup_justification = override_dup
+            return CriticVerdict(
+                decision=CriticDecision.REJECT_DUPLICATE,
+                confidence=0.9,
+                reasons=[
+                    "override_justification duplicates a prior theory's "
+                    f"justification (Jaccard ≥ {SIMILARITY_THRESHOLD})",
+                    f"Prior theory: {dup_id}",
+                    f"Prior justification: {dup_justification[:100]}",
+                ],
+                similar_hypotheses=[dup_id],
+            )
+
         # --- Check 4: Contradiction check ---
         contradictions = self._check_contradictions(theory)
         if contradictions:
@@ -484,6 +504,49 @@ class TheoryCritic:
     # ------------------------------------------------------------------
     # Internal checks
     # ------------------------------------------------------------------
+
+    def _check_override_duplicate(
+        self, theory: TheoryRecord,
+    ) -> Optional[tuple[str, str]]:
+        """R2-3: detect override_justification collision with a prior theory.
+
+        Returns ``None`` when no collision. Returns ``(prior_id, prior_just)``
+        when this theory's override_justification (first 100 chars,
+        tokenized) has Jaccard similarity ≥ SIMILARITY_THRESHOLD with a
+        previously-tested theory's override_justification.
+
+        The guard only fires for theories that actually carry an
+        override_justification (i.e., claim the exhaustion override);
+        theories without the claim skip this check entirely.
+        """
+        just = (theory.override_justification or "").strip()
+        if not just:
+            return None
+        head = just[:100]
+        this_tokens = self._tokenize(head)
+        if not this_tokens:
+            return None
+        # Walk every tested theory in the ledger. This is O(n) on tested
+        # theory count; fine in practice — the ledger rarely exceeds a
+        # few hundred entries.
+        for status in (TheoryStatus.COMPLETED, TheoryStatus.ELIMINATED):
+            for prior in self.ledger.get_theories_by_status(status):
+                if prior.hypothesis_id == theory.hypothesis_id:
+                    continue
+                prior_just = (prior.override_justification or "").strip()
+                if not prior_just:
+                    continue
+                prior_head = prior_just[:100]
+                prior_tokens = self._tokenize(prior_head)
+                if not prior_tokens:
+                    continue
+                jaccard = (
+                    len(this_tokens & prior_tokens)
+                    / len(this_tokens | prior_tokens)
+                )
+                if jaccard >= SIMILARITY_THRESHOLD:
+                    return (prior.hypothesis_id, prior_just)
+        return None
 
     def _find_similar_theories(self, theory: TheoryRecord) -> list[TheoryRecord]:
         """Find theories with similar mechanism + claim."""

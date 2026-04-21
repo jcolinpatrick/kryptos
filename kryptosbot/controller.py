@@ -1441,6 +1441,20 @@ CONSTRAINTS:
 - Do NOT propose hypotheses for eliminated families (tier 1/2 single-layer)
 - Prioritize hypotheses that would produce high information gain
 
+EXHAUSTION-OVERLAP OVERRIDE (R2-3, available 2026-04-21):
+The dispatcher's admissibility check rejects specs whose cipher family
+substring-matches a prior exhaustion-log entry. If your proposal genuinely
+adds new information beyond that overlap — e.g., a DIFFERENT assumption
+bundle, a different scoring path, a multi-layer composition where the old
+elimination was single-layer, a Bean-linear-subset approach not previously
+run — you may include ``override_exhaustion: true`` and a non-empty
+``override_justification`` in your minimal_test_spec. The justification
+must be specific to why the overlap doesn't apply; do NOT reuse the
+override to rerun previously-eliminated work. The critic rejects overrides
+whose justification (first 100 chars, Jaccard ≥ 0.7) duplicates a prior
+theory's override_justification, so laundering a dead idea under new
+wording is caught automatically.
+
 IMPORTANT — THE PROCEDURAL PARADIGM:
 Sanborn is a sculptor, not a cryptographer. He learned "systems that didn't
 necessarily depend on mathematics" from Scheidt in 2-3 meetings. Gillogly

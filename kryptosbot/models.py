@@ -157,6 +157,13 @@ class TheoryRecord:
     generalization_strength: str = ""
     notes: str = ""
 
+    # R2-3 (2026-04-21): exhaustion-overlap override justification. When
+    # the theory's minimal_test_spec carries override_exhaustion=True,
+    # this field stores the justification verbatim so the critic can
+    # detect duplicate-justification laundering across theories.
+    # Default "" means no override was claimed.
+    override_justification: str = ""
+
     def __post_init__(self) -> None:
         if not self.hypothesis_id and self.core_claim:
             self.hypothesis_id = _stable_id(

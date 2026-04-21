@@ -328,6 +328,23 @@ class HypothesisSpec:
     checkpoint_every_sec: int = 60
     assumption_bundle: list[str] = field(default_factory=list)
     notes: str = ""
+    # R2-3 (2026-04-21): exhaustion-overlap override.
+    #
+    # The dispatcher's admissibility check rejects specs whose assumption-
+    # bundle + cipher family overlap a prior exhaustion-log entry. That
+    # heuristic uses a substring match — Phase 8 observed it rejecting
+    # one-third of legitimate procedural proposals where the
+    # exhaustion-log coverage didn't actually subsume the new assumption
+    # bundle.
+    #
+    # When override_exhaustion=True, the dispatcher demotes exhaustion
+    # overlap from rejection to warning. The justification field is
+    # mandatory: empty-string justification raises a validation error,
+    # and the critic rejects theories whose justification duplicates
+    # (Jaccard ≥ 0.7 on first 100 chars) an already-tested theory's
+    # justification (see critic._check_override_duplicate).
+    override_exhaustion: bool = False
+    override_justification: str = ""
 
     def expected_cardinality(self) -> int:
         """Product of parameter cardinalities across all layers.
@@ -401,6 +418,15 @@ class HypothesisSpec:
             else:
                 for err in self.null_baseline.validate():
                     errors.append(f"null_baseline: {err}")
+        # R2-3: override_exhaustion requires a non-empty justification.
+        # Allow justification without override (harmless — records
+        # rationale); reject override without justification (the whole
+        # point of the mechanism is to force a written reason).
+        if self.override_exhaustion and not (self.override_justification or "").strip():
+            errors.append(
+                "HypothesisSpec.override_exhaustion=True requires a "
+                "non-empty override_justification string (R2-3)"
+            )
         return errors
 
     def is_valid(self) -> bool:
@@ -420,6 +446,8 @@ class HypothesisSpec:
             "checkpoint_every_sec": self.checkpoint_every_sec,
             "assumption_bundle": list(self.assumption_bundle),
             "notes": self.notes,
+            "override_exhaustion": self.override_exhaustion,
+            "override_justification": self.override_justification,
         }
         return d
 
@@ -470,6 +498,8 @@ class HypothesisSpec:
             checkpoint_every_sec=_coerce_int("checkpoint_every_sec", 60),
             assumption_bundle=list(d.get("assumption_bundle", []) or []),
             notes=str(d.get("notes", "") or ""),
+            override_exhaustion=bool(d.get("override_exhaustion", False)),
+            override_justification=str(d.get("override_justification", "") or ""),
         )
 
     @classmethod
