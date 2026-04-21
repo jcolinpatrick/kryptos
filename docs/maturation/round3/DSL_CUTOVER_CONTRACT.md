@@ -38,14 +38,21 @@ automatically.
 identity, vigenere, beaufort, variant_beaufort, columnar, atbash
 ```
 
-**Post-R3-0.5 state (after `CLAUDE_CODE_BRIEF_round3_0_5_dsl_completion.md` lands):**
+**Current state (R3-0.5 exit, 2026-04-21 — 9 entries):**
 
 ```
 identity, vigenere, beaufort, variant_beaufort, columnar, atbash,
 procedural, grille, polybius
 ```
 
-**Kinds in the DSL type literal but still not translatable after R3-0.5:**
+R3-0.5 added the three rightmost kinds. `procedural` dispatches via
+spec-level expansion through `procedural_enumerator.recipe_to_spec`;
+`grille` dispatches via `TransformType.GRILLE` delegating to
+`apply_grille_permutation` under the permutation-only interpretation;
+`polybius` dispatches via the existing `TransformType.BIFID` (straight
+polybius is deferred).
+
+**Kinds in the DSL type literal but still not translatable:**
 
 ```
 rail_fence, route, myszkowski, quagmire, key_tape
@@ -149,21 +156,23 @@ Post-transposition crib alignment is already supported by the dispatcher's kerne
 
 #### Example C — Untranslatable hypothesis (honest rejection)
 
-Theorist's natural-language hypothesis: *"K4 uses the P-F1-1 procedural recipe — reverse the ciphertext, then apply a Polybius 5×5 substitution from the KRYPTOS tableau."*
+Theorist's natural-language hypothesis: *"K4 uses a rail-fence transposition (3 rails) applied to the carved text."*
 
 ```json
 {
   "hypothesis_id": "<filled by controller from core_claim>",
   "dsl_spec": null,
   "core_claim": "...",
-  "mechanism": "Procedural recipe P-F1-1 applied to K4",
-  "notes": "DSL cannot express procedural recipes yet — rail_fence, polybius, procedural, route, myszkowski, and quagmire kinds lack dispatcher translations in R3."
+  "mechanism": "Rail-fence depth-3 transposition",
+  "notes": "rail_fence, route, myszkowski, quagmire, and key_tape still lack dispatcher translations after R3-0.5. This theory correctly declares dsl_spec=null rather than fabricating a spec the framework cannot execute."
 }
 ```
 
-**Outcome:** critic rejects with `CriticDecision.REJECT_UNDERCONSTRAINED`, reason `"dsl_untranslatable: theorist declared dsl_spec=null; DSL does not cover this hypothesis in R3"`.
+**Outcome:** critic rejects with `CriticDecision.REJECT_UNDERCONSTRAINED`, reason `"dsl_untranslatable: cipher-family theory declared dsl_spec=null; DSL requires a spec for Category-A dispatch"` (per §6.5 hybrid-aware critic sketch).
 
-This is the correct behaviour per brief §6.1. Under the brief's scope discipline, DSL growth is deferred. R3-3's real-theorist test must demonstrate that the theorist proposes translatable hypotheses at least 80% of the time so this rejection path is exercised but not dominant.
+Revised 2026-04-21 after R3-0.5 landed: the original Example C used a procedural P-F1-1 hypothesis, but R3-0.5-1 added the procedural translator, making that particular theory dispatchable. The example now uses `rail_fence`, which remains untranslatable.
+
+This is the correct behaviour per brief §6.1. R3-3's real-theorist test measures Category-A spec-production rate (§2.7) only; Category-B methodological theories are not expected to carry DSL specs and are not counted against the 80% floor.
 
 ### 1.4 Validation order
 
