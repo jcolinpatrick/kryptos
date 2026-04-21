@@ -277,13 +277,25 @@ class TheoryCritic:
         """
         Run all critic checks on a theory. Returns a CriticVerdict.
 
-        Checks are ordered from cheapest/most decisive to most expensive:
+        Checks are ordered from cheapest/most decisive to most expensive,
+        with the strongest-reason-first principle:
         1. Completeness check (are required fields present?)
         2. Family elimination check (is this family proven impossible?)
         3. Duplicate detection (is this the same idea we already tested?)
         4. Contradiction check (does this violate known constraints?)
-        5. Discriminability check (can this hypothesis be falsified?)
+        4.5. Prompt-surface scope check (is the theory falsifiable as
+             framed?)
+        5. (R3-2) Category-A/C DSL translatability — runs last among
+           reject-producing checks so stronger rejection reasons fire
+           first (a Tier-1 eliminated cipher-family theory is better
+           reported as "eliminated" than as "no DSL spec")
         6. Information gain estimation
+
+        R3-2 note: the DSL-translatability check was placed after the
+        existing reject-producing checks intentionally. Tests that
+        target prior rejection paths continue to fire on their intended
+        code path; Category-C enforcement applies to theories that
+        survive every other gate.
         """
         reasons: list[str] = []
 
@@ -462,6 +474,63 @@ class TheoryCritic:
                 confidence=0.85,
                 reasons=scope_reasons,
             )
+
+        # --- Check 4.6 (R3-2): Category-A/C DSL translatability ---
+        #
+        # Per DSL_CUTOVER_CONTRACT §2.1, placed after the existing
+        # reject-producing checks so stronger rejection reasons fire
+        # first (e.g., a Tier-1 eliminated family theory is better
+        # reported as "eliminated" than as "no DSL spec"):
+        #   Category A (cipher-family, DSL-expressible) → must carry
+        #       a translatable dsl_spec
+        #   Category B (family ∈ NON_DSL_FAMILIES) → skip DSL check;
+        #       routes to legacy path during dispatch
+        #   Category C (cipher-family, no / malformed / untranslatable
+        #       spec) → reject with REJECT_UNDERCONSTRAINED and reason
+        #       "dsl_untranslatable"
+        family_lower_for_category = (theory.family or "").lower()
+        if family_lower_for_category not in NON_DSL_FAMILIES:
+            from .hypothesis_dsl import validate_hypothesis_spec
+            from .job_dispatcher import _kind_has_translation, _SUPPORTED_KINDS
+
+            if not theory.dsl_spec:
+                return CriticVerdict(
+                    decision=CriticDecision.REJECT_UNDERCONSTRAINED,
+                    confidence=1.0,
+                    reasons=[
+                        "dsl_untranslatable: cipher-family theory declared "
+                        "dsl_spec=null or empty; DSL requires a spec for "
+                        "Category-A dispatch "
+                        "(see DSL_CUTOVER_CONTRACT §2)",
+                    ],
+                )
+
+            parsed = validate_hypothesis_spec(theory.dsl_spec)
+            if not parsed.is_valid:
+                return CriticVerdict(
+                    decision=CriticDecision.REJECT_UNDERCONSTRAINED,
+                    confidence=1.0,
+                    reasons=[
+                        "dsl_untranslatable: dsl_spec failed validation",
+                        *parsed.errors,
+                    ],
+                )
+
+            spec = parsed.value
+            untranslatable = [
+                layer.kind for layer in spec.pipeline
+                if not _kind_has_translation(layer.kind)
+            ]
+            if untranslatable:
+                return CriticVerdict(
+                    decision=CriticDecision.REJECT_UNDERCONSTRAINED,
+                    confidence=1.0,
+                    reasons=[
+                        f"dsl_untranslatable: kinds {untranslatable} have "
+                        f"no dispatcher translation in R3 "
+                        f"(supported: {sorted(_SUPPORTED_KINDS)})",
+                    ],
+                )
 
         # NOTE: Day 2 had a Check 4b here that lexically detected
         # CT-perturbation-class theories and rejected them if no

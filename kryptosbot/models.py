@@ -56,6 +56,12 @@ class WorkerStatus(str, Enum):
     INCONCLUSIVE = "inconclusive"
     ERROR = "error"
     TIMEOUT = "timeout"
+    # R3-2 (2026-04-21): dispatcher rejected the spec before any compute
+    # ran — admissibility failed (translation gap, cardinality > budget,
+    # exhaustion overlap without override, or procedural expansion error).
+    # Distinct from INCONCLUSIVE (ran but nothing stored) and ERROR
+    # (ran and raised). See DSL_CUTOVER_CONTRACT §4.2 for semantics.
+    REJECTED_ADMISSIBILITY = "rejected_admissibility"
 
 
 class EvidenceType(str, Enum):
@@ -163,6 +169,16 @@ class TheoryRecord:
     # detect duplicate-justification laundering across theories.
     # Default "" means no override was claimed.
     override_justification: str = ""
+
+    # R3-2 (2026-04-21): DSL spec attached by the theorist for
+    # Category-A (cipher-family) theories. A dict conforming to
+    # HypothesisSpec.to_dict() shape enables DSL dispatch via
+    # job_dispatcher.execute(). Empty dict means "no spec attached" —
+    # appropriate for Category B (family in NON_DSL_FAMILIES) where
+    # the theory routes to _run_worker_legacy. Category C (cipher-
+    # family with empty/malformed spec) is rejected by the critic.
+    # See DSL_CUTOVER_CONTRACT §5.
+    dsl_spec: dict[str, Any] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
         if not self.hypothesis_id and self.core_claim:

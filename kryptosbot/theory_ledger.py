@@ -122,7 +122,14 @@ class TheoryLedger:
                     best_plaintext  TEXT NOT NULL DEFAULT '',
                     generalization_strength TEXT NOT NULL DEFAULT '',
                     notes           TEXT NOT NULL DEFAULT '',
-                    override_justification TEXT NOT NULL DEFAULT ''
+                    override_justification TEXT NOT NULL DEFAULT '',
+                    -- R3-2 (2026-04-21): DSL spec attached by the theorist
+                    -- for Category-A (cipher-family) theories. JSON-encoded
+                    -- dict matching HypothesisSpec.to_dict() shape. Empty
+                    -- "{}" means no spec — appropriate for Category-B
+                    -- methodological theories that route via the legacy
+                    -- worker path. See DSL_CUTOVER_CONTRACT §5.
+                    dsl_spec        TEXT NOT NULL DEFAULT '{}'
                 );
 
                 CREATE INDEX IF NOT EXISTS idx_theories_status ON theories(status);
@@ -264,6 +271,15 @@ class TheoryLedger:
                     "ALTER TABLE theories ADD COLUMN "
                     "override_justification TEXT NOT NULL DEFAULT ''"
                 )
+            if "dsl_spec" not in cols:
+                # R3-2 (2026-04-21): additive migration for the DSL
+                # spec field. Pre-R3-2 rows default to "{}" — correct,
+                # since those theories were dispatched via the legacy
+                # SDK path and never carried a dsl_spec.
+                conn.execute(
+                    "ALTER TABLE theories ADD COLUMN "
+                    "dsl_spec TEXT NOT NULL DEFAULT '{}'"
+                )
 
             pl_cols = {row[1] for row in conn.execute("PRAGMA table_info(pursuit_leads)")}
             if "source_verdict" not in pl_cols:
@@ -316,8 +332,9 @@ class TheoryLedger:
                     status, created_at, updated_at,
                     critic_verdict, experiment_ids, outcome_summary,
                     failure_reason, best_score, best_plaintext,
-                    generalization_strength, notes, override_justification
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    generalization_strength, notes, override_justification,
+                    dsl_spec
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 ON CONFLICT(hypothesis_id) DO UPDATE SET
                     title=excluded.title, core_claim=excluded.core_claim,
                     mechanism=excluded.mechanism, family=excluded.family,
@@ -340,7 +357,8 @@ class TheoryLedger:
                     best_plaintext=excluded.best_plaintext,
                     generalization_strength=excluded.generalization_strength,
                     notes=excluded.notes,
-                    override_justification=excluded.override_justification
+                    override_justification=excluded.override_justification,
+                    dsl_spec=excluded.dsl_spec
             """, self._theory_to_row(theory))
 
     def get_theory(self, hypothesis_id: str) -> Optional[TheoryRecord]:
@@ -726,6 +744,7 @@ class TheoryLedger:
             t.best_score, t.best_plaintext,
             t.generalization_strength, t.notes,
             t.override_justification or "",
+            json.dumps(t.dsl_spec or {}),
         )
 
     def _row_to_theory(self, row: sqlite3.Row) -> TheoryRecord:
@@ -763,6 +782,11 @@ class TheoryLedger:
             override_justification=(
                 row["override_justification"]
                 if "override_justification" in row.keys() else ""
+            ),
+            dsl_spec=(
+                json.loads(row["dsl_spec"])
+                if "dsl_spec" in row.keys() and row["dsl_spec"]
+                else {}
             ),
         )
 

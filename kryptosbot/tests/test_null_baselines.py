@@ -272,7 +272,9 @@ class TestAlertIntegration:
         from kryptosbot import alerts as alerts_mod
 
         # Force p_value_for_alert to return (0.5, "ok") — well above gate.
-        def fake_pvfa(plaintext, crib_score_value):
+        # R3-2: p_value_for_alert gained an optional `family` kwarg; the
+        # fake must accept it without using it.
+        def fake_pvfa(plaintext, crib_score_value, family=""):
             return (0.5, "ok")
 
         # Replace the imported symbol in the alerts module's namespace at

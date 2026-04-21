@@ -1056,9 +1056,10 @@ def job_result_to_worker_contract(
     from .contracts import _verify_against_kernel
     from .models import WorkerContract, WorkerStatus
 
-    # Determine terminal status.
+    # Determine terminal status. R3-2: rejected admissibility now maps
+    # to WorkerStatus.REJECTED_ADMISSIBILITY (was INCONCLUSIVE pre-R3-2).
     if result.admissibility_verdict == "rejected":
-        status = WorkerStatus.INCONCLUSIVE
+        status = WorkerStatus.REJECTED_ADMISSIBILITY
     elif result.eliminated_claim:
         status = WorkerStatus.DISPROVED
     elif result.total_stored > 0:

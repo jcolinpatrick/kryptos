@@ -561,12 +561,44 @@ def validate_theory_proposals(raw: str) -> TheoryParseReport:
         if ecm is not None and not isinstance(ecm, (int, float)):
             type_errors.append("'estimated_compute_minutes' must be numeric")
 
+        # R3-2 (2026-04-21): dsl_spec must be either a dict or explicit
+        # null. A dict is further validated structurally below so that
+        # syntactic errors surface as "invalid" rather than silently
+        # parsing to an un-dispatchable spec. The critic enforces
+        # Category-A spec requirements (DSL_CUTOVER_CONTRACT §6.5); the
+        # boundary parser only checks shape.
+        dsl_spec_raw = item.get("dsl_spec")
+        if dsl_spec_raw is not None and not isinstance(dsl_spec_raw, dict):
+            type_errors.append(
+                "'dsl_spec' must be a HypothesisSpec object or null"
+            )
+
         if type_errors:
             report.invalid.append({
                 "index": i, "raw": json.dumps(item)[:500],
                 "error": "; ".join(type_errors),
             })
             continue
+
+        # R3-2: if dsl_spec is a dict, validate it structurally via
+        # validate_hypothesis_spec. The validator returns ParseResult;
+        # failure lands the whole theory in `invalid` with the concrete
+        # errors rather than constructing a TheoryRecord that won't
+        # dispatch. null / missing dsl_spec is acceptable at boundary
+        # time (the critic enforces Category-A/B/C semantics).
+        dsl_spec_dict: dict[str, Any] = {}
+        if isinstance(dsl_spec_raw, dict) and dsl_spec_raw:
+            from .hypothesis_dsl import validate_hypothesis_spec
+            parsed = validate_hypothesis_spec(dsl_spec_raw)
+            if not parsed.is_valid:
+                report.invalid.append({
+                    "index": i, "raw": json.dumps(item)[:500],
+                    "error": "dsl_spec invalid: " + "; ".join(parsed.errors),
+                })
+                continue
+            # Preserve the original dict (not the parsed dataclass) so
+            # the ledger stores what the theorist emitted verbatim.
+            dsl_spec_dict = dsl_spec_raw
 
         # Step 4: Construct validated TheoryRecord
         theory = TheoryRecord(
@@ -584,6 +616,7 @@ def validate_theory_proposals(raw: str) -> TheoryParseReport:
             compute_cost_estimate=str(item.get("compute_cost_estimate", "")),
             estimated_compute_minutes=int(item.get("estimated_compute_minutes") or 0),
             minimal_test_spec=item.get("minimal_test_spec", {}),
+            dsl_spec=dsl_spec_dict,
         )
         report.valid.append(theory)
 

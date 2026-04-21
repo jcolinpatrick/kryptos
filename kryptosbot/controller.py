@@ -1558,13 +1558,61 @@ OUTPUT FORMAT (JSON array):
   }}
 ]
 
-OPTIONAL: "dsl_spec" may contain a kryptosbot.hypothesis_dsl.HypothesisSpec
-JSON object describing a bounded, kernel-executable translation of this
-theory. When populated, the dispatcher in kryptosbot.job_dispatcher can
-run the spec directly on the 28-core compute infrastructure, bypassing
-the per-worker scratch-code path. Phase 4 accepts null here; leave null
-when no clean DSL translation exists (e.g. novel procedural recipes not
-in the DSL vocabulary yet).
+DSL_SPEC CONTRACT (R3-2, 2026-04-21):
+Cipher-family theories MUST include a dsl_spec that the dispatcher can
+execute. Methodological/investigative theories (family in geometry,
+k2_coords, geodetic, antipodes, archive_evidence, crib_analysis,
+k3_continuity) may set "dsl_spec": null and will route through the
+legacy worker path with a ledger tag.
+
+Supported cipher kinds (translator lives in kryptosbot.job_dispatcher):
+  identity, vigenere, beaufort, variant_beaufort, columnar, atbash,
+  procedural, grille, polybius
+
+Untranslatable kinds (proposing one triggers CriticDecision.
+REJECT_UNDERCONSTRAINED with reason "dsl_untranslatable"):
+  rail_fence, route, myszkowski, quagmire, key_tape
+
+Example A — single-layer Vigenere on KA alphabet:
+  "dsl_spec": {{
+    "hypothesis_id": "<fill with title-derived slug>",
+    "pipeline": [
+      {{"kind": "vigenere", "alphabet": "KA",
+        "params": [{{"name": "keyword",
+                     "values": ["PALIMPSEST", "KRYPTOS"]}}]}}
+    ],
+    "crib_alignment": "direct_positional",
+    "scoring": "crib_plus_bean",
+    "compute_budget_cpu_minutes": 1,
+    "assumption_bundle": ["single_layer"]
+  }}
+
+Example B — two-layer columnar-then-Vigenere:
+  "dsl_spec": {{
+    "hypothesis_id": "<slug>",
+    "pipeline": [
+      {{"kind": "columnar", "alphabet": "AZ",
+        "params": [{{"name": "width", "values": [7]}},
+                   {{"name": "col_order",
+                     "values": [[3, 1, 4, 0, 6, 2, 5]]}}]}},
+      {{"kind": "vigenere", "alphabet": "AZ",
+        "params": [{{"name": "keyword",
+                     "values": ["KRYPTOS"]}}]}}
+    ],
+    "crib_alignment": "post_transposition",
+    "scoring": "crib_plus_bean",
+    "compute_budget_cpu_minutes": 2,
+    "assumption_bundle": ["multilayer", "columnar_first"]
+  }}
+
+Example C — honest null (non-cipher theory, no spec required):
+  Theory's family is e.g. "geometry" or "k2_coords".
+  "dsl_spec": null
+
+If you cannot express your cipher-family theory as a valid spec over the
+supported kinds, DO NOT fabricate one. Set "dsl_spec": null and accept
+rejection — the framework will later extend the DSL rather than you
+launder an untranslatable theory through a fake spec.
 
 Output ONLY the JSON array. No commentary."""
 
@@ -1641,6 +1689,12 @@ Output ONLY the JSON array. No commentary."""
     ) -> list[WorkerContract]:
         """Dispatch approved theories to workers and collect outcomes.
 
+        R3-2 (2026-04-21): fan-out per DSL_CUTOVER_CONTRACT §2.5.
+        Category-B theories (family ∈ NON_DSL_FAMILIES) route to the
+        legacy SDK path with a worker_role tag; all other approved
+        theories go through the DSL _run_worker (which dispatches via
+        job_dispatcher.execute and does NOT spawn a Claude subprocess).
+
         Every dispatched theory is guaranteed to reach a terminal state
         in the ledger. If a worker raises an exception, the theory gets
         an ERROR contract with its hypothesis_id preserved.
@@ -1650,16 +1704,32 @@ Output ONLY the JSON array. No commentary."""
                 called during worker execution for live progress display.
                 Events: "start", "turn", "tool_use", "done", "error".
         """
+        from .critic import NON_DSL_FAMILIES
+
         tasks = []
+        dispatch_roles: list[str] = []  # align with tasks; ERROR contracts need it
         for theory in theories:
             theory.status = TheoryStatus.RUNNING
             self.ledger.upsert_theory(theory)
-            tasks.append(self._run_worker(theory, on_worker_message))
+            family_lower = (theory.family or "").lower()
+            if family_lower in NON_DSL_FAMILIES:
+                # Category B — methodological / investigative; legacy path.
+                tasks.append(
+                    self._run_worker_legacy(
+                        theory, on_worker_message,
+                        tag="non_dsl_category",
+                    )
+                )
+                dispatch_roles.append("agent_sdk_non_dsl_category")
+            else:
+                # Category A — cipher-family; DSL dispatch.
+                tasks.append(self._run_worker(theory, on_worker_message))
+                dispatch_roles.append("dsl_dispatcher")
 
         outcomes = await asyncio.gather(*tasks, return_exceptions=True)
 
         results = []
-        for theory, outcome in zip(theories, outcomes):
+        for theory, outcome, role in zip(theories, outcomes, dispatch_roles):
             if isinstance(outcome, Exception):
                 logger.error(
                     "Worker for %s raised exception: %s",
@@ -1667,7 +1737,7 @@ Output ONLY the JSON array. No commentary."""
                 )
                 error_contract = WorkerContract(
                     hypothesis_id=theory.hypothesis_id,
-                    worker_role="agent_sdk",
+                    worker_role=role,
                     status=WorkerStatus.ERROR,
                     error=f"Worker exception: {type(outcome).__name__}: {outcome}",
                 )
@@ -1675,7 +1745,7 @@ Output ONLY the JSON array. No commentary."""
                 exp = ExperimentRecord(
                     experiment_id=f"exp-err-{uuid.uuid4().hex[:8]}",
                     hypothesis_id=theory.hypothesis_id,
-                    worker_role="agent_sdk",
+                    worker_role=role,
                     completed_at=_now_iso(),
                     result=error_contract,
                 )
@@ -1698,13 +1768,197 @@ Output ONLY the JSON array. No commentary."""
     async def _run_worker(
         self, theory: TheoryRecord, on_message: Any = None,
     ) -> WorkerContract:
-        """Run a single worker for a theory."""
+        """Dispatch one Category-A (cipher) theory via the DSL.
+
+        R3-2 (2026-04-21): no Claude call on this path. The theorist
+        proposed a HypothesisSpec during the theory-proposal phase; by
+        the time we get here the critic has already validated the spec
+        and confirmed every layer kind is translatable. This function
+        parses the spec, runs admissibility + dispatch through
+        job_dispatcher.execute (which uses the 28-core multiprocessing
+        pool), and converts the JobResult to a kernel-verified
+        WorkerContract via job_result_to_worker_contract.
+
+        Under the hybrid fallback (see DSL_CUTOVER_CONTRACT §2),
+        Category-B theories (family ∈ NON_DSL_FAMILIES) route to
+        _run_worker_legacy instead and never reach this function.
+        """
+        from .hypothesis_dsl import HypothesisSpec
+        from .job_dispatcher import (
+            check_admissibility,
+            execute,
+            job_result_to_worker_contract,
+        )
+
+        async with self._semaphore:
+            exp = ExperimentRecord(
+                experiment_id=f"exp-{uuid.uuid4().hex[:8]}",
+                hypothesis_id=theory.hypothesis_id,
+                worker_role="dsl_dispatcher",
+                config=theory.dsl_spec,
+            )
+            start_time = datetime.now(timezone.utc)
+            if on_message:
+                on_message(theory.hypothesis_id, "start", theory.title)
+
+            # Parse the DSL spec. Invariant: the critic already validated
+            # it, so this should never fail. If it does, surface as ERROR.
+            try:
+                spec = HypothesisSpec.from_dict(theory.dsl_spec)
+                spec_errors = spec.validate()
+                if spec_errors:
+                    raise ValueError(
+                        f"spec revalidation failed (critic missed?): "
+                        f"{spec_errors}"
+                    )
+            except Exception as exc:
+                contract = WorkerContract(
+                    hypothesis_id=theory.hypothesis_id,
+                    worker_role="dsl_dispatcher",
+                    status=WorkerStatus.ERROR,
+                    error=f"spec parse failure (post-critic): {exc}",
+                    duration_seconds=(
+                        datetime.now(timezone.utc) - start_time
+                    ).total_seconds(),
+                )
+                exp.completed_at = _now_iso()
+                exp.result = contract
+                self._record_experiment_and_link(exp)
+                return contract
+
+            # Admissibility check — when rejected, return immediately;
+            # no compute spent. This is the code path the K4 2026-04-21
+            # run never reached (postmortem §6.1.6 "Row D = 0").
+            admissible, reasons = check_admissibility(spec)
+            if not admissible:
+                elapsed = (
+                    datetime.now(timezone.utc) - start_time
+                ).total_seconds()
+                contract = WorkerContract(
+                    hypothesis_id=theory.hypothesis_id,
+                    worker_role="dsl_dispatcher",
+                    status=WorkerStatus.REJECTED_ADMISSIBILITY,
+                    disproof_evidence=[
+                        f"ADMISSIBILITY: {r}" for r in reasons
+                    ],
+                    duration_seconds=elapsed,
+                    narrative_summary=(
+                        "Admissibility check rejected the spec without "
+                        f"running compute. {len(reasons)} reason(s)."
+                    ),
+                    raw_artifacts={
+                        "dsl_pipeline_kinds": [
+                            layer.kind for layer in spec.pipeline
+                        ],
+                        "dsl_spec_hash": spec.spec_hash,
+                    },
+                )
+                if on_message:
+                    on_message(
+                        theory.hypothesis_id, "done",
+                        f"rejected_admissibility: {len(reasons)} reason(s)",
+                    )
+                exp.completed_at = _now_iso()
+                exp.result = contract
+                self._record_experiment_and_link(exp)
+                return contract
+
+            if on_message:
+                on_message(
+                    theory.hypothesis_id, "dispatch",
+                    f"running {spec.expected_cardinality()} configs",
+                )
+
+            # Dispatch via job_dispatcher.execute. asyncio.to_thread so
+            # the controller's event loop stays responsive while the
+            # multiprocessing pool does the work.
+            try:
+                job_result = await asyncio.to_thread(execute, spec)
+            except Exception as exc:
+                elapsed = (
+                    datetime.now(timezone.utc) - start_time
+                ).total_seconds()
+                contract = WorkerContract(
+                    hypothesis_id=theory.hypothesis_id,
+                    worker_role="dsl_dispatcher",
+                    status=WorkerStatus.ERROR,
+                    error=f"dispatch raised: {type(exc).__name__}: {exc}",
+                    duration_seconds=elapsed,
+                )
+                exp.completed_at = _now_iso()
+                exp.result = contract
+                self._record_experiment_and_link(exp)
+                return contract
+
+            elapsed = (datetime.now(timezone.utc) - start_time).total_seconds()
+
+            # Kernel overrule: job_result_to_worker_contract internally
+            # calls _verify_against_kernel, so the returned contract's
+            # crib_score / bean_passed / score are kernel-sourced.
+            contract = job_result_to_worker_contract(
+                job_result, hypothesis_id=theory.hypothesis_id,
+            )
+            contract.duration_seconds = elapsed
+            contract.worker_role = "dsl_dispatcher"
+
+            # Preserve pipeline layer kinds in raw_artifacts for the
+            # alert gate's matched-family null lookup (DSL_CUTOVER_CONTRACT
+            # §7). The JobResult already carries spec_hash via
+            # artifact_path; this denormalizes the kinds for quick access.
+            contract.raw_artifacts.setdefault("dsl_pipeline_kinds", [
+                layer.kind for layer in spec.pipeline
+            ])
+            contract.raw_artifacts.setdefault(
+                "dsl_spec_hash", spec.spec_hash,
+            )
+
+            if on_message:
+                on_message(
+                    theory.hypothesis_id, "done",
+                    f"{contract.status.value} score={contract.score} "
+                    f"in {elapsed:.0f}s",
+                )
+
+            exp.completed_at = _now_iso()
+            exp.result = contract
+            self._record_experiment_and_link(exp)
+            # Defensive cleanup (no-op on DSL path since scratch was
+            # never created, but protects against accidental writes).
+            self._cleanup_worker_artifacts(theory, contract)
+            return contract
+
+    async def _run_worker_legacy(
+        self,
+        theory: TheoryRecord,
+        on_message: Any = None,
+        *,
+        tag: Optional[str] = None,
+    ) -> WorkerContract:
+        """Pre-R3 SDK-subprocess worker path — live in R3 for Category B.
+
+        R3-2 (2026-04-21): kept live under the hybrid fallback policy
+        (DSL_CUTOVER_CONTRACT §6.1). Called by _dispatch_theories for
+        theories whose family is in NON_DSL_FAMILIES. No DeprecationWarning
+        is emitted — this path is part of the supported dispatch surface.
+
+        Args:
+            tag: When "non_dsl_category", the returned WorkerContract
+                 carries worker_role="agent_sdk_non_dsl_category".
+                 Otherwise defaults to "agent_sdk" (pre-R3 behaviour,
+                 preserved for tests and one-off scripts).
+        """
+        # R3-2: resolve worker_role from tag. "non_dsl_category" marks
+        # Category-B dispatches for downstream mortality-table analysis.
+        worker_role_value = (
+            "agent_sdk_non_dsl_category" if tag == "non_dsl_category"
+            else "agent_sdk"
+        )
         async with self._semaphore:
             exp_id = f"exp-{uuid.uuid4().hex[:8]}"
             exp = ExperimentRecord(
                 experiment_id=exp_id,
                 hypothesis_id=theory.hypothesis_id,
-                worker_role="agent_sdk",
+                worker_role=worker_role_value,
                 config=theory.minimal_test_spec,
             )
 
@@ -1876,7 +2130,7 @@ Output ONLY the JSON array. No commentary."""
                     )
                 timeout_contract = WorkerContract(
                     hypothesis_id=theory.hypothesis_id,
-                    worker_role="agent_sdk",
+                    worker_role=worker_role_value,
                     status=WorkerStatus.TIMEOUT,
                     error=f"Timed out after {self.config.worker_timeout_minutes} minutes",
                 )
@@ -1888,7 +2142,7 @@ Output ONLY the JSON array. No commentary."""
                 heartbeat_task.cancel()
                 exc_contract = WorkerContract(
                     hypothesis_id=theory.hypothesis_id,
-                    worker_role="agent_sdk",
+                    worker_role=worker_role_value,
                     status=WorkerStatus.ERROR,
                     error=str(exc),
                 )
@@ -1907,7 +2161,7 @@ Output ONLY the JSON array. No commentary."""
             if parse_result.is_valid:
                 contract = parse_result.value
                 contract.duration_seconds = elapsed
-                contract.worker_role = "agent_sdk"
+                contract.worker_role = worker_role_value
             else:
                 # Explicit parse failure — do NOT infer status from prose
                 logger.warning(
@@ -1916,7 +2170,7 @@ Output ONLY the JSON array. No commentary."""
                 )
                 contract = WorkerContract(
                     hypothesis_id=theory.hypothesis_id,
-                    worker_role="agent_sdk",
+                    worker_role=worker_role_value,
                     status=WorkerStatus.ERROR,
                     error=(
                         "Contract validation failed: "

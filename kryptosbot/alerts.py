@@ -152,19 +152,61 @@ def _ngram_per_char_safe(plaintext: str) -> Optional[float]:
         return None
 
 
+def _matched_null_family_from_contract(contract: WorkerContract) -> str:
+    """Derive the matched-null family tag from a WorkerContract.
+
+    R3-2 (2026-04-21): DSL-dispatched contracts carry
+    ``raw_artifacts["dsl_pipeline_kinds"]`` — a list of CipherLayer kinds
+    in pipeline order. This function maps that list to a R2-4
+    matched-family null key when possible, else returns "" (caller
+    falls back to random_text).
+
+    Matching rules (per DSL_CUTOVER_CONTRACT §7.2):
+      - Single-layer columnar              → "columnar_single"
+      - Two columnar layers in sequence   → "columnar_double"
+      - Single-layer {vigenere, beaufort,
+        variant_beaufort, atbash}          → the kind itself
+      - Anything else (multi-layer,
+        grille, polybius, procedural)      → "" (random_text fallback)
+    """
+    kinds = (contract.raw_artifacts or {}).get("dsl_pipeline_kinds") or []
+    if not isinstance(kinds, list) or not all(isinstance(k, str) for k in kinds):
+        return ""
+    if len(kinds) == 1:
+        k = kinds[0]
+        if k == "columnar":
+            return "columnar_single"
+        if k in ("beaufort", "variant_beaufort", "vigenere"):
+            return k
+        return ""
+    if len(kinds) == 2 and kinds[0] == "columnar" and kinds[1] == "columnar":
+        return "columnar_double"
+    return ""
+
+
 def _p_value_gate_passes(
     plaintext: str,
     crib_score_value: int,
     hypothesis_id: str = "",
+    family: str = "",
 ) -> tuple[bool, str]:
     """Phase 6 p-value gate.
 
     Returns (passes_gate, status) where status is:
-      "ok_gated"       — null cache available, p-value <= ALERT_P_VALUE_GATE
-      "ok_ungated"     — null cache available, p-value > gate (alert suppressed)
-      "cache_miss"     — null cache unavailable; passes_gate=True (legacy fallback)
-                         with a logged warning that the alert is uncalibrated
-      "error"          — unexpected failure; passes_gate=True (fail-open, legacy)
+      "ok_gated"            — null cache available, p-value <= ALERT_P_VALUE_GATE
+      "ok_ungated"          — null cache available, p-value > gate (alert suppressed)
+      "ok_matched_family"   — R3-2: matched-family null consulted, p <= gate
+      "matched_family_ungated" — R3-2: matched-family null, p > gate (suppressed)
+      "matched_null_miss"   — R3-2: caller gave family but matched cache
+                              missing; fell back to random_text null
+      "cache_miss"          — null cache unavailable; passes_gate=True (legacy fallback)
+                              with a logged warning that the alert is uncalibrated
+      "error"               — unexpected failure; passes_gate=True (fail-open, legacy)
+
+    R3-2 (2026-04-21): ``family`` argument routes through the R2-4
+    matched-family null cache when present. When absent, falls back to
+    random_text and records matched_null_miss so the alert path can log
+    the degradation. Empty family preserves Phase 6 behaviour.
 
     The fallback is explicit: an uncalibrated alert is still emitted
     (legacy behaviour) but flagged as uncalibrated in logs and in the
@@ -174,7 +216,7 @@ def _p_value_gate_passes(
     """
     try:
         from .null_baselines import p_value_for_alert
-        p, status = p_value_for_alert(plaintext, crib_score_value)
+        p, status = p_value_for_alert(plaintext, crib_score_value, family=family)
     except Exception as exc:  # pragma: no cover - defensive
         logger.warning(
             "p_value gate failed for %s: %s; falling back to legacy gating",
@@ -190,6 +232,30 @@ def _p_value_gate_passes(
             hypothesis_id,
         )
         return (True, "cache_miss")
+    if status == "matched_null_miss":
+        # Got a p-value from random_text fallback; keep enforcing the
+        # gate but mark the alert's status so downstream records the
+        # degradation.
+        logger.warning(
+            "Alert using random_text fallback p-value for hypothesis %s "
+            "(matched-family null for %r was missing)",
+            hypothesis_id, family,
+        )
+        if p is None:
+            return (True, "cache_miss")
+        passes = p <= ALERT_P_VALUE_GATE
+        return (passes, "matched_null_miss")
+    if status == "ok_matched_family":
+        if p is None:
+            return (True, "error")
+        passes = p <= ALERT_P_VALUE_GATE
+        if not passes:
+            logger.info(
+                "Alert SUPPRESSED by matched-family p-value gate: "
+                "p=%.3g > %.1e (family=%r, hypothesis %s)",
+                p, ALERT_P_VALUE_GATE, family, hypothesis_id,
+            )
+        return (passes, "ok_matched_family" if passes else "matched_family_ungated")
     if status != "ok" or p is None:
         return (True, status or "error")
 
@@ -236,6 +302,10 @@ def classify_outcome(
 
     thresholds = _load_thresholds()
     crib = int(contract.crib_score or 0)
+    # R3-2: derive matched-family tag from the contract's DSL metadata.
+    # Empty string for legacy contracts → p_value_for_alert falls back
+    # to random_text (the Phase 6 behaviour).
+    matched_family = _matched_null_family_from_contract(contract)
 
     # Breakthrough: full crib score AND bean pass AND ngram floor AND
     # p-value gate. If any gate fails, fall through to the SIGNAL branch.
@@ -244,6 +314,7 @@ def classify_outcome(
         ngram_ok = ngram_pc is not None and ngram_pc >= BREAKTHROUGH_NGRAM_FLOOR
         p_value_ok, _p_status = _p_value_gate_passes(
             contract.best_plaintext, crib, contract.hypothesis_id,
+            family=matched_family,
         )
         if ngram_ok and p_value_ok:
             return AlertLevel.BREAKTHROUGH
@@ -275,6 +346,7 @@ def classify_outcome(
         if crib >= thresholds["signal"]:
             p_value_ok, _p_status = _p_value_gate_passes(
                 contract.best_plaintext, crib, contract.hypothesis_id,
+                family=matched_family,
             )
             if p_value_ok:
                 return AlertLevel.SIGNAL

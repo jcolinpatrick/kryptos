@@ -641,18 +641,55 @@ def p_value(score: float, dist: NullDistribution) -> float:
 def p_value_for_alert(
     plaintext: str,
     crib_score_value: int,
+    family: str = "",
 ) -> tuple[Optional[float], str]:
     """Best-effort p-value for the alert path (Phase 6 §8.4).
 
     Returns ``(p_value, status)`` where status is one of:
         "ok"                    — p-value computed from cached distribution
-        "cache_miss"            — null cache not available, p-value is None
+        "ok_matched_family"     — R3-2: matched-family null consulted
+                                  successfully (R2-4 cache hit for ``family``)
+        "matched_null_miss"     — R3-2: caller requested a matched-family
+                                  null but no cache exists for that family;
+                                  p-value was computed from the random_text
+                                  fallback and the alert is flagged
+                                  uncalibrated-for-family
+        "cache_miss"            — null cache not available at all,
+                                  p-value is None
         "error"                 — unexpected failure, p-value is None
 
+    R3-2 (2026-04-21): when ``family`` is non-empty, attempt a
+    matched-family null lookup first (R2-4 calibration cache). If the
+    matched-family cache is missing, fall back to the random_text null
+    with status ``"matched_null_miss"`` so the alert path can log the
+    degradation explicitly. Empty ``family`` preserves the Phase 6
+    behaviour (random_text null only).
+
     Callers should fall back to legacy crib_score-only alert gating when
-    status != "ok" and emit a WARNING that the alert is uncalibrated.
+    status in {"cache_miss", "error"} and emit a WARNING that the alert
+    is uncalibrated.
     """
     try:
+        # R3-2: try matched-family first when caller gave a family hint.
+        if family:
+            matched = get_cached(
+                "crib_score", "matched_variant_family", 97, "AZ",
+                family=family,
+            )
+            if matched is not None:
+                p = matched.p_value(float(crib_score_value))
+                return (p, "ok_matched_family")
+            logger.warning(
+                "Matched-family null cache miss for family=%r; "
+                "falling back to random_text null for alert p-value",
+                family,
+            )
+            dist = get_cached("crib_score", "random_text", 97, "AZ")
+            if dist is None:
+                return (None, "cache_miss")
+            p = dist.p_value(float(crib_score_value))
+            return (p, "matched_null_miss")
+
         dist = get_cached("crib_score", "random_text", 97, "AZ")
         if dist is None:
             return (None, "cache_miss")

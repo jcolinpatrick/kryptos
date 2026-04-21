@@ -436,9 +436,12 @@ class TestJobResultToWorkerContract:
         assert contract.disproof_evidence, "expected eliminated_claim in disproof_evidence"
         assert spec.hypothesis_id in contract.disproof_evidence[0]
 
-    def test_admissibility_rejection_becomes_inconclusive(self, tmp_path: Path):
+    def test_admissibility_rejection_becomes_rejected_admissibility(self, tmp_path: Path):
+        """R3-2: admissibility-rejected specs now produce
+        WorkerStatus.REJECTED_ADMISSIBILITY (previously INCONCLUSIVE).
+        Uses rail_fence since polybius was wired in R3-0.5-3."""
         spec = HypothesisSpec(
-            hypothesis_id="T", pipeline=[CipherLayer(kind="polybius")],
+            hypothesis_id="T", pipeline=[CipherLayer(kind="rail_fence")],
             compute_budget_cpu_minutes=1,
         )
         result = execute(
@@ -446,7 +449,7 @@ class TestJobResultToWorkerContract:
             parallel=False, exhaustion_log={},
         )
         contract = job_result_to_worker_contract(result)
-        assert contract.status == WorkerStatus.INCONCLUSIVE
+        assert contract.status == WorkerStatus.REJECTED_ADMISSIBILITY
         assert any("ADMISSIBILITY" in e for e in contract.disproof_evidence)
 
     def test_contract_fields_are_kernel_verified(self, tmp_path: Path):

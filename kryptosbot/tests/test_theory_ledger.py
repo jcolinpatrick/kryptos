@@ -662,6 +662,9 @@ class TestCritic:
         assert verdict.decision == CriticDecision.REJECT_CONTRADICTED
 
     def test_approve_novel_theory(self, tmp_ledger):
+        """R3-2: cipher-family theories require a translatable dsl_spec to
+        pass the Category-A/C check. Grille is in _SUPPORTED_KINDS after
+        R3-0.5-2, so a minimal grille spec satisfies the requirement."""
         critic = TheoryCritic(tmp_ledger)
         theory = TheoryRecord(
             core_claim="K4 uses a turning grille with compass-derived positions",
@@ -670,6 +673,18 @@ class TestCritic:
             anomalies_exploited=["k2_coordinates"],
             kill_criteria=["No crib match for any rotation"],
             expected_signal="Crib score >= 18",
+            dsl_spec={
+                "hypothesis_id": "novel-grille",
+                "pipeline": [{
+                    "kind": "grille",
+                    "alphabet": "AZ",
+                    "params": [{
+                        "name": "hole_mask",
+                        "values": [list(range(97))],
+                    }],
+                }],
+                "compute_budget_cpu_minutes": 1,
+            },
         )
         verdict = critic.evaluate(theory)
         assert verdict.decision == CriticDecision.APPROVE
@@ -835,14 +850,24 @@ class TestCritic:
         assert verdict.decision == CriticDecision.REJECT_ELIMINATED
 
     def test_batch_evaluation(self, tmp_ledger):
+        """R3-2: cipher-family 'novel' theory carries a minimal identity
+        dsl_spec to satisfy the Category-A translatability check."""
         critic = TheoryCritic(tmp_ledger)
         # Add a family so "novel" doesn't get rejected for low info
         f = FamilyRecord(family_id="novel", name="Novel", status=FamilyStatus.ACTIVE,
                          total_theories=1)
         tmp_ledger.upsert_family(f)
         theories = [
-            TheoryRecord(core_claim="Claim A", mechanism="M", family="novel",
-                         kill_criteria=["Test"], expected_signal="Score > 10"),
+            TheoryRecord(
+                core_claim="Claim A", mechanism="M", family="novel",
+                kill_criteria=["Test"], expected_signal="Score > 10",
+                dsl_spec={
+                    "hypothesis_id": "batch-A",
+                    "pipeline": [{"kind": "identity", "alphabet": "AZ",
+                                   "params": []}],
+                    "compute_budget_cpu_minutes": 1,
+                },
+            ),
             TheoryRecord(core_claim="K4 is Caesar", mechanism="Shift",
                          family="caesar"),
         ]
