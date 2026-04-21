@@ -165,12 +165,15 @@ class TestQueryExhaustion:
 # ─── 4. compute_null_baseline ────────────────────────────────────────────────
 
 class TestComputeNullBaseline:
-    def setup_method(self):
-        # Don't delete the cache — slow to rebuild. Tests are side-effect
-        # tolerant because the baseline is deterministic (fixed seed).
-        pass
+    """Phase 6 wired the tool to kryptosbot.null_baselines.
 
-    def test_happy_path_supported_combo(self):
+    Shape contract: success returns summary_dict keys including
+    scorer_name, method, n_chars, alphabet, mean, stdev, percentiles
+    (nested dict with p01..p999), parametric_model, p_value_tail_method.
+    Unknown scorer/method/alphabet yields ``status='error'`` (hard
+    validation), not ``not_yet_available``."""
+
+    def test_happy_path_crib_score_combo(self):
         env = _invoke(compute_null_baseline_tool, {
             "scorer": "crib_score",
             "method": "random_text",
@@ -179,33 +182,52 @@ class TestComputeNullBaseline:
         })
         assert env["status"] == "ok"
         d = env["data"]
-        assert d["scorer"] == "crib_score"
+        assert d["scorer_name"] == "crib_score"
         assert d["n_chars"] == 97
         assert "mean" in d and "stdev" in d
-        # Mean of crib_score on random 97-char text should be ~0.5-1.5
-        # (24 crib positions, each matching with prob 1/26).
+        # 24 Bernoulli(1/26) sum ⇒ mean ≈ 24/26 ≈ 0.923
         assert 0.0 <= d["mean"] <= 3.0, f"unexpected mean: {d['mean']}"
-        assert d["p99"] >= d["p50"]
+        # Percentiles nested under 'percentiles'.
+        pct = d["percentiles"]
+        assert pct["p99"] >= pct["p50"]
+        # parametric model populated for crib_score × random_text
+        assert d["parametric_model"] == "binomial"
 
-    def test_adversarial_unsupported_scorer(self):
+    def test_happy_path_ngram_score_combo(self):
+        """Phase 6 added ngram_score support with normal-approx tail."""
         env = _invoke(compute_null_baseline_tool, {
-            "scorer": "ngram_score",          # Phase 5 only does crib_score
+            "scorer": "ngram_score",
             "method": "random_text",
             "n_chars": 97,
             "alphabet": "AZ",
         })
-        assert env["status"] == "not_yet_available"
-        assert "Phase 6" in env["data"]["reason"]
+        if env["status"] == "error":
+            # Cache not built; skip rather than fail.
+            pytest.skip(f"ngram_score cache unavailable: {env['data']}")
+        assert env["status"] == "ok"
+        assert env["data"]["parametric_model"] == "normal"
 
-    def test_adversarial_unsupported_alphabet(self):
+    def test_adversarial_unknown_scorer_hard_rejected(self):
+        """Unknown scorer (not in _VALID_SCORERS) is an error, not a
+        'not_yet_available'."""
+        env = _invoke(compute_null_baseline_tool, {
+            "scorer": "not_a_scorer",
+            "method": "random_text",
+            "n_chars": 97,
+            "alphabet": "AZ",
+        })
+        assert env["status"] == "error"
+        assert any("scorer=" in d for d in env["data"]["details"])
+
+    def test_adversarial_unknown_alphabet_hard_rejected(self):
         env = _invoke(compute_null_baseline_tool, {
             "scorer": "crib_score",
             "method": "random_text",
             "n_chars": 97,
-            "alphabet": "KA",                 # Phase 5 only does AZ
+            "alphabet": "EBCDIC",
         })
-        assert env["status"] == "not_yet_available"
-        assert env["data"]["requested"]["alphabet"] == "KA"
+        assert env["status"] == "error"
+        assert any("alphabet=" in d for d in env["data"]["details"])
 
 
 # ─── 5. score_candidate_canonical ────────────────────────────────────────────

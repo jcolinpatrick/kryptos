@@ -59,6 +59,13 @@ class ScoreBreakdown:
     # Composite
     is_breakthrough: bool = False
 
+    # Phase 6: optional null-baseline p-values. Populated by callers that
+    # pass include_p_values=True into score_candidate (or equivalent path).
+    # Keys are scorer names ("crib_score", "ngram_score", "composite") and
+    # values are right-tailed p-values in [0, 1]. Default None preserves
+    # backward compatibility for callers that don't load the null cache.
+    p_value_breakdown: Optional[Dict[str, float]] = None
+
     @property
     def summary(self) -> str:
         parts = [
@@ -95,6 +102,8 @@ class ScoreBreakdown:
             d["word_score"] = self.word_score
             d["word_count"] = self.word_count
             d["longest_word"] = self.longest_word
+        if self.p_value_breakdown is not None:
+            d["p_value_breakdown"] = dict(self.p_value_breakdown)
         return d
 
 
@@ -103,6 +112,7 @@ def score_candidate(
     bean_result: Optional[BeanResult] = None,
     ngram_scorer=None,
     word_scorer=None,
+    include_p_values: bool = False,
 ) -> ScoreBreakdown:
     """Score a plaintext candidate through the canonical evaluation path.
 
@@ -173,7 +183,41 @@ def score_candidate(
         bean_passed=bean_pass,
         bean_detail=bean_det,
         is_breakthrough=is_breakthrough(crib_sc, bean_pass),
+        p_value_breakdown=_compute_p_value_breakdown(
+            plaintext, crib_sc, ngram_total,
+        ) if include_p_values else None,
     )
+
+
+def _compute_p_value_breakdown(
+    plaintext: str,
+    crib_score_value: int,
+    ngram_score_value: Optional[float],
+) -> Optional[Dict[str, float]]:
+    """Look up the null cache and return per-scorer p-values.
+
+    Phase 6 wiring. Never raises — on any failure (cache miss, import
+    error) returns None so the caller sees ``p_value_breakdown = None``
+    and knows the scoring was uncalibrated. Alerts.py has matching
+    fallback logic.
+    """
+    try:
+        from kryptosbot.null_baselines import get_cached
+    except ImportError:
+        return None
+
+    pvs: Dict[str, float] = {}
+
+    dist_crib = get_cached("crib_score", "random_text", 97, "AZ")
+    if dist_crib is not None:
+        pvs["crib_score"] = float(dist_crib.p_value(float(crib_score_value)))
+
+    if ngram_score_value is not None:
+        dist_ng = get_cached("ngram_score", "random_text", 97, "AZ")
+        if dist_ng is not None:
+            pvs["ngram_score"] = float(dist_ng.p_value(float(ngram_score_value)))
+
+    return pvs if pvs else None
 
 
 # ── Position-free scoring ────────────────────────────────────────────────

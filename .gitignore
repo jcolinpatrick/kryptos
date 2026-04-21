@@ -71,6 +71,10 @@ agent_analysis.json
 scripts/vm_capability_report.sh
 bootstrap_report.json
 manifest.json
+# Phase 6 null-baseline manifest is committed (small summary file);
+# the large per-distribution cache lives under results/null_baselines/
+# which is already ignored via the broader results/ rule.
+!null_baselines/manifest.json
 framework_inventory.json
 exhaustion_log.json
 kryptos_organize.py

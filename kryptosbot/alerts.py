@@ -124,6 +124,14 @@ def _load_thresholds() -> dict[str, int]:
 # ngram still surfaces in the audit trail.
 BREAKTHROUGH_NGRAM_FLOOR: float = -5.5
 
+# Phase 6: p-value gate for SIGNAL / BREAKTHROUGH alerts.
+# The brief mandates firing on p_value_vs_null <= 1e-6 AND crib_score >= 18.
+# For crib_score >= 18 under the random_text null the analytic
+# (Binomial(24, 1/26)) p-value is ~3.7e-21, comfortably below the gate.
+# The gate is primarily there to suppress FALSE SIGNAL alerts at lower
+# crib_scores where the empirical null tail matters.
+ALERT_P_VALUE_GATE: float = 1e-6
+
 
 def _ngram_per_char_safe(plaintext: str) -> Optional[float]:
     """Return per-char quadgram log-prob for plaintext, or None on error.
@@ -144,6 +152,56 @@ def _ngram_per_char_safe(plaintext: str) -> Optional[float]:
         return None
 
 
+def _p_value_gate_passes(
+    plaintext: str,
+    crib_score_value: int,
+    hypothesis_id: str = "",
+) -> tuple[bool, str]:
+    """Phase 6 p-value gate.
+
+    Returns (passes_gate, status) where status is:
+      "ok_gated"       — null cache available, p-value <= ALERT_P_VALUE_GATE
+      "ok_ungated"     — null cache available, p-value > gate (alert suppressed)
+      "cache_miss"     — null cache unavailable; passes_gate=True (legacy fallback)
+                         with a logged warning that the alert is uncalibrated
+      "error"          — unexpected failure; passes_gate=True (fail-open, legacy)
+
+    The fallback is explicit: an uncalibrated alert is still emitted
+    (legacy behaviour) but flagged as uncalibrated in logs and in the
+    AlertEvent.contradiction_note. Once the null cache exists
+    (scripts/_infra/calibrate_null_baselines.py has been run on this
+    kernel commit), the gate becomes enforcing.
+    """
+    try:
+        from .null_baselines import p_value_for_alert
+        p, status = p_value_for_alert(plaintext, crib_score_value)
+    except Exception as exc:  # pragma: no cover - defensive
+        logger.warning(
+            "p_value gate failed for %s: %s; falling back to legacy gating",
+            hypothesis_id, exc,
+        )
+        return (True, "error")
+
+    if status == "cache_miss":
+        logger.warning(
+            "Alert is UNCALIBRATED: null baseline cache missing for "
+            "hypothesis %s. Run scripts/_infra/calibrate_null_baselines.py "
+            "to enable p-value gating.",
+            hypothesis_id,
+        )
+        return (True, "cache_miss")
+    if status != "ok" or p is None:
+        return (True, status or "error")
+
+    passes = p <= ALERT_P_VALUE_GATE
+    if not passes:
+        logger.info(
+            "Alert SUPPRESSED by p-value gate: p=%.3g > %.1e (hypothesis %s)",
+            p, ALERT_P_VALUE_GATE, hypothesis_id,
+        )
+    return (passes, "ok_gated" if passes else "ok_ungated")
+
+
 def classify_outcome(
     contract: WorkerContract,
     threshold: AlertLevel,
@@ -159,6 +217,13 @@ def classify_outcome(
     quadgram score. Failing the floor downgrades BREAKTHROUGH to SIGNAL
     — the result is still worth investigation, but not a full-volume
     alert — and the downgrade is logged so the audit trail records it.
+
+    Phase 6: both SIGNAL and BREAKTHROUGH additionally gate on
+    p_value <= ALERT_P_VALUE_GATE (1e-6) against the cached null
+    distribution. When the null cache is unavailable, the gate fails
+    open to the legacy behaviour with a WARNING logged — so the
+    framework never becomes silent on a high score just because
+    calibration hasn't run yet.
     """
     if threshold == AlertLevel.NONE:
         return None
@@ -172,12 +237,15 @@ def classify_outcome(
     thresholds = _load_thresholds()
     crib = int(contract.crib_score or 0)
 
-    # Breakthrough: full crib score AND bean pass AND ngram floor. If
-    # ngram scoring is unavailable, fail down to SIGNAL rather than
-    # treating an unvetted 24/24 as a BREAKTHROUGH.
+    # Breakthrough: full crib score AND bean pass AND ngram floor AND
+    # p-value gate. If any gate fails, fall through to the SIGNAL branch.
     if crib >= thresholds["breakthrough"] and contract.bean_passed:
         ngram_pc = _ngram_per_char_safe(contract.best_plaintext)
-        if ngram_pc is not None and ngram_pc >= BREAKTHROUGH_NGRAM_FLOOR:
+        ngram_ok = ngram_pc is not None and ngram_pc >= BREAKTHROUGH_NGRAM_FLOOR
+        p_value_ok, _p_status = _p_value_gate_passes(
+            contract.best_plaintext, crib, contract.hypothesis_id,
+        )
+        if ngram_ok and p_value_ok:
             return AlertLevel.BREAKTHROUGH
         if ngram_pc is None:
             logger.warning(
@@ -185,7 +253,7 @@ def classify_outcome(
                 "(hypothesis_id=%s)",
                 contract.hypothesis_id,
             )
-        else:
+        elif not ngram_ok:
             # Fabrication-shaped result: crib+bean hit but the plaintext is
             # gibberish. Log the downgrade and fall through to the SIGNAL
             # branch so the result still surfaces, but not at BREAKTHROUGH
@@ -195,11 +263,25 @@ def classify_outcome(
                 "floor=%.3f (fabrication-shaped result from hypothesis_id=%s)",
                 ngram_pc, BREAKTHROUGH_NGRAM_FLOOR, contract.hypothesis_id,
             )
+        elif not p_value_ok:
+            logger.warning(
+                "BREAKTHROUGH downgraded to SIGNAL: p-value gate not satisfied "
+                "(hypothesis_id=%s)",
+                contract.hypothesis_id,
+            )
 
-    # Signal: above SIGNAL threshold (regardless of bean_passed)
+    # Signal: above SIGNAL threshold AND p-value gate.
     if threshold in (AlertLevel.SIGNAL, AlertLevel.BREAKTHROUGH):
         if crib >= thresholds["signal"]:
-            return AlertLevel.SIGNAL
+            p_value_ok, _p_status = _p_value_gate_passes(
+                contract.best_plaintext, crib, contract.hypothesis_id,
+            )
+            if p_value_ok:
+                return AlertLevel.SIGNAL
+            logger.info(
+                "SIGNAL suppressed by p-value gate (hypothesis_id=%s, crib=%d)",
+                contract.hypothesis_id, crib,
+            )
 
     return None
 

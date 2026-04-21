@@ -340,70 +340,33 @@ async def query_exhaustion_tool(args: dict[str, Any]) -> dict[str, Any]:
     ))
 
 
-# ─── 4. compute_null_baseline (Phase-6 stub + minimal Phase-5 baseline) ──────
+# ─── 4. compute_null_baseline (Phase-6 wired) ────────────────────────────────
 #
-# Phase 4 note: full null-baseline infrastructure is Phase 6 work. The
-# Phase-5 implementation here handles exactly one scorer × method
-# combination (crib_score × random_text at CT length 97) by running
-# a deterministic Monte Carlo on demand and caching the result. Other
-# combos return "not_yet_available" with a pointer at Phase 6. Callers
-# who need other combos should wait for the Phase 6 calibration module.
+# Phase 6 replaced the Phase-5 single-combo stub with real calibrated
+# baselines from ``kryptosbot.null_baselines``. The tool now supports
+# every (scorer, method, alphabet, n_chars) combination present in the
+# cache manifest at call time. On cache miss it attempts a
+# ``get_or_build`` with standard sample counts — that may take up to
+# ~5 seconds for ngram_score. Callers who cannot block should prefer
+# the offline ``scripts/_infra/calibrate_null_baselines.py`` runner.
 
+# Legacy path retained for backward-compat with any callers that pre-dated
+# the Phase-6 rewire (not in ALL_TOOLS, not surfaced through the MCP server).
 _PHASE5_NULL_CACHE_PATH = (
     Path(__file__).resolve().parent.parent
     / "results" / "null_baselines_phase5_stub.json"
 )
 
 
-def _build_phase5_null_baseline_for_crib_score(
-    n_samples: int = 10_000,
-    seed: int = 20260421,
-) -> dict[str, Any]:
-    """Minimal demonstrator. Phase 6 replaces this with a proper module."""
-    import random as _random
-    from kryptos.kernel.scoring.crib_score import score_cribs
-
-    rng = _random.Random(seed)
-    scores = []
-    for _ in range(n_samples):
-        pt = "".join(
-            rng.choice("ABCDEFGHIJKLMNOPQRSTUVWXYZ") for _ in range(97)
-        )
-        scores.append(score_cribs(pt))
-    scores.sort()
-    n = len(scores)
-    mean = sum(scores) / n
-    var = sum((s - mean) ** 2 for s in scores) / n
-    def pct(p: float) -> float:
-        return scores[min(n - 1, int(p * n))]
-    return {
-        "scorer": "crib_score",
-        "method": "random_text",
-        "n_chars": 97,
-        "alphabet": "AZ",
-        "n_samples": n,
-        "seed": seed,
-        "mean": mean,
-        "stdev": var ** 0.5,
-        "min": scores[0],
-        "max": scores[-1],
-        "p50": pct(0.50),
-        "p90": pct(0.90),
-        "p95": pct(0.95),
-        "p99": pct(0.99),
-        "kernel_commit": _KERNEL_COMMIT,
-    }
-
-
 @tool(
     "compute_null_baseline",
     "Return the cached null distribution summary (mean, stdev, "
     "percentiles) for a given (scorer, method, n_chars, alphabet) "
-    "combination. Phase 5 supports ONLY (scorer='crib_score', "
-    "method='random_text', n_chars=97, alphabet='AZ') as a demonstrator; "
-    "other combinations return 'not_yet_available' with a Phase 6 "
-    "pointer. The Phase-5 baseline is deterministic (fixed seed) and "
-    "cached to results/null_baselines_phase5_stub.json.",
+    "combination. Phase 6: backed by kryptosbot.null_baselines; any "
+    "combination listed in _VALID_SCORERS × _VALID_METHODS × _VALID_ALPHABETS "
+    "is supported. On cache miss the tool builds + caches deterministically; "
+    "prefer the offline scripts/_infra/calibrate_null_baselines.py runner "
+    "for bulk calibration.",
     {"scorer": str, "method": str, "n_chars": int, "alphabet": str},
 )
 async def compute_null_baseline_tool(args: dict[str, Any]) -> dict[str, Any]:
@@ -412,45 +375,62 @@ async def compute_null_baseline_tool(args: dict[str, Any]) -> dict[str, Any]:
     n_chars = int(args.get("n_chars", 97))
     alphabet = args.get("alphabet", "AZ")
 
-    supported = (scorer == "crib_score"
-                 and method == "random_text"
-                 and n_chars == 97
-                 and alphabet == "AZ")
-    if not supported:
+    from .null_baselines import (
+        _VALID_SCORERS, _VALID_METHODS, _VALID_ALPHABETS,
+        get_cached, get_or_build, calibration_stale,
+    )
+
+    # Validate the combo against the module's registries.
+    bad_fields = []
+    if scorer not in _VALID_SCORERS:
+        bad_fields.append(
+            f"scorer={scorer!r} not in {sorted(_VALID_SCORERS)}"
+        )
+    if method not in _VALID_METHODS:
+        bad_fields.append(
+            f"method={method!r} not in {sorted(_VALID_METHODS)}"
+        )
+    if alphabet not in _VALID_ALPHABETS:
+        bad_fields.append(
+            f"alphabet={alphabet!r} not in {sorted(_VALID_ALPHABETS)}"
+        )
+    if bad_fields:
         return _text_response(_envelope(
-            "not_yet_available",
-            {
-                "reason": (
-                    "Phase 5 supports only (scorer='crib_score', "
-                    "method='random_text', n_chars=97, alphabet='AZ'). "
-                    "Phase 6 null-baseline calibration module will extend "
-                    "to other scorers and methods."
-                ),
-                "requested": {
-                    "scorer": scorer, "method": method,
-                    "n_chars": n_chars, "alphabet": alphabet,
-                },
-            },
-            extra_provenance={"pending_phase": 6},
+            "error",
+            {"reason": "invalid request", "details": bad_fields},
         ))
 
-    # Cache hit or miss.
-    if _PHASE5_NULL_CACHE_PATH.exists():
-        try:
-            cached = json.loads(_PHASE5_NULL_CACHE_PATH.read_text())
-            return _text_response(_envelope(
-                "ok", cached,
-                extra_provenance={"cache": "hit"},
-            ))
-        except (OSError, json.JSONDecodeError) as exc:
-            logger.warning("Null cache unreadable; rebuilding: %s", exc)
+    try:
+        # Prefer cache hit for latency. Only rebuild on miss.
+        cached = get_cached(scorer, method, n_chars, alphabet)
+        cache_status: str
+        if cached is not None and not calibration_stale(cached):
+            dist = cached
+            cache_status = "hit"
+        elif cached is not None and calibration_stale(cached):
+            dist = get_or_build(scorer, method, n_chars, alphabet)
+            cache_status = "rebuilt_stale"
+        else:
+            dist = get_or_build(scorer, method, n_chars, alphabet)
+            cache_status = "miss_built"
+    except NotImplementedError as exc:
+        return _text_response(_envelope(
+            "not_yet_available",
+            {"reason": str(exc),
+             "requested": {"scorer": scorer, "method": method,
+                           "n_chars": n_chars, "alphabet": alphabet}},
+            extra_provenance={"pending_phase": 7},
+        ))
+    except Exception as exc:  # pragma: no cover - defensive
+        return _text_response(_envelope(
+            "error",
+            {"reason": f"{type(exc).__name__}: {exc}"},
+        ))
 
-    summary = _build_phase5_null_baseline_for_crib_score()
-    _PHASE5_NULL_CACHE_PATH.parent.mkdir(parents=True, exist_ok=True)
-    _PHASE5_NULL_CACHE_PATH.write_text(json.dumps(summary, indent=2))
+    summary = dist.to_summary_dict()
     return _text_response(_envelope(
         "ok", summary,
-        extra_provenance={"cache": "miss_built"},
+        extra_provenance={"cache": cache_status},
     ))
 
 
