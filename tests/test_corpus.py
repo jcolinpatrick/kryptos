@@ -229,8 +229,8 @@ class TestVariantGenerator:
 class TestIngester:
     """Text ingestion and segmentation."""
 
-    def test_paragraph_segmentation(self):
-        ingester = TextIngester(cache_dir="/tmp/kryptos_test_cache")
+    def test_paragraph_segmentation(self, tmp_path):
+        ingester = TextIngester(cache_dir=str(tmp_path / "cache"))
         # Simulate a multi-paragraph text
         text = (
             "First paragraph about Tutankhamen and his tomb.\n"
@@ -242,30 +242,30 @@ class TestIngester:
             "Third paragraph is about Nefertiti.\n"
         )
         # Write temp file
-        tmp = "/tmp/kryptos_test_ingest.txt"
+        tmp = tmp_path / "ingest.txt"
         with open(tmp, "w") as f:
             f.write(text)
 
         passages = ingester.load_local(
-            tmp, title="Test", author="Test", is_ocr=False
+            str(tmp), title="Test", author="Test", is_ocr=False
         )
         # Should get 3 passages (each paragraph > 20 chars)
         assert len(passages) >= 2
         assert all(p.passage_id for p in passages)
         assert all(p.provenance.title == "Test" for p in passages)
 
-    def test_short_blocks_skipped(self):
-        ingester = TextIngester(cache_dir="/tmp/kryptos_test_cache")
+    def test_short_blocks_skipped(self, tmp_path):
+        ingester = TextIngester(cache_dir=str(tmp_path / "cache"))
         text = (
             "I\n\n"
             "II\n\n"
             "This is a longer paragraph that should be kept as a passage.\n"
         )
-        tmp = "/tmp/kryptos_test_short.txt"
+        tmp = tmp_path / "short.txt"
         with open(tmp, "w") as f:
             f.write(text)
         passages = ingester.load_local(
-            tmp, title="Test", author="Test", is_ocr=False
+            str(tmp), title="Test", author="Test", is_ocr=False
         )
         # Only the long paragraph should survive (>20 alpha chars)
         assert len(passages) == 1
@@ -285,8 +285,8 @@ class TestIngester:
         assert "footer stuff" not in result
         assert "actual content" in result
 
-    def test_chapter_detection(self):
-        ingester = TextIngester(cache_dir="/tmp/kryptos_test_cache")
+    def test_chapter_detection(self, tmp_path):
+        ingester = TextIngester(cache_dir=str(tmp_path / "cache"))
         text = (
             "CHAPTER I. THE DISCOVERY\n"
             "The Valley of the Kings at Thebes was well explored by this time.\n"
@@ -296,11 +296,11 @@ class TestIngester:
             "CHAPTER II. THE TOMB\n"
             "The entrance was sealed with plaster bearing the royal cartouche.\n"
         )
-        tmp = "/tmp/kryptos_test_chapter.txt"
+        tmp = tmp_path / "chapter.txt"
         with open(tmp, "w") as f:
             f.write(text)
         passages = ingester.load_local(
-            tmp, title="Test", author="Test", is_ocr=False
+            str(tmp), title="Test", author="Test", is_ocr=False
         )
         # At least one passage should have chapter info
         chapters = [p.provenance.chapter for p in passages if p.provenance.chapter]

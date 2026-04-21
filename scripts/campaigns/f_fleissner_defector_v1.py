@@ -22,10 +22,17 @@ Q2 autokey reached 13/24 (KRYPTOS:9×9). DEFECTOR:AZ_beau is the strongest
 cipher model (15/24 with col7). This tests whether Fleissner transposition
 can match or exceed col7.
 
-Consensus null mask (17 fixed positions from 15/24 col7 result) used as
-warm-start seed for SA.
+WARNING: historical / reproducibility artifact. This script still warm-starts
+from a retired consensus-null construct and must not be used as live evidence
+without explicit operator intent.
+
+Use `--allow-retired-construct` to run it.
+
+Consensus null mask (17 fixed positions from the retired 15/24 col7 result)
+used as warm-start seed for SA.
 """
 
+import argparse
 import math
 import os
 import random
@@ -175,7 +182,24 @@ GRID_CONFIGS = [
 ]
 
 
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--allow-retired-construct",
+        action="store_true",
+        help="Acknowledge that this script is a historical artifact using a retired construct.",
+    )
+    return parser.parse_args()
+
+
 def main():
+    args = parse_args()
+    if not args.allow_retired_construct:
+        raise SystemExit(
+            "Refusing to run retired-construct historical artifact without "
+            "--allow-retired-construct."
+        )
+
     t_start = time.time()
     random.seed(42)
 

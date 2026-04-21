@@ -6,7 +6,7 @@
 
 <p align="center">
   <strong>An open-source computational analysis of Kryptos K4</strong><br>
-  671 billion+ configurations tested. 486 eliminations recorded. Zero breakthroughs yet.
+  671 billion+ configurations evaluated across recorded experiments. 494 eliminations recorded. Zero verified breakthroughs.
 </p>
 
 <p align="center">
@@ -22,7 +22,7 @@
 
 **Kryptos** is an encrypted sculpture at CIA headquarters in Langley, Virginia. Installed in 1990 by artist Jim Sanborn with cryptographic assistance from Ed Scheidt (retired Chairman of the CIA Cryptographic Center), it contains four encrypted messages. The first three (K1–K3) were solved in 1998–1999. **The fourth, K4, remains unsolved after 35 years.**
 
-This repository is a systematic attempt to solve K4 — or at least to rigorously document what doesn't work.
+This repository is a systematic attempt to solve K4 — or at least to rigorously document what doesn't work within clearly stated assumptions.
 
 ### K4 at a glance
 
@@ -63,7 +63,7 @@ ops/api/              # FastAPI backend (theory classifier, submission queue)
 
 ## Quick start
 
-**Python 3.11+** required. No external runtime dependencies — stdlib only. `pytest` is the only dev dependency.
+**Python 3.11+** required. The repo uses a small Python dependency stack for testing, scientific computing, web/API serving, and agent tooling; see [requirements.txt](requirements.txt).
 
 ```bash
 # Clone
@@ -91,16 +91,16 @@ Every candidate decryption is scored against known constraints:
 |-------|---------------|---------|
 | 0-9   | Noise         | Expected random performance |
 | 10-17 | Interesting   | Worth logging, likely noise |
-| 18-23 | Signal        | Unusual at short periods; likely false positive at periods >7 |
+| 18-23 | Signal        | Unusual within tested scope; requires follow-up and validation |
 | 24    | Breakthrough  | All cribs match — potential solution |
 
 The score is based on crib consistency (do the known plaintext positions produce a valid keystream?), Bean constraints (equality/inequality relationships between key positions), index of coincidence, and n-gram quality.
 
-**After 671 billion+ configurations: the best score achieved is noise-level within tested families and parameter ranges.** No single-layer classical cipher produces a meaningful result on K4 under direct positional correspondence.
+**After 671 billion+ configurations: no verified solution has emerged within the tested families and parameter ranges.** Many standard bounded classical families have been saturated under direct positional correspondence, but that does not rule out multi-layer, procedural, or differently aligned constructions.
 
 ## What's been eliminated
 
-The [internal.com](https://internal.com/browse/) site documents 390 formal eliminations across 7 categories:
+The [internal.com](https://internal.com/browse/) site currently documents 494 formal eliminations across 7 categories:
 
 - **Substitution** — Vigenere, Beaufort, Quagmire, Hill, Caesar, mixed alphabets
 - **Transposition** — Columnar, double-columnar, AMSCO, Myszkowski, rail fence, route, grille
@@ -110,16 +110,16 @@ The [internal.com](https://internal.com/browse/) site documents 390 formal elimi
 - **Bespoke** — RS44, VIC, Wheatstone, Weltzeituhr, DRYAD charts, NATO/COMSEC
 - **Uncategorized** — Morse-derived, encoding schemes, sculpture-physical hypotheses
 
-**Important caveat:** Single-layer eliminations do not rule out the same cipher family as one layer of a multi-layer construction.
+**Important caveat:** These eliminations are always scoped to the assumptions actually tested. Single-layer eliminations do not rule out the same cipher family as one layer of a multi-layer construction.
 
 ## Working hypotheses
 
-None of these are proven. They represent the current working model.
+None of these are proven. They represent live hypothesis surfaces or residual coverage gaps.
 
-1. **Two systems** — Sanborn's 1990 dedication speech states K4 uses "two systems of enciphering," distinct from the Vigenere used for K1-K3. [PUBLIC FACT] The specific interpretation (null insertion + substitution) is our model, not confirmed.
-2. **Null insertion hypothesis** — Some positions in K4 may be steganographic filler. The number of nulls (if any) and their positions are unknown. This is a hypothesis, not a confirmed finding.
-3. ~~**Null palette observation**~~ **(RETIRED, April 2026)** — Under one cipher model (KA-autokey Vigenere), 17 candidate null positions appeared to use only 7 of 26 letters ({B,G,I,K,O,W,Z}). A score-conditioned null experiment (April 2026) showed this was a post-hoc selection artifact: the SA discovery process produces 11 distinct letters on real K4, indistinguishable from shuffled controls (p=0.30). The original 17 positions were selected from spots already containing palette letters, making the "7 distinct" observation circular. See [full report](docs/a1_score_conditioned_null_report.md). All downstream claims (BCL enrichment, KA mod-5 structure, mod-35 table, AP enrichment) are also retired.
-4. **Running key from unknown source** — The only structured non-periodic key model surviving Bean constraints under additive-key assumptions and direct correspondence. Source text is unknown. If K4 uses a non-additive cipher, this constraint does not apply.
+1. **Two systems** — Sanborn's 1990 dedication speech states K4 uses "two systems of enciphering," distinct from the Vigenere used for K1-K3. That public statement is evidence; any specific mechanistic interpretation remains a hypothesis.
+2. **W-delimiter structural hypothesis** — The five carved `W`s at positions 20, 36, 48, 58, and 74 explain the old width-21 anomaly. This does **not** prove the `W`s are delimiters, nulls, or row markers, but it makes `W`-bounded segmentation one of the main live structural surfaces.
+3. **Null insertion / procedural markers** — Some positions in K4 may be filler or marker symbols. The number, placement, and interpretation remain unknown. The older "null palette" family is retired and should not be treated as evidence.
+4. **Residual running-key / non-periodic additive models** — Within additive-key assumptions and direct correspondence, running-key style models remain an open residual family. That is a scoped statement, not a global claim about all possible K4 constructions.
 
 See [docs/research_questions.md](docs/research_questions.md) for the full list of open questions.
 
@@ -149,5 +149,4 @@ Built by **Colin Patrick** (human lead) and **Claude** (computational partner, A
 The sculpture *Kryptos* was created by **Jim Sanborn** with cryptographic assistance from **Ed Scheidt** (retired Chairman of the CIA Cryptographic Center).
 
 ---
-
 
