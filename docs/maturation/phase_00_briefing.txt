@@ -1,0 +1,227 @@
+========================================================================
+K4 SESSION BRIEFING
+Generated: 2026-04-20 21:13  |  CT: 97 chars  |  Cribs: 24 positions  |  Bean: 1 eq + 242 ineq + 101 linear
+========================================================================
+── CRITICAL CONSTANTS ─────────────────────────────────────────────
+
+  CT: OBKRUOXOGHULBSOLIFBBWFLRVQQPRNGKSSOTWTQSJQSSEKZZWATJKLUDIAWINFBNYPVTTMZFPKWGDKZXTJCDIGKUHUAUEKCAR
+  Crib: positions 21-33: EASTNORTHEAST
+  Crib: positions 63-73: BERLINCLOCK
+  Bean equality: k[27] = k[65]  (242 inequalities + 101 linear constraints; 624 valid keystreams at crib positions)
+  Self-encrypting: CT[32]=PT[32]=S, CT[73]=PT[73]=K
+  IC: 0.0361 (below random 0.0385, NOT significant for n=97)
+
+── CLAIM REGISTRY — DISPUTED / RETIRED / SUPERSEDED ───────────────
+
+  From docs/claims_registry.json. Do NOT cite these as live
+  evidence without first checking docs/methodological_audits.md.
+
+  RETIRED:
+    • C-PALETTE-01: The 7-letter palette {B,G,I,K,O,W,Z}, the 17-position CONSENSUS_NULL_POSITIONS mask, and all derived constructs (BCL enr…
+
+  SUPERSEDED:
+    • C-HIST-01: reports/final_synthesis.md (2026-02-20) and docs/history/status_report_2026_03_22.md describe historical project posture…
+
+
+── ELIMINATION LANDSCAPE ──────────────────────────────────────────
+
+  Scripts tracked: 1023  |  Exhausted: 226  |  Active: 797
+
+  Family                          Exh  Act  Tot  Status
+  ------------------------------ ---- ---- ----  --------------------
+  _uncategorized                   36   59   95  38% eliminated
+  substitution                     24   25   49  49% eliminated
+  fractionation                    22   40   62  35% eliminated
+  grille                           17  119  136  12% eliminated
+  campaigns                        13  121  134  10% eliminated
+  exploration                      13   21   34  38% eliminated
+  polyalphabetic                   13   14   27  48% eliminated
+  blitz                            12   19   31  39% eliminated
+  novel                            12    0   12  FULLY ELIMINATED
+  transposition/columnar           10   27   37  27% eliminated
+  transposition/other              10   19   29  34% eliminated
+  tableau                           8   14   22  36% eliminated
+  archive_evidence                  6    6   12  50% eliminated
+  campaigns/tabp                    5    0    5  FULLY ELIMINATED
+  team                              4   22   26  15% eliminated
+  _infra                            4   10   14  29% eliminated
+  k3_continuity                     3   18   21  14% eliminated
+  thematic/sculpture_physical       3    7   10  30% eliminated
+  running_key                       2   28   30  7% eliminated
+  crib_analysis                     2   16   18  11% eliminated
+  statistical                       2   10   12  17% eliminated
+  antipodes                         2    4    6  33% eliminated
+  analysis                          1   76   77  1% eliminated
+  yar                               1   24   25  4% eliminated
+  null_mask_beaufort                1    0    1  FULLY ELIMINATED
+  two_system                        0   24   24  active
+  encoding                          0   18   18  active
+  thematic/berlin_clock             0   11   11  active
+  stego_mechanism                   0   11   11  active
+  geometry                          0   10   10  active
+  cfm                               0    8    8  active
+  transposition                     0    4    4  active
+  geodetic                          0    3    3  active
+  multi_layer                       0    3    3  active
+  campaigns/final_checklist         0    2    2  active
+
+── TIER 1: MATHEMATICAL PROOFS (permanent, do NOT re-test) ────────
+
+  ✗ Pure transposition (CT has 2 E's, PT needs 3)
+  ✗ ALL periodic polyalphabetic (periods 1-26, all variants, direct correspondence)
+  ✗ ALL autokey variants + arbitrary transposition (structural: PT-max=16/24, CT-max=21/24)
+  ✗ ALL fractionation families (bifid, trifid, ADFGVX, four-square — structural proofs)
+  ✗ Hill 2x2/3x3 (algebraic impossibility)
+  ✗ Gromark/Vimark (orders 1-8, 8.74B configs)
+  ✗ Progressive key (Bean: delta in {0,13} only)
+  ✗ Quadratic key (0/676 survive Bean)
+  ✗ Fibonacci key (0/676 survive Bean)
+  ✗ Columnar w5,w7: ZERO Bean passes across all orderings
+  ✗ Columnar w6,w8,w9: exhaustive, max 13-14/24 = noise
+  ✗ Columnar w10-15: sampled 100K each, all max 14/24 = noise
+  ✗ ALL simple transposition families + periodic sub: max 13/24
+  ✗ Double columnar (9 Bean-compatible width pairs): max 15/24 = random
+  ✗ Myszkowski w5-13: max 15/24 = random
+  ✗ AMSCO/Nihilist/Swapped w8-13: ZERO Bean passes
+  ✗ ANY transposition + periodic key at 17 of 25 periods (Bean impossibility proof)
+  ✗ Null mask (any 24 positions) + periodic sub p=1-23 (algebraic proof)
+  ✗ Three-layer Sub+Trans+Sub at p1*p2<=50: ZERO candidates
+  ✗ Mono+Trans+Periodic at periods 3-7: ZERO candidates (bipartite too stringent)
+
+── DO NOT TEST (without a materially new assumption) ──────────────
+
+  ✗ Any autokey variant (structural proof, all 4 variants × arbitrary transposition)
+  ✗ DEFECTOR/PALIMPSEST as keywords (15/24 ceiling exhaustively confirmed)
+  ✗ K2 numbers as keys (tested, noise)
+  ✗ YES WONDERFUL THINGS as PT[0:18] (tested, noise)
+  ✗ CIA cryptonym digraphs / Cold War keyword families (tested, noise)
+  ✗ RS44 grid-mask (905.6M configs, noise)
+  ✗ Full VIC pipeline (52M+ configs, noise)
+  ✗ Wheatstone clock (327M configs, noise)
+  ✗ ITA-2 XOR / Baudot mod-31 / Wilson prime mask / Sawtooth mask
+  ✗ Interrupted-key Vigenere (14.7M configs)
+  ✗ Ubchi null insertion / Soviet three-step / Sanborn matrix
+  ✗ 72+1 delimiter model
+  ✗ NDYAHR (all 5 variants)
+  ✗ K1-K3 PT as literal keys
+  ✗ OBKOGBOWWKWIWGZIG as key material
+  ✗ Periodic substitution on null-extracted CT73 at any period 1-23 (algebraic proof)
+
+── SURVIVING ANOMALIES (real but not yet exploitable) ───────────
+
+  • Width-21 bigram on CT97 (p=1.6e-4)
+    STEGO artifact — disappears after null extraction (documented, not actionable)
+  • Width-10/17 bigrams on CT73 (p=6e-3/8e-3)
+    CIPHER layer — destroyed by col7 undo (col7 mathematical artifact)
+  • Stehle constant-difference (pos 55-63) (p~1/642 (corrected))
+    Unique in K4; local coincidence, not a mechanism
+
+── RETIRED ANOMALIES (April 2026 audit) ────────────────────────
+
+  ✗ Null palette {B,G,I,K,O,W,Z} — RETIRED
+    Score-conditioned null: SA produces 11 distinct on K4 (p=0.30 vs shuffled)
+  ✗ SA palette provenance (0/40K) — RETIRED
+    Moot — the palette claim itself is circular (post-hoc position selection)
+  ✗ KA mod-5 column structure — RETIRED
+    Dependent on palette definition; fails all corrections
+  ✗ BCL Beaufort keystream 7/8 palette — RETIRED
+    Dependent on palette; does not survive Bonferroni (corrected p=0.65)
+  ✗ Beaufort keystream AP {G,K,O} 12/24 — RETIRED
+    Look-elsewhere: 312 APs tested, corrected p=0.001 → Bonferroni dead
+  ✗ 14-col grid asymmetry — RETIRED
+    Dependent on palette positions; fails correction
+  ✗ Mod-35 KRYPTOS×SEVEN table — RETIRED
+    LOO-CV accuracy 47% (below 49% baseline); zero predictive power
+
+── RECENT RESULTS WITH VERDICTS ───────────────────────────────────
+
+  Eliminated: 44  |  Noise: 110  |  Interesting: 3  |  Other: 47
+
+  ELIMINATED (44):
+    e_affine_mono_disproof                        ELIMINATED
+    e_autokey_bidir_extended                      ELIMINATED
+    e_autokey_bootstrap_00                        ELIMINATED
+    e_autokey_bootstrap_01_crossval               ELIMINATED
+    e_cfm_04_homophonic                           ELIMINATED
+    e_cfm_05_nomenclator                          ELIMINATED (PURE NOMENCLA
+    e_chart_02_autokey                            ELIMINATED best=21
+    e_combined_ptct_autokey                       ELIMINATED (AUDIT 2026-04 best=11
+    e_freq_homophonic_analysis                    DISPROVED
+    e_hybrid_04_reverse_k3                        DISPROVED
+    e_k0_running_key_01                           DISPROVED
+    e_mono_sa_substitution                        DISPROVED
+    e_morse_indexed_alphabet_01                   ELIMINATED
+    e_opgold_berlin_tunnel_v2                     ELIMINATED (AUDIT 2026-04 best=14
+    e_palette_gromark_primer                      ELIMINATED
+    ... and 29 more
+
+  INTERESTING/SIGNAL (3):
+    e_berlin_clock_route                          INTERESTING (20260323_1)
+    e_carter_transposition_optimized_01           INTERESTING -- ABOVE EXPE
+    e_model_b_running_key_sa                      SIGNAL (2026-03-16)
+
+── FINAL CHECKLIST — BIN C (execution state) ──────────────────────
+
+  ✓ C7  Admissibility backlog — CLOSED (CERTIFIED)
+      Manual provenance review of ASSUMPTION_UNMET running-key scripts. Declare source, add license, or archive.
+      artifact: docs/exhaustion_certificate_2026_04_08.md
+  ✓ C1  Carter Vol 1 + columnar w6/8/9 × 3 variants — CLOSED (EMPTY)
+      Admissibility-gated. Source: carter_tomb_vol1 (ARTIST_STATEMENT). Pre-registered thresholds: docs/preregistered_thresholds_2026_04_08.md
+      artifact: results/f_final_checklist_c1_c2.json
+  ✓ C2  Kahn Codebreakers + columnar w6/8/9 × 3 variants — CLOSED (EMPTY)
+      Admissibility-gated. Source: kahn_codebreakers (CREATOR_STATEMENT). Same thresholds.
+      artifact: results/f_final_checklist_c1_c2.json
+  ✓ C6  Non-columnar 3-layer enumeration — CLOSED (EMPTY)
+      {additive,vig,beau} outer × {myszkowski,rail_fence,route,block} middle × {additive,vig,beau} inner.
+      artifact: results/f_final_checklist_c6.json
+  ⊘ C3  Bifid as composition OUTER (DEFERRED) — DEFERRED
+      Only run if C1/C2/C6 escalates — priors too low otherwise.
+  ⊘ C4  Four-square as composition OUTER (DEFERRED) — DEFERRED
+      Only run if C1/C2/C6 escalates — priors too low otherwise.
+  ⊘ C5  Homophonic as composition OUTER (DEFERRED) — DEFERRED
+      Only run if earlier bin-C campaigns escalate.
+  ⊘ C8  Stateful seed-space expansion (DEFERRED) — DEFERRED
+      Only run if earlier bin-C campaigns escalate.
+
+  Summary: 4 closed, 0 testable, 4 deferred
+  ⚠ All non-deferred bin-C campaigns are CLOSED. Running-key and/or non-columnar 3-layer may already be downgraded — consult docs/exhaustion_certificate_*.md before starting new compute in these families.
+
+── BIN D — weakly testable (engineering, not compute) ─────────────
+
+  → Mono+Trans+Running-key
+    E-FRAC-54: 13 mono DOF saturate detection. Needs new detector, not more sweeps.
+  → Running-key from unknown NON-English text
+    E-FRAC-51 bound is English-specific. Needs pre-declared language + CorpusLicense.
+  → Archive-term operationalization (ABSCISSA, ATBASH, '4,8,10,26=Col')
+    Needs parametric mapping from archive term to cipher family.
+  → Pre-ENE (0-20) as separate sub-cipher
+    E-FRAC-19: IC 'anomaly' Bonferroni p=1.0. No crib at 0-20.
+
+── BIN E — untestable under current clues (waiting list) ──────────
+
+  ⊘ Bespoke chart-based cipher — needs public chart OR CipherProcedureLicense schema
+  ⊘ Model-free null mask search — no defined statistic; palette retired April 2026
+  ⊘ K5 ciphertext cross-constraint — not published
+  ⊘ Circled letters IMG_1223-1235 — needs forensic archive extraction
+  ⊘ Photogrammetric sculpture data — needs primary-source field measurement
+  ⊘ Sanborn's private coding system — not public
+
+  These are prerequisites for new testable hypotheses, not open families.
+
+── PITFALLS ───────────────────────────────────────────────────────
+
+  ⚠ ALL positions 0-indexed (cribs at 21-33, 63-73)
+  ⚠ Every command needs PYTHONPATH=src
+  ⚠ Import constants from kryptos.kernel.constants — NEVER hardcode
+  ⚠ Vigenere: K=(CT-PT)%26 | Beaufort: K=(CT+PT)%26 | VarBeau: K=(PT-CT)%26
+  ⚠ High scores at large periods are ALWAYS false positives (underdetermination)
+  ⚠ KA ordering: KRYPTOSABCDEFGHIJLMNQUVWXZ (non-standard, all 26 letters)
+  ⚠ Null positions are MODEL-DEPENDENT — state which model when reporting
+  ⚠ scoring/ is at kernel/scoring/, NOT a top-level module
+  ⚠ Root exhaustion_log.json is authoritative (NOT scripts/EXHAUSTION.json)
+
+========================================================================
+Data sources: exhaustion_log.json (1023 entries) | results/ (417 JSON + 53 subdirs) | 896 scripts
+For detailed elimination proofs: docs/elimination_tiers.md
+For experiment search: PYTHONPATH=src python3 run_attack.py --list --verbose | grep KEYWORD
+========================================================================

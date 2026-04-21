@@ -1,0 +1,138 @@
+# Provenance inventory
+
+## Public facts
+
+- [k4_ct_97char] K4 ciphertext is the 97-character string OBKRUOXOGHULBSOLIFBBWFLRVQQPRNGKSSOTWTQSJQSSEKZZWATJKLUDIAWINFBNYPVTTMZFPKWGDKZXTJCDIGKUHUAUEKCAR
+- [kryptos_alphabet_ordering] The KRYPTOS keyed alphabet used by K1-K3 is KRYPTOSABCDEFGHIJLMNQUVWXZ (all 26 letters, keyword first).
+
+## Primary-source facts
+
+- [berlin_disclosure] Sanborn publicly disclosed that 'BERLIN' is part of the K4 plaintext.
+- [clock_disclosure] Sanborn publicly disclosed that 'CLOCK' is part of the K4 plaintext. CLOCK was disclosed independently; BERLINCLOCK adjacency is community consensus, not a creator statement.
+- [ene_disclosure] Sanborn publicly disclosed that 'EASTNORTHEAST' is part of the K4 plaintext.
+- [k1_solved] K1 solved by Gillogly/Stein (1999): Vigenère with keyword PALIMPSEST and KRYPTOS tableau.
+- [k2_layer_two_sanborn_statement] Sanborn stated in 2006 correspondence that K2 contains a reference reading 'X LAYER TWO'.
+- [k2_solved] K2 solved by Gillogly/Stein (1999): Vigenère with keyword ABSCISSA and KRYPTOS tableau.
+- [k3_solved] K3 solved by Gillogly/Stein (1999): keyed columnar transposition.
+
+## H1-conditional derivations (direct positional crib mapping)
+
+- [bean_624_keystream_vectors] Under H1, exactly 624 keystream value-vectors at the 24 crib positions satisfy the combined Bean equality, 242 inequalities, and 101 linear constraints.
+    * The remaining 73 keystream positions are unconstrained by Bean. Cite as crib-position constraint, NOT as global keystream constraint.
+- [bean_equality] Under H1, k[27] = k[65] at the 24 crib positions because CT[27]=CT[65]='P' and PT[27]=PT[65]='R', independent of Vigenère/Beaufort/VarBeaufort variant.
+    * Invalidated by any non-additive cipher class or by any rearrangement of the carved CT before the analyzed step.
+- [bean_inequalities_242] Under H1, 242 of 276 crib-pair inequalities hold at the 24 crib positions with distinct key values under all three additive variants (Vigenère, Beaufort, Variant Beaufort).
+    * Count is variant-independent. Invalid outside additive-cipher / H1 context.
+- [bean_linear_101] Under H1, 101 Groebner-derived linear constraints further restrict the keystream value-vectors at the 24 crib positions.
+    * Not independent evidence — algebraic consequence of the same H1 system.
+- [beaufort_a0_crib_keystream] Under H1 (direct positional crib mapping on the carved 97-char CT, additive cipher class): Under Beaufort A=0 and H1, one specific keystream vector at the 24 crib positions is selected from the 624 valid Bean vectors. (under Beaufort A=0)
+    * One specific instance from the 624 vectors; under different variants the values differ.
+- [fp32_modeled] Under H1 (direct positional crib mapping on the carved 97-char CT, additive cipher class): Under direct positional crib mapping, K[32]=0 (a fixed point) because CT[32]='S' and PT[32]='S' at the anchored EASTNORTHEAST position. (at the 24 crib positions)
+    * Does NOT hold if the carved CT is rearranged, masked, or filtered before the cipher step.
+- [fp73_modeled] Under H1 (direct positional crib mapping on the carved 97-char CT, additive cipher class): Under direct positional crib mapping, K[73]=0 (a fixed point) because CT[73]='K' and PT[73]='K' at the anchored BERLIN position. (at the 24 crib positions)
+    * Does NOT hold if the carved CT is rearranged, masked, or filtered before the cipher step.
+
+## Project-reverified statistical anomalies
+
+- [ic_not_significant] K4's overall IC (~0.0361) is below the random expectation (~0.0385). Bonferroni-corrected p=1.0; not statistically significant at length 97. [Project-verified anomaly; remains a filter/ranking feature, not a mandatory constraint.]
+    * Bonferroni p=1.0. Do not use IC alone as a discriminator.
+- [width21_bigrams] Writing K4 at width 21 produces 11 repeated vertical bigrams out of 76; random-permutation null gives p≈0.0002 (z=4.47, 100K MC). [Project-verified anomaly; remains a filter/ranking feature, not a mandatory constraint.]
+    * Selected post-hoc; not corrected for the number of widths historically tested.
+    * Random-permutation null gives p≈0.0002 (z=4.47, 100K MC).
+    * English-baseline expectation ~9.7 is close to observed 11.
+
+## Bean-reported (NOT independently re-derived in project)
+
+- [bean_minor_diffs] At the 24 known PT positions, the 10 where PT ∈ {K,R,Y,P,T,O,S} have CT letters very close in the standard alphabet (sum of distances=21, mean=2.1). Bean 2021 reports Monte Carlo p ≈ 1/5520. [Bean-reported, not independently re-derived in project.] (at the 24 crib positions; external statistic, not project-rerun)
+    * Bean 2021 reports MC p ≈ 1/5520. NOT independently re-derived in project.
+    * The KRYPTOS-letter subset selection is post-hoc (the subset spells the project's name and the K1-K3 keyword).
+- [bean_repeated_pt_distances] Bean 2021 reports anomalous cipher distances for repeated plaintext letters at the 24 crib positions. [Bean-reported, not independently re-derived in project.] (external statistic, not project-rerun)
+    * Reported by Bean 2021, NOT independently re-derived in project.
+    * Post-hoc subset selection; not multiplicity-corrected here.
+- [stehle_delta5] Every 4th character in carved positions 55-63 (DIAWINFBN) differs by exactly 5 mod 26 — a local [5,5,5,5,5] delta sequence. [Bean-reported, not independently re-derived in project.] (external statistic, not project-rerun)
+    * Existence of the [5,5,5,5,5] delta sequence is verified directly.
+    * Bean's claimed corrected p ≈ 1/642 has NOT been independently re-derived in this project.
+    * The pattern is local (9 chars at one position) and its cryptographic interpretation is open.
+
+## Physical facts (sculpture)
+
+- [desparatly_misspelling_exists] K2 plaintext contains the misspelling DESPARATLY (vs standard DESPERATELY): E→A at word position 5, E deleted at position 8.
+- [extra_l_existence] Row N of the engraved tableau has 27 characters (extra L) vs 26 for all other rows.
+- [k2_coordinates_in_plaintext] K2 plaintext contains coordinates 38°57'6.5"N 77°8'44"W.
+- [lodestone_existence] A lodestone is embedded in the Kryptos installation; a nearby compass is physically deflected from geographic north.
+- [morse_extra_e_count] The Morse code on the Kryptos entrance slabs contains 26 extra E characters beyond the encoded message.
+- [tableau_engraved_reverse] The Kryptos tableau is engraved on the reverse of the cipher panel, facing the cipher text.
+- [yar_physical_existence] Letters Y, A, R near line 15 (K3/K4 boundary) on the Kryptos sculpture are physically raised several centimeters above the baseline.
+
+## Interpretive physical observations
+
+- [desparatly_silence_as_signal_interpretation] Sanborn's refusal to confirm or deny whether DESPARATLY is intentional is itself a cryptographic signal encoding parameters 5 and 8. [Physical existence may be confirmed; cryptographic role is unproven.]
+    * Behavioral signal interpretation is speculative.
+- [extra_l_alignment_interpretation] The extra L shifts row N of any physical tableau overlay on the cipher panel, implying a misaligned-overlay procedure. [Physical existence may be confirmed; cryptographic role is unproven.]
+    * Cryptographic role unproven.
+- [k2_coordinates_manhole_observation] The K2 coordinates point to a manhole near the Kryptos sculpture and this location is cryptographically meaningful for K4. [Physical existence may be confirmed; cryptographic role is unproven.]
+    * Cryptographic relevance unproven.
+- [lodestone_ene_interpretation] The compass deflection points east-northeast and implies a directional reading instruction aligned with the ENE crib. [Physical existence may be confirmed; cryptographic role is unproven.]
+    * Bearing interpretation unproven.
+- [morse_e_alphabet_interpretation] The count of 26 extra Morse E's equals the alphabet size and therefore encodes a cipher alphabet mapping. [Physical existence may be confirmed; cryptographic role is unproven.]
+    * Cryptographic role unproven; coincidence of count is suggestive but not evidence.
+- [yar_cryptographic_interpretation] The raised YAR letters are a cryptographically meaningful procedural marker. [Physical existence may be confirmed; cryptographic role is unproven.]
+    * Physical existence is confirmed. Cryptographic role is unproven.
+    * 50+ scripts tested YAR as algebra → noise.
+
+## Structural eliminations
+
+- [autokey_eliminated] Standard autokey variants (Vigenère / Beaufort / CT-autokey) are structurally eliminated: PT-autokey max 16/24, CT-autokey max 21/24.
+    * Under standard autokey primer/update rules.
+    * PT-autokey max 16/24, CT-autokey max 21/24.
+    * Non-standard autokey variants not covered.
+- [fractionation_eliminated_structural] Bifid, trifid, ADFGVX, and straddling-checkerboard ciphers are eliminated for K4 by parity, alphabet-count, or digit-output constraints.
+    * Bifid/trifid/ADFGVX/checkerboard eliminated by parity, alphabet count, or digit-output constraints. Holds with or without transposition.
+- [pure_transposition_impossible] Pure transposition (any permutation) of K4 cannot produce the known cribs: CT has 2 E's but the crib set requires 3 E's. Letter count is invariant under permutation.
+    * CT has 2 E's, cribs need 3. Letter count mismatch is structural under any permutation.
+
+## Conditional eliminations (scope-dependent)
+
+- [columnar_4_6_8_9_additive_eliminated] Columnar transposition at widths 4/6/8/9 composed with additive keystreams is eliminated for K4 under direct positional crib mapping. [Elimination scope: see scope_conditions.]
+    * Does NOT cover non-additive keystreams, outer layers preceding the columnar step, or widths outside {4,6,8,9}.
+- [hill_2x2_3x3_eliminated_h1] Hill 2x2 and 3x3 are algebraically eliminated for K4 under direct positional crib mapping. [Elimination scope: see scope_conditions.]
+    * Algebraically eliminated under direct positional crib mapping.
+    * Does not eliminate Hill as inner layer of multi-layer construction.
+- [periodic_poly_eliminated_h1] Periodic Vigenère / Beaufort / Variant Beaufort is eliminated for K4 at all periods 1-26 under direct positional crib mapping. [Elimination scope: see scope_conditions.]
+    * Eliminates periodic Vig/Beau/VarBeau applied directly to the carved CT under direct positional crib mapping.
+    * Does NOT eliminate periodic substitution as one layer of a multi-layer cipher where an outer transposition or selector precedes the substitution step.
+- [running_key_corpus_eliminated] Running-key attacks using K1/K2/K3 PT, Carter Vol 1, Kahn, and 73 Gutenberg books crossed with structured transpositions are eliminated (17B+ checks). [Elimination scope: see scope_conditions.]
+    * K1/K2/K3 PT, Carter Vol 1, Kahn, 73 Gutenberg books × structured transpositions. 17B+ checks.
+    * Does not cover unknown non-English texts.
+- [running_key_unknown_english_columnar_eliminated] Running-key with unknown English fragment + columnar transposition is eliminated for K4 under direct positional crib mapping and the project's English fragment scorer. [Elimination scope: see scope_conditions.]
+    * Under the project's English fragment scorer.
+    * Not tight against ciphers with monoalphabetic preprocessing layer (cf. E-FRAC-54).
+- [structured_additive_keys_bean_eliminated] Structured additive key models (progressive, quadratic, Fibonacci) are eliminated for K4 under the additive-cipher-family assumption. [Elimination scope: see scope_conditions.]
+    * Under additive-key model. E-FRAC-38.
+- [two_layer_composition_null] The project's two-layer composition framework returned a null result within its parameterized search space. [Elimination scope: see scope_conditions.]
+    * Within the two-layer parameterized search space the composition framework expresses.
+    * Does not cover three-layer compositions, grilles, or procedural mechanisms.
+
+## Retired claims (do not revive)
+
+- [null_palette_retired] [RETIRED] The null palette {B,G,I,K,O,W,Z} was a retired K4 hypothesis. Do not revive without formal rehabilitation.
+    * Retired 2026-04-01. Do not revive. Any theory touching this palette is blocked.
+
+## Other: hypothesis
+
+- [k2_layer_two_operational_hypothesis] The 'X LAYER TWO' Sanborn statement implies K4 requires a second, distinct operational layer beyond standard decryption.
+
+## Summary
+
+- public_fact: 2
+- primary_source_fact: 7
+- h1_conditional_derivation: 7
+- project_reverified_statistical_anomaly: 2
+- bean_reported_not_rerun: 3
+- physical_fact: 7
+- interpretive_physical_observation: 6
+- structural_elimination: 3
+- conditional_elimination: 7
+- retired_claim: 1
+- hypothesis: 1
+- total: 46

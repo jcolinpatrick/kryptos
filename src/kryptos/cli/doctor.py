@@ -27,12 +27,23 @@ def run_doctor(verbose: bool = True) -> bool:
 
     # 2. Constants import and verification
     try:
-        from kryptos.kernel.constants import CT, CT_LEN, CRIB_DICT, N_CRIBS, BEAN_EQ, BEAN_INEQ
+        from kryptos.kernel.constants import (
+            CT, CT_LEN, CRIB_DICT, N_CRIBS,
+            BEAN_EQ, BEAN_INEQ, BEAN_LINEAR,
+        )
         checks.append(("constants_import", True, ""))
         checks.append(("ct_length", len(CT) == CT_LEN, f"len={len(CT)}"))
         checks.append(("ct_boundary", CT[0] == "O" and CT[-1] == "R", ""))
         checks.append(("crib_count", len(CRIB_DICT) == N_CRIBS, f"n={len(CRIB_DICT)}"))
-        checks.append(("bean_count", len(BEAN_EQ) == 1 and len(BEAN_INEQ) == 21, ""))
+        # Canonical Bean constraint counts (CLAUDE.md §Key Gotchas). These three
+        # numbers are the documented size of the combined Bean system at the 24
+        # crib positions; they together admit exactly 624 valid keystreams.
+        # If BEAN_* tuples are legitimately expanded, update the canonical
+        # counts here — the check is intentionally pinned so silent drift
+        # fails loudly.
+        checks.append(("bean_eq_count", len(BEAN_EQ) == 1, f"n={len(BEAN_EQ)}"))
+        checks.append(("bean_ineq_count", len(BEAN_INEQ) == 242, f"n={len(BEAN_INEQ)}"))
+        checks.append(("bean_linear_count", len(BEAN_LINEAR) == 101, f"n={len(BEAN_LINEAR)}"))
     except Exception as e:
         checks.append(("constants_import", False, str(e)))
 

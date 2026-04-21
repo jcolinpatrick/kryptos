@@ -81,7 +81,6 @@ deploy/
 kryptosbot/kbot_results/
 kryptosbot/split_results/
 kryptosbot/kryptosbot_results.db
-kryptosbot/RUNBOOK.md
 kryptosbot/english_quadgrams.txt
 kryptosbot/horologe_deep.py
 jobs/done/
