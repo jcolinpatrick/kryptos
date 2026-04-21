@@ -108,6 +108,51 @@ def _render_anomaly_line(anomaly_id: str, fallback_title: str) -> str:
 logger = logging.getLogger("kryptosbot.controller")
 
 
+def _extract_message_text(content: Any) -> str:
+    """Extract raw text from a ``claude_agent_sdk`` AssistantMessage.content.
+
+    Post-K4-cycle-1 hygiene (2026-04-21). The SDK streams
+    AssistantMessage objects whose ``content`` attribute is typically a
+    list of ContentBlock dataclasses (TextBlock, ThinkingBlock,
+    ToolUseBlock). Calling ``str()`` on such a list returns a Python
+    repr like
+    ``"[TextBlock(citations=None, text='[\\n  {\"title\":...', type='text')]"``
+    which silently breaks downstream JSON extraction — the repr's
+    single-quoted string value and escaped newlines confuse
+    ``validate_theory_proposals`` / ``validate_worker_contract`` and
+    their ``extract_json_block`` helper, causing the theorist or
+    worker output to appear empty and the controller to fall through
+    to programmatic fallback paths.
+
+    This helper extracts text from each block explicitly:
+
+    - ``TextBlock`` (``.type == "text"``) → ``.text``
+    - ``ThinkingBlock`` (``.type == "thinking"``) → skipped (never JSON
+      payload; leaking it into the parsed text can pollute JSON scans)
+    - Any other block with a ``.text`` attribute → included as a
+      best-effort fallback
+    - Unknown block types without ``.text`` → skipped silently
+
+    Non-list content (e.g., a plain string from legacy SDK shapes) is
+    returned as ``str(content)`` unchanged.
+
+    See ``docs/maturation/round3/K4_RUN_CYCLE1_DIAGNOSTIC.md`` for the
+    bug history.
+    """
+    if isinstance(content, list):
+        parts: list[str] = []
+        for block in content:
+            block_type = getattr(block, "type", None)
+            if block_type == "text":
+                parts.append(str(getattr(block, "text", "")))
+            elif block_type == "thinking":
+                continue
+            elif hasattr(block, "text"):
+                parts.append(str(getattr(block, "text", "")))
+        return "\n".join(parts) if parts else ""
+    return str(content)
+
+
 _RETRACTED_RECENT_OUTCOME_PATTERNS: tuple[str, ...] = (
     "4, 8, 10, 26 = col",
     "sequential four-width columnar transposition",
@@ -1025,7 +1070,16 @@ class ResearchController:
                     if on_progress:
                         on_progress("result", str(message.result)[:150])
                 elif hasattr(message, "content"):
-                    text = str(message.content)
+                    # Post-K4-cycle-1 hygiene (2026-04-21): message.content
+                    # is typically a list of ContentBlock dataclasses
+                    # (TextBlock, ThinkingBlock, ToolUseBlock). Python's
+                    # str() on such a list yields a repr like
+                    # "[TextBlock(citations=None, text='[\\n  {...', type='text')]"
+                    # which extract_json_block cannot parse — it silently
+                    # falls through to _programmatic_fallback. Extract
+                    # TextBlock text explicitly so the downstream
+                    # validator sees raw JSON. See K4_RUN_CYCLE1_DIAGNOSTIC.md.
+                    text = _extract_message_text(message.content)
                     raw_chunks.append(text)
                     if on_progress:
                         # Check for tool use in structured content
@@ -2105,7 +2159,12 @@ Output ONLY the JSON array. No commentary."""
                             preview = str(message.result)[:200]
                             on_message(theory.hypothesis_id, "result", preview)
                     elif hasattr(message, "content"):
-                        text = str(message.content)
+                        # Same hygiene as the theorist path: list-of-
+                        # ContentBlock must be text-extracted rather
+                        # than Python-repr-stringified. See
+                        # _extract_message_text and
+                        # K4_RUN_CYCLE1_DIAGNOSTIC.md.
+                        text = _extract_message_text(message.content)
                         raw_chunks.append(text)
                         event_count += 1
                         # Extract tool use info if present

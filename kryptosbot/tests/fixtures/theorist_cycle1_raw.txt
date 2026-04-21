@@ -1,0 +1,161 @@
+[
+  {
+    "title": "CT perturbation preregistered variant list against eliminated columnar-Vigenere",
+    "core_claim": "Single-layer and two-layer columnar(Vigenere) families were eliminated on the raw 97-char carved CT. If the carved K4 contains a small number of archival-discrepant characters (analogous to IQLUSION / UNDERGRUUND / DESPARATLY in K1-K3), then those eliminations do not transfer to the corrected CT. A preregistered, archive-anchored short list of <=3-character K4 CT perturbations is the only admissible way to test this.",
+    "mechanism": "Build a frozen preregistered list of exactly 5 K4 CT variants, each differing from the carved CT at no more than 3 positions. Each variant is justified by a specific archive observation (coding-chart letter that differs from carved letter at a specific position, or a visually-confusable pair I/L, U/V, O/Q at a position where the chart shows the alternate letter). For each variant, run Vigenere on KA (keywords = {KRYPTOS, PALIMPSEST, ABSCISSA, IQLUSION, SHADOW}) and columnar width 7 col_order = KRYPTOS letter-rank, both peel orders. Score against cribs + Bean.",
+    "family": "archive_evidence",
+    "subfamily": "ct_perturbation_vigenere_columnar",
+    "tags": ["ct_perturbation", "archive", "multilayer", "preregistered_variants", "override_exhaustion"],
+    "clue_anchors_used": ["Bean equality k[27]=k[65]", "624 valid keystreams", "self-encrypting 32/73", "archive coding-chart evidence of carved-vs-chart discrepancies in K1-K3"],
+    "anomalies_exploited": ["ct_perturbation"],
+    "novelty_basis": "Prior columnar and Vigenere-on-KA eliminations ran on the raw carved CT. This proposal does not rerun those sweeps; it runs a frozen <=5-variant list where every variant is justified by a specific archive observation, not by arbitrary single-char rescue. Kill criterion is pre-committed: zero variants produce crib>=18 AND Bean PASS AND ngram floor, eliminated. No truncation, no wrap, no geometry choice.",
+    "kill_criteria": ["Across all 5 preregistered variants x 5 keywords x width-7 columnar x 2 peel orders x 3 Vig variants (Vig/Beau/VarBeau), no config produces crib_score>=18 with bean_passed=True and ngram_score above noise floor", "At least one variant matches carved CT exactly (control) and scores at noise floor, confirming the baseline is unchanged"],
+    "expected_signal": "If the hypothesis is true, exactly one perturbation variant (the archival-correct one) produces a crib+Bean+ngram PASS while the other four and the carved-CT control remain at noise. If all variants pass, the perturbation is too loose and the override is invalid.",
+    "compute_cost_estimate": "low",
+    "minimal_test_spec": {
+      "method": "Pre-register the 5 CT variants in a frozen JSON file, pre-register 5 keywords, 1 width, 2 peel orders, 3 Vig variants. Single pass evaluates 150 configs. Record all scores to results/ before inspecting any.",
+      "parameters": {
+        "ct_variants": "archive_derived_preregistered_list_of_5",
+        "keywords": ["KRYPTOS", "PALIMPSEST", "ABSCISSA", "IQLUSION", "SHADOW"],
+        "columnar_width": 7,
+        "peel_orders": ["vig_then_col", "col_then_vig"],
+        "vig_variants": ["vigenere", "beaufort", "variant_beaufort"],
+        "scoring": "crib_plus_bean_plus_ngram_floor",
+        "override_exhaustion": true,
+        "override_justification": "Prior columnar and Vigenere-on-KA eliminations used the raw carved CT; this run uses a frozen 5-element archive-derived CT-perturbation variant set with <=3 char changes each, which is a different assumption bundle (perturbed-carving) not previously exercised."
+      }
+    },
+    "dsl_spec": null
+  },
+  {
+    "title": "K3 as-carved plaintext as finite OTP-like running key for K4",
+    "core_claim": "K4 is encrypted with a running key equal to the first 97 characters of K3's as-carved plaintext (including the archival misspellings DESPARATLY, IQLUSION, UNDERGRUUND). Sanborn-as-sculptor would use the already-carved K3 plaintext as a physical tape of key material; the fact that K3's plaintext contains known transcription errors is then a feature, not a bug: the intended key is the carved form, not the corrected form.",
+    "mechanism": "Take K3 plaintext as carved on the sculpture, strip spaces and punctuation, take the first 97 characters, and use as a 97-character running key (non-periodic). Decrypt K4 with Vigenere, Beaufort, and Variant-Beaufort arithmetic. Also test the corrected-spelling variant and the reversed K3-plaintext variant to bound the alternatives.",
+    "family": "key_tape",
+    "subfamily": "k3_running_key",
+    "tags": ["key_tape", "k3_continuity", "running_key", "finite_tape", "as_carved"],
+    "clue_anchors_used": ["K3 plaintext is a PUBLIC FACT", "self-encrypting 32/73 constrains key chars at those positions", "Bean equality k[27]=k[65] constrains K3 plaintext chars at positions 27 and 65", "624 valid keystreams check"],
+    "anomalies_exploited": ["k3_continuity as under-explored source material", "archive-attested K3 misspellings as intentional key spelling"],
+    "novelty_basis": "Prior running-key work targeted external corpora (Egyptological, Gutenberg). The key_tape family per landscape is 0 theories, 0 tested. K3 as source is uniquely constrained: finite, 100% public, carved on the same sculpture, and the as-carved-with-errors form is an archival signature. This is not another generic running-key sweep.",
+    "kill_criteria": ["Check k[27] and k[65] from K3-as-carved at positions 27, 65 under Vig/Beau/VarBeau. If k[27] != k[65] under all three variants, the hypothesis is structurally dead before any scoring.", "Score the two non-structurally-dead variants against cribs + Bean + ngram floor. If crib_score < 18 for all three K3 source forms (as-carved, corrected, reversed) across all three Vig variants, eliminated.", "Verify the derived keystream at the 24 crib positions is one of the 624 valid Bean survivors; if not for any variant, that variant is eliminated."],
+    "expected_signal": "Correct variant produces crib_score=24, bean_passed=True, and a 97-char plaintext that reads as English outside the cribs. Likely to be caught by the 624-survivor check in <1 second; only one variant can survive at most.",
+    "compute_cost_estimate": "low",
+    "minimal_test_spec": {
+      "method": "Three K3 source forms (as_carved, corrected, reversed) x three Vig variants = 9 decryptions. Bean and crib scoring is instant. Total wall time under 5 seconds.",
+      "parameters": {
+        "key_source": "K3_plaintext_first_97_chars",
+        "source_variants": ["as_carved_with_errors", "corrected_spelling", "reversed_as_carved"],
+        "vig_variants": ["vigenere", "beaufort", "variant_beaufort"],
+        "scoring": "bean_eq_first_then_full_crib_plus_bean_plus_ngram"
+      }
+    },
+    "dsl_spec": {
+      "hypothesis_id": "k3_ascarved_running_key_vig",
+      "pipeline": [
+        {"kind": "vigenere", "alphabet": "AZ", "params": [{"name": "keyword", "values": ["BETWEENSUBTLESHADINGANDTHEABSENCEOFLIGHTLIESTHENUANCEOFIQLUSION"]}]}
+      ],
+      "crib_alignment": "direct_positional",
+      "scoring": "crib_plus_bean",
+      "compute_budget_cpu_minutes": 1,
+      "assumption_bundle": ["single_layer", "running_key", "finite_key_tape", "k3_source"]
+    }
+  },
+  {
+    "title": "K2-coordinate-to-Kryptos azimuth as pre-Vigenere cyclic shift",
+    "core_claim": "The K2 carved coordinates name a physical point on the CIA campus. The geodetic azimuth from that point to the Kryptos sculpture's own surveyed position defines an integer rotation N (degrees rounded) that is the cyclic shift of K4 CT applied before Vigenere decryption. This is a k2_coords + geodetic mechanism that does NOT use coordinate digits as key material and does NOT invoke the coordinate-lie delta.",
+    "mechanism": "Compute the forward geodetic azimuth from (38 deg 57' 6.5\" N, 77 deg 8' 44\" W) to the Kryptos sculpture's surveyed position on the New Headquarters courtyard. Round to nearest integer degree; call this N. Cyclically shift K4 CT by N positions, then decrypt with Vigenere on KA with KRYPTOS-family keywords. N is fully determined by two public facts (K2 coordinates, sculpture survey position); no rescue parameters.",
+    "family": "k2_coords",
+    "subfamily": "azimuth_shift_then_vigenere",
+    "tags": ["geodetic", "k2_coords", "physical_sculpture", "preregistered_N"],
+    "clue_anchors_used": ["K2 coordinates as carved (public fact)", "Kryptos sculpture physical location (public fact, Langley campus)", "624 valid keystreams check on post-shift alignment"],
+    "anomalies_exploited": ["k2_coords and geodetic both under-explored (0 tested)"],
+    "novelty_basis": "Distinct from prior coord-lie mechanisms: does NOT use coordinate digits as key, does NOT use the delta between the two coordinate sets, does NOT interpret the lie. Uses only the carved coordinates and the sculpture's own position to derive a single scalar N. Prior coord theories mined the coords as key material; this treats them as a physical pointer.",
+    "kill_criteria": ["N is a single integer, fully determined by public data. Compute it once, apply the shift, run Vigenere on KA with 10 preregistered KRYPTOS-family keywords. If no keyword produces crib_score>=18 with Bean PASS, eliminated.", "The self-encrypting positions 32 and 73 become positions (32-N) mod 97 and (73-N) mod 97 post-shift; if those positions in the shifted CT do not admit key=0 under the decrypted keyword, eliminated for that keyword.", "Also test the reverse azimuth (sculpture-to-K2-point) as a preregistered fallback; if both azimuths fail, eliminated."],
+    "expected_signal": "Correct N produces a crib-aligned plaintext under exactly one keyword with Bean PASS. The scalar N is public-fact-derived, so the result is reproducible by any third party from K2 coords + sculpture position.",
+    "compute_cost_estimate": "low",
+    "minimal_test_spec": {
+      "method": "Compute N from geodesic formula (Vincenty or Haversine, both preregistered). Apply cyclic shift, run Vigenere on KA with 10 keywords. ~30 configs total. Under 1 second.",
+      "parameters": {
+        "N_source": "forward_azimuth_from_K2_coords_to_sculpture_position",
+        "N_fallback": "reverse_azimuth_only_if_forward_fails_all_keywords",
+        "keywords": ["KRYPTOS", "PALIMPSEST", "ABSCISSA", "LUCID", "SHADOW", "NUANCE", "IQLUSION", "LANGLEY", "SANBORN", "SCHEIDT"],
+        "alphabet": "KA",
+        "scoring": "crib_plus_bean"
+      }
+    },
+    "dsl_spec": null
+  },
+  {
+    "title": "Compass-rose 8-position Cardan grille over 7x14 K4 layout",
+    "core_claim": "The physical compass rose slab adjacent to Kryptos provides the grille template for K4: a Cardan-style grille rotated to 8 cardinal/intercardinal positions (N, NE, E, SE, S, SW, W, NW = 0, 45, 90, 135, 180, 225, 270, 315 deg). K4 CT is written into a 7x14=98 cell grid (one null position preregistered at the last cell). The grille mask is read out at each of the 8 orientations in sequence, producing a transposed PT.",
+    "mechanism": "Preregister: grid 7 rows x 14 cols, null at cell (6,13), grille cell-count = 12 (so 8 rotations * 12 = 96 <= 97 with one unused cell). Grille open cells preregistered as a fixed 12-position mask derived from the physical compass slab markings (N_1, N_2, ..., NW_1, NW_2). Read K4 CT into grid row-major, apply grille at each of 8 orientations, concatenate outputs to produce the candidate PT.",
+    "family": "grille",
+    "subfamily": "compass_rose_cardan_8pos",
+    "tags": ["grille", "cardan", "compass_cipher", "physical_sculpture", "aaa_compass_cipher"],
+    "clue_anchors_used": ["compass rose slab is a physical sculpture element (public fact)", "grille family has 136 theories, 0 tested (live active surface)", "self-encrypting 32/73 check post-transposition"],
+    "anomalies_exploited": ["aaa_compass_cipher (tie to physical sculpture geometry specifically)"],
+    "novelty_basis": "Prior grille work explored algebraic grille parameter spaces. This proposal ties the grille geometry specifically to the compass-rose slab as a physical template, with one preregistered grid dimension, one preregistered null position, and one preregistered 12-cell mask. No choose-among-rectangles, no optional wrap, no optional truncation.",
+    "kill_criteria": ["The 8-rotation readout produces a single candidate PT. Score against cribs. If PT does not show EAST and NORTHEAST (or BERLINCLOCK) at any position via free-crib scoring, and crib_score < 18, eliminated.", "The Bean equality k[27]=k[65] becomes a constraint on which CT positions land at PT positions 27 and 65 after the grille transposition; if no 12-cell mask rotation schedule satisfies this, eliminated structurally.", "Control: random 12-cell masks over the same grid should produce noise-floor scores; if random controls match the proposed mask score, the mask is non-specific and eliminated."],
+    "expected_signal": "If correct, the 97-char PT reads as English with EAST / NORTHEAST / BERLINCLOCK at their disclosed positions, and the grille cell-count and mask are fully explained by the compass-slab markings.",
+    "compute_cost_estimate": "low",
+    "minimal_test_spec": {
+      "method": "Single grid dimension, single null position, single 12-cell mask, 8 rotations. One candidate PT. Wall time under 1 second. Control: 1000 random 12-cell masks for null distribution.",
+      "parameters": {
+        "grid_rows": 7,
+        "grid_cols": 14,
+        "null_cell": [6, 13],
+        "grille_cell_count": 12,
+        "mask_source": "preregistered_from_compass_slab_marking_positions",
+        "rotations_deg": [0, 45, 90, 135, 180, 225, 270, 315],
+        "readout": "concatenate_in_rotation_order",
+        "scoring": "crib_plus_bean_free_crib_search"
+      }
+    },
+    "dsl_spec": {
+      "hypothesis_id": "compass_rose_8pos_cardan_grille",
+      "pipeline": [
+        {"kind": "grille", "alphabet": "AZ", "params": [{"name": "grid_rows", "values": [7]}, {"name": "grid_cols", "values": [14]}, {"name": "rotations", "values": [[0, 45, 90, 135, 180, 225, 270, 315]]}, {"name": "mask_cells", "values": [[[0,0],[0,3],[0,7],[0,10],[1,2],[1,5],[3,6],[3,7],[5,2],[5,11],[6,3],[6,10]]]}]}
+      ],
+      "crib_alignment": "post_transposition",
+      "scoring": "crib_plus_bean",
+      "compute_budget_cpu_minutes": 1,
+      "assumption_bundle": ["single_layer_transposition", "cardan_grille", "physical_template"]
+    }
+  },
+  {
+    "title": "KA-internal reflection as second layer over Vigenere-on-KA",
+    "core_claim": "K4 is encrypted by Vigenere on the KA alphabet followed by an atbash-like reflection within the KA ordering (KA[i] <-> KA[25-i], so K<->Z, R<->X, Y<->W, P<->V, T<->U, ...). This is a two-layer substitution composition, NOT a single-layer Vigenere or a single-layer atbash (both of which are eliminated). The second layer is the KA-internal reflection, not the standard AZ-atbash.",
+    "mechanism": "Decrypt: invert the KA-internal reflection (atbash applied to KA ordering, not AZ) on the CT to get an intermediate, then decrypt with Vigenere on KA using KRYPTOS-family keywords. Equivalently: CT -> KA_atbash^-1 -> Vigenere_KA^-1 -> PT.",
+    "family": "encoding",
+    "subfamily": "mirror_ka_two_layer",
+    "tags": ["mirror_ka", "atbash_on_KA", "two_layer", "multilayer"],
+    "clue_anchors_used": ["KA alphabet singleton (kernel/constants)", "mirror_ka family is listed underexplored (0 tested)", "Bean equality k[27]=k[65] survives both layers (atbash-on-KA is deterministic positional map, doesn't break the equality)", "624 valid keystreams check on the post-atbash intermediate"],
+    "anomalies_exploited": ["mirror_ka is listed as underexplored (0 tested)"],
+    "novelty_basis": "Standard atbash is AZ-atbash (A<->Z in AZ order). This uses KA-atbash (K<->Z in KA order), which is a different permutation entirely. The composition Vigenere_KA o KA_atbash is not the same as any Vigenere_KA alone or any AZ-atbash composition. Single-layer atbash and single-layer Vig-on-KA are both eliminated; the composition is not.",
+    "kill_criteria": ["KA_atbash is deterministic. Apply KA_atbash^-1 to K4 CT to get intermediate T. Check Bean equality on T: k[27]=k[65] under Vig/Beau/VarBeau on T. If T[27] and T[65] do not share the same keystream relation that K4 does, structurally eliminated.", "Run Vigenere/Beaufort/VarBeau on T with 50 preregistered keywords (KRYPTOS-family + thematic + K3 plaintext tokens). If no keyword produces crib_score>=18 with Bean PASS and ngram above noise floor, eliminated.", "Control: apply standard AZ-atbash (wrong mirror) and run same sweep; if AZ-atbash control produces comparable scores, the KA-atbash is not specific and eliminated."],
+    "expected_signal": "One specific KRYPTOS-family keyword produces crib=24, Bean PASS, ngram well above noise on the post-KA-atbash intermediate. The control with standard AZ-atbash produces noise. This discriminates KA-atbash specifically.",
+    "compute_cost_estimate": "low",
+    "minimal_test_spec": {
+      "method": "One deterministic layer inversion, then Vigenere sweep over 50 preregistered keywords x 3 Vig variants = 150 configs. Plus AZ-atbash control with same sweep = 150 configs. Total 300. Under 10 seconds.",
+      "parameters": {
+        "layer1_inversion": "KA_internal_atbash (KA[i] <-> KA[25-i])",
+        "layer2": "vigenere_on_KA",
+        "keywords": "50_preregistered_KRYPTOS_family_plus_thematic",
+        "vig_variants": ["vigenere", "beaufort", "variant_beaufort"],
+        "control": "AZ_atbash_with_same_keyword_sweep",
+        "scoring": "crib_plus_bean_plus_ngram_floor"
+      }
+    },
+    "dsl_spec": {
+      "hypothesis_id": "mirror_ka_then_vigenere_ka",
+      "pipeline": [
+        {"kind": "atbash", "alphabet": "KA", "params": []},
+        {"kind": "vigenere", "alphabet": "KA", "params": [{"name": "keyword", "values": ["KRYPTOS", "PALIMPSEST", "ABSCISSA", "IQLUSION", "SHADOW", "NUANCE", "LUCID", "LANGLEY", "SANBORN", "SCHEIDT", "BERLIN", "CLOCK", "COMPASS", "LODESTONE", "MAGNETIC", "NORTHEAST", "EASTNORTHEAST", "LAYERTWO", "UNDERGRUUND", "DESPARATLY", "SUBTLESHADING", "ABSENCEOFLIGHT", "NUANCEOFIQLUSION", "INVISIBLE", "SHADOWFORCES", "VIRTUALLY", "INVISIBLE", "WESTIDIBYROWS", "SLOWLY", "DESPARATELY"]}]}
+      ],
+      "crib_alignment": "direct_positional",
+      "scoring": "crib_plus_bean",
+      "compute_budget_cpu_minutes": 1,
+      "assumption_bundle": ["multilayer", "substitution_then_substitution", "KA_atbash_specific"]
+    }
+  }
+]
