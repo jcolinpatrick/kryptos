@@ -29,7 +29,7 @@
     },
     "crib_score__random_text__AZ__n97": {
       "alphabet": "AZ",
-      "kernel_commit": "ca3ac72828c9ba5ab5399cac155a7092ff996cec",
+      "kernel_commit": "8ca75511d100a82ec7e2a348357b5dd322bbf707",
       "max": 7.0,
       "mean": 0.92372,
       "method": "random_text",
@@ -110,7 +110,7 @@
     },
     "ngram_score__random_text__AZ__n97": {
       "alphabet": "AZ",
-      "kernel_commit": "ca3ac72828c9ba5ab5399cac155a7092ff996cec",
+      "kernel_commit": "8ca75511d100a82ec7e2a348357b5dd322bbf707",
       "max": -5.912654265957446,
       "mean": -6.426264987916275,
       "method": "random_text",
@@ -163,6 +163,6 @@
       "stdev": 0.06479467769433293
     }
   },
-  "kernel_commit_at_latest_write": "ca3ac72828c9ba5ab5399cac155a7092ff996cec",
-  "updated_at": "2026-04-21T15:10:14Z"
+  "kernel_commit_at_latest_write": "8ca75511d100a82ec7e2a348357b5dd322bbf707",
+  "updated_at": "2026-04-21T15:18:54Z"
 }
