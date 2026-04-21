@@ -86,16 +86,20 @@ class TestAdmissibility:
         assert any("hypothesis_id" in r for r in reasons)
 
     def test_unsupported_kind_rejected_with_pointer(self):
-        """A DSL-valid but dispatcher-unsupported kind (e.g. polybius in
-        Phase 4) must fail admissibility with a clear pointer."""
+        """A DSL-valid but dispatcher-unsupported kind must fail
+        admissibility with a clear pointer. Pre-R3-0.5 used polybius
+        as the exemplar; R3-0.5-3 wired polybius so this test now
+        uses rail_fence — still in the DSL literal, still lacking a
+        translator. Any kind in _VALID_CIPHER_KINDS but not in
+        _SUPPORTED_KINDS is a valid exemplar here."""
         spec = HypothesisSpec(
-            hypothesis_id="T", pipeline=[CipherLayer(kind="polybius")],
+            hypothesis_id="T", pipeline=[CipherLayer(kind="rail_fence")],
             compute_budget_cpu_minutes=1,
         )
         admissible, reasons = check_admissibility(spec, exhaustion_log={})
         assert admissible is False
         assert any(
-            "polybius" in r and "no dispatcher translation" in r
+            "rail_fence" in r and "no dispatcher translation" in r
             for r in reasons
         )
 
@@ -325,9 +329,14 @@ class TestExecuteEndToEnd:
         assert "STORE_THRESHOLD" in result.eliminated_claim
 
     def test_admissibility_rejection_short_circuits(self, tmp_path: Path):
-        """Rejected spec returns early — total_tested stays 0."""
+        """Rejected spec returns early — total_tested stays 0.
+
+        Uses rail_fence (still unsupported as of R3-0.5-3) rather than
+        polybius (now supported); see test_unsupported_kind_rejected_with_pointer
+        for the history.
+        """
         spec = HypothesisSpec(
-            hypothesis_id="T", pipeline=[CipherLayer(kind="polybius")],
+            hypothesis_id="T", pipeline=[CipherLayer(kind="rail_fence")],
             compute_budget_cpu_minutes=1,
         )
         result = execute(

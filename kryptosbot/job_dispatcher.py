@@ -261,6 +261,11 @@ _SUPPORTED_KINDS: frozenset[str] = frozenset({
     # to TransformType.GRILLE in compose.py, which calls
     # apply_grille_permutation.
     "grille",
+    # R3-0.5-3: Polybius family. Dispatches to TransformType.BIFID in
+    # compose.py (the length-preserving fractionation variant; straight
+    # polybius is length-non-preserving and deferred to a later brief).
+    # The translator accepts variant="bifid" only.
+    "polybius",
 })
 
 
@@ -573,6 +578,78 @@ def _translate_layer(layer: CipherLayer, binding: dict[str, Any]) -> dict[str, A
             "params": {
                 "key": [25],
                 "direction": "decrypt",
+            },
+        }
+
+    if kind == "polybius":
+        # R3-0.5-3: polybius-family translator. Dispatches to the
+        # existing TransformType.BIFID in compose.py, which owns the
+        # make_polybius_5x5 grid construction and bifid_encrypt/decrypt
+        # (length-preserving fractionation). Straight polybius — the
+        # length-doubling letter→coord encoding — has no TransformType
+        # yet and is deferred. Translator rejects variant="polybius"
+        # with a clear pointer.
+        #
+        # Note on K4 applicability: a 5x5 Polybius square forces a
+        # 25-letter alphabet (I/J merged by default). K4 CT contains all
+        # 26 letters (CLAUDE.md §Gotchas), so this translator is only
+        # useful as a layer in multi-layer specs whose prior layers
+        # already reduced the text to 25 letters. Single-layer dispatch
+        # on raw K4 CT is admissible but will always score as noise
+        # because the kernel decodes via I-only lookup when no J is
+        # present; a J in input passes through unchanged, breaking the
+        # 5x5 invariant. That noise floor is the expected behaviour, not
+        # a bug.
+        keyword = binding.get("square_keyword")
+        if keyword is None:
+            raise DispatcherError(
+                "polybius layer requires 'square_keyword' parameter "
+                "(empty string for canonical A-Z ordering; any keyword "
+                "string builds a keyword-prefixed square)"
+            )
+        if not isinstance(keyword, str):
+            raise DispatcherError(
+                f"polybius square_keyword must be str; "
+                f"got {type(keyword).__name__}"
+            )
+        variant = binding.get("variant", "bifid")
+        if variant != "bifid":
+            if variant == "polybius":
+                raise DispatcherError(
+                    "polybius layer variant='polybius' (straight, "
+                    "length-doubling) is deferred to a later brief. "
+                    "R3-0.5-3 supports variant='bifid' (length-preserving "
+                    "fractionation) only."
+                )
+            raise DispatcherError(
+                f"polybius variant {variant!r} unsupported; "
+                "valid: 'bifid'"
+            )
+        merge = binding.get("merge", "IJ")
+        if not isinstance(merge, str) or len(merge) != 2:
+            raise DispatcherError(
+                f"polybius merge {merge!r} must be a 2-char string; "
+                "canonical values: 'IJ' (default), 'CK', 'VW'"
+            )
+        direction = binding.get("direction", "decrypt")
+        if direction not in ("encrypt", "decrypt"):
+            raise DispatcherError(
+                f"polybius direction {direction!r} must be "
+                "'encrypt' or 'decrypt'"
+            )
+        period = binding.get("period", 0)
+        if not isinstance(period, int) or isinstance(period, bool) or period < 0:
+            raise DispatcherError(
+                f"polybius period {period!r} must be a non-negative int "
+                "(0 = full-length classical bifid)"
+            )
+        return {
+            "type": "bifid",
+            "params": {
+                "keyword": keyword,
+                "merge": merge,
+                "period": period,
+                "direction": direction,
             },
         }
 
