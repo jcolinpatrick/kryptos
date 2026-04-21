@@ -19,6 +19,12 @@ Tests three genuinely untested VIC angles to close the gap:
 
 3. Historical Häyhänen VIC parameters — the ACTUAL 1953 defection
    case parameters as a deliberate Sanborn reference.
+
+QUARANTINE 2026-04-19
+---------------------
+This script includes a retired consensus-null removal branch. It is retained
+only as a historical artifact and intentional use requires
+`--allow-retired-construct`.
 =================================================================
 """
 

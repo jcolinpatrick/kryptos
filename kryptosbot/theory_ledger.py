@@ -24,6 +24,7 @@ from .models import (
     EvidenceLink, EvidenceType,
     ControllerState,
     PursuitLead, PursuitLeadStatus,
+    PURSUIT_SOURCE_PURSUE, PURSUIT_SOURCE_VALUES,
 )
 from .provenance import (
     ProvenanceClaim, EpistemicClass, VerificationStatus,
@@ -35,6 +36,13 @@ logger = logging.getLogger("kryptosbot.theory_ledger")
 
 def _now_iso() -> str:
     return datetime.now(timezone.utc).isoformat()
+
+
+def _normalize_pursuit_source_verdict(value: Any) -> str:
+    """Fail closed to the historical hard-lead semantics."""
+    if value in PURSUIT_SOURCE_VALUES:
+        return str(value)
+    return PURSUIT_SOURCE_PURSUE
 
 
 class TheoryLedger:
@@ -222,6 +230,7 @@ class TheoryLedger:
                     rationale           TEXT NOT NULL DEFAULT '',
                     suggested_variants  TEXT NOT NULL DEFAULT '[]',
                     status              TEXT NOT NULL DEFAULT 'open',
+                    source_verdict      TEXT NOT NULL DEFAULT 'pursue',
                     opened_at           TEXT NOT NULL,
                     closed_at           TEXT NOT NULL DEFAULT '',
                     closed_cycle        INTEGER
@@ -246,6 +255,13 @@ class TheoryLedger:
                 conn.execute(
                     "ALTER TABLE theories ADD COLUMN "
                     "estimated_compute_minutes INTEGER NOT NULL DEFAULT 0"
+                )
+
+            pl_cols = {row[1] for row in conn.execute("PRAGMA table_info(pursuit_leads)")}
+            if "source_verdict" not in pl_cols:
+                conn.execute(
+                    "ALTER TABLE pursuit_leads ADD COLUMN "
+                    "source_verdict TEXT NOT NULL DEFAULT 'pursue'"
                 )
 
     # ------------------------------------------------------------------
@@ -933,14 +949,15 @@ class TheoryLedger:
 
     def insert_pursuit_lead(self, lead: PursuitLead) -> None:
         """Insert a new pursuit lead. Caller must supply a unique lead_id."""
+        source_verdict = _normalize_pursuit_source_verdict(lead.source_verdict)
         with self._connect() as conn:
             conn.execute(
                 """
                 INSERT INTO pursuit_leads (
                     lead_id, source_theory_id, source_cycle, crib_score,
-                    rationale, suggested_variants, status, opened_at,
-                    closed_at, closed_cycle
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    rationale, suggested_variants, status, source_verdict,
+                    opened_at, closed_at, closed_cycle
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                 (
                     lead.lead_id,
@@ -950,6 +967,7 @@ class TheoryLedger:
                     lead.rationale or "",
                     json.dumps(lead.suggested_variants or []),
                     lead.status.value,
+                    source_verdict,
                     lead.opened_at or _now_iso(),
                     lead.closed_at or "",
                     lead.closed_cycle,
@@ -967,6 +985,17 @@ class TheoryLedger:
             status = PursuitLeadStatus(row["status"])
         except (ValueError, KeyError):
             status = PursuitLeadStatus.OPEN
+        # source_verdict column is post-migration; rows written before the
+        # migration ran will have a missing key when accessed positionally.
+        # sqlite3.Row raises IndexError / the underlying access raises. Fall
+        # back to "pursue" so pre-existing rows (all of which were hard
+        # leads under the old gate) are interpreted correctly.
+        try:
+            source_verdict = _normalize_pursuit_source_verdict(
+                row["source_verdict"]
+            )
+        except (IndexError, KeyError):
+            source_verdict = PURSUIT_SOURCE_PURSUE
         return PursuitLead(
             lead_id=row["lead_id"],
             source_theory_id=row["source_theory_id"],
@@ -975,23 +1004,49 @@ class TheoryLedger:
             rationale=row["rationale"] or "",
             suggested_variants=[str(v) for v in variants],
             status=status,
+            source_verdict=source_verdict,
             opened_at=row["opened_at"] or "",
             closed_at=row["closed_at"] or "",
             closed_cycle=row["closed_cycle"],
         )
 
-    def get_open_pursuit_leads(self, limit: int = 20) -> list[PursuitLead]:
-        """Return the currently open pursuit leads, newest first."""
+    def get_open_pursuit_leads(
+        self,
+        limit: int = 20,
+        *,
+        source_verdict: Optional[str] = None,
+    ) -> list[PursuitLead]:
+        """Return the currently open pursuit leads, newest first.
+
+        If `source_verdict` is given, filter to rows matching that
+        provenance tag (e.g. "pursue" for hard leads, "skip_variants"
+        for soft leads). If None, return all open leads regardless.
+        """
         with self._connect() as conn:
-            rows = conn.execute(
-                """
-                SELECT * FROM pursuit_leads
-                 WHERE status = ?
-                 ORDER BY source_cycle DESC, opened_at DESC
-                 LIMIT ?
-                """,
-                (PursuitLeadStatus.OPEN.value, int(limit)),
-            ).fetchall()
+            if source_verdict is None:
+                rows = conn.execute(
+                    """
+                    SELECT * FROM pursuit_leads
+                     WHERE status = ?
+                     ORDER BY source_cycle DESC, opened_at DESC
+                     LIMIT ?
+                    """,
+                    (PursuitLeadStatus.OPEN.value, int(limit)),
+                ).fetchall()
+            else:
+                rows = conn.execute(
+                    """
+                    SELECT * FROM pursuit_leads
+                     WHERE status = ? AND source_verdict = ?
+                     ORDER BY source_cycle DESC, opened_at DESC
+                     LIMIT ?
+                    """,
+                    (
+                        PursuitLeadStatus.OPEN.value,
+                        str(source_verdict),
+                        int(limit),
+                    ),
+                ).fetchall()
         return [self._row_to_pursuit_lead(r) for r in rows]
 
     def get_pursuit_lead(self, lead_id: str) -> Optional[PursuitLead]:

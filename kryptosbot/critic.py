@@ -166,6 +166,60 @@ def _detect_retired_palette_revival(text: str) -> Optional[str]:
             )
     return None
 
+
+# ── CONSENSUS_NULL_POSITIONS revival matcher ────────────────────────────────
+#
+# Closes the generator leak observed 2026-04-17 (cycles 94-102 of the run
+# killed that day): theories kept invoking the 17-position null mask despite
+# memory/project_consensus_nulls_epistemic_status_2026_04_14.md flagging it
+# as pending retraction. The palette matcher above only catches the 7-letter
+# subset {B,G,I,K,O,W,Z}; theories that invoked the position mask without
+# naming the letter subset slipped through as red-team CONCERNED and
+# dispatched anyway, burning compute on a foundation that has no independent
+# verification.
+#
+# Matches are deliberately narrow to avoid false positives on legitimate
+# stego work (which must be able to discuss "null masks" and "null positions"
+# in general terms):
+#   1. Literal symbol: "CONSENSUS_NULL_POSITIONS" (case-insensitive).
+#   2. "17-position null mask" / "17 position null mask" / "17-position mask"
+#      near a stego trigger word.
+#   3. "consensus null mask" / "consensus null positions" as a phrase.
+_CONSENSUS_NULL_MASK_PATTERNS = [
+    re.compile(r"\bCONSENSUS[_\s]+NULL[_\s]+POSITIONS?\b", re.IGNORECASE),
+    re.compile(r"\b17[-\s]?position[-\s]+(?:null[-\s]+)?mask\b", re.IGNORECASE),
+    re.compile(r"\b17[-\s]?position[-\s]+null[-\s]+positions?\b", re.IGNORECASE),
+    re.compile(r"\bconsensus[-\s]+null[-\s]+(?:mask|positions?)\b", re.IGNORECASE),
+]
+
+
+def _detect_consensus_null_positions_revival(text: str) -> Optional[str]:
+    """Return a human-readable reason string if the theory text invokes the
+    17-position CONSENSUS_NULL_POSITIONS mask, else None.
+
+    The 17-position mask is a pending-retraction construct derived from the
+    retired palette hypothesis. It has no independent verification. Per
+    memory/project_consensus_nulls_epistemic_status_2026_04_14.md any theory
+    that rests on it is building on historical weight, not epistemic support.
+
+    The palette matcher above handles the 7-letter letter-set revival. This
+    matcher handles theories that invoke the position mask without the
+    letter subset.
+    """
+    if not text:
+        return None
+    for pattern in _CONSENSUS_NULL_MASK_PATTERNS:
+        m = pattern.search(text)
+        if m is not None:
+            return (
+                f"CONSENSUS_NULL_POSITIONS revival: theory references "
+                f"'{m.group(0)}'. The 17-position null mask is pending "
+                f"retraction (derived from the retired palette hypothesis, "
+                f"no independent verification). See "
+                f"memory/project_consensus_nulls_epistemic_status_2026_04_14.md."
+            )
+    return None
+
 # NOTE (2026-04-13 Day 3 Pantheon integration): the CT_PERTURBATION_MARKERS
 # and BUDGET_MARKERS lexical-rule sets that lived here have been removed.
 # The judgment of "is this CT-perturbation-class theory going to spin without
@@ -294,6 +348,22 @@ class TheoryCritic:
                 decision=CriticDecision.REJECT_ELIMINATED,
                 confidence=0.95,
                 reasons=[retired_reason],
+            )
+
+        # --- Check 2.6: CONSENSUS_NULL_POSITIONS revival (belt-and-suspenders) ---
+        # Closes the generator leak observed 2026-04-17: theorists kept
+        # invoking the 17-position null mask despite red-team flagging it
+        # as pending-retraction. See matcher docstring above.
+        mask_reason = _detect_consensus_null_positions_revival(combined_text)
+        if mask_reason is not None:
+            logger.info(
+                "Critic rejected %s as CONSENSUS_NULL_POSITIONS revival: %s",
+                theory.hypothesis_id[:8], mask_reason[:120],
+            )
+            return CriticVerdict(
+                decision=CriticDecision.REJECT_ELIMINATED,
+                confidence=0.95,
+                reasons=[mask_reason],
             )
 
         # --- Check 3: Duplicate detection ---
@@ -621,7 +691,13 @@ class TheoryCritic:
                     "Physical cut/chunk/reassembly theories must specify a finite boundary rule, "
                     "chunk count or lengths, and permutation budget."
                 )
-            if _DELIMITER_RE.search(combined_text) and "w_delimiter" not in theory.anomalies_exploited:
+            if (
+                _DELIMITER_RE.search(combined_text)
+                and not any(
+                    anom_id == "w_delimiter_segments" or anom_id.startswith("w_delimiter")
+                    for anom_id in theory.anomalies_exploited
+                )
+            ):
                 reasons.append(
                     "Delimiter-driven reassembly theories must cite an explicit finite boundary rule, "
                     "not free-form delimiter lore."

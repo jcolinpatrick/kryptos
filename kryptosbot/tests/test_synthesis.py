@@ -22,6 +22,7 @@ from kryptosbot.pantheon_siblings import (
     CycleSynthesis,
     StatAuditVerdict,
     RedTeamVerdict,
+    _normalize_w_focus_recommendation,
     _format_outcomes_for_synthesis,
     _format_redteam_for_synthesis,
     _format_stat_audit_for_synthesis,
@@ -155,3 +156,89 @@ class TestSynthesisPromptFormatters:
         assert "alert 0" in block
         assert "alert 9" in block
         assert "alert 11" not in block
+
+
+class TestWFocusSynthesisGuard:
+
+    def _w_theory(self, title: str = "W-delimited segment trial") -> TheoryRecord:
+        return TheoryRecord(
+            title=title,
+            core_claim="The carved W positions bound six segments for a delimiter-style mechanism.",
+            mechanism="Preserve CT97 crib positions under W-bounded segment geometry.",
+            family="grille",
+            anomalies_exploited=["w_delimiter_segments"],
+        )
+
+    def test_negative_w_cycle_cannot_recommend_moving_away(self):
+        theory = self._w_theory()
+        contract = WorkerContract(
+            hypothesis_id=theory.hypothesis_id,
+            status=WorkerStatus.DISPROVED,
+            crib_score=0,
+            bean_passed=False,
+            score=0.0,
+        )
+        focus = _normalize_w_focus_recommendation(
+            "Theorist should move away from W-delimiter structural interpretations entirely.",
+            [theory],
+            [contract],
+        )
+        assert "move away" not in focus.lower()
+        assert "continue aggressively" in focus.lower()
+        assert "x/q/z" in focus.lower()
+
+    def test_w_geometry_demotions_are_narrowed_not_globalized(self):
+        theory = self._w_theory("W geometry trial")
+        contract = WorkerContract(
+            hypothesis_id=theory.hypothesis_id,
+            status=WorkerStatus.DISPROVED,
+            crib_score=0,
+            bean_passed=False,
+            score=0.0,
+        )
+        focus = _normalize_w_focus_recommendation(
+            "Avoid further W-segment geometry variants until a width constraint can be independently justified from the sculpture.",
+            [theory],
+            [contract],
+        )
+        assert "avoid new width-specific geometry variants" in focus.lower()
+        assert "delimiter-marker" in focus.lower()
+        assert "crib-bridge geometry" in focus.lower()
+
+    def test_non_w_cycle_focus_is_left_unchanged(self):
+        theory = TheoryRecord(
+            title="Compass rose keyed tableau",
+            core_claim="Use compass bearings as tableau selectors.",
+            mechanism="Finite keyed tableau walk.",
+            family="geometry",
+            anomalies_exploited=["aaa_compass_cipher"],
+        )
+        contract = WorkerContract(
+            hypothesis_id=theory.hypothesis_id,
+            status=WorkerStatus.DISPROVED,
+            crib_score=0,
+            bean_passed=False,
+            score=0.0,
+        )
+        focus = _normalize_w_focus_recommendation(
+            "Bias toward families with no recent clean sweeps.",
+            [theory],
+            [contract],
+        )
+        assert focus == "Bias toward families with no recent clean sweeps."
+
+    def test_w_signal_cycle_is_left_unchanged(self):
+        theory = self._w_theory()
+        contract = WorkerContract(
+            hypothesis_id=theory.hypothesis_id,
+            status=WorkerStatus.SUCCESS,
+            crib_score=18,
+            bean_passed=True,
+            score=18.0,
+        )
+        focus = _normalize_w_focus_recommendation(
+            "Escalate the strongest W survivor with stat-audit support.",
+            [theory],
+            [contract],
+        )
+        assert focus == "Escalate the strongest W survivor with stat-audit support."

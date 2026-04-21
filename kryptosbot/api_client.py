@@ -22,6 +22,9 @@ from pathlib import Path
 from typing import Any
 
 import anthropic
+from kryptosbot.claim_policy import can_use_in_prompt
+from kryptosbot.claim_rendering import render_claim_inline
+from kryptosbot.claims_registry import CANONICAL_CLAIMS_BY_ID
 
 logger = logging.getLogger("kryptosbot.api_client")
 
@@ -87,7 +90,22 @@ class TokenUsage:
 # K4 system prompt (cacheable)
 # ---------------------------------------------------------------------------
 
-K4_SYSTEM_PROMPT = """You are an expert cryptanalyst solving Kryptos K4, the last unsolved section of the CIA sculpture. Your role is to propose novel, testable hypotheses about the encryption method.
+
+def _render_prompt_claim(claim_id: str) -> str:
+    """Render one canonical claim for prompt context, fail-closed on drift."""
+    claim = CANONICAL_CLAIMS_BY_ID.get(claim_id)
+    if claim is None:
+        raise KeyError(f"Missing canonical claim for prompt: {claim_id}")
+    allowed, reason = can_use_in_prompt(claim)
+    if not allowed:
+        raise ValueError(f"Claim {claim_id} not prompt-eligible: {reason}")
+    return render_claim_inline(claim)
+
+
+_PROMPT_PERIODIC_POLY = _render_prompt_claim("periodic_poly_eliminated_h1")
+_PROMPT_PURE_TRANSPOSITION = _render_prompt_claim("pure_transposition_impossible")
+
+K4_SYSTEM_PROMPT = f"""You are an expert cryptanalyst solving Kryptos K4, the last unsolved section of the CIA sculpture. Your role is to propose novel, testable hypotheses about the encryption method.
 
 ## The K4 Problem
 
@@ -109,23 +127,33 @@ Scheidt (Wired 2009): "mirrors and obfuscation" + "just because you broke it doe
 
 K4 plaintext is "not standard English, would require a second level of cryptanalysis."
 
-## What Is MATHEMATICALLY PROVEN
+## Scoped Project Constraints And Eliminations
 
-1. SINGLE-LAYER PERIODIC SUBSTITUTION IS IMPOSSIBLE on raw 97-char text:
-   242 Bean variant-independent inequalities eliminate ALL periods 1-26 for
-   Vigenère, Beaufort, and Variant Beaufort on both AZ and KA alphabets.
+Treat every item below as scoped to the stated assumption bundle or search
+space. Do NOT promote a conditional elimination to a global fact, and do
+NOT assume a project anomaly is a hard constraint unless the prompt says so.
 
-2. DIGRAM FREQUENCY TEST proves outermost layer is SUBSTITUTION (not transposition):
-   K4 digrams match English top-30 at 5.2% (transposition gives ~42%, random ~4.4%).
-   → Encryption order: PT → transposition → substitution → carved text
+1. Under direct positional crib mapping on the raw 97-char carved CT, single-layer
+   periodic additive substitution is eliminated:
+   {_PROMPT_PERIODIC_POLY}
 
-3. NULL MASK + PERIODIC SUB (periods 1-23) IMPOSSIBLE for ANY choice of 24 null positions.
+2. The digram-frequency result is a project statistical signal, NOT a proof
+   that the outermost layer must be substitution. You may use it as context
+   or ranking guidance, but not as a hard constraint.
 
-4. PURE TRANSPOSITION IMPOSSIBLE: CT has 2 E's but cribs need 3.
+3. Under the project's 24-null / 73-real additive-model harnesses, the tested
+   null-mask + periodic-substitution families are conditionally eliminated
+   within their explicit assumption bundles. This is not a global elimination
+   of every possible null-removal mechanism.
 
-## What Is EXHAUSTIVELY ELIMINATED (47M+ configs, ZERO signal)
+4. Literal pure transposition of a fixed plaintext alphabet is structurally
+   incompatible with the disclosed cribs:
+   {_PROMPT_PURE_TRANSPOSITION}
+   This does NOT eliminate multi-layer, mixed-alphabet, or null-insertion systems.
 
-- All periodic sub (Vig/Beau/VBeau × AZ/KA) periods 1-26 on raw 97
+## What Has Been Broadly Searched With Zero Project Signal
+
+- All periodic sub (Vig/Beau/VBeau × AZ/KA) periods 1-26 on raw 97 under direct positional crib mapping
 - All 362,880 width-9 column permutations × Vig/Beau/VBeau × AZ/KA × periods 1-13 + autokey
 - Keyword-derived column orders for widths 4-14 × all substitution types
 - Running-key crib-drag on Howard Carter's book (max 7/24 = noise)
@@ -133,7 +161,7 @@ K4 plaintext is "not standard English, would require a second level of cryptanal
 - Autokey on raw 97 (156 single-key + 1M dictionary = ZERO)
 - All standard transpositions (16M+ configs), all fractionation, Hill, Bifid, ADFGVX
 - Exhaustive Gromark (3.2B primers), VERDIGRIS (362K perms), affine mod 97
-- Keywords HOROLOGE and ENIGMA: pigeonhole elimination (DO NOT USE these keywords)
+- Keywords HOROLOGE and ENIGMA: ruled out only within the project's pigeonhole analysis assumptions
 
 ## What Remains OPEN
 
@@ -159,7 +187,7 @@ K4 plaintext is "not standard English, would require a second level of cryptanal
 5. WIDTH-13 = 8 ROWS matches "8 lines" from Sanborn's legal pad. Width-14 has
    both cribs starting at same column. Both worth exploring with non-standard paths.
 
-## Bean 2021 Statistical Insights (Context, Not Constraints on Product Cipher)
+## Bean 2021 Statistical Insights (Context, Not Hard Constraints On Product Ciphers)
 
 Bean's paper analyzed the DIRECT CT↔PT relationship and found:
 - Minor differences (p≈1/5520): KRYPTOS letters map close in alphabet. Suggests near-standard cipher alphabet.
@@ -262,8 +290,11 @@ HYPOTHESIS TYPES:
 
 CRITICAL RULES:
 - USE "plaintext_generator" for non-periodic substitution (autokey, Quagmire, etc.)
-- DO NOT test periodic Vigenere/Beaufort on raw 97 chars (mathematically impossible)
-- DO NOT use keywords HOROLOGE or ENIGMA (eliminated by pigeonhole)
+- DO NOT treat any project elimination as global unless this prompt explicitly says so
+- DO NOT test periodic Vigenere/Beaufort on raw 97 chars under direct positional crib mapping;
+  that single-layer setup is already conditionally eliminated in-project
+- DO NOT use keywords HOROLOGE or ENIGMA as if they were universally impossible;
+  they are ruled out only within the project's pigeonhole-analysis assumptions
 - Keep generator code SIMPLE: under 50 lines, no complex class hierarchies
 - Filter candidates INSIDE the generator (e.g., only return if crib_hits >= 2)
 - Think about what a CIA cryptographer in 1989 would use that's hand-executable

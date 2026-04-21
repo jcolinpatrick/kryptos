@@ -469,10 +469,26 @@ class ControllerState:
 
 
 class PursuitLeadStatus(str, Enum):
-    """Lifecycle of a lead opened by the Day 6 lead-pursuit evaluator."""
+    """Lifecycle of a lead opened by the Day 6 lead-pursuit evaluator.
+
+    Lifecycle only — does NOT encode lead strength/kind. See
+    `PursuitLead.source_verdict` for the hard-vs-soft distinction.
+    """
     OPEN = "open"          # Freshly created, awaiting a theorist cycle to engage
     PURSUED = "pursued"    # A downstream theory referenced this lead
     STALE = "stale"        # Auto-closed after N cycles with no engagement
+
+
+# Provenance tags for PursuitLead.source_verdict. Orthogonal to
+# PursuitLeadStatus (which tracks lifecycle). A hard lead (PURSUE)
+# originates from an evaluator verdict="pursue" and surfaces as priority
+# context. A soft lead (SKIP_VARIANTS) originates from verdict="skip"
+# with non-empty suggested_variants — the evaluator rejected this
+# specific lead but preserved nearby variant directions that may be
+# worth the theorist seeing next cycle. Capped smaller in rendering.
+PURSUIT_SOURCE_PURSUE = "pursue"
+PURSUIT_SOURCE_SKIP_VARIANTS = "skip_variants"
+PURSUIT_SOURCE_VALUES = (PURSUIT_SOURCE_PURSUE, PURSUIT_SOURCE_SKIP_VARIANTS)
 
 
 @dataclass
@@ -491,6 +507,7 @@ class PursuitLead:
     rationale: str = ""
     suggested_variants: list[str] = field(default_factory=list)
     status: PursuitLeadStatus = PursuitLeadStatus.OPEN
+    source_verdict: str = PURSUIT_SOURCE_PURSUE
     opened_at: str = field(default_factory=_now_iso)
     closed_at: str = ""
     closed_cycle: Optional[int] = None
@@ -508,4 +525,7 @@ class PursuitLead:
                 d["status"] = PursuitLeadStatus(d["status"])
             except ValueError:
                 d["status"] = PursuitLeadStatus.OPEN
+        sv = d.get("source_verdict")
+        if sv is not None and sv not in PURSUIT_SOURCE_VALUES:
+            d["source_verdict"] = PURSUIT_SOURCE_PURSUE
         return cls(**{k: v for k, v in d.items() if k in cls.__dataclass_fields__})

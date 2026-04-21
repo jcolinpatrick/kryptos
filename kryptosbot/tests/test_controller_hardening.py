@@ -562,15 +562,64 @@ class TestRetiredPaletteCriticHardening:
         assert "ct_perturbation" in prompt
         assert "aaa_coordinate_lie" in prompt
         assert "aaa_compass_cipher" in prompt
+        assert "w_delimiter_segments" in prompt
         assert "width21_vertical_bigrams" in prompt
         assert "Only the following investigable anomalies are admissible" in prompt
-        assert "Treat width21 as a" in prompt
-        assert "project-verified anomaly / ranking feature" in prompt
-        assert "not as a mandatory constraint" in prompt
-        assert "Other historical anomalies remain in the ledger for audit" in prompt
+        # Rotation 2026-04-20: ct_perturbation is the PRIMARY anchor;
+        # w_delimiter_segments is SATURATED and demoted from primary.
+        assert "PRIMARY under-mined anchor" in prompt
+        assert "SATURATED for single-layer work" in prompt
+        assert "Treat width21 as a derived ranking feature" in prompt
+        assert "explained by W placement" in prompt
+        assert "historical anomalies" in prompt
+        assert "ledger for audit" in prompt
         assert "MANUAL PRIORITY FOCUS" in prompt
-        assert "finite physical reassembly hypotheses" in prompt
-        assert "Do NOT use W-delimiters as a standalone clue surface" in prompt
+        # Rotation 2026-04-20: manual focus points at the ranked under-mined
+        # surface, not W specifically.
+        assert "Rotate across the under-explored anomaly surface" in prompt
+        assert "ct_perturbation is the currently under-mined" in prompt
+        assert "w_delimiter_segments is SATURATED" in prompt
+        assert "Do NOT use rescue parameters" in prompt
+        assert "accept-specific-disproofs doctrine" in prompt
+
+    def test_landscape_ranks_least_explored_anomaly_first(self, tmp_path):
+        """Rotation 2026-04-20: sort by exploration depth, not hard-pin.
+
+        Replaces the prior test that pinned w_delimiter_segments to
+        position 0. The new sort puts the least-explored anomaly first so
+        ranking self-tunes as exploration counts accumulate.
+        """
+        from kryptosbot.controller import ResearchController, ControllerConfig
+
+        cfg = ControllerConfig(
+            project_root=tmp_path,
+            ledger_db_path=tmp_path / "ledger.sqlite",
+        )
+        ctrl = ResearchController.__new__(ResearchController)
+        ctrl.config = cfg
+        ctrl.ledger = TheoryLedger(cfg.ledger_db_path)
+        ctrl.state = ControllerState()
+        ctrl._last_synthesis = None
+        ctrl._session_baseline_tested = 0
+        ctrl._session_baseline_eliminated = 0
+
+        from kryptosbot.registries import bootstrap_all
+
+        bootstrap_all(ctrl.ledger)
+        landscape = ctrl._assess_landscape()
+        open_anoms = landscape["open_anomalies"]
+        # The first entry must be the least-explored admissible anomaly,
+        # with ties broken by priority (lower is better).
+        explored_counts = [a["explored_by"] for a in open_anoms]
+        assert explored_counts == sorted(explored_counts), (
+            "open_anomalies must be sorted ascending by explored_by"
+        )
+        # And the W hard-pin must no longer force position 0 when another
+        # anomaly has fewer theories exploring it.
+        if open_anoms and open_anoms[0]["id"] == "w_delimiter_segments":
+            # Only acceptable if W is tied for the lowest exploration count.
+            first_count = open_anoms[0]["explored_by"]
+            assert all(a["explored_by"] >= first_count for a in open_anoms)
 
     def test_landscape_recent_outcomes_hides_retracted_archive_ocr_theory(self, tmp_path):
         from kryptosbot.controller import ResearchController, ControllerConfig
@@ -606,6 +655,128 @@ class TestRetiredPaletteCriticHardening:
         titles = [r["title"] for r in landscape["recent_outcomes"]]
         assert "True coordinate digits as Beaufort key" in titles
         assert not any("4, 8, 10, 26 = Col" in title for title in titles)
+
+
+class TestConsensusNullMaskCriticHardening:
+    """CONSENSUS_NULL_POSITIONS revival is rejected at the critic.
+
+    Closes the generator leak observed 2026-04-17 (controller cycles 94-102):
+    theories invoking the 17-position null mask slipped past red-team as
+    CONCERNED and dispatched anyway. The palette matcher only catches the
+    7-letter letter subset; this matcher catches position-mask revivals.
+    """
+
+    def test_literal_consensus_null_positions_symbol_is_rejected(self, tmp_path):
+        ledger = TheoryLedger(tmp_path / "ledger.sqlite")
+        critic = TheoryCritic(ledger)
+        theory = TheoryRecord(
+            hypothesis_id="literal-mask-symbol",
+            title="Period-21 Keystream Under Null-Skip",
+            core_claim=(
+                "A period-21 keystream explains width-21 vertical bigrams "
+                "when null positions are skipped per CONSENSUS_NULL_POSITIONS."
+            ),
+            mechanism="Skip tape positions listed in CONSENSUS_NULL_POSITIONS.",
+            family="key_tape",
+        )
+        verdict = critic.evaluate(theory)
+        assert verdict.decision == "reject_eliminated" or verdict.decision.value == "reject_eliminated"
+        assert any("CONSENSUS_NULL_POSITIONS revival" in reason for reason in verdict.reasons)
+
+    def test_seventeen_position_null_mask_phrase_is_rejected(self, tmp_path):
+        ledger = TheoryLedger(tmp_path / "ledger.sqlite")
+        critic = TheoryCritic(ledger)
+        theory = TheoryRecord(
+            hypothesis_id="seventeen-position-phrase",
+            title="Compass Rose Finite Keystream Tape",
+            core_claim=(
+                "A 32-point compass rose deterministically generates a finite "
+                "keystream tape aligned to the 17-position null mask."
+            ),
+            mechanism="Step a tape past the 17-position null mask positions.",
+            family="encoding",
+        )
+        verdict = critic.evaluate(theory)
+        assert verdict.decision == "reject_eliminated" or verdict.decision.value == "reject_eliminated"
+        assert any("CONSENSUS_NULL_POSITIONS revival" in reason for reason in verdict.reasons)
+
+    def test_consensus_null_mask_phrase_is_rejected(self, tmp_path):
+        ledger = TheoryLedger(tmp_path / "ledger.sqlite")
+        critic = TheoryCritic(ledger)
+        theory = TheoryRecord(
+            hypothesis_id="consensus-null-mask-phrase",
+            title="CT-Perturbation Tape Skip Markers",
+            core_claim=(
+                "Coding-chart divergences select tape-skip positions that "
+                "match the consensus null mask."
+            ),
+            mechanism="Use the consensus null positions to skip tape.",
+            family="crib_analysis",
+        )
+        verdict = critic.evaluate(theory)
+        assert verdict.decision == "reject_eliminated" or verdict.decision.value == "reject_eliminated"
+        assert any("CONSENSUS_NULL_POSITIONS revival" in reason for reason in verdict.reasons)
+
+    def test_benign_null_prose_is_not_falsely_rejected(self, tmp_path):
+        """Guard against false positives on legitimate stego prose.
+
+        A theory that mentions "null" or "null mask" or "null positions" in
+        general terms (without the 17-position / consensus phrasing and
+        without the 5-of-7 palette letters) must NOT be rejected by either
+        retired-construct matcher. Legitimate stego work must be able to
+        discuss null masks.
+        """
+        ledger = TheoryLedger(tmp_path / "ledger.sqlite")
+        critic = TheoryCritic(ledger)
+        theory = TheoryRecord(
+            hypothesis_id="benign-null-prose",
+            title="Novel Width-21 Column Null Hypothesis",
+            core_claim=(
+                "Each width-21 column may contain a single null position "
+                "determined by an independent mechanism. No retired "
+                "construct is invoked."
+            ),
+            mechanism=(
+                "Place one null per column at a position selected by a "
+                "novel width-21 carving-artefact rule."
+            ),
+            family="stego_layer",
+        )
+        verdict = critic.evaluate(theory)
+        # The theory may still be rejected for OTHER reasons (duplicate,
+        # contradiction), but it must NOT be rejected as either a
+        # retired-palette revival or a CONSENSUS_NULL_POSITIONS revival.
+        reasons_text = " ".join(verdict.reasons)
+        assert "Retired palette revival" not in reasons_text
+        assert "CONSENSUS_NULL_POSITIONS revival" not in reasons_text
+
+    def test_theorist_prompt_names_consensus_null_positions_retraction(self, tmp_path):
+        from kryptosbot.controller import ResearchController, ControllerConfig
+
+        cfg = ControllerConfig(
+            project_root=tmp_path,
+            ledger_db_path=tmp_path / "ledger.sqlite",
+        )
+        ctrl = ResearchController.__new__(ResearchController)
+        ctrl.config = cfg
+        ctrl.ledger = TheoryLedger(cfg.ledger_db_path)
+        ctrl.state = ControllerState()
+
+        prompt = ctrl._build_theorist_prompt({
+            "open_anomalies": [],
+            "unaddressed_anomalies": [],
+            "underexplored_families": [],
+            "standing_constraints": [],
+            "status_counts": {},
+            "cycle_delta": {},
+            "active_families": [],
+            "recent_outcomes": [],
+            "pursuit_leads": [],
+            "previous_synthesis": None,
+        })
+        assert "CONSENSUS_NULL_POSITIONS" in prompt
+        assert "17-position null mask" in prompt
+        assert "pending retraction" in prompt
 
 
 class TestDisplayStageTransitions:

@@ -41,6 +41,7 @@ external/
 
 # Site build output
 site/
+site.stale-*/
 
 # Environment
 .env

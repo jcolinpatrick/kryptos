@@ -1072,8 +1072,82 @@ ALERTS THAT FIRED:
 YOUR TASK:
 Read the cycle outcomes and produce a structured synthesis the next cycle's theorist will use as context. You are NOT writing a publication summary or recommending memory promotion. You are producing a compact, structured handoff.
 
+SPECIAL POLICY FOR THIS HARDENING WINDOW:
+Do NOT recommend moving away from, deprioritizing, or abandoning the
+`w_delimiter_segments` anomaly lane solely because recent bounded W-focused
+theories returned negative results. That anomaly remains the primary live
+structural lead unless it is explicitly closed by controller policy. If a
+W-focused cycle is cleanly negative, bias toward narrower W-bounded follow-up
+variants rather than diversification-away language. In particular:
+- demote width-specific geometry variants unless the width is independently justified
+- keep delimiter / marker semantics, X-Q-Z-style marker letters, and crib-bridge geometry live
+- do not overgeneralize a negative width-geometry cycle into "avoid W work"
+
 Output exactly ONE JSON object with the seven fields specified in your operational mode override (headline, family_movements, evidence_added, recommended_next_focus, dispatched_count, disproved_count, signal_count). No prose. No markdown fences.
 """
+
+
+def _is_w_focus_theory(theory: TheoryRecord) -> bool:
+    """Return True if the theory is explicitly in the W-delimiter lane."""
+    if "w_delimiter_segments" in (theory.anomalies_exploited or []):
+        return True
+    text = " ".join(
+        str(part)
+        for part in (theory.title, theory.core_claim, theory.mechanism)
+        if part
+    ).lower()
+    return "w-delimit" in text or "w delimiter" in text or "w-segment" in text
+
+
+def _normalize_w_focus_recommendation(
+    focus: str,
+    theories: list[TheoryRecord],
+    contracts: list[WorkerContract],
+) -> str:
+    """Prevent synthesis from auto-demoting the W-delimiter lane.
+
+    Narrow guard only: if a cycle materially focused on W-delimiter theories and
+    all of those returned non-signal outcomes, do not allow results-synthesis to
+    recommend abandoning or moving away from that lane. Replace such guidance
+    with a bounded follow-up directive instead.
+    """
+    w_theories = [t for t in theories if _is_w_focus_theory(t)]
+    if not w_theories:
+        return focus
+
+    by_id = {c.hypothesis_id: c for c in contracts}
+    w_contracts = [by_id[t.hypothesis_id] for t in w_theories if t.hypothesis_id in by_id]
+    if not w_contracts:
+        return focus
+
+    # Only intervene on cleanly non-signal W cycles. Signal/promise handling
+    # should remain whatever the synthesis agent reported.
+    if any(c.crib_score >= 18 for c in w_contracts):
+        return focus
+
+    lowered = focus.lower()
+    demotion_markers = (
+        "move away from w",
+        "move away from w-delimiter",
+        "move away from w delimiter",
+        "move away from w-delimiter structural interpretations",
+        "avoid further w-segment geometry variants",
+        "avoid further w segment geometry variants",
+        "avoid w-segment geometry",
+        "avoid w segment geometry",
+        "deprioritize w",
+        "abandon w",
+        "diversify away",
+        "bias toward families with no recent",
+    )
+    if any(marker in lowered for marker in demotion_markers):
+        return (
+            "Continue aggressively along the W-delimiter lane, but keep it "
+            "narrow: avoid new width-specific geometry variants unless the "
+            "width is independently justified; prefer delimiter-marker, rare "
+            "PT marker (X/Q/Z), and crib-bridge geometry variants."
+        )
+    return focus
 
 
 def _format_outcomes_for_synthesis(
@@ -1322,6 +1396,7 @@ async def run_results_synthesis(
     ev_raw = parsed.get("evidence_added", [])
     ev = [str(x).strip() for x in ev_raw if x] if isinstance(ev_raw, list) else []
     focus = str(parsed.get("recommended_next_focus", "")).strip()
+    focus = _normalize_w_focus_recommendation(focus, theories, contracts)
 
     return CycleSynthesis(
         headline=headline,

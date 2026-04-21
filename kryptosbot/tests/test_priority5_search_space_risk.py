@@ -382,3 +382,250 @@ class TestPriority3NgramFloor:
         contract = self._make_contract("")
         level = classify_outcome(contract, AlertLevel.BREAKTHROUGH)
         assert level == AlertLevel.SIGNAL
+
+
+# ---------------------------------------------------------------------------
+# 5. Controller-side escalation: CONCERNED+duplicate_family → REJECT
+# ---------------------------------------------------------------------------
+#
+# Added 2026-04-17. The Priority-5 taxonomy defines duplicate_family as
+# "the mechanism has been structurally eliminated; re-running under a
+# new name would produce the same result." Logically that is a REJECT,
+# not a dispatch decision. Pre-2026-04-17 the controller dispatched
+# duplicate_family theories anyway; the 2026-04-17 run (cycles 94-102
+# and cycle 102 validation) showed each such dispatch burned 3-8 min
+# of compute and produced noise as predicted.
+#
+# This is NOT a lexicon rule — the controller reads the structured
+# search_space_risk field emitted by the red-team agent directly.
+
+import asyncio
+
+from kryptosbot.models import TheoryStatus
+from kryptosbot.pantheon import AgentSpec
+
+
+def _make_redteam_roster() -> dict[str, AgentSpec]:
+    """Minimal Pantheon roster with a red-team-disprover spec.
+
+    `_red_team_filter` calls `select_redteam(self._pantheon_roster)` and
+    then uses `rt_model, _ = resolve_model_for_phase(redteam_spec, "red_team")`.
+    We need a real AgentSpec (not MagicMock) so that resolution works.
+    """
+    return {
+        "red-team-disprover": AgentSpec(
+            name="red-team-disprover",
+            description="test fixture",
+            body="adversarial pre-check",
+            model="sonnet",
+        )
+    }
+
+
+def _make_controller_for_redteam(tmp_path):
+    from kryptosbot.controller import ResearchController, ControllerConfig
+    cfg = ControllerConfig(
+        project_root=tmp_path,
+        ledger_db_path=tmp_path / "ledger.sqlite",
+    )
+    ctrl = ResearchController.__new__(ResearchController)
+    ctrl.config = cfg
+    ctrl.ledger = TheoryLedger(cfg.ledger_db_path)
+    ctrl.state = MagicMock()
+    ctrl.state.cycle_number = 10
+    ctrl._cycle_redteam_verdicts = {}
+    ctrl._pantheon_roster = _make_redteam_roster()
+    return ctrl
+
+
+def _make_theory(hid: str, title: str = "test theory") -> TheoryRecord:
+    from kryptosbot.models import CriticVerdict, CriticDecision
+    theory = TheoryRecord(
+        hypothesis_id=hid,
+        title=title,
+        core_claim="c",
+        mechanism="m",
+        family="f",
+        kill_criteria=["k"],
+        expected_signal="s",
+    )
+    theory.critic_verdict = CriticVerdict(
+        decision=CriticDecision.APPROVE,
+        confidence=0.95,
+        reasons=["prior critic: approved"],
+    )
+    return theory
+
+
+def _patch_redteam_call(monkeypatch, verdict_by_hid: dict[str, RedTeamVerdict]):
+    """Replace run_red_team_precheck with a lookup against verdict_by_hid."""
+    async def _fake_precheck(theory, **_kwargs):
+        v = verdict_by_hid.get(theory.hypothesis_id)
+        if v is None:
+            raise AssertionError(
+                f"no verdict stubbed for {theory.hypothesis_id}"
+            )
+        return v
+    monkeypatch.setattr(
+        "kryptosbot.controller.run_red_team_precheck",
+        _fake_precheck,
+    )
+
+
+class TestDuplicateFamilyAutoRejectInFilter:
+    """CONCERNED+duplicate_family must escalate to REJECT before dispatch."""
+
+    def test_concerned_duplicate_family_is_escalated_to_reject(
+        self, tmp_path, monkeypatch
+    ):
+        ctrl = _make_controller_for_redteam(tmp_path)
+        t_dup = _make_theory("dup-1", "Wheatstone disk cipher")
+        _patch_redteam_call(monkeypatch, {
+            "dup-1": RedTeamVerdict(
+                verdict="concerned",
+                confidence=0.7,
+                reasons=["Structurally a stepping polyalphabetic cipher."],
+                search_space_risk="duplicate_family",
+            ),
+        })
+        survivors = asyncio.run(ctrl._red_team_filter([t_dup]))
+        assert survivors == []
+        assert t_dup.status == TheoryStatus.CRITICIZED
+
+    def test_escalated_theory_is_persisted_with_escalation_reason(
+        self, tmp_path, monkeypatch
+    ):
+        ctrl = _make_controller_for_redteam(tmp_path)
+        t_dup = _make_theory("dup-2", "Rebranded Vigenère")
+        _patch_redteam_call(monkeypatch, {
+            "dup-2": RedTeamVerdict(
+                verdict="concerned",
+                confidence=0.8,
+                reasons=["Reduces to Vigenère with mixed alphabet."],
+                search_space_risk="duplicate_family",
+            ),
+        })
+        asyncio.run(ctrl._red_team_filter([t_dup]))
+        # Ledger should have the downgraded theory with the escalation
+        # reason appended to its critic_verdict audit trail.
+        reloaded = ctrl.ledger.get_theory("dup-2")
+        assert reloaded is not None
+        assert reloaded.status == TheoryStatus.CRITICIZED
+        assert reloaded.critic_verdict is not None
+        reasons_text = " ".join(reloaded.critic_verdict.reasons)
+        assert "duplicate_family" in reasons_text
+        assert "controller escalated" in reasons_text
+
+    def test_concerned_residual_caution_still_dispatches(
+        self, tmp_path, monkeypatch
+    ):
+        ctrl = _make_controller_for_redteam(tmp_path)
+        t_ok = _make_theory("resid-1")
+        _patch_redteam_call(monkeypatch, {
+            "resid-1": RedTeamVerdict(
+                verdict="concerned",
+                confidence=0.7,
+                reasons=["I checked duplication; this is genuinely novel."],
+                search_space_risk="residual_caution",
+            ),
+        })
+        survivors = asyncio.run(ctrl._red_team_filter([t_ok]))
+        assert survivors == [t_ok]
+        assert t_ok.status != TheoryStatus.CRITICIZED
+
+    def test_concerned_unbounded_search_still_dispatches(
+        self, tmp_path, monkeypatch
+    ):
+        # unbounded_search produces a worker-prompt injection (BOUNDED-
+        # SEARCH POLICY) but should still dispatch. The escalation
+        # policy is narrow — only duplicate_family escalates.
+        ctrl = _make_controller_for_redteam(tmp_path)
+        t_unb = _make_theory("unb-1")
+        _patch_redteam_call(monkeypatch, {
+            "unb-1": RedTeamVerdict(
+                verdict="concerned",
+                confidence=0.7,
+                reasons=["Free parameters with no stated budget."],
+                search_space_risk="unbounded_search",
+            ),
+        })
+        survivors = asyncio.run(ctrl._red_team_filter([t_unb]))
+        assert survivors == [t_unb]
+        assert t_unb.status != TheoryStatus.CRITICIZED
+
+    def test_concerned_exhausted_and_underconstrained_still_dispatch(
+        self, tmp_path, monkeypatch
+    ):
+        ctrl = _make_controller_for_redteam(tmp_path)
+        t_exh = _make_theory("exh-1")
+        t_und = _make_theory("und-1")
+        _patch_redteam_call(monkeypatch, {
+            "exh-1": RedTeamVerdict(
+                verdict="concerned",
+                confidence=0.7,
+                reasons=["Source anomaly already exhausted by prior scripts."],
+                search_space_risk="exhausted_source_material",
+            ),
+            "und-1": RedTeamVerdict(
+                verdict="concerned",
+                confidence=0.7,
+                reasons=["Kill criterion is effectively vacuous."],
+                search_space_risk="underconstrained",
+            ),
+        })
+        survivors = asyncio.run(ctrl._red_team_filter([t_exh, t_und]))
+        assert set(s.hypothesis_id for s in survivors) == {"exh-1", "und-1"}
+
+    def test_reject_verdict_still_downgrades_regardless_of_risk(
+        self, tmp_path, monkeypatch
+    ):
+        # Baseline: the existing verdict="reject" path must still
+        # downgrade the theory. The new escalation code must not
+        # short-circuit or conflict with explicit rejects.
+        ctrl = _make_controller_for_redteam(tmp_path)
+        t_rej = _make_theory("rej-1")
+        _patch_redteam_call(monkeypatch, {
+            "rej-1": RedTeamVerdict(
+                verdict="reject",
+                confidence=0.9,
+                reasons=["Relies on CONSENSUS_NULL_POSITIONS."],
+                search_space_risk="duplicate_family",
+            ),
+        })
+        survivors = asyncio.run(ctrl._red_team_filter([t_rej]))
+        assert survivors == []
+        assert t_rej.status == TheoryStatus.CRITICIZED
+        # The explicit-reject path should be the one that fired (not
+        # the new escalation path). Check by ensuring the reason trail
+        # does NOT contain the escalation-specific string.
+        reloaded = ctrl.ledger.get_theory("rej-1")
+        assert reloaded is not None
+        reasons_text = " ".join(reloaded.critic_verdict.reasons)
+        assert "controller escalated" not in reasons_text
+
+    def test_pass_verdict_unchanged(self, tmp_path, monkeypatch):
+        ctrl = _make_controller_for_redteam(tmp_path)
+        t_pass = _make_theory("pass-1")
+        _patch_redteam_call(monkeypatch, {
+            "pass-1": RedTeamVerdict(
+                verdict="pass",
+                confidence=0.9,
+                reasons=["Bounded search, novel mechanism."],
+                search_space_risk="none",
+            ),
+        })
+        survivors = asyncio.run(ctrl._red_team_filter([t_pass]))
+        assert survivors == [t_pass]
+        assert t_pass.status != TheoryStatus.CRITICIZED
+
+    def test_taxonomy_docstring_documents_auto_reject_policy(self):
+        """The red-team agent's taxonomy docstring must explain the
+        auto-reject policy, so the agent can decide between
+        duplicate_family (escalates) and residual_caution (dispatches)
+        correctly. Without this block the agent would have no way to
+        know its duplicate_family tags trigger rejection.
+        """
+        from kryptosbot.pantheon import _REDTEAM_PRECHECK_PREFACE
+        assert "duplicate_family" in _REDTEAM_PRECHECK_PREFACE
+        assert "AUTO-REJECT POLICY" in _REDTEAM_PRECHECK_PREFACE
+        assert "2026-04-17" in _REDTEAM_PRECHECK_PREFACE

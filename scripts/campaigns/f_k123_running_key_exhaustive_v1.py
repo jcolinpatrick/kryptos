@@ -15,6 +15,12 @@ on either the raw 97-char ciphertext or the 73-char null-extracted ciphertext.
 Phase 1: Generate ~60+ derived texts from K1, K2, K3 and K1K2K3 combined
 Phase 2: Crib-drag each derived text against the required key at crib positions
 Phase 2b: Extended transpositions on K1K2K3 combined (widths 2-31, double-trans)
+
+QUARANTINE 2026-04-19
+---------------------
+This script includes a retired consensus-null extracted-text branch. It is
+retained only as a historical / reproducibility artifact and requires
+`--allow-retired-construct` for intentional use.
 """
 
 import sys

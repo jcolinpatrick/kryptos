@@ -75,10 +75,13 @@ with open('$SUMMARY_LOG', 'a') as f:
         existing.add(day)
 "
 
-# Print summary to stdout (useful for cron mail / manual runs)
+# Print the current rolling-14-day API totals to stdout.
+# These are NOT per-day counts; GitHub's traffic endpoints return a moving
+# 14-day window. Keep the wording explicit so cron logs are not misread as
+# daily deltas.
 TOTAL_CLONES=$(echo "$CLONES_JSON" | python3 -c "import json,sys; print(json.load(sys.stdin)['count'])")
 UNIQUE_CLONES=$(echo "$CLONES_JSON" | python3 -c "import json,sys; print(json.load(sys.stdin)['uniques'])")
 TOTAL_VIEWS=$(echo "$VIEWS_JSON" | python3 -c "import json,sys; print(json.load(sys.stdin)['count'])")
 UNIQUE_VIEWS=$(echo "$VIEWS_JSON" | python3 -c "import json,sys; print(json.load(sys.stdin)['uniques'])")
 
-echo "[$DATE_TODAY] Clones: $TOTAL_CLONES ($UNIQUE_CLONES unique) | Views: $TOTAL_VIEWS ($UNIQUE_VIEWS unique)"
+echo "[$DATE_TODAY] Rolling 14d clones: $TOTAL_CLONES ($UNIQUE_CLONES unique) | Rolling 14d views: $TOTAL_VIEWS ($UNIQUE_VIEWS unique)"

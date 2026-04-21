@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
-"""
+"""E-MARATHON-01 — 24-Hour Final Assault on K4.
+
 Cipher: multi-vector campaign
 Family: campaigns
 Status: exhausted
 Keyspace: see implementation
-Last run: 
-Best score: 
-"""
-"""E-MARATHON-01 — 24-Hour Final Assault on K4.
+Last run:
+Best score:
 
 260+ experiments, 669B+ configs, all noise. This is the largest single K4
 computation ever attempted: 4 phases, ~504B SA iterations, plus exhaustive

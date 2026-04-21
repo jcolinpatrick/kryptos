@@ -1297,6 +1297,25 @@ class TestFailClosedTheoryProposals:
         assert len(report.valid) == 1
         assert len(report.invalid) == 0
 
+    def test_w_delimiter_segments_critic_path_accepts_canonical_anomaly_id(self, tmp_ledger):
+        critic = TheoryCritic(tmp_ledger)
+        theory = TheoryRecord(
+            hypothesis_id="wdelim-ok-1",
+            title="W-bounded strip reassembly",
+            core_claim="The five carved W positions are enciphered delimiters that bound six segments.",
+            mechanism="Apply a fixed six-segment route budget anchored to the W boundaries while preserving CT97 crib positions.",
+            family="procedural",
+            anomalies_exploited=["w_delimiter_segments"],
+            kill_criteria=["No survivor above noise under the finite route budget."],
+        )
+
+        verdict = critic.evaluate(theory)
+        assert not any(
+            "Delimiter-driven reassembly theories must cite an explicit finite boundary rule"
+            in reason
+            for reason in verdict.reasons
+        )
+
     def test_non_dict_item_in_array(self):
         """Array containing non-objects is not selected as a theory array.
         The extractor requires the first element to be a dict (object)."""

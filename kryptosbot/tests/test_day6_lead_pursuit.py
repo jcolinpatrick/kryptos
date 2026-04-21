@@ -368,6 +368,241 @@ class TestPursuitLeadsPromptRendering:
 
 
 # ---------------------------------------------------------------------------
+# Soft pursuit leads: skip-with-variants preservation
+# ---------------------------------------------------------------------------
+
+class TestSoftPursuitLeads:
+    """Verify that SKIP verdicts with non-empty suggested_variants are
+    persisted as soft pursuit leads (source_verdict='skip_variants')
+    rather than being discarded at the cycle boundary.
+
+    Closes the information leak where cycle N's evaluator suggestions
+    never reach cycle N+1's theorist prompt.
+    """
+
+    def test_pursuit_lead_default_source_verdict_is_pursue(self):
+        lead = PursuitLead(lead_id="x", source_theory_id="t", source_cycle=1)
+        assert lead.source_verdict == "pursue"
+
+    def test_pursuit_lead_from_dict_rejects_unknown_source_verdict(self):
+        d = {
+            "lead_id": "x",
+            "source_theory_id": "t",
+            "source_cycle": 1,
+            "status": "open",
+            "source_verdict": "not-a-real-value",
+        }
+        lead = PursuitLead.from_dict(d)
+        assert lead.source_verdict == "pursue"
+
+    def test_ledger_round_trips_soft_lead(self, tmp_path):
+        ledger = TheoryLedger(tmp_path / "ledger.sqlite")
+        lead = PursuitLead(
+            lead_id="pls-1", source_theory_id="t1", source_cycle=1,
+            crib_score=6, rationale="skip, but try width 23",
+            suggested_variants=["width 23", "ABSCISSA substring"],
+            status=PursuitLeadStatus.OPEN,
+            source_verdict="skip_variants",
+        )
+        ledger.insert_pursuit_lead(lead)
+        got = ledger.get_pursuit_lead("pls-1")
+        assert got is not None
+        assert got.source_verdict == "skip_variants"
+        assert got.suggested_variants == ["width 23", "ABSCISSA substring"]
+
+    def test_ledger_insert_normalizes_unknown_source_verdict(self, tmp_path):
+        ledger = TheoryLedger(tmp_path / "ledger.sqlite")
+        ledger.insert_pursuit_lead(PursuitLead(
+            lead_id="pl-bad-insert", source_theory_id="t1", source_cycle=1,
+            crib_score=6, status=PursuitLeadStatus.OPEN,
+            source_verdict="not-a-real-value",
+        ))
+        got = ledger.get_pursuit_lead("pl-bad-insert")
+        assert got is not None
+        assert got.source_verdict == "pursue"
+
+    def test_ledger_load_normalizes_corrupt_source_verdict_row(self, tmp_path):
+        ledger = TheoryLedger(tmp_path / "ledger.sqlite")
+        with ledger._connect() as conn:
+            conn.execute(
+                """
+                INSERT INTO pursuit_leads (
+                    lead_id, source_theory_id, source_cycle, crib_score,
+                    rationale, suggested_variants, status, source_verdict,
+                    opened_at, closed_at, closed_cycle
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    "pl-corrupt-row", "t1", 1, 6,
+                    "", "[]", "open", "corrupt-value",
+                    "2026-01-01T00:00:00+00:00", "", None,
+                ),
+            )
+        got = ledger.get_pursuit_lead("pl-corrupt-row")
+        assert got is not None
+        assert got.source_verdict == "pursue"
+
+    def test_get_open_pursuit_leads_filter_separates_hard_and_soft(self, tmp_path):
+        ledger = TheoryLedger(tmp_path / "ledger.sqlite")
+        ledger.insert_pursuit_lead(PursuitLead(
+            lead_id="pl-hard-1", source_theory_id="t1", source_cycle=1,
+            crib_score=10, status=PursuitLeadStatus.OPEN,
+            source_verdict="pursue",
+        ))
+        ledger.insert_pursuit_lead(PursuitLead(
+            lead_id="pls-soft-1", source_theory_id="t2", source_cycle=1,
+            crib_score=6, status=PursuitLeadStatus.OPEN,
+            source_verdict="skip_variants",
+            suggested_variants=["v"],
+        ))
+        hard = ledger.get_open_pursuit_leads(source_verdict="pursue")
+        soft = ledger.get_open_pursuit_leads(source_verdict="skip_variants")
+        all_open = ledger.get_open_pursuit_leads()
+        assert [l.lead_id for l in hard] == ["pl-hard-1"]
+        assert [l.lead_id for l in soft] == ["pls-soft-1"]
+        assert {l.lead_id for l in all_open} == {"pl-hard-1", "pls-soft-1"}
+
+    def test_open_pursuit_lead_from_verdict_writes_soft_lead(self, tmp_path):
+        from kryptosbot.pantheon_siblings import PursuitVerdict
+        ctrl = _make_minimal_controller(tmp_path)
+        contract = WorkerContract(
+            hypothesis_id="abc123def456",
+            status=WorkerStatus.DISPROVED,
+            crib_score=6,
+        )
+        verdict = PursuitVerdict(
+            verdict="skip",
+            confidence=0.87,
+            rationale="near-noise, but three specific variants worth noting",
+            suggested_variants=["width 23 variant", "ABSCISSA substring"],
+        )
+        ctrl._open_pursuit_lead_from_verdict(
+            contract=contract,
+            verdict=verdict,
+            source_verdict="skip_variants",
+            lead_id_prefix="pls-",
+        )
+        soft = ctrl.ledger.get_open_pursuit_leads(source_verdict="skip_variants")
+        assert len(soft) == 1
+        assert soft[0].source_verdict == "skip_variants"
+        assert soft[0].suggested_variants == [
+            "width 23 variant", "ABSCISSA substring",
+        ]
+        assert soft[0].lead_id.startswith("pls-")
+
+    def test_rendering_two_sections_when_both_present(self, tmp_path):
+        ctrl = _make_minimal_controller(tmp_path)
+        hard = [{
+            "lead_id": "pl-hard", "source_theory_id": "aaa11111",
+            "source_cycle": 5, "crib_score": 10,
+            "rationale": "worth pursuing",
+            "suggested_variants": ["do X"],
+        }]
+        soft = [{
+            "lead_id": "pls-soft", "source_theory_id": "bbb22222",
+            "source_cycle": 6, "crib_score": 6,
+            "rationale": "skip parent, nearby variant",
+            "suggested_variants": ["try width 23", "swap read order"],
+        }]
+        block = ctrl._render_pursuit_leads_for_prompt(hard, soft)
+        assert "PRIORITY PURSUIT LEADS" in block
+        assert "SOFT PURSUIT LEADS" in block
+        assert "pl-hard" in block
+        assert "pls-soft" in block
+        assert "try width 23" in block
+        # SOFT section appears after the hard section
+        assert block.index("PRIORITY PURSUIT LEADS") < block.index("SOFT PURSUIT LEADS")
+
+    def test_rendering_soft_section_absent_when_empty(self, tmp_path):
+        ctrl = _make_minimal_controller(tmp_path)
+        hard = [{
+            "lead_id": "pl-only", "source_theory_id": "aaa",
+            "source_cycle": 5, "crib_score": 10, "rationale": "r",
+            "suggested_variants": [],
+        }]
+        block = ctrl._render_pursuit_leads_for_prompt(hard, [])
+        assert "PRIORITY PURSUIT LEADS" in block
+        assert "SOFT PURSUIT LEADS" not in block
+
+    def test_landscape_fetches_hard_and_soft_separately(self, tmp_path):
+        ctrl = _make_minimal_controller(tmp_path)
+        ctrl.config.soft_pursuit_leads_prompt_cap = 3
+        ctrl.ledger.insert_pursuit_lead(PursuitLead(
+            lead_id="pl-a", source_theory_id="t1", source_cycle=1,
+            crib_score=10, status=PursuitLeadStatus.OPEN,
+            source_verdict="pursue", rationale="hard",
+        ))
+        ctrl.ledger.insert_pursuit_lead(PursuitLead(
+            lead_id="pls-b", source_theory_id="t2", source_cycle=1,
+            crib_score=6, status=PursuitLeadStatus.OPEN,
+            source_verdict="skip_variants", rationale="soft",
+            suggested_variants=["v1"],
+        ))
+        hard = ctrl._safe_get_open_pursuit_leads(source_verdict="pursue")
+        soft = ctrl._safe_get_open_pursuit_leads(source_verdict="skip_variants")
+        assert [l.lead_id for l in hard] == ["pl-a"]
+        assert [l.lead_id for l in soft] == ["pls-b"]
+
+    def test_close_referenced_closes_soft_lead_by_tag(self, tmp_path):
+        """Tag-based closure must work for soft leads too."""
+        ctrl = _make_minimal_controller(tmp_path)
+        ctrl.ledger.insert_pursuit_lead(PursuitLead(
+            lead_id="pls-close-me", source_theory_id="src",
+            source_cycle=5, crib_score=6,
+            status=PursuitLeadStatus.OPEN,
+            source_verdict="skip_variants",
+            suggested_variants=["v"],
+        ))
+        approved = [
+            TheoryRecord(
+                hypothesis_id="variant-follower", title="v",
+                core_claim="c", mechanism="m", family="f",
+                tags=["pursuit_lead:pls-close-me"],
+            )
+        ]
+        ctrl._close_referenced_pursuit_leads(approved)
+        reloaded = ctrl.ledger.get_pursuit_lead("pls-close-me")
+        assert reloaded.status == PursuitLeadStatus.PURSUED
+
+    def test_migration_adds_source_verdict_column_to_existing_db(self, tmp_path):
+        """Pre-existing DBs without the column must gain it on init,
+        with rows defaulting to 'pursue' (historical semantics)."""
+        import sqlite3
+        db_path = tmp_path / "ledger.sqlite"
+        # Simulate pre-migration state: create only the old schema.
+        conn = sqlite3.connect(db_path)
+        conn.executescript("""
+            CREATE TABLE schema_version (version INTEGER PRIMARY KEY);
+            CREATE TABLE pursuit_leads (
+                lead_id TEXT PRIMARY KEY,
+                source_theory_id TEXT NOT NULL,
+                source_cycle INTEGER NOT NULL,
+                crib_score INTEGER NOT NULL,
+                rationale TEXT NOT NULL DEFAULT '',
+                suggested_variants TEXT NOT NULL DEFAULT '[]',
+                status TEXT NOT NULL DEFAULT 'open',
+                opened_at TEXT NOT NULL,
+                closed_at TEXT NOT NULL DEFAULT '',
+                closed_cycle INTEGER
+            );
+        """)
+        conn.execute(
+            "INSERT INTO pursuit_leads "
+            "(lead_id, source_theory_id, source_cycle, crib_score, opened_at) "
+            "VALUES (?, ?, ?, ?, ?)",
+            ("pl-legacy", "t", 1, 10, "2026-01-01T00:00:00+00:00"),
+        )
+        conn.commit()
+        conn.close()
+
+        # Now open via TheoryLedger — migration should run.
+        ledger = TheoryLedger(db_path)
+        lead = ledger.get_pursuit_lead("pl-legacy")
+        assert lead is not None
+        assert lead.source_verdict == "pursue"
+
+
+# ---------------------------------------------------------------------------
 # P4 (rewritten under Priority 5): CycleSynthesis.risk_breakdown
 # ---------------------------------------------------------------------------
 

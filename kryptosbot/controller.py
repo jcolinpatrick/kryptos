@@ -38,6 +38,7 @@ from .models import (
     EvidenceLink, EvidenceType,
     ControllerState,
     PursuitLead, PursuitLeadStatus,
+    PURSUIT_SOURCE_PURSUE, PURSUIT_SOURCE_SKIP_VARIANTS,
 )
 from .pantheon import (
     AgentSpec,
@@ -151,6 +152,15 @@ def _now_iso() -> str:
 # injection: "unbounded_search". The other non-none values get their
 # own tailored warning blocks or no injection at all. See
 # _build_worker_prompt below for the switch.
+#
+# POLICY UPDATE 2026-04-17: search_space_risk="duplicate_family" no
+# longer dispatches clean. The taxonomy defines duplicate_family as
+# "the mechanism has been structurally eliminated; re-running under a
+# new name would produce the same result" — which is logically a
+# rejection. The controller now escalates CONCERNED+duplicate_family
+# to REJECT in _red_team_filter, before the worker prompt is built.
+# This reverses the original Priority-5 choice; see _red_team_filter
+# for the rationale and the run evidence that motivated it.
 
 
 # ---------------------------------------------------------------------------
@@ -228,6 +238,12 @@ class ControllerConfig:
     # Auto-close stale open leads after N cycles without a downstream
     # theorist reference. 0 disables auto-close.
     lead_pursuit_stale_cycles: int = 3
+
+    # Max soft leads (source_verdict='skip_variants') surfaced per
+    # theorist prompt. Intentionally small — soft leads carry weaker
+    # provenance (the evaluator rejected the specific lead) so we
+    # cap hard to avoid prompt sludge.
+    soft_pursuit_leads_prompt_cap: int = 3
 
     # Day 6 hardening priority #1: bounded-search policy total-
     # configuration cap. When red-team flags a theory as
@@ -649,15 +665,34 @@ class ResearchController:
             and a.anomaly_id in ADMISSIBLE_PROMPT_ANOMALY_IDS
         ]
 
-        # Sort investigable anomalies by priority (from KNOWN_ANOMALIES registry).
-        # Lower priority number = more important (Tier S=1, A=2, B=3, C=4).
-        # Anomalies not in the registry default to priority 99.
+        # Sort investigable anomalies so under-explored ones surface first.
+        #
+        # Rotation 2026-04-20: the prior sort hard-pinned w_delimiter_segments
+        # to position 0. That emphasis was added 2026-04-17 when W was the
+        # live structural lead; it is now saturated (80+ controller theories
+        # across cycles 125-133, all eliminated or rejected). Replacing the
+        # pin with len(a.theories_exploring) as the primary sort key lets
+        # ranking self-tune: depth-mined anomalies demote automatically as
+        # counts accumulate, and fresh surfaces bubble up without hand-edits.
+        #
+        # Priority (from KNOWN_ANOMALIES; lower = more important: Tier
+        # S=1, A=2, B=3, C=4) is the tiebreaker, so within an equal
+        # exploration bucket the S/A tier anchors still win.
+        #
+        # Disproof-pivot risk on low-count anomalies (e.g. aaa_coordinate_lie
+        # at 15) is handled downstream by the critic and red-team, not here;
+        # see feedback_accept_specific_disproofs.md.
         from kryptosbot.registries import KNOWN_ANOMALIES
         _priority_map = {
             a["anomaly_id"]: a.get("priority", 99)
             for a in KNOWN_ANOMALIES
         }
-        investigable.sort(key=lambda a: _priority_map.get(a.anomaly_id, 99))
+        investigable.sort(
+            key=lambda a: (
+                len(a.theories_exploring),
+                _priority_map.get(a.anomaly_id, 99),
+            )
+        )
 
         # Find anomalies not yet addressed by any theory
         unaddressed_anomalies = [
@@ -739,9 +774,10 @@ class ResearchController:
                 if self._last_synthesis is not None
                 else None
             ),
-            # Day 6: open pursuit leads from prior cycles. Surfaced in
-            # the theorist prompt as priority context so sub-signal
-            # follow-ups no longer depend on persona rotation.
+            # Day 6: open HARD pursuit leads (source_verdict='pursue')
+            # from prior cycles. Surfaced in the theorist prompt as
+            # priority context so sub-signal follow-ups no longer
+            # depend on persona rotation.
             "pursuit_leads": [
                 {
                     "lead_id": lead.lead_id,
@@ -751,19 +787,47 @@ class ResearchController:
                     "rationale": lead.rationale,
                     "suggested_variants": list(lead.suggested_variants),
                 }
-                for lead in self._safe_get_open_pursuit_leads()
+                for lead in self._safe_get_open_pursuit_leads(
+                    source_verdict=PURSUIT_SOURCE_PURSUE,
+                )
+            ],
+            # SOFT pursuit leads (source_verdict='skip_variants'):
+            # evaluator rejected the specific lead but left concrete
+            # variant directions worth preserving. Capped small to
+            # avoid prompt sludge per feedback.
+            "soft_pursuit_leads": [
+                {
+                    "lead_id": lead.lead_id,
+                    "source_theory_id": lead.source_theory_id,
+                    "source_cycle": lead.source_cycle,
+                    "crib_score": lead.crib_score,
+                    "rationale": lead.rationale,
+                    "suggested_variants": list(lead.suggested_variants),
+                }
+                for lead in self._safe_get_open_pursuit_leads(
+                    limit=self.config.soft_pursuit_leads_prompt_cap,
+                    source_verdict=PURSUIT_SOURCE_SKIP_VARIANTS,
+                )
             ],
         }
 
-    def _safe_get_open_pursuit_leads(self, limit: int = 10) -> list[PursuitLead]:
+    def _safe_get_open_pursuit_leads(
+        self,
+        limit: int = 10,
+        *,
+        source_verdict: Optional[str] = None,
+    ) -> list[PursuitLead]:
         """Wrapper around ledger.get_open_pursuit_leads that never raises.
 
         Called during landscape assessment, which must never fail the
         cycle. If the ledger table is missing or a query raises, return
-        an empty list and log the error.
+        an empty list and log the error. The optional `source_verdict`
+        filter selects hard vs soft leads.
         """
         try:
-            return self.ledger.get_open_pursuit_leads(limit=limit)
+            return self.ledger.get_open_pursuit_leads(
+                limit=limit, source_verdict=source_verdict,
+            )
         except Exception:
             logger.exception("Failed to fetch open pursuit leads (returning [])")
             return []
@@ -1103,6 +1167,46 @@ class ResearchController:
                 for r in verdict.reasons[:3]:  # keep ledger reasons compact
                     theory.critic_verdict.reasons.append(f"  - {r}")
 
+            # Controller-side escalation (added 2026-04-17): CONCERNED with
+            # search_space_risk=duplicate_family auto-escalates to REJECT.
+            # Rationale: the Priority-5 taxonomy defines duplicate_family
+            # as "the mechanism has been structurally eliminated; re-running
+            # under a new name would produce the same result." That is
+            # logically a rejection of the theory, not a dispatch decision.
+            # Day 8+ evidence (2026-04-17 run cycles 94-102, cycle 102 test
+            # run): every CONCERNED+duplicate_family theory dispatched during
+            # those cycles burned 3-8 minutes of compute and produced noise
+            # exactly as the red-team predicted. Honoring the taxonomy's own
+            # semantics closes this waste path. Reverses the original
+            # Priority-5 "duplicate_family dispatches clean" choice.
+            #
+            # NOTE: this is NOT a lexicon rule (which
+            # feedback_concerned_vs_search_space_risk_separation.md
+            # forbids). It reads the structured search_space_risk value
+            # emitted directly by the red-team agent. If the agent tags
+            # borderline cases too aggressively, the correct response is
+            # for it to use residual_caution for those cases, not for the
+            # controller to hedge on duplicate_family.
+            if (
+                verdict.verdict == "concerned"
+                and (verdict.search_space_risk or "none") == "duplicate_family"
+            ):
+                logger.warning(
+                    "  ↑ ESCALATED concerned→reject by duplicate_family "
+                    "policy: %s — %s",
+                    theory.title[:60],
+                    verdict.reasons[0] if verdict.reasons else "no reason given",
+                )
+                theory.status = TheoryStatus.CRITICIZED
+                if theory.critic_verdict is not None:
+                    theory.critic_verdict.reasons = list(theory.critic_verdict.reasons)
+                    theory.critic_verdict.reasons.append(
+                        "controller escalated concerned→reject on "
+                        "search_space_risk=duplicate_family"
+                    )
+                self.ledger.upsert_theory(theory)
+                continue
+
             if verdict.verdict == "reject":
                 # Downgrade this theory before dispatch
                 theory.status = TheoryStatus.CRITICIZED
@@ -1122,6 +1226,8 @@ class ResearchController:
                 # structural problem — dispatch clean. Any other value
                 # gets surfaced in the warning log and fed to
                 # _build_worker_prompt for a category-specific block.
+                # duplicate_family is handled above via controller-side
+                # escalation to REJECT and never reaches this branch.
                 risk = verdict.search_space_risk or "none"
                 if risk in ("none", "residual_caution"):
                     logger.warning(
@@ -1183,39 +1289,78 @@ class ResearchController:
         return "\n".join(lines) if lines else "(no anomaly-backed claims in current landscape)"
 
     def _render_pursuit_leads_for_prompt(
-        self, pursuit_leads: list[dict[str, Any]],
+        self,
+        pursuit_leads: list[dict[str, Any]],
+        soft_pursuit_leads: Optional[list[dict[str, Any]]] = None,
     ) -> str:
         """Render the open pursuit leads as a priority-context block.
 
         Day 6: this block tells the theorist which sub-signal follow-ups
-        the Day-6 evaluator flagged as worth extending. Leads are NOT a
+        the evaluator flagged as worth extending. Leads are NOT a
         dispatch trigger — the theorist still decides whether to generate
-        variants. This is passive surfacing by design; see
-        project_day6_lead_pursuit_plan.md decision 5.
+        variants. Passive surfacing by design; see
+        project_day6_lead_pursuit_plan.md decision 5 and
+        feedback_pursuit_stays_passive.md.
+
+        Two sections rendered:
+          - PRIORITY PURSUIT LEADS: hard leads (evaluator verdict=pursue).
+            Capped at 10. Full rationale + up to 3 variants each.
+          - SOFT PURSUIT LEADS: soft leads (evaluator verdict=skip with
+            non-empty suggested_variants). Capped small by caller. Shorter
+            rationale + up to 2 variants each. Lower priority framing.
         """
+        soft_pursuit_leads = soft_pursuit_leads or []
+        lines: list[str] = []
+
+        # --- Hard leads section -----------------------------------------
         if not pursuit_leads:
-            return (
+            lines.append(
                 "PRIORITY PURSUIT LEADS (recent interesting results "
                 "worth following up):\n  (none open)"
             )
-        lines = [
-            "PRIORITY PURSUIT LEADS (recent interesting results "
-            "worth following up):"
-        ]
-        for lead in pursuit_leads[:10]:
-            hid = str(lead.get("source_theory_id", ""))[:8]
-            score = lead.get("crib_score", 0)
-            cyc = lead.get("source_cycle", "?")
-            rationale = str(lead.get("rationale", ""))[:200]
+        else:
             lines.append(
-                f"  - lead_id={lead.get('lead_id', '?')} "
-                f"source={hid} score={score}/24 opened_in_cycle={cyc}"
+                "PRIORITY PURSUIT LEADS (recent interesting results "
+                "worth following up):"
             )
-            if rationale:
-                lines.append(f"    rationale: {rationale}")
-            variants = lead.get("suggested_variants") or []
-            for v in list(variants)[:3]:
-                lines.append(f"    variant: {str(v)[:160]}")
+            for lead in pursuit_leads[:10]:
+                hid = str(lead.get("source_theory_id", ""))[:8]
+                score = lead.get("crib_score", 0)
+                cyc = lead.get("source_cycle", "?")
+                rationale = str(lead.get("rationale", ""))[:200]
+                lines.append(
+                    f"  - lead_id={lead.get('lead_id', '?')} "
+                    f"source={hid} score={score}/24 opened_in_cycle={cyc}"
+                )
+                if rationale:
+                    lines.append(f"    rationale: {rationale}")
+                variants = lead.get("suggested_variants") or []
+                for v in list(variants)[:3]:
+                    lines.append(f"    variant: {str(v)[:160]}")
+
+        # --- Soft leads section -----------------------------------------
+        if soft_pursuit_leads:
+            lines.append("")
+            lines.append(
+                "SOFT PURSUIT LEADS (evaluator skipped the parent lead but "
+                "preserved nearby variant directions — weaker context, "
+                "only pursue if it fits the cycle's theme):"
+            )
+            for lead in soft_pursuit_leads:
+                hid = str(lead.get("source_theory_id", ""))[:8]
+                score = lead.get("crib_score", 0)
+                cyc = lead.get("source_cycle", "?")
+                rationale = str(lead.get("rationale", ""))[:120]
+                lines.append(
+                    f"  ~ lead_id={lead.get('lead_id', '?')} "
+                    f"source={hid} score={score}/24 opened_in_cycle={cyc}"
+                )
+                if rationale:
+                    lines.append(f"    rationale: {rationale}")
+                variants = lead.get("suggested_variants") or []
+                for v in list(variants)[:2]:
+                    lines.append(f"    variant: {str(v)[:140]}")
+
         lines.append(
             "\nIf any of your proposals target or extend these leads, "
             "include the lead's lead_id in your theory's tags field as "
@@ -1234,22 +1379,48 @@ class ResearchController:
         """
         return (
             "MANUAL PRIORITY FOCUS:\n"
-            "  - Prefer finite physical reassembly hypotheses derived from "
-            "archive cut/tape/reassembly workflow over free-form delimiter lore.\n"
-            "  - If proposing chunk/strip/reassembly theories, specify: "
-            "(1) the boundary rule, (2) the maximum chunk count or lengths, "
-            "(3) the permutation budget, and (4) why this is not already "
-            "covered by existing pre-transposition harnesses.\n"
-            "  - Do NOT use W-delimiters as a standalone clue surface. W-like "
-            "markers are admissible only when they instantiate an explicit, "
-            "finite boundary rule."
+            "  - Rotate across the under-explored anomaly surface. The "
+            "open_anomalies list in the landscape is now ranked by exploration "
+            "depth (lowest explored_by count first); take that ranking seriously "
+            "and bias generation toward the top of the list.\n"
+            "  - ct_perturbation is the currently under-mined, archive-anchored "
+            "lead. Published Sanborn coding charts prove specific transcription "
+            "errors in the carved K1-K3 plaintexts (IQLUSION, UNDERGRUUND, "
+            "DESPARATLY). Strong proposals here test whether analogous "
+            "perturbations of K4 CT — a preregistered short variant list derived "
+            "from archive evidence, NOT arbitrary single-char sweeps — change "
+            "the behavior of already-eliminated cipher families.\n"
+            "  - w_delimiter_segments is SATURATED as a single-layer lead "
+            "(80+ theories tested, all eliminated). It remains admissible only "
+            "as one layer of a multi-layer construction or with a genuinely "
+            "novel mechanism that is not a rehash of reset / segment-tape / "
+            "digit-key / compass-rotation / strip-permutation / Chaocipher "
+            "variants already disproved. Do not propose another single-layer "
+            "W variant unless it clears that bar.\n"
+            "  - width21_vertical_bigrams is a ranking feature, not a clue "
+            "surface. Do not build new theories on it; use it only to rank "
+            "candidates that arise from other anchors.\n"
+            "  - aaa_coordinate_lie: the archive evidence is real, but "
+            "multiple specific mechanisms (true-coord digits, coord-lie delta, "
+            "coord-delta Gronsfeld) have been cleanly disproved. Per "
+            "accept-specific-disproofs doctrine, new coord-lie mechanisms must "
+            "either fix the specific error of a prior disproof or propose a "
+            "genuinely different mechanism class — not a pivot that preserves "
+            "the coordinate commitment while dodging the last disproof.\n"
+            "  - aaa_compass_cipher is mature; new proposals should either "
+            "tie to physical-sculpture geometry specifically or be set aside.\n"
+            "  - Do NOT use rescue parameters such as optional truncation, "
+            "optional wrap, or choose-among-plausible-rectangles geometry. "
+            "A valid theory must have one preregistered geometry and one "
+            "preregistered parameter envelope."
         )
 
     def _build_theorist_prompt(self, landscape: dict[str, Any]) -> str:
         """Build the theorist prompt from the current landscape."""
         hedged_claims = self._render_landscape_anomaly_claims(landscape)
         pursuit_leads_block = self._render_pursuit_leads_for_prompt(
-            landscape.get("pursuit_leads") or []
+            landscape.get("pursuit_leads") or [],
+            landscape.get("soft_pursuit_leads") or [],
         )
         manual_focus_block = self._render_manual_focus_for_prompt()
         return f"""Generate {self.config.theories_per_cycle} novel, testable K4 hypotheses.
@@ -1309,14 +1480,30 @@ re-anchoring. Do not attempt to infer it. Any theory proposing a fixed
 small-alphabet null set at a fixed position mask should be treated as a
 revival of this retired claim and withdrawn.
 
-ACTIVE ANOMALY SURFACE (RESET 2026-04-15):
+DO NOT invoke CONSENSUS_NULL_POSITIONS or any "17-position null mask"
+construct as a foundation for a theory. This mask is pending retraction:
+it was derived from the retired palette hypothesis and has no independent
+verification. Theories that rest on the 17-position mask are building on
+historical weight, not epistemic support, and will be rejected by the
+critic. See memory/project_consensus_nulls_epistemic_status_2026_04_14.md.
+
+ACTIVE ANOMALY SURFACE (RESET 2026-04-15, W EMPHASIS ROTATED OUT 2026-04-20):
 Only the following investigable anomalies are admissible as active prompt
 anchors for new theories: ct_perturbation, aaa_coordinate_lie,
-aaa_compass_cipher, width21_vertical_bigrams. Treat width21 as a
-project-verified anomaly / ranking feature whose mechanism remains unknown,
-not as a mandatory constraint. Other historical anomalies remain in the ledger for audit
-but are demoted from active prompting unless a future hardening pass restores
-them with new finite evidence.
+aaa_compass_cipher, w_delimiter_segments, width21_vertical_bigrams.
+Ranking is self-tuning: the open_anomalies list above is sorted by
+exploration depth (lowest explored_by count first), so whichever anchor is
+currently under-mined surfaces at the top. Follow that ranking.
+Treat ct_perturbation as the PRIMARY under-mined anchor: archive-evidence
+anchored, bounded (archive-derived preregistered variant list), and least
+explored. Treat w_delimiter_segments as SATURATED for single-layer work
+(80+ theories tested, all eliminated across cycles 125-133); it remains
+admissible as a LAYER in a multi-layer proposal but is not a standalone
+primary anchor. Treat width21 as a derived ranking feature largely
+explained by W placement, not as an independent clue surface. Other
+historical anomalies remain in the ledger for audit but are demoted from
+active prompting unless a future hardening pass restores them with new
+finite evidence.
 
 OUTPUT FORMAT (JSON array):
 [
@@ -2482,6 +2669,55 @@ field empty. The controller will record the verification gap and your status
     # Day 6: Lead-pursuit phase for sub-signal (6-17) contracts
     # ------------------------------------------------------------------
 
+    def _open_pursuit_lead_from_verdict(
+        self,
+        *,
+        contract: WorkerContract,
+        verdict: "PursuitVerdict",
+        source_verdict: str,
+        lead_id_prefix: str,
+    ) -> None:
+        """Persist a pursuit lead from an evaluator verdict.
+
+        Shared by the PURSUE path (hard lead, prefix 'pl-') and the
+        SKIP-with-variants path (soft lead, prefix 'pls-'). Failures
+        are logged but never raised — pursuit bookkeeping must not
+        block the cycle.
+        """
+        lead_id = (
+            f"{lead_id_prefix}{contract.hypothesis_id[:8]}-"
+            f"c{self.state.cycle_number}"
+        )
+        lead = PursuitLead(
+            lead_id=lead_id,
+            source_theory_id=contract.hypothesis_id,
+            source_cycle=self.state.cycle_number,
+            crib_score=int(contract.crib_score or 0),
+            rationale=verdict.rationale[:500],
+            suggested_variants=list(verdict.suggested_variants),
+            status=PursuitLeadStatus.OPEN,
+            source_verdict=source_verdict,
+            opened_at=_now_iso(),
+        )
+        try:
+            self.ledger.insert_pursuit_lead(lead)
+            self._cycle_pursuit_leads_opened.append(lead_id)
+            marker = "↪" if source_verdict == PURSUIT_SOURCE_PURSUE else "~"
+            kind = "LEAD OPENED" if source_verdict == PURSUIT_SOURCE_PURSUE else "SOFT LEAD OPENED"
+            logger.info(
+                "  %s %s %s source=%s cycle=%d score=%d",
+                marker, kind, lead_id, contract.hypothesis_id[:8],
+                self.state.cycle_number, contract.crib_score,
+            )
+        except Exception as exc:
+            # Duplicate PRIMARY KEY (same cycle re-run) or other
+            # constraint violation — log and continue, never block
+            # the cycle on pursuit bookkeeping.
+            logger.warning(
+                "  ~ lead insert failed for %s: %s",
+                lead_id, exc,
+            )
+
     async def _run_lead_pursuit(
         self,
         theories: list[TheoryRecord],
@@ -2581,41 +2817,31 @@ field empty. The controller will record the verification gap and your status
 
             if verdict.verdict == "pursue":
                 pursue_n += 1
-                # Open a pursuit lead in the ledger. Lead ID is
-                # deterministic per source theory + cycle so repeated
-                # calls on the same contract don't multiply.
-                lead_id = (
-                    f"pl-{contract.hypothesis_id[:8]}-"
-                    f"c{self.state.cycle_number}"
+                # Open a HARD pursuit lead. Lead ID is deterministic
+                # per source theory + cycle so repeated calls on the
+                # same contract don't multiply.
+                self._open_pursuit_lead_from_verdict(
+                    contract=contract,
+                    verdict=verdict,
+                    source_verdict=PURSUIT_SOURCE_PURSUE,
+                    lead_id_prefix="pl-",
                 )
-                lead = PursuitLead(
-                    lead_id=lead_id,
-                    source_theory_id=contract.hypothesis_id,
-                    source_cycle=self.state.cycle_number,
-                    crib_score=int(contract.crib_score or 0),
-                    rationale=verdict.rationale[:500],
-                    suggested_variants=list(verdict.suggested_variants),
-                    status=PursuitLeadStatus.OPEN,
-                    opened_at=_now_iso(),
-                )
-                try:
-                    self.ledger.insert_pursuit_lead(lead)
-                    self._cycle_pursuit_leads_opened.append(lead_id)
-                    logger.info(
-                        "  ↪ LEAD OPENED %s source=%s cycle=%d score=%d",
-                        lead_id, contract.hypothesis_id[:8],
-                        self.state.cycle_number, contract.crib_score,
-                    )
-                except Exception as exc:
-                    # Duplicate PRIMARY KEY (same cycle re-run) or other
-                    # constraint violation — log and continue, never
-                    # block the cycle on a pursuit bookkeeping failure.
-                    logger.warning(
-                        "  ↪ lead insert failed for %s: %s",
-                        lead_id, exc,
-                    )
             elif verdict.verdict == "skip":
                 skip_n += 1
+                # SOFT lead path: the evaluator rejected this specific
+                # lead but left behind concrete variant directions. We
+                # persist them as a soft lead (source_verdict=skip_variants)
+                # so the next theorist sees them as weaker context instead
+                # of losing the information at the cycle boundary. See
+                # feedback_pursuit_stays_passive.md — these remain passive
+                # context, not dispatch triggers.
+                if verdict.suggested_variants:
+                    self._open_pursuit_lead_from_verdict(
+                        contract=contract,
+                        verdict=verdict,
+                        source_verdict=PURSUIT_SOURCE_SKIP_VARIANTS,
+                        lead_id_prefix="pls-",
+                    )
             else:  # error
                 error_n += 1
 

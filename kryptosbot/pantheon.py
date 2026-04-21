@@ -218,6 +218,12 @@ _REDTEAM_PRECHECK_PREFACE = """\
 #       result. Examples: "structurally Vigenère with mixed CT
 #       alphabet", "guild cipher ring stepping = variable-period
 #       polyalphabetic rebranded", "Gronsfeld algebraically eliminated".
+#       AUTO-REJECT POLICY (since 2026-04-17): emitting this value
+#       under verdict="concerned" causes the controller to escalate
+#       the theory to REJECT before dispatch. If the mechanism is
+#       structurally eliminated, the theory should not run. Use
+#       "residual_caution" for borderline cases where you checked for
+#       duplication and found none but want the audit record.
 #
 #   "residual_caution" — CONCERNED verdict where you explicitly
 #       checked for a structural problem (duplicate, exhausted,

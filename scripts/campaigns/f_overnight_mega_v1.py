@@ -38,6 +38,12 @@ PHASES
    - Catches cable-like text that quadgrams miss
    - 1000 restarts × 300K steps
 
+QUARANTINE 2026-04-19
+---------------------
+This script includes retired-consensus-null branches and is retained only as a
+historical / reproducibility artifact. It must not be treated as live evidence;
+intentional use requires `--allow-retired-construct`.
+
 =================================================================
 """
 

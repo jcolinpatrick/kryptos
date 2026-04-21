@@ -34,6 +34,12 @@ Phase 3: Single crib letter error (24 positions × 25 alternatives = 600)
 
 Phase 4: Single null position error
   - What if one consensus null is actually real, or vice versa?
+
+QUARANTINE 2026-04-19
+---------------------
+This script touches the retired consensus-null construct. It is retained only
+as a historical artifact and must not be used as live evidence without
+explicit operator intent via `--allow-retired-construct`.
 =================================================================
 """
 
