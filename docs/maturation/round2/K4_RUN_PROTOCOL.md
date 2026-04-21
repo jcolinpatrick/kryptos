@@ -4,6 +4,7 @@
 **Author:** Claude Code Opus 4.7 (under Round 2 maturation brief)
 **Status:** awaiting operator approval before any K4 compute starts
 **Supersedes:** nothing — this is the first K4 run protocol document
+**Amendments:** 2026-04-21 (operator review): §3.1 first-run defaults tightened to 15 cycles / $25; §5 restructured with explicit §5.2 "nothing fires" terminal state; §6.1 mortality table spec made required (not advisory); §7 sign-off updated.
 
 This document is the single point where the framework's automation
 hands control back to the human for the go/no-go decision. **Claude
@@ -191,14 +192,85 @@ When outcome (5) occurs:
 
 ## 6. Post-run analysis procedure
 
-### 6.1 If K4 is NOT solved
+### 6.1 If K4 is NOT solved (including the natural §5.2 terminal state)
 
-Produce `docs/maturation/round2/K4_RUN_POSTMORTEM.md` with:
+Produce `docs/maturation/round2/K4_RUN_POSTMORTEM.md` with **all of** the following sections. The table in §6.1.2 is REQUIRED, not optional; skipping it forfeits the first run's diagnostic value.
 
-- Cycle-by-cycle telemetry: theories proposed, critic decisions, red-team verdicts, dispatcher outcomes.
-- Breakdown of where proposals died: theorist (didn't propose), critic (rejected), dispatcher (eliminated by bean / crib mismatch), scoring (below threshold).
-- **Negative-space finding:** what does the set of tested-and-failed proposals tell us about where the K4 search space likely doesn't live? This is useful for the next round regardless of solve status.
-- Total USD + token count; consistency check against forecast.
+#### 6.1.1 Cycle-by-cycle telemetry
+
+One row per cycle with: cycle number, # theories proposed, # approved by critic, # dispatched, best `crib_score` observed that cycle, best `p_value_vs_null` observed that cycle, cumulative USD spent. Source of truth: the ledger DB (`db/k4_run_<date>.sqlite`) + `results/` artifacts.
+
+#### 6.1.2 Proposal-mortality table (REQUIRED)
+
+A single table answering **"where did proposals die?"** Every proposal that entered the loop belongs to exactly one row. Counts sum to total proposals. If a stage was skipped (e.g., critic rejected before dispatch), the proposal is credited to the earliest-stage death, not the skipped later stages.
+
+| Stage | Sub-reason | Count | % of total |
+|---|---|---|---|
+| **A. Theorist never proposed** | Family `X` absent from proposals | | |
+| | Keyword space `Y` absent | | |
+| | No procedural recipe referenced | | |
+| **B. Critic rejected** | `REJECT_DUPLICATE` (regular — §3 similar-theories) | | |
+| | `REJECT_DUPLICATE` (R2-3 override-justification collision) | | |
+| | `REJECT_ELIMINATED` (Tier 1 family) | | |
+| | `REJECT_ELIMINATED` (Tier 2 single-layer family) | | |
+| | `REJECT_ELIMINATED` (retired palette / null-mask revival) | | |
+| | `REJECT_UNDERCONSTRAINED` (scope / falsifiability hygiene) | | |
+| | `REJECT_CONTRADICTED` (claims-registry conflict) | | |
+| | `REJECT_LOW_INFORMATION` | | |
+| | `DEFER` | | |
+| **C. Red-team killed** | `CONCERNED` with `search_space_risk=unbounded_search` | | |
+| | `CONCERNED` with `search_space_risk=exhausted_source_material` | | |
+| | `CONCERNED` with `search_space_risk=underconstrained` | | |
+| | `CONCERNED` with `search_space_risk=duplicate_family` | | |
+| | `CONCERNED` with other `search_space_risk` | | |
+| | `DISPROVE` (strong mechanical contradiction) | | |
+| **D. Dispatcher rejected** | admissibility: budget overflow | | |
+| | admissibility: exhaustion overlap (no override) | | |
+| | admissibility: translation gap (unsupported DSL kind) | | |
+| | translation error at `_build_pipeline_config` | | |
+| **E. Scoring outcomes (dispatched)** | `crib_score < STORE_THRESHOLD` (below 6) | | |
+| | `crib_score ∈ [6, 9]` — noise-band | | |
+| | `crib_score ∈ [10, 17]` — interesting / lead-pursued | | |
+| | `crib_score ∈ [18, 23]` — SIGNAL, failed p-value gate | | |
+| | `crib_score ∈ [18, 23]` — SIGNAL, passed p-value gate | | |
+| | `crib_score = 24` — verified BREAKTHROUGH | | |
+| **F. Error / infra** | worker timeout | | |
+| | kernel error during scoring | | |
+| | API failure / rate-limit / retry-exhausted | | |
+| **TOTAL** | | | 100% |
+
+Every `Count` cell must be filled. Cells with zero are also filled as zero — an absent cell is ambiguous.
+
+**For row A (Theorist never proposed)**, the "target list" against which proposals are measured is the **post-eliminations admissible family × primary-keyword-class space**, specifically:
+
+- Cipher families: the `_SUPPORTED_KINDS` set from `job_dispatcher.py` minus Tier 1 / Tier 2 single-layer eliminations, plus any multi-layer composition families enumerated by `procedural_enumerator`.
+- Keyword classes: the thematic-keyword-list buckets in `src/kryptos/kernel/alphabet.py::THEMATIC_KEYWORDS` + Sanborn / Scheidt vocabulary buckets in `docs/procedural_recipes.json`.
+- Procedural recipes: every `PROC-P-*` id in `docs/procedural_recipes.json`.
+
+A family / keyword / recipe is "absent from proposals" if it appears in the target list but zero proposals in the run referenced it. Partial matches (a keyword from the bucket appeared but not the specific variant) count as present.
+
+#### 6.1.3 Negative-space finding
+
+Given the mortality table, answer: what does the tested-and-failed set tell us about where the K4 search space likely doesn't live? Confine claims to families that actually got dispatched (rows E) — row B/C/D rejections tell us about the filters, not about K4.
+
+#### 6.1.4 Failure-mode classification
+
+Pick the ONE row with the largest count and classify the failure mode:
+
+- **Mode A1** (theorist concentrated on eliminated families) → next brief: "improve theorist derivation under strict elimination context." NOT another maturation round.
+- **Mode A2** (theorist missed a large open-search region) → next brief: "expand theorist prompt scope / add pursuit leads for region X."
+- **Mode B** (critic rejected disproportionately) → investigate whether Tier 2 is over-eager or the retired-palette matcher false-positive-prone.
+- **Mode C** (red-team killed disproportionately) → investigate search_space_risk classifier.
+- **Mode D** (dispatcher rejected for admissibility / translation) → gap in DSL coverage.
+- **Mode E (below 6)** (framework ran cleanly, nothing scored above noise) → this is "the instrument works but the hypothesis space doesn't contain K4." Next brief: expand the hypothesis space, not the instrument.
+- **Mode E (6-17 band populated, nothing crossed 18)** → the framework has candidates but none are strong. Lead-pursuit should have fired; check whether lead-pursuit produced follow-ups and whether they were executed.
+- **Mode F** (errors / infra) → infrastructure fix, then re-run.
+
+The classification drives the next brief. Without it, "run again with different settings" is cargo-culted.
+
+#### 6.1.5 Budget accounting
+
+Total USD + token count per model; consistency check against the pre-run forecast and against the per-cycle telemetry. An unexpected blow-up in any cycle is a signal that a persona is looping or a worker is retrying silently.
 
 ### 6.2 If K4 IS solved
 
@@ -217,10 +289,14 @@ Before operator starts the K4 run:
 
 - [ ] Read sections 1-6 above.
 - [ ] Confirmed `ANTHROPIC_API_KEY` is set and corresponds to the account authorized for the spend.
-- [ ] Confirmed the TokenAccountant cap matches the operator's budget intent (default $50.00, adjust as needed).
-- [ ] Confirmed `max_cycles` is set (default 25, adjust as needed).
+- [ ] Confirmed the TokenAccountant cap is **$25.00** (first-run default per §3.1, tight by design to preserve $25 reserve for an informed second run).
+- [ ] Confirmed `max_cycles = 15` (first-run default per §3.1). 15 × 5 = 75 proposals should be enough for the mortality table to classify the failure mode cleanly.
 - [ ] Confirmed a fresh `db/k4_run_<date>.sqlite` target DB is configured — do NOT run into the live research ledger on the first attempt.
-- [ ] Read §5 halt conditions and §4 alert runbook. Mentally committed to the "do not celebrate until validated" rule.
+- [ ] Read §4 alert runbook and §5 halt / terminal conditions. Mentally committed to:
+    - the "do not celebrate until §4 validation passes" rule.
+    - treating §5.2 (nothing fires) as the **expected most likely outcome**, not a failure.
+    - executing §6.1's full mortality table even if §5.2 is what happens — the table is the first run's diagnostic value.
+- [ ] Confirmed the $25 reserve is held until §6.1 post-mortem classifies the failure mode.
 
 Once all are checked: start the run.
 
