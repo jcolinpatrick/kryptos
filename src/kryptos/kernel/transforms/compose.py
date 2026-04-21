@@ -161,10 +161,19 @@ def build_transform(config: TransformConfig) -> TransformFn:
         }
         variant = variant_map[t]
         direction = p.get("direction", "decrypt")
-        if direction == "decrypt":
-            return lambda text, k=key, v=variant: decrypt_text(text, k, v)
+        # R2-2 (2026-04-21): optional alphabet_sequence param routes through
+        # keyword-mixed / KA tableaux. When absent the AZ fast path is used
+        # (zero behavior change for Phase 4 callers).
+        alph_seq = p.get("alphabet_sequence")
+        if alph_seq is not None:
+            from kryptos.kernel.alphabet import Alphabet
+            alph_obj = Alphabet(p.get("alphabet_label", "custom"), alph_seq)
         else:
-            return lambda text, k=key, v=variant: encrypt_text(text, k, v)
+            alph_obj = None
+        if direction == "decrypt":
+            return lambda text, k=key, v=variant, a=alph_obj: decrypt_text(text, k, v, a)
+        else:
+            return lambda text, k=key, v=variant, a=alph_obj: encrypt_text(text, k, v, a)
 
     elif t == TransformType.BIFID:
         from kryptos.kernel.transforms.polybius import bifid_decrypt, bifid_encrypt, make_polybius_5x5
