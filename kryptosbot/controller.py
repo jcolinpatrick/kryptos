@@ -1973,7 +1973,7 @@ whose justification (first 100 chars, Jaccard ≥ 0.7) duplicates a prior
 theory's override_justification, so laundering a dead idea under new
 wording is caught automatically.
 
-IMPORTANT — THE PROCEDURAL PARADIGM:
+IMPORTANT — THE PROCEDURAL PARADIGM (philosophy, not DSL shape):
 Sanborn is a sculptor, not a cryptographer. He learned "systems that didn't
 necessarily depend on mathematics" from Scheidt in 2-3 meetings. Gillogly
 confirmed K4 uses "an invention by Ed Scheidt that has never appeared in
@@ -1985,12 +1985,40 @@ sculptor could execute by hand — over algebraic ones. Physical anomalies on
 the sculpture (YAR superscript, extra L, misspellings, compass, LAYER TWO)
 are likely INSTRUCTIONS, not decorations.
 
-Anomalies with recipe IDs (P-xxx, CP-xxx) reference specific testable procedures
-in docs/procedural_anomaly_recipes.md. When an anomaly has a recipe, propose
-a theory that EXECUTES that recipe, not one that merely "investigates" the pattern.
+CRITICAL DISAMBIGUATION:
 
-The "procedural" family is for hypotheses that derive from physical anomaly
-interpretation rather than cipher taxonomy. Use it.
+The "procedural paradigm" above is a PHILOSOPHY about mechanism
+preference — favor hand-executable over purely algebraic. That
+philosophy is SEPARATE from the DSL's literal ``kind="procedural"``,
+which is a narrow technical label reserved for pre-registered recipes
+with a ``recipe_id`` (e.g., ``P-042``, ``CP-117``). Using
+``kind="procedural"`` with an ad-hoc recipe name (``"serpentine_read"``,
+``"ragbaby_inverse"``, ``"alberti_disk_w_indicator"``, etc.) will be
+rejected as ``dsl_untranslatable`` — the dispatcher cannot synthesize
+a new cipher from a string label.
+
+When your procedural-paradigm hypothesis maps to an existing DSL kind,
+USE THAT KIND. Examples:
+
+  - Serpentine / zigzag physical read → ``kind="route"``,
+    ``variant="serpentine"`` (composed with Vigenere/Beaufort inner
+    gives the AAA-archive "serpentine copper screen + Vigenère
+    tableaux" anchor directly).
+  - W-segment columnar reorder → ``kind="columnar"`` with a
+    W-derived ``col_order``.
+  - Compass-bearing-indexed tableau rotation → ``kind="quagmire"``
+    with ``indicator`` chosen per-bearing.
+  - Depth-based zigzag → ``kind="rail_fence"`` with ``depth``.
+
+Only propose ``kind="procedural"`` when the theory literally executes
+a recipe listed in ``docs/procedural_recipes.json`` with its ``P-xxx``
+or ``CP-xxx`` identifier supplied in the ``recipe_id`` field (NOT the
+``params``). Anomalies with recipe IDs in the landscape surface those
+identifiers; cite them directly.
+
+The "procedural" FAMILY (theory.family) is a separate classification
+from the DSL kind. A theory whose family is "procedural" can still
+use any cipher kind in its pipeline — they are orthogonal fields.
 
 STATISTICAL FINGERPRINTS — ADVISORY, NOT MANDATORY:
 The following claims are drawn from the canonical provenance registry with
@@ -2072,7 +2100,32 @@ legacy worker path with a ledger tag.
 
 Supported cipher kinds (translator lives in kryptosbot.job_dispatcher):
   identity, vigenere, beaufort, variant_beaufort, columnar, atbash,
-  procedural, grille, polybius
+  rail_fence, myszkowski, route, quagmire, grille, polybius, procedural
+
+IMPORTANT — the ``procedural`` DSL kind is NOT the same as the
+"procedural paradigm" philosophical section below. ``procedural`` is
+reserved for pre-registered recipes with a ``recipe_id`` like
+``P-042`` or ``CP-117``. If your theory implements a different
+mechanism (serpentine read, ragbaby cipher, Alberti disk, compass-
+bearing tableau, W-segment polyalphabetic, etc.), use the appropriate
+cipher kind directly:
+
+  - Serpentine / spiral / zigzag read → ``kind="route"``,
+    ``variant="serpentine"`` or ``"spiral"`` with ``rows``, ``cols``.
+  - Rail-fence (zigzag depth) → ``kind="rail_fence"`` with ``depth``.
+  - Myszkowski (columnar with tied columns) → ``kind="myszkowski"``
+    with ``keyword``.
+  - Quagmire III / IV → ``kind="quagmire"`` with ``variant``,
+    ``period_keyword``, ``ct_alphabet_keyword``, ``pt_alphabet_keyword``,
+    ``indicator``.
+  - Bifid (length-preserving Polybius fractionation) →
+    ``kind="polybius"``, ``variant="bifid"``.
+  - Cardan grille (hole_mask permutation) → ``kind="grille"``.
+
+Emitting ``kind="procedural"`` with an ad-hoc recipe name will be
+rejected as ``dsl_untranslatable``. The dispatcher cannot synthesize a
+new cipher from a string label; only registered recipes with declared
+templates dispatch.
 
 Valid enum/value domains for dsl_spec fields:
   pipeline[].alphabet: AZ | KA | keyword_mixed
