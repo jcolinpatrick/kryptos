@@ -125,6 +125,51 @@ Moved to Closed section below.
 
 ---
 
+## AUDIT-4 — Matched-family alert gate unreachable under R2-4 calibration
+
+**Status:** CLOSED 2026-04-22
+
+**Raised:** 2026-04-22 (Campaign A §7.2 finding + synthetic-signal harness commit `b20b100`)
+
+**Affected claims:**
+
+- `kryptosbot/alerts.py` `ALERT_P_VALUE_GATE = 1e-6` (Phase 6)
+- `null_baselines/manifest.json` matched-family entries at `n_samples=50_000` (R2-4)
+- `docs/maturation/round3/K4_CAMPAIGN_A_POSTMORTEM.md` §7.2 ("matched-null alert path untested under load")
+- `kryptosbot/null_baselines.py` `p_value_for_alert` (matched-family branch)
+
+**The worry (in plain terms):**
+
+Empirical null distributions have no information below `1/n_samples` in their tail. With `n_samples = 50_000` for each of the R2-4 matched-family nulls (`beaufort`, `variant_beaufort`, `columnar_single`, `columnar_double`), the smallest p-value the tail can return is ~2e-5. The `ALERT_P_VALUE_GATE` is `1e-6`, tighter than that floor by more than an order of magnitude.
+
+Consequence: any real matched-family alert (crib_score ≥ 18) produces `p ≈ 2e-5`, which fails the `p <= 1e-6` gate, which routes the alert into `matched_family_ungated` (suppressed). **Any signal-level matched-family alert was structurally suppressed regardless of crib score.** No K4 run had fired such an alert historically, so the defect was latent; a run that did fire would have had its alert silently sorted into non-signal.
+
+The synthetic-signal harness (`kryptosbot/tests/test_r3_synthetic_alert_path.py`, commit `b20b100`) surfaced this on first run by fabricating SIGNAL-level contracts on each calibrated family and observing the structural suppression.
+
+**Concrete risk:**
+
+A future K4 run that produces a real matched-family signal would have its alert silently suppressed. The halt-condition counter (BREAKTHROUGH + matched_null_miss) would never fire, and the operator would learn about the finding via the postmortem rather than live. This defeats the purpose of the R2-4 matched-null infrastructure.
+
+**What closed this audit:**
+
+Two-part fix, landed as commits `<recalibration-sha>` + `<gate-param-sha>` (2026-04-22):
+
+1. **Raise `n_samples` to 10M** for the four R2-4 matched-family nulls (`beaufort`, `variant_beaufort`, `columnar_single`, `columnar_double`). Empirical floor `10 / n_samples = 1e-6` now matches the configured gate.
+2. **Parameterize the alert gate against each null's empirical support** via `null_baselines.effective_gate(null, configured_gate)`. When the configured gate is tighter than the null's `10 / n_samples` floor, the function widens the gate to the floor and logs a warning exactly once per `(family, pid)` tuple. This makes the "gate becomes unreachable" failure mode **loud** rather than silent — a future recalibration that undershoots will surface in logs on first alert. Parametric nulls (Phase 6 `random_text` with its exact Binomial tail) are intentionally exempt: the empirical floor is irrelevant to them, and the brief explicitly scoped random_text out of this change.
+
+The invariant the code now enforces: **for empirical nulls, alert gate ≥ 10 / n_samples.** Verified by `TestGateParameterization::test_gate_parameterization_logs_warning_below_floor` and the renamed production-behaviour test `test_production_matched_family_alert_clearable_post_fix` in `kryptosbot/tests/test_r3_synthetic_alert_path.py`.
+
+**Options not taken:**
+
+- **Adding a parametric tail to matched-family `NullDistribution`** (e.g., fitted normal on crib_score). Deferred because the empirical distribution is already skewed/zero-inflated (most samples score 0) and fitting a tail without more structural reasoning would be harder to defend than conservative empirical + wider n_samples. Revisit if p-values below 1e-7 ever become load-bearing (multi-testing correction, larger search spaces).
+- **Relaxing `ALERT_P_VALUE_GATE` from 1e-6.** Rejected. The configured gate reflects the project's stated alert-fire threshold; moving it to accommodate a calibration gap would invert cause and effect.
+
+**Forward reference:**
+
+Future recalibration of any matched-family null should target `n_samples ≥ 10 / ALERT_P_VALUE_GATE` (currently 10M). If the configured gate tightens below 1e-6, recalibrate to match before landing the gate change. The `effective_gate` function's warning is the canary that fires when this invariant is about to drift.
+
+---
+
 ## Rules for this file
 
 - An audit closes only when **every affected claim** listed under it has
