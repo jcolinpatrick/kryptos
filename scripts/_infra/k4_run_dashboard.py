@@ -1410,6 +1410,17 @@ def _mortality_panel(snap: dict, frame: int, now: float,
         notes = (r.get("notes") or "").lower()
         if "admissibility" in notes or "exhaustion overlap" in notes or "translation" in notes:
             _bump("D  dispatcher reject"); continue
+        # Dashboard-hardening 2026-04-22: only surface theories that
+        # still warrant investigation in the score-band E-rows. A
+        # theory whose lifecycle settled into ``completed`` or
+        # ``eliminated`` has already been resolved — stat-audit /
+        # red-team / operator review left it in a terminal state, and
+        # showing its historical score as a live band entry misleads
+        # the operator into thinking there's an unresolved SIGNAL to
+        # chase. Only PROMISING (explicit "deserves follow-up") survives
+        # into the score-based rows.
+        if status in ("completed", "eliminated"):
+            continue
         cs = r.get("crib_score") or t.get("best_score") or 0
         try:
             cs = int(cs)

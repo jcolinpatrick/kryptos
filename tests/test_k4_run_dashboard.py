@@ -184,3 +184,96 @@ class TestControllerPidDetection:
         # the dashboard must never crash on this probe.
         result = dashboard._detect_controller_pid()
         assert result is None or isinstance(result, int)
+
+
+class TestMortalityEBandFiltering:
+    """The mortality panel's score-band (E) rows must only surface
+    theories that still warrant investigation. Completed / eliminated
+    theories are resolved history; including their historical scores in
+    the live display misleads the operator into thinking there's an
+    unresolved SIGNAL to chase.
+
+    Regression target: user-reported 2026-04-22 — dashboard showed
+    "E score 18-23: 1" for a Nihilist experiment that had been
+    ELIMINATED 10 days earlier, plus 7 entries in the BREAKTHROUGH
+    band that were all known crib-paste fabrications already stat-
+    audited out.
+    """
+
+    def _panel_text(self, panel) -> str:
+        """Render panel to a plain-text string so assertions can look
+        for substrings without caring about Rich widget types."""
+        from io import StringIO
+        from rich.console import Console
+        console = Console(file=StringIO(), width=200, color_system=None)
+        console.print(panel)
+        return console.file.getvalue()
+
+    def _row_count(self, rendered: str, row_label: str) -> int:
+        """Extract the count from a mortality row like
+        'E  score 18-23  │  SIGNAL  │ ▕▰...▏ │     1 │     2.1%'.
+        Returns 0 when the row is present with count 0 or missing."""
+        import re
+        for line in rendered.splitlines():
+            if row_label in line:
+                # The count is the second-to-last pipe-separated column.
+                # We take the last number-only token before the pct column.
+                m = re.findall(r"\│\s*(\d+)\s*\│\s*\d", line)
+                if m:
+                    return int(m[-1])
+        return 0
+
+    def _snap_with(self, theory_status: str, crib_score: int) -> dict:
+        return {
+            "theories": [{
+                "hypothesis_id": "h1", "title": "t", "status": theory_status,
+                "critic_verdict": {"decision": "approve", "reasons": []},
+                "best_score": 0.0,
+            }],
+            "experiments": [{
+                "hypothesis_id": "h1",
+                "result": {"crib_score": crib_score, "bean_passed": False},
+            }],
+            "error": None,
+        }
+
+    def test_eliminated_theory_does_not_populate_e_bands(self):
+        # ELIMINATED at crib=19 (SIGNAL-range historical) must NOT show up.
+        snap = self._snap_with("eliminated", 19)
+        panel = dashboard._mortality_panel(snap, frame=0, now=100.0)
+        rendered = self._panel_text(panel)
+        assert "18-23" in rendered
+        assert self._row_count(rendered, "18-23") == 0, (
+            "eliminated theory leaked into E 18-23 band; the panel now shows "
+            "a spurious historical SIGNAL"
+        )
+
+    def test_completed_theory_does_not_populate_e_bands(self):
+        # COMPLETED at crib=24 (BREAKTHROUGH historical crib-paste) must NOT show.
+        snap = self._snap_with("completed", 24)
+        panel = dashboard._mortality_panel(snap, frame=0, now=100.0)
+        rendered = self._panel_text(panel)
+        assert self._row_count(rendered, "score 24") == 0, (
+            "completed theory leaked into E 24 band"
+        )
+
+    def test_promising_theory_still_populates_e_bands(self):
+        # PROMISING means "stat-audit says investigate" — must remain
+        # visible so the operator can find it.
+        snap = self._snap_with("promising", 19)
+        panel = dashboard._mortality_panel(snap, frame=0, now=100.0)
+        rendered = self._panel_text(panel)
+        assert self._row_count(rendered, "18-23") == 1, (
+            "PROMISING theory must still surface in E 18-23 band"
+        )
+
+    def test_running_theory_goes_to_in_flight_not_score_bands(self):
+        # Running theories should land in row A; their score bands stay empty.
+        snap = self._snap_with("running", 15)
+        panel = dashboard._mortality_panel(snap, frame=0, now=100.0)
+        rendered = self._panel_text(panel)
+        assert self._row_count(rendered, "in flight") == 1, (
+            "running theory must show in A in-flight row"
+        )
+        # And MUST NOT also pollute the 10-17 score band.
+        assert self._row_count(rendered, "10-17") == 0
