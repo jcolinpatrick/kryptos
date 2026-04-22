@@ -636,6 +636,70 @@ def p_value(score: float, dist: NullDistribution) -> float:
     return dist.p_value(score)
 
 
+# ─── Alert gate parameterization (brief: raise n_samples + parameterize) ────
+#
+# Invariant the project relies on: the configured p-value gate
+# (``alerts.ALERT_P_VALUE_GATE``) must be reachable under each null cache's
+# empirical support. If n_samples is too small for the gate, the gate is
+# structurally unreachable and matched-family alerts get silently suppressed
+# regardless of how strong the signal is. That failure mode was Campaign A's
+# §7.2 finding (surfaced by the synthetic-signal harness).
+#
+# The floor here is ``10 / n_samples`` rather than ``1 / n_samples``. The
+# 10-event convention is conservative: a one-event tail could happen from a
+# single stray high sample, but a 10-event tail is a genuinely rare outcome
+# under the empirical null. We widen the gate to the floor when the
+# configured gate is tighter, and log a warning the first time this happens
+# per (family, session) pair so postmortems can see the degradation.
+
+_EMPIRICAL_FLOOR_EVENT_COUNT: int = 10
+_warned_floor_mismatches: set[tuple[str, int]] = set()
+
+
+def effective_gate(
+    null: "NullDistribution",
+    configured_gate: float,
+) -> float:
+    """Return the effective p-value gate for alerts consulting ``null``.
+
+    Enforces ``gate >= 10 / null.n_samples`` for **empirical** nulls only.
+    When the configured gate is below the empirical floor, return the
+    floor and log a warning exactly once per (family, process) pair.
+    Otherwise return the configured gate unchanged.
+
+    Nulls with a parametric model (``random_text`` has an exact Binomial
+    tail; ``ngram_score`` on additive nulls has a normal-approx tail)
+    extrapolate past their empirical support — the 10-event floor is
+    irrelevant to them. Always return the configured gate in that case.
+    This is load-bearing: Phase 6 random_text alerts must not be
+    affected by the matched-family parameterization (brief non-goal).
+
+    Intentionally pure aside from logging. Safe to call from the alert
+    path without affecting production code outside this module.
+    """
+    if null is None or null.n_samples <= 0:
+        return configured_gate
+    # Parametric nulls bypass the empirical-floor widening: their
+    # p-values are computed analytically, not via tail-counting, so the
+    # floor doesn't apply.
+    if null.parametric_model:
+        return configured_gate
+    empirical_floor = float(_EMPIRICAL_FLOOR_EVENT_COUNT) / float(null.n_samples)
+    if configured_gate >= empirical_floor:
+        return configured_gate
+    key = (null.family, os.getpid())
+    if key not in _warned_floor_mismatches:
+        _warned_floor_mismatches.add(key)
+        logger.warning(
+            "ALERT_P_VALUE_GATE=%.0e is below empirical floor %.0e for "
+            "family=%r (n_samples=%d); widening gate to floor. Run "
+            "scripts/_infra/calibrate_null_baselines_r2_4.py with a "
+            "higher n_samples to reach the configured gate.",
+            configured_gate, empirical_floor, null.family, null.n_samples,
+        )
+    return empirical_floor
+
+
 # ─── Convenience: alert-path helper ──────────────────────────────────────────
 
 def p_value_for_alert(
@@ -709,10 +773,12 @@ __all__ = [
     "calibration_stale",
     "p_value",
     "p_value_for_alert",
+    "effective_gate",
     "_KERNEL_COMMIT",
     "_FULL_CACHE_DIR",
     "_MANIFEST_PATH",
     "_VALID_SCORERS",
     "_VALID_METHODS",
     "_VALID_ALPHABETS",
+    "_EMPIRICAL_FLOOR_EVENT_COUNT",
 ]

@@ -95,6 +95,14 @@ class AlertEvent:
     # matched_null_miss or cache_miss halts the controller so calibration
     # can be rebuilt before the alert is treated as signal.
     p_value_status: str = ""
+    # Gate parameterization (brief: raise n_samples + parameterize gate):
+    # the gate value actually enforced when this alert was classified.
+    # Equals ALERT_P_VALUE_GATE when the null cache's empirical support is
+    # sufficient; widens to ``10 / n_samples`` when it isn't. A widened
+    # value in the postmortem means the cache could not support the
+    # configured gate — recalibrate with higher n_samples to restore it.
+    # Default -1.0 is the "not populated" sentinel for legacy callers.
+    effective_p_value_gate: float = -1.0
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -199,6 +207,30 @@ def _matched_null_family_from_contract(contract: WorkerContract) -> str:
     return ""
 
 
+def _effective_gate_for_family(family: str) -> float:
+    """Return the effective p-value gate for ``family`` given the currently
+    cached null.
+
+    Looks up whichever null the alert path would consult for this family
+    (matched-family when non-empty, random_text otherwise), then applies
+    the ``null_baselines.effective_gate`` invariant so the caller never
+    enforces a gate below the empirical support's 10-event floor.
+
+    Missing cache → return the configured gate unchanged; the cache_miss
+    branch downstream still fails open with its own warning.
+    """
+    from .null_baselines import get_cached, effective_gate as _eg
+    if family:
+        null = get_cached(
+            "crib_score", "matched_variant_family", 97, "AZ", family=family,
+        )
+    else:
+        null = get_cached("crib_score", "random_text", 97, "AZ")
+    if null is None:
+        return ALERT_P_VALUE_GATE
+    return _eg(null, ALERT_P_VALUE_GATE)
+
+
 def _p_value_gate_passes(
     plaintext: str,
     crib_score_value: int,
@@ -250,7 +282,8 @@ def _p_value_gate_passes(
     if status == "matched_null_miss":
         # Got a p-value from random_text fallback; keep enforcing the
         # gate but mark the alert's status so downstream records the
-        # degradation.
+        # degradation. The effective gate here is random_text's, since
+        # that's the null the p-value came from.
         logger.warning(
             "Alert using random_text fallback p-value for hypothesis %s "
             "(matched-family null for %r was missing)",
@@ -258,27 +291,34 @@ def _p_value_gate_passes(
         )
         if p is None:
             return (True, "cache_miss")
-        passes = p <= ALERT_P_VALUE_GATE
+        gate = _effective_gate_for_family("")  # random_text
+        passes = p <= gate
         return (passes, "matched_null_miss")
     if status == "ok_matched_family":
         if p is None:
             return (True, "error")
-        passes = p <= ALERT_P_VALUE_GATE
+        # Gate parameterization: widen the enforced gate to the
+        # matched-family cache's empirical floor when n_samples cannot
+        # support the configured 1e-6. This prevents the structural
+        # suppression the synthetic harness found on 50K calibration.
+        gate = _effective_gate_for_family(family)
+        passes = p <= gate
         if not passes:
             logger.info(
                 "Alert SUPPRESSED by matched-family p-value gate: "
                 "p=%.3g > %.1e (family=%r, hypothesis %s)",
-                p, ALERT_P_VALUE_GATE, family, hypothesis_id,
+                p, gate, family, hypothesis_id,
             )
         return (passes, "ok_matched_family" if passes else "matched_family_ungated")
     if status != "ok" or p is None:
         return (True, status or "error")
 
-    passes = p <= ALERT_P_VALUE_GATE
+    gate = _effective_gate_for_family("")  # random_text
+    passes = p <= gate
     if not passes:
         logger.info(
             "Alert SUPPRESSED by p-value gate: p=%.3g > %.1e (hypothesis %s)",
-            p, ALERT_P_VALUE_GATE, hypothesis_id,
+            p, gate, hypothesis_id,
         )
     return (passes, "ok_gated" if passes else "ok_ungated")
 
@@ -598,6 +638,11 @@ def process_alerts(
                 continue
 
             theory_info = (theory_lookup or {}).get(contract.hypothesis_id, {})
+            # Gate parameterization: record which gate was actually enforced
+            # for this alert so postmortems can see when the null cache
+            # widened it (indicates recalibration is overdue).
+            matched_family = _matched_null_family_from_contract(contract)
+            gate_used = _effective_gate_for_family(matched_family)
 
             event = AlertEvent(
                 triggered_at=datetime.now(timezone.utc).isoformat(),
@@ -615,6 +660,7 @@ def process_alerts(
                 theory_family=theory_info.get("family", ""),
                 theory_mechanism=theory_info.get("mechanism", ""),
                 p_value_status=p_value_status,
+                effective_p_value_gate=gate_used,
             )
 
             # Persist first — survives even if notification channels fail

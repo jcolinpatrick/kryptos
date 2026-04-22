@@ -116,20 +116,20 @@ def _redirect_cache(tmp_path, monkeypatch, *, keep_random_text=False, family="")
 class TestScenarioA_MatchedNullHappyPath:
     """Real cache hit on every R2-4 calibrated family.
 
-    **Production finding (surfaced by this harness 2026-04-22):** the
-    matched-family empirical nulls have only 100K samples and no
-    parametric tail, so their minimum returnable p-value is ~1e-5.
-    ``ALERT_P_VALUE_GATE = 1e-6`` is tighter than that empirical floor,
-    so at the real gate ANY matched-family alert lands in
-    ``matched_family_ungated`` (suppressed) regardless of how high the
-    crib score goes. The ``ok_matched_family`` status is structurally
-    unreachable without raising n_samples, adding a parametric tail,
-    or relaxing the gate.
+    Originally this class documented a production defect: at the R2-4
+    calibration of 50K samples per family, ``ok_matched_family`` was
+    structurally unreachable because the empirical floor (2e-4)
+    exceeded the configured 1e-6 gate. Every real matched-family alert
+    would have landed in ``matched_family_ungated`` (suppressed).
 
-    These tests relax the gate via monkeypatch to exercise the
-    ``ok_matched_family`` branch — confirming the family tag flows
-    end-to-end. A companion test below documents the realistic
-    production behaviour."""
+    Resolution (follow-up brief): null cache recalibrated to 10M
+    samples AND ``null_baselines.effective_gate`` now widens the gate
+    to the empirical floor when calibration can't support the
+    configured gate. With both fixes, matched-family alerts at
+    SIGNAL-level crib scores now produce ``ok_matched_family`` under
+    the real configured gate, not a monkeypatched one.
+
+    These tests no longer require the gate monkeypatch."""
 
     @pytest.mark.parametrize(
         "pipeline_kinds, expected_family",
@@ -151,10 +151,6 @@ class TestScenarioA_MatchedNullHappyPath:
         ) is not None, (
             f"precondition: calibrated cache missing for {expected_family!r}"
         )
-
-        # Relax the gate so empirical p≈1e-5 clears it and we observe the
-        # ok_matched_family branch rather than the ungated suppression.
-        monkeypatch.setattr(alerts_mod, "ALERT_P_VALUE_GATE", 1.0)
 
         # Spy on p_value_for_alert to confirm the family argument flows
         # through from contract → _matched_null_family_from_contract →
@@ -183,33 +179,30 @@ class TestScenarioA_MatchedNullHappyPath:
             f"family={expected_family!r}; got call list {calls}"
         )
 
-    def test_production_matched_family_is_ungated_at_default_gate(self):
-        """Documents the production observation the harness surfaced:
-        under the unmonkeypatched ``ALERT_P_VALUE_GATE = 1e-6``, a real
-        matched-family consultation at crib=18 suppresses the alert
-        because empirical p (~1e-5) > gate. This test is intentionally
-        assertion-light; its purpose is to pin the current behaviour
-        so a future calibration / gate change surfaces loudly.
+    def test_production_matched_family_alert_clearable_post_fix(self):
+        """Post-fix behaviour check: under the real configured gate
+        (no monkeypatch), a matched-family alert at SIGNAL-level crib
+        score now produces ``ok_matched_family`` — not
+        ``matched_family_ungated``.
 
-        When this test fails, check whether:
-          (a) matched-family nulls were recalibrated with more samples,
-          (b) a parametric tail was added to NullDistribution, or
-          (c) ALERT_P_VALUE_GATE was relaxed.
-        Any of those is the right kind of change. Silent drift is not.
-        """
+        Fails loudly if either fix regresses:
+          (1) null cache recalibration at n_samples >= 10M (the
+              empirical floor ``10/n_samples`` must be ≤ configured gate)
+          (2) ``null_baselines.effective_gate`` must widen the gate to
+              the empirical floor when calibration can't support it
+
+        A fail here means signal-level matched-family alerts are being
+        silently suppressed again — the exact defect this work closed."""
         contract = _fab(pipeline_kinds=["beaufort"], crib_score=18)
         level, status = classify_outcome(contract, AlertLevel.SIGNAL)
-        # At real gate: matched-family is consulted but ungated → no alert.
-        assert level is None, (
-            f"production behaviour check: matched-family alert at crib=18 "
-            f"is expected to suppress at the 1e-6 gate. Got level={level!r}. "
-            f"If this is intentional (gate / calibration was updated), "
-            f"update this test to match the new observation."
+        assert level == AlertLevel.SIGNAL, (
+            f"post-fix: matched-family alert at crib=18 must clear the "
+            f"effective gate. Got level={level!r}. Check (a) n_samples in "
+            f"null_baselines/manifest.json and (b) effective_gate wiring."
         )
-        # Status from classify_outcome is "" when level is None (the
-        # function drops the status on suppressed alerts). That's a
-        # separate subtle behaviour covered by production code, not
-        # something this test asserts on — just noting it here.
+        assert status == "ok_matched_family", (
+            f"post-fix: expected ok_matched_family; got {status!r}"
+        )
 
 
 # ---------------------------------------------------------------------------
@@ -348,14 +341,12 @@ class TestScenarioE_CriterionOnePrimeClosure:
         "non_worked_example_family", ["beaufort", "variant_beaufort"],
     )
     def test_matched_family_null_on_family_outside_worked_examples(
-        self, non_worked_example_family, monkeypatch,
+        self, non_worked_example_family,
     ):
-        # See Scenario A's production-finding docstring: the real gate
-        # (1e-6) is tighter than the matched-family empirical tail (~1e-5),
-        # so ``ok_matched_family`` is unreachable at the production gate.
-        # Relax to observe the closure outcome.
-        monkeypatch.setattr(alerts_mod, "ALERT_P_VALUE_GATE", 1.0)
-
+        # Post-fix: the gate monkeypatch is no longer required —
+        # effective_gate widens to the empirical floor when the cache
+        # can't support the configured gate, and the 10M recalibration
+        # brings the floor down to meet the gate exactly.
         contract = _fab(
             pipeline_kinds=[non_worked_example_family],
             crib_score=18,
@@ -385,8 +376,8 @@ class TestScenarioF_EndToEndIntegration:
     real cycle does. If any glue between classify_outcome → AlertEvent
     → controller state is broken, this is the canary."""
 
-    def test_ok_matched_family_end_to_end_no_halt(self, tmp_path, monkeypatch):
-        monkeypatch.setattr(alerts_mod, "ALERT_P_VALUE_GATE", 1.0)
+    def test_ok_matched_family_end_to_end_no_halt(self, tmp_path):
+        # Post-fix: real configured gate — no monkeypatch needed.
         ctrl = _controller(tmp_path)
         ctrl._begin_cycle_phase_state()
         ctrl.state.cycle_number = 1
@@ -441,3 +432,97 @@ def test_module_constants_match_production():
     the halt-streak constants."""
     assert isinstance(FALLBACK_HALT_STREAK, int) and FALLBACK_HALT_STREAK >= 1
     assert isinstance(D_ZERO_HALT_STREAK, int) and D_ZERO_HALT_STREAK >= 1
+
+
+# ---------------------------------------------------------------------------
+# Gate parameterization invariant — effective_gate(null) widens configured
+# gate to the empirical floor when calibration can't support it.
+# ---------------------------------------------------------------------------
+
+class TestGateParameterization:
+    """``null_baselines.effective_gate`` enforces the invariant that
+    ``alert gate >= 10 / n_samples`` so a undersampled null cache can
+    never silently suppress matched-family alerts."""
+
+    def test_gate_parameterization_logs_warning_below_floor(self, caplog):
+        import logging
+        from kryptosbot.null_baselines import (
+            NullDistribution, effective_gate, _warned_floor_mismatches,
+        )
+
+        # Synthetic null with n_samples=10K → empirical floor = 1e-3,
+        # well above the 1e-6 configured gate → widens + warns.
+        null = NullDistribution(
+            scorer_name="crib_score",
+            method="matched_variant_family",
+            n_chars=97, alphabet="AZ",
+            n_samples=10_000, seed=42,
+            kernel_commit="test-synthetic",
+            sorted_scores=[0.0] * 10_000,
+            mean=0.0, stdev=0.0,
+            family="beaufort_lowsample_test",
+        )
+
+        # Ensure a fresh warning (the module-level dedup set is per-session).
+        _warned_floor_mismatches.discard((null.family, _pid()))
+
+        with caplog.at_level(logging.WARNING, logger="kryptosbot.null_baselines"):
+            gate = effective_gate(null, 1e-6)
+
+        assert gate == pytest.approx(1e-3), (
+            f"expected gate widened to empirical floor 1e-3; got {gate!r}"
+        )
+        warning_msgs = [r.message for r in caplog.records if "empirical floor" in r.message]
+        assert warning_msgs, (
+            "expected a warning when gate < empirical floor; none logged"
+        )
+        # Second call must NOT re-warn (dedup by (family, session)).
+        caplog.clear()
+        with caplog.at_level(logging.WARNING, logger="kryptosbot.null_baselines"):
+            gate2 = effective_gate(null, 1e-6)
+        assert gate2 == gate
+        assert not [r for r in caplog.records if "empirical floor" in r.message], (
+            "effective_gate must dedup warnings per (family, session)"
+        )
+
+    def test_effective_gate_respects_configured_when_cache_is_sufficient(self):
+        from kryptosbot.null_baselines import NullDistribution, effective_gate
+
+        # Synthetic null with n_samples=10M → empirical floor = 1e-6 = configured
+        # → returns configured gate unchanged, no warning.
+        null = NullDistribution(
+            scorer_name="crib_score",
+            method="matched_variant_family",
+            n_chars=97, alphabet="AZ",
+            n_samples=10_000_000, seed=42,
+            kernel_commit="test",
+            sorted_scores=[],
+            mean=0.0, stdev=0.0,
+            family="sufficient_test",
+        )
+        assert effective_gate(null, 1e-6) == pytest.approx(1e-6)
+        # A much tighter gate (1e-8) would be below the floor at 10M.
+        # Widens to 1e-6 (the floor).
+        assert effective_gate(null, 1e-8) == pytest.approx(1e-6)
+
+    def test_effective_gate_handles_none_or_zero_samples_defensively(self):
+        from kryptosbot.null_baselines import NullDistribution, effective_gate
+        # None null → passes configured through unchanged.
+        assert effective_gate(None, 1e-6) == pytest.approx(1e-6)
+        # Zero n_samples (shouldn't happen in practice) → pass through.
+        null = NullDistribution(
+            scorer_name="crib_score",
+            method="matched_variant_family",
+            n_chars=97, alphabet="AZ",
+            n_samples=0, seed=42,
+            kernel_commit="test",
+            sorted_scores=[],
+            mean=0.0, stdev=0.0,
+            family="zero_samples_test",
+        )
+        assert effective_gate(null, 1e-6) == pytest.approx(1e-6)
+
+
+def _pid() -> int:
+    import os
+    return os.getpid()
