@@ -54,13 +54,60 @@ def test_theorist_prompt_lists_supported_kinds(tmp_path):
 
 def test_theorist_prompt_lists_untranslatable_kinds(tmp_path):
     prompt = _get_prompt(tmp_path)
-    # Each untranslatable kind must be explicitly named so theorists
-    # know to avoid them (or accept rejection).
-    for kind in ("rail_fence", "route", "myszkowski", "quagmire",
-                 "key_tape"):
+    # After B-DSL-expanded (2026-04-22), only ``key_tape`` remains
+    # deferred. The other four (rail_fence, route, myszkowski,
+    # quagmire) got first-class dispatcher translators and no longer
+    # belong on the untranslatable list. A future brief may add
+    # key_tape or other families — update this test to match.
+    for kind in ("key_tape",):
         assert kind in prompt, (
             f"theorist prompt should flag {kind!r} as untranslatable"
         )
+    # Guard against regression: families that B-DSL-expanded moved into
+    # _SUPPORTED_KINDS must NOT appear in the theorist's
+    # untranslatable-kinds listing (a specific line in DSL_SPEC_CONTRACT).
+    import re
+    untranslatable_line = re.search(
+        r"Untranslatable kinds.*?:\s*\n\s*([^\n]+)", prompt, re.DOTALL,
+    )
+    assert untranslatable_line, (
+        "theorist prompt must declare an 'Untranslatable kinds' line"
+    )
+    for kind in ("rail_fence", "route", "myszkowski", "quagmire"):
+        assert kind not in untranslatable_line.group(1), (
+            f"{kind!r} is now supported and must not appear on the "
+            f"untranslatable-kinds listing"
+        )
+
+
+def test_theorist_prompt_enumerates_dsl_enum_domains(tmp_path):
+    prompt = _get_prompt(tmp_path)
+    for token in (
+        "direct_positional",
+        "post_transposition",
+        "free",
+        "crib_only",
+        "crib_plus_bean",
+        "ngram_vs_null",
+        "composite",
+        "random_text",
+        "shuffled_ct",
+        "matched_variant_family",
+        "monte_carlo_cached",
+        "AZ",
+        "KA",
+        "keyword_mixed",
+    ):
+        assert token in prompt, (
+            f"theorist prompt must enumerate DSL token {token!r} "
+            "to reduce enum invention drift"
+        )
+
+
+def test_theorist_prompt_calls_out_invalid_free_search_alias(tmp_path):
+    prompt = _get_prompt(tmp_path)
+    assert "free_search" in prompt
+    assert 'only free-alignment enum value is "free"' in prompt
 
 
 def test_theorist_prompt_includes_three_worked_examples(tmp_path):

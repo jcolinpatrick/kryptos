@@ -28,6 +28,15 @@ class TransformType(str, Enum):
     # record the grille semantics explicitly. Dispatches to
     # kryptos.kernel.transforms.grille.apply_grille_permutation.
     GRILLE = "grille"
+    # B-DSL-expanded (2026-04-22): Quagmire III routed as a first-class
+    # kernel transform. Dispatches to
+    # kryptos.kernel.transforms.quagmire.quagmire_{encrypt,decrypt}. The
+    # K1/K2 convention (both ct_alphabet_keyword AND pt_alphabet_keyword
+    # set to the same keyword + indicator = first letter of that keyword)
+    # is enforced by the dispatcher translator, not by this transform —
+    # the transform just calls the kernel function with the params it
+    # receives.
+    QUAGMIRE = "quagmire"
     IDENTITY = "identity"
     CUSTOM = "custom"
 
@@ -199,6 +208,35 @@ def build_transform(config: TransformConfig) -> TransformFn:
         from kryptos.kernel.transforms.grille import apply_grille_permutation
         mask_order = p["mask_order"]
         return lambda text, m=mask_order: apply_grille_permutation(text, m)
+
+    elif t == TransformType.QUAGMIRE:
+        # B-DSL-expanded (2026-04-22): Quagmire III / IV routed via the
+        # kernel's quagmire_encrypt / quagmire_decrypt functions. The
+        # K1/K2 calling convention (pt_alphabet_keyword AND
+        # ct_alphabet_keyword both set to the same mixed-alphabet
+        # keyword, indicator = first letter of that keyword) is the
+        # caller's responsibility — the dispatcher translator enforces
+        # it. This transform just forwards params.
+        from kryptos.kernel.transforms.quagmire import (
+            quagmire_decrypt, quagmire_encrypt,
+        )
+        period_keyword = p["period_keyword"]
+        indicator = p.get("indicator", "A")
+        ct_alphabet_keyword = p.get("ct_alphabet_keyword", "")
+        pt_alphabet_keyword = p.get("pt_alphabet_keyword", "")
+        direction = p.get("direction", "decrypt")
+        if direction == "decrypt":
+            return (
+                lambda text, pk=period_keyword, ind=indicator,
+                       cak=ct_alphabet_keyword, pak=pt_alphabet_keyword:
+                quagmire_decrypt(text, pk, ind, cak, pak)
+            )
+        else:
+            return (
+                lambda text, pk=period_keyword, ind=indicator,
+                       cak=ct_alphabet_keyword, pak=pt_alphabet_keyword:
+                quagmire_encrypt(text, pk, ind, cak, pak)
+            )
 
     elif t == TransformType.CUSTOM:
         raise ValueError("Custom transforms must be provided as functions, not configs")

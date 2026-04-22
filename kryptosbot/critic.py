@@ -65,6 +65,18 @@ NON_DSL_FAMILIES: frozenset[str] = frozenset({
     "k3_continuity",
 })
 
+# Families that name a deferred DSL cipher kind outright. These must not carry
+# a supported-kind dsl_spec to bypass the honest unsupported boundary.
+#
+# B-DSL-expanded (2026-04-22) shrank this set from 5 to 1: rail_fence,
+# route, myszkowski, and quagmire all got first-class dispatcher
+# translators. Only ``key_tape`` remains deferred — it needs new
+# kernel-level infrastructure (finite tape + null insertion mechanism)
+# that this project doesn't yet have.
+_DEFERRED_DSL_FAMILY_NAMES: frozenset[str] = frozenset({
+    "key_tape",
+})
+
 # Minimum fields required for a theory to be testable
 REQUIRED_FIELDS = {"core_claim", "mechanism", "family"}
 
@@ -492,6 +504,19 @@ class TheoryCritic:
         if family_lower_for_category not in NON_DSL_FAMILIES:
             from .hypothesis_dsl import validate_hypothesis_spec
             from .job_dispatcher import _kind_has_translation, _SUPPORTED_KINDS
+
+            if theory.dsl_spec and family_lower_for_category in _DEFERRED_DSL_FAMILY_NAMES:
+                return CriticVerdict(
+                    decision=CriticDecision.REJECT_UNDERCONSTRAINED,
+                    confidence=1.0,
+                    reasons=[
+                        "dsl_untranslatable: deferred cipher family "
+                        f"{theory.family!r} must not carry an executable dsl_spec. "
+                        "This looks like family/spec mismatch or kind smuggling; "
+                        "deferred families must stay honestly deferred until a "
+                        "translator brief lands."
+                    ],
+                )
 
             if not theory.dsl_spec:
                 return CriticVerdict(

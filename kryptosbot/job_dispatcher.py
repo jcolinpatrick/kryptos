@@ -266,6 +266,20 @@ _SUPPORTED_KINDS: frozenset[str] = frozenset({
     # polybius is length-non-preserving and deferred to a later brief).
     # The translator accepts variant="bifid" only.
     "polybius",
+    # B-DSL-expanded (2026-04-22): four additional cipher families that
+    # were listed in R3 protocol §2.1 as deferred. With these live the
+    # only remaining deferred kind is ``key_tape`` (finite tape + null-
+    # insertion, needs new kernel infrastructure). All four route
+    # through existing kernel primitives:
+    #   rail_fence  → transposition_full via rail_fence_perm
+    #   myszkowski  → transposition_full via myszkowski_perm
+    #   route       → transposition_full via serpentine_perm / spiral_perm
+    #                 (variant selects the path)
+    #   quagmire    → new TransformType.QUAGMIRE, enforces K1/K2 convention
+    "rail_fence",
+    "myszkowski",
+    "route",
+    "quagmire",
 })
 
 
@@ -682,6 +696,191 @@ def _translate_layer(layer: CipherLayer, binding: dict[str, Any]) -> dict[str, A
             "type": "grille",
             "params": {
                 "mask_order": list(mask_raw),
+            },
+        }
+
+    if kind == "rail_fence":
+        # B-DSL-expanded (2026-04-22): rail-fence (zigzag) transposition.
+        # Kernel primitive: rail_fence_perm(length, depth). Depth must be
+        # in [2, length/2]; depths of 1 or ≥length are no-ops.
+        depth = binding.get("depth")
+        if depth is None or not isinstance(depth, int) or depth < 2:
+            raise DispatcherError(
+                f"rail_fence layer requires int 'depth' >= 2; got {depth!r}"
+            )
+        from kryptos.kernel.constants import CT_LEN
+        from kryptos.kernel.transforms.transposition import rail_fence_perm
+        if depth >= CT_LEN:
+            raise DispatcherError(
+                f"rail_fence depth {depth} must be < CT_LEN={CT_LEN} "
+                "(otherwise the permutation is identity)"
+            )
+        perm = rail_fence_perm(CT_LEN, depth)
+        return {
+            "type": "transposition_full",
+            "params": {
+                "perm": list(perm),
+                "direction": "undo",
+            },
+        }
+
+    if kind == "myszkowski":
+        # B-DSL-expanded (2026-04-22): Myszkowski transposition — the
+        # columnar variant where repeated keyword letters produce tied
+        # columns that are read row-by-row. Kernel primitive:
+        # myszkowski_perm(keyword, length).
+        keyword = binding.get("keyword")
+        if keyword is None or not isinstance(keyword, str) or len(keyword) < 2:
+            raise DispatcherError(
+                f"myszkowski layer requires str 'keyword' with len >= 2; "
+                f"got {keyword!r}"
+            )
+        from kryptos.kernel.constants import CT_LEN
+        from kryptos.kernel.transforms.transposition import myszkowski_perm
+        perm = myszkowski_perm(keyword.upper(), CT_LEN)
+        return {
+            "type": "transposition_full",
+            "params": {
+                "perm": list(perm),
+                "direction": "undo",
+            },
+        }
+
+    if kind == "route":
+        # B-DSL-expanded (2026-04-22): route transposition wrapper.
+        # Variant selects the read pattern over an implied rows×cols
+        # grid filled row-by-row. Currently supports:
+        #   variant="serpentine" — boustrophedon (alternating row/col
+        #                           direction). Takes optional 'vertical' bool.
+        #                           NOTE: Sanborn's AAA archive (Page 17,
+        #                           UAN AAA-AAA_sanbojim_4129080) describes
+        #                           Kryptos as "a serpentine copper screen
+        #                           ... with Blaise De Vigenère's Tableaux"
+        #                           — this variant is the natural anchor
+        #                           for any serpentine-Vigenère hypothesis.
+        #   variant="spiral"      — outside-in spiral. Takes optional
+        #                           'clockwise' bool.
+        # Both kernel primitives (serpentine_perm, spiral_perm) trim
+        # positions beyond `length` so rows*cols may exceed CT_LEN.
+        variant = binding.get("variant")
+        if variant not in ("serpentine", "spiral"):
+            raise DispatcherError(
+                f"route layer requires variant in "
+                f"{{'serpentine', 'spiral'}}; got {variant!r}"
+            )
+        rows = binding.get("rows")
+        cols = binding.get("cols")
+        if not (isinstance(rows, int) and rows >= 1):
+            raise DispatcherError(
+                f"route layer requires int 'rows' >= 1; got {rows!r}"
+            )
+        if not (isinstance(cols, int) and cols >= 1):
+            raise DispatcherError(
+                f"route layer requires int 'cols' >= 1; got {cols!r}"
+            )
+        from kryptos.kernel.constants import CT_LEN
+        if rows * cols < CT_LEN:
+            raise DispatcherError(
+                f"route layer rows*cols={rows * cols} must be >= CT_LEN={CT_LEN} "
+                "to cover every position"
+            )
+        if variant == "serpentine":
+            from kryptos.kernel.transforms.transposition import serpentine_perm
+            vertical = bool(binding.get("vertical", False))
+            perm = serpentine_perm(rows, cols, CT_LEN, vertical=vertical)
+        else:  # spiral
+            from kryptos.kernel.transforms.transposition import spiral_perm
+            clockwise = bool(binding.get("clockwise", True))
+            perm = spiral_perm(rows, cols, CT_LEN, clockwise=clockwise)
+        return {
+            "type": "transposition_full",
+            "params": {
+                "perm": list(perm),
+                "direction": "undo",
+            },
+        }
+
+    if kind == "quagmire":
+        # B-DSL-expanded (2026-04-22): straight Quagmire III / IV via the
+        # kernel's quagmire_encrypt / quagmire_decrypt. This translator
+        # enforces the K1/K2 calling convention the kernel documented
+        # (see src/kryptos/kernel/transforms/quagmire.py §"K1/K2
+        # CALLING CONVENTION"): pt_alphabet_keyword AND
+        # ct_alphabet_keyword must both be set for a proper Quagmire III
+        # run; indicator must be a single letter present in the CT
+        # alphabet.
+        #
+        # Rejecting under-specified bindings is deliberate. The
+        # f_w10_quagmire_iii_v1 campaign (project memo from 2026-04-21)
+        # was misconfigured with only ct_alphabet_keyword set and
+        # silently ran a different mechanism that could not reproduce
+        # K2. A regression here protects future theories from the same
+        # footgun.
+        period_keyword = binding.get("period_keyword")
+        if not (isinstance(period_keyword, str) and len(period_keyword) >= 1):
+            raise DispatcherError(
+                f"quagmire layer requires non-empty str 'period_keyword'; "
+                f"got {period_keyword!r}"
+            )
+        ct_kw = binding.get("ct_alphabet_keyword")
+        pt_kw = binding.get("pt_alphabet_keyword")
+        variant = binding.get("variant", "quagmire_iii")
+        if variant not in ("quagmire_iii", "quagmire_iv"):
+            raise DispatcherError(
+                f"quagmire layer variant {variant!r} unsupported; "
+                "valid: 'quagmire_iii' (same keyword on PT and CT), "
+                "'quagmire_iv' (different keywords on PT and CT)"
+            )
+        # Quagmire III requires both keywords identical and non-empty;
+        # Quagmire IV requires both non-empty but distinct.
+        if not (isinstance(ct_kw, str) and len(ct_kw) >= 1):
+            raise DispatcherError(
+                "quagmire layer requires non-empty str "
+                "'ct_alphabet_keyword'. The K1/K2 convention requires "
+                "BOTH alphabet keywords; calling the kernel with only "
+                "ct_alphabet_keyword set implements a different "
+                "mechanism that cannot reproduce K1/K2 (see kernel "
+                "docstring)."
+            )
+        if not (isinstance(pt_kw, str) and len(pt_kw) >= 1):
+            raise DispatcherError(
+                "quagmire layer requires non-empty str "
+                "'pt_alphabet_keyword'. The K1/K2 convention requires "
+                "BOTH alphabet keywords (see kernel docstring for why)."
+            )
+        if variant == "quagmire_iii" and ct_kw != pt_kw:
+            raise DispatcherError(
+                f"quagmire_iii requires ct_alphabet_keyword == "
+                f"pt_alphabet_keyword; got {ct_kw!r} vs {pt_kw!r}. "
+                f"Use variant='quagmire_iv' for different keywords."
+            )
+        if variant == "quagmire_iv" and ct_kw == pt_kw:
+            raise DispatcherError(
+                f"quagmire_iv requires distinct ct/pt alphabet keywords; "
+                f"got identical {ct_kw!r}. Use variant='quagmire_iii' "
+                f"for same-keyword Quagmire (the K1/K2 convention)."
+            )
+        indicator = binding.get("indicator")
+        if not (isinstance(indicator, str) and len(indicator) == 1):
+            raise DispatcherError(
+                f"quagmire layer requires single-character str 'indicator'; "
+                f"got {indicator!r}. For K1/K2 Quagmire III with "
+                f"keyword='KRYPTOS', indicator='K' is the zero-shift row."
+            )
+        direction = binding.get("direction", "decrypt")
+        if direction not in ("encrypt", "decrypt"):
+            raise DispatcherError(
+                f"quagmire direction {direction!r} must be "
+                "'encrypt' or 'decrypt'"
+            )
+        return {
+            "type": "quagmire",
+            "params": {
+                "period_keyword": period_keyword,
+                "indicator": indicator,
+                "ct_alphabet_keyword": ct_kw,
+                "pt_alphabet_keyword": pt_kw,
+                "direction": direction,
             },
         }
 

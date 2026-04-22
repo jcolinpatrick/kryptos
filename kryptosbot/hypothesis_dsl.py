@@ -55,11 +55,15 @@ CipherKind = Literal[
     "atbash",
     "procedural",           # maps to a recipe_id in procedural_anomaly_recipes.md
     "grille",               # R3-0.5-2: Cardano-grille gather (permutation-only)
+    "key_tape",             # B-DSL-expanded (2026-04-22): DEFERRED (no translator)
 ]
 
 _VALID_CIPHER_KINDS: frozenset[str] = frozenset(
     # Keep in lock-step with CipherKind Literal above. The Literal is for
     # static type-checkers; this frozenset is for runtime validation.
+    # ``key_tape`` is listed here but absent from job_dispatcher._SUPPORTED_KINDS
+    # — proposals validate through DSL but admissibility rejects with a
+    # "no dispatcher translation" pointer (the deferred-kind contract).
     [
         "identity",
         "vigenere", "beaufort", "variant_beaufort",
@@ -67,6 +71,7 @@ _VALID_CIPHER_KINDS: frozenset[str] = frozenset(
         "polybius", "quagmire", "atbash",
         "procedural",
         "grille",  # R3-0.5-2
+        "key_tape",  # B-DSL-expanded (2026-04-22): deferred
     ]
 )
 

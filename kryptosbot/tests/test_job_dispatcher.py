@@ -88,18 +88,19 @@ class TestAdmissibility:
     def test_unsupported_kind_rejected_with_pointer(self):
         """A DSL-valid but dispatcher-unsupported kind must fail
         admissibility with a clear pointer. Pre-R3-0.5 used polybius
-        as the exemplar; R3-0.5-3 wired polybius so this test now
-        uses rail_fence — still in the DSL literal, still lacking a
-        translator. Any kind in _VALID_CIPHER_KINDS but not in
-        _SUPPORTED_KINDS is a valid exemplar here."""
+        as the exemplar; R3-0.5-3 wired polybius. Pre-B-DSL-expanded
+        used rail_fence; B-DSL-expanded (2026-04-22) wired four more
+        kinds (rail_fence, myszkowski, route, quagmire) so this test
+        now uses ``key_tape`` — the last remaining member of
+        _VALID_CIPHER_KINDS that isn't in _SUPPORTED_KINDS."""
         spec = HypothesisSpec(
-            hypothesis_id="T", pipeline=[CipherLayer(kind="rail_fence")],
+            hypothesis_id="T", pipeline=[CipherLayer(kind="key_tape")],
             compute_budget_cpu_minutes=1,
         )
         admissible, reasons = check_admissibility(spec, exhaustion_log={})
         assert admissible is False
         assert any(
-            "rail_fence" in r and "no dispatcher translation" in r
+            "key_tape" in r and "no dispatcher translation" in r
             for r in reasons
         )
 
@@ -211,6 +212,193 @@ class TestLayerTranslation:
         step = _translate_layer(CipherLayer(kind="atbash"), {})
         assert step["type"] == "beaufort"
         assert step["params"]["key"] == [25]
+
+
+# ─── B-DSL-expanded translators (2026-04-22) ─────────────────────────────────
+
+class TestRailFenceTranslation:
+    def test_rail_fence_translates_to_transposition_with_perm(self):
+        step = _translate_layer(CipherLayer(kind="rail_fence"), {"depth": 3})
+        assert step["type"] == "transposition_full"
+        assert step["params"]["direction"] == "undo"
+        assert len(step["params"]["perm"]) == 97
+        # Perm must be a valid permutation of [0, 97).
+        assert sorted(step["params"]["perm"]) == list(range(97))
+
+    def test_rail_fence_rejects_missing_depth(self):
+        with pytest.raises(DispatcherError, match="depth"):
+            _translate_layer(CipherLayer(kind="rail_fence"), {})
+
+    def test_rail_fence_rejects_depth_below_2(self):
+        with pytest.raises(DispatcherError, match="depth"):
+            _translate_layer(CipherLayer(kind="rail_fence"), {"depth": 1})
+
+    def test_rail_fence_rejects_depth_at_or_above_ct_len(self):
+        with pytest.raises(DispatcherError, match="depth"):
+            _translate_layer(CipherLayer(kind="rail_fence"), {"depth": 97})
+
+
+class TestMyszkowskiTranslation:
+    def test_myszkowski_translates_to_transposition_with_perm(self):
+        step = _translate_layer(
+            CipherLayer(kind="myszkowski"), {"keyword": "TOMATO"},
+        )
+        assert step["type"] == "transposition_full"
+        assert len(step["params"]["perm"]) == 97
+        assert sorted(step["params"]["perm"]) == list(range(97))
+
+    def test_myszkowski_rejects_short_keyword(self):
+        with pytest.raises(DispatcherError, match="keyword"):
+            _translate_layer(CipherLayer(kind="myszkowski"), {"keyword": "A"})
+
+    def test_myszkowski_rejects_non_string_keyword(self):
+        with pytest.raises(DispatcherError, match="keyword"):
+            _translate_layer(
+                CipherLayer(kind="myszkowski"), {"keyword": 12345},
+            )
+
+    def test_myszkowski_keyword_case_insensitive(self):
+        upper = _translate_layer(
+            CipherLayer(kind="myszkowski"), {"keyword": "TOMATO"},
+        )
+        lower = _translate_layer(
+            CipherLayer(kind="myszkowski"), {"keyword": "tomato"},
+        )
+        assert upper["params"]["perm"] == lower["params"]["perm"]
+
+
+class TestRouteTranslation:
+    def test_serpentine_variant_translates(self):
+        step = _translate_layer(
+            CipherLayer(kind="route"),
+            {"variant": "serpentine", "rows": 10, "cols": 10},
+        )
+        assert step["type"] == "transposition_full"
+        assert len(step["params"]["perm"]) == 97
+        assert sorted(step["params"]["perm"]) == list(range(97))
+
+    def test_spiral_variant_translates(self):
+        step = _translate_layer(
+            CipherLayer(kind="route"),
+            {"variant": "spiral", "rows": 10, "cols": 10},
+        )
+        assert step["type"] == "transposition_full"
+        assert len(step["params"]["perm"]) == 97
+        assert sorted(step["params"]["perm"]) == list(range(97))
+
+    def test_route_rejects_unknown_variant(self):
+        with pytest.raises(DispatcherError, match="variant"):
+            _translate_layer(
+                CipherLayer(kind="route"),
+                {"variant": "diagonal", "rows": 10, "cols": 10},
+            )
+
+    def test_route_rejects_grid_too_small(self):
+        with pytest.raises(DispatcherError, match="CT_LEN"):
+            _translate_layer(
+                CipherLayer(kind="route"),
+                {"variant": "serpentine", "rows": 5, "cols": 5},
+            )
+
+    def test_serpentine_horizontal_vs_vertical_differ(self):
+        h = _translate_layer(
+            CipherLayer(kind="route"),
+            {"variant": "serpentine", "rows": 10, "cols": 10, "vertical": False},
+        )
+        v = _translate_layer(
+            CipherLayer(kind="route"),
+            {"variant": "serpentine", "rows": 10, "cols": 10, "vertical": True},
+        )
+        assert h["params"]["perm"] != v["params"]["perm"]
+
+
+class TestQuagmireTranslation:
+    def _k1_binding(self):
+        # The K1/K2 calling convention (see kernel quagmire docstring).
+        return {
+            "variant": "quagmire_iii",
+            "period_keyword": "PALIMPSEST",
+            "ct_alphabet_keyword": "KRYPTOS",
+            "pt_alphabet_keyword": "KRYPTOS",
+            "indicator": "K",
+        }
+
+    def test_quagmire_iii_translates_with_correct_params(self):
+        step = _translate_layer(CipherLayer(kind="quagmire"), self._k1_binding())
+        assert step["type"] == "quagmire"
+        assert step["params"]["period_keyword"] == "PALIMPSEST"
+        assert step["params"]["ct_alphabet_keyword"] == "KRYPTOS"
+        assert step["params"]["pt_alphabet_keyword"] == "KRYPTOS"
+        assert step["params"]["indicator"] == "K"
+        assert step["params"]["direction"] == "decrypt"
+
+    def test_quagmire_rejects_missing_ct_alphabet_keyword(self):
+        # The f_w10 footgun: calling the kernel with only ct_alphabet_keyword
+        # set (or neither) silently implements a different mechanism. The
+        # translator must reject instead.
+        bad = self._k1_binding()
+        del bad["ct_alphabet_keyword"]
+        with pytest.raises(DispatcherError, match="ct_alphabet_keyword"):
+            _translate_layer(CipherLayer(kind="quagmire"), bad)
+
+    def test_quagmire_rejects_missing_pt_alphabet_keyword(self):
+        bad = self._k1_binding()
+        del bad["pt_alphabet_keyword"]
+        with pytest.raises(DispatcherError, match="pt_alphabet_keyword"):
+            _translate_layer(CipherLayer(kind="quagmire"), bad)
+
+    def test_quagmire_iii_rejects_mismatched_keywords(self):
+        bad = self._k1_binding()
+        bad["pt_alphabet_keyword"] = "DIFFERENT"
+        with pytest.raises(DispatcherError, match="quagmire_iii requires"):
+            _translate_layer(CipherLayer(kind="quagmire"), bad)
+
+    def test_quagmire_iv_requires_distinct_keywords(self):
+        bad = self._k1_binding()
+        bad["variant"] = "quagmire_iv"
+        # Same keyword for both — quagmire_iv requires distinct.
+        with pytest.raises(DispatcherError, match="distinct"):
+            _translate_layer(CipherLayer(kind="quagmire"), bad)
+
+    def test_quagmire_rejects_missing_indicator(self):
+        bad = self._k1_binding()
+        del bad["indicator"]
+        with pytest.raises(DispatcherError, match="indicator"):
+            _translate_layer(CipherLayer(kind="quagmire"), bad)
+
+    def test_quagmire_rejects_multi_char_indicator(self):
+        bad = self._k1_binding()
+        bad["indicator"] = "KR"
+        with pytest.raises(DispatcherError, match="indicator"):
+            _translate_layer(CipherLayer(kind="quagmire"), bad)
+
+    def test_quagmire_k1_roundtrip_through_kernel(self):
+        """End-to-end: the translator produces params that the kernel
+        quagmire_decrypt accepts, and decrypting K1 CT with PALIMPSEST /
+        KRYPTOS / KRYPTOS / 'K' reproduces the K1 plaintext prefix.
+        This is the hard guard against the f_w10 convention footgun —
+        anything that breaks the K1 discovery path fails here first."""
+        from kryptos.kernel.transforms.quagmire import quagmire_decrypt
+        step = _translate_layer(CipherLayer(kind="quagmire"), self._k1_binding())
+        params = step["params"]
+        K1_CT = (
+            "EMUFPHZLRFAXYUSDJKZLDKRNSHGNFIVJ"
+            "YQTQUXQBQVYUVLLTREVJYQTMKYRDMFD"
+        )
+        pt = quagmire_decrypt(
+            K1_CT,
+            period_keyword=params["period_keyword"],
+            indicator=params["indicator"],
+            ct_alphabet_keyword=params["ct_alphabet_keyword"],
+            pt_alphabet_keyword=params["pt_alphabet_keyword"],
+        )
+        # K1 starts with BETWEEN... — the first word is the regression
+        # anchor the kernel docstring calls out.
+        assert pt.startswith("BETWEEN"), (
+            f"K1/K2 convention regression: translator-produced params "
+            f"should decrypt K1 CT to plaintext starting with 'BETWEEN'. "
+            f"Got {pt[:20]!r}."
+        )
 
 
 # ─── Universe enumeration ───────────────────────────────────────────────────
@@ -331,12 +519,10 @@ class TestExecuteEndToEnd:
     def test_admissibility_rejection_short_circuits(self, tmp_path: Path):
         """Rejected spec returns early — total_tested stays 0.
 
-        Uses rail_fence (still unsupported as of R3-0.5-3) rather than
-        polybius (now supported); see test_unsupported_kind_rejected_with_pointer
-        for the history.
-        """
+        Uses ``key_tape`` — the only _VALID_CIPHER_KINDS member still
+        absent from _SUPPORTED_KINDS after B-DSL-expanded (2026-04-22)."""
         spec = HypothesisSpec(
-            hypothesis_id="T", pipeline=[CipherLayer(kind="rail_fence")],
+            hypothesis_id="T", pipeline=[CipherLayer(kind="key_tape")],
             compute_budget_cpu_minutes=1,
         )
         result = execute(

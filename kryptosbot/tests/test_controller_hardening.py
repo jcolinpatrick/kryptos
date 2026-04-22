@@ -1184,9 +1184,32 @@ class TestOranchakPromptPlumbing:
         assert "wordlists/quagmire3_keywords_oranchak.txt" in block
         assert "wordlists/quagmire4_keywords_oranchak.txt" in block
         assert "data/k4_candidate_fills_oranchak.csv" in block
-        # DSL-translator gap caveat must be surfaced so the theorist
-        # doesn't propose kind='quagmire' and eat an admissibility rejection.
-        assert "_SUPPORTED_KINDS" in block or "dsl_untranslatable" in block.lower()
+        # B-DSL-expanded (2026-04-22): kind='quagmire' is now dispatchable,
+        # so the block must route the theorist to it (with K1/K2 convention
+        # guidance) rather than warning it off.
+        assert "quagmire" in block.lower()
+        assert "dispatchable" in block.lower() or "quagmire_iii" in block.lower()
+
+    def test_oranchak_block_surfaces_serpentine_vigenere_anchor(self, tmp_path):
+        """The serpentine-Vigenère hypothesis seed (Sanborn AAA archive
+        page 17) must appear in the theorist prompt so it's a first-class
+        anchor rather than a word buried in `reference/`.
+        Added 2026-04-22 after the user surfaced the archive quote."""
+        config = ControllerConfig(
+            project_root=tmp_path,
+            ledger_db_path=tmp_path / "ledger.sqlite",
+            legacy_db_path=tmp_path / "results.db",
+        )
+        controller = ResearchController(config)
+        block = controller._render_oranchak_corpora_for_prompt()
+        assert "serpentine" in block.lower()
+        # Pair the two specific tokens Sanborn put in the same sentence,
+        # not just the adjective alone — it's the pairing that carries
+        # the hypothesis weight.
+        assert "vigen" in block.lower()  # matches 'Vigenère' or 'vigenere'
+        # Tier-3 discipline: the block should flag that this is a
+        # hypothesis seed, not confirmed evidence.
+        assert "tier 3" in block.lower() or "not confirmed" in block.lower()
 
     def test_oranchak_block_excludes_tier3_cia_memo(self, tmp_path):
         # feedback_sanborn_epistemic_weight: community-seeded material

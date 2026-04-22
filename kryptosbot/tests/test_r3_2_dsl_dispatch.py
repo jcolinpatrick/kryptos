@@ -220,23 +220,52 @@ def test_critic_rejects_cipher_family_without_dsl_spec():
 
 
 def test_critic_rejects_cipher_family_with_untranslatable_kind():
-    """Category C: cipher family + spec uses rail_fence → reject.
-    rail_fence is in _VALID_CIPHER_KINDS but NOT _SUPPORTED_KINDS."""
+    """Category C: cipher family + spec uses a deferred kind → reject.
+
+    B-DSL-expanded (2026-04-22) promoted rail_fence, route, myszkowski,
+    and quagmire out of the deferred set, so this test now uses
+    ``key_tape`` — the only remaining kind in _VALID_CIPHER_KINDS
+    that is NOT in _SUPPORTED_KINDS."""
     critic = TheoryCritic(_tmp_ledger())
     bad_spec = {
-        "hypothesis_id": "t-rf",
-        "pipeline": [{"kind": "rail_fence", "alphabet": "AZ", "params": []}],
+        "hypothesis_id": "t-kt",
+        "pipeline": [{"kind": "key_tape", "alphabet": "AZ", "params": []}],
         "compute_budget_cpu_minutes": 1,
     }
     t = TheoryRecord(
-        hypothesis_id="t-rf",
+        hypothesis_id="t-kt",
         core_claim="c", mechanism="m", family="novel",
         kill_criteria=["x"], expected_signal="y",
         dsl_spec=bad_spec,
     )
     verdict = critic.evaluate(t)
     assert verdict.decision == CriticDecision.REJECT_UNDERCONSTRAINED
-    assert any("dsl_untranslatable" in r and "rail_fence" in r
+    assert any("dsl_untranslatable" in r and "key_tape" in r
+               for r in verdict.reasons)
+
+
+def test_critic_rejects_deferred_family_with_supported_kind_spec():
+    """Deferred family names must not launder themselves through a supported
+    pipeline kind. key_tape is explicitly deferred, so a vigenere dsl_spec
+    is a family/spec mismatch and must reject at the critic."""
+    critic = TheoryCritic(_tmp_ledger())
+    bad_spec = {
+        "hypothesis_id": "t-key-tape",
+        "pipeline": [{"kind": "vigenere", "alphabet": "AZ", "params": []}],
+        "compute_budget_cpu_minutes": 1,
+    }
+    t = TheoryRecord(
+        hypothesis_id="t-key-tape",
+        core_claim="A deferred family proposal is represented by a supported DSL spec",
+        mechanism="bounded additive execution over a declared finite family",
+        family="key_tape",
+        kill_criteria=["x"],
+        expected_signal="y",
+        dsl_spec=bad_spec,
+    )
+    verdict = critic.evaluate(t)
+    assert verdict.decision == CriticDecision.REJECT_UNDERCONSTRAINED
+    assert any("kind smuggling" in r or "family/spec mismatch" in r
                for r in verdict.reasons)
 
 

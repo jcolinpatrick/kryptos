@@ -172,14 +172,16 @@ def test_r3_3_synthetic_integration_covers_mortality_battery(tmp_path):
         dsl_spec={},  # empty — Category C
     )
 
-    # 5. Cipher-family with translation error (rail_fence still lacks a
-    #    translator) — translation error at admissibility time.
+    # 5. Cipher-family with translation error. B-DSL-expanded
+    #    (2026-04-22) added translators for rail_fence/route/myszkowski/
+    #    quagmire, leaving ``key_tape`` as the only deferred kind. Use
+    #    it as the untranslatable-kind exemplar here.
     t_translation_error = _make_theory(
         "t-transerr",
         "novel",
         dsl_spec={
             "hypothesis_id": "t-transerr",
-            "pipeline": [{"kind": "rail_fence", "alphabet": "AZ",
+            "pipeline": [{"kind": "key_tape", "alphabet": "AZ",
                           "params": []}],
             "compute_budget_cpu_minutes": 1,
         },

@@ -1815,19 +1815,30 @@ class ResearchController:
 
         Scope constraint: these are REFERENCES, not theories to propose
         directly. The theorist may:
-          (a) propose a Quagmire-family theory that uses the keyword
-              pool as its sweep space (note the DSL translator gap:
-              straight "quagmire" is not in _SUPPORTED_KINDS as of
-              R3-0.5 — per R3 protocol §2.1, a theorist proposal
-              tagged as quagmire will be rejected with
-              dsl_untranslatable. Propose as vigenere or
-              variant_beaufort with a KA/mixed-alphabet tableau if the
-              keyword surface is the point.)
+          (a) propose a Quagmire-family theory using the keyword pool
+              as its sweep space — after B-DSL-expanded (2026-04-22),
+              kind="quagmire" dispatches natively and requires
+              variant ∈ {quagmire_iii, quagmire_iv}, period_keyword,
+              ct_alphabet_keyword, pt_alphabet_keyword, and indicator.
+              For K1/K2-style Quagmire III set both alphabet keywords
+              to the same string (e.g., "KRYPTOS") and indicator to
+              that keyword's first letter.
           (b) propose a fill-language-scoring refinement where the
               CSV is used as a plausibility reference for non-crib
               positions.
           (c) rank other proposals by whether their predicted
               plaintext resembles candidates in the fills corpus.
+
+        Serpentine-Vigenère anchor (primary-source evidence, Tier 3):
+        Sanborn's own writing in the Archives of American Art (page 17,
+        UAN AAA-AAA_sanbojim_4129080) describes Kryptos as
+        "a serpentine copper screen perforated with encoded text and
+        Blaise De Vigenère's Tableaux". The pairing of "serpentine"
+        with "Vigenère's Tableaux" in one sentence is a candidate
+        hypothesis seed — the ``route`` kind with variant="serpentine"
+        composed with a single-layer Vigenere on KA is the natural
+        dispatch shape for testing it. Not confirmed evidence; valid
+        hypothesis seed.
 
         Tier 3 flag on accompanying source (``reference/cia_1996_memo.md``):
         the CIA 1996 memo is NOT in this block. Its OTP claim rests on
@@ -1835,8 +1846,7 @@ class ResearchController:
         weight. Do not cite it.
         """
         return (
-            "ORANCHAK COMMUNITY REFERENCE CORPORA (mirrored 2026-04-21, "
-            "available for Campaign A):\n"
+            "ORANCHAK COMMUNITY REFERENCE CORPORA (mirrored 2026-04-21):\n"
             "  - wordlists/quagmire3_keywords_oranchak.txt: 10,000 English words "
             "ordered by community Reddit-frequency; use as preregistered Quagmire "
             "III keyword sweep space.\n"
@@ -1847,16 +1857,26 @@ class ResearchController:
             "fill-language plausibility reference for non-crib positions.\n"
             "\n"
             "HOW TO USE:\n"
-            "  - Propose Quagmire-family sweeps with an explicit sweep_space "
-            "reference to the wordlist file, NOT a regenerated guess list.\n"
-            "  - Note the DSL translator gap: kind='quagmire' is NOT in "
-            "_SUPPORTED_KINDS as of R3-0.5 and will be rejected at the critic. "
-            "Route as kind='vigenere' or 'variant_beaufort' with a "
-            "keyword-mixed (KA-style) alphabet if the keyword surface is the "
-            "point. See the DSL coverage note in this prompt's constraints.\n"
+            "  - kind='quagmire' IS NOW DISPATCHABLE (B-DSL-expanded, "
+            "2026-04-22). Required fields: variant ∈ {'quagmire_iii', "
+            "'quagmire_iv'}, period_keyword (a keyword from the Oranchak "
+            "pool is natural), ct_alphabet_keyword, pt_alphabet_keyword, "
+            "indicator (single char). For K1/K2-style Quagmire III set "
+            "both alphabet keywords to the same string and indicator to "
+            "that string's first letter. Missing any alphabet keyword is "
+            "the footgun from f_w10 and will be rejected loudly.\n"
             "  - For fill-language scoring, cite the CSV path in your "
             "minimal_test_spec so the worker can load it; do not paste "
             "candidate rows inline.\n"
+            "\n"
+            "SERPENTINE-VIGENÈRE ANCHOR (Tier 3, primary-source hypothesis seed):\n"
+            "  Sanborn's AAA archive page 17 (UAN AAA-AAA_sanbojim_4129080) "
+            "describes Kryptos as \"a serpentine copper screen perforated "
+            "with encoded text and Blaise De Vigenère's Tableaux\". The "
+            "pairing of the two technical terms in one sentence motivates "
+            "testing a two-layer spec with kind='route', variant='serpentine' "
+            "composed with kind='vigenere' on alphabet='KA'. Not confirmed; "
+            "fair game as a hypothesis anchor.\n"
             "\n"
             "EPISTEMIC CAVEAT: these are community-seeded reference lists, "
             "not preregistered eliminations. A keyword scoring well against "
@@ -2063,7 +2083,7 @@ Valid enum/value domains for dsl_spec fields:
 
 Untranslatable kinds (proposing one triggers CriticDecision.
 REJECT_UNDERCONSTRAINED with reason "dsl_untranslatable"):
-  rail_fence, route, myszkowski, quagmire, key_tape
+  key_tape
 
 Family and dsl_spec must describe the SAME mechanism class. Do not label a
 theory as a deferred family (for example key_tape) and then smuggle it
