@@ -232,6 +232,7 @@ These are non-obvious pitfalls discovered through prior sessions. Check these fi
 - **`doctor` `bean_count` always FAILs — not a real problem**: `cli/doctor.py:35` checks `len(BEAN_INEQ) == 21` but the constant has held 242 inequalities since the Bean Linear constraints expansion. This is a stale threshold, not an environment error. All other `doctor` checks are authoritative; ignore `bean_count` until the check is updated.
 - **Two exhaustion logs — only one is authoritative**: Root `exhaustion_log.json` is the single source of truth. `scripts/EXHAUSTION.json` is stale — never read from or write to it.
 - **Two `.env` files — don't mix them up**: `.env` (root) = `ANTHROPIC_API_KEY` + `KBOT_CLASSIFY_API_KEY` + `NTFY_TOPIC`. `kryptosbot/.env` = Agent SDK API key (see `kryptosbot/.env.template`). Loading the wrong one gives silent auth failures.
+- **Quagmire III requires explicit convention args**: `quagmire_encrypt` / `quagmire_decrypt` in `src/kryptos/kernel/transforms/quagmire.py` only reproduce the Kryptos K1/K2 convention when called with `pt_alphabet_keyword=..., ct_alphabet_keyword='KRYPTOS', indicator='K'`. Calling with the wrong shape does NOT raise — it silently produces output that fails K1/K2 ground-truth regression. `scripts/campaigns/f_w10_quagmire_iii_v1.py` was historically misconfigured this way; K1/K2 regression tests landed 2026-04-21 as the standing guard. Before trusting any new Quagmire result, verify the regression tests pass.
 
 ---
 
@@ -377,6 +378,7 @@ Results are not trusted until they pass:
 - [Elonka Dunin's Kryptos page](https://elonka.com/kryptos/) — Community hub, authoritative CT transcription
 - [`reference/ed_scheidt_dossier.md`](reference/ed_scheidt_dossier.md) — What the co-creator has revealed publicly
 - [`reference/sanborn_open_letter_aug2025.md`](reference/sanborn_open_letter_aug2025.md) — AI verification, K5 confirmed
+- [`reference/cia_1996_memo.md`](reference/cia_1996_memo.md) — **Tier-3 hearsay**, mirrored from the Oranchak repo 2026-04-21. Three of its four cipher diagnoses are known-wrong; its "K4 = OTP" claim carries no evidentiary weight. Cite with the Tier-3 banner and never as support for an OTP hypothesis. Related mirrored assets: `data/k4_candidate_fills_oranchak.csv`, `wordlists/quagmire[34]_keywords_oranchak.txt`.
 
 ### Operations quick-reference
 
@@ -407,13 +409,14 @@ Two `memory/` directories exist — don't confuse them:
 
 - **KryptosBot runner:** `python3 kryptosbot/solve.py`. See `kryptosbot/RUNBOOK.md`.
 - **Campaign runner:** `PYTHONPATH=src python3 -u kryptosbot/campaign_v2.py` (supports `--local-only`, `--dry-run`).
+- **Post-R3 control flow (2026-04-21):** Controller worker path now dispatches through `job_dispatcher.execute()`; Category-A workers no longer call Claude directly, and the kernel overrule is preserved across the DSL handoff. R3-0.5 extended the DSL to 9 kinds (added procedural / grille / polybius translators). **`docs/maturation/round3/K4_RUN_PROTOCOL_R3.md` supersedes `round2/K4_RUN_PROTOCOL.md`** for any post-R3 run; do not follow the R2 protocol.
 - **Pantheon (current multi-agent system):** persona-routed theorists + sibling red-team-disprover + statistical-audit gate + lead-pursuit evaluator. Live state and day-by-day build notes in `MEMORY.md` under "Project (current state)" — read those, not this section, for what's actually running. Two cycle loops exist (`controller.run` and `run_controller.do_run`); any phase addition must patch **both**.
 - **AGENTS.md** — Codex operating instructions (`AGENTS.md` at repo root). Codex performs debugging, troubleshooting, and hardening passes as an independent auditor. Defines hard constraints (free text never drives control flow, worker scores never trusted, timeout means inconclusive), autonomous fix scope (off-by-one, resume bugs, weak tests, misleading docs), and areas requiring extra caution (kernel constants, Bean logic, elimination semantics). Codex treats prior Claude Code conclusions as hypotheses to verify, not facts.
 - **Historical reference:** `archive/legacy_harness/`, `archive/session_reports/`, `docs/history/`, [`reports/final_synthesis.md`](reports/final_synthesis.md) (banner-labelled HISTORICAL SNAPSHOT).
 
 ---
 
-*Last updated: 2026-04-17 — Added `run_lean.py` disambiguation, `requirements.txt` pointer, and `external/` (Bean reference C/SageMath impl) to Source Layout. 2026-04-16 prior edit added campaigns/, admissibility/, composition/ and AGENTS.md pointer. CLAUDE.md is operational doctrine only. Live research state in MEMORY.md; structured claims in docs/claims_registry.json; open audits in docs/methodological_audits.md; canonical entry index in docs/README_current_state.md.*
+*Last updated: 2026-04-22 — Added Quagmire III convention gotcha (silent-failure footgun from f_w10 misconfig), post-R3 control-flow pointer (K4_RUN_PROTOCOL_R3 supersedes R2), and Oranchak / CIA 1996 memo Tier-3 reference. 2026-04-21: maturation phase 09 doctrine refresh (ORIENT.md pointer + ARCHITECTURE.md update). 2026-04-17: added `run_lean.py` disambiguation, `requirements.txt` pointer, and `external/` (Bean reference C/SageMath impl) to Source Layout. 2026-04-16: added campaigns/, admissibility/, composition/ and AGENTS.md pointer. CLAUDE.md is operational doctrine only. Live research state in MEMORY.md; structured claims in docs/claims_registry.json; open audits in docs/methodological_audits.md; canonical entry index in docs/README_current_state.md.*
 *Primary author: Colin Patrick (human lead) + Claude (computational partner)*
 
 *Precedence rule for conflicts: verify freshness with `git log -1 --format=%cd CLAUDE.md MEMORY.md`. If CLAUDE.md is older than MEMORY.md and the two conflict on research state (not operational doctrine), trust MEMORY.md and flag the drift. Operational doctrine in CLAUDE.md is always authoritative regardless of date.*

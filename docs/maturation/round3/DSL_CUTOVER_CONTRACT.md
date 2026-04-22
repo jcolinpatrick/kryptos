@@ -183,8 +183,8 @@ This is the correct behaviour per brief §6.1. R3-3's real-theorist test measure
 3. List fields are lists.
 4. `anomalies_exploited` entries are canonical anomaly_ids.
 5. `minimal_test_spec` is a dict (optional).
-6. **NEW: `dsl_spec` is either a dict or literal `null`. If dict, `validate_hypothesis_spec(dsl_spec)` must succeed. If validation fails, theory goes to `invalid` with the full validation errors concatenated into the reason string.**
-7. Construct `TheoryRecord` with the new `dsl_spec` attribute populated (`dict` for success, `{}` for null / absent).
+6. **NEW: `dsl_spec` is either a dict or literal `null`. Boundary parsing does NOT structurally validate the spec object beyond that type check.** This is the landed behavior in `kryptosbot/contracts.py`: shape-level validation is deferred to the critic's Category-A/C check so malformed specs are rejected as `dsl_untranslatable` rather than silently dropped at boundary time.
+7. Construct `TheoryRecord` with the new `dsl_spec` attribute populated (`dict` for success, `{}` for null / absent). Structural validation then runs in `TheoryCritic.evaluate()`, which calls `validate_hypothesis_spec(...)`.
 
 ---
 
