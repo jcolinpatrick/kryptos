@@ -1881,9 +1881,45 @@ def _halt_counters(snap: dict, events: list[tuple[str, str]]) -> dict:
     }
 
 
+# Dashboard-hardening 2026-04-22: statuses that indicate the theory has
+# been resolved and no longer deserves to drive live telemetry. A high
+# crib_score attached to one of these is archived history, not a live
+# signal — per the user's explicit direction, if it's truly noise /
+# resolved, it doesn't belong on the dashboard.
+_RESOLVED_THEORY_STATUSES: frozenset[str] = frozenset({
+    "completed", "eliminated", "withdrawn", "superseded",
+})
+
+
 def _best_crib(snap: dict) -> int:
+    """Best crib_score across theories that still warrant investigation.
+
+    Filters out experiments / theories whose owning theory settled into
+    a resolved lifecycle state (``completed``, ``eliminated``,
+    ``withdrawn``, ``superseded``). Without this filter, the dashboard's
+    "best crib" telemetry would display historical crib-paste
+    fabrications (crib_score=24 results that stat-audit already rejected
+    as noise) as if they were live signal — the opposite of what the
+    operator needs to see.
+
+    When no investigable theory has a score yet, returns 0. A legitimate
+    new PROMISING theory at crib_score N will immediately surface.
+    """
+    status_by_hid: dict[str, str] = {}
+    for t in snap["theories"]:
+        hid = (t.get("hypothesis_id") or "").strip()
+        if hid:
+            status_by_hid[hid] = (t.get("status") or "").lower()
+
+    def _investigable(hid: str) -> bool:
+        status = status_by_hid.get(hid, "")
+        return status not in _RESOLVED_THEORY_STATUSES
+
     best = 0
     for e in snap["experiments"]:
+        hid = (e.get("hypothesis_id") or "").strip()
+        if not _investigable(hid):
+            continue
         r = e.get("result") or {}
         try:
             cs = int(r.get("crib_score") or 0)
@@ -1892,6 +1928,9 @@ def _best_crib(snap: dict) -> int:
         if cs > best:
             best = cs
     for t in snap["theories"]:
+        status = (t.get("status") or "").lower()
+        if status in _RESOLVED_THEORY_STATUSES:
+            continue
         try:
             bs = int(t.get("best_score") or 0)
         except (TypeError, ValueError):
