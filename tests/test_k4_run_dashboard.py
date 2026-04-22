@@ -277,3 +277,95 @@ class TestMortalityEBandFiltering:
         )
         # And MUST NOT also pollute the 10-17 score band.
         assert self._row_count(rendered, "10-17") == 0
+
+
+class TestBestCribFiltering:
+    """Telemetry's "best crib" must only reflect theories that still
+    warrant investigation. Historical crib-paste fabrications — high-
+    crib theories already ELIMINATED or COMPLETED after stat-audit —
+    must not inflate the live display.
+
+    Regression target 2026-04-22: dashboard displayed "best crib 24/24"
+    because the ledger held 7 historical BREAKTHROUGH-scored theories
+    all resolved as crib-paste noise."""
+
+    def _snap(self, theories: list[dict], experiments: list[dict]) -> dict:
+        return {"theories": theories, "experiments": experiments, "error": None}
+
+    def test_eliminated_theory_does_not_contribute(self):
+        snap = self._snap(
+            theories=[{"hypothesis_id": "h1", "status": "eliminated",
+                       "best_score": 24.0, "critic_verdict": None}],
+            experiments=[{"hypothesis_id": "h1",
+                          "result": {"crib_score": 24}}],
+        )
+        assert dashboard._best_crib(snap) == 0, (
+            "eliminated theory with crib=24 must not surface as best_crib"
+        )
+
+    def test_completed_theory_does_not_contribute(self):
+        snap = self._snap(
+            theories=[{"hypothesis_id": "h1", "status": "completed",
+                       "best_score": 24.0, "critic_verdict": None}],
+            experiments=[{"hypothesis_id": "h1",
+                          "result": {"crib_score": 24}}],
+        )
+        assert dashboard._best_crib(snap) == 0
+
+    def test_promising_theory_does_contribute(self):
+        snap = self._snap(
+            theories=[{"hypothesis_id": "h1", "status": "promising",
+                       "best_score": 19.0, "critic_verdict": None}],
+            experiments=[{"hypothesis_id": "h1",
+                          "result": {"crib_score": 19}}],
+        )
+        assert dashboard._best_crib(snap) == 19
+
+    def test_running_theory_does_contribute(self):
+        # A theory mid-dispatch may not yet have an experiment row; the
+        # theory-level best_score fallback must still count.
+        snap = self._snap(
+            theories=[{"hypothesis_id": "h1", "status": "running",
+                       "best_score": 15.0, "critic_verdict": None}],
+            experiments=[],
+        )
+        assert dashboard._best_crib(snap) == 15
+
+    def test_mixed_live_and_resolved(self):
+        # Live theory at 11, eliminated theory at 24 — best_crib = 11.
+        snap = self._snap(
+            theories=[
+                {"hypothesis_id": "h1", "status": "running",
+                 "best_score": 11.0, "critic_verdict": None},
+                {"hypothesis_id": "h2", "status": "eliminated",
+                 "best_score": 24.0, "critic_verdict": None},
+            ],
+            experiments=[
+                {"hypothesis_id": "h1", "result": {"crib_score": 11}},
+                {"hypothesis_id": "h2", "result": {"crib_score": 24}},
+            ],
+        )
+        assert dashboard._best_crib(snap) == 11, (
+            "live theory's 11 must beat the resolved theory's 24"
+        )
+
+    def test_withdrawn_theory_filtered(self):
+        snap = self._snap(
+            theories=[{"hypothesis_id": "h1", "status": "withdrawn",
+                       "best_score": 22.0, "critic_verdict": None}],
+            experiments=[{"hypothesis_id": "h1",
+                          "result": {"crib_score": 22}}],
+        )
+        assert dashboard._best_crib(snap) == 0
+
+    def test_unknown_status_counted_defensively(self):
+        # A theory with an unexpected / empty status should still
+        # contribute — silently filtering an unrecognized state would
+        # hide live signal. Only explicit resolved-states filter.
+        snap = self._snap(
+            theories=[{"hypothesis_id": "h1", "status": "",
+                       "best_score": 17.0, "critic_verdict": None}],
+            experiments=[{"hypothesis_id": "h1",
+                          "result": {"crib_score": 17}}],
+        )
+        assert dashboard._best_crib(snap) == 17
