@@ -116,14 +116,24 @@ def _breathe(t: float, period: float = 2.0,
     return hot if phase > 0.55 else cold
 
 
-def _log_liveness(last_mtime: float, now: float) -> tuple[str, str, str]:
+def _log_liveness(
+    last_mtime: float, now: float, controller_alive: bool = False,
+) -> tuple[str, str, str]:
     """Classify log liveness. Returns (label, color, spinner_kind).
 
     States:
-      'live'    = log updated within 4s       → verdigris, braille spin
-      'stale'   = 4-15s stale                 → amber, arc spin
-      'cold'    = 15-60s stale                → signal-red, dot spin
-      'halted'  = >60s stale (run ended / op) → dim slate, static glyph
+      'live'     = log updated within 4s                  → verdigris, braille
+      'stale'    = 4-15s stale                             → amber, arc
+      'cold'     = 15-60s stale                            → signal-red, dot
+      'thinking' = >60s stale BUT controller PID is alive → amber, arc
+                   (candidate generator deep-generate on opus can go 3-10 min silent)
+      'halted'   = >60s stale AND controller PID is dead  → dim slate, static
+
+    Campaign-B dashboard-hardening (2026-04-22): prior behaviour flipped
+    to HALTED on any 60s+ silence, which false-triggered every time the
+    candidate generator was mid-API-call (generate phase produces no stdout until
+    the SDK returns). Cross-checking the controller PID distinguishes a
+    silent-but-working run from an actually-dead one.
     """
     age = now - last_mtime
     if age < 4:
@@ -132,14 +142,142 @@ def _log_liveness(last_mtime: float, now: float) -> tuple[str, str, str]:
         return ("stale", C_WATCH, "arc")
     if age < 60:
         return ("cold", C_CRITICAL, "dot")
+    if controller_alive:
+        return ("thinking", C_WATCH, "arc")
     return ("halted", C_DIM, "static")
 
 
-def _is_run_halted(last_mtime: float, now: float) -> bool:
-    """True when the log has been static long enough that we're
-    confident the controller exited (or crashed). Everything
-    time-varying should freeze in this state."""
+def _is_run_halted(
+    last_mtime: float, now: float, controller_alive: bool = False,
+) -> bool:
+    """True when the log has been static long enough AND the controller
+    process is not alive — meaning we're confident the controller exited
+    (or crashed).
+
+    A long silent window on its own does NOT imply halt: candidate generator
+    generate phases routinely produce no stdout for minutes while the
+    SDK call runs. Only report halted when the controller PID is
+    actually dead. See _detect_controller_pid."""
+    if controller_alive:
+        return False
     return (now - last_mtime) >= 60.0
+
+
+def _detect_controller_pid() -> Optional[int]:
+    """Return the PID of a running run_controller.py / solve.py, else None.
+
+    Uses /proc on Linux so there's no dependency on psutil or pgrep.
+    Best-effort; a None return is treated as "no controller detected",
+    which for halt-detection means the 60s stale rule kicks in normally.
+    """
+    import os
+    import glob
+    try:
+        for pid_dir in glob.glob("/proc/[0-9]*"):
+            try:
+                pid = int(os.path.basename(pid_dir))
+                with open(f"{pid_dir}/cmdline", "rb") as f:
+                    cmdline = f.read().replace(b"\x00", b" ").decode(
+                        "utf-8", errors="replace",
+                    )
+                if (
+                    "run_controller.py" in cmdline
+                    or "<internal>/solve.py" in cmdline
+                    or "internal.run_controller" in cmdline
+                ):
+                    return pid
+            except (OSError, ValueError):
+                continue
+    except Exception:
+        # Any platform that lacks /proc (macOS, Windows) gracefully falls
+        # through to "None detected" — the dashboard keeps working with
+        # the 60s stale rule as a fallback halt heuristic.
+        return None
+    return None
+
+
+def _is_pid_alive(pid: int) -> bool:
+    """Best-effort liveness probe. Safe on any Unix; returns False on
+    non-POSIX platforms without raising."""
+    if pid <= 0:
+        return False
+    try:
+        import os
+        os.kill(pid, 0)
+        return True
+    except (ProcessLookupError, PermissionError, OSError):
+        return False
+
+
+# ─── Auto-detect active run paths ──────────────────────────────────────────
+
+def _detect_active_db() -> Optional[Path]:
+    """Canonical ledger path, or None if missing."""
+    canonical = _ROOT / "db" / "theory_ledger.sqlite"
+    return canonical if canonical.exists() else None
+
+
+def _detect_active_log() -> Optional[Path]:
+    """Most recent campaign log by mtime.
+
+    Search order:
+      1. ``logs/campaign_*/run_*.log`` — canonical Campaign-era paths
+      2. ``logs/**/run_*.log`` — any nested run log
+      3. ``results/*/run.log`` — legacy pre-Campaign paths
+    Returns the newest match, or None if nothing found.
+    """
+    candidates: list[Path] = []
+    for pattern in (
+        "logs/campaign_*/run_*.log",
+        "logs/**/run_*.log",
+        "results/*/run.log",
+    ):
+        candidates.extend(_ROOT.glob(pattern))
+    candidates = [p for p in candidates if p.is_file()]
+    if not candidates:
+        return None
+    return max(candidates, key=lambda p: p.stat().st_mtime)
+
+
+# ─── Cycle-counter parsing ──────────────────────────────────────────────────
+
+_CYCLE_OF_RE = None  # lazy — compile on first use
+
+
+def _parse_cycle_info_from_log(log_text: str) -> Optional[tuple[int, int]]:
+    """Extract (current_cycle, max_cycle) from the log's most recent
+    ``── CYCLE N of M ──`` line.
+
+    The controller prints this at each cycle boundary; it already carries
+    the absolute cycle number AND the absolute ceiling computed from
+    session-start + ``--cycles``. The dashboard used to compute its own
+    ratio as ``cycle_number / args.max_cycles`` which silently misread
+    the CLI's relative ``--cycles N`` (N new cycles added) as an absolute
+    ceiling — producing nonsense like "154 / 15" when the true ratio was
+    154/165. Parsing the log directly fixes that.
+
+    Returns None if no matching line is found; caller falls back to the
+    old behaviour.
+    """
+    global _CYCLE_OF_RE
+    if _CYCLE_OF_RE is None:
+        import re
+        # Controller prints the banner as "CYCLE 151/165". Older logs
+        # and the dashboard's own event-tape rendering use
+        # "CYCLE 151 of 165"; tolerate both shapes so a mixed-source
+        # log still parses cleanly.
+        _CYCLE_OF_RE = re.compile(
+            r"CYCLE\s+(\d+)\s*(?:/|of)\s*(\d+)", re.IGNORECASE,
+        )
+    # Scan from the tail so the *most recent* cycle wins.
+    matches = list(_CYCLE_OF_RE.finditer(log_text))
+    if not matches:
+        return None
+    m = matches[-1]
+    try:
+        return (int(m.group(1)), int(m.group(2)))
+    except (TypeError, ValueError):
+        return None
 
 
 # ─── K4 reference ───────────────────────────────────────────────────────────
@@ -344,6 +482,7 @@ _WORKER_DONE_RE = re.compile(
 def _parse_log(log_path: Path) -> dict:
     out: dict = {
         "cycle_current": 0,
+        "cycle_max_from_log": 0,  # dashboard-hardening 2026-04-22
         "total_usd": 0.0,
         "api_calls": 0,
         "input_tokens": 0,
@@ -524,6 +663,19 @@ def _parse_log(log_path: Path) -> dict:
         tag = _tag_for_line(clean)
         events.append((tag, clean))
     out["recent"] = events[-18:]
+
+    # Dashboard-hardening (2026-04-22): pull the absolute cycle ceiling
+    # from the log's "CYCLE N of M" banner. The controller prints this
+    # at each cycle boundary, and it already accounts for session-start
+    # cycle + --cycles (so a run launched with --cycles 15 from cycle
+    # 151 will print "CYCLE 151 of 165"). Reading this directly avoids
+    # the old "154 / 15" display bug where the dashboard treated the
+    # CLI's --cycles as an absolute ceiling.
+    cycle_info = _parse_cycle_info_from_log(text_tail)
+    if cycle_info:
+        out["cycle_current"] = max(out["cycle_current"], cycle_info[0])
+        out["cycle_max_from_log"] = cycle_info[1]
+
     return out
 
 
@@ -604,7 +756,10 @@ def _source_badges(snap: dict, logdata: dict, now: float) -> list[tuple[str, str
     if not logdata.get("last_modified"):
         badges.append(("log waiting", C_WATCH))
     else:
-        log_label, log_color, _ = _log_liveness(logdata["last_modified"], now)
+        log_label, log_color, _ = _log_liveness(
+            logdata["last_modified"], now,
+            controller_alive=bool(logdata.get("controller_alive")),
+        )
         if log_label != "live":
             badges.append((f"log {log_label}", log_color))
 
@@ -660,12 +815,15 @@ def _banner(cycle_cur: int, cycle_max: int,
             stream_events_total: int,
             active_workers: int,
             source_badges: list[tuple[str, str]],
-            subscription: Optional[dict] = None) -> Panel:
+            subscription: Optional[dict] = None,
+            controller_alive: bool = False) -> Panel:
     cycle_pct = min(1.0, cycle_cur / max(1, cycle_max))
     cyc_color = C_NOMINAL if cycle_pct < 0.8 else (C_WATCH if cycle_pct < 1.0 else C_CRITICAL)
 
-    halted = _is_run_halted(log_last_mtime, now)
-    liveness_label, liveness_color, liveness_spin = _log_liveness(log_last_mtime, now)
+    halted = _is_run_halted(log_last_mtime, now, controller_alive=controller_alive)
+    liveness_label, liveness_color, liveness_spin = _log_liveness(
+        log_last_mtime, now, controller_alive=controller_alive,
+    )
     # When halted: static heartbeat + static glyph instead of spinner.
     if halted:
         hb_glyph, hb_color = "◌", C_DIM
@@ -889,7 +1047,10 @@ def _activity_panel(snap: dict, logdata: dict,
     stage = logdata.get("current_stage") or ""
     persona = logdata.get("current_persona") or ""
     workers = logdata.get("workers") or {}
-    halted = _is_run_halted(logdata.get("last_modified") or now, now)
+    halted = _is_run_halted(
+        logdata.get("last_modified") or now, now,
+        controller_alive=bool(logdata.get("controller_alive")),
+    )
 
     if not stage and current:
         stage = {
@@ -1747,7 +1908,8 @@ def _compose_wide(snap: dict, logdata: dict, max_cycles: int, max_usd: float,
     # exited, giving the misleading impression that the run is still
     # progressing.
     _last_mtime = logdata.get("last_modified") or now
-    if _is_run_halted(_last_mtime, now):
+    _ctrl_alive = bool(logdata.get("controller_alive"))
+    if _is_run_halted(_last_mtime, now, controller_alive=_ctrl_alive):
         elapsed = max(0.0, _last_mtime - run_start)
     else:
         elapsed = max(0.0, now - run_start)
@@ -1774,6 +1936,7 @@ def _compose_wide(snap: dict, logdata: dict, max_cycles: int, max_usd: float,
             active_workers=active_workers,
             source_badges=source_badges,
             subscription=logdata.get("subscription"),
+            controller_alive=bool(logdata.get("controller_alive")),
         ), name="banner", size=3),
         Layout(name="row_a", size=14),      # CT + ACTIVITY + POSTURE
         Layout(name="row_b", size=18),      # MORTALITY + STATUS + HALT + TELEMETRY
@@ -1835,7 +1998,8 @@ def _compose_narrow(snap: dict, logdata: dict, max_cycles: int, max_usd: float,
     # exited, giving the misleading impression that the run is still
     # progressing.
     _last_mtime = logdata.get("last_modified") or now
-    if _is_run_halted(_last_mtime, now):
+    _ctrl_alive = bool(logdata.get("controller_alive"))
+    if _is_run_halted(_last_mtime, now, controller_alive=_ctrl_alive):
         elapsed = max(0.0, _last_mtime - run_start)
     else:
         elapsed = max(0.0, now - run_start)
@@ -1859,6 +2023,7 @@ def _compose_narrow(snap: dict, logdata: dict, max_cycles: int, max_usd: float,
             active_workers=active_workers,
             source_badges=source_badges,
             subscription=logdata.get("subscription"),
+            controller_alive=bool(logdata.get("controller_alive")),
         ), name="banner", size=3),
         Layout(name="middle"),
         Layout(_event_ticker(logdata["recent"], frame, now, source_badges),
@@ -1903,13 +2068,26 @@ def _compose_frame(db_path: Path, log_path: Path,
     snap = _query_ledger(db_path)
     logdata = _parse_log(log_path)
     now = time.time()
+
+    # Dashboard-hardening (2026-04-22): detect live controller once per
+    # frame and attach to logdata so halt/liveness checks can use it
+    # without signature churn across panel composers.
+    pid = _detect_controller_pid()
+    logdata["controller_pid"] = pid
+    logdata["controller_alive"] = bool(pid and _is_pid_alive(pid))
+
+    # If the log carried an explicit "CYCLE N of M" ceiling, prefer
+    # that over the CLI's --max-cycles (which is typically a relative
+    # increment rather than an absolute ceiling).
+    cycle_max_effective = int(logdata.get("cycle_max_from_log") or 0) or max_cycles
+
     if console_width >= 200:
         return _compose_wide(
-            snap, logdata, max_cycles, max_usd,
+            snap, logdata, cycle_max_effective, max_usd,
             history, start_time, frame, now,
         )
     return _compose_narrow(
-        snap, logdata, max_cycles, max_usd,
+        snap, logdata, cycle_max_effective, max_usd,
         history, start_time, frame, now,
     )
 
@@ -1918,15 +2096,39 @@ def _compose_frame(db_path: Path, log_path: Path,
 
 def main(argv: Optional[list[str]] = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--db", type=Path,
-                    default=_ROOT / "db" / "k4_run_2026_04_21.sqlite")
-    ap.add_argument("--log", type=Path,
-                    default=_ROOT / "results" / "k4_run_2026_04_21" / "run.log")
-    ap.add_argument("--max-cycles", type=int, default=15)
+    # Dashboard-hardening (2026-04-22): defaults now auto-detect the
+    # current active run. Pass --db / --log explicitly only when you
+    # want to point the dashboard at a non-canonical location (e.g.
+    # a historical ledger copy or a diverted log).
+    ap.add_argument(
+        "--db", type=Path, default=None,
+        help="ledger sqlite path (default: auto-detect db/theory_ledger.sqlite)",
+    )
+    ap.add_argument(
+        "--log", type=Path, default=None,
+        help="controller log path (default: auto-detect newest logs/campaign_*/run_*.log)",
+    )
+    ap.add_argument("--max-cycles", type=int, default=15,
+                    help="fallback cycle ceiling when the log lacks a "
+                         "'CYCLE N of M' banner (the log's value always wins)")
     ap.add_argument("--max-usd", type=float, default=25.00)
     ap.add_argument("--refresh", type=float, default=0.33,
                     help="refresh interval seconds (default 0.33 = 3 Hz)")
     args = ap.parse_args(argv)
+
+    # Resolve paths. Flag overrides take priority; auto-detect fills in
+    # defaults. Missing paths are tolerated — the composers render a
+    # graceful "waiting" state rather than crashing.
+    if args.db is None:
+        args.db = _detect_active_db() or (_ROOT / "db" / "theory_ledger.sqlite")
+    if args.log is None:
+        detected_log = _detect_active_log()
+        if detected_log is not None:
+            args.log = detected_log
+        else:
+            # Give composers a path to stat against; Path.exists() returns
+            # False for non-existent paths and the composers handle that.
+            args.log = _ROOT / "logs" / "campaign_pending.log"
 
     console = Console(color_system="truecolor")
     history = _History()
