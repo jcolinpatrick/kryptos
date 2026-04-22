@@ -352,6 +352,25 @@ async def do_run(config: ControllerConfig) -> None:
             # Step 5b: Contradiction-detector alerts (honors the stat-audit gate)
             controller._run_alerts(approved, outcomes)
 
+            # Step 5b'. Campaign-A hardening (2026-04-22): runtime halt
+            # counters. Mirrors controller.run's hook per
+            # feedback_dup_cycle_loop_trap — both cycle loops must patch
+            # or the TUI-driven path drifts silently while the library-
+            # driven path halts.
+            hardening_reason = controller._check_cycle_hardening_halts(
+                candidates=candidates,
+                outcomes=outcomes,
+                triggered_alerts=controller._cycle_alert_events,
+            )
+            if hardening_reason:
+                # TUI rendering happens via display.print_run_halt below
+                # after persist + synthesis. Log inline so -q mode users
+                # still see the reason in the log stream.
+                import logging
+                logging.getLogger("kryptosbot.controller").warning(
+                    "Campaign-A hardening halt: %s", hardening_reason,
+                )
+
             # Step 5d: Day 6 — lead-pursuit evaluator for sub-signal
             # (6-17) contracts. Best-effort; never blocks the cycle.
             # Opens PursuitLead rows in the ledger for each "pursue"
@@ -415,6 +434,15 @@ async def do_run(config: ControllerConfig) -> None:
         except Exception as exc:
             display.print_cycle_error(controller.state.cycle_number, exc)
             controller.ledger.save_controller_state(controller.state)
+
+        # Campaign-A hardening (2026-04-22): break after persist +
+        # synthesis if any halt condition tripped this (or a prior)
+        # cycle. Uses the existing display.print_run_halt surface so the
+        # TUI output matches the fatal-agent-failure halt already wired
+        # at generate-time above.
+        if controller.state.halt_reason_hardening:
+            display.print_run_halt(controller.state.halt_reason_hardening)
+            break
 
     display.print_completion(controller.state.to_dict())
 

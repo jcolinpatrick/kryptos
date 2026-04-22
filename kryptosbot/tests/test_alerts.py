@@ -48,7 +48,7 @@ class TestClassifyOutcome:
             crib_score=24,
             bean_passed=True,
         )
-        assert classify_outcome(contract, AlertLevel.NONE) is None
+        assert classify_outcome(contract, AlertLevel.NONE)[0] is None
 
     def test_signal_fires_at_18(self):
         contract = WorkerContract(
@@ -57,7 +57,7 @@ class TestClassifyOutcome:
             crib_score=18,
             bean_passed=False,
         )
-        assert classify_outcome(contract, AlertLevel.SIGNAL) == AlertLevel.SIGNAL
+        assert classify_outcome(contract, AlertLevel.SIGNAL)[0] == AlertLevel.SIGNAL
 
     def test_signal_does_not_fire_at_17(self):
         contract = WorkerContract(
@@ -66,7 +66,7 @@ class TestClassifyOutcome:
             crib_score=17,
             bean_passed=True,
         )
-        assert classify_outcome(contract, AlertLevel.SIGNAL) is None
+        assert classify_outcome(contract, AlertLevel.SIGNAL)[0] is None
 
     def test_breakthrough_requires_24_and_bean(self, monkeypatch):
         from kryptosbot import alerts
@@ -78,10 +78,10 @@ class TestClassifyOutcome:
             crib_score=24,
             bean_passed=False,
         )
-        assert classify_outcome(c, AlertLevel.BREAKTHROUGH) == AlertLevel.SIGNAL
+        assert classify_outcome(c, AlertLevel.BREAKTHROUGH)[0] == AlertLevel.SIGNAL
 
         c.bean_passed = True
-        assert classify_outcome(c, AlertLevel.BREAKTHROUGH) == AlertLevel.BREAKTHROUGH
+        assert classify_outcome(c, AlertLevel.BREAKTHROUGH)[0] == AlertLevel.BREAKTHROUGH
 
     def test_breakthrough_threshold_blocks_signal_only_results(self):
         # crib=18 should NOT fire at BREAKTHROUGH threshold... wait, re-read.
@@ -94,7 +94,7 @@ class TestClassifyOutcome:
             crib_score=18,
             bean_passed=False,
         )
-        assert classify_outcome(c, AlertLevel.BREAKTHROUGH) == AlertLevel.SIGNAL
+        assert classify_outcome(c, AlertLevel.BREAKTHROUGH)[0] == AlertLevel.SIGNAL
 
     def test_error_status_never_alerts(self):
         c = WorkerContract(
@@ -103,8 +103,8 @@ class TestClassifyOutcome:
             crib_score=24,
             bean_passed=True,
         )
-        assert classify_outcome(c, AlertLevel.SIGNAL) is None
-        assert classify_outcome(c, AlertLevel.BREAKTHROUGH) is None
+        assert classify_outcome(c, AlertLevel.SIGNAL)[0] is None
+        assert classify_outcome(c, AlertLevel.BREAKTHROUGH)[0] is None
 
     def test_timeout_status_never_alerts(self):
         c = WorkerContract(
@@ -113,7 +113,7 @@ class TestClassifyOutcome:
             crib_score=24,
             bean_passed=True,
         )
-        assert classify_outcome(c, AlertLevel.SIGNAL) is None
+        assert classify_outcome(c, AlertLevel.SIGNAL)[0] is None
 
 
 # ── thresholds ────────────────────────────────────────────────────────

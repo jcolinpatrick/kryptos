@@ -306,7 +306,12 @@ class TestAlertIntegration:
         )
 
         # Cache miss ⇒ legacy (crib_score-only) ⇒ SIGNAL fires.
-        level = classify_outcome(contract, AlertLevel.SIGNAL)
+        level, status = classify_outcome(contract, AlertLevel.SIGNAL)
         assert level == AlertLevel.SIGNAL, (
             f"expected legacy SIGNAL on cache miss; got {level}"
+        )
+        # Hardening addition: cache miss status should surface on the return
+        # so the controller halt check can see it.
+        assert status == "cache_miss", (
+            f"expected p_value_status='cache_miss' on empty cache; got {status!r}"
         )

@@ -80,6 +80,21 @@ class AlertEvent:
     theory_title: str = ""
     theory_family: str = ""
     theory_mechanism: str = ""
+    # Campaign-A hardening (2026-04-22): which p-value null was consulted
+    # when this alert fired. Empty string for pre-hardening callers that
+    # never plumbed the status through. Values mirror alerts._p_value_gate_passes:
+    #   "ok_gated"              — random_text null consulted, p <= gate
+    #   "ok_ungated"            — random_text null consulted, p > gate
+    #   "ok_matched_family"     — matched-family null consulted, p <= gate
+    #   "matched_family_ungated"— matched-family null consulted, p > gate
+    #   "matched_null_miss"     — matched family requested, cache missed,
+    #                             fell back to random_text
+    #   "cache_miss"            — no null cache at all
+    #
+    # Per R3 §5 halt condition 1, a BREAKTHROUGH alert with status
+    # matched_null_miss or cache_miss halts the controller so calibration
+    # can be rebuilt before the alert is treated as signal.
+    p_value_status: str = ""
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -271,10 +286,25 @@ def _p_value_gate_passes(
 def classify_outcome(
     contract: WorkerContract,
     threshold: AlertLevel,
-) -> Optional[AlertLevel]:
+) -> tuple[Optional[AlertLevel], str]:
     """Determine whether a worker outcome triggers an alert.
 
-    Returns the highest matching AlertLevel or None.
+    Returns ``(level, p_value_status)`` where:
+      - ``level`` is the highest matching AlertLevel, or None if no
+        alert fires.
+      - ``p_value_status`` is the status string from
+        ``_p_value_gate_passes`` ("ok_gated" / "ok_matched_family" /
+        "matched_null_miss" / "cache_miss" / etc.) so the caller can
+        distinguish an alert that was calibrated against a matched-
+        family null (R2-4, the R3-target alert quality) from one that
+        fell back to random_text or fired with no null cache at all.
+        Empty string when no p-value gate was consulted (e.g. level is
+        None because the contract is below threshold).
+
+    Campaign-A hardening (2026-04-22): prior version returned only the
+    AlertLevel, throwing away the p_value_status. R3 §5 halt condition
+    1 requires the controller to halt on BREAKTHROUGH with
+    matched_null_miss / cache_miss, so the status must flow through.
 
     Priority 3: BREAKTHROUGH classification requires the worker's
     best_plaintext to pass an ngram-per-char floor. A crib-paste
@@ -292,13 +322,13 @@ def classify_outcome(
     calibration hasn't run yet.
     """
     if threshold == AlertLevel.NONE:
-        return None
+        return (None, "")
 
     # Only consider workers that actually completed with a structured result.
     # Errors and timeouts cannot trigger alerts.
     if contract.status not in (WorkerStatus.SUCCESS, WorkerStatus.DISPROVED,
                                 WorkerStatus.INCONCLUSIVE):
-        return None
+        return (None, "")
 
     thresholds = _load_thresholds()
     crib = int(contract.crib_score or 0)
@@ -312,12 +342,12 @@ def classify_outcome(
     if crib >= thresholds["breakthrough"] and contract.bean_passed:
         ngram_pc = _ngram_per_char_safe(contract.best_plaintext)
         ngram_ok = ngram_pc is not None and ngram_pc >= BREAKTHROUGH_NGRAM_FLOOR
-        p_value_ok, _p_status = _p_value_gate_passes(
+        p_value_ok, p_status = _p_value_gate_passes(
             contract.best_plaintext, crib, contract.hypothesis_id,
             family=matched_family,
         )
         if ngram_ok and p_value_ok:
-            return AlertLevel.BREAKTHROUGH
+            return (AlertLevel.BREAKTHROUGH, p_status)
         if ngram_pc is None:
             logger.warning(
                 "BREAKTHROUGH downgraded to SIGNAL: ngram floor unavailable "
@@ -344,18 +374,18 @@ def classify_outcome(
     # Signal: above SIGNAL threshold AND p-value gate.
     if threshold in (AlertLevel.SIGNAL, AlertLevel.BREAKTHROUGH):
         if crib >= thresholds["signal"]:
-            p_value_ok, _p_status = _p_value_gate_passes(
+            p_value_ok, p_status = _p_value_gate_passes(
                 contract.best_plaintext, crib, contract.hypothesis_id,
                 family=matched_family,
             )
             if p_value_ok:
-                return AlertLevel.SIGNAL
+                return (AlertLevel.SIGNAL, p_status)
             logger.info(
                 "SIGNAL suppressed by p-value gate (hypothesis_id=%s, crib=%d)",
                 contract.hypothesis_id, crib,
             )
 
-    return None
+    return (None, "")
 
 
 def _build_contradiction_note(contract: WorkerContract) -> str:
@@ -563,7 +593,7 @@ def process_alerts(
     triggered = []
     for contract in outcomes:
         try:
-            level = classify_outcome(contract, threshold)
+            level, p_value_status = classify_outcome(contract, threshold)
             if level is None:
                 continue
 
@@ -584,6 +614,7 @@ def process_alerts(
                 theory_title=theory_info.get("title", ""),
                 theory_family=theory_info.get("family", ""),
                 theory_mechanism=theory_info.get("mechanism", ""),
+                p_value_status=p_value_status,
             )
 
             # Persist first — survives even if notification channels fail

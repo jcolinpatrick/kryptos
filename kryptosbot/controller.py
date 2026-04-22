@@ -15,6 +15,7 @@ from __future__ import annotations
 import asyncio
 import json
 import logging
+import re
 import uuid
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
@@ -67,7 +68,7 @@ from .routing import (
     select_worker,
     select_pursuit_evaluator,
 )
-from .sdk_wrapper import safe_query, classify_error
+from .sdk_wrapper import safe_query, classify_error, extract_sdk_text_content
 from .theory_ledger import TheoryLedger
 from .claims_registry import CANONICAL_CLAIMS, CANONICAL_CLAIMS_BY_ID
 from .claim_rendering import render_claim_inline
@@ -139,18 +140,30 @@ def _extract_message_text(content: Any) -> str:
     See ``docs/maturation/round3/K4_RUN_CYCLE1_DIAGNOSTIC.md`` for the
     bug history.
     """
-    if isinstance(content, list):
-        parts: list[str] = []
-        for block in content:
-            block_type = getattr(block, "type", None)
-            if block_type == "text":
-                parts.append(str(getattr(block, "text", "")))
-            elif block_type == "thinking":
-                continue
-            elif hasattr(block, "text"):
-                parts.append(str(getattr(block, "text", "")))
-        return "\n".join(parts) if parts else ""
-    return str(content)
+    return extract_sdk_text_content(content)
+
+
+def _raw_contains_json_like_structure(raw: str) -> bool:
+    """Best-effort signal that a payload likely attempted structured output."""
+    text = raw or ""
+    return (
+        "```json" in text
+        or bool(re.search(r"\[\s*\{", text))
+        or bool(re.search(r"\{\s*\"", text))
+    )
+
+
+def _looks_like_sdk_repr_mangling(raw: str) -> bool:
+    """Detect Python repr-shaped SDK content that should have been normalized."""
+    text = raw or ""
+    return any(
+        marker in text for marker in (
+            "TextBlock(",
+            "ThinkingBlock(",
+            "ToolUseBlock(",
+            "[FakeTextBlock(",
+        )
+    )
 
 
 _RETRACTED_RECENT_OUTCOME_PATTERNS: tuple[str, ...] = (
@@ -206,6 +219,40 @@ def _now_iso() -> str:
 # to REJECT in _red_team_filter, before the worker prompt is built.
 # This reverses the original Priority-5 choice; see _red_team_filter
 # for the rationale and the run evidence that motivated it.
+
+
+# ---------------------------------------------------------------------------
+# Campaign-A hardening (2026-04-22) — runtime halt thresholds
+# ---------------------------------------------------------------------------
+#
+# Red-team finding: R3 protocol §5 enumerated halt conditions (three
+# consecutive programmatic-fallback cycles, three consecutive cycles
+# with D-column = 0, matched_null_miss on a BREAKTHROUGH) but none of
+# them were wired into either cycle loop. Only should_abort_run (fatal
+# agent failure) was live. An overnight run could drift for 15 cycles
+# in a silently-degraded state.
+#
+# These thresholds are module-level so tests can monkeypatch them down
+# to 1-2 for fast-failing coverage. The live loops consume them via
+# ResearchController._check_cycle_hardening_halts which consolidates
+# all three halt checks into one decision point, called after alert
+# processing (step 5b). Both controller.run and run_controller.do_run
+# must consult the result (feedback_dup_cycle_loop_trap.md).
+
+# Three consecutive cycles where _programmatic_fallback emitted any
+# theory with origin="programmatic_fallback" ⇒ halt. The theorist
+# agent is broken; investigate before burning more compute.
+FALLBACK_HALT_STREAK: int = 3
+
+# Three consecutive dispatched cycles with zero REJECTED_ADMISSIBILITY
+# contracts ⇒ halt. D-column=0 for three in a row means either (a)
+# theorists are only proposing trivially-admissible specs, or (b) the
+# prompt is narrow enough that admissibility has nothing to filter,
+# or (c) everything is routing to the legacy path and the DSL is not
+# exercised. All three are concerning; the operator should intervene.
+# Cycles with zero dispatched contracts do NOT increment the counter
+# (they are not "D=0" in a meaningful sense).
+D_ZERO_HALT_STREAK: int = 3
 
 
 # ---------------------------------------------------------------------------
@@ -357,6 +404,11 @@ class ResearchController:
         self._cycle_redteam_verdicts: dict[str, RedTeamVerdict] = {}
         self._cycle_stat_audit_verdicts: dict[str, StatAuditVerdict] = {}
         self._cycle_alert_summaries: list[str] = []
+        # Campaign-A hardening (2026-04-22): hold the full AlertEvent list
+        # so _check_cycle_hardening_halts can inspect level + p_value_status
+        # at halt-decision time. The compact summary form in
+        # _cycle_alert_summaries loses the p_value_status field.
+        self._cycle_alert_events: list[Any] = []
         # Day 6: per-cycle pursuit verdicts, keyed by hypothesis_id.
         # Populated by _run_lead_pursuit for any contract in the 6-17
         # interesting band. Consumed by _run_synthesis for rendering
@@ -401,8 +453,109 @@ class ResearchController:
         self._cycle_redteam_verdicts = {}
         self._cycle_stat_audit_verdicts = {}
         self._cycle_alert_summaries = []
+        self._cycle_alert_events = []
         self._cycle_pursuit_verdicts = {}
         self._cycle_pursuit_leads_opened = []
+
+    def _record_theorist_parse_diagnostics(self, diagnostics: dict[str, Any]) -> None:
+        """Persist compact theorist parse telemetry into controller state."""
+        self.state.last_theorist_parse_diagnostics = dict(diagnostics)
+        outcome = diagnostics.get("parse_outcome")
+        if outcome == "success":
+            self.state.theorist_parse_successes += 1
+        elif outcome == "partial_valid":
+            self.state.theorist_parse_partial_successes += 1
+        if diagnostics.get("used_fallback"):
+            self.state.theorist_fallbacks += 1
+            reason = str(diagnostics.get("fallback_reason") or "unknown")
+            counts = dict(self.state.theorist_fallback_reasons)
+            counts[reason] = counts.get(reason, 0) + 1
+            self.state.theorist_fallback_reasons = counts
+
+    def _build_theorist_parse_diagnostics(
+        self,
+        raw_output: str,
+        report: TheoryParseReport,
+    ) -> dict[str, Any]:
+        """Classify theorist parse results for logs, persistence, and fallback."""
+        raw = raw_output or ""
+        valid_count = len(report.valid)
+        invalid_count = len(report.invalid)
+        error_count = len(report.errors)
+        suspicious_json_like = _raw_contains_json_like_structure(raw)
+        repr_mangling_suspected = _looks_like_sdk_repr_mangling(raw)
+
+        parse_outcome = "success"
+        used_fallback = False
+        fallback_reason = ""
+        if valid_count and invalid_count:
+            parse_outcome = "partial_valid"
+        elif not valid_count:
+            used_fallback = True
+            parse_outcome = "fallback"
+            if not raw.strip():
+                fallback_reason = "model_returned_nothing"
+            elif repr_mangling_suspected:
+                fallback_reason = "structured_output_mangled_locally"
+            elif invalid_count and not error_count:
+                fallback_reason = "model_returned_only_invalid_proposals"
+            elif suspicious_json_like:
+                fallback_reason = "model_returned_json_like_but_unparseable"
+            else:
+                fallback_reason = "model_returned_unparseable_text"
+
+        return {
+            "cycle": self.state.cycle_number,
+            "raw_length": len(raw),
+            "valid_count": valid_count,
+            "invalid_count": invalid_count,
+            "error_count": error_count,
+            "used_fallback": used_fallback,
+            "fallback_reason": fallback_reason,
+            "parse_outcome": parse_outcome,
+            "suspicious_json_like": suspicious_json_like,
+            "repr_mangling_suspected": repr_mangling_suspected,
+            "suspicious_fallback": bool(
+                used_fallback and (suspicious_json_like or repr_mangling_suspected or invalid_count)
+            ),
+            "errors": list(report.errors[:5]),
+            "invalid_errors": [
+                str(item.get("error", "")) for item in report.invalid[:5]
+            ],
+        }
+
+    def _classify_worker_parse_failure(
+        self,
+        raw_output: str,
+        errors: list[str],
+    ) -> dict[str, Any]:
+        """Classify legacy worker contract-parse failures for auditability."""
+        raw = raw_output or ""
+        has_json_like = _raw_contains_json_like_structure(raw)
+        repr_mangling_suspected = _looks_like_sdk_repr_mangling(raw)
+        reason = "contract_validation_failed"
+        if not raw.strip():
+            reason = "model_returned_nothing"
+        elif any("No fenced JSON block" in err for err in errors):
+            if repr_mangling_suspected:
+                reason = "structured_output_mangled_locally"
+            elif has_json_like:
+                reason = "model_returned_json_like_without_fences"
+            else:
+                reason = "model_returned_unstructured_text"
+        elif any("JSON parse error" in err for err in errors):
+            reason = (
+                "structured_output_mangled_locally"
+                if repr_mangling_suspected
+                else "model_returned_invalid_json"
+            )
+        return {
+            "parse_failure_reason": reason,
+            "repr_mangling_suspected": repr_mangling_suspected,
+            "suspicious_json_like": has_json_like,
+            "contract_validation_errors": list(errors),
+            "raw_output_preview": raw[:5000],
+        }
 
     def should_abort_run(self) -> bool:
         """True when the current controller session hit a fatal agent failure."""
@@ -412,6 +565,125 @@ class ResearchController:
     def fatal_agent_error(self) -> Optional[str]:
         """Human-readable explanation for the current fatal agent failure."""
         return self._fatal_agent_error
+
+    # ------------------------------------------------------------------
+    # Campaign-A hardening (2026-04-22) — runtime halt conditions
+    # ------------------------------------------------------------------
+
+    def _check_cycle_hardening_halts(
+        self,
+        candidates: list[TheoryRecord],
+        outcomes: list[WorkerContract],
+        triggered_alerts: list[Any],
+    ) -> Optional[str]:
+        """Update halt counters and return a halt reason if any trips.
+
+        Consolidates the three R3 §5 halt conditions (programmatic-
+        fallback streak, D-column-zero streak, matched_null_miss on
+        BREAKTHROUGH) into one decision point. Called from both cycle
+        loops after the alert pass.
+
+        Side effects: mutates ``self.state.consecutive_fallback_cycles``,
+        ``self.state.consecutive_d_zero_cycles``, and
+        ``self.state.halt_reason_hardening``. Resets counters on
+        streak-break so a single good cycle clears the running window.
+
+        Args:
+            candidates: theories generated this cycle (theorist output
+                or programmatic fallback). Empty list means no theorist
+                activity this cycle; counters are NOT advanced in that
+                case because "no candidates" is already covered by
+                should_abort_run.
+            outcomes: worker contracts returned by _dispatch_theories.
+                An empty list means no theory reached dispatch (could be
+                dry_run, or all rejected by critic/red-team). We only
+                count D=0 when there WERE dispatched contracts.
+            triggered_alerts: AlertEvent objects emitted by _run_alerts.
+                Used to detect BREAKTHROUGH + matched_null_miss /
+                cache_miss (R3 §5 halt condition 1).
+
+        Returns:
+            A human-readable halt reason string when a threshold is
+            crossed, or None when the cycle is within bounds. When a
+            reason is returned, ``self.state.halt_reason_hardening`` is
+            also set so the post-loop code can see it.
+        """
+        # ── Halt 1: BREAKTHROUGH with unreliable null cache ─────────
+        # A BREAKTHROUGH alert whose p-value status is matched_null_miss
+        # or cache_miss is uncalibrated — the operator must rebuild the
+        # null cache before treating this as signal. We halt immediately
+        # (no streak required) because the alert has already fired and
+        # the next cycle would compound the ambiguity.
+        for ev in triggered_alerts:
+            level = getattr(ev, "level", "")
+            p_status = getattr(ev, "p_value_status", "")
+            if level == "breakthrough" and p_status in (
+                "matched_null_miss", "cache_miss"
+            ):
+                reason = (
+                    f"BREAKTHROUGH alert fired with p_value_status={p_status!r} "
+                    f"— null cache is unreliable for this family; calibrate "
+                    f"before proceeding (scripts/_infra/calibrate_null_baselines.py). "
+                    f"hypothesis_id={getattr(ev, 'hypothesis_id', '?')}"
+                )
+                self.state.halt_reason_hardening = reason
+                return reason
+
+        # ── Halt 2: programmatic-fallback streak ────────────────────
+        # "Fallback fired this cycle" = any candidate carries
+        # origin="programmatic_fallback". The _programmatic_fallback
+        # method tags every record it emits; real theorist parses leave
+        # the default "theorist_agent" in place.
+        fallback_fired_this_cycle = any(
+            getattr(c, "origin", "theorist_agent") == "programmatic_fallback"
+            for c in candidates
+        )
+        if fallback_fired_this_cycle:
+            self.state.consecutive_fallback_cycles += 1
+        else:
+            self.state.consecutive_fallback_cycles = 0
+
+        if self.state.consecutive_fallback_cycles >= FALLBACK_HALT_STREAK:
+            reason = (
+                f"Programmatic fallback fired for "
+                f"{self.state.consecutive_fallback_cycles} consecutive cycles "
+                f"(threshold={FALLBACK_HALT_STREAK}). The theorist agent is "
+                f"not producing parseable output; investigate before "
+                f"committing more compute."
+            )
+            self.state.halt_reason_hardening = reason
+            return reason
+
+        # ── Halt 3: D-column-zero streak ────────────────────────────
+        # D column = WorkerContract with status=REJECTED_ADMISSIBILITY.
+        # Only count cycles that actually dispatched; a dry-run cycle
+        # or one where critic/red-team eliminated everything is not a
+        # meaningful "D=0".
+        dispatched_this_cycle = len(outcomes)
+        if dispatched_this_cycle > 0:
+            d_count = sum(
+                1 for o in outcomes
+                if o.status == WorkerStatus.REJECTED_ADMISSIBILITY
+            )
+            if d_count == 0:
+                self.state.consecutive_d_zero_cycles += 1
+            else:
+                self.state.consecutive_d_zero_cycles = 0
+        # else: dispatched=0 cycles don't move the counter either way.
+
+        if self.state.consecutive_d_zero_cycles >= D_ZERO_HALT_STREAK:
+            reason = (
+                f"Admissibility rejections (D column) were zero for "
+                f"{self.state.consecutive_d_zero_cycles} consecutive "
+                f"dispatched cycles (threshold={D_ZERO_HALT_STREAK}). "
+                f"Either all theorist specs are trivially admissible or "
+                f"the DSL path is not being exercised; operator review "
+                f"required."
+            )
+            self.state.halt_reason_hardening = reason
+            return reason
+
+        return None
 
     def _classify_agent_failure(self, error_text: str) -> tuple[bool, str]:
         """Classify whether an SDK/CLI failure should halt the remaining run.
@@ -628,6 +900,24 @@ class ResearchController:
                 # Honors stat-audit gate from step 5c.
                 self._run_alerts(approved, outcomes)
 
+                # Step 5b'. Campaign-A hardening (2026-04-22): consolidated
+                # halt check. Updates state counters; sets
+                # self.state.halt_reason_hardening if a threshold trips.
+                # Reads the AlertEvent list captured by _run_alerts above
+                # so matched_null_miss / cache_miss on BREAKTHROUGH is
+                # visible. Called AFTER alerts so p_value_status is
+                # populated, BEFORE persist so the halt reason is saved
+                # in the ledger.
+                hardening_reason = self._check_cycle_hardening_halts(
+                    candidates=candidates,
+                    outcomes=outcomes,
+                    triggered_alerts=self._cycle_alert_events,
+                )
+                if hardening_reason:
+                    logger.warning(
+                        "Campaign-A hardening halt: %s", hardening_reason,
+                    )
+
                 # Step 5d: Day 6 — lead-pursuit evaluator for sub-signal
                 # (6-17) contracts. Populates _cycle_pursuit_verdicts and
                 # opens PursuitLead rows in the ledger for any "pursue"
@@ -654,6 +944,19 @@ class ResearchController:
                 logger.exception("Error in cycle %d", self.state.cycle_number)
                 # Persist state even on error so we don't lose progress
                 self.ledger.save_controller_state(self.state)
+
+            # Campaign-A hardening (2026-04-22): break the cycle loop
+            # after persist + synthesis have run, so the halt reason is
+            # saved and the run closes cleanly. Placed OUTSIDE the try
+            # so a cycle that errors mid-body can still break here if a
+            # prior cycle set the halt reason.
+            if self.state.halt_reason_hardening:
+                logger.warning(
+                    "Stopping run after cycle %d: %s",
+                    self.state.cycle_number,
+                    self.state.halt_reason_hardening,
+                )
+                break
 
         logger.info("Controller completed %d cycles", self.config.max_cycles)
         return self.state
@@ -781,6 +1084,13 @@ class ResearchController:
         return {
             "status_counts": status_counts,
             "cycle_delta": delta,
+            "theorist_parse_telemetry": {
+                "successes": self.state.theorist_parse_successes,
+                "partial_successes": self.state.theorist_parse_partial_successes,
+                "fallbacks": self.state.theorist_fallbacks,
+                "fallback_reasons": dict(self.state.theorist_fallback_reasons),
+                "last": dict(self.state.last_theorist_parse_diagnostics),
+            },
             "standing_constraints": STANDING_CONSTRAINTS,
             "active_families": [
                 {"id": f.family_id, "name": f.name, "theories": f.total_theories,
@@ -1101,21 +1411,45 @@ class ResearchController:
                 combined_error = f"{combined_error}\n" + "\n".join(stderr_lines[-20:])
             is_fatal, classified = self._classify_agent_failure(combined_error)
             if is_fatal:
+                self._record_theorist_parse_diagnostics({
+                    "cycle": self.state.cycle_number,
+                    "parse_outcome": "fatal_agent_failure",
+                    "used_fallback": False,
+                    "fallback_reason": "",
+                    "error": classified,
+                    "raw_length": 0,
+                    "valid_count": 0,
+                    "invalid_count": 0,
+                    "error_count": 1,
+                })
                 self._fatal_agent_error = classified
                 logger.warning("Theorist session failed fatally: %s", classified)
                 if on_progress:
                     on_progress("error", classified)
                 return []
             logger.warning("Theorist session failed: %s", combined_error)
+            self._record_theorist_parse_diagnostics({
+                "cycle": self.state.cycle_number,
+                "parse_outcome": "agent_failure_fallback",
+                "used_fallback": True,
+                "fallback_reason": "agent_failure",
+                "error": combined_error[:500],
+                "raw_length": 0,
+                "valid_count": 0,
+                "invalid_count": 0,
+                "error_count": 1,
+            })
             if on_progress:
                 on_progress(
                     "fallback",
-                    f"Agent failed ({type(exc).__name__}), using programmatic generation",
+                    f"agent_failure: {type(exc).__name__}; using programmatic generation",
                 )
             return self._programmatic_fallback(landscape)
 
         raw_output = "\n".join(raw_chunks)
         report = validate_theory_proposals(raw_output)
+        diagnostics = self._build_theorist_parse_diagnostics(raw_output, report)
+        self._record_theorist_parse_diagnostics(diagnostics)
 
         if report.errors:
             for err in report.errors:
@@ -1132,7 +1466,29 @@ class ResearchController:
                 )
 
         if not report.valid:
-            logger.info("No valid theories parsed from theorist output, using fallback")
+            logger.warning(
+                "No valid theories parsed from theorist output; using fallback "
+                "(reason=%s suspicious=%s valid=%d invalid=%d errors=%d)",
+                diagnostics.get("fallback_reason", "unknown"),
+                diagnostics.get("suspicious_fallback", False),
+                diagnostics["valid_count"],
+                diagnostics["invalid_count"],
+                diagnostics["error_count"],
+            )
+            if diagnostics.get("suspicious_fallback"):
+                logger.warning(
+                    "Suspicious theorist fallback: raw output looked structured "
+                    "but produced zero valid proposals (repr_mangling=%s, "
+                    "json_like=%s)",
+                    diagnostics.get("repr_mangling_suspected", False),
+                    diagnostics.get("suspicious_json_like", False),
+                )
+            if on_progress:
+                on_progress(
+                    "fallback",
+                    f"{diagnostics.get('fallback_reason', 'unknown')} "
+                    f"(invalid={diagnostics['invalid_count']} errors={diagnostics['error_count']})",
+                )
             return self._programmatic_fallback(landscape)
 
         return report.valid[:self.config.theories_per_cycle]
@@ -1440,6 +1796,75 @@ class ResearchController:
         )
         return "\n".join(lines)
 
+    def _render_oranchak_corpora_for_prompt(self) -> str:
+        """Render the mirrored Oranchak community reference corpora as
+        a read-only resource block for the theorist.
+
+        Campaign-A hardening addition (2026-04-22). The assets are:
+
+          - ``wordlists/quagmire3_keywords_oranchak.txt`` (10,000 words)
+            — community-curated English frequency list used as a
+            Quagmire III keyword sweep space.
+          - ``wordlists/quagmire4_keywords_oranchak.txt`` (7,092 words)
+            — same shape, Quagmire IV pool.
+          - ``data/k4_candidate_fills_oranchak.csv`` (19,185 rows) —
+            K4-shaped candidate plaintexts (97 chars with EASTNORTHEAST
+            at 21-33 and BERLINCLOCK at 63-73). Useful as a fill-
+            language reference for scoring decrypted plaintext
+            plausibility outside the crib regions.
+
+        Scope constraint: these are REFERENCES, not theories to propose
+        directly. The theorist may:
+          (a) propose a Quagmire-family theory that uses the keyword
+              pool as its sweep space (note the DSL translator gap:
+              straight "quagmire" is not in _SUPPORTED_KINDS as of
+              R3-0.5 — per R3 protocol §2.1, a theorist proposal
+              tagged as quagmire will be rejected with
+              dsl_untranslatable. Propose as vigenere or
+              variant_beaufort with a KA/mixed-alphabet tableau if the
+              keyword surface is the point.)
+          (b) propose a fill-language-scoring refinement where the
+              CSV is used as a plausibility reference for non-crib
+              positions.
+          (c) rank other proposals by whether their predicted
+              plaintext resembles candidates in the fills corpus.
+
+        Tier 3 flag on accompanying source (``reference/cia_1996_memo.md``):
+        the CIA 1996 memo is NOT in this block. Its OTP claim rests on
+        three other wrong cipher diagnoses; it has no evidentiary
+        weight. Do not cite it.
+        """
+        return (
+            "ORANCHAK COMMUNITY REFERENCE CORPORA (mirrored 2026-04-21, "
+            "available for Campaign A):\n"
+            "  - wordlists/quagmire3_keywords_oranchak.txt: 10,000 English words "
+            "ordered by community Reddit-frequency; use as preregistered Quagmire "
+            "III keyword sweep space.\n"
+            "  - wordlists/quagmire4_keywords_oranchak.txt: 7,092 words, same shape "
+            "for Quagmire IV.\n"
+            "  - data/k4_candidate_fills_oranchak.csv: 19,185 K4-shaped candidate "
+            "plaintexts (97 chars, cribs fixed at 21-33 and 63-73). Use as a "
+            "fill-language plausibility reference for non-crib positions.\n"
+            "\n"
+            "HOW TO USE:\n"
+            "  - Propose Quagmire-family sweeps with an explicit sweep_space "
+            "reference to the wordlist file, NOT a regenerated guess list.\n"
+            "  - Note the DSL translator gap: kind='quagmire' is NOT in "
+            "_SUPPORTED_KINDS as of R3-0.5 and will be rejected at the critic. "
+            "Route as kind='vigenere' or 'variant_beaufort' with a "
+            "keyword-mixed (KA-style) alphabet if the keyword surface is the "
+            "point. See the DSL coverage note in this prompt's constraints.\n"
+            "  - For fill-language scoring, cite the CSV path in your "
+            "minimal_test_spec so the worker can load it; do not paste "
+            "candidate rows inline.\n"
+            "\n"
+            "EPISTEMIC CAVEAT: these are community-seeded reference lists, "
+            "not preregistered eliminations. A keyword scoring well against "
+            "this pool's ordering is a ranking feature, not a signal. "
+            "Treat the corpora as CONTEXT that widens the theorist's "
+            "accessible search space — not as evidence."
+        )
+
     def _render_manual_focus_for_prompt(self) -> str:
         """Render operator-injected focus areas that should guide generation.
 
@@ -1493,6 +1918,7 @@ class ResearchController:
             landscape.get("soft_pursuit_leads") or [],
         )
         manual_focus_block = self._render_manual_focus_for_prompt()
+        oranchak_block = self._render_oranchak_corpora_for_prompt()
         return f"""Generate {self.config.theories_per_cycle} novel, testable K4 hypotheses.
 
 CURRENT RESEARCH LANDSCAPE:
@@ -1501,6 +1927,8 @@ CURRENT RESEARCH LANDSCAPE:
 {pursuit_leads_block}
 
 {manual_focus_block}
+
+{oranchak_block}
 
 CONSTRAINTS:
 - Each hypothesis must target an active or partially explored family
@@ -1626,9 +2054,21 @@ Supported cipher kinds (translator lives in kryptosbot.job_dispatcher):
   identity, vigenere, beaufort, variant_beaufort, columnar, atbash,
   procedural, grille, polybius
 
+Valid enum/value domains for dsl_spec fields:
+  pipeline[].alphabet: AZ | KA | keyword_mixed
+  crib_alignment: direct_positional | post_transposition | free
+  scoring: crib_only | crib_plus_bean | ngram_vs_null | composite
+  null_baseline.method: random_text | shuffled_ct |
+                        matched_variant_family | monte_carlo_cached
+
 Untranslatable kinds (proposing one triggers CriticDecision.
 REJECT_UNDERCONSTRAINED with reason "dsl_untranslatable"):
   rail_fence, route, myszkowski, quagmire, key_tape
+
+Family and dsl_spec must describe the SAME mechanism class. Do not label a
+theory as a deferred family (for example key_tape) and then smuggle it
+through a supported pipeline kind (for example vigenere). "free_search" is
+INVALID; the only free-alignment enum value is "free".
 
 Example A — single-layer Vigenere on KA alphabet:
   "dsl_spec": {{
@@ -1710,6 +2150,10 @@ Output ONLY the JSON array. No commentary."""
                     "method": "keyword_sweep",
                     "parameters": {"family": fam_id},
                 },
+                # Campaign-A hardening (2026-04-22): durable provenance so
+                # the mortality table detects silent sustained fallback
+                # without relying on title-pattern grep.
+                origin="programmatic_fallback",
             )
             if not self.ledger.exists(theory.hypothesis_id):
                 theories.append(theory)
@@ -1730,6 +2174,7 @@ Output ONLY the JSON array. No commentary."""
                     "method": "anomaly_investigation",
                     "parameters": {"anomaly_id": anom_info["id"]},
                 },
+                origin="programmatic_fallback",
             )
             if not self.ledger.exists(theory.hypothesis_id):
                 theories.append(theory)
@@ -2226,9 +2671,19 @@ Output ONLY the JSON array. No commentary."""
                 contract.worker_role = worker_role_value
             else:
                 # Explicit parse failure — do NOT infer status from prose
+                artifacts = self._classify_worker_parse_failure(
+                    raw_output, parse_result.errors,
+                )
                 logger.warning(
-                    "Worker output for %s failed contract validation: %s",
-                    theory.hypothesis_id, "; ".join(parse_result.errors),
+                    "Worker output for %s failed contract validation: %s "
+                    "(reason=%s suspicious=%s)",
+                    theory.hypothesis_id,
+                    "; ".join(parse_result.errors),
+                    artifacts["parse_failure_reason"],
+                    bool(
+                        artifacts["repr_mangling_suspected"]
+                        or artifacts["suspicious_json_like"]
+                    ),
                 )
                 contract = WorkerContract(
                     hypothesis_id=theory.hypothesis_id,
@@ -2240,7 +2695,7 @@ Output ONLY the JSON array. No commentary."""
                     ),
                     duration_seconds=elapsed,
                     # Raw output preserved for audit only, never parsed
-                    raw_artifacts={"raw_output_preview": raw_output[:5000]},
+                    raw_artifacts=artifacts,
                 )
 
             if on_message:
@@ -2916,6 +3371,10 @@ field empty. The controller will record the verification gap and your status
                     f"crib={ev.crib_score} bean={ev.bean_passed} — "
                     f"{(ev.theory_title or '')[:60]}"
                 )
+            # Campaign-A hardening (2026-04-22): retain the full AlertEvent
+            # list so _check_cycle_hardening_halts can read p_value_status
+            # on BREAKTHROUGH events.
+            self._cycle_alert_events = list(triggered)
             if triggered:
                 logger.warning(
                     "%d alert event(s) fired in cycle %d — see %s",

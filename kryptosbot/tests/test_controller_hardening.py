@@ -914,3 +914,342 @@ class TestFatalTheoristFailures:
                 display._dispatch_progress = None
         finally:
             display._theorist_status = old_status
+
+
+class TestTheoristTelemetrySurfacing:
+    def test_assess_landscape_includes_theorist_parse_telemetry(self, tmp_path):
+        config = ControllerConfig(
+            project_root=tmp_path,
+            ledger_db_path=tmp_path / "ledger.sqlite",
+            legacy_db_path=tmp_path / "results.db",
+        )
+        controller = ResearchController(config)
+        controller.state.theorist_parse_successes = 4
+        controller.state.theorist_parse_partial_successes = 1
+        controller.state.theorist_fallbacks = 2
+        controller.state.theorist_fallback_reasons = {
+            "agent_failure": 1,
+            "model_returned_only_invalid_proposals": 1,
+        }
+        controller.state.last_theorist_parse_diagnostics = {
+            "parse_outcome": "fallback",
+            "fallback_reason": "model_returned_only_invalid_proposals",
+        }
+        controller._session_baseline_tested = 0
+        controller._session_baseline_eliminated = 0
+
+        landscape = controller._assess_landscape()
+        telemetry = landscape["theorist_parse_telemetry"]
+
+        assert telemetry["successes"] == 4
+        assert telemetry["partial_successes"] == 1
+        assert telemetry["fallbacks"] == 2
+        assert telemetry["fallback_reasons"]["agent_failure"] == 1
+        assert telemetry["last"]["fallback_reason"] == (
+            "model_returned_only_invalid_proposals"
+        )
+
+
+# ---------------------------------------------------------------------------
+# Campaign-A hardening (2026-04-22) — origin tag, halt counters, Oranchak
+# ---------------------------------------------------------------------------
+# Red-team-disprover flagged three showstoppers on the pre-hardening plan:
+#   (1) criterion_1 tautologically satisfied by prompt worked examples,
+#   (2) _programmatic_fallback laundering indistinguishable in mortality
+#       tables without a durable origin tag,
+#   (3) R3 §5 halt conditions documented but not wired into either
+#       cycle loop (feedback_dup_cycle_loop_trap applies).
+# These tests lock the hardening response into place so future sessions
+# can't silently regress any of the three.
+
+
+class TestTheoryRecordOriginField:
+    """Durable provenance tag on TheoryRecord separates fallback theories
+    from agent-parsed ones without relying on title-pattern grep."""
+
+    def test_default_origin_is_theorist_agent(self):
+        from kryptosbot.models import TheoryRecord
+        t = TheoryRecord(hypothesis_id="h1", title="t", core_claim="c", mechanism="m")
+        assert t.origin == "theorist_agent"
+
+    def test_programmatic_fallback_tags_origin(self, tmp_path):
+        config = ControllerConfig(
+            project_root=tmp_path,
+            ledger_db_path=tmp_path / "ledger.sqlite",
+            legacy_db_path=tmp_path / "results.db",
+        )
+        controller = ResearchController(config)
+        landscape = {
+            "underexplored_families": [
+                {"id": "grille", "name": "grille", "tested": 0},
+                {"id": "polybius", "name": "polybius", "tested": 0},
+            ],
+            "unaddressed_anomalies": [
+                {"id": "ct_perturbation", "title": "ct perturbation"},
+            ],
+        }
+        theories = controller._programmatic_fallback(landscape)
+        assert theories, "fallback must emit at least one theory"
+        assert all(
+            t.origin == "programmatic_fallback" for t in theories
+        ), "every fallback-emitted record must carry origin tag"
+
+
+class TestHardeningHaltCheck:
+    """_check_cycle_hardening_halts wires R3 §5 halt conditions."""
+
+    def _controller(self, tmp_path):
+        config = ControllerConfig(
+            project_root=tmp_path,
+            ledger_db_path=tmp_path / "ledger.sqlite",
+            legacy_db_path=tmp_path / "results.db",
+        )
+        return ResearchController(config)
+
+    def _fallback_candidate(self):
+        return _make_theory("fh1", origin="programmatic_fallback")
+
+    def _agent_candidate(self):
+        return _make_theory("ah1", origin="theorist_agent")
+
+    def _admissibility_reject(self):
+        # An outcome that counts as D-column non-zero.
+        return WorkerContract(
+            hypothesis_id="adm1",
+            status=WorkerStatus.REJECTED_ADMISSIBILITY,
+        )
+
+    def _success_outcome(self):
+        return WorkerContract(
+            hypothesis_id="ok1",
+            status=WorkerStatus.SUCCESS,
+            crib_score=5,
+        )
+
+    def test_fallback_streak_halts_at_threshold(self, tmp_path, monkeypatch):
+        # Shrink threshold to 2 so the test is fast-failing and
+        # deterministic; monkeypatching the module constant is the
+        # canonical pattern from other hardening tests.
+        from kryptosbot import controller as ctrl_mod
+        monkeypatch.setattr(ctrl_mod, "FALLBACK_HALT_STREAK", 2)
+
+        c = self._controller(tmp_path)
+        cand = [self._fallback_candidate()]
+        # Include one success outcome so D-zero streak does NOT also trip
+        # and confuse the halt-reason attribution.
+        out = [self._success_outcome()]
+
+        r1 = c._check_cycle_hardening_halts(cand, out, [])
+        assert r1 is None
+        assert c.state.consecutive_fallback_cycles == 1
+
+        r2 = c._check_cycle_hardening_halts(cand, out, [])
+        assert r2 is not None
+        assert "fallback" in r2.lower()
+        assert c.state.halt_reason_hardening == r2
+
+    def test_fallback_streak_resets_on_real_theorist_cycle(self, tmp_path, monkeypatch):
+        from kryptosbot import controller as ctrl_mod
+        monkeypatch.setattr(ctrl_mod, "FALLBACK_HALT_STREAK", 3)
+
+        c = self._controller(tmp_path)
+        out = [self._success_outcome()]
+
+        c._check_cycle_hardening_halts([self._fallback_candidate()], out, [])
+        assert c.state.consecutive_fallback_cycles == 1
+
+        # Real theorist output ⇒ counter resets.
+        c._check_cycle_hardening_halts([self._agent_candidate()], out, [])
+        assert c.state.consecutive_fallback_cycles == 0
+
+        # Counter can rise again from zero.
+        c._check_cycle_hardening_halts([self._fallback_candidate()], out, [])
+        assert c.state.consecutive_fallback_cycles == 1
+
+    def test_d_zero_streak_halts_on_dispatched_cycles(self, tmp_path, monkeypatch):
+        from kryptosbot import controller as ctrl_mod
+        monkeypatch.setattr(ctrl_mod, "D_ZERO_HALT_STREAK", 2)
+
+        c = self._controller(tmp_path)
+        cand = [self._agent_candidate()]
+        # Outcomes all SUCCESS ⇒ zero D-column rejections.
+        out = [self._success_outcome(), self._success_outcome()]
+
+        r1 = c._check_cycle_hardening_halts(cand, out, [])
+        assert r1 is None
+        assert c.state.consecutive_d_zero_cycles == 1
+
+        r2 = c._check_cycle_hardening_halts(cand, out, [])
+        assert r2 is not None
+        assert "admissibility" in r2.lower() or "d column" in r2.lower()
+
+    def test_d_zero_streak_not_incremented_on_zero_dispatched(self, tmp_path, monkeypatch):
+        # A cycle with no dispatched contracts (dry run, critic killed
+        # everything, etc.) must NOT advance the D-zero counter — the
+        # concept "D column was zero" is undefined when there are no
+        # rows to check.
+        from kryptosbot import controller as ctrl_mod
+        monkeypatch.setattr(ctrl_mod, "D_ZERO_HALT_STREAK", 2)
+
+        c = self._controller(tmp_path)
+        cand = [self._agent_candidate()]
+
+        c._check_cycle_hardening_halts(cand, [], [])
+        c._check_cycle_hardening_halts(cand, [], [])
+        c._check_cycle_hardening_halts(cand, [], [])
+        assert c.state.consecutive_d_zero_cycles == 0
+        assert c.state.halt_reason_hardening == ""
+
+    def test_d_zero_streak_resets_on_any_admissibility_rejection(self, tmp_path, monkeypatch):
+        from kryptosbot import controller as ctrl_mod
+        monkeypatch.setattr(ctrl_mod, "D_ZERO_HALT_STREAK", 3)
+
+        c = self._controller(tmp_path)
+        cand = [self._agent_candidate()]
+
+        c._check_cycle_hardening_halts(cand, [self._success_outcome()], [])
+        assert c.state.consecutive_d_zero_cycles == 1
+
+        # One admissibility reject breaks the streak.
+        c._check_cycle_hardening_halts(
+            cand, [self._success_outcome(), self._admissibility_reject()], [],
+        )
+        assert c.state.consecutive_d_zero_cycles == 0
+
+    def test_breakthrough_matched_null_miss_halts_immediately(self, tmp_path):
+        # No streak required — a BREAKTHROUGH fired without reliable
+        # null calibration is an ambiguous result that must pause the
+        # run until the operator rebuilds the cache.
+        from kryptosbot.alerts import AlertEvent
+        c = self._controller(tmp_path)
+        cand = [self._agent_candidate()]
+        out = [self._admissibility_reject()]  # keeps D-zero at 0
+
+        ev = AlertEvent(
+            triggered_at="2026-04-22T00:00:00",
+            hypothesis_id="bk1",
+            level="breakthrough",
+            crib_score=24,
+            bean_passed=True,
+            score=24.0,
+            worker_status="success",
+            best_plaintext="",
+            narrative_summary="",
+            contradiction_note="",
+            cycle_number=1,
+            p_value_status="matched_null_miss",
+        )
+        r = c._check_cycle_hardening_halts(cand, out, [ev])
+        assert r is not None
+        assert "null cache" in r.lower() or "calibrate" in r.lower()
+
+    def test_breakthrough_ok_matched_family_does_not_halt(self, tmp_path):
+        from kryptosbot.alerts import AlertEvent
+        c = self._controller(tmp_path)
+        cand = [self._agent_candidate()]
+        out = [self._admissibility_reject()]
+
+        ev = AlertEvent(
+            triggered_at="2026-04-22T00:00:00",
+            hypothesis_id="bk1",
+            level="breakthrough",
+            crib_score=24,
+            bean_passed=True,
+            score=24.0,
+            worker_status="success",
+            best_plaintext="",
+            narrative_summary="",
+            contradiction_note="",
+            cycle_number=1,
+            p_value_status="ok_matched_family",
+        )
+        r = c._check_cycle_hardening_halts(cand, out, [ev])
+        assert r is None
+        assert c.state.halt_reason_hardening == ""
+
+
+class TestOranchakPromptPlumbing:
+    """Theorist prompt exposes the Oranchak reference corpora."""
+
+    def test_prompt_renders_oranchak_block(self, tmp_path):
+        config = ControllerConfig(
+            project_root=tmp_path,
+            ledger_db_path=tmp_path / "ledger.sqlite",
+            legacy_db_path=tmp_path / "results.db",
+        )
+        controller = ResearchController(config)
+        block = controller._render_oranchak_corpora_for_prompt()
+        # Core paths must appear so the theorist can reference them
+        # in minimal_test_spec.
+        assert "wordlists/quagmire3_keywords_oranchak.txt" in block
+        assert "wordlists/quagmire4_keywords_oranchak.txt" in block
+        assert "data/k4_candidate_fills_oranchak.csv" in block
+        # DSL-translator gap caveat must be surfaced so the theorist
+        # doesn't propose kind='quagmire' and eat an admissibility rejection.
+        assert "_SUPPORTED_KINDS" in block or "dsl_untranslatable" in block.lower()
+
+    def test_oranchak_block_excludes_tier3_cia_memo(self, tmp_path):
+        # feedback_sanborn_epistemic_weight: community-seeded material
+        # gets into the prompt, but Tier-3 hearsay (CIA 1996 memo,
+        # 3 of 4 cipher diagnoses wrong) must not.
+        config = ControllerConfig(
+            project_root=tmp_path,
+            ledger_db_path=tmp_path / "ledger.sqlite",
+            legacy_db_path=tmp_path / "results.db",
+        )
+        controller = ResearchController(config)
+        block = controller._render_oranchak_corpora_for_prompt()
+        assert "cia_1996_memo.md" not in block
+        assert "OTP" not in block  # OTP claim in the memo has no weight
+
+    def test_theorist_prompt_incorporates_oranchak_block(self, tmp_path):
+        config = ControllerConfig(
+            project_root=tmp_path,
+            ledger_db_path=tmp_path / "ledger.sqlite",
+            legacy_db_path=tmp_path / "results.db",
+        )
+        controller = ResearchController(config)
+        prompt = controller._build_theorist_prompt({
+            "underexplored_families": [],
+            "unaddressed_anomalies": [],
+            "open_anomalies": [],
+        })
+        assert "ORANCHAK COMMUNITY REFERENCE CORPORA" in prompt
+
+
+class TestAlertEventCarriesPValueStatus:
+    """p_value_status must reach AlertEvent so halt checks can see it."""
+
+    def test_alert_event_has_p_value_status_field(self):
+        from kryptosbot.alerts import AlertEvent
+        ev = AlertEvent(
+            triggered_at="t",
+            hypothesis_id="h",
+            level="signal",
+            crib_score=18,
+            bean_passed=False,
+            score=18.0,
+            worker_status="success",
+            best_plaintext="",
+            narrative_summary="",
+            contradiction_note="",
+            cycle_number=1,
+            p_value_status="ok_matched_family",
+        )
+        assert ev.p_value_status == "ok_matched_family"
+
+    def test_classify_outcome_returns_tuple(self):
+        from kryptosbot.alerts import classify_outcome, AlertLevel
+        contract = WorkerContract(
+            hypothesis_id="abc",
+            status=WorkerStatus.SUCCESS,
+            crib_score=5,
+            bean_passed=False,
+        )
+        result = classify_outcome(contract, AlertLevel.SIGNAL)
+        # Tuple of (Optional[AlertLevel], p_value_status_str)
+        assert isinstance(result, tuple)
+        assert len(result) == 2
+        level, status = result
+        assert level is None  # crib=5 is noise
+        assert isinstance(status, str)

@@ -333,7 +333,7 @@ class TestPriority3NgramFloor:
         )
         assert len(english) >= 97, f"test setup: need >=97 chars, got {len(english)}"
         contract = self._make_contract(english[:97])
-        level = classify_outcome(contract, AlertLevel.BREAKTHROUGH)
+        level, _ = classify_outcome(contract, AlertLevel.BREAKTHROUGH)
         assert level == AlertLevel.BREAKTHROUGH
 
     def test_crib_paste_fabrication_downgrades_to_signal(self, monkeypatch):
@@ -354,7 +354,7 @@ class TestPriority3NgramFloor:
             pt[i] = ch
         fabrication = "".join(pt)
         contract = self._make_contract(fabrication)
-        level = classify_outcome(contract, AlertLevel.BREAKTHROUGH)
+        level, _ = classify_outcome(contract, AlertLevel.BREAKTHROUGH)
         # Downgraded — still SIGNAL, not BREAKTHROUGH.
         assert level == AlertLevel.SIGNAL
 
@@ -371,7 +371,7 @@ class TestPriority3NgramFloor:
             bean_passed=False,
             best_plaintext="Q" * 97,
         )
-        level = classify_outcome(contract, AlertLevel.BREAKTHROUGH)
+        level, _ = classify_outcome(contract, AlertLevel.BREAKTHROUGH)
         assert level == AlertLevel.SIGNAL
 
     def test_missing_plaintext_fails_down_to_signal(self):
@@ -380,7 +380,7 @@ class TestPriority3NgramFloor:
         # BREAKTHROUGH because the ngram floor could not vet it.
         from kryptosbot.alerts import classify_outcome, AlertLevel
         contract = self._make_contract("")
-        level = classify_outcome(contract, AlertLevel.BREAKTHROUGH)
+        level, _ = classify_outcome(contract, AlertLevel.BREAKTHROUGH)
         assert level == AlertLevel.SIGNAL
 
 
