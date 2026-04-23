@@ -43,6 +43,16 @@ The reconsideration question is not whether methodological progress is valuable 
 
 *If none of these map well to what you'd call "progress", that is itself the answer: it may be that the project's current working definition of progress is too narrow or too broad. A sentence or two identifying what progress actually means to you now is the deliverable of this question.*
 
+### Response (2026-04-23)
+
+I want to solve K4, but my honest belief set is that either (A) the mechanism is so bespoke that it's effectively unsolvable from outside (chaocipher-analogy, not chaocipher-algorithm: a private construction of the author's, sealed until disclosure), or (B) Sanborn made an error he doesn't realize. In either case, search won't find it.
+
+A lot of what Sanborn calls "clues" are anything but. They anchor (the known cribs at 21-33 and 63-73 are genuine plaintext fragments) but they don't carry mechanism content. A bespoke-private cipher whose author releases partial plaintext is behaviorally consistent with releasing "clues" that aren't cryptanalytic clues, and the observed pattern fits that profile.
+
+Progress from here, if it exists at all, is **primary-source disclosure** (archive material, Sanborn / Scheidt statements that reveal mechanism rather than anchor position) or **internal-inconsistency evidence** (the puzzle is broken in a way its author doesn't realize). It is not more cryptanalytic search. The scaffold's menu assumed search-mediated progress and asked what shape it takes; my reaction is that the menu's premise may not hold for this puzzle.
+
+**Implication for Q2 / Q3:** this answer makes Purpose A (solve K4) aspirational rather than operating, and sharpens Q3 into "when do I stop investing search effort against an object I believe is effectively sealed from outside?"
+
 ---
 
 ## 2. What is the project's actual purpose over the next six months?
