@@ -416,6 +416,19 @@ Two `memory/` directories exist — don't confuse them:
 
 ---
 
+## Kryptos project context
+- Primary objective: detect recurring, evidence-backed visual anomalies or
+  structural clues in Kryptos-related image corpora without overcalling
+  artifacts.
+- Maintain repo-relative paths in prompts, scripts, and reports.
+- Treat chart images as registered document comparisons when possible.
+- Treat physical surface imagery separately from document scans.
+- Project artifacts should be written under `analysis_runs/` unless a task says
+  otherwise.
+- Stable confirmed findings belong in project records, not only in agent memory.
+
+---
+
 *Last updated: 2026-04-22 — Added Quagmire III convention gotcha (silent-failure footgun from f_w10 misconfig), post-R3 control-flow pointer (K4_RUN_PROTOCOL_R3 supersedes R2), and Oranchak / CIA 1996 memo Tier-3 reference. 2026-04-21: internal phase 09 doctrine refresh (ORIENT.md pointer + ARCHITECTURE.md update). 2026-04-17: added `run_lean.py` disambiguation, `requirements.txt` pointer, and `external/` (Bean reference C/SageMath impl) to Source Layout. 2026-04-16: added campaigns/, admissibility/, composition/ and AGENTS.md pointer. CLAUDE.md is operational doctrine only. Live research state in MEMORY.md; structured claims in docs/claims_registry.json; open audits in docs/methodological_audits.md; canonical entry index in docs/README_current_state.md.*
 *Primary author: Colin Patrick (human lead) + Claude (computational partner)*
 
