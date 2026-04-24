@@ -206,6 +206,15 @@ ls -la null_baselines/manifest.json
 
 # 4. R2-5 real-API K1 test (ensures the full dispatch path actually runs end-to-end)
 PYTHONPATH=src python3 -u <internal>/self_test_real_api.py
+
+# 5. Transport verification (strongly recommended; added 2026-04-24
+#    after Campaign C attempt 1 silently hung for 3h on an
+#    unverified subscription throttle). Either run the two probes
+#    manually, or use --verify-transport as a launch-time gate:
+PYTHONPATH=src python3 -u <internal> \
+    --verify-transport --status
+# (or pass --verify-transport to any launch command; the run halts
+#  before touching the ledger if either probe fails)
 ```
 
 **Expected:**
@@ -216,8 +225,11 @@ PYTHONPATH=src python3 -u <internal>/self_test_real_api.py
 - Self-test: K1 cycles=15, K2 cycles=17, K3 cycles=9345 all discovered at peak 20/20.
 - Manifest exists with `kernel_commit_at_latest_write` matching current HEAD.
 - R2-5 real-API: K1 discovered via live agent loop.
+- Transport probes (if run): direct-api PROCEED, subscription-sdk PROCEED. See `<internal>/transport_preflight.py`.
 
 **Any deviation halts the run until resolved.** Commit hash of the green readiness pass is recorded in the K4 run's session header.
+
+**`--verify-transport` policy (2026-04-24).** Currently optional but strongly recommended. Skipping it after a heavy-usage day risks the silent-throttle failure mode that caused Campaign C attempt 1. Whether to make the flag mandatory is a separate operator decision; this protocol does not pre-empt it.
 
 **Operator sign-off:** the R3-3 phase report (§3) and R3-4 this document (§2) flag the fallback-firing reliability concern. Operator must explicitly acknowledge before initiating the K4 run that the fallback trigger is understood and will be monitored via §6.1.7's `programmatic_fallback_cycles` counter.
 
