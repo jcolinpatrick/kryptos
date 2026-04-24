@@ -163,12 +163,17 @@ def _is_run_halted(
     return (now - last_mtime) >= 60.0
 
 
-def _detect_controller_pid() -> Optional[int]:
-    """Return the PID of a running run_controller.py / solve.py, else None.
+def _detect_controller_process() -> Optional[tuple[int, list[str]]]:
+    """Return ``(pid, argv)`` of a running run_controller.py / solve.py
+    where ``argv`` is the controller's command-line tokens as read from
+    ``/proc/<pid>/cmdline``. Returns ``None`` if no controller is found
+    or if the probe fails (e.g. non-Linux platform).
 
-    Uses /proc on Linux so there's no dependency on psutil or pgrep.
-    Best-effort; a None return is treated as "no controller detected",
-    which for halt-detection means the 60s stale rule kicks in normally.
+    Exists so callers that need the controller's actual arguments (e.g.
+    ``--db <path>``) can read them from the live process without re-
+    parsing a separate launch-command log. The PID-only helper
+    ``_detect_controller_pid`` remains for callers that only need
+    liveness.
     """
     import os
     import glob
@@ -177,22 +182,67 @@ def _detect_controller_pid() -> Optional[int]:
             try:
                 pid = int(os.path.basename(pid_dir))
                 with open(f"{pid_dir}/cmdline", "rb") as f:
-                    cmdline = f.read().replace(b"\x00", b" ").decode(
-                        "utf-8", errors="replace",
-                    )
-                if (
-                    "run_controller.py" in cmdline
-                    or "<internal>/solve.py" in cmdline
-                    or "internal.run_controller" in cmdline
+                    raw = f.read()
+                # /proc/<pid>/cmdline is NUL-separated, trailing NUL
+                # terminator.
+                tokens = [
+                    t.decode("utf-8", errors="replace")
+                    for t in raw.split(b"\x00") if t
+                ]
+                # Match on a token that IS the controller script path,
+                # not on a string containing the script name anywhere.
+                # This rules out bash wrappers like
+                # ``/bin/bash -c "... run_controller.py --db foo.sqlite"``
+                # where the argv tokens are only ``['/bin/bash', '-c',
+                # '<body>']`` and ``--db`` is not a separable token —
+                # the dashboard needs the flat-argv shape to extract
+                # ``--db``. Campaign-C attempt-2 (2026-04-24) surfaced
+                # this footgun: the bash wrapper PID matched first,
+                # returned with no ``--db`` in tokens, and the
+                # dashboard fell through to the main ledger while the
+                # real run wrote to a campaign-specific DB.
+                if any(
+                    t.endswith("run_controller.py")
+                    or t.endswith("<internal>/solve.py")
+                    or t == "internal.run_controller"
+                    for t in tokens
                 ):
-                    return pid
+                    return (pid, tokens)
             except (OSError, ValueError):
                 continue
     except Exception:
-        # Any platform that lacks /proc (macOS, Windows) gracefully falls
-        # through to "None detected" — the dashboard keeps working with
-        # the 60s stale rule as a fallback halt heuristic.
         return None
+    return None
+
+
+def _detect_controller_pid() -> Optional[int]:
+    """Return the PID of a running run_controller.py / solve.py, else None.
+
+    Thin wrapper over ``_detect_controller_process`` that drops the argv
+    when the caller only needs liveness. Preserved for backwards
+    compatibility with callers (and tests) that expect the pid-only
+    shape. Best-effort; a None return is treated as "no controller
+    detected", which for halt-detection means the 60s stale rule kicks
+    in normally.
+    """
+    result = _detect_controller_process()
+    return result[0] if result is not None else None
+
+
+def _extract_db_arg_from_argv(argv: list[str]) -> Optional[Path]:
+    """Extract the ``--db PATH`` value from a controller argv list.
+
+    Handles both space-separated (``--db foo.sqlite``) and equals
+    (``--db=foo.sqlite``) forms. Returns ``None`` if no ``--db`` was
+    passed — i.e. the controller is using the default main-ledger
+    path. Caller decides whether to fall back to canonical or report
+    "no override detected".
+    """
+    for i, tok in enumerate(argv):
+        if tok == "--db" and i + 1 < len(argv):
+            return Path(argv[i + 1])
+        if tok.startswith("--db="):
+            return Path(tok.split("=", 1)[1])
     return None
 
 
@@ -212,7 +262,34 @@ def _is_pid_alive(pid: int) -> bool:
 # ─── Auto-detect active run paths ──────────────────────────────────────────
 
 def _detect_active_db() -> Optional[Path]:
-    """Canonical ledger path, or None if missing."""
+    """Return the ledger path the running controller is actually using.
+
+    Detection order:
+      1. Running controller's ``--db`` argv (authoritative — the
+         dashboard reads what the controller is writing).
+      2. Canonical main ledger ``db/theory_ledger.sqlite`` as fallback.
+      3. ``None`` if neither exists.
+
+    Campaign-C attempt-2 hardening (2026-04-24): prior behaviour always
+    returned the canonical main ledger, which ignored attempt-specific
+    campaign DBs (e.g. ``db/k4_campaign_c_*_attempt2.sqlite``) and left
+    the dashboard silently showing stale data from the main ledger
+    while the live run wrote to a different file. The
+    ``Compass-rose``-stuck-in-Activity observation that surfaced this
+    bug is documented in the Campaign C postmortem §Z.
+    """
+    proc = _detect_controller_process()
+    if proc is not None:
+        _pid, argv = proc
+        live_db = _extract_db_arg_from_argv(argv)
+        if live_db is not None:
+            # Resolve relative paths against repo root so the dashboard
+            # can find them from any cwd.
+            if not live_db.is_absolute():
+                live_db = _ROOT / live_db
+            if live_db.exists():
+                return live_db
+
     canonical = _ROOT / "db" / "theory_ledger.sqlite"
     return canonical if canonical.exists() else None
 
