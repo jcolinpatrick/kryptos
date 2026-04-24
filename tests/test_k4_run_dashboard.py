@@ -136,13 +136,95 @@ class TestAutoDetectPaths:
         (fake_root / "db").mkdir()
         (fake_root / "db" / "theory_ledger.sqlite").write_bytes(b"")
         monkeypatch.setattr(dashboard, "_ROOT", fake_root)
+        # No live controller → falls through to canonical.
+        monkeypatch.setattr(
+            dashboard, "_detect_controller_process", lambda: None,
+        )
         assert dashboard._detect_active_db() == (
             fake_root / "db" / "theory_ledger.sqlite"
         )
 
     def test_detect_active_db_returns_none_when_missing(self, tmp_path, monkeypatch):
         monkeypatch.setattr(dashboard, "_ROOT", tmp_path)
+        monkeypatch.setattr(
+            dashboard, "_detect_controller_process", lambda: None,
+        )
         assert dashboard._detect_active_db() is None
+
+    def test_detect_active_db_prefers_running_controllers_db_arg(
+        self, tmp_path, monkeypatch,
+    ):
+        """Campaign-C attempt-2 fix: when a controller is running with
+        --db pointing at a campaign-specific ledger, the dashboard's
+        auto-detect must return THAT ledger, not the canonical main
+        ledger. Prior behaviour silently ignored --db and surfaced
+        stale data from the main ledger."""
+        fake_root = tmp_path
+        (fake_root / "db").mkdir()
+        (fake_root / "db" / "theory_ledger.sqlite").write_bytes(b"")
+        attempt_db = fake_root / "db" / "k4_campaign_c_attempt2.sqlite"
+        attempt_db.write_bytes(b"")
+        monkeypatch.setattr(dashboard, "_ROOT", fake_root)
+        # Simulate a live controller launched with --db pointing at the
+        # campaign-specific file.
+        fake_argv = [
+            "python3", "-u", "kryptosbot/run_controller.py",
+            "--cycles", "15", "--theories", "5",
+            "--no-oranchak-corpora",
+            "--db", "db/k4_campaign_c_attempt2.sqlite",
+        ]
+        monkeypatch.setattr(
+            dashboard, "_detect_controller_process",
+            lambda: (12345, fake_argv),
+        )
+        assert dashboard._detect_active_db() == attempt_db
+
+    def test_detect_active_db_falls_back_to_canonical_when_db_arg_missing(
+        self, tmp_path, monkeypatch,
+    ):
+        """Controller launched without --db (default main ledger) →
+        dashboard returns canonical. No argv-less match should treat
+        a non-existent path as valid."""
+        fake_root = tmp_path
+        (fake_root / "db").mkdir()
+        (fake_root / "db" / "theory_ledger.sqlite").write_bytes(b"")
+        monkeypatch.setattr(dashboard, "_ROOT", fake_root)
+        fake_argv = [
+            "python3", "-u", "kryptosbot/run_controller.py",
+            "--cycles", "10",
+        ]
+        monkeypatch.setattr(
+            dashboard, "_detect_controller_process",
+            lambda: (12345, fake_argv),
+        )
+        assert dashboard._detect_active_db() == (
+            fake_root / "db" / "theory_ledger.sqlite"
+        )
+
+    def test_detect_active_db_falls_back_when_db_arg_points_to_missing_file(
+        self, tmp_path, monkeypatch,
+    ):
+        """If the controller's --db points at a file that doesn't exist
+        yet (e.g. race at launch before the ledger is written),
+        dashboard falls back to canonical rather than returning a
+        non-existent path. This keeps the dashboard's resolve
+        contract consistent with the rest of the codebase."""
+        fake_root = tmp_path
+        (fake_root / "db").mkdir()
+        (fake_root / "db" / "theory_ledger.sqlite").write_bytes(b"")
+        monkeypatch.setattr(dashboard, "_ROOT", fake_root)
+        fake_argv = [
+            "python3", "-u", "kryptosbot/run_controller.py",
+            "--db", "db/does_not_exist.sqlite",
+        ]
+        monkeypatch.setattr(
+            dashboard, "_detect_controller_process",
+            lambda: (12345, fake_argv),
+        )
+        assert dashboard._detect_active_db() == (
+            fake_root / "db" / "theory_ledger.sqlite"
+        )
+
 
     def test_detect_active_log_picks_newest_campaign_log(self, tmp_path, monkeypatch):
         # Create three logs across two campaigns with different mtimes.
@@ -166,6 +248,30 @@ class TestAutoDetectPaths:
     def test_detect_active_log_returns_none_when_no_logs(self, tmp_path, monkeypatch):
         monkeypatch.setattr(dashboard, "_ROOT", tmp_path)
         assert dashboard._detect_active_log() is None
+
+
+class TestExtractDbArgFromArgv:
+    """_extract_db_arg_from_argv is pure parsing — exercise every shape."""
+
+    def test_space_separated_db_arg(self):
+        argv = ["python3", "run_controller.py", "--db", "foo.sqlite"]
+        assert dashboard._extract_db_arg_from_argv(argv) == Path("foo.sqlite")
+
+    def test_equals_form_db_arg(self):
+        argv = ["python3", "run_controller.py", "--db=bar.sqlite"]
+        assert dashboard._extract_db_arg_from_argv(argv) == Path("bar.sqlite")
+
+    def test_no_db_arg_returns_none(self):
+        argv = ["python3", "run_controller.py", "--cycles", "10"]
+        assert dashboard._extract_db_arg_from_argv(argv) is None
+
+    def test_db_arg_without_value_returns_none(self):
+        argv = ["python3", "run_controller.py", "--db"]
+        assert dashboard._extract_db_arg_from_argv(argv) is None
+
+    def test_db_arg_at_end_with_value(self):
+        argv = ["python3", "run_controller.py", "--cycles", "10", "--db", "end.sqlite"]
+        assert dashboard._extract_db_arg_from_argv(argv) == Path("end.sqlite")
 
 
 class TestControllerPidDetection:
