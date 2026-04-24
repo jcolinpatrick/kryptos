@@ -80,6 +80,37 @@ def parse_args() -> argparse.Namespace:
             "results that contradict current eliminations and warrant audit."
         ),
     )
+    parser.add_argument(
+        "--no-oranchak",
+        action="store_true",
+        help=(
+            "SHORTHAND: set both --no-oranchak-corpora and "
+            "--no-serpentine-anchor. Reproduces the pre-Campaign-C "
+            "single-flag behavior (both community corpora and archive "
+            "serpentine anchor suppressed)."
+        ),
+    )
+    parser.add_argument(
+        "--no-oranchak-corpora",
+        action="store_true",
+        help=(
+            "Suppress only the Oranchak community reference corpora "
+            "(quagmire keyword pools + k4_candidate_fills CSV) in the "
+            "theorist prompt. Leaves the AAA-archive serpentine-"
+            "Vigenère anchor in place. Campaign-C counterfactual; see "
+            "docs/maturation/round3/K4_CAMPAIGN_C_PREREG.md."
+        ),
+    )
+    parser.add_argument(
+        "--no-serpentine-anchor",
+        action="store_true",
+        help=(
+            "Suppress only the AAA-archive serpentine-Vigenère "
+            "hypothesis seed block (Sanborn page-17 quote). Leaves the "
+            "community Oranchak corpora in place. Future Campaign-D "
+            "counterfactual; not currently scheduled."
+        ),
+    )
     return parser.parse_args()
 
 
@@ -452,6 +483,16 @@ async def main() -> None:
     _configure_logging(args.quiet)
 
     project_root = _ROOT
+    # Campaign-C flag semantics (2026-04-24):
+    #   --no-oranchak            → both sub-blocks off (shorthand,
+    #                              reproduces pre-split single-flag behavior)
+    #   --no-oranchak-corpora    → community corpora only off
+    #   --no-serpentine-anchor   → archive anchor only off
+    # Either the shorthand or the specific flag is sufficient to
+    # suppress the corresponding sub-block.
+    include_oranchak_corpora = not (args.no_oranchak or args.no_oranchak_corpora)
+    include_serpentine_anchor = not (args.no_oranchak or args.no_serpentine_anchor)
+
     config = ControllerConfig(
         project_root=project_root,
         ledger_db_path=Path(args.db),
@@ -462,6 +503,8 @@ async def main() -> None:
         dry_run=args.dry_run,
         skip_critic=args.skip_critic,
         alert_threshold=args.alert_on,
+        include_oranchak_corpora=include_oranchak_corpora,
+        include_serpentine_anchor=include_serpentine_anchor,
     )
 
     if args.status:

@@ -1190,11 +1190,12 @@ class TestOranchakPromptPlumbing:
         assert "quagmire" in block.lower()
         assert "dispatchable" in block.lower() or "quagmire_iii" in block.lower()
 
-    def test_oranchak_block_surfaces_serpentine_vigenere_anchor(self, tmp_path):
-        """The serpentine-Vigenère hypothesis seed (Sanborn AAA archive
-        page 17) must appear in the theorist prompt so it's a first-class
-        anchor rather than a word buried in `reference/`.
-        Added 2026-04-22 after the user surfaced the archive quote."""
+    def test_oranchak_corpora_block_no_longer_contains_serpentine_content(self, tmp_path):
+        """Campaign-C split (2026-04-24): the serpentine-Vigenère anchor
+        moved out of _render_oranchak_corpora_for_prompt into its own
+        renderer so it can be gated independently. Verifies the split
+        is clean — no cross-contamination between provenance
+        categories."""
         config = ControllerConfig(
             project_root=tmp_path,
             ledger_db_path=tmp_path / "ledger.sqlite",
@@ -1202,14 +1203,14 @@ class TestOranchakPromptPlumbing:
         )
         controller = ResearchController(config)
         block = controller._render_oranchak_corpora_for_prompt()
-        assert "serpentine" in block.lower()
-        # Pair the two specific tokens Sanborn put in the same sentence,
-        # not just the adjective alone — it's the pairing that carries
-        # the hypothesis weight.
-        assert "vigen" in block.lower()  # matches 'Vigenère' or 'vigenere'
-        # Tier-3 discipline: the block should flag that this is a
-        # hypothesis seed, not confirmed evidence.
-        assert "tier 3" in block.lower() or "not confirmed" in block.lower()
+        # Serpentine-anchor-specific tokens should NOT leak into the
+        # community-corpora renderer.
+        assert "serpentine copper screen" not in block.lower()
+        assert "aaa archive page 17" not in block.lower()
+        assert "aaa_sanbojim" not in block.lower()
+        # The community-specific content is still here.
+        assert "ORANCHAK COMMUNITY REFERENCE CORPORA" in block
+        assert "quagmire3_keywords_oranchak.txt" in block
 
     def test_oranchak_block_excludes_tier3_cia_memo(self, tmp_path):
         # feedback_sanborn_epistemic_weight: community-seeded material
@@ -1238,6 +1239,191 @@ class TestOranchakPromptPlumbing:
             "open_anomalies": [],
         })
         assert "ORANCHAK COMMUNITY REFERENCE CORPORA" in prompt
+
+    def test_oranchak_renderer_is_pure_and_unaffected_by_flag(self, tmp_path):
+        """Renderer is the unit under test for other Oranchak tests; it
+        must keep returning the block unconditionally. Both gates
+        (include_oranchak_corpora and include_serpentine_anchor) live
+        in _build_theorist_prompt, not the renderers themselves."""
+        config = ControllerConfig(
+            project_root=tmp_path,
+            ledger_db_path=tmp_path / "ledger.sqlite",
+            legacy_db_path=tmp_path / "results.db",
+            include_oranchak_corpora=False,
+            include_serpentine_anchor=False,
+        )
+        controller = ResearchController(config)
+        corpora = controller._render_oranchak_corpora_for_prompt()
+        anchor = controller._render_serpentine_anchor_for_prompt()
+        assert "ORANCHAK COMMUNITY REFERENCE CORPORA" in corpora
+        assert "SERPENTINE-VIGENÈRE ANCHOR" in anchor
+
+
+class TestSerpentineAnchorRenderer:
+    """Campaign-C split: the serpentine-Vigenère anchor is now gated
+    independently from the Oranchak community corpora. This class
+    unit-tests the dedicated renderer."""
+
+    def test_serpentine_anchor_contains_sanborn_archive_pairing(self, tmp_path):
+        """The AAA page-17 quote pairs 'serpentine' and 'Vigenère's
+        Tableaux' in one sentence — it's the pairing that carries the
+        hypothesis weight. Migrated from Oranchak test class on
+        2026-04-24 when the anchor moved to its own renderer."""
+        config = ControllerConfig(
+            project_root=tmp_path,
+            ledger_db_path=tmp_path / "ledger.sqlite",
+            legacy_db_path=tmp_path / "results.db",
+        )
+        controller = ResearchController(config)
+        block = controller._render_serpentine_anchor_for_prompt()
+        assert "serpentine" in block.lower()
+        assert "vigen" in block.lower()  # matches 'Vigenère' or 'vigenere'
+        # Tier-3 discipline preserved in the migrated block.
+        assert "tier 3" in block.lower() or "not confirmed" in block.lower()
+        # Archive provenance explicitly cited.
+        assert "aaa" in block.lower()
+        assert "page 17" in block.lower()
+
+    def test_serpentine_anchor_suggests_correct_dsl_shape(self, tmp_path):
+        """The anchor points theorists at kind='route', variant='serpentine'
+        composed with kind='vigenere' — the DSL shape the B-DSL-expanded
+        translators can dispatch. Named so the Campaign-B prompt-bug
+        failure mode (kind='procedural' + invented recipe) can't re-
+        emerge under the split renderer."""
+        config = ControllerConfig(
+            project_root=tmp_path,
+            ledger_db_path=tmp_path / "ledger.sqlite",
+            legacy_db_path=tmp_path / "results.db",
+        )
+        controller = ResearchController(config)
+        block = controller._render_serpentine_anchor_for_prompt()
+        assert "route" in block.lower()
+        assert "serpentine" in block.lower()
+        assert "vigenere" in block.lower() or "vigenère" in block.lower()
+
+
+class TestNoOranchakCLIShorthand:
+    """Pre-flight criterion from the Campaign-C brief: the
+    --no-oranchak CLI shorthand must map to BOTH sub-flags False so
+    any Campaign-A-era launch command using it reproduces the
+    pre-split single-flag prompt state exactly."""
+
+    def _parse_with_argv(self, monkeypatch, argv_tail):
+        """Invoke run_controller.parse_args() with a synthetic argv."""
+        import sys
+        from kryptosbot import run_controller
+        monkeypatch.setattr(sys, "argv", ["run_controller.py", *argv_tail])
+        return run_controller.parse_args()
+
+    def test_no_flags_defaults_to_both_on(self, monkeypatch):
+        args = self._parse_with_argv(monkeypatch, [])
+        assert args.no_oranchak is False
+        assert args.no_oranchak_corpora is False
+        assert args.no_serpentine_anchor is False
+
+    def test_no_oranchak_shorthand_parses(self, monkeypatch):
+        """--no-oranchak is preserved for Campaign-A launch reproducibility."""
+        args = self._parse_with_argv(monkeypatch, ["--no-oranchak"])
+        assert args.no_oranchak is True
+
+    def test_no_oranchak_corpora_only_parses(self, monkeypatch):
+        """Campaign-C launch flag."""
+        args = self._parse_with_argv(monkeypatch, ["--no-oranchak-corpora"])
+        assert args.no_oranchak_corpora is True
+        assert args.no_serpentine_anchor is False
+        assert args.no_oranchak is False
+
+    def test_no_serpentine_anchor_only_parses(self, monkeypatch):
+        """Future Campaign-D launch flag."""
+        args = self._parse_with_argv(monkeypatch, ["--no-serpentine-anchor"])
+        assert args.no_serpentine_anchor is True
+        assert args.no_oranchak_corpora is False
+        assert args.no_oranchak is False
+
+
+class TestCampaignCPromptSplitCombinations:
+    """Campaign-C preregistration (K4_CAMPAIGN_C_PREREG.md, 2026-04-24):
+    the Oranchak prompt block was split into two independently-gated
+    sub-blocks. This class pins the prompt content for all four
+    (corpora, anchor) flag combinations so an accidental re-bundling
+    can't silently reintroduce the co-removal confound that would
+    defeat the attribution experiment."""
+
+    LANDSCAPE = {
+        "underexplored_families": [],
+        "unaddressed_anomalies": [],
+        "open_anomalies": [],
+    }
+
+    def _build_prompt(self, tmp_path, *, corpora, anchor):
+        config = ControllerConfig(
+            project_root=tmp_path,
+            ledger_db_path=tmp_path / "ledger.sqlite",
+            legacy_db_path=tmp_path / "results.db",
+            include_oranchak_corpora=corpora,
+            include_serpentine_anchor=anchor,
+        )
+        controller = ResearchController(config)
+        return controller._build_theorist_prompt(self.LANDSCAPE)
+
+    # The anchor-unique discriminator. "serpentine copper screen" also
+    # appears in the CRITICAL DISAMBIGUATION block (added in the
+    # Campaign-B prompt fix), so it is NOT a reliable discriminator
+    # for anchor presence. The AAA document ID appears only in the
+    # anchor renderer's returned block, so it is the authoritative
+    # indicator that the anchor block is in the prompt.
+    ANCHOR_UNIQUE_TOKEN = "AAA_sanbojim_4129080"
+
+    def test_both_on_matches_pre_split_content(self, tmp_path):
+        """(True, True): Campaign-A / Campaign-B prompt state. Both
+        provenance blocks present."""
+        prompt = self._build_prompt(tmp_path, corpora=True, anchor=True)
+        assert "ORANCHAK COMMUNITY REFERENCE CORPORA" in prompt
+        assert "quagmire3_keywords_oranchak.txt" in prompt
+        assert "k4_candidate_fills_oranchak.csv" in prompt
+        assert "SERPENTINE-VIGENÈRE ANCHOR" in prompt
+        assert self.ANCHOR_UNIQUE_TOKEN in prompt
+
+    def test_corpora_off_anchor_on_is_campaign_c_state(self, tmp_path):
+        """(False, True): Campaign-C launch state. Community corpora
+        suppressed, archive anchor preserved as control surface."""
+        prompt = self._build_prompt(tmp_path, corpora=False, anchor=True)
+        # Corpora absent.
+        assert "ORANCHAK COMMUNITY REFERENCE CORPORA" not in prompt
+        assert "quagmire3_keywords_oranchak.txt" not in prompt
+        assert "quagmire4_keywords_oranchak.txt" not in prompt
+        assert "k4_candidate_fills_oranchak.csv" not in prompt
+        # Anchor preserved.
+        assert "SERPENTINE-VIGENÈRE ANCHOR" in prompt
+        assert self.ANCHOR_UNIQUE_TOKEN in prompt
+        # Non-Oranchak prompt structure intact.
+        assert "Generate" in prompt
+        assert "CURRENT RESEARCH LANDSCAPE" in prompt
+
+    def test_corpora_on_anchor_off_is_future_campaign_d_state(self, tmp_path):
+        """(True, False): Future Campaign-D launch state if the anchor's
+        effect is commissioned for isolation. Community corpora
+        preserved, archive anchor suppressed."""
+        prompt = self._build_prompt(tmp_path, corpora=True, anchor=False)
+        # Corpora present.
+        assert "ORANCHAK COMMUNITY REFERENCE CORPORA" in prompt
+        assert "quagmire3_keywords_oranchak.txt" in prompt
+        # Anchor absent.
+        assert "SERPENTINE-VIGENÈRE ANCHOR" not in prompt
+        assert self.ANCHOR_UNIQUE_TOKEN not in prompt
+
+    def test_both_off_matches_no_oranchak_shorthand(self, tmp_path):
+        """(False, False): the state the --no-oranchak CLI shorthand
+        produces. Reproduces the pre-split single-flag behavior for
+        any launch command still using --no-oranchak."""
+        prompt = self._build_prompt(tmp_path, corpora=False, anchor=False)
+        assert "ORANCHAK COMMUNITY REFERENCE CORPORA" not in prompt
+        assert "SERPENTINE-VIGENÈRE ANCHOR" not in prompt
+        assert "quagmire3_keywords_oranchak.txt" not in prompt
+        assert self.ANCHOR_UNIQUE_TOKEN not in prompt
+        # Prompt still valid — landscape + other blocks intact.
+        assert "Generate" in prompt
+        assert "CURRENT RESEARCH LANDSCAPE" in prompt
 
 
 class TestAlertEventCarriesPValueStatus:

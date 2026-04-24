@@ -362,6 +362,17 @@ class ControllerConfig:
     # narrower follow-up sweeps.
     bounded_search_max_configurations: int = 5000
 
+    # Campaign-C toggles (2026-04-24): provenance-split gates for the
+    # prompt-content blocks originally bundled under the single Oranchak
+    # block. Split per K4_CAMPAIGN_C_PREREG.md so the Oranchak community-
+    # corpora effect can be isolated from the AAA-archive serpentine-
+    # Vigenère anchor effect. Both default True — Campaign-A prompt
+    # state is `(True, True)`, identical to pre-split behavior. The
+    # `--no-oranchak` CLI shorthand still sets both False
+    # (Campaign-A launch reproducibility).
+    include_oranchak_corpora: bool = True   # community-derived keyword pools + fills CSV
+    include_serpentine_anchor: bool = True  # AAA archive page 17 Sanborn quote
+
     def __post_init__(self) -> None:
         root = self.project_root.resolve()
         if not self.ledger_db_path.is_absolute():
@@ -1829,21 +1840,16 @@ class ResearchController:
           (c) rank other proposals by whether their predicted
               plaintext resembles candidates in the fills corpus.
 
-        Serpentine-Vigenère anchor (primary-source evidence, Tier 3):
-        Sanborn's own writing in the Archives of American Art (page 17,
-        UAN AAA-AAA_sanbojim_4129080) describes Kryptos as
-        "a serpentine copper screen perforated with encoded text and
-        Blaise De Vigenère's Tableaux". The pairing of "serpentine"
-        with "Vigenère's Tableaux" in one sentence is a candidate
-        hypothesis seed — the ``route`` kind with variant="serpentine"
-        composed with a single-layer Vigenere on KA is the natural
-        dispatch shape for testing it. Not confirmed evidence; valid
-        hypothesis seed.
-
         Tier 3 flag on accompanying source (``reference/cia_1996_memo.md``):
         the CIA 1996 memo is NOT in this block. Its OTP claim rests on
         three other wrong cipher diagnoses; it has no evidentiary
         weight. Do not cite it.
+
+        Campaign-C split (2026-04-24): the serpentine-Vigenère anchor
+        that used to live inside this renderer has moved to its own
+        method (_render_serpentine_anchor_for_prompt) so it can be
+        gated independently. This renderer now contains *only*
+        community-derived content.
         """
         return (
             "ORANCHAK COMMUNITY REFERENCE CORPORA (mirrored 2026-04-21):\n"
@@ -1869,6 +1875,33 @@ class ResearchController:
             "minimal_test_spec so the worker can load it; do not paste "
             "candidate rows inline.\n"
             "\n"
+            "EPISTEMIC CAVEAT: these are community-seeded reference lists, "
+            "not preregistered eliminations. A keyword scoring well against "
+            "this pool's ordering is a ranking feature, not a signal. "
+            "Treat the corpora as CONTEXT that widens the theorist's "
+            "accessible search space — not as evidence."
+        )
+
+    def _render_serpentine_anchor_for_prompt(self) -> str:
+        """Render the archive-derived serpentine-Vigenère hypothesis seed.
+
+        Primary-source material from the Sanborn Archives of American
+        Art holdings (UAN AAA-AAA_sanbojim_4129080, page 17): Sanborn
+        describes Kryptos as "a serpentine copper screen perforated
+        with encoded text and Blaise De Vigenère's Tableaux". The
+        pairing of "serpentine" with "Vigenère's Tableaux" in a single
+        Sanborn sentence is a candidate hypothesis seed — the ``route``
+        kind with variant="serpentine" composed with a single-layer
+        Vigenere on KA is the natural dispatch shape for testing it.
+        Not confirmed evidence; valid hypothesis seed.
+
+        Campaign-C split (2026-04-24): moved out of
+        _render_oranchak_corpora_for_prompt so it can be gated
+        independently. The community-Oranchak corpora and this
+        archive-derived anchor have different provenance and should
+        not be bundled behind a single toggle.
+        """
+        return (
             "SERPENTINE-VIGENÈRE ANCHOR (Tier 3, primary-source hypothesis seed):\n"
             "  Sanborn's AAA archive page 17 (UAN AAA-AAA_sanbojim_4129080) "
             "describes Kryptos as \"a serpentine copper screen perforated "
@@ -1876,13 +1909,7 @@ class ResearchController:
             "pairing of the two technical terms in one sentence motivates "
             "testing a two-layer spec with kind='route', variant='serpentine' "
             "composed with kind='vigenere' on alphabet='KA'. Not confirmed; "
-            "fair game as a hypothesis anchor.\n"
-            "\n"
-            "EPISTEMIC CAVEAT: these are community-seeded reference lists, "
-            "not preregistered eliminations. A keyword scoring well against "
-            "this pool's ordering is a ranking feature, not a signal. "
-            "Treat the corpora as CONTEXT that widens the theorist's "
-            "accessible search space — not as evidence."
+            "fair game as a hypothesis anchor."
         )
 
     def _render_manual_focus_for_prompt(self) -> str:
@@ -1938,7 +1965,14 @@ class ResearchController:
             landscape.get("soft_pursuit_leads") or [],
         )
         manual_focus_block = self._render_manual_focus_for_prompt()
-        oranchak_block = self._render_oranchak_corpora_for_prompt()
+        if self.config.include_oranchak_corpora:
+            oranchak_block = self._render_oranchak_corpora_for_prompt()
+        else:
+            oranchak_block = ""
+        if self.config.include_serpentine_anchor:
+            serpentine_block = self._render_serpentine_anchor_for_prompt()
+        else:
+            serpentine_block = ""
         return f"""Generate {self.config.theories_per_cycle} novel, testable K4 hypotheses.
 
 CURRENT RESEARCH LANDSCAPE:
@@ -1949,6 +1983,8 @@ CURRENT RESEARCH LANDSCAPE:
 {manual_focus_block}
 
 {oranchak_block}
+
+{serpentine_block}
 
 CONSTRAINTS:
 - Each hypothesis must target an active or partially explored family
