@@ -2151,9 +2151,14 @@ cipher kind directly:
   - Rail-fence (zigzag depth) → ``kind="rail_fence"`` with ``depth``.
   - Myszkowski (columnar with tied columns) → ``kind="myszkowski"``
     with ``keyword``.
-  - Quagmire III / IV → ``kind="quagmire"`` with ``variant``,
-    ``period_keyword``, ``ct_alphabet_keyword``, ``pt_alphabet_keyword``,
-    ``indicator``.
+  - Quagmire III / IV → ``kind="quagmire"`` with ``period_keyword``,
+    ``ct_alphabet_keyword``, ``pt_alphabet_keyword``, ``indicator``.
+    The ``variant`` field takes the CANONICAL snake_case form
+    ``"quagmire_iii"`` or ``"quagmire_iv"`` — NOT the roman-numeral
+    labels ``"III"`` / ``"IV"`` the cipher is commonly called. Correct:
+    ``{{"kind": "quagmire", "variant": "quagmire_iii", ...}}``. Wrong
+    (rejected as dsl_untranslatable): ``{{"kind": "quagmire",
+    "variant": "III", ...}}``.
   - Bifid (length-preserving Polybius fractionation) →
     ``kind="polybius"``, ``variant="bifid"``.
   - Cardan grille (hole_mask permutation) → ``kind="grille"``.

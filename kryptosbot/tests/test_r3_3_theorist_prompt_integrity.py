@@ -149,6 +149,45 @@ def test_theorist_prompt_calls_out_invalid_free_search_alias(tmp_path):
     assert 'only free-alignment enum value is "free"' in prompt
 
 
+def test_theorist_prompt_canonicalizes_quagmire_variant_field(tmp_path):
+    """Quagmire variant naming canonicalization (2026-04-24).
+
+    Theorists across Campaigns A, B, and C proposed quagmire layers
+    with ``variant='III'`` (matching the cipher's common roman-numeral
+    label) but the translator only accepts ``'quagmire_iii'`` /
+    ``'quagmire_iv'``. 15 theories total across three campaigns were
+    lost to admissibility translation errors with this exact shape.
+
+    The prompt must explicitly disambiguate by specifying the canonical
+    form AND the exact rejected form so the theorist learns to write
+    ``quagmire_iii`` instead of ``III``.
+    """
+    prompt = _get_prompt(tmp_path)
+    # Canonical form explicitly enumerated so theorists can lift it
+    # directly.
+    assert "quagmire_iii" in prompt, (
+        "theorist prompt must show the canonical variant "
+        "'quagmire_iii' so proposals don't use the roman-numeral form"
+    )
+    assert "quagmire_iv" in prompt, (
+        "theorist prompt must show 'quagmire_iv' (the other canonical "
+        "variant) alongside quagmire_iii"
+    )
+    # Anti-example: the rejected shape must also appear, explicitly
+    # flagged as wrong. Without this, a future prompt edit that drops
+    # the disambiguation would silently revive the translation-error
+    # class observed in Campaigns A/B/C.
+    assert '"III"' in prompt, (
+        "theorist prompt must call out the rejected roman-numeral form "
+        "'III' as the anti-example so the contrast is explicit"
+    )
+    # Cross-check: the rejection mode (dsl_untranslatable) must be
+    # named in the vicinity of the anti-example so the theorist knows
+    # the *consequence* of emitting the wrong form, not just that one
+    # form is preferred.
+    assert "dsl_untranslatable" in prompt
+
+
 def test_theorist_prompt_includes_three_worked_examples(tmp_path):
     prompt = _get_prompt(tmp_path)
     # The three examples have distinct headers. Verify all three appear.
