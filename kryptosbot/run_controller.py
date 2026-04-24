@@ -111,6 +111,27 @@ def parse_args() -> argparse.Namespace:
             "counterfactual; not currently scheduled."
         ),
     )
+    parser.add_argument(
+        "--verify-transport",
+        action="store_true",
+        help=(
+            "Before starting the main run, verify the direct-API and "
+            "subscription-SDK transports are alive. Halts with exit 1 "
+            "if either probe fails. See K4_RUN_PROTOCOL_R3.md §7. "
+            "Added after Campaign C attempt 1 (2026-04-24) wasted "
+            "~3 hours on a silently-throttled subscription transport."
+        ),
+    )
+    parser.add_argument(
+        "--verify-transport-timeout",
+        type=int,
+        default=60,
+        help=(
+            "Per-probe timeout in seconds for --verify-transport "
+            "(default: 60). Each probe has its own budget of this "
+            "length."
+        ),
+    )
     return parser.parse_args()
 
 
@@ -481,6 +502,29 @@ async def do_run(config: ControllerConfig) -> None:
 async def main() -> None:
     args = parse_args()
     _configure_logging(args.quiet)
+
+    # Transport pre-flight gate. Runs direct-API + subscription-SDK
+    # probes before any controller state is loaded so a flaky
+    # transport halts early without touching the ledger.
+    if args.verify_transport:
+        from datetime import datetime, timezone
+        from kryptosbot.transport_preflight import verify_transport as _verify
+
+        ts = datetime.now(timezone.utc).isoformat()
+        print(f"[{ts}] transport-verify: running pre-flight probes "
+              f"(per-probe timeout={args.verify_transport_timeout}s)")
+        ok, summary = _verify(timeout_sec=args.verify_transport_timeout)
+        ts_done = datetime.now(timezone.utc).isoformat()
+        print(f"[{ts_done}] transport-verify result:")
+        print(summary)
+        if not ok:
+            print(
+                f"[{ts_done}] HALT: transport verification failed — "
+                "refusing to launch main run. Wait for a fresh "
+                "subscription window or diagnose the failing probe."
+            )
+            sys.exit(1)
+        print(f"[{ts_done}] transport-verify: PROCEED")
 
     project_root = _ROOT
     # Campaign-C flag semantics (2026-04-24):
