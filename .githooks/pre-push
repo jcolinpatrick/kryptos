@@ -53,15 +53,33 @@ while read -r local_ref local_sha remote_ref remote_sha; do
     range_args=("$remote_sha..$local_sha")
   fi
 
-  # Get all paths touched in this range (across all commits)
-  changed_paths=$(git log --name-only --pretty=format: "${range_args[@]}" 2>/dev/null \
-                  | sort -u | grep -v '^$' || true)
+  # Get path:status touched in this range. We block ADDITIONS and
+  # MODIFICATIONS of forbidden paths but ALLOW DELETIONS — deleting a
+  # previously-leaked forbidden path is exactly what publish-cleanup does.
+  # `git log --name-status` prefixes each path with one of: A (added),
+  # M (modified), D (deleted), R (renamed), C (copied).
+  changed_status=$(git log --name-status --pretty=format: "${range_args[@]}" 2>/dev/null \
+                   | sort -u | grep -v '^$' || true)
 
-  if [ -z "$changed_paths" ]; then
+  if [ -z "$changed_status" ]; then
     continue
   fi
 
-  matches=$(echo "$changed_paths" | grep -E "$FORBIDDEN_REGEX" || true)
+  # Keep only non-deletion operations on forbidden paths.
+  # Lines look like:  "A\t<internal>/foo.py"  or  "M\t<internal>/phase_R3_01.md"
+  # Deletions look like: "D\t<internal>/foo.py" — these are PERMITTED.
+  # Renames look like "R100\told\tnew" — we treat the new path's prefix as relevant.
+  matches=$(echo "$changed_status" | awk -F'\t' -v re="$FORBIDDEN_REGEX" '
+    {
+      op = $1
+      sub(/[0-9]+$/, "", op)  # strip "100" off "R100" etc.
+      if (op == "D") next     # deletion of forbidden path is allowed
+      # For renames the new path is in $3
+      path = (op == "R" || op == "C") ? $3 : $2
+      if (path ~ re) print op "\t" path
+    }
+  ')
+
   if [ -n "$matches" ]; then
     echo "" >&2
     echo "PRE-PUSH BLOCK: refusing to push to $remote_name ($remote_url)" >&2
