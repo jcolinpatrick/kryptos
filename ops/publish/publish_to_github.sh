@@ -189,13 +189,13 @@ echo ""
 echo "Summary: $applied applied, $skipped_empty skipped (no public changes), $skipped_failed skipped (apply failures)"
 echo ""
 
-# Verify _publish has no forbidden paths
-violations=$(git diff origin/main.._publish --name-only 2>/dev/null | grep -E "$FORBIDDEN_REGEX" || true)
+# Verify _publish has no forbidden paths in its CURRENT TREE (not in the
+# diff — diffing includes intentional deletions, which would false-positive).
+violations=$(git ls-tree -r _publish --name-only 2>/dev/null | grep -E "$FORBIDDEN_REGEX" || true)
 if [ -n "$violations" ]; then
-  echo "ERROR: _publish branch contains forbidden paths:" >&2
+  echo "ERROR: _publish branch tree contains forbidden paths:" >&2
   echo "$violations" | sed 's/^/  /' >&2
   echo "Aborting." >&2
-  git checkout main >/dev/null 2>&1
   exit 1
 fi
 
