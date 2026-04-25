@@ -365,6 +365,72 @@ class TestQuagmire:
         shift = quagmire_recover_key(ct, pt, indicator="A")
         assert shift == 3  # D is shift 3 from A
 
+    def test_k1_groundtruth(self):
+        # K1 is Quagmire III with the KRYPTOS-mixed tableau and cycleword
+        # PALIMPSEST. Both PT and CT use the same mixed alphabet; indicator
+        # is 'K' (the first letter of the mixed alphabet, zero-shift row).
+        from kryptos.kernel.transforms.quagmire import quagmire_encrypt, quagmire_decrypt
+        K1_PT = (
+            "BETWEENSUBTLESHADINGANDTHEABSENCEOFLIGHTLIESTHENUANCEOFIQLUSION"
+        )
+        K1_CT = (
+            "EMUFPHZLRFAXYUSDJKZLDKRNSHGNFIVJYQTQUXQBQVYUVLLTREVJYQTMKYRDMFD"
+        )
+        ct = quagmire_encrypt(
+            K1_PT, period_keyword="PALIMPSEST",
+            ct_alphabet_keyword="KRYPTOS",
+            pt_alphabet_keyword="KRYPTOS",
+            indicator="K",
+        )
+        assert ct == K1_CT
+        pt = quagmire_decrypt(
+            K1_CT, period_keyword="PALIMPSEST",
+            ct_alphabet_keyword="KRYPTOS",
+            pt_alphabet_keyword="KRYPTOS",
+            indicator="K",
+        )
+        assert pt == K1_PT
+
+    def test_k2_groundtruth(self):
+        # K2 is Quagmire III with the KRYPTOS-mixed tableau and cycleword
+        # ABSCISSA. Same calling convention as K1.
+        from kryptos.kernel.transforms.quagmire import quagmire_decrypt
+        K2_CT_PREFIX = (
+            "VFPJUDEEHZWETZYVGWHKKQETGFQJNCEGGWHKK"
+            "DQMCPFQZDQMMIAGPFXHQRLGTIMVMZJANQLVKQEDAGDV"
+        )
+        K2_PT_PREFIX = (
+            "ITWASTOTALLYINVISIBLEHOWSTHATPOSSIBLE"
+            "THEYUSEDTHEEARTHSMAGNETICFIELDXTHEINFORMATI"
+        )
+        assert len(K2_CT_PREFIX) == len(K2_PT_PREFIX) == 80
+        pt = quagmire_decrypt(
+            K2_CT_PREFIX, period_keyword="ABSCISSA",
+            ct_alphabet_keyword="KRYPTOS",
+            pt_alphabet_keyword="KRYPTOS",
+            indicator="K",
+        )
+        assert pt == K2_PT_PREFIX
+
+    def test_k1_foot_gun_does_not_roundtrip(self):
+        # Foot-gun guard: the "obvious" Q III call (ct_alphabet_keyword only,
+        # indicator='A') does NOT reproduce K1. Pin this so anyone who later
+        # "fixes" the math by flipping a sign catches the change here instead
+        # of in a silent drift of campaign results.
+        from kryptos.kernel.transforms.quagmire import quagmire_decrypt
+        K1_CT = (
+            "EMUFPHZLRFAXYUSDJKZLDKRNSHGNFIVJYQTQUXQBQVYUVLLTREVJYQTMKYRDMFD"
+        )
+        K1_PT = (
+            "BETWEENSUBTLESHADINGANDTHEABSENCEOFLIGHTLIESTHENUANCEOFIQLUSION"
+        )
+        pt = quagmire_decrypt(
+            K1_CT, period_keyword="PALIMPSEST",
+            ct_alphabet_keyword="KRYPTOS",
+            indicator="A",
+        )
+        assert pt != K1_PT
+
 
 class TestAutokey:
     """Tests for autokey cipher."""

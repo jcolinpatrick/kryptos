@@ -2,10 +2,12 @@
 """
 Cipher:   columnar_w10 + Quagmire III (KRYPTOS alphabet, ABSCISSA keyword)
 Family:   campaigns
-Status:   active
-Keyspace: 4 candidates (the 4 w10 Bean-survivors from f_archive_col_notation_v1)
-Last run: never
-Best score: N/A
+Status:   exhausted
+Keyspace: 2 candidates (the 2 canonical w10 Bean-survivors from
+          f_archive_col_notation_v1; the 4 raw entries in v1 collapse to
+          2 distinct orderings under the Vig/VarBeau Bean symmetry)
+Last run: 2026-04-21
+Best score: 1  (verdict EMPTY; see results/f_w10_quagmire_iii_v1.json)
 
 ============================================================================
 W10 + QUAGMIRE III (K2 CONTINUITY) CAMPAIGN v1
@@ -18,10 +20,14 @@ This campaign tests Quagmire III (the K2-canonical construction) on the
 same 4 survivors.
 
 Rationale (clue-surface continuity): K2 was solved as Quagmire III with:
-    - indicator/period keyword  =  ABSCISSA
+    - period keyword            =  ABSCISSA
     - CT alphabet keyword       =  KRYPTOS (giving the mixed alphabet
                                    KRYPTOSABCDEFGHIJLMNQUVWXZ)
-    - PT alphabet               =  standard A-Z
+    - PT alphabet keyword       =  KRYPTOS (same mixed alphabet as CT;
+                                   canonical Q III uses ONE mixed alphabet
+                                   on both sides)
+    - indicator                 =  K      (first letter of the mixed
+                                   alphabet = zero-shift row)
 
 If K4 also uses Quagmire III as an inner substitution layer composed
 with a columnar transposition layer, and the column width is 10, then
@@ -105,7 +111,18 @@ W10_SURVIVORS: Tuple[Tuple[int, ...], ...] = (
 
 QUAGMIRE_PERIOD_KEYWORD = "ABSCISSA"
 QUAGMIRE_CT_ALPHABET_KEYWORD = "KRYPTOS"
-QUAGMIRE_INDICATOR = "A"  # K2 canonical
+QUAGMIRE_PT_ALPHABET_KEYWORD = "KRYPTOS"  # canonical Q III: same mixed
+#                                           alphabet on both sides
+QUAGMIRE_INDICATOR = "K"  # K2 canonical: first letter of KRYPTOS-mixed
+#                           alphabet = zero-shift reference row. Pinned
+#                           by tests/test_transforms.py::TestQuagmire
+#                           ::test_k2_groundtruth (landed 2026-04-21).
+#
+# History: prior to 2026-04-21 this file carried
+# QUAGMIRE_INDICATOR = "A" and omitted QUAGMIRE_PT_ALPHABET_KEYWORD.
+# That configuration does NOT reproduce K2's plaintext under
+# kernel.transforms.quagmire (verified 2026-04-21). Fixed to the
+# K2-canonical convention before the first real run.
 
 
 # ── Columnar inverse (duplicated from v1 for self-contained reproduction) ──
@@ -252,6 +269,7 @@ def main() -> int:
         "quagmire_config": {
             "period_keyword": QUAGMIRE_PERIOD_KEYWORD,
             "ct_alphabet_keyword": QUAGMIRE_CT_ALPHABET_KEYWORD,
+            "pt_alphabet_keyword": QUAGMIRE_PT_ALPHABET_KEYWORD,
             "indicator": QUAGMIRE_INDICATOR,
         },
         "w10_survivors_tested": [list(c) for c in W10_SURVIVORS],
@@ -271,6 +289,7 @@ def main() -> int:
             QUAGMIRE_PERIOD_KEYWORD,
             indicator=QUAGMIRE_INDICATOR,
             ct_alphabet_keyword=QUAGMIRE_CT_ALPHABET_KEYWORD,
+            pt_alphabet_keyword=QUAGMIRE_PT_ALPHABET_KEYWORD,
         )
         cand = _score(plaintext, col_order)
         record["candidates"].append(cand.as_dict())
