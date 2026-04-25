@@ -6,7 +6,7 @@
 
 <p align="center">
   <strong>An open-source computational analysis of Kryptos K4</strong><br>
-  671 billion+ configurations evaluated across recorded experiments. 494 eliminations recorded. Zero verified breakthroughs.
+  671 billion+ configurations evaluated across recorded experiments. 1,000+ experiment scripts. Zero verified breakthroughs.
 </p>
 
 <p align="center">
@@ -20,9 +20,9 @@
 
 ## What is this?
 
-**Kryptos** is an encrypted sculpture at CIA headquarters in Langley, Virginia. Installed in 1990 by artist Jim Sanborn with cryptographic assistance from Ed Scheidt (retired Chairman of the CIA Cryptographic Center), it contains four encrypted messages. The first three (K1–K3) were solved in 1998–1999. **The fourth, K4, remains unsolved after 35 years.**
+**Kryptos** is an encrypted sculpture at CIA headquarters in Langley, Virginia. Installed in 1990 by artist Jim Sanborn with cryptographic assistance from Ed Scheidt (retired Chairman of the CIA Cryptographic Center), it contains four encrypted messages. The first three (K1–K3) were solved in 1998–1999. **The fourth, K4, remains unsolved after 36 years.**
 
-This repository is a systematic attempt to solve K4 — or at least to rigorously document what doesn't work within clearly stated assumptions.
+This repository is a systematic attempt to solve K4. At a minimum, it rigorously documents what doesn't work within clearly stated assumptions.
 
 ### K4 at a glance
 
@@ -36,7 +36,7 @@ This repository is a systematic attempt to solve K4 — or at least to rigorousl
 ## What's here
 
 ```
-src/kryptos/          # Core library — cipher transforms, scoring, constraints
+src/kryptos/          # Core library: cipher transforms, scoring, constraints
   kernel/             #   Pure computation: alphabets, transforms, Bean constraints
     scoring/          #     Crib scoring, n-gram analysis, IC
   pipeline/           #   Candidate evaluation and parallel sweep runner
@@ -44,7 +44,7 @@ src/kryptos/          # Core library — cipher transforms, scoring, constraints
   corpus/             #   Egyptological corpus for running-key testing
   cli/                #   Command-line tools (sweep, reproduce, novelty, report)
 
-scripts/              # ~900 experiment scripts organized by cipher family
+scripts/              # 1,000+ experiment scripts organized by cipher family
   substitution/       #   Vigenere, Beaufort, Hill, monoalphabetic, etc.
   transposition/      #   Columnar, rail fence, route, grid-based
   fractionation/      #   Bifid, Trifid, ADFGVX, Playfair
@@ -52,13 +52,14 @@ scripts/              # ~900 experiment scripts organized by cipher family
   polyalphabetic/     #   Kasiski analysis, period detection
   running_key/        #   Book ciphers, thematic running keys
   encoding/           #   Morse (K0), misspelling analysis, binary tests
+  campaigns/          #   Structured multi-stage campaigns (preregistered)
   ...and more
 
-tests/                # Unit, QA, and benchmark tests
+tests/                # 1,500+ unit, QA, and benchmark tests
 bench/                # Cipher-solving benchmark framework
 ops/site_builder/     # Static site generator for kryptosbot.com
 ops/api/              # FastAPI backend (theory classifier, submission queue)
-kryptosbot/           # Multi-agent campaign runner (Claude Agent SDK)
+ops/publish/          # Publishing workflow (filtered push to GitHub)
 ```
 
 ## Quick start
@@ -92,7 +93,7 @@ Every candidate decryption is scored against known constraints:
 | 0-9   | Noise         | Expected random performance |
 | 10-17 | Interesting   | Worth logging, likely noise |
 | 18-23 | Signal        | Unusual within tested scope; requires follow-up and validation |
-| 24    | Breakthrough  | All cribs match — potential solution |
+| 24    | Breakthrough  | All cribs match; potential solution |
 
 The score is based on crib consistency (do the known plaintext positions produce a valid keystream?), Bean constraints (equality/inequality relationships between key positions), index of coincidence, and n-gram quality.
 
@@ -102,24 +103,25 @@ The score is based on crib consistency (do the known plaintext positions produce
 
 The [kryptosbot.com](https://kryptosbot.com/browse/) site currently documents 494 formal eliminations across 7 categories:
 
-- **Substitution** — Vigenere, Beaufort, Quagmire, Hill, Caesar, mixed alphabets
-- **Transposition** — Columnar, double-columnar, AMSCO, Myszkowski, rail fence, route, grille
-- **Fractionation** — Bifid, Trifid, ADFGVX, Playfair, four-square (structurally eliminated under direct correspondence)
-- **Multi-layer** — Substitution + transposition combinations, null extraction, three-layer cascades
-- **Key models** — Running keys, autokey (structurally eliminated), progressive, Fibonacci, date-derived
-- **Bespoke** — RS44, VIC, Wheatstone, Weltzeituhr, DRYAD charts, NATO/COMSEC
-- **Uncategorized** — Morse-derived, encoding schemes, sculpture-physical hypotheses
+- **Substitution.** Vigenere, Beaufort, Quagmire, Hill, Caesar, mixed alphabets.
+- **Transposition.** Columnar, double-columnar, AMSCO, Myszkowski, rail fence, route, grille.
+- **Fractionation.** Bifid, Trifid, ADFGVX, Playfair, four-square (structurally eliminated under direct correspondence).
+- **Multi-layer.** Substitution + transposition combinations, null extraction, three-layer cascades.
+- **Key models.** Running keys, autokey (structurally eliminated), progressive, Fibonacci, date-derived.
+- **Bespoke.** RS44, VIC, Wheatstone, Weltzeituhr, DRYAD charts, NATO/COMSEC.
+- **Uncategorized.** Morse-derived, encoding schemes, sculpture-physical hypotheses.
 
 **Important caveat:** These eliminations are always scoped to the assumptions actually tested. Single-layer eliminations do not rule out the same cipher family as one layer of a multi-layer construction.
 
 ## Working hypotheses
 
-None of these are proven. They represent live hypothesis surfaces or residual coverage gaps.
+None of these are proven. They represent live hypothesis surfaces or residual coverage gaps. Status as of April 2026.
 
-1. **Two systems** — Sanborn's 1990 dedication speech states K4 uses "two systems of enciphering," distinct from the Vigenere used for K1-K3. That public statement is evidence; any specific mechanistic interpretation remains a hypothesis.
-2. **W-delimiter structural hypothesis** — The five carved `W`s at positions 20, 36, 48, 58, and 74 explain the old width-21 anomaly. This does **not** prove the `W`s are delimiters, nulls, or row markers, but it makes `W`-bounded segmentation one of the main live structural surfaces.
-3. **Null insertion / procedural markers** — Some positions in K4 may be filler or marker symbols. The number, placement, and interpretation remain unknown. The older "null palette" family is retired and should not be treated as evidence.
-4. **Residual running-key / non-periodic additive models** — Within additive-key assumptions and direct correspondence, running-key style models remain an open residual family. That is a scoped statement, not a global claim about all possible K4 constructions.
+1. **Two systems.** Sanborn's 1990 dedication speech states K4 uses "two systems of enciphering," distinct from the Vigenere used for K1-K3. That public statement is evidence; any specific mechanistic interpretation remains a hypothesis.
+2. **CT perturbation.** The currently primary anomaly surface. Evidence from photographed coding charts in Sanborn's archive at the Smithsonian suggests the canonical 97-character ciphertext may include a small number of transcription errors. If real, modest CT corrections could unlock cipher families that currently fail by a small margin. Open and actively explored.
+3. **W-delimiter structural hypothesis.** The five carved `W`s at positions 20, 36, 48, 58, and 74 explain the old width-21 vertical-bigram anomaly. As a *single-layer* construction the W-segmentation hypothesis has been saturated (80+ tested, no signal); it remains admissible as one layer within multi-layer constructions. Whether the `W`s are delimiters, nulls, row markers, or something else remains open.
+4. **Null insertion or procedural markers.** Some positions in K4 may be filler or marker symbols. The number, placement, and interpretation remain unknown. The older statistical "null palette" family is retired and should not be treated as evidence.
+5. **Residual running-key and non-periodic additive models.** Within additive-key assumptions and direct correspondence, running-key style models remain an open residual family. That is a scoped statement, not a global claim about all possible K4 constructions.
 
 See [docs/research_questions.md](docs/research_questions.md) for the full list of open questions.
 
@@ -127,7 +129,7 @@ See [docs/research_questions.md](docs/research_questions.md) for the full list o
 
 The whole point of open-sourcing this is to get more eyes on K4.
 
-**Try a theory:** Use the [browser workbench](https://kryptosbot.com/workbench/) — no install needed. Apply transpositions and substitutions, see crib scores in real time.
+**Try a theory:** Use the [browser workbench](https://kryptosbot.com/workbench/), no install needed. Apply transpositions and substitutions, see crib scores in real time.
 
 **Submit a theory:** Use [kryptosbot.com/submit](https://kryptosbot.com/submit/) to check if your idea has already been tested. Novel feasible theories are queued for evaluation.
 
@@ -137,10 +139,10 @@ The whole point of open-sourcing this is to get more eyes on K4.
 
 ## Key references
 
-- [Bean 2021](https://ecp.ep.liu.se/index.php/histocrypt/article/view/153) — "Cryptodiagnosis of Kryptos K4," HistoCrypt 2021
-- [Elonka Dunin's Kryptos page](https://elonka.com/kryptos/) — Community hub and transcription
-- [Ed Scheidt dossier](reference/ed_scheidt_dossier.md) — What the co-creator has revealed
-- [Sanborn's open letter (Aug 2025)](reference/sanborn_open_letter_aug2025.md) — AI verification, K5 confirmed
+- [Bean 2021](https://ecp.ep.liu.se/index.php/histocrypt/article/view/153): "Cryptodiagnosis of Kryptos K4," HistoCrypt 2021.
+- [Elonka Dunin's Kryptos page](https://elonka.com/kryptos/): community hub and transcription.
+- [Ed Scheidt dossier](reference/ed_scheidt_dossier.md): what the co-creator has revealed.
+- [Sanborn's open letter (Aug 2025)](reference/sanborn_open_letter_aug2025.md): AI verification, K5 confirmed.
 
 ## Credits
 
