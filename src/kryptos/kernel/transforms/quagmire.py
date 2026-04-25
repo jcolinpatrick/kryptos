@@ -2,11 +2,44 @@
 
 Quagmire I:   keyword-mixed PT alphabet, standard CT alphabet
 Quagmire II:  standard PT alphabet, keyword-mixed CT alphabet
-Quagmire III: keyword-mixed CT alphabet, standard PT alphabet, shifted by keyword
-Quagmire IV:  keyword-mixed PT and CT alphabets
+Quagmire III: SAME keyword-mixed alphabet used as both PT and CT alphabet
+Quagmire IV:  keyword-mixed PT and CT alphabets (different keywords)
 
-For K4, Quagmire III is most relevant — equivalent to Vigenère with a
-keyword-mixed tableau row.
+For K4, Quagmire III is most relevant — K1 and K2 use Quagmire III with
+the KRYPTOS-mixed tableau.
+
+=== K1/K2 CALLING CONVENTION (IMPORTANT) ===
+
+K1 and K2 are Quagmire III under the canonical ACA definition: both PT and
+CT use the same keyword-mixed alphabet. To reproduce K1/K2 with the
+functions below, you MUST pass the keyword-mixed alphabet for BOTH
+``ct_alphabet_keyword`` AND ``pt_alphabet_keyword``, and use
+``indicator='K'`` (the first letter of the mixed alphabet):
+
+    quagmire_decrypt(
+        K1_CT, period_keyword="PALIMPSEST",
+        ct_alphabet_keyword="KRYPTOS",
+        pt_alphabet_keyword="KRYPTOS",
+        indicator="K",
+    )
+
+Calling the function with only ``ct_alphabet_keyword`` set (leaving
+``pt_alphabet_keyword`` at its default ``""``, i.e. standard A-Z) implements
+a DIFFERENT mechanism — not the Quagmire III that K1/K2 use. It does not
+reproduce K1 or K2 regardless of ``indicator`` value. This is a real
+distinction, not an API quirk: the underlying math is different.
+
+The ``indicator`` parameter selects which letter of the CT (and PT)
+keyword-mixed alphabet aligns with the zero-shift row. ``indicator='K'``
+means "the first letter of the KRYPTOS-mixed alphabet is the zero-shift
+reference"; ``indicator='A'`` means "the letter A of the mixed alphabet
+(which sits at position 7 for KRYPTOS) is the zero-shift reference".
+These produce different ciphertexts and only one of them is the K1/K2
+ground truth for a given ``period_keyword``.
+
+The K1/K2 round-trip is pinned by ``test_transforms.py`` tests named
+``test_k1_groundtruth`` and ``test_k2_groundtruth``; if you change this
+module's math, those will fail first.
 """
 from __future__ import annotations
 
