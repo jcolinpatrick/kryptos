@@ -118,3 +118,9 @@ docs/challenge_k4_solution.md
 # Personal research notes: on-disk but not tracked
 reference/Notes/
 reference/parse_stats.txt
+
+# Synthetic-signal calibration bundles — deterministic outputs of
+# scripts/_infra/synth_signal/build_synthetic.py, reproducible from the
+# spec doc. Not load-bearing artifacts.
+# (Anchored to repo root — does NOT match scripts/_infra/synth_signal/.)
+/synth_signal/
