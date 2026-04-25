@@ -137,10 +137,17 @@ for c in $commits; do
     continue
   fi
 
-  # Apply the filtered diff
-  if ! git apply --index --reject --whitespace=nowarn "$diff_file" 2>/dev/null; then
+  # Apply the filtered diff. Try 3-way merge first (resilient against
+  # context drift), fall back to plain apply, then to cherry-pick.
+  applied_ok=0
+  if git apply --index --3way --whitespace=nowarn "$diff_file" 2>/dev/null; then
+    applied_ok=1
+  elif git apply --index --whitespace=nowarn "$diff_file" 2>/dev/null; then
+    applied_ok=1
+  fi
+  if [ "$applied_ok" = "0" ]; then
     rm -f "$diff_file"
-    # Fallback: try git cherry-pick (3-way merge) + active filter
+    # Final fallback: git cherry-pick (3-way merge from the original commit) + active filter
     if git cherry-pick --no-commit "$c" 2>/dev/null; then
       # Remove any forbidden paths the cherry-pick may have introduced
       forbidden_in_stage=$(git diff --cached --name-only | grep -E "$FORBIDDEN_REGEX" || true)
@@ -166,7 +173,7 @@ for c in $commits; do
     fi
     git reset --hard >/dev/null 2>&1
     git cherry-pick --abort 2>/dev/null || true
-    echo "  ! $short (apply + cherry-pick both failed) — skipping: $subject" >&2
+    echo "  ! $short (3-way + plain apply + cherry-pick all failed) — skipping: $subject" >&2
     skipped_failed=$((skipped_failed + 1))
     continue
   fi
