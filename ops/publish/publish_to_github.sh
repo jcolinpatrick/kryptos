@@ -48,7 +48,8 @@ PUBLIC_PATHSPECS=(
 
 FORBIDDEN_REGEX='^(kryptosbot/|scripts/_infra/calibrate_null_baselines|tests/test_polybius_scorer\.py$|tests/test_kryptosbot_oracle_hardening\.py$|tests/test_historical_eliminations\.py$|docs/maturation/phase_|docs/maturation/round2/|docs/maturation/round3/phase_R3|docs/maturation/round3/CLAUDE_CODE_BRIEF|docs/maturation/round3/CURRENT_WORKER_PATH|docs/maturation/round3/DSL_CUTOVER_CONTRACT|docs/maturation/round3/SUMMARY\.md$|docs/maturation/SUMMARY\.md$)'
 
-cd "$(git rev-parse --show-toplevel)"
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+cd "$REPO_ROOT"
 
 current_branch=$(git rev-parse --abbrev-ref HEAD)
 if [ "$current_branch" != "main" ]; then
@@ -56,8 +57,11 @@ if [ "$current_branch" != "main" ]; then
   exit 1
 fi
 
-if ! git diff --quiet || ! git diff --cached --quiet; then
-  echo "ERROR: working tree has uncommitted changes; commit or stash first." >&2
+# Refuse if the index has STAGED changes (those would taint the cherry-picks).
+# Unstaged worktree dirt (e.g., pre-existing modifications to kryptosbot/) is
+# fine — we run the publish in an isolated git worktree.
+if ! git diff --cached --quiet; then
+  echo "ERROR: index has staged changes; commit or unstage before publishing." >&2
   exit 1
 fi
 
@@ -73,9 +77,15 @@ fi
 echo "Found $unpushed unpushed commit(s) on main."
 echo ""
 
-# Build the temporary publish branch from origin/main
+# Build the temporary publish in an isolated worktree so we don't touch
+# the operator's working tree (which may legitimately carry uncommitted
+# private-side modifications).
+WORKTREE_DIR="$(mktemp -d -t kryptos-publish-XXXXXX)"
+trap 'cd "$REPO_ROOT"; git worktree remove --force "$WORKTREE_DIR" 2>/dev/null || true; rm -rf "$WORKTREE_DIR"' EXIT
+
 git branch -D _publish 2>/dev/null || true
-git checkout -B _publish origin/main >/dev/null 2>&1
+git worktree add -B _publish "$WORKTREE_DIR" origin/main >/dev/null 2>&1
+cd "$WORKTREE_DIR"
 
 commits=$(git rev-list --reverse origin/main..main)
 total=$(echo "$commits" | wc -l)
@@ -149,13 +159,13 @@ git diff origin/main.._publish --stat | tail -20
 echo ""
 
 if [ "$MODE" = "dry_run" ]; then
-  echo "DRY RUN — _publish branch is built locally; not pushing."
-  echo "  Review:  git log origin/main.._publish --oneline"
-  echo "  Diff:    git diff origin/main.._publish"
-  echo "  Push:    ops/publish/publish_to_github.sh --push"
+  echo "DRY RUN — _publish branch built in isolated worktree; not pushing."
+  echo "  Review:    git log origin/main.._publish --oneline"
+  echo "  Full diff: git diff origin/main.._publish"
+  echo "  Push:      ops/publish/publish_to_github.sh --push"
   echo ""
-  echo "Returning to main branch."
-  git checkout main >/dev/null 2>&1
+  echo "(The temporary worktree at $WORKTREE_DIR is auto-cleaned on script exit;"
+  echo " the _publish branch ref is retained in the main repo for inspection.)"
   exit 0
 fi
 
@@ -163,8 +173,7 @@ if [ "$MODE" = "interactive" ]; then
   echo "Push _publish to origin/main? [y/N]"
   read -r answer
   if [ "${answer:-N}" != "y" ] && [ "${answer:-N}" != "Y" ]; then
-    echo "Cancelled. _publish branch retained for inspection."
-    git checkout main >/dev/null 2>&1
+    echo "Cancelled. _publish branch retained for inspection in the main repo."
     exit 0
   fi
 fi
@@ -186,8 +195,5 @@ fi
 echo "✓ origin/main contains 0 forbidden paths."
 
 echo ""
-echo "Restoring main branch."
-git checkout main >/dev/null 2>&1
-
-echo ""
-echo "Publish complete. _publish branch retained — run 'git branch -D _publish' to clean up."
+echo "Publish complete. _publish branch retained in the main repo."
+echo "Worktree auto-cleans on script exit."
