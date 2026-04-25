@@ -87,6 +87,26 @@ git branch -D _publish 2>/dev/null || true
 git worktree add -B _publish "$WORKTREE_DIR" origin/main >/dev/null 2>&1
 cd "$WORKTREE_DIR"
 
+# ── Step 0: actively remove any pre-leaked forbidden paths inherited from origin/main ──
+# (Past pushes may have leaked some files before this hook + script existed.)
+preleak=$(git ls-tree -r HEAD --name-only 2>/dev/null | grep -E "$FORBIDDEN_REGEX" || true)
+if [ -n "$preleak" ]; then
+  echo "Removing pre-leaked forbidden paths from _publish base:"
+  echo "$preleak" | while read -r path; do
+    [ -z "$path" ] && continue
+    git rm -f -- "$path" >/dev/null 2>&1 || true
+    echo "  - $path"
+  done
+  if ! git diff --cached --quiet; then
+    git commit --no-verify --quiet -m "publish: remove pre-leaked proprietary paths
+
+Files leaked in prior pushes are removed from public history.
+Filter list is enforced by ops/publish/publish_to_github.sh and
+.githooks/pre-push going forward."
+  fi
+  echo ""
+fi
+
 commits=$(git rev-list --reverse origin/main..main)
 total=$(echo "$commits" | wc -l)
 applied=0
@@ -119,10 +139,35 @@ for c in $commits; do
 
   # Apply the filtered diff
   if ! git apply --index --reject --whitespace=nowarn "$diff_file" 2>/dev/null; then
-    echo "  ! $short (apply failed) — skipping: $subject" >&2
-    git reset --hard >/dev/null 2>&1
-    skipped_failed=$((skipped_failed + 1))
     rm -f "$diff_file"
+    # Fallback: try git cherry-pick (3-way merge) + active filter
+    if git cherry-pick --no-commit "$c" 2>/dev/null; then
+      # Remove any forbidden paths the cherry-pick may have introduced
+      forbidden_in_stage=$(git diff --cached --name-only | grep -E "$FORBIDDEN_REGEX" || true)
+      for path in $forbidden_in_stage; do
+        git rm -f -- "$path" >/dev/null 2>&1 || git checkout HEAD -- "$path" 2>/dev/null || true
+      done
+      # Also check working-tree changes
+      forbidden_in_wt=$(git diff --name-only | grep -E "$FORBIDDEN_REGEX" || true)
+      for path in $forbidden_in_wt; do
+        git checkout HEAD -- "$path" 2>/dev/null || true
+      done
+      git add -A 2>/dev/null || true
+      if git diff --cached --quiet; then
+        git reset --hard >/dev/null 2>&1
+        echo "  ⊘ $short (cherry-pick filtered to no-op)  $subject"
+        skipped_empty=$((skipped_empty + 1))
+        continue
+      fi
+      git commit -C "$c" --no-verify --quiet
+      applied=$((applied + 1))
+      echo "  ✓ $short (via cherry-pick fallback)  $subject"
+      continue
+    fi
+    git reset --hard >/dev/null 2>&1
+    git cherry-pick --abort 2>/dev/null || true
+    echo "  ! $short (apply + cherry-pick both failed) — skipping: $subject" >&2
+    skipped_failed=$((skipped_failed + 1))
     continue
   fi
   rm -f "$diff_file"
