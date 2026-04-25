@@ -4,17 +4,64 @@ Every other module must import from here — never define CT, cribs,
 or Bean constraints independently.
 
 All positions are 0-indexed.
+
+=== SYNTHETIC MODE (calibration use only) ===
+
+If the environment variable ``KRYPTOS_CT_OVERRIDE`` is set at module-import
+time, this module loads the override CT instead of the real K4 ciphertext
+and propagates it through Bean derivation. This is intended ONLY for
+controlled synthetic-signal calibration runs (see
+``<internal>/SYNTHETIC_SIGNAL_CALIBRATION_SPEC.md``); synthetic
+results MUST never be merged with real-K4 work.
+
+The override:
+- replaces ``CT`` with the override string (which must be 97 uppercase A-Z chars),
+- prints a stderr warning at import,
+- gates K4-specific assertions in ``_verify()`` (CT boundary, self-encrypt
+  positions, Bean inequality count, Bean linear count) so they don't fire
+  on synthetic CTs whose derivation differs from K4's.
+
+Crib positions and content are NOT overridden — synthetic plaintexts must
+contain ``EASTNORTHEAST`` at 21-33 and ``BERLINCLOCK`` at 63-73 verbatim
+to keep the rest of the kernel coherent.
+
+The boolean ``_SYNTHETIC_MODE`` is exported for downstream sentinel
+handling (e.g., DB taint files, log warnings).
 """
 from __future__ import annotations
 
+import os
+import sys
 from typing import Dict, FrozenSet, Tuple
 
-# ── Ciphertext ────────────────────────────────────────────────────────────
+# ── Ciphertext (real K4 by default; overridable for synthetic calibration) ──
 
-CT: str = (
-    "OBKRUOXOGHULBSOLIFBBWFLRVQQPRNGKSSOTWTQSJQSSEKZZWAT"
-    "JKLUDIAWINFBNYPVTTMZFPKWGDKZXTJCDIGKUHUAUEKCAR"
-)
+_CT_OVERRIDE: str | None = os.environ.get("KRYPTOS_CT_OVERRIDE")
+_SYNTHETIC_MODE: bool = _CT_OVERRIDE is not None
+
+if _SYNTHETIC_MODE:
+    assert _CT_OVERRIDE is not None  # for type-checker
+    if len(_CT_OVERRIDE) != 97:
+        raise ValueError(
+            f"KRYPTOS_CT_OVERRIDE must be exactly 97 chars; got {len(_CT_OVERRIDE)}"
+        )
+    if not _CT_OVERRIDE.isalpha() or not _CT_OVERRIDE.isupper():
+        raise ValueError(
+            "KRYPTOS_CT_OVERRIDE must be uppercase A-Z only"
+        )
+    CT: str = _CT_OVERRIDE
+    print(
+        f"[kryptos.kernel.constants] WARNING: KRYPTOS_CT_OVERRIDE active. "
+        f"Synthetic CT loaded ({_CT_OVERRIDE[:8]}...{_CT_OVERRIDE[-8:]}). "
+        f"This is NOT real K4. Synthetic-mode results must not be merged "
+        f"with real K4 work; see <internal>/SYNTHETIC_SIGNAL_CALIBRATION_SPEC.md.",
+        file=sys.stderr,
+    )
+else:
+    CT: str = (
+        "OBKRUOXOGHULBSOLIFBBWFLRVQQPRNGKSSOTWTQSJQSSEKZZWAT"
+        "JKLUDIAWINFBNYPVTTMZFPKWGDKZXTJCDIGKUHUAUEKCAR"
+    )
 CT_LEN: int = 97
 
 # ── Standard alphabet ─────────────────────────────────────────────────────
@@ -50,7 +97,34 @@ SELF_ENCRYPTING: Dict[int, str] = {32: "S", 73: "K"}
 
 # ── Bean constraints ──────────────────────────────────────────────────────
 
-BEAN_EQ: Tuple[Tuple[int, int], ...] = ((27, 65),)
+def _derive_bean_eq() -> Tuple[Tuple[int, int], ...]:
+    """Derive variant-independent Bean equality constraints.
+
+    A pair (a, b) is in BEAN_EQ iff the implied keystream values are
+    EQUAL under ALL three additive cipher variants (Vigenère, Beaufort,
+    Variant Beaufort). For real K4, this yields exactly ((27, 65),) —
+    the position pair where both CT and PT chars match (CT[27]=CT[65]=P,
+    PT[27]=PT[65]=R).
+
+    Under synthetic CTs the derivation runs against the override CT and
+    may produce a different (often empty) set; this is correct.
+    """
+    positions = sorted(CRIB_DICT.keys())
+    pairs: list[tuple[int, int]] = []
+    for i in range(len(positions)):
+        for j in range(i + 1, len(positions)):
+            a, b = positions[i], positions[j]
+            ca, pa = ALPH_IDX[CT[a]], ALPH_IDX[CRIB_DICT[a]]
+            cb, pb = ALPH_IDX[CT[b]], ALPH_IDX[CRIB_DICT[b]]
+            vig_eq = (ca - pa) % MOD == (cb - pb) % MOD
+            beau_eq = (ca + pa) % MOD == (cb + pb) % MOD
+            vbeau_eq = (pa - ca) % MOD == (pb - cb) % MOD
+            if vig_eq and beau_eq and vbeau_eq:
+                pairs.append((a, b))
+    return tuple(pairs)
+
+
+BEAN_EQ: Tuple[Tuple[int, int], ...] = _derive_bean_eq()
 
 def _derive_bean_ineq() -> Tuple[Tuple[int, int], ...]:
     """Derive the full variant-independent Bean inequality set.
@@ -164,22 +238,42 @@ IC_PRE_ENE: float = 0.0667    # Positions 0-20, suspiciously English-like
 # ── Import-time verification ─────────────────────────────────────────────
 
 def _verify() -> None:
-    """Verify all constants at import time. Raises AssertionError on failure."""
+    """Verify all constants at import time. Raises AssertionError on failure.
+
+    Under synthetic mode (``_SYNTHETIC_MODE`` True), K4-specific assertions
+    are skipped: CT boundary chars, self-encrypt positions, and the K4
+    Bean count invariants. Crib content and structural alphabet checks
+    still run unconditionally because they are properties of the kernel
+    contract, not of any specific CT.
+    """
+    # Always-on: structural invariants of the kernel contract
     assert len(CT) == CT_LEN, f"CT length {len(CT)} != {CT_LEN}"
-    assert CT[0] == "O" and CT[-1] == "R", "CT boundary check failed"
     assert CT.isalpha() and CT.isupper(), "CT must be uppercase A-Z"
     assert len(CRIB_ENTRIES) == N_CRIBS, f"Crib count {len(CRIB_ENTRIES)} != {N_CRIBS}"
     assert CRIB_DICT[21] == "E" and CRIB_DICT[33] == "T", "ENE crib check failed"
     assert CRIB_DICT[63] == "B" and CRIB_DICT[73] == "K", "BC crib check failed"
     assert 74 not in CRIB_DICT, "Position 74 should not be a crib"
-    assert CT[32] == CRIB_DICT[32] == "S", "Self-encrypt pos 32 failed"
-    assert CT[73] == CRIB_DICT[73] == "K", "Self-encrypt pos 73 failed"
+    assert CRIB_DICT[32] == "S", "Crib content @ 32 must be S"
+    assert CRIB_DICT[73] == "K", "Crib content @ 73 must be K"
     assert len(ALPH) == MOD and len(set(ALPH)) == MOD, "ALPH malformed"
     assert len(KRYPTOS_ALPHABET) == MOD and len(set(KRYPTOS_ALPHABET)) == MOD, "KA malformed"
     assert set(KRYPTOS_ALPHABET) == set(ALPH), "KA and ALPH char sets differ"
-    assert len(BEAN_EQ) == 1, "Expected 1 Bean equality"
-    assert len(BEAN_INEQ) == 242, f"Expected 242 Bean inequalities, got {len(BEAN_INEQ)}"
-    assert len(BEAN_LINEAR) == 101, f"Expected 101 Bean linear constraints, got {len(BEAN_LINEAR)}"
+
+    if not _SYNTHETIC_MODE:
+        # K4-specific: real CT boundary, self-encrypt CT==PT, and
+        # the K4 Bean constraint counts that hold for the carved CT.
+        assert CT[0] == "O" and CT[-1] == "R", "CT boundary check failed"
+        assert CT[32] == CRIB_DICT[32] == "S", "Self-encrypt pos 32 failed"
+        assert CT[73] == CRIB_DICT[73] == "K", "Self-encrypt pos 73 failed"
+        assert len(BEAN_EQ) == 1, f"Expected 1 Bean equality on K4, got {len(BEAN_EQ)}"
+        assert BEAN_EQ == ((27, 65),), f"K4 Bean equality must be ((27, 65),), got {BEAN_EQ}"
+        assert len(BEAN_INEQ) == 242, f"Expected 242 Bean inequalities on K4, got {len(BEAN_INEQ)}"
+        assert len(BEAN_LINEAR) == 101, f"Expected 101 Bean linear constraints on K4, got {len(BEAN_LINEAR)}"
+    # Under _SYNTHETIC_MODE the Bean derivation runs against the override
+    # CT and produces whatever counts that yields. We do not assert the
+    # synthetic counts here; the synthetic-build script verifies the
+    # derivation produces a non-degenerate constraint set before launch.
+
     # Retired constants (palette, consensus null positions, Beaufort
     # crib keystream) live in `kryptos.kernel.retired` and self-verify
     # at their own import time.
