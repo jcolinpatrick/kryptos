@@ -1,0 +1,89 @@
+#!/usr/bin/env bash
+# Pre-push hook: blocks pushes to public remotes (GitHub) that include
+# proprietary paths (<internal>/ and its cross-import dependents).
+#
+# To install: git config core.hooksPath .githooks
+# To verify:  git config core.hooksPath  (should print '.githooks')
+#
+# To override for an intentional push to a PRIVATE remote (e.g. the
+# local upstream mirror), use:
+#   PUBLISH_KRYPTOSBOT=1 git push <remote> <ref>
+#
+# This hook is a structural protection. It exists because the
+# <internal>/ multi-agent orchestrator is proprietary IP (per
+# `feedback_internal_gitignored_by_design.md` — note: <internal>/
+# is tracked in git locally but MUST NOT reach public GitHub).
+
+set -euo pipefail
+
+remote_name="$1"
+remote_url="$2"
+
+# Determine if this is a public remote
+is_public=0
+case "$remote_url" in
+  *github.com*|*github.io*|https://gitlab.com/*|git@gitlab.com:*) is_public=1 ;;
+esac
+
+# Private local mirrors are exempt
+if [ "$is_public" = "0" ]; then
+  exit 0
+fi
+
+if [ "${PUBLISH_KRYPTOSBOT:-0}" = "1" ]; then
+  echo "WARNING: PUBLISH_KRYPTOSBOT=1 override active — permitting internalpush." >&2
+  exit 0
+fi
+
+# Forbidden path prefixes (anchored regex — '^' added below)
+FORBIDDEN_REGEX='^(<internal>/|scripts/_infra/calibrate_null_baselines|tests/test_polybius_scorer\.py$|tests/test_internal_oracle_hardening\.py$|tests/test_historical_eliminations\.py$|<internal>phase_|<internal>/|<internal>/phase_R3|<internal>/CLAUDE_CODE_BRIEF|<internal>/CURRENT_WORKER_PATH|<internal>/DSL_CUTOVER_CONTRACT|<internal>/SUMMARY\.md$|<internal>SUMMARY\.md$)'
+
+violations=0
+zero_sha=0000000000000000000000000000000000000000
+
+while read -r local_ref local_sha remote_ref remote_sha; do
+  # Skip deletion pushes
+  [ "$local_sha" = "$zero_sha" ] && continue
+
+  # Determine commit range to inspect
+  if [ "$remote_sha" = "$zero_sha" ]; then
+    # New branch on remote: check all commits not on origin already
+    range_args=("$local_sha" "--not" "--remotes=$remote_name")
+  else
+    range_args=("$remote_sha..$local_sha")
+  fi
+
+  # Get all paths touched in this range (across all commits)
+  changed_paths=$(git log --name-only --pretty=format: "${range_args[@]}" 2>/dev/null \
+                  | sort -u | grep -v '^$' || true)
+
+  if [ -z "$changed_paths" ]; then
+    continue
+  fi
+
+  matches=$(echo "$changed_paths" | grep -E "$FORBIDDEN_REGEX" || true)
+  if [ -n "$matches" ]; then
+    echo "" >&2
+    echo "PRE-PUSH BLOCK: refusing to push to $remote_name ($remote_url)" >&2
+    echo "Push includes proprietary paths:" >&2
+    echo "$matches" | head -20 | sed 's/^/  - /' >&2
+    extra=$(echo "$matches" | tail -n +21)
+    if [ -n "$extra" ]; then
+      echo "  ...and $(echo "$extra" | wc -l) more" >&2
+    fi
+    violations=$((violations + 1))
+  fi
+done
+
+if [ "$violations" -gt 0 ]; then
+  echo "" >&2
+  echo "To publish only public-safe changes, use:" >&2
+  echo "  ops/publish/publish_to_github.sh" >&2
+  echo "" >&2
+  echo "To intentionally push proprietary content (private remote only):" >&2
+  echo "  PUBLISH_KRYPTOSBOT=1 git push $remote_name <ref>" >&2
+  echo "" >&2
+  exit 1
+fi
+
+exit 0
