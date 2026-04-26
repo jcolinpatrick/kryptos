@@ -6,11 +6,11 @@ Full operational reference for `kryptosbot.com` and supporting systems. Referenc
 
 - **`ops/site_builder/`** — Builds `kryptosbot.com` → `site/` (gitignored). Config: `overrides.toml`.
 - **`ops/api/`** — FastAPI backend: theory classifier (`classifier.py`), submission queue (`queue.py`), admin CLI (`admin.py`). Mounts `site/` as static. Requires `venv/`.
-- **`kryptosbot/`** — Claude Agent SDK multi-agent runner. Ops guide: `ops/RUNBOOK.md`. Has its own `pyproject.toml` with `claude-agent-sdk` dependency.
-  - `solve.py` — Original entry point (single-agent).
-  - `campaign_v2.py` — **Active campaign runner**: Phases 1–5 (free compute: row key forensics, fractionation, state machines), Phase 6+ (Opus-guided, API budget). Entry: `PYTHONPATH=src python3 -u kryptosbot/campaign_v2.py`. Supports `--local-only`, `--dry-run`.
-  - `monitor.py` — Live campaign dashboard: `python3 kryptosbot/monitor.py [--interval 1]`. Scans `results/campaigns/` for active sessions.
+- **`kryptosbot/`** — Claude Agent SDK multi-agent runner. Operator guide: `kryptosbot/ORIENT.md`. Architecture: `kryptosbot/ARCHITECTURE.md`. Has its own `pyproject.toml` with `claude-agent-sdk` dependency.
+  - `run_controller.py` — **Live entry point.** Primary CLI: `PYTHONPATH=src python3 -u kryptosbot/run_controller.py`. Parses args, instantiates `ResearchController`, drives the cycle loop in `controller.py`.
+  - `controller.py` — Core orchestrator (theorist dispatch, critic, worker dispatch via `job_dispatcher.execute()`, evidence synthesis, alert path).
   - `polybius_scorer.py` — Polybius coordinate extraction and crib scoring.
+  - **Quarantined (do not invoke):** `solve.py` (removed Phase 1), `monitor.py` (removed Phase 1), `campaign_v2.py` (stub at original path raises `ImportError`; original at `kryptosbot/_archive/campaign_v2.py`). See `docs/maturation/phase_01_report.md`.
 - **`bench/`** — Benchmark suite (tier0–tier3). CLI: `bench/cli.py run|score|generate`. Tests: `tests/test_bench*.py`.
 - **`reports/`** — 45+ synthesis files from experiment campaigns. Summary JSONs (`*.summary.json`), audit matrices, synthesis markdown. Key file: [`reports/final_synthesis.md`](../reports/final_synthesis.md).
 - **`archive/`** — `legacy_harness/` (old agent code), `session_reports/` (historical outputs).
