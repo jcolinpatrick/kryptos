@@ -48,22 +48,9 @@ Historical strategy snapshots live in `docs/history/` and `reports/final_synthes
 
 **Python 3.11+** required (uses `tomllib` from stdlib; dev environment runs 3.12.3). **No external runtime dependencies** — stdlib only. `pytest` is the only dev dependency. No `pyproject.toml` or `setup.py` for the core project — `pip install -e .` will not work. All commands require `PYTHONPATH=src`. (`kryptosbot/` has its own `pyproject.toml` for the Agent SDK dependency — that's separate.) **Repo:** `github.com/jcolinpatrick/kryptos`.
 
-**Common imports** (all require `PYTHONPATH=src`):
-```python
-from kryptos.kernel.constants import CT, CRIB_POSITIONS, BEAN_EQ, BEAN_INEQ, CONSENSUS_NULL_POSITIONS
-from kryptos.kernel.alphabet import AZ, KA, keyword_mixed_alphabet
-from kryptos.kernel.text import sanitize, text_to_nums, nums_to_text
-from kryptos.kernel.scoring.aggregate import score_candidate, score_candidate_free
-from kryptos.kernel.transforms.vigenere import decrypt_vigenere, decrypt_beaufort
-```
+Common kernel symbols (`CT`, `CRIB_POSITIONS`, `BEAN_EQ`/`BEAN_INEQ`, `KA`, `score_candidate`, `decrypt_vigenere`/`decrypt_beaufort`) live under `kryptos.kernel.{constants,alphabet,scoring.aggregate,transforms.vigenere}`. Grep there before assuming a name.
 
-A `venv/` exists (gitignored) for non-core work. Activate with `source venv/bin/activate`. Packages: `numpy`, `pymupdf` (PDF), `jinja2` (site builder), `fastapi`, `uvicorn`, `python-dotenv`, `anthropic` (API server), `claude-agent-sdk` (KryptosBot SDK). Core code uses stdlib only.
-
-**Pin file:** `requirements.txt` (root) is the canonical venv pin list (pytest, numpy, scipy, z3-solver, ortools, statsmodels, simanneal, rich, anthropic, claude-agent-sdk, etc.). Install with `pip install -r requirements.txt` inside `venv/`. None of this is imported by core `kryptos` code — only by supporting scripts, the API server, and kryptosbot.
-
-**Code style:** No linter or formatter configured. No enforced style conventions beyond stdlib-only for core code.
-
-**Git workflow:** Development happens directly on `main`. No branch naming conventions or PR process — this is a solo research project with computational partners.
+A `venv/` exists (gitignored) for non-core work pinned in root `requirements.txt` (numpy, scipy, z3-solver, ortools, statsmodels, simanneal, rich, anthropic, claude-agent-sdk, fastapi, uvicorn, jinja2, pymupdf). None of this is imported by core `kryptos` code. No linter or formatter configured. Development happens directly on `main`.
 
 ```bash
 # Run all tests (~2 minutes, 1500+ tests, no expected failures).
@@ -92,6 +79,9 @@ PYTHONPATH=src python3 run_attack.py --exhaustion-summary | grep -i FAMILY
 PYTHONPATH=src python3 run_attack.py --list --verbose | grep -i KEYWORD
 
 # Benchmark: PYTHONPATH=src python3 bench/cli.py run --suite bench/suites/tier0_smoke.jsonl
+
+# K4Bench (synthetic calibration; redirects ledger to db/k4bench/, never touches real-K4 state)
+PYTHONPATH=src python3 -u kryptosbot/run_controller.py --bench-challenge bench/k4bench/challenges/K4B-001.json [--bench-attempts-out <out.json>]
 ```
 
 For site builder, API server, and deployment commands, see [`docs/operations.md`](docs/operations.md).
@@ -124,9 +114,13 @@ Four layers with strict dependency direction: **kernel → pipeline → novelty 
 
 **`kryptosbot/` (separate subproject, NOT under `src/kryptos/`)** — Multi-agent runner built on the Claude Agent SDK. Has its own `pyproject.toml`, its own `.env` (see `kryptosbot/.env.template`), its own runbook (`kryptosbot/RUNBOOK.md`), and depends on `claude-agent-sdk`. **Do not confuse with the core `kryptos` package** — they have independent dependency trees and different API key env vars. Core kryptos must stay stdlib-only; kryptosbot may use anything in its own venv.
 
+**K4Bench mode (`bench/k4bench/` + `kryptosbot/bench_loader.py` + `bench_attempts.py`)** — Synthetic calibration suite of 25 K4-shaped challenges. Activate with `--bench-challenge <path>` on `run_controller.py`; this installs kernel overrides **before** any `kryptos.kernel` import, swaps the ledger to `db/k4bench/`, suppresses real-K4 prompt surfaces, and emits an attempt artifact in `k4bench.attempts.v1` schema. `bench_loader` rejects any file containing answer-like keys; sealed answers must never reach controller paths or prompt-visible code. See MEMORY.md `project_k4bench_mode_pipeline_gates_landed_2026_04_26.md`.
+
 **`external/` (repo root, NOT under `src/`)** — Third-party reference material checked into the tree:
 - `external/bean_k4testing/` — Bean's reference C / SageMath implementation of the K4 constraints (`k4-bean3.c`, `k4-perm-test.c`, `kryptos-k4-sage.txt`, `k4testing.py`). This is the **authoritative cross-check** for `kernel/constants.py` Bean equality/inequality values. When debugging constraint semantics or verifying a new Bean-derived claim, diff against this reference, do not re-derive from the paper.
 - `external/claude-plugins-official/` — Unpinned plugin source, reference only.
+
+**`copy/` (repo root)** — Curated software-review snapshot of kryptosbot (114 files, flat layout, original paths encoded in filenames). Regenerated for third-party software review. **Do not edit directly** — changes belong in `kryptosbot/`. Exclude from grep when working on the live controller.
 
 ### Data flow
 
@@ -232,6 +226,7 @@ These are non-obvious pitfalls discovered through prior sessions. Check these fi
 - **`doctor` `bean_count` always FAILs — not a real problem**: `cli/doctor.py:35` checks `len(BEAN_INEQ) == 21` but the constant has held 242 inequalities since the Bean Linear constraints expansion. This is a stale threshold, not an environment error. All other `doctor` checks are authoritative; ignore `bean_count` until the check is updated.
 - **Exhaustion log — one authoritative source**: Root `exhaustion_log.json` is the single source of truth. The former second log at `scripts/EXHAUSTION.json` was retired and renamed to `scripts/EXHAUSTION.json.RETIRED` (see `scripts/EXHAUSTION.json.RETIRED.README` for the retirement note). If any script or doc still references `scripts/EXHAUSTION.json`, that's a stale pointer — fix it to read the root log.
 - **Two `.env` files — don't mix them up**: `.env` (root) = `ANTHROPIC_API_KEY` + `KBOT_CLASSIFY_API_KEY` + `NTFY_TOPIC`. `kryptosbot/.env` = Agent SDK API key (see `kryptosbot/.env.template`). Loading the wrong one gives silent auth failures.
+- **K4Bench sealed answers must not enter prompt context**: any `bench/k4bench/answers/*` (when present) and any answer-keyed JSON are off-limits to controller paths. `bench_loader.load_k4bench_challenge()` rejects answer-like keys at load time — that's the boundary. Don't add helpers that bypass it; sealed answer leakage invalidates the calibration run.
 - **Quagmire III requires explicit convention args**: `quagmire_encrypt` / `quagmire_decrypt` in `src/kryptos/kernel/transforms/quagmire.py` only reproduce the Kryptos K1/K2 convention when called with `pt_alphabet_keyword=..., ct_alphabet_keyword='KRYPTOS', indicator='K'`. Calling with the wrong shape does NOT raise — it silently produces output that fails K1/K2 ground-truth regression. `scripts/campaigns/f_w10_quagmire_iii_v1.py` was historically misconfigured this way; K1/K2 regression tests landed 2026-04-21 as the standing guard. Before trusting any new Quagmire result, verify the regression tests pass.
 - **Never `git push origin main` directly — use the publish script**: `kryptosbot/` and `docs/maturation/` are private and intentionally excluded from the public GitHub mirror. A pre-push hook at `.githooks/pre-push` blocks any push containing those paths (DELETIONS of forbidden paths are allowed in case of past leakage; ADDITIONS are blocked). To publish to the public mirror, run `ops/publish/publish_to_github.sh` — it uses an isolated git worktree to filter the private paths and falls back to `git apply --3way` then cherry-pick on conflicts. The privacy boundary is a deliberate protection policy, not an oversight; never propose un-ignoring `kryptosbot/` or removing the hook. See `feedback_publish_workflow.md` and `feedback_kryptosbot_gitignored_by_design.md`.
 
@@ -310,11 +305,7 @@ Before implementing any CPU-bound or batch script, produce an execution plan cov
 6. **Memory**: Estimated per-worker footprint × worker count vs. available RAM
 7. **Storage**: Output format, estimated size, WAL mode for SQLite if applicable
 
-### What this policy does NOT mean
-
-- It does NOT mean "always use 28 workers." Overhead, memory, I/O bottlenecks, and algorithmic structure can justify fewer.
-- It does NOT apply to quick one-off tests, smoke tests, or scripts that complete in <30 seconds.
-- It does NOT override correctness. A parallel implementation that's buggy is worse than a correct serial one.
+**Caveats:** the policy doesn't mean "always 28 workers" (memory, I/O, and algorithmic structure can justify fewer), doesn't apply to <30-second smoke tests, and never overrides correctness — a buggy parallel impl is worse than a correct serial one.
 
 ---
 
@@ -364,6 +355,7 @@ Results are not trusted until they pass:
 - **`kryptosbot/ORIENT.md`** — One-page operator onboarding for the multi-agent runner. Start here for any task that touches the kryptosbot loop. Authored in framework maturation Phase 9 (2026-04-21).
 - **`kryptosbot/ARCHITECTURE.md`** — Full architecture: controller cycle, DSL + dispatcher, null baselines, alert path. Updated 2026-04-21 for Phases 4-6.
 - **`docs/maturation/SUMMARY.md`** — Phases 1-9 handoff summary. Every phase, every artifact, every test delta, every behavior change.
+- **`docs/maturation/round3/K4_SYNTHETIC_T1_POSTMORTEM_CHECKLIST.md`** — Working example of a preregistered postmortem with binding pass/fail criteria; canonical reference for how synthetic-calibration runs are reviewed without post-hoc relaxation.
 
 ### Historical / retired (not authoritative — do not cite as current)
 
@@ -429,7 +421,8 @@ Two `memory/` directories exist — don't confuse them:
 
 ---
 
-*Last updated: 2026-04-26 — Multi-Agent Mode entry-point references corrected: `kryptosbot/solve.py` and `kryptosbot/campaign_v2.py` were quarantined in maturation Phase 1 and `solve.py`/`monitor.py` no longer exist; `run_controller.py` is the live controller entry point. Same correction landed in `docs/operations.md`. Unused 2.7 GB Kaikki corpus files moved from `data/` and `wordlists/` to `archive/unused_corpora/`. 2026-04-26 (earlier): Added privacy boundary / publish workflow gotcha: `kryptosbot/` and `docs/maturation/` are filtered from the public mirror, `.githooks/pre-push` enforces, and `ops/publish/publish_to_github.sh` is the only sanctioned path to push. 2026-04-22: Added Quagmire III convention gotcha (silent-failure footgun from f_w10 misconfig), post-R3 control-flow pointer (K4_RUN_PROTOCOL_R3 supersedes R2), and Oranchak / CIA 1996 memo Tier-3 reference. 2026-04-21: maturation phase 09 doctrine refresh (ORIENT.md pointer + ARCHITECTURE.md update). 2026-04-17: added `run_lean.py` disambiguation, `requirements.txt` pointer, and `external/` (Bean reference C/SageMath impl) to Source Layout. 2026-04-16: added campaigns/, admissibility/, composition/ and AGENTS.md pointer. CLAUDE.md is operational doctrine only. Live research state in MEMORY.md; structured claims in docs/claims_registry.json; open audits in docs/methodological_audits.md; canonical entry index in docs/README_current_state.md.*
-*Primary author: Colin Patrick (human lead) + Claude (computational partner)*
+*Last updated: 2026-04-26. CLAUDE.md is **operational doctrine only**. Live research state lives in MEMORY.md, structured claims in `docs/claims_registry.json`, open audits in `docs/methodological_audits.md`, canonical entry index in `docs/README_current_state.md`. For prior-revision history, see `git log CLAUDE.md`.*
 
-*Precedence rule for conflicts: verify freshness with `git log -1 --format=%cd CLAUDE.md MEMORY.md`. If CLAUDE.md is older than MEMORY.md and the two conflict on research state (not operational doctrine), trust MEMORY.md and flag the drift. Operational doctrine in CLAUDE.md is always authoritative regardless of date.*
+*Primary author: Colin Patrick (human lead) + Claude (computational partner).*
+
+*Conflict-resolution rule: verify freshness with `git log -1 --format=%cd CLAUDE.md MEMORY.md`. If CLAUDE.md is older than MEMORY.md and the two disagree on research state (not operational doctrine), trust MEMORY.md and flag the drift. Operational doctrine in CLAUDE.md is always authoritative regardless of date.*
