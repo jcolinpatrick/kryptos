@@ -28,6 +28,12 @@ esac
 
 # ── Forbidden paths (private — never reaches GitHub) ─────────────────────
 # Negative pathspecs for `git diff -- ${PUBLIC_PATHSPECS[@]}`.
+#
+# Heuristic: <internal> is presumed entirely private. Anything in
+# that tree describes controller construction, behavior, or hardening,
+# all of which are part of the internalproprietary surface. If a
+# specific internal doc is genuinely public-research-narrative and
+# should be exposed, whitelist it explicitly with operator approval.
 PUBLIC_PATHSPECS=(
   '.'
   ':!<internal>/'
@@ -36,20 +42,10 @@ PUBLIC_PATHSPECS=(
   ':!tests/test_polybius_scorer.py'
   ':!tests/test_internal_oracle_hardening.py'
   ':!tests/test_historical_eliminations.py'
-  ':!<internal>phase_*'
   ':!<internal>'
-  ':!<internal>/'
-  ':!<internal>/phase_R3*'
-  ':!<internal>/CLAUDE_CODE_BRIEF_*'
-  ':!<internal>/CURRENT_WORKER_PATH.md'
-  ':!<internal>/DSL_CUTOVER_CONTRACT.md'
-  ':!<internal>/SUMMARY.md'
-  ':!<internal>/K4_CAMPAIGN_*'
-  ':!<internal>/K4_RUN_*'
-  ':!<internal>/K4_SYNTHETIC_*'
 )
 
-FORBIDDEN_REGEX='^(<internal>/|scripts/_infra/calibrate_null_baselines|tests/test_polybius_scorer\.py$|tests/test_internal_oracle_hardening\.py$|tests/test_historical_eliminations\.py$|<internal>phase_|<internal>/|<internal>/phase_R3|<internal>/CLAUDE_CODE_BRIEF|<internal>/CURRENT_WORKER_PATH|<internal>/DSL_CUTOVER_CONTRACT|<internal>/SUMMARY\.md$|<internal>SUMMARY\.md$|<internal>/K4_CAMPAIGN_|<internal>/K4_RUN_|<internal>/K4_SYNTHETIC_)'
+FORBIDDEN_REGEX='^(<internal>/|scripts/_infra/calibrate_null_baselines|tests/test_polybius_scorer\.py$|tests/test_internal_oracle_hardening\.py$|tests/test_historical_eliminations\.py$|<internal>)'
 
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 cd "$REPO_ROOT"
