@@ -20,6 +20,7 @@ from kryptosbot.transport_preflight import (
     verify_direct_api_k1,
     verify_subscription_sdk,
     verify_transport,
+    verify_transport_async,
 )
 
 
@@ -195,6 +196,50 @@ class TestVerifyTransportCombined:
             ok, summary = verify_transport()
         assert ok is False
         assert "HALT" in summary
+
+
+# ---------------------------------------------------------------------------
+# verify_transport_async (async variant — used by run_controller.main)
+#
+# Regression: the sync verify_transport used to call asyncio.run() on the
+# subscription-SDK probe, which fails with "asyncio.run() cannot be called
+# from a running event loop" when invoked from run_controller's async main.
+# These tests pin the async path so a future refactor can't silently
+# reintroduce the nested-loop bug.
+# ---------------------------------------------------------------------------
+
+
+class TestVerifyTransportAsync:
+
+    def test_proceed_verdict_when_both_probes_ok(self):
+        with patch(
+            "kryptosbot.transport_preflight.verify_direct_api_k1",
+            return_value=(True, "api ok"),
+        ), patch(
+            "kryptosbot.transport_preflight.verify_subscription_sdk",
+            AsyncMock(return_value=(True, "sdk ok")),
+        ):
+            ok, summary = asyncio.run(verify_transport_async())
+        assert ok is True
+        assert "PROCEED" in summary
+
+    def test_runs_inside_existing_event_loop(self):
+        # The original bug: verify_transport called asyncio.run() internally,
+        # which crashed when called from another async context. The async
+        # variant must work when awaited from inside a running loop.
+        async def _scenario():
+            with patch(
+                "kryptosbot.transport_preflight.verify_direct_api_k1",
+                return_value=(True, "api ok"),
+            ), patch(
+                "kryptosbot.transport_preflight.verify_subscription_sdk",
+                AsyncMock(return_value=(True, "sdk ok")),
+            ):
+                return await verify_transport_async()
+
+        ok, summary = asyncio.run(_scenario())
+        assert ok is True
+        assert "PROCEED" in summary
 
 
 # ---------------------------------------------------------------------------

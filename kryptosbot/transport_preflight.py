@@ -120,16 +120,14 @@ async def verify_subscription_sdk(
     )
 
 
-def verify_transport(
+async def verify_transport_async(
     timeout_sec: int = DEFAULT_PROBE_TIMEOUT_SEC,
 ) -> tuple[bool, str]:
-    """Run both probes and produce a combined verdict.
+    """Async variant of :func:`verify_transport`.
 
-    Runs sequentially (not in parallel) so a hung probe can't starve
-    the other. Each probe has its own ``timeout_sec`` budget.
-
-    Returns ``(overall_ok, multiline_summary)``. ``overall_ok=True``
-    requires both probes to succeed.
+    Use this from coroutines (e.g. ``run_controller.main``) so the
+    subscription-SDK probe can be awaited inside the caller's existing
+    event loop instead of trying to spin up a nested one.
     """
     logger.info("transport-verify: running direct-api probe")
     api_ok, api_msg = verify_direct_api_k1(timeout_sec=timeout_sec)
@@ -139,9 +137,7 @@ def verify_transport(
     )
 
     logger.info("transport-verify: running subscription-sdk probe")
-    sdk_ok, sdk_msg = asyncio.run(
-        verify_subscription_sdk(timeout_sec=timeout_sec)
-    )
+    sdk_ok, sdk_msg = await verify_subscription_sdk(timeout_sec=timeout_sec)
     logger.info(
         "transport-verify: subscription-sdk %s: %s",
         "OK" if sdk_ok else "FAIL", sdk_msg,
@@ -154,3 +150,19 @@ def verify_transport(
         f"verdict:           {'PROCEED' if overall_ok else 'HALT'}",
     ]
     return overall_ok, "\n".join(summary_lines)
+
+
+def verify_transport(
+    timeout_sec: int = DEFAULT_PROBE_TIMEOUT_SEC,
+) -> tuple[bool, str]:
+    """Run both probes and produce a combined verdict (sync wrapper).
+
+    Runs sequentially (not in parallel) so a hung probe can't starve
+    the other. Each probe has its own ``timeout_sec`` budget.
+
+    Returns ``(overall_ok, multiline_summary)``. ``overall_ok=True``
+    requires both probes to succeed. Async callers should use
+    :func:`verify_transport_async` instead — calling this from inside
+    a running event loop will fail.
+    """
+    return asyncio.run(verify_transport_async(timeout_sec=timeout_sec))

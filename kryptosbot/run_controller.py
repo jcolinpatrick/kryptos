@@ -508,12 +508,14 @@ async def main() -> None:
     # transport halts early without touching the ledger.
     if args.verify_transport:
         from datetime import datetime, timezone
-        from kryptosbot.transport_preflight import verify_transport as _verify
+        from kryptosbot.transport_preflight import (
+            verify_transport_async as _verify,
+        )
 
         ts = datetime.now(timezone.utc).isoformat()
         print(f"[{ts}] transport-verify: running pre-flight probes "
               f"(per-probe timeout={args.verify_transport_timeout}s)")
-        ok, summary = _verify(timeout_sec=args.verify_transport_timeout)
+        ok, summary = await _verify(timeout_sec=args.verify_transport_timeout)
         ts_done = datetime.now(timezone.utc).isoformat()
         print(f"[{ts_done}] transport-verify result:")
         print(summary)
