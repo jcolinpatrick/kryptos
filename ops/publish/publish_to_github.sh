@@ -44,9 +44,12 @@ PUBLIC_PATHSPECS=(
   ':!docs/maturation/round3/CURRENT_WORKER_PATH.md'
   ':!docs/maturation/round3/DSL_CUTOVER_CONTRACT.md'
   ':!docs/maturation/round3/SUMMARY.md'
+  ':!docs/maturation/round3/K4_CAMPAIGN_*'
+  ':!docs/maturation/round3/K4_RUN_*'
+  ':!docs/maturation/round3/K4_SYNTHETIC_*'
 )
 
-FORBIDDEN_REGEX='^(kryptosbot/|scripts/_infra/calibrate_null_baselines|tests/test_polybius_scorer\.py$|tests/test_kryptosbot_oracle_hardening\.py$|tests/test_historical_eliminations\.py$|docs/maturation/phase_|docs/maturation/round2/|docs/maturation/round3/phase_R3|docs/maturation/round3/CLAUDE_CODE_BRIEF|docs/maturation/round3/CURRENT_WORKER_PATH|docs/maturation/round3/DSL_CUTOVER_CONTRACT|docs/maturation/round3/SUMMARY\.md$|docs/maturation/SUMMARY\.md$)'
+FORBIDDEN_REGEX='^(kryptosbot/|scripts/_infra/calibrate_null_baselines|tests/test_polybius_scorer\.py$|tests/test_kryptosbot_oracle_hardening\.py$|tests/test_historical_eliminations\.py$|docs/maturation/phase_|docs/maturation/round2/|docs/maturation/round3/phase_R3|docs/maturation/round3/CLAUDE_CODE_BRIEF|docs/maturation/round3/CURRENT_WORKER_PATH|docs/maturation/round3/DSL_CUTOVER_CONTRACT|docs/maturation/round3/SUMMARY\.md$|docs/maturation/SUMMARY\.md$|docs/maturation/round3/K4_CAMPAIGN_|docs/maturation/round3/K4_RUN_|docs/maturation/round3/K4_SYNTHETIC_)'
 
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 cd "$REPO_ROOT"
