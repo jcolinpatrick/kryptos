@@ -1,0 +1,83 @@
+{
+  "bench_id": "K4B-018",
+  "ciphertext": "ARNNYRHBJAFAPAGYJRUYYBWBCEYYJAFNRBJGJGJFPRUAIOQYWAJEGXKNFKTAEDVTFNJRMKQKIQMHYAWHFEQLHEWMKEHCSRQLF",
+  "ciphertext_alphabet": "AZ",
+  "ciphertext_length": 97,
+  "known_plaintext_positions": {
+    "21": "D",
+    "22": "I",
+    "23": "A",
+    "24": "G",
+    "25": "O",
+    "26": "N",
+    "27": "A",
+    "28": "L",
+    "29": "E",
+    "30": "I",
+    "31": "G",
+    "32": "H",
+    "33": "T",
+    "63": "B",
+    "64": "E",
+    "65": "A",
+    "66": "U",
+    "67": "F",
+    "68": "O",
+    "69": "R",
+    "70": "T",
+    "71": "K",
+    "72": "E",
+    "73": "Y"
+  },
+  "known_plaintext_spans": [
+    {
+      "end_inclusive": 33,
+      "label": "crib_a",
+      "length": 13,
+      "start": 21,
+      "text": "DIAGONALEIGHT"
+    },
+    {
+      "end_inclusive": 73,
+      "label": "crib_b",
+      "length": 11,
+      "start": 63,
+      "text": "BEAUFORTKEY"
+    }
+  ],
+  "public_clue_pack": {
+    "clue_text": "CEREMONY is the only word on the card. The grid drawing uses an eight-wide alternating diagonal read.",
+    "constraint_summary": [
+      "A-Z only; no spaces or punctuation in ciphertext.",
+      "Plaintext is exactly 97 A-Z characters.",
+      "The construction uses hand-executable classical/procedural layers only.",
+      "All key material needed for the intended solution is derivable from this clue pack.",
+      "Layer count is between two and three unless a clue explicitly collapses a layer into a simple reversal or mirror.",
+      "A strict pass requires both the exact plaintext and a reproducible method/layer order."
+    ]
+  },
+  "public_quality_metadata": {
+    "answer_hash_sha256": "23d4590ca8fc9061b8b039bafe7136c069db852dc006bfcf45a125787dd53a28",
+    "challenge_hash_sha256": "d0c29d32c710c65fbfe91454fcf67b6ae4e8ff14c014e460976d198df7a28832",
+    "contains_solution_material": false,
+    "difficulty_band": "gold",
+    "purpose": "blind synthetic K4-like full-controller calibration"
+  },
+  "schema_version": "k4bench.challenge.v1",
+  "solver_output_contract": {
+    "known_crib_score_target": 24,
+    "required_json_fields": [
+      "bench_id",
+      "plaintext",
+      "confidence",
+      "method_summary",
+      "layers",
+      "crib_score",
+      "evidence",
+      "reproducibility_notes"
+    ],
+    "strict_pass_rule": "Exact 97-character plaintext AND exact or human-equivalent layer order with keys/routes/alphabets. Plaintext-only is at most PARTIAL."
+  },
+  "suite_id": "K4BENCH-2026-04-26-V1",
+  "title": "Ceremony diagonal"
+}

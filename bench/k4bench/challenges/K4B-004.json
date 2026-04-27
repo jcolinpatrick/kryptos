@@ -1,0 +1,83 @@
+{
+  "bench_id": "K4B-004",
+  "ciphertext": "JXOXSSKMXQYKAMBJLPTWKMXQIEAQUWPIYMSYIYNAMBQPFZHKANAQPSWALYIWOZFVJSMEBCPQFZFQNBMSEABAPMRPHBFVJBHXF",
+  "ciphertext_alphabet": "AZ",
+  "ciphertext_length": 97,
+  "known_plaintext_positions": {
+    "21": "C",
+    "22": "L",
+    "23": "O",
+    "24": "C",
+    "25": "K",
+    "26": "W",
+    "27": "I",
+    "28": "S",
+    "29": "E",
+    "30": "K",
+    "31": "E",
+    "32": "Y",
+    "33": "X",
+    "63": "R",
+    "64": "O",
+    "65": "U",
+    "66": "T",
+    "67": "E",
+    "68": "B",
+    "69": "E",
+    "70": "F",
+    "71": "O",
+    "72": "R",
+    "73": "E"
+  },
+  "known_plaintext_spans": [
+    {
+      "end_inclusive": 33,
+      "label": "crib_a",
+      "length": 13,
+      "start": 21,
+      "text": "CLOCKWISEKEYX"
+    },
+    {
+      "end_inclusive": 73,
+      "label": "crib_b",
+      "length": 11,
+      "start": 63,
+      "text": "ROUTEBEFORE"
+    }
+  ],
+  "public_clue_pack": {
+    "clue_text": "A compass rose has five tick groups and the word COMPASS written below a subtractive arrow.",
+    "constraint_summary": [
+      "A-Z only; no spaces or punctuation in ciphertext.",
+      "Plaintext is exactly 97 A-Z characters.",
+      "The construction uses hand-executable classical/procedural layers only.",
+      "All key material needed for the intended solution is derivable from this clue pack.",
+      "Layer count is between two and three unless a clue explicitly collapses a layer into a simple reversal or mirror.",
+      "A strict pass requires both the exact plaintext and a reproducible method/layer order."
+    ]
+  },
+  "public_quality_metadata": {
+    "answer_hash_sha256": "0c642eebd63e2c719588c17726dea74d9e02d9ab47184bf08b0a45f1958137cb",
+    "challenge_hash_sha256": "d6147c2f619cd7976a572434a7e87b5ebafe6d9beae59a3403c851dbfe60115f",
+    "contains_solution_material": false,
+    "difficulty_band": "bronze",
+    "purpose": "blind synthetic K4-like full-controller calibration"
+  },
+  "schema_version": "k4bench.challenge.v1",
+  "solver_output_contract": {
+    "known_crib_score_target": 24,
+    "required_json_fields": [
+      "bench_id",
+      "plaintext",
+      "confidence",
+      "method_summary",
+      "layers",
+      "crib_score",
+      "evidence",
+      "reproducibility_notes"
+    ],
+    "strict_pass_rule": "Exact 97-character plaintext AND exact or human-equivalent layer order with keys/routes/alphabets. Plaintext-only is at most PARTIAL."
+  },
+  "suite_id": "K4BENCH-2026-04-26-V1",
+  "title": "Compass block note"
+}

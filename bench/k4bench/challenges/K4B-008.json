@@ -1,0 +1,83 @@
+{
+  "bench_id": "K4B-008",
+  "ciphertext": "GPIUEUKQFVELTVZYTVOGSFLQMJHVFYBTECAOKZGPWPFIHYUXMQCULZMZFVTYOGSEAKDNGLMPXZNALZCSNIDCBUFKWIGKFCTVO",
+  "ciphertext_alphabet": "AZ",
+  "ciphertext_length": 97,
+  "known_plaintext_positions": {
+    "21": "R",
+    "22": "E",
+    "23": "V",
+    "24": "E",
+    "25": "R",
+    "26": "S",
+    "27": "E",
+    "28": "S",
+    "29": "T",
+    "30": "R",
+    "31": "I",
+    "32": "P",
+    "33": "X",
+    "63": "K",
+    "64": "R",
+    "65": "Y",
+    "66": "P",
+    "67": "T",
+    "68": "O",
+    "69": "S",
+    "70": "F",
+    "71": "O",
+    "72": "L",
+    "73": "D"
+  },
+  "known_plaintext_spans": [
+    {
+      "end_inclusive": 33,
+      "label": "crib_a",
+      "length": 13,
+      "start": 21,
+      "text": "REVERSESTRIPX"
+    },
+    {
+      "end_inclusive": 73,
+      "label": "crib_b",
+      "length": 11,
+      "start": 63,
+      "text": "KRYPTOSFOLD"
+    }
+  ],
+  "public_clue_pack": {
+    "clue_text": "A dark strip gives SHADOW and a KRYPTOS alphabet with the far end folded back over the near end.",
+    "constraint_summary": [
+      "A-Z only; no spaces or punctuation in ciphertext.",
+      "Plaintext is exactly 97 A-Z characters.",
+      "The construction uses hand-executable classical/procedural layers only.",
+      "All key material needed for the intended solution is derivable from this clue pack.",
+      "Layer count is between two and three unless a clue explicitly collapses a layer into a simple reversal or mirror.",
+      "A strict pass requires both the exact plaintext and a reproducible method/layer order."
+    ]
+  },
+  "public_quality_metadata": {
+    "answer_hash_sha256": "619fcc9f5adb05ecad7a27bc4db44b14d02541f3fd8d317d10951676eded1a29",
+    "challenge_hash_sha256": "5f92796c3d2e07714e9ae5974e7771af9857df397afeaf43667577ee752a5188",
+    "contains_solution_material": false,
+    "difficulty_band": "silver",
+    "purpose": "blind synthetic K4-like full-controller calibration"
+  },
+  "schema_version": "k4bench.challenge.v1",
+  "solver_output_contract": {
+    "known_crib_score_target": 24,
+    "required_json_fields": [
+      "bench_id",
+      "plaintext",
+      "confidence",
+      "method_summary",
+      "layers",
+      "crib_score",
+      "evidence",
+      "reproducibility_notes"
+    ],
+    "strict_pass_rule": "Exact 97-character plaintext AND exact or human-equivalent layer order with keys/routes/alphabets. Plaintext-only is at most PARTIAL."
+  },
+  "suite_id": "K4BENCH-2026-04-26-V1",
+  "title": "Shadow reverse alphabet"
+}

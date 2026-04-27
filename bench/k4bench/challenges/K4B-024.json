@@ -1,0 +1,83 @@
+{
+  "bench_id": "K4B-024",
+  "ciphertext": "ZIBXOVLZOZZKYHXIGJQCXMFQDLKZYSQIIZFPLCQIZMSZIVRVHGBHFZZCIXVGNHEGJMHVIZZMWMELVGHVKUQIWRKGFGNVOEIGA",
+  "ciphertext_alphabet": "AZ",
+  "ciphertext_length": 97,
+  "known_plaintext_positions": {
+    "21": "D",
+    "22": "I",
+    "23": "A",
+    "24": "G",
+    "25": "O",
+    "26": "N",
+    "27": "A",
+    "28": "L",
+    "29": "S",
+    "30": "T",
+    "31": "A",
+    "32": "R",
+    "33": "T",
+    "63": "F",
+    "64": "I",
+    "65": "N",
+    "66": "A",
+    "67": "L",
+    "68": "M",
+    "69": "I",
+    "70": "R",
+    "71": "R",
+    "72": "O",
+    "73": "R"
+  },
+  "known_plaintext_spans": [
+    {
+      "end_inclusive": 33,
+      "label": "crib_a",
+      "length": 13,
+      "start": 21,
+      "text": "DIAGONALSTART"
+    },
+    {
+      "end_inclusive": 73,
+      "label": "crib_b",
+      "length": 11,
+      "start": 63,
+      "text": "FINALMIRROR"
+    }
+  ],
+  "public_clue_pack": {
+    "clue_text": "FACADE sits below a subtractive arrow. The route drawing is eleven-wide alternating diagonal and ends in a mirror.",
+    "constraint_summary": [
+      "A-Z only; no spaces or punctuation in ciphertext.",
+      "Plaintext is exactly 97 A-Z characters.",
+      "The construction uses hand-executable classical/procedural layers only.",
+      "All key material needed for the intended solution is derivable from this clue pack.",
+      "Layer count is between two and three unless a clue explicitly collapses a layer into a simple reversal or mirror.",
+      "A strict pass requires both the exact plaintext and a reproducible method/layer order."
+    ]
+  },
+  "public_quality_metadata": {
+    "answer_hash_sha256": "12189d342a0ceba7d37d5226884d471b01762fb17a8d957ea5722c913ab9b725",
+    "challenge_hash_sha256": "782fc3579b6462190c4708389a2d22577990b3f82fdd83c8bcc1818ef923f0a0",
+    "contains_solution_material": false,
+    "difficulty_band": "gold",
+    "purpose": "blind synthetic K4-like full-controller calibration"
+  },
+  "schema_version": "k4bench.challenge.v1",
+  "solver_output_contract": {
+    "known_crib_score_target": 24,
+    "required_json_fields": [
+      "bench_id",
+      "plaintext",
+      "confidence",
+      "method_summary",
+      "layers",
+      "crib_score",
+      "evidence",
+      "reproducibility_notes"
+    ],
+    "strict_pass_rule": "Exact 97-character plaintext AND exact or human-equivalent layer order with keys/routes/alphabets. Plaintext-only is at most PARTIAL."
+  },
+  "suite_id": "K4BENCH-2026-04-26-V1",
+  "title": "Facade diagonal mirror"
+}
