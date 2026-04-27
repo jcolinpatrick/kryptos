@@ -20,7 +20,7 @@ import uuid
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any, Callable, Optional
 
 from claude_agent_sdk import ClaudeAgentOptions
 
@@ -30,7 +30,6 @@ from .contracts import (
     TheoryParseReport,
 )
 from .critic import TheoryCritic
-from .database import ResultsDB
 from .models import (
     TheoryRecord, TheoryStatus,
     CriticVerdict, CriticDecision,
@@ -265,7 +264,6 @@ class ControllerConfig:
     # Paths
     project_root: Path = Path(".")
     ledger_db_path: Path = Path("db/theory_ledger.sqlite")
-    legacy_db_path: Path = Path("results/results.db")
 
     # Cycle control
     max_cycles: int = 10
@@ -373,12 +371,201 @@ class ControllerConfig:
     include_oranchak_corpora: bool = True   # community-derived keyword pools + fills CSV
     include_serpentine_anchor: bool = True  # AAA archive page 17 Sanborn quote
 
+    # K4Bench input mode (2026-04-26): when both fields are non-None
+    # the controller is running against one synthetic challenge JSON
+    # instead of real K4. The kernel CT/cribs are already overridden
+    # via env vars at this point — these fields carry the prompt-side
+    # surface (bench_id, suite_id, clue text, solver contract). Set
+    # together by run_controller.main when --bench-challenge is given.
+    # When None, real-K4 prompt assembly is unchanged.
+    bench_challenge_payload: Optional[dict[str, Any]] = None
+    bench_challenge_prompt_block: Optional[str] = None
+
+    # HandCipherCore deterministic-seed controls (2026-04-27).
+    # Active only in bench mode; in real-K4 mode both fields are
+    # ignored because _collect_hcc_seeds returns [] regardless.
+    #
+    #   hcc_seeds_cap = None  → emit the full HCC catalogue (default,
+    #                            currently up to 64 specs from
+    #                            generate_layered_specs)
+    #   hcc_seeds_cap = 0     → disable HCC seeding entirely
+    #                            (set by --no-hcc-seeds)
+    #   hcc_seeds_cap = N > 0 → cap emitted seeds at N
+    #                            (set by --hcc-seeds N)
+    #
+    #   hcc_only = True       → skip the LLM theorist call entirely;
+    #                            dispatch only HCC seeds. Combined
+    #                            with hcc_seeds_cap=0 would dispatch
+    #                            nothing — argparse rejects that
+    #                            combination at CLI time.
+    #
+    # CRITICAL: ``theories_per_cycle`` does NOT cap HCC seeds. The
+    # cap is governed exclusively by ``hcc_seeds_cap``. This is by
+    # design — HCC seeds carry the deterministic-coverage contract
+    # and must not be silently dropped because a user lowered
+    # ``--theories``.
+    hcc_seeds_cap: Optional[int] = None
+    hcc_only: bool = False
+
+    @property
+    def is_bench_mode(self) -> bool:
+        """True iff the controller is running a K4Bench challenge.
+
+        Backwards-compatible alias for ``problem.is_bench``. New code
+        SHOULD route through ``self.problem`` so the registry / anomaly
+        / exhaustion gates are explicit; this property is preserved
+        only for legacy call sites that have not yet been migrated.
+        """
+        return self.bench_challenge_payload is not None
+
+    @property
+    def problem(self) -> "ProblemContext":
+        """Single funnel for problem-state access.
+
+        Returns a fresh ``ProblemContext`` each call (the object is
+        frozen + cheap to construct, and we deliberately do not cache
+        on a frozen dataclass to keep the config hashable). All
+        controller surfaces — landscape, prompts, critic rules,
+        red-team context, synthesis, fallback, display — MUST read
+        real-K4 registry / anomaly / exhaustion / family state through
+        this object so a K4Bench run cannot accidentally reach into
+        the real-K4 corpus.
+        """
+        from kryptosbot.problem_context import ProblemContext
+
+        if self.bench_challenge_payload is None:
+            return ProblemContext.real_k4()
+        return ProblemContext.k4bench(
+            payload=self.bench_challenge_payload,
+            prompt_block=self.bench_challenge_prompt_block or "",
+        )
+
     def __post_init__(self) -> None:
         root = self.project_root.resolve()
         if not self.ledger_db_path.is_absolute():
             self.ledger_db_path = root / self.ledger_db_path
-        if not self.legacy_db_path.is_absolute():
-            self.legacy_db_path = root / self.legacy_db_path
+
+
+# ---------------------------------------------------------------------------
+# Cycle observability callbacks
+# ---------------------------------------------------------------------------
+#
+# Bundle of optional callbacks for the shared cycle-loop body. Both
+# ResearchController.run (library mode) and run_controller.do_run (TUI
+# mode) call _run_cycle_loop with a CycleCallbacks bundle. Library mode
+# leaves every field None — _run_cycle_loop emits no callback events,
+# only its existing logger.* calls. TUI mode populates the bundle with
+# wrappers around display.print_*, so cycle headers, dispatch banners,
+# halt messages and per-phase progress all render via Rich.
+#
+# This is the seam introduced by the priority-1 cycle-loop collapse
+# (feedback_dup_cycle_loop_trap.md). Before this seam, the for-loop body
+# was duplicated in controller.run() and run_controller.do_run(), and a
+# new phase had to be patched in both. After this seam, the body lives
+# in one place and the two entry points only differ in their callback
+# bundle.
+#
+# Adding a new event:
+#   1. Add the field to CycleCallbacks (Optional, default None).
+#   2. Add a single ``cb.emit("on_<event>", ...)`` line in
+#      ``_run_cycle_loop`` at the moment the event is meaningful.
+#   3. If TUI rendering is desired, wire the field in
+#      ``run_controller._build_display_callbacks``.
+#
+# Callback contract:
+#   - Emits are best-effort. A raising callback is logged and swallowed
+#     so the cycle loop never fails because the TUI broke.
+#   - Callbacks must not write to the ledger. The ledger is the loop's
+#     state machine; observers are read-only.
+#   - Callback signatures are documented inline at each field.
+
+@dataclass
+class CycleCallbacks:
+    """Optional observability hooks invoked by the shared cycle loop.
+
+    Each callback is None by default. The shared loop body emits events
+    via ``CycleCallbacks.emit(name, *args)``, which is a no-op when the
+    named callback is None. See the comment block above for the full
+    rationale and authoring contract.
+    """
+
+    # ── Cycle body ────────────────────────────────────────────────────
+    # on_cycle_begin(cycle: int, total_max: int) — fired after the
+    # cycle counter is incremented but before any phase work.
+    on_cycle_begin: Optional[Callable[[int, int], None]] = None
+    # on_cycle_error(cycle: int, exc: BaseException) — fired when the
+    # cycle body raises. The loop catches and persists state regardless.
+    on_cycle_error: Optional[Callable[[int, BaseException], None]] = None
+    # on_landscape(landscape: dict) — fired after _assess_landscape returns.
+    on_landscape: Optional[Callable[[dict], None]] = None
+    # on_no_candidates() — fired when _generate_theories returns []
+    # and should_abort_run() is False (the cycle continues to the next).
+    on_no_candidates: Optional[Callable[[], None]] = None
+    # on_candidates_generated(count: int) — fired with the size of the
+    # candidate list returned by _generate_theories.
+    on_candidates_generated: Optional[Callable[[int], None]] = None
+    # on_dry_run_skip() — fired when config.dry_run is True and
+    # dispatch is bypassed.
+    on_dry_run_skip: Optional[Callable[[], None]] = None
+    # on_run_halt(reason: str) — fired when the cycle loop is breaking
+    # because of a halt condition (fatal agent error, hardening halt).
+    on_run_halt: Optional[Callable[[str], None]] = None
+
+    # ── Phase: theorist generation ────────────────────────────────────
+    # on_theorist_event(event: str, detail: Any) — passed as on_progress
+    # to _generate_theories. Forwarded directly into the existing
+    # theorist progress callback shape (no signature change).
+    on_theorist_event: Optional[Callable[[str, Any], None]] = None
+
+    # ── Phase: critic loop ────────────────────────────────────────────
+    on_critic_start: Optional[Callable[[], None]] = None
+    # on_critic_result(theory_title: str, decision_value: str,
+    #                  confidence: float, reason: str) — fired per theory.
+    on_critic_result: Optional[Callable[[str, str, float, str], None]] = None
+    # on_critic_summary(approved_count: int, total_count: int)
+    on_critic_summary: Optional[Callable[[int, int], None]] = None
+
+    # ── Phase: red-team filter ────────────────────────────────────────
+    # on_redteam_progress(event: str, detail: Any) — passed as on_progress
+    # to _red_team_filter. See run_controller._build_display_callbacks
+    # for the existing event taxonomy ("start", "verdict", "summary",
+    # "skipped").
+    on_redteam_progress: Optional[Callable[[str, Any], None]] = None
+
+    # ── Phase: dispatch ───────────────────────────────────────────────
+    on_dispatch_header: Optional[Callable[[int], None]] = None
+    # on_worker_message(hypothesis_id: str, event: str, detail: Any) —
+    # passed as on_worker_message to _dispatch_theories.
+    on_worker_message: Optional[Callable[[str, str, Any], None]] = None
+    on_dispatch_footer: Optional[Callable[[], None]] = None
+    # on_outcome_summary(outcomes: list[WorkerContract])
+    on_outcome_summary: Optional[Callable[[Any], None]] = None
+
+    # ── Phase: stat audit (Day 5) ─────────────────────────────────────
+    on_stat_audit_progress: Optional[Callable[[str, Any], None]] = None
+
+    # ── Phase: lead pursuit (Day 6) ───────────────────────────────────
+    on_pursuit_progress: Optional[Callable[[str, Any], None]] = None
+
+    # ── Phase: synthesis (Day 5) ──────────────────────────────────────
+    on_synthesis_progress: Optional[Callable[[str, Any], None]] = None
+
+    def emit(self, name: str, *args: Any, **kwargs: Any) -> None:
+        """Invoke the named callback if set. Swallow exceptions.
+
+        A raising display callback must never fail the cycle. The
+        exception is logged so observability bugs are visible in logs,
+        not silent.
+        """
+        cb = getattr(self, name, None)
+        if cb is None:
+            return
+        try:
+            cb(*args, **kwargs)
+        except Exception:
+            logger.exception(
+                "Cycle callback %s raised; loop continues", name,
+            )
 
 
 # ---------------------------------------------------------------------------
@@ -405,7 +592,18 @@ class ResearchController:
     def __init__(self, config: ControllerConfig) -> None:
         self.config = config
         self.ledger = TheoryLedger(config.ledger_db_path)
-        self.critic = TheoryCritic(self.ledger)
+        # K4Bench input mode: in bench mode the critic must not reject
+        # cipher-family theories on real-K4 elimination grounds (Tier 1/2,
+        # FamilyRecord.elimination_tier, retired-palette / consensus-null
+        # revival, K4-anomaly-keyed prompt-surface checks). Spec-shape
+        # checks (completeness, duplicate, override-duplicate,
+        # dsl_untranslatable) still fire normally. ``getattr`` is
+        # defensive against legacy KryptosBotConfig (no is_bench_mode
+        # property); those paths default to bench_mode=False.
+        self.critic = TheoryCritic(
+            self.ledger,
+            bench_mode=getattr(config, "is_bench_mode", False),
+        )
         self.state = ControllerState()
         self._semaphore = asyncio.Semaphore(config.max_concurrent_workers)
 
@@ -728,6 +926,15 @@ class ResearchController:
     def _load_canonical_facts(self) -> None:
         """Load canonical K4 facts from kernel constants into research tools.
 
+        Under K4Bench input mode the kernel's CT/cribs/Bean derivation
+        already point at the synthetic challenge (because
+        KRYPTOS_CT_OVERRIDE / KRYPTOS_CRIB_DICT_OVERRIDE were installed
+        at process start), so the same import path produces challenge-
+        appropriate facts. We additionally enrich the facts dict with
+        the bench-side payload (bench_id, suite_id, clue_text, solver
+        contract) so workers calling ``get_canonical_facts`` see the
+        challenge context the theorist saw.
+
         QUARANTINE (2026-04-14): NULL_PALETTE and CONSENSUS_NULL_POSITIONS
         were previously injected here and exposed to workers via the
         get_canonical_facts MCP tool as "ground truth". They are now
@@ -757,22 +964,93 @@ class ResearchController:
                     "breakthrough": BREAKTHROUGH_THRESHOLD,
                 },
             }
+            if self.config.is_bench_mode and self.config.bench_challenge_payload:
+                # Surface bench-side context the theorist was given.
+                # Keys do not collide with the K4 facts above.
+                facts.update({
+                    "bench_mode": True,
+                    "bench_id": self.config.bench_challenge_payload.get("bench_id"),
+                    "suite_id": self.config.bench_challenge_payload.get("suite_id"),
+                    "title": self.config.bench_challenge_payload.get("title"),
+                    "clue_text": self.config.bench_challenge_payload.get("clue_text"),
+                    "constraint_summary": self.config.bench_challenge_payload.get("constraint_summary"),
+                    "solver_required_fields": self.config.bench_challenge_payload.get("solver_required_fields"),
+                    "strict_pass_rule": self.config.bench_challenge_payload.get("strict_pass_rule"),
+                    "known_crib_score_target": self.config.bench_challenge_payload.get("known_crib_score_target"),
+                })
             set_canonical_facts(facts)
         except ImportError:
             logger.warning("Could not import kernel constants for canonical facts")
 
     # ------------------------------------------------------------------
+    # Session baseline (read by _assess_landscape for cycle_delta)
+    # ------------------------------------------------------------------
+
+    def _snapshot_session_baseline(self) -> None:
+        """Record the ledger's tested/eliminated counts at session start.
+
+        Both ``ResearchController.run`` and ``run_controller.do_run``
+        must call this before the cycle loop so that
+        ``_assess_landscape``'s ``cycle_delta`` reflects work done in
+        this session, not zero. Before this helper existed, the TUI
+        (do_run) path skipped baseline initialization and reported
+        ``cycle_delta = 0`` permanently.
+
+        The baseline is read only by ``_assess_landscape`` via
+        ``getattr(self, '_session_baseline_*', current_value)``, so
+        forgetting to call this helper degrades silently to "zero
+        delta" rather than crashing. Tests in
+        ``test_cycle_loop_characterization.py`` assert that both
+        entry points populate the attributes.
+        """
+        counts = self.ledger.count_by_status()
+        self._session_baseline_tested = sum(
+            counts.get(s, 0) for s in ["completed", "eliminated", "promising"]
+        )
+        self._session_baseline_eliminated = counts.get("eliminated", 0)
+
+    # ------------------------------------------------------------------
     # Main run loop
     # ------------------------------------------------------------------
 
-    async def run(self) -> ControllerState:
+    async def run(
+        self, *, callbacks: Optional[CycleCallbacks] = None,
+    ) -> ControllerState:
         """
         Execute the controller for up to max_cycles.
 
         Each cycle: assess → generate → critic → dispatch → absorb → persist.
+
+        ``callbacks`` is an optional ``CycleCallbacks`` bundle of
+        observability hooks. Library-mode callers (cron, smoke tests)
+        pass nothing and the loop emits only its existing logger.*
+        output. ``run_controller.do_run`` populates the bundle with
+        ``display.print_*`` wrappers so the same loop body renders via
+        Rich for interactive sessions. The two paths now share
+        ``_run_cycle_loop``; this is the priority-1 cycle-loop collapse
+        (see ``feedback_dup_cycle_loop_trap.md`` and
+        ``test_cycle_loop_characterization.py``).
         """
-        # Bootstrap registries
-        bootstrap_all(self.ledger, self.config.project_root)
+        # Synthetic-mode enforcement (2026-04-26). Refuse a real launch
+        # against a synthetic-tainted ledger (or vice versa) BEFORE
+        # bootstrap so the launch fails without mutating ledger state.
+        # Source of truth for the launching mode is the kernel's
+        # KRYPTOS_CT_OVERRIDE flag. See SyntheticModeError for the
+        # failure surface and feedback_synthetic_mode_propagation for
+        # the rationale.
+        from kryptos.kernel.constants import _SYNTHETIC_MODE
+        self.ledger.verify_and_pin_synthetic_mode(_SYNTHETIC_MODE)
+
+        # Bootstrap registries — gated via ProblemContext so a bench
+        # run never seeds real-K4 family / anomaly / claim / exhaustion
+        # rows into the bench-scoped ledger. Bench mode runs only the
+        # generic controller-queue-reset bootstrap. See run_controller.do_run
+        # for the matching gate on the TUI entry point.
+        if self.config.problem.is_real_k4:
+            bootstrap_all(self.ledger, self.config.project_root)
+        else:
+            from .registries import bootstrap_controller_queue_reset
+            bootstrap_controller_queue_reset(self.ledger)
 
         # Load persisted state
         self.state = self.ledger.load_controller_state()
@@ -793,26 +1071,50 @@ class ResearchController:
             self.state.theories_eliminated,
         )
 
-        # Snapshot baseline for session-local deltas
-        counts = self.ledger.count_by_status()
-        self._session_baseline_tested = sum(
-            counts.get(s, 0) for s in ["completed", "eliminated", "promising"]
-        )
-        self._session_baseline_eliminated = counts.get("eliminated", 0)
+        # Snapshot baseline for session-local deltas. Extracted to a
+        # helper so run_controller.do_run can call it too — without it,
+        # the TUI path's cycle_delta values were always 0 because the
+        # baseline attributes were never set on the controller.
+        self._snapshot_session_baseline()
+
+        await self._run_cycle_loop(callbacks or CycleCallbacks())
+
+        logger.info("Controller completed %d cycles", self.config.max_cycles)
+        return self.state
+
+    async def _run_cycle_loop(self, cb: CycleCallbacks) -> None:
+        """Shared cycle-loop body for both library and TUI entry points.
+
+        Before this method existed the for-loop body was duplicated in
+        ``ResearchController.run`` and ``run_controller.do_run``, which
+        meant every new phase had to be patched in two places (see
+        ``feedback_dup_cycle_loop_trap.md``). The body now lives only
+        here; both entry points dispatch to it with their own
+        ``CycleCallbacks`` bundle.
+
+        Pinned by ``test_cycle_loop_characterization.py`` (test G):
+        the canonical trace produced by this method is identical
+        regardless of which callback bundle is passed.
+        """
+        total_max = self.state.cycle_number + self.config.max_cycles
 
         for cycle in range(self.config.max_cycles):
             self.state.cycle_number += 1
             self.state.last_cycle_at = _now_iso()
             logger.info("=== Cycle %d ===", self.state.cycle_number)
             self._begin_cycle_phase_state()  # Day 5: reset per-cycle dicts
+            cb.emit("on_cycle_begin", self.state.cycle_number, total_max)
 
             try:
                 # Step 1: Assess landscape
                 landscape = self._assess_landscape()
                 logger.info("Landscape: %s", json.dumps(landscape, indent=2)[:500])
+                cb.emit("on_landscape", landscape)
 
                 # Step 2: Generate candidate theories
-                candidates = await self._generate_theories(landscape)
+                candidates = await self._generate_theories(
+                    landscape, on_progress=cb.on_theorist_event,
+                )
                 logger.info("Generated %d candidate theories", len(candidates))
 
                 if not candidates:
@@ -821,16 +1123,28 @@ class ResearchController:
                             "Aborting remaining cycles after fatal theorist failure: %s",
                             self.fatal_agent_error,
                         )
+                        cb.emit(
+                            "on_run_halt",
+                            self.fatal_agent_error or "fatal agent failure",
+                        )
                         break
                     logger.info("No candidates generated, ending cycle")
+                    cb.emit("on_no_candidates")
                     continue
 
+                cb.emit("on_candidates_generated", len(candidates))
+
                 # Step 3: Critic pass
+                cb.emit("on_critic_start")
                 approved = []
                 for theory in candidates:
                     if self.config.skip_critic:
                         theory.status = TheoryStatus.APPROVED
                         approved.append(theory)
+                        cb.emit(
+                            "on_critic_result",
+                            theory.title, "approve", 1.0, "",
+                        )
                     else:
                         verdict = self.critic.evaluate(theory)
                         theory.critic_verdict = verdict
@@ -854,10 +1168,19 @@ class ResearchController:
                                 verdict.reasons[0] if verdict.reasons else "no reason",
                             )
 
+                        cb.emit(
+                            "on_critic_result",
+                            theory.title,
+                            verdict.decision.value,
+                            verdict.confidence,
+                            verdict.reasons[0] if verdict.reasons else "",
+                        )
+
                 logger.info(
                     "%d/%d theories approved by critic",
                     len(approved), len(candidates),
                 )
+                cb.emit("on_critic_summary", len(approved), len(candidates))
 
                 # Day 6: any approved theory tagged "pursuit_lead:<id>"
                 # closes the corresponding open lead as PURSUED. Best-
@@ -880,7 +1203,9 @@ class ResearchController:
                 # session per approved theory). Compute is not the
                 # constraint — the user explicitly approved this; see
                 # feedback_do_not_cap_runtime.md.
-                approved = await self._red_team_filter(approved)
+                approved = await self._red_team_filter(
+                    approved, on_progress=cb.on_redteam_progress,
+                )
 
                 if not approved:
                     logger.info("No theories survived red-team, ending cycle")
@@ -888,11 +1213,17 @@ class ResearchController:
 
                 if self.config.dry_run:
                     logger.info("DRY RUN — skipping dispatch")
+                    cb.emit("on_dry_run_skip")
                     continue
 
                 # Step 4: Dispatch to workers
-                outcomes = await self._dispatch_theories(approved)
+                cb.emit("on_dispatch_header", len(approved))
+                outcomes = await self._dispatch_theories(
+                    approved, on_worker_message=cb.on_worker_message,
+                )
                 logger.info("Got %d experiment outcomes", len(outcomes))
+                cb.emit("on_dispatch_footer")
+                cb.emit("on_outcome_summary", outcomes)
 
                 # Step 5: Absorb outcomes
                 self._absorb_outcomes(outcomes)
@@ -902,9 +1233,13 @@ class ResearchController:
                 # which _run_alerts consumes to gate signal-level alerts.
                 # Best-effort: never blocks the cycle.
                 try:
-                    await self._stat_audit_filter(approved, outcomes)
-                except Exception:
+                    await self._stat_audit_filter(
+                        approved, outcomes,
+                        on_progress=cb.on_stat_audit_progress,
+                    )
+                except Exception as exc:
                     logger.exception("Stat-audit filter raised (continuing)")
+                    cb.emit("on_cycle_error", self.state.cycle_number, exc)
 
                 # Step 5b: Run contradiction-detector alerts BEFORE persisting
                 # state. Alerting is best-effort and never blocks the loop.
@@ -934,9 +1269,13 @@ class ResearchController:
                 # opens PursuitLead rows in the ledger for any "pursue"
                 # verdict. Best-effort: never blocks the cycle.
                 try:
-                    await self._run_lead_pursuit(approved, outcomes)
-                except Exception:
+                    await self._run_lead_pursuit(
+                        approved, outcomes,
+                        on_progress=cb.on_pursuit_progress,
+                    )
+                except Exception as exc:
                     logger.exception("Lead pursuit raised (continuing)")
+                    cb.emit("on_cycle_error", self.state.cycle_number, exc)
 
                 # Step 6: Persist state
                 self._update_state_counts()
@@ -947,14 +1286,19 @@ class ResearchController:
                 # a structured CycleSynthesis written to self._last_synthesis
                 # which the next cycle's _assess_landscape can render.
                 try:
-                    await self._run_synthesis(approved, outcomes)
-                except Exception:
+                    await self._run_synthesis(
+                        approved, outcomes,
+                        on_progress=cb.on_synthesis_progress,
+                    )
+                except Exception as exc:
                     logger.exception("Cycle synthesis raised (continuing)")
+                    cb.emit("on_cycle_error", self.state.cycle_number, exc)
 
-            except Exception:
+            except Exception as exc:
                 logger.exception("Error in cycle %d", self.state.cycle_number)
                 # Persist state even on error so we don't lose progress
                 self.ledger.save_controller_state(self.state)
+                cb.emit("on_cycle_error", self.state.cycle_number, exc)
 
             # Campaign-A hardening (2026-04-22): break the cycle loop
             # after persist + synthesis have run, so the halt reason is
@@ -967,21 +1311,29 @@ class ResearchController:
                     self.state.cycle_number,
                     self.state.halt_reason_hardening,
                 )
+                cb.emit("on_run_halt", self.state.halt_reason_hardening)
                 break
-
-        logger.info("Controller completed %d cycles", self.config.max_cycles)
-        return self.state
 
     # ------------------------------------------------------------------
     # Step 1: Assess landscape
     # ------------------------------------------------------------------
 
     def _assess_landscape(self) -> dict[str, Any]:
-        """Build a structured view of the current research landscape."""
-        from kryptosbot.registries import (
-            STANDING_CONSTRAINTS,
-            ADMISSIBLE_PROMPT_ANOMALY_IDS,
-        )
+        """Build a structured view of the current research landscape.
+
+        Reads all real-K4 registry / anomaly / family state through
+        ``self.config.problem`` so a K4Bench run never reaches into
+        the real-K4 corpus. In bench mode this short-circuits to
+        ``_assess_landscape_bench`` for a challenge-local landscape;
+        in real-K4 mode the ProblemContext accessors return the live
+        registries so behavior is unchanged.
+        """
+        problem = self.config.problem
+        if problem.is_bench:
+            return self._assess_landscape_bench()
+
+        STANDING_CONSTRAINTS = problem.standing_constraints()
+        ADMISSIBLE_PROMPT_ANOMALY_IDS = problem.admissible_prompt_anomaly_ids()
 
         status_counts = self.ledger.count_by_status()
         family_counts = self.ledger.count_by_family()
@@ -1021,7 +1373,7 @@ class ResearchController:
         # thoroughly tested elsewhere — by external campaigns (running_key,
         # stego_layer, w_delimiter), by kernel-level proofs (E-FRAC series),
         # or by exhaustion-log script families with significant coverage.
-        from kryptosbot.registries import EXTERNALLY_EVIDENCED_FAMILIES
+        EXTERNALLY_EVIDENCED_FAMILIES = problem.externally_evidenced_families()
 
         tested_families = family_counts  # {family: {total, eliminated, promising}}
         underexplored = [
@@ -1057,10 +1409,9 @@ class ResearchController:
         # Disproof-pivot risk on low-count anomalies (e.g. aaa_coordinate_lie
         # at 15) is handled downstream by the critic and red-team, not here;
         # see feedback_accept_specific_disproofs.md.
-        from kryptosbot.registries import KNOWN_ANOMALIES
         _priority_map = {
             a["anomaly_id"]: a.get("priority", 99)
-            for a in KNOWN_ANOMALIES
+            for a in problem.known_anomalies()
         }
         investigable.sort(
             key=lambda a: (
@@ -1268,6 +1619,96 @@ class ResearchController:
     # Step 2: Generate theories
     # ------------------------------------------------------------------
 
+    def _collect_hcc_seeds(self) -> list[TheoryRecord]:
+        """Compute the HandCipherCore deterministic coverage seeds for
+        the current bench challenge.
+
+        Returns the full role × layer-order × family permutation set
+        from ``hand_cipher_core_fallback``. The result is deterministic
+        for a given bench payload — same clue pack always produces
+        the same seed list, in the same order, with the same
+        hypothesis_ids.
+
+        In real-K4 mode this returns ``[]``. The bench-mode call site
+        in ``_generate_theories`` is responsible for actually merging
+        the seeds into the cycle's candidate list; this function only
+        produces the seed material so it can be unit-tested
+        independently of the LLM session.
+
+        2026-04-27 patch: this is the deterministic-coverage entry
+        point the controller uses BEFORE any LLM call. The contract:
+        every seed in this list MUST appear in the cycle's dispatched
+        candidate set (subject only to ledger-dedup against prior
+        cycles). The LLM may add candidates above these but cannot
+        replace or omit them.
+        """
+        if self.config.problem.is_real_k4:
+            return []
+        # --no-hcc-seeds: explicit operator opt-out. Returns [] without
+        # calling the generator at all — useful for LLM-only diagnostic
+        # runs where the operator wants to see what the theorist
+        # produces in isolation.
+        cap = self.config.hcc_seeds_cap
+        if cap is not None and cap == 0:
+            return []
+        from .bench_fallback import hand_cipher_core_fallback
+        payload = self.config.bench_challenge_payload or {}
+        # n_target is a floor on the catalogue size, NOT a cap. The
+        # function returns the full HCC role × order matrix (up to
+        # the generate_layered_specs internal max_specs ceiling).
+        # ``theories_per_cycle`` deliberately does NOT cap HCC seeds:
+        # the cap is governed by ``hcc_seeds_cap`` only, so a user
+        # lowering --theories cannot silently drop coverage seeds.
+        seeds = hand_cipher_core_fallback(
+            payload,
+            n_target=self.config.theories_per_cycle,
+        )
+        # --hcc-seeds N: explicit cap. Slice from the front so the
+        # earliest-emitted families (columnar+vigenere first) are
+        # preserved even under aggressive caps.
+        if cap is not None and cap > 0:
+            seeds = seeds[:cap]
+        return seeds
+
+    def _merge_hcc_seeds_into_candidates(
+        self,
+        seeds: list[TheoryRecord],
+        llm_candidates: list[TheoryRecord],
+    ) -> list[TheoryRecord]:
+        """Combine HCC seeds with LLM-supplied candidates.
+
+        Seeds come first (deterministic-coverage contract); LLM
+        candidates that share a hypothesis_id with any seed are
+        dropped (the seed already covers them). LLM candidates with
+        novel hypothesis_ids are appended in order.
+
+        Also dedupes against the live ledger so a seed that was
+        already dispatched on a prior cycle isn't re-dispatched —
+        this matches the behaviour of the pre-2026-04-27
+        ``_programmatic_fallback`` bench branch and keeps the
+        ``ResearchController`` cycle behaviour idempotent across
+        restarts.
+        """
+        seen_ids: set[str] = set()
+        out: list[TheoryRecord] = []
+        for seed in seeds:
+            if seed.hypothesis_id in seen_ids:
+                continue
+            if self.ledger.exists(seed.hypothesis_id):
+                # Already in the ledger from a prior cycle; the
+                # ledger row carries its own coverage_vector so the
+                # seed has already done its job. Skip to keep the
+                # dispatched-set finite.
+                continue
+            seen_ids.add(seed.hypothesis_id)
+            out.append(seed)
+        for cand in llm_candidates:
+            if cand.hypothesis_id in seen_ids:
+                continue
+            seen_ids.add(cand.hypothesis_id)
+            out.append(cand)
+        return out
+
     async def _generate_theories(
         self, landscape: dict[str, Any],
         on_progress: Any = None,
@@ -1278,6 +1719,18 @@ class ResearchController:
         The theorist is given the current landscape and must produce
         structured theory records (not free-text). Falls back to
         programmatic generation if the agent fails.
+
+        2026-04-27 patch — HandCipherCore deterministic coverage:
+        in BENCH MODE only, this function calls
+        ``_collect_hcc_seeds`` BEFORE the LLM theorist runs. The
+        seeds are deterministic role × layer-order × family
+        permutations from the challenge clue pack. They are
+        guaranteed to appear in the returned candidate list
+        (subject only to ledger dedup against prior cycles); the
+        LLM theorist may add additional candidates, but cannot
+        replace or omit any seed. Real-K4 mode is unchanged — the
+        seeds list is empty and the function behaves exactly as
+        before.
 
         PANTHEON INTEGRATION (Day 2): instead of a generic system prompt,
         the theorist loads one of the Pantheon operator/interpretive-rival
@@ -1302,6 +1755,41 @@ class ResearchController:
             on_progress: Optional callback(event, detail) for live display.
                 Events: "start", "turn", "tool_use", "done", "fallback", "error".
         """
+        # 2026-04-27: collect HCC seeds BEFORE the LLM call. Empty in
+        # real-K4 mode. The seeds are merged into every return path
+        # below so a seed cannot be silently omitted by an LLM that
+        # produces a few "interesting" candidates of its own.
+        hcc_seeds = self._collect_hcc_seeds()
+        if hcc_seeds and on_progress:
+            on_progress(
+                "hcc_seeds",
+                f"injected {len(hcc_seeds)} deterministic coverage seeds",
+            )
+
+        # --hcc-only: skip the LLM call entirely and dispatch only
+        # the HCC seed list. Used for deterministic-coverage runs
+        # where the operator wants to validate the seed-only
+        # behaviour without paying for an LLM session. When the
+        # operator combined --hcc-only with --no-hcc-seeds the CLI
+        # already errored out, so the empty-seeds branch here is a
+        # defensive boundary for programmatic callers only.
+        if self.config.hcc_only:
+            if not hcc_seeds:
+                logger.warning(
+                    "--hcc-only requested but no HCC seeds available "
+                    "(real-K4 mode or --no-hcc-seeds set); returning []"
+                )
+                return []
+            if on_progress:
+                on_progress(
+                    "hcc_only",
+                    f"hcc_only=True; skipping LLM, dispatching {len(hcc_seeds)} seeds",
+                )
+            # Run through the merge helper so ledger-dedup still
+            # applies (matches the bench-mode path's idempotency
+            # contract across cycle restarts).
+            return self._merge_hcc_seeds_into_candidates(hcc_seeds, [])
+
         prompt = self._build_theorist_prompt(landscape)
 
         # Select Pantheon persona for this cycle and resolve its model.
@@ -1437,6 +1925,13 @@ class ResearchController:
                 logger.warning("Theorist session failed fatally: %s", classified)
                 if on_progress:
                     on_progress("error", classified)
+                # 2026-04-27: even on fatal LLM failure, bench mode
+                # still emits HCC seeds for THIS cycle so the
+                # deterministic coverage matrix runs. The
+                # fatal_agent_error flag still halts the run after
+                # this cycle finishes — see should_abort_run().
+                if hcc_seeds:
+                    return self._merge_hcc_seeds_into_candidates(hcc_seeds, [])
                 return []
             logger.warning("Theorist session failed: %s", combined_error)
             self._record_theorist_parse_diagnostics({
@@ -1458,7 +1953,13 @@ class ResearchController:
             return self._programmatic_fallback(landscape)
 
         raw_output = "\n".join(raw_chunks)
-        report = validate_theory_proposals(raw_output)
+        # Route validation through ProblemContext so bench runs validate
+        # against an empty anomaly registry (any anomalies_exploited
+        # reference becomes a contamination signal, not a real-K4 ID
+        # check).
+        report = validate_theory_proposals(
+            raw_output, problem=self.config.problem
+        )
         diagnostics = self._build_theorist_parse_diagnostics(raw_output, report)
         self._record_theorist_parse_diagnostics(diagnostics)
 
@@ -1500,9 +2001,23 @@ class ResearchController:
                     f"{diagnostics.get('fallback_reason', 'unknown')} "
                     f"(invalid={diagnostics['invalid_count']} errors={diagnostics['error_count']})",
                 )
+            # The fallback in bench mode IS the HCC catalogue, so we
+            # do NOT additionally prepend hcc_seeds here — that would
+            # double-count. In real-K4 mode hcc_seeds is empty, so
+            # prepending would be a no-op anyway.
             return self._programmatic_fallback(landscape)
 
-        return report.valid[:self.config.theories_per_cycle]
+        # 2026-04-27 deterministic-coverage merge: bench-mode runs
+        # always include the HCC seeds in the dispatched set. In
+        # real-K4 mode hcc_seeds is empty, so this collapses to the
+        # historical ``report.valid[:theories_per_cycle]`` behaviour
+        # bit-for-bit.
+        llm_candidates = report.valid[:self.config.theories_per_cycle]
+        if hcc_seeds:
+            return self._merge_hcc_seeds_into_candidates(
+                hcc_seeds, llm_candidates,
+            )
+        return llm_candidates
 
     # ------------------------------------------------------------------
     # Step 3b: Red-team pre-check (Day 3 Pantheon integration)
@@ -1583,6 +2098,7 @@ class ResearchController:
                 project_root=self.config.project_root.resolve(),
                 allowed_tools=self.config.allowed_tools,
                 permission_mode=self.config.permission_mode,
+                bench_mode=self.config.problem.is_bench,
             )
 
             # Day 5: capture the verdict in the per-cycle dict so the
@@ -1703,6 +2219,164 @@ class ResearchController:
                 (len(survivors), len(approved), rejected, concerned_count, error_count),
             )
         return survivors
+
+    def _assess_landscape_bench(self) -> dict[str, Any]:
+        """Build a challenge-local landscape for K4Bench input mode.
+
+        Hard contract (2026-04-26): in bench mode the landscape MUST
+        NOT carry any real-K4 family, anomaly, standing constraint,
+        anchor, or recent-outcome string. The only permitted bench
+        context is:
+
+          - bench_id / suite_id / title          (from challenge JSON)
+          - challenge CT length / crib count     (from challenge JSON)
+          - prior attempts for this bench_id     (bench-scoped ledger)
+          - synthetic ledger status              (pinned mode marker)
+          - cycle telemetry                      (status_counts, delta)
+          - previous_synthesis                   (only if produced
+                                                  under bench mode in
+                                                  this same run)
+
+        This method is the single source of truth for bench-mode
+        landscape content. ``_assess_landscape`` short-circuits to it
+        when ``is_bench_mode`` so KNOWN_FAMILIES / KNOWN_ANOMALIES /
+        STANDING_CONSTRAINTS / EXTERNALLY_EVIDENCED_FAMILIES /
+        ADMISSIBLE_PROMPT_ANOMALY_IDS are never read for a bench run.
+        Empty arrays are returned for the K4-specific fields so the
+        downstream theorist-prompt builder, display, and programmatic
+        fallback all see a structurally complete dict but with no
+        content to leak.
+        """
+        status_counts = self.ledger.count_by_status()
+
+        current_tested = sum(
+            status_counts.get(s, 0)
+            for s in ("completed", "eliminated", "promising")
+        )
+        current_eliminated = status_counts.get("eliminated", 0)
+        delta = {
+            "new_tested": current_tested - getattr(
+                self, "_session_baseline_tested", current_tested
+            ),
+            "new_eliminated": current_eliminated - getattr(
+                self, "_session_baseline_eliminated", current_eliminated
+            ),
+        }
+
+        # All bench context is sourced via ProblemContext so the
+        # accessor is the single audit point for what's permitted in
+        # a bench landscape. The ledger pin is added in by the
+        # controller (it lives on the bench-scoped ledger, not on
+        # the immutable challenge payload).
+        bench_context = self.config.problem.bench_context_dict()
+        try:
+            bench_context["synthetic_ledger_pin"] = (
+                self.ledger.get_pinned_synthetic_mode()
+            )
+        except Exception:
+            bench_context["synthetic_ledger_pin"] = None
+
+        prior_attempts = {
+            "total": sum(status_counts.values()),
+            "completed": status_counts.get("completed", 0),
+            "eliminated": status_counts.get("eliminated", 0),
+            "promising": status_counts.get("promising", 0),
+            "running": status_counts.get("running", 0),
+            "criticized": status_counts.get("criticized", 0),
+            "error": status_counts.get("error", 0),
+        }
+
+        previous_synthesis = (
+            {
+                "headline": self._last_synthesis.headline,
+                "recommended_next_focus":
+                    self._last_synthesis.recommended_next_focus,
+                "family_movements": list(
+                    self._last_synthesis.family_movements
+                ),
+                "evidence_added": list(self._last_synthesis.evidence_added),
+                "dispatched_count": self._last_synthesis.dispatched_count,
+                "disproved_count": self._last_synthesis.disproved_count,
+                "signal_count": self._last_synthesis.signal_count,
+            }
+            if self._last_synthesis is not None
+            else None
+        )
+
+        return {
+            "bench_mode": True,
+            "status_counts": status_counts,
+            "cycle_delta": delta,
+            "theorist_parse_telemetry": {
+                "successes": self.state.theorist_parse_successes,
+                "partial_successes":
+                    self.state.theorist_parse_partial_successes,
+                "fallbacks": self.state.theorist_fallbacks,
+                "fallback_reasons": dict(
+                    self.state.theorist_fallback_reasons
+                ),
+                "last": dict(self.state.last_theorist_parse_diagnostics),
+            },
+            "bench_context": bench_context,
+            "prior_attempts": prior_attempts,
+            "previous_synthesis": previous_synthesis,
+            # The following fields are kept in the dict for structural
+            # parity with the real-K4 landscape (so display + theorist
+            # prompt builder see the same shape) but MUST stay empty
+            # under bench mode. Any non-empty value here is a leak.
+            "standing_constraints": [],
+            "active_families": [],
+            "underexplored_families": [],
+            "open_anomalies": [],
+            "unaddressed_anomalies": [],
+            "prompt_anomaly_count": 0,
+            "registry_open_anomaly_count": 0,
+            "recent_outcomes": [],
+            "pursuit_leads": [],
+            "soft_pursuit_leads": [],
+        }
+
+    def _strip_landscape_for_bench(
+        self, landscape: dict[str, Any],
+    ) -> dict[str, Any]:
+        """Return a bench-safe view of the landscape.
+
+        Defense-in-depth complement to ``_assess_landscape_bench``: even
+        if a future change accidentally re-introduces real-K4 fields
+        into a bench landscape, this projection drops them before the
+        theorist prompt is built.
+
+        Kept fields (bench-safe by construction — counts, counters,
+        and bench_context derived from the challenge JSON itself):
+          - bench_mode                           sentinel
+          - status_counts                        bench-ledger counts
+          - cycle_delta                          session delta
+          - theorist_parse_telemetry             parse rates
+          - bench_context                        bench_id/title/etc.
+          - prior_attempts                       bench-scoped summary
+          - previous_synthesis                   bench-cycle synthesis
+                                                 only (real-K4 mode
+                                                 never reaches this
+                                                 stripper)
+        Dropped: every other field — including any real-K4 anomaly,
+        family, anchor, or claim name that could leak into a bench
+        prompt.
+
+        The acceptance test for this helper is in
+        ``test_bench_mode_pipeline.py::test_bench_prompt_omits_real_k4_anomaly_phrases``:
+        a bench-mode theorist prompt must not contain K4-specific
+        phrases unless they appear verbatim in the challenge JSON.
+        """
+        bench_safe_keys = (
+            "bench_mode",
+            "status_counts",
+            "cycle_delta",
+            "theorist_parse_telemetry",
+            "bench_context",
+            "prior_attempts",
+            "previous_synthesis",
+        )
+        return {k: landscape.get(k) for k in bench_safe_keys}
 
     def _render_landscape_anomaly_claims(self, landscape: dict[str, Any]) -> str:
         """Render the anomaly-backed ProvenanceClaims visible in the landscape
@@ -1973,6 +2647,154 @@ class ResearchController:
             serpentine_block = self._render_serpentine_anchor_for_prompt()
         else:
             serpentine_block = ""
+
+        # K4Bench input mode replaces the real-K4 anchor prelude with
+        # the synthetic-challenge prompt block. The block is fully
+        # self-contained (CT, cribs, clue text, solver contract) and
+        # the rest of the prompt below clarifies how to treat the
+        # historical landscape under bench mode.
+        #
+        # Critically: the K4 landscape carries open anomalies
+        # (aaa_coordinate_lie / "He lied", width21_vertical_bigrams,
+        # w_delimiter_segments / W segmentation), K4-specific families
+        # (k2_coords, geodetic, antipodes), and the manual-focus /
+        # serpentine-anchor / Oranchak-corpora blocks — none of which
+        # apply to a synthetic K4Bench challenge. Surfacing them under
+        # bench mode primes the theorist to test K4 anomalies on a
+        # CT that has no relation to K4. The bench-mode prompt below
+        # therefore (a) skips the K4 anchor blocks entirely (they are
+        # already gated on include_oranchak_corpora /
+        # include_serpentine_anchor / hedged_claims, which
+        # run_controller.main forces False / empty in bench mode), and
+        # (b) serializes only a STRIPPED landscape view that carries
+        # cycle telemetry but no K4 anomaly / family / anchor names.
+        problem = self.config.problem
+        if problem.is_bench:
+            bench_block = problem.bench_prompt()
+            bench_landscape = self._strip_landscape_for_bench(landscape)
+            bench_intro = (
+                "K4BENCH SYNTHETIC CALIBRATION RUN — the controller is "
+                "running against one challenge from the K4Bench blind "
+                "synthetic suite. The CIPHERTEXT and CRIB SPANS in the "
+                "block above are the SOLE source of truth. The landscape "
+                "summary below has been STRIPPED to cycle-telemetry "
+                "fields only; real-K4 anomalies, families, and anchor "
+                "blocks have been intentionally suppressed because they "
+                "do not apply to a synthetic calibration challenge.\n\n"
+            )
+            bench_id_for_skel = (
+                (self.config.bench_challenge_payload or {}).get("bench_id")
+                or "K4Bench"
+            )
+            return f"""{bench_block}
+
+{bench_intro}Generate {self.config.theories_per_cycle} novel, testable hypotheses for the
+K4Bench challenge above.
+
+CYCLE TELEMETRY (synthetic-challenge run; no real-K4 content):
+{json.dumps(bench_landscape, indent=2)}
+
+CONSTRAINTS:
+- Each hypothesis must propose a hand-executable classical/procedural
+  cipher chain that, when applied to the K4Bench ciphertext, would
+  produce a 97-character A-Z plaintext matching the declared cribs.
+- Each must have a clear kill criterion (how to disprove it).
+- Use the public clue pack as your source of key material and
+  procedure hints.
+- Avoid overfitting only the 24 crib positions: a plaintext that
+  matches the cribs but reads as noise outside them is a crib-overfit.
+- Do not import real-K4 elimination history as a hard constraint; the
+  K4Bench construction is independent of K4. A family eliminated for
+  real K4 may still be the right answer here.
+
+DSL_SPEC CONTRACT (same shape as the real-K4 theorist contract):
+Cipher-family theories MUST include a translatable dsl_spec. Supported
+cipher kinds:
+  identity, vigenere, beaufort, variant_beaufort, columnar, atbash,
+  rail_fence, myszkowski, route, quagmire, grille, polybius, procedural
+
+Required parameter shapes (these are the dispatcher's exact parameter
+names; mismatches are repaired or rejected before dispatch):
+  - rail_fence:        params=[{{"name": "depth", "values": [<int >= 2>]}}]
+  - route:             params=[{{"name": "variant",
+                                 "values": ["serpentine"|"spiral"]}},
+                                {{"name": "rows", "values": [<int>]}},
+                                {{"name": "cols", "values": [<int>]}}]
+                       (rows*cols must be >= 97)
+  - quagmire:          params=[{{"name": "period_keyword",
+                                 "values": [<non-empty A-Z str>]}},
+                                {{"name": "indicator", "values": [<single A-Z>]}},
+                                {{"name": "ct_alphabet_keyword", "values": [<A-Z>]}},
+                                {{"name": "pt_alphabet_keyword", "values": [<A-Z>]}}]
+                       Use variant="quagmire_iii" or "quagmire_iv" — NOT
+                       "III"/"IV" Roman numerals (rejected).
+  - polybius:          params=[{{"name": "square_keyword", "values": [<str>]}},
+                                {{"name": "variant", "values": ["bifid"]}},
+                                {{"name": "merge", "values": ["IJ"|"CK"|"VW"]}}]
+  - vigenere/beaufort/variant_beaufort:
+                       params=[{{"name": "keyword", "values": [<A-Z str>]}}]
+  - columnar:          params=[{{"name": "width", "values": [<int >= 2>]}},
+                                {{"name": "col_order",
+                                 "values": [[<permutation of 0..width-1>]]}}]
+  - grille:            params=[{{"name": "hole_mask",
+                                 "values": [[<permutation of 0..96>]]}}]
+
+Other contract fields:
+  hypothesis_id MUST be a non-empty string (theorist-supplied slug).
+  pipeline[].alphabet ∈ {{AZ, KA, keyword_mixed}}
+  crib_alignment ∈ {{direct_positional, post_transposition, free}}
+  scoring ∈ {{crib_only, crib_plus_bean, ngram_vs_null, composite}}
+  null_baseline.method ∈ {{random_text, shuffled_ct,
+                           matched_variant_family, monte_carlo_cached}}
+
+OUTPUT FORMAT (JSON array — literal, not a description):
+Emit ONLY a top-level JSON array of objects. Do not wrap it in any
+other JSON structure, do not include ```json fences except optionally
+around the array itself, and do not emit prose before or after. The
+parser is strict: a trailing summary, a leading "Here are my
+theories:", or wrapping the array in {{"theories": [...]}} all cause
+the entire batch to be rejected.
+
+Each object MUST include the required fields ``core_claim``,
+``mechanism``, ``family``; SHOULD include ``title``, ``kill_criteria``,
+``expected_signal``, ``compute_cost_estimate``, ``minimal_test_spec``;
+and MUST include a translatable ``dsl_spec`` (since every K4Bench
+challenge uses a hand-executable cipher chain — there are no
+methodological / non-cipher families in bench mode).
+
+Concrete shape (copy this skeleton and fill in fields):
+[
+  {{
+    "title": "Vigenere with CEDAR keyword",
+    "core_claim": "K4Bench challenge {bench_id_for_skel} uses a Vigenere cipher keyed CEDAR",
+    "mechanism": "Single-layer Vigenere over A-Z with keyword from clue pack",
+    "family": "vigenere",
+    "kill_criteria": ["Crib score below 10 with CEDAR keyword"],
+    "expected_signal": "crib_score >= 18 with Bean PASS",
+    "compute_cost_estimate": "low",
+    "minimal_test_spec": {{"method": "vigenere_keyword", "parameters": {{"keyword": "CEDAR"}}}},
+    "dsl_spec": {{
+      "hypothesis_id": "bench-vig-cedar",
+      "pipeline": [{{
+        "kind": "vigenere", "alphabet": "AZ",
+        "params": [{{"name": "keyword", "values": ["CEDAR"]}}]
+      }}],
+      "crib_alignment": "direct_positional",
+      "scoring": "crib_plus_bean",
+      "compute_budget_cpu_minutes": 1,
+      "assumption_bundle": ["single_layer"]
+    }}
+  }},
+  {{ /* second hypothesis with the same shape */ }}
+]
+
+The dispatcher / worker pipeline is identical in bench mode. A spec
+that fails ``validate_hypothesis_spec`` is rejected; the Roman-numeral
+quagmire variant pitfall and the empty hypothesis_id pitfall are
+auto-repaired before validation, but every other shape error is
+reported as ``dsl_untranslatable`` rejection.
+"""
+
         return f"""Generate {self.config.theories_per_cycle} novel, testable K4 hypotheses.
 
 CURRENT RESEARCH LANDSCAPE:
@@ -2237,7 +3059,55 @@ Output ONLY the JSON array. No commentary."""
         structured hypotheses without an API call. Skips families/anomalies
         that already have theories in the ledger to avoid re-proposing
         eliminated work.
+
+        K4Bench input mode (2026-04-26 v2): routes to
+        ``bench_fallback.hand_cipher_core_fallback``. The earlier
+        revision returned ``[]`` in bench mode because the real-K4
+        fallback corpus draws from the K4 family / anomaly registries
+        that don't apply to a synthetic challenge — but that produced
+        Proposed=0 / Tested=0 cycles whenever the theorist hiccupped
+        on a K4Bench run. The HandCipherCore fallback is challenge-
+        local: it mines keys from ``bench_challenge_payload["clue_text"]``
+        and emits validated DSL specs over the supported cipher kinds
+        (vigenere, beaufort, variant_beaufort, columnar, rail_fence,
+        myszkowski, route, quagmire III, plus two-layer combinations).
+        Every emitted spec is validated via
+        ``validate_hypothesis_spec`` AND every layer kind is checked
+        for dispatcher translation BEFORE the TheoryRecord is built,
+        so any returned theory is guaranteed dispatchable.
+
+        Real-K4 mode is unchanged: underexplored_families +
+        unaddressed_anomalies as before.
         """
+        if not self.config.problem.is_real_k4:
+            from .bench_fallback import hand_cipher_core_fallback
+
+            payload = self.config.bench_challenge_payload or {}
+            theories = hand_cipher_core_fallback(
+                payload,
+                n_target=self.config.theories_per_cycle,
+            )
+            # Drop catalogue entries that already exist in the ledger
+            # (deterministic catalogue → stable IDs → second cycle would
+            # otherwise propose the same set). This mirrors the real-K4
+            # branch's existence check below.
+            fresh: list[TheoryRecord] = []
+            for theory in theories:
+                if not self.ledger.exists(theory.hypothesis_id):
+                    fresh.append(theory)
+            logger.info(
+                "bench_fallback emitted %d theories (%d catalogue, %d "
+                "already in ledger) for bench_id=%s",
+                len(fresh),
+                len(theories),
+                len(theories) - len(fresh),
+                payload.get("bench_id", "?"),
+            )
+            # If every catalogue entry is already in the ledger, return
+            # the full set so the cycle still has something to dispatch
+            # — duplicate-protection lives in the dispatcher / critic.
+            return fresh if fresh else theories[: self.config.theories_per_cycle]
+
         theories = []
 
         # Generate theories for underexplored families — skip those already tested
@@ -2399,7 +3269,7 @@ Output ONLY the JSON array. No commentary."""
         Category-B theories (family ∈ NON_DSL_FAMILIES) route to
         _run_worker_legacy instead and never reach this function.
         """
-        from .hypothesis_dsl import HypothesisSpec
+        from .hypothesis_dsl import HypothesisSpec, repair_spec_shape
         from .job_dispatcher import (
             check_admissibility,
             execute,
@@ -2407,11 +3277,19 @@ Output ONLY the JSON array. No commentary."""
         )
 
         async with self._semaphore:
+            # ExperimentRecord.config is built AFTER repair so the
+            # downstream attempt-replay path (bench_attempts.py) sees
+            # the canonical repaired dsl_spec, not the raw theorist-
+            # authored form. The wrapper key 'dsl_spec' matches the
+            # K4Bench attempt-replay layer-source priority order
+            # (raw_artifacts.dispatched_dsl_spec.pipeline ->
+            #  experiment.config.dsl_spec.pipeline ->
+            #  theory.minimal_test_spec.dsl_spec.pipeline).
             exp = ExperimentRecord(
                 experiment_id=f"exp-{uuid.uuid4().hex[:8]}",
                 hypothesis_id=theory.hypothesis_id,
                 worker_role="dsl_dispatcher",
-                config=theory.dsl_spec,
+                config={"dsl_spec": dict(theory.dsl_spec)},
             )
             start_time = datetime.now(timezone.utc)
             if on_message:
@@ -2419,14 +3297,36 @@ Output ONLY the JSON array. No commentary."""
 
             # Parse the DSL spec. Invariant: the critic already validated
             # it, so this should never fail. If it does, surface as ERROR.
+            #
+            # K4Bench wiring (2026-04-26): rerun repair_spec_shape on the
+            # raw dsl_spec so the dispatcher's translator sees the same
+            # canonical form the critic validated. Without this the
+            # critic's repair was scoped to validation only and the raw
+            # (un-repaired) dsl_spec would reach _translate_layer, which
+            # would reject e.g. a quagmire ``variant: "III"`` even though
+            # the critic just approved its repaired form.
             try:
-                spec = HypothesisSpec.from_dict(theory.dsl_spec)
+                repaired_spec_dict, repair_report = repair_spec_shape(
+                    theory.dsl_spec,
+                    default_hypothesis_id=theory.hypothesis_id,
+                )
+                if repair_report.applied():
+                    logger.info(
+                        "Dispatch repaired dsl_spec for theory %s: %s",
+                        theory.hypothesis_id[:8],
+                        "; ".join(repair_report.entries)[:300],
+                    )
+                spec = HypothesisSpec.from_dict(repaired_spec_dict)
                 spec_errors = spec.validate()
                 if spec_errors:
                     raise ValueError(
                         f"spec revalidation failed (critic missed?): "
                         f"{spec_errors}"
                     )
+                # Update experiment.config to the repaired dict so
+                # downstream attempt-replay sees the canonical form
+                # the dispatcher actually fed into translation.
+                exp.config = {"dsl_spec": dict(repaired_spec_dict)}
             except Exception as exc:
                 contract = WorkerContract(
                     hypothesis_id=theory.hypothesis_id,
@@ -2445,7 +3345,19 @@ Output ONLY the JSON array. No commentary."""
             # Admissibility check — when rejected, return immediately;
             # no compute spent. This is the code path the K4 2026-04-21
             # run never reached (postmortem §6.1.6 "Row D = 0").
-            admissible, reasons = check_admissibility(spec)
+            #
+            # K4Bench: bench_mode skips the real-K4 exhaustion-log
+            # overlap heuristic; spec-shape / translation / cardinality
+            # checks still fire so a malformed bench spec is still
+            # rejected before compute. ``getattr`` is defensive against
+            # legacy test paths that build the controller with the older
+            # ``KryptosBotConfig`` (no is_bench_mode property); those
+            # paths fall through as not-bench-mode, which is the correct
+            # default.
+            bench_mode_flag = getattr(self.config, "is_bench_mode", False)
+            admissible, reasons = check_admissibility(
+                spec, bench_mode=bench_mode_flag,
+            )
             if not admissible:
                 elapsed = (
                     datetime.now(timezone.utc) - start_time
@@ -2488,8 +3400,18 @@ Output ONLY the JSON array. No commentary."""
             # Dispatch via job_dispatcher.execute. asyncio.to_thread so
             # the controller's event loop stays responsive while the
             # multiprocessing pool does the work.
+            #
+            # K4Bench: pass bench_mode through so the per-spec
+            # admissibility re-check inside execute() also bypasses the
+            # real-K4 exhaustion log. (execute() validates the spec
+            # again before running; without bench_mode the second check
+            # would re-impose the K4 overlap.) Reuse the same defensive
+            # getattr-resolved flag from the admissibility check above
+            # so legacy KryptosBotConfig paths still work.
             try:
-                job_result = await asyncio.to_thread(execute, spec)
+                job_result = await asyncio.to_thread(
+                    execute, spec, bench_mode=bench_mode_flag,
+                )
             except Exception as exc:
                 elapsed = (
                     datetime.now(timezone.utc) - start_time
@@ -2527,6 +3449,26 @@ Output ONLY the JSON array. No commentary."""
             contract.raw_artifacts.setdefault(
                 "dsl_spec_hash", spec.spec_hash,
             )
+
+            # K4Bench attempt-replay (2026-04-27): backfill the dispatched
+            # DSL spec onto theory.minimal_test_spec so the third layer
+            # of the bench_attempts source chain has data even when the
+            # WorkerContract / ExperimentRecord rows have not yet been
+            # picked up by emit_attempt_artifact. This rewrites whatever
+            # the theorist authored into ``minimal_test_spec`` because
+            # at this point the dispatched form is the authoritative
+            # description of what the kernel actually ran.
+            if job_result.dispatched_dsl_spec:
+                if not isinstance(theory.minimal_test_spec, dict):
+                    theory.minimal_test_spec = {}
+                theory.minimal_test_spec["dsl_spec"] = dict(
+                    job_result.dispatched_dsl_spec
+                )
+                if job_result.best_config_bindings:
+                    theory.minimal_test_spec["best_config_bindings"] = [
+                        list(p) for p in job_result.best_config_bindings
+                    ]
+                self.ledger.upsert_theory(theory)
 
             if on_message:
                 on_message(
@@ -3110,6 +4052,10 @@ Output ONLY the JSON array. No commentary."""
         "unbounded_search" triggers the BOUNDED-SEARCH POLICY block;
         other non-none risks get their own tailored blocks or no
         injection at all.
+
+        K4Bench input mode (2026-04-26): when ``config.is_bench_mode``,
+        the prompt prefixes the synthetic-challenge block so the
+        worker tests against the K4Bench CT/cribs, not real K4.
         """
         scratch_dir = self._worker_scratch_dir(theory)
         scratch_dir_rel = scratch_dir.relative_to(self.config.project_root)
@@ -3122,7 +4068,29 @@ Output ONLY the JSON array. No commentary."""
         warning_block = self._build_risk_warning_block(
             risk_value, rationale, scratch_dir_rel,
         )
-        return f"""Test the following K4 hypothesis and report structured results.
+
+        bench_prefix = ""
+        if self.config.is_bench_mode and self.config.bench_challenge_prompt_block:
+            bench_prefix = (
+                self.config.bench_challenge_prompt_block
+                + "\n\nK4BENCH WORKER POLICY:\n"
+                "  - The CIPHERTEXT and CRIB SPANS above are the SOLE\n"
+                "    source of truth for this run. Do NOT operate on\n"
+                "    real-K4 ciphertext.\n"
+                "  - The kernel's score_candidate already targets the\n"
+                "    K4Bench cribs because KRYPTOS_CT_OVERRIDE and\n"
+                "    KRYPTOS_CRIB_DICT_OVERRIDE were installed before\n"
+                "    process start. Your scoring path is the same one\n"
+                "    you would use for real K4 — no special calls.\n"
+                "  - A strict pass requires exact 97-char plaintext PLUS\n"
+                "    a reproducible method/layer order (keys, routes,\n"
+                "    alphabets). Plaintext-only is partial.\n"
+                "  - Avoid crib-overfitting: a plaintext that matches\n"
+                "    only the 24 declared positions but reads as noise\n"
+                "    outside them is an overfit, not a solve.\n\n"
+            )
+
+        return f"""{bench_prefix}Test the following hypothesis and report structured results.
 {warning_block}
 
 HYPOTHESIS:
@@ -3901,6 +4869,7 @@ field empty. The controller will record the verification gap and your status
                 project_root=self.config.project_root.resolve(),
                 allowed_tools=self.config.allowed_tools,
                 permission_mode=self.config.permission_mode,
+                bench_mode=self.config.problem.is_bench,
             )
         except Exception:
             logger.exception("Synthesis call raised (continuing run)")

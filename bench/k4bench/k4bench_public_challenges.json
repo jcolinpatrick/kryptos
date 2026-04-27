@@ -1,0 +1,2081 @@
+{
+  "challenges": [
+    {
+      "bench_id": "K4B-001",
+      "ciphertext": "DCXEGPKDRHYITACRUTBWOXRKGXZEOEEQPIULFRQVEELEFFIVBPKKFIEGYDVXEZFOEQWVSRIUQXHZAITUMBFFSORMSPBZTRXPO",
+      "ciphertext_alphabet": "AZ",
+      "ciphertext_length": 97,
+      "known_plaintext_positions": {
+        "21": "S",
+        "22": "E",
+        "23": "C",
+        "24": "O",
+        "25": "N",
+        "26": "D",
+        "27": "S",
+        "28": "Y",
+        "29": "S",
+        "30": "T",
+        "31": "E",
+        "32": "M",
+        "33": "X",
+        "63": "C",
+        "64": "O",
+        "65": "L",
+        "66": "U",
+        "67": "M",
+        "68": "N",
+        "69": "O",
+        "70": "R",
+        "71": "D",
+        "72": "E",
+        "73": "R"
+      },
+      "known_plaintext_spans": [
+        {
+          "end_inclusive": 33,
+          "label": "crib_a",
+          "length": 13,
+          "start": 21,
+          "text": "SECONDSYSTEMX"
+        },
+        {
+          "end_inclusive": 73,
+          "label": "crib_b",
+          "length": 11,
+          "start": 63,
+          "text": "COLUMNORDER"
+        }
+      ],
+      "public_clue_pack": {
+        "clue_text": "A field sketch labels two objects: CEDAR posts below a LANTERN. Seven post marks appear in the margin.",
+        "constraint_summary": [
+          "A-Z only; no spaces or punctuation in ciphertext.",
+          "Plaintext is exactly 97 A-Z characters.",
+          "The construction uses hand-executable classical/procedural layers only.",
+          "All key material needed for the intended solution is derivable from this clue pack.",
+          "Layer count is between two and three unless a clue explicitly collapses a layer into a simple reversal or mirror.",
+          "A strict pass requires both the exact plaintext and a reproducible method/layer order."
+        ]
+      },
+      "public_quality_metadata": {
+        "answer_hash_sha256": "9249c1bfb1dc5a100a57e5407d582fa13db00069f7b91879fbd2071ed51fa8c9",
+        "challenge_hash_sha256": "83b90663689dcef7eea8c5ab295376a79a68af69c2ee588648c89d82f78bae71",
+        "contains_solution_material": false,
+        "difficulty_band": "bronze",
+        "purpose": "blind synthetic K4-like full-controller calibration"
+      },
+      "schema_version": "k4bench.challenge.v1",
+      "solver_output_contract": {
+        "known_crib_score_target": 24,
+        "required_json_fields": [
+          "bench_id",
+          "plaintext",
+          "confidence",
+          "method_summary",
+          "layers",
+          "crib_score",
+          "evidence",
+          "reproducibility_notes"
+        ],
+        "strict_pass_rule": "Exact 97-character plaintext AND exact or human-equivalent layer order with keys/routes/alphabets. Plaintext-only is at most PARTIAL."
+      },
+      "suite_id": "K4BENCH-2026-04-26-V1",
+      "title": "Lantern over cedar"
+    },
+    {
+      "bench_id": "K4B-002",
+      "ciphertext": "WYJPHPCUGLVNKIWPMBTJOXJEJSBZXJMBYPFGKTPKXPKJQPPJSJWBBKRFXXYDMPVVNODZJLZPECTDTAFBWRWTZXJOCGCVRUWWP",
+      "ciphertext_alphabet": "AZ",
+      "ciphertext_length": 97,
+      "known_plaintext_positions": {
+        "21": "M",
+        "22": "I",
+        "23": "R",
+        "24": "R",
+        "25": "O",
+        "26": "R",
+        "27": "E",
+        "28": "D",
+        "29": "A",
+        "30": "L",
+        "31": "P",
+        "32": "H",
+        "33": "A",
+        "63": "A",
+        "64": "L",
+        "65": "P",
+        "66": "H",
+        "67": "A",
+        "68": "S",
+        "69": "T",
+        "70": "R",
+        "71": "I",
+        "72": "P",
+        "73": "X"
+      },
+      "known_plaintext_spans": [
+        {
+          "end_inclusive": 33,
+          "label": "crib_a",
+          "length": 13,
+          "start": 21,
+          "text": "MIRROREDALPHA"
+        },
+        {
+          "end_inclusive": 73,
+          "label": "crib_b",
+          "length": 11,
+          "start": 63,
+          "text": "ALPHASTRIPX"
+        }
+      ],
+      "public_clue_pack": {
+        "clue_text": "The card says ORCHARD after a three rail fence. A note asks whether the alphabet itself can be mirrored.",
+        "constraint_summary": [
+          "A-Z only; no spaces or punctuation in ciphertext.",
+          "Plaintext is exactly 97 A-Z characters.",
+          "The construction uses hand-executable classical/procedural layers only.",
+          "All key material needed for the intended solution is derivable from this clue pack.",
+          "Layer count is between two and three unless a clue explicitly collapses a layer into a simple reversal or mirror.",
+          "A strict pass requires both the exact plaintext and a reproducible method/layer order."
+        ]
+      },
+      "public_quality_metadata": {
+        "answer_hash_sha256": "e87f7d86858f2ff58cc689b1f3cbe2f96331791f652e5c0d42d74a63ec8802d6",
+        "challenge_hash_sha256": "aa7a4026be2c1378954a61f4db55bbfe41392b8e482ee4d827f025215e51bd8b",
+        "contains_solution_material": false,
+        "difficulty_band": "bronze",
+        "purpose": "blind synthetic K4-like full-controller calibration"
+      },
+      "schema_version": "k4bench.challenge.v1",
+      "solver_output_contract": {
+        "known_crib_score_target": 24,
+        "required_json_fields": [
+          "bench_id",
+          "plaintext",
+          "confidence",
+          "method_summary",
+          "layers",
+          "crib_score",
+          "evidence",
+          "reproducibility_notes"
+        ],
+        "strict_pass_rule": "Exact 97-character plaintext AND exact or human-equivalent layer order with keys/routes/alphabets. Plaintext-only is at most PARTIAL."
+      },
+      "suite_id": "K4BENCH-2026-04-26-V1",
+      "title": "Orchard mirror rail"
+    },
+    {
+      "bench_id": "K4B-003",
+      "ciphertext": "DTQKZQODHONOCDKQJUKHWDDFFDTKVECKWTSUDOKFNXWKPOADETOKWADTWZKCQNKGDLOUAPKNOQOFAKQLQKQTPWODVZKVETWHP",
+      "ciphertext_alphabet": "AZ",
+      "ciphertext_length": 97,
+      "known_plaintext_positions": {
+        "21": "C",
+        "22": "R",
+        "23": "I",
+        "24": "B",
+        "25": "S",
+        "26": "C",
+        "27": "O",
+        "28": "R",
+        "29": "E",
+        "30": "T",
+        "31": "E",
+        "32": "S",
+        "33": "T",
+        "63": "F",
+        "64": "U",
+        "65": "L",
+        "66": "L",
+        "67": "M",
+        "68": "E",
+        "69": "T",
+        "70": "H",
+        "71": "O",
+        "72": "D",
+        "73": "X"
+      },
+      "known_plaintext_spans": [
+        {
+          "end_inclusive": 33,
+          "label": "crib_a",
+          "length": 13,
+          "start": 21,
+          "text": "CRIBSCORETEST"
+        },
+        {
+          "end_inclusive": 73,
+          "label": "crib_b",
+          "length": 11,
+          "start": 63,
+          "text": "FULLMETHODX"
+        }
+      ],
+      "public_clue_pack": {
+        "clue_text": "RIVET is stamped on five metal heads. A separate brass tag says SHIFT EIGHT and shows a reversed alphabet strip.",
+        "constraint_summary": [
+          "A-Z only; no spaces or punctuation in ciphertext.",
+          "Plaintext is exactly 97 A-Z characters.",
+          "The construction uses hand-executable classical/procedural layers only.",
+          "All key material needed for the intended solution is derivable from this clue pack.",
+          "Layer count is between two and three unless a clue explicitly collapses a layer into a simple reversal or mirror.",
+          "A strict pass requires both the exact plaintext and a reproducible method/layer order."
+        ]
+      },
+      "public_quality_metadata": {
+        "answer_hash_sha256": "1a2aa78f7245209d002a2e7b2fc11ba9144504a830fdf88a28f00766230044a9",
+        "challenge_hash_sha256": "f1d0d61c04485fea0bd5eeb5b74560bec502416f3f3c2d4f5cb9f650c314e6a9",
+        "contains_solution_material": false,
+        "difficulty_band": "bronze",
+        "purpose": "blind synthetic K4-like full-controller calibration"
+      },
+      "schema_version": "k4bench.challenge.v1",
+      "solver_output_contract": {
+        "known_crib_score_target": 24,
+        "required_json_fields": [
+          "bench_id",
+          "plaintext",
+          "confidence",
+          "method_summary",
+          "layers",
+          "crib_score",
+          "evidence",
+          "reproducibility_notes"
+        ],
+        "strict_pass_rule": "Exact 97-character plaintext AND exact or human-equivalent layer order with keys/routes/alphabets. Plaintext-only is at most PARTIAL."
+      },
+      "suite_id": "K4BENCH-2026-04-26-V1",
+      "title": "Rivet reflection shift"
+    },
+    {
+      "bench_id": "K4B-004",
+      "ciphertext": "JXOXSSKMXQYKAMBJLPTWKMXQIEAQUWPIYMSYIYNAMBQPFZHKANAQPSWALYIWOZFVJSMEBCPQFZFQNBMSEABAPMRPHBFVJBHXF",
+      "ciphertext_alphabet": "AZ",
+      "ciphertext_length": 97,
+      "known_plaintext_positions": {
+        "21": "C",
+        "22": "L",
+        "23": "O",
+        "24": "C",
+        "25": "K",
+        "26": "W",
+        "27": "I",
+        "28": "S",
+        "29": "E",
+        "30": "K",
+        "31": "E",
+        "32": "Y",
+        "33": "X",
+        "63": "R",
+        "64": "O",
+        "65": "U",
+        "66": "T",
+        "67": "E",
+        "68": "B",
+        "69": "E",
+        "70": "F",
+        "71": "O",
+        "72": "R",
+        "73": "E"
+      },
+      "known_plaintext_spans": [
+        {
+          "end_inclusive": 33,
+          "label": "crib_a",
+          "length": 13,
+          "start": 21,
+          "text": "CLOCKWISEKEYX"
+        },
+        {
+          "end_inclusive": 73,
+          "label": "crib_b",
+          "length": 11,
+          "start": 63,
+          "text": "ROUTEBEFORE"
+        }
+      ],
+      "public_clue_pack": {
+        "clue_text": "A compass rose has five tick groups and the word COMPASS written below a subtractive arrow.",
+        "constraint_summary": [
+          "A-Z only; no spaces or punctuation in ciphertext.",
+          "Plaintext is exactly 97 A-Z characters.",
+          "The construction uses hand-executable classical/procedural layers only.",
+          "All key material needed for the intended solution is derivable from this clue pack.",
+          "Layer count is between two and three unless a clue explicitly collapses a layer into a simple reversal or mirror.",
+          "A strict pass requires both the exact plaintext and a reproducible method/layer order."
+        ]
+      },
+      "public_quality_metadata": {
+        "answer_hash_sha256": "0c642eebd63e2c719588c17726dea74d9e02d9ab47184bf08b0a45f1958137cb",
+        "challenge_hash_sha256": "d6147c2f619cd7976a572434a7e87b5ebafe6d9beae59a3403c851dbfe60115f",
+        "contains_solution_material": false,
+        "difficulty_band": "bronze",
+        "purpose": "blind synthetic K4-like full-controller calibration"
+      },
+      "schema_version": "k4bench.challenge.v1",
+      "solver_output_contract": {
+        "known_crib_score_target": 24,
+        "required_json_fields": [
+          "bench_id",
+          "plaintext",
+          "confidence",
+          "method_summary",
+          "layers",
+          "crib_score",
+          "evidence",
+          "reproducibility_notes"
+        ],
+        "strict_pass_rule": "Exact 97-character plaintext AND exact or human-equivalent layer order with keys/routes/alphabets. Plaintext-only is at most PARTIAL."
+      },
+      "suite_id": "K4BENCH-2026-04-26-V1",
+      "title": "Compass block note"
+    },
+    {
+      "bench_id": "K4B-005",
+      "ciphertext": "MYQLQUUZSNVUTKLDWVYVTJTXKHZXMZONVTTNOSLBFDYCHVZOBALQLPTZHLMGHDLBTXOOKBCNTDTTIIGTKSFYIRHQYWYZUKMMY",
+      "ciphertext_alphabet": "AZ",
+      "ciphertext_length": 97,
+      "known_plaintext_positions": {
+        "21": "A",
+        "22": "R",
+        "23": "C",
+        "24": "H",
+        "25": "I",
+        "26": "V",
+        "27": "E",
+        "28": "T",
+        "29": "U",
+        "30": "N",
+        "31": "N",
+        "32": "E",
+        "33": "L",
+        "63": "K",
+        "64": "R",
+        "65": "Y",
+        "66": "P",
+        "67": "T",
+        "68": "O",
+        "69": "S",
+        "70": "K",
+        "71": "E",
+        "72": "Y",
+        "73": "X"
+      },
+      "known_plaintext_spans": [
+        {
+          "end_inclusive": 33,
+          "label": "crib_a",
+          "length": 13,
+          "start": 21,
+          "text": "ARCHIVETUNNEL"
+        },
+        {
+          "end_inclusive": 73,
+          "label": "crib_b",
+          "length": 11,
+          "start": 63,
+          "text": "KRYPTOSKEYX"
+        }
+      ],
+      "public_clue_pack": {
+        "clue_text": "A tower diagram is read in columns. The word TUNNEL is printed inside a KRYPTOS alphabet strip.",
+        "constraint_summary": [
+          "A-Z only; no spaces or punctuation in ciphertext.",
+          "Plaintext is exactly 97 A-Z characters.",
+          "The construction uses hand-executable classical/procedural layers only.",
+          "All key material needed for the intended solution is derivable from this clue pack.",
+          "Layer count is between two and three unless a clue explicitly collapses a layer into a simple reversal or mirror.",
+          "A strict pass requires both the exact plaintext and a reproducible method/layer order."
+        ]
+      },
+      "public_quality_metadata": {
+        "answer_hash_sha256": "0ac2d0c93fd5f4c4eadfb7459a5e809a7fdd4170054a3f83bdd65ab1d433bcf7",
+        "challenge_hash_sha256": "a6bb522fd68eed7e39629f4b94cf66bb8eb14981a284ee8bbbf0010e790c9eec",
+        "contains_solution_material": false,
+        "difficulty_band": "bronze",
+        "purpose": "blind synthetic K4-like full-controller calibration"
+      },
+      "schema_version": "k4bench.challenge.v1",
+      "solver_output_contract": {
+        "known_crib_score_target": 24,
+        "required_json_fields": [
+          "bench_id",
+          "plaintext",
+          "confidence",
+          "method_summary",
+          "layers",
+          "crib_score",
+          "evidence",
+          "reproducibility_notes"
+        ],
+        "strict_pass_rule": "Exact 97-character plaintext AND exact or human-equivalent layer order with keys/routes/alphabets. Plaintext-only is at most PARTIAL."
+      },
+      "suite_id": "K4BENCH-2026-04-26-V1",
+      "title": "Tower tunnel table"
+    },
+    {
+      "bench_id": "K4B-006",
+      "ciphertext": "UOEZUBNEGPALYUQIZKDDYPRNNOPUVARBFCZZNDPKVNUOYKNGQPEHUGFBYCKUPNRDJLRDGKARTNMNRBZRKCRVDHYDLMZKDUAJF",
+      "ciphertext_alphabet": "AZ",
+      "ciphertext_length": 97,
+      "known_plaintext_positions": {
+        "21": "L",
+        "22": "A",
+        "23": "Y",
+        "24": "E",
+        "25": "R",
+        "26": "H",
+        "27": "I",
+        "28": "D",
+        "29": "E",
+        "30": "S",
+        "31": "O",
+        "32": "N",
+        "33": "E",
+        "63": "F",
+        "64": "E",
+        "65": "N",
+        "66": "C",
+        "67": "E",
+        "68": "P",
+        "69": "A",
+        "70": "T",
+        "71": "H",
+        "72": "X",
+        "73": "X"
+      },
+      "known_plaintext_spans": [
+        {
+          "end_inclusive": 33,
+          "label": "crib_a",
+          "length": 13,
+          "start": 21,
+          "text": "LAYERHIDESONE"
+        },
+        {
+          "end_inclusive": 73,
+          "label": "crib_b",
+          "length": 11,
+          "start": 63,
+          "text": "FENCEPATHXX"
+        }
+      ],
+      "public_clue_pack": {
+        "clue_text": "The margins show four rails, the word MIRROR, and a route beginning three steps from the start with step five.",
+        "constraint_summary": [
+          "A-Z only; no spaces or punctuation in ciphertext.",
+          "Plaintext is exactly 97 A-Z characters.",
+          "The construction uses hand-executable classical/procedural layers only.",
+          "All key material needed for the intended solution is derivable from this clue pack.",
+          "Layer count is between two and three unless a clue explicitly collapses a layer into a simple reversal or mirror.",
+          "A strict pass requires both the exact plaintext and a reproducible method/layer order."
+        ]
+      },
+      "public_quality_metadata": {
+        "answer_hash_sha256": "c48144a4c2a3d09b79770e9daac4bb754a58a7be998c3019cbb9bfc14ffcc067",
+        "challenge_hash_sha256": "a9626a1451c289e08432764e69b7f3551fb01743165790b1c40452ad2ba193b5",
+        "contains_solution_material": false,
+        "difficulty_band": "silver",
+        "purpose": "blind synthetic K4-like full-controller calibration"
+      },
+      "schema_version": "k4bench.challenge.v1",
+      "solver_output_contract": {
+        "known_crib_score_target": 24,
+        "required_json_fields": [
+          "bench_id",
+          "plaintext",
+          "confidence",
+          "method_summary",
+          "layers",
+          "crib_score",
+          "evidence",
+          "reproducibility_notes"
+        ],
+        "strict_pass_rule": "Exact 97-character plaintext AND exact or human-equivalent layer order with keys/routes/alphabets. Plaintext-only is at most PARTIAL."
+      },
+      "suite_id": "K4BENCH-2026-04-26-V1",
+      "title": "Mirror route lesson"
+    },
+    {
+      "bench_id": "K4B-007",
+      "ciphertext": "LIPNVDHNCGYZSQDPREWYBEKKLNQBDNFDFCPSZVJIVBNFCJFZXEKZVTREXSUVFSRTVZNVFPRTFNWVYGLCEBRJXOKVSVMPIONCZ",
+      "ciphertext_alphabet": "AZ",
+      "ciphertext_length": 97,
+      "known_plaintext_positions": {
+        "21": "R",
+        "22": "A",
+        "23": "G",
+        "24": "G",
+        "25": "E",
+        "26": "D",
+        "27": "C",
+        "28": "O",
+        "29": "L",
+        "30": "U",
+        "31": "M",
+        "32": "N",
+        "33": "X",
+        "63": "A",
+        "64": "L",
+        "65": "P",
+        "66": "H",
+        "67": "A",
+        "68": "B",
+        "69": "E",
+        "70": "T",
+        "71": "K",
+        "72": "E",
+        "73": "Y"
+      },
+      "known_plaintext_spans": [
+        {
+          "end_inclusive": 33,
+          "label": "crib_a",
+          "length": 13,
+          "start": 21,
+          "text": "RAGGEDCOLUMNX"
+        },
+        {
+          "end_inclusive": 73,
+          "label": "crib_b",
+          "length": 11,
+          "start": 63,
+          "text": "ALPHABETKEY"
+        }
+      ],
+      "public_clue_pack": {
+        "clue_text": "The artifact says ARCHIVE and shows a ragged eight-column grid with arrows down, up, down, up.",
+        "constraint_summary": [
+          "A-Z only; no spaces or punctuation in ciphertext.",
+          "Plaintext is exactly 97 A-Z characters.",
+          "The construction uses hand-executable classical/procedural layers only.",
+          "All key material needed for the intended solution is derivable from this clue pack.",
+          "Layer count is between two and three unless a clue explicitly collapses a layer into a simple reversal or mirror.",
+          "A strict pass requires both the exact plaintext and a reproducible method/layer order."
+        ]
+      },
+      "public_quality_metadata": {
+        "answer_hash_sha256": "a46214b98bac55edc7a7fd161f620fccd082d9b92d4194a8e9b178abc0651958",
+        "challenge_hash_sha256": "a93a3e7984d08c1bf324d58fcfeb82517e0d16d95fff4b7546ec43bf5ea09e3a",
+        "contains_solution_material": false,
+        "difficulty_band": "silver",
+        "purpose": "blind synthetic K4-like full-controller calibration"
+      },
+      "schema_version": "k4bench.challenge.v1",
+      "solver_output_contract": {
+        "known_crib_score_target": 24,
+        "required_json_fields": [
+          "bench_id",
+          "plaintext",
+          "confidence",
+          "method_summary",
+          "layers",
+          "crib_score",
+          "evidence",
+          "reproducibility_notes"
+        ],
+        "strict_pass_rule": "Exact 97-character plaintext AND exact or human-equivalent layer order with keys/routes/alphabets. Plaintext-only is at most PARTIAL."
+      },
+      "suite_id": "K4BENCH-2026-04-26-V1",
+      "title": "Archive column walk"
+    },
+    {
+      "bench_id": "K4B-008",
+      "ciphertext": "GPIUEUKQFVELTVZYTVOGSFLQMJHVFYBTECAOKZGPWPFIHYUXMQCULZMZFVTYOGSEAKDNGLMPXZNALZCSNIDCBUFKWIGKFCTVO",
+      "ciphertext_alphabet": "AZ",
+      "ciphertext_length": 97,
+      "known_plaintext_positions": {
+        "21": "R",
+        "22": "E",
+        "23": "V",
+        "24": "E",
+        "25": "R",
+        "26": "S",
+        "27": "E",
+        "28": "S",
+        "29": "T",
+        "30": "R",
+        "31": "I",
+        "32": "P",
+        "33": "X",
+        "63": "K",
+        "64": "R",
+        "65": "Y",
+        "66": "P",
+        "67": "T",
+        "68": "O",
+        "69": "S",
+        "70": "F",
+        "71": "O",
+        "72": "L",
+        "73": "D"
+      },
+      "known_plaintext_spans": [
+        {
+          "end_inclusive": 33,
+          "label": "crib_a",
+          "length": 13,
+          "start": 21,
+          "text": "REVERSESTRIPX"
+        },
+        {
+          "end_inclusive": 73,
+          "label": "crib_b",
+          "length": 11,
+          "start": 63,
+          "text": "KRYPTOSFOLD"
+        }
+      ],
+      "public_clue_pack": {
+        "clue_text": "A dark strip gives SHADOW and a KRYPTOS alphabet with the far end folded back over the near end.",
+        "constraint_summary": [
+          "A-Z only; no spaces or punctuation in ciphertext.",
+          "Plaintext is exactly 97 A-Z characters.",
+          "The construction uses hand-executable classical/procedural layers only.",
+          "All key material needed for the intended solution is derivable from this clue pack.",
+          "Layer count is between two and three unless a clue explicitly collapses a layer into a simple reversal or mirror.",
+          "A strict pass requires both the exact plaintext and a reproducible method/layer order."
+        ]
+      },
+      "public_quality_metadata": {
+        "answer_hash_sha256": "619fcc9f5adb05ecad7a27bc4db44b14d02541f3fd8d317d10951676eded1a29",
+        "challenge_hash_sha256": "5f92796c3d2e07714e9ae5974e7771af9857df397afeaf43667577ee752a5188",
+        "contains_solution_material": false,
+        "difficulty_band": "silver",
+        "purpose": "blind synthetic K4-like full-controller calibration"
+      },
+      "schema_version": "k4bench.challenge.v1",
+      "solver_output_contract": {
+        "known_crib_score_target": 24,
+        "required_json_fields": [
+          "bench_id",
+          "plaintext",
+          "confidence",
+          "method_summary",
+          "layers",
+          "crib_score",
+          "evidence",
+          "reproducibility_notes"
+        ],
+        "strict_pass_rule": "Exact 97-character plaintext AND exact or human-equivalent layer order with keys/routes/alphabets. Plaintext-only is at most PARTIAL."
+      },
+      "suite_id": "K4BENCH-2026-04-26-V1",
+      "title": "Shadow reverse alphabet"
+    },
+    {
+      "bench_id": "K4B-009",
+      "ciphertext": "RTVFEDVJOOUWKDELJOOVELROZJOJOVYOMFWMEYFVXVOJEOOJRJIRZBDOFKWKCKZKERZVIKCROERJVKCKVNJOYFKOVVOVJCKFO",
+      "ciphertext_alphabet": "AZ",
+      "ciphertext_length": 97,
+      "known_plaintext_positions": {
+        "21": "D",
+        "22": "I",
+        "23": "A",
+        "24": "G",
+        "25": "O",
+        "26": "N",
+        "27": "A",
+        "28": "L",
+        "29": "R",
+        "30": "O",
+        "31": "U",
+        "32": "T",
+        "33": "E",
+        "63": "S",
+        "64": "H",
+        "65": "I",
+        "66": "F",
+        "67": "T",
+        "68": "S",
+        "69": "E",
+        "70": "V",
+        "71": "E",
+        "72": "N",
+        "73": "T"
+      },
+      "known_plaintext_spans": [
+        {
+          "end_inclusive": 33,
+          "label": "crib_a",
+          "length": 13,
+          "start": 21,
+          "text": "DIAGONALROUTE"
+        },
+        {
+          "end_inclusive": 73,
+          "label": "crib_b",
+          "length": 11,
+          "start": 63,
+          "text": "SHIFTSEVENT"
+        }
+      ],
+      "public_clue_pack": {
+        "clue_text": "MASON appears on five stones. A ten-wide ragged grid is crossed by alternating diagonals. A small tag says seventeen.",
+        "constraint_summary": [
+          "A-Z only; no spaces or punctuation in ciphertext.",
+          "Plaintext is exactly 97 A-Z characters.",
+          "The construction uses hand-executable classical/procedural layers only.",
+          "All key material needed for the intended solution is derivable from this clue pack.",
+          "Layer count is between two and three unless a clue explicitly collapses a layer into a simple reversal or mirror.",
+          "A strict pass requires both the exact plaintext and a reproducible method/layer order."
+        ]
+      },
+      "public_quality_metadata": {
+        "answer_hash_sha256": "34a97343837a5a80e627655fd9c062a156fe7644a5bfc98fc22178a40a8b536c",
+        "challenge_hash_sha256": "b8826fd2c7d9267c5f87f12c5db778e9520738d78285f66cb65dc968d38eb7fd",
+        "contains_solution_material": false,
+        "difficulty_band": "silver",
+        "purpose": "blind synthetic K4-like full-controller calibration"
+      },
+      "schema_version": "k4bench.challenge.v1",
+      "solver_output_contract": {
+        "known_crib_score_target": 24,
+        "required_json_fields": [
+          "bench_id",
+          "plaintext",
+          "confidence",
+          "method_summary",
+          "layers",
+          "crib_score",
+          "evidence",
+          "reproducibility_notes"
+        ],
+        "strict_pass_rule": "Exact 97-character plaintext AND exact or human-equivalent layer order with keys/routes/alphabets. Plaintext-only is at most PARTIAL."
+      },
+      "suite_id": "K4BENCH-2026-04-26-V1",
+      "title": "Mason diagonal stones"
+    },
+    {
+      "bench_id": "K4B-010",
+      "ciphertext": "DKSKQKKQBVGBVQGHAGUNJRDIJQSXISHUJROQBYSAJAKJDQIMYIKLHRMWGHAGOLKZJJEWDVFSHLKJGTLNKXJPKKXCJNGGGHAFF",
+      "ciphertext_alphabet": "AZ",
+      "ciphertext_length": 97,
+      "known_plaintext_positions": {
+        "21": "B",
+        "22": "L",
+        "23": "O",
+        "24": "C",
+        "25": "K",
+        "26": "R",
+        "27": "E",
+        "28": "V",
+        "29": "E",
+        "30": "R",
+        "31": "S",
+        "32": "A",
+        "33": "L",
+        "63": "S",
+        "64": "U",
+        "65": "B",
+        "66": "T",
+        "67": "R",
+        "68": "A",
+        "69": "C",
+        "70": "T",
+        "71": "K",
+        "72": "E",
+        "73": "Y"
+      },
+      "known_plaintext_spans": [
+        {
+          "end_inclusive": 33,
+          "label": "crib_a",
+          "length": 13,
+          "start": 21,
+          "text": "BLOCKREVERSAL"
+        },
+        {
+          "end_inclusive": 73,
+          "label": "crib_b",
+          "length": 11,
+          "start": 63,
+          "text": "SUBTRACTKEY"
+        }
+      ],
+      "public_clue_pack": {
+        "clue_text": "NEEDLE is written beside groups of seven letters turned over before a subtractive table is applied.",
+        "constraint_summary": [
+          "A-Z only; no spaces or punctuation in ciphertext.",
+          "Plaintext is exactly 97 A-Z characters.",
+          "The construction uses hand-executable classical/procedural layers only.",
+          "All key material needed for the intended solution is derivable from this clue pack.",
+          "Layer count is between two and three unless a clue explicitly collapses a layer into a simple reversal or mirror.",
+          "A strict pass requires both the exact plaintext and a reproducible method/layer order."
+        ]
+      },
+      "public_quality_metadata": {
+        "answer_hash_sha256": "73f6619fc2f63e3b791c239ac167f8de1447bf052bb54b4a77935c17240c00d2",
+        "challenge_hash_sha256": "a56878e9e2f75fdcd92520426b12c586200272377c275a70d953df940d94e616",
+        "contains_solution_material": false,
+        "difficulty_band": "silver",
+        "purpose": "blind synthetic K4-like full-controller calibration"
+      },
+      "schema_version": "k4bench.challenge.v1",
+      "solver_output_contract": {
+        "known_crib_score_target": 24,
+        "required_json_fields": [
+          "bench_id",
+          "plaintext",
+          "confidence",
+          "method_summary",
+          "layers",
+          "crib_score",
+          "evidence",
+          "reproducibility_notes"
+        ],
+        "strict_pass_rule": "Exact 97-character plaintext AND exact or human-equivalent layer order with keys/routes/alphabets. Plaintext-only is at most PARTIAL."
+      },
+      "suite_id": "K4BENCH-2026-04-26-V1",
+      "title": "Needle group reversal"
+    },
+    {
+      "bench_id": "K4B-011",
+      "ciphertext": "CVSBIGLJICEZCHXPSJAMOBAMYUSQBIVWGJUSPYEKPHBGRPWZBIOMFGIMIQBMISJSHKOIWSBDGTKSUUKHLZCIFIPOGVFBVBELX",
+      "ciphertext_alphabet": "AZ",
+      "ciphertext_length": 97,
+      "known_plaintext_positions": {
+        "21": "G",
+        "22": "A",
+        "23": "R",
+        "24": "D",
+        "25": "E",
+        "26": "N",
+        "27": "C",
+        "28": "O",
+        "29": "L",
+        "30": "U",
+        "31": "M",
+        "32": "N",
+        "33": "X",
+        "63": "T",
+        "64": "H",
+        "65": "R",
+        "66": "E",
+        "67": "E",
+        "68": "R",
+        "69": "A",
+        "70": "I",
+        "71": "L",
+        "72": "X",
+        "73": "X"
+      },
+      "known_plaintext_spans": [
+        {
+          "end_inclusive": 33,
+          "label": "crib_a",
+          "length": 13,
+          "start": 21,
+          "text": "GARDENCOLUMNX"
+        },
+        {
+          "end_inclusive": 73,
+          "label": "crib_b",
+          "length": 11,
+          "start": 63,
+          "text": "THREERAILXX"
+        }
+      ],
+      "public_clue_pack": {
+        "clue_text": "OBSERVE and GARDEN are both carved on the mock panel. A three-rail fence appears after the column labels.",
+        "constraint_summary": [
+          "A-Z only; no spaces or punctuation in ciphertext.",
+          "Plaintext is exactly 97 A-Z characters.",
+          "The construction uses hand-executable classical/procedural layers only.",
+          "All key material needed for the intended solution is derivable from this clue pack.",
+          "Layer count is between two and three unless a clue explicitly collapses a layer into a simple reversal or mirror.",
+          "A strict pass requires both the exact plaintext and a reproducible method/layer order."
+        ]
+      },
+      "public_quality_metadata": {
+        "answer_hash_sha256": "c566c205d476f91be69e40f2f9e89a410cc0d0d2ce790648cc55317eee086e14",
+        "challenge_hash_sha256": "f7d5f97df1dcaabca35f8a215c6b90d45f9b8965bde722a62a0cded9c1f44e15",
+        "contains_solution_material": false,
+        "difficulty_band": "silver",
+        "purpose": "blind synthetic K4-like full-controller calibration"
+      },
+      "schema_version": "k4bench.challenge.v1",
+      "solver_output_contract": {
+        "known_crib_score_target": 24,
+        "required_json_fields": [
+          "bench_id",
+          "plaintext",
+          "confidence",
+          "method_summary",
+          "layers",
+          "crib_score",
+          "evidence",
+          "reproducibility_notes"
+        ],
+        "strict_pass_rule": "Exact 97-character plaintext AND exact or human-equivalent layer order with keys/routes/alphabets. Plaintext-only is at most PARTIAL."
+      },
+      "suite_id": "K4BENCH-2026-04-26-V1",
+      "title": "Observe garden fence"
+    },
+    {
+      "bench_id": "K4B-012",
+      "ciphertext": "NNXIWIYLIWHMPAOIAICHTICEQTOYMBDNLXCBCWLVTAEXDENKMHUERAUKYLHTKHLLABOHWGHNULUAAFDNDYPLPKLYTQCBIEQDR",
+      "ciphertext_alphabet": "AZ",
+      "ciphertext_length": 97,
+      "known_plaintext_positions": {
+        "21": "S",
+        "22": "K",
+        "23": "I",
+        "24": "P",
+        "25": "R",
+        "26": "O",
+        "27": "U",
+        "28": "T",
+        "29": "E",
+        "30": "S",
+        "31": "T",
+        "32": "E",
+        "33": "P",
+        "63": "B",
+        "64": "E",
+        "65": "A",
+        "66": "U",
+        "67": "F",
+        "68": "O",
+        "69": "R",
+        "70": "T",
+        "71": "M",
+        "72": "A",
+        "73": "P"
+      },
+      "known_plaintext_spans": [
+        {
+          "end_inclusive": 33,
+          "label": "crib_a",
+          "length": 13,
+          "start": 21,
+          "text": "SKIPROUTESTEP"
+        },
+        {
+          "end_inclusive": 73,
+          "label": "crib_b",
+          "length": 11,
+          "start": 63,
+          "text": "BEAUFORTMAP"
+        }
+      ],
+      "public_clue_pack": {
+        "clue_text": "RELIEF is printed on a map whose path advances by eleven positions and begins four positions in.",
+        "constraint_summary": [
+          "A-Z only; no spaces or punctuation in ciphertext.",
+          "Plaintext is exactly 97 A-Z characters.",
+          "The construction uses hand-executable classical/procedural layers only.",
+          "All key material needed for the intended solution is derivable from this clue pack.",
+          "Layer count is between two and three unless a clue explicitly collapses a layer into a simple reversal or mirror.",
+          "A strict pass requires both the exact plaintext and a reproducible method/layer order."
+        ]
+      },
+      "public_quality_metadata": {
+        "answer_hash_sha256": "405ef8628800d29f0173c6ae509e5f80f09987778d5abaf70cde4d8e6b4451e4",
+        "challenge_hash_sha256": "f42b7d49486b0ae3a96c0fba6fa9cf00cf8ac0f67d0d4807c2e55fb3272d7432",
+        "contains_solution_material": false,
+        "difficulty_band": "silver",
+        "purpose": "blind synthetic K4-like full-controller calibration"
+      },
+      "schema_version": "k4bench.challenge.v1",
+      "solver_output_contract": {
+        "known_crib_score_target": 24,
+        "required_json_fields": [
+          "bench_id",
+          "plaintext",
+          "confidence",
+          "method_summary",
+          "layers",
+          "crib_score",
+          "evidence",
+          "reproducibility_notes"
+        ],
+        "strict_pass_rule": "Exact 97-character plaintext AND exact or human-equivalent layer order with keys/routes/alphabets. Plaintext-only is at most PARTIAL."
+      },
+      "suite_id": "K4BENCH-2026-04-26-V1",
+      "title": "Relief skip map"
+    },
+    {
+      "bench_id": "K4B-013",
+      "ciphertext": "ARFVFNGBOLKMBHMYDXDHLQEXMQMUFCFKMFXWCWKIKJOOZLDMRAFJNWMHMMYDBNMACJNRAFBZMNZVQYBMFSYOOWTMBXXIYFDXX",
+      "ciphertext_alphabet": "AZ",
+      "ciphertext_length": 97,
+      "known_plaintext_positions": {
+        "21": "R",
+        "22": "A",
+        "23": "G",
+        "24": "G",
+        "25": "E",
+        "26": "D",
+        "27": "M",
+        "28": "I",
+        "29": "R",
+        "30": "R",
+        "31": "O",
+        "32": "R",
+        "33": "X",
+        "63": "K",
+        "64": "R",
+        "65": "Y",
+        "66": "P",
+        "67": "T",
+        "68": "O",
+        "69": "S",
+        "70": "T",
+        "71": "A",
+        "72": "B",
+        "73": "X"
+      },
+      "known_plaintext_spans": [
+        {
+          "end_inclusive": 33,
+          "label": "crib_a",
+          "length": 13,
+          "start": 21,
+          "text": "RAGGEDMIRRORX"
+        },
+        {
+          "end_inclusive": 73,
+          "label": "crib_b",
+          "length": 11,
+          "start": 63,
+          "text": "KRYPTOSTABX"
+        }
+      ],
+      "public_clue_pack": {
+        "clue_text": "COPPER appears next to a nine-column ragged walk. The drawing also shows a normal alphabet reflected before the table.",
+        "constraint_summary": [
+          "A-Z only; no spaces or punctuation in ciphertext.",
+          "Plaintext is exactly 97 A-Z characters.",
+          "The construction uses hand-executable classical/procedural layers only.",
+          "All key material needed for the intended solution is derivable from this clue pack.",
+          "Layer count is between two and three unless a clue explicitly collapses a layer into a simple reversal or mirror.",
+          "A strict pass requires both the exact plaintext and a reproducible method/layer order."
+        ]
+      },
+      "public_quality_metadata": {
+        "answer_hash_sha256": "86514b26d67c31370c7a3a7aa569e002ef66b0b8aad655ad56d4407994803eff",
+        "challenge_hash_sha256": "ba195b88bfe6f4258bf5e9a7cbfd53a8a03c4a0134c2add5789c689ffc412d6f",
+        "contains_solution_material": false,
+        "difficulty_band": "silver",
+        "purpose": "blind synthetic K4-like full-controller calibration"
+      },
+      "schema_version": "k4bench.challenge.v1",
+      "solver_output_contract": {
+        "known_crib_score_target": 24,
+        "required_json_fields": [
+          "bench_id",
+          "plaintext",
+          "confidence",
+          "method_summary",
+          "layers",
+          "crib_score",
+          "evidence",
+          "reproducibility_notes"
+        ],
+        "strict_pass_rule": "Exact 97-character plaintext AND exact or human-equivalent layer order with keys/routes/alphabets. Plaintext-only is at most PARTIAL."
+      },
+      "suite_id": "K4BENCH-2026-04-26-V1",
+      "title": "Copper ragged mirror"
+    },
+    {
+      "bench_id": "K4B-014",
+      "ciphertext": "QLKPPRREJEELCZLZMEBPZUOAYDETPZZNMNPSCKKQDOEKJKPSMOALERJNCTEPHZBZMRHWEHRAHSYPYKEJMZAYPIQHIREMAYBKM",
+      "ciphertext_alphabet": "AZ",
+      "ciphertext_length": 97,
+      "known_plaintext_positions": {
+        "21": "V",
+        "22": "I",
+        "23": "S",
+        "24": "I",
+        "25": "B",
+        "26": "L",
+        "27": "E",
+        "28": "C",
+        "29": "O",
+        "30": "L",
+        "31": "U",
+        "32": "M",
+        "33": "N",
+        "63": "S",
+        "64": "U",
+        "65": "B",
+        "66": "T",
+        "67": "R",
+        "68": "A",
+        "69": "C",
+        "70": "T",
+        "71": "I",
+        "72": "V",
+        "73": "E"
+      },
+      "known_plaintext_spans": [
+        {
+          "end_inclusive": 33,
+          "label": "crib_a",
+          "length": 13,
+          "start": 21,
+          "text": "VISIBLECOLUMN"
+        },
+        {
+          "end_inclusive": 73,
+          "label": "crib_b",
+          "length": 11,
+          "start": 63,
+          "text": "SUBTRACTIVE"
+        }
+      ],
+      "public_clue_pack": {
+        "clue_text": "BRONZE labels the column heads. LATITUDE sits under a subtractive arrow rather than an additive one.",
+        "constraint_summary": [
+          "A-Z only; no spaces or punctuation in ciphertext.",
+          "Plaintext is exactly 97 A-Z characters.",
+          "The construction uses hand-executable classical/procedural layers only.",
+          "All key material needed for the intended solution is derivable from this clue pack.",
+          "Layer count is between two and three unless a clue explicitly collapses a layer into a simple reversal or mirror.",
+          "A strict pass requires both the exact plaintext and a reproducible method/layer order."
+        ]
+      },
+      "public_quality_metadata": {
+        "answer_hash_sha256": "84b9bedebd71ada9f4c8babaf80e2d5438a5a1a0d0c961e5cb4f45883fa7ba45",
+        "challenge_hash_sha256": "90461203997a330469321ae1877783c889a633a0217af2c436dcd5be1feb22e0",
+        "contains_solution_material": false,
+        "difficulty_band": "silver",
+        "purpose": "blind synthetic K4-like full-controller calibration"
+      },
+      "schema_version": "k4bench.challenge.v1",
+      "solver_output_contract": {
+        "known_crib_score_target": 24,
+        "required_json_fields": [
+          "bench_id",
+          "plaintext",
+          "confidence",
+          "method_summary",
+          "layers",
+          "crib_score",
+          "evidence",
+          "reproducibility_notes"
+        ],
+        "strict_pass_rule": "Exact 97-character plaintext AND exact or human-equivalent layer order with keys/routes/alphabets. Plaintext-only is at most PARTIAL."
+      },
+      "suite_id": "K4BENCH-2026-04-26-V1",
+      "title": "Bronze latitude"
+    },
+    {
+      "bench_id": "K4B-015",
+      "ciphertext": "ZQUYEGMBXVNOMHLMEAQFHXQHLCQOXHFBHXQBANQTMEQKLHQXUYLNTVMJKQATXQLXEXEGBLGTAKFXLXNEQEFEMQYXGQBINQGQV",
+      "ciphertext_alphabet": "AZ",
+      "ciphertext_length": 97,
+      "known_plaintext_positions": {
+        "21": "R",
+        "22": "A",
+        "23": "I",
+        "24": "L",
+        "25": "F",
+        "26": "I",
+        "27": "V",
+        "28": "E",
+        "29": "S",
+        "30": "H",
+        "31": "I",
+        "32": "F",
+        "33": "T",
+        "63": "C",
+        "64": "L",
+        "65": "O",
+        "66": "S",
+        "67": "E",
+        "68": "C",
+        "69": "O",
+        "70": "L",
+        "71": "U",
+        "72": "M",
+        "73": "N"
+      },
+      "known_plaintext_spans": [
+        {
+          "end_inclusive": 33,
+          "label": "crib_a",
+          "length": 13,
+          "start": 21,
+          "text": "RAILFIVESHIFT"
+        },
+        {
+          "end_inclusive": 73,
+          "label": "crib_b",
+          "length": 11,
+          "start": 63,
+          "text": "CLOSECOLUMN"
+        }
+      ],
+      "public_clue_pack": {
+        "clue_text": "OBTUSE is the column key. The inscription shows five rails and the Roman numeral XIX before the closing columns.",
+        "constraint_summary": [
+          "A-Z only; no spaces or punctuation in ciphertext.",
+          "Plaintext is exactly 97 A-Z characters.",
+          "The construction uses hand-executable classical/procedural layers only.",
+          "All key material needed for the intended solution is derivable from this clue pack.",
+          "Layer count is between two and three unless a clue explicitly collapses a layer into a simple reversal or mirror.",
+          "A strict pass requires both the exact plaintext and a reproducible method/layer order."
+        ]
+      },
+      "public_quality_metadata": {
+        "answer_hash_sha256": "31f2c66c46f4643dea55ac0566725e89be19b97bfead19dcad419e4e3c2d998e",
+        "challenge_hash_sha256": "87398184216364b34a098018a0701a13ada80eed0760b10a5874f8756532b0ef",
+        "contains_solution_material": false,
+        "difficulty_band": "silver",
+        "purpose": "blind synthetic K4-like full-controller calibration"
+      },
+      "schema_version": "k4bench.challenge.v1",
+      "solver_output_contract": {
+        "known_crib_score_target": 24,
+        "required_json_fields": [
+          "bench_id",
+          "plaintext",
+          "confidence",
+          "method_summary",
+          "layers",
+          "crib_score",
+          "evidence",
+          "reproducibility_notes"
+        ],
+        "strict_pass_rule": "Exact 97-character plaintext AND exact or human-equivalent layer order with keys/routes/alphabets. Plaintext-only is at most PARTIAL."
+      },
+      "suite_id": "K4BENCH-2026-04-26-V1",
+      "title": "Obtuse rail numeral"
+    },
+    {
+      "bench_id": "K4B-016",
+      "ciphertext": "OSYXQUDSKSHMBRDYBOOLOGENEPWSQRKAOGDJHGCPWSVPXKDOZAHFTNBGAPJKROEGENQYKSASECMHGMBDSMNTQKETHOGGEXBMB",
+      "ciphertext_alphabet": "AZ",
+      "ciphertext_length": 97,
+      "known_plaintext_positions": {
+        "21": "S",
+        "22": "I",
+        "23": "X",
+        "24": "B",
+        "25": "L",
+        "26": "O",
+        "27": "C",
+        "28": "K",
+        "29": "T",
+        "30": "U",
+        "31": "R",
+        "32": "N",
+        "33": "X",
+        "63": "K",
+        "64": "R",
+        "65": "Y",
+        "66": "P",
+        "67": "T",
+        "68": "O",
+        "69": "S",
+        "70": "R",
+        "71": "U",
+        "72": "N",
+        "73": "X"
+      },
+      "known_plaintext_spans": [
+        {
+          "end_inclusive": 33,
+          "label": "crib_a",
+          "length": 13,
+          "start": 21,
+          "text": "SIXBLOCKTURNX"
+        },
+        {
+          "end_inclusive": 73,
+          "label": "crib_b",
+          "length": 11,
+          "start": 63,
+          "text": "KRYPTOSRUNX"
+        }
+      ],
+      "public_clue_pack": {
+        "clue_text": "ECLIPSE appears on a KRYPTOS strip. The note says turn each six-letter block inside out before reading the strip.",
+        "constraint_summary": [
+          "A-Z only; no spaces or punctuation in ciphertext.",
+          "Plaintext is exactly 97 A-Z characters.",
+          "The construction uses hand-executable classical/procedural layers only.",
+          "All key material needed for the intended solution is derivable from this clue pack.",
+          "Layer count is between two and three unless a clue explicitly collapses a layer into a simple reversal or mirror.",
+          "A strict pass requires both the exact plaintext and a reproducible method/layer order."
+        ]
+      },
+      "public_quality_metadata": {
+        "answer_hash_sha256": "8d5ca036157f9378d7098c55acd7e2b42c655877c187dd71723a2d85009554d5",
+        "challenge_hash_sha256": "b2a2dd398a659e3b6d2e21855b2da345434a606a87ae37214e47a8038e6daee0",
+        "contains_solution_material": false,
+        "difficulty_band": "gold",
+        "purpose": "blind synthetic K4-like full-controller calibration"
+      },
+      "schema_version": "k4bench.challenge.v1",
+      "solver_output_contract": {
+        "known_crib_score_target": 24,
+        "required_json_fields": [
+          "bench_id",
+          "plaintext",
+          "confidence",
+          "method_summary",
+          "layers",
+          "crib_score",
+          "evidence",
+          "reproducibility_notes"
+        ],
+        "strict_pass_rule": "Exact 97-character plaintext AND exact or human-equivalent layer order with keys/routes/alphabets. Plaintext-only is at most PARTIAL."
+      },
+      "suite_id": "K4BENCH-2026-04-26-V1",
+      "title": "Eclipse block turn"
+    },
+    {
+      "bench_id": "K4B-017",
+      "ciphertext": "MUHEDYOROGVLZWHRDZGHSUIKJOWKJZVVANCLFRVKOELKHRVBZRLXFEZCAWDXLYCXFWVRLRCKWYEOZHCGPUHXZEOOSQCCULRRS",
+      "ciphertext_alphabet": "AZ",
+      "ciphertext_length": 97,
+      "known_plaintext_positions": {
+        "21": "S",
+        "22": "E",
+        "23": "V",
+        "24": "E",
+        "25": "N",
+        "26": "S",
+        "27": "T",
+        "28": "E",
+        "29": "P",
+        "30": "W",
+        "31": "A",
+        "32": "L",
+        "33": "K",
+        "63": "D",
+        "64": "A",
+        "65": "R",
+        "66": "K",
+        "67": "M",
+        "68": "I",
+        "69": "R",
+        "70": "R",
+        "71": "O",
+        "72": "R",
+        "73": "X"
+      },
+      "known_plaintext_spans": [
+        {
+          "end_inclusive": 33,
+          "label": "crib_a",
+          "length": 13,
+          "start": 21,
+          "text": "SEVENSTEPWALK"
+        },
+        {
+          "end_inclusive": 73,
+          "label": "crib_b",
+          "length": 11,
+          "start": 63,
+          "text": "DARKMIRRORX"
+        }
+      ],
+      "public_clue_pack": {
+        "clue_text": "DIAL is written on a seven-step wheel starting at twelve. A final dark alphabet strip closes the procedure.",
+        "constraint_summary": [
+          "A-Z only; no spaces or punctuation in ciphertext.",
+          "Plaintext is exactly 97 A-Z characters.",
+          "The construction uses hand-executable classical/procedural layers only.",
+          "All key material needed for the intended solution is derivable from this clue pack.",
+          "Layer count is between two and three unless a clue explicitly collapses a layer into a simple reversal or mirror.",
+          "A strict pass requires both the exact plaintext and a reproducible method/layer order."
+        ]
+      },
+      "public_quality_metadata": {
+        "answer_hash_sha256": "cdd6b38aedd64733d9e7d45c1e399c38257ce60b22a2c753f08cc8a31fa6f3fa",
+        "challenge_hash_sha256": "b1d6f0d0755c9b301c83fe31d00d873902617100216afd35aa4e9d3be93c4423",
+        "contains_solution_material": false,
+        "difficulty_band": "gold",
+        "purpose": "blind synthetic K4-like full-controller calibration"
+      },
+      "schema_version": "k4bench.challenge.v1",
+      "solver_output_contract": {
+        "known_crib_score_target": 24,
+        "required_json_fields": [
+          "bench_id",
+          "plaintext",
+          "confidence",
+          "method_summary",
+          "layers",
+          "crib_score",
+          "evidence",
+          "reproducibility_notes"
+        ],
+        "strict_pass_rule": "Exact 97-character plaintext AND exact or human-equivalent layer order with keys/routes/alphabets. Plaintext-only is at most PARTIAL."
+      },
+      "suite_id": "K4BENCH-2026-04-26-V1",
+      "title": "Dial seven walk"
+    },
+    {
+      "bench_id": "K4B-018",
+      "ciphertext": "ARNNYRHBJAFAPAGYJRUYYBWBCEYYJAFNRBJGJGJFPRUAIOQYWAJEGXKNFKTAEDVTFNJRMKQKIQMHYAWHFEQLHEWMKEHCSRQLF",
+      "ciphertext_alphabet": "AZ",
+      "ciphertext_length": 97,
+      "known_plaintext_positions": {
+        "21": "D",
+        "22": "I",
+        "23": "A",
+        "24": "G",
+        "25": "O",
+        "26": "N",
+        "27": "A",
+        "28": "L",
+        "29": "E",
+        "30": "I",
+        "31": "G",
+        "32": "H",
+        "33": "T",
+        "63": "B",
+        "64": "E",
+        "65": "A",
+        "66": "U",
+        "67": "F",
+        "68": "O",
+        "69": "R",
+        "70": "T",
+        "71": "K",
+        "72": "E",
+        "73": "Y"
+      },
+      "known_plaintext_spans": [
+        {
+          "end_inclusive": 33,
+          "label": "crib_a",
+          "length": 13,
+          "start": 21,
+          "text": "DIAGONALEIGHT"
+        },
+        {
+          "end_inclusive": 73,
+          "label": "crib_b",
+          "length": 11,
+          "start": 63,
+          "text": "BEAUFORTKEY"
+        }
+      ],
+      "public_clue_pack": {
+        "clue_text": "CEREMONY is the only word on the card. The grid drawing uses an eight-wide alternating diagonal read.",
+        "constraint_summary": [
+          "A-Z only; no spaces or punctuation in ciphertext.",
+          "Plaintext is exactly 97 A-Z characters.",
+          "The construction uses hand-executable classical/procedural layers only.",
+          "All key material needed for the intended solution is derivable from this clue pack.",
+          "Layer count is between two and three unless a clue explicitly collapses a layer into a simple reversal or mirror.",
+          "A strict pass requires both the exact plaintext and a reproducible method/layer order."
+        ]
+      },
+      "public_quality_metadata": {
+        "answer_hash_sha256": "23d4590ca8fc9061b8b039bafe7136c069db852dc006bfcf45a125787dd53a28",
+        "challenge_hash_sha256": "d0c29d32c710c65fbfe91454fcf67b6ae4e8ff14c014e460976d198df7a28832",
+        "contains_solution_material": false,
+        "difficulty_band": "gold",
+        "purpose": "blind synthetic K4-like full-controller calibration"
+      },
+      "schema_version": "k4bench.challenge.v1",
+      "solver_output_contract": {
+        "known_crib_score_target": 24,
+        "required_json_fields": [
+          "bench_id",
+          "plaintext",
+          "confidence",
+          "method_summary",
+          "layers",
+          "crib_score",
+          "evidence",
+          "reproducibility_notes"
+        ],
+        "strict_pass_rule": "Exact 97-character plaintext AND exact or human-equivalent layer order with keys/routes/alphabets. Plaintext-only is at most PARTIAL."
+      },
+      "suite_id": "K4BENCH-2026-04-26-V1",
+      "title": "Ceremony diagonal"
+    },
+    {
+      "bench_id": "K4B-019",
+      "ciphertext": "JTNASQNIGJLTGEYSGCTBQKRYKGYVCXDTLATUEGKLIUANGINTLBIFHSCPNLGTDUNYGITJIKNIQJCQLJRXAXTLBRFURAGJWVZGG",
+      "ciphertext_alphabet": "AZ",
+      "ciphertext_length": 97,
+      "known_plaintext_positions": {
+        "21": "C",
+        "22": "O",
+        "23": "L",
+        "24": "U",
+        "25": "M",
+        "26": "N",
+        "27": "K",
+        "28": "E",
+        "29": "Y",
+        "30": "W",
+        "31": "O",
+        "32": "R",
+        "33": "D",
+        "63": "F",
+        "64": "O",
+        "65": "U",
+        "66": "R",
+        "67": "B",
+        "68": "L",
+        "69": "O",
+        "70": "C",
+        "71": "K",
+        "72": "X",
+        "73": "X"
+      },
+      "known_plaintext_spans": [
+        {
+          "end_inclusive": 33,
+          "label": "crib_a",
+          "length": 13,
+          "start": 21,
+          "text": "COLUMNKEYWORD"
+        },
+        {
+          "end_inclusive": 73,
+          "label": "crib_b",
+          "length": 11,
+          "start": 63,
+          "text": "FOURBLOCKXX"
+        }
+      ],
+      "public_clue_pack": {
+        "clue_text": "SPIRAL heads the columns, KINETIC appears on a KRYPTOS strip, and every four-letter tile is drawn upside down.",
+        "constraint_summary": [
+          "A-Z only; no spaces or punctuation in ciphertext.",
+          "Plaintext is exactly 97 A-Z characters.",
+          "The construction uses hand-executable classical/procedural layers only.",
+          "All key material needed for the intended solution is derivable from this clue pack.",
+          "Layer count is between two and three unless a clue explicitly collapses a layer into a simple reversal or mirror.",
+          "A strict pass requires both the exact plaintext and a reproducible method/layer order."
+        ]
+      },
+      "public_quality_metadata": {
+        "answer_hash_sha256": "88bcf16437cca5c0fd29e4696eb929a1ee4ac9c3ed5d310d9c09584ef1e74eb6",
+        "challenge_hash_sha256": "3d16774b6bd21354354e42f15f69d01208d186ddbf9edc449179503e97bbfb3f",
+        "contains_solution_material": false,
+        "difficulty_band": "gold",
+        "purpose": "blind synthetic K4-like full-controller calibration"
+      },
+      "schema_version": "k4bench.challenge.v1",
+      "solver_output_contract": {
+        "known_crib_score_target": 24,
+        "required_json_fields": [
+          "bench_id",
+          "plaintext",
+          "confidence",
+          "method_summary",
+          "layers",
+          "crib_score",
+          "evidence",
+          "reproducibility_notes"
+        ],
+        "strict_pass_rule": "Exact 97-character plaintext AND exact or human-equivalent layer order with keys/routes/alphabets. Plaintext-only is at most PARTIAL."
+      },
+      "suite_id": "K4BENCH-2026-04-26-V1",
+      "title": "Spiral kinetic blocks"
+    },
+    {
+      "bench_id": "K4B-020",
+      "ciphertext": "YOLBPHCJQDUZMFFFIGXMZWGNGDMTTDOHCJPAKLEGKEFKVHYOAPELENLVIYVTPZHFKXUDOKRSXOVROHNKOCEZEYWNSVRSECIHM",
+      "ciphertext_alphabet": "AZ",
+      "ciphertext_length": 97,
+      "known_plaintext_positions": {
+        "21": "R",
+        "22": "A",
+        "23": "I",
+        "24": "L",
+        "25": "K",
+        "26": "R",
+        "27": "Y",
+        "28": "P",
+        "29": "T",
+        "30": "O",
+        "31": "S",
+        "32": "X",
+        "33": "X",
+        "63": "P",
+        "64": "L",
+        "65": "A",
+        "66": "N",
+        "67": "E",
+        "68": "T",
+        "69": "O",
+        "70": "R",
+        "71": "D",
+        "72": "E",
+        "73": "R"
+      },
+      "known_plaintext_spans": [
+        {
+          "end_inclusive": 33,
+          "label": "crib_a",
+          "length": 13,
+          "start": 21,
+          "text": "RAILKRYPTOSXX"
+        },
+        {
+          "end_inclusive": 73,
+          "label": "crib_b",
+          "length": 11,
+          "start": 63,
+          "text": "PLANETORDER"
+        }
+      ],
+      "public_clue_pack": {
+        "clue_text": "NORTHING is on a KRYPTOS strip and PLANET labels the columns. A three-rail sketch precedes both.",
+        "constraint_summary": [
+          "A-Z only; no spaces or punctuation in ciphertext.",
+          "Plaintext is exactly 97 A-Z characters.",
+          "The construction uses hand-executable classical/procedural layers only.",
+          "All key material needed for the intended solution is derivable from this clue pack.",
+          "Layer count is between two and three unless a clue explicitly collapses a layer into a simple reversal or mirror.",
+          "A strict pass requires both the exact plaintext and a reproducible method/layer order."
+        ]
+      },
+      "public_quality_metadata": {
+        "answer_hash_sha256": "a6faf30c3cd817a84518114eeb458d4df64f1d18c5f26386836d5193f1036dc4",
+        "challenge_hash_sha256": "e22b7d3785ceae644bfa05199f649c50d0ee47dcba8307f899b3984def1d0a1a",
+        "contains_solution_material": false,
+        "difficulty_band": "gold",
+        "purpose": "blind synthetic K4-like full-controller calibration"
+      },
+      "schema_version": "k4bench.challenge.v1",
+      "solver_output_contract": {
+        "known_crib_score_target": 24,
+        "required_json_fields": [
+          "bench_id",
+          "plaintext",
+          "confidence",
+          "method_summary",
+          "layers",
+          "crib_score",
+          "evidence",
+          "reproducibility_notes"
+        ],
+        "strict_pass_rule": "Exact 97-character plaintext AND exact or human-equivalent layer order with keys/routes/alphabets. Plaintext-only is at most PARTIAL."
+      },
+      "suite_id": "K4BENCH-2026-04-26-V1",
+      "title": "Northing planet"
+    },
+    {
+      "bench_id": "K4B-021",
+      "ciphertext": "OBCHCDTLZPOYFDJKRTMTJLQLZIMSJIIAINUPVBZVLWYLNIBCULYBGZSUNEZWHMBJTLFYYTIWFUAIDMVZHVDROZVYFJKVCYPUU",
+      "ciphertext_alphabet": "AZ",
+      "ciphertext_length": 97,
+      "known_plaintext_positions": {
+        "21": "K",
+        "22": "R",
+        "23": "Y",
+        "24": "P",
+        "25": "T",
+        "26": "O",
+        "27": "S",
+        "28": "M",
+        "29": "I",
+        "30": "R",
+        "31": "R",
+        "32": "O",
+        "33": "R",
+        "63": "S",
+        "64": "H",
+        "65": "O",
+        "66": "R",
+        "67": "T",
+        "68": "W",
+        "69": "O",
+        "70": "R",
+        "71": "D",
+        "72": "X",
+        "73": "X"
+      },
+      "known_plaintext_spans": [
+        {
+          "end_inclusive": 33,
+          "label": "crib_a",
+          "length": 13,
+          "start": 21,
+          "text": "KRYPTOSMIRROR"
+        },
+        {
+          "end_inclusive": 73,
+          "label": "crib_b",
+          "length": 11,
+          "start": 63,
+          "text": "SHORTWORDXX"
+        }
+      ],
+      "public_clue_pack": {
+        "clue_text": "RELIC is written beside a KRYPTOS mirror and a seven-wide ragged column walk.",
+        "constraint_summary": [
+          "A-Z only; no spaces or punctuation in ciphertext.",
+          "Plaintext is exactly 97 A-Z characters.",
+          "The construction uses hand-executable classical/procedural layers only.",
+          "All key material needed for the intended solution is derivable from this clue pack.",
+          "Layer count is between two and three unless a clue explicitly collapses a layer into a simple reversal or mirror.",
+          "A strict pass requires both the exact plaintext and a reproducible method/layer order."
+        ]
+      },
+      "public_quality_metadata": {
+        "answer_hash_sha256": "a93852bfaf3202fb348bd92fe52d8c191509fff686140978e94292ea22dac4fa",
+        "challenge_hash_sha256": "35a959c439a4e298ef050c98504b66db2e925c8bf5d49d4a509056f7d79a46f4",
+        "contains_solution_material": false,
+        "difficulty_band": "gold",
+        "purpose": "blind synthetic K4-like full-controller calibration"
+      },
+      "schema_version": "k4bench.challenge.v1",
+      "solver_output_contract": {
+        "known_crib_score_target": 24,
+        "required_json_fields": [
+          "bench_id",
+          "plaintext",
+          "confidence",
+          "method_summary",
+          "layers",
+          "crib_score",
+          "evidence",
+          "reproducibility_notes"
+        ],
+        "strict_pass_rule": "Exact 97-character plaintext AND exact or human-equivalent layer order with keys/routes/alphabets. Plaintext-only is at most PARTIAL."
+      },
+      "suite_id": "K4BENCH-2026-04-26-V1",
+      "title": "Relic ragged mirror"
+    },
+    {
+      "bench_id": "K4B-022",
+      "ciphertext": "CNHMMCQOLRGJTLABDEUWMPTQAZLGKPWZVCALUGALJWTOPUWALZBDRZDAURWCKECRQDHWIKLUZKGJYLQPJLEMZPPKVEGLJQCML",
+      "ciphertext_alphabet": "AZ",
+      "ciphertext_length": 97,
+      "known_plaintext_positions": {
+        "21": "C",
+        "22": "O",
+        "23": "L",
+        "24": "U",
+        "25": "M",
+        "26": "N",
+        "27": "S",
+        "28": "K",
+        "29": "I",
+        "30": "P",
+        "31": "K",
+        "32": "E",
+        "33": "Y",
+        "63": "S",
+        "64": "T",
+        "65": "E",
+        "66": "P",
+        "67": "N",
+        "68": "I",
+        "69": "N",
+        "70": "E",
+        "71": "X",
+        "72": "X",
+        "73": "X"
+      },
+      "known_plaintext_spans": [
+        {
+          "end_inclusive": 33,
+          "label": "crib_a",
+          "length": 13,
+          "start": 21,
+          "text": "COLUMNSKIPKEY"
+        },
+        {
+          "end_inclusive": 73,
+          "label": "crib_b",
+          "length": 11,
+          "start": 63,
+          "text": "STEPNINEXXX"
+        }
+      ],
+      "public_clue_pack": {
+        "clue_text": "SILVER labels columns. THIRTEEN names the balancing word. A route card says start two, step nine.",
+        "constraint_summary": [
+          "A-Z only; no spaces or punctuation in ciphertext.",
+          "Plaintext is exactly 97 A-Z characters.",
+          "The construction uses hand-executable classical/procedural layers only.",
+          "All key material needed for the intended solution is derivable from this clue pack.",
+          "Layer count is between two and three unless a clue explicitly collapses a layer into a simple reversal or mirror.",
+          "A strict pass requires both the exact plaintext and a reproducible method/layer order."
+        ]
+      },
+      "public_quality_metadata": {
+        "answer_hash_sha256": "ba38a7fbd7e88f3634d337c178016c490d996f0e545072e557f9f1b89cddf596",
+        "challenge_hash_sha256": "1335a1f1d60455d758ec1bab64a87576d00d17bf5d10c36153492a88b628c961",
+        "contains_solution_material": false,
+        "difficulty_band": "gold",
+        "purpose": "blind synthetic K4-like full-controller calibration"
+      },
+      "schema_version": "k4bench.challenge.v1",
+      "solver_output_contract": {
+        "known_crib_score_target": 24,
+        "required_json_fields": [
+          "bench_id",
+          "plaintext",
+          "confidence",
+          "method_summary",
+          "layers",
+          "crib_score",
+          "evidence",
+          "reproducibility_notes"
+        ],
+        "strict_pass_rule": "Exact 97-character plaintext AND exact or human-equivalent layer order with keys/routes/alphabets. Plaintext-only is at most PARTIAL."
+      },
+      "suite_id": "K4BENCH-2026-04-26-V1",
+      "title": "Silver thirteen skip"
+    },
+    {
+      "bench_id": "K4B-023",
+      "ciphertext": "UYGYYRXUVZITZZGZHSUJMBHZYNOFEMKTXBMWMLGOTVRNEBOWRCEUYBOTXZFZCVESDKONOSOYUSIQBJQNCKYKZFXVVMMJCMCOM",
+      "ciphertext_alphabet": "AZ",
+      "ciphertext_length": 97,
+      "known_plaintext_positions": {
+        "21": "B",
+        "22": "L",
+        "23": "O",
+        "24": "C",
+        "25": "K",
+        "26": "R",
+        "27": "A",
+        "28": "I",
+        "29": "L",
+        "30": "K",
+        "31": "E",
+        "32": "Y",
+        "33": "X",
+        "63": "K",
+        "64": "R",
+        "65": "Y",
+        "66": "P",
+        "67": "T",
+        "68": "O",
+        "69": "S",
+        "70": "R",
+        "71": "U",
+        "72": "N",
+        "73": "X"
+      },
+      "known_plaintext_spans": [
+        {
+          "end_inclusive": 33,
+          "label": "crib_a",
+          "length": 13,
+          "start": 21,
+          "text": "BLOCKRAILKEYX"
+        },
+        {
+          "end_inclusive": 73,
+          "label": "crib_b",
+          "length": 11,
+          "start": 63,
+          "text": "KRYPTOSRUNX"
+        }
+      ],
+      "public_clue_pack": {
+        "clue_text": "QUARTZ is printed on a KRYPTOS strip. The work order says reverse nine-letter blocks, then pass four rails.",
+        "constraint_summary": [
+          "A-Z only; no spaces or punctuation in ciphertext.",
+          "Plaintext is exactly 97 A-Z characters.",
+          "The construction uses hand-executable classical/procedural layers only.",
+          "All key material needed for the intended solution is derivable from this clue pack.",
+          "Layer count is between two and three unless a clue explicitly collapses a layer into a simple reversal or mirror.",
+          "A strict pass requires both the exact plaintext and a reproducible method/layer order."
+        ]
+      },
+      "public_quality_metadata": {
+        "answer_hash_sha256": "5f16c9c57b56cf5f17c86a742898fecd1b31abc233103cea0de94e3f985b9fb4",
+        "challenge_hash_sha256": "8221e790c99df92e7bdf13159d05fdd8a1b0202226c38d4418cc3012e771a750",
+        "contains_solution_material": false,
+        "difficulty_band": "gold",
+        "purpose": "blind synthetic K4-like full-controller calibration"
+      },
+      "schema_version": "k4bench.challenge.v1",
+      "solver_output_contract": {
+        "known_crib_score_target": 24,
+        "required_json_fields": [
+          "bench_id",
+          "plaintext",
+          "confidence",
+          "method_summary",
+          "layers",
+          "crib_score",
+          "evidence",
+          "reproducibility_notes"
+        ],
+        "strict_pass_rule": "Exact 97-character plaintext AND exact or human-equivalent layer order with keys/routes/alphabets. Plaintext-only is at most PARTIAL."
+      },
+      "suite_id": "K4BENCH-2026-04-26-V1",
+      "title": "Quartz rail blocks"
+    },
+    {
+      "bench_id": "K4B-024",
+      "ciphertext": "ZIBXOVLZOZZKYHXIGJQCXMFQDLKZYSQIIZFPLCQIZMSZIVRVHGBHFZZCIXVGNHEGJMHVIZZMWMELVGHVKUQIWRKGFGNVOEIGA",
+      "ciphertext_alphabet": "AZ",
+      "ciphertext_length": 97,
+      "known_plaintext_positions": {
+        "21": "D",
+        "22": "I",
+        "23": "A",
+        "24": "G",
+        "25": "O",
+        "26": "N",
+        "27": "A",
+        "28": "L",
+        "29": "S",
+        "30": "T",
+        "31": "A",
+        "32": "R",
+        "33": "T",
+        "63": "F",
+        "64": "I",
+        "65": "N",
+        "66": "A",
+        "67": "L",
+        "68": "M",
+        "69": "I",
+        "70": "R",
+        "71": "R",
+        "72": "O",
+        "73": "R"
+      },
+      "known_plaintext_spans": [
+        {
+          "end_inclusive": 33,
+          "label": "crib_a",
+          "length": 13,
+          "start": 21,
+          "text": "DIAGONALSTART"
+        },
+        {
+          "end_inclusive": 73,
+          "label": "crib_b",
+          "length": 11,
+          "start": 63,
+          "text": "FINALMIRROR"
+        }
+      ],
+      "public_clue_pack": {
+        "clue_text": "FACADE sits below a subtractive arrow. The route drawing is eleven-wide alternating diagonal and ends in a mirror.",
+        "constraint_summary": [
+          "A-Z only; no spaces or punctuation in ciphertext.",
+          "Plaintext is exactly 97 A-Z characters.",
+          "The construction uses hand-executable classical/procedural layers only.",
+          "All key material needed for the intended solution is derivable from this clue pack.",
+          "Layer count is between two and three unless a clue explicitly collapses a layer into a simple reversal or mirror.",
+          "A strict pass requires both the exact plaintext and a reproducible method/layer order."
+        ]
+      },
+      "public_quality_metadata": {
+        "answer_hash_sha256": "12189d342a0ceba7d37d5226884d471b01762fb17a8d957ea5722c913ab9b725",
+        "challenge_hash_sha256": "782fc3579b6462190c4708389a2d22577990b3f82fdd83c8bcc1818ef923f0a0",
+        "contains_solution_material": false,
+        "difficulty_band": "gold",
+        "purpose": "blind synthetic K4-like full-controller calibration"
+      },
+      "schema_version": "k4bench.challenge.v1",
+      "solver_output_contract": {
+        "known_crib_score_target": 24,
+        "required_json_fields": [
+          "bench_id",
+          "plaintext",
+          "confidence",
+          "method_summary",
+          "layers",
+          "crib_score",
+          "evidence",
+          "reproducibility_notes"
+        ],
+        "strict_pass_rule": "Exact 97-character plaintext AND exact or human-equivalent layer order with keys/routes/alphabets. Plaintext-only is at most PARTIAL."
+      },
+      "suite_id": "K4BENCH-2026-04-26-V1",
+      "title": "Facade diagonal mirror"
+    },
+    {
+      "bench_id": "K4B-025",
+      "ciphertext": "YGSBFHJKNZSKMCEPBKDQERZBEVGBLCBXJKFIITYGGKEBJEJDVZBBZWTGBQFYNDOSBDEUKQYYKDNOCEMMPQGZSLZQURJUGLEKN",
+      "ciphertext_alphabet": "AZ",
+      "ciphertext_length": 97,
+      "known_plaintext_positions": {
+        "21": "C",
+        "22": "O",
+        "23": "L",
+        "24": "U",
+        "25": "M",
+        "26": "N",
+        "27": "R",
+        "28": "A",
+        "29": "G",
+        "30": "G",
+        "31": "E",
+        "32": "D",
+        "33": "X",
+        "63": "B",
+        "64": "E",
+        "65": "A",
+        "66": "U",
+        "67": "F",
+        "68": "O",
+        "69": "R",
+        "70": "T",
+        "71": "E",
+        "72": "N",
+        "73": "D"
+      },
+      "known_plaintext_spans": [
+        {
+          "end_inclusive": 33,
+          "label": "crib_a",
+          "length": 13,
+          "start": 21,
+          "text": "COLUMNRAGGEDX"
+        },
+        {
+          "end_inclusive": 73,
+          "label": "crib_b",
+          "length": 11,
+          "start": 63,
+          "text": "BEAUFORTEND"
+        }
+      ],
+      "public_clue_pack": {
+        "clue_text": "FJORD labels a column board, SOLSTICE sits on a KRYPTOS strip, and a six-wide ragged route follows the board.",
+        "constraint_summary": [
+          "A-Z only; no spaces or punctuation in ciphertext.",
+          "Plaintext is exactly 97 A-Z characters.",
+          "The construction uses hand-executable classical/procedural layers only.",
+          "All key material needed for the intended solution is derivable from this clue pack.",
+          "Layer count is between two and three unless a clue explicitly collapses a layer into a simple reversal or mirror.",
+          "A strict pass requires both the exact plaintext and a reproducible method/layer order."
+        ]
+      },
+      "public_quality_metadata": {
+        "answer_hash_sha256": "00ad6ea67f0ff9aaadafc9ebfee5c2cf3b8df6644f107d31fcdd32b454bf9e00",
+        "challenge_hash_sha256": "56ff63a9c51f187f1e367965293c1b0408636a87609458372e15bf0b84478e29",
+        "contains_solution_material": false,
+        "difficulty_band": "gold",
+        "purpose": "blind synthetic K4-like full-controller calibration"
+      },
+      "schema_version": "k4bench.challenge.v1",
+      "solver_output_contract": {
+        "known_crib_score_target": 24,
+        "required_json_fields": [
+          "bench_id",
+          "plaintext",
+          "confidence",
+          "method_summary",
+          "layers",
+          "crib_score",
+          "evidence",
+          "reproducibility_notes"
+        ],
+        "strict_pass_rule": "Exact 97-character plaintext AND exact or human-equivalent layer order with keys/routes/alphabets. Plaintext-only is at most PARTIAL."
+      },
+      "suite_id": "K4BENCH-2026-04-26-V1",
+      "title": "Solstice fjord route"
+    }
+  ],
+  "schema_version": "k4bench.public_bundle.v1",
+  "suite_id": "K4BENCH-2026-04-26-V1"
+}

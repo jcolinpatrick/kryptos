@@ -118,14 +118,21 @@ columnar all overlap something). Workarounds:
 - See `kryptosbot/job_dispatcher.py::_exhaustion_overlap` for the
   heuristic's exact logic.
 
-### 5.4 Worker crashes with "alphabet 'KA' not supported in Phase 4 dispatcher"
+### 5.4 Dispatcher rejects a `key_tape` layer with "no translator"
 
-The Phase 4 DSL dispatcher only handles AZ alphabet for Vigenère-family
-layers. Theorist proposed a KA / Quagmire III hypothesis; dispatcher
-rejects at admissibility time with a clear pointer. Fix: either the
-theorist routes through a different cipher family, or the operator
-extends `_translate_layer` with a Quagmire III case. The Phase-7
-self-test notes this as a known gap (report §6.1).
+`key_tape` is the only DSL-valid cipher kind without a dispatcher
+translation path (see `kryptosbot/hypothesis_dsl.py::_VALID_CIPHER_KINDS`
+vs `kryptosbot/job_dispatcher.py::_SUPPORTED_KINDS`). It validates as a
+spec but admissibility rejects with a "no dispatcher translation"
+pointer — the deferred-kind contract. Fix: route the hypothesis through
+a supported family, or extend `_translate_layer` with a key-tape case
+(needs new kernel infrastructure for finite-tape + null insertion).
+
+Historical note: Phase 4 only supported the AZ alphabet for Vigenère-
+family layers, so KA / Quagmire III hypotheses crashed with
+"alphabet 'KA' not supported in Phase 4 dispatcher". R2-2 (2026-04-21)
+added KA and keyword_mixed support. If you still see that error string,
+the dispatcher is older than R2-2 — pull main.
 
 ### 5.5 Procedural sweep returns `tested=0` on several recipes
 

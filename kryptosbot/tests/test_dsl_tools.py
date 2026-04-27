@@ -39,13 +39,6 @@ from kryptosbot.dsl_tools import (
     _PHASE5_NULL_CACHE_PATH,
 )
 from kryptosbot.hypothesis_dsl import CipherLayer, HypothesisSpec, ParamRange
-from kryptosbot.k4_tools import (
-    hill_climb_tool,
-    swap_and_test_tool,
-    try_keyword_sweep_tool,
-)
-
-
 # ─── Helpers ─────────────────────────────────────────────────────────────────
 
 def _invoke(tool_obj, args: dict) -> dict:
@@ -298,7 +291,15 @@ class TestEnumerateAdmissibleTransforms:
         assert env["status"] == "ok"
         assert "vigenere" in env["data"]["supported_kinds"]
         assert "identity" in env["data"]["supported_kinds"]
-        assert "AZ" in env["data"]["supported_alphabets"]
+        # R2-2 (2026-04-21) added KA + keyword_mixed; tool used to lie
+        # by reporting AZ-only. All three must be advertised.
+        supported = env["data"]["supported_alphabets"]
+        assert "AZ" in supported
+        assert "KA" in supported
+        assert "keyword_mixed" in supported
+        # And nothing should be in unsupported_alphabets, since the
+        # dispatcher now covers the full _VALID_ALPHABET_KINDS set.
+        assert env["data"]["unsupported_alphabets"] == []
         assert env["provenance"]["assumption_bundle"] == ["H1_direct_positional"]
 
     def test_adversarial_non_list_bundle(self):
@@ -386,36 +387,14 @@ class TestServerWiring:
         assert names == expected
 
 
-# ─── Deprecation coverage for the 3 noise tools in k4_tools ─────────────────
-
-class TestK4NoiseToolsDeprecated:
-    """Brief §7.1: each of the three noise tools must emit a
-    DeprecationWarning AND remain importable for backward compat."""
-
-    @pytest.mark.parametrize("tool_obj,args,label", [
-        (try_keyword_sweep_tool, {"keyword": "K"}, "try_keyword_sweep"),
-        (swap_and_test_tool,
-         {"swaps": [], "keyword": "K", "cipher": "vig", "alphabet": "AZ"},
-         "swap_and_test"),
-        (hill_climb_tool,
-         {"iterations": 10, "keyword": "K", "cipher": "vig", "alphabet": "AZ"},
-         "hill_climb"),
-    ])
-    def test_noise_tool_emits_deprecation_warning(self, tool_obj, args, label):
-        with warnings.catch_warnings(record=True) as wlist:
-            warnings.simplefilter("always")
-            try:
-                asyncio.run(tool_obj.handler(args))
-            except Exception:
-                # Underlying tool has a pre-existing bug unrelated to
-                # deprecation. What matters is the warning fired FIRST.
-                pass
-            dep = [w for w in wlist if issubclass(w.category, DeprecationWarning)]
-            assert dep, f"{label}: expected DeprecationWarning"
-            msg = str(dep[0].message)
-            assert "deprecated" in msg.lower()
-            assert "dsl_tools" in msg or "submit_hypothesis_spec" in msg
-
+# Deprecation-coverage tests for the three noise tools in
+# kryptosbot/k4_tools.py (try_keyword_sweep, swap_and_test, hill_climb)
+# were removed on 2026-04-26 along with the move of k4_tools.py to
+# _archive/k4_tools_legacy.py. The tools are unreachable from any
+# worker session (no MCP server registers them; create_k4_mcp_server
+# is never called in production code). The DeprecationWarning surface
+# they emitted on direct invocation served no real purpose because
+# nothing invoked them in production.
 
 # ─── End-to-end integration (brief §7.5) ────────────────────────────────────
 

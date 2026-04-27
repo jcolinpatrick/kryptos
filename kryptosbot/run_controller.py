@@ -37,15 +37,51 @@ import asyncio
 import logging
 import sys
 from pathlib import Path
+from typing import Any, Optional
 
 # Ensure repo root (for kryptosbot package) and src (for kernel) are on path
 _ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(_ROOT))
 sys.path.insert(0, str(_ROOT / "src"))
 
-from kryptosbot.controller import ControllerConfig, ResearchController
-from kryptosbot.theory_ledger import TheoryLedger
-from kryptosbot import display
+# IMPORTANT: kryptosbot.controller transitively imports
+# kryptos.kernel.constants, which freezes its CT/cribs/Bean derivation
+# at first import time from KRYPTOS_CT_OVERRIDE / KRYPTOS_CRIB_DICT_OVERRIDE.
+# When --bench-challenge is set we must install those overrides BEFORE
+# the controller import. The dispatcher and worker-contract verifier
+# both read CT and CRIB_DICT from kryptos.kernel.constants, so this
+# install is the single bottleneck that makes the bench challenge flow
+# into every downstream call site (including forked multiprocessing
+# workers, which inherit os.environ and the parent's already-imported
+# kernel module). See kryptosbot/bench_loader.py for the contract.
+_BENCH_CHALLENGE_FLAG = "--bench-challenge"
+_BENCH_CHALLENGE_PATH: Path | None = None
+if _BENCH_CHALLENGE_FLAG in sys.argv:
+    _idx = sys.argv.index(_BENCH_CHALLENGE_FLAG)
+    if _idx + 1 >= len(sys.argv):
+        print(
+            f"error: {_BENCH_CHALLENGE_FLAG} requires a path argument",
+            file=sys.stderr,
+        )
+        sys.exit(2)
+    _BENCH_CHALLENGE_PATH = Path(sys.argv[_idx + 1]).resolve()
+    # Lazy import: bench_loader is stdlib-only, safe before kernel.
+    from kryptosbot.bench_loader import (  # noqa: E402
+        BenchLoaderError,
+        load_k4bench_challenge,
+    )
+    try:
+        _BENCH_CHALLENGE = load_k4bench_challenge(_BENCH_CHALLENGE_PATH)
+    except BenchLoaderError as _exc:
+        print(f"error: {_exc}", file=sys.stderr)
+        sys.exit(2)
+    _BENCH_CHALLENGE.install_kernel_overrides()
+else:
+    _BENCH_CHALLENGE = None  # type: ignore[assignment]
+
+from kryptosbot.controller import ControllerConfig, ResearchController  # noqa: E402
+from kryptosbot.theory_ledger import TheoryLedger  # noqa: E402
+from kryptosbot import display  # noqa: E402
 
 
 def parse_args() -> argparse.Namespace:
@@ -132,7 +168,94 @@ def parse_args() -> argparse.Namespace:
             "length."
         ),
     )
-    return parser.parse_args()
+    parser.add_argument(
+        "--bench-challenge",
+        type=str,
+        default=None,
+        help=(
+            "Run the controller against one K4Bench public challenge "
+            "JSON instead of real K4. Installs KRYPTOS_CT_OVERRIDE / "
+            "KRYPTOS_CRIB_DICT_OVERRIDE before any kernel import, "
+            "forces a synthetic ledger under db/k4bench/ unless --db "
+            "is explicitly under that tree, and tags every ledger "
+            "entry with bench_id/suite_id. K4Bench is a calibration "
+            "input mode for the existing controller; it does NOT "
+            "create a parallel solver."
+        ),
+    )
+    parser.add_argument(
+        "--bench-attempts-out",
+        type=str,
+        default=None,
+        help=(
+            "When --bench-challenge is set, write the attempt artifact "
+            "JSON to this path on completion. Defaults to "
+            "bench/k4bench/attempts/<bench_id>.json."
+        ),
+    )
+    # ------------------------------------------------------------------
+    # K4Bench HandCipherCore deterministic-seed controls (2026-04-27).
+    # These flags govern only the bench-mode HCC seed list — they have
+    # no effect in real-K4 mode (where HCC seeds are always empty).
+    # CRITICAL: --theories does NOT cap HCC seeds; only --hcc-seeds N
+    # and --no-hcc-seeds do.
+    # ------------------------------------------------------------------
+    parser.add_argument(
+        "--hcc-seeds",
+        type=int,
+        default=None,
+        metavar="N",
+        help=(
+            "Bench mode: cap HandCipherCore deterministic coverage "
+            "seeds at N. Default (when this flag is omitted) is "
+            "uncapped — the full role × layer-order × family matrix "
+            "from the clue pack runs. Use a small N (e.g. --hcc-seeds 8) "
+            "to test only the highest-priority families. Note: "
+            "--theories does NOT cap HCC seeds; only --hcc-seeds and "
+            "--no-hcc-seeds do."
+        ),
+    )
+    parser.add_argument(
+        "--no-hcc-seeds",
+        action="store_true",
+        help=(
+            "Bench mode: DISABLE HandCipherCore seeding entirely. "
+            "Equivalent to --hcc-seeds 0. Use for LLM-only diagnostic "
+            "runs where you want to see what the theorist agent "
+            "produces in isolation. Mutually exclusive with --hcc-only "
+            "and --hcc-seeds N."
+        ),
+    )
+    parser.add_argument(
+        "--hcc-only",
+        action="store_true",
+        help=(
+            "Bench mode: skip the LLM theorist entirely; dispatch ONLY "
+            "the HCC deterministic seed catalogue. Use for fast, "
+            "tokens-free coverage runs where the LLM contribution is "
+            "not needed. Mutually exclusive with --no-hcc-seeds. "
+            "Combine with --hcc-seeds N to also cap the seed count."
+        ),
+    )
+    args = parser.parse_args()
+    # Validate mutually-exclusive HCC flag combinations. argparse's
+    # add_mutually_exclusive_group can't express "either of these two
+    # but not both AND not with --hcc-seeds 0", so we validate by hand.
+    if args.no_hcc_seeds and args.hcc_only:
+        parser.error(
+            "--no-hcc-seeds and --hcc-only are mutually exclusive: "
+            "--no-hcc-seeds disables HCC seeds (LLM only), --hcc-only "
+            "disables the LLM (HCC only). Combining them would dispatch "
+            "nothing."
+        )
+    if args.no_hcc_seeds and args.hcc_seeds is not None:
+        parser.error(
+            "--no-hcc-seeds and --hcc-seeds N are contradictory. Use "
+            "one or the other, not both."
+        )
+    if args.hcc_seeds is not None and args.hcc_seeds < 0:
+        parser.error("--hcc-seeds N requires N >= 0; for disable use --no-hcc-seeds.")
+    return args
 
 
 def _configure_logging(quiet: bool) -> None:
@@ -188,15 +311,210 @@ def do_inventory(db_path: Path) -> None:
     print(render_inventory(claims))
 
 
+def _build_display_callbacks() -> "CycleCallbacks":
+    """Return a CycleCallbacks bundle that routes events to display.print_*.
+
+    This bundle replaces the inline display calls that used to live in
+    do_run's per-cycle loop. The actual cycle work now runs in
+    ``ResearchController._run_cycle_loop`` (one shared body for both
+    library mode and TUI mode); see
+    ``feedback_dup_cycle_loop_trap.md``.
+
+    Adding TUI rendering for a new event:
+       1. Add the corresponding field to ``CycleCallbacks`` in controller.py.
+       2. Add a single ``cb.emit(...)`` line in ``_run_cycle_loop`` at
+          the moment the event is meaningful.
+       3. Wire the field below.
+
+    Pinned by ``test_cycle_loop_characterization.py`` (test G).
+    """
+    from kryptosbot.controller import CycleCallbacks
+
+    def _redteam_progress(event: str, detail: Any) -> None:
+        if event == "start":
+            agent_name, model, count = detail
+            display.print_redteam_start(agent_name, model, count)
+        elif event == "verdict":
+            theory, verdict = detail
+            reason = verdict.reasons[0] if verdict.reasons else ""
+            display.print_redteam_verdict(
+                theory_id=theory.hypothesis_id,
+                theory_title=theory.title or "(untitled)",
+                verdict=verdict.verdict,
+                confidence=verdict.confidence,
+                wall_time_sec=verdict.wall_time_sec,
+                turn_count=verdict.turn_count,
+                tool_count=verdict.tool_count,
+                reason=reason,
+            )
+        elif event == "summary":
+            # Post-Day-5 hardening: summary tuple widened to
+            # (survivors, total, rejected, concerned, errors). Older
+            # 3-tuple form still tolerated.
+            if len(detail) == 5:
+                survivors, total, rejected, concerned, errors = detail
+            else:
+                survivors, total, rejected = detail
+                concerned = 0
+                errors = 0
+            display.print_redteam_summary(
+                survivors, total, rejected,
+                concerned=concerned, errors=errors,
+            )
+        elif event == "skipped":
+            pass  # logger.info covers it
+
+    def _stat_audit_progress(event: str, detail: Any) -> None:
+        if event == "start":
+            agent_name, model, count = detail
+            display.print_stat_audit_start(agent_name, model, count)
+        elif event == "verdict":
+            theory, contract, verdict = detail
+            concern = (
+                verdict.methodology_concerns[0]
+                if verdict.methodology_concerns else ""
+            )
+            display.print_stat_audit_verdict(
+                theory_id=contract.hypothesis_id,
+                theory_title=theory.title or "(untitled)",
+                verdict=verdict.verdict,
+                confidence=verdict.confidence,
+                wall_time_sec=verdict.wall_time_sec,
+                turn_count=verdict.turn_count,
+                tool_count=verdict.tool_count,
+                concern=concern,
+            )
+        elif event == "summary":
+            confirmed, concerned, rejected, total = detail
+            display.print_stat_audit_summary(
+                confirmed, concerned, rejected, total,
+            )
+        elif event == "skipped":
+            display.print_stat_audit_skipped(str(detail))
+
+    def _pursuit_progress(event: str, detail: Any) -> None:
+        if event == "start":
+            agent_name, model, count = detail
+            display.print_pursuit_start(agent_name, model, count)
+        elif event == "verdict":
+            theory, contract, verdict = detail
+            display.print_pursuit_verdict(
+                theory_id=contract.hypothesis_id,
+                theory_title=theory.title or "(untitled)",
+                verdict=verdict.verdict,
+                confidence=verdict.confidence,
+                wall_time_sec=verdict.wall_time_sec,
+                turn_count=verdict.turn_count,
+                tool_count=verdict.tool_count,
+                rationale=verdict.rationale,
+                suggested_variants=verdict.suggested_variants,
+            )
+        elif event == "summary":
+            pursue, skip, error, total = detail
+            display.print_pursuit_summary(pursue, skip, error, total)
+        elif event == "skipped":
+            display.print_pursuit_skipped(str(detail))
+
+    def _synthesis_progress(event: str, detail: Any) -> None:
+        if event == "start":
+            agent_name, model = detail
+            display.print_synthesis_start(agent_name, model)
+        elif event == "result":
+            display.print_synthesis_result(detail)
+        elif event == "skipped":
+            display.print_synthesis_skipped(str(detail))
+
+    def _on_candidates_generated(count: int) -> None:
+        # Display.print_generation_start was inline before generation,
+        # display.print_candidates_generated after. The shared loop
+        # only emits one event after candidates are produced; the
+        # "generation_start" banner is now triggered by on_landscape
+        # ending plus the theorist's own progress events. If a
+        # generation-start banner is still desired, wire it through
+        # on_theorist_event's "start" event below.
+        display.print_candidates_generated(count)
+
+    def _on_theorist_event(event: str, detail: Any) -> None:
+        # Special-case: emit print_generation_start on the very first
+        # theorist event of each cycle so the TUI banner still appears.
+        # display.print_theorist_event handles the rest.
+        if event == "start":
+            display.print_generation_start()
+        display.print_theorist_event(event, detail)
+
+    return CycleCallbacks(
+        on_cycle_begin=display.print_cycle_header,
+        on_cycle_error=display.print_cycle_error,
+        on_landscape=display.print_landscape,
+        on_no_candidates=display.print_no_candidates,
+        on_candidates_generated=_on_candidates_generated,
+        on_dry_run_skip=display.print_dry_run_skip,
+        on_run_halt=display.print_run_halt,
+        on_theorist_event=_on_theorist_event,
+        on_critic_start=display.print_critic_start,
+        on_critic_result=display.print_critic_result,
+        on_critic_summary=display.print_critic_summary,
+        on_redteam_progress=_redteam_progress,
+        on_dispatch_header=display.print_dispatch_header,
+        on_worker_message=display.print_worker_event,
+        on_dispatch_footer=display.print_dispatch_footer,
+        on_outcome_summary=display.print_outcome_summary,
+        on_stat_audit_progress=_stat_audit_progress,
+        on_pursuit_progress=_pursuit_progress,
+        on_synthesis_progress=_synthesis_progress,
+    )
+
+
 async def do_run(config: ControllerConfig) -> None:
-    """Run the controller with formatted console output."""
+    """Run the controller with formatted console output.
+
+    Thin wrapper since the priority-1 cycle-loop collapse: the cycle
+    body runs in ``ResearchController._run_cycle_loop``, which we drive
+    here with a display-routing ``CycleCallbacks`` bundle. Setup phases
+    (bootstrap, orphan reconcile, startup banner) remain inline because
+    they happen before the cycle loop and have their own display surface.
+
+    Pinned by ``test_cycle_loop_characterization.py`` (test G): the
+    canonical trace produced via this path is identical to the trace
+    produced by ``ResearchController.run`` with the same scenario.
+    """
     controller = ResearchController(config)
 
-    from kryptosbot.registries import bootstrap_all
-    from kryptosbot.models import TheoryStatus, CriticDecision
+    from kryptosbot.registries import bootstrap_all, bootstrap_controller_queue_reset
 
-    # Bootstrap registries
-    bootstrap_result = bootstrap_all(controller.ledger, config.project_root)
+    # Synthetic-mode enforcement (2026-04-26). Refuse a real launch
+    # against a synthetic-tainted ledger (or vice versa) BEFORE
+    # bootstrap so the launch fails without mutating ledger state.
+    # Mirrors ResearchController.run; the check must run on every
+    # entry point that drives the controller against a ledger.
+    from kryptos.kernel.constants import _SYNTHETIC_MODE
+    controller.ledger.verify_and_pin_synthetic_mode(_SYNTHETIC_MODE)
+
+    # Bootstrap registries — gated via ProblemContext. In real-K4 mode
+    # the full bootstrap seeds KNOWN_FAMILIES, KNOWN_ANOMALIES, claims,
+    # exhaustion-log families, campaign manifests, and reruns into the
+    # ledger so the landscape has the live research state. In bench
+    # mode every one of those would inject real-K4 rows into the
+    # bench-scoped ledger and contaminate downstream queries (the
+    # ledger backs status_counts, family_counts, get_open_anomalies,
+    # get_active_families, recent_outcomes, get_theories_by_family —
+    # so a single bootstrap call would re-leak real-K4 state into
+    # every cycle of a bench run). Bench mode runs only the controller-
+    # queue-reset bootstrap, which is generic lifecycle and carries no
+    # K4-specific seed data.
+    if config.problem.is_real_k4:
+        bootstrap_result = bootstrap_all(controller.ledger, config.project_root)
+    else:
+        bootstrap_result = {
+            "families_added": 0,
+            "anomalies_added": 0,
+            "claims_added": 0,
+            "exhaustion_families": 0,
+            "campaign_manifests_applied": 0,
+            "local_reruns_applied": 0,
+            "queue_reset_withdrawn":
+                bootstrap_controller_queue_reset(controller.ledger),
+        }
     display.print_bootstrap(
         families=bootstrap_result["families_added"],
         anomalies=bootstrap_result["anomalies_added"],
@@ -217,7 +535,31 @@ async def do_run(config: ControllerConfig) -> None:
         except Exception:
             print(console_msg)
 
-    # Startup banner
+    # Startup banner — in bench mode, count HCC seeds at startup so the
+    # banner shows the actual deterministic-coverage size (not just the
+    # cap). Computing seeds at this point is cheap (pure Python; no API
+    # call) and the same call _generate_theories will make on cycle 1.
+    # In real-K4 mode the seed count is None and the banner falls back
+    # to its pre-2026-04-27 layout bit-for-bit.
+    hcc_seeds_count: Optional[int] = None
+    llm_theories_count: Optional[int] = None
+    total_candidates_count: Optional[int] = None
+    if config.problem.is_bench:
+        try:
+            hcc_seeds_list = controller._collect_hcc_seeds()
+            hcc_seeds_count = len(hcc_seeds_list)
+        except Exception as exc:  # noqa: BLE001 — banner must never crash startup
+            logger = logging.getLogger("kryptosbot.run_controller")
+            logger.warning(
+                "Could not count HCC seeds for startup banner: %s", exc,
+            )
+            hcc_seeds_count = 0
+        # LLM contributes 0 when --hcc-only is set; otherwise up to
+        # ``theories_per_cycle`` (the actual count depends on what the
+        # theorist returns each cycle, but the banner shows the cap).
+        llm_theories_count = 0 if config.hcc_only else config.theories_per_cycle
+        total_candidates_count = hcc_seeds_count + llm_theories_count
+
     display.print_startup(
         cycle_start=controller.state.cycle_number + 1,
         max_cycles=config.max_cycles,
@@ -228,273 +570,26 @@ async def do_run(config: ControllerConfig) -> None:
         tested=controller.state.theories_tested,
         eliminated=controller.state.theories_eliminated,
         dry_run=config.dry_run,
+        hcc_seeds=hcc_seeds_count,
+        llm_theories=llm_theories_count,
+        total_candidates=total_candidates_count,
+        hcc_seeds_cap=config.hcc_seeds_cap,
+        hcc_only=config.hcc_only,
+        no_hcc_seeds=(config.hcc_seeds_cap == 0),
     )
 
-    total_max = controller.state.cycle_number + config.max_cycles
+    # Snapshot session baseline so _assess_landscape's cycle_delta
+    # reflects new work in this session. Without this call, the TUI
+    # path historically reported cycle_delta=0 because the baseline
+    # attributes were never populated. Mirrors ResearchController.run
+    # which makes the same call right before the cycle loop.
+    controller._snapshot_session_baseline()
 
-    for cycle_idx in range(config.max_cycles):
-        controller.state.cycle_number += 1
-        from datetime import datetime, timezone
-        controller.state.last_cycle_at = datetime.now(timezone.utc).isoformat()
-        controller._begin_cycle_phase_state()  # Day 5: reset per-cycle dicts
-
-        display.print_cycle_header(controller.state.cycle_number, total_max)
-
-        try:
-            # Step 1: Landscape
-            landscape = controller._assess_landscape()
-            display.print_landscape(landscape)
-
-            # Step 2: Generate
-            display.print_generation_start()
-            candidates = await controller._generate_theories(
-                landscape, on_progress=display.print_theorist_event,
-            )
-
-            if not candidates:
-                if controller.should_abort_run():
-                    display.print_run_halt(
-                        controller.fatal_agent_error or "fatal agent failure",
-                    )
-                    break
-                display.print_no_candidates()
-                continue
-
-            display.print_candidates_generated(len(candidates))
-
-            # Step 3: Critic
-            display.print_critic_start()
-            approved = []
-            for theory in candidates:
-                if config.skip_critic:
-                    theory.status = TheoryStatus.APPROVED
-                    approved.append(theory)
-                    display.print_critic_result(theory.title, "approve", 1.0, "")
-                else:
-                    verdict = controller.critic.evaluate(theory)
-                    theory.critic_verdict = verdict
-                    theory.status = (
-                        TheoryStatus.APPROVED
-                        if verdict.decision == CriticDecision.APPROVE
-                        else TheoryStatus.CRITICIZED
-                    )
-                    controller.ledger.upsert_theory(theory)
-
-                    if verdict.decision == CriticDecision.APPROVE:
-                        approved.append(theory)
-
-                    display.print_critic_result(
-                        theory.title,
-                        verdict.decision.value,
-                        verdict.confidence,
-                        verdict.reasons[0] if verdict.reasons else "",
-                    )
-
-            display.print_critic_summary(len(approved), len(candidates))
-
-            # Day 6: close any open pursuit lead whose lead_id is
-            # referenced in an approved theory's tags via the
-            # "pursuit_lead:<id>" convention. Best-effort bookkeeping.
-            controller._close_referenced_pursuit_leads(approved)
-
-            if not approved:
-                continue
-
-            # Step 3b: Red-team pre-check (Day 3 Pantheon integration)
-            # Sibling call to red-team-disprover for each approved theory
-            # before workers are dispatched. See
-            # controller._red_team_filter for the rationale.
-            def _redteam_progress(event: str, detail: Any) -> None:
-                if event == "start":
-                    agent_name, model, count = detail
-                    display.print_redteam_start(agent_name, model, count)
-                elif event == "verdict":
-                    theory, verdict = detail
-                    reason = verdict.reasons[0] if verdict.reasons else ""
-                    display.print_redteam_verdict(
-                        theory_id=theory.hypothesis_id,
-                        theory_title=theory.title or "(untitled)",
-                        verdict=verdict.verdict,
-                        confidence=verdict.confidence,
-                        wall_time_sec=verdict.wall_time_sec,
-                        turn_count=verdict.turn_count,
-                        tool_count=verdict.tool_count,
-                        reason=reason,
-                    )
-                elif event == "summary":
-                    # Post-Day-5 hardening: summary tuple widened to
-                    # (survivors, total, rejected, concerned, errors)
-                    # so the display can distinguish PASS / CONCERNED /
-                    # REJECT / ERROR. Older 3-tuple form still tolerated.
-                    if len(detail) == 5:
-                        survivors, total, rejected, concerned, errors = detail
-                    else:
-                        survivors, total, rejected = detail
-                        concerned = 0
-                        errors = 0
-                    display.print_redteam_summary(
-                        survivors, total, rejected,
-                        concerned=concerned, errors=errors,
-                    )
-                elif event == "skipped":
-                    # Brief notice that the phase was bypassed
-                    pass  # nothing to render; logger.info covers it
-
-            approved = await controller._red_team_filter(
-                approved, on_progress=_redteam_progress,
-            )
-
-            if not approved:
-                continue
-
-            if config.dry_run:
-                display.print_dry_run_skip()
-                continue
-
-            # Step 4: Dispatch
-            display.print_dispatch_header(len(approved))
-            outcomes = await controller._dispatch_theories(
-                approved, on_worker_message=display.print_worker_event,
-            )
-            display.print_dispatch_footer()
-            display.print_outcome_summary(outcomes)
-
-            # Step 5: Absorb
-            controller._absorb_outcomes(outcomes)
-
-            # Step 5c: Day 5 — statistical-auditor post-execution review
-            # for any contract with kernel-verified crib_score >= 18.
-            # Populates controller._cycle_stat_audit_verdicts which
-            # _run_alerts consumes to gate signal-level alerts.
-            def _stat_audit_progress(event: str, detail: Any) -> None:
-                if event == "start":
-                    agent_name, model, count = detail
-                    display.print_stat_audit_start(agent_name, model, count)
-                elif event == "verdict":
-                    theory, contract, verdict = detail
-                    concern = (
-                        verdict.methodology_concerns[0]
-                        if verdict.methodology_concerns else ""
-                    )
-                    display.print_stat_audit_verdict(
-                        theory_id=contract.hypothesis_id,
-                        theory_title=theory.title or "(untitled)",
-                        verdict=verdict.verdict,
-                        confidence=verdict.confidence,
-                        wall_time_sec=verdict.wall_time_sec,
-                        turn_count=verdict.turn_count,
-                        tool_count=verdict.tool_count,
-                        concern=concern,
-                    )
-                elif event == "summary":
-                    confirmed, concerned, rejected, total = detail
-                    display.print_stat_audit_summary(
-                        confirmed, concerned, rejected, total,
-                    )
-                elif event == "skipped":
-                    display.print_stat_audit_skipped(str(detail))
-
-            try:
-                await controller._stat_audit_filter(
-                    approved, outcomes, on_progress=_stat_audit_progress,
-                )
-            except Exception as exc:
-                display.print_cycle_error(controller.state.cycle_number, exc)
-
-            # Step 5b: Contradiction-detector alerts (honors the stat-audit gate)
-            controller._run_alerts(approved, outcomes)
-
-            # Step 5b'. Campaign-A hardening (2026-04-22): runtime halt
-            # counters. Mirrors controller.run's hook per
-            # feedback_dup_cycle_loop_trap — both cycle loops must patch
-            # or the TUI-driven path drifts silently while the library-
-            # driven path halts.
-            hardening_reason = controller._check_cycle_hardening_halts(
-                candidates=candidates,
-                outcomes=outcomes,
-                triggered_alerts=controller._cycle_alert_events,
-            )
-            if hardening_reason:
-                # TUI rendering happens via display.print_run_halt below
-                # after persist + synthesis. Log inline so -q mode users
-                # still see the reason in the log stream.
-                import logging
-                logging.getLogger("kryptosbot.controller").warning(
-                    "Campaign-A hardening halt: %s", hardening_reason,
-                )
-
-            # Step 5d: Day 6 — lead-pursuit evaluator for sub-signal
-            # (6-17) contracts. Best-effort; never blocks the cycle.
-            # Opens PursuitLead rows in the ledger for each "pursue"
-            # verdict so the next cycle's theorist sees them as
-            # priority context.
-            def _pursuit_progress(event: str, detail: Any) -> None:
-                if event == "start":
-                    agent_name, model, count = detail
-                    display.print_pursuit_start(agent_name, model, count)
-                elif event == "verdict":
-                    theory, contract, verdict = detail
-                    display.print_pursuit_verdict(
-                        theory_id=contract.hypothesis_id,
-                        theory_title=theory.title or "(untitled)",
-                        verdict=verdict.verdict,
-                        confidence=verdict.confidence,
-                        wall_time_sec=verdict.wall_time_sec,
-                        turn_count=verdict.turn_count,
-                        tool_count=verdict.tool_count,
-                        rationale=verdict.rationale,
-                        suggested_variants=verdict.suggested_variants,
-                    )
-                elif event == "summary":
-                    pursue, skip, error, total = detail
-                    display.print_pursuit_summary(pursue, skip, error, total)
-                elif event == "skipped":
-                    display.print_pursuit_skipped(str(detail))
-
-            try:
-                await controller._run_lead_pursuit(
-                    approved, outcomes, on_progress=_pursuit_progress,
-                )
-            except Exception as exc:
-                display.print_cycle_error(controller.state.cycle_number, exc)
-
-            # Step 6: Persist
-            controller._update_state_counts()
-            controller.ledger.save_controller_state(controller.state)
-            controller.ledger.refresh_family_stats()
-
-            # Step 6b: Day 5 — end-of-cycle results synthesis. Best-effort;
-            # never blocks the cycle. Result is written to
-            # controller._last_synthesis where the next cycle's
-            # _assess_landscape can render it for the theorist.
-            def _synthesis_progress(event: str, detail: Any) -> None:
-                if event == "start":
-                    agent_name, model = detail
-                    display.print_synthesis_start(agent_name, model)
-                elif event == "result":
-                    display.print_synthesis_result(detail)
-                elif event == "skipped":
-                    display.print_synthesis_skipped(str(detail))
-
-            try:
-                await controller._run_synthesis(
-                    approved, outcomes, on_progress=_synthesis_progress,
-                )
-            except Exception as exc:
-                display.print_cycle_error(controller.state.cycle_number, exc)
-
-        except Exception as exc:
-            display.print_cycle_error(controller.state.cycle_number, exc)
-            controller.ledger.save_controller_state(controller.state)
-
-        # Campaign-A hardening (2026-04-22): break after persist +
-        # synthesis if any halt condition tripped this (or a prior)
-        # cycle. Uses the existing display.print_run_halt surface so the
-        # TUI output matches the fatal-agent-failure halt already wired
-        # at generate-time above.
-        if controller.state.halt_reason_hardening:
-            display.print_run_halt(controller.state.halt_reason_hardening)
-            break
+    # Run the shared cycle-loop body with display-routing callbacks.
+    # ResearchController._run_cycle_loop handles all per-cycle work,
+    # logger.* calls, and emits CycleCallbacks events as it goes.
+    callbacks = _build_display_callbacks()
+    await controller._run_cycle_loop(callbacks)
 
     display.print_completion(controller.state.to_dict())
 
@@ -539,9 +634,55 @@ async def main() -> None:
     include_oranchak_corpora = not (args.no_oranchak or args.no_oranchak_corpora)
     include_serpentine_anchor = not (args.no_oranchak or args.no_serpentine_anchor)
 
+    # K4Bench mode: kernel overrides were already installed at module
+    # import time (see top of file). Now resolve the ledger path so a
+    # bench run cannot stomp the real-K4 ledger, suppress real-K4 prompt
+    # anchors, and remember the challenge for the attempt artifact emit
+    # at completion time.
+    bench_challenge = _BENCH_CHALLENGE
+    db_default_real = Path("db/theory_ledger.sqlite")
+    if bench_challenge is not None:
+        from kryptosbot.bench_loader import (
+            BenchLoaderError as _BenchLoaderError,
+            derive_synthetic_ledger_path,
+        )
+        # If the user left --db at its default, force the bench default.
+        # If they passed an explicit --db, derive_synthetic_ledger_path
+        # validates it lives under db/k4bench/ (or carries a bench /
+        # synthetic segment) and refuses the real-K4 path outright.
+        requested = None if Path(args.db) == db_default_real else Path(args.db)
+        try:
+            ledger_path = derive_synthetic_ledger_path(
+                bench_challenge.bench_id,
+                project_root=project_root,
+                requested=requested,
+            )
+        except _BenchLoaderError as exc:
+            print(f"error: {exc}", file=sys.stderr)
+            sys.exit(2)
+        # Bench prompts must not include real-K4 anchors. Suppressing
+        # both Oranchak blocks is structural: their content references
+        # K4-shaped fills and the AAA-archive serpentine anchor, which
+        # leak K4 cribs (EASTNORTHEAST, BERLINCLOCK) and K4-specific
+        # community references into a synthetic-challenge prompt.
+        include_oranchak_corpora = False
+        include_serpentine_anchor = False
+    else:
+        ledger_path = Path(args.db)
+
+    # 2026-04-27: HCC controls. ``--no-hcc-seeds`` and ``--hcc-seeds N``
+    # both feed the same ``hcc_seeds_cap`` field (0 vs N); the CLI
+    # validator already enforced their mutual exclusion. ``--hcc-only``
+    # is a separate flag that the controller checks AFTER computing
+    # the seed list.
+    if args.no_hcc_seeds:
+        hcc_seeds_cap = 0
+    else:
+        hcc_seeds_cap = args.hcc_seeds  # None or positive int
+
     config = ControllerConfig(
         project_root=project_root,
-        ledger_db_path=Path(args.db),
+        ledger_db_path=ledger_path,
         max_cycles=args.cycles,
         theories_per_cycle=args.theories,
         max_concurrent_workers=args.workers,
@@ -551,6 +692,14 @@ async def main() -> None:
         alert_threshold=args.alert_on,
         include_oranchak_corpora=include_oranchak_corpora,
         include_serpentine_anchor=include_serpentine_anchor,
+        bench_challenge_payload=(
+            bench_challenge.canonical_facts() if bench_challenge else None
+        ),
+        bench_challenge_prompt_block=(
+            bench_challenge.prompt_block() if bench_challenge else None
+        ),
+        hcc_seeds_cap=hcc_seeds_cap,
+        hcc_only=args.hcc_only,
     )
 
     if args.status:
@@ -580,6 +729,31 @@ async def main() -> None:
             os.close(_saved_stderr_fd)
     else:
         await do_run(config)
+
+    # Bench mode: emit the attempt artifact JSON so the offline
+    # evaluator can score the run against the sealed answer file. The
+    # artifact contains nothing the controller hadn't already written
+    # to the ledger; it just packages the best candidate(s) into the
+    # k4bench.attempts.v1 schema.
+    if bench_challenge is not None:
+        from kryptosbot.bench_attempts import emit_attempt_artifact
+
+        attempts_out: Path | None = (
+            Path(args.bench_attempts_out) if args.bench_attempts_out else None
+        )
+        try:
+            artifact_path = emit_attempt_artifact(
+                challenge=bench_challenge,
+                ledger_db_path=config.ledger_db_path,
+                project_root=project_root,
+                output_path=attempts_out,
+            )
+            print(f"K4Bench: wrote attempt artifact -> {artifact_path}")
+        except Exception as exc:  # noqa: BLE001 — boundary, never crash the run
+            print(
+                f"K4Bench: warning — failed to emit attempt artifact: {exc}",
+                file=sys.stderr,
+            )
 
 
 if __name__ == "__main__":

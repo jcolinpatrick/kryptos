@@ -41,17 +41,31 @@ class TestVerifyDirectApiK1:
         return proc
 
     def test_returns_ok_on_discovered_true(self):
+        # Real spacing from self_test_real_api.py:424 — 9 spaces between
+        # "discovered" and the colon. The previous fixture used 11 spaces
+        # which silently encoded a matcher bug; the real self-test would
+        # have failed this probe in production.
         stdout = (
             "R2-5 real-API self-test: panel=k1\n"
             "api_call_ok        : True\n"
-            "discovered           : True\n"
-            "usd_spent            : $0.0263\n"
+            "discovered         : True\n"
+            "usd_spent          : $0.0263\n"
         )
         proc = self._fake_completed_process(returncode=0, stdout=stdout)
         with patch("subprocess.run", return_value=proc):
             ok, msg = verify_direct_api_k1()
         assert ok is True
         assert "ok" in msg.lower()
+
+    def test_returns_ok_on_alternate_spacing(self):
+        # Whitespace-tolerant regex must accept any column-padding the
+        # self-test format chooses. Three spacings, all valid.
+        for label_pad in ("", "   ", "           "):
+            stdout = f"discovered{label_pad} : True\n"
+            proc = self._fake_completed_process(returncode=0, stdout=stdout)
+            with patch("subprocess.run", return_value=proc):
+                ok, _ = verify_direct_api_k1()
+            assert ok is True, f"matcher rejected spacing {label_pad!r}"
 
     def test_returns_fail_on_nonzero_exit_code(self):
         proc = self._fake_completed_process(
@@ -68,7 +82,7 @@ class TestVerifyDirectApiK1:
     def test_returns_fail_on_non_discovery(self):
         stdout = (
             "api_call_ok        : True\n"
-            "discovered           : False\n"
+            "discovered         : False\n"
         )
         proc = self._fake_completed_process(returncode=0, stdout=stdout)
         with patch("subprocess.run", return_value=proc):
@@ -196,6 +210,30 @@ class TestVerifyTransportCombined:
             ok, summary = verify_transport()
         assert ok is False
         assert "HALT" in summary
+
+    def test_sync_wrapper_refuses_running_loop_before_coroutine_created(self, monkeypatch):
+        calls = 0
+
+        def _should_not_construct_coroutine(timeout_sec=60):
+            nonlocal calls
+            calls += 1
+
+            async def _unused():
+                return True, "unused"
+
+            return _unused()
+
+        monkeypatch.setattr(
+            "kryptosbot.transport_preflight.verify_transport_async",
+            _should_not_construct_coroutine,
+        )
+
+        async def _scenario():
+            with pytest.raises(RuntimeError, match="verify_transport_async"):
+                verify_transport()
+
+        asyncio.run(_scenario())
+        assert calls == 0
 
 
 # ---------------------------------------------------------------------------

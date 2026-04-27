@@ -45,6 +45,35 @@ def _normalize_pursuit_source_verdict(value: Any) -> str:
     return PURSUIT_SOURCE_PURSUE
 
 
+class SyntheticModeError(RuntimeError):
+    """Raised when a controller launches against a ledger pinned to the
+    other mode.
+
+    A ledger is committed to "real" or "synthetic" on its first
+    controller run (see ``TheoryLedger.verify_and_pin_synthetic_mode``).
+    Subsequent runs in the other mode are refused before any controller
+    write happens. This prevents synthetic-CT calibration runs from
+    silently mutating the real K4 ledger and vice versa.
+
+    The error message names the existing mode and the attempted mode so
+    the operator can either point at the correct ledger or, if the
+    pinning is genuinely wrong, manually clear the metadata row.
+    """
+
+    def __init__(self, existing: str, attempted: str, db_path: Path) -> None:
+        super().__init__(
+            f"Ledger {db_path} is pinned to synthetic_mode={existing!r} "
+            f"but the current process is launching with synthetic_mode="
+            f"{attempted!r}. Real and synthetic runs cannot share a "
+            f"ledger. Use a fresh ledger path for the new mode, or "
+            f"delete the row from ledger_metadata if the pinning is "
+            f"incorrect (rare; verify before clearing)."
+        )
+        self.existing = existing
+        self.attempted = attempted
+        self.db_path = db_path
+
+
 class TheoryLedger:
     """
     SQLite-backed theory ledger with full lifecycle tracking.
@@ -65,6 +94,76 @@ class TheoryLedger:
         self.db_path = Path(db_path)
         self.db_path.parent.mkdir(parents=True, exist_ok=True)
         self._init_schema()
+
+    # ------------------------------------------------------------------
+    # Synthetic-mode pinning
+    # ------------------------------------------------------------------
+
+    def verify_and_pin_synthetic_mode(self, synthetic: bool) -> None:
+        """Pin the ledger to real or synthetic mode, or refuse mismatch.
+
+        Called by ``ResearchController`` BEFORE bootstrap so any
+        mismatch fails before the loop mutates the ledger.
+
+        Behavior:
+          - Empty ``ledger_metadata`` (fresh ledger): write the current
+            mode and proceed.
+          - Existing mode matches current mode: no-op.
+          - Existing mode differs: raise ``SyntheticModeError``.
+
+        Empty / unpinned ledgers are accepted in either mode. Once the
+        first controller run pins the mode, subsequent runs in the
+        other mode are refused. The pinning is persistent across
+        process restarts, since it is stored in the ledger itself.
+
+        This is the enforcement layer for ``KRYPTOS_CT_OVERRIDE``.
+        Without it, a synthetic-mode controller could append rows to a
+        real-K4 ledger (or vice versa) and silently corrupt analysis.
+        """
+        attempted_mode = "synthetic" if synthetic else "real"
+
+        with self._connect() as conn:
+            row = conn.execute(
+                "SELECT value FROM ledger_metadata WHERE key='synthetic_mode'"
+            ).fetchone()
+
+            if row is None:
+                # First-touch pinning. The ledger commits to whatever
+                # mode launched first.
+                conn.execute(
+                    "INSERT INTO ledger_metadata (key, value, updated_at) "
+                    "VALUES ('synthetic_mode', ?, ?)",
+                    (attempted_mode, _now_iso()),
+                )
+                logger.info(
+                    "Pinned ledger %s to synthetic_mode=%s",
+                    self.db_path, attempted_mode,
+                )
+                return
+
+            existing_mode = row[0]
+            if existing_mode == attempted_mode:
+                # Mode matches — proceed without touching metadata.
+                return
+
+            # Mismatch. Refuse before bootstrap.
+            raise SyntheticModeError(
+                existing=existing_mode,
+                attempted=attempted_mode,
+                db_path=self.db_path,
+            )
+
+    def get_pinned_synthetic_mode(self) -> Optional[str]:
+        """Return 'real', 'synthetic', or None if unpinned. Read-only.
+
+        Useful for tests and operator inspection. Does not pin or
+        modify the ledger.
+        """
+        with self._connect() as conn:
+            row = conn.execute(
+                "SELECT value FROM ledger_metadata WHERE key='synthetic_mode'"
+            ).fetchone()
+            return row[0] if row is not None else None
 
     # ------------------------------------------------------------------
     # Connection management
@@ -251,6 +350,21 @@ class TheoryLedger:
 
                 INSERT OR IGNORE INTO schema_version VALUES (1);
                 INSERT OR IGNORE INTO controller_state (id, state) VALUES (1, '{}');
+
+                -- Synthetic-mode enforcement (2026-04-26): a single-row
+                -- key/value table that records whether this ledger has
+                -- been touched by a real-K4 run or a synthetic-CT
+                -- calibration run. ResearchController calls
+                -- verify_and_pin_synthetic_mode before bootstrap so a
+                -- mismatch (real launch against a synthetic-tainted
+                -- ledger, or vice versa) fails before any controller
+                -- mutation. See feedback_synthetic_mode_propagation
+                -- for the rationale.
+                CREATE TABLE IF NOT EXISTS ledger_metadata (
+                    key        TEXT PRIMARY KEY,
+                    value      TEXT NOT NULL,
+                    updated_at TEXT NOT NULL
+                );
             """)
 
             # Day 5 additive migration: estimated_compute_minutes on theories.

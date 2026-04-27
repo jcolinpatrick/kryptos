@@ -514,6 +514,153 @@ class HypothesisSpec:
         return cls.from_dict(json.loads(raw))
 
 
+# ─── Pre-validation repair ───────────────────────────────────────────────────
+#
+# K4Bench wiring (2026-04-26): the brief requires that DSL specs validate
+# with the dispatcher's exact parameter names before dispatch — rail_fence
+# `depth`, route `variant`, quagmire `period_keyword`, non-empty
+# `hypothesis_id`. The dispatcher has historically rejected mismatches at
+# translation time. ``repair_spec_shape`` runs a narrow, explicit set of
+# normalizations on a raw spec dict before it reaches
+# ``validate_hypothesis_spec``:
+#
+#   1. quagmire ``variant`` Roman numerals: "III" → "quagmire_iii",
+#      "IV" → "quagmire_iv". The kernel and dispatcher both use the
+#      canonical snake_case form.
+#   2. empty / placeholder ``hypothesis_id``: a caller-supplied default
+#      replaces the empty string. The validator rejects empty
+#      hypothesis_id outright; this repair lets the caller (the controller)
+#      substitute the TheoryRecord.hypothesis_id without copy-pasting
+#      the substitution into every callsite.
+#
+# Repairs are LISTED on the returned RepairReport so the controller can
+# log what was rewritten. The function NEVER silently rewrites a layer
+# kind, parameter name, or any field that would change the cryptographic
+# semantics — only the two narrow normalizations above. Anything else is
+# the dispatcher's job to reject.
+#
+# Day-4 fabrication caveat (MEMORY.md): the original DSL boundary refused
+# to silently repair anything because the LLM was producing fabricated
+# minimal_test_specs and the validator's default-tolerance was
+# laundering them through to dispatch. The repairs here are explicit,
+# narrow, logged, and reversible — they fix well-known LLM mistakes
+# without papering over real spec content.
+
+
+@dataclass
+class RepairReport:
+    """What ``repair_spec_shape`` actually changed, in human-readable form.
+
+    The controller logs ``repair.entries`` so an operator can audit
+    every silent-rewrite. An empty list means no repair was applied
+    (the spec was already shape-correct).
+    """
+    entries: list[str] = field(default_factory=list)
+
+    def applied(self) -> bool:
+        return bool(self.entries)
+
+
+_QUAGMIRE_VARIANT_NORMALIZE: dict[str, str] = {
+    "III": "quagmire_iii",
+    "iii": "quagmire_iii",
+    "IV": "quagmire_iv",
+    "iv": "quagmire_iv",
+    # Already-canonical forms pass through unchanged (no entry needed).
+}
+
+
+def repair_spec_shape(
+    raw: dict[str, Any],
+    *,
+    default_hypothesis_id: Optional[str] = None,
+) -> tuple[dict[str, Any], RepairReport]:
+    """Normalize a raw spec dict against well-known LLM shape mistakes.
+
+    Returns a (possibly-rewritten) spec dict and a RepairReport listing
+    every change. The original ``raw`` dict is NOT mutated; the returned
+    dict is a deep-enough copy of the layer/param structures the
+    function might touch.
+
+    Repairs applied:
+      1. Layers whose ``kind == "quagmire"`` and whose params include a
+         ``variant`` value of "III" / "iii" / "IV" / "iv" are rewritten
+         to the canonical "quagmire_iii" / "quagmire_iv".
+      2. An empty / missing / placeholder (``"<...>"``) ``hypothesis_id``
+         is replaced by ``default_hypothesis_id`` when one is supplied.
+
+    Anything else — unknown kinds, missing params, malformed param
+    structures, etc. — is left untouched. ``validate_hypothesis_spec``
+    runs after this and surfaces the remaining errors.
+    """
+    report = RepairReport()
+    if not isinstance(raw, dict):
+        return raw, report  # validator will reject
+
+    # Shallow copy of top-level; deep-copy only nested fields we may rewrite.
+    out: dict[str, Any] = dict(raw)
+
+    # Repair 2 first because it's cheap and applies regardless of pipeline.
+    raw_id = out.get("hypothesis_id")
+    if (
+        default_hypothesis_id
+        and (
+            not isinstance(raw_id, str)
+            or not raw_id.strip()
+            or raw_id.strip().startswith("<")
+        )
+    ):
+        report.entries.append(
+            f"hypothesis_id: substituted {default_hypothesis_id!r} for "
+            f"empty/placeholder value {raw_id!r}"
+        )
+        out["hypothesis_id"] = default_hypothesis_id
+
+    # Repair 1: quagmire variant Roman numerals.
+    pipeline_raw = out.get("pipeline")
+    if isinstance(pipeline_raw, list) and pipeline_raw:
+        new_pipeline: list[Any] = []
+        for i, layer in enumerate(pipeline_raw):
+            if not isinstance(layer, dict):
+                new_pipeline.append(layer)
+                continue
+            kind = layer.get("kind")
+            params = layer.get("params")
+            if kind != "quagmire" or not isinstance(params, list):
+                new_pipeline.append(layer)
+                continue
+            new_layer = dict(layer)
+            new_params: list[Any] = []
+            for p in params:
+                if (
+                    isinstance(p, dict)
+                    and p.get("name") == "variant"
+                    and isinstance(p.get("values"), list)
+                ):
+                    new_p = dict(p)
+                    new_values: list[Any] = []
+                    for v in p["values"]:
+                        if isinstance(v, str) and v in _QUAGMIRE_VARIANT_NORMALIZE:
+                            canonical = _QUAGMIRE_VARIANT_NORMALIZE[v]
+                            report.entries.append(
+                                f"pipeline[{i}].params[variant]: rewrote "
+                                f"{v!r} -> {canonical!r} (canonical "
+                                f"snake_case form)"
+                            )
+                            new_values.append(canonical)
+                        else:
+                            new_values.append(v)
+                    new_p["values"] = new_values
+                    new_params.append(new_p)
+                else:
+                    new_params.append(p)
+            new_layer["params"] = new_params
+            new_pipeline.append(new_layer)
+        out["pipeline"] = new_pipeline
+
+    return out, report
+
+
 # ─── Boundary validation ─────────────────────────────────────────────────────
 
 def validate_hypothesis_spec(raw: str | dict[str, Any]) -> ParseResult[HypothesisSpec]:
@@ -577,6 +724,9 @@ __all__ = [
     "CipherLayer",
     "NullBaselineSpec",
     "HypothesisSpec",
+    "RepairReport",
     # Boundary validator
     "validate_hypothesis_spec",
+    # Pre-validation repair (K4Bench wiring)
+    "repair_spec_shape",
 ]

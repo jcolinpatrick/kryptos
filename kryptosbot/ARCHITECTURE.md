@@ -119,10 +119,10 @@ Key invariants enforced at the code level:
 
 | File | Role |
 |------|------|
-| `k4_tools.py` | MCP tools for K4 computation. **Phase 5**: `hill_climb`, `try_keyword_sweep`, `swap_and_test` emit `DeprecationWarning`; callers should use `dsl_tools` instead |
+| `_archive/k4_tools_legacy.py` | Legacy MCP tools (`hill_climb`, `try_keyword_sweep`, `swap_and_test`). Quarantined 2026-04-26. The tools were `@tool`-registered and emitted `DeprecationWarning` on direct invocation, but `create_k4_mcp_server()` was never called in production — workers reach the live tools via `dsl_tools.create_dsl_mcp_server` and `research_tools.create_research_mcp_server` only |
 | `sdk_wrapper.py` | Agent SDK error handling and cleanup |
 | `oracle.py` | Local compute dispatcher (no API calls) |
-| `database.py` | Legacy ResultsDB (backward compatible) |
+| `_archive/database.py` | Legacy ResultsDB. Quarantined 2026-04-26 — was imported but never instantiated; production persistence is `theory_ledger.py` only |
 | `config.py` | Runtime configuration and hypothesis status |
 | `constants.py` | Bridge to kernel constants. **Phase 2**: retired palette symbols (`NULL_PALETTE`, `CONSENSUS_NULL_POSITIONS`, `BEAUFORT_KEYSTREAM_AT_CRIBS`) moved to `kryptos.kernel.retired` |
 | `agent_runner.py` | Session launcher and output extraction |
@@ -165,14 +165,28 @@ Theorist → HypothesisSpec (JSON)
       WorkerContract ready for ledger ingestion
 ```
 
-### DSL coverage (Phase 4 + 8)
+### DSL coverage (Phase 4 + 8 + R2-2 + R3-0.5 + B-DSL-expanded)
+
+The dispatcher's `_SUPPORTED_KINDS` set has grown over five separate
+expansions. As of 2026-04-26 the only DSL-valid kind without dispatcher
+translation is `key_tape`. To get the live count programmatically:
+
+```bash
+PYTHONPATH=src python3 -c "
+from kryptosbot.job_dispatcher import _SUPPORTED_KINDS
+from kryptosbot.hypothesis_dsl import _VALID_CIPHER_KINDS
+print('GAPS:', sorted(_VALID_CIPHER_KINDS - _SUPPORTED_KINDS))"
+```
 
 | Cipher kind | Dispatcher support | Notes |
 |---|---|---|
 | `identity`, `vigenere`, `beaufort`, `variant_beaufort`, `columnar`, `atbash` | ✅ AZ alphabet | Phase 4 |
-| `rail_fence`, `route`, `myszkowski`, `polybius`, `quagmire` | ✅ DSL-valid, ❌ no dispatcher translation yet | Admissibility rejects with clear pointer |
-| KA alphabet for Vigenère-family | ❌ not in dispatcher | Phase 7 self-test went around dispatcher for K1/K2 |
+| `rail_fence`, `route`, `myszkowski`, `quagmire` | ✅ via existing kernel transforms | B-DSL-expanded (2026-04-22) |
+| `polybius` (variant=`bifid`) | ✅ via TransformType.BIFID | R3-0.5-3 (2026-04-21) |
+| `grille` (Cardano permutation-only) | ✅ via TransformType.GRILLE | R3-0.5-2 (2026-04-21) |
 | `procedural` with `recipe_id` | ✅ via procedural_enumerator.py | Phase 8 |
+| KA alphabet for Vigenère-family | ✅ R2-2 (2026-04-21) — Phase 4 was AZ-only | Quagmire III enforces K1/K2 convention |
+| `key_tape` | ❌ DSL-valid, no dispatcher translation | Deferred-kind contract; needs new kernel infrastructure for finite tape + null insertion |
 
 ### Null-baseline calibration (Phase 6)
 

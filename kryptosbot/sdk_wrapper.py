@@ -30,6 +30,28 @@ from claude_agent_sdk import ClaudeAgentOptions, query
 logger = logging.getLogger("kryptosbot.sdk_wrapper")
 
 
+def extract_sdk_text_content(content: Any) -> str:
+    """Extract text payloads from Claude SDK message content safely.
+
+    The SDK may surface assistant content either as a plain string or as a
+    list of structured blocks (text, thinking, tool_use, etc.). Calling
+    ``str()`` on a block list yields a Python repr that can poison downstream
+    JSON parsing. This helper concatenates only text-bearing blocks and skips
+    thinking/tool-use noise.
+    """
+    if isinstance(content, list):
+        parts: list[str] = []
+        for block in content:
+            block_type = getattr(block, "type", None)
+            if block_type == "thinking":
+                continue
+            text = getattr(block, "text", None)
+            if text:
+                parts.append(str(text))
+        return "\n".join(parts) if parts else ""
+    return str(content)
+
+
 # ---------------------------------------------------------------------------
 # Error classification — map stderr/error strings to human-readable causes
 # ---------------------------------------------------------------------------
@@ -167,7 +189,7 @@ async def test_sdk_auth() -> str:
             if hasattr(msg, "result"):
                 result_text = str(msg.result)
             elif hasattr(msg, "content"):
-                result_text = str(msg.content)
+                result_text = extract_sdk_text_content(msg.content)
     except RuntimeError as exc:
         if "cancel scope" not in str(exc) and "Event loop is closed" not in str(exc):
             raise

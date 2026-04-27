@@ -1,0 +1,83 @@
+{
+  "bench_id": "K4B-007",
+  "ciphertext": "LIPNVDHNCGYZSQDPREWYBEKKLNQBDNFDFCPSZVJIVBNFCJFZXEKZVTREXSUVFSRTVZNVFPRTFNWVYGLCEBRJXOKVSVMPIONCZ",
+  "ciphertext_alphabet": "AZ",
+  "ciphertext_length": 97,
+  "known_plaintext_positions": {
+    "21": "R",
+    "22": "A",
+    "23": "G",
+    "24": "G",
+    "25": "E",
+    "26": "D",
+    "27": "C",
+    "28": "O",
+    "29": "L",
+    "30": "U",
+    "31": "M",
+    "32": "N",
+    "33": "X",
+    "63": "A",
+    "64": "L",
+    "65": "P",
+    "66": "H",
+    "67": "A",
+    "68": "B",
+    "69": "E",
+    "70": "T",
+    "71": "K",
+    "72": "E",
+    "73": "Y"
+  },
+  "known_plaintext_spans": [
+    {
+      "end_inclusive": 33,
+      "label": "crib_a",
+      "length": 13,
+      "start": 21,
+      "text": "RAGGEDCOLUMNX"
+    },
+    {
+      "end_inclusive": 73,
+      "label": "crib_b",
+      "length": 11,
+      "start": 63,
+      "text": "ALPHABETKEY"
+    }
+  ],
+  "public_clue_pack": {
+    "clue_text": "The artifact says ARCHIVE and shows a ragged eight-column grid with arrows down, up, down, up.",
+    "constraint_summary": [
+      "A-Z only; no spaces or punctuation in ciphertext.",
+      "Plaintext is exactly 97 A-Z characters.",
+      "The construction uses hand-executable classical/procedural layers only.",
+      "All key material needed for the intended solution is derivable from this clue pack.",
+      "Layer count is between two and three unless a clue explicitly collapses a layer into a simple reversal or mirror.",
+      "A strict pass requires both the exact plaintext and a reproducible method/layer order."
+    ]
+  },
+  "public_quality_metadata": {
+    "answer_hash_sha256": "a46214b98bac55edc7a7fd161f620fccd082d9b92d4194a8e9b178abc0651958",
+    "challenge_hash_sha256": "a93a3e7984d08c1bf324d58fcfeb82517e0d16d95fff4b7546ec43bf5ea09e3a",
+    "contains_solution_material": false,
+    "difficulty_band": "silver",
+    "purpose": "blind synthetic K4-like full-controller calibration"
+  },
+  "schema_version": "k4bench.challenge.v1",
+  "solver_output_contract": {
+    "known_crib_score_target": 24,
+    "required_json_fields": [
+      "bench_id",
+      "plaintext",
+      "confidence",
+      "method_summary",
+      "layers",
+      "crib_score",
+      "evidence",
+      "reproducibility_notes"
+    ],
+    "strict_pass_rule": "Exact 97-character plaintext AND exact or human-equivalent layer order with keys/routes/alphabets. Plaintext-only is at most PARTIAL."
+  },
+  "suite_id": "K4BENCH-2026-04-26-V1",
+  "title": "Archive column walk"
+}

@@ -47,6 +47,7 @@ from .hypothesis_dsl import (
     validate_hypothesis_spec,
 )
 from .job_dispatcher import (
+    _SUPPORTED_ALPHABETS,
     _SUPPORTED_KINDS,
     JobResult,
     check_admissibility,
@@ -306,6 +307,38 @@ async def query_exhaustion_tool(args: dict[str, Any]) -> dict[str, Any]:
     if not isinstance(assumption_bundle, list):
         return _text_response(_envelope(
             "error", {"reason": "'assumption_bundle' must be a list"},
+        ))
+
+    # K4Bench input mode (2026-04-26): the tool MUST NOT consult the
+    # real-K4 exhaustion log when the controller is running a synthetic
+    # K4Bench challenge — those entries are real-K4 elimination history
+    # that does not apply to the bench problem. The bench-mode signal
+    # is the ``KRYPTOS_BENCH_ID`` env var, which K4BenchChallenge.
+    # install_kernel_overrides sets at controller startup before any
+    # ``kryptos.kernel`` import. Tool callbacks have no direct access
+    # to the controller's ProblemContext (they're decorated SDK
+    # callbacks, not methods), so the env var is the in-process funnel.
+    import os
+    bench_id = os.environ.get("KRYPTOS_BENCH_ID", "")
+    if bench_id:
+        return _text_response(_envelope(
+            "ok",
+            {
+                "total_log_entries": 0,
+                "overlapping_scripts": [],
+                "overlap_count": 0,
+                "unknown_kinds": [
+                    k for k in kinds if not isinstance(k, str)
+                ],
+                "bench_mode": True,
+                "bench_id": bench_id,
+                "note": (
+                    "exhaustion log not consulted under K4Bench mode "
+                    "— real-K4 elimination history does not apply to "
+                    "the synthetic challenge"
+                ),
+            },
+            assumption_bundle=list(assumption_bundle),
         ))
 
     # Reuse the dispatcher's internals for consistency.
@@ -636,10 +669,11 @@ async def enumerate_admissible_transforms_tool(
             "error", {"reason": "'assumption_bundle' must be a list"},
         ))
 
-    # Supported alphabets are a subset of the DSL-valid alphabet set.
-    # Phase 4 dispatcher currently only supports AZ for additive ciphers;
-    # KA / keyword_mixed fail translation.
-    supported_alphabets = ["AZ"]  # Phase 5 limit
+    # Supported alphabets are derived from the dispatcher's
+    # _SUPPORTED_ALPHABETS frozenset rather than hard-coded here. R2-2
+    # (2026-04-21) extended the dispatcher beyond AZ to cover KA and
+    # keyword_mixed; this tool used to lie to agents by reporting AZ-only.
+    supported_alphabets = sorted(_SUPPORTED_ALPHABETS)
     return _text_response(_envelope(
         "ok",
         {

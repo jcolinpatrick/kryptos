@@ -1,0 +1,83 @@
+{
+  "bench_id": "K4B-013",
+  "ciphertext": "ARFVFNGBOLKMBHMYDXDHLQEXMQMUFCFKMFXWCWKIKJOOZLDMRAFJNWMHMMYDBNMACJNRAFBZMNZVQYBMFSYOOWTMBXXIYFDXX",
+  "ciphertext_alphabet": "AZ",
+  "ciphertext_length": 97,
+  "known_plaintext_positions": {
+    "21": "R",
+    "22": "A",
+    "23": "G",
+    "24": "G",
+    "25": "E",
+    "26": "D",
+    "27": "M",
+    "28": "I",
+    "29": "R",
+    "30": "R",
+    "31": "O",
+    "32": "R",
+    "33": "X",
+    "63": "K",
+    "64": "R",
+    "65": "Y",
+    "66": "P",
+    "67": "T",
+    "68": "O",
+    "69": "S",
+    "70": "T",
+    "71": "A",
+    "72": "B",
+    "73": "X"
+  },
+  "known_plaintext_spans": [
+    {
+      "end_inclusive": 33,
+      "label": "crib_a",
+      "length": 13,
+      "start": 21,
+      "text": "RAGGEDMIRRORX"
+    },
+    {
+      "end_inclusive": 73,
+      "label": "crib_b",
+      "length": 11,
+      "start": 63,
+      "text": "KRYPTOSTABX"
+    }
+  ],
+  "public_clue_pack": {
+    "clue_text": "COPPER appears next to a nine-column ragged walk. The drawing also shows a normal alphabet reflected before the table.",
+    "constraint_summary": [
+      "A-Z only; no spaces or punctuation in ciphertext.",
+      "Plaintext is exactly 97 A-Z characters.",
+      "The construction uses hand-executable classical/procedural layers only.",
+      "All key material needed for the intended solution is derivable from this clue pack.",
+      "Layer count is between two and three unless a clue explicitly collapses a layer into a simple reversal or mirror.",
+      "A strict pass requires both the exact plaintext and a reproducible method/layer order."
+    ]
+  },
+  "public_quality_metadata": {
+    "answer_hash_sha256": "86514b26d67c31370c7a3a7aa569e002ef66b0b8aad655ad56d4407994803eff",
+    "challenge_hash_sha256": "ba195b88bfe6f4258bf5e9a7cbfd53a8a03c4a0134c2add5789c689ffc412d6f",
+    "contains_solution_material": false,
+    "difficulty_band": "silver",
+    "purpose": "blind synthetic K4-like full-controller calibration"
+  },
+  "schema_version": "k4bench.challenge.v1",
+  "solver_output_contract": {
+    "known_crib_score_target": 24,
+    "required_json_fields": [
+      "bench_id",
+      "plaintext",
+      "confidence",
+      "method_summary",
+      "layers",
+      "crib_score",
+      "evidence",
+      "reproducibility_notes"
+    ],
+    "strict_pass_rule": "Exact 97-character plaintext AND exact or human-equivalent layer order with keys/routes/alphabets. Plaintext-only is at most PARTIAL."
+  },
+  "suite_id": "K4BENCH-2026-04-26-V1",
+  "title": "Copper ragged mirror"
+}

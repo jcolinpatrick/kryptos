@@ -846,7 +846,6 @@ class TestFatalTheoristFailures:
         config = ControllerConfig(
             project_root=tmp_path,
             ledger_db_path=tmp_path / "ledger.sqlite",
-            legacy_db_path=tmp_path / "results.db",
         )
         controller = ResearchController(config)
         monkeypatch.setattr(controller, "_build_theorist_prompt", lambda _: "prompt")
@@ -876,7 +875,6 @@ class TestFatalTheoristFailures:
         config = ControllerConfig(
             project_root=tmp_path,
             ledger_db_path=tmp_path / "ledger.sqlite",
-            legacy_db_path=tmp_path / "results.db",
         )
         controller = ResearchController(config)
         monkeypatch.setattr(controller, "_build_theorist_prompt", lambda _: "prompt")
@@ -921,7 +919,6 @@ class TestTheoristTelemetrySurfacing:
         config = ControllerConfig(
             project_root=tmp_path,
             ledger_db_path=tmp_path / "ledger.sqlite",
-            legacy_db_path=tmp_path / "results.db",
         )
         controller = ResearchController(config)
         controller.state.theorist_parse_successes = 4
@@ -976,7 +973,6 @@ class TestTheoryRecordOriginField:
         config = ControllerConfig(
             project_root=tmp_path,
             ledger_db_path=tmp_path / "ledger.sqlite",
-            legacy_db_path=tmp_path / "results.db",
         )
         controller = ResearchController(config)
         landscape = {
@@ -1002,7 +998,6 @@ class TestHardeningHaltCheck:
         config = ControllerConfig(
             project_root=tmp_path,
             ledger_db_path=tmp_path / "ledger.sqlite",
-            legacy_db_path=tmp_path / "results.db",
         )
         return ResearchController(config)
 
@@ -1175,7 +1170,6 @@ class TestOranchakPromptPlumbing:
         config = ControllerConfig(
             project_root=tmp_path,
             ledger_db_path=tmp_path / "ledger.sqlite",
-            legacy_db_path=tmp_path / "results.db",
         )
         controller = ResearchController(config)
         block = controller._render_oranchak_corpora_for_prompt()
@@ -1199,7 +1193,6 @@ class TestOranchakPromptPlumbing:
         config = ControllerConfig(
             project_root=tmp_path,
             ledger_db_path=tmp_path / "ledger.sqlite",
-            legacy_db_path=tmp_path / "results.db",
         )
         controller = ResearchController(config)
         block = controller._render_oranchak_corpora_for_prompt()
@@ -1219,7 +1212,6 @@ class TestOranchakPromptPlumbing:
         config = ControllerConfig(
             project_root=tmp_path,
             ledger_db_path=tmp_path / "ledger.sqlite",
-            legacy_db_path=tmp_path / "results.db",
         )
         controller = ResearchController(config)
         block = controller._render_oranchak_corpora_for_prompt()
@@ -1230,7 +1222,6 @@ class TestOranchakPromptPlumbing:
         config = ControllerConfig(
             project_root=tmp_path,
             ledger_db_path=tmp_path / "ledger.sqlite",
-            legacy_db_path=tmp_path / "results.db",
         )
         controller = ResearchController(config)
         prompt = controller._build_theorist_prompt({
@@ -1248,7 +1239,6 @@ class TestOranchakPromptPlumbing:
         config = ControllerConfig(
             project_root=tmp_path,
             ledger_db_path=tmp_path / "ledger.sqlite",
-            legacy_db_path=tmp_path / "results.db",
             include_oranchak_corpora=False,
             include_serpentine_anchor=False,
         )
@@ -1272,7 +1262,6 @@ class TestSerpentineAnchorRenderer:
         config = ControllerConfig(
             project_root=tmp_path,
             ledger_db_path=tmp_path / "ledger.sqlite",
-            legacy_db_path=tmp_path / "results.db",
         )
         controller = ResearchController(config)
         block = controller._render_serpentine_anchor_for_prompt()
@@ -1293,7 +1282,6 @@ class TestSerpentineAnchorRenderer:
         config = ControllerConfig(
             project_root=tmp_path,
             ledger_db_path=tmp_path / "ledger.sqlite",
-            legacy_db_path=tmp_path / "results.db",
         )
         controller = ResearchController(config)
         block = controller._render_serpentine_anchor_for_prompt()
@@ -1359,7 +1347,6 @@ class TestCampaignCPromptSplitCombinations:
         config = ControllerConfig(
             project_root=tmp_path,
             ledger_db_path=tmp_path / "ledger.sqlite",
-            legacy_db_path=tmp_path / "results.db",
             include_oranchak_corpora=corpora,
             include_serpentine_anchor=anchor,
         )

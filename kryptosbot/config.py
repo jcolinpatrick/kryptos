@@ -137,7 +137,6 @@ class KryptosBotConfig:
 
     # Paths
     project_root: Path = Path(".")
-    results_db_path: Path = field(default=Path("results/results.db"))
     log_dir: Path = Path("logs")
 
     # Session management
@@ -153,8 +152,6 @@ class KryptosBotConfig:
     def __post_init__(self) -> None:
         """Resolve all relative paths against project_root."""
         root = self.project_root.resolve()
-        if not self.results_db_path.is_absolute():
-            self.results_db_path = root / self.results_db_path
         if not self.log_dir.is_absolute():
             self.log_dir = root / self.log_dir
         if not self.session_store_path.is_absolute():

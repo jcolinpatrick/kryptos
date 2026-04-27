@@ -18,12 +18,15 @@ import json
 import logging
 import re
 from dataclasses import dataclass, field
-from typing import Any, Generic, Optional, TypeVar
+from typing import Any, Generic, Optional, TYPE_CHECKING, TypeVar
 
 from .models import (
     TheoryRecord,
     WorkerContract, WorkerStatus,
 )
+
+if TYPE_CHECKING:
+    from .problem_context import ProblemContext
 
 logger = logging.getLogger("kryptosbot.contracts")
 
@@ -390,13 +393,24 @@ def validate_worker_contract(
 _THEORY_REQUIRED_FIELDS = {"core_claim", "mechanism", "family"}
 
 
-def _known_anomaly_ids() -> set[str]:
+def _known_anomaly_ids(problem: Optional["ProblemContext"] = None) -> set[str]:
     """Return the canonical anomaly IDs recognized by the controller.
 
-    Kept as a helper so theory-proposal validation can fail closed on
-    freeform anomaly prose without importing registries at module import
-    time.
+    Reads through ProblemContext (when supplied) so theory-proposal
+    validation only consults the real-K4 KNOWN_ANOMALIES registry in
+    real-K4 mode. In K4Bench mode the accessor returns an empty set,
+    which makes ANY anomaly reference in a parsed bench theory invalid
+    — bench challenges define no anomaly registry, so a non-empty
+    ``anomalies_exploited`` field IS a contamination signal.
+
+    For backwards compatibility, callers that have not yet been
+    migrated to thread a ProblemContext fall back to the live registry
+    (preserves existing real-K4 behavior). New call sites should
+    always supply ``problem``.
     """
+    if problem is not None:
+        return problem.known_anomaly_ids()
+
     from .registries import KNOWN_ANOMALIES
 
     return {
@@ -462,7 +476,11 @@ def _normalize_anomaly_id(raw: str) -> str:
     return head
 
 
-def validate_theory_proposals(raw: str) -> TheoryParseReport:
+def validate_theory_proposals(
+    raw: str,
+    *,
+    problem: Optional["ProblemContext"] = None,
+) -> TheoryParseReport:
     """
     Parse and validate theory proposals from theorist output.
 
@@ -474,9 +492,16 @@ def validate_theory_proposals(raw: str) -> TheoryParseReport:
 
     No semantic guessing. Items without required fields are rejected,
     not repaired.
+
+    ``problem`` is the ProblemContext that gates real-K4 registry
+    access. When supplied (the controller always supplies it), bench
+    runs validate against an empty anomaly registry, which makes any
+    ``anomalies_exploited`` reference an invalid contamination signal.
+    When omitted (legacy / test paths), falls back to the live
+    KNOWN_ANOMALIES registry — preserves prior real-K4 behavior.
     """
     report = TheoryParseReport()
-    known_anomaly_ids = _known_anomaly_ids()
+    known_anomaly_ids = _known_anomaly_ids(problem=problem)
 
     # Step 1: Extract JSON array.
     # The raw output may contain Python repr strings like [ThinkingBlock(...)]

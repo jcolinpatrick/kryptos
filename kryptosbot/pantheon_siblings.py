@@ -51,7 +51,7 @@ from claude_agent_sdk import ClaudeAgentOptions
 
 from .models import TheoryRecord, WorkerContract
 from .pantheon import AgentSpec, resolve_model_for_phase
-from .sdk_wrapper import safe_query
+from .sdk_wrapper import safe_query, extract_sdk_text_content
 
 logger = logging.getLogger("kryptosbot.pantheon_siblings")
 
@@ -163,6 +163,45 @@ Output exactly ONE JSON object with the four fields specified in your operationa
 """
 
 
+# K4Bench input mode (2026-04-26): bench-only red-team user prompt.
+# Removes the "K4 theory" framing and the "K4 plaintext" reference so
+# the adversarial pre-check evaluates the proposal against the
+# synthetic challenge, not against real-K4 elimination history. The
+# bench challenge construction is independent of K4 — a family
+# eliminated for real K4 may still be the right answer for the
+# K4Bench challenge, so the "Already eliminated" check is reframed
+# around proposals already disproved IN THIS bench_id run.
+_REDTEAM_USER_PROMPT_TEMPLATE_BENCH = """\
+You are pre-checking ONE proposed theory for a synthetic K4Bench calibration challenge before the controller dispatches a worker to test it. The challenge is NOT real K4 — it is a synthetic, blind, K4-shaped construction with its own ciphertext, its own cribs, and its own clue pack. Real-K4 elimination history does not apply.
+
+THEORY UNDER REVIEW:
+
+  hypothesis_id : {hypothesis_id}
+  title         : {title}
+  family        : {family}
+  core_claim    : {core_claim}
+  mechanism     : {mechanism}
+  kill_criteria : {kill_criteria}
+  expected_signal: {expected_signal}
+  anomalies_exploited: {anomalies_exploited}
+  tags          : {tags}
+
+YOUR TASK:
+Decide whether to PASS this theory through to dispatch, mark it CONCERNED but allow dispatch, or REJECT it before compute is spent. Apply your bias toward finding noise, symmetric failure modes, and post-hoc constructions. Specifically check for:
+
+1. **Symmetric failure modes** — does the hypothesis "explain" any data because every failure can be rescued by adjusting a free parameter? (e.g. "perturb up to N CT letters" with no stated N)
+2. **Already disproved in this bench run** — does this restate a mechanism already eliminated in the prior cycles of this same bench_id? Do NOT reject solely because the family is "known dead for real K4" — the bench challenge is independent.
+3. **Vague kill criteria** — would you actually be able to disprove this against the bench challenge, or could the proposer always claim more search is needed?
+4. **Numerology without mechanism** — is the proposal "X = alphabet size, therefore..." with no procedural rule connecting X to the bench plaintext?
+5. **Unstated budgets** — does the theory invoke an enumeration without saying when to stop?
+6. **Cross-cycle echo** — has a near-identical mechanism been tested and disproved in this bench run already?
+
+Do NOT cite real-K4 anomalies (aaa_coordinate_lie / "He lied", width21_vertical_bigrams, w_delimiter_segments, ct_perturbation, k2_coords, geodetic, antipodes, mirror_ka, overlay, archive_evidence, k3_continuity, compass cipher, null mask, etc.) as a reason to reject or flag the proposal — they apply to real K4, not to this synthetic challenge.
+
+Output exactly ONE JSON object with the five fields specified in your operational mode override (verdict, confidence, reasons, next_test, search_space_risk). No prose. No markdown fences.
+"""
+
+
 def _serialize_theory_for_redteam(theory: TheoryRecord) -> dict[str, str]:
     """Extract the fields red-team needs from a TheoryRecord."""
     return {
@@ -184,9 +223,22 @@ def _serialize_theory_for_redteam(theory: TheoryRecord) -> dict[str, str]:
     }
 
 
-def _build_redteam_user_prompt(theory: TheoryRecord) -> str:
-    """Render the user prompt for a red-team pre-check call."""
+def _build_redteam_user_prompt(
+    theory: TheoryRecord,
+    *,
+    bench_mode: bool = False,
+) -> str:
+    """Render the user prompt for a red-team pre-check call.
+
+    K4Bench input mode (2026-04-26): when ``bench_mode=True`` the
+    user prompt swaps to the bench-only template so the adversarial
+    pre-check evaluates the proposal against the synthetic challenge
+    and not against real-K4 elimination history. The bench template
+    explicitly forbids citing real-K4 anomalies as a reject reason.
+    """
     fields = _serialize_theory_for_redteam(theory)
+    if bench_mode:
+        return _REDTEAM_USER_PROMPT_TEMPLATE_BENCH.format(**fields)
     return _REDTEAM_USER_PROMPT_TEMPLATE.format(**fields)
 
 
@@ -321,6 +373,7 @@ async def run_red_team_precheck(
     allowed_tools: list[str],
     permission_mode: str = "bypassPermissions",
     max_turns: int = 20,
+    bench_mode: bool = False,
 ) -> RedTeamVerdict:
     """
     Make a sibling call to red-team-disprover for proposal-time pre-check.
@@ -349,7 +402,7 @@ async def run_red_team_precheck(
     import time
 
     system_prompt = redteam_spec.redteam_precheck_system_prompt()
-    user_prompt = _build_redteam_user_prompt(theory)
+    user_prompt = _build_redteam_user_prompt(theory, bench_mode=bench_mode)
     model, fallback_model = resolve_model_for_phase(redteam_spec, "red_team")
 
     options = ClaudeAgentOptions(
@@ -379,13 +432,16 @@ async def run_red_team_precheck(
                 turn_count += 1
                 content = message.content
                 if isinstance(content, list):
+                    text = extract_sdk_text_content(content)
+                    if text:
+                        content_chunks.append(text)
                     for block in content:
-                        if hasattr(block, "text") and block.text:
-                            content_chunks.append(block.text)
-                        elif hasattr(block, "type") and block.type == "tool_use":
+                        if hasattr(block, "type") and block.type == "tool_use":
                             tool_count += 1
                 else:
-                    content_chunks.append(str(content))
+                    text = extract_sdk_text_content(content)
+                    if text:
+                        content_chunks.append(text)
     except Exception as exc:
         elapsed = time.monotonic() - start
         logger.warning(
@@ -664,13 +720,16 @@ async def run_stat_audit(
                 turn_count += 1
                 content = message.content
                 if isinstance(content, list):
+                    text = extract_sdk_text_content(content)
+                    if text:
+                        content_chunks.append(text)
                     for block in content:
-                        if hasattr(block, "text") and block.text:
-                            content_chunks.append(block.text)
-                        elif hasattr(block, "type") and block.type == "tool_use":
+                        if hasattr(block, "type") and block.type == "tool_use":
                             tool_count += 1
                 else:
-                    content_chunks.append(str(content))
+                    text = extract_sdk_text_content(content)
+                    if text:
+                        content_chunks.append(text)
     except Exception as exc:
         elapsed = time.monotonic() - start
         logger.warning(
@@ -940,13 +999,16 @@ async def run_pursuit_evaluator(
                 turn_count += 1
                 content = message.content
                 if isinstance(content, list):
+                    text = extract_sdk_text_content(content)
+                    if text:
+                        content_chunks.append(text)
                     for block in content:
-                        if hasattr(block, "text") and block.text:
-                            content_chunks.append(block.text)
-                        elif hasattr(block, "type") and block.type == "tool_use":
+                        if hasattr(block, "type") and block.type == "tool_use":
                             tool_count += 1
                 else:
-                    content_chunks.append(str(content))
+                    text = extract_sdk_text_content(content)
+                    if text:
+                        content_chunks.append(text)
     except Exception as exc:
         elapsed = time.monotonic() - start
         logger.warning(
@@ -1082,6 +1144,60 @@ variants rather than diversification-away language. In particular:
 - demote width-specific geometry variants unless the width is independently justified
 - keep delimiter / marker semantics, X-Q-Z-style marker letters, and crib-bridge geometry live
 - do not overgeneralize a negative width-geometry cycle into "avoid W work"
+
+Output exactly ONE JSON object with the seven fields specified in your operational mode override (headline, family_movements, evidence_added, recommended_next_focus, dispatched_count, disproved_count, signal_count). No prose. No markdown fences.
+"""
+
+
+# K4Bench input mode (2026-04-26): bench-only synthesis user prompt.
+# Strips the K4-specific "SPECIAL POLICY FOR THIS HARDENING WINDOW"
+# block (which directs synthesis to defend the w_delimiter_segments
+# lane — irrelevant to a synthetic challenge), replaces "next cycle's
+# theorist" framing with bench-cycle framing, and explicitly forbids
+# referencing real-K4 anomalies/families/anchors in the synthesis
+# output. Synthesis stays challenge-local: only the dispatched
+# theories' bench outcomes drive the recommended_next_focus.
+_SYNTHESIS_USER_PROMPT_TEMPLATE_BENCH = """\
+You are synthesizing the outcomes of ONE research cycle for a synthetic K4Bench calibration challenge that just completed. Produce a structured handoff for the next bench cycle's theorist.
+
+CYCLE METADATA:
+  cycle_number        : {cycle_number}
+  dispatched_count    : {dispatched_count}
+  disproved_count     : {disproved_count}
+  signal_count        : {signal_count}
+  alert_count         : {alert_count}
+  risk_breakdown      : {risk_breakdown_inline}
+
+DISPATCHED THEORIES (with kernel-verified outcomes against the bench challenge):
+
+{outcomes_block}
+
+RED-TEAM PRE-CHECK VERDICTS:
+{redteam_block}
+
+SEARCH-SPACE RISK DISPATCHES (red-team structured risk field by category):
+{risk_breakdown_block}
+
+STATISTICAL AUDIT VERDICTS (post-execution, only for crib_score >= 18):
+{stat_audit_block}
+
+ALERTS THAT FIRED:
+{alert_block}
+
+YOUR TASK:
+Read the bench-cycle outcomes and produce a structured synthesis the next bench cycle's theorist will use as context. The challenge is a synthetic K4Bench calibration, NOT real K4. Real-K4 elimination history, anomaly registries, and family registries do NOT apply.
+
+Do NOT reference, recommend, or warn about real-K4 anomalies / families / anchors:
+  Width-21, W segmentation, w_delimiter_segments, He lied, aaa_coordinate_lie,
+  compass cipher, aaa_compass_cipher, CT perturbation, ct_perturbation,
+  K2 Coords, k2_coords, Geodetic, geodetic, Mirror KA, mirror_ka, Overlay,
+  Antipodes, antipodes, K3 continuity, k3_continuity, Archive Evidence,
+  archive_evidence, null mask, CONSENSUS_NULL_POSITIONS, serpentine anchor,
+  Oranchak corpora, EASTNORTHEAST, BERLINCLOCK, PALIMPSEST, ABSCISSA.
+None of these strings should appear in your output unless they are literally
+present in the dispatched theory titles above.
+
+`recommended_next_focus` MUST stay derived only from the dispatched bench-theory outcomes — what mechanisms looked promising against the bench cribs, what looked dead, what variants are worth a second pass. Do NOT recommend "diversifying toward" or "investigating" any real-K4 anomaly or family.
 
 Output exactly ONE JSON object with the seven fields specified in your operational mode override (headline, family_movements, evidence_added, recommended_next_focus, dispatched_count, disproved_count, signal_count). No prose. No markdown fences.
 """
@@ -1255,6 +1371,7 @@ async def run_results_synthesis(
     permission_mode: str = "bypassPermissions",
     max_turns: int = 15,
     risk_by_hid: Optional[dict[str, tuple[str, str]]] = None,
+    bench_mode: bool = False,
 ) -> CycleSynthesis:
     """
     Make a sibling call to results-analyst for end-of-cycle synthesis.
@@ -1296,7 +1413,12 @@ async def run_results_synthesis(
         risk_breakdown_counts,
     ) = _format_risk_breakdown_for_synthesis(dispatched_risks)
 
-    user_prompt = _SYNTHESIS_USER_PROMPT_TEMPLATE.format(
+    template = (
+        _SYNTHESIS_USER_PROMPT_TEMPLATE_BENCH
+        if bench_mode
+        else _SYNTHESIS_USER_PROMPT_TEMPLATE
+    )
+    user_prompt = template.format(
         cycle_number=cycle_number,
         dispatched_count=dispatched,
         disproved_count=disproved,
@@ -1339,13 +1461,16 @@ async def run_results_synthesis(
                 turn_count += 1
                 content = message.content
                 if isinstance(content, list):
+                    text = extract_sdk_text_content(content)
+                    if text:
+                        content_chunks.append(text)
                     for block in content:
-                        if hasattr(block, "text") and block.text:
-                            content_chunks.append(block.text)
-                        elif hasattr(block, "type") and block.type == "tool_use":
+                        if hasattr(block, "type") and block.type == "tool_use":
                             tool_count += 1
                 else:
-                    content_chunks.append(str(content))
+                    text = extract_sdk_text_content(content)
+                    if text:
+                        content_chunks.append(text)
     except Exception as exc:
         elapsed = time.monotonic() - start
         logger.warning(
@@ -1396,7 +1521,13 @@ async def run_results_synthesis(
     ev_raw = parsed.get("evidence_added", [])
     ev = [str(x).strip() for x in ev_raw if x] if isinstance(ev_raw, list) else []
     focus = str(parsed.get("recommended_next_focus", "")).strip()
-    focus = _normalize_w_focus_recommendation(focus, theories, contracts)
+    # K4Bench input mode (2026-04-26): the W-focus normalizer is real-K4
+    # specific (defends the w_delimiter_segments lane against premature
+    # demotion). It must NOT run on a synthetic challenge — applying it
+    # would inject the K4 phrase "W-delimiter lane" into a bench-cycle
+    # focus string. Skip the normalizer in bench mode.
+    if not bench_mode:
+        focus = _normalize_w_focus_recommendation(focus, theories, contracts)
 
     return CycleSynthesis(
         headline=headline,

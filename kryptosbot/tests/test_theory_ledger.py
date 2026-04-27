@@ -235,11 +235,18 @@ class TestModels:
             theories_proposed=20,
             theories_eliminated=8,
             underexplored_families=["novel", "key_tape"],
+            theorist_parse_successes=3,
+            theorist_parse_partial_successes=1,
+            theorist_fallbacks=2,
+            theorist_fallback_reasons={"agent_failure": 1, "model_returned_nothing": 1},
+            last_theorist_parse_diagnostics={"parse_outcome": "fallback"},
         )
         d = cs.to_dict()
         restored = ControllerState.from_dict(d)
         assert restored.cycle_number == 5
         assert restored.underexplored_families == ["novel", "key_tape"]
+        assert restored.theorist_parse_successes == 3
+        assert restored.theorist_fallback_reasons["agent_failure"] == 1
 
     def test_stable_id_deterministic(self):
         id1 = _stable_id("claim", "mech", "fam")

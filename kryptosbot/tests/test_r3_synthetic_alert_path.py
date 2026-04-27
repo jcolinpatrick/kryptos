@@ -64,7 +64,6 @@ def _controller(tmp_path):
     config = ControllerConfig(
         project_root=tmp_path,
         ledger_db_path=tmp_path / "ledger.sqlite",
-        legacy_db_path=tmp_path / "results.db",
         alert_threshold="signal",
     )
     return ResearchController(config)

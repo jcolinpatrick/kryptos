@@ -1,0 +1,83 @@
+{
+  "bench_id": "K4B-019",
+  "ciphertext": "JTNASQNIGJLTGEYSGCTBQKRYKGYVCXDTLATUEGKLIUANGINTLBIFHSCPNLGTDUNYGITJIKNIQJCQLJRXAXTLBRFURAGJWVZGG",
+  "ciphertext_alphabet": "AZ",
+  "ciphertext_length": 97,
+  "known_plaintext_positions": {
+    "21": "C",
+    "22": "O",
+    "23": "L",
+    "24": "U",
+    "25": "M",
+    "26": "N",
+    "27": "K",
+    "28": "E",
+    "29": "Y",
+    "30": "W",
+    "31": "O",
+    "32": "R",
+    "33": "D",
+    "63": "F",
+    "64": "O",
+    "65": "U",
+    "66": "R",
+    "67": "B",
+    "68": "L",
+    "69": "O",
+    "70": "C",
+    "71": "K",
+    "72": "X",
+    "73": "X"
+  },
+  "known_plaintext_spans": [
+    {
+      "end_inclusive": 33,
+      "label": "crib_a",
+      "length": 13,
+      "start": 21,
+      "text": "COLUMNKEYWORD"
+    },
+    {
+      "end_inclusive": 73,
+      "label": "crib_b",
+      "length": 11,
+      "start": 63,
+      "text": "FOURBLOCKXX"
+    }
+  ],
+  "public_clue_pack": {
+    "clue_text": "SPIRAL heads the columns, KINETIC appears on a KRYPTOS strip, and every four-letter tile is drawn upside down.",
+    "constraint_summary": [
+      "A-Z only; no spaces or punctuation in ciphertext.",
+      "Plaintext is exactly 97 A-Z characters.",
+      "The construction uses hand-executable classical/procedural layers only.",
+      "All key material needed for the intended solution is derivable from this clue pack.",
+      "Layer count is between two and three unless a clue explicitly collapses a layer into a simple reversal or mirror.",
+      "A strict pass requires both the exact plaintext and a reproducible method/layer order."
+    ]
+  },
+  "public_quality_metadata": {
+    "answer_hash_sha256": "88bcf16437cca5c0fd29e4696eb929a1ee4ac9c3ed5d310d9c09584ef1e74eb6",
+    "challenge_hash_sha256": "3d16774b6bd21354354e42f15f69d01208d186ddbf9edc449179503e97bbfb3f",
+    "contains_solution_material": false,
+    "difficulty_band": "gold",
+    "purpose": "blind synthetic K4-like full-controller calibration"
+  },
+  "schema_version": "k4bench.challenge.v1",
+  "solver_output_contract": {
+    "known_crib_score_target": 24,
+    "required_json_fields": [
+      "bench_id",
+      "plaintext",
+      "confidence",
+      "method_summary",
+      "layers",
+      "crib_score",
+      "evidence",
+      "reproducibility_notes"
+    ],
+    "strict_pass_rule": "Exact 97-character plaintext AND exact or human-equivalent layer order with keys/routes/alphabets. Plaintext-only is at most PARTIAL."
+  },
+  "suite_id": "K4BENCH-2026-04-26-V1",
+  "title": "Spiral kinetic blocks"
+}

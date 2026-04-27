@@ -104,6 +104,22 @@ class JobResult:
     # R2-3: list of exhaustion-log script_ids this run overrode. Empty
     # when override was not invoked OR when the spec had no overlap.
     override_exhaustion_overlap: list[str] = field(default_factory=list)
+    # K4Bench attempt-replay (2026-04-27): the post-procedural-expansion
+    # HypothesisSpec dict that was actually dispatched. Empty {} on
+    # admissibility / translation rejection (nothing was dispatched).
+    # Populated whenever ``execute()`` runs the spec through
+    # ``_evaluate_one`` so downstream consumers (bench_attempts, the
+    # offline evaluator) can replay layers without round-tripping
+    # through the artifact_path file.
+    dispatched_dsl_spec: dict[str, Any] = field(default_factory=dict)
+    # K4Bench attempt-replay: the parameter binding that produced the
+    # best candidate, as a list of [flat_key, value] pairs (e.g.
+    # [["layer0.keyword", "CEDAR"], ["layer1.width", 7]]). Empty when
+    # no candidate was produced or when the spec had no params (an
+    # all-fixed pipeline). Combined with ``dispatched_dsl_spec.pipeline``
+    # this is enough to reconstruct the resolved layer set the kernel
+    # actually ran for the best result.
+    best_config_bindings: list[list[Any]] = field(default_factory=list)
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -148,6 +164,8 @@ def _load_exhaustion_log(path: Optional[Path] = None) -> dict[str, dict[str, Any
 def check_admissibility(
     spec: HypothesisSpec,
     exhaustion_log: Optional[dict[str, Any]] = None,
+    *,
+    bench_mode: bool = False,
 ) -> tuple[bool, list[str]]:
     """Validate that the spec is safe to dispatch.
 
@@ -155,6 +173,15 @@ def check_admissibility(
     ``reasons`` is empty. The dispatcher refuses to execute when
     ``admissible`` is False — the brief's §6.2 policy is "reject explicit,
     never silently clip" so the caller can surface the exact reason.
+
+    K4Bench (2026-04-26): when ``bench_mode=True`` the real-K4
+    ``exhaustion_log.json`` is ignored entirely — the controller is
+    running a synthetic K4Bench challenge and the real-K4 elimination
+    history does not constrain it. Spec-shape validation, translation-
+    path check, and cardinality budget still fire normally; only the
+    real-K4 overlap heuristic is treated as not-applicable. Equivalent
+    to passing ``override_exhaustion=True`` on every bench-mode spec
+    without the synthesised justification text.
     """
     reasons: list[str] = []
 
@@ -190,25 +217,37 @@ def check_admissibility(
     # with a non-empty justification, overlap is logged but NOT added to
     # reasons. Validation guarantees the justification is non-empty when
     # override=True, so we can trust it here.
-    log = exhaustion_log if exhaustion_log is not None else _load_exhaustion_log()
-    overlap = _exhaustion_overlap(spec, log)
-    if overlap:
-        if getattr(spec, "override_exhaustion", False):
-            logger.info(
-                "admissibility: exhaustion overlap (%d entries) present on "
-                "spec %s, overridden with justification: %s",
-                len(overlap),
-                spec.hypothesis_id,
-                (spec.override_justification or "")[:120],
-            )
-        else:
-            reasons.append(
-                f"exhaustion overlap: {len(overlap)} prior entr{'y' if len(overlap) == 1 else 'ies'} "
-                f"already cover this spec's assumption bundle + family "
-                f"(first 3: {overlap[:3]}). If this spec genuinely "
-                "adds information beyond the overlap, re-submit with "
-                "override_exhaustion=True and an override_justification."
-            )
+    #
+    # K4Bench (2026-04-26): bench_mode short-circuits the entire overlap
+    # check — the real-K4 exhaustion log doesn't constrain a synthetic
+    # challenge. Skip the file load too so a bench run cannot be
+    # rejected by stale rows in the K4 log.
+    if bench_mode:
+        logger.info(
+            "admissibility: bench_mode=True; real-K4 exhaustion log "
+            "treated as not applicable for spec %s",
+            spec.hypothesis_id,
+        )
+    else:
+        log = exhaustion_log if exhaustion_log is not None else _load_exhaustion_log()
+        overlap = _exhaustion_overlap(spec, log)
+        if overlap:
+            if getattr(spec, "override_exhaustion", False):
+                logger.info(
+                    "admissibility: exhaustion overlap (%d entries) present on "
+                    "spec %s, overridden with justification: %s",
+                    len(overlap),
+                    spec.hypothesis_id,
+                    (spec.override_justification or "")[:120],
+                )
+            else:
+                reasons.append(
+                    f"exhaustion overlap: {len(overlap)} prior entr{'y' if len(overlap) == 1 else 'ies'} "
+                    f"already cover this spec's assumption bundle + family "
+                    f"(first 3: {overlap[:3]}). If this spec genuinely "
+                    "adds information beyond the overlap, re-submit with "
+                    "override_exhaustion=True and an override_justification."
+                )
 
     return (not reasons, reasons)
 
@@ -280,6 +319,18 @@ _SUPPORTED_KINDS: frozenset[str] = frozenset({
     "myszkowski",
     "route",
     "quagmire",
+})
+
+
+# Alphabets the dispatcher can currently translate into kernel transforms.
+# R2-2 (2026-04-21) added KA and keyword_mixed; before that the dispatcher
+# was AZ-only. Kept in sync with _resolve_alphabet_sequence(); extending
+# this set requires (a) adding a branch there and (b) updating this
+# frozenset.
+_SUPPORTED_ALPHABETS: frozenset[str] = frozenset({
+    "AZ",
+    "KA",
+    "keyword_mixed",
 })
 
 
@@ -1039,6 +1090,7 @@ def execute(
     parallel: Optional[bool] = None,
     exhaustion_log: Optional[dict[str, Any]] = None,
     store_threshold: Optional[int] = None,
+    bench_mode: bool = False,
 ) -> JobResult:
     """Run a HypothesisSpec end-to-end and return a JobResult.
 
@@ -1054,6 +1106,11 @@ def execute(
         exhaustion_log:     Override for admissibility check (test hook).
         store_threshold:    Override for STORE_THRESHOLD (default: import
                             from kernel.constants).
+        bench_mode:         When True (K4Bench synthetic challenge run),
+                            real-K4 exhaustion-overlap admissibility is
+                            skipped. All other admissibility checks
+                            (validation, translation, cardinality budget)
+                            still fire. See ``check_admissibility``.
     """
     t_wall_start = time.monotonic()
     t_cpu_start = time.process_time()
@@ -1077,8 +1134,12 @@ def execute(
             assumption_bundle=list(spec.assumption_bundle),
         )
 
-    # Admissibility check.
-    admissible, reasons = check_admissibility(spec, exhaustion_log=exhaustion_log)
+    # Admissibility check. bench_mode skips the real-K4 exhaustion log
+    # entirely; everything else (validation, translation, budget) still
+    # fires, so a malformed bench spec is still rejected.
+    admissible, reasons = check_admissibility(
+        spec, exhaustion_log=exhaustion_log, bench_mode=bench_mode,
+    )
     if not admissible:
         return JobResult(
             hypothesis_id=spec.hypothesis_id,
@@ -1098,6 +1159,10 @@ def execute(
     # Enumerate work items.
     work_items: list[dict[str, Any]] = []
     config_ids: list[str] = []
+    # K4Bench attempt-replay: index from config_id -> bindings so we can
+    # recover the parameter binding that produced the best candidate
+    # without re-parsing the human-readable config_id string.
+    bindings_by_config_id: dict[str, tuple[tuple[str, Any], ...]] = {}
     for bindings in _enumerate_bindings(spec):
         cfg_id = _config_id(spec.spec_hash, bindings)
         try:
@@ -1113,9 +1178,11 @@ def execute(
                 wall_time_sec=time.monotonic() - t_wall_start,
                 cpu_time_sec=time.process_time() - t_cpu_start,
                 assumption_bundle=list(spec.assumption_bundle),
+                dispatched_dsl_spec=spec.to_dict(),
             )
         work_items.append({"config_id": cfg_id, "pipeline_dict": pipeline_dict})
         config_ids.append(cfg_id)
+        bindings_by_config_id[cfg_id] = bindings
 
     # Dispatch.
     if parallel is None:
@@ -1162,12 +1229,26 @@ def execute(
 
     # R2-3: propagate override metadata into the result so the ledger
     # preserves WHY a prior-exhaustion spec was run anyway.
+    #
+    # K4Bench: bench_mode bypasses the real-K4 exhaustion log entirely,
+    # so override_exhaustion_overlap stays empty regardless of what the
+    # spec carries — the synthetic challenge has no overlap with the
+    # K4 history by definition.
     override_overlap_list: list[str] = []
-    if getattr(spec, "override_exhaustion", False):
+    if getattr(spec, "override_exhaustion", False) and not bench_mode:
         override_overlap_list = list(_exhaustion_overlap(
             spec,
             exhaustion_log if exhaustion_log is not None else _load_exhaustion_log(),
         ))
+
+    # K4Bench attempt-replay: lift the bindings tuple for whichever
+    # config produced ``best`` into a JSON-serializable list of pairs.
+    # When best is None (zero successful evaluations) the list stays
+    # empty; downstream consumers must check before assuming a binding.
+    best_bindings_list: list[list[Any]] = []
+    if best is not None and best.get("config_id") in bindings_by_config_id:
+        best_bindings_tuple = bindings_by_config_id[best["config_id"]]
+        best_bindings_list = [[k, v] for k, v in best_bindings_tuple]
 
     result = JobResult(
         hypothesis_id=spec.hypothesis_id,
@@ -1188,6 +1269,8 @@ def execute(
             if getattr(spec, "override_exhaustion", False) else ""
         ),
         override_exhaustion_overlap=override_overlap_list,
+        dispatched_dsl_spec=spec.to_dict(),
+        best_config_bindings=best_bindings_list,
     )
 
     # An elimination claim is earned only when the job ran to completion
@@ -1277,6 +1360,13 @@ def job_result_to_worker_contract(
         "artifact_path": result.artifact_path,
         "spec_hash": result.spec_hash,
         "universe_hash": result.universe_hash,
+        # K4Bench attempt-replay (2026-04-27): inline the dispatched
+        # spec + best-config bindings so bench_attempts.emit_attempt_artifact
+        # can surface replayable layers without re-reading artifact_path
+        # (which the ledger does not retain across processes). Both fields
+        # are empty on rejection paths; bench_attempts checks before use.
+        "dispatched_dsl_spec": dict(result.dispatched_dsl_spec),
+        "best_config_bindings": [list(p) for p in result.best_config_bindings],
     }
 
     disproof_evidence = []
@@ -1326,6 +1416,9 @@ def execute_from_json(raw: str | dict[str, Any], **kwargs: Any) -> JobResult:
     ``admissibility_verdict == "rejected"`` and the parse errors in
     ``admissibility_reasons`` — consistent shape so callers don't need
     to distinguish parse failures from admissibility failures.
+
+    ``bench_mode`` and any other ``execute`` kwargs are forwarded
+    verbatim.
     """
     parsed = validate_hypothesis_spec(raw)
     if not parsed.is_valid:
@@ -1348,6 +1441,7 @@ __all__ = [
     "execute_from_json",
     "job_result_to_worker_contract",
     "_SUPPORTED_KINDS",
+    "_SUPPORTED_ALPHABETS",
     "_kind_has_translation",
     # R3-0.5-1
     "_expand_procedural_layers",

@@ -35,10 +35,21 @@ from __future__ import annotations
 import asyncio
 import logging
 import os
+import re
 import subprocess
 import sys
 import time
 from pathlib import Path
+
+# Whitespace-tolerant match for the self-test's "discovered : True" line.
+# self_test_real_api.py prints with 9 spaces of column padding, but earlier
+# the matcher hard-coded 11 spaces, so a successful self-test was silently
+# misclassified as a transport failure. The actual format is a column-padded
+# label, so any amount of intra-label whitespace is acceptable.
+_DISCOVERED_TRUE_RE = re.compile(
+    r"^discovered\s*:\s*True\s*$",
+    re.MULTILINE,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -57,7 +68,8 @@ def verify_direct_api_k1(
     at controller-launch time.
 
     Returns ``(ok, message)``. ``ok=True`` requires: exit 0, stdout
-    contains ``discovered           : True``.
+    contains a ``discovered : True`` line (whitespace-tolerant; the
+    self-test column-pads the label to align values).
     """
     script = Path(__file__).resolve().parent / "self_test_real_api.py"
     env = {**os.environ, "PYTHONPATH": str(_REPO_ROOT / "src")}
@@ -83,7 +95,7 @@ def verify_direct_api_k1(
             f"direct-api probe failed (rc={result.returncode}): "
             f"{stderr_excerpt}"
         )
-    if "discovered           : True" not in (result.stdout or ""):
+    if not _DISCOVERED_TRUE_RE.search(result.stdout or ""):
         tail = (result.stdout or "")[-300:]
         return False, f"direct-api probe returned non-discovery: {tail}"
     return True, f"direct-api probe ok in {elapsed:.1f}s"
@@ -165,4 +177,13 @@ def verify_transport(
     :func:`verify_transport_async` instead — calling this from inside
     a running event loop will fail.
     """
+    try:
+        asyncio.get_running_loop()
+    except RuntimeError:
+        pass
+    else:
+        raise RuntimeError(
+            "verify_transport() cannot be called from a running event loop; "
+            "use verify_transport_async() instead"
+        )
     return asyncio.run(verify_transport_async(timeout_sec=timeout_sec))

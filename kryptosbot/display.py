@@ -178,8 +178,25 @@ def print_startup(
     tested: int,
     eliminated: int,
     dry_run: bool = False,
+    hcc_seeds: Optional[int] = None,
+    llm_theories: Optional[int] = None,
+    total_candidates: Optional[int] = None,
+    hcc_seeds_cap: Optional[int] = None,
+    hcc_only: bool = False,
+    no_hcc_seeds: bool = False,
 ) -> None:
-    """Print the controller startup banner as a rich Panel."""
+    """Print the controller startup banner as a rich Panel.
+
+    2026-04-27: in bench mode, callers pass ``hcc_seeds`` (the actual
+    deterministic seed count for THIS challenge), ``llm_theories``
+    (the cap on LLM-supplied theories per cycle, == theories_per_cycle
+    when LLM is enabled), and ``total_candidates`` (the projected
+    dispatched-set size = hcc_seeds + llm_theories). The three
+    ``hcc_*`` flag fields drive an extra annotation line that shows
+    the operator which CLI flags shaped the seed count. In real-K4
+    mode, all six bench-banner fields default to None and the banner
+    layout is unchanged from pre-2026-04-27.
+    """
 
     # Build content lines
     parts: list[Any] = []
@@ -198,6 +215,23 @@ def print_startup(
     grid.add_row("Starting cycle", str(cycle_start))
     grid.add_row("Max cycles", str(max_cycles))
     grid.add_row("Theories/cycle", str(theories_per_cycle))
+    # HCC + LLM split (bench mode only). The conditional keeps the
+    # real-K4 banner identical to the historical layout while making
+    # the seed/LLM split visible whenever HCC is in play.
+    if hcc_seeds is not None or llm_theories is not None:
+        grid.add_row(
+            "HCC seeds",
+            f"{hcc_seeds if hcc_seeds is not None else 0}"
+            + (f"  (cap={hcc_seeds_cap})" if hcc_seeds_cap is not None and hcc_seeds_cap > 0 else "")
+            + ("  (--no-hcc-seeds)" if no_hcc_seeds else ""),
+        )
+        grid.add_row(
+            "LLM theories",
+            f"{llm_theories if llm_theories is not None else 0}"
+            + ("  (--hcc-only, LLM disabled)" if hcc_only else ""),
+        )
+        if total_candidates is not None:
+            grid.add_row("Total candidates", str(total_candidates))
     grid.add_row("Workers", str(workers))
     grid.add_row("Timeout", f"{timeout_minutes}m per worker")
     parts.append(grid)
@@ -263,7 +297,20 @@ def print_cycle_header(cycle: int, max_cycle: int) -> None:
 # ---------------------------------------------------------------------------
 
 def print_landscape(landscape: dict[str, Any]) -> None:
-    """Print the research landscape assessment in a Panel."""
+    """Print the research landscape assessment in a Panel.
+
+    K4Bench input mode (2026-04-26): when ``landscape["bench_mode"]``
+    is True, render a bench-only panel (bench_id / suite_id / title
+    / CT length / crib count / prior-attempts summary / cycle delta).
+    The real-K4 panel — standing constraints, active families,
+    underexplored families, prompt anomalies, recent outcomes — is
+    suppressed so a synthetic challenge run cannot leak K4 anomaly
+    or family names into the operator-facing TUI.
+    """
+    if landscape.get("bench_mode"):
+        _print_landscape_bench(landscape)
+        return
+
     parts: list[Any] = []
 
     # Cycle delta
@@ -388,6 +435,88 @@ def print_landscape(landscape: dict[str, Any]) -> None:
     panel = Panel(
         Group(*parts),
         title="[bold dim cyan]LANDSCAPE[/]",
+        border_style="dim",
+        box=rich_box.ROUNDED,
+        padding=(0, 2),
+        width=min(console.width, MAX_DISPLAY_WIDTH),
+    )
+    console.print(panel)
+    console.print()
+
+
+def _print_landscape_bench(landscape: dict[str, Any]) -> None:
+    """Render the bench-only landscape panel.
+
+    Permitted bench context per the K4Bench isolation contract:
+      bench_id, suite_id, title, ct_length, n_cribs, prior attempts
+      summary, synthetic ledger pin, and cycle delta. Nothing else
+      is rendered — every real-K4 anomaly / family / anchor surface
+      is intentionally suppressed. Adding a non-bench field here
+      requires updating the test contract in
+      ``test_bench_run_controller.py``.
+    """
+    parts: list[Any] = []
+    bc = landscape.get("bench_context") or {}
+    pa = landscape.get("prior_attempts") or {}
+    delta = landscape.get("cycle_delta") or {}
+
+    bench_id = bc.get("bench_id") or "(unknown)"
+    suite_id = bc.get("suite_id") or "(unknown)"
+    title = bc.get("title") or ""
+
+    parts.append(
+        Text("K4BENCH challenge ", style=S_INFO)
+        + Text(str(bench_id), style="bold")
+        + Text(f"  /  suite {suite_id}", style=S_DIM)
+    )
+    if title:
+        parts.append(Text(f"  title: {title}", style=S_DIM))
+    parts.append(
+        Text(
+            f"  CT: {bc.get('ct_length', '?')} chars · "
+            f"{bc.get('n_cribs', '?')} crib positions",
+            style=S_DIM,
+        )
+    )
+    pin = bc.get("synthetic_ledger_pin")
+    if pin:
+        parts.append(
+            Text(f"  ledger pin: synthetic_mode={pin}", style=S_DIM)
+        )
+
+    parts.append(
+        Text(
+            f"  prior attempts (this bench_id): "
+            f"total={pa.get('total', 0)}  "
+            f"completed={pa.get('completed', 0)}  "
+            f"eliminated={pa.get('eliminated', 0)}  "
+            f"promising={pa.get('promising', 0)}",
+            style=S_DIM,
+        )
+    )
+    new_tested = delta.get("new_tested", 0)
+    new_elim = delta.get("new_eliminated", 0)
+    if new_tested or new_elim:
+        parts.append(
+            Text("  Δ this session: ", style=S_SUCCESS)
+            + Text(
+                f"+{new_tested} tested, +{new_elim} eliminated",
+                style=S_DIM,
+            )
+        )
+
+    prev = landscape.get("previous_synthesis")
+    if prev:
+        head = (prev.get("headline") or "")[:120]
+        focus = (prev.get("recommended_next_focus") or "")[:120]
+        if head:
+            parts.append(Text(f"  prev synthesis: {head}", style=S_DIM))
+        if focus:
+            parts.append(Text(f"    focus: {focus}", style=S_DIM))
+
+    panel = Panel(
+        Group(*parts),
+        title="[bold dim cyan]LANDSCAPE — BENCH (challenge-local)[/]",
         border_style="dim",
         box=rich_box.ROUNDED,
         padding=(0, 2),

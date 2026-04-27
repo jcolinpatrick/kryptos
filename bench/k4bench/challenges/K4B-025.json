@@ -1,0 +1,83 @@
+{
+  "bench_id": "K4B-025",
+  "ciphertext": "YGSBFHJKNZSKMCEPBKDQERZBEVGBLCBXJKFIITYGGKEBJEJDVZBBZWTGBQFYNDOSBDEUKQYYKDNOCEMMPQGZSLZQURJUGLEKN",
+  "ciphertext_alphabet": "AZ",
+  "ciphertext_length": 97,
+  "known_plaintext_positions": {
+    "21": "C",
+    "22": "O",
+    "23": "L",
+    "24": "U",
+    "25": "M",
+    "26": "N",
+    "27": "R",
+    "28": "A",
+    "29": "G",
+    "30": "G",
+    "31": "E",
+    "32": "D",
+    "33": "X",
+    "63": "B",
+    "64": "E",
+    "65": "A",
+    "66": "U",
+    "67": "F",
+    "68": "O",
+    "69": "R",
+    "70": "T",
+    "71": "E",
+    "72": "N",
+    "73": "D"
+  },
+  "known_plaintext_spans": [
+    {
+      "end_inclusive": 33,
+      "label": "crib_a",
+      "length": 13,
+      "start": 21,
+      "text": "COLUMNRAGGEDX"
+    },
+    {
+      "end_inclusive": 73,
+      "label": "crib_b",
+      "length": 11,
+      "start": 63,
+      "text": "BEAUFORTEND"
+    }
+  ],
+  "public_clue_pack": {
+    "clue_text": "FJORD labels a column board, SOLSTICE sits on a KRYPTOS strip, and a six-wide ragged route follows the board.",
+    "constraint_summary": [
+      "A-Z only; no spaces or punctuation in ciphertext.",
+      "Plaintext is exactly 97 A-Z characters.",
+      "The construction uses hand-executable classical/procedural layers only.",
+      "All key material needed for the intended solution is derivable from this clue pack.",
+      "Layer count is between two and three unless a clue explicitly collapses a layer into a simple reversal or mirror.",
+      "A strict pass requires both the exact plaintext and a reproducible method/layer order."
+    ]
+  },
+  "public_quality_metadata": {
+    "answer_hash_sha256": "00ad6ea67f0ff9aaadafc9ebfee5c2cf3b8df6644f107d31fcdd32b454bf9e00",
+    "challenge_hash_sha256": "56ff63a9c51f187f1e367965293c1b0408636a87609458372e15bf0b84478e29",
+    "contains_solution_material": false,
+    "difficulty_band": "gold",
+    "purpose": "blind synthetic K4-like full-controller calibration"
+  },
+  "schema_version": "k4bench.challenge.v1",
+  "solver_output_contract": {
+    "known_crib_score_target": 24,
+    "required_json_fields": [
+      "bench_id",
+      "plaintext",
+      "confidence",
+      "method_summary",
+      "layers",
+      "crib_score",
+      "evidence",
+      "reproducibility_notes"
+    ],
+    "strict_pass_rule": "Exact 97-character plaintext AND exact or human-equivalent layer order with keys/routes/alphabets. Plaintext-only is at most PARTIAL."
+  },
+  "suite_id": "K4BENCH-2026-04-26-V1",
+  "title": "Solstice fjord route"
+}

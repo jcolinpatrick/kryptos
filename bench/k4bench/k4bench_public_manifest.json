@@ -1,0 +1,262 @@
+{
+  "challenge_count": 25,
+  "challenges": [
+    {
+      "answer_hash_sha256": "9249c1bfb1dc5a100a57e5407d582fa13db00069f7b91879fbd2071ed51fa8c9",
+      "bench_id": "K4B-001",
+      "challenge_hash_sha256": "83b90663689dcef7eea8c5ab295376a79a68af69c2ee588648c89d82f78bae71",
+      "ciphertext_ic": 0.041881,
+      "ciphertext_sha256": "74de3e656466e4faf307d1c0aaccc30af6815c272e458225f82a6a0662026730",
+      "difficulty_band": "bronze",
+      "title": "Lantern over cedar",
+      "unique_ciphertext_letters": 24
+    },
+    {
+      "answer_hash_sha256": "e87f7d86858f2ff58cc689b1f3cbe2f96331791f652e5c0d42d74a63ec8802d6",
+      "bench_id": "K4B-002",
+      "challenge_hash_sha256": "aa7a4026be2c1378954a61f4db55bbfe41392b8e482ee4d827f025215e51bd8b",
+      "ciphertext_ic": 0.046177,
+      "ciphertext_sha256": "e7311cb716ffd3d0ba6d8934db4de6e7a4dee16e5438dc6d60b25488bd23b8f2",
+      "difficulty_band": "bronze",
+      "title": "Orchard mirror rail",
+      "unique_ciphertext_letters": 26
+    },
+    {
+      "answer_hash_sha256": "1a2aa78f7245209d002a2e7b2fc11ba9144504a830fdf88a28f00766230044a9",
+      "bench_id": "K4B-003",
+      "challenge_hash_sha256": "f1d0d61c04485fea0bd5eeb5b74560bec502416f3f3c2d4f5cb9f650c314e6a9",
+      "ciphertext_ic": 0.065292,
+      "ciphertext_sha256": "22943ad0136e515ce1507efcf779d0cbb79840b50b7deaa19f6020c3d942699c",
+      "difficulty_band": "bronze",
+      "title": "Rivet reflection shift",
+      "unique_ciphertext_letters": 21
+    },
+    {
+      "answer_hash_sha256": "0c642eebd63e2c719588c17726dea74d9e02d9ab47184bf08b0a45f1958137cb",
+      "bench_id": "K4B-004",
+      "challenge_hash_sha256": "d6147c2f619cd7976a572434a7e87b5ebafe6d9beae59a3403c851dbfe60115f",
+      "ciphertext_ic": 0.044674,
+      "ciphertext_sha256": "a4b3397b5fd1526ee1fc36c71256016b8fb476af389e49c7efc7d4a2dac2c99a",
+      "difficulty_band": "bronze",
+      "title": "Compass block note",
+      "unique_ciphertext_letters": 24
+    },
+    {
+      "answer_hash_sha256": "0ac2d0c93fd5f4c4eadfb7459a5e809a7fdd4170054a3f83bdd65ab1d433bcf7",
+      "bench_id": "K4B-005",
+      "challenge_hash_sha256": "a6bb522fd68eed7e39629f4b94cf66bb8eb14981a284ee8bbbf0010e790c9eec",
+      "ciphertext_ic": 0.044029,
+      "ciphertext_sha256": "567d4516aa59e8824026cf6fe1f86574742a5a1a738f0bf20ead740703375f4c",
+      "difficulty_band": "bronze",
+      "title": "Tower tunnel table",
+      "unique_ciphertext_letters": 25
+    },
+    {
+      "answer_hash_sha256": "c48144a4c2a3d09b79770e9daac4bb754a58a7be998c3019cbb9bfc14ffcc067",
+      "bench_id": "K4B-006",
+      "challenge_hash_sha256": "a9626a1451c289e08432764e69b7f3551fb01743165790b1c40452ad2ba193b5",
+      "ciphertext_ic": 0.047466,
+      "ciphertext_sha256": "251183bbb4645349ce9031040ffa88fd39b10adff007a2114d86e5e2779a45d1",
+      "difficulty_band": "silver",
+      "title": "Mirror route lesson",
+      "unique_ciphertext_letters": 23
+    },
+    {
+      "answer_hash_sha256": "a46214b98bac55edc7a7fd161f620fccd082d9b92d4194a8e9b178abc0651958",
+      "bench_id": "K4B-007",
+      "challenge_hash_sha256": "a93a3e7984d08c1bf324d58fcfeb82517e0d16d95fff4b7546ec43bf5ea09e3a",
+      "ciphertext_ic": 0.042741,
+      "ciphertext_sha256": "45a859ed54f8d54457f77e3d85a7a7ded6bd4de6748f612fb2b1808958ddd5b0",
+      "difficulty_band": "silver",
+      "title": "Archive column walk",
+      "unique_ciphertext_letters": 25
+    },
+    {
+      "answer_hash_sha256": "619fcc9f5adb05ecad7a27bc4db44b14d02541f3fd8d317d10951676eded1a29",
+      "bench_id": "K4B-008",
+      "challenge_hash_sha256": "5f92796c3d2e07714e9ae5974e7771af9857df397afeaf43667577ee752a5188",
+      "ciphertext_ic": 0.036297,
+      "ciphertext_sha256": "b2f80f61eac82968cb5e4e1e39d89a7f2e91df965b721b5a643083e987d1e44f",
+      "difficulty_band": "silver",
+      "title": "Shadow reverse alphabet",
+      "unique_ciphertext_letters": 25
+    },
+    {
+      "answer_hash_sha256": "34a97343837a5a80e627655fd9c062a156fe7644a5bfc98fc22178a40a8b536c",
+      "bench_id": "K4B-009",
+      "challenge_hash_sha256": "b8826fd2c7d9267c5f87f12c5db778e9520738d78285f66cb65dc968d38eb7fd",
+      "ciphertext_ic": 0.080112,
+      "ciphertext_sha256": "7de9fd1aad749fb40df77b65dd05b9711f51e7d3457ba1453a2a985a61374e21",
+      "difficulty_band": "silver",
+      "title": "Mason diagonal stones",
+      "unique_ciphertext_letters": 20
+    },
+    {
+      "answer_hash_sha256": "73f6619fc2f63e3b791c239ac167f8de1447bf052bb54b4a77935c17240c00d2",
+      "bench_id": "K4B-010",
+      "challenge_hash_sha256": "a56878e9e2f75fdcd92520426b12c586200272377c275a70d953df940d94e616",
+      "ciphertext_ic": 0.048754,
+      "ciphertext_sha256": "8d56712c8555f4e3f7bafb59d5bc0c394301a5f6b27b7c7a973fcf48d2fbb5b8",
+      "difficulty_band": "silver",
+      "title": "Needle group reversal",
+      "unique_ciphertext_letters": 26
+    },
+    {
+      "answer_hash_sha256": "c566c205d476f91be69e40f2f9e89a410cc0d0d2ce790648cc55317eee086e14",
+      "bench_id": "K4B-011",
+      "challenge_hash_sha256": "f7d5f97df1dcaabca35f8a215c6b90d45f9b8965bde722a62a0cded9c1f44e15",
+      "ciphertext_ic": 0.044029,
+      "ciphertext_sha256": "250ae2cb4a3aea6dc2ff16663f864e2315ba424af0b9bccae4b65343cb23f497",
+      "difficulty_band": "silver",
+      "title": "Observe garden fence",
+      "unique_ciphertext_letters": 25
+    },
+    {
+      "answer_hash_sha256": "405ef8628800d29f0173c6ae509e5f80f09987778d5abaf70cde4d8e6b4451e4",
+      "bench_id": "K4B-012",
+      "challenge_hash_sha256": "f42b7d49486b0ae3a96c0fba6fa9cf00cf8ac0f67d0d4807c2e55fb3272d7432",
+      "ciphertext_ic": 0.043814,
+      "ciphertext_sha256": "3595f02ae2811b39ed61e2ea62187fbb91ec3dcac84edbb03347616ba87d88a4",
+      "difficulty_band": "silver",
+      "title": "Relief skip map",
+      "unique_ciphertext_letters": 23
+    },
+    {
+      "answer_hash_sha256": "86514b26d67c31370c7a3a7aa569e002ef66b0b8aad655ad56d4407994803eff",
+      "bench_id": "K4B-013",
+      "challenge_hash_sha256": "ba195b88bfe6f4258bf5e9a7cbfd53a8a03c4a0134c2add5789c689ffc412d6f",
+      "ciphertext_ic": 0.049613,
+      "ciphertext_sha256": "2e29b2151f36b0681897824d8f372a37c9987ad2ca2be8877e45c9c99b331d56",
+      "difficulty_band": "silver",
+      "title": "Copper ragged mirror",
+      "unique_ciphertext_letters": 25
+    },
+    {
+      "answer_hash_sha256": "84b9bedebd71ada9f4c8babaf80e2d5438a5a1a0d0c961e5cb4f45883fa7ba45",
+      "bench_id": "K4B-014",
+      "challenge_hash_sha256": "90461203997a330469321ae1877783c889a633a0217af2c436dcd5be1feb22e0",
+      "ciphertext_ic": 0.051332,
+      "ciphertext_sha256": "2428be187e6c068a76933aaedada7439d4a167dc7fe80f9861003ef849e2ca45",
+      "difficulty_band": "silver",
+      "title": "Bronze latitude",
+      "unique_ciphertext_letters": 22
+    },
+    {
+      "answer_hash_sha256": "31f2c66c46f4643dea55ac0566725e89be19b97bfead19dcad419e4e3c2d998e",
+      "bench_id": "K4B-015",
+      "challenge_hash_sha256": "87398184216364b34a098018a0701a13ada80eed0760b10a5874f8756532b0ef",
+      "ciphertext_ic": 0.064003,
+      "ciphertext_sha256": "b63438c29d70d0c2081f3e1dcfb0c3158ddf729c58a267658b63f6bbd245486d",
+      "difficulty_band": "silver",
+      "title": "Obtuse rail numeral",
+      "unique_ciphertext_letters": 21
+    },
+    {
+      "answer_hash_sha256": "8d5ca036157f9378d7098c55acd7e2b42c655877c187dd71723a2d85009554d5",
+      "bench_id": "K4B-016",
+      "challenge_hash_sha256": "b2a2dd398a659e3b6d2e21855b2da345434a606a87ae37214e47a8038e6daee0",
+      "ciphertext_ic": 0.043814,
+      "ciphertext_sha256": "6fa6e661f5632436e38eaba569fa12602d81bb17d2695214e27a3b106b406e67",
+      "difficulty_band": "gold",
+      "title": "Eclipse block turn",
+      "unique_ciphertext_letters": 25
+    },
+    {
+      "answer_hash_sha256": "cdd6b38aedd64733d9e7d45c1e399c38257ce60b22a2c753f08cc8a31fa6f3fa",
+      "bench_id": "K4B-017",
+      "challenge_hash_sha256": "b1d6f0d0755c9b301c83fe31d00d873902617100216afd35aa4e9d3be93c4423",
+      "ciphertext_ic": 0.044888,
+      "ciphertext_sha256": "99c8c0c9cbc7d0e542571cd6b1b388ee167d299ad4bf20bf990b87cb09be8715",
+      "difficulty_band": "gold",
+      "title": "Dial seven walk",
+      "unique_ciphertext_letters": 25
+    },
+    {
+      "answer_hash_sha256": "23d4590ca8fc9061b8b039bafe7136c069db852dc006bfcf45a125787dd53a28",
+      "bench_id": "K4B-018",
+      "challenge_hash_sha256": "d0c29d32c710c65fbfe91454fcf67b6ae4e8ff14c014e460976d198df7a28832",
+      "ciphertext_ic": 0.046392,
+      "ciphertext_sha256": "ff29ea19328e2cc03eff4280f2c84d44f1254d87736e0251a073d50d96b74329",
+      "difficulty_band": "gold",
+      "title": "Ceremony diagonal",
+      "unique_ciphertext_letters": 25
+    },
+    {
+      "answer_hash_sha256": "88bcf16437cca5c0fd29e4696eb929a1ee4ac9c3ed5d310d9c09584ef1e74eb6",
+      "bench_id": "K4B-019",
+      "challenge_hash_sha256": "3d16774b6bd21354354e42f15f69d01208d186ddbf9edc449179503e97bbfb3f",
+      "ciphertext_ic": 0.048969,
+      "ciphertext_sha256": "f257ee5099907c0799dc929d7b892897353124241237523dbba291d349d3bc31",
+      "difficulty_band": "gold",
+      "title": "Spiral kinetic blocks",
+      "unique_ciphertext_letters": 24
+    },
+    {
+      "answer_hash_sha256": "a6faf30c3cd817a84518114eeb458d4df64f1d18c5f26386836d5193f1036dc4",
+      "bench_id": "K4B-020",
+      "challenge_hash_sha256": "e22b7d3785ceae644bfa05199f649c50d0ee47dcba8307f899b3984def1d0a1a",
+      "ciphertext_ic": 0.035438,
+      "ciphertext_sha256": "d31c24b699207d53d5380f4ad96721cfe2a6a7b37f37dcf90a05d7cff2d9efea",
+      "difficulty_band": "gold",
+      "title": "Northing planet",
+      "unique_ciphertext_letters": 26
+    },
+    {
+      "answer_hash_sha256": "a93852bfaf3202fb348bd92fe52d8c191509fff686140978e94292ea22dac4fa",
+      "bench_id": "K4B-021",
+      "challenge_hash_sha256": "35a959c439a4e298ef050c98504b66db2e925c8bf5d49d4a509056f7d79a46f4",
+      "ciphertext_ic": 0.040163,
+      "ciphertext_sha256": "114aa0ff7dfd5f8a34812c9ea1e9eaa6d4bf8508f629526cd03fad932f2a6f0f",
+      "difficulty_band": "gold",
+      "title": "Relic ragged mirror",
+      "unique_ciphertext_letters": 25
+    },
+    {
+      "answer_hash_sha256": "ba38a7fbd7e88f3634d337c178016c490d996f0e545072e557f9f1b89cddf596",
+      "bench_id": "K4B-022",
+      "challenge_hash_sha256": "1335a1f1d60455d758ec1bab64a87576d00d17bf5d10c36153492a88b628c961",
+      "ciphertext_ic": 0.046177,
+      "ciphertext_sha256": "e93d91dbb739d19538b8104541e429a8a1d54b8548eeab30804350a710967eab",
+      "difficulty_band": "gold",
+      "title": "Silver thirteen skip",
+      "unique_ciphertext_letters": 23
+    },
+    {
+      "answer_hash_sha256": "5f16c9c57b56cf5f17c86a742898fecd1b31abc233103cea0de94e3f985b9fb4",
+      "bench_id": "K4B-023",
+      "challenge_hash_sha256": "8221e790c99df92e7bdf13159d05fdd8a1b0202226c38d4418cc3012e771a750",
+      "ciphertext_ic": 0.042311,
+      "ciphertext_sha256": "fd7d6c4e2a4131a523b2bd8bf5963a2b15b716d3c9a6e340d3c6db33fe074475",
+      "difficulty_band": "gold",
+      "title": "Quartz rail blocks",
+      "unique_ciphertext_letters": 24
+    },
+    {
+      "answer_hash_sha256": "12189d342a0ceba7d37d5226884d471b01762fb17a8d957ea5722c913ab9b725",
+      "bench_id": "K4B-024",
+      "challenge_hash_sha256": "782fc3579b6462190c4708389a2d22577990b3f82fdd83c8bcc1818ef923f0a0",
+      "ciphertext_ic": 0.051976,
+      "ciphertext_sha256": "8e440c915ff697dd957b645f7760dceceae2319e519fe340bb3877c06f897f8e",
+      "difficulty_band": "gold",
+      "title": "Facade diagonal mirror",
+      "unique_ciphertext_letters": 25
+    },
+    {
+      "answer_hash_sha256": "00ad6ea67f0ff9aaadafc9ebfee5c2cf3b8df6644f107d31fcdd32b454bf9e00",
+      "bench_id": "K4B-025",
+      "challenge_hash_sha256": "56ff63a9c51f187f1e367965293c1b0408636a87609458372e15bf0b84478e29",
+      "ciphertext_ic": 0.045103,
+      "ciphertext_sha256": "4864d3a6636ba339c22bad871a013f8d4f0d4dc0ac5bef2bb7b087eb3f325ecb",
+      "difficulty_band": "gold",
+      "title": "Solstice fjord route",
+      "unique_ciphertext_letters": 25
+    }
+  ],
+  "controller_policy": "Use the existing KryptosBot full controller with a synthetic challenge input adapter and isolated synthetic ledger. Do not create a mini-controller.",
+  "created_utc": "2026-04-26T00:00:00Z",
+  "crib_policy": "Each challenge publishes 24 known plaintext positions in two spans matching K4-style 0-indexed spans 21-33 and 63-73.",
+  "length_policy": "All challenge ciphertexts and plaintexts are exactly 97 A-Z characters.",
+  "pass_policy": "Strict pass requires exact plaintext plus reproducible method/layer order. Plaintext-only is partial. Method-only is not a pass.",
+  "schema_version": "k4bench.public_manifest.v1",
+  "suite_id": "K4BENCH-2026-04-26-V1"
+}

@@ -1,0 +1,83 @@
+{
+  "bench_id": "K4B-021",
+  "ciphertext": "OBCHCDTLZPOYFDJKRTMTJLQLZIMSJIIAINUPVBZVLWYLNIBCULYBGZSUNEZWHMBJTLFYYTIWFUAIDMVZHVDROZVYFJKVCYPUU",
+  "ciphertext_alphabet": "AZ",
+  "ciphertext_length": 97,
+  "known_plaintext_positions": {
+    "21": "K",
+    "22": "R",
+    "23": "Y",
+    "24": "P",
+    "25": "T",
+    "26": "O",
+    "27": "S",
+    "28": "M",
+    "29": "I",
+    "30": "R",
+    "31": "R",
+    "32": "O",
+    "33": "R",
+    "63": "S",
+    "64": "H",
+    "65": "O",
+    "66": "R",
+    "67": "T",
+    "68": "W",
+    "69": "O",
+    "70": "R",
+    "71": "D",
+    "72": "X",
+    "73": "X"
+  },
+  "known_plaintext_spans": [
+    {
+      "end_inclusive": 33,
+      "label": "crib_a",
+      "length": 13,
+      "start": 21,
+      "text": "KRYPTOSMIRROR"
+    },
+    {
+      "end_inclusive": 73,
+      "label": "crib_b",
+      "length": 11,
+      "start": 63,
+      "text": "SHORTWORDXX"
+    }
+  ],
+  "public_clue_pack": {
+    "clue_text": "RELIC is written beside a KRYPTOS mirror and a seven-wide ragged column walk.",
+    "constraint_summary": [
+      "A-Z only; no spaces or punctuation in ciphertext.",
+      "Plaintext is exactly 97 A-Z characters.",
+      "The construction uses hand-executable classical/procedural layers only.",
+      "All key material needed for the intended solution is derivable from this clue pack.",
+      "Layer count is between two and three unless a clue explicitly collapses a layer into a simple reversal or mirror.",
+      "A strict pass requires both the exact plaintext and a reproducible method/layer order."
+    ]
+  },
+  "public_quality_metadata": {
+    "answer_hash_sha256": "a93852bfaf3202fb348bd92fe52d8c191509fff686140978e94292ea22dac4fa",
+    "challenge_hash_sha256": "35a959c439a4e298ef050c98504b66db2e925c8bf5d49d4a509056f7d79a46f4",
+    "contains_solution_material": false,
+    "difficulty_band": "gold",
+    "purpose": "blind synthetic K4-like full-controller calibration"
+  },
+  "schema_version": "k4bench.challenge.v1",
+  "solver_output_contract": {
+    "known_crib_score_target": 24,
+    "required_json_fields": [
+      "bench_id",
+      "plaintext",
+      "confidence",
+      "method_summary",
+      "layers",
+      "crib_score",
+      "evidence",
+      "reproducibility_notes"
+    ],
+    "strict_pass_rule": "Exact 97-character plaintext AND exact or human-equivalent layer order with keys/routes/alphabets. Plaintext-only is at most PARTIAL."
+  },
+  "suite_id": "K4BENCH-2026-04-26-V1",
+  "title": "Relic ragged mirror"
+}

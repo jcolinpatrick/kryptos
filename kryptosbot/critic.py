@@ -280,10 +280,27 @@ class TheoryCritic:
         critic = TheoryCritic(ledger)
         verdict = critic.evaluate(theory)
         # verdict.decision is APPROVE, REJECT_*, or DEFER
+
+    K4Bench input mode (2026-04-26): construct with ``bench_mode=True``
+    to suppress real-K4 elimination-tier rejections. Spec-shape checks
+    (completeness, duplicate, override-duplicate, dsl_untranslatable)
+    still fire normally; what's skipped is every check whose evidence
+    lives in the real-K4 elimination ledger or registries (TIER_1/TIER_2
+    families, FamilyRecord.elimination_tier, retired-palette / consensus-
+    null-mask revival, K4-anomaly-keyed prompt-surface scope, K4-specific
+    contradictions). The synthetic K4Bench challenge is independent of
+    K4; a family eliminated for K4 may still be the right answer for
+    the synthetic challenge.
     """
 
-    def __init__(self, ledger: TheoryLedger) -> None:
+    def __init__(
+        self,
+        ledger: TheoryLedger,
+        *,
+        bench_mode: bool = False,
+    ) -> None:
         self.ledger = ledger
+        self.bench_mode = bench_mode
 
     def evaluate(self, theory: TheoryRecord) -> CriticVerdict:
         """
@@ -326,100 +343,106 @@ class TheoryCritic:
         # --- Check 2: Family elimination ---
         family_lower = theory.family.lower().replace(" ", "_").replace("/", "_")
 
-        # Generic family-tier refusal from the bootstrapped family registry.
-        # Runs BEFORE the hardcoded TIER_1/TIER_2 sets so newly-bridged
-        # historical eliminations (imported via campaign manifests) are
-        # honoured without having to touch this file again. KEEP NARROW:
-        # only consults FamilyRecord.elimination_tier, no semantic parsing.
-        tier_refusal = self._check_family_tier_eliminated(theory, family_lower)
-        if tier_refusal is not None:
-            return tier_refusal
+        # K4Bench input mode (2026-04-26): every Check-2 gate below is a
+        # real-K4 elimination grounded in real-K4 evidence. Skip them
+        # under bench_mode so a synthetic K4Bench challenge can dispatch
+        # families that K4 happens to have eliminated. Spec-shape checks
+        # below (Check 3 onward) still fire.
+        if not self.bench_mode:
+            # Generic family-tier refusal from the bootstrapped family registry.
+            # Runs BEFORE the hardcoded TIER_1/TIER_2 sets so newly-bridged
+            # historical eliminations (imported via campaign manifests) are
+            # honoured without having to touch this file again. KEEP NARROW:
+            # only consults FamilyRecord.elimination_tier, no semantic parsing.
+            tier_refusal = self._check_family_tier_eliminated(theory, family_lower)
+            if tier_refusal is not None:
+                return tier_refusal
 
-        if family_lower in TIER_1_FAMILIES:
-            return CriticVerdict(
-                decision=CriticDecision.REJECT_ELIMINATED,
-                confidence=1.0,
-                reasons=[
-                    f"Family '{theory.family}' is Tier 1 eliminated (structurally impossible)",
-                ],
-            )
+            if family_lower in TIER_1_FAMILIES:
+                return CriticVerdict(
+                    decision=CriticDecision.REJECT_ELIMINATED,
+                    confidence=1.0,
+                    reasons=[
+                        f"Family '{theory.family}' is Tier 1 eliminated (structurally impossible)",
+                    ],
+                )
 
-        # Tier 2: eliminated as single-layer, but OPEN as part of multi-layer
-        if family_lower in TIER_2_FAMILIES:
-            is_multi_layer = (
-                "multi" in theory.mechanism.lower()
-                or "layer" in theory.mechanism.lower()
-                or "composite" in theory.mechanism.lower()
-                or theory.family.lower() == "multi_layer"
-                or any("multi" in t.lower() for t in theory.tags)
-            )
-            if not is_multi_layer:
+            # Tier 2: eliminated as single-layer, but OPEN as part of multi-layer
+            if family_lower in TIER_2_FAMILIES:
+                is_multi_layer = (
+                    "multi" in theory.mechanism.lower()
+                    or "layer" in theory.mechanism.lower()
+                    or "composite" in theory.mechanism.lower()
+                    or theory.family.lower() == "multi_layer"
+                    or any("multi" in t.lower() for t in theory.tags)
+                )
+                if not is_multi_layer:
+                    return CriticVerdict(
+                        decision=CriticDecision.REJECT_ELIMINATED,
+                        confidence=0.95,
+                        reasons=[
+                            f"Family '{theory.family}' is Tier 2 eliminated as single-layer",
+                            "Would pass if framed as one layer of a multi-layer hypothesis",
+                        ],
+                    )
+                else:
+                    reasons.append(
+                        f"Family '{theory.family}' is Tier 2 single-layer eliminated "
+                        "but allowed as component of multi-layer hypothesis"
+                    )
+
+            # Check family status from ledger
+            fam_record = self.ledger.get_family(family_lower)
+            if fam_record and fam_record.status == FamilyStatus.EXHAUSTED:
+                # Allow if explicitly multi-layer
+                is_multi = "multi" in theory.mechanism.lower() or "layer" in theory.mechanism.lower()
+                if not is_multi:
+                    return CriticVerdict(
+                        decision=CriticDecision.REJECT_ELIMINATED,
+                        confidence=0.9,
+                        reasons=[
+                            f"Family '{theory.family}' marked exhausted in ledger",
+                            f"Evidence: {fam_record.elimination_evidence}",
+                        ],
+                    )
+
+            # --- Check 2.5: Retired-palette revival (belt-and-suspenders) ---
+            # Matches theories that revive the null_palette_retired claim
+            # without using the claim_id verbatim (so the claim_policy gates
+            # would miss them). See module-level matcher docstring.
+            combined_text_for_retired = " ".join([
+                theory.title or "",
+                theory.core_claim or "",
+                theory.mechanism or "",
+                " ".join(theory.tags or []),
+            ])
+            retired_reason = _detect_retired_palette_revival(combined_text_for_retired)
+            if retired_reason is not None:
+                logger.info(
+                    "Critic rejected %s as retired-palette revival: %s",
+                    theory.hypothesis_id[:8], retired_reason[:120],
+                )
                 return CriticVerdict(
                     decision=CriticDecision.REJECT_ELIMINATED,
                     confidence=0.95,
-                    reasons=[
-                        f"Family '{theory.family}' is Tier 2 eliminated as single-layer",
-                        "Would pass if framed as one layer of a multi-layer hypothesis",
-                    ],
-                )
-            else:
-                reasons.append(
-                    f"Family '{theory.family}' is Tier 2 single-layer eliminated "
-                    "but allowed as component of multi-layer hypothesis"
+                    reasons=[retired_reason],
                 )
 
-        # Check family status from ledger
-        fam_record = self.ledger.get_family(family_lower)
-        if fam_record and fam_record.status == FamilyStatus.EXHAUSTED:
-            # Allow if explicitly multi-layer
-            is_multi = "multi" in theory.mechanism.lower() or "layer" in theory.mechanism.lower()
-            if not is_multi:
+            # --- Check 2.6: CONSENSUS_NULL_POSITIONS revival (belt-and-suspenders) ---
+            # Closes the generator leak observed 2026-04-17: theorists kept
+            # invoking the 17-position null mask despite red-team flagging it
+            # as pending-retraction. See matcher docstring above.
+            mask_reason = _detect_consensus_null_positions_revival(combined_text_for_retired)
+            if mask_reason is not None:
+                logger.info(
+                    "Critic rejected %s as CONSENSUS_NULL_POSITIONS revival: %s",
+                    theory.hypothesis_id[:8], mask_reason[:120],
+                )
                 return CriticVerdict(
                     decision=CriticDecision.REJECT_ELIMINATED,
-                    confidence=0.9,
-                    reasons=[
-                        f"Family '{theory.family}' marked exhausted in ledger",
-                        f"Evidence: {fam_record.elimination_evidence}",
-                    ],
+                    confidence=0.95,
+                    reasons=[mask_reason],
                 )
-
-        # --- Check 2.5: Retired-palette revival (belt-and-suspenders) ---
-        # Matches theories that revive the null_palette_retired claim
-        # without using the claim_id verbatim (so the claim_policy gates
-        # would miss them). See module-level matcher docstring.
-        combined_text = " ".join([
-            theory.title or "",
-            theory.core_claim or "",
-            theory.mechanism or "",
-            " ".join(theory.tags or []),
-        ])
-        retired_reason = _detect_retired_palette_revival(combined_text)
-        if retired_reason is not None:
-            logger.info(
-                "Critic rejected %s as retired-palette revival: %s",
-                theory.hypothesis_id[:8], retired_reason[:120],
-            )
-            return CriticVerdict(
-                decision=CriticDecision.REJECT_ELIMINATED,
-                confidence=0.95,
-                reasons=[retired_reason],
-            )
-
-        # --- Check 2.6: CONSENSUS_NULL_POSITIONS revival (belt-and-suspenders) ---
-        # Closes the generator leak observed 2026-04-17: theorists kept
-        # invoking the 17-position null mask despite red-team flagging it
-        # as pending-retraction. See matcher docstring above.
-        mask_reason = _detect_consensus_null_positions_revival(combined_text)
-        if mask_reason is not None:
-            logger.info(
-                "Critic rejected %s as CONSENSUS_NULL_POSITIONS revival: %s",
-                theory.hypothesis_id[:8], mask_reason[:120],
-            )
-            return CriticVerdict(
-                decision=CriticDecision.REJECT_ELIMINATED,
-                confidence=0.95,
-                reasons=[mask_reason],
-            )
 
         # --- Check 3: Duplicate detection ---
         similar = self._find_similar_theories(theory)
@@ -469,23 +492,32 @@ class TheoryCritic:
             )
 
         # --- Check 4: Contradiction check ---
-        contradictions = self._check_contradictions(theory)
-        if contradictions:
-            return CriticVerdict(
-                decision=CriticDecision.REJECT_CONTRADICTED,
-                confidence=0.9,
-                reasons=contradictions,
-                contradicting_facts=contradictions,
-            )
+        # Skip in bench mode: the contradictions are all keyed to real-K4
+        # facts (Bifid alphabet, autokey crib feedback, K4 IC). The
+        # synthetic K4Bench challenge has its own A-Z 97-char structure
+        # but no shared factual constraint with these checks.
+        if not self.bench_mode:
+            contradictions = self._check_contradictions(theory)
+            if contradictions:
+                return CriticVerdict(
+                    decision=CriticDecision.REJECT_CONTRADICTED,
+                    confidence=0.9,
+                    reasons=contradictions,
+                    contradicting_facts=contradictions,
+                )
 
-        # --- Check 4.5: Narrow prompt-surface / falsifiability hygiene ---
-        scope_reasons = self._check_prompt_surface_scope(theory)
-        if scope_reasons:
-            return CriticVerdict(
-                decision=CriticDecision.REJECT_UNDERCONSTRAINED,
-                confidence=0.85,
-                reasons=scope_reasons,
-            )
+            # --- Check 4.5: Narrow prompt-surface / falsifiability hygiene ---
+            # Skip in bench mode: every clause keys on real-K4 anomaly ids
+            # (width21_vertical_bigrams, aaa_coordinate_lie, w_delimiter_segments)
+            # or on K4-specific text patterns. None of these apply to a
+            # synthetic K4Bench challenge.
+            scope_reasons = self._check_prompt_surface_scope(theory)
+            if scope_reasons:
+                return CriticVerdict(
+                    decision=CriticDecision.REJECT_UNDERCONSTRAINED,
+                    confidence=0.85,
+                    reasons=scope_reasons,
+                )
 
         # --- Check 4.6 (R3-2): Category-A/C DSL translatability ---
         #
@@ -502,7 +534,10 @@ class TheoryCritic:
         #       "dsl_untranslatable"
         family_lower_for_category = (theory.family or "").lower()
         if family_lower_for_category not in NON_DSL_FAMILIES:
-            from .hypothesis_dsl import validate_hypothesis_spec
+            from .hypothesis_dsl import (
+                repair_spec_shape,
+                validate_hypothesis_spec,
+            )
             from .job_dispatcher import _kind_has_translation, _SUPPORTED_KINDS
 
             if theory.dsl_spec and family_lower_for_category in _DEFERRED_DSL_FAMILY_NAMES:
@@ -530,15 +565,25 @@ class TheoryCritic:
                     ],
                 )
 
-            # R3-2: if the theorist omitted hypothesis_id or used a
-            # placeholder, substitute the theory's hypothesis_id (which
-            # was derived from core_claim by TheoryRecord.__post_init__).
-            # This preserves the spec's semantic content while ensuring
-            # the validator has a legal id to check against.
-            spec_for_validation = dict(theory.dsl_spec)
-            existing_id = str(spec_for_validation.get("hypothesis_id", "")).strip()
-            if not existing_id or existing_id.startswith("<"):
-                spec_for_validation["hypothesis_id"] = theory.hypothesis_id
+            # K4Bench wiring (2026-04-26): run the narrow shape-repair
+            # pass before validation. Repairs fix two well-known LLM
+            # mistakes: (1) quagmire variant Roman numerals "III"/"IV"
+            # rewritten to canonical "quagmire_iii"/"quagmire_iv";
+            # (2) empty/placeholder hypothesis_id substituted with the
+            # TheoryRecord.hypothesis_id. Anything else is left untouched
+            # for the validator to reject explicitly. The repair report
+            # is logged so silent rewrites are auditable. Subsumes the
+            # R3-2 hypothesis_id substitution that lived inline here.
+            spec_for_validation, repair_report = repair_spec_shape(
+                theory.dsl_spec,
+                default_hypothesis_id=theory.hypothesis_id,
+            )
+            if repair_report.applied():
+                logger.info(
+                    "Critic repaired dsl_spec for theory %s: %s",
+                    theory.hypothesis_id[:8],
+                    "; ".join(repair_report.entries)[:300],
+                )
 
             parsed = validate_hypothesis_spec(spec_for_validation)
             if not parsed.is_valid:
@@ -587,7 +632,22 @@ class TheoryCritic:
         # --- Check 6: Information gain ---
         info_gain = self._estimate_information_gain(theory)
 
-        if info_gain == "low" and not theory.anomalies_exploited:
+        # K4Bench input mode (2026-04-26): the LOW_INFORMATION rejection
+        # rests on (a) "low" info gain estimated against the real-K4
+        # ledger's family-status table and (b) the absence of
+        # anomalies_exploited, which is itself a real-K4 concept (the
+        # anomaly registry catalogues real-K4 anomalies). Both inputs
+        # are real-K4 evidence; neither applies to a synthetic K4Bench
+        # challenge. A concrete DSL spec with valid pipeline layers,
+        # finite cardinality, and challenge-local clue anchors should
+        # be approved unless malformed (Check 1), duplicate (Check 3),
+        # overbudget (downstream admissibility), or unsupported by the
+        # dispatcher (Check 4.6). Skip this check in bench mode.
+        if (
+            info_gain == "low"
+            and not theory.anomalies_exploited
+            and not self.bench_mode
+        ):
             return CriticVerdict(
                 decision=CriticDecision.REJECT_LOW_INFORMATION,
                 confidence=0.7,
