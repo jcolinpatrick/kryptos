@@ -48,6 +48,7 @@ patch spec:
     LESSON-006  failed_method_coverage
     LESSON-007  trigger_driven_alphabet_enumeration
     LESSON-008  fixed_size_block_reversal
+    LESSON-009  caesar_rot_composition
 
 The constructor refuses to load any registry file containing
 forbidden fields, so a corrupted on-disk registry fails closed.
@@ -159,6 +160,15 @@ _VALID_TACTIC_KINDS: frozenset[str] = frozenset({
                                    # tactic; clue-derived block sizes
                                    # plus safe defaults compose with
                                    # vig/beau/var_beau/caesar/atbash.
+    "caesar_rot_composition",      # 2026-04-28: trigger-driven Caesar /
+                                   # ROT shift composed with keyed
+                                   # transpositions and Atbash
+                                   # (LESSON-009). Generalizes the
+                                   # K4B-003 miss into a reusable
+                                   # tactic; clue-derived shift values
+                                   # plus safe defaults compose with
+                                   # columnar / myszkowski / rail_fence /
+                                   # route / atbash.
 })
 
 
@@ -476,6 +486,78 @@ def _default_lessons() -> list[Lesson]:
                 ],
                 "operation_source_labels": [
                     "clue_numeral", "clue_phrase", "default_set",
+                ],
+            },
+        ),
+        Lesson(
+            lesson_id="LESSON-009",
+            title="Caesar / ROT composition with transposition + Atbash",
+            description=(
+                "When clue-pack language gestures at additive shifts "
+                "or rotations — words such as shift, shifted, offset, "
+                "rotate, rotated, rotation, step, caesar, rot, "
+                "additive, subtractive — the candidate pipeline MUST "
+                "enumerate a canonical Caesar / ROT layer (the "
+                "first-class ``caesar`` DSL kind, NOT a 1-letter "
+                "Vigenere collapse, so coverage_vector and attempt "
+                "layers explicitly carry shift_value and "
+                "operation_source). Shift values are drawn from "
+                "clue-derived numerals (digit literals 0..25 and "
+                "small spelled numerals two..twenty) UNIONED with "
+                "the safe default set {1, 3, 5, 7, 8, 13, 17, 23} "
+                "(common shift constants including ROT13). The "
+                "lesson composes Caesar with the keyed transpositions "
+                "(columnar, myszkowski, rail_fence, route) in BOTH "
+                "layer orders, with Atbash in BOTH layer orders, and "
+                "with the four three-layer sandwiches that route "
+                "through Caesar + transposition + Atbash, Atbash + "
+                "transposition + Caesar, transposition + Caesar + "
+                "Atbash, and Atbash + Caesar + transposition. The "
+                "lesson is GENERALIZED: it stores trigger vocabulary, "
+                "shift-value knobs, and family pairings — never "
+                "challenge-specific plaintexts or sealed material."
+            ),
+            tactic_kind="caesar_rot_composition",
+            applies_to_families=[
+                "caesar",
+                "caesar_columnar",
+                "caesar_myszkowski",
+                "caesar_rail_fence",
+                "caesar_route",
+                "caesar_atbash",
+                "caesar_columnar_atbash",
+                "atbash_columnar_caesar",
+                "columnar_caesar_atbash",
+                "atbash_caesar_columnar",
+            ],
+            generates_specs=True,
+            related_lesson_ids=["LESSON-001", "LESSON-002", "LESSON-008"],
+            source_origin="k4bench-derived",
+            tactic_parameters={
+                "trigger_tokens": [
+                    "shift", "shifted", "offset",
+                    "rotate", "rotated", "rotation",
+                    "step",
+                    "caesar",
+                    "rot",
+                    "additive", "subtractive",
+                ],
+                "default_shifts": [1, 3, 5, 7, 8, 13, 17, 23],
+                "trigger_match": "word_boundary_case_insensitive",
+                "applies_to_transposition_kinds": [
+                    "columnar", "myszkowski", "rail_fence", "route",
+                ],
+                "applies_to_substitution_partners": [
+                    "atbash",
+                ],
+                "operation_source_labels": [
+                    "clue_numeral", "clue_phrase", "default_set",
+                ],
+                "three_layer_orders": [
+                    ["caesar", "transposition", "atbash"],
+                    ["atbash", "transposition", "caesar"],
+                    ["transposition", "caesar", "atbash"],
+                    ["atbash", "caesar", "transposition"],
                 ],
             },
         ),

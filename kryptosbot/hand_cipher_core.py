@@ -155,25 +155,168 @@ _SHIFT_TRIGGER_TOKENS: frozenset[str] = frozenset({
     "turn", "clockwise", "counterclockwise",
 })
 
-# Caesar shift enumeration. Caesar is implemented as a single-letter
-# Vigenere keyword (A..Z), so the family generator can reuse the
-# existing _keyword_substitution_layer machinery without adding a new
-# DSL kind. The default set covers ROT13 plus a handful of common
-# shifts; clue-derived numerics may extend it. Shift 0 is identity
-# and is excluded.
-_DEFAULT_CAESAR_SHIFTS: tuple[int, ...] = (1, 3, 5, 7, 13)
+# Caesar shift enumeration. The dispatcher now exposes a first-class
+# ``caesar`` DSL kind (LESSON-009) so HCC emits caesar layers directly
+# rather than collapsing them into 1-letter Vigeneres; this keeps
+# coverage_vector and attempt artifact layers explicit.
+#
+# Default shift set (LESSON-009 tactic_parameters.default_shifts):
+# common hand-cipher shifts including ROT13. Shift 0 is identity and
+# is excluded by callers. Clue-derived numerals are unioned in front
+# of the defaults via ``_caesar_shifts_for_payload``.
+_DEFAULT_CAESAR_SHIFTS: tuple[int, ...] = (1, 3, 5, 7, 8, 13, 17, 23)
+
+# Smaller shift set used by LESSON-008's ``reverse_blocks_caesar``
+# generator. LESSON-009 already exercises the full shift space against
+# every transposition kind; the LESSON-008 sub-family only needs a
+# small representative cover here so the universe stays bounded when
+# both triggers fire on the same clue pack.
+_DEFAULT_REV_BLOCKS_CAESAR_SHIFTS: tuple[int, ...] = (1, 3, 13)
+
+# 2026-04-28 (LESSON-009): Caesar / ROT trigger vocabulary. When ANY
+# of these tokens appears in the clue text (case-insensitive,
+# word-boundary match), the generator emits the full Caesar +
+# transposition + Atbash family matrix. Without a trigger the family
+# generators are absent and the historical catalogue is preserved.
+_CAESAR_TRIGGER_TOKENS: frozenset[str] = frozenset({
+    "shift", "shifted", "offset",
+    "rotate", "rotated", "rotation",
+    "step",
+    "caesar",
+    "rot",
+    "additive", "subtractive",
+})
 
 
 def _shift_to_keyword(shift: int) -> str:
     """Map an integer shift in [1, 25] to its Vigenere keyword char.
     Shift k → chr(ord('A') + k). Shift 0 is identity (excluded by
     callers).
+
+    Retained for backwards compatibility with the LESSON-008
+    reverse_blocks_caesar generator that still wraps Caesar inside a
+    Vigenere layer when emitting the LESSON-008 family. New callers
+    SHOULD prefer ``_caesar_layer`` so the canonical caesar kind
+    surfaces in coverage_vector.
     """
     if not 1 <= shift <= 25:
         raise ValueError(
             f"_shift_to_keyword: shift must be in [1, 25]; got {shift}"
         )
     return chr(ord("A") + shift)
+
+
+def _caesar_layer(shift: int) -> dict[str, Any]:
+    """Build a canonical caesar layer dict (LESSON-009).
+
+    The dispatcher translates ``kind='caesar'`` with a single
+    ``shift`` parameter into a Vigenere transform with key=[shift]
+    so the kernel arithmetic is exactly C = (P + shift) mod 26.
+    Using a first-class kind (rather than collapsing into a 1-letter
+    Vigenere) keeps coverage_vector + attempt layers explicit.
+
+    The shift must be in [0, 25]. Shift 0 is identity and most
+    callers exclude it; it is permitted at the layer-builder level so
+    tests can verify the boundary behaviour.
+    """
+    if not isinstance(shift, int) or not 0 <= shift <= 25:
+        raise ValueError(
+            f"_caesar_layer: shift must be int in [0, 25]; got {shift!r}"
+        )
+    return {
+        "kind": "caesar",
+        "alphabet": "AZ",
+        "params": [{"name": "shift", "values": [shift]}],
+    }
+
+
+def _detect_caesar_trigger(clue_text: str) -> bool:
+    """Whole-word match for any LESSON-009 Caesar / ROT trigger token.
+
+    Used by ``generate_layered_specs`` to gate emission of the
+    caesar family matrix. A clue text without any of these tokens
+    leaves the historical catalogue bit-identical.
+
+    Special case for the "rot" token: the standard naming convention
+    for ROT-N ciphers is "rotN" (rot13, rot8, etc.). A strict
+    word-boundary check would reject those because the digits are
+    alphanumeric. The detector therefore accepts "rot" followed by
+    one or more decimal digits as a valid match. This is the only
+    digit-tolerant trigger; every other token uses the standard
+    alphanumeric word-boundary rule.
+    """
+    if not isinstance(clue_text, str) or not clue_text:
+        return False
+    lower = clue_text.lower()
+    for token in _CAESAR_TRIGGER_TOKENS:
+        idx = 0
+        while True:
+            pos = lower.find(token, idx)
+            if pos < 0:
+                break
+            before_ok = pos == 0 or not lower[pos - 1].isalnum()
+            after_pos = pos + len(token)
+            if after_pos >= len(lower):
+                after_ok = True
+            else:
+                next_ch = lower[after_pos]
+                if not next_ch.isalnum():
+                    after_ok = True
+                elif token == "rot" and next_ch.isdigit():
+                    # ROT13 naming convention. Accept "rot" followed
+                    # by digits then a non-alphanumeric (or EOL) so
+                    # "rot13", "rot-3", "rot8" all trigger.
+                    j = after_pos
+                    while j < len(lower) and lower[j].isdigit():
+                        j += 1
+                    after_ok = j >= len(lower) or not lower[j].isalpha()
+                else:
+                    after_ok = False
+            if before_ok and after_ok:
+                return True
+            idx = pos + 1
+    return False
+
+
+def _caesar_shifts_for_payload(clue_text: str) -> list[tuple[int, str]]:
+    """Return the (shift, operation_source) list for the payload.
+
+    Sources:
+      ``clue_numeral`` — digit literals 0..25 in the clue text and
+                         small spelled numerals (two..twenty)
+      ``default_set``  — the safe default set ``_DEFAULT_CAESAR_SHIFTS``
+
+    Order: clue-derived shifts first (more meaningful), then defaults
+    not already present. The caller is expected to filter shift 0
+    when it would render a layer identity.
+    """
+    out: list[tuple[int, str]] = []
+    seen: set[int] = set()
+    # Re-use _depths_from_clue_text — its [2, 49] band is a superset
+    # of [0, 25] for non-trivial shifts; we further restrict here.
+    for n in _depths_from_clue_text(clue_text):
+        if 1 <= n <= 25 and n not in seen:
+            seen.add(n)
+            out.append((n, "clue_numeral"))
+    # Also pick up digit "0" and "1" that _depths_from_clue_text
+    # filters out (its band starts at 2). Caesar shifts 0 and 1 are
+    # legitimate, though shift 0 is identity and most callers skip it.
+    import re
+    if isinstance(clue_text, str) and clue_text:
+        for m in re.finditer(r"(?<!\w)([01])(?!\w)", clue_text):
+            try:
+                n = int(m.group(1))
+            except ValueError:
+                continue
+            if n not in seen:
+                seen.add(n)
+                out.append((n, "clue_numeral"))
+    for d in _DEFAULT_CAESAR_SHIFTS:
+        if d in seen:
+            continue
+        seen.add(d)
+        out.append((d, "default_set"))
+    return out
 
 # Hard cap on the number of generated specs. With alphabet-mode
 # enumeration on top of (family × role × order), the universe is
@@ -192,7 +335,7 @@ def _shift_to_keyword(shift: int) -> str:
 # case. Operators can lower the ceiling via --hcc-seeds N when they
 # want a faster cycle. Cap at 600 to leave headroom for future
 # kinds without breaking the deterministic-coverage contract.
-_DEFAULT_MAX_SPECS: int = 1200
+_DEFAULT_MAX_SPECS: int = 5000
 
 
 # ============================================================================
@@ -242,6 +385,18 @@ class CoverageVector:
     block_size: Optional[int] = None
     block_mode: str = ""              # "reverse_partial" | "truncate" | ""
     operation_source: str = ""        # "clue_numeral" | "clue_phrase" | "default_set" | ""
+    # 2026-04-28 (LESSON-009): Caesar / ROT coverage fields. Empty
+    # when the spec does not include a caesar layer; populated
+    # otherwise so coverage analysis can answer "have we tested
+    # shift=8 in this family?". ``operation_source`` (above) is
+    # shared between LESSON-008 and LESSON-009 — it always describes
+    # the provenance of whichever non-keyword numeric parameter
+    # drives the spec (block_size for reverse_blocks, shift_value
+    # for caesar). When a spec uses BOTH layers (e.g. caesar +
+    # reverse_blocks), the operation_source reports the Caesar
+    # shift's provenance and the block_size's provenance is encoded
+    # in the spec extras.
+    shift_value: Optional[int] = None
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -256,6 +411,7 @@ class CoverageVector:
             "block_size": self.block_size,
             "block_mode": self.block_mode,
             "operation_source": self.operation_source,
+            "shift_value": self.shift_value,
         }
 
     @classmethod
@@ -280,6 +436,8 @@ class CoverageVector:
         legacy_alphabet = str(d.get("alphabet", "AZ"))
         bs_raw = d.get("block_size")
         block_size = int(bs_raw) if isinstance(bs_raw, int) else None
+        sh_raw = d.get("shift_value")
+        shift_value = int(sh_raw) if isinstance(sh_raw, int) else None
         return cls(
             layer_family=str(d.get("layer_family", "")),
             layer_order=tuple(layer_order),
@@ -292,6 +450,7 @@ class CoverageVector:
             block_size=block_size,
             block_mode=str(d.get("block_mode", "")),
             operation_source=str(d.get("operation_source", "")),
+            shift_value=shift_value,
         )
 
     @property
@@ -1314,7 +1473,7 @@ def _gen_reverse_blocks_caesar_family(
     *,
     bench_slug: str,
     block_sizes: Sequence[tuple[int, str]],
-    shifts: Sequence[int] = _DEFAULT_CAESAR_SHIFTS,
+    shifts: Sequence[int] = _DEFAULT_REV_BLOCKS_CAESAR_SHIFTS,
     block_modes: Sequence[str] = ("reverse_partial", "truncate"),
 ) -> list[GeneratedSpec]:
     """LESSON-008: reverse_blocks paired with a Caesar shift.
@@ -1395,7 +1554,7 @@ def _gen_reverse_blocks_three_layer_family(
     keyword_a: str,
     keyword_b: str,
     block_sizes: Sequence[tuple[int, str]],
-    shifts: Sequence[int] = _DEFAULT_CAESAR_SHIFTS,
+    shifts: Sequence[int] = _DEFAULT_REV_BLOCKS_CAESAR_SHIFTS,
     block_modes: Sequence[str] = ("reverse_partial",),
     alphabet_modes: Optional[Sequence[AlphabetMode]] = None,
 ) -> list[GeneratedSpec]:
@@ -1494,6 +1653,399 @@ def _gen_reverse_blocks_three_layer_family(
                             ),
                             compute_budget_minutes=3,
                         ))
+    return out
+
+
+def _gen_caesar_alone_family(
+    *,
+    bench_slug: str,
+    shifts: Sequence[tuple[int, str]],
+) -> list[GeneratedSpec]:
+    """LESSON-009: canonical Caesar / ROT layer alone.
+
+    Emits one spec per shift value. Shift 0 is excluded (identity).
+    The coverage_vector carries shift_value + operation_source so
+    telemetry distinguishes Caesar(8) from a 1-letter Vigenere(I).
+    """
+    family_label = "caesar"
+    out: list[GeneratedSpec] = []
+    for shift, op_source in shifts:
+        if shift == 0:
+            continue
+        layer = _caesar_layer(shift)
+        cov = CoverageVector(
+            layer_family=family_label,
+            layer_order=("caesar",),
+            role_assignment=(("caesar_shift", str(shift)),),
+            alphabet="AZ", n_layers=1,
+            extras=(("caesar_shift", shift),),
+            shift_value=shift,
+            operation_source=op_source,
+        )
+        out.append(_make_spec(
+            bench_slug=bench_slug, family_label=family_label,
+            pipeline=[layer], coverage=cov,
+            notes=(
+                f"caesar(shift={shift}) [op_source={op_source}]"
+            ),
+            crib_alignment="direct_positional",
+        ))
+    return out
+
+
+def _gen_caesar_keyword_transposition_family(
+    *,
+    bench_slug: str,
+    trans_kind: str,                  # "columnar" | "myszkowski"
+    keyword_a: str,
+    keyword_b: str,
+    shifts: Sequence[tuple[int, str]],
+) -> list[GeneratedSpec]:
+    """LESSON-009: Caesar + keyword transposition in BOTH layer orders.
+
+    For trans_kind in {columnar, myszkowski}, emits one spec per
+    (keyword × shift × layer_order) tuple. The transposition keyword
+    is clue-derived (caller passes ``keyword_a`` / ``keyword_b`` from
+    the clue extraction); Caesar shift values come from the
+    LESSON-009 ``_caesar_shifts_for_payload`` enumeration. Layer
+    family label = ``caesar_<trans_kind>`` so coverage analysis
+    answers "have we tested caesar(8) + columnar(RIVET) in both
+    orders?".
+    """
+    if trans_kind not in ("columnar", "myszkowski"):
+        raise ValueError(
+            f"_gen_caesar_keyword_transposition_family: unsupported "
+            f"trans_kind {trans_kind!r}; expected columnar / myszkowski"
+        )
+    family_label = f"caesar_{trans_kind}"
+
+    def _trans_layer(kw: str) -> dict[str, Any]:
+        if trans_kind == "columnar":
+            return _keyword_columnar_layer(kw)
+        return _keyword_myszkowski_layer(kw)
+
+    out: list[GeneratedSpec] = []
+    for kw in (keyword_a, keyword_b):
+        if not isinstance(kw, str) or len(kw) < 2:
+            continue
+        trans_layer = _trans_layer(kw)
+        for shift, op_source in shifts:
+            if shift == 0:
+                continue
+            caesar_layer = _caesar_layer(shift)
+            role = (
+                ("caesar_shift", str(shift)),
+                (trans_kind, kw),
+            )
+            extras = (("caesar_shift", shift),)
+            # Order 1: Caesar first
+            out.append(_make_spec(
+                bench_slug=bench_slug, family_label=family_label,
+                pipeline=[caesar_layer, trans_layer],
+                coverage=CoverageVector(
+                    layer_family=family_label,
+                    layer_order=("caesar", trans_kind),
+                    role_assignment=role,
+                    alphabet="AZ", n_layers=2,
+                    extras=extras,
+                    shift_value=shift,
+                    operation_source=op_source,
+                ),
+                notes=(
+                    f"caesar(shift={shift}) ∘ {trans_kind}({kw}) "
+                    "[caesar-first]"
+                ),
+            ))
+            # Order 2: Transposition first
+            out.append(_make_spec(
+                bench_slug=bench_slug, family_label=family_label,
+                pipeline=[trans_layer, caesar_layer],
+                coverage=CoverageVector(
+                    layer_family=family_label,
+                    layer_order=(trans_kind, "caesar"),
+                    role_assignment=role,
+                    alphabet="AZ", n_layers=2,
+                    extras=extras,
+                    shift_value=shift,
+                    operation_source=op_source,
+                ),
+                notes=(
+                    f"{trans_kind}({kw}) ∘ caesar(shift={shift}) "
+                    "[trans-first]"
+                ),
+            ))
+    return out
+
+
+def _gen_caesar_keywordless_transposition_family(
+    *,
+    bench_slug: str,
+    trans_kind: str,                  # "rail_fence" | "route"
+    shifts: Sequence[tuple[int, str]],
+    rail_fence_depths: Sequence[int] = (3, 5),
+    route_grids: Sequence[tuple[int, int]] = ((7, 14), (10, 10)),
+) -> list[GeneratedSpec]:
+    """LESSON-009: Caesar + keywordless transposition (rail_fence /
+    route) in BOTH layer orders.
+
+    Rail-fence iterates depth from the resolved depth set (clue
+    numerals + safe defaults). Route iterates the project default
+    grids (7×14, 10×10) at the serpentine variant.
+    """
+    if trans_kind not in ("rail_fence", "route"):
+        raise ValueError(
+            f"_gen_caesar_keywordless_transposition_family: "
+            f"unsupported trans_kind {trans_kind!r}"
+        )
+    family_label = f"caesar_{trans_kind}"
+
+    if trans_kind == "rail_fence":
+        trans_specs = [
+            (
+                _rail_fence_layer(depth),
+                (("rail_fence_depth", depth),),
+            )
+            for depth in rail_fence_depths
+        ]
+    else:  # route
+        trans_specs = [
+            (
+                _route_layer(variant="serpentine", rows=r, cols=c),
+                (("route_rows", r), ("route_cols", c)),
+            )
+            for r, c in route_grids
+        ]
+
+    out: list[GeneratedSpec] = []
+    for trans_layer, trans_extras in trans_specs:
+        for shift, op_source in shifts:
+            if shift == 0:
+                continue
+            caesar_layer = _caesar_layer(shift)
+            role = (("caesar_shift", str(shift)),)
+            extras = (("caesar_shift", shift),) + trans_extras
+            # Order 1: Caesar first
+            out.append(_make_spec(
+                bench_slug=bench_slug, family_label=family_label,
+                pipeline=[caesar_layer, trans_layer],
+                coverage=CoverageVector(
+                    layer_family=family_label,
+                    layer_order=("caesar", trans_kind),
+                    role_assignment=role,
+                    alphabet="AZ", n_layers=2,
+                    extras=extras,
+                    shift_value=shift,
+                    operation_source=op_source,
+                ),
+                notes=(
+                    f"caesar(shift={shift}) ∘ {trans_kind}{trans_extras} "
+                    "[caesar-first]"
+                ),
+            ))
+            # Order 2: Transposition first
+            out.append(_make_spec(
+                bench_slug=bench_slug, family_label=family_label,
+                pipeline=[trans_layer, caesar_layer],
+                coverage=CoverageVector(
+                    layer_family=family_label,
+                    layer_order=(trans_kind, "caesar"),
+                    role_assignment=role,
+                    alphabet="AZ", n_layers=2,
+                    extras=extras,
+                    shift_value=shift,
+                    operation_source=op_source,
+                ),
+                notes=(
+                    f"{trans_kind}{trans_extras} ∘ caesar(shift={shift}) "
+                    "[trans-first]"
+                ),
+            ))
+    return out
+
+
+def _gen_caesar_atbash_family(
+    *,
+    bench_slug: str,
+    shifts: Sequence[tuple[int, str]],
+) -> list[GeneratedSpec]:
+    """LESSON-009: Caesar + Atbash (parameter-free) in BOTH orders."""
+    family_label = "caesar_atbash"
+    atbash_layer = {"kind": "atbash", "alphabet": "AZ", "params": []}
+    out: list[GeneratedSpec] = []
+    for shift, op_source in shifts:
+        if shift == 0:
+            continue
+        caesar_layer = _caesar_layer(shift)
+        role = (("caesar_shift", str(shift)),)
+        extras = (("caesar_shift", shift),)
+        # caesar + atbash
+        out.append(_make_spec(
+            bench_slug=bench_slug, family_label=family_label,
+            pipeline=[caesar_layer, atbash_layer],
+            coverage=CoverageVector(
+                layer_family=family_label,
+                layer_order=("caesar", "atbash"),
+                role_assignment=role,
+                alphabet="AZ", n_layers=2,
+                extras=extras,
+                shift_value=shift,
+                operation_source=op_source,
+            ),
+            notes=f"caesar(shift={shift}) ∘ atbash [caesar-first]",
+        ))
+        # atbash + caesar
+        out.append(_make_spec(
+            bench_slug=bench_slug, family_label=family_label,
+            pipeline=[atbash_layer, caesar_layer],
+            coverage=CoverageVector(
+                layer_family=family_label,
+                layer_order=("atbash", "caesar"),
+                role_assignment=role,
+                alphabet="AZ", n_layers=2,
+                extras=extras,
+                shift_value=shift,
+                operation_source=op_source,
+            ),
+            notes=f"atbash ∘ caesar(shift={shift}) [atbash-first]",
+        ))
+    return out
+
+
+def _gen_caesar_three_layer_family(
+    *,
+    bench_slug: str,
+    trans_kind: str,
+    keyword: str,
+    shifts: Sequence[tuple[int, str]],
+    rail_fence_depth: Optional[int] = None,
+    route_grid: Optional[tuple[int, int]] = None,
+) -> list[GeneratedSpec]:
+    """LESSON-009: three-layer sandwiches over Caesar + transposition
+    + Atbash, in all four meaningful orderings.
+
+    Orderings:
+      1. caesar    ∘ transposition ∘ atbash
+      2. atbash    ∘ transposition ∘ caesar
+      3. transposition ∘ caesar    ∘ atbash
+      4. atbash    ∘ caesar         ∘ transposition
+
+    For keyword transpositions (columnar, myszkowski) the keyword is
+    clue-derived. For keywordless transpositions (rail_fence, route)
+    the caller passes the depth or grid via the optional params.
+    """
+    if trans_kind == "columnar":
+        if not isinstance(keyword, str) or len(keyword) < 2:
+            return []
+        trans_layer = _keyword_columnar_layer(keyword)
+        trans_role = (trans_kind, keyword)
+        trans_extras: tuple[tuple[str, Any], ...] = ()
+    elif trans_kind == "myszkowski":
+        if not isinstance(keyword, str) or len(keyword) < 2:
+            return []
+        trans_layer = _keyword_myszkowski_layer(keyword)
+        trans_role = (trans_kind, keyword)
+        trans_extras = ()
+    elif trans_kind == "rail_fence":
+        depth = int(rail_fence_depth or 3)
+        trans_layer = _rail_fence_layer(depth)
+        trans_role = (trans_kind, str(depth))
+        trans_extras = (("rail_fence_depth", depth),)
+    elif trans_kind == "route":
+        rows, cols = route_grid or (7, 14)
+        trans_layer = _route_layer(variant="serpentine", rows=rows, cols=cols)
+        trans_role = (trans_kind, f"{rows}x{cols}")
+        trans_extras = (("route_rows", rows), ("route_cols", cols))
+    else:
+        raise ValueError(
+            f"_gen_caesar_three_layer_family: unsupported trans_kind "
+            f"{trans_kind!r}"
+        )
+
+    family_label = f"caesar_{trans_kind}_atbash"
+    atbash_layer = {"kind": "atbash", "alphabet": "AZ", "params": []}
+
+    out: list[GeneratedSpec] = []
+    for shift, op_source in shifts:
+        if shift == 0:
+            continue
+        caesar_layer = _caesar_layer(shift)
+        role = (
+            ("caesar_shift", str(shift)),
+            trans_role,
+        )
+        extras = (("caesar_shift", shift),) + trans_extras
+        # 1. caesar ∘ transposition ∘ atbash
+        out.append(_make_spec(
+            bench_slug=bench_slug, family_label=family_label,
+            pipeline=[caesar_layer, trans_layer, atbash_layer],
+            coverage=CoverageVector(
+                layer_family=family_label,
+                layer_order=("caesar", trans_kind, "atbash"),
+                role_assignment=role,
+                alphabet="AZ", n_layers=3,
+                extras=extras,
+                shift_value=shift,
+                operation_source=op_source,
+            ),
+            notes=(
+                f"caesar({shift}) ∘ {trans_kind}{trans_extras} ∘ atbash"
+            ),
+            compute_budget_minutes=3,
+        ))
+        # 2. atbash ∘ transposition ∘ caesar
+        out.append(_make_spec(
+            bench_slug=bench_slug, family_label=family_label,
+            pipeline=[atbash_layer, trans_layer, caesar_layer],
+            coverage=CoverageVector(
+                layer_family=family_label,
+                layer_order=("atbash", trans_kind, "caesar"),
+                role_assignment=role,
+                alphabet="AZ", n_layers=3,
+                extras=extras,
+                shift_value=shift,
+                operation_source=op_source,
+            ),
+            notes=(
+                f"atbash ∘ {trans_kind}{trans_extras} ∘ caesar({shift})"
+            ),
+            compute_budget_minutes=3,
+        ))
+        # 3. transposition ∘ caesar ∘ atbash
+        out.append(_make_spec(
+            bench_slug=bench_slug, family_label=family_label,
+            pipeline=[trans_layer, caesar_layer, atbash_layer],
+            coverage=CoverageVector(
+                layer_family=family_label,
+                layer_order=(trans_kind, "caesar", "atbash"),
+                role_assignment=role,
+                alphabet="AZ", n_layers=3,
+                extras=extras,
+                shift_value=shift,
+                operation_source=op_source,
+            ),
+            notes=(
+                f"{trans_kind}{trans_extras} ∘ caesar({shift}) ∘ atbash"
+            ),
+            compute_budget_minutes=3,
+        ))
+        # 4. atbash ∘ caesar ∘ transposition
+        out.append(_make_spec(
+            bench_slug=bench_slug, family_label=family_label,
+            pipeline=[atbash_layer, caesar_layer, trans_layer],
+            coverage=CoverageVector(
+                layer_family=family_label,
+                layer_order=("atbash", "caesar", trans_kind),
+                role_assignment=role,
+                alphabet="AZ", n_layers=3,
+                extras=extras,
+                shift_value=shift,
+                operation_source=op_source,
+            ),
+            notes=(
+                f"atbash ∘ caesar({shift}) ∘ {trans_kind}{trans_extras}"
+            ),
+            compute_budget_minutes=3,
+        ))
     return out
 
 
@@ -1701,6 +2253,12 @@ def generate_layered_specs(
     # absent and the historical catalogue is preserved bit-for-bit.
     block_reversal_triggered = _detect_block_reversal_trigger(clue_text)
     shift_triggered = _detect_shift_trigger(clue_text)
+    # 2026-04-28 (LESSON-009): Caesar / ROT trigger. The Caesar
+    # vocabulary is wider than the LESSON-008 shift-trigger set
+    # (adds: shift, shifted, offset, step, caesar, rot, additive,
+    # subtractive); a clue with any of these tokens activates the
+    # Caesar + transposition + Atbash family matrix.
+    caesar_triggered = _detect_caesar_trigger(clue_text)
     if block_reversal_triggered:
         default_families |= {
             "reverse_blocks",
@@ -1722,6 +2280,23 @@ def generate_layered_specs(
                 "vigenere_reverse_blocks_caesar",
                 "beaufort_reverse_blocks_caesar",
                 "variant_beaufort_reverse_blocks_caesar",
+            }
+    # 2026-04-28 (LESSON-009): Caesar / ROT family matrix.
+    if caesar_triggered:
+        default_families |= {
+            "caesar",
+            "caesar_columnar",
+            "caesar_myszkowski",
+            "caesar_rail_fence",
+            "caesar_route",
+            "caesar_atbash",
+        }
+        if include_three_layer:
+            default_families |= {
+                "caesar_columnar_atbash",
+                "caesar_myszkowski_atbash",
+                "caesar_rail_fence_atbash",
+                "caesar_route_atbash",
             }
     active = set(families) if families is not None else default_families
 
@@ -1881,6 +2456,83 @@ def generate_layered_specs(
                         block_sizes=block_sizes,
                         alphabet_modes=alphabet_modes,
                     ))
+
+    # --- LESSON-009: Caesar / ROT composition families -----------------
+    # Trigger-driven (caesar_triggered set above). When the clue pack
+    # contains no Caesar / ROT trigger token, every ``caesar*`` family
+    # above is absent from ``active`` and the entire block here is a
+    # no-op. Real-K4 mode receives the lesson registry entry but has
+    # empty HCC seed lists (HCC is bench-mode only via
+    # _collect_hcc_seeds), so the families fire only on bench
+    # challenges whose clue pack triggers them.
+    if caesar_triggered:
+        caesar_shifts = _caesar_shifts_for_payload(clue_text)
+        if "caesar" in active:
+            out.extend(_gen_caesar_alone_family(
+                bench_slug=bench_slug,
+                shifts=caesar_shifts,
+            ))
+        if "caesar_columnar" in active:
+            out.extend(_gen_caesar_keyword_transposition_family(
+                bench_slug=bench_slug,
+                trans_kind="columnar",
+                keyword_a=keyword_a, keyword_b=keyword_b,
+                shifts=caesar_shifts,
+            ))
+        if "caesar_myszkowski" in active:
+            out.extend(_gen_caesar_keyword_transposition_family(
+                bench_slug=bench_slug,
+                trans_kind="myszkowski",
+                keyword_a=keyword_a, keyword_b=keyword_b,
+                shifts=caesar_shifts,
+            ))
+        if "caesar_rail_fence" in active:
+            out.extend(_gen_caesar_keywordless_transposition_family(
+                bench_slug=bench_slug,
+                trans_kind="rail_fence",
+                shifts=caesar_shifts,
+                rail_fence_depths=tuple(rail_fence_depths),
+            ))
+        if "caesar_route" in active:
+            out.extend(_gen_caesar_keywordless_transposition_family(
+                bench_slug=bench_slug,
+                trans_kind="route",
+                shifts=caesar_shifts,
+                route_grids=_DEFAULT_ROUTE_GRIDS,
+            ))
+        if "caesar_atbash" in active:
+            out.extend(_gen_caesar_atbash_family(
+                bench_slug=bench_slug,
+                shifts=caesar_shifts,
+            ))
+        if include_three_layer:
+            # Use the first rail-fence depth + first route grid from
+            # the resolved sets so three-layer sandwiches enumerate
+            # the most-clue-relevant params without multiplying the
+            # universe by every candidate.
+            sw_depth = (
+                rail_fence_depths[0] if rail_fence_depths else 3
+            )
+            sw_grid = _DEFAULT_ROUTE_GRIDS[0]
+            for label, trans_kind, kw_for_trans, kwargs in [
+                ("caesar_columnar_atbash", "columnar", keyword_a, {}),
+                ("caesar_columnar_atbash", "columnar", keyword_b, {}),
+                ("caesar_myszkowski_atbash", "myszkowski", keyword_a, {}),
+                ("caesar_myszkowski_atbash", "myszkowski", keyword_b, {}),
+                ("caesar_rail_fence_atbash", "rail_fence", "",
+                 {"rail_fence_depth": sw_depth}),
+                ("caesar_route_atbash", "route", "",
+                 {"route_grid": sw_grid}),
+            ]:
+                if label not in active:
+                    continue
+                out.extend(_gen_caesar_three_layer_family(
+                    bench_slug=bench_slug,
+                    trans_kind=trans_kind,
+                    keyword=kw_for_trans,
+                    shifts=caesar_shifts,
+                    **kwargs,
+                ))
 
     # Validate every emitted spec; drop the ones the dispatcher would
     # reject. This is a belt-and-suspenders check — the family

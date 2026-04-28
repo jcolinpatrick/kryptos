@@ -60,6 +60,13 @@ CipherKind = Literal[
                             #   reversal as a hand-cipher transposition
                             #   primitive. Params: block_size (int >= 2),
                             #   block_mode (str: reverse_partial|truncate).
+    "caesar",               # 2026-04-28 (LESSON-009): canonical Caesar /
+                            #   ROT shift. Params: shift (int in [0, 25]).
+                            #   The dispatcher emits a Vigenere translation
+                            #   with key=[shift]; using a first-class kind
+                            #   keeps coverage_vector and attempt artifact
+                            #   layers explicit so telemetry distinguishes
+                            #   "Caesar(8)" from a 1-letter Vigenere.
 ]
 
 _VALID_CIPHER_KINDS: frozenset[str] = frozenset(
@@ -77,6 +84,7 @@ _VALID_CIPHER_KINDS: frozenset[str] = frozenset(
         "grille",  # R3-0.5-2
         "key_tape",  # B-DSL-expanded (2026-04-22): deferred
         "reverse_blocks",  # 2026-04-28: LESSON-008 block-reversal primitive
+        "caesar",  # 2026-04-28: LESSON-009 canonical Caesar / ROT shift
     ]
 )
 

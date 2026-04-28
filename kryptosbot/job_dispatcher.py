@@ -333,6 +333,15 @@ _SUPPORTED_KINDS: frozenset[str] = frozenset({
     #                       the clue pack signals a fixed grid that
     #                       does not divide the CT length.
     "reverse_blocks",
+    # 2026-04-28 (LESSON-009): canonical Caesar / ROT-N. Param:
+    # ``shift`` (int in [0, 25]). The translator emits a Vigenere
+    # transform with a single-element key [shift], so the kernel
+    # arithmetic is exactly C = (P + shift) mod 26. Using a first-
+    # class kind (rather than collapsing into a 1-letter Vigenere)
+    # keeps coverage_vector and attempt layers explicit so
+    # telemetry distinguishes "caesar(shift=8)" from a Vigenere
+    # spec that happened to pick a 1-character keyword.
+    "caesar",
 })
 
 
@@ -643,6 +652,41 @@ def _translate_layer(layer: CipherLayer, binding: dict[str, Any]) -> dict[str, A
             "params": {
                 "perm": list(perm),
                 "direction": "undo",
+            },
+        }
+
+    if kind == "caesar":
+        # 2026-04-28 (LESSON-009): canonical Caesar / ROT-N. The
+        # translator emits a Vigenere transform with a single-element
+        # key [shift], so the kernel arithmetic is exactly the Caesar
+        # decrypt formula P = (C - shift) mod 26. The first-class
+        # kind keeps coverage_vector and attempt artifact layers
+        # explicit so a downstream consumer can distinguish a
+        # Caesar(shift=8) seed from a 1-letter Vigenere(I) seed even
+        # though the kernel-level math is identical.
+        shift = binding.get("shift")
+        if not isinstance(shift, int) or not 0 <= shift <= 25:
+            raise DispatcherError(
+                f"caesar layer requires int 'shift' in [0, 25]; "
+                f"got {shift!r}"
+            )
+        # 2026-04-28: canonical AZ alphabet only — Caesar is an
+        # additive shift over the canonical 26-letter alphabet by
+        # definition. A non-AZ alphabet would no longer be a Caesar
+        # cipher (it would be a 1-letter Vigenere over a different
+        # alphabet) and would mislead telemetry.
+        if layer.alphabet != "AZ":
+            raise DispatcherError(
+                f"caesar layer requires alphabet='AZ'; got "
+                f"{layer.alphabet!r}. A non-AZ alphabet collapses "
+                "the operation to a 1-letter Vigenere over a "
+                "different tableau and is not a Caesar cipher."
+            )
+        return {
+            "type": "vigenere",
+            "params": {
+                "key": [shift],
+                "direction": "decrypt",
             },
         }
 
