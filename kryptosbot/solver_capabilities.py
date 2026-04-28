@@ -51,6 +51,7 @@ patch spec:
     LESSON-009  caesar_rot_composition
     LESSON-010  independent_multi_role_assignment
     LESSON-011  skip_step_route_enumeration
+    LESSON-012  phrase_attached_numeric_prominence
 
 The constructor refuses to load any registry file containing
 forbidden fields, so a corrupted on-disk registry fails closed.
@@ -190,6 +191,20 @@ _VALID_TACTIC_KINDS: frozenset[str] = frozenset({
                                    # compose with vig/beau/var_beau/
                                    # caesar/atbash/rail_fence
                                    # (LESSON-011).
+    "phrase_attached_numeric_prominence",  # 2026-04-28: bind clue
+                                   # numerals to their semantic
+                                   # anchor words so each numeric-
+                                   # parametrized lesson (rail_fence
+                                   # depth, reverse_blocks block_size,
+                                   # caesar shift_value, skip_route
+                                   # step+offset) consumes its own
+                                   # phrase-bound numerals before
+                                   # falling back to default sets.
+                                   # Closes the K4B-006 cap-budget
+                                   # starvation where "step five" was
+                                   # outranked by "three steps" /
+                                   # "four rails" in a flat numeral
+                                   # bag (LESSON-012).
 })
 
 
@@ -750,6 +765,117 @@ def _default_lessons() -> list[Lesson]:
                 "permutation_formula": (
                     "output[i] = input[(offset + i*step) mod L]"
                 ),
+            },
+        ),
+        Lesson(
+            lesson_id="LESSON-012",
+            title="Phrase-attached numeric prominence in clue parsing",
+            description=(
+                "When a clue text contains multiple numerals, each "
+                "numeral carries an anchor word that names its target "
+                "cipher parameter. Pre-LESSON-012 generators flowed "
+                "every numeral into a flat bag and let cap budgets "
+                "and ascending-order iteration decide priority — "
+                "which starves clue-prominent numerals when other "
+                "anchored numerals appear earlier in the text or "
+                "earlier in the numeric ordering. The lesson requires "
+                "that the parser extract anchor-to-numeral bindings "
+                "BEFORE any numeric-parametrized HCC family runs, "
+                "and that each lesson consume only its own bound "
+                "values + safe defaults (never another parameter's "
+                "bound values).\n\n"
+                "Anchor patterns the parser recognizes "
+                "(case-insensitive, word-boundary; supports digit "
+                "literals, cardinals two..twenty, and ordinals "
+                "second..twentieth):\n"
+                "  step / stepped / stride N     -> skip_route step\n"
+                "  every Nth                     -> skip_route step\n"
+                "  offset / offset of N          -> skip_route offset\n"
+                "  depth / N rails / N rail /\n"
+                "    N-rail                       -> rail_fence depth\n"
+                "  block / blocks of / block of /\n"
+                "    groups of / every N          -> reverse_blocks block_size\n"
+                "  shift / shift by / rotated /\n"
+                "    rotate / rotN                -> caesar shift_value\n\n"
+                "Each numeric-parametrized lesson consumes its own "
+                "bound list FIRST (with operation_source labels such "
+                "as 'phrase_bound_step', 'phrase_bound_offset', "
+                "'phrase_bound_rail_depth', 'phrase_bound_block_size', "
+                "'phrase_bound_shift_value'), then falls back to the "
+                "legacy flat numeric extraction and finally to the "
+                "default set. Phrase-bound values are guaranteed to "
+                "survive the per-lesson cap budget so the most "
+                "semantically prominent value never gets starved.\n\n"
+                "The lesson is GENERALIZED: it stores anchor->parameter "
+                "vocabulary only — never benchmark-specific decryptions "
+                "or sealed material."
+            ),
+            tactic_kind="phrase_attached_numeric_prominence",
+            applies_to_families=[
+                # All numeric-parametrized HCC families benefit
+                "rail_fence_vigenere", "rail_fence_beaufort",
+                "reverse_blocks", "reverse_blocks_vigenere",
+                "reverse_blocks_beaufort",
+                "reverse_blocks_variant_beaufort",
+                "reverse_blocks_caesar", "reverse_blocks_atbash",
+                "caesar", "caesar_columnar", "caesar_myszkowski",
+                "caesar_rail_fence", "caesar_route", "caesar_atbash",
+                "skip_route", "skip_route_vigenere",
+                "skip_route_beaufort",
+                "skip_route_variant_beaufort",
+                "skip_route_caesar", "skip_route_atbash",
+                "skip_route_rail_fence",
+            ],
+            generates_specs=False,  # Generates BINDINGS, not specs
+            related_lesson_ids=[
+                "LESSON-008", "LESSON-009", "LESSON-011",
+            ],
+            source_origin="k4bench-derived",
+            tactic_parameters={
+                # Anchor lexicon. Keys are the parameter slots; values
+                # are the anchor tokens / phrases that bind to them.
+                # The runtime parser consumes this taxonomy as the
+                # source of truth — a drift test asserts the runtime
+                # constants match.
+                "anchor_to_parameter": {
+                    "step": [
+                        "step", "stepped", "stride",
+                        "every nth",
+                    ],
+                    "offset": [
+                        "offset", "offset of",
+                    ],
+                    "rail_depth": [
+                        "depth", "rails", "rail", "rail-fence",
+                    ],
+                    "block_size": [
+                        "block", "blocks", "blocks of", "block of",
+                        "groups of", "every",
+                    ],
+                    "shift_value": [
+                        "shift", "shifted", "shift by",
+                        "rotated", "rotate", "rot",
+                    ],
+                },
+                "binding_keys": [
+                    "step", "offset", "rail_depth",
+                    "block_size", "shift_value",
+                ],
+                "operation_source_labels": [
+                    "phrase_bound_step",
+                    "phrase_bound_offset",
+                    "phrase_bound_rail_depth",
+                    "phrase_bound_block_size",
+                    "phrase_bound_shift_value",
+                    "clue_numeral",     # legacy flat fallback
+                    "default_set",      # safe default fallback
+                    "mixed",            # legacy mixed-source label
+                ],
+                "supports_digit_literals": True,
+                "supports_cardinals": True,
+                "supports_ordinals": True,
+                "trigger_match": "anchor_phrase_proximity_case_insensitive",
+                "fallback_when_no_anchor": "legacy_flat_extraction",
             },
         ),
     ]

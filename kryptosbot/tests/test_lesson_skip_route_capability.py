@@ -392,8 +392,13 @@ class TestParameterExtraction:
         steps = _skip_route_steps_for_payload(
             "step five and step seven", ct_length=97,
         )
-        # Clue-derived steps appear first
-        clue_steps = [s for s, src in steps if src == "clue_numeral"]
+        # Clue-derived steps appear first. Under LESSON-012 the
+        # "step" BEFORE-anchor binds them with provenance
+        # phrase_bound_step; pre-LESSON-012 they were clue_numeral.
+        clue_steps = [
+            s for s, src in steps
+            if src in ("clue_numeral", "phrase_bound_step")
+        ]
         defaults = [s for s, src in steps if src == "default_set"]
         assert 5 in clue_steps
         assert 7 in clue_steps
@@ -423,9 +428,13 @@ class TestParameterExtraction:
         pairs = _skip_route_pairs_for_payload(
             "step five and offset three", cap=8,
         )
-        # (5, 3) should be flagged as clue_numeral (both clue-derived)
+        # (5, 3) should appear with clue-derived provenance. Under
+        # LESSON-012 the "step" anchor binds 5→step and "offset"
+        # anchor binds 3→offset, so the pair is "phrase_bound" (both
+        # phrase-bound). Pre-LESSON-012 it was "clue_numeral".
         match = [src for s, o, src in pairs if s == 5 and o == 3]
-        assert match == ["clue_numeral"]
+        assert match
+        assert match[0] in ("phrase_bound", "clue_numeral")
 
     def test_pairs_cap_respected(self):
         pairs = _skip_route_pairs_for_payload(
@@ -806,4 +815,7 @@ class TestK4B006Canary:
             )
             assert cv.get("operation_source") in (
                 "clue_numeral", "default_set", "mixed",
+                # LESSON-012 phrase-bound provenance values
+                "phrase_bound", "phrase_bound_step",
+                "phrase_bound_offset",
             )

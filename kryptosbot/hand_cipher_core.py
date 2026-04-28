@@ -327,25 +327,46 @@ def _skip_route_steps_for_payload(
 ) -> list[tuple[int, str]]:
     """Return the (step, operation_source) list for the payload.
 
-    Sources:
-      ``clue_numeral`` — digit literals 2..ct_length-1 in the clue
-                         text and small spelled numerals
-                         (two..twenty)
-      ``default_set``  — ``_DEFAULT_SKIP_ROUTE_STEPS``
+    LESSON-012 ordering:
+      ``phrase_bound_step`` — anchor-bound numerals from
+                          ``extract_phrase_bound_numerics``
+                          ("step five" → 5, "stride seven" → 7,
+                          "every fifth step" → 5). Highest
+                          priority — never starved by cap budget
+                          downstream.
+      ``clue_numeral``     — legacy flat extraction for any
+                          coprime numeral 2..ct_length-1 not
+                          phrase-bound to a different parameter.
+                          Cross-contamination filter prevents
+                          "four rails" from contributing step=4.
+      ``default_set``      — ``_DEFAULT_SKIP_ROUTE_STEPS`` final
+                          fallback.
 
-    Steps coprime with ``ct_length`` only; non-coprime values are
-    silently dropped (the dispatcher would reject them anyway). For
-    the canonical K4 length 97 (prime), every step survives.
+    Steps coprime with ``ct_length`` only; non-coprime values
+    silently dropped. For canonical K4 length 97 (prime), every
+    step survives.
     """
     import math
     out: list[tuple[int, str]] = []
     seen: set[int] = set()
+    bound = extract_phrase_bound_numerics(clue_text, ct_length=ct_length)
+    # 1. Phrase-bound first
+    for n in bound["step"]:
+        if 1 <= n < ct_length and math.gcd(n, ct_length) == 1 and n not in seen:
+            seen.add(n)
+            out.append((n, "phrase_bound_step"))
+    # Cross-contamination filter for legacy fallback
+    other_param_bound: set[int] = set()
+    for k in ("offset", "rail_depth", "block_size", "shift_value"):
+        for v in bound[k]:
+            other_param_bound.add(v)
+    # 2. Legacy flat fallback (filtered)
     for n in _depths_from_clue_text(clue_text):
         if not 1 <= n < ct_length:
             continue
         if math.gcd(n, ct_length) != 1:
             continue
-        if n in seen:
+        if n in seen or n in other_param_bound:
             continue
         seen.add(n)
         out.append((n, "clue_numeral"))
@@ -370,36 +391,50 @@ def _skip_route_offsets_for_payload(
 ) -> list[tuple[int, str]]:
     """Return the (offset, operation_source) list for a given step.
 
-    Sources:
-      ``clue_numeral`` — digit literals 0..ct_length-1 + small
-                         spelled numerals from the clue text
-      ``default_set``  — ``_DEFAULT_SKIP_ROUTE_OFFSETS`` plus the
-                         band ``0..min(step-1, extra_window)``
-                         that covers the early offset window every
-                         step admits
+    LESSON-012 ordering:
+      ``phrase_bound_offset`` — anchor-bound numerals
+                          ("offset three" → 3, "offset of five"
+                          → 5).
+      ``clue_numeral``     — legacy flat extraction filtered to
+                          drop numerals already bound to other
+                          parameters.
+      ``default_set``      — bounded default window
+                          0..min(step-1, extra_window) + the
+                          project-wide ``_DEFAULT_SKIP_ROUTE_OFFSETS``.
 
-    Caller is expected to truncate the returned list to a manageable
-    size when composing with substitution layers; the alone family
-    can iterate the full list.
+    Caller is expected to truncate the returned list when
+    composing with substitution layers; the alone family iterates
+    the full list.
     """
     out: list[tuple[int, str]] = []
     seen: set[int] = set()
-    # Clue-derived offsets first
+    bound = extract_phrase_bound_numerics(clue_text, ct_length=ct_length)
+    # 1. Phrase-bound first
+    for n in bound["offset"]:
+        if 0 <= n < ct_length and n not in seen:
+            seen.add(n)
+            out.append((n, "phrase_bound_offset"))
+    # Cross-contamination filter
+    other_param_bound: set[int] = set()
+    for k in ("step", "rail_depth", "block_size", "shift_value"):
+        for v in bound[k]:
+            other_param_bound.add(v)
+    # 2. Legacy flat fallback (filtered)
     for n in _depths_from_clue_text(clue_text):
         if not 0 <= n < ct_length:
             continue
-        if n in seen:
+        if n in seen or n in other_param_bound:
             continue
         seen.add(n)
         out.append((n, "clue_numeral"))
-    # Bounded default window
+    # 3. Bounded default window
     cap = min(step - 1, extra_window)
     for d in range(cap + 1):
         if d in seen:
             continue
         seen.add(d)
         out.append((d, "default_set"))
-    # Plus the project-wide explicit defaults
+    # 4. Project-wide explicit defaults
     for d in _DEFAULT_SKIP_ROUTE_OFFSETS:
         if d in seen or d >= ct_length:
             continue
@@ -416,19 +451,103 @@ def _skip_route_pairs_for_payload(
 ) -> list[tuple[int, int, str]]:
     """Cartesian (step, offset) enumeration with provenance.
 
-    The provenance label is "clue_numeral" iff BOTH step and offset
-    came from the clue text; "mixed" if exactly one did;
-    "default_set" if neither did. The deterministic ordering is
-    (step from ``_skip_route_steps_for_payload``) × (offset from
-    ``_skip_route_offsets_for_payload``).
+    LESSON-012 cap-priority rule (2026-04-28): pairs whose step
+    AND offset are BOTH phrase-bound to their parameter slots are
+    emitted FIRST, in step-major / offset-major order, before any
+    cap budget is consumed. This guarantees the most semantically
+    prominent (step, offset) pair survives the per-family cap on
+    substitution-paired and three-layer families. K4B-006 evidence:
+    "step five" + "offset three" was previously starved when the
+    cap=12 list filled with step=3, step=4 (from "three steps" and
+    "four rails") before reaching step=5.
+
+    Provenance labels (most-specific first):
+      ``phrase_bound``  — both step and offset are phrase-bound
+      ``phrase_bound_step`` — step phrase-bound, offset from
+                              clue_numeral / default
+      ``phrase_bound_offset`` — offset phrase-bound, step from
+                              clue_numeral / default
+      ``clue_numeral``  — both came from clue (legacy)
+      ``mixed``         — exactly one came from clue (legacy)
+      ``default_set``   — neither from clue
     """
     out: list[tuple[int, int, str]] = []
+    seen_pairs: set[tuple[int, int]] = set()
+
+    def _emit(pair: tuple[int, int, str]) -> bool:
+        """Emit a pair if not already seen and not at cap. Returns
+        False if cap is reached."""
+        key = (pair[0], pair[1])
+        if key in seen_pairs:
+            return True
+        seen_pairs.add(key)
+        out.append(pair)
+        return cap is None or len(out) < cap
+
+    # 1. Phrase-bound (step, offset) FIRST — guaranteed to survive
+    #    the cap. This is the LESSON-012 starvation fix.
+    bound = extract_phrase_bound_numerics(
+        clue_text, ct_length=ct_length,
+    )
+    import math
+    for step in bound["step"]:
+        if not 1 <= step < ct_length:
+            continue
+        if math.gcd(step, ct_length) != 1:
+            continue
+        for offset in bound["offset"]:
+            if not 0 <= offset < ct_length:
+                continue
+            if not _emit((step, offset, "phrase_bound")):
+                return out
+
+    # 2. Phrase-bound step × default-window offset (priority for
+    #    the named step value even when no offset phrase fired)
+    for step in bound["step"]:
+        if not 1 <= step < ct_length:
+            continue
+        if math.gcd(step, ct_length) != 1:
+            continue
+        for offset, off_src in _skip_route_offsets_for_payload(
+            clue_text, step, ct_length=ct_length,
+        ):
+            if (step, offset) in seen_pairs:
+                continue
+            label = (
+                "phrase_bound_step" if off_src != "phrase_bound_offset"
+                else "phrase_bound"
+            )
+            if not _emit((step, offset, label)):
+                return out
+
+    # 3. Phrase-bound offset × full-step list (priority for the
+    #    named offset value across step alternatives)
+    for offset in bound["offset"]:
+        if not 0 <= offset < ct_length:
+            continue
+        for step, step_src in _skip_route_steps_for_payload(
+            clue_text, ct_length=ct_length,
+        ):
+            if (step, offset) in seen_pairs:
+                continue
+            label = (
+                "phrase_bound_offset" if step_src != "phrase_bound_step"
+                else "phrase_bound"
+            )
+            if not _emit((step, offset, label)):
+                return out
+
+    # 4. Legacy step-major × offset-major fallback for any
+    #    remaining (step, offset) combinations from clue_numeral /
+    #    default_set sources.
     for step, step_src in _skip_route_steps_for_payload(
         clue_text, ct_length=ct_length,
     ):
         for offset, off_src in _skip_route_offsets_for_payload(
             clue_text, step, ct_length=ct_length,
         ):
+            if (step, offset) in seen_pairs:
+                continue
             if step_src == "clue_numeral" and off_src == "clue_numeral":
                 src = "clue_numeral"
             elif (
@@ -438,8 +557,7 @@ def _skip_route_pairs_for_payload(
                 src = "mixed"
             else:
                 src = "default_set"
-            out.append((step, offset, src))
-            if cap is not None and len(out) >= cap:
+            if not _emit((step, offset, src)):
                 return out
     return out
 
@@ -519,26 +637,47 @@ def _detect_caesar_trigger(clue_text: str) -> bool:
 def _caesar_shifts_for_payload(clue_text: str) -> list[tuple[int, str]]:
     """Return the (shift, operation_source) list for the payload.
 
-    Sources:
-      ``clue_numeral`` — digit literals 0..25 in the clue text and
-                         small spelled numerals (two..twenty)
-      ``default_set``  — the safe default set ``_DEFAULT_CAESAR_SHIFTS``
+    LESSON-012 ordering:
+      ``phrase_bound_shift_value`` — anchor-bound numerals from
+                          ``extract_phrase_bound_numerics``
+                          ("shift eight" → 8, "rotated three" → 3,
+                          "shift by five" → 5). Never starved.
+      ``clue_numeral``     — legacy flat extraction for digit
+                          literals + spelled numerals 1..25 not
+                          already phrase-bound to a different
+                          parameter (rail_depth / step / offset /
+                          block_size). Cross-contamination filter
+                          prevents "four rails" from polluting the
+                          Caesar shift list with shift=4.
+      ``default_set``      — ``_DEFAULT_CAESAR_SHIFTS`` final fallback.
 
-    Order: clue-derived shifts first (more meaningful), then defaults
-    not already present. The caller is expected to filter shift 0
-    when it would render a layer identity.
+    Caller is expected to filter shift 0 when it would render a
+    layer identity.
     """
     out: list[tuple[int, str]] = []
     seen: set[int] = set()
-    # Re-use _depths_from_clue_text — its [2, 49] band is a superset
-    # of [0, 25] for non-trivial shifts; we further restrict here.
-    for n in _depths_from_clue_text(clue_text):
+    bound = extract_phrase_bound_numerics(clue_text)
+    # 1. Phrase-bound shifts first (priority)
+    for n in bound["shift_value"]:
         if 1 <= n <= 25 and n not in seen:
+            seen.add(n)
+            out.append((n, "phrase_bound_shift_value"))
+    # Build a set of numerals that are bound to OTHER parameters
+    # so the legacy flat extraction doesn't promote them as
+    # Caesar shifts. This prevents "four rails" from contributing
+    # shift=4 when no anchor said "shift four".
+    other_param_bound: set[int] = set()
+    for k in ("step", "offset", "rail_depth", "block_size"):
+        for v in bound[k]:
+            other_param_bound.add(v)
+    # 2. Legacy flat fallback (filtered by cross-contamination)
+    for n in _depths_from_clue_text(clue_text):
+        if 1 <= n <= 25 and n not in seen and n not in other_param_bound:
             seen.add(n)
             out.append((n, "clue_numeral"))
     # Also pick up digit "0" and "1" that _depths_from_clue_text
-    # filters out (its band starts at 2). Caesar shifts 0 and 1 are
-    # legitimate, though shift 0 is identity and most callers skip it.
+    # filters out (band starts at 2). Same cross-contamination
+    # filter applies.
     import re
     if isinstance(clue_text, str) and clue_text:
         for m in re.finditer(r"(?<!\w)([01])(?!\w)", clue_text):
@@ -546,7 +685,7 @@ def _caesar_shifts_for_payload(clue_text: str) -> list[tuple[int, str]]:
                 n = int(m.group(1))
             except ValueError:
                 continue
-            if n not in seen:
+            if n not in seen and n not in other_param_bound:
                 seen.add(n)
                 out.append((n, "clue_numeral"))
     for d in _DEFAULT_CAESAR_SHIFTS:
@@ -1031,6 +1170,285 @@ _NUMBER_WORDS: dict[str, int] = {
 _DEFAULT_RAIL_FENCE_DEPTHS_BASE: tuple[int, ...] = (3, 5)
 
 
+# ============================================================================
+# LESSON-012: Phrase-attached numeric prominence
+# ============================================================================
+#
+# Anchor token taxonomy. Keys are parameter slots; values are the
+# trigger phrases that bind a numeral to that slot. Multi-word
+# phrases ("blocks of", "shift by") are matched verbatim before
+# the numeral; single-word anchors match either before or after
+# the numeral within an N-token window.
+#
+# A drift test in test_lesson_phrase_numeric_prominence_capability.py
+# asserts these runtime constants match LESSON-012's
+# tactic_parameters.anchor_to_parameter mapping.
+_PHRASE_ANCHORS_BEFORE: dict[str, tuple[str, ...]] = {
+    # parameter -> anchor tokens that appear BEFORE the numeral.
+    # The numeral can be a digit literal, cardinal, or ordinal.
+    # Order within each tuple is irrelevant — we test set
+    # membership against the immediately-preceding 1-3 tokens.
+    "step": (
+        "step", "stepped", "stride",
+        # "every Nth" / "every fifth" — phrase pattern matched
+        # via _PHRASE_ANCHORS_PHRASES below.
+    ),
+    "offset": (
+        "offset",
+    ),
+    "rail_depth": (
+        "depth",
+        # "N rails" / "N-rail" matched via
+        # _PHRASE_ANCHORS_AFTER below.
+    ),
+    "block_size": (
+        "block", "blocks", "group", "groups", "chunk", "chunks",
+        # "blocks of N" / "groups of N" matched via
+        # _PHRASE_ANCHORS_PHRASES below.
+    ),
+    "shift_value": (
+        "shift", "shifted", "rotated", "rotate",
+        # "rot 13" matches here via the BEFORE-anchor; the
+        # numeric-suffix pattern "rot13" (no space) is handled
+        # by ``_detect_caesar_trigger`` separately.
+        "rot",
+    ),
+}
+
+# Anchor tokens that appear AFTER the numeral (e.g. "four rails").
+# Searched within a 2-token window so "five tick groups" matches
+# block_size=5 via the "groups" anchor at distance 2.
+_PHRASE_ANCHORS_AFTER: dict[str, tuple[str, ...]] = {
+    "rail_depth": (
+        "rails", "rail", "railfence", "rail-fence",
+    ),
+    "step": (
+        # Both singular and plural so "every fifth step" and
+        # "three steps from the start" both bind to the step
+        # parameter. Disambiguation against block_size's "every"
+        # phrase is handled in the parser body.
+        "step", "steps",
+    ),
+    "block_size": (
+        # "five tick groups" / "five groups" / "five blocks"
+        "blocks", "block", "groups", "group", "chunks", "chunk",
+    ),
+}
+
+# Multi-word anchor phrases. Matched as exact substrings (after
+# lowercase + whitespace normalization) immediately before the
+# numeral. Longer phrases checked first so "every nth" matches
+# before "every".
+_PHRASE_ANCHORS_PHRASES: dict[str, tuple[str, ...]] = {
+    "step": (
+        "every nth", "every n",
+    ),
+    "offset": (
+        "offset of",
+    ),
+    "block_size": (
+        "blocks of", "block of", "groups of",
+        # "every N" alone is handled here too — it is a hand-
+        # cipher idiom for block_size when no other anchor names
+        # the same numeral.
+        "every",
+    ),
+    "shift_value": (
+        "shift by",
+    ),
+}
+
+# Operation-source labels for phrase-bound provenance. These appear
+# in CoverageVector.operation_source so attempt-artifact readers can
+# tell whether a parameter came from a clue phrase ("phrase_bound_*"),
+# from the legacy flat numeric extraction ("clue_numeral"), or from
+# a default fallback ("default_set").
+_PHRASE_BOUND_SOURCES: dict[str, str] = {
+    "step": "phrase_bound_step",
+    "offset": "phrase_bound_offset",
+    "rail_depth": "phrase_bound_rail_depth",
+    "block_size": "phrase_bound_block_size",
+    "shift_value": "phrase_bound_shift_value",
+}
+
+
+def extract_phrase_bound_numerics(
+    clue_text: str,
+    *,
+    ct_length: int = 97,
+) -> dict[str, list[int]]:
+    """Parse phrase-attached numerals from clue text (LESSON-012).
+
+    Returns a dict ``{parameter: [int, ...]}`` keyed by the
+    parameter slots ``step``, ``offset``, ``rail_depth``,
+    ``block_size``, ``shift_value``. Each value list is in
+    document order of the bound numeral, deduplicated, never
+    empty for a parameter that has at least one phrase-bound
+    occurrence in the clue.
+
+    Numerals supported:
+      * digit literals 0..ct_length-1
+      * cardinals: two..twenty (via _NUMBER_WORDS)
+      * ordinals: second..twentieth (via _NUMBER_WORDS;
+        LESSON-011 added ordinals)
+
+    Anchor matching rules:
+      * BEFORE-anchors: check the 1-3 tokens immediately
+        preceding the numeral; if any matches a parameter's
+        BEFORE list, bind the numeral to that parameter.
+      * AFTER-anchors: check the 1-2 tokens immediately
+        following the numeral; if any matches an AFTER list,
+        bind.
+      * PHRASE-anchors: check whether the (lowercased,
+        whitespace-normalized) substring immediately before the
+        numeral ends with any phrase in that parameter's PHRASE
+        list.
+      * Multi-binding: a numeral that matches anchors for
+        multiple parameters appears in each list (e.g. "every
+        fifth step" — the phrase "every" maps to block_size AND
+        the trailing "step" word maps to step). The downstream
+        consumer picks whichever it needs and discards the rest.
+
+    A clue with no anchor phrases returns ``{}``-equivalent (every
+    list empty); callers fall back to the legacy flat extractor
+    plus default sets.
+    """
+    bindings: dict[str, list[int]] = {
+        "step": [],
+        "offset": [],
+        "rail_depth": [],
+        "block_size": [],
+        "shift_value": [],
+    }
+    if not isinstance(clue_text, str) or not clue_text:
+        return bindings
+
+    import re
+    lower = clue_text.lower()
+
+    # Tokenize into (token, start, end) triples covering BOTH word
+    # tokens (alphanumeric, possibly with internal hyphens) and
+    # numerals. We keep positions so PHRASE-anchor matching can
+    # check the substring immediately before the numeral.
+    tokens: list[tuple[str, int, int]] = []
+    for m in re.finditer(r"[A-Za-z]+|\d+", lower):
+        tokens.append((m.group(0), m.start(), m.end()))
+
+    # Helper: numeric value of a single token, if any.
+    def _numeric_of(tok: str) -> Optional[int]:
+        if tok.isdigit():
+            try:
+                v = int(tok)
+            except ValueError:
+                return None
+            return v if 0 <= v < ct_length else None
+        return _NUMBER_WORDS.get(tok)
+
+    # Index every numeric token's position in `tokens` along with
+    # its value.
+    numerics: list[tuple[int, int]] = []  # (token_index, value)
+    for i, (tok, _s, _e) in enumerate(tokens):
+        v = _numeric_of(tok)
+        if v is not None:
+            numerics.append((i, v))
+
+    def _add(param: str, value: int) -> None:
+        # Skip degenerate values per parameter contract:
+        if param in ("step", "rail_depth") and value < 2:
+            return
+        if param == "shift_value" and not 1 <= value <= 25:
+            return
+        if param == "block_size" and value < 2:
+            return
+        if param == "offset" and not 0 <= value < ct_length:
+            return
+        if value not in bindings[param]:
+            bindings[param].append(value)
+
+    # Pre-compute set of token indices that are themselves numerics
+    # so the AFTER lookahead can avoid crossing over a different
+    # numeral. Without this guard "blocks of seven four rails" would
+    # bind seven=>rails because the 2-token lookahead reaches "rails"
+    # past "four". The anchor for "rails" is "four", not "seven".
+    numeric_idxs: set[int] = {i for i, _ in numerics}
+
+    for tok_idx, value in numerics:
+        # --- AFTER-anchor check (up to 2-token lookahead, blocked
+        # by intervening numerics) ---
+        # Computed FIRST because "fifth step" should win over the
+        # BEFORE-phrase "every fifth" — the noun the numeral
+        # modifies (the closest noun anchor following) wins.
+        after_params: set[str] = set()
+        for j in (1, 2):
+            if tok_idx + j >= len(tokens):
+                break
+            # If the intervening token at tok_idx+j-1 (for j=2) is
+            # itself a numeric, this numeric belongs to that
+            # numeric's anchor scope, not ours. Stop the lookahead.
+            if j == 2 and (tok_idx + 1) in numeric_idxs:
+                break
+            next_tok = tokens[tok_idx + j][0]
+            for param, anchors in _PHRASE_ANCHORS_AFTER.items():
+                if next_tok in anchors:
+                    after_params.add(param)
+            # Stop at the first matching token; deeper lookahead
+            # only fires when the immediate next token is a
+            # filler (e.g. "five tick groups" — j=2 reaches
+            # "groups").
+            if after_params:
+                break
+        for param in after_params:
+            _add(param, value)
+
+        # --- BEFORE-anchor check (1-token lookback) ---
+        before_params: set[str] = set()
+        if tok_idx >= 1:
+            prev_tok = tokens[tok_idx - 1][0]
+            for param, anchors in _PHRASE_ANCHORS_BEFORE.items():
+                if prev_tok in anchors:
+                    before_params.add(param)
+        for param in before_params:
+            _add(param, value)
+
+        # --- PHRASE-anchor check (multi-word lookback) ---
+        # Disambiguation rule: when an AFTER-anchor for a
+        # noun parameter (step/rail_depth/block_size) already
+        # bound the numeral, the BEFORE-phrase "every" /
+        # "every nth" does NOT also bind to block_size. The
+        # AFTER-anchor wins because it names the noun the
+        # numeral modifies. Without this rule "every fifth
+        # step" would bind both step=5 (via the "step"
+        # AFTER-anchor) AND block_size=5 (via the "every"
+        # phrase), polluting the block_size lesson with
+        # numerals that are semantically step values.
+        if tok_idx >= 1:
+            window_start = tokens[max(0, tok_idx - 4)][1]
+            num_start = tokens[tok_idx][1]
+            window = lower[window_start:num_start]
+            window_norm = re.sub(r"\s+", " ", window).strip()
+            for param, phrases in _PHRASE_ANCHORS_PHRASES.items():
+                # AFTER-anchor for a different noun parameter
+                # already claimed this numeral — skip the loose
+                # "every" / "every nth" phrase binding so we
+                # don't cross-contaminate.
+                if param == "block_size" and after_params & {
+                    "step", "rail_depth",
+                }:
+                    continue
+                if param == "step" and after_params & {
+                    "rail_depth", "block_size",
+                }:
+                    continue
+                # Sort longest-first so "every nth" wins over
+                # "every".
+                for phrase in sorted(phrases, key=len, reverse=True):
+                    if window_norm.endswith(phrase):
+                        _add(param, value)
+                        break
+
+    return bindings
+
+
 def _depths_from_clue_text(clue_text: str) -> list[int]:
     """Extract rail-fence depth candidates from the clue text.
 
@@ -1058,19 +1476,35 @@ def _depths_from_clue_text(clue_text: str) -> list[int]:
 
 
 def _rail_fence_depths_for_payload(clue_text: str) -> list[int]:
-    """Combine clue-derived depths with the safe default set.
+    """Combine phrase-bound + clue-derived depths with the safe
+    default set.
 
-    Order: clue-derived depths first (they are more meaningful), then
-    defaults that are not already present. Always returns a
-    deterministic, deduplicated list with at least
+    LESSON-012 ordering:
+      1. Phrase-bound depths from ``extract_phrase_bound_numerics``
+         (e.g. "four rails" → 4, "depth seven" → 7) — highest
+         priority, never starved.
+      2. Legacy flat clue numerals from ``_depths_from_clue_text``
+         — fallback when no anchor phrase exists.
+      3. ``_DEFAULT_RAIL_FENCE_DEPTHS_BASE`` — final fallback.
+
+    Always returns a deterministic, deduplicated list with at least
     ``len(_DEFAULT_RAIL_FENCE_DEPTHS_BASE)`` entries.
     """
     out: list[int] = []
     seen: set[int] = set()
-    for d in _depths_from_clue_text(clue_text):
-        if d not in seen:
+    # 1. Phrase-bound first
+    bound = extract_phrase_bound_numerics(clue_text)
+    for d in bound["rail_depth"]:
+        if 2 <= d and d not in seen:
             seen.add(d)
             out.append(d)
+    # 2. Legacy flat fallback (only when no phrase-bound depth fired,
+    # or to add complementary numerals that weren't anchor-bound)
+    for d in _depths_from_clue_text(clue_text):
+        if d >= 2 and d not in seen:
+            seen.add(d)
+            out.append(d)
+    # 3. Safe defaults
     for d in _DEFAULT_RAIL_FENCE_DEPTHS_BASE:
         if d not in seen:
             seen.add(d)
@@ -1230,19 +1664,40 @@ def _detect_shift_trigger(clue_text: str) -> bool:
 def _block_sizes_for_payload(clue_text: str) -> list[tuple[int, str]]:
     """Return the (block_size, operation_source) list for the payload.
 
-    Sources:
-      ``clue_numeral`` — digit literals 2..49 in the clue text and
-                         small spelled numerals (two..twenty)
-      ``default_set``  — the safe default set {2, 3, 4, 5, 6, 7, 8, 10}
-
-    Order: clue-derived sizes first (more meaningful), then defaults
-    not already present. Always returns a deterministic, deduplicated
-    list with at least ``len(_DEFAULT_BLOCK_SIZES)`` entries.
+    LESSON-012 ordering:
+      ``phrase_bound_block_size`` — anchor-bound numerals from
+                         ``extract_phrase_bound_numerics``
+                         (e.g. "blocks of seven" → 7, "five
+                         groups" → 5). Never starved.
+      ``clue_numeral``    — legacy flat extraction from
+                            ``_depths_from_clue_text`` for any
+                            digit-literal / spelled numeral that
+                            is NOT phrase-bound to a different
+                            parameter slot.
+      ``default_set``     — ``_DEFAULT_BLOCK_SIZES`` final fallback.
     """
     out: list[tuple[int, str]] = []
     seen: set[int] = set()
+    bound = extract_phrase_bound_numerics(clue_text)
+    # 1. Phrase-bound first (priority, cannot be starved)
+    for d in bound["block_size"]:
+        if d >= 2 and d not in seen:
+            seen.add(d)
+            out.append((d, "phrase_bound_block_size"))
+    # Cross-contamination filter: numerals already bound to other
+    # specific parameters (rail_depth / step / offset / shift_value)
+    # should NOT also be promoted as block_size from the legacy
+    # flat extractor. Without this filter "four rails, three steps"
+    # would flood block_size with 3, 4 — polluting the
+    # reverse_blocks family with numerals that the clue
+    # semantically attached to other parameters.
+    other_param_bound: set[int] = set()
+    for k in ("step", "offset", "rail_depth", "shift_value"):
+        for v in bound[k]:
+            other_param_bound.add(v)
+    # 2. Legacy flat fallback (filtered)
     for d in _depths_from_clue_text(clue_text):
-        if d in seen or d < 2:
+        if d < 2 or d in seen or d in other_param_bound:
             continue
         seen.add(d)
         out.append((d, "clue_numeral"))

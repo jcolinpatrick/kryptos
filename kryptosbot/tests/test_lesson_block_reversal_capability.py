@@ -471,17 +471,21 @@ class TestTriggerDrivenGeneration:
                 )
 
     def test_block_size_from_clue_numeral(self):
-        """The clue text 'five tick groups' must contribute block_size=5
-        with operation_source='clue_numeral'.
+        """The clue text 'five tick groups' must contribute
+        block_size=5 from clue-derived provenance. Under LESSON-012
+        the "groups" AFTER-anchor binds 5 to block_size with
+        provenance 'phrase_bound_block_size'; pre-LESSON-012 the
+        same numeral surfaced as 'clue_numeral'. Either is acceptable.
         """
         clue = "compass rose has five tick groups"
         sizes = _block_sizes_for_payload(clue)
         sources_for_5 = [
             src for n, src in sizes if n == 5
         ]
-        assert sources_for_5 == ["clue_numeral"], (
-            f"expected block_size 5 sourced from clue numeral; got {sizes}"
-        )
+        assert sources_for_5
+        assert sources_for_5[0] in (
+            "phrase_bound_block_size", "clue_numeral",
+        ), f"expected clue-derived provenance for block_size 5; got {sizes}"
         # Defaults still present after the clue size
         size_set = {n for n, _ in sizes}
         assert {2, 3, 4, 5, 6, 7, 8, 10} <= size_set
@@ -627,8 +631,12 @@ class TestK4B004Canary:
         )
 
     def test_k4b004_seeds_include_block_size_5(self):
-        """The clue text 'five tick groups' MUST contribute block_size=5
-        with operation_source='clue_numeral' to at least one seed.
+        """The clue text 'five tick groups' MUST contribute
+        block_size=5 to at least one seed. As of LESSON-012 this
+        binding is anchor-driven (the "groups" AFTER-anchor binds
+        the numeral 5 to block_size, with provenance
+        'phrase_bound_block_size'); pre-LESSON-012 it appeared as
+        'clue_numeral'. Either provenance is acceptable.
         """
         _, seeds = self._hcc_seeds_for_k4b004()
         size5 = [
@@ -638,11 +646,14 @@ class TestK4B004Canary:
             ).get("block_size") == 5
             and s.minimal_test_spec.get(
                 "coverage_vector", {}
-            ).get("operation_source") == "clue_numeral"
+            ).get("operation_source") in (
+                "clue_numeral", "phrase_bound_block_size",
+            )
         ]
         assert size5, (
             "K4B-004 HCC catalog must contain block_size=5 seeds "
-            "sourced from the 'five tick groups' clue numeral"
+            "sourced from the 'five tick groups' clue (either "
+            "phrase_bound_block_size or legacy clue_numeral)"
         )
 
     def test_k4b004_variant_beaufort_reverse_blocks_5_hits_24(self):
@@ -747,9 +758,14 @@ class TestInternalHelpers:
 
     def test_block_sizes_for_payload_orders_clue_numerals_first(self):
         sizes = _block_sizes_for_payload("five tick groups, three rows")
-        # Clue numerals 5 and 3 come first
-        clue_nums = [n for n, src in sizes if src == "clue_numeral"]
-        assert clue_nums[0] in (3, 5)
+        # Clue-derived numerals (either phrase_bound_block_size
+        # under LESSON-012 or legacy clue_numeral) come first.
+        non_default = [
+            n for n, src in sizes
+            if src in ("clue_numeral", "phrase_bound_block_size")
+        ]
+        assert non_default
+        assert non_default[0] in (3, 5)
         # Defaults appear after, with no overlap
         defaults = [n for n, src in sizes if src == "default_set"]
-        assert set(defaults).isdisjoint(set(clue_nums))
+        assert set(defaults).isdisjoint(set(non_default))

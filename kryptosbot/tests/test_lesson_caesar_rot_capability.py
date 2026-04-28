@@ -283,11 +283,15 @@ class TestTriggerDrivenGeneration:
             s for s in specs if s.coverage.layer_family == "caesar"
         ]
         assert alone, "caesar alone family did not fire"
-        # Shifts include both clue numerals and defaults; clue_numeral 8
-        # must be present.
+        # Shifts include the clue-derived 8 with EITHER the LESSON-012
+        # phrase-bound source ("shift eight" anchor) OR the legacy
+        # clue_numeral source. Both are valid provenance for shift=8.
         shifts = {(s.coverage.shift_value, s.coverage.operation_source)
                   for s in alone}
-        assert (8, "clue_numeral") in shifts
+        assert (
+            (8, "phrase_bound_shift_value") in shifts
+            or (8, "clue_numeral") in shifts
+        ), f"shift=8 not present with clue-derived provenance; shifts={shifts}"
 
     def test_caesar_columnar_both_layer_orders(self):
         clue = "stamped shift eight, reverse the panel, rivet column"
@@ -395,13 +399,17 @@ class TestTriggerDrivenGeneration:
         assert "caesar_route_atbash" in labels
 
     def test_clue_derived_shift_value_present(self):
-        """The clue 'shift eight' must contribute shift=8 with
-        operation_source='clue_numeral'."""
+        """The clue 'shift eight' must contribute shift=8. Under
+        LESSON-012 the "shift" BEFORE-anchor binds 8 to shift_value
+        with provenance 'phrase_bound_shift_value'. The pre-LESSON-012
+        path produced 'clue_numeral'; either is acceptable."""
         sizes = _caesar_shifts_for_payload("stamped shift eight")
         eights = [s for s, src in sizes if s == 8]
         assert eights == [8]
         sources = [src for s, src in sizes if s == 8]
-        assert sources == ["clue_numeral"]
+        assert sources[0] in (
+            "phrase_bound_shift_value", "clue_numeral",
+        )
 
     def test_synthetic_clue_emits_caesar_columnar_and_atbash(self):
         """User-mandated synthetic test: the clue 'stamped shift eight,
@@ -608,7 +616,7 @@ class TestK4B003Canary:
         assert meta is not None
         assert meta["shift_value"] is not None
         assert meta["operation_source"] in (
-            "clue_numeral", "default_set",
+            "phrase_bound_shift_value", "clue_numeral", "default_set",
         )
 
 
@@ -626,7 +634,14 @@ class TestInternalHelpers:
 
     def test_caesar_shifts_for_payload_orders(self):
         sizes = _caesar_shifts_for_payload("apply shift eight, then shift three")
-        clue = [s for s, src in sizes if src == "clue_numeral"]
+        # Under LESSON-012 the "shift" anchor binds both numerals to
+        # shift_value with phrase_bound_shift_value provenance. Pre-
+        # LESSON-012 they appeared as clue_numeral. Either is the
+        # "non-default" bucket the legacy test was checking.
+        clue = [
+            s for s, src in sizes
+            if src in ("clue_numeral", "phrase_bound_shift_value")
+        ]
         defaults = [s for s, src in sizes if src == "default_set"]
         assert {3, 8} <= set(clue)
         assert set(defaults).isdisjoint(set(clue))
