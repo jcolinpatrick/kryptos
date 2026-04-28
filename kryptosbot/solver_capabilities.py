@@ -49,6 +49,7 @@ patch spec:
     LESSON-007  trigger_driven_alphabet_enumeration
     LESSON-008  fixed_size_block_reversal
     LESSON-009  caesar_rot_composition
+    LESSON-010  independent_multi_role_assignment
 
 The constructor refuses to load any registry file containing
 forbidden fields, so a corrupted on-disk registry fails closed.
@@ -169,6 +170,16 @@ _VALID_TACTIC_KINDS: frozenset[str] = frozenset({
                                    # plus safe defaults compose with
                                    # columnar / myszkowski / rail_fence /
                                    # route / atbash.
+    "independent_multi_role_assignment",  # 2026-04-28: independent
+                                   # enumeration of substitution /
+                                   # alphabet / transposition role
+                                   # keywords from the clue pool,
+                                   # NOT just pairwise. Generalizes
+                                   # the K4B-005 miss where the
+                                   # intended cipher used three
+                                   # distinct clue keywords across
+                                   # three independent role slots
+                                   # (LESSON-010).
 })
 
 
@@ -558,6 +569,86 @@ def _default_lessons() -> list[Lesson]:
                     ["atbash", "transposition", "caesar"],
                     ["transposition", "caesar", "atbash"],
                     ["atbash", "caesar", "transposition"],
+                ],
+            },
+        ),
+        Lesson(
+            lesson_id="LESSON-010",
+            title="Independent multi-role keyword assignment",
+            description=(
+                "When a candidate has at least three role slots — "
+                "substitution keyword, alphabet/tableau keyword, "
+                "transposition keyword (and optionally Quagmire "
+                "period_keyword, pt_alphabet_keyword, ct_alphabet_"
+                "keyword, indicator/key-letter, route/grid keyword) — "
+                "every role MUST be enumerable independently from "
+                "the clue keyword pool. The pre-LESSON-010 generator "
+                "iterated only pairwise role swaps (sub_keyword, "
+                "trans_keyword) ∈ {(A,B), (B,A)} with the alphabet "
+                "keyword tied to the substitution role; this missed "
+                "any candidate where the alphabet/tableau keyword is "
+                "a third clue word. The lesson requires that for a "
+                "clue pool {A, B, C, ...}, the generator emit "
+                "candidates of the form ``substitution(key=A, "
+                "alphabet_keyword=B) ∘ transposition(keyword=C)`` "
+                "and all bounded permutations across the three "
+                "roles, in BOTH layer orders. Each emitted spec "
+                "MUST tag its CoverageVector with the explicit "
+                "role keywords (substitution_keyword, "
+                "alphabet_keyword, transposition_keyword) so a "
+                "downstream attempt-artifact reader can resolve "
+                "the question 'did we test substitution key X with "
+                "alphabet key Y and transposition key Z?'. To keep "
+                "the universe "
+                "bounded, the role enumeration is capped at the "
+                "first ``role_pool_size`` clue keywords (default 3); "
+                "operators with more clue words rely on clue "
+                "ranking to put the right keywords first. Self-"
+                "pairs (sub_keyword == trans_keyword) are admitted "
+                "because some hand ciphers reuse the same keyword "
+                "across roles. The lesson is GENERALIZED: it stores "
+                "role-slot taxonomy and the bounded-pool policy "
+                "only — never benchmark-specific decryptions or "
+                "sealed material."
+            ),
+            tactic_kind="independent_multi_role_assignment",
+            applies_to_families=[
+                "columnar_vigenere", "columnar_beaufort",
+                "columnar_variant_beaufort",
+                "myszkowski_vigenere", "myszkowski_beaufort",
+                "rail_fence_vigenere", "rail_fence_beaufort",
+                "route_vigenere", "route_beaufort",
+                "quagmire",
+            ],
+            generates_specs=True,
+            related_lesson_ids=[
+                "LESSON-001", "LESSON-002", "LESSON-003",
+                "LESSON-006", "LESSON-007",
+            ],
+            source_origin="k4bench-derived",
+            tactic_parameters={
+                "role_slots": [
+                    "substitution_keyword",
+                    "alphabet_keyword",
+                    "transposition_keyword",
+                    "quagmire_period_keyword",
+                    "quagmire_pt_alphabet_keyword",
+                    "quagmire_ct_alphabet_keyword",
+                    "indicator_letter",
+                    "route_grid_keyword",
+                ],
+                "role_pool_size": 3,
+                "allow_self_pairs": True,
+                "alphabet_keyword_pool_size": 3,
+                "role_assignment_modes": [
+                    "pairwise",                   # legacy: 2-role
+                    "independent_three_role",     # LESSON-010 path
+                ],
+                "applies_to_substitution_kinds": [
+                    "vigenere", "beaufort", "variant_beaufort",
+                ],
+                "applies_to_transposition_kinds": [
+                    "columnar", "myszkowski", "rail_fence", "route",
                 ],
             },
         ),

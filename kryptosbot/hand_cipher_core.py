@@ -397,6 +397,41 @@ class CoverageVector:
     # shift's provenance and the block_size's provenance is encoded
     # in the spec extras.
     shift_value: Optional[int] = None
+    # 2026-04-28 (LESSON-010): explicit role telemetry. The
+    # ``role_assignment`` tuple is preserved as the canonical
+    # symmetry-class key, but specs that involve a substitution +
+    # transposition pipeline now also surface the per-role keywords
+    # as named fields so a downstream attempt-artifact reader can
+    # answer "did we test substitution key X with alphabet key Y
+    # and transposition key Z?" without parsing the role_assignment
+    # tuple.
+    #
+    #   substitution_keyword     — the keyword passed to the
+    #                              substitution layer (vig/beau/var_beau)
+    #   alphabet_keyword         — the alphabet_keyword resolved by
+    #                              the alphabet_mode (clue word for
+    #                              keyword_mixed; "" for AZ/KA;
+    #                              reversed_az/ka constants for the
+    #                              mirror modes)
+    #   transposition_keyword    — the keyword passed to the
+    #                              transposition layer (columnar /
+    #                              myszkowski). "" for keywordless
+    #                              transpositions (rail_fence / route)
+    #                              and for caesar / atbash families.
+    #   role_assignment_mode     — "pairwise" (legacy 2-role family
+    #                              generator) or
+    #                              "independent_three_role"
+    #                              (LESSON-010 generator that
+    #                              enumerates the full sub × alpha ×
+    #                              trans triple). Other values: ""
+    #                              (legacy / single-layer specs).
+    #
+    # Legacy specs leave all four fields at their safe empty defaults
+    # so the historical catalog and gap analysis continue to work.
+    substitution_keyword: str = ""
+    alphabet_keyword: str = ""
+    transposition_keyword: str = ""
+    role_assignment_mode: str = ""
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -412,6 +447,10 @@ class CoverageVector:
             "block_mode": self.block_mode,
             "operation_source": self.operation_source,
             "shift_value": self.shift_value,
+            "substitution_keyword": self.substitution_keyword,
+            "alphabet_keyword": self.alphabet_keyword,
+            "transposition_keyword": self.transposition_keyword,
+            "role_assignment_mode": self.role_assignment_mode,
         }
 
     @classmethod
@@ -451,6 +490,10 @@ class CoverageVector:
             block_mode=str(d.get("block_mode", "")),
             operation_source=str(d.get("operation_source", "")),
             shift_value=shift_value,
+            substitution_keyword=str(d.get("substitution_keyword", "")),
+            alphabet_keyword=str(d.get("alphabet_keyword", "")),
+            transposition_keyword=str(d.get("transposition_keyword", "")),
+            role_assignment_mode=str(d.get("role_assignment_mode", "")),
         )
 
     @property
@@ -626,7 +669,7 @@ def _alphabet_modes_for_payload(
     clue_text: str,
     clue_words: Sequence[str],
     *,
-    max_keyword_mixed: int = 2,
+    max_keyword_mixed: int = 3,
 ) -> list[AlphabetMode]:
     """Enumerate alphabet modes derivable from a clue pack.
 
@@ -643,6 +686,13 @@ def _alphabet_modes_for_payload(
     the same enumeration. Keyword-mixed entries follow the order of
     ``clue_words``; mirrored entries always come last so a small
     per-family alphabet cap preserves the standard modes first.
+
+    2026-04-28 (LESSON-010): default ``max_keyword_mixed`` bumped
+    from 2 to 3 so the alphabet/tableau keyword can be drawn
+    independently from a third clue word — the K4B-005 case where
+    substitution + alphabet + transposition map to three distinct
+    clue keywords. The cap remains explicit so callers can lower
+    it when they want a narrower mode set.
     """
     modes: list[AlphabetMode] = [
         AlphabetMode(
@@ -2049,6 +2099,288 @@ def _gen_caesar_three_layer_family(
     return out
 
 
+def _gen_independent_three_role_keyword_family(
+    *,
+    bench_slug: str,
+    sub_kind: str,                  # vigenere | beaufort | variant_beaufort
+    trans_kind: str,                # columnar | myszkowski
+    clue_keywords: Sequence[str],
+    alphabet_modes: Optional[Sequence[AlphabetMode]] = None,
+    role_pool_size: int = 3,
+    allow_self_pairs: bool = True,
+) -> list[GeneratedSpec]:
+    """LESSON-010: substitution + keyword-transposition with the
+    three role slots (substitution_keyword, alphabet_keyword,
+    transposition_keyword) enumerated INDEPENDENTLY from the clue
+    pool.
+
+    The pre-LESSON-010 ``_gen_keyword_pair_family`` iterated only
+    pairwise role swaps ``(kw_sub, kw_trans) ∈ {(A,B), (B,A)}`` —
+    which forces the transposition keyword to be the OTHER of the
+    first two clue words and ties the alphabet keyword (when
+    ``alphabet_mode == keyword_mixed``) to whichever clue word the
+    AlphabetMode points to. With three clue words {A, B, C} this
+    misses any candidate where all three roles use distinct
+    keywords (e.g. K4B-005's intended ``vig(TUNNEL,
+    alphabet_keyword=KRYPTOS) ∘ columnar(TOWER)``).
+
+    This generator emits the full
+    ``(sub_keyword × alphabet_mode × trans_keyword)`` cartesian
+    product, capped at the first ``role_pool_size`` clue keywords
+    (default 3). Self-pairs are admitted by default because some
+    hand ciphers reuse the same keyword across multiple roles.
+
+    Coverage_vector telemetry:
+      ``substitution_keyword``  — populated
+      ``alphabet_keyword``      — populated (may be "" for AZ/KA)
+      ``transposition_keyword`` — populated
+      ``role_assignment_mode``  — "independent_three_role"
+
+    Universe per family with default knobs and no mirror trigger:
+      role_pool_size (3) × alphabet_modes (5: AZ + KA + 3 keyword_mixed)
+                        × role_pool_size (3) × layer_orders (2)
+        = 90 specs / family
+    With mirror trigger (+2 alphabet modes):
+        = 3 × 7 × 3 × 2 = 126 specs / family
+    """
+    if sub_kind not in _SUBSTITUTION_KEYWORD_KINDS:
+        raise ValueError(
+            f"_gen_independent_three_role_keyword_family: unsupported "
+            f"sub_kind {sub_kind!r}"
+        )
+    if trans_kind not in _KEYWORD_TRANSPOSITION_KINDS:
+        raise ValueError(
+            f"_gen_independent_three_role_keyword_family: unsupported "
+            f"trans_kind {trans_kind!r}"
+        )
+    pool: list[str] = []
+    seen: set[str] = set()
+    for kw in clue_keywords:
+        if not isinstance(kw, str):
+            continue
+        upper = kw.upper().strip()
+        if not upper.isalpha() or upper in seen:
+            continue
+        seen.add(upper)
+        pool.append(upper)
+        if len(pool) >= role_pool_size:
+            break
+    # Need at least 2 keywords for a meaningful enumeration; with 1
+    # keyword the legacy pair family is a strict superset of what
+    # this generator could emit. Caller is expected to skip the i3
+    # family when len(pool) < 2.
+    if len(pool) < 2:
+        return []
+
+    family_label = f"i3_{trans_kind}_{sub_kind}"
+    if alphabet_modes is None:
+        alphabet_modes = (AlphabetMode("AZ", "AZ", None, "default"),)
+
+    def _trans_layer(kw: str) -> dict[str, Any]:
+        if trans_kind == "columnar":
+            return _keyword_columnar_layer(kw)
+        return _keyword_myszkowski_layer(kw)
+
+    out: list[GeneratedSpec] = []
+    for kw_sub in pool:
+        for kw_trans in pool:
+            if not allow_self_pairs and kw_sub == kw_trans:
+                continue
+            for mode in alphabet_modes:
+                sub_layer = _keyword_substitution_layer(
+                    sub_kind, kw_sub,
+                    alphabet=mode.dsl_alphabet,
+                    alphabet_keyword=mode.alphabet_keyword,
+                )
+                trans_layer = _trans_layer(kw_trans)
+                # role_assignment encodes the full triple so the
+                # symmetry-class key + slug both reflect the
+                # independent role assignment.
+                # role_assignment stays as the canonical keyword-swap
+                # tuple ``((sub, kw_sub), (trans, kw_trans))`` so the
+                # legacy "all role values are clue words" invariant
+                # still holds. The independent alphabet axis lives
+                # in the explicit ``alphabet_keyword`` field below.
+                role = (
+                    (sub_kind, kw_sub),
+                    (trans_kind, kw_trans),
+                )
+                alphabet_kw_text = mode.alphabet_keyword or ""
+                # Order 1: substitution first
+                out.append(_make_spec(
+                    bench_slug=bench_slug, family_label=family_label,
+                    pipeline=[sub_layer, trans_layer],
+                    coverage=CoverageVector(
+                        layer_family=family_label,
+                        layer_order=(sub_kind, trans_kind),
+                        role_assignment=role,
+                        alphabet=mode.mode_label,
+                        n_layers=2,
+                        alphabet_mode=mode.mode_label,
+                        alphabet_source=mode.source,
+                        substitution_keyword=kw_sub,
+                        alphabet_keyword=alphabet_kw_text,
+                        transposition_keyword=kw_trans,
+                        role_assignment_mode="independent_three_role",
+                    ),
+                    notes=(
+                        f"i3 {sub_kind}(sub={kw_sub}, alpha={mode.mode_label}/"
+                        f"{mode.source}) ∘ {trans_kind}(trans={kw_trans}) "
+                        "[sub-first]"
+                    ),
+                ))
+                # Order 2: transposition first
+                out.append(_make_spec(
+                    bench_slug=bench_slug, family_label=family_label,
+                    pipeline=[trans_layer, sub_layer],
+                    coverage=CoverageVector(
+                        layer_family=family_label,
+                        layer_order=(trans_kind, sub_kind),
+                        role_assignment=role,
+                        alphabet=mode.mode_label,
+                        n_layers=2,
+                        alphabet_mode=mode.mode_label,
+                        alphabet_source=mode.source,
+                        substitution_keyword=kw_sub,
+                        alphabet_keyword=alphabet_kw_text,
+                        transposition_keyword=kw_trans,
+                        role_assignment_mode="independent_three_role",
+                    ),
+                    notes=(
+                        f"i3 {trans_kind}(trans={kw_trans}) ∘ "
+                        f"{sub_kind}(sub={kw_sub}, alpha={mode.mode_label}/"
+                        f"{mode.source}) [trans-first]"
+                    ),
+                ))
+    return out
+
+
+def _gen_independent_three_role_keywordless_family(
+    *,
+    bench_slug: str,
+    sub_kind: str,                  # vigenere | beaufort | variant_beaufort
+    trans_kind: str,                # rail_fence | route
+    clue_keywords: Sequence[str],
+    extra_params: dict[str, Any],
+    alphabet_modes: Optional[Sequence[AlphabetMode]] = None,
+    role_pool_size: int = 3,
+) -> list[GeneratedSpec]:
+    """LESSON-010 keywordless variant. The transposition is keyword-
+    free (rail_fence depth, route variant + grid) so only the
+    substitution_keyword × alphabet_keyword × layer_order axes
+    matter for role independence. The transposition's
+    ``transposition_keyword`` field is recorded as "" since there
+    is no keyword to swap.
+
+    This is the LESSON-010 path the existing ``_gen_keywordless_
+    trans_pair_family`` already approximated (it iterated each clue
+    word as the substitution keyword separately). The new generator
+    is structurally distinct so coverage analysis can audit the
+    independent role choice via the explicit telemetry fields.
+    """
+    if sub_kind not in _SUBSTITUTION_KEYWORD_KINDS:
+        raise ValueError(
+            f"_gen_independent_three_role_keywordless_family: "
+            f"unsupported sub_kind {sub_kind!r}"
+        )
+    if trans_kind not in _KEYWORDLESS_TRANSPOSITION_KINDS:
+        raise ValueError(
+            f"_gen_independent_three_role_keywordless_family: "
+            f"unsupported trans_kind {trans_kind!r}"
+        )
+    pool: list[str] = []
+    seen: set[str] = set()
+    for kw in clue_keywords:
+        if not isinstance(kw, str):
+            continue
+        upper = kw.upper().strip()
+        if not upper.isalpha() or upper in seen:
+            continue
+        seen.add(upper)
+        pool.append(upper)
+        if len(pool) >= role_pool_size:
+            break
+    if not pool:
+        return []
+
+    family_label = f"i3_{trans_kind}_{sub_kind}"
+    extras_tuple = tuple(sorted(extra_params.items()))
+    if trans_kind == "rail_fence":
+        depth = int(extra_params.get("depth", 3))
+        trans_layer = _rail_fence_layer(depth)
+    else:  # route
+        trans_layer = _route_layer(
+            variant=str(extra_params.get("variant", "serpentine")),
+            rows=int(extra_params.get("rows", 7)),
+            cols=int(extra_params.get("cols", 14)),
+        )
+
+    if alphabet_modes is None:
+        alphabet_modes = (AlphabetMode("AZ", "AZ", None, "default"),)
+
+    out: list[GeneratedSpec] = []
+    for kw_sub in pool:
+        for mode in alphabet_modes:
+            sub_layer = _keyword_substitution_layer(
+                sub_kind, kw_sub,
+                alphabet=mode.dsl_alphabet,
+                alphabet_keyword=mode.alphabet_keyword,
+            )
+            # role_assignment stays as the canonical keyword tuple
+            # ``((sub, kw_sub),)``; alphabet axis carried in the
+            # explicit ``alphabet_keyword`` field below.
+            role = (
+                (sub_kind, kw_sub),
+            )
+            alphabet_kw_text = mode.alphabet_keyword or ""
+            # Order 1: substitution first
+            out.append(_make_spec(
+                bench_slug=bench_slug, family_label=family_label,
+                pipeline=[sub_layer, trans_layer],
+                coverage=CoverageVector(
+                    layer_family=family_label,
+                    layer_order=(sub_kind, trans_kind),
+                    role_assignment=role,
+                    alphabet=mode.mode_label, n_layers=2,
+                    extras=extras_tuple,
+                    alphabet_mode=mode.mode_label,
+                    alphabet_source=mode.source,
+                    substitution_keyword=kw_sub,
+                    alphabet_keyword=alphabet_kw_text,
+                    transposition_keyword="",
+                    role_assignment_mode="independent_three_role",
+                ),
+                notes=(
+                    f"i3 {sub_kind}(sub={kw_sub}, alpha={mode.mode_label}/"
+                    f"{mode.source}) ∘ {trans_kind}({extra_params}) [sub-first]"
+                ),
+            ))
+            # Order 2: transposition first
+            out.append(_make_spec(
+                bench_slug=bench_slug, family_label=family_label,
+                pipeline=[trans_layer, sub_layer],
+                coverage=CoverageVector(
+                    layer_family=family_label,
+                    layer_order=(trans_kind, sub_kind),
+                    role_assignment=role,
+                    alphabet=mode.mode_label, n_layers=2,
+                    extras=extras_tuple,
+                    alphabet_mode=mode.mode_label,
+                    alphabet_source=mode.source,
+                    substitution_keyword=kw_sub,
+                    alphabet_keyword=alphabet_kw_text,
+                    transposition_keyword="",
+                    role_assignment_mode="independent_three_role",
+                ),
+                notes=(
+                    f"i3 {trans_kind}({extra_params}) ∘ "
+                    f"{sub_kind}(sub={kw_sub}, alpha={mode.mode_label}/"
+                    f"{mode.source}) [trans-first]"
+                ),
+            ))
+    return out
+
+
 def _gen_three_layer_sandwich_family(
     *,
     bench_slug: str,
@@ -2245,6 +2577,23 @@ def generate_layered_specs(
             "vigenere_rail_fence_beaufort",
             "beaufort_rail_fence_vigenere",
         }
+    # 2026-04-28 (LESSON-010): the i3_* family labels are part of the
+    # default catalogue when there are 2+ clue keywords. Adding them
+    # to ``default_families`` keeps the gating uniform (a caller
+    # passing ``families={"i3_columnar_vigenere"}`` activates only
+    # that family; passing ``families=None`` activates everything).
+    if len(cleaned) >= 2:
+        default_families |= {
+            "i3_columnar_vigenere",
+            "i3_columnar_beaufort",
+            "i3_columnar_variant_beaufort",
+            "i3_myszkowski_vigenere",
+            "i3_myszkowski_beaufort",
+            "i3_rail_fence_vigenere",
+            "i3_rail_fence_beaufort",
+            "i3_route_vigenere",
+            "i3_route_beaufort",
+        }
     # 2026-04-28 (LESSON-008): block-reversal families fire only when
     # the clue pack carries a block-reversal trigger token. The lesson
     # is GENERALIZED — when triggered, we add the family set to the
@@ -2356,6 +2705,78 @@ def generate_layered_specs(
                         },
                         alphabet_modes=alphabet_modes,
                     ))
+
+    # --- LESSON-010: independent three-role keyword assignment -------
+    # When the clue pool has 2+ keywords, also emit the i3 family
+    # variants that enumerate substitution_keyword × alphabet_keyword
+    # × transposition_keyword INDEPENDENTLY across the first three
+    # clue keywords. The pre-LESSON-010 pair-family generators above
+    # tied (kw_sub, kw_trans) to (A, B) / (B, A) and tied alphabet_
+    # keyword to whichever clue word the AlphabetMode points to;
+    # this missed any candidate where all three roles use distinct
+    # clue keywords (e.g. K4B-005's intended vig(TUNNEL,
+    # alphabet_keyword=KRYPTOS) ∘ columnar(TOWER)).
+    #
+    # Real-K4 mode is unaffected because HCC is bench-mode only via
+    # _collect_hcc_seeds; the LESSON-010 entry in the registry is
+    # still visible to the LLM theorist as a generalized tactic.
+    if len(cleaned) >= 2:
+        i3_keyword_pair_specs: list[tuple[str, str, str]] = [
+            ("i3_columnar_vigenere",         "vigenere",         "columnar"),
+            ("i3_columnar_beaufort",         "beaufort",         "columnar"),
+            ("i3_columnar_variant_beaufort", "variant_beaufort", "columnar"),
+            ("i3_myszkowski_vigenere",       "vigenere",         "myszkowski"),
+            ("i3_myszkowski_beaufort",       "beaufort",         "myszkowski"),
+        ]
+        for label, sub_kind, trans_kind in i3_keyword_pair_specs:
+            # i3 family is gated by its own ``i3_*`` label only; a
+            # caller passing ``families={"columnar_vigenere"}``
+            # activates the legacy pair family, while
+            # ``families={"i3_columnar_vigenere"}`` activates only
+            # the LESSON-010 family. Both fire under the default
+            # ``families=None`` (full catalogue).
+            if label not in active:
+                continue
+            out.extend(_gen_independent_three_role_keyword_family(
+                bench_slug=bench_slug,
+                sub_kind=sub_kind, trans_kind=trans_kind,
+                clue_keywords=cleaned,
+                alphabet_modes=alphabet_modes,
+            ))
+        i3_keywordless_pairs: list[tuple[str, str, str]] = [
+            ("i3_rail_fence_vigenere", "vigenere", "rail_fence"),
+            ("i3_rail_fence_beaufort", "beaufort", "rail_fence"),
+            ("i3_route_vigenere",      "vigenere", "route"),
+            ("i3_route_beaufort",      "beaufort", "route"),
+        ]
+        for label, sub_kind, trans_kind in i3_keywordless_pairs:
+            if label not in active:
+                continue
+            if trans_kind == "rail_fence":
+                for depth in rail_fence_depths:
+                    out.extend(
+                        _gen_independent_three_role_keywordless_family(
+                            bench_slug=bench_slug,
+                            sub_kind=sub_kind, trans_kind=trans_kind,
+                            clue_keywords=cleaned,
+                            extra_params={"depth": depth},
+                            alphabet_modes=alphabet_modes,
+                        )
+                    )
+            else:  # route
+                for rows, cols in _DEFAULT_ROUTE_GRIDS:
+                    out.extend(
+                        _gen_independent_three_role_keywordless_family(
+                            bench_slug=bench_slug,
+                            sub_kind=sub_kind, trans_kind=trans_kind,
+                            clue_keywords=cleaned,
+                            extra_params={
+                                "variant": "serpentine",
+                                "rows": rows, "cols": cols,
+                            },
+                            alphabet_modes=alphabet_modes,
+                        )
+                    )
 
     # --- Quagmire family (III + IV with role permutation) ---
     if "quagmire" in active:
