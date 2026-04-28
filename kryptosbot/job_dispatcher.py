@@ -353,6 +353,32 @@ _SUPPORTED_KINDS: frozenset[str] = frozenset({
     # a clear error rather than silently producing a partial
     # permutation.
     "skip_route",
+    # 2026-04-28 (LESSON-014): width-only ragged boustrophedon
+    # (serpentine) route. Params: ``width`` (int, 2 <= width <
+    # CT_LEN), optional ``vertical`` (bool, default False). The
+    # translator computes rows = ceil(CT_LEN / width) and reuses
+    # ``serpentine_perm(rows, width, CT_LEN, vertical)`` which trims
+    # positions beyond CT_LEN — that is what makes the layer
+    # "ragged" (the final row/column may be short). Distinct from
+    # the existing ``route`` kind, which requires an explicit
+    # rows*cols >= CT_LEN grid; LESSON-014 generates the grid from
+    # a single width parameter so width-only triggers can fire
+    # cleanly. Length-preserving, deterministic.
+    "route_boustrophedon",
+    # 2026-04-28 (LESSON-015): folded-strip / alternate-row
+    # reversal. Params: ``width`` (int, 2 <= width <= CT_LEN),
+    # ``parity`` (str, "odd"|"even"|"both"), optional
+    # ``start_row`` (int, 0|1, default 0). The translator splits
+    # the text into rows of width ``width`` and reverses every row
+    # whose 0-indexed row index matches the parity selector
+    # (offset by ``start_row``). The trailing partial row is
+    # reversed in place (still ragged-aware). Self-inverse:
+    # applying the same parameter tuple twice returns the
+    # identity — kernel ``transposition_full`` with direction=
+    # 'undo' inverts the perm, but for an involutive perm the
+    # inverse is the same perm so encrypt/decrypt direction is
+    # unambiguous. Length-preserving, deterministic.
+    "row_reverse",
 })
 
 
@@ -1036,6 +1062,167 @@ def _translate_layer(layer: CipherLayer, binding: dict[str, Any]) -> dict[str, A
         perm = [
             ((j - offset) * step_inv) % CT_LEN for j in range(CT_LEN)
         ]
+        return {
+            "type": "transposition_full",
+            "params": {
+                "perm": perm,
+                "direction": "undo",
+            },
+        }
+
+    if kind == "route_boustrophedon":
+        # 2026-04-28 (LESSON-014): width-only ragged boustrophedon
+        # (serpentine) route. Distinct from the existing ``route``
+        # kind: that kind requires explicit rows AND cols with
+        # rows*cols >= CT_LEN; this kind takes ``width`` only and
+        # implies rows = ceil(CT_LEN / width). The final row (or
+        # column, if vertical) may be short — this is the "ragged"
+        # contract. The kernel primitive ``serpentine_perm`` already
+        # trims positions ``pos < length`` so out-of-bounds cells
+        # in the trailing partial row never enter the permutation.
+        #
+        # Length-preserving: the emitted permutation has exactly
+        # CT_LEN entries and is a bijection of [0, CT_LEN). Verified
+        # by every (width, vertical) pair the LESSON-014 generator
+        # emits (see test_lesson_route_boustrophedon_capability.py).
+        #
+        # Direction conventions:
+        #   vertical=False — fill row-major, read alternating
+        #                    row direction (left-to-right,
+        #                    right-to-left, ...). This is the
+        #                    "horizontal serpentine" reading.
+        #   vertical=True  — fill row-major, read alternating
+        #                    column direction (top-down, bottom-
+        #                    up, ...). Matches clue language like
+        #                    "arrows down, up, down, up".
+        width = binding.get("width")
+        if not isinstance(width, int):
+            raise DispatcherError(
+                f"route_boustrophedon layer requires int 'width'; "
+                f"got {width!r}"
+            )
+        from kryptos.kernel.constants import CT_LEN
+        if not 2 <= width < CT_LEN:
+            raise DispatcherError(
+                f"route_boustrophedon width={width} must be in "
+                f"[2, {CT_LEN - 1}]; width=1 is identity and width "
+                f">= CT_LEN is degenerate (no row alternation)"
+            )
+        vertical = bool(binding.get("vertical", False))
+        rows = (CT_LEN + width - 1) // width  # ceil(CT_LEN / width)
+        from kryptos.kernel.transforms.transposition import serpentine_perm
+        perm = serpentine_perm(rows, width, CT_LEN, vertical=vertical)
+        # Length-preservation invariant. Any drift here means the
+        # kernel primitive's trimming contract changed and we must
+        # update LESSON-014 alongside.
+        if len(perm) != CT_LEN:
+            raise DispatcherError(
+                f"route_boustrophedon translator produced perm of "
+                f"length {len(perm)} (expected {CT_LEN}); width="
+                f"{width}, rows={rows}, vertical={vertical}. "
+                "This indicates a kernel primitive contract drift "
+                "and is not safe to dispatch."
+            )
+        return {
+            "type": "transposition_full",
+            "params": {
+                "perm": list(perm),
+                "direction": "undo",
+            },
+        }
+
+    if kind == "row_reverse":
+        # 2026-04-28 (LESSON-015): folded-strip / alternate-row
+        # reversal. The text is split into rows of width ``width``
+        # (final row may be short — ragged). Rows whose 0-indexed
+        # row-index is selected by ``parity`` are reversed in
+        # place; other rows are kept verbatim. The whole thing is
+        # length-preserving by construction.
+        #
+        # SELF-INVERSE invariant: row_reverse(row_reverse(x)) == x
+        # under the same (width, parity, start_row) parameters.
+        # The kernel applies direction='undo' which inverts the
+        # supplied perm before applying. For an involutive perm
+        # (inv == perm), undo is identical to do, so emitting
+        # direction='undo' here is equivalent to direction='do'
+        # — we keep 'undo' for symmetry with every other
+        # transposition kind in this dispatcher.
+        #
+        # Width=CT_LEN with parity=odd is the "no-fold" identity
+        # case (only row 0 exists; row 0 is even; parity=odd
+        # selects no rows). This is intentionally reachable so
+        # the LESSON-015 enumeration can express
+        # "substitution-alone-equivalent" without adding a
+        # separate substitution-alone family — keeping the
+        # generalized capability surface small.
+        width = binding.get("width")
+        parity = binding.get("parity", "odd")
+        start_row = binding.get("start_row", 0)
+        if not isinstance(width, int):
+            raise DispatcherError(
+                f"row_reverse layer requires int 'width'; got {width!r}"
+            )
+        from kryptos.kernel.constants import CT_LEN
+        if not 2 <= width <= CT_LEN:
+            raise DispatcherError(
+                f"row_reverse width={width} must be in [2, {CT_LEN}]; "
+                "width=1 reverses every single character (identity), "
+                "width > CT_LEN has no row partition."
+            )
+        if parity not in ("odd", "even", "both"):
+            raise DispatcherError(
+                f"row_reverse parity {parity!r} must be in "
+                "{'odd', 'even', 'both'}"
+            )
+        if not isinstance(start_row, int) or start_row not in (0, 1):
+            raise DispatcherError(
+                f"row_reverse start_row {start_row!r} must be 0 or 1"
+            )
+        # Build the in-place perm: rows that are reversed are
+        # mirrored about their row's center; rows that are kept
+        # map to themselves. The trailing partial row is reversed
+        # in place when its row-index matches the parity selector.
+        perm = list(range(CT_LEN))
+        for row_idx, start in enumerate(range(0, CT_LEN, width)):
+            end = min(start + width, CT_LEN)
+            row_len = end - start
+            # Apply start_row offset BEFORE the parity test so
+            # start_row=1 effectively flips the parity selector.
+            effective_idx = row_idx - start_row
+            if parity == "both":
+                reverse = True
+            elif parity == "odd":
+                reverse = (effective_idx % 2) == 1
+            else:  # parity == "even"
+                reverse = (effective_idx % 2) == 0
+            if reverse:
+                # Output position start+k receives the input character
+                # at start + (row_len - 1 - k). This is the in-place
+                # row reversal — same convention as reverse_blocks
+                # (LESSON-008) at the row-block level.
+                for k in range(row_len):
+                    perm[start + k] = start + (row_len - 1 - k)
+            # else: identity (already initialised by range(CT_LEN))
+        # Length-preservation invariant.
+        if len(perm) != CT_LEN:
+            raise DispatcherError(
+                f"row_reverse translator produced perm of length "
+                f"{len(perm)} (expected {CT_LEN}); width={width}, "
+                f"parity={parity}, start_row={start_row}. This "
+                "indicates a partition bug and is not safe to "
+                "dispatch."
+            )
+        # Self-inverse invariant. perm[perm[i]] == i for every i.
+        # We only assert in debug-friendly form; a violation would
+        # indicate the loop above corrupted the perm.
+        for i in range(CT_LEN):
+            if perm[perm[i]] != i:
+                raise DispatcherError(
+                    f"row_reverse translator violated self-inverse "
+                    f"invariant at i={i} (width={width}, parity="
+                    f"{parity}, start_row={start_row}). Refusing to "
+                    "dispatch."
+                )
         return {
             "type": "transposition_full",
             "params": {

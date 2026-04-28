@@ -264,6 +264,28 @@ _SKIP_ROUTE_THREE_LAYER_PAIR_CAP: int = 6
 # Caesar to demonstrate the ordering.
 _SKIP_ROUTE_THREE_LAYER_CAESAR_SHIFTS: tuple[int, ...] = (13,)
 
+# 2026-04-28 (LESSON-014): caps on (width, direction) enumeration for
+# substitution-paired and three-layer route_boustrophedon families.
+# The alone family is uncapped because it produces only ~10 widths × 2
+# directions = 20 specs at the default. Substitution-paired families
+# pre-multiply by keywords × alphabets × layer-orders, so capping the
+# (width, direction) cartesian keeps the universe bounded.
+_ROUTE_BOUSTROPHEDON_PAIR_WIDTH_CAP: int = 8
+# Smaller cap for three-layer sandwiches where (sub × alpha × widths
+# × directions × layer-orders) cartesian explodes the universe. Six
+# widths is enough to hit any phrase-bound width plus the most common
+# defaults.
+_ROUTE_BOUSTROPHEDON_THREE_LAYER_WIDTH_CAP: int = 6
+
+# 2026-04-28 (LESSON-015): caps on (width × parity) enumeration for
+# substitution-paired and three-layer row_reverse families. The alone
+# family is uncapped because it produces only ~9 widths × 2 parities =
+# 18 specs at the default; substitution-paired families pre-multiply
+# by keywords × alphabets × layer-orders, so capping the (width,
+# parity) cartesian keeps the universe bounded.
+_ROW_REVERSE_PAIR_WIDTH_CAP: int = 8
+_ROW_REVERSE_THREE_LAYER_WIDTH_CAP: int = 5
+
 
 def _skip_route_layer(step: int, offset: int) -> dict[str, Any]:
     """Build a skip_route layer dict (LESSON-011).
@@ -708,11 +730,23 @@ def _caesar_shifts_for_payload(clue_text: str) -> list[tuple[int, str]]:
 #
 # Worst-case ≈ 530 specs. Each spec dispatches as a single kernel
 # config (microseconds), so the dispatch cost is dominated by
-# multiprocessing startup (~1s/spec) — ~9 min/cycle at the worst
+# multiprocessing startup (~1s/spec) — ~14 min/cycle at the worst
 # case. Operators can lower the ceiling via --hcc-seeds N when they
-# want a faster cycle. Cap at 600 to leave headroom for future
-# kinds without breaking the deterministic-coverage contract.
-_DEFAULT_MAX_SPECS: int = 5000
+# want a faster cycle.
+#
+# 2026-04-28 (LESSON-013): bumped from 5000 to 10000 to accommodate
+# the enumerated columnar families:
+#   * columnar_<sub> pair (~900 specs)
+#   * i3_columnar_<sub> pair (~900 specs)
+#   * caesar_columnar_atbash (~300 specs)
+#   * columnar_<sub>_rail_fence 3-layer (~2100 specs — needed to
+#     reach K4B-006's empirical 24/24 path)
+# Total LESSON-013 contribution: ~4200 specs per triggered cycle.
+# Combined with the legacy keyword path + LESSON-008/-009/-011
+# trigger-driven families the catalogue stays under 10000. Per
+# Colin's runtime policy (memory: feedback_do_not_cap_runtime.md),
+# compute is not the constraint.
+_DEFAULT_MAX_SPECS: int = 10000
 
 
 # ============================================================================
@@ -832,6 +866,115 @@ class CoverageVector:
     route_mode: str = ""
     step: Optional[int] = None
     offset: Optional[int] = None
+    # 2026-04-28 (LESSON-013): explicit columnar-permutation
+    # telemetry. Empty when the spec does not include a columnar
+    # layer; populated otherwise so coverage analysis can answer
+    # "have we tested width=5 col_order=(4,1,3,0,2) in this
+    # family?". The legacy ``role_assignment`` tuple still carries
+    # ("columnar", keyword) when col_order is keyword-derived;
+    # for enumerated permutations the role_assignment carries
+    # ("columnar", f"width{W}_perm{idx}") so the symmetry-class
+    # key remains unique. Legacy specs (no columnar layer) leave
+    # all four fields at safe empty defaults.
+    transposition_width: Optional[int] = None
+    col_order: tuple[int, ...] = ()
+    col_order_source: str = ""
+    col_order_index: Optional[int] = None
+    width_source: str = ""
+    # 2026-04-28 (LESSON-014): width-only ragged boustrophedon
+    # route telemetry. Empty when the spec does not include a
+    # route_boustrophedon layer; populated otherwise so coverage
+    # analysis can answer "did we test vigenere(ARCHIVE) followed
+    # by ragged boustrophedon width 8 with vertical=True?".
+    #
+    #   route_mode (existing)  — set to "route_boustrophedon" or
+    #                            "boustrophedon_width" when this spec
+    #                            uses the LESSON-014 layer; "" for
+    #                            non-LESSON-014 specs and "skip_route"
+    #                            for LESSON-011 specs.
+    #   route_width            — int width of the boustrophedon grid.
+    #                            Implies rows = ceil(CT_LEN / width).
+    #                            None for non-LESSON-014 specs.
+    #   route_rows             — implied row count = ceil(CT_LEN /
+    #                            route_width). None for non-LESSON-014
+    #                            specs. Stored explicitly so attempt-
+    #                            artifact readers do not have to
+    #                            recompute.
+    #   route_cols             — equals route_width. Stored explicitly
+    #                            so the (rows, cols) telemetry pair is
+    #                            symmetric with the existing ``route``
+    #                            kind.
+    #   route_ragged           — True when CT_LEN is not a multiple of
+    #                            route_width (the standard case for
+    #                            CT_LEN=97). False only when width
+    #                            divides CT_LEN exactly. None for non-
+    #                            LESSON-014 specs.
+    #   route_direction        — "horizontal" (vertical=False) or
+    #                            "vertical" (vertical=True). Mirrors
+    #                            the dispatcher's ``vertical`` flag.
+    #                            "" for non-LESSON-014 specs.
+    #   route_width_source     — "phrase_bound_route_width",
+    #                            "clue_keyword_length", "default_set"
+    #                            — provenance of the width used.
+    #                            Empty for non-LESSON-014 specs.
+    #
+    # The legacy ``width_source`` field describes columnar widths
+    # (LESSON-013); ``route_width_source`` is a separate field so
+    # three-layer specs that combine columnar AND route_boustrophedon
+    # can carry both provenance values without ambiguity.
+    route_width: Optional[int] = None
+    route_rows: Optional[int] = None
+    route_cols: Optional[int] = None
+    route_ragged: Optional[bool] = None
+    route_direction: str = ""
+    route_width_source: str = ""
+    # 2026-04-28 (LESSON-015): folded-strip / alternate-row reversal
+    # telemetry. Empty when the spec does not include a row_reverse
+    # layer; populated otherwise so coverage analysis can answer
+    # "did we test vig(SHADOW) followed by row_reverse(width=10,
+    # parity=odd)?".
+    #
+    #   row_reverse_width      — int width of each row
+    #   row_reverse_parity     — "odd" / "even" / "both"
+    #   row_reverse_source     — "phrase_bound_row_reverse_width" /
+    #                            "clue_keyword_length" /
+    #                            "default_set"
+    #   row_reverse_ragged     — True when CT_LEN % width != 0;
+    #                            False for exact divisors
+    #   row_reverse_start_row  — 0 or 1 (parity offset)
+    #
+    # Self-inverse contract: applying the same (width, parity,
+    # start_row) twice returns the identity. The dispatcher's
+    # row_reverse translator asserts this invariant and refuses to
+    # dispatch on violation.
+    row_reverse_width: Optional[int] = None
+    row_reverse_parity: str = ""
+    row_reverse_source: str = ""
+    row_reverse_ragged: Optional[bool] = None
+    row_reverse_start_row: Optional[int] = None
+    # 2026-04-28 (LESSON-015 audit-hygiene): explicit identity flag.
+    # ``row_reverse_identity=True`` means the (width, parity, start_row)
+    # triple selects no row of length > 1, so the layer is the
+    # identity permutation. This happens when the no-fold sentinel
+    # ``width=CT_LEN + parity=odd + start_row=0`` is enumerated AND
+    # for any other (width, parity, start_row) where every row whose
+    # parity matches happens to be a single character.
+    #
+    # Why this matters: identity layers provide ZERO cipher work but
+    # are still useful catalog points (they let substitution+row_reverse
+    # cover substitution-alone-equivalent specs). Downstream analysis
+    # — coverage rollups, bench postmortems, success-attribution
+    # tooling — MUST distinguish "fold-style row reversal was in the
+    # winning method" from "an identity wrapper happened to ride the
+    # winning substitution." Without this flag a no-fold sentinel
+    # win would be miscredited as evidence that folded-row reversal
+    # is the missing capability.
+    #
+    # ``row_reverse_identity=False`` means the layer actually reverses
+    # at least one multi-character row (the substantive case).
+    # ``None`` is the default for specs that do not include a
+    # row_reverse layer.
+    row_reverse_identity: Optional[bool] = None
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -854,6 +997,30 @@ class CoverageVector:
             "route_mode": self.route_mode,
             "step": self.step,
             "offset": self.offset,
+            "transposition_width": self.transposition_width,
+            "col_order": list(self.col_order),
+            "col_order_source": self.col_order_source,
+            "col_order_index": self.col_order_index,
+            "width_source": self.width_source,
+            # LESSON-014 fields. Always emitted (even when None /
+            # empty) so attempt artifact readers can tell the
+            # difference between "field absent in old data" and
+            # "field present but inapplicable here".
+            "route_width": self.route_width,
+            "route_rows": self.route_rows,
+            "route_cols": self.route_cols,
+            "route_ragged": self.route_ragged,
+            "route_direction": self.route_direction,
+            "route_width_source": self.route_width_source,
+            # LESSON-015 fields. Always emitted so attempt artifact
+            # readers can tell "field absent in old data" from
+            # "field present but inapplicable here".
+            "row_reverse_width": self.row_reverse_width,
+            "row_reverse_parity": self.row_reverse_parity,
+            "row_reverse_source": self.row_reverse_source,
+            "row_reverse_ragged": self.row_reverse_ragged,
+            "row_reverse_start_row": self.row_reverse_start_row,
+            "row_reverse_identity": self.row_reverse_identity,
         }
 
     @classmethod
@@ -901,6 +1068,69 @@ class CoverageVector:
             step=int(d["step"]) if isinstance(d.get("step"), int) else None,
             offset=(
                 int(d["offset"]) if isinstance(d.get("offset"), int)
+                else None
+            ),
+            transposition_width=(
+                int(d["transposition_width"])
+                if isinstance(d.get("transposition_width"), int)
+                else None
+            ),
+            col_order=tuple(d.get("col_order") or ()),
+            col_order_source=str(d.get("col_order_source", "")),
+            col_order_index=(
+                int(d["col_order_index"])
+                if isinstance(d.get("col_order_index"), int)
+                else None
+            ),
+            width_source=str(d.get("width_source", "")),
+            # LESSON-014 fields. Lenient parsing so older ledger rows
+            # that predate LESSON-014 read back as None / empty
+            # without raising — those rows correctly describe specs
+            # that did not include a route_boustrophedon layer.
+            route_width=(
+                int(d["route_width"])
+                if isinstance(d.get("route_width"), int)
+                else None
+            ),
+            route_rows=(
+                int(d["route_rows"])
+                if isinstance(d.get("route_rows"), int)
+                else None
+            ),
+            route_cols=(
+                int(d["route_cols"])
+                if isinstance(d.get("route_cols"), int)
+                else None
+            ),
+            route_ragged=(
+                bool(d["route_ragged"])
+                if isinstance(d.get("route_ragged"), bool)
+                else None
+            ),
+            route_direction=str(d.get("route_direction", "")),
+            route_width_source=str(d.get("route_width_source", "")),
+            # LESSON-015 fields. Lenient parsing: older ledger rows
+            # that predate LESSON-015 read back as None / empty.
+            row_reverse_width=(
+                int(d["row_reverse_width"])
+                if isinstance(d.get("row_reverse_width"), int)
+                else None
+            ),
+            row_reverse_parity=str(d.get("row_reverse_parity", "")),
+            row_reverse_source=str(d.get("row_reverse_source", "")),
+            row_reverse_ragged=(
+                bool(d["row_reverse_ragged"])
+                if isinstance(d.get("row_reverse_ragged"), bool)
+                else None
+            ),
+            row_reverse_start_row=(
+                int(d["row_reverse_start_row"])
+                if isinstance(d.get("row_reverse_start_row"), int)
+                else None
+            ),
+            row_reverse_identity=(
+                bool(d["row_reverse_identity"])
+                if isinstance(d.get("row_reverse_identity"), bool)
                 else None
             ),
         )
@@ -1528,6 +1758,185 @@ def _keyword_columnar_layer(keyword: str) -> dict[str, Any]:
     }
 
 
+# ---------------------------------------------------------------------------
+# LESSON-013: arbitrary columnar column-order enumeration
+# ---------------------------------------------------------------------------
+#
+# Pre-LESSON-013 the columnar layer was only ever built via
+# ``_keyword_columnar_layer`` whose col_order came from the keyword's
+# stable rank (LESSON-004 + LESSON-005). Some hand ciphers use an
+# explicit numeric column permutation (e.g. (4, 1, 3, 0, 2) for W=5)
+# that no natural English keyword stable-ranks to. LESSON-013 adds an
+# enumerated col_order path that runs alongside — never replacing —
+# the keyword path.
+
+# Default widths to enumerate when no clue-driven width applies.
+_DEFAULT_COLUMNAR_WIDTHS: tuple[int, ...] = (3, 4, 5)
+
+# Largest width we are willing to enumerate exhaustively. W >= 8 is
+# left untouched; the keyword-derived path still produces specs for
+# any keyword of any length >= 2, but the enumerated path stops at 7.
+_MAX_ENUMERATED_WIDTH: int = 7
+
+# Per-width permutation cap. W=2..5 are exhaustive; W=6 (720) and
+# W=7 (5040) get truncated to the first 120 lexicographic entries so
+# the dispatch universe stays bounded across (sub × alpha × order ×
+# col_order) products.
+_PER_WIDTH_PERM_CAP: dict[int, int] = {
+    2: 2, 3: 6, 4: 24, 5: 120, 6: 120, 7: 120,
+}
+
+# Alphabet modes that the enumerated path is allowed to use. Restricted
+# to AZ + KA — keyword_mixed already explodes via the keyword path and
+# would multiply the enumerated universe without adding a meaningful
+# new tactic. Real-K4 mode is unaffected because HCC is bench-only.
+_LESSON_013_ALPHABET_MODES: tuple[AlphabetMode, ...] = (
+    AlphabetMode("AZ", "AZ", None, "default"),
+    AlphabetMode("KA", "KA", None, "default"),
+)
+
+
+def _columnar_widths_for_payload(
+    clue_text: str,
+    clue_keywords: Sequence[str],
+) -> list[tuple[int, str]]:
+    """Resolve the enumerated columnar widths for a clue payload.
+
+    Returns ``[(width, source), ...]`` deduplicated and capped at
+    ``_MAX_ENUMERATED_WIDTH``. Source is one of:
+      * ``phrase_bound_step``  — LESSON-012 ``step`` slot (only)
+      * ``clue_keyword_length`` — len of a clue keyword in [2, 7]
+      * ``default_set``         — fallback ``_DEFAULT_COLUMNAR_WIDTHS``
+
+    Critical: rail_depth, shift_value, block_size, and offset
+    bindings from ``extract_phrase_bound_numerics`` are EXPLICITLY
+    NOT pulled in. Those numerals describe rail-count or arithmetic
+    shifts; using them as a transposition width would be a category
+    error and would explode the universe with unrelated values.
+    """
+    out: list[tuple[int, str]] = []
+    seen: set[int] = set()
+
+    # Priority 1: Phrase-bound ``step`` slot (LESSON-012). Most clue-
+    # relevant — when the clue says "step five" we MUST enumerate W=5.
+    # Only the ``step`` slot is consulted; rail_depth, shift_value,
+    # block_size, and offset bindings are EXPLICITLY skipped (they
+    # describe rail-count or arithmetic shifts, not transposition
+    # widths — using them would explode the universe with unrelated
+    # numerals).
+    if isinstance(clue_text, str) and clue_text:
+        bound = extract_phrase_bound_numerics(clue_text)
+        for w in bound.get("step", []):
+            if 2 <= w <= _MAX_ENUMERATED_WIDTH and w not in seen:
+                seen.add(w)
+                out.append((w, "phrase_bound_step"))
+
+    # Priority 2: Safe defaults {3, 4, 5}. Cover the small-W universe
+    # before the long tail of clue-keyword lengths so the per-family
+    # cap reaches W=5 reliably.
+    for w in _DEFAULT_COLUMNAR_WIDTHS:
+        if w not in seen:
+            seen.add(w)
+            out.append((w, "default_set"))
+
+    # Priority 3: Clue keyword lengths in [2, 7]. Long tail; only fills
+    # remaining budget after phrase-bound + defaults are covered.
+    for kw in clue_keywords:
+        if not isinstance(kw, str):
+            continue
+        upper = kw.upper().strip()
+        if not upper.isalpha():
+            continue
+        w = len(upper)
+        if 2 <= w <= _MAX_ENUMERATED_WIDTH and w not in seen:
+            seen.add(w)
+            out.append((w, "clue_keyword_length"))
+
+    return out
+
+
+def _enumerated_col_orders_for_width(
+    width: int,
+    *,
+    dedup_against: Optional[Sequence[Sequence[int]]] = None,
+) -> list[tuple[tuple[int, ...], int]]:
+    """Return ``[(col_order_tuple, index), ...]`` for ``width``.
+
+    For W in [2, 7] this yields all W! permutations of ``range(width)``
+    in lexicographic order, capped at ``_PER_WIDTH_PERM_CAP[width]``.
+    The returned ``index`` is the position in the *unfiltered*
+    lexicographic enumeration (so the index is a stable identifier
+    even when ``dedup_against`` removes some entries).
+
+    ``dedup_against`` is an optional collection of col_order sequences
+    (typically keyword-derived) that should be skipped — guarantees the
+    enumerated path emits no specs the keyword path already covers.
+
+    For W < 2 returns ``[]`` (degenerate; columnar(W=1) is identity).
+    For W > ``_MAX_ENUMERATED_WIDTH`` returns ``[]`` (out of scope).
+    """
+    if not isinstance(width, int) or width < 2:
+        return []
+    if width > _MAX_ENUMERATED_WIDTH:
+        return []
+    cap = _PER_WIDTH_PERM_CAP.get(width, 0)
+    if cap <= 0:
+        return []
+    skip: set[tuple[int, ...]] = set()
+    # Always skip the identity permutation — columnar with col_order =
+    # range(W) is a no-op transposition (lesson 004 violation; was the
+    # K4B-001 root-cause bug). Callers may add additional dedup
+    # entries via ``dedup_against``.
+    skip.add(tuple(range(width)))
+    if dedup_against is not None:
+        for co in dedup_against:
+            try:
+                skip.add(tuple(int(x) for x in co))
+            except (TypeError, ValueError):
+                continue
+    import itertools as _it
+    out: list[tuple[tuple[int, ...], int]] = []
+    for idx, perm in enumerate(_it.permutations(range(width))):
+        if perm in skip:
+            continue
+        out.append((perm, idx))
+        if len(out) >= cap:
+            break
+    return out
+
+
+def _explicit_columnar_layer(
+    width: int,
+    col_order: Sequence[int],
+) -> dict[str, Any]:
+    """Build a columnar layer with an explicit width + col_order pair.
+
+    Mirror of ``_keyword_columnar_layer`` but for col_orders that did
+    not come from a keyword's stable rank. Validates that ``col_order``
+    is a permutation of ``range(width)`` so no malformed specs reach
+    the validator.
+    """
+    if not isinstance(width, int) or width < 2:
+        raise ValueError(
+            f"_explicit_columnar_layer: width {width!r} too small; "
+            "need width >= 2"
+        )
+    co_list = [int(x) for x in col_order]
+    if sorted(co_list) != list(range(width)):
+        raise ValueError(
+            f"_explicit_columnar_layer: col_order {col_order!r} is "
+            f"not a permutation of range({width})"
+        )
+    return {
+        "kind": "columnar",
+        "alphabet": "AZ",
+        "params": [
+            {"name": "width", "values": [width]},
+            {"name": "col_order", "values": [co_list]},
+        ],
+    }
+
+
 def _keyword_myszkowski_layer(keyword: str) -> dict[str, Any]:
     """Myszkowski layer keyed by ``keyword``; the kernel handles the
     tied-column rank logic internally.
@@ -1569,6 +1978,687 @@ def _route_layer(
             {"name": "cols", "values": [cols]},
         ],
     }
+
+
+# ============================================================================
+# LESSON-014: width-only ragged boustrophedon route
+# ============================================================================
+#
+# A clue like "the artifact says ARCHIVE and shows a ragged eight-column
+# grid with arrows down, up, down, up" describes a width-only
+# boustrophedon: the ciphertext is laid into a grid of fixed width
+# (here 8), where the final row may be short ("ragged"), and read in a
+# serpentine pattern alternating direction by row (or by column, when
+# the clue says "down, up, down, up"). The existing ``route`` kind
+# requires explicit rows AND cols + a non-ragged grid; LESSON-014's
+# ``route_boustrophedon`` kind takes only ``width``, which is the
+# correct shape for clue language that names a column count without
+# specifying rows.
+#
+# Trigger vocabulary, default widths, width-source priority, and family
+# pairings are all owned by LESSON-014 in the registry. A drift test
+# asserts the runtime constants below match the registry payload.
+
+_ROUTE_BOUSTROPHEDON_TRIGGER_TOKENS: frozenset[str] = frozenset({
+    "archive",
+    "column", "columns", "col",
+    "grid",
+    "walk", "walks", "walking",
+    "route", "routes",
+    "path", "paths",
+    "edge", "edges",
+    "ragged",
+    "artifact", "artifacts",
+    "count", "counts",
+    "serpentine",
+    "boustrophedon",
+    "snake", "snaking",
+    "zigzag",
+    "up", "down", "left", "right",
+    "row", "rows",
+})
+
+# Direction-priority tokens. When ANY of these appears in the clue,
+# the vertical=True variant is the priority direction; vertical=False
+# is still emitted as the symmetry partner (LESSON-002).
+_ROUTE_BOUSTROPHEDON_VERTICAL_TOKENS: frozenset[str] = frozenset({
+    "down", "up",
+    "vertical", "vertically",
+    "columnwise",
+})
+
+_ROUTE_BOUSTROPHEDON_HORIZONTAL_TOKENS: frozenset[str] = frozenset({
+    "left", "right",
+    "horizontal", "horizontally",
+    "rowwise",
+})
+
+# Default width set. Intentionally bounded to the small-grid range a
+# hand cipher operator could realistically count off on a sheet of
+# paper. K4-length CT is 97 chars; widths up to 12 leave the implied
+# row count at >=9 which is still grid-shaped. Wider widths (>12) are
+# reachable only via clue keyword length when the clue keyword is
+# itself longer (capped at 16 to stay within hand-cipher plausibility).
+_DEFAULT_ROUTE_BOUSTROPHEDON_WIDTHS: tuple[int, ...] = (
+    3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
+)
+
+# Hard bounds on enumerated widths. ``min_width`` is 2 because width=1
+# is identity (a single column read top-down). ``max_width`` caps the
+# clue-keyword-length path so a pathological 30-letter "keyword" does
+# not seed a 30-wide grid.
+_ROUTE_BOUSTROPHEDON_MIN_WIDTH: int = 2
+_ROUTE_BOUSTROPHEDON_MAX_WIDTH: int = 16
+_ROUTE_BOUSTROPHEDON_MAX_KEYWORD_WIDTH: int = 12
+
+# Phrase anchors that bind a numeral to ``route_width`` specifically.
+# These are SEPARATE from the LESSON-012 phrase taxonomy because the
+# LESSON-012 anchors do not include "column" / "wide" / "grid" /
+# "row" — those are LESSON-014's concern. The lesson registry mirrors
+# this list so a drift test asserts they stay in sync.
+_ROUTE_WIDTH_PHRASE_ANCHORS_BEFORE: tuple[str, ...] = (
+    "width", "wide",
+    "column", "columns", "col", "cols",
+    "grid",
+    "row", "rows",
+)
+_ROUTE_WIDTH_PHRASE_ANCHORS_AFTER: tuple[str, ...] = (
+    "wide",
+    "column", "columns", "col", "cols",
+    "grid",
+    "row", "rows",
+)
+# Hyphenated patterns: "eight-column", "8-wide", "12-row". The numeral
+# can be a digit literal, cardinal, or ordinal (any token resolved by
+# ``_NUMBER_WORDS`` / ``int(token)``).
+_ROUTE_WIDTH_HYPHEN_SUFFIXES: tuple[str, ...] = (
+    "column", "columns", "col", "cols",
+    "wide", "row", "rows",
+)
+
+
+def _route_boustrophedon_layer(
+    width: int,
+    *,
+    vertical: bool = False,
+) -> dict[str, Any]:
+    """Build a route_boustrophedon layer dict (LESSON-014).
+
+    The dispatcher computes ``rows = ceil(CT_LEN / width)`` and reuses
+    ``serpentine_perm`` which trims positions beyond CT_LEN; the layer
+    is therefore length-preserving and deterministic. ``vertical``
+    selects between row-direction alternation (False) and
+    column-direction alternation (True) — the latter matches clue
+    language like "arrows down, up, down, up".
+    """
+    if not isinstance(width, int) or width < _ROUTE_BOUSTROPHEDON_MIN_WIDTH:
+        raise ValueError(
+            f"_route_boustrophedon_layer: width must be int >= "
+            f"{_ROUTE_BOUSTROPHEDON_MIN_WIDTH}; got {width!r}"
+        )
+    return {
+        "kind": "route_boustrophedon",
+        "alphabet": "AZ",
+        "params": [
+            {"name": "width", "values": [width]},
+            {"name": "vertical", "values": [bool(vertical)]},
+        ],
+    }
+
+
+def _detect_route_boustrophedon_trigger(clue_text: str) -> bool:
+    """Whole-word match for any LESSON-014 boustrophedon trigger token.
+
+    Used by ``generate_layered_specs`` to gate emission of the
+    route_boustrophedon family matrix. A clue text without any of these
+    tokens leaves the historical catalog bit-identical (route_
+    boustrophedon families are absent).
+    """
+    if not isinstance(clue_text, str) or not clue_text:
+        return False
+    lower = clue_text.lower()
+    for token in _ROUTE_BOUSTROPHEDON_TRIGGER_TOKENS:
+        idx = 0
+        while True:
+            pos = lower.find(token, idx)
+            if pos < 0:
+                break
+            before_ok = pos == 0 or not lower[pos - 1].isalnum()
+            after_pos = pos + len(token)
+            after_ok = (
+                after_pos >= len(lower) or not lower[after_pos].isalnum()
+            )
+            if before_ok and after_ok:
+                return True
+            idx = pos + 1
+    return False
+
+
+def _detect_route_vertical_priority(clue_text: str) -> bool:
+    """True iff the clue text contains any LESSON-014 vertical-direction
+    token. Used to select vertical=True as the priority direction;
+    vertical=False is always emitted as the symmetry partner.
+    """
+    if not isinstance(clue_text, str) or not clue_text:
+        return False
+    lower = clue_text.lower()
+    for token in _ROUTE_BOUSTROPHEDON_VERTICAL_TOKENS:
+        # Word-boundary match. "down" inside "downfall" must NOT
+        # trigger; "down" in "down, up, down, up" must trigger.
+        idx = 0
+        while True:
+            pos = lower.find(token, idx)
+            if pos < 0:
+                break
+            before_ok = pos == 0 or not lower[pos - 1].isalnum()
+            after_pos = pos + len(token)
+            after_ok = (
+                after_pos >= len(lower) or not lower[after_pos].isalnum()
+            )
+            if before_ok and after_ok:
+                return True
+            idx = pos + 1
+    return False
+
+
+def _extract_phrase_bound_route_widths(
+    clue_text: str,
+    *,
+    ct_length: int = 97,
+) -> list[int]:
+    """Parse phrase-attached numerals that bind to ``route_width``.
+
+    Distinct from ``extract_phrase_bound_numerics`` (LESSON-012), which
+    handles step / offset / rail_depth / block_size / shift_value
+    parameters. LESSON-014 anchors are different — "width", "column",
+    "grid", "row", "wide" — so the parser is a lightweight separate
+    routine rather than a new slot in the LESSON-012 taxonomy. Keeping
+    them separate prevents cross-contamination: a clue like "every
+    fifth step through eight columns" must bind step=5 to skip_route
+    AND width=8 to route_boustrophedon, not pollute either with the
+    other's numeral.
+
+    Anchor matching rules (case-insensitive, whole-word):
+      * BEFORE-anchors: numeral immediately preceded by an anchor
+        token (within 1 token).
+      * AFTER-anchors: numeral immediately followed by an anchor
+        token (within 2 tokens).
+      * Hyphen forms: "eight-column", "8-wide", "12-row" — matched
+        as adjacent token pairs separated by '-'.
+
+    Returns a deduplicated list of ints in document order, each in the
+    range [_ROUTE_BOUSTROPHEDON_MIN_WIDTH, _ROUTE_BOUSTROPHEDON_MAX_WIDTH].
+    """
+    if not isinstance(clue_text, str) or not clue_text:
+        return []
+    import re
+    lower = clue_text.lower()
+
+    # Tokenize: alphabetic tokens, digit tokens, and remember whether
+    # adjacent tokens are joined by a hyphen so "eight-column" is
+    # recognized as a hyphen pair.
+    tokens: list[tuple[str, int, int]] = []  # (token, start, end)
+    for m in re.finditer(r"[A-Za-z]+|\d+", lower):
+        tokens.append((m.group(0), m.start(), m.end()))
+
+    def _numeric_of(tok: str) -> Optional[int]:
+        if tok.isdigit():
+            try:
+                v = int(tok)
+            except ValueError:
+                return None
+            return v
+        return _NUMBER_WORDS.get(tok)
+
+    def _hyphen_between(tok_a_end: int, tok_b_start: int) -> bool:
+        # Hyphen joining condition: every char between the two tokens
+        # is whitespace, optional '-', and optional more whitespace.
+        # We accept exactly one '-' separator because that is the
+        # hyphenated-compound idiom; "eight column" without hyphen is
+        # already handled by the AFTER-anchor branch.
+        between = lower[tok_a_end:tok_b_start]
+        return between == "-"
+
+    found: list[int] = []
+    seen: set[int] = set()
+
+    def _accept(value: int) -> None:
+        if value in seen:
+            return
+        if not (
+            _ROUTE_BOUSTROPHEDON_MIN_WIDTH
+            <= value
+            <= _ROUTE_BOUSTROPHEDON_MAX_WIDTH
+        ):
+            return
+        seen.add(value)
+        found.append(value)
+
+    for i, (tok, start, end) in enumerate(tokens):
+        v = _numeric_of(tok)
+        if v is None:
+            continue
+
+        # BEFORE-anchor: previous token in
+        # _ROUTE_WIDTH_PHRASE_ANCHORS_BEFORE.
+        if i >= 1:
+            prev_tok = tokens[i - 1][0]
+            if prev_tok in _ROUTE_WIDTH_PHRASE_ANCHORS_BEFORE:
+                _accept(v)
+
+        # AFTER-anchor: next 1-2 tokens. Stop after the first match;
+        # do not cross over a different numeric token.
+        for j in (1, 2):
+            if i + j >= len(tokens):
+                break
+            if j == 2 and _numeric_of(tokens[i + 1][0]) is not None:
+                break
+            next_tok = tokens[i + j][0]
+            if next_tok in _ROUTE_WIDTH_PHRASE_ANCHORS_AFTER:
+                _accept(v)
+                break
+            if j == 2:
+                # Don't re-check token at j=2 if the j=1 token was
+                # not an anchor (i.e. it was a filler like "wide").
+                # Fillers are fine; just keep scanning to j=2.
+                continue
+
+        # Hyphen-pair: "eight-column", "8-wide". The numeral token
+        # ends at ``end``; if the next token starts immediately after
+        # a single '-' and is in _ROUTE_WIDTH_HYPHEN_SUFFIXES, accept.
+        if i + 1 < len(tokens):
+            next_tok, next_start, _ = tokens[i + 1]
+            if _hyphen_between(end, next_start) and (
+                next_tok in _ROUTE_WIDTH_HYPHEN_SUFFIXES
+            ):
+                _accept(v)
+
+    return found
+
+
+def _route_boustrophedon_widths_for_payload(
+    clue_text: str,
+    clue_keywords: Sequence[str],
+    *,
+    ct_length: int = 97,
+) -> list[tuple[int, str]]:
+    """Resolve LESSON-014 width candidates with provenance.
+
+    Priority (highest first):
+      1. ``phrase_bound_route_width`` — anchor-bound numerals from
+         ``_extract_phrase_bound_route_widths``. Never starved by
+         downstream caps.
+      2. ``clue_keyword_length`` — len of any clue keyword in
+         [min_width, max_keyword_width]. The lesson permits any
+         clue keyword to seed a width — the trigger detector has
+         already flagged the clue as route-relevant, so any clue
+         word's length is a plausible width hint. Excluding by
+         semantic class would over-fit to specific challenges.
+      3. ``default_set`` — ``_DEFAULT_ROUTE_BOUSTROPHEDON_WIDTHS``.
+
+    Returns ``[(width, source), ...]`` deduplicated and bounded to
+    ``[min_width, max_width]``. Width values that fall outside the
+    range are silently dropped.
+
+    EXCLUSIONS (LESSON-014 contract): rail_depth, shift_value,
+    block_size, step, and offset bindings from
+    ``extract_phrase_bound_numerics`` are NOT pulled in. Those
+    numerals describe rail count / arithmetic shifts / block size /
+    skip-route step+offset; using them as a route-boustrophedon
+    width would be a category error and would explode the universe.
+    """
+    out: list[tuple[int, str]] = []
+    seen: set[int] = set()
+
+    def _emit(width: int, source: str) -> None:
+        if width in seen:
+            return
+        if not (
+            _ROUTE_BOUSTROPHEDON_MIN_WIDTH
+            <= width
+            <= _ROUTE_BOUSTROPHEDON_MAX_WIDTH
+        ):
+            return
+        seen.add(width)
+        out.append((width, source))
+
+    # Priority 1: phrase-bound widths (highest priority, never starved).
+    for w in _extract_phrase_bound_route_widths(
+        clue_text, ct_length=ct_length,
+    ):
+        _emit(w, "phrase_bound_route_width")
+
+    # Priority 2: clue keyword lengths in the keyword-width band.
+    for kw in clue_keywords:
+        if not isinstance(kw, str):
+            continue
+        upper = kw.upper().strip()
+        if not upper.isalpha():
+            continue
+        w = len(upper)
+        if (
+            _ROUTE_BOUSTROPHEDON_MIN_WIDTH
+            <= w
+            <= _ROUTE_BOUSTROPHEDON_MAX_KEYWORD_WIDTH
+        ):
+            _emit(w, "clue_keyword_length")
+
+    # Priority 3: safe default set.
+    for w in _DEFAULT_ROUTE_BOUSTROPHEDON_WIDTHS:
+        _emit(w, "default_set")
+
+    return out
+
+
+# ============================================================================
+# LESSON-015: alternate-row reversal / folded-strip route
+# ============================================================================
+#
+# A clue like "a dark strip gives SHADOW and a KRYPTOS alphabet with the
+# far end folded back over the near end" describes a folded-strip
+# transposition: split the text into rows of fixed width and reverse
+# alternating rows in place. The result is length-preserving and
+# self-inverse — applying the same (width, parity, start_row) twice
+# returns the original text.
+#
+# Distinct from ``route_boustrophedon`` (LESSON-014): that kind reads
+# the GRID in serpentine fashion via a single global permutation.
+# ``row_reverse`` only reverses SELECTED rows in place; non-selected
+# rows pass through verbatim.
+#
+# Trigger vocabulary, default widths, parity options, and width-source
+# priority are all owned by LESSON-015 in the registry. A drift test
+# asserts the runtime constants below match the registry payload.
+
+_ROW_REVERSE_TRIGGER_TOKENS: frozenset[str] = frozenset({
+    "fold", "folded", "unfold", "unfolded", "folding",
+    "reverse", "reversed", "reversal",
+    "row", "rows", "line", "lines",
+    "strip", "strips", "wall", "panel",
+    "boustrophedon", "serpentine", "zigzag",
+    "alternate", "alternating",
+})
+
+# Multi-word phrase triggers (case-insensitive substring match).
+_ROW_REVERSE_TRIGGER_PHRASES: tuple[str, ...] = (
+    "every other",
+    "left edge", "right edge",
+    "read back", "turn back",
+)
+
+# Default width set per the user's spec, plus CT_LEN as the "no-fold"
+# boundary case so the LESSON-015 catalog covers substitution-alone-
+# equivalent specs (width=CT_LEN with parity=odd is identity because
+# only row 0 exists, row 0 is even, parity=odd selects no rows).
+_DEFAULT_ROW_REVERSE_WIDTHS: tuple[int, ...] = (
+    5, 7, 8, 10, 12, 14, 16,
+)
+
+# Hard bounds. min=2 because width=1 reverses every single char
+# (identity) and is degenerate. max=CT_LEN because any width >=
+# CT_LEN packs all characters into a single row; widths above
+# CT_LEN are equivalent to width=CT_LEN.
+_ROW_REVERSE_MIN_WIDTH: int = 2
+_ROW_REVERSE_MAX_WIDTH: int = 97  # equals CT_LEN; exact-match expected
+_ROW_REVERSE_MAX_KEYWORD_WIDTH: int = 16
+
+# Default parity options enumerated per (width × layer-order ×
+# keyword × alphabet) tuple. ``both`` is reachable via the explicit-
+# parity path but not enumerated by default — reversing every row is
+# equivalent to a global reverse and dilutes LESSON-015's signal.
+_DEFAULT_ROW_REVERSE_PARITIES: tuple[str, ...] = ("odd", "even")
+
+# Phrase anchors that bind a numeral to ``row_reverse_width``.
+# Distinct from LESSON-014's route-width anchors and LESSON-013's
+# columnar-width anchors so the three lessons can co-exist on the
+# same clue without cross-contaminating their width pools.
+_ROW_REVERSE_PHRASE_ANCHORS_BEFORE: tuple[str, ...] = (
+    "width", "wide",
+    "row", "rows",
+    "line", "lines",
+    "strip", "strips",
+    "wall", "panel",
+)
+_ROW_REVERSE_PHRASE_ANCHORS_AFTER: tuple[str, ...] = (
+    "wide",
+    "row", "rows",
+    "line", "lines",
+    "strip", "strips",
+    "wall", "panel",
+)
+_ROW_REVERSE_HYPHEN_SUFFIXES: tuple[str, ...] = (
+    "wide", "row", "rows",
+    "line", "lines",
+    "strip", "strips",
+)
+
+
+def _row_reverse_layer(
+    width: int,
+    parity: str,
+    *,
+    start_row: int = 0,
+) -> dict[str, Any]:
+    """Build a row_reverse layer dict (LESSON-015).
+
+    The dispatcher partitions the text into rows of width ``width``,
+    reverses rows whose 0-indexed row-index (offset by start_row)
+    matches the parity selector, and keeps the remaining rows. The
+    operation is self-inverse: applying the same (width, parity,
+    start_row) twice returns the identity.
+    """
+    if not isinstance(width, int) or width < _ROW_REVERSE_MIN_WIDTH:
+        raise ValueError(
+            f"_row_reverse_layer: width must be int >= "
+            f"{_ROW_REVERSE_MIN_WIDTH}; got {width!r}"
+        )
+    if parity not in ("odd", "even", "both"):
+        raise ValueError(
+            f"_row_reverse_layer: parity must be in "
+            "{'odd', 'even', 'both'}; got " + repr(parity)
+        )
+    if not isinstance(start_row, int) or start_row not in (0, 1):
+        raise ValueError(
+            f"_row_reverse_layer: start_row must be 0 or 1; got "
+            f"{start_row!r}"
+        )
+    return {
+        "kind": "row_reverse",
+        "alphabet": "AZ",
+        "params": [
+            {"name": "width", "values": [width]},
+            {"name": "parity", "values": [parity]},
+            {"name": "start_row", "values": [start_row]},
+        ],
+    }
+
+
+def _detect_row_reverse_trigger(clue_text: str) -> bool:
+    """Whole-word match for any LESSON-015 trigger token, plus
+    multi-word phrase substring match. Returns True iff the
+    operator's clue language suggests a folded-strip / alternate-
+    row reversal.
+    """
+    if not isinstance(clue_text, str) or not clue_text:
+        return False
+    lower = clue_text.lower()
+    # Multi-word phrases first (substring match — phrases are
+    # specific enough that false-positives are unlikely).
+    for phrase in _ROW_REVERSE_TRIGGER_PHRASES:
+        if phrase in lower:
+            return True
+    # Single-token triggers with word-boundary checks.
+    for token in _ROW_REVERSE_TRIGGER_TOKENS:
+        idx = 0
+        while True:
+            pos = lower.find(token, idx)
+            if pos < 0:
+                break
+            before_ok = pos == 0 or not lower[pos - 1].isalnum()
+            after_pos = pos + len(token)
+            after_ok = (
+                after_pos >= len(lower) or not lower[after_pos].isalnum()
+            )
+            if before_ok and after_ok:
+                return True
+            idx = pos + 1
+    return False
+
+
+def _extract_phrase_bound_row_reverse_widths(
+    clue_text: str,
+    *,
+    ct_length: int = 97,
+) -> list[int]:
+    """Parse phrase-attached numerals that bind to row_reverse width.
+
+    Distinct from LESSON-012 / LESSON-014 anchor sets so the three
+    lessons can co-exist without cross-contaminating their width
+    pools. Anchor matching rules mirror LESSON-014's
+    ``_extract_phrase_bound_route_widths``: BEFORE-anchors,
+    AFTER-anchors, and hyphen pairs (e.g. "ten-wide", "8-row").
+
+    Returns a deduplicated list of ints in document order, each in
+    the range [_ROW_REVERSE_MIN_WIDTH, _ROW_REVERSE_MAX_WIDTH].
+    """
+    if not isinstance(clue_text, str) or not clue_text:
+        return []
+    import re
+    lower = clue_text.lower()
+
+    tokens: list[tuple[str, int, int]] = []
+    for m in re.finditer(r"[A-Za-z]+|\d+", lower):
+        tokens.append((m.group(0), m.start(), m.end()))
+
+    def _numeric_of(tok: str) -> Optional[int]:
+        if tok.isdigit():
+            try:
+                v = int(tok)
+            except ValueError:
+                return None
+            return v
+        return _NUMBER_WORDS.get(tok)
+
+    def _hyphen_between(end: int, start: int) -> bool:
+        return lower[end:start] == "-"
+
+    found: list[int] = []
+    seen: set[int] = set()
+
+    def _accept(value: int) -> None:
+        if value in seen:
+            return
+        if not (
+            _ROW_REVERSE_MIN_WIDTH
+            <= value
+            <= _ROW_REVERSE_MAX_WIDTH
+        ):
+            return
+        seen.add(value)
+        found.append(value)
+
+    for i, (tok, start, end) in enumerate(tokens):
+        v = _numeric_of(tok)
+        if v is None:
+            continue
+        # BEFORE-anchor.
+        if i >= 1:
+            prev_tok = tokens[i - 1][0]
+            if prev_tok in _ROW_REVERSE_PHRASE_ANCHORS_BEFORE:
+                _accept(v)
+        # AFTER-anchor (1-2 token lookahead, blocked by intervening
+        # numerics).
+        for j in (1, 2):
+            if i + j >= len(tokens):
+                break
+            if j == 2 and _numeric_of(tokens[i + 1][0]) is not None:
+                break
+            next_tok = tokens[i + j][0]
+            if next_tok in _ROW_REVERSE_PHRASE_ANCHORS_AFTER:
+                _accept(v)
+                break
+        # Hyphen pair: "ten-wide", "8-row".
+        if i + 1 < len(tokens):
+            next_tok, next_start, _ = tokens[i + 1]
+            if _hyphen_between(end, next_start) and (
+                next_tok in _ROW_REVERSE_HYPHEN_SUFFIXES
+            ):
+                _accept(v)
+
+    return found
+
+
+def _row_reverse_widths_for_payload(
+    clue_text: str,
+    clue_keywords: Sequence[str],
+    *,
+    ct_length: int = 97,
+) -> list[tuple[int, str]]:
+    """Resolve LESSON-015 width candidates with provenance.
+
+    Priority (highest first):
+      1. ``phrase_bound_row_reverse_width`` — anchor-bound numerals.
+      2. ``clue_keyword_length`` — len of any clue keyword in
+         [min_width, max_keyword_width].
+      3. ``default_set`` — ``_DEFAULT_ROW_REVERSE_WIDTHS``.
+      4. The ``ct_length`` "no-fold sentinel" is always appended
+         last so the catalog can express substitution-alone-
+         equivalent specs via width=CT_LEN + parity=odd. The
+         sentinel never displaces a phrase-bound or keyword-
+         derived width.
+
+    EXCLUSIONS: rail_depth, shift_value, block_size, step, and
+    offset bindings from LESSON-012 are NOT pulled in.
+    """
+    out: list[tuple[int, str]] = []
+    seen: set[int] = set()
+
+    def _emit(width: int, source: str) -> None:
+        if width in seen:
+            return
+        if not (
+            _ROW_REVERSE_MIN_WIDTH
+            <= width
+            <= _ROW_REVERSE_MAX_WIDTH
+        ):
+            return
+        seen.add(width)
+        out.append((width, source))
+
+    # Priority 1: phrase-bound widths.
+    for w in _extract_phrase_bound_row_reverse_widths(
+        clue_text, ct_length=ct_length,
+    ):
+        _emit(w, "phrase_bound_row_reverse_width")
+
+    # Priority 2: clue keyword lengths.
+    for kw in clue_keywords:
+        if not isinstance(kw, str):
+            continue
+        upper = kw.upper().strip()
+        if not upper.isalpha():
+            continue
+        w = len(upper)
+        if (
+            _ROW_REVERSE_MIN_WIDTH
+            <= w
+            <= _ROW_REVERSE_MAX_KEYWORD_WIDTH
+        ):
+            _emit(w, "clue_keyword_length")
+
+    # Priority 3: safe default set.
+    for w in _DEFAULT_ROW_REVERSE_WIDTHS:
+        _emit(w, "default_set")
+
+    # Priority 4: no-fold sentinel. Always last so phrase-bound /
+    # keyword-derived widths consume the per-family cap budget
+    # first; the sentinel is a graceful fallback that lets
+    # row_reverse(width=CT_LEN, parity=odd) act as identity, which
+    # — when paired with a substitution layer — covers the
+    # "substitution alone" case.
+    _emit(ct_length, "default_set")
+
+    return out
 
 
 def _reverse_blocks_layer(
@@ -1922,6 +3012,686 @@ def _gen_keyword_pair_family(
                     "[trans-first decrypt order]"
                 ),
             ))
+    return out
+
+
+# ---------------------------------------------------------------------------
+# LESSON-013 family generators
+# ---------------------------------------------------------------------------
+#
+# Per-family spec cap. Bounded so 7 LESSON-013 families combined
+# (3 columnar_<sub> + 3 i3_columnar_<sub> + 1 caesar_columnar_atbash)
+# stay under ~2100 specs of the global ``_DEFAULT_MAX_SPECS = 5000``
+# cap, leaving room for skip_route / quagmire / sandwiches.
+#
+# At 300 per family with the canonical iteration (width → sub_kw →
+# alphabet_mode → col_order → both layer orders) the W=5 enumeration
+# reaches lex index ~120 for the first (sub_kw, alphabet_mode) pair
+# before the cap fires. This is enough to ensure K4B-006's
+# col_order=(4,1,3,0,2) at lex index 106 is emitted under the first
+# sub_kw + first alphabet_mode in BOTH layer orderings (~254 specs
+# from start: 40 from W=3 enumeration + 2×107 W=5 specs to reach
+# idx 106). Reducing to 250 starves the canary; raising past 360
+# starts to crowd skip_route at the global cap.
+_LESSON_013_PER_FAMILY_CAP: int = 300
+
+
+def _gen_enumerated_columnar_pair_family(
+    *,
+    bench_slug: str,
+    sub_kind: str,
+    keyword_a: str,
+    keyword_b: str,
+    clue_text: str,
+    clue_keywords: Sequence[str],
+    alphabet_modes: Optional[Sequence[AlphabetMode]] = None,
+    per_family_cap: int = _LESSON_013_PER_FAMILY_CAP,
+) -> list[GeneratedSpec]:
+    """LESSON-013: 2-layer ``columnar_<sub>`` family with ENUMERATED
+    column orderings instead of (or in addition to) the keyword-derived
+    col_order produced by the legacy ``_gen_keyword_pair_family``.
+
+    Width selection priority (LESSON-012 + LESSON-013):
+      1. ``phrase_bound_step`` (LESSON-012 ``step`` slot only)
+      2. ``clue_keyword_length`` (clue keywords of length 2..7)
+      3. ``default_set`` ({3, 4, 5})
+
+    For each (width, source) the col_orders enumerate ALL
+    ``min(W!, _PER_WIDTH_PERM_CAP[W])`` permutations of ``range(W)``,
+    deduplicated against any keyword-stable-rank col_order produced
+    by a clue keyword of the same length. The keyword-derived path
+    in ``_gen_keyword_pair_family`` is preserved bit-for-bit and
+    runs in parallel, so legacy behaviour is unchanged.
+
+    Coverage_vector telemetry (new fields populated):
+      * ``transposition_width``  — int width of the columnar grid
+      * ``col_order``            — explicit permutation tuple
+      * ``col_order_source``     — ``"enumerated_permutation"``
+      * ``col_order_index``      — index into the W! lex list
+      * ``width_source``         — ``"phrase_bound_step"`` etc.
+
+    The family_label stays ``columnar_<sub>`` so coverage analysis
+    treats the enumerated and keyword-derived specs as members of
+    the same family. The role_assignment uses the synthetic
+    transposition role ``("columnar", f"W{width}_co{idx}")`` so two
+    enumerated specs at different col_orders never collide on the
+    symmetry-class key.
+    """
+    if sub_kind not in _SUBSTITUTION_KEYWORD_KINDS:
+        raise ValueError(
+            f"_gen_enumerated_columnar_pair_family: unsupported "
+            f"sub_kind {sub_kind!r}"
+        )
+    sub_kws_raw = [keyword_a, keyword_b]
+    sub_kws: list[str] = []
+    seen_sub: set[str] = set()
+    for kw in sub_kws_raw:
+        if not isinstance(kw, str):
+            continue
+        u = kw.upper().strip()
+        if u and u.isalpha() and u not in seen_sub and len(u) >= 2:
+            seen_sub.add(u)
+            sub_kws.append(u)
+    if not sub_kws:
+        return []
+
+    family_label = f"columnar_{sub_kind}"
+    if alphabet_modes is None:
+        alphabet_modes = _LESSON_013_ALPHABET_MODES
+
+    # Build (width, source) list. Phrase-bound widths come first so
+    # the per-family cap can never starve them out.
+    widths = _columnar_widths_for_payload(clue_text, clue_keywords)
+    if not widths:
+        return []
+
+    # For each width, the keyword-derived path of _gen_keyword_pair_
+    # family already covers col_orders for clue keywords whose length
+    # equals that width. We dedupe those out so the enumerated path
+    # never emits a duplicate of the keyword path.
+    def _keyword_co_set_for_width(w: int) -> list[list[int]]:
+        out: list[list[int]] = []
+        seen_local: set[tuple[int, ...]] = set()
+        for kw in clue_keywords or []:
+            if not isinstance(kw, str):
+                continue
+            u = kw.upper().strip()
+            if u.isalpha() and len(u) == w:
+                co = _keyword_to_col_order(u)
+                t = tuple(co)
+                if t not in seen_local:
+                    seen_local.add(t)
+                    out.append(co)
+        return out
+
+    out: list[GeneratedSpec] = []
+    for width, width_source in widths:
+        if len(out) >= per_family_cap:
+            break
+        col_orders = _enumerated_col_orders_for_width(
+            width, dedup_against=_keyword_co_set_for_width(width),
+        )
+        if not col_orders:
+            continue
+        for sub_kw in sub_kws:
+            if len(out) >= per_family_cap:
+                break
+            for mode in alphabet_modes:
+                if len(out) >= per_family_cap:
+                    break
+                sub_layer = _keyword_substitution_layer(
+                    sub_kind, sub_kw,
+                    alphabet=mode.dsl_alphabet,
+                    alphabet_keyword=mode.alphabet_keyword,
+                )
+                for co_tuple, co_idx in col_orders:
+                    if len(out) >= per_family_cap:
+                        break
+                    trans_layer = _explicit_columnar_layer(
+                        width, list(co_tuple),
+                    )
+                    trans_role_value = (
+                        f"W{width}_co{co_idx}"
+                    )
+                    role = (
+                        (sub_kind, sub_kw),
+                        ("columnar", trans_role_value),
+                    )
+                    cov_common = dict(
+                        layer_family=family_label,
+                        role_assignment=role,
+                        alphabet=mode.mode_label,
+                        n_layers=2,
+                        alphabet_mode=mode.mode_label,
+                        alphabet_source=mode.source,
+                        substitution_keyword=sub_kw,
+                        alphabet_keyword=mode.alphabet_keyword or "",
+                        transposition_keyword="",
+                        role_assignment_mode="enumerated_columnar",
+                        transposition_width=width,
+                        col_order=co_tuple,
+                        col_order_source="enumerated_permutation",
+                        col_order_index=co_idx,
+                        width_source=width_source,
+                    )
+                    # Order 1: substitution first
+                    out.append(_make_spec(
+                        bench_slug=bench_slug,
+                        family_label=family_label,
+                        pipeline=[sub_layer, trans_layer],
+                        coverage=CoverageVector(
+                            layer_order=(sub_kind, "columnar"),
+                            **cov_common,
+                        ),
+                        notes=(
+                            f"L013 {sub_kind}({sub_kw}, "
+                            f"alpha={mode.mode_label}) ∘ "
+                            f"columnar(W={width}, co={co_tuple}) "
+                            "[sub-first]"
+                        ),
+                    ))
+                    if len(out) >= per_family_cap:
+                        break
+                    # Order 2: transposition first
+                    out.append(_make_spec(
+                        bench_slug=bench_slug,
+                        family_label=family_label,
+                        pipeline=[trans_layer, sub_layer],
+                        coverage=CoverageVector(
+                            layer_order=("columnar", sub_kind),
+                            **cov_common,
+                        ),
+                        notes=(
+                            f"L013 columnar(W={width}, co={co_tuple}) "
+                            f"∘ {sub_kind}({sub_kw}, "
+                            f"alpha={mode.mode_label}) "
+                            "[trans-first]"
+                        ),
+                    ))
+    return out
+
+
+def _gen_enumerated_columnar_i3_family(
+    *,
+    bench_slug: str,
+    sub_kind: str,
+    clue_keywords: Sequence[str],
+    clue_text: str,
+    alphabet_modes: Optional[Sequence[AlphabetMode]] = None,
+    role_pool_size: int = 3,
+    per_family_cap: int = _LESSON_013_PER_FAMILY_CAP,
+) -> list[GeneratedSpec]:
+    """LESSON-013 + LESSON-010: i3 columnar family with ENUMERATED
+    col_orders. The substitution_keyword and alphabet_keyword roles
+    iterate independently (LESSON-010 contract); the columnar trans
+    layer uses an enumerated col_order rather than a keyword stable
+    rank so the role_assignment_mode is ``enumerated_columnar`` —
+    NOT ``independent_three_role``.
+
+    Family_label stays ``i3_columnar_<sub>``. Coverage_vector telemetry
+    is identical to ``_gen_enumerated_columnar_pair_family`` but
+    populates ``substitution_keyword``, ``alphabet_keyword`` from the
+    independent role enumeration.
+    """
+    if sub_kind not in _SUBSTITUTION_KEYWORD_KINDS:
+        raise ValueError(
+            f"_gen_enumerated_columnar_i3_family: unsupported sub_kind "
+            f"{sub_kind!r}"
+        )
+    pool: list[str] = []
+    seen_pool: set[str] = set()
+    for kw in clue_keywords:
+        if not isinstance(kw, str):
+            continue
+        u = kw.upper().strip()
+        if u and u.isalpha() and u not in seen_pool and len(u) >= 2:
+            seen_pool.add(u)
+            pool.append(u)
+            if len(pool) >= role_pool_size:
+                break
+    if len(pool) < 2:
+        return []
+
+    family_label = f"i3_columnar_{sub_kind}"
+    if alphabet_modes is None:
+        alphabet_modes = _LESSON_013_ALPHABET_MODES
+
+    widths = _columnar_widths_for_payload(clue_text, clue_keywords)
+    if not widths:
+        return []
+
+    out: list[GeneratedSpec] = []
+    for width, width_source in widths:
+        if len(out) >= per_family_cap:
+            break
+        # Dedup against keyword-stable-rank col_orders produced by
+        # the i3 keyword path for this width.
+        keyword_co: list[list[int]] = []
+        seen_co: set[tuple[int, ...]] = set()
+        for kw in pool:
+            if len(kw) == width:
+                co = _keyword_to_col_order(kw)
+                t = tuple(co)
+                if t not in seen_co:
+                    seen_co.add(t)
+                    keyword_co.append(co)
+        col_orders = _enumerated_col_orders_for_width(
+            width, dedup_against=keyword_co,
+        )
+        if not col_orders:
+            continue
+        for kw_sub in pool:
+            if len(out) >= per_family_cap:
+                break
+            for mode in alphabet_modes:
+                if len(out) >= per_family_cap:
+                    break
+                sub_layer = _keyword_substitution_layer(
+                    sub_kind, kw_sub,
+                    alphabet=mode.dsl_alphabet,
+                    alphabet_keyword=mode.alphabet_keyword,
+                )
+                alphabet_kw_text = mode.alphabet_keyword or ""
+                for co_tuple, co_idx in col_orders:
+                    if len(out) >= per_family_cap:
+                        break
+                    trans_layer = _explicit_columnar_layer(
+                        width, list(co_tuple),
+                    )
+                    trans_role_value = (
+                        f"W{width}_co{co_idx}"
+                    )
+                    role = (
+                        (sub_kind, kw_sub),
+                        ("columnar", trans_role_value),
+                    )
+                    cov_common = dict(
+                        layer_family=family_label,
+                        role_assignment=role,
+                        alphabet=mode.mode_label,
+                        n_layers=2,
+                        alphabet_mode=mode.mode_label,
+                        alphabet_source=mode.source,
+                        substitution_keyword=kw_sub,
+                        alphabet_keyword=alphabet_kw_text,
+                        transposition_keyword="",
+                        role_assignment_mode="enumerated_columnar",
+                        transposition_width=width,
+                        col_order=co_tuple,
+                        col_order_source="enumerated_permutation",
+                        col_order_index=co_idx,
+                        width_source=width_source,
+                    )
+                    out.append(_make_spec(
+                        bench_slug=bench_slug,
+                        family_label=family_label,
+                        pipeline=[sub_layer, trans_layer],
+                        coverage=CoverageVector(
+                            layer_order=(sub_kind, "columnar"),
+                            **cov_common,
+                        ),
+                        notes=(
+                            f"L013 i3 {sub_kind}(sub={kw_sub}, "
+                            f"alpha={mode.mode_label}) ∘ columnar"
+                            f"(W={width}, co={co_tuple}) [sub-first]"
+                        ),
+                    ))
+                    if len(out) >= per_family_cap:
+                        break
+                    out.append(_make_spec(
+                        bench_slug=bench_slug,
+                        family_label=family_label,
+                        pipeline=[trans_layer, sub_layer],
+                        coverage=CoverageVector(
+                            layer_order=("columnar", sub_kind),
+                            **cov_common,
+                        ),
+                        notes=(
+                            f"L013 i3 columnar(W={width}, "
+                            f"co={co_tuple}) ∘ {sub_kind}"
+                            f"(sub={kw_sub}, alpha={mode.mode_label}) "
+                            "[trans-first]"
+                        ),
+                    ))
+    return out
+
+
+def _gen_enumerated_caesar_columnar_atbash_family(
+    *,
+    bench_slug: str,
+    shifts: Sequence[tuple[int, str]],
+    clue_text: str,
+    clue_keywords: Sequence[str],
+    per_family_cap: int = _LESSON_013_PER_FAMILY_CAP,
+) -> list[GeneratedSpec]:
+    """LESSON-013 + LESSON-009: 3-layer ``caesar_columnar_atbash``
+    sandwich with ENUMERATED col_orders. Mirrors
+    ``_gen_caesar_three_layer_family(trans_kind="columnar", ...)`` but
+    swaps the keyword-stable-rank columnar layer for an enumerated
+    columnar layer.
+
+    Emits all four canonical 3-layer orderings per (shift × width ×
+    col_order). Family_label stays ``caesar_columnar_atbash``.
+    """
+    if not shifts:
+        return []
+    family_label = "caesar_columnar_atbash"
+    atbash_layer = {"kind": "atbash", "alphabet": "AZ", "params": []}
+
+    widths = _columnar_widths_for_payload(clue_text, clue_keywords)
+    if not widths:
+        return []
+
+    out: list[GeneratedSpec] = []
+    for width, width_source in widths:
+        if len(out) >= per_family_cap:
+            break
+        keyword_co: list[list[int]] = []
+        seen_co: set[tuple[int, ...]] = set()
+        for kw in clue_keywords or []:
+            if not isinstance(kw, str):
+                continue
+            u = kw.upper().strip()
+            if u.isalpha() and len(u) == width:
+                co = _keyword_to_col_order(u)
+                t = tuple(co)
+                if t not in seen_co:
+                    seen_co.add(t)
+                    keyword_co.append(co)
+        col_orders = _enumerated_col_orders_for_width(
+            width, dedup_against=keyword_co,
+        )
+        if not col_orders:
+            continue
+        for shift, op_source in shifts:
+            if shift == 0:
+                continue
+            if len(out) >= per_family_cap:
+                break
+            caesar_layer = _caesar_layer(shift)
+            for co_tuple, co_idx in col_orders:
+                if len(out) >= per_family_cap:
+                    break
+                trans_layer = _explicit_columnar_layer(
+                    width, list(co_tuple),
+                )
+                trans_role_value = f"W{width}_co{co_idx}"
+                role = (
+                    ("caesar_shift", str(shift)),
+                    ("columnar", trans_role_value),
+                )
+                extras = (
+                    ("caesar_shift", shift),
+                    ("transposition_width", width),
+                    ("col_order_index", co_idx),
+                )
+                cov_common = dict(
+                    layer_family=family_label,
+                    role_assignment=role,
+                    alphabet="AZ",
+                    n_layers=3,
+                    extras=extras,
+                    shift_value=shift,
+                    operation_source=op_source,
+                    transposition_width=width,
+                    col_order=co_tuple,
+                    col_order_source="enumerated_permutation",
+                    col_order_index=co_idx,
+                    width_source=width_source,
+                    role_assignment_mode="enumerated_columnar",
+                )
+                # 1. caesar ∘ columnar ∘ atbash
+                out.append(_make_spec(
+                    bench_slug=bench_slug,
+                    family_label=family_label,
+                    pipeline=[caesar_layer, trans_layer, atbash_layer],
+                    coverage=CoverageVector(
+                        layer_order=("caesar", "columnar", "atbash"),
+                        **cov_common,
+                    ),
+                    notes=(
+                        f"L013 caesar({shift}) ∘ columnar"
+                        f"(W={width}, co={co_tuple}) ∘ atbash"
+                    ),
+                    compute_budget_minutes=3,
+                ))
+                if len(out) >= per_family_cap:
+                    break
+                # 2. atbash ∘ columnar ∘ caesar
+                out.append(_make_spec(
+                    bench_slug=bench_slug,
+                    family_label=family_label,
+                    pipeline=[atbash_layer, trans_layer, caesar_layer],
+                    coverage=CoverageVector(
+                        layer_order=("atbash", "columnar", "caesar"),
+                        **cov_common,
+                    ),
+                    notes=(
+                        f"L013 atbash ∘ columnar(W={width}, "
+                        f"co={co_tuple}) ∘ caesar({shift})"
+                    ),
+                    compute_budget_minutes=3,
+                ))
+                if len(out) >= per_family_cap:
+                    break
+                # 3. columnar ∘ caesar ∘ atbash
+                out.append(_make_spec(
+                    bench_slug=bench_slug,
+                    family_label=family_label,
+                    pipeline=[trans_layer, caesar_layer, atbash_layer],
+                    coverage=CoverageVector(
+                        layer_order=("columnar", "caesar", "atbash"),
+                        **cov_common,
+                    ),
+                    notes=(
+                        f"L013 columnar(W={width}, co={co_tuple}) "
+                        f"∘ caesar({shift}) ∘ atbash"
+                    ),
+                    compute_budget_minutes=3,
+                ))
+                if len(out) >= per_family_cap:
+                    break
+                # 4. atbash ∘ caesar ∘ columnar
+                out.append(_make_spec(
+                    bench_slug=bench_slug,
+                    family_label=family_label,
+                    pipeline=[atbash_layer, caesar_layer, trans_layer],
+                    coverage=CoverageVector(
+                        layer_order=("atbash", "caesar", "columnar"),
+                        **cov_common,
+                    ),
+                    notes=(
+                        f"L013 atbash ∘ caesar({shift}) ∘ columnar"
+                        f"(W={width}, co={co_tuple})"
+                    ),
+                    compute_budget_minutes=3,
+                ))
+    return out
+
+
+# Per-family cap for the 3-layer columnar+sub+rail_fence family.
+# The iteration order is
+#   width → sub_kw → alpha → depth → col_order → ordering
+# so the (first sub_kw, first alpha, first depth) tuple reaches its
+# full W=5 enumeration before any other tuple starts. With the
+# K4B-006 clue (3 widths × 3 depths × 2 sub_kws × 2 alphas × 6
+# orderings, full universe ~27720 per family), the spec count to
+# reach K4B-006's empirical winning config (W=5, co_idx=106,
+# sub_kw=MIRROR, alpha=AZ, depth=4, ordering=(columnar, sub,
+# rail_fence)) is:
+#   W=3 enumerated for all (sub_kw, alpha, depth) tuples = 360
+#   + W=5, MIRROR, AZ, depth=4, idx=0..106 × 6 orderings = 642
+#   = 1002 specs
+# Cap at 1200 to leave margin while still bounding the per-family
+# universe under the global 10000 cap.
+_LESSON_013_RAIL_FENCE_CAP: int = 1200
+
+
+def _gen_enumerated_columnar_sub_rail_fence_family(
+    *,
+    bench_slug: str,
+    sub_kind: str,
+    keyword_a: str,
+    keyword_b: str,
+    rail_fence_depths: Sequence[int],
+    clue_text: str,
+    clue_keywords: Sequence[str],
+    per_family_cap: int = _LESSON_013_RAIL_FENCE_CAP,
+) -> list[GeneratedSpec]:
+    """LESSON-013 + rail-fence 3-layer sandwich.
+
+    Emits 3-layer specs of shape ``columnar(W, co) + <sub>(kw, alpha)
+    + rail_fence(d)`` in every meaningful layer ordering. The
+    columnar layer uses an ENUMERATED col_order (LESSON-013), the
+    substitution uses a clue keyword, and the rail-fence uses one of
+    the resolved depth candidates.
+
+    Family_label: ``columnar_<sub>_rail_fence`` (NEW family, not a
+    re-use of an existing label). The lesson registry's
+    ``applies_to_families`` field grew to include this label so the
+    drift test stays in sync.
+
+    Layer orderings emitted: all 6 permutations of (columnar, sub,
+    rail_fence). The K4B-006 winning ordering is
+    ``(columnar, sub, rail_fence)`` — the first ordering in the
+    deterministic enumeration.
+
+    Universe per family with the default cap:
+      widths × col_orders × sub_kws × alpha_modes × depths × orderings
+      capped at ``_LESSON_013_RAIL_FENCE_CAP``.
+
+    Real-K4 mode is unaffected (HCC bench-only via
+    ``ProblemContext``).
+    """
+    if sub_kind not in _SUBSTITUTION_KEYWORD_KINDS:
+        raise ValueError(
+            f"_gen_enumerated_columnar_sub_rail_fence_family: "
+            f"unsupported sub_kind {sub_kind!r}"
+        )
+    sub_kws_raw = [keyword_a, keyword_b]
+    sub_kws: list[str] = []
+    seen_sub: set[str] = set()
+    for kw in sub_kws_raw:
+        if not isinstance(kw, str):
+            continue
+        u = kw.upper().strip()
+        if u and u.isalpha() and u not in seen_sub and len(u) >= 2:
+            seen_sub.add(u)
+            sub_kws.append(u)
+    if not sub_kws:
+        return []
+    depths = [int(d) for d in rail_fence_depths if isinstance(d, int) and d >= 2]
+    if not depths:
+        return []
+
+    family_label = f"columnar_{sub_kind}_rail_fence"
+    alphabet_modes = _LESSON_013_ALPHABET_MODES
+
+    widths = _columnar_widths_for_payload(clue_text, clue_keywords)
+    if not widths:
+        return []
+
+    # Six canonical orderings, ENUMERATING all 3! permutations so the
+    # K4B-006 (columnar, sub, rail_fence) ordering is reached.
+    from itertools import permutations as _perm
+    layer_orderings = list(_perm(("columnar", sub_kind, "rail_fence")))
+
+    out: list[GeneratedSpec] = []
+    for width, width_source in widths:
+        if len(out) >= per_family_cap:
+            break
+        keyword_co: list[list[int]] = []
+        seen_co: set[tuple[int, ...]] = set()
+        for kw in clue_keywords or []:
+            if not isinstance(kw, str):
+                continue
+            u = kw.upper().strip()
+            if u.isalpha() and len(u) == width:
+                co = _keyword_to_col_order(u)
+                t = tuple(co)
+                if t not in seen_co:
+                    seen_co.add(t)
+                    keyword_co.append(co)
+        col_orders = _enumerated_col_orders_for_width(
+            width, dedup_against=keyword_co,
+        )
+        if not col_orders:
+            continue
+        for sub_kw in sub_kws:
+            if len(out) >= per_family_cap:
+                break
+            for mode in alphabet_modes:
+                if len(out) >= per_family_cap:
+                    break
+                sub_layer = _keyword_substitution_layer(
+                    sub_kind, sub_kw,
+                    alphabet=mode.dsl_alphabet,
+                    alphabet_keyword=mode.alphabet_keyword,
+                )
+                for depth in depths:
+                    if len(out) >= per_family_cap:
+                        break
+                    rf_layer = _rail_fence_layer(depth)
+                    for co_tuple, co_idx in col_orders:
+                        if len(out) >= per_family_cap:
+                            break
+                        col_layer = _explicit_columnar_layer(
+                            width, list(co_tuple),
+                        )
+                        layer_lookup = {
+                            "columnar": col_layer,
+                            sub_kind: sub_layer,
+                            "rail_fence": rf_layer,
+                        }
+                        trans_role_value = f"W{width}_co{co_idx}"
+                        role = (
+                            (sub_kind, sub_kw),
+                            ("columnar", trans_role_value),
+                            ("rail_fence", str(depth)),
+                        )
+                        extras = (
+                            ("transposition_width", width),
+                            ("col_order_index", co_idx),
+                            ("rail_fence_depth", depth),
+                        )
+                        for ordering in layer_orderings:
+                            if len(out) >= per_family_cap:
+                                break
+                            pipeline = [
+                                layer_lookup[k] for k in ordering
+                            ]
+                            cov = CoverageVector(
+                                layer_family=family_label,
+                                layer_order=ordering,
+                                role_assignment=role,
+                                alphabet=mode.mode_label,
+                                n_layers=3,
+                                alphabet_mode=mode.mode_label,
+                                alphabet_source=mode.source,
+                                substitution_keyword=sub_kw,
+                                alphabet_keyword=mode.alphabet_keyword or "",
+                                transposition_keyword="",
+                                role_assignment_mode="enumerated_columnar",
+                                transposition_width=width,
+                                col_order=co_tuple,
+                                col_order_source="enumerated_permutation",
+                                col_order_index=co_idx,
+                                width_source=width_source,
+                                extras=extras,
+                            )
+                            out.append(_make_spec(
+                                bench_slug=bench_slug,
+                                family_label=family_label,
+                                pipeline=pipeline,
+                                coverage=cov,
+                                notes=(
+                                    f"L013 columnar(W={width}, "
+                                    f"co={co_tuple}) ∘ {sub_kind}"
+                                    f"({sub_kw}, alpha={mode.mode_label}) "
+                                    f"∘ rail_fence({depth}) order={ordering}"
+                                ),
+                                compute_budget_minutes=3,
+                            ))
     return out
 
 
@@ -3603,6 +5373,1411 @@ def _gen_skip_route_three_layer_family(
     return out
 
 
+# ----------------------------------------------------------------------------
+# LESSON-014: route_boustrophedon family generators
+# ----------------------------------------------------------------------------
+
+
+def _route_boustrophedon_route_metadata(
+    width: int, vertical: bool, *, ct_length: int = 97,
+) -> tuple[int, int, bool, str]:
+    """Compute (rows, cols, ragged, direction) for a width / vertical
+    pair. Centralized so every LESSON-014 generator emits identical
+    telemetry.
+    """
+    rows = (ct_length + width - 1) // width
+    cols = width
+    ragged = (ct_length % width) != 0
+    direction = "vertical" if vertical else "horizontal"
+    return rows, cols, ragged, direction
+
+
+def _route_boustrophedon_extras(
+    width: int, vertical: bool, *, ct_length: int = 97,
+) -> tuple[tuple[str, Any], ...]:
+    """Standard ``extras`` tuple for a LESSON-014 spec. Mirrors the
+    coverage-vector telemetry so two specs with identical
+    (width, vertical) share an extras hash regardless of family.
+    """
+    rows, cols, ragged, direction = _route_boustrophedon_route_metadata(
+        width, vertical, ct_length=ct_length,
+    )
+    return (
+        ("route_width", width),
+        ("route_rows", rows),
+        ("route_cols", cols),
+        ("route_ragged", ragged),
+        ("route_direction", direction),
+        ("vertical", vertical),
+    )
+
+
+def _gen_route_boustrophedon_alone_family(
+    *,
+    bench_slug: str,
+    widths: Sequence[tuple[int, str]],
+    directions: Sequence[bool] = (False, True),
+    ct_length: int = 97,
+) -> list[GeneratedSpec]:
+    """LESSON-014: route_boustrophedon as a single-layer transposition.
+
+    Emits one spec per (width, vertical) pair. ``widths`` is the
+    provenance-tagged width list from
+    ``_route_boustrophedon_widths_for_payload``; ``directions``
+    enumerates both vertical=False and vertical=True per LESSON-002
+    (layer-order inversion is degenerate for a one-layer family, so
+    direction enumeration is the analogous symmetry control here).
+    """
+    family_label = "route_boustrophedon"
+    out: list[GeneratedSpec] = []
+    for width, source in widths:
+        for vertical in directions:
+            layer = _route_boustrophedon_layer(width, vertical=vertical)
+            rows, cols, ragged, direction = (
+                _route_boustrophedon_route_metadata(
+                    width, vertical, ct_length=ct_length,
+                )
+            )
+            cov = CoverageVector(
+                layer_family=family_label,
+                layer_order=("route_boustrophedon",),
+                role_assignment=(),
+                alphabet="AZ", n_layers=1,
+                extras=_route_boustrophedon_extras(
+                    width, vertical, ct_length=ct_length,
+                ),
+                route_mode="route_boustrophedon",
+                operation_source=source,
+                route_width=width,
+                route_rows=rows,
+                route_cols=cols,
+                route_ragged=ragged,
+                route_direction=direction,
+                route_width_source=source,
+            )
+            out.append(_make_spec(
+                bench_slug=bench_slug, family_label=family_label,
+                pipeline=[layer], coverage=cov,
+                notes=(
+                    f"route_boustrophedon(width={width}, "
+                    f"vertical={vertical}) "
+                    f"[width_source={source}, rows={rows}, "
+                    f"ragged={ragged}]"
+                ),
+                crib_alignment="post_transposition",
+            ))
+    return out
+
+
+def _gen_route_boustrophedon_substitution_family(
+    *,
+    bench_slug: str,
+    sub_kind: str,                  # vigenere | beaufort | variant_beaufort
+    keyword_a: str,
+    keyword_b: str,
+    widths: Sequence[tuple[int, str]],
+    directions: Sequence[bool] = (False, True),
+    alphabet_modes: Optional[Sequence[AlphabetMode]] = None,
+    ct_length: int = 97,
+) -> list[GeneratedSpec]:
+    """LESSON-014: route_boustrophedon paired with a keyword
+    substitution in BOTH layer orders (LESSON-002).
+
+    Emits one spec per (keyword × alphabet_mode × (width, direction)
+    × layer_order) tuple. Caller is expected to pre-cap ``widths`` if
+    the universe gets too large.
+    """
+    if sub_kind not in _SUBSTITUTION_KEYWORD_KINDS:
+        raise ValueError(f"unsupported sub_kind {sub_kind!r}")
+    family_label = f"route_boustrophedon_{sub_kind}"
+    if alphabet_modes is None:
+        alphabet_modes = (AlphabetMode("AZ", "AZ", None, "default"),)
+
+    out: list[GeneratedSpec] = []
+    for kw in (keyword_a, keyword_b):
+        if not isinstance(kw, str) or len(kw) < 1:
+            continue
+        for mode in alphabet_modes:
+            sub_layer = _keyword_substitution_layer(
+                sub_kind, kw,
+                alphabet=mode.dsl_alphabet,
+                alphabet_keyword=mode.alphabet_keyword,
+            )
+            for width, source in widths:
+                for vertical in directions:
+                    rb_layer = _route_boustrophedon_layer(
+                        width, vertical=vertical,
+                    )
+                    rows, cols, ragged, direction = (
+                        _route_boustrophedon_route_metadata(
+                            width, vertical, ct_length=ct_length,
+                        )
+                    )
+                    role = ((sub_kind, kw),)
+                    extras = _route_boustrophedon_extras(
+                        width, vertical, ct_length=ct_length,
+                    )
+                    # Order 1: substitution first
+                    out.append(_make_spec(
+                        bench_slug=bench_slug,
+                        family_label=family_label,
+                        pipeline=[sub_layer, rb_layer],
+                        coverage=CoverageVector(
+                            layer_family=family_label,
+                            layer_order=(sub_kind, "route_boustrophedon"),
+                            role_assignment=role,
+                            alphabet=mode.mode_label, n_layers=2,
+                            extras=extras,
+                            alphabet_mode=mode.mode_label,
+                            alphabet_source=mode.source,
+                            substitution_keyword=kw,
+                            alphabet_keyword=mode.alphabet_keyword or "",
+                            route_mode="route_boustrophedon",
+                            operation_source=source,
+                            route_width=width,
+                            route_rows=rows,
+                            route_cols=cols,
+                            route_ragged=ragged,
+                            route_direction=direction,
+                            route_width_source=source,
+                        ),
+                        notes=(
+                            f"{sub_kind}({kw}, alpha={mode.mode_label}) ∘ "
+                            f"route_boustrophedon({width}, "
+                            f"vertical={vertical}) [sub-first, "
+                            f"width_source={source}]"
+                        ),
+                    ))
+                    # Order 2: route_boustrophedon first
+                    out.append(_make_spec(
+                        bench_slug=bench_slug,
+                        family_label=family_label,
+                        pipeline=[rb_layer, sub_layer],
+                        coverage=CoverageVector(
+                            layer_family=family_label,
+                            layer_order=("route_boustrophedon", sub_kind),
+                            role_assignment=role,
+                            alphabet=mode.mode_label, n_layers=2,
+                            extras=extras,
+                            alphabet_mode=mode.mode_label,
+                            alphabet_source=mode.source,
+                            substitution_keyword=kw,
+                            alphabet_keyword=mode.alphabet_keyword or "",
+                            route_mode="route_boustrophedon",
+                            operation_source=source,
+                            route_width=width,
+                            route_rows=rows,
+                            route_cols=cols,
+                            route_ragged=ragged,
+                            route_direction=direction,
+                            route_width_source=source,
+                        ),
+                        notes=(
+                            f"route_boustrophedon({width}, "
+                            f"vertical={vertical}) ∘ "
+                            f"{sub_kind}({kw}, alpha={mode.mode_label}) "
+                            f"[trans-first, width_source={source}]"
+                        ),
+                    ))
+    return out
+
+
+def _gen_route_boustrophedon_caesar_family(
+    *,
+    bench_slug: str,
+    widths: Sequence[tuple[int, str]],
+    directions: Sequence[bool] = (False, True),
+    shifts: Sequence[int] = _DEFAULT_REV_BLOCKS_CAESAR_SHIFTS,
+    ct_length: int = 97,
+) -> list[GeneratedSpec]:
+    """LESSON-014: route_boustrophedon + canonical Caesar in BOTH
+    orders. Uses the smaller LESSON-008 default shift set so the
+    (caesar_shift × width × direction × order) universe stays bounded.
+    """
+    family_label = "route_boustrophedon_caesar"
+    out: list[GeneratedSpec] = []
+    for shift in shifts:
+        if shift == 0 or not 1 <= shift <= 25:
+            continue
+        caesar_layer = _caesar_layer(shift)
+        for width, source in widths:
+            for vertical in directions:
+                rb_layer = _route_boustrophedon_layer(
+                    width, vertical=vertical,
+                )
+                rows, cols, ragged, direction = (
+                    _route_boustrophedon_route_metadata(
+                        width, vertical, ct_length=ct_length,
+                    )
+                )
+                role = (("caesar_shift", str(shift)),)
+                extras = _route_boustrophedon_extras(
+                    width, vertical, ct_length=ct_length,
+                ) + (("caesar_shift", shift),)
+                # caesar + route_boustrophedon
+                out.append(_make_spec(
+                    bench_slug=bench_slug, family_label=family_label,
+                    pipeline=[caesar_layer, rb_layer],
+                    coverage=CoverageVector(
+                        layer_family=family_label,
+                        layer_order=("caesar", "route_boustrophedon"),
+                        role_assignment=role,
+                        alphabet="AZ", n_layers=2,
+                        extras=extras,
+                        shift_value=shift,
+                        route_mode="route_boustrophedon",
+                        operation_source=source,
+                        route_width=width,
+                        route_rows=rows,
+                        route_cols=cols,
+                        route_ragged=ragged,
+                        route_direction=direction,
+                        route_width_source=source,
+                    ),
+                    notes=(
+                        f"caesar({shift}) ∘ route_boustrophedon("
+                        f"{width}, vertical={vertical}) [caesar-first]"
+                    ),
+                ))
+                # route_boustrophedon + caesar
+                out.append(_make_spec(
+                    bench_slug=bench_slug, family_label=family_label,
+                    pipeline=[rb_layer, caesar_layer],
+                    coverage=CoverageVector(
+                        layer_family=family_label,
+                        layer_order=("route_boustrophedon", "caesar"),
+                        role_assignment=role,
+                        alphabet="AZ", n_layers=2,
+                        extras=extras,
+                        shift_value=shift,
+                        route_mode="route_boustrophedon",
+                        operation_source=source,
+                        route_width=width,
+                        route_rows=rows,
+                        route_cols=cols,
+                        route_ragged=ragged,
+                        route_direction=direction,
+                        route_width_source=source,
+                    ),
+                    notes=(
+                        f"route_boustrophedon({width}, "
+                        f"vertical={vertical}) ∘ caesar({shift}) "
+                        "[trans-first]"
+                    ),
+                ))
+    return out
+
+
+def _gen_route_boustrophedon_atbash_family(
+    *,
+    bench_slug: str,
+    widths: Sequence[tuple[int, str]],
+    directions: Sequence[bool] = (False, True),
+    ct_length: int = 97,
+) -> list[GeneratedSpec]:
+    """LESSON-014: route_boustrophedon + parameter-free Atbash in
+    BOTH orders.
+    """
+    family_label = "route_boustrophedon_atbash"
+    atbash_layer = {"kind": "atbash", "alphabet": "AZ", "params": []}
+    out: list[GeneratedSpec] = []
+    for width, source in widths:
+        for vertical in directions:
+            rb_layer = _route_boustrophedon_layer(
+                width, vertical=vertical,
+            )
+            rows, cols, ragged, direction = (
+                _route_boustrophedon_route_metadata(
+                    width, vertical, ct_length=ct_length,
+                )
+            )
+            extras = _route_boustrophedon_extras(
+                width, vertical, ct_length=ct_length,
+            )
+            # atbash + route_boustrophedon
+            out.append(_make_spec(
+                bench_slug=bench_slug, family_label=family_label,
+                pipeline=[atbash_layer, rb_layer],
+                coverage=CoverageVector(
+                    layer_family=family_label,
+                    layer_order=("atbash", "route_boustrophedon"),
+                    role_assignment=(),
+                    alphabet="AZ", n_layers=2,
+                    extras=extras,
+                    route_mode="route_boustrophedon",
+                    operation_source=source,
+                    route_width=width,
+                    route_rows=rows,
+                    route_cols=cols,
+                    route_ragged=ragged,
+                    route_direction=direction,
+                    route_width_source=source,
+                ),
+                notes=(
+                    f"atbash ∘ route_boustrophedon({width}, "
+                    f"vertical={vertical}) [atbash-first]"
+                ),
+            ))
+            # route_boustrophedon + atbash
+            out.append(_make_spec(
+                bench_slug=bench_slug, family_label=family_label,
+                pipeline=[rb_layer, atbash_layer],
+                coverage=CoverageVector(
+                    layer_family=family_label,
+                    layer_order=("route_boustrophedon", "atbash"),
+                    role_assignment=(),
+                    alphabet="AZ", n_layers=2,
+                    extras=extras,
+                    route_mode="route_boustrophedon",
+                    operation_source=source,
+                    route_width=width,
+                    route_rows=rows,
+                    route_cols=cols,
+                    route_ragged=ragged,
+                    route_direction=direction,
+                    route_width_source=source,
+                ),
+                notes=(
+                    f"route_boustrophedon({width}, "
+                    f"vertical={vertical}) ∘ atbash [trans-first]"
+                ),
+            ))
+    return out
+
+
+def _gen_route_boustrophedon_rail_fence_family(
+    *,
+    bench_slug: str,
+    widths: Sequence[tuple[int, str]],
+    rail_fence_depths: Sequence[int],
+    directions: Sequence[bool] = (False, True),
+    ct_length: int = 97,
+) -> list[GeneratedSpec]:
+    """LESSON-014: route_boustrophedon + rail_fence in BOTH orders.
+
+    Pure-transposition pair. No keyword roles, so the family is bounded
+    by the (width × direction × depth × layer_order) cartesian.
+    """
+    family_label = "route_boustrophedon_rail_fence"
+    out: list[GeneratedSpec] = []
+    for depth in rail_fence_depths:
+        rf_layer = _rail_fence_layer(int(depth))
+        for width, source in widths:
+            for vertical in directions:
+                rb_layer = _route_boustrophedon_layer(
+                    width, vertical=vertical,
+                )
+                rows, cols, ragged, direction = (
+                    _route_boustrophedon_route_metadata(
+                        width, vertical, ct_length=ct_length,
+                    )
+                )
+                extras = _route_boustrophedon_extras(
+                    width, vertical, ct_length=ct_length,
+                ) + (("rail_fence_depth", int(depth)),)
+                # rail_fence + route_boustrophedon
+                out.append(_make_spec(
+                    bench_slug=bench_slug, family_label=family_label,
+                    pipeline=[rf_layer, rb_layer],
+                    coverage=CoverageVector(
+                        layer_family=family_label,
+                        layer_order=("rail_fence", "route_boustrophedon"),
+                        role_assignment=(),
+                        alphabet="AZ", n_layers=2,
+                        extras=extras,
+                        route_mode="route_boustrophedon",
+                        operation_source=source,
+                        route_width=width,
+                        route_rows=rows,
+                        route_cols=cols,
+                        route_ragged=ragged,
+                        route_direction=direction,
+                        route_width_source=source,
+                    ),
+                    notes=(
+                        f"rail_fence({depth}) ∘ route_boustrophedon("
+                        f"{width}, vertical={vertical}) [rail-first]"
+                    ),
+                ))
+                # route_boustrophedon + rail_fence
+                out.append(_make_spec(
+                    bench_slug=bench_slug, family_label=family_label,
+                    pipeline=[rb_layer, rf_layer],
+                    coverage=CoverageVector(
+                        layer_family=family_label,
+                        layer_order=("route_boustrophedon", "rail_fence"),
+                        role_assignment=(),
+                        alphabet="AZ", n_layers=2,
+                        extras=extras,
+                        route_mode="route_boustrophedon",
+                        operation_source=source,
+                        route_width=width,
+                        route_rows=rows,
+                        route_cols=cols,
+                        route_ragged=ragged,
+                        route_direction=direction,
+                        route_width_source=source,
+                    ),
+                    notes=(
+                        f"route_boustrophedon({width}, "
+                        f"vertical={vertical}) ∘ rail_fence({depth}) "
+                        "[rb-first]"
+                    ),
+                ))
+    return out
+
+
+def _gen_route_boustrophedon_three_layer_family(
+    *,
+    bench_slug: str,
+    sub_kind: str,                  # vigenere | beaufort | variant_beaufort
+    sandwich_partner: str,          # "rail_fence" | "columnar"
+    keyword_a: str,
+    keyword_b: str,
+    widths: Sequence[tuple[int, str]],
+    directions: Sequence[bool] = (False, True),
+    rail_fence_depth: int = 4,
+    columnar_keyword: Optional[str] = None,
+    alphabet_modes: Optional[Sequence[AlphabetMode]] = None,
+    ct_length: int = 97,
+) -> list[GeneratedSpec]:
+    """LESSON-014 three-layer sandwich:
+    sub ∘ route_boustrophedon ∘ partner (and rotations).
+
+    Partner kinds:
+      "rail_fence" — sub ∘ rb ∘ rail_fence in 4 layer orderings:
+         sub_first   → sub ∘ rb ∘ fence
+         fence_first → fence ∘ rb ∘ sub
+         rb_middle   → sub ∘ fence ∘ rb is NOT generated (mirrored
+                       by fence_first when keyword roles flip);
+                       instead the four canonical orderings closing
+                       the symmetry class are used (cf. LESSON-011's
+                       rail_fence three-layer).
+      "columnar"   — sub ∘ rb ∘ columnar in 2 layer orderings:
+         sub_first   → sub ∘ rb ∘ columnar
+         col_first   → columnar ∘ rb ∘ sub
+         The columnar keyword is taken from ``columnar_keyword`` when
+         provided, else from ``keyword_b``. col_order derives from
+         the keyword stable rank (LESSON-004 / LESSON-005). The
+         enumerated col_order path (LESSON-013) is exercised by the
+         dedicated columnar+sub pair family; this sandwich keeps the
+         keyword path so the universe stays bounded.
+
+    To keep the universe bounded, callers are expected to pre-cap
+    ``widths`` and ``directions``.
+    """
+    if sub_kind not in _SUBSTITUTION_KEYWORD_KINDS:
+        raise ValueError(f"unsupported sub_kind {sub_kind!r}")
+    if sandwich_partner not in ("rail_fence", "columnar"):
+        raise ValueError(
+            f"sandwich_partner must be in {{'rail_fence', 'columnar'}}; "
+            f"got {sandwich_partner!r}"
+        )
+    family_label = f"{sub_kind}_route_boustrophedon_{sandwich_partner}"
+    if alphabet_modes is None:
+        alphabet_modes = (AlphabetMode("AZ", "AZ", None, "default"),)
+
+    if sandwich_partner == "rail_fence":
+        partner_layer = _rail_fence_layer(int(rail_fence_depth))
+        partner_extras: tuple[tuple[str, Any], ...] = (
+            ("rail_fence_depth", int(rail_fence_depth)),
+        )
+        partner_role: tuple[tuple[str, str], ...] = ()
+    else:  # columnar
+        kw_for_col = (
+            columnar_keyword
+            if isinstance(columnar_keyword, str) and len(columnar_keyword) >= 2
+            else keyword_b
+        )
+        if not (isinstance(kw_for_col, str) and len(kw_for_col) >= 2):
+            return []  # no usable columnar keyword; family inactive
+        partner_layer = _keyword_columnar_layer(kw_for_col)
+        col_order = _keyword_to_col_order(kw_for_col)
+        partner_extras = (
+            ("columnar_keyword", kw_for_col),
+            ("columnar_width", len(kw_for_col)),
+            ("columnar_col_order", tuple(col_order)),
+        )
+        partner_role = (("columnar", kw_for_col),)
+
+    out: list[GeneratedSpec] = []
+    for kw in (keyword_a, keyword_b):
+        if not isinstance(kw, str) or len(kw) < 1:
+            continue
+        for mode in alphabet_modes:
+            sub_layer = _keyword_substitution_layer(
+                sub_kind, kw,
+                alphabet=mode.dsl_alphabet,
+                alphabet_keyword=mode.alphabet_keyword,
+            )
+            for width, source in widths:
+                for vertical in directions:
+                    rb_layer = _route_boustrophedon_layer(
+                        width, vertical=vertical,
+                    )
+                    rows, cols, ragged, direction = (
+                        _route_boustrophedon_route_metadata(
+                            width, vertical, ct_length=ct_length,
+                        )
+                    )
+                    extras = (
+                        _route_boustrophedon_extras(
+                            width, vertical, ct_length=ct_length,
+                        )
+                        + partner_extras
+                    )
+                    role: tuple[tuple[str, str], ...] = (
+                        (sub_kind, kw),
+                    ) + partner_role
+
+                    if sandwich_partner == "rail_fence":
+                        # 4 orderings, mirroring LESSON-011's rail_fence
+                        # three-layer pattern.
+                        orderings: list[tuple[
+                            tuple[str, str, str], list[dict[str, Any]],
+                        ]] = [
+                            (
+                                (sub_kind, "route_boustrophedon",
+                                 "rail_fence"),
+                                [sub_layer, rb_layer, partner_layer],
+                            ),
+                            (
+                                ("rail_fence", "route_boustrophedon",
+                                 sub_kind),
+                                [partner_layer, rb_layer, sub_layer],
+                            ),
+                            (
+                                ("route_boustrophedon", sub_kind,
+                                 "rail_fence"),
+                                [rb_layer, sub_layer, partner_layer],
+                            ),
+                            (
+                                ("rail_fence", sub_kind,
+                                 "route_boustrophedon"),
+                                [partner_layer, sub_layer, rb_layer],
+                            ),
+                        ]
+                    else:  # columnar — 2 layer-order rotations
+                        orderings = [
+                            (
+                                (sub_kind, "route_boustrophedon",
+                                 "columnar"),
+                                [sub_layer, rb_layer, partner_layer],
+                            ),
+                            (
+                                ("columnar", "route_boustrophedon",
+                                 sub_kind),
+                                [partner_layer, rb_layer, sub_layer],
+                            ),
+                        ]
+
+                    for layer_order, pipeline in orderings:
+                        cov_kwargs: dict[str, Any] = dict(
+                            layer_family=family_label,
+                            layer_order=layer_order,
+                            role_assignment=role,
+                            alphabet=mode.mode_label, n_layers=3,
+                            extras=extras,
+                            alphabet_mode=mode.mode_label,
+                            alphabet_source=mode.source,
+                            substitution_keyword=kw,
+                            alphabet_keyword=(
+                                mode.alphabet_keyword or ""
+                            ),
+                            route_mode="route_boustrophedon",
+                            operation_source=source,
+                            route_width=width,
+                            route_rows=rows,
+                            route_cols=cols,
+                            route_ragged=ragged,
+                            route_direction=direction,
+                            route_width_source=source,
+                        )
+                        if sandwich_partner == "columnar":
+                            cov_kwargs["transposition_keyword"] = (
+                                kw_for_col
+                            )
+                            cov_kwargs["transposition_width"] = (
+                                len(kw_for_col)
+                            )
+                            cov_kwargs["col_order"] = tuple(col_order)
+                            cov_kwargs["col_order_source"] = (
+                                "keyword_stable_rank"
+                            )
+                            cov_kwargs["width_source"] = (
+                                "clue_keyword_length"
+                            )
+                        cov = CoverageVector(**cov_kwargs)
+                        out.append(_make_spec(
+                            bench_slug=bench_slug,
+                            family_label=family_label,
+                            pipeline=pipeline, coverage=cov,
+                            notes=(
+                                f"{sub_kind}({kw}, alpha="
+                                f"{mode.mode_label}) × "
+                                f"route_boustrophedon({width}, "
+                                f"vertical={vertical}) × "
+                                f"{sandwich_partner}{partner_extras} "
+                                f"[order={'/'.join(layer_order)}]"
+                            ),
+                            compute_budget_minutes=3,
+                        ))
+    return out
+
+
+# ----------------------------------------------------------------------------
+# Standalone single-layer substitution family (audit-hygiene 2026-04-28)
+# ----------------------------------------------------------------------------
+#
+# Pre-2026-04-28 the HCC catalog never emitted single-layer
+# substitution specs — every Vigenere / Beaufort / Variant Beaufort
+# always paired with a transposition partner. That coverage gap was
+# observed on K4B-008 (single-layer ``vigenere(SHADOW, mirrored_KA)``
+# is the intended decryption) where the controller could only reach
+# the answer through an identity ``row_reverse(width=CT_LEN,
+# parity=odd)`` wrapper riding the substitution layer.
+#
+# This generator emits standalone substitution specs as a always-on
+# default family — one spec per (sub_kind × clue_keyword × alphabet_
+# mode) — so single-layer-substitution challenges no longer require
+# an identity-wrapper workaround. The coverage_vector clearly marks
+# ``layer_family="standalone_<sub_kind>"`` and ``n_layers=1`` so
+# downstream attribution distinguishes "single-layer substitution
+# was the intended cipher" from "two-layer pipeline reached the
+# answer".
+
+
+def _gen_standalone_substitution_family(
+    *,
+    bench_slug: str,
+    sub_kind: str,                  # vigenere | beaufort | variant_beaufort
+    clue_keywords: Sequence[str],
+    alphabet_modes: Optional[Sequence[AlphabetMode]] = None,
+) -> list[GeneratedSpec]:
+    """Emit single-layer substitution specs across (keyword × alphabet
+    mode). One spec per (clue_keyword × alphabet_mode); the family is
+    deliberately keyword-driven so a clue pack containing N keywords
+    and M alphabet modes produces exactly N×M specs (≤ a few dozen
+    for typical clue packs).
+
+    The family is ALWAYS emitted — it does not require a trigger word.
+    Single-layer substitution is a fundamental cipher class that any
+    coverage-complete catalog should include independent of clue
+    triggers; the prior absence was a real coverage gap, not an
+    intentional gate.
+    """
+    if sub_kind not in _SUBSTITUTION_KEYWORD_KINDS:
+        raise ValueError(f"unsupported sub_kind {sub_kind!r}")
+    family_label = f"standalone_{sub_kind}"
+    if alphabet_modes is None:
+        alphabet_modes = (AlphabetMode("AZ", "AZ", None, "default"),)
+
+    out: list[GeneratedSpec] = []
+    seen_keys: set[tuple[str, str, str]] = set()
+    for kw in clue_keywords:
+        if not isinstance(kw, str):
+            continue
+        upper = kw.upper().strip()
+        if not upper.isalpha() or not upper:
+            continue
+        for mode in alphabet_modes:
+            # Dedup on (keyword, alphabet_mode_label, alphabet_source)
+            # so two AlphabetMode entries with the same shape (which
+            # can happen if a caller passes a redundant override list)
+            # never produce duplicate specs.
+            key = (upper, mode.mode_label, mode.source)
+            if key in seen_keys:
+                continue
+            seen_keys.add(key)
+            sub_layer = _keyword_substitution_layer(
+                sub_kind, upper,
+                alphabet=mode.dsl_alphabet,
+                alphabet_keyword=mode.alphabet_keyword,
+            )
+            cov = CoverageVector(
+                layer_family=family_label,
+                layer_order=(sub_kind,),
+                role_assignment=((sub_kind, upper),),
+                alphabet=mode.mode_label, n_layers=1,
+                alphabet_mode=mode.mode_label,
+                alphabet_source=mode.source,
+                substitution_keyword=upper,
+                alphabet_keyword=mode.alphabet_keyword or "",
+            )
+            out.append(_make_spec(
+                bench_slug=bench_slug, family_label=family_label,
+                pipeline=[sub_layer], coverage=cov,
+                notes=(
+                    f"standalone {sub_kind}({upper}, alpha="
+                    f"{mode.mode_label}, src={mode.source}) "
+                    "[single-layer substitution]"
+                ),
+                # Single-layer substitution is the simplest dispatch
+                # shape; the kernel evaluates one config in
+                # microseconds, so the budget is overwhelmingly
+                # multiprocessing startup. 1 minute is plenty.
+                compute_budget_minutes=1,
+                crib_alignment="direct_positional",
+            ))
+    return out
+
+
+# ----------------------------------------------------------------------------
+# LESSON-015: row_reverse family generators
+# ----------------------------------------------------------------------------
+
+
+def _row_reverse_metadata(
+    width: int, *, ct_length: int = 97,
+) -> bool:
+    """Return ``ragged`` flag (True iff width does not divide
+    CT_LEN). Centralized so every LESSON-015 generator emits
+    consistent ragged telemetry.
+    """
+    return (ct_length % width) != 0
+
+
+def _row_reverse_is_identity(
+    width: int,
+    parity: str,
+    start_row: int,
+    *,
+    ct_length: int = 97,
+) -> bool:
+    """Return True iff the (width, parity, start_row) triple selects
+    no row of length > 1 — i.e. the row_reverse perm is the identity
+    permutation.
+
+    This is the "no-fold" check. The audit-hygiene contract is that
+    every emitted row_reverse spec carries
+    ``row_reverse_identity = _row_reverse_is_identity(...)`` so
+    downstream analysis can distinguish substantive folded-row
+    reversal from identity wrappers that ride a substitution layer
+    just to surface a substitution-alone-equivalent spec.
+
+    Cases:
+      - parity="both": every row is reversed; identity iff ALL rows
+        have length <= 1 (effectively impossible for our widths).
+      - parity="odd"/"even": identity iff every selected row has
+        length <= 1.
+
+    The canonical no-fold sentinel ``width=CT_LEN, parity=odd,
+    start_row=0`` matches: only row 0 exists (length CT_LEN), but
+    parity=odd selects only ODD-indexed rows, so no row is
+    reversed → identity.
+    """
+    if not isinstance(width, int) or width < 1:
+        return False
+    if parity not in ("odd", "even", "both"):
+        return False
+    if start_row not in (0, 1):
+        return False
+    n_rows = (ct_length + width - 1) // width
+    for row_idx in range(n_rows):
+        # Replicate the dispatcher's parity logic exactly.
+        effective_idx = row_idx - start_row
+        if parity == "both":
+            should_reverse = True
+        elif parity == "odd":
+            should_reverse = (effective_idx % 2) == 1
+        else:  # "even"
+            should_reverse = (effective_idx % 2) == 0
+        if not should_reverse:
+            continue
+        # This row is selected. Is its reversal the identity?
+        # A single-character row reversed in place is the identity;
+        # any row of length >= 2 produces a non-identity perm.
+        row_start = row_idx * width
+        row_len = min(width, ct_length - row_start)
+        if row_len > 1:
+            return False
+    return True
+
+
+def _row_reverse_extras(
+    width: int, parity: str, start_row: int, *, ct_length: int = 97,
+) -> tuple[tuple[str, Any], ...]:
+    """Standard ``extras`` tuple for a LESSON-015 spec."""
+    return (
+        ("row_reverse_width", width),
+        ("row_reverse_parity", parity),
+        ("row_reverse_start_row", start_row),
+        ("row_reverse_ragged", _row_reverse_metadata(
+            width, ct_length=ct_length,
+        )),
+        ("row_reverse_identity", _row_reverse_is_identity(
+            width, parity, start_row, ct_length=ct_length,
+        )),
+    )
+
+
+def _gen_row_reverse_alone_family(
+    *,
+    bench_slug: str,
+    widths: Sequence[tuple[int, str]],
+    parities: Sequence[str] = _DEFAULT_ROW_REVERSE_PARITIES,
+    start_rows: Sequence[int] = (0,),
+    ct_length: int = 97,
+) -> list[GeneratedSpec]:
+    """LESSON-015: row_reverse as a single-layer transposition.
+
+    Emits one spec per (width, parity, start_row) triple. ``widths``
+    is the provenance-tagged width list from
+    ``_row_reverse_widths_for_payload``.
+    """
+    family_label = "row_reverse"
+    out: list[GeneratedSpec] = []
+    for width, source in widths:
+        for parity in parities:
+            for start_row in start_rows:
+                layer = _row_reverse_layer(
+                    width, parity, start_row=start_row,
+                )
+                ragged = _row_reverse_metadata(
+                    width, ct_length=ct_length,
+                )
+                cov = CoverageVector(
+                    layer_family=family_label,
+                    layer_order=("row_reverse",),
+                    role_assignment=(),
+                    alphabet="AZ", n_layers=1,
+                    extras=_row_reverse_extras(
+                        width, parity, start_row, ct_length=ct_length,
+                    ),
+                    operation_source=source,
+                    row_reverse_width=width,
+                    row_reverse_parity=parity,
+                    row_reverse_source=source,
+                    row_reverse_ragged=ragged,
+                    row_reverse_start_row=start_row,
+                    row_reverse_identity=_row_reverse_is_identity(
+                        width, parity, start_row, ct_length=ct_length,
+                    ),
+                )
+                out.append(_make_spec(
+                    bench_slug=bench_slug, family_label=family_label,
+                    pipeline=[layer], coverage=cov,
+                    notes=(
+                        f"row_reverse(width={width}, parity={parity}, "
+                        f"start_row={start_row}) "
+                        f"[width_source={source}, ragged={ragged}]"
+                    ),
+                    crib_alignment="post_transposition",
+                ))
+    return out
+
+
+def _gen_row_reverse_substitution_family(
+    *,
+    bench_slug: str,
+    sub_kind: str,                  # vigenere | beaufort | variant_beaufort
+    keyword_a: str,
+    keyword_b: str,
+    widths: Sequence[tuple[int, str]],
+    parities: Sequence[str] = _DEFAULT_ROW_REVERSE_PARITIES,
+    start_rows: Sequence[int] = (0,),
+    alphabet_modes: Optional[Sequence[AlphabetMode]] = None,
+    ct_length: int = 97,
+) -> list[GeneratedSpec]:
+    """LESSON-015: row_reverse paired with a keyword substitution in
+    BOTH layer orders (LESSON-002).
+    """
+    if sub_kind not in _SUBSTITUTION_KEYWORD_KINDS:
+        raise ValueError(f"unsupported sub_kind {sub_kind!r}")
+    family_label = f"row_reverse_{sub_kind}"
+    if alphabet_modes is None:
+        alphabet_modes = (AlphabetMode("AZ", "AZ", None, "default"),)
+
+    out: list[GeneratedSpec] = []
+    for kw in (keyword_a, keyword_b):
+        if not isinstance(kw, str) or len(kw) < 1:
+            continue
+        for mode in alphabet_modes:
+            sub_layer = _keyword_substitution_layer(
+                sub_kind, kw,
+                alphabet=mode.dsl_alphabet,
+                alphabet_keyword=mode.alphabet_keyword,
+            )
+            for width, source in widths:
+                for parity in parities:
+                    for start_row in start_rows:
+                        rr_layer = _row_reverse_layer(
+                            width, parity, start_row=start_row,
+                        )
+                        ragged = _row_reverse_metadata(
+                            width, ct_length=ct_length,
+                        )
+                        role = ((sub_kind, kw),)
+                        extras = _row_reverse_extras(
+                            width, parity, start_row,
+                            ct_length=ct_length,
+                        )
+                        # Order 1: substitution first
+                        out.append(_make_spec(
+                            bench_slug=bench_slug,
+                            family_label=family_label,
+                            pipeline=[sub_layer, rr_layer],
+                            coverage=CoverageVector(
+                                layer_family=family_label,
+                                layer_order=(sub_kind, "row_reverse"),
+                                role_assignment=role,
+                                alphabet=mode.mode_label, n_layers=2,
+                                extras=extras,
+                                alphabet_mode=mode.mode_label,
+                                alphabet_source=mode.source,
+                                substitution_keyword=kw,
+                                alphabet_keyword=(
+                                    mode.alphabet_keyword or ""
+                                ),
+                                operation_source=source,
+                                row_reverse_width=width,
+                                row_reverse_parity=parity,
+                                row_reverse_source=source,
+                                row_reverse_ragged=ragged,
+                                row_reverse_start_row=start_row,
+                                row_reverse_identity=(
+                                    _row_reverse_is_identity(
+                                        width, parity, start_row,
+                                        ct_length=ct_length,
+                                    )
+                                ),
+                            ),
+                            notes=(
+                                f"{sub_kind}({kw}, alpha="
+                                f"{mode.mode_label}) ∘ "
+                                f"row_reverse({width}, {parity}, "
+                                f"start={start_row}) "
+                                f"[sub-first, src={source}]"
+                            ),
+                        ))
+                        # Order 2: row_reverse first
+                        out.append(_make_spec(
+                            bench_slug=bench_slug,
+                            family_label=family_label,
+                            pipeline=[rr_layer, sub_layer],
+                            coverage=CoverageVector(
+                                layer_family=family_label,
+                                layer_order=("row_reverse", sub_kind),
+                                role_assignment=role,
+                                alphabet=mode.mode_label, n_layers=2,
+                                extras=extras,
+                                alphabet_mode=mode.mode_label,
+                                alphabet_source=mode.source,
+                                substitution_keyword=kw,
+                                alphabet_keyword=(
+                                    mode.alphabet_keyword or ""
+                                ),
+                                operation_source=source,
+                                row_reverse_width=width,
+                                row_reverse_parity=parity,
+                                row_reverse_source=source,
+                                row_reverse_ragged=ragged,
+                                row_reverse_start_row=start_row,
+                                row_reverse_identity=(
+                                    _row_reverse_is_identity(
+                                        width, parity, start_row,
+                                        ct_length=ct_length,
+                                    )
+                                ),
+                            ),
+                            notes=(
+                                f"row_reverse({width}, {parity}, "
+                                f"start={start_row}) ∘ "
+                                f"{sub_kind}({kw}, alpha="
+                                f"{mode.mode_label}) "
+                                f"[trans-first, src={source}]"
+                            ),
+                        ))
+    return out
+
+
+def _gen_row_reverse_caesar_family(
+    *,
+    bench_slug: str,
+    widths: Sequence[tuple[int, str]],
+    parities: Sequence[str] = _DEFAULT_ROW_REVERSE_PARITIES,
+    shifts: Sequence[int] = _DEFAULT_REV_BLOCKS_CAESAR_SHIFTS,
+    ct_length: int = 97,
+) -> list[GeneratedSpec]:
+    """LESSON-015: row_reverse + canonical Caesar in BOTH orders."""
+    family_label = "row_reverse_caesar"
+    out: list[GeneratedSpec] = []
+    for shift in shifts:
+        if shift == 0 or not 1 <= shift <= 25:
+            continue
+        caesar_layer = _caesar_layer(shift)
+        for width, source in widths:
+            for parity in parities:
+                rr_layer = _row_reverse_layer(width, parity)
+                ragged = _row_reverse_metadata(
+                    width, ct_length=ct_length,
+                )
+                role = (("caesar_shift", str(shift)),)
+                extras = _row_reverse_extras(
+                    width, parity, 0, ct_length=ct_length,
+                ) + (("caesar_shift", shift),)
+                out.append(_make_spec(
+                    bench_slug=bench_slug, family_label=family_label,
+                    pipeline=[caesar_layer, rr_layer],
+                    coverage=CoverageVector(
+                        layer_family=family_label,
+                        layer_order=("caesar", "row_reverse"),
+                        role_assignment=role,
+                        alphabet="AZ", n_layers=2,
+                        extras=extras,
+                        shift_value=shift,
+                        operation_source=source,
+                        row_reverse_width=width,
+                        row_reverse_parity=parity,
+                        row_reverse_source=source,
+                        row_reverse_ragged=ragged,
+                        row_reverse_start_row=0,
+                        row_reverse_identity=_row_reverse_is_identity(
+                            width, parity, 0, ct_length=ct_length,
+                        ),
+                    ),
+                    notes=(
+                        f"caesar({shift}) ∘ row_reverse({width}, "
+                        f"{parity}) [caesar-first]"
+                    ),
+                ))
+                out.append(_make_spec(
+                    bench_slug=bench_slug, family_label=family_label,
+                    pipeline=[rr_layer, caesar_layer],
+                    coverage=CoverageVector(
+                        layer_family=family_label,
+                        layer_order=("row_reverse", "caesar"),
+                        role_assignment=role,
+                        alphabet="AZ", n_layers=2,
+                        extras=extras,
+                        shift_value=shift,
+                        operation_source=source,
+                        row_reverse_width=width,
+                        row_reverse_parity=parity,
+                        row_reverse_source=source,
+                        row_reverse_ragged=ragged,
+                        row_reverse_start_row=0,
+                        row_reverse_identity=_row_reverse_is_identity(
+                            width, parity, 0, ct_length=ct_length,
+                        ),
+                    ),
+                    notes=(
+                        f"row_reverse({width}, {parity}) ∘ "
+                        f"caesar({shift}) [trans-first]"
+                    ),
+                ))
+    return out
+
+
+def _gen_row_reverse_atbash_family(
+    *,
+    bench_slug: str,
+    widths: Sequence[tuple[int, str]],
+    parities: Sequence[str] = _DEFAULT_ROW_REVERSE_PARITIES,
+    ct_length: int = 97,
+) -> list[GeneratedSpec]:
+    """LESSON-015: row_reverse + Atbash in BOTH orders."""
+    family_label = "row_reverse_atbash"
+    atbash_layer = {"kind": "atbash", "alphabet": "AZ", "params": []}
+    out: list[GeneratedSpec] = []
+    for width, source in widths:
+        for parity in parities:
+            rr_layer = _row_reverse_layer(width, parity)
+            ragged = _row_reverse_metadata(width, ct_length=ct_length)
+            extras = _row_reverse_extras(
+                width, parity, 0, ct_length=ct_length,
+            )
+            out.append(_make_spec(
+                bench_slug=bench_slug, family_label=family_label,
+                pipeline=[atbash_layer, rr_layer],
+                coverage=CoverageVector(
+                    layer_family=family_label,
+                    layer_order=("atbash", "row_reverse"),
+                    role_assignment=(),
+                    alphabet="AZ", n_layers=2,
+                    extras=extras,
+                    operation_source=source,
+                    row_reverse_width=width,
+                    row_reverse_parity=parity,
+                    row_reverse_source=source,
+                    row_reverse_ragged=ragged,
+                    row_reverse_start_row=0,
+                    row_reverse_identity=_row_reverse_is_identity(
+                        width, parity, 0, ct_length=ct_length,
+                    ),
+                ),
+                notes=(
+                    f"atbash ∘ row_reverse({width}, {parity}) "
+                    "[atbash-first]"
+                ),
+            ))
+            out.append(_make_spec(
+                bench_slug=bench_slug, family_label=family_label,
+                pipeline=[rr_layer, atbash_layer],
+                coverage=CoverageVector(
+                    layer_family=family_label,
+                    layer_order=("row_reverse", "atbash"),
+                    role_assignment=(),
+                    alphabet="AZ", n_layers=2,
+                    extras=extras,
+                    operation_source=source,
+                    row_reverse_width=width,
+                    row_reverse_parity=parity,
+                    row_reverse_source=source,
+                    row_reverse_ragged=ragged,
+                    row_reverse_start_row=0,
+                    row_reverse_identity=_row_reverse_is_identity(
+                        width, parity, 0, ct_length=ct_length,
+                    ),
+                ),
+                notes=(
+                    f"row_reverse({width}, {parity}) ∘ atbash "
+                    "[trans-first]"
+                ),
+            ))
+    return out
+
+
+def _gen_row_reverse_rail_fence_family(
+    *,
+    bench_slug: str,
+    widths: Sequence[tuple[int, str]],
+    rail_fence_depths: Sequence[int],
+    parities: Sequence[str] = _DEFAULT_ROW_REVERSE_PARITIES,
+    ct_length: int = 97,
+) -> list[GeneratedSpec]:
+    """LESSON-015: row_reverse + rail_fence in BOTH orders."""
+    family_label = "row_reverse_rail_fence"
+    out: list[GeneratedSpec] = []
+    for depth in rail_fence_depths:
+        rf_layer = _rail_fence_layer(int(depth))
+        for width, source in widths:
+            for parity in parities:
+                rr_layer = _row_reverse_layer(width, parity)
+                ragged = _row_reverse_metadata(
+                    width, ct_length=ct_length,
+                )
+                extras = _row_reverse_extras(
+                    width, parity, 0, ct_length=ct_length,
+                ) + (("rail_fence_depth", int(depth)),)
+                out.append(_make_spec(
+                    bench_slug=bench_slug, family_label=family_label,
+                    pipeline=[rf_layer, rr_layer],
+                    coverage=CoverageVector(
+                        layer_family=family_label,
+                        layer_order=("rail_fence", "row_reverse"),
+                        role_assignment=(),
+                        alphabet="AZ", n_layers=2,
+                        extras=extras,
+                        operation_source=source,
+                        row_reverse_width=width,
+                        row_reverse_parity=parity,
+                        row_reverse_source=source,
+                        row_reverse_ragged=ragged,
+                        row_reverse_start_row=0,
+                        row_reverse_identity=_row_reverse_is_identity(
+                            width, parity, 0, ct_length=ct_length,
+                        ),
+                    ),
+                    notes=(
+                        f"rail_fence({depth}) ∘ row_reverse("
+                        f"{width}, {parity}) [rail-first]"
+                    ),
+                ))
+                out.append(_make_spec(
+                    bench_slug=bench_slug, family_label=family_label,
+                    pipeline=[rr_layer, rf_layer],
+                    coverage=CoverageVector(
+                        layer_family=family_label,
+                        layer_order=("row_reverse", "rail_fence"),
+                        role_assignment=(),
+                        alphabet="AZ", n_layers=2,
+                        extras=extras,
+                        operation_source=source,
+                        row_reverse_width=width,
+                        row_reverse_parity=parity,
+                        row_reverse_source=source,
+                        row_reverse_ragged=ragged,
+                        row_reverse_start_row=0,
+                        row_reverse_identity=_row_reverse_is_identity(
+                            width, parity, 0, ct_length=ct_length,
+                        ),
+                    ),
+                    notes=(
+                        f"row_reverse({width}, {parity}) ∘ "
+                        f"rail_fence({depth}) [rr-first]"
+                    ),
+                ))
+    return out
+
+
+def _gen_row_reverse_route_three_layer_family(
+    *,
+    bench_slug: str,
+    sub_kind: str,                  # vigenere | beaufort | variant_beaufort
+    route_partner: str,             # "route" | "route_boustrophedon"
+    keyword_a: str,
+    keyword_b: str,
+    widths: Sequence[tuple[int, str]],
+    parities: Sequence[str] = _DEFAULT_ROW_REVERSE_PARITIES,
+    route_grid: tuple[int, int] = (10, 10),
+    route_boustrophedon_widths: Sequence[int] = (8, 10),
+    alphabet_modes: Optional[Sequence[AlphabetMode]] = None,
+    ct_length: int = 97,
+) -> list[GeneratedSpec]:
+    """LESSON-015 three-layer: substitution + route + row_reverse
+    (and rotations).
+
+    ``route_partner`` selects the ``route`` kind (variant=
+    serpentine, fixed grid) or the LESSON-014 ``route_boustrophedon``
+    kind. Both peel orders for the row_reverse position are
+    enumerated:
+      sub + route + row_reverse
+      row_reverse + route + sub
+      sub + row_reverse + route
+      route + row_reverse + sub
+    """
+    if sub_kind not in _SUBSTITUTION_KEYWORD_KINDS:
+        raise ValueError(f"unsupported sub_kind {sub_kind!r}")
+    if route_partner not in ("route", "route_boustrophedon"):
+        raise ValueError(
+            f"route_partner must be in {{'route', 'route_boustrophedon'}}; "
+            f"got {route_partner!r}"
+        )
+    family_label = f"{sub_kind}_{route_partner}_row_reverse"
+    if alphabet_modes is None:
+        alphabet_modes = (AlphabetMode("AZ", "AZ", None, "default"),)
+
+    if route_partner == "route":
+        rows, cols = route_grid
+        route_layers: list[tuple[dict[str, Any], dict[str, Any]]] = [
+            (
+                _route_layer(variant="serpentine", rows=rows, cols=cols),
+                {"route_rows": rows, "route_cols": cols,
+                 "route_variant": "serpentine"},
+            ),
+        ]
+    else:  # route_boustrophedon
+        route_layers = [
+            (
+                _route_boustrophedon_layer(rb_width, vertical=False),
+                {"route_boustrophedon_width": rb_width,
+                 "route_boustrophedon_vertical": False},
+            )
+            for rb_width in route_boustrophedon_widths
+        ]
+
+    out: list[GeneratedSpec] = []
+    for kw in (keyword_a, keyword_b):
+        if not isinstance(kw, str) or len(kw) < 1:
+            continue
+        for mode in alphabet_modes:
+            sub_layer = _keyword_substitution_layer(
+                sub_kind, kw,
+                alphabet=mode.dsl_alphabet,
+                alphabet_keyword=mode.alphabet_keyword,
+            )
+            for width, source in widths:
+                for parity in parities:
+                    rr_layer = _row_reverse_layer(width, parity)
+                    ragged = _row_reverse_metadata(
+                        width, ct_length=ct_length,
+                    )
+                    rr_extras = _row_reverse_extras(
+                        width, parity, 0, ct_length=ct_length,
+                    )
+                    for route_layer, route_extras in route_layers:
+                        extras = rr_extras + tuple(
+                            route_extras.items()
+                        )
+                        role: tuple[tuple[str, str], ...] = (
+                            (sub_kind, kw),
+                        )
+                        # 4 layer orderings closing the symmetry
+                        # class.
+                        orderings: list[tuple[
+                            tuple[str, str, str], list[dict[str, Any]],
+                        ]] = [
+                            (
+                                (sub_kind, route_partner, "row_reverse"),
+                                [sub_layer, route_layer, rr_layer],
+                            ),
+                            (
+                                ("row_reverse", route_partner, sub_kind),
+                                [rr_layer, route_layer, sub_layer],
+                            ),
+                            (
+                                (sub_kind, "row_reverse", route_partner),
+                                [sub_layer, rr_layer, route_layer],
+                            ),
+                            (
+                                (route_partner, "row_reverse", sub_kind),
+                                [route_layer, rr_layer, sub_layer],
+                            ),
+                        ]
+                        for layer_order, pipeline in orderings:
+                            cov_kwargs: dict[str, Any] = dict(
+                                layer_family=family_label,
+                                layer_order=layer_order,
+                                role_assignment=role,
+                                alphabet=mode.mode_label, n_layers=3,
+                                extras=extras,
+                                alphabet_mode=mode.mode_label,
+                                alphabet_source=mode.source,
+                                substitution_keyword=kw,
+                                alphabet_keyword=(
+                                    mode.alphabet_keyword or ""
+                                ),
+                                operation_source=source,
+                                row_reverse_width=width,
+                                row_reverse_parity=parity,
+                                row_reverse_source=source,
+                                row_reverse_ragged=ragged,
+                                row_reverse_start_row=0,
+                                row_reverse_identity=(
+                                    _row_reverse_is_identity(
+                                        width, parity, 0,
+                                        ct_length=ct_length,
+                                    )
+                                ),
+                            )
+                            if route_partner == "route_boustrophedon":
+                                rb_width = route_extras[
+                                    "route_boustrophedon_width"
+                                ]
+                                rb_rows = (
+                                    ct_length + rb_width - 1
+                                ) // rb_width
+                                cov_kwargs["route_mode"] = (
+                                    "route_boustrophedon"
+                                )
+                                cov_kwargs["route_width"] = rb_width
+                                cov_kwargs["route_rows"] = rb_rows
+                                cov_kwargs["route_cols"] = rb_width
+                                cov_kwargs["route_ragged"] = (
+                                    (ct_length % rb_width) != 0
+                                )
+                                cov_kwargs["route_direction"] = (
+                                    "horizontal"
+                                )
+                            cov = CoverageVector(**cov_kwargs)
+                            out.append(_make_spec(
+                                bench_slug=bench_slug,
+                                family_label=family_label,
+                                pipeline=pipeline, coverage=cov,
+                                notes=(
+                                    f"{sub_kind}({kw}, alpha="
+                                    f"{mode.mode_label}) × "
+                                    f"{route_partner}{route_extras} "
+                                    f"× row_reverse({width}, "
+                                    f"{parity}) "
+                                    f"[order={'/'.join(layer_order)}]"
+                                ),
+                                compute_budget_minutes=3,
+                            ))
+    return out
+
+
 def _gen_three_layer_sandwich_family(
     *,
     bench_slug: str,
@@ -3793,11 +6968,25 @@ def generate_layered_specs(
         "rail_fence_vigenere", "rail_fence_beaufort",
         "route_vigenere", "route_beaufort",
         "quagmire",
+        # 2026-04-28 audit-hygiene: standalone single-layer
+        # substitution families are part of the default catalogue
+        # (no trigger required). Closes the coverage gap observed
+        # on K4B-008 where a single-layer Vigenere + mirrored_KA
+        # answer was previously only reachable through an identity
+        # row_reverse wrapper.
+        "standalone_vigenere",
+        "standalone_beaufort",
+        "standalone_variant_beaufort",
     }
     if include_three_layer:
         default_families |= {
             "vigenere_rail_fence_beaufort",
             "beaufort_rail_fence_vigenere",
+            # LESSON-013: 3-layer ``columnar_<sub>_rail_fence``
+            # sandwich with enumerated col_orders.
+            "columnar_vigenere_rail_fence",
+            "columnar_beaufort_rail_fence",
+            "columnar_variant_beaufort_rail_fence",
         }
     # 2026-04-28 (LESSON-010): the i3_* family labels are part of the
     # default catalogue when there are 2+ clue keywords. Adding them
@@ -3869,6 +7058,62 @@ def generate_layered_specs(
                 "caesar_rail_fence_atbash",
                 "caesar_route_atbash",
             }
+    # 2026-04-28 (LESSON-015): folded-strip / alternate-row reversal
+    # trigger. Detected before LESSON-014 / LESSON-011 because clue
+    # language like "fold" / "reverse" / "row" overlaps with the other
+    # transposition triggers; we add row_reverse families ALONGSIDE
+    # those (not instead).
+    row_reverse_triggered = _detect_row_reverse_trigger(clue_text)
+    if row_reverse_triggered:
+        default_families |= {
+            "row_reverse",
+            "row_reverse_vigenere",
+            "row_reverse_beaufort",
+            "row_reverse_variant_beaufort",
+            "row_reverse_caesar",
+            "row_reverse_atbash",
+            "row_reverse_rail_fence",
+        }
+        if include_three_layer:
+            default_families |= {
+                "vigenere_route_row_reverse",
+                "beaufort_route_row_reverse",
+                "variant_beaufort_route_row_reverse",
+                "vigenere_route_boustrophedon_row_reverse",
+                "beaufort_route_boustrophedon_row_reverse",
+                "variant_beaufort_route_boustrophedon_row_reverse",
+            }
+
+    # 2026-04-28 (LESSON-014): width-only ragged boustrophedon route
+    # trigger. Detected before the LESSON-011 trigger because clue
+    # language like "route" appears in BOTH lessons' vocabularies; we
+    # gate on the LESSON-014 detector to add boustrophedon families
+    # ALONGSIDE skip_route families (not instead).
+    boustrophedon_triggered = _detect_route_boustrophedon_trigger(clue_text)
+    boustrophedon_vertical_priority = (
+        _detect_route_vertical_priority(clue_text)
+        if boustrophedon_triggered else False
+    )
+    if boustrophedon_triggered:
+        default_families |= {
+            "route_boustrophedon",
+            "route_boustrophedon_vigenere",
+            "route_boustrophedon_beaufort",
+            "route_boustrophedon_variant_beaufort",
+            "route_boustrophedon_caesar",
+            "route_boustrophedon_atbash",
+            "route_boustrophedon_rail_fence",
+        }
+        if include_three_layer:
+            default_families |= {
+                "vigenere_route_boustrophedon_rail_fence",
+                "beaufort_route_boustrophedon_rail_fence",
+                "variant_beaufort_route_boustrophedon_rail_fence",
+                "vigenere_route_boustrophedon_columnar",
+                "beaufort_route_boustrophedon_columnar",
+                "variant_beaufort_route_boustrophedon_columnar",
+            }
+
     # 2026-04-28 (LESSON-011): skip / step / stride route trigger.
     skip_route_triggered = _detect_skip_route_trigger(clue_text)
     if skip_route_triggered:
@@ -3922,6 +7167,26 @@ def generate_layered_specs(
             sub_kind=sub_kind, trans_kind=trans_kind,
             keyword_a=keyword_a, keyword_b=keyword_b,
             alphabet_modes=alphabet_modes,
+        ))
+
+    # --- LESSON-013: enumerated columnar pair families ---------------
+    # Fires immediately after the legacy keyword-pair generator so
+    # the per-family cap is filled while we still have global
+    # _DEFAULT_MAX_SPECS budget. Family_label stays
+    # ``columnar_<sub>`` (same coverage class as the legacy path).
+    enumerated_columnar_pair_specs: list[tuple[str, str]] = [
+        ("columnar_vigenere",         "vigenere"),
+        ("columnar_beaufort",         "beaufort"),
+        ("columnar_variant_beaufort", "variant_beaufort"),
+    ]
+    for label, sub_kind in enumerated_columnar_pair_specs:
+        if label not in active:
+            continue
+        out.extend(_gen_enumerated_columnar_pair_family(
+            bench_slug=bench_slug,
+            sub_kind=sub_kind,
+            keyword_a=keyword_a, keyword_b=keyword_b,
+            clue_text=clue_text, clue_keywords=cleaned,
         ))
 
     # --- Two-layer keywordless-transposition families ---
@@ -3997,6 +7262,20 @@ def generate_layered_specs(
                 clue_keywords=cleaned,
                 alphabet_modes=alphabet_modes,
             ))
+        # --- LESSON-013: enumerated col_orders in i3 columnar -----
+        # Family_label stays ``i3_columnar_<sub>`` (same coverage
+        # class). Only fires for trans_kind == "columnar".
+        for label, sub_kind, trans_kind in i3_keyword_pair_specs:
+            if trans_kind != "columnar":
+                continue
+            if label not in active:
+                continue
+            out.extend(_gen_enumerated_columnar_i3_family(
+                bench_slug=bench_slug,
+                sub_kind=sub_kind,
+                clue_keywords=cleaned,
+                clue_text=clue_text,
+            ))
         i3_keywordless_pairs: list[tuple[str, str, str]] = [
             ("i3_rail_fence_vigenere", "vigenere", "rail_fence"),
             ("i3_rail_fence_beaufort", "beaufort", "rail_fence"),
@@ -4031,6 +7310,28 @@ def generate_layered_specs(
                             alphabet_modes=alphabet_modes,
                         )
                     )
+
+    # --- Standalone single-layer substitution families (audit-hygiene) ---
+    # 2026-04-28: always-on (no trigger required). Emitted AFTER the
+    # legacy keyword-pair / i3 keyword-pair families so K4B-001-style
+    # cap-preservation invariants (small caps keep columnar_vigenere
+    # at the front of the catalogue) remain intact, but BEFORE the
+    # quagmire single-layer family and all trigger-driven families
+    # so single-layer substitution coverage is robust against budget
+    # truncation. ~3 sub_kinds × clue_keywords × alphabet_modes
+    # ≈ 100 specs total at typical clue pack sizes.
+    for sub_kind, label in (
+        ("vigenere", "standalone_vigenere"),
+        ("beaufort", "standalone_beaufort"),
+        ("variant_beaufort", "standalone_variant_beaufort"),
+    ):
+        if label in active:
+            out.extend(_gen_standalone_substitution_family(
+                bench_slug=bench_slug,
+                sub_kind=sub_kind,
+                clue_keywords=cleaned,
+                alphabet_modes=alphabet_modes,
+            ))
 
     # --- Quagmire family (III + IV with role permutation) ---
     if "quagmire" in active:
@@ -4208,6 +7509,47 @@ def generate_layered_specs(
                     shifts=caesar_shifts,
                     **kwargs,
                 ))
+            # --- LESSON-013: enumerated col_orders in caesar+col+atbash
+            # Only the columnar variant gets enumerated; rail_fence /
+            # route / myszkowski sandwiches keep their existing shape.
+            # Family_label stays ``caesar_columnar_atbash``.
+            if "caesar_columnar_atbash" in active:
+                out.extend(
+                    _gen_enumerated_caesar_columnar_atbash_family(
+                        bench_slug=bench_slug,
+                        shifts=caesar_shifts,
+                        clue_text=clue_text,
+                        clue_keywords=cleaned,
+                    )
+                )
+
+    # --- LESSON-013: 3-layer columnar+sub+rail_fence sandwich --------
+    # Closes K4B-006's empirical 24/24 path that the 2-layer
+    # columnar+sub cannot reach (probe_all_col_orders.py confirmed
+    # 24/24 requires the rail-fence layer). Wired AFTER LESSON-009
+    # so the trigger-driven caesar* families fire first under tight
+    # budgets — the new family's per-family cap is large
+    # (~1200 specs × 3 sub_kinds = 3600 specs total) and would
+    # starve caesar otherwise.
+    if include_three_layer:
+        enumerated_columnar_rf_specs: list[tuple[str, str]] = [
+            ("columnar_vigenere_rail_fence",         "vigenere"),
+            ("columnar_beaufort_rail_fence",         "beaufort"),
+            ("columnar_variant_beaufort_rail_fence", "variant_beaufort"),
+        ]
+        for label, sub_kind in enumerated_columnar_rf_specs:
+            if label not in active:
+                continue
+            out.extend(
+                _gen_enumerated_columnar_sub_rail_fence_family(
+                    bench_slug=bench_slug,
+                    sub_kind=sub_kind,
+                    keyword_a=keyword_a, keyword_b=keyword_b,
+                    rail_fence_depths=rail_fence_depths,
+                    clue_text=clue_text,
+                    clue_keywords=cleaned,
+                )
+            )
 
     # --- LESSON-011: skip / step / stride route families ---------------
     # Trigger-driven (skip_route_triggered set above). When the clue
@@ -4306,6 +7648,231 @@ def generate_layered_specs(
                         ),
                         alphabet_modes=alphabet_modes,
                     ))
+
+    # --- LESSON-014: width-only ragged boustrophedon families ---------
+    # Trigger-driven (boustrophedon_triggered set above). When the
+    # clue pack contains no boustrophedon trigger token, every
+    # ``route_boustrophedon*`` family is absent from ``active`` and
+    # this block is a no-op. Real-K4 mode is unaffected because HCC
+    # is bench-mode only via _collect_hcc_seeds; the LESSON-014
+    # entry remains visible to the LLM theorist as a generalized
+    # tactic.
+    if boustrophedon_triggered:
+        rb_widths_full = _route_boustrophedon_widths_for_payload(
+            clue_text, cleaned,
+        )
+        # Direction priority (LESSON-014): if the clue contains a
+        # vertical-direction token (down/up/vertical/columnwise),
+        # the vertical=True variant is enumerated FIRST (in the
+        # tuple) so it gets priority under the per-family cap;
+        # vertical=False is still emitted as the symmetry partner.
+        if boustrophedon_vertical_priority:
+            rb_directions: tuple[bool, ...] = (True, False)
+        else:
+            rb_directions = (False, True)
+        # Cap the substitution-paired and three-layer width lists so
+        # the (sub × alpha × widths × directions × order) cartesian
+        # stays bounded. Phrase-bound widths come first by
+        # construction in _route_boustrophedon_widths_for_payload, so
+        # truncation never starves a clue-prominent width.
+        rb_widths_capped = rb_widths_full[
+            :_ROUTE_BOUSTROPHEDON_PAIR_WIDTH_CAP
+        ]
+        rb_widths_three = rb_widths_full[
+            :_ROUTE_BOUSTROPHEDON_THREE_LAYER_WIDTH_CAP
+        ]
+
+        if "route_boustrophedon" in active:
+            out.extend(_gen_route_boustrophedon_alone_family(
+                bench_slug=bench_slug,
+                widths=rb_widths_full,
+                directions=rb_directions,
+            ))
+        for sub_kind, label in (
+            ("vigenere", "route_boustrophedon_vigenere"),
+            ("beaufort", "route_boustrophedon_beaufort"),
+            ("variant_beaufort", "route_boustrophedon_variant_beaufort"),
+        ):
+            if label in active:
+                out.extend(
+                    _gen_route_boustrophedon_substitution_family(
+                        bench_slug=bench_slug,
+                        sub_kind=sub_kind,
+                        keyword_a=keyword_a, keyword_b=keyword_b,
+                        widths=rb_widths_capped,
+                        directions=rb_directions,
+                        alphabet_modes=alphabet_modes,
+                    )
+                )
+        if "route_boustrophedon_caesar" in active:
+            out.extend(_gen_route_boustrophedon_caesar_family(
+                bench_slug=bench_slug,
+                widths=rb_widths_capped,
+                directions=rb_directions,
+            ))
+        if "route_boustrophedon_atbash" in active:
+            out.extend(_gen_route_boustrophedon_atbash_family(
+                bench_slug=bench_slug,
+                widths=rb_widths_capped,
+                directions=rb_directions,
+            ))
+        if "route_boustrophedon_rail_fence" in active:
+            out.extend(_gen_route_boustrophedon_rail_fence_family(
+                bench_slug=bench_slug,
+                widths=rb_widths_capped,
+                rail_fence_depths=tuple(rail_fence_depths),
+                directions=rb_directions,
+            ))
+        if include_three_layer:
+            sw_depth = (
+                rail_fence_depths[0] if rail_fence_depths else 3
+            )
+            for sub_kind in (
+                "vigenere", "beaufort", "variant_beaufort",
+            ):
+                rf_label = (
+                    f"{sub_kind}_route_boustrophedon_rail_fence"
+                )
+                col_label = (
+                    f"{sub_kind}_route_boustrophedon_columnar"
+                )
+                if rf_label in active:
+                    out.extend(
+                        _gen_route_boustrophedon_three_layer_family(
+                            bench_slug=bench_slug,
+                            sub_kind=sub_kind,
+                            sandwich_partner="rail_fence",
+                            keyword_a=keyword_a, keyword_b=keyword_b,
+                            widths=rb_widths_three,
+                            directions=rb_directions,
+                            rail_fence_depth=sw_depth,
+                            alphabet_modes=alphabet_modes,
+                        )
+                    )
+                if col_label in active and len(cleaned) >= 2:
+                    out.extend(
+                        _gen_route_boustrophedon_three_layer_family(
+                            bench_slug=bench_slug,
+                            sub_kind=sub_kind,
+                            sandwich_partner="columnar",
+                            keyword_a=keyword_a, keyword_b=keyword_b,
+                            columnar_keyword=keyword_b,
+                            widths=rb_widths_three,
+                            directions=rb_directions,
+                            alphabet_modes=alphabet_modes,
+                        )
+                    )
+
+    # --- LESSON-015: alternate-row reversal / folded-strip families ---
+    # Trigger-driven (row_reverse_triggered set above). When the clue
+    # pack contains no row_reverse trigger token, every ``row_reverse*``
+    # family is absent from ``active`` and this block is a no-op.
+    # Real-K4 mode is unaffected because HCC is bench-mode only via
+    # _collect_hcc_seeds; the LESSON-015 entry remains visible to the
+    # LLM theorist as a generalized tactic.
+    if row_reverse_triggered:
+        rr_widths_full = _row_reverse_widths_for_payload(
+            clue_text, cleaned,
+        )
+        # Ensure the no-fold sentinel (width=CT_LEN) survives the
+        # per-family cap. The sentinel is appended LAST by the width
+        # resolver so phrase-bound and keyword-derived widths fill
+        # the cap first; we then explicitly merge the sentinel into
+        # the capped list. Without this, substitution+row_reverse
+        # families miss the substitution-alone-equivalent path.
+        def _capped_with_sentinel(
+            full: Sequence[tuple[int, str]], cap: int,
+        ) -> list[tuple[int, str]]:
+            out_list = list(full[:cap])
+            keys = {w for w, _ in out_list}
+            for w, src in full:
+                if w == 97 and w not in keys:
+                    out_list.append((w, src))
+                    break
+            return out_list
+
+        rr_widths_capped = _capped_with_sentinel(
+            rr_widths_full, _ROW_REVERSE_PAIR_WIDTH_CAP,
+        )
+        rr_widths_three = _capped_with_sentinel(
+            rr_widths_full, _ROW_REVERSE_THREE_LAYER_WIDTH_CAP,
+        )
+        rr_parities = _DEFAULT_ROW_REVERSE_PARITIES
+
+        if "row_reverse" in active:
+            out.extend(_gen_row_reverse_alone_family(
+                bench_slug=bench_slug,
+                widths=rr_widths_full,
+                parities=rr_parities,
+            ))
+        for sub_kind, label in (
+            ("vigenere", "row_reverse_vigenere"),
+            ("beaufort", "row_reverse_beaufort"),
+            ("variant_beaufort", "row_reverse_variant_beaufort"),
+        ):
+            if label in active:
+                out.extend(_gen_row_reverse_substitution_family(
+                    bench_slug=bench_slug,
+                    sub_kind=sub_kind,
+                    keyword_a=keyword_a, keyword_b=keyword_b,
+                    widths=rr_widths_capped,
+                    parities=rr_parities,
+                    alphabet_modes=alphabet_modes,
+                ))
+        if "row_reverse_caesar" in active:
+            out.extend(_gen_row_reverse_caesar_family(
+                bench_slug=bench_slug,
+                widths=rr_widths_capped,
+                parities=rr_parities,
+            ))
+        if "row_reverse_atbash" in active:
+            out.extend(_gen_row_reverse_atbash_family(
+                bench_slug=bench_slug,
+                widths=rr_widths_capped,
+                parities=rr_parities,
+            ))
+        if "row_reverse_rail_fence" in active:
+            out.extend(_gen_row_reverse_rail_fence_family(
+                bench_slug=bench_slug,
+                widths=rr_widths_capped,
+                rail_fence_depths=tuple(rail_fence_depths),
+                parities=rr_parities,
+            ))
+        if include_three_layer:
+            sw_route_grid = _DEFAULT_ROUTE_GRIDS[0]
+            for sub_kind in (
+                "vigenere", "beaufort", "variant_beaufort",
+            ):
+                route_label = f"{sub_kind}_route_row_reverse"
+                rb_label = (
+                    f"{sub_kind}_route_boustrophedon_row_reverse"
+                )
+                if route_label in active:
+                    out.extend(
+                        _gen_row_reverse_route_three_layer_family(
+                            bench_slug=bench_slug,
+                            sub_kind=sub_kind,
+                            route_partner="route",
+                            keyword_a=keyword_a, keyword_b=keyword_b,
+                            widths=rr_widths_three,
+                            parities=rr_parities,
+                            route_grid=sw_route_grid,
+                            alphabet_modes=alphabet_modes,
+                        )
+                    )
+                if rb_label in active:
+                    out.extend(
+                        _gen_row_reverse_route_three_layer_family(
+                            bench_slug=bench_slug,
+                            sub_kind=sub_kind,
+                            route_partner="route_boustrophedon",
+                            keyword_a=keyword_a, keyword_b=keyword_b,
+                            widths=rr_widths_three,
+                            parities=rr_parities,
+                            route_boustrophedon_widths=(8, 10),
+                            alphabet_modes=alphabet_modes,
+                        )
+                    )
 
     # Validate every emitted spec; drop the ones the dispatcher would
     # reject. This is a belt-and-suspenders check — the family

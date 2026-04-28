@@ -360,7 +360,7 @@ class TestTriggerDrivenGeneration:
         clue = "small clock note, backward steps, reverse blocks before the key"
         specs = generate_layered_specs(
             ["CEDAR", "LANTERN"], bench_slug="t",
-            clue_text=clue, max_specs=2000,
+            clue_text=clue, max_specs=6000,
         )
         alone = [
             s for s in specs
@@ -378,7 +378,7 @@ class TestTriggerDrivenGeneration:
         clue = "small clock note, backward steps, reverse blocks before the key"
         specs = generate_layered_specs(
             ["CEDAR", "LANTERN"], bench_slug="t",
-            clue_text=clue, max_specs=3000,
+            clue_text=clue, max_specs=6000,
         )
         # Each substitution pairing must produce specs in BOTH layer
         # orders.
@@ -401,7 +401,7 @@ class TestTriggerDrivenGeneration:
         clue = "small clock note, reverse blocks before the key"
         specs = generate_layered_specs(
             ["CEDAR", "LANTERN"], bench_slug="t",
-            clue_text=clue, max_specs=3000,
+            clue_text=clue, max_specs=6000,
         )
         caesar = [
             s for s in specs
@@ -423,7 +423,7 @@ class TestTriggerDrivenGeneration:
         clue = "small clock note, reverse blocks before the key"
         specs = generate_layered_specs(
             ["CEDAR", "LANTERN"], bench_slug="t",
-            clue_text=clue, max_specs=3000,
+            clue_text=clue, max_specs=6000,
         )
         atbash = [
             s for s in specs
@@ -441,7 +441,7 @@ class TestTriggerDrivenGeneration:
         # Block trigger only — no sandwiches
         specs_block = generate_layered_specs(
             ["CEDAR", "LANTERN"], bench_slug="t",
-            clue_text="reverse the small groups", max_specs=3000,
+            clue_text="reverse the small groups", max_specs=6000,
         )
         sandwiches = [
             s for s in specs_block
@@ -456,7 +456,7 @@ class TestTriggerDrivenGeneration:
         specs_both = generate_layered_specs(
             ["CEDAR", "LANTERN"], bench_slug="t",
             clue_text="reverse the small groups, clockwise turn",
-            max_specs=4000,
+            max_specs=8000,
         )
         sandwich_labels = {
             s.coverage.layer_family for s in specs_both

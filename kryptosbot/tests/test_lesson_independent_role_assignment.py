@@ -145,6 +145,18 @@ class TestCoverageVectorRoleFields:
             if not s.coverage.layer_family.startswith("i3_")
             and "reverse_blocks" not in s.coverage.layer_family
             and "caesar" not in s.coverage.layer_family
+            # LESSON-013 enumerated columnar specs share the
+            # ``columnar_<sub>`` family_label but populate the new
+            # role/coverage fields (col_order_source, transposition_
+            # width, role_assignment_mode='enumerated_columnar').
+            # Exclude them from the "legacy" filter.
+            and s.coverage.col_order_source != "enumerated_permutation"
+            # 2026-04-28 audit-hygiene: the standalone substitution
+            # family DOES populate substitution_keyword (that is its
+            # whole point — single-layer substitution specs need the
+            # keyword visible in the coverage_vector). Exclude it
+            # from the "legacy specs leave fields empty" filter.
+            and not s.coverage.layer_family.startswith("standalone_")
         ]
         assert legacy
         for s in legacy:
@@ -430,9 +442,14 @@ class TestBoundedness:
             clue_text="alphabet table mirror",
             max_specs=10000, include_three_layer=False,
         )
+        # LESSON-010 keyword-derived i3 specs only — exclude the
+        # LESSON-013 enumerated col_order specs which share the
+        # ``i3_columnar_<sub>`` family_label but live on a different
+        # coverage axis.
         i3_specs = [
             s for s in specs
             if s.coverage.layer_family.startswith("i3_")
+            and s.coverage.col_order_source != "enumerated_permutation"
         ]
         # 5 keyword-pair families (col_vig, col_beau, col_vbeau,
         # myz_vig, myz_beau) × 3 sub × 3 trans × ~7 modes × 2 orders

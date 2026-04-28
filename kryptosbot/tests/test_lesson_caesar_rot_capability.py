@@ -261,7 +261,7 @@ class TestTriggerDrivenGeneration:
     def test_no_trigger_no_caesar_families(self):
         specs = generate_layered_specs(
             ["RIVET", "BRASS"], bench_slug="t",
-            clue_text="ordinary cipher problem", max_specs=3000,
+            clue_text="ordinary cipher problem", max_specs=8000,
         )
         caesar_specs = [
             s for s in specs
@@ -277,7 +277,7 @@ class TestTriggerDrivenGeneration:
         clue = "stamped shift eight, reverse the panel, rivet column"
         specs = generate_layered_specs(
             ["RIVET", "BRASS"], bench_slug="t",
-            clue_text=clue, max_specs=4000,
+            clue_text=clue, max_specs=8000,
         )
         alone = [
             s for s in specs if s.coverage.layer_family == "caesar"
@@ -297,7 +297,7 @@ class TestTriggerDrivenGeneration:
         clue = "stamped shift eight, reverse the panel, rivet column"
         specs = generate_layered_specs(
             ["RIVET", "BRASS"], bench_slug="t",
-            clue_text=clue, max_specs=4000,
+            clue_text=clue, max_specs=8000,
         )
         fam = [
             s for s in specs
@@ -312,7 +312,7 @@ class TestTriggerDrivenGeneration:
         clue = "stamped shift eight, reverse the panel, rivet column"
         specs = generate_layered_specs(
             ["RIVET", "BRASS"], bench_slug="t",
-            clue_text=clue, max_specs=4000,
+            clue_text=clue, max_specs=8000,
         )
         fam = [
             s for s in specs
@@ -327,7 +327,7 @@ class TestTriggerDrivenGeneration:
         clue = "stamped shift eight, reverse the panel, rivet column"
         specs = generate_layered_specs(
             ["RIVET", "BRASS"], bench_slug="t",
-            clue_text=clue, max_specs=4000,
+            clue_text=clue, max_specs=8000,
         )
         fam = [
             s for s in specs
@@ -342,7 +342,7 @@ class TestTriggerDrivenGeneration:
         clue = "stamped shift eight, reverse the panel, rivet column"
         specs = generate_layered_specs(
             ["RIVET", "BRASS"], bench_slug="t",
-            clue_text=clue, max_specs=4000,
+            clue_text=clue, max_specs=8000,
         )
         fam = [
             s for s in specs
@@ -357,7 +357,7 @@ class TestTriggerDrivenGeneration:
         clue = "rotate the disc, atbash strip, shift three"
         specs = generate_layered_specs(
             ["KEY", "BRASS"], bench_slug="t",
-            clue_text=clue, max_specs=4000,
+            clue_text=clue, max_specs=8000,
         )
         fam = [
             s for s in specs
@@ -374,7 +374,7 @@ class TestTriggerDrivenGeneration:
         clue = "stamped shift eight, reverse the panel, rivet column"
         specs = generate_layered_specs(
             ["RIVET", "BRASS"], bench_slug="t",
-            clue_text=clue, max_specs=4000,
+            clue_text=clue, max_specs=8000,
         )
         fam = [
             s for s in specs

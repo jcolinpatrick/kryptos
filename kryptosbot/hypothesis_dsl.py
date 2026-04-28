@@ -76,6 +76,35 @@ CipherKind = Literal[
                             #   step and CT_LEN must be coprime so the
                             #   walk visits every position exactly once.
                             #   Length-preserving, deterministic.
+    "route_boustrophedon",  # 2026-04-28 (LESSON-014): width-only ragged
+                            #   boustrophedon (serpentine) route. Params:
+                            #   width (int, 2 <= width < CT_LEN), and an
+                            #   optional vertical (bool, default False).
+                            #   Implies rows = ceil(CT_LEN / width); the
+                            #   final row may be short ("ragged"). The
+                            #   dispatcher reuses serpentine_perm which
+                            #   trims positions beyond CT_LEN. Length-
+                            #   preserving, deterministic. Distinct from
+                            #   ``route`` (which requires explicit rows
+                            #   AND cols + a non-ragged grid sized to
+                            #   cover CT_LEN).
+    "row_reverse",          # 2026-04-28 (LESSON-015): folded-strip /
+                            #   alternate-row reversal. Params: width
+                            #   (int, 2 <= width <= CT_LEN), parity
+                            #   (str, "odd"|"even"|"both"), optional
+                            #   start_row (int, 0|1, default 0). Splits
+                            #   the text into rows of fixed width
+                            #   (final row may be short / ragged) and
+                            #   reverses rows whose 0-indexed row index
+                            #   matches the parity selector. SELF-
+                            #   INVERSE: applying the same (width,
+                            #   parity, start_row) twice returns the
+                            #   identity. Length-preserving,
+                            #   deterministic. Distinct from
+                            #   ``route_boustrophedon`` (which reads
+                            #   the grid serpentine-fashion with a
+                            #   single global permutation; row_reverse
+                            #   only reverses SELECTED rows in place).
 ]
 
 _VALID_CIPHER_KINDS: frozenset[str] = frozenset(
@@ -95,6 +124,10 @@ _VALID_CIPHER_KINDS: frozenset[str] = frozenset(
         "reverse_blocks",  # 2026-04-28: LESSON-008 block-reversal primitive
         "caesar",  # 2026-04-28: LESSON-009 canonical Caesar / ROT shift
         "skip_route",  # 2026-04-28: LESSON-011 modular skip-route transposition
+        "route_boustrophedon",  # 2026-04-28: LESSON-014 ragged width-only
+                                # boustrophedon (serpentine) route
+        "row_reverse",  # 2026-04-28: LESSON-015 folded-strip / alternate-
+                        # row reversal (self-inverse)
     ]
 )
 

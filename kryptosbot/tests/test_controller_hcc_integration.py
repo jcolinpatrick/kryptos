@@ -162,12 +162,21 @@ class TestHccSeedsBeforeLLM:
         2026-04-27: with alphabet-mode enumeration, each (role × order)
         coordinate is replicated per alphabet mode. The coordinate
         count is what stays at 4; the spec count grows.
+
+        2026-04-28 (LESSON-013): the family also emits enumerated
+        col_order specs whose role_assignment uses synthetic
+        identifiers (``W{w}_co{idx}``). The 4-coord invariant is on
+        the KEYWORD-DERIVED specs only — filter via
+        ``col_order_source != "enumerated_permutation"``.
         """
         seeds = bench_controller._collect_hcc_seeds()
         cv_seeds = [
             s for s in seeds
             if s.minimal_test_spec.get("coverage_vector", {}).get("layer_family")
             == "columnar_vigenere"
+            and s.minimal_test_spec.get("coverage_vector", {}).get(
+                "col_order_source", ""
+            ) != "enumerated_permutation"
         ]
         coords = {
             (
@@ -178,8 +187,9 @@ class TestHccSeedsBeforeLLM:
         }
         assert len(coords) == 4, (
             f"expected 4 distinct (layer_order, role_assignment) coords "
-            f"for columnar_vigenere on K4B-001; got {len(coords)} "
-            f"({len(cv_seeds)} total specs across alphabet modes)"
+            f"for columnar_vigenere keyword path on K4B-001; got "
+            f"{len(coords)} ({len(cv_seeds)} total specs across alphabet "
+            "modes)"
         )
 
     def test_seed_list_is_deterministic_across_calls(self, bench_controller):

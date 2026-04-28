@@ -59,24 +59,35 @@ class TestTwoClueWordsFourCombos:
         2026-04-27: with alphabet-mode enumeration, the same (role ×
         order) coord appears once per alphabet mode. The structural
         assertion is on the COORDINATE COUNT, not the spec count.
+
+        2026-04-28 (LESSON-013): the family also emits enumerated
+        col_order specs whose role_assignment uses synthetic
+        identifiers (``W{w}_co{idx}``), creating ~120 additional
+        coords per W=5 enumeration. The 4-coord invariant is on the
+        KEYWORD-DERIVED specs only — filter them via
+        ``col_order_source != "enumerated_permutation"``.
         """
         specs = generate_layered_specs(["ALPHA", "BRAVO"], bench_slug="t01")
         cv_specs = [
-            gs for gs in specs if gs.family_label == "columnar_vigenere"
+            gs for gs in specs
+            if gs.family_label == "columnar_vigenere"
+            and gs.coverage.col_order_source != "enumerated_permutation"
         ]
-        # Build the (layer_order, role_assignment) coordinate set
         coords = {
             (gs.coverage.layer_order, gs.coverage.role_assignment)
             for gs in cv_specs
         }
         assert len(coords) == 4, (
             f"expected 4 distinct (layer_order, role_assignment) coords "
-            f"for columnar_vigenere; got {len(coords)} from {len(cv_specs)} specs"
+            f"for columnar_vigenere keyword path; got {len(coords)} from "
+            f"{len(cv_specs)} specs"
         )
 
     def test_all_four_combos_present_for_every_keyword_pair_family(self):
         """Same property as above for every keyword-pair two-layer
-        family the generator supports.
+        family the generator supports. The 4-coord invariant is on
+        the KEYWORD-DERIVED specs; LESSON-013's enumerated col_order
+        specs are excluded by ``col_order_source`` filtering.
         """
         keyword_pair_families = (
             "columnar_vigenere", "columnar_beaufort",
@@ -85,14 +96,18 @@ class TestTwoClueWordsFourCombos:
         )
         specs = generate_layered_specs(["ALPHA", "BRAVO"], bench_slug="t02")
         for family in keyword_pair_families:
-            family_specs = [gs for gs in specs if gs.family_label == family]
+            family_specs = [
+                gs for gs in specs
+                if gs.family_label == family
+                and gs.coverage.col_order_source != "enumerated_permutation"
+            ]
             coords = {
                 (gs.coverage.layer_order, gs.coverage.role_assignment)
                 for gs in family_specs
             }
             assert len(coords) == 4, (
-                f"{family} expected 4 distinct (order, role) coords; "
-                f"got {len(coords)}"
+                f"{family} expected 4 distinct (order, role) coords on "
+                f"keyword path; got {len(coords)}"
             )
 
     def test_keywordless_transposition_collapses_role_swap(self):
@@ -222,6 +237,12 @@ class TestGapRecommendations:
     def test_full_coverage_yields_no_recommendations(self):
         """When all four combos in a class are tested, the class is
         NOT in the recommendations.
+
+        2026-04-28 (LESSON-013): the family also emits enumerated
+        col_order specs whose role_assignment uses synthetic
+        identifiers. They share the family_label but are a separate
+        coverage axis; the 4-combo gap invariant is on the keyword
+        path only — filter via ``col_order_source``.
         """
         from kryptosbot.hand_cipher_core import AlphabetMode
         az_only = (AlphabetMode("AZ", "AZ", None, "default"),)
@@ -232,6 +253,7 @@ class TestGapRecommendations:
                 families={"columnar_vigenere"},
                 alphabet_modes=az_only,
             )
+            if gs.coverage.col_order_source != "enumerated_permutation"
         ]
         assert len(full) == 4
         recs = coverage_gap_recommendations(full, bench_slug="t08")
@@ -408,14 +430,32 @@ class TestBenchModeChallengeLocal:
         """The generator emits keywords drawn from its inputs only;
         nothing from real-K4 vocabulary unless the caller explicitly
         added it.
+
+        2026-04-28 (LESSON-013): synthetic role identifiers of the
+        form ``W{w}_co{idx}`` are emitted by the enumerated columnar
+        path (they are NOT keywords — they encode (width, col_order_
+        index) into the role tuple). Rail-fence depths in 3-layer
+        sandwich families also appear as numeric strings ("3", "4",
+        ...). Both are allowed in addition to the clue-derived
+        keyword pool.
         """
+        import re as _re
+        l013_synthetic = _re.compile(r"^W\d+_co\d+$")
+        rail_fence_depth = _re.compile(r"^\d+$")
         specs = generate_layered_specs(["WIDGET", "GIZMO"], bench_slug="b01")
         for gs in specs:
             roles = dict(gs.coverage.role_assignment)
             for keyword in roles.values():
+                kw_str = str(keyword)
                 # Allow placeholder kw_b == kw_a when only one supplied
                 # (tested separately); here we passed two distinct words
-                # so all role keywords MUST be in {WIDGET, GIZMO}.
+                # so all role keywords MUST be in {WIDGET, GIZMO} or a
+                # LESSON-013 synthetic ``W{w}_co{idx}`` identifier or
+                # a rail-fence depth numeric string.
+                if l013_synthetic.match(kw_str):
+                    continue
+                if rail_fence_depth.match(kw_str):
+                    continue
                 assert keyword in {"WIDGET", "GIZMO"}, (
                     f"unexpected keyword {keyword!r} in spec "
                     f"{gs.hypothesis_id} — should be from input pool only"

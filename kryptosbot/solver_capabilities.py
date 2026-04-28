@@ -52,6 +52,9 @@ patch spec:
     LESSON-010  independent_multi_role_assignment
     LESSON-011  skip_step_route_enumeration
     LESSON-012  phrase_attached_numeric_prominence
+    LESSON-013  arbitrary_columnar_order_enumeration
+    LESSON-014  width_only_ragged_boustrophedon_route
+    LESSON-015  alternate_row_reversal_folded_strip
 
 The constructor refuses to load any registry file containing
 forbidden fields, so a corrupted on-disk registry fails closed.
@@ -205,6 +208,57 @@ _VALID_TACTIC_KINDS: frozenset[str] = frozenset({
                                    # outranked by "three steps" /
                                    # "four rails" in a flat numeral
                                    # bag (LESSON-012).
+    "arbitrary_columnar_order_enumeration",  # 2026-04-28: enumerate
+                                   # ALL W! columnar col_orders for
+                                   # small widths (W in 2..7), in
+                                   # addition to the existing keyword-
+                                   # derived col_orders. Generalizes
+                                   # the K4B-006 Gap B finding: the
+                                   # answer used col_order=(4,1,3,0,2)
+                                   # which is NOT producible from any
+                                   # natural 5-letter keyword via
+                                   # stable rank. The lesson is the
+                                   # bounded-exhaustive enumeration,
+                                   # not the specific permutation
+                                   # (LESSON-013).
+    "width_only_ragged_boustrophedon_route",  # 2026-04-28: width-only
+                                   # ragged boustrophedon (serpentine)
+                                   # route as a hand-cipher transposition
+                                   # primitive. Generalizes the K4B-007
+                                   # miss into a reusable tactic. The
+                                   # existing ``route`` kind requires
+                                   # explicit rows AND cols + a non-
+                                   # ragged grid; this lesson adds the
+                                   # width-only ``route_boustrophedon``
+                                   # kind so a clue like "ragged eight-
+                                   # column grid" emits the correct
+                                   # permutation directly. Clue-
+                                   # derived widths plus safe defaults
+                                   # compose with vig/beau/var_beau/
+                                   # caesar/atbash/rail_fence and (for
+                                   # three-layer families) columnar
+                                   # (LESSON-014).
+    "alternate_row_reversal_folded_strip",  # 2026-04-28: folded-
+                                   # strip / alternate-row reversal
+                                   # as a hand-cipher transposition
+                                   # primitive. Generalizes the K4B-008
+                                   # miss into a reusable tactic. The
+                                   # existing transposition catalog
+                                   # had no in-place row-reversal
+                                   # primitive (route_boustrophedon
+                                   # reads the GRID serpentine, but
+                                   # does not selectively reverse
+                                   # rows in place). LESSON-015 adds
+                                   # the ``row_reverse`` kind which
+                                   # is self-inverse: applying it
+                                   # twice with the same parameters
+                                   # returns the identity. Clue-
+                                   # derived widths plus safe
+                                   # defaults compose with vig/beau/
+                                   # var_beau/caesar/atbash/rail_fence
+                                   # and (for three-layer families)
+                                   # route + route_boustrophedon
+                                   # (LESSON-015).
 })
 
 
@@ -876,6 +930,476 @@ def _default_lessons() -> list[Lesson]:
                 "supports_ordinals": True,
                 "trigger_match": "anchor_phrase_proximity_case_insensitive",
                 "fallback_when_no_anchor": "legacy_flat_extraction",
+            },
+        ),
+        Lesson(
+            lesson_id="LESSON-013",
+            title="Arbitrary columnar column-order enumeration for small widths",
+            description=(
+                "Pre-LESSON-013 HCC emitted columnar layers only with "
+                "col_order derived from a clue keyword's stable rank "
+                "(LESSON-004 + LESSON-005). Some hand ciphers use an "
+                "explicit numeric column permutation that is NOT "
+                "producible from any natural keyword via the standard "
+                "stable-rank convention. This lesson generalizes the "
+                "columnar primitive so column order may come from "
+                "EITHER (1) the existing keyword-derived stable rank "
+                "OR (2) an enumerated arbitrary permutation for small "
+                "widths.\n\n"
+                "Bounded exhaustive enumeration: for width W in 2..7, "
+                "all W! column orderings are emitted (with a per-"
+                "width cap that limits W=6 and W=7 to keep the "
+                "universe manageable). Width W >= 8 is NOT enumerated "
+                "by default — those use only keyword-derived "
+                "col_orders. Width selection priority:\n"
+                "  1. Phrase-bound numeric values from LESSON-012's "
+                "     ``step`` slot (when the numeral is in [2, 7] "
+                "     and plausibly describes route/step/width "
+                "     behaviour). Rail-depth and shift-value "
+                "     bindings are EXPLICITLY excluded so unrelated "
+                "     numerals do not pollute columnar width.\n"
+                "  2. Clue keyword lengths in [2, 7].\n"
+                "  3. Safe defaults {3, 4, 5}.\n\n"
+                "Coverage_vector telemetry:\n"
+                "  ``transposition_width``  — int width of the "
+                "                              columnar grid\n"
+                "  ``col_order``            — the explicit "
+                "                              permutation tuple\n"
+                "  ``col_order_source``     — 'keyword_stable_rank' "
+                "                              (legacy) or "
+                "                              'enumerated_permutation'\n"
+                "  ``col_order_index``      — index into the W! list "
+                "                              (only for enumerated)\n"
+                "  ``width_source``         — 'phrase_bound_step' / "
+                "                              'clue_keyword_length' "
+                "                              / 'default_set'\n\n"
+                "Deduplication: enumerated col_orders for a given "
+                "width skip any col_order that is also produced by "
+                "a clue-keyword-derived family for the same width.\n\n"
+                "Per-family budget caps prevent the W! growth from "
+                "exploding HCC's dispatch universe:\n"
+                "  W=5 → 120 col_orders (full)\n"
+                "  W=6 → cap at 120 (random sample of 720)\n"
+                "  W=7 → cap at 120 (sample of 5040)\n"
+                "Alphabet modes for enumerated columnar families are "
+                "restricted to AZ + KA only (no keyword_mixed). "
+                "Keyword-derived families retain full alphabet mode "
+                "coverage so legacy behaviour is bit-identical.\n\n"
+                "The lesson is GENERALIZED: it enumerates ALL "
+                "permutations for small W, never privileging a "
+                "specific col_order. K4B-006's winning permutation "
+                "(4, 1, 3, 0, 2) is one of 120 W=5 entries — no "
+                "more, no less."
+            ),
+            tactic_kind="arbitrary_columnar_order_enumeration",
+            applies_to_families=[
+                "columnar_vigenere", "columnar_beaufort",
+                "columnar_variant_beaufort",
+                "i3_columnar_vigenere", "i3_columnar_beaufort",
+                "i3_columnar_variant_beaufort",
+                "caesar_columnar", "caesar_columnar_atbash",
+                # 3-layer columnar+sub+rail_fence sandwich added so
+                # K4B-006's empirical 24/24 path
+                # (columnar(W=5, co=(4,1,3,0,2)) + beaufort(MIRROR,
+                # AZ) + rail_fence(4)) is reachable from HCC.
+                "columnar_vigenere_rail_fence",
+                "columnar_beaufort_rail_fence",
+                "columnar_variant_beaufort_rail_fence",
+            ],
+            generates_specs=True,
+            related_lesson_ids=[
+                "LESSON-004", "LESSON-005", "LESSON-010", "LESSON-012",
+            ],
+            source_origin="k4bench-derived",
+            tactic_parameters={
+                "default_widths": [3, 4, 5],
+                "max_enumerated_width": 7,
+                "per_width_caps": {
+                    "2": 2, "3": 6, "4": 24, "5": 120,
+                    "6": 120, "7": 120,
+                },
+                "width_sources": [
+                    "phrase_bound_step",
+                    "clue_keyword_length",
+                    "default_set",
+                ],
+                "col_order_sources": [
+                    "keyword_stable_rank",
+                    "enumerated_permutation",
+                ],
+                "alphabet_modes_for_enumerated": [
+                    "AZ", "KA",
+                ],
+                "applies_to_substitution_kinds": [
+                    "vigenere", "beaufort", "variant_beaufort",
+                ],
+                "applies_to_transposition_kinds": [
+                    "columnar",
+                ],
+                "phrase_bound_slots_for_width": [
+                    # LESSON-012 slots that may seed columnar widths.
+                    # rail_depth and shift_value are deliberately
+                    # excluded — they describe rail-count and shift,
+                    # not transposition width.
+                    "step",
+                ],
+                "deterministic_ordering": "lexicographic_within_width",
+            },
+        ),
+        Lesson(
+            lesson_id="LESSON-014",
+            title="Width-only ragged boustrophedon route enumeration",
+            description=(
+                "When clue-pack language gestures at a fixed-width "
+                "grid that is read as a serpentine / boustrophedon "
+                "(alternating-direction-by-row or by-column) — words "
+                "such as archive, column, columns, grid, walk, route, "
+                "path, edge, ragged, artifact, count, serpentine, "
+                "boustrophedon, snake, zigzag, up, down, left, right, "
+                "row, rows — the candidate pipeline MUST enumerate a "
+                "ragged width-only boustrophedon route layer (the "
+                "first-class ``route_boustrophedon`` DSL kind). The "
+                "kind is deliberately distinct from the existing "
+                "``route`` kind: ``route`` requires explicit rows AND "
+                "cols + a grid sized to cover the full ciphertext; "
+                "``route_boustrophedon`` takes a single ``width`` "
+                "parameter and implies ``rows = ceil(CT_LEN / "
+                "width)`` so the final row may be short ('ragged'). "
+                "The dispatcher reuses the kernel's ``serpentine_perm`` "
+                "primitive — which already trims positions beyond "
+                "CT_LEN — so the layer is length-preserving and "
+                "deterministic.\n\n"
+                "Width values are drawn from "
+                "(1) phrase-bound numerals attached to a "
+                "route/grid/column anchor in the clue text "
+                "(highest priority — never starved by cap budget), "
+                "(2) clue keyword lengths in [2, 12] when the "
+                "keyword denotes an artifact / column / grid / "
+                "archive / route / walk concept, and "
+                "(3) the safe default set {3, 4, 5, 6, 7, 8, 9, 10, "
+                "11, 12}. The lesson EXPLICITLY excludes rail_depth, "
+                "shift_value, block_size, step, and offset bindings "
+                "as width sources — those numerals describe rail "
+                "count / arithmetic shifts / block size / route "
+                "step+offset, not boustrophedon width; using them "
+                "would explode the universe with category-error "
+                "values.\n\n"
+                "Direction enumeration: each (width, layer-order, "
+                "keyword) tuple is emitted with BOTH "
+                "``vertical=False`` (horizontal serpentine — "
+                "left/right alternation by row) and ``vertical=True`` "
+                "(vertical serpentine — top-down/bottom-up "
+                "alternation by column). The vertical=True variant "
+                "matches clue language like 'arrows down, up, down, "
+                "up'. The horizontal default matches plain 'ragged "
+                "row read'.\n\n"
+                "The lesson composes route_boustrophedon alone, "
+                "paired with Vigenere / Beaufort / Variant "
+                "Beaufort / Caesar / Atbash / rail_fence in BOTH "
+                "layer orders, and in three-layer sandwiches with "
+                "substitution + route_boustrophedon + rail_fence "
+                "(both peel orders) and substitution + "
+                "route_boustrophedon + columnar (both peel orders, "
+                "columnar permits use of LESSON-013 enumerated "
+                "col_orders).\n\n"
+                "Coverage_vector telemetry:\n"
+                "  ``route_mode``        — 'route_boustrophedon' or "
+                "                          'boustrophedon_width'\n"
+                "  ``route_width``       — int width of the grid\n"
+                "  ``width_source``      — 'phrase_bound_route_width' "
+                "                          / 'clue_keyword_length' / "
+                "                          'default_set'\n"
+                "  ``route_rows``        — implied row count\n"
+                "  ``route_cols``        — equals ``route_width``\n"
+                "  ``route_ragged``      — True when CT_LEN is not "
+                "                          a multiple of width "
+                "                          (the standard case)\n"
+                "  ``route_direction``   — 'horizontal' or "
+                "                          'vertical' (mirrors the "
+                "                          ``vertical`` flag)\n\n"
+                "The lesson is GENERALIZED: it stores trigger "
+                "vocabulary, width-source priority rules, and family "
+                "pairings only — never benchmark-specific "
+                "decryptions or sealed material."
+            ),
+            tactic_kind="width_only_ragged_boustrophedon_route",
+            applies_to_families=[
+                "route_boustrophedon",
+                "route_boustrophedon_vigenere",
+                "route_boustrophedon_beaufort",
+                "route_boustrophedon_variant_beaufort",
+                "route_boustrophedon_caesar",
+                "route_boustrophedon_atbash",
+                "route_boustrophedon_rail_fence",
+                "vigenere_route_boustrophedon_rail_fence",
+                "beaufort_route_boustrophedon_rail_fence",
+                "variant_beaufort_route_boustrophedon_rail_fence",
+                "vigenere_route_boustrophedon_columnar",
+                "beaufort_route_boustrophedon_columnar",
+                "variant_beaufort_route_boustrophedon_columnar",
+            ],
+            generates_specs=True,
+            related_lesson_ids=[
+                "LESSON-002", "LESSON-006", "LESSON-007",
+                "LESSON-009", "LESSON-010", "LESSON-011",
+                "LESSON-012", "LESSON-013",
+            ],
+            source_origin="k4bench-derived",
+            tactic_parameters={
+                "trigger_tokens": [
+                    "archive",
+                    "column", "columns", "col",
+                    "grid",
+                    "walk", "walks", "walking",
+                    "route", "routes",
+                    "path", "paths",
+                    "edge", "edges",
+                    "ragged",
+                    "artifact", "artifacts",
+                    "count", "counts",
+                    "serpentine",
+                    "boustrophedon",
+                    "snake", "snaking",
+                    "zigzag",
+                    # Direction tokens used in clues like
+                    # "arrows down, up, down, up" — these alone are
+                    # not strong enough to fire LESSON-014 but the
+                    # detector uses them as supporting context for
+                    # the vertical=True variant.
+                    "up", "down", "left", "right",
+                    "row", "rows",
+                ],
+                "vertical_direction_tokens": [
+                    # When ANY of these tokens appears in the clue,
+                    # the vertical=True variant is the priority
+                    # direction; vertical=False is still emitted as
+                    # the symmetry partner.
+                    "down", "up",
+                    "vertical", "vertically",
+                    "column-wise", "columnwise",
+                ],
+                "horizontal_direction_tokens": [
+                    "left", "right",
+                    "horizontal", "horizontally",
+                    "row-wise", "rowwise",
+                ],
+                "default_widths": [3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+                "min_width": 2,
+                "max_width": 16,
+                "max_clue_keyword_width": 12,
+                "trigger_match": "word_boundary_case_insensitive",
+                "applies_to_substitution_kinds": [
+                    "vigenere", "beaufort", "variant_beaufort",
+                    "caesar", "atbash",
+                ],
+                "applies_to_transposition_partners": [
+                    "rail_fence", "columnar",
+                ],
+                "operation_source_labels": [
+                    "phrase_bound_route_width",
+                    "clue_keyword_length",
+                    "default_set",
+                ],
+                # Width sources EXPLICITLY excluded from the
+                # route-width enumeration. These describe rail-count,
+                # arithmetic shifts, block size, and skip-route
+                # step+offset — using them would explode the universe
+                # with unrelated values. The exclusion is a category
+                # contract, not a budget heuristic.
+                "excluded_width_sources": [
+                    "phrase_bound_rail_depth",
+                    "phrase_bound_shift_value",
+                    "phrase_bound_block_size",
+                    "phrase_bound_step",
+                    "phrase_bound_offset",
+                ],
+                "permutation_formula": (
+                    "rows = ceil(CT_LEN / width); "
+                    "perm = serpentine_perm(rows, width, CT_LEN, "
+                    "vertical); ragged final row trimmed by "
+                    "kernel primitive"
+                ),
+                "length_preserving": True,
+                "directions_emitted": [
+                    "horizontal",
+                    "vertical",
+                ],
+            },
+        ),
+        Lesson(
+            lesson_id="LESSON-015",
+            title="Alternate-row reversal / folded-strip route",
+            description=(
+                "When clue-pack language gestures at a folded strip, "
+                "an alternate-row reversal, or a 'far end folded back "
+                "over near end' construction — words such as fold, "
+                "folded, unfold, unfolded, folding, reverse, "
+                "reversed, reversal, row, rows, line, lines, strip, "
+                "strips, wall, panel, boustrophedon, serpentine, "
+                "zigzag, every other, alternate, alternating, left "
+                "edge, right edge, read back, turn back — the "
+                "candidate pipeline MUST enumerate a self-inverse "
+                "row-reversal layer (the first-class ``row_reverse`` "
+                "DSL kind). Distinct from ``route_boustrophedon`` "
+                "(LESSON-014) which reads a width-grid in serpentine "
+                "fashion via a single global permutation; "
+                "``row_reverse`` reverses ONLY the rows whose 0-"
+                "indexed row-index matches a parity selector "
+                "(``odd``, ``even``, or ``both``), while the other "
+                "rows pass through verbatim.\n\n"
+                "Operation: split the text into consecutive rows of "
+                "width W; for each row whose 0-indexed row-index "
+                "(optionally offset by ``start_row``) matches the "
+                "parity, reverse that row in place; concatenate "
+                "back to the original length. The trailing partial "
+                "row is reversed in place when its row-index is "
+                "selected (ragged-aware). The dispatcher emits the "
+                "perm and asserts both length-preservation and the "
+                "self-inverse invariant ``perm[perm[i]] == i`` so a "
+                "partition bug fails closed.\n\n"
+                "Width values are drawn from\n"
+                "  (1) phrase-bound numerals attached to a "
+                "row/strip/wall/panel/column anchor in the clue text "
+                "(highest priority — never starved by cap budget),\n"
+                "  (2) clue keyword lengths in [2, 16] when the "
+                "keyword denotes an artifact / strip / wall / panel "
+                "/ route / row concept, and\n"
+                "  (3) the safe default set {5, 7, 8, 10, 12, 14, "
+                "16}.\n\n"
+                "EXCLUSIONS (LESSON-015 contract): rail_depth, "
+                "shift_value, block_size, step, and offset bindings "
+                "from ``extract_phrase_bound_numerics`` are NOT "
+                "pulled in. Those numerals describe rail count / "
+                "arithmetic shifts / block size / skip-route step+"
+                "offset; using them as a row-reversal width would "
+                "be a category error and would explode the "
+                "universe.\n\n"
+                "Parity enumeration: each (width, layer-order, "
+                "keyword) tuple is emitted with ``parity=odd`` "
+                "(reverse rows 1, 3, 5, ...) and ``parity=even`` "
+                "(reverse rows 0, 2, 4, ...). The ``both`` value "
+                "is reachable via the explicit-parity path but is "
+                "not enumerated by default — reversing every row "
+                "is just a global reverse-then-permute equivalent, "
+                "and LESSON-015's value is in the ALTERNATING "
+                "structure.\n\n"
+                "The lesson composes row_reverse alone, paired "
+                "with Vigenere / Beaufort / Variant Beaufort / "
+                "Caesar / Atbash / rail_fence in BOTH layer "
+                "orders, and in three-layer sandwiches with "
+                "substitution + route + row_reverse and "
+                "substitution + route_boustrophedon + row_reverse "
+                "(both peel orders). When width = CT_LEN with "
+                "parity=odd, row_reverse is the identity (only "
+                "row 0 exists; row 0 is even; parity=odd selects "
+                "no rows) — this is the 'no-fold' boundary case "
+                "and is intentionally enumerated so the catalog "
+                "covers substitution-alone-equivalent specs "
+                "without adding a separate substitution-alone "
+                "family.\n\n"
+                "Coverage_vector telemetry:\n"
+                "  ``row_reverse_width``    — int width of each "
+                "                              row\n"
+                "  ``row_reverse_parity``   — 'odd' / 'even' / "
+                "                              'both'\n"
+                "  ``row_reverse_source``   — 'phrase_bound_row_"
+                "                              reverse_width' / "
+                "                              'clue_keyword_length' "
+                "                              / 'default_set'\n"
+                "  ``row_reverse_ragged``   — True when CT_LEN is "
+                "                              not a multiple of "
+                "                              width\n"
+                "  ``row_reverse_start_row``— 0 or 1 (parity "
+                "                              offset)\n\n"
+                "The lesson is GENERALIZED: it stores trigger "
+                "vocabulary, width-source priority rules, and "
+                "family pairings only — never benchmark-specific "
+                "decryptions or sealed material."
+            ),
+            tactic_kind="alternate_row_reversal_folded_strip",
+            applies_to_families=[
+                "row_reverse",
+                "row_reverse_vigenere",
+                "row_reverse_beaufort",
+                "row_reverse_variant_beaufort",
+                "row_reverse_caesar",
+                "row_reverse_atbash",
+                "row_reverse_rail_fence",
+                "row_reverse_route",
+                "row_reverse_route_boustrophedon",
+                "vigenere_route_row_reverse",
+                "beaufort_route_row_reverse",
+                "variant_beaufort_route_row_reverse",
+                "vigenere_route_boustrophedon_row_reverse",
+                "beaufort_route_boustrophedon_row_reverse",
+                "variant_beaufort_route_boustrophedon_row_reverse",
+            ],
+            generates_specs=True,
+            related_lesson_ids=[
+                "LESSON-002", "LESSON-006", "LESSON-007",
+                "LESSON-008", "LESSON-009", "LESSON-010",
+                "LESSON-011", "LESSON-012", "LESSON-013",
+                "LESSON-014",
+            ],
+            source_origin="k4bench-derived",
+            tactic_parameters={
+                "trigger_tokens": [
+                    "fold", "folded", "unfold", "unfolded", "folding",
+                    "reverse", "reversed", "reversal",
+                    "row", "rows", "line", "lines",
+                    "strip", "strips", "wall", "panel",
+                    "boustrophedon", "serpentine", "zigzag",
+                    "alternate", "alternating",
+                    "every other",
+                    "left edge", "right edge",
+                    "read back", "turn back",
+                ],
+                "default_widths": [5, 7, 8, 10, 12, 14, 16],
+                "min_width": 2,
+                # Includes CT_LEN (97) so width=97 + parity=odd
+                # gives identity. The boundary case is the "no-
+                # fold" sentinel that lets the catalog reach
+                # substitution-alone-equivalent specs without a
+                # separate alone family.
+                "max_width": 97,
+                "max_clue_keyword_width": 16,
+                "parity_options": ["odd", "even", "both"],
+                "default_parities": ["odd", "even"],
+                "trigger_match": "word_boundary_case_insensitive",
+                "applies_to_substitution_kinds": [
+                    "vigenere", "beaufort", "variant_beaufort",
+                    "caesar", "atbash",
+                ],
+                "applies_to_transposition_partners": [
+                    "rail_fence", "route", "route_boustrophedon",
+                    "columnar",
+                ],
+                "operation_source_labels": [
+                    "phrase_bound_row_reverse_width",
+                    "clue_keyword_length",
+                    "default_set",
+                ],
+                "excluded_width_sources": [
+                    "phrase_bound_rail_depth",
+                    "phrase_bound_shift_value",
+                    "phrase_bound_block_size",
+                    "phrase_bound_step",
+                    "phrase_bound_offset",
+                ],
+                "permutation_formula": (
+                    "for each row r in 0..ceil(CT_LEN/W)-1: "
+                    "if (r - start_row) % 2 selects parity, "
+                    "reverse row in place; else identity. "
+                    "perm[perm[i]] == i (self-inverse)"
+                ),
+                "length_preserving": True,
+                "self_inverse": True,
+                "no_fold_boundary_case": (
+                    "width=CT_LEN with parity=odd is identity "
+                    "(only row 0 exists; row 0 is even; parity=odd "
+                    "selects no rows). Used by the catalog to "
+                    "express substitution-alone-equivalent specs."
+                ),
             },
         ),
     ]
