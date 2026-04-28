@@ -184,6 +184,12 @@ def print_startup(
     hcc_seeds_cap: Optional[int] = None,
     hcc_only: bool = False,
     no_hcc_seeds: bool = False,
+    bench_fast: bool = False,
+    critic_mode: Optional[str] = None,
+    redteam_mode: Optional[str] = None,
+    synthesis_mode: Optional[str] = None,
+    lead_pursuit_mode: Optional[str] = None,
+    stat_audit_mode: Optional[str] = None,
 ) -> None:
     """Print the controller startup banner as a rich Panel.
 
@@ -234,6 +240,32 @@ def print_startup(
             grid.add_row("Total candidates", str(total_candidates))
     grid.add_row("Workers", str(workers))
     grid.add_row("Timeout", f"{timeout_minutes}m per worker")
+    # K4Bench cost-control mode lines (2026-04-28). Show whether each
+    # LLM phase is deterministic, skipped, or LLM-backed so the
+    # operator can confirm at-a-glance which phases are spending
+    # tokens. Caller passes None in real-K4 mode → rows are omitted
+    # so the historical layout is unchanged.
+    any_cost_ctl_row = bool(
+        critic_mode or redteam_mode or synthesis_mode
+        or lead_pursuit_mode or stat_audit_mode or bench_fast
+    )
+    if any_cost_ctl_row:
+        if bench_fast:
+            grid.add_row(
+                "Cost-control",
+                "--bench-fast (synthesis + lead pursuit + stat audit "
+                "skipped, deterministic critic, HCC red-team bypass)",
+            )
+        if critic_mode:
+            grid.add_row("Critic", critic_mode)
+        if redteam_mode:
+            grid.add_row("Red-team", redteam_mode)
+        if synthesis_mode:
+            grid.add_row("Synthesis", synthesis_mode)
+        if lead_pursuit_mode:
+            grid.add_row("Lead pursuit", lead_pursuit_mode)
+        if stat_audit_mode:
+            grid.add_row("Stat audit", stat_audit_mode)
     parts.append(grid)
 
     # Prior state

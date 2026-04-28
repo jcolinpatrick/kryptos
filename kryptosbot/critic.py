@@ -445,7 +445,28 @@ class TheoryCritic:
                 )
 
         # --- Check 3: Duplicate detection ---
-        similar = self._find_similar_theories(theory)
+        # Bench-mode HCC seeds carry deterministic hypothesis_id slugs
+        # that are already deduplicated at generation time
+        # (``_merge_hcc_seeds_into_candidates``); the family-grouped
+        # Jaccard similarity check is O(N²/F) on the running ledger
+        # and dominates the per-cycle budget on large catalogues
+        # (2.5k+ seeds → tens of minutes of pure tokenization vs. a
+        # few seconds of dispatch). Skip the slow path for HCC seeds
+        # in bench mode; the deterministic-coverage contract already
+        # guarantees uniqueness, and the dispatcher's own ledger
+        # dedup catches re-emissions across cycles. The override-
+        # justification dup check (3b) below is preserved because it
+        # only fires for theories that explicitly carry the override
+        # claim, which HCC seeds do not.
+        is_hcc_bench_seed = (
+            self.bench_mode
+            and (theory.minimal_test_spec or {}).get("method")
+            == "bench_hand_cipher_core"
+        )
+        similar = (
+            [] if is_hcc_bench_seed
+            else self._find_similar_theories(theory)
+        )
         if similar:
             sim_ids = [s.hypothesis_id for s in similar]
             sim_titles = [s.title or s.core_claim[:50] for s in similar]

@@ -187,6 +187,26 @@ def _now_iso() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
+def _is_hcc_seed(theory: TheoryRecord) -> bool:
+    """True iff this theory is a deterministic HandCipherCore seed.
+
+    HCC seeds are challenge-local, parameter-enumerated cipher
+    pipelines emitted by ``bench_fallback.hand_cipher_core_fallback``;
+    they are deterministic in the sense that no LLM call shapes them
+    and no adversarial pre-check changes their predicted outcome. The
+    durable discriminator is ``minimal_test_spec.method ==
+    "bench_hand_cipher_core"`` — more specific than ``origin ==
+    "programmatic_fallback"`` (which the real-K4 fallback path also
+    uses) and stable across the bench-mode pipeline.
+
+    Used by the K4Bench cost-control gates in ``_red_team_filter``:
+    when ``redteam_min_crib_score > 0`` HCC seeds bypass the LLM
+    sibling call without affecting LLM-generated theories.
+    """
+    spec = theory.minimal_test_spec or {}
+    return spec.get("method") == "bench_hand_cipher_core"
+
+
 # ---------------------------------------------------------------------------
 # Search-space risk policy (Priority 5)
 # ---------------------------------------------------------------------------
@@ -406,6 +426,43 @@ class ControllerConfig:
     # ``--theories``.
     hcc_seeds_cap: Optional[int] = None
     hcc_only: bool = False
+
+    # K4Bench cost-control flags (2026-04-28). Active only in bench
+    # mode; in real-K4 mode they are inert (HCC seeds are empty, so
+    # the HCC-origin gate trivially does nothing). Each flag governs
+    # one specific LLM phase that adds cost without information for
+    # deterministic HCC seeds:
+    #
+    #   bench_fast              meta flag. Implies skip_synthesis +
+    #                            deterministic_critic + sets
+    #                            redteam_min_crib_score>0 so HCC seeds
+    #                            bypass red-team pre-dispatch. Used
+    #                            for tokens-free HCC-only coverage runs.
+    #
+    #   deterministic_critic    forces the critic stage to remain
+    #                            deterministic. Today the critic is
+    #                            ALWAYS deterministic (TheoryCritic is
+    #                            a pure-Python class with no LLM call),
+    #                            so this flag currently affects only
+    #                            the startup-banner mode line. It is
+    #                            recorded so a future LLM-backed critic
+    #                            path can read it without reshuffling
+    #                            CLI semantics.
+    #
+    #   redteam_min_crib_score  pre-dispatch gate for the red-team
+    #                            sibling call. 0 (default) means
+    #                            "red-team every approved theory" —
+    #                            existing behavior. N>0 means "skip
+    #                            red-team for HCC seeds pre-dispatch".
+    #                            HCC seeds have no a-priori crib_score
+    #                            before workers run, so any positive
+    #                            threshold means "deterministic HCC
+    #                            seeds bypass red-team" (cost control).
+    #                            LLM-generated theories ALWAYS hit the
+    #                            red-team filter regardless of N.
+    bench_fast: bool = False
+    deterministic_critic: bool = False
+    redteam_min_crib_score: int = 0
 
     @property
     def is_bench_mode(self) -> bool:
@@ -2066,6 +2123,48 @@ class ResearchController:
                 on_progress("skipped", "config.skip_red_team=True")
             return approved
 
+        # K4Bench cost-control gate (2026-04-28): when
+        # redteam_min_crib_score > 0, skip the red-team sibling call for
+        # HCC seeds (deterministic challenge-local coverage). LLM-
+        # generated theories ALWAYS hit red-team regardless of N. HCC
+        # seeds carry minimal_test_spec.method == "bench_hand_cipher_core"
+        # — that's the durable discriminator (more specific than
+        # origin="programmatic_fallback", which is shared with the real-
+        # K4 fallback path). Pre-dispatch HCC seeds have no crib_score,
+        # so any positive threshold collapses to "skip red-team for HCC
+        # pre-dispatch"; the field name preserves intent (a future post-
+        # dispatch red-team path can re-read it as "redteam if crib >= N").
+        min_crib = int(self.config.redteam_min_crib_score or 0)
+        if min_crib > 0:
+            llm_theories: list[TheoryRecord] = []
+            hcc_bypass: list[TheoryRecord] = []
+            for t in approved:
+                if _is_hcc_seed(t):
+                    hcc_bypass.append(t)
+                else:
+                    llm_theories.append(t)
+            if hcc_bypass:
+                logger.info(
+                    "Red-team gate: bypassing %d HCC seed(s) "
+                    "(redteam_min_crib_score=%d, deterministic seeds "
+                    "without pre-dispatch crib_score skip pre-check)",
+                    len(hcc_bypass), min_crib,
+                )
+                if on_progress:
+                    on_progress(
+                        "skipped",
+                        f"hcc_bypass={len(hcc_bypass)} "
+                        f"min_crib={min_crib}",
+                    )
+            if not llm_theories:
+                # Nothing to red-team; HCC bypass returns the full set
+                # unchanged (caller still dispatches them).
+                return approved
+            approved_for_redteam = llm_theories
+        else:
+            hcc_bypass = []
+            approved_for_redteam = approved
+
         redteam_spec = select_redteam(self._pantheon_roster)
         if redteam_spec is None:
             logger.warning(
@@ -2083,15 +2182,19 @@ class ResearchController:
         logger.info(
             "redteam_agent=%s model=%s setting_sources=project "
             "task_tools=disabled cycle=%d count=%d",
-            redteam_spec.name, rt_model, self.state.cycle_number, len(approved),
+            redteam_spec.name, rt_model, self.state.cycle_number,
+            len(approved_for_redteam),
         )
         if on_progress:
-            on_progress("start", (redteam_spec.name, rt_model, len(approved)))
+            on_progress(
+                "start",
+                (redteam_spec.name, rt_model, len(approved_for_redteam)),
+            )
 
-        survivors: list[TheoryRecord] = []
+        survivors: list[TheoryRecord] = list(hcc_bypass)
         concerned_count = 0
         error_count = 0
-        for theory in approved:
+        for theory in approved_for_redteam:
             verdict = await run_red_team_precheck(
                 theory,
                 redteam_spec=redteam_spec,
@@ -2206,12 +2309,17 @@ class ResearchController:
             survivors.append(theory)
 
         rejected = len(approved) - len(survivors)
+        # Survivors include both red-teamed survivors AND HCC bypasses.
+        # The "clean" tally subtracts the bypass count so the log
+        # accurately reports the red-team's adversarial verdict
+        # distribution; the bypass count is shown separately so the
+        # operator can see how much LLM cost was avoided.
+        clean = len(survivors) - len(hcc_bypass) - concerned_count - error_count
         logger.info(
             "Red-team filter: %d/%d theories survived "
-            "(%d clean, %d concerned, %d error, %d rejected)",
+            "(%d clean, %d concerned, %d error, %d rejected, %d hcc-bypass)",
             len(survivors), len(approved),
-            len(survivors) - concerned_count - error_count,
-            concerned_count, error_count, rejected,
+            clean, concerned_count, error_count, rejected, len(hcc_bypass),
         )
         if on_progress:
             on_progress(

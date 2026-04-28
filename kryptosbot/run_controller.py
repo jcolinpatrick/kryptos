@@ -237,6 +237,101 @@ def parse_args() -> argparse.Namespace:
             "Combine with --hcc-seeds N to also cap the seed count."
         ),
     )
+    # ------------------------------------------------------------------
+    # K4Bench cost-control flags (2026-04-28). These plumb the existing
+    # ``ControllerConfig`` skip fields and the new HCC-bypass gate onto
+    # the CLI. They are only meaningful in bench mode (real-K4 mode is
+    # unaffected because HCC seeds are empty); none of them change the
+    # cryptanalytic behaviour of the worker / dispatcher / scoring path.
+    # ------------------------------------------------------------------
+    parser.add_argument(
+        "--bench-fast",
+        action="store_true",
+        help=(
+            "Bench mode: cost-control orchestrator. Implies "
+            "--skip-synthesis, --skip-lead-pursuit, --skip-stat-audit, "
+            "--deterministic-critic, and sets --redteam-min-crib so "
+            "deterministic HCC seeds bypass the LLM red-team sibling "
+            "call. LLM-generated theories (when present) still hit "
+            "critic+red-team. Combine with --hcc-only for the "
+            "cheapest tokens-free coverage run — every LLM-backed "
+            "phase is suppressed. Real-K4 mode unchanged."
+        ),
+    )
+    parser.add_argument(
+        "--skip-red-team",
+        action="store_true",
+        help=(
+            "Skip the proposal-time red-team-disprover sibling call "
+            "entirely (both LLM-generated and HCC theories). Cost-"
+            "control flag; not a cryptanalytic change. Mirrors the "
+            "existing ``ControllerConfig.skip_red_team`` field."
+        ),
+    )
+    parser.add_argument(
+        "--skip-synthesis",
+        action="store_true",
+        help=(
+            "Skip the end-of-cycle results-analyst synthesis (Day 5). "
+            "Cost-control flag; mirrors the existing "
+            "``ControllerConfig.skip_synthesis`` field. Synthesis is "
+            "skipped by default under --bench-fast."
+        ),
+    )
+    parser.add_argument(
+        "--skip-lead-pursuit",
+        action="store_true",
+        help=(
+            "Skip the Day-6 lead-pursuit evaluator (LLM sibling "
+            "call against contracts in the [lead_pursuit_lo, "
+            "lead_pursuit_hi] sub-signal band). Cost-control flag; "
+            "mirrors the existing ``ControllerConfig.skip_lead_"
+            "pursuit`` field. Skipped by default under --bench-fast "
+            "so HCC-only runs do not pay tokens for sub-signal "
+            "follow-ups that have no theorist on the next cycle."
+        ),
+    )
+    parser.add_argument(
+        "--skip-stat-audit",
+        action="store_true",
+        help=(
+            "Skip the Day-5 statistical-auditor sibling call against "
+            "post-execution contracts at or above stat_audit_"
+            "threshold. Cost-control flag; mirrors the existing "
+            "``ControllerConfig.skip_stat_audit`` field. Skipped by "
+            "default under --bench-fast so a high HCC crib score "
+            "does not trigger a stat-audit LLM call (the audit's "
+            "purpose is to gate LLM-driven signal claims; "
+            "deterministic HCC scores are auditable from the seed "
+            "catalogue alone)."
+        ),
+    )
+    parser.add_argument(
+        "--deterministic-critic",
+        action="store_true",
+        help=(
+            "Force the critic stage to remain deterministic (no LLM "
+            "call). Today the critic is always deterministic so this "
+            "flag is currently a banner annotation; reserved for a "
+            "future LLM-backed critic path. Implied by --bench-fast."
+        ),
+    )
+    parser.add_argument(
+        "--redteam-min-crib",
+        type=int,
+        default=0,
+        metavar="N",
+        help=(
+            "Bench mode: skip the red-team sibling call for HCC seeds "
+            "whose pre-dispatch crib_score is below N. Default 0 = "
+            "red-team every theory (existing behaviour). Any N>0 "
+            "causes deterministic HCC seeds (those with "
+            "minimal_test_spec.method=='bench_hand_cipher_core') to "
+            "bypass red-team pre-dispatch; LLM-generated theories "
+            "ALWAYS hit red-team regardless of N. Implied by "
+            "--bench-fast."
+        ),
+    )
     args = parser.parse_args()
     # Validate mutually-exclusive HCC flag combinations. argparse's
     # add_mutually_exclusive_group can't express "either of these two
@@ -560,6 +655,46 @@ async def do_run(config: ControllerConfig) -> None:
         llm_theories_count = 0 if config.hcc_only else config.theories_per_cycle
         total_candidates_count = hcc_seeds_count + llm_theories_count
 
+    # 2026-04-28: K4Bench cost-control banner annotations. Real-K4
+    # runs leave these as None so the existing banner layout is bit-
+    # identical to the pre-flag version. In bench mode we always
+    # render the three phase rows so the operator can see at-a-glance
+    # which LLM calls are paying tokens.
+    critic_mode_label: Optional[str] = None
+    redteam_mode_label: Optional[str] = None
+    synthesis_mode_label: Optional[str] = None
+    lead_pursuit_mode_label: Optional[str] = None
+    stat_audit_mode_label: Optional[str] = None
+    if config.problem.is_bench:
+        # Critic stage is always deterministic today; --deterministic-
+        # critic is recorded for clarity / future-proofing.
+        critic_mode_label = (
+            "deterministic (--deterministic-critic)"
+            if config.deterministic_critic
+            else "deterministic"
+        )
+        if config.skip_red_team:
+            redteam_mode_label = "skipped (--skip-red-team)"
+        elif config.redteam_min_crib_score > 0:
+            redteam_mode_label = (
+                f"LLM-backed for LLM theories; HCC seeds bypass "
+                f"(--redteam-min-crib={config.redteam_min_crib_score})"
+            )
+        else:
+            redteam_mode_label = "LLM-backed (all approved theories)"
+        if config.skip_synthesis:
+            synthesis_mode_label = "skipped (--skip-synthesis)"
+        else:
+            synthesis_mode_label = "LLM-backed"
+        if config.skip_lead_pursuit:
+            lead_pursuit_mode_label = "skipped (--skip-lead-pursuit)"
+        else:
+            lead_pursuit_mode_label = "LLM-backed"
+        if config.skip_stat_audit:
+            stat_audit_mode_label = "skipped (--skip-stat-audit)"
+        else:
+            stat_audit_mode_label = "LLM-backed"
+
     display.print_startup(
         cycle_start=controller.state.cycle_number + 1,
         max_cycles=config.max_cycles,
@@ -576,6 +711,12 @@ async def do_run(config: ControllerConfig) -> None:
         hcc_seeds_cap=config.hcc_seeds_cap,
         hcc_only=config.hcc_only,
         no_hcc_seeds=(config.hcc_seeds_cap == 0),
+        bench_fast=config.bench_fast,
+        critic_mode=critic_mode_label,
+        redteam_mode=redteam_mode_label,
+        synthesis_mode=synthesis_mode_label,
+        lead_pursuit_mode=lead_pursuit_mode_label,
+        stat_audit_mode=stat_audit_mode_label,
     )
 
     # Snapshot session baseline so _assess_landscape's cycle_delta
@@ -680,6 +821,28 @@ async def main() -> None:
     else:
         hcc_seeds_cap = args.hcc_seeds  # None or positive int
 
+    # 2026-04-28: K4Bench cost-control flags. ``--bench-fast`` is a
+    # meta flag that defaults the three sub-flags ON, but each may
+    # also be set explicitly. The default redteam-min-crib threshold
+    # under --bench-fast is 1 (any positive value causes HCC bypass;
+    # the field's intent is "minimum predictive crib_score to spend
+    # an LLM red-team call on", and HCC seeds carry no pre-dispatch
+    # score so they always fall below the threshold).
+    skip_red_team = bool(args.skip_red_team)
+    skip_synthesis = bool(args.skip_synthesis) or bool(args.bench_fast)
+    skip_lead_pursuit = (
+        bool(args.skip_lead_pursuit) or bool(args.bench_fast)
+    )
+    skip_stat_audit = (
+        bool(args.skip_stat_audit) or bool(args.bench_fast)
+    )
+    deterministic_critic = (
+        bool(args.deterministic_critic) or bool(args.bench_fast)
+    )
+    redteam_min_crib_score = int(args.redteam_min_crib)
+    if args.bench_fast and redteam_min_crib_score == 0:
+        redteam_min_crib_score = 1
+
     config = ControllerConfig(
         project_root=project_root,
         ledger_db_path=ledger_path,
@@ -700,6 +863,13 @@ async def main() -> None:
         ),
         hcc_seeds_cap=hcc_seeds_cap,
         hcc_only=args.hcc_only,
+        bench_fast=bool(args.bench_fast),
+        skip_red_team=skip_red_team,
+        skip_synthesis=skip_synthesis,
+        skip_lead_pursuit=skip_lead_pursuit,
+        skip_stat_audit=skip_stat_audit,
+        deterministic_critic=deterministic_critic,
+        redteam_min_crib_score=redteam_min_crib_score,
     )
 
     if args.status:
