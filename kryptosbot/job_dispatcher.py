@@ -319,6 +319,20 @@ _SUPPORTED_KINDS: frozenset[str] = frozenset({
     "myszkowski",
     "route",
     "quagmire",
+    # 2026-04-28 (LESSON-008): fixed-size block reversal. Pure
+    # transposition primitive — divide CT into blocks of size N and
+    # reverse each block. Self-inverse, length-preserving. Composes
+    # with any substitution layer because it returns a
+    # transposition_full perm. Two ``block_mode`` values:
+    #   "reverse_partial" — every block including a partial trailing
+    #                       block gets reversed (default; matches
+    #                       the hand-cipher convention where the
+    #                       last short group is still flipped).
+    #   "truncate"        — only complete blocks are reversed; the
+    #                       trailing tail is identity. Useful when
+    #                       the clue pack signals a fixed grid that
+    #                       does not divide the CT length.
+    "reverse_blocks",
 })
 
 
@@ -847,6 +861,66 @@ def _translate_layer(layer: CipherLayer, binding: dict[str, Any]) -> dict[str, A
             "type": "transposition_full",
             "params": {
                 "perm": list(perm),
+                "direction": "undo",
+            },
+        }
+
+    if kind == "reverse_blocks":
+        # 2026-04-28 (LESSON-008): fixed-size in-block reversal. The
+        # ciphertext is conceptually divided into consecutive blocks
+        # of size ``block_size``; each block is then reversed in
+        # place. The operation is its own inverse, so the same perm
+        # serves encryption and decryption (we emit it with
+        # direction="undo" to match the rest of the dispatcher's
+        # transposition convention).
+        #
+        # Two block_mode values:
+        #   "reverse_partial" — every block including the trailing
+        #                       partial block is reversed (default).
+        #   "truncate"        — only complete blocks are reversed;
+        #                       the trailing tail is identity.
+        block_size = binding.get("block_size")
+        if not isinstance(block_size, int) or block_size < 2:
+            raise DispatcherError(
+                f"reverse_blocks layer requires int 'block_size' >= 2; "
+                f"got {block_size!r}"
+            )
+        block_mode = binding.get("block_mode", "reverse_partial")
+        if block_mode not in ("reverse_partial", "truncate"):
+            raise DispatcherError(
+                f"reverse_blocks layer requires block_mode in "
+                f"{{'reverse_partial', 'truncate'}}; got {block_mode!r}"
+            )
+        from kryptos.kernel.constants import CT_LEN
+        if block_size > CT_LEN:
+            raise DispatcherError(
+                f"reverse_blocks block_size={block_size} exceeds "
+                f"CT_LEN={CT_LEN}; the permutation would be identity"
+            )
+        perm = list(range(CT_LEN))
+        if block_mode == "reverse_partial":
+            # Reverse every block, including a trailing partial one.
+            for start in range(0, CT_LEN, block_size):
+                end = min(start + block_size, CT_LEN)
+                # output[i] = input[perm[i]]; reversed block of width
+                # w spans positions [start, end). After reversal the
+                # input position at output index start+k is
+                # start + (w-1-k).
+                w = end - start
+                for k in range(w):
+                    perm[start + k] = start + (w - 1 - k)
+        else:  # truncate
+            full_blocks = CT_LEN // block_size
+            for b in range(full_blocks):
+                start = b * block_size
+                for k in range(block_size):
+                    perm[start + k] = start + (block_size - 1 - k)
+            # Tail (positions full_blocks*block_size .. CT_LEN-1) is
+            # left as identity by the initial range(CT_LEN) seed.
+        return {
+            "type": "transposition_full",
+            "params": {
+                "perm": perm,
                 "direction": "undo",
             },
         }

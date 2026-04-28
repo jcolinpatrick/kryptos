@@ -56,6 +56,10 @@ CipherKind = Literal[
     "procedural",           # maps to a recipe_id in procedural_anomaly_recipes.md
     "grille",               # R3-0.5-2: Cardano-grille gather (permutation-only)
     "key_tape",             # B-DSL-expanded (2026-04-22): DEFERRED (no translator)
+    "reverse_blocks",       # 2026-04-28 (LESSON-008): fixed-size in-block
+                            #   reversal as a hand-cipher transposition
+                            #   primitive. Params: block_size (int >= 2),
+                            #   block_mode (str: reverse_partial|truncate).
 ]
 
 _VALID_CIPHER_KINDS: frozenset[str] = frozenset(
@@ -72,6 +76,7 @@ _VALID_CIPHER_KINDS: frozenset[str] = frozenset(
         "procedural",
         "grille",  # R3-0.5-2
         "key_tape",  # B-DSL-expanded (2026-04-22): deferred
+        "reverse_blocks",  # 2026-04-28: LESSON-008 block-reversal primitive
     ]
 )
 

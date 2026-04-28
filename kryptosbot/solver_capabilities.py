@@ -47,6 +47,7 @@ patch spec:
     LESSON-005  stable_column_order_tie_handling
     LESSON-006  failed_method_coverage
     LESSON-007  trigger_driven_alphabet_enumeration
+    LESSON-008  fixed_size_block_reversal
 
 The constructor refuses to load any registry file containing
 forbidden fields, so a corrupted on-disk registry fails closed.
@@ -150,6 +151,14 @@ _VALID_TACTIC_KINDS: frozenset[str] = frozenset({
                                    # variant enumeration over substitution
                                    # layers (AZ, KA, keyword_mixed,
                                    # mirrored_az, mirrored_ka)
+    "block_reversal_enumeration",  # 2026-04-28: trigger-driven fixed-
+                                   # size block reversal as a hand-
+                                   # cipher transposition primitive
+                                   # (LESSON-008). Generalizes the
+                                   # K4B-004 miss into a reusable
+                                   # tactic; clue-derived block sizes
+                                   # plus safe defaults compose with
+                                   # vig/beau/var_beau/caesar/atbash.
 })
 
 
@@ -391,6 +400,82 @@ def _default_lessons() -> list[Lesson]:
                 ],
                 "applies_to_paired_transposition_kinds": [
                     "columnar", "myszkowski", "rail_fence", "route",
+                ],
+            },
+        ),
+        Lesson(
+            lesson_id="LESSON-008",
+            title="Fixed-size block / chunk reversal",
+            description=(
+                "When clue-pack language gestures at fixed-size "
+                "groupings, in-block reordering, or directional "
+                "reversal — words such as block, blocks, chunk, "
+                "chunks, group, groups, small group, backward, "
+                "backwards, reverse, reversed, reversal, turn, "
+                "clockwise, counterclockwise, clock, route before, "
+                "read first, read last, before key, after key — the "
+                "candidate pipeline MUST enumerate a fixed-size "
+                "block-reversal transposition (the reverse_blocks "
+                "kind). The block size is drawn from clue-derived "
+                "numerals (digit literals 2..49 and small spelled "
+                "numbers two..twenty) UNIONED with the safe default "
+                "set {2, 3, 4, 5, 6, 7, 8, 10}. Two block modes are "
+                "enumerated: reverse_partial (reverse every block "
+                "including a partial trailing one) and truncate "
+                "(reverse complete blocks only; trailing tail is "
+                "identity). The lesson composes with the existing "
+                "substitution families: reverse_blocks alone, plus "
+                "two-layer pairings with vigenere, beaufort, "
+                "variant_beaufort, caesar, and atbash in BOTH layer "
+                "orders, plus three-layer sandwiches where "
+                "reverse_blocks sits between or after a substitution "
+                "and Atbash/Caesar when shift/reverse trigger "
+                "language is also present. The lesson is a "
+                "GENERALIZED tactic: it stores trigger vocabulary, "
+                "block-size knobs, and family pairings — never "
+                "challenge-specific plaintexts or sealed material."
+            ),
+            tactic_kind="block_reversal_enumeration",
+            applies_to_families=[
+                "reverse_blocks",
+                "reverse_blocks_vigenere",
+                "reverse_blocks_beaufort",
+                "reverse_blocks_variant_beaufort",
+                "reverse_blocks_caesar",
+                "reverse_blocks_atbash",
+                "vigenere_reverse_blocks_atbash",
+                "beaufort_reverse_blocks_caesar",
+            ],
+            generates_specs=True,
+            related_lesson_ids=["LESSON-002", "LESSON-006", "LESSON-007"],
+            source_origin="k4bench-derived",
+            tactic_parameters={
+                "trigger_tokens": [
+                    "block", "blocks",
+                    "chunk", "chunks",
+                    "group", "groups",
+                    "small group",
+                    "backward", "backwards",
+                    "reverse", "reversed", "reversal",
+                    "turn",
+                    "clockwise", "counterclockwise", "clock",
+                    "route before",
+                    "read first", "read last",
+                    "before key", "after key",
+                ],
+                "default_block_sizes": [2, 3, 4, 5, 6, 7, 8, 10],
+                "block_modes": ["reverse_partial", "truncate"],
+                "trigger_match": "phrase_or_word_boundary_case_insensitive",
+                "applies_to_substitution_kinds": [
+                    "vigenere", "beaufort", "variant_beaufort",
+                    "caesar", "atbash",
+                ],
+                "shift_trigger_tokens": [
+                    "shift", "shifted", "rotate", "rotated", "rotation",
+                    "turn", "clockwise", "counterclockwise",
+                ],
+                "operation_source_labels": [
+                    "clue_numeral", "clue_phrase", "default_set",
                 ],
             },
         ),

@@ -117,6 +117,64 @@ _KEYWORDLESS_TRANSPOSITION_KINDS: tuple[str, ...] = (
     "rail_fence", "route",
 )
 
+# 2026-04-28 (LESSON-008): block-reversal trigger vocabulary. Sourced
+# from the lesson's ``tactic_parameters.trigger_tokens`` and kept here
+# as a runtime constant so the generator does not have to re-load the
+# registry on the hot path. A drift test asserts the runtime list
+# matches the registry. Phrases (multi-word triggers) are listed
+# alongside single tokens; ``_detect_block_reversal_trigger`` matches
+# whole phrases case-insensitively.
+_BLOCK_REVERSAL_TRIGGER_TOKENS: frozenset[str] = frozenset({
+    "block", "blocks",
+    "chunk", "chunks",
+    "group", "groups",
+    "small group",
+    "backward", "backwards",
+    "reverse", "reversed", "reversal",
+    "turn",
+    "clockwise", "counterclockwise", "clock",
+    "route before",
+    "read first", "read last",
+    "before key", "after key",
+})
+
+# Default block sizes when no clue numerals apply (LESSON-008
+# tactic_parameters.default_block_sizes). The generator unions clue-
+# derived block sizes with these so a clue-free payload still produces
+# a useful enumeration.
+_DEFAULT_BLOCK_SIZES: tuple[int, ...] = (2, 3, 4, 5, 6, 7, 8, 10)
+
+# 2026-04-28 (LESSON-008): "shift" trigger tokens. When ANY of these
+# appears alongside a block-reversal trigger, the generator emits the
+# three-layer sandwiches that include Atbash or a Caesar shift (e.g.
+# vigenere ∘ reverse_blocks ∘ atbash). Without a shift trigger, the
+# three-layer sandwiches stay with the existing rail_fence center to
+# preserve historical coverage.
+_SHIFT_TRIGGER_TOKENS: frozenset[str] = frozenset({
+    "shift", "shifted", "rotate", "rotated", "rotation",
+    "turn", "clockwise", "counterclockwise",
+})
+
+# Caesar shift enumeration. Caesar is implemented as a single-letter
+# Vigenere keyword (A..Z), so the family generator can reuse the
+# existing _keyword_substitution_layer machinery without adding a new
+# DSL kind. The default set covers ROT13 plus a handful of common
+# shifts; clue-derived numerics may extend it. Shift 0 is identity
+# and is excluded.
+_DEFAULT_CAESAR_SHIFTS: tuple[int, ...] = (1, 3, 5, 7, 13)
+
+
+def _shift_to_keyword(shift: int) -> str:
+    """Map an integer shift in [1, 25] to its Vigenere keyword char.
+    Shift k → chr(ord('A') + k). Shift 0 is identity (excluded by
+    callers).
+    """
+    if not 1 <= shift <= 25:
+        raise ValueError(
+            f"_shift_to_keyword: shift must be in [1, 25]; got {shift}"
+        )
+    return chr(ord("A") + shift)
+
 # Hard cap on the number of generated specs. With alphabet-mode
 # enumeration on top of (family × role × order), the universe is
 # bounded by:
@@ -134,7 +192,7 @@ _KEYWORDLESS_TRANSPOSITION_KINDS: tuple[str, ...] = (
 # case. Operators can lower the ceiling via --hcc-seeds N when they
 # want a faster cycle. Cap at 600 to leave headroom for future
 # kinds without breaking the deterministic-coverage contract.
-_DEFAULT_MAX_SPECS: int = 600
+_DEFAULT_MAX_SPECS: int = 1200
 
 
 # ============================================================================
@@ -177,6 +235,13 @@ class CoverageVector:
     extras: tuple[tuple[str, Any], ...] = ()           # (("depth", 3), ...)
     alphabet_mode: str = "AZ"                          # AZ|KA|keyword_mixed|mirrored_az|mirrored_ka
     alphabet_source: str = "default"                   # default|kryptos_alphabet|<clue_word>|reversed_az|reversed_ka
+    # 2026-04-28 (LESSON-008): block-reversal coverage fields. Empty
+    # when the spec does not include a reverse_blocks layer; populated
+    # otherwise so coverage analysis can answer "have we tested
+    # block_size=5 with mode=reverse_partial in this family?".
+    block_size: Optional[int] = None
+    block_mode: str = ""              # "reverse_partial" | "truncate" | ""
+    operation_source: str = ""        # "clue_numeral" | "clue_phrase" | "default_set" | ""
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -188,6 +253,9 @@ class CoverageVector:
             "extras": {k: v for k, v in self.extras},
             "alphabet_mode": self.alphabet_mode,
             "alphabet_source": self.alphabet_source,
+            "block_size": self.block_size,
+            "block_mode": self.block_mode,
+            "operation_source": self.operation_source,
         }
 
     @classmethod
@@ -210,6 +278,8 @@ class CoverageVector:
         # alphabet_mode default mirrors the legacy alphabet field for
         # rows persisted before 2026-04-27.
         legacy_alphabet = str(d.get("alphabet", "AZ"))
+        bs_raw = d.get("block_size")
+        block_size = int(bs_raw) if isinstance(bs_raw, int) else None
         return cls(
             layer_family=str(d.get("layer_family", "")),
             layer_order=tuple(layer_order),
@@ -219,6 +289,9 @@ class CoverageVector:
             extras=extras_tuple,
             alphabet_mode=str(d.get("alphabet_mode", legacy_alphabet)),
             alphabet_source=str(d.get("alphabet_source", "default")),
+            block_size=block_size,
+            block_mode=str(d.get("block_mode", "")),
+            operation_source=str(d.get("operation_source", "")),
         )
 
     @property
@@ -572,6 +645,123 @@ def _route_layer(
             {"name": "cols", "values": [cols]},
         ],
     }
+
+
+def _reverse_blocks_layer(
+    block_size: int,
+    block_mode: str = "reverse_partial",
+) -> dict[str, Any]:
+    """Build a reverse_blocks layer dict.
+
+    LESSON-008 primitive. The dispatcher emits a ``transposition_full``
+    perm that reverses each block of size ``block_size`` over the
+    canonical 97-char K4-shaped CT. ``block_mode`` selects whether a
+    trailing partial block is reversed (``reverse_partial``) or kept
+    as identity (``truncate``).
+    """
+    if not isinstance(block_size, int) or block_size < 2:
+        raise ValueError(
+            f"_reverse_blocks_layer: block_size must be int >= 2; "
+            f"got {block_size!r}"
+        )
+    if block_mode not in ("reverse_partial", "truncate"):
+        raise ValueError(
+            f"_reverse_blocks_layer: block_mode must be in "
+            f"{{'reverse_partial', 'truncate'}}; got {block_mode!r}"
+        )
+    return {
+        "kind": "reverse_blocks",
+        "alphabet": "AZ",
+        "params": [
+            {"name": "block_size", "values": [block_size]},
+            {"name": "block_mode", "values": [block_mode]},
+        ],
+    }
+
+
+def _detect_block_reversal_trigger(clue_text: str) -> bool:
+    """Case-insensitive whole-word/phrase match for any block-reversal
+    trigger token. Returns True iff the operator's clue language
+    suggests a fixed-size block reversal is in play.
+
+    Uses simple word-boundary checks for single tokens and substring
+    checks for multi-word phrases. Multi-word phrases are listed
+    verbatim in ``_BLOCK_REVERSAL_TRIGGER_TOKENS`` (e.g. "small
+    group", "route before", "before key").
+    """
+    if not isinstance(clue_text, str) or not clue_text:
+        return False
+    lower = clue_text.lower()
+    for token in _BLOCK_REVERSAL_TRIGGER_TOKENS:
+        if " " in token:
+            # Phrase match — substring is enough; the phrases are
+            # specific enough that false-positives are unlikely.
+            if token in lower:
+                return True
+            continue
+        # Single-word match with neighbour-character word boundary.
+        idx = 0
+        while True:
+            pos = lower.find(token, idx)
+            if pos < 0:
+                break
+            before_ok = pos == 0 or not lower[pos - 1].isalnum()
+            after_pos = pos + len(token)
+            after_ok = after_pos >= len(lower) or not lower[after_pos].isalnum()
+            if before_ok and after_ok:
+                return True
+            idx = pos + 1
+    return False
+
+
+def _detect_shift_trigger(clue_text: str) -> bool:
+    """Whole-word match for shift / rotation trigger language used by
+    LESSON-008 to gate the three-layer sandwiches that include Atbash
+    or a Caesar shift.
+    """
+    if not isinstance(clue_text, str) or not clue_text:
+        return False
+    lower = clue_text.lower()
+    for token in _SHIFT_TRIGGER_TOKENS:
+        idx = 0
+        while True:
+            pos = lower.find(token, idx)
+            if pos < 0:
+                break
+            before_ok = pos == 0 or not lower[pos - 1].isalnum()
+            after_pos = pos + len(token)
+            after_ok = after_pos >= len(lower) or not lower[after_pos].isalnum()
+            if before_ok and after_ok:
+                return True
+            idx = pos + 1
+    return False
+
+
+def _block_sizes_for_payload(clue_text: str) -> list[tuple[int, str]]:
+    """Return the (block_size, operation_source) list for the payload.
+
+    Sources:
+      ``clue_numeral`` — digit literals 2..49 in the clue text and
+                         small spelled numerals (two..twenty)
+      ``default_set``  — the safe default set {2, 3, 4, 5, 6, 7, 8, 10}
+
+    Order: clue-derived sizes first (more meaningful), then defaults
+    not already present. Always returns a deterministic, deduplicated
+    list with at least ``len(_DEFAULT_BLOCK_SIZES)`` entries.
+    """
+    out: list[tuple[int, str]] = []
+    seen: set[int] = set()
+    for d in _depths_from_clue_text(clue_text):
+        if d in seen or d < 2:
+            continue
+        seen.add(d)
+        out.append((d, "clue_numeral"))
+    for d in _DEFAULT_BLOCK_SIZES:
+        if d in seen:
+            continue
+        seen.add(d)
+        out.append((d, "default_set"))
+    return out
 
 
 def _quagmire_iii_layer(keyword: str, *, indicator: str = "A") -> dict[str, Any]:
@@ -929,6 +1119,384 @@ def _gen_quagmire_family(
     return out
 
 
+def _gen_reverse_blocks_alone_family(
+    *,
+    bench_slug: str,
+    block_sizes: Sequence[tuple[int, str]],
+    block_modes: Sequence[str] = ("reverse_partial", "truncate"),
+) -> list[GeneratedSpec]:
+    """LESSON-008: reverse_blocks as a single-layer transposition.
+
+    Emits one spec per (block_size, block_mode) pair so the operator
+    can observe which combinations the kernel scoring is closest on
+    BEFORE composing with a substitution layer. No keywords involved
+    — pure permutation.
+    """
+    family_label = "reverse_blocks"
+    out: list[GeneratedSpec] = []
+    for block_size, op_source in block_sizes:
+        for mode in block_modes:
+            layer = _reverse_blocks_layer(block_size, mode)
+            cov = CoverageVector(
+                layer_family=family_label,
+                layer_order=("reverse_blocks",),
+                role_assignment=(),
+                alphabet="AZ", n_layers=1,
+                extras=(("block_size", block_size), ("block_mode", mode)),
+                alphabet_mode="AZ",
+                alphabet_source="default",
+                block_size=block_size,
+                block_mode=mode,
+                operation_source=op_source,
+            )
+            out.append(_make_spec(
+                bench_slug=bench_slug, family_label=family_label,
+                pipeline=[layer], coverage=cov,
+                notes=(
+                    f"reverse_blocks(size={block_size}, mode={mode}) "
+                    f"[op_source={op_source}]"
+                ),
+                crib_alignment="post_transposition",
+            ))
+    return out
+
+
+def _gen_reverse_blocks_substitution_family(
+    *,
+    bench_slug: str,
+    sub_kind: str,                # vigenere | beaufort | variant_beaufort
+    keyword_a: str,
+    keyword_b: str,
+    block_sizes: Sequence[tuple[int, str]],
+    alphabet_modes: Optional[Sequence[AlphabetMode]] = None,
+    block_modes: Sequence[str] = ("reverse_partial", "truncate"),
+) -> list[GeneratedSpec]:
+    """LESSON-008: reverse_blocks paired with a keyword substitution.
+
+    Emits BOTH layer orders (sub-first / trans-first) per (keyword,
+    block_size, block_mode, alphabet_mode) tuple. Like
+    ``_gen_keywordless_trans_pair_family`` the role-permutation
+    collapses to "which keyword is the sub keyword?", because the
+    transposition is keyword-free.
+    """
+    if sub_kind not in _SUBSTITUTION_KEYWORD_KINDS:
+        raise ValueError(f"unsupported sub_kind {sub_kind!r}")
+    family_label = f"reverse_blocks_{sub_kind}"
+    if alphabet_modes is None:
+        alphabet_modes = (AlphabetMode("AZ", "AZ", None, "default"),)
+
+    out: list[GeneratedSpec] = []
+    for kw in (keyword_a, keyword_b):
+        if not isinstance(kw, str) or len(kw) < 1:
+            continue
+        for mode in alphabet_modes:
+            sub_layer = _keyword_substitution_layer(
+                sub_kind, kw,
+                alphabet=mode.dsl_alphabet,
+                alphabet_keyword=mode.alphabet_keyword,
+            )
+            for block_size, op_source in block_sizes:
+                for bmode in block_modes:
+                    rb_layer = _reverse_blocks_layer(block_size, bmode)
+                    role = ((sub_kind, kw),)
+                    extras = (
+                        ("block_size", block_size),
+                        ("block_mode", bmode),
+                    )
+                    # Order 1: substitution first
+                    out.append(_make_spec(
+                        bench_slug=bench_slug,
+                        family_label=family_label,
+                        pipeline=[sub_layer, rb_layer],
+                        coverage=CoverageVector(
+                            layer_family=family_label,
+                            layer_order=(sub_kind, "reverse_blocks"),
+                            role_assignment=role,
+                            alphabet=mode.mode_label, n_layers=2,
+                            extras=extras,
+                            alphabet_mode=mode.mode_label,
+                            alphabet_source=mode.source,
+                            block_size=block_size,
+                            block_mode=bmode,
+                            operation_source=op_source,
+                        ),
+                        notes=(
+                            f"{sub_kind}({kw}, alpha={mode.mode_label}) ∘ "
+                            f"reverse_blocks({block_size}, {bmode}) "
+                            "[sub-first]"
+                        ),
+                    ))
+                    # Order 2: reverse_blocks first
+                    out.append(_make_spec(
+                        bench_slug=bench_slug,
+                        family_label=family_label,
+                        pipeline=[rb_layer, sub_layer],
+                        coverage=CoverageVector(
+                            layer_family=family_label,
+                            layer_order=("reverse_blocks", sub_kind),
+                            role_assignment=role,
+                            alphabet=mode.mode_label, n_layers=2,
+                            extras=extras,
+                            alphabet_mode=mode.mode_label,
+                            alphabet_source=mode.source,
+                            block_size=block_size,
+                            block_mode=bmode,
+                            operation_source=op_source,
+                        ),
+                        notes=(
+                            f"reverse_blocks({block_size}, {bmode}) ∘ "
+                            f"{sub_kind}({kw}, alpha={mode.mode_label}) "
+                            "[trans-first]"
+                        ),
+                    ))
+    return out
+
+
+def _gen_reverse_blocks_atbash_family(
+    *,
+    bench_slug: str,
+    block_sizes: Sequence[tuple[int, str]],
+    block_modes: Sequence[str] = ("reverse_partial", "truncate"),
+) -> list[GeneratedSpec]:
+    """LESSON-008: reverse_blocks paired with parameter-free Atbash.
+
+    Atbash takes no parameters, so there is no role-permutation; only
+    the layer-order flip matters. Emits 2 specs per
+    (block_size, block_mode).
+    """
+    family_label = "reverse_blocks_atbash"
+    atbash_layer = {"kind": "atbash", "alphabet": "AZ", "params": []}
+    out: list[GeneratedSpec] = []
+    for block_size, op_source in block_sizes:
+        for bmode in block_modes:
+            rb_layer = _reverse_blocks_layer(block_size, bmode)
+            extras = (("block_size", block_size), ("block_mode", bmode))
+            # atbash + reverse_blocks
+            out.append(_make_spec(
+                bench_slug=bench_slug, family_label=family_label,
+                pipeline=[atbash_layer, rb_layer],
+                coverage=CoverageVector(
+                    layer_family=family_label,
+                    layer_order=("atbash", "reverse_blocks"),
+                    role_assignment=(),
+                    alphabet="AZ", n_layers=2,
+                    extras=extras,
+                    block_size=block_size, block_mode=bmode,
+                    operation_source=op_source,
+                ),
+                notes=(
+                    f"atbash ∘ reverse_blocks({block_size}, {bmode}) "
+                    "[atbash-first]"
+                ),
+            ))
+            # reverse_blocks + atbash
+            out.append(_make_spec(
+                bench_slug=bench_slug, family_label=family_label,
+                pipeline=[rb_layer, atbash_layer],
+                coverage=CoverageVector(
+                    layer_family=family_label,
+                    layer_order=("reverse_blocks", "atbash"),
+                    role_assignment=(),
+                    alphabet="AZ", n_layers=2,
+                    extras=extras,
+                    block_size=block_size, block_mode=bmode,
+                    operation_source=op_source,
+                ),
+                notes=(
+                    f"reverse_blocks({block_size}, {bmode}) ∘ atbash "
+                    "[trans-first]"
+                ),
+            ))
+    return out
+
+
+def _gen_reverse_blocks_caesar_family(
+    *,
+    bench_slug: str,
+    block_sizes: Sequence[tuple[int, str]],
+    shifts: Sequence[int] = _DEFAULT_CAESAR_SHIFTS,
+    block_modes: Sequence[str] = ("reverse_partial", "truncate"),
+) -> list[GeneratedSpec]:
+    """LESSON-008: reverse_blocks paired with a Caesar shift.
+
+    Caesar is implemented as a single-letter Vigenere keyword
+    (shift k → keyword=chr(A+k)) so the existing dispatcher path
+    handles it without a new DSL kind. The family_label preserves
+    "caesar" so coverage analysis can answer "have we tested
+    reverse_blocks ∘ caesar(shift=5)?".
+    """
+    family_label = "reverse_blocks_caesar"
+    out: list[GeneratedSpec] = []
+    for shift in shifts:
+        if shift == 0 or not 1 <= shift <= 25:
+            continue
+        kw = _shift_to_keyword(shift)
+        # Caesar uses canonical AZ — KA / mirrored modes are
+        # collapsed because a single-letter shift over a non-AZ
+        # alphabet is just a different shift constant; no extra
+        # information is exposed.
+        sub_layer = _keyword_substitution_layer(
+            "vigenere", kw, alphabet="AZ", alphabet_keyword=None,
+        )
+        for block_size, op_source in block_sizes:
+            for bmode in block_modes:
+                rb_layer = _reverse_blocks_layer(block_size, bmode)
+                role = (("caesar_shift", str(shift)),)
+                extras = (
+                    ("block_size", block_size),
+                    ("block_mode", bmode),
+                    ("caesar_shift", shift),
+                )
+                # caesar + reverse_blocks
+                out.append(_make_spec(
+                    bench_slug=bench_slug, family_label=family_label,
+                    pipeline=[sub_layer, rb_layer],
+                    coverage=CoverageVector(
+                        layer_family=family_label,
+                        layer_order=("caesar", "reverse_blocks"),
+                        role_assignment=role,
+                        alphabet="AZ", n_layers=2,
+                        extras=extras,
+                        block_size=block_size, block_mode=bmode,
+                        operation_source=op_source,
+                    ),
+                    notes=(
+                        f"caesar(shift={shift}) ∘ "
+                        f"reverse_blocks({block_size}, {bmode}) "
+                        "[caesar-first]"
+                    ),
+                ))
+                # reverse_blocks + caesar
+                out.append(_make_spec(
+                    bench_slug=bench_slug, family_label=family_label,
+                    pipeline=[rb_layer, sub_layer],
+                    coverage=CoverageVector(
+                        layer_family=family_label,
+                        layer_order=("reverse_blocks", "caesar"),
+                        role_assignment=role,
+                        alphabet="AZ", n_layers=2,
+                        extras=extras,
+                        block_size=block_size, block_mode=bmode,
+                        operation_source=op_source,
+                    ),
+                    notes=(
+                        f"reverse_blocks({block_size}, {bmode}) ∘ "
+                        f"caesar(shift={shift}) [trans-first]"
+                    ),
+                ))
+    return out
+
+
+def _gen_reverse_blocks_three_layer_family(
+    *,
+    bench_slug: str,
+    sub_kind: str,                # vigenere | beaufort | variant_beaufort
+    sandwich_partner: str,        # "atbash" | "caesar"
+    keyword_a: str,
+    keyword_b: str,
+    block_sizes: Sequence[tuple[int, str]],
+    shifts: Sequence[int] = _DEFAULT_CAESAR_SHIFTS,
+    block_modes: Sequence[str] = ("reverse_partial",),
+    alphabet_modes: Optional[Sequence[AlphabetMode]] = None,
+) -> list[GeneratedSpec]:
+    """LESSON-008 three-layer sandwich: ``sub`` ∘ ``reverse_blocks`` ∘
+    ``partner`` where partner is Atbash or Caesar(shift). Only fires
+    when the clue pack carries BOTH a block-reversal trigger AND a
+    shift / rotation trigger; the caller is responsible for that gate.
+
+    To keep the universe bounded, three-layer sandwiches default to
+    a single ``block_mode`` ("reverse_partial") and a small Caesar
+    shift set when partner=="caesar". Substitution alphabets follow
+    the standard ``alphabet_modes``.
+    """
+    if sub_kind not in _SUBSTITUTION_KEYWORD_KINDS:
+        raise ValueError(f"unsupported sub_kind {sub_kind!r}")
+    if sandwich_partner not in ("atbash", "caesar"):
+        raise ValueError(
+            f"sandwich_partner must be in {{'atbash', 'caesar'}}; "
+            f"got {sandwich_partner!r}"
+        )
+    family_label = f"{sub_kind}_reverse_blocks_{sandwich_partner}"
+    if alphabet_modes is None:
+        alphabet_modes = (AlphabetMode("AZ", "AZ", None, "default"),)
+
+    if sandwich_partner == "atbash":
+        partner_specs: list[tuple[dict[str, Any], int]] = [
+            ({"kind": "atbash", "alphabet": "AZ", "params": []}, 0),
+        ]
+    else:  # caesar
+        partner_specs = []
+        for s in shifts:
+            if s == 0 or not 1 <= s <= 25:
+                continue
+            partner_specs.append((
+                _keyword_substitution_layer(
+                    "vigenere", _shift_to_keyword(s),
+                    alphabet="AZ", alphabet_keyword=None,
+                ),
+                s,
+            ))
+
+    out: list[GeneratedSpec] = []
+    for kw in (keyword_a, keyword_b):
+        if not isinstance(kw, str) or len(kw) < 1:
+            continue
+        for mode in alphabet_modes:
+            sub_layer = _keyword_substitution_layer(
+                sub_kind, kw,
+                alphabet=mode.dsl_alphabet,
+                alphabet_keyword=mode.alphabet_keyword,
+            )
+            for block_size, op_source in block_sizes:
+                for bmode in block_modes:
+                    rb_layer = _reverse_blocks_layer(block_size, bmode)
+                    for partner_layer, shift_value in partner_specs:
+                        if sandwich_partner == "atbash":
+                            role = ((sub_kind, kw),)
+                            partner_label = "atbash"
+                        else:
+                            role = (
+                                (sub_kind, kw),
+                                ("caesar_shift", str(shift_value)),
+                            )
+                            partner_label = f"caesar({shift_value})"
+                        extras = (
+                            ("block_size", block_size),
+                            ("block_mode", bmode),
+                        )
+                        if sandwich_partner == "caesar":
+                            extras = extras + (
+                                ("caesar_shift", shift_value),
+                            )
+                        out.append(_make_spec(
+                            bench_slug=bench_slug,
+                            family_label=family_label,
+                            pipeline=[sub_layer, rb_layer, partner_layer],
+                            coverage=CoverageVector(
+                                layer_family=family_label,
+                                layer_order=(
+                                    sub_kind, "reverse_blocks",
+                                    sandwich_partner,
+                                ),
+                                role_assignment=role,
+                                alphabet=mode.mode_label, n_layers=3,
+                                extras=extras,
+                                alphabet_mode=mode.mode_label,
+                                alphabet_source=mode.source,
+                                block_size=block_size,
+                                block_mode=bmode,
+                                operation_source=op_source,
+                            ),
+                            notes=(
+                                f"{sub_kind}({kw}, alpha={mode.mode_label}) "
+                                f"∘ reverse_blocks({block_size}, {bmode}) "
+                                f"∘ {partner_label}"
+                            ),
+                            compute_budget_minutes=3,
+                        ))
+    return out
+
+
 def _gen_three_layer_sandwich_family(
     *,
     bench_slug: str,
@@ -1125,6 +1693,36 @@ def generate_layered_specs(
             "vigenere_rail_fence_beaufort",
             "beaufort_rail_fence_vigenere",
         }
+    # 2026-04-28 (LESSON-008): block-reversal families fire only when
+    # the clue pack carries a block-reversal trigger token. The lesson
+    # is GENERALIZED — when triggered, we add the family set to the
+    # default allow-list so the operator gets the full coverage matrix
+    # without having to opt in. When NOT triggered, the family set is
+    # absent and the historical catalogue is preserved bit-for-bit.
+    block_reversal_triggered = _detect_block_reversal_trigger(clue_text)
+    shift_triggered = _detect_shift_trigger(clue_text)
+    if block_reversal_triggered:
+        default_families |= {
+            "reverse_blocks",
+            "reverse_blocks_vigenere",
+            "reverse_blocks_beaufort",
+            "reverse_blocks_variant_beaufort",
+            "reverse_blocks_caesar",
+            "reverse_blocks_atbash",
+        }
+        if include_three_layer and shift_triggered:
+            # Three-layer sandwiches fire only when BOTH triggers
+            # are present. The shift trigger gates the partner kind
+            # (Atbash / Caesar); without it the sandwich would be a
+            # generic two-layer pair already covered above.
+            default_families |= {
+                "vigenere_reverse_blocks_atbash",
+                "beaufort_reverse_blocks_atbash",
+                "variant_beaufort_reverse_blocks_atbash",
+                "vigenere_reverse_blocks_caesar",
+                "beaufort_reverse_blocks_caesar",
+                "variant_beaufort_reverse_blocks_caesar",
+            }
     active = set(families) if families is not None else default_families
 
     out: list[GeneratedSpec] = []
@@ -1215,6 +1813,74 @@ def generate_layered_specs(
                 alphabet_modes=alphabet_modes,
                 rail_fence_depth=sandwich_depth,
             ))
+
+    # --- LESSON-008: reverse_blocks families ---------------------------
+    # Trigger-driven (block_reversal_triggered set above). When the
+    # clue pack contains no block-reversal trigger token, every
+    # ``reverse_blocks_*`` family above is absent from ``active`` and
+    # the entire block here is a no-op. Real-K4 mode receives the
+    # lesson registry entry but has empty HCC seed lists (HCC is
+    # bench-mode only via _collect_hcc_seeds), so the families fire
+    # only on bench challenges whose clue pack triggers them.
+    if block_reversal_triggered:
+        block_sizes = _block_sizes_for_payload(clue_text)
+        if "reverse_blocks" in active:
+            out.extend(_gen_reverse_blocks_alone_family(
+                bench_slug=bench_slug,
+                block_sizes=block_sizes,
+            ))
+        # Substitution-paired families: emit only ``reverse_partial``
+        # block mode by default. The alone family above already tests
+        # both modes, so this avoids doubling the substitution-paired
+        # spec count while keeping coverage of both modes per family.
+        for sub_kind, label in (
+            ("vigenere", "reverse_blocks_vigenere"),
+            ("beaufort", "reverse_blocks_beaufort"),
+            ("variant_beaufort", "reverse_blocks_variant_beaufort"),
+        ):
+            if label in active:
+                out.extend(_gen_reverse_blocks_substitution_family(
+                    bench_slug=bench_slug,
+                    sub_kind=sub_kind,
+                    keyword_a=keyword_a, keyword_b=keyword_b,
+                    block_sizes=block_sizes,
+                    alphabet_modes=alphabet_modes,
+                    block_modes=("reverse_partial",),
+                ))
+        if "reverse_blocks_atbash" in active:
+            out.extend(_gen_reverse_blocks_atbash_family(
+                bench_slug=bench_slug,
+                block_sizes=block_sizes,
+                block_modes=("reverse_partial", "truncate"),
+            ))
+        if "reverse_blocks_caesar" in active:
+            out.extend(_gen_reverse_blocks_caesar_family(
+                bench_slug=bench_slug,
+                block_sizes=block_sizes,
+                block_modes=("reverse_partial",),
+            ))
+        if include_three_layer and shift_triggered:
+            for sub_kind in ("vigenere", "beaufort", "variant_beaufort"):
+                atbash_label = f"{sub_kind}_reverse_blocks_atbash"
+                caesar_label = f"{sub_kind}_reverse_blocks_caesar"
+                if atbash_label in active:
+                    out.extend(_gen_reverse_blocks_three_layer_family(
+                        bench_slug=bench_slug,
+                        sub_kind=sub_kind,
+                        sandwich_partner="atbash",
+                        keyword_a=keyword_a, keyword_b=keyword_c,
+                        block_sizes=block_sizes,
+                        alphabet_modes=alphabet_modes,
+                    ))
+                if caesar_label in active:
+                    out.extend(_gen_reverse_blocks_three_layer_family(
+                        bench_slug=bench_slug,
+                        sub_kind=sub_kind,
+                        sandwich_partner="caesar",
+                        keyword_a=keyword_a, keyword_b=keyword_c,
+                        block_sizes=block_sizes,
+                        alphabet_modes=alphabet_modes,
+                    ))
 
     # Validate every emitted spec; drop the ones the dispatcher would
     # reject. This is a belt-and-suspenders check — the family
