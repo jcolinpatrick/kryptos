@@ -206,6 +206,244 @@ def _shift_to_keyword(shift: int) -> str:
     return chr(ord("A") + shift)
 
 
+# 2026-04-28 (LESSON-011): skip / step / stride route trigger
+# vocabulary. When ANY of these tokens appears in the clue text
+# (case-insensitive, word-boundary match), the generator emits the
+# skip_route family matrix. Pulled from the lesson registry's
+# ``tactic_parameters.trigger_tokens``; the runtime constant lets
+# the generator avoid re-loading the registry on the hot path.
+_SKIP_ROUTE_TRIGGER_TOKENS: frozenset[str] = frozenset({
+    "skip", "skipped",
+    "step", "stepped",
+    "stride",
+    "every",
+    "nth",
+    "offset",
+    "route", "path",
+    "tunnel", "passage",
+    "layer",
+    "hide", "hides", "hidden",
+    "read", "reads",
+    "walk", "walks",
+    "margin", "margins",
+})
+
+# 2026-04-28 (LESSON-011): default step set for skip_route. K4
+# (CT_LEN=97) is prime, so every step in [1, 96] is coprime —
+# the dispatcher's coprimality guard never fires for the standard
+# K4 length. The default set covers small primes + a handful of
+# slightly larger primes / composites that show up in hand-cipher
+# folklore. Clue-derived numerals are unioned in front.
+_DEFAULT_SKIP_ROUTE_STEPS: tuple[int, ...] = (
+    2, 3, 4, 5, 6, 7, 8, 10, 13, 17, 23,
+)
+
+# Bounded default offset window. The lesson allows 0..min(step-1, 25)
+# but emitting all of those for every (family × keyword × alphabet
+# × layer-order) combination would explode the universe. The default
+# is a small window that covers the common offsets; clue-derived
+# offsets are always appended on top.
+_DEFAULT_SKIP_ROUTE_OFFSETS: tuple[int, ...] = (0, 1, 2)
+
+# Bound on the number of (step, offset) pairs the substitution-
+# paired families enumerate. The skip_route alone family is
+# uncapped because it produces only ~11×3 = 33 specs even at the
+# default. The substitution-paired and three-layer-sandwich
+# families pre-multiply by keywords and alphabet modes, so we cap
+# the (step, offset) cartesian aggressively.
+_SKIP_ROUTE_PAIR_CAP: int = 12
+# Smaller cap for three-layer sandwiches where the (sub × alpha
+# × layer-orders × pair) cartesian explodes the universe. Six
+# pairs is enough to hit the two clue-derived offsets plus four
+# default-set options.
+_SKIP_ROUTE_THREE_LAYER_PAIR_CAP: int = 6
+# Smallest possible Caesar shift set for the LESSON-011 three-
+# layer skip_route + sub + caesar variant — LESSON-009 already
+# exercises the full Caesar shift space against the keyed
+# transpositions; the skip-route sandwich just needs a token
+# Caesar to demonstrate the ordering.
+_SKIP_ROUTE_THREE_LAYER_CAESAR_SHIFTS: tuple[int, ...] = (13,)
+
+
+def _skip_route_layer(step: int, offset: int) -> dict[str, Any]:
+    """Build a skip_route layer dict (LESSON-011).
+
+    The dispatcher translator validates that step ∈ [1, CT_LEN-1],
+    offset ∈ [0, CT_LEN-1], and gcd(step, CT_LEN) == 1; this layer
+    builder accepts any int in those bounds, leaving the kernel
+    coprimality guard as the single source of truth.
+    """
+    if not isinstance(step, int) or step < 1:
+        raise ValueError(
+            f"_skip_route_layer: step must be int >= 1; got {step!r}"
+        )
+    if not isinstance(offset, int) or offset < 0:
+        raise ValueError(
+            f"_skip_route_layer: offset must be int >= 0; got "
+            f"{offset!r}"
+        )
+    return {
+        "kind": "skip_route",
+        "alphabet": "AZ",
+        "params": [
+            {"name": "step", "values": [step]},
+            {"name": "offset", "values": [offset]},
+        ],
+    }
+
+
+def _detect_skip_route_trigger(clue_text: str) -> bool:
+    """Whole-word match for any LESSON-011 skip-route trigger token.
+
+    Used by ``generate_layered_specs`` to gate emission of the
+    skip_route family matrix. A clue text without any of these
+    tokens leaves the historical catalog bit-identical (skip_route
+    families are absent).
+    """
+    if not isinstance(clue_text, str) or not clue_text:
+        return False
+    lower = clue_text.lower()
+    for token in _SKIP_ROUTE_TRIGGER_TOKENS:
+        idx = 0
+        while True:
+            pos = lower.find(token, idx)
+            if pos < 0:
+                break
+            before_ok = pos == 0 or not lower[pos - 1].isalnum()
+            after_pos = pos + len(token)
+            after_ok = (
+                after_pos >= len(lower) or not lower[after_pos].isalnum()
+            )
+            if before_ok and after_ok:
+                return True
+            idx = pos + 1
+    return False
+
+
+def _skip_route_steps_for_payload(
+    clue_text: str,
+    *,
+    ct_length: int = 97,
+) -> list[tuple[int, str]]:
+    """Return the (step, operation_source) list for the payload.
+
+    Sources:
+      ``clue_numeral`` — digit literals 2..ct_length-1 in the clue
+                         text and small spelled numerals
+                         (two..twenty)
+      ``default_set``  — ``_DEFAULT_SKIP_ROUTE_STEPS``
+
+    Steps coprime with ``ct_length`` only; non-coprime values are
+    silently dropped (the dispatcher would reject them anyway). For
+    the canonical K4 length 97 (prime), every step survives.
+    """
+    import math
+    out: list[tuple[int, str]] = []
+    seen: set[int] = set()
+    for n in _depths_from_clue_text(clue_text):
+        if not 1 <= n < ct_length:
+            continue
+        if math.gcd(n, ct_length) != 1:
+            continue
+        if n in seen:
+            continue
+        seen.add(n)
+        out.append((n, "clue_numeral"))
+    for d in _DEFAULT_SKIP_ROUTE_STEPS:
+        if d in seen:
+            continue
+        if not 1 <= d < ct_length:
+            continue
+        if math.gcd(d, ct_length) != 1:
+            continue
+        seen.add(d)
+        out.append((d, "default_set"))
+    return out
+
+
+def _skip_route_offsets_for_payload(
+    clue_text: str,
+    step: int,
+    *,
+    ct_length: int = 97,
+    extra_window: int = 5,
+) -> list[tuple[int, str]]:
+    """Return the (offset, operation_source) list for a given step.
+
+    Sources:
+      ``clue_numeral`` — digit literals 0..ct_length-1 + small
+                         spelled numerals from the clue text
+      ``default_set``  — ``_DEFAULT_SKIP_ROUTE_OFFSETS`` plus the
+                         band ``0..min(step-1, extra_window)``
+                         that covers the early offset window every
+                         step admits
+
+    Caller is expected to truncate the returned list to a manageable
+    size when composing with substitution layers; the alone family
+    can iterate the full list.
+    """
+    out: list[tuple[int, str]] = []
+    seen: set[int] = set()
+    # Clue-derived offsets first
+    for n in _depths_from_clue_text(clue_text):
+        if not 0 <= n < ct_length:
+            continue
+        if n in seen:
+            continue
+        seen.add(n)
+        out.append((n, "clue_numeral"))
+    # Bounded default window
+    cap = min(step - 1, extra_window)
+    for d in range(cap + 1):
+        if d in seen:
+            continue
+        seen.add(d)
+        out.append((d, "default_set"))
+    # Plus the project-wide explicit defaults
+    for d in _DEFAULT_SKIP_ROUTE_OFFSETS:
+        if d in seen or d >= ct_length:
+            continue
+        seen.add(d)
+        out.append((d, "default_set"))
+    return out
+
+
+def _skip_route_pairs_for_payload(
+    clue_text: str,
+    *,
+    ct_length: int = 97,
+    cap: Optional[int] = None,
+) -> list[tuple[int, int, str]]:
+    """Cartesian (step, offset) enumeration with provenance.
+
+    The provenance label is "clue_numeral" iff BOTH step and offset
+    came from the clue text; "mixed" if exactly one did;
+    "default_set" if neither did. The deterministic ordering is
+    (step from ``_skip_route_steps_for_payload``) × (offset from
+    ``_skip_route_offsets_for_payload``).
+    """
+    out: list[tuple[int, int, str]] = []
+    for step, step_src in _skip_route_steps_for_payload(
+        clue_text, ct_length=ct_length,
+    ):
+        for offset, off_src in _skip_route_offsets_for_payload(
+            clue_text, step, ct_length=ct_length,
+        ):
+            if step_src == "clue_numeral" and off_src == "clue_numeral":
+                src = "clue_numeral"
+            elif (
+                step_src == "clue_numeral"
+                or off_src == "clue_numeral"
+            ):
+                src = "mixed"
+            else:
+                src = "default_set"
+            out.append((step, offset, src))
+            if cap is not None and len(out) >= cap:
+                return out
+    return out
+
+
 def _caesar_layer(shift: int) -> dict[str, Any]:
     """Build a canonical caesar layer dict (LESSON-009).
 
@@ -432,6 +670,29 @@ class CoverageVector:
     alphabet_keyword: str = ""
     transposition_keyword: str = ""
     role_assignment_mode: str = ""
+    # 2026-04-28 (LESSON-011): skip / step / stride modular route
+    # telemetry. Empty when the spec does not include a skip_route
+    # layer; populated otherwise so coverage analysis can answer
+    # "have we tested skip_route(step=5, offset=3) in this family?".
+    #
+    #   route_mode  — "skip_route" when this spec uses the
+    #                 LESSON-011 modular-walk transposition; ""
+    #                 for legacy / non-skip-route specs.
+    #   step        — int parameter passed to the skip_route layer.
+    #                 None for non-skip-route specs.
+    #   offset      — int parameter passed to the skip_route layer.
+    #                 None for non-skip-route specs.
+    #
+    # ``operation_source`` (above) is shared with LESSON-008 /
+    # LESSON-009: it always describes the provenance of whichever
+    # numeric parameter drove the spec (block_size for
+    # reverse_blocks, shift_value for caesar, the (step, offset)
+    # pair for skip_route — when both come from the clue text the
+    # source is "clue_numeral", otherwise "default_set" or "mixed"
+    # if step is clue-derived but offset is default).
+    route_mode: str = ""
+    step: Optional[int] = None
+    offset: Optional[int] = None
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -451,6 +712,9 @@ class CoverageVector:
             "alphabet_keyword": self.alphabet_keyword,
             "transposition_keyword": self.transposition_keyword,
             "role_assignment_mode": self.role_assignment_mode,
+            "route_mode": self.route_mode,
+            "step": self.step,
+            "offset": self.offset,
         }
 
     @classmethod
@@ -494,6 +758,12 @@ class CoverageVector:
             alphabet_keyword=str(d.get("alphabet_keyword", "")),
             transposition_keyword=str(d.get("transposition_keyword", "")),
             role_assignment_mode=str(d.get("role_assignment_mode", "")),
+            route_mode=str(d.get("route_mode", "")),
+            step=int(d["step"]) if isinstance(d.get("step"), int) else None,
+            offset=(
+                int(d["offset"]) if isinstance(d.get("offset"), int)
+                else None
+            ),
         )
 
     @property
@@ -737,11 +1007,22 @@ def _alphabet_modes_for_payload(
 # Numeral extraction for rail-fence depth selection ---------------------------
 
 _NUMBER_WORDS: dict[str, int] = {
+    # Cardinals
     "two": 2, "three": 3, "four": 4, "five": 5, "six": 6,
     "seven": 7, "eight": 8, "nine": 9, "ten": 10,
     "eleven": 11, "twelve": 12, "thirteen": 13, "fourteen": 14,
     "fifteen": 15, "sixteen": 16, "seventeen": 17,
     "eighteen": 18, "nineteen": 19, "twenty": 20,
+    # Ordinals (LESSON-011 added 2026-04-28). Clue text often uses
+    # ordinal forms — "fifth step", "third pass" — so the
+    # extractor must lift those to the same numeric values as the
+    # corresponding cardinals.
+    "second": 2, "third": 3, "fourth": 4, "fifth": 5, "sixth": 6,
+    "seventh": 7, "eighth": 8, "ninth": 9, "tenth": 10,
+    "eleventh": 11, "twelfth": 12, "thirteenth": 13,
+    "fourteenth": 14, "fifteenth": 15, "sixteenth": 16,
+    "seventeenth": 17, "eighteenth": 18, "nineteenth": 19,
+    "twentieth": 20,
 }
 
 # Rail-fence depths default set when no clue numerals apply. The
@@ -2381,6 +2662,492 @@ def _gen_independent_three_role_keywordless_family(
     return out
 
 
+def _gen_skip_route_alone_family(
+    *,
+    bench_slug: str,
+    pairs: Sequence[tuple[int, int, str]],
+) -> list[GeneratedSpec]:
+    """LESSON-011: skip_route as a single-layer transposition.
+
+    Emits one spec per (step, offset) pair. Coverage_vector carries
+    route_mode='skip_route' + step + offset + operation_source so
+    downstream readers can audit the exact modular walk that was
+    tested.
+    """
+    family_label = "skip_route"
+    out: list[GeneratedSpec] = []
+    for step, offset, op_source in pairs:
+        layer = _skip_route_layer(step, offset)
+        cov = CoverageVector(
+            layer_family=family_label,
+            layer_order=("skip_route",),
+            role_assignment=(),
+            alphabet="AZ", n_layers=1,
+            extras=(("step", step), ("offset", offset)),
+            route_mode="skip_route",
+            step=step, offset=offset,
+            operation_source=op_source,
+        )
+        out.append(_make_spec(
+            bench_slug=bench_slug, family_label=family_label,
+            pipeline=[layer], coverage=cov,
+            notes=(
+                f"skip_route(step={step}, offset={offset}) "
+                f"[op_source={op_source}]"
+            ),
+            crib_alignment="post_transposition",
+        ))
+    return out
+
+
+def _gen_skip_route_substitution_family(
+    *,
+    bench_slug: str,
+    sub_kind: str,                  # vigenere | beaufort | variant_beaufort
+    keyword_a: str,
+    keyword_b: str,
+    pairs: Sequence[tuple[int, int, str]],
+    alphabet_modes: Optional[Sequence[AlphabetMode]] = None,
+) -> list[GeneratedSpec]:
+    """LESSON-011: skip_route paired with a keyword substitution in
+    BOTH layer orders. Emits one spec per (keyword × alphabet_mode
+    × (step, offset) × layer_order) tuple. Caller is expected to
+    pre-cap ``pairs`` so the universe stays bounded.
+    """
+    if sub_kind not in _SUBSTITUTION_KEYWORD_KINDS:
+        raise ValueError(f"unsupported sub_kind {sub_kind!r}")
+    family_label = f"skip_route_{sub_kind}"
+    if alphabet_modes is None:
+        alphabet_modes = (AlphabetMode("AZ", "AZ", None, "default"),)
+
+    out: list[GeneratedSpec] = []
+    for kw in (keyword_a, keyword_b):
+        if not isinstance(kw, str) or len(kw) < 1:
+            continue
+        for mode in alphabet_modes:
+            sub_layer = _keyword_substitution_layer(
+                sub_kind, kw,
+                alphabet=mode.dsl_alphabet,
+                alphabet_keyword=mode.alphabet_keyword,
+            )
+            for step, offset, op_source in pairs:
+                sk_layer = _skip_route_layer(step, offset)
+                role = ((sub_kind, kw),)
+                extras = (("step", step), ("offset", offset))
+                # Order 1: substitution first
+                out.append(_make_spec(
+                    bench_slug=bench_slug, family_label=family_label,
+                    pipeline=[sub_layer, sk_layer],
+                    coverage=CoverageVector(
+                        layer_family=family_label,
+                        layer_order=(sub_kind, "skip_route"),
+                        role_assignment=role,
+                        alphabet=mode.mode_label, n_layers=2,
+                        extras=extras,
+                        alphabet_mode=mode.mode_label,
+                        alphabet_source=mode.source,
+                        substitution_keyword=kw,
+                        alphabet_keyword=mode.alphabet_keyword or "",
+                        route_mode="skip_route",
+                        step=step, offset=offset,
+                        operation_source=op_source,
+                    ),
+                    notes=(
+                        f"{sub_kind}({kw}, alpha={mode.mode_label}) ∘ "
+                        f"skip_route({step}, {offset}) [sub-first]"
+                    ),
+                ))
+                # Order 2: skip_route first
+                out.append(_make_spec(
+                    bench_slug=bench_slug, family_label=family_label,
+                    pipeline=[sk_layer, sub_layer],
+                    coverage=CoverageVector(
+                        layer_family=family_label,
+                        layer_order=("skip_route", sub_kind),
+                        role_assignment=role,
+                        alphabet=mode.mode_label, n_layers=2,
+                        extras=extras,
+                        alphabet_mode=mode.mode_label,
+                        alphabet_source=mode.source,
+                        substitution_keyword=kw,
+                        alphabet_keyword=mode.alphabet_keyword or "",
+                        route_mode="skip_route",
+                        step=step, offset=offset,
+                        operation_source=op_source,
+                    ),
+                    notes=(
+                        f"skip_route({step}, {offset}) ∘ "
+                        f"{sub_kind}({kw}, alpha={mode.mode_label}) "
+                        "[trans-first]"
+                    ),
+                ))
+    return out
+
+
+def _gen_skip_route_caesar_family(
+    *,
+    bench_slug: str,
+    pairs: Sequence[tuple[int, int, str]],
+    shifts: Sequence[int] = _DEFAULT_REV_BLOCKS_CAESAR_SHIFTS,
+) -> list[GeneratedSpec]:
+    """LESSON-011: skip_route + canonical Caesar in BOTH orders.
+
+    Uses the smaller LESSON-008 default shift set (1, 3, 13) to
+    keep the (caesar_shift × skip_route step × offset) universe
+    bounded; LESSON-009 already exercises the full Caesar shift
+    space against the keyed transpositions independently.
+    """
+    family_label = "skip_route_caesar"
+    out: list[GeneratedSpec] = []
+    for shift in shifts:
+        if shift == 0 or not 1 <= shift <= 25:
+            continue
+        caesar_layer = _caesar_layer(shift)
+        for step, offset, op_source in pairs:
+            sk_layer = _skip_route_layer(step, offset)
+            role = (("caesar_shift", str(shift)),)
+            extras = (
+                ("caesar_shift", shift),
+                ("step", step), ("offset", offset),
+            )
+            # caesar + skip_route
+            out.append(_make_spec(
+                bench_slug=bench_slug, family_label=family_label,
+                pipeline=[caesar_layer, sk_layer],
+                coverage=CoverageVector(
+                    layer_family=family_label,
+                    layer_order=("caesar", "skip_route"),
+                    role_assignment=role,
+                    alphabet="AZ", n_layers=2,
+                    extras=extras,
+                    shift_value=shift,
+                    route_mode="skip_route",
+                    step=step, offset=offset,
+                    operation_source=op_source,
+                ),
+                notes=(
+                    f"caesar({shift}) ∘ skip_route({step}, {offset}) "
+                    "[caesar-first]"
+                ),
+            ))
+            # skip_route + caesar
+            out.append(_make_spec(
+                bench_slug=bench_slug, family_label=family_label,
+                pipeline=[sk_layer, caesar_layer],
+                coverage=CoverageVector(
+                    layer_family=family_label,
+                    layer_order=("skip_route", "caesar"),
+                    role_assignment=role,
+                    alphabet="AZ", n_layers=2,
+                    extras=extras,
+                    shift_value=shift,
+                    route_mode="skip_route",
+                    step=step, offset=offset,
+                    operation_source=op_source,
+                ),
+                notes=(
+                    f"skip_route({step}, {offset}) ∘ caesar({shift}) "
+                    "[trans-first]"
+                ),
+            ))
+    return out
+
+
+def _gen_skip_route_atbash_family(
+    *,
+    bench_slug: str,
+    pairs: Sequence[tuple[int, int, str]],
+) -> list[GeneratedSpec]:
+    """LESSON-011: skip_route + parameter-free Atbash in BOTH orders."""
+    family_label = "skip_route_atbash"
+    atbash_layer = {"kind": "atbash", "alphabet": "AZ", "params": []}
+    out: list[GeneratedSpec] = []
+    for step, offset, op_source in pairs:
+        sk_layer = _skip_route_layer(step, offset)
+        extras = (("step", step), ("offset", offset))
+        # atbash + skip_route
+        out.append(_make_spec(
+            bench_slug=bench_slug, family_label=family_label,
+            pipeline=[atbash_layer, sk_layer],
+            coverage=CoverageVector(
+                layer_family=family_label,
+                layer_order=("atbash", "skip_route"),
+                role_assignment=(),
+                alphabet="AZ", n_layers=2,
+                extras=extras,
+                route_mode="skip_route",
+                step=step, offset=offset,
+                operation_source=op_source,
+            ),
+            notes=(
+                f"atbash ∘ skip_route({step}, {offset}) [atbash-first]"
+            ),
+        ))
+        # skip_route + atbash
+        out.append(_make_spec(
+            bench_slug=bench_slug, family_label=family_label,
+            pipeline=[sk_layer, atbash_layer],
+            coverage=CoverageVector(
+                layer_family=family_label,
+                layer_order=("skip_route", "atbash"),
+                role_assignment=(),
+                alphabet="AZ", n_layers=2,
+                extras=extras,
+                route_mode="skip_route",
+                step=step, offset=offset,
+                operation_source=op_source,
+            ),
+            notes=(
+                f"skip_route({step}, {offset}) ∘ atbash [trans-first]"
+            ),
+        ))
+    return out
+
+
+def _gen_skip_route_rail_fence_family(
+    *,
+    bench_slug: str,
+    pairs: Sequence[tuple[int, int, str]],
+    rail_fence_depths: Sequence[int],
+) -> list[GeneratedSpec]:
+    """LESSON-011: skip_route + rail_fence in BOTH orders.
+
+    Pure-transposition pair: skip_route(step, offset) composed with
+    rail_fence(depth). No keyword roles, so the family is bounded
+    by the (step × offset × depth × layer_order) cartesian.
+    """
+    family_label = "skip_route_rail_fence"
+    out: list[GeneratedSpec] = []
+    for depth in rail_fence_depths:
+        rf_layer = _rail_fence_layer(int(depth))
+        for step, offset, op_source in pairs:
+            sk_layer = _skip_route_layer(step, offset)
+            extras = (
+                ("step", step), ("offset", offset),
+                ("rail_fence_depth", int(depth)),
+            )
+            # rail_fence + skip_route
+            out.append(_make_spec(
+                bench_slug=bench_slug, family_label=family_label,
+                pipeline=[rf_layer, sk_layer],
+                coverage=CoverageVector(
+                    layer_family=family_label,
+                    layer_order=("rail_fence", "skip_route"),
+                    role_assignment=(),
+                    alphabet="AZ", n_layers=2,
+                    extras=extras,
+                    route_mode="skip_route",
+                    step=step, offset=offset,
+                    operation_source=op_source,
+                ),
+                notes=(
+                    f"rail_fence({depth}) ∘ skip_route({step}, {offset}) "
+                    "[rail-first]"
+                ),
+            ))
+            # skip_route + rail_fence
+            out.append(_make_spec(
+                bench_slug=bench_slug, family_label=family_label,
+                pipeline=[sk_layer, rf_layer],
+                coverage=CoverageVector(
+                    layer_family=family_label,
+                    layer_order=("skip_route", "rail_fence"),
+                    role_assignment=(),
+                    alphabet="AZ", n_layers=2,
+                    extras=extras,
+                    route_mode="skip_route",
+                    step=step, offset=offset,
+                    operation_source=op_source,
+                ),
+                notes=(
+                    f"skip_route({step}, {offset}) ∘ rail_fence({depth}) "
+                    "[skip-first]"
+                ),
+            ))
+    return out
+
+
+def _gen_skip_route_three_layer_family(
+    *,
+    bench_slug: str,
+    sub_kind: str,                  # vigenere | beaufort | variant_beaufort
+    sandwich_partner: str,          # "rail_fence" | "atbash" | "caesar"
+    keyword_a: str,
+    keyword_b: str,
+    pairs: Sequence[tuple[int, int, str]],
+    rail_fence_depth: int = 4,
+    caesar_shifts: Sequence[int] = (1, 3, 13),
+    alphabet_modes: Optional[Sequence[AlphabetMode]] = None,
+) -> list[GeneratedSpec]:
+    """LESSON-011 three-layer sandwich:
+    sub ∘ skip_route ∘ partner.
+
+    Partner kinds:
+      "rail_fence" — sub ∘ skip_route ∘ rail_fence in 4 orderings:
+         sub_first   → sub ∘ skip ∘ fence,   fence_first → fence ∘ skip ∘ sub
+         skip_first  → skip ∘ sub ∘ fence,   skip_last   → fence ∘ sub ∘ skip
+      "atbash"     — sub ∘ skip_route ∘ atbash in 2 layer orderings
+                     (atbash is parameter-free; reduces to 2 not 4).
+      "caesar"     — sub ∘ skip_route ∘ caesar(shift) in 2 layer
+                     orderings × len(caesar_shifts).
+
+    To keep the universe bounded, ``pairs`` is expected to be the
+    pre-capped (step, offset) list from
+    ``_skip_route_pairs_for_payload(cap=...)``.
+    """
+    if sub_kind not in _SUBSTITUTION_KEYWORD_KINDS:
+        raise ValueError(f"unsupported sub_kind {sub_kind!r}")
+    if sandwich_partner not in ("rail_fence", "atbash", "caesar"):
+        raise ValueError(
+            f"sandwich_partner must be in "
+            f"{{'rail_fence', 'atbash', 'caesar'}}; got "
+            f"{sandwich_partner!r}"
+        )
+    family_label = f"{sub_kind}_skip_route_{sandwich_partner}"
+    if alphabet_modes is None:
+        alphabet_modes = (AlphabetMode("AZ", "AZ", None, "default"),)
+
+    if sandwich_partner == "rail_fence":
+        partner_layers: list[tuple[dict[str, Any], dict[str, Any]]] = [
+            (
+                _rail_fence_layer(int(rail_fence_depth)),
+                {"rail_fence_depth": int(rail_fence_depth)},
+            ),
+        ]
+    elif sandwich_partner == "atbash":
+        partner_layers = [
+            ({"kind": "atbash", "alphabet": "AZ", "params": []}, {}),
+        ]
+    else:  # caesar
+        partner_layers = [
+            (_caesar_layer(s), {"caesar_shift": s})
+            for s in caesar_shifts if 1 <= s <= 25
+        ]
+
+    out: list[GeneratedSpec] = []
+    for kw in (keyword_a, keyword_b):
+        if not isinstance(kw, str) or len(kw) < 1:
+            continue
+        for mode in alphabet_modes:
+            sub_layer = _keyword_substitution_layer(
+                sub_kind, kw,
+                alphabet=mode.dsl_alphabet,
+                alphabet_keyword=mode.alphabet_keyword,
+            )
+            for step, offset, op_source in pairs:
+                sk_layer = _skip_route_layer(step, offset)
+                for partner_layer, partner_extras in partner_layers:
+                    role: tuple[tuple[str, str], ...] = (
+                        (sub_kind, kw),
+                    )
+                    if sandwich_partner == "caesar":
+                        role = role + (
+                            (
+                                "caesar_shift",
+                                str(partner_extras.get("caesar_shift")),
+                            ),
+                        )
+                    extras = (
+                        ("step", step), ("offset", offset),
+                    )
+                    for k, v in partner_extras.items():
+                        extras = extras + ((k, v),)
+
+                    if sandwich_partner == "rail_fence":
+                        # 4 orderings for rail_fence
+                        orderings: list[tuple[
+                            tuple[str, str, str], list[dict[str, Any]],
+                        ]] = [
+                            (
+                                (sub_kind, "skip_route", "rail_fence"),
+                                [sub_layer, sk_layer, partner_layer],
+                            ),
+                            (
+                                ("rail_fence", "skip_route", sub_kind),
+                                [partner_layer, sk_layer, sub_layer],
+                            ),
+                            (
+                                ("skip_route", sub_kind, "rail_fence"),
+                                [sk_layer, sub_layer, partner_layer],
+                            ),
+                            (
+                                ("rail_fence", sub_kind, "skip_route"),
+                                [partner_layer, sub_layer, sk_layer],
+                            ),
+                        ]
+                    else:
+                        # 2 orderings for atbash / caesar
+                        orderings = [
+                            (
+                                (sub_kind, "skip_route",
+                                 sandwich_partner),
+                                [sub_layer, sk_layer, partner_layer],
+                            ),
+                            (
+                                (sandwich_partner, "skip_route",
+                                 sub_kind),
+                                [partner_layer, sk_layer, sub_layer],
+                            ),
+                        ]
+
+                    for layer_order, pipeline in orderings:
+                        cov = CoverageVector(
+                            layer_family=family_label,
+                            layer_order=layer_order,
+                            role_assignment=role,
+                            alphabet=mode.mode_label, n_layers=3,
+                            extras=extras,
+                            alphabet_mode=mode.mode_label,
+                            alphabet_source=mode.source,
+                            substitution_keyword=kw,
+                            alphabet_keyword=(
+                                mode.alphabet_keyword or ""
+                            ),
+                            route_mode="skip_route",
+                            step=step, offset=offset,
+                            operation_source=op_source,
+                        )
+                        if sandwich_partner == "caesar":
+                            cov = CoverageVector(
+                                **{
+                                    **cov.to_dict(),
+                                    "shift_value": int(
+                                        partner_extras["caesar_shift"]
+                                    ),
+                                }
+                            ) if False else CoverageVector(
+                                layer_family=cov.layer_family,
+                                layer_order=cov.layer_order,
+                                role_assignment=cov.role_assignment,
+                                alphabet=cov.alphabet,
+                                n_layers=cov.n_layers,
+                                extras=cov.extras,
+                                alphabet_mode=cov.alphabet_mode,
+                                alphabet_source=cov.alphabet_source,
+                                substitution_keyword=cov.substitution_keyword,
+                                alphabet_keyword=cov.alphabet_keyword,
+                                route_mode=cov.route_mode,
+                                step=cov.step, offset=cov.offset,
+                                operation_source=cov.operation_source,
+                                shift_value=int(
+                                    partner_extras["caesar_shift"]
+                                ),
+                            )
+                        out.append(_make_spec(
+                            bench_slug=bench_slug,
+                            family_label=family_label,
+                            pipeline=pipeline, coverage=cov,
+                            notes=(
+                                f"{sub_kind}({kw}, alpha={mode.mode_label}) "
+                                f"× skip_route({step}, {offset}) × "
+                                f"{sandwich_partner}{partner_extras} "
+                                f"[order={'/'.join(layer_order)}]"
+                            ),
+                            compute_budget_minutes=3,
+                        ))
+    return out
+
+
 def _gen_three_layer_sandwich_family(
     *,
     bench_slug: str,
@@ -2647,6 +3414,38 @@ def generate_layered_specs(
                 "caesar_rail_fence_atbash",
                 "caesar_route_atbash",
             }
+    # 2026-04-28 (LESSON-011): skip / step / stride route trigger.
+    skip_route_triggered = _detect_skip_route_trigger(clue_text)
+    if skip_route_triggered:
+        default_families |= {
+            "skip_route",
+            "skip_route_vigenere",
+            "skip_route_beaufort",
+            "skip_route_variant_beaufort",
+            "skip_route_caesar",
+            "skip_route_atbash",
+            "skip_route_rail_fence",
+        }
+        if include_three_layer:
+            default_families |= {
+                "vigenere_skip_route_rail_fence",
+                "beaufort_skip_route_rail_fence",
+                "variant_beaufort_skip_route_rail_fence",
+            }
+            # Three-layer atbash / caesar sandwiches fire only
+            # when the corresponding trigger is also present.
+            if shift_triggered or caesar_triggered:
+                default_families |= {
+                    "vigenere_skip_route_atbash",
+                    "beaufort_skip_route_atbash",
+                    "variant_beaufort_skip_route_atbash",
+                }
+            if caesar_triggered:
+                default_families |= {
+                    "vigenere_skip_route_caesar",
+                    "beaufort_skip_route_caesar",
+                    "variant_beaufort_skip_route_caesar",
+                }
     active = set(families) if families is not None else default_families
 
     out: list[GeneratedSpec] = []
@@ -2954,6 +3753,104 @@ def generate_layered_specs(
                     shifts=caesar_shifts,
                     **kwargs,
                 ))
+
+    # --- LESSON-011: skip / step / stride route families ---------------
+    # Trigger-driven (skip_route_triggered set above). When the clue
+    # pack contains no skip-route trigger token, every ``skip_route*``
+    # family is absent from ``active`` and this block is a no-op.
+    # Real-K4 mode is unaffected because HCC is bench-mode only via
+    # _collect_hcc_seeds; the LESSON-011 entry remains visible to
+    # the LLM theorist as a generalized tactic.
+    if skip_route_triggered:
+        # Full pair enumeration for the alone family (the universe
+        # stays small even at the default).
+        sk_pairs_full = _skip_route_pairs_for_payload(clue_text)
+        # Capped pair list for the (sub × alpha × order × pair)
+        # combinatorics. The cap guarantees the combined LESSON-011
+        # universe stays bounded under O(few thousand) specs even
+        # when block_reversal / caesar / mirror triggers also fire.
+        sk_pairs_capped = _skip_route_pairs_for_payload(
+            clue_text, cap=_SKIP_ROUTE_PAIR_CAP,
+        )
+        if "skip_route" in active:
+            out.extend(_gen_skip_route_alone_family(
+                bench_slug=bench_slug,
+                pairs=sk_pairs_full,
+            ))
+        for sub_kind, label in (
+            ("vigenere", "skip_route_vigenere"),
+            ("beaufort", "skip_route_beaufort"),
+            ("variant_beaufort", "skip_route_variant_beaufort"),
+        ):
+            if label in active:
+                out.extend(_gen_skip_route_substitution_family(
+                    bench_slug=bench_slug,
+                    sub_kind=sub_kind,
+                    keyword_a=keyword_a, keyword_b=keyword_b,
+                    pairs=sk_pairs_capped,
+                    alphabet_modes=alphabet_modes,
+                ))
+        if "skip_route_caesar" in active:
+            out.extend(_gen_skip_route_caesar_family(
+                bench_slug=bench_slug,
+                pairs=sk_pairs_capped,
+            ))
+        if "skip_route_atbash" in active:
+            out.extend(_gen_skip_route_atbash_family(
+                bench_slug=bench_slug,
+                pairs=sk_pairs_capped,
+            ))
+        if "skip_route_rail_fence" in active:
+            out.extend(_gen_skip_route_rail_fence_family(
+                bench_slug=bench_slug,
+                pairs=sk_pairs_capped,
+                rail_fence_depths=tuple(rail_fence_depths),
+            ))
+        if include_three_layer:
+            sw_depth = (
+                rail_fence_depths[0] if rail_fence_depths else 3
+            )
+            # Three-layer sandwiches use a smaller (step, offset)
+            # cap so (sub × alpha × pair × layer-orders) stays
+            # bounded across the catalog.
+            sk_pairs_three = _skip_route_pairs_for_payload(
+                clue_text, cap=_SKIP_ROUTE_THREE_LAYER_PAIR_CAP,
+            )
+            for sub_kind in ("vigenere", "beaufort", "variant_beaufort"):
+                rf_label = f"{sub_kind}_skip_route_rail_fence"
+                atb_label = f"{sub_kind}_skip_route_atbash"
+                cae_label = f"{sub_kind}_skip_route_caesar"
+                if rf_label in active:
+                    out.extend(_gen_skip_route_three_layer_family(
+                        bench_slug=bench_slug,
+                        sub_kind=sub_kind,
+                        sandwich_partner="rail_fence",
+                        keyword_a=keyword_a, keyword_b=keyword_b,
+                        pairs=sk_pairs_three,
+                        rail_fence_depth=sw_depth,
+                        alphabet_modes=alphabet_modes,
+                    ))
+                if atb_label in active:
+                    out.extend(_gen_skip_route_three_layer_family(
+                        bench_slug=bench_slug,
+                        sub_kind=sub_kind,
+                        sandwich_partner="atbash",
+                        keyword_a=keyword_a, keyword_b=keyword_b,
+                        pairs=sk_pairs_three,
+                        alphabet_modes=alphabet_modes,
+                    ))
+                if cae_label in active:
+                    out.extend(_gen_skip_route_three_layer_family(
+                        bench_slug=bench_slug,
+                        sub_kind=sub_kind,
+                        sandwich_partner="caesar",
+                        keyword_a=keyword_a, keyword_b=keyword_b,
+                        pairs=sk_pairs_three,
+                        caesar_shifts=(
+                            _SKIP_ROUTE_THREE_LAYER_CAESAR_SHIFTS
+                        ),
+                        alphabet_modes=alphabet_modes,
+                    ))
 
     # Validate every emitted spec; drop the ones the dispatcher would
     # reject. This is a belt-and-suspenders check — the family

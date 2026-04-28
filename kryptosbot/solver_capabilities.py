@@ -50,6 +50,7 @@ patch spec:
     LESSON-008  fixed_size_block_reversal
     LESSON-009  caesar_rot_composition
     LESSON-010  independent_multi_role_assignment
+    LESSON-011  skip_step_route_enumeration
 
 The constructor refuses to load any registry file containing
 forbidden fields, so a corrupted on-disk registry fails closed.
@@ -180,6 +181,15 @@ _VALID_TACTIC_KINDS: frozenset[str] = frozenset({
                                    # distinct clue keywords across
                                    # three independent role slots
                                    # (LESSON-010).
+    "skip_step_route_enumeration", # 2026-04-28: trigger-driven
+                                   # modular skip / step / stride
+                                   # route transposition. Generalizes
+                                   # the K4B-006 miss into a reusable
+                                   # tactic. Clue-derived (step,
+                                   # offset) pairs plus safe defaults
+                                   # compose with vig/beau/var_beau/
+                                   # caesar/atbash/rail_fence
+                                   # (LESSON-011).
 })
 
 
@@ -650,6 +660,96 @@ def _default_lessons() -> list[Lesson]:
                 "applies_to_transposition_kinds": [
                     "columnar", "myszkowski", "rail_fence", "route",
                 ],
+            },
+        ),
+        Lesson(
+            lesson_id="LESSON-011",
+            title="Skip / step / stride modular route transposition",
+            description=(
+                "When clue-pack language gestures at a stepped or "
+                "stride-walked route — words such as skip, skipped, "
+                "step, stepped, stride, every, nth, offset, route, "
+                "path, tunnel, passage, layer, hide, hides, hidden, "
+                "read, reads, walk, walks, margin, margins — the "
+                "candidate pipeline MUST enumerate a modular skip-"
+                "route transposition layer (the first-class "
+                "``skip_route`` DSL kind, NOT a generic route or "
+                "serpentine layer, so coverage_vector and attempt "
+                "artifact layers explicitly carry route_mode + step + "
+                "offset). The skip-route layer is length-preserving: "
+                "for ciphertext length L, ``output[i] = input"
+                "[(offset + i*step) mod L]``; the (step, L) pair MUST "
+                "be coprime so the walk visits every position once. "
+                "Step values are drawn from clue-derived numerals "
+                "(digit literals 2..L-1 and small spelled numerals "
+                "two..twenty) UNIONED with the safe default set "
+                "{2, 3, 4, 5, 6, 7, 8, 10, 13, 17, 23}. Offsets are "
+                "drawn from clue-derived numerals UNIONED with "
+                "0..min(step-1, 5) so a small bounded enumeration "
+                "covers the early offset window every step admits. "
+                "The lesson composes skip_route alone, paired with "
+                "Vigenere / Beaufort / Variant Beaufort / Caesar / "
+                "Atbash / rail_fence in BOTH layer orders, and in "
+                "three-layer sandwiches with substitution + "
+                "skip_route + rail_fence (and skip_route + sub + "
+                "atbash / caesar when the corresponding existing "
+                "trigger applies). The lesson is GENERALIZED: it "
+                "stores trigger vocabulary, step / offset knobs, "
+                "and family pairings only — never benchmark-"
+                "specific decryptions or sealed material."
+            ),
+            tactic_kind="skip_step_route_enumeration",
+            applies_to_families=[
+                "skip_route",
+                "skip_route_vigenere",
+                "skip_route_beaufort",
+                "skip_route_variant_beaufort",
+                "skip_route_caesar",
+                "skip_route_atbash",
+                "skip_route_rail_fence",
+                "vigenere_skip_route_rail_fence",
+                "beaufort_skip_route_rail_fence",
+                "variant_beaufort_skip_route_rail_fence",
+            ],
+            generates_specs=True,
+            related_lesson_ids=[
+                "LESSON-002", "LESSON-006", "LESSON-007",
+                "LESSON-008", "LESSON-009", "LESSON-010",
+            ],
+            source_origin="k4bench-derived",
+            tactic_parameters={
+                "trigger_tokens": [
+                    "skip", "skipped",
+                    "step", "stepped",
+                    "stride",
+                    "every",
+                    "nth",
+                    "offset",
+                    "route", "path",
+                    "tunnel", "passage",
+                    "layer",
+                    "hide", "hides", "hidden",
+                    "read", "reads",
+                    "walk", "walks",
+                    "margin", "margins",
+                ],
+                "default_steps": [2, 3, 4, 5, 6, 7, 8, 10, 13, 17, 23],
+                "default_offsets": [0, 1, 2],
+                "trigger_match": "word_boundary_case_insensitive",
+                "applies_to_substitution_kinds": [
+                    "vigenere", "beaufort", "variant_beaufort",
+                    "caesar", "atbash",
+                ],
+                "applies_to_transposition_partners": [
+                    "rail_fence",
+                ],
+                "operation_source_labels": [
+                    "clue_numeral", "default_set",
+                ],
+                "coprimality_required": True,
+                "permutation_formula": (
+                    "output[i] = input[(offset + i*step) mod L]"
+                ),
             },
         ),
     ]

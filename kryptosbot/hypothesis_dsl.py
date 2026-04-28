@@ -67,6 +67,15 @@ CipherKind = Literal[
                             #   keeps coverage_vector and attempt artifact
                             #   layers explicit so telemetry distinguishes
                             #   "Caesar(8)" from a 1-letter Vigenere.
+    "skip_route",           # 2026-04-28 (LESSON-011): modular skip / step
+                            #   route transposition. Params: step (int,
+                            #   1 <= step < CT_LEN), offset (int,
+                            #   0 <= offset < CT_LEN). Reads positions in
+                            #   skip-step order with offset:
+                            #   output[i] = input[(offset + i*step) mod L].
+                            #   step and CT_LEN must be coprime so the
+                            #   walk visits every position exactly once.
+                            #   Length-preserving, deterministic.
 ]
 
 _VALID_CIPHER_KINDS: frozenset[str] = frozenset(
@@ -85,6 +94,7 @@ _VALID_CIPHER_KINDS: frozenset[str] = frozenset(
         "key_tape",  # B-DSL-expanded (2026-04-22): deferred
         "reverse_blocks",  # 2026-04-28: LESSON-008 block-reversal primitive
         "caesar",  # 2026-04-28: LESSON-009 canonical Caesar / ROT shift
+        "skip_route",  # 2026-04-28: LESSON-011 modular skip-route transposition
     ]
 )
 

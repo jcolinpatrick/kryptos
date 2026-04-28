@@ -342,6 +342,17 @@ _SUPPORTED_KINDS: frozenset[str] = frozenset({
     # telemetry distinguishes "caesar(shift=8)" from a Vigenere
     # spec that happened to pick a 1-character keyword.
     "caesar",
+    # 2026-04-28 (LESSON-011): modular skip / step / stride route.
+    # Params: ``step`` (int, 1 <= step < CT_LEN), ``offset``
+    # (int, 0 <= offset < CT_LEN). The translator emits a
+    # transposition_full perm with
+    # ``perm[i] = (offset + i*step) mod CT_LEN``. Length-preserving,
+    # deterministic, replayable from attempt artifacts. step and
+    # CT_LEN must be coprime so the walk visits every position
+    # exactly once; the translator rejects non-coprime steps with
+    # a clear error rather than silently producing a partial
+    # permutation.
+    "skip_route",
 })
 
 
@@ -961,6 +972,70 @@ def _translate_layer(layer: CipherLayer, binding: dict[str, Any]) -> dict[str, A
                     perm[start + k] = start + (block_size - 1 - k)
             # Tail (positions full_blocks*block_size .. CT_LEN-1) is
             # left as identity by the initial range(CT_LEN) seed.
+        return {
+            "type": "transposition_full",
+            "params": {
+                "perm": perm,
+                "direction": "undo",
+            },
+        }
+
+    if kind == "skip_route":
+        # 2026-04-28 (LESSON-011): modular skip / step / stride route.
+        # Decryption convention:
+        #     output[i] = input[(offset + i*step) mod CT_LEN]
+        # i.e. walking through the input every ``step`` positions
+        # starting at ``offset`` reads the plaintext in order. The
+        # kernel's transposition_full with direction="undo" computes
+        # ``inv = invert_perm(perm)`` and applies ``output[i] =
+        # input[inv[i]]``, so we emit ``perm`` = the INVERSE of the
+        # decryption map: ``perm[j] = ((j - offset) * step_inv) mod
+        # CT_LEN`` where step_inv is the modular inverse of step
+        # mod CT_LEN. This way the kernel inverts our ``perm`` back
+        # to the desired ``inv[i] = (offset + i*step) mod CT_LEN``
+        # and applies it.
+        #
+        # Length-preserving and deterministic. Coprimality of step
+        # and CT_LEN is required so the walk visits every position
+        # exactly once AND so the modular inverse exists. The
+        # translator rejects non-coprime steps with an explicit
+        # error.
+        step = binding.get("step")
+        offset = binding.get("offset")
+        if not isinstance(step, int):
+            raise DispatcherError(
+                f"skip_route layer requires int 'step'; got {step!r}"
+            )
+        if not isinstance(offset, int):
+            raise DispatcherError(
+                f"skip_route layer requires int 'offset'; got {offset!r}"
+            )
+        from kryptos.kernel.constants import CT_LEN
+        if not 1 <= step < CT_LEN:
+            raise DispatcherError(
+                f"skip_route step={step} must be in "
+                f"[1, {CT_LEN - 1}]"
+            )
+        if not 0 <= offset < CT_LEN:
+            raise DispatcherError(
+                f"skip_route offset={offset} must be in "
+                f"[0, {CT_LEN - 1}]"
+            )
+        import math as _math
+        g = _math.gcd(step, CT_LEN)
+        if g != 1:
+            raise DispatcherError(
+                f"skip_route step={step} is not coprime with "
+                f"CT_LEN={CT_LEN} (gcd={g}); the modular walk would "
+                "skip positions and the modular inverse of step "
+                "would not exist. Pick a step coprime to "
+                f"{CT_LEN}."
+            )
+        # Modular inverse of step mod CT_LEN via extended Euclidean.
+        step_inv = pow(step, -1, CT_LEN)
+        perm = [
+            ((j - offset) * step_inv) % CT_LEN for j in range(CT_LEN)
+        ]
         return {
             "type": "transposition_full",
             "params": {
