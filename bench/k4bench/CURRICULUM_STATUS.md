@@ -87,6 +87,51 @@ exhausting the current capability set.
 
 ---
 
+## K4B-011 — Observe garden fence
+
+- **Status:** CANDIDATE SOLVED PENDING SEALED EXTERNAL EVALUATOR
+  CONFIRMATION
+- **Top candidate crib_score:** 24/24 (BREAKTHROUGH band)
+- **Top candidate hypothesis_id:**
+  `hcc-k4b-011-i3_columnar_vigenere_rail_fence-rail_fence_columnar_vigenere-vigenere=observe-columnar=garden-rail_fence=3-substitution_keyword=observe-columnar_keyword=garden-columnar_width=6-columnar_col_order=(3, 0, 5, 1, 2, 4)-rail_fence_depth=3`
+- **Top candidate coverage vector:**
+  - layer_family: `i3_columnar_vigenere_rail_fence`
+  - layer_order: `[rail_fence, columnar, vigenere]`
+  - substitution_keyword: `OBSERVE` (vigenere role)
+  - transposition_keyword: `GARDEN` (columnar role; col_order =
+    `(3, 0, 5, 1, 2, 4)` from keyword stable rank)
+  - rail_fence_depth: `3`
+  - role_assignment_mode:
+    `independent_two_keyword_rail_fence_three_role`
+  - operation_source: `independent_keyword_rail_fence_composition`
+- **Run summary (db/k4bench/K4B-011.sqlite + post-LESSON-022 rerun):**
+  - theories=10046, experiments=10046
+  - status: 1 promising, 10045 eliminated
+- **Initial run (pre-LESSON-022) result:** max_crib 5/24, 0
+  promising, 0 BREAKTHROUGH. The composition gap was opened by a
+  read-only audit confirming the role detectors and independent
+  two-keyword assignment were correct, but the three-layer
+  combination [sub_clue_kw_a, columnar_clue_kw_b, rail_fence] was
+  structurally absent (zero specs even at uncapped emission).
+- **Lesson extracted: LESSON-022 — independent two-keyword rail-
+  fence three-role composition.**
+  - New family generators
+    `i3_columnar_<sub>_rail_fence` (3 sub kinds).
+  - Trigger: ≥ 2 distinct usable clue keywords (length ≥ 2) AND
+    ≥ 1 phrase-bound rail-fence depth.
+  - 36 specs emitted on K4B-011; 18 OBSERVE→GARDEN + 18 reverse
+    orientation; quota=40 three_layer_sandwich.
+  - Of those 36, exactly 1 hit crib=24/24.
+- **No new cipher primitive added.**
+- **No K4B-011-specific patch was made.**
+- **Sealed evaluator (`tools/evaluate_k4bench_records.py`) not
+  run on this VM; sealed answers are off-limits to controller-
+  reachable paths. Pending external confirmation.**
+- **No real-K4 progress claimed.**
+- **Next bench in line:** K4B-012.
+
+---
+
 ## Other K4Bench challenges
 
 Not yet tracked here; add entries only on lesson-surface, solve, or
