@@ -328,7 +328,13 @@ class TestHCCDiagonalCellOrder:
             # All other diagonal telemetry must remain populated.
             assert s.coverage.diagonal_axis in ("main", "anti")
             assert s.coverage.diagonal_order in ("forward", "reverse")
-            assert s.coverage.route_mode == "route_diagonal"
+            # LESSON-021 introduced an additional ``route_mode``
+            # value for the canonical width-only alias; both modes
+            # are valid diagonal-route surfaces.
+            assert s.coverage.route_mode in (
+                "route_diagonal",
+                "route_diagonal_canonical",
+            )
 
     def test_dict_round_trip_preserves_cell_order(self):
         specs = _gen(["KEYNAME", "TAG"], DIAG_CLUE_BASIC)

@@ -914,11 +914,46 @@ def _translate_layer(layer: CipherLayer, binding: dict[str, Any]) -> dict[str, A
         # diagonal_perm) trim positions beyond `length` so rows*cols
         # may exceed CT_LEN (ragged grids).
         variant = binding.get("variant")
-        if variant not in ("serpentine", "spiral", "diagonal"):
+        if variant not in (
+            "serpentine", "spiral", "diagonal", "diagonal_canonical",
+        ):
             raise DispatcherError(
                 f"route layer requires variant in "
-                f"{{'serpentine', 'spiral', 'diagonal'}}; got {variant!r}"
+                f"{{'serpentine', 'spiral', 'diagonal', "
+                f"'diagonal_canonical'}}; got {variant!r}"
             )
+        # LESSON-021: variant="diagonal_canonical" is a width-only
+        # alias. Width is the only required cipher-semantic parameter;
+        # rows/cols are inferred from width and CT_LEN. Translation
+        # branches early so the rows/cols validation below applies
+        # only to the row-major variants.
+        from kryptos.kernel.constants import CT_LEN
+        if variant == "diagonal_canonical":
+            width = binding.get("width")
+            if not (isinstance(width, int) and width >= 1):
+                raise DispatcherError(
+                    f"route variant='diagonal_canonical' requires "
+                    f"int 'width' >= 1; got {width!r}"
+                )
+            from kryptos.kernel.transforms.transposition import (
+                canonical_diagonal_perm,
+            )
+            perm = canonical_diagonal_perm(width, CT_LEN)
+            if len(perm) != CT_LEN:
+                raise DispatcherError(
+                    f"diagonal_canonical route translator produced "
+                    f"perm of length {len(perm)} (expected {CT_LEN}); "
+                    f"width={width}. This indicates a kernel "
+                    f"primitive contract drift and is not safe to "
+                    "dispatch."
+                )
+            return {
+                "type": "transposition_full",
+                "params": {
+                    "perm": list(perm),
+                    "direction": "undo",
+                },
+            }
         rows = binding.get("rows")
         cols = binding.get("cols")
         if not (isinstance(rows, int) and rows >= 1):
@@ -929,7 +964,6 @@ def _translate_layer(layer: CipherLayer, binding: dict[str, Any]) -> dict[str, A
             raise DispatcherError(
                 f"route layer requires int 'cols' >= 1; got {cols!r}"
             )
-        from kryptos.kernel.constants import CT_LEN
         if rows * cols < CT_LEN:
             raise DispatcherError(
                 f"route layer rows*cols={rows * cols} must be >= CT_LEN={CT_LEN} "

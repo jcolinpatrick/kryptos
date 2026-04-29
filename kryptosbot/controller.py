@@ -900,14 +900,37 @@ class ResearchController:
         # origin="programmatic_fallback". The _programmatic_fallback
         # method tags every record it emits; real theorist parses leave
         # the default "theorist_agent" in place.
-        fallback_fired_this_cycle = any(
-            getattr(c, "origin", "theorist_agent") == "programmatic_fallback"
-            for c in candidates
+        #
+        # Bench-mode HCC-only carve-out (2026-04-29, LESSON-021
+        # follow-up): when --hcc-only is set OR every candidate this
+        # cycle is a deterministic HCC seed (``_is_hcc_seed`` true),
+        # the dispatch is the intended deterministic-coverage path,
+        # NOT a degraded theorist. Counting those cycles toward the
+        # fallback streak produced spurious cycle-3 halts on bench
+        # reruns even though all seeds were correctly dispatched. The
+        # durable discriminator is
+        # ``minimal_test_spec.method == "bench_hand_cipher_core"``,
+        # which the real-K4 _programmatic_fallback path does NOT
+        # carry — so this carve-out cannot mask a degraded real-K4
+        # theorist.
+        all_hcc_seeds = bool(candidates) and all(
+            _is_hcc_seed(c) for c in candidates
         )
-        if fallback_fired_this_cycle:
-            self.state.consecutive_fallback_cycles += 1
-        else:
+        if self.config.hcc_only or all_hcc_seeds:
+            # Deterministic HCC-only dispatch — does not count as a
+            # fallback cycle.
             self.state.consecutive_fallback_cycles = 0
+            fallback_fired_this_cycle = False
+        else:
+            fallback_fired_this_cycle = any(
+                getattr(c, "origin", "theorist_agent")
+                == "programmatic_fallback"
+                for c in candidates
+            )
+            if fallback_fired_this_cycle:
+                self.state.consecutive_fallback_cycles += 1
+            else:
+                self.state.consecutive_fallback_cycles = 0
 
         if self.state.consecutive_fallback_cycles >= FALLBACK_HALT_STREAK:
             reason = (
@@ -925,8 +948,18 @@ class ResearchController:
         # Only count cycles that actually dispatched; a dry-run cycle
         # or one where critic/red-team eliminated everything is not a
         # meaningful "D=0".
+        #
+        # Bench-mode HCC-only carve-out (2026-04-29): the
+        # deterministic HCC seed catalogue is pre-validated and
+        # produces zero admissibility rejections by construction.
+        # Counting those cycles toward the D-zero streak halt is the
+        # same category error as the fallback-streak halt; same
+        # carve-out applies.
         dispatched_this_cycle = len(outcomes)
-        if dispatched_this_cycle > 0:
+        if self.config.hcc_only or all_hcc_seeds:
+            # Deterministic HCC seeds: D=0 by design, not a signal.
+            self.state.consecutive_d_zero_cycles = 0
+        elif dispatched_this_cycle > 0:
             d_count = sum(
                 1 for o in outcomes
                 if o.status == WorkerStatus.REJECTED_ADMISSIBILITY

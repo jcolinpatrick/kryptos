@@ -60,6 +60,7 @@ patch spec:
     LESSON-018  numeric_clue_caesar_trigger_semantics
     LESSON-019  numeric_route_columnar_three_layer_composition
     LESSON-020  diagonal_route_semantic_completeness
+    LESSON-021  diagonal_canonical_width_alias
 
 The constructor refuses to load any registry file containing
 forbidden fields, so a corrupted on-disk registry fails closed.
@@ -367,6 +368,31 @@ _VALID_TACTIC_KINDS: frozenset[str] = frozenset({
                                    # supported at the kernel layer
                                    # but not enumerated by HCC. No
                                    # new primitive (LESSON-020).
+    "diagonal_canonical_width_alias",  # 2026-04-29: a clue may
+                                   # specify a diagonal route only by
+                                   # width — "diagonal grid of width
+                                   # N" — without exposing axis,
+                                   # start-edge, or cell-order terms.
+                                   # Adds a kernel helper
+                                   # ``canonical_diagonal_perm`` that
+                                   # pins a single canonical
+                                   # convention (anti / forward /
+                                   # top_then_right / forward) and a
+                                   # dispatcher ``route variant=
+                                   # "diagonal_canonical"`` taking
+                                   # only ``width``. HCC emits
+                                   # ``route_diagonal_canonical``
+                                   # standalone family AND a
+                                   # LESSON-019 cross-product
+                                   # ``caesar_route_diagonal_
+                                   # canonical_columnar``. No new
+                                   # cipher primitive; the canonical
+                                   # convention is one of the
+                                   # combinations diagonal_perm
+                                   # already supports, just NAMED so
+                                   # auditors can identify the
+                                   # width-only convention directly
+                                   # (LESSON-021).
 })
 
 
@@ -2095,6 +2121,90 @@ def _default_lessons() -> list[Lesson]:
                 "no_new_primitive": True,
                 "bench_only": True,
                 "semantic_completeness_only": True,
+            },
+        ),
+        Lesson(
+            lesson_id="LESSON-021",
+            title="Canonical width-only diagonal route alias",
+            description=(
+                "A clue may specify a diagonal route ONLY by its "
+                "width — 'diagonal grid of width N' — without "
+                "exposing axis, start-edge, or within-diagonal "
+                "cell-order terms. The expanded LESSON-016 / "
+                "LESSON-020 parameter set (axis × order × start_edge "
+                "× cell_order) enumerates all combinations, but "
+                "downstream telemetry can lose track of WHICH "
+                "combination is 'the' canonical width-only reading.\n\n"
+                "LESSON-021 fixes the canonical convention as one "
+                "auditable surface:\n"
+                "  axis        = 'anti'\n"
+                "  order       = 'forward'\n"
+                "  start_edge  = 'top_then_right'\n"
+                "  cell_order  = 'forward'\n"
+                "  rows        = ceil(length / width)\n"
+                "  cols        = width\n\n"
+                "This is the natural top-left-to-bottom-right "
+                "anti-diagonal reading of a row-major-filled width-N "
+                "rectangle. It is one of the eight combinations "
+                "``diagonal_perm`` already supports — LESSON-021 "
+                "does NOT introduce a new kernel mechanism, it "
+                "names the canonical convention so HCC, dispatcher, "
+                "and downstream telemetry can refer to it directly.\n\n"
+                "Kernel: ``canonical_diagonal_perm(width, length)`` "
+                "— width-only alias; calls ``diagonal_perm`` with the "
+                "four canonical parameters pinned. Bijective and "
+                "length-preserving.\n\n"
+                "Dispatcher: ``route variant='diagonal_canonical'`` "
+                "takes only ``width``; rows / cols are inferred. "
+                "Invalid width fails closed (DispatcherError).\n\n"
+                "HCC families:\n"
+                "  route_diagonal_canonical                 standalone\n"
+                "  caesar_route_diagonal_canonical_columnar  LESSON-019\n"
+                "    cross-product (numeric Caesar + canonical\n"
+                "    diagonal width + columnar keyword)\n\n"
+                "CoverageVector telemetry:\n"
+                "  route_mode = 'route_diagonal_canonical'\n"
+                "  route_width / route_rows / route_cols\n"
+                "  route_width_source ('phrase_bound_route_width' |\n"
+                "    'default_set')\n"
+                "  diagonal_axis / diagonal_order /\n"
+                "    diagonal_start_edge / diagonal_cell_order all\n"
+                "    populated with the canonical pinned values.\n\n"
+                "EXPLICIT CAVEATS:\n"
+                "  - This is a benchmark curriculum capability.\n"
+                "  - It does NOT imply real K4 uses diagonal "
+                "    routing.\n"
+                "  - It does NOT solve any specific benchmark "
+                "    unless independently evaluated.\n"
+                "  - Sealed-answer text must not enter repo "
+                "    artifacts."
+            ),
+            tactic_kind="diagonal_canonical_width_alias",
+            applies_to_families=[
+                "route_diagonal_canonical",
+                "caesar_route_diagonal_canonical_columnar",
+            ],
+            generates_specs=True,
+            related_lesson_ids=[
+                "LESSON-014", "LESSON-016", "LESSON-017", "LESSON-018",
+                "LESSON-019", "LESSON-020",
+            ],
+            source_origin="k4bench-derived",
+            tactic_parameters={
+                "canonical_axis": "anti",
+                "canonical_order": "forward",
+                "canonical_start_edge": "top_then_right",
+                "canonical_cell_order": "forward",
+                "rows_formula": "ceil(length / width)",
+                "cols_formula": "width",
+                "width_min": 3,
+                "width_max": 16,
+                "width_sources": [
+                    "phrase_bound_route_width", "default_set",
+                ],
+                "no_new_primitive": True,
+                "bench_only": True,
+                "alias_only": True,
             },
         ),
     ]

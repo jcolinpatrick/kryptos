@@ -3351,6 +3351,36 @@ def _diagonal_route_layer(
     }
 
 
+def _diagonal_canonical_route_layer(width: int) -> dict[str, Any]:
+    """LESSON-021: width-only canonical diagonal route layer.
+
+    Width is the only required cipher-semantic parameter; the
+    canonical convention (axis="anti", order="forward",
+    start_edge="top_then_right", cell_order="forward") is pinned at
+    the dispatcher / kernel layer via ``canonical_diagonal_perm``.
+    rows / cols are inferred from width and CT_LEN at translation
+    time.
+
+    Use when a clue specifies only "diagonal grid of width N" with
+    no axis / start-edge / cell-order terms. For clues that DO
+    specify those dimensions, use ``_diagonal_route_layer`` with
+    explicit parameters.
+    """
+    if not isinstance(width, int) or width < 1:
+        raise ValueError(
+            f"_diagonal_canonical_route_layer: width must be int >= 1; "
+            f"got {width!r}"
+        )
+    return {
+        "kind": "route",
+        "alphabet": "AZ",
+        "params": [
+            {"name": "variant", "values": ["diagonal_canonical"]},
+            {"name": "width", "values": [width]},
+        ],
+    }
+
+
 def _detect_diagonal_trigger(clue_text: str) -> bool:
     """Return True iff the clue text contains any LESSON-016 trigger
     token (single-word, word-boundary) or trigger phrase (substring).
@@ -5701,6 +5731,8 @@ def _gen_numeric_caesar_route_columnar_family(
     """
     if route_partner_kind not in (
         "route_boustrophedon", "route_diagonal",
+        # LESSON-021: canonical width-only diagonal route alias.
+        "route_diagonal_canonical",
     ):
         raise ValueError(
             f"unsupported route_partner_kind {route_partner_kind!r}"
@@ -8283,6 +8315,140 @@ def _gen_diagonal_rail_fence_family(
     return out
 
 
+# ----------------------------------------------------------------------------
+# LESSON-021: canonical width-only diagonal route family generators
+# ----------------------------------------------------------------------------
+
+
+_CANONICAL_DIAGONAL_AXIS: str = "anti"
+_CANONICAL_DIAGONAL_ORDER: str = "forward"
+_CANONICAL_DIAGONAL_START_EDGE: str = "top_then_right"
+_CANONICAL_DIAGONAL_CELL_ORDER: str = "forward"
+
+
+def _canonical_diagonal_extras(
+    width: int, *, ct_length: int = 97,
+) -> tuple[tuple[str, Any], ...]:
+    """Standard ``extras`` tuple for a LESSON-021 spec.
+
+    Records the canonical convention pinned by
+    ``canonical_diagonal_perm``. ``rows`` is inferred from width.
+    """
+    rows = (ct_length + width - 1) // width
+    return (
+        ("route_width", width),
+        ("route_rows", rows),
+        ("route_cols", width),
+        ("route_ragged", (rows * width) > ct_length),
+        ("diagonal_axis", _CANONICAL_DIAGONAL_AXIS),
+        ("diagonal_order", _CANONICAL_DIAGONAL_ORDER),
+        ("diagonal_start_edge", _CANONICAL_DIAGONAL_START_EDGE),
+        ("diagonal_cell_order", _CANONICAL_DIAGONAL_CELL_ORDER),
+        ("diagonal_canonical", True),
+    )
+
+
+def _canonical_diagonal_widths_for_payload(
+    clue_text: str,
+    clue_keywords: Sequence[str],
+    *,
+    ct_length: int = 97,
+) -> list[tuple[int, str]]:
+    """Resolve canonical-diagonal widths with provenance.
+
+    Reuses the LESSON-014 phrase-bound width parser and the
+    LESSON-016 default grid set. Priority:
+      1. ``phrase_bound_route_width`` — anchor-bound numerals from
+         LESSON-014's ``_extract_phrase_bound_route_widths``
+      2. ``default_set`` — the LESSON-016 default cols values
+         derived from ``_DEFAULT_DIAGONAL_GRIDS``.
+
+    Returns deduplicated [(width, source), ...].
+    """
+    # Width bounds: 3..16 mirrors the LESSON-016 default-grid cols
+    # range; widths below 3 give degenerate diagonals (almost all
+    # singletons) and widths above 16 leave too few rows for any
+    # diagonal-stripe to be informative on a 97-char text.
+    out: list[tuple[int, str]] = []
+    seen: set[int] = set()
+    _CANONICAL_DIAG_MIN_WIDTH = 3
+    _CANONICAL_DIAG_MAX_WIDTH = 16
+
+    def _emit(w: int, src: str) -> None:
+        if not isinstance(w, int):
+            return
+        if w < _CANONICAL_DIAG_MIN_WIDTH or w > _CANONICAL_DIAG_MAX_WIDTH:
+            return
+        if w in seen:
+            return
+        seen.add(w)
+        out.append((w, src))
+
+    # Priority 1: phrase-bound widths.
+    for w in _extract_phrase_bound_route_widths(
+        clue_text, ct_length=ct_length,
+    ):
+        _emit(w, "phrase_bound_route_width")
+
+    # Priority 2: default-set cols (deduplicate against phrase-bound).
+    for rows, cols in _DEFAULT_DIAGONAL_GRIDS:
+        _emit(cols, "default_set")
+
+    return out
+
+
+def _gen_canonical_diagonal_alone_family(
+    *,
+    bench_slug: str,
+    widths: Sequence[tuple[int, str]],
+    ct_length: int = 97,
+) -> list[GeneratedSpec]:
+    """LESSON-021: canonical width-only diagonal route as a single-
+    layer transposition.
+
+    One spec per (width, source). The canonical convention is pinned
+    at the kernel layer via ``canonical_diagonal_perm``; HCC carries
+    the convention in CoverageVector telemetry but does NOT enumerate
+    axis / start_edge / cell_order variants here — those belong to
+    the explicit LESSON-016 / LESSON-020 generators.
+    """
+    family_label = "route_diagonal_canonical"
+    out: list[GeneratedSpec] = []
+    for width, source in widths:
+        rows = (ct_length + width - 1) // width
+        ragged = (rows * width) > ct_length
+        layer = _diagonal_canonical_route_layer(width)
+        cov = CoverageVector(
+            layer_family=family_label,
+            layer_order=("route_diagonal_canonical",),
+            role_assignment=(),
+            alphabet="AZ", n_layers=1,
+            extras=_canonical_diagonal_extras(width, ct_length=ct_length),
+            operation_source="canonical_diagonal_width",
+            route_mode="route_diagonal_canonical",
+            route_width=width,
+            route_rows=rows,
+            route_cols=width,
+            route_ragged=ragged,
+            route_direction=_CANONICAL_DIAGONAL_AXIS,
+            route_width_source=source,
+            diagonal_axis=_CANONICAL_DIAGONAL_AXIS,
+            diagonal_order=_CANONICAL_DIAGONAL_ORDER,
+            diagonal_start_edge=_CANONICAL_DIAGONAL_START_EDGE,
+            diagonal_cell_order=_CANONICAL_DIAGONAL_CELL_ORDER,
+        )
+        out.append(_make_spec(
+            bench_slug=bench_slug, family_label=family_label,
+            pipeline=[layer], coverage=cov,
+            notes=(
+                f"route_diagonal_canonical(width={width}) "
+                f"[width_source={source}, ragged={ragged}]"
+            ),
+            crib_alignment="post_transposition",
+        ))
+    return out
+
+
 def _gen_three_layer_sandwich_family(
     *,
     bench_slug: str,
@@ -8499,6 +8665,15 @@ _LESSON_017_FAMILY_CLASSIFIERS: tuple[tuple[str, str], ...] = (
     # matches the other LESSON-013/-014 sandwich families.
     ("three_layer_sandwich", "caesar_route_boustrophedon_columnar"),
     ("three_layer_sandwich", "caesar_route_diagonal_columnar"),
+    # LESSON-021: canonical width-only diagonal in the LESSON-019
+    # three-layer composition. Same three_layer_sandwich class so
+    # retention parity with the explicit-diagonal sibling family.
+    (
+        "three_layer_sandwich",
+        "caesar_route_diagonal_canonical_columnar",
+    ),
+    # LESSON-021: standalone canonical diagonal route alone family.
+    ("trigger_route", "route_diagonal_canonical"),
     # Front-of-catalog (legacy keyword-pair, i3, standalone).
     ("front_of_catalog", "i3_columnar_"),
     ("front_of_catalog", "i3_myszkowski_"),
@@ -8910,6 +9085,8 @@ def generate_layered_specs(
             "route_diagonal_beaufort",
             "route_diagonal_variant_beaufort",
             "route_diagonal_rail_fence",
+            # LESSON-021: canonical width-only diagonal route alias.
+            "route_diagonal_canonical",
         }
 
     # 2026-04-28 (LESSON-014): width-only ragged boustrophedon route
@@ -9532,6 +9709,19 @@ def generate_layered_specs(
                 rail_fence_depths=tuple(rail_fence_depths),
                 cell_orders=l020_cell_orders,
             ))
+        # --- LESSON-021: canonical width-only diagonal route ----------
+        # Emitted alongside the explicit diagonal variants, NOT in
+        # place of them. The canonical alias is the natural reading
+        # for clues that specify "diagonal grid of width N" without
+        # axis / start-edge / cell-order terms.
+        if "route_diagonal_canonical" in active:
+            l021_widths = _canonical_diagonal_widths_for_payload(
+                clue_text, cleaned,
+            )
+            out.extend(_gen_canonical_diagonal_alone_family(
+                bench_slug=bench_slug,
+                widths=l021_widths,
+            ))
 
     # --- LESSON-018: numeric Caesar/ROT promotion ---------------------
     # Placement note: emitted BEFORE LESSON-014 / -015 / -016 so the
@@ -9888,6 +10078,106 @@ def generate_layered_specs(
                             numeric_only=True,
                         )
                     )
+                    # --- LESSON-021: numeric Caesar + canonical diagonal
+                    # width + columnar three-layer composition.
+                    # Reuses the LESSON-021 width pool (phrase-bound +
+                    # default-set) so a clue saying "ten-wide diagonal"
+                    # gets a top-priority width-10 canonical route in
+                    # addition to the explicit-axis variants enumerated
+                    # above.
+                    l021_diag_widths = (
+                        _canonical_diagonal_widths_for_payload(
+                            clue_text, cleaned,
+                        )
+                    )
+                    # Cap at top 6 widths so the (widths × shifts ×
+                    # keywords × layer_orders) cartesian stays within
+                    # the LESSON-017 three_layer_sandwich quota.
+                    l021_diag_widths_capped = l021_diag_widths[:6]
+
+                    def _l021_canon_layer_factory() -> list[dict[str, Any]]:
+                        return [
+                            _diagonal_canonical_route_layer(w)
+                            for w, _src in l021_diag_widths_capped
+                        ]
+
+                    # Map each canonical layer back to its (width,
+                    # source) for telemetry. The factory output index
+                    # aligns with l021_diag_widths_capped order.
+                    _l021_layer_width_map = {
+                        id(_diagonal_canonical_route_layer(w)): (w, src)
+                        for w, src in l021_diag_widths_capped
+                    }
+                    # id() of a freshly-built layer dict is unstable
+                    # across re-instantiation; use a closure that
+                    # rebuilds the mapping by matching the layer's
+                    # ``width`` param directly.
+
+                    def _l021_extras(
+                        layer: dict[str, Any],
+                    ) -> tuple[tuple[str, Any], ...]:
+                        params = {
+                            p["name"]: p["values"][0]
+                            for p in layer.get("params", [])
+                        }
+                        return (
+                            ("canon_width", params.get("width")),
+                        )
+
+                    def _l021_cov_extras(
+                        layer: dict[str, Any],
+                    ) -> dict[str, Any]:
+                        params = {
+                            p["name"]: p["values"][0]
+                            for p in layer.get("params", [])
+                        }
+                        width = int(params["width"])
+                        rows = (97 + width - 1) // width
+                        # Resolve the width's provenance from the
+                        # capped width pool (linear scan; pool is
+                        # <= 6 entries).
+                        src = "default_set"
+                        for w, prov in l021_diag_widths_capped:
+                            if w == width:
+                                src = prov
+                                break
+                        return {
+                            "route_mode": "route_diagonal_canonical",
+                            "route_rows": rows,
+                            "route_cols": width,
+                            "route_width": width,
+                            "route_ragged": (rows * width) > 97,
+                            "route_direction": _CANONICAL_DIAGONAL_AXIS,
+                            "route_width_source": src,
+                            "diagonal_axis": _CANONICAL_DIAGONAL_AXIS,
+                            "diagonal_order": _CANONICAL_DIAGONAL_ORDER,
+                            "diagonal_start_edge": (
+                                _CANONICAL_DIAGONAL_START_EDGE
+                            ),
+                            "diagonal_cell_order": (
+                                _CANONICAL_DIAGONAL_CELL_ORDER
+                            ),
+                        }
+
+                    if l021_diag_widths_capped:
+                        out.extend(
+                            _gen_numeric_caesar_route_columnar_family(
+                                bench_slug=bench_slug,
+                                route_partner_kind=(
+                                    "route_diagonal_canonical"
+                                ),
+                                route_layer_factory=(
+                                    _l021_canon_layer_factory
+                                ),
+                                route_partner_extras_factory=(
+                                    _l021_extras
+                                ),
+                                coverage_extras_factory=_l021_cov_extras,
+                                promoted_shifts=promoted_shifts,
+                                columnar_keywords=l019_columnar_keywords,
+                                numeric_only=True,
+                            )
+                        )
 
     # --- LESSON-014: width-only ragged boustrophedon families ---------
     # Trigger-driven (boustrophedon_triggered set above). When the
