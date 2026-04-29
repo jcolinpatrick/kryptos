@@ -196,8 +196,9 @@ def diagonal_perm(
     axis: str = "main",
     order: str = "forward",
     start_edge: str = "top_then_left",
+    cell_order: str = "forward",
 ) -> List[int]:
-    """Diagonal grid-route transposition (LESSON-016).
+    """Diagonal grid-route transposition (LESSON-016 / LESSON-020).
 
     Reads an ``rows x cols`` grid in diagonal-stripe order and emits
     a permutation in the standard ``output[i] = input[perm[i]]``
@@ -252,10 +253,43 @@ def diagonal_perm(
                                  traverse up-right to the
                                  smallest-row end.
 
+      ``cell_order``  (LESSON-020)
+        Independent within-diagonal ordering applied AFTER the
+        ``start_edge`` selection. Decouples the "which-end-starts"
+        choice (``start_edge``) from the "which-direction-each-
+        diagonal-is-read" choice when callers want both varied
+        explicitly. Values:
+
+          ``"forward"`` — preserve the cell order as produced by
+                           ``start_edge`` selection. Default.
+                           Backward-compatible: every existing
+                           caller that omits ``cell_order`` gets
+                           identical output to the pre-LESSON-020
+                           implementation.
+          ``"reverse"`` — reverse each diagonal's cell list AFTER
+                           ``start_edge`` selection. Note that for a
+                           uniform reversal this is mathematically
+                           equivalent to swapping ``start_edge``
+                           between its two valid values, but
+                           exposing it as an orthogonal parameter
+                           lets the HCC enumerate cell-order
+                           variants without touching ``start_edge``
+                           and lets callers reason about the two
+                           dimensions independently.
+          ``"alternate"``— alternate forward/reverse by diagonal
+                           group index — even-indexed diagonals
+                           (after ``order="reverse"`` flip is
+                           applied) preserve the ``start_edge``
+                           direction; odd-indexed diagonals are
+                           reversed. This is a boustrophedon
+                           traversal on the diagonal-stripe sequence
+                           and is genuinely distinct from any
+                           ``start_edge`` setting.
+
     Raises:
       ValueError: if ``rows`` or ``cols`` < 1, or ``axis`` /
-        ``order`` / ``start_edge`` is invalid (the valid
-        ``start_edge`` values are constrained by ``axis``).
+        ``order`` / ``start_edge`` / ``cell_order`` is invalid (the
+        valid ``start_edge`` values are constrained by ``axis``).
     """
     if rows < 1 or cols < 1:
         raise ValueError(
@@ -279,6 +313,11 @@ def diagonal_perm(
             f"diagonal_perm: start_edge {start_edge!r} not valid "
             f"for axis={axis!r}; valid values: "
             f"{valid_start_edges[axis]}"
+        )
+    if cell_order not in ("forward", "reverse", "alternate"):
+        raise ValueError(
+            f"diagonal_perm: cell_order must be 'forward', 'reverse', "
+            f"or 'alternate'; got {cell_order!r}"
         )
 
     diagonals: list[list[tuple[int, int]]] = []
@@ -311,6 +350,16 @@ def diagonal_perm(
 
     if order == "reverse":
         diagonals.reverse()
+
+    # LESSON-020: within-diagonal cell ordering. Applied AFTER
+    # start_edge AND order so it composes orthogonally.
+    if cell_order == "reverse":
+        diagonals = [list(reversed(d)) for d in diagonals]
+    elif cell_order == "alternate":
+        diagonals = [
+            list(reversed(d)) if (i % 2 == 1) else d
+            for i, d in enumerate(diagonals)
+        ]
 
     perm: list[int] = []
     for diag in diagonals:
