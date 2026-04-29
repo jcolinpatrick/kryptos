@@ -56,6 +56,7 @@ patch spec:
     LESSON-014  width_only_ragged_boustrophedon_route
     LESSON-015  alternate_row_reversal_folded_strip
     LESSON-016  diagonal_grid_route_enumeration
+    LESSON-017  stratified_hcc_bench_fast_family_quotas
 
 The constructor refuses to load any registry file containing
 forbidden fields, so a corrupted on-disk registry fails closed.
@@ -285,6 +286,26 @@ _VALID_TACTIC_KINDS: frozenset[str] = frozenset({
                                    # instantiate route operations,
                                    # not only keyword material
                                    # (LESSON-016).
+    "stratified_hcc_bench_fast_family_quotas",  # 2026-04-29:
+                                   # deterministic two-pass scheduler
+                                   # for the HCC catalog.
+                                   # Pre-LESSON-017, the validation
+                                   # tail truncated the spec stream
+                                   # from the front whenever
+                                   # ``len(validated) >= max_specs``
+                                   # — on multi-trigger clues this
+                                   # starved later-emitted learned
+                                   # families (LESSON-014 / -015 /
+                                   # -016 sandwiches received zero
+                                   # dispatched specs on K4B-009).
+                                   # LESSON-017 replaces front-
+                                   # truncation with a quota pass
+                                   # (per-family bounded minimum
+                                   # exposure) followed by a
+                                   # residual pass (legacy emission-
+                                   # order fill). Scheduler-only;
+                                   # no new cipher primitive
+                                   # (LESSON-017).
 })
 
 
@@ -1566,6 +1587,115 @@ def _default_lessons() -> list[Lesson]:
                     "alone family enumerates 8 variants per grid; "
                     "paired families cap at 4 to keep "
                     "(sub × alpha × grid × variant) bounded"
+                ),
+            },
+        ),
+        Lesson(
+            lesson_id="LESSON-017",
+            title="Stratified HCC bench-fast family quotas",
+            description=(
+                "When multiple learned HCC triggers fire on the same "
+                "clue, front-loaded ``max_specs`` truncation can "
+                "starve later-emitted capability families. Audits of "
+                "the post-LESSON-016 catalog showed multi-trigger "
+                "clues generating ~18000 specs and capping at 10000 "
+                "via a simple ``len(validated) >= max_specs: break`` "
+                "tail, deterministically dropping ~8000 specs and "
+                "leaving more than 20 entire families with zero "
+                "dispatched candidates — including row_reverse "
+                "combinations, three-layer route_boustrophedon "
+                "sandwiches, and Caesar combinations with a route "
+                "variant.\n\n"
+                "The general lesson: bench-fast must guarantee "
+                "bounded per-family exposure BEFORE residual "
+                "emission-order fill, so triggered learned "
+                "capabilities are not deterministically dropped by "
+                "ordering accident.\n\n"
+                "LESSON-017 replaces the validation tail's front-"
+                "truncation in ``hand_cipher_core.generate_layered_"
+                "specs`` with a deterministic two-pass scheduler:\n"
+                "  Pass 1 (quota): walk the FULL emitted stream "
+                "    once. For each spec, retain it if its family "
+                "    has not yet hit its per-family quota AND total "
+                "    retained < max_specs.\n"
+                "  Pass 2 (residual): walk the same stream again. "
+                "    For each spec not retained in pass 1, retain it "
+                "    if total retained < max_specs.\n"
+                "Output ordering: pass 1 specs first (in original "
+                "emission order), then pass 2 specs (in original "
+                "emission order). This preserves the small-cap "
+                "front-of-catalogue invariant — at very small caps, "
+                "the first emitted specs are the legacy keyword-pair "
+                "family (e.g. columnar_vigenere), all retained by "
+                "quota, all at the front of the catalogue.\n\n"
+                "Quota classes (conservative; total quota budget on "
+                "multi-trigger clues sums to ~5500 specs, leaving "
+                "~4500 residual at cap=10000):\n"
+                "  front_of_catalog     200  (legacy keyword-pair, "
+                "                              i3, standalone, "
+                "                              enumerated columnar "
+                "                              three-layer)\n"
+                "  trigger_route        80   (route_boustrophedon /  "
+                "                              row_reverse / "
+                "                              route_diagonal / "
+                "                              skip_route / "
+                "                              reverse_blocks pair "
+                "                              families and Caesar "
+                "                              combinations)\n"
+                "  three_layer_sandwich 40   (multi-lesson cross-"
+                "                              products)\n"
+                "  default              40   (alone families, "
+                "                              Quagmire)\n\n"
+                "Coverage_vector telemetry: every retained spec "
+                "carries scheduling_pass ('quota'|'residual'), "
+                "family_quota (int), family_quota_rank (int within "
+                "family among quota-retained; 0 for residual), and "
+                "hcc_max_specs (the cap that was applied).\n\n"
+                "EXPLICIT CAVEATS:\n"
+                "  - This is scheduler coverage, NOT a new cipher "
+                "    primitive.\n"
+                "  - This does NOT imply real-K4 progress.\n"
+                "  - The audit did not solve any benchmark; it "
+                "    re-scheduled an existing dispatch surface so "
+                "    triggered learned capabilities all reach the "
+                "    worker pool.\n"
+                "  - A separate role-assignment gap (clue numerals "
+                "    that imply Caesar shift values without an "
+                "    explicit shift/rotate/caesar trigger word, so "
+                "    the Caesar family is NEVER GENERATED in the "
+                "    first place) is tracked as a follow-up "
+                "    candidate. LESSON-017 only schedules specs "
+                "    already generated by the existing trigger "
+                "    surface."
+            ),
+            tactic_kind="stratified_hcc_bench_fast_family_quotas",
+            applies_to_families=["*"],
+            generates_specs=False,
+            related_lesson_ids=[
+                "LESSON-006", "LESSON-008", "LESSON-009",
+                "LESSON-011", "LESSON-013", "LESSON-014",
+                "LESSON-015", "LESSON-016",
+            ],
+            source_origin="k4bench-derived",
+            tactic_parameters={
+                "scheduler_passes": ["quota", "residual"],
+                "quota_classes": {
+                    "front_of_catalog": 200,
+                    "trigger_route": 80,
+                    "three_layer_sandwich": 40,
+                    "default": 40,
+                },
+                "deterministic": True,
+                "bench_only": True,
+                "no_new_primitive": True,
+                "preserves_k4b_001_invariant": (
+                    "At cap=4 with CEDAR/LANTERN, columnar_vigenere "
+                    "still occupies the entire catalog (4 specs)."
+                ),
+                "k4b_009_unblocking": (
+                    "Pre-LESSON-017: 23 families received zero "
+                    "dispatched specs on K4B-009. Post-LESSON-017: "
+                    "all 58 triggered families receive >= 26 specs."
                 ),
             },
         ),

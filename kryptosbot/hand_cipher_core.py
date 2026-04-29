@@ -992,6 +992,33 @@ class CoverageVector:
     # ``None`` is the default for specs that do not include a
     # row_reverse layer.
     row_reverse_identity: Optional[bool] = None
+    # 2026-04-29 (LESSON-017): stratified bench-fast scheduling
+    # telemetry. Set by the two-pass scheduler in
+    # ``generate_layered_specs`` so attempt artifacts can answer
+    # "was this spec retained because of its family quota guarantee
+    # or because residual cap was still available?". Empty when
+    # the spec did not pass through the LESSON-017 scheduler (e.g.
+    # a future caller invoking _make_spec directly without going
+    # through generate_layered_specs).
+    #
+    #   scheduling_pass    — "quota" | "residual" | ""
+    #   family_quota       — the per-family minimum-exposure quota
+    #                        in effect when this spec was scheduled
+    #   family_quota_rank  — 1-indexed rank within the family among
+    #                        quota-retained specs; 0 for residual
+    #                        specs and for non-scheduled specs
+    #   hcc_max_specs      — the max_specs cap that was applied
+    #
+    # Downstream attribution: a winning spec with
+    # ``scheduling_pass="quota"`` indicates the family would have
+    # been TRUNCATED under pre-LESSON-017 front-loaded scheduling;
+    # ``scheduling_pass="residual"`` indicates the family was
+    # already in the front of the catalog and would have survived
+    # any reasonable cap.
+    scheduling_pass: str = ""
+    family_quota: Optional[int] = None
+    family_quota_rank: Optional[int] = None
+    hcc_max_specs: Optional[int] = None
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -1044,6 +1071,11 @@ class CoverageVector:
             "diagonal_axis": self.diagonal_axis,
             "diagonal_order": self.diagonal_order,
             "diagonal_start_edge": self.diagonal_start_edge,
+            # LESSON-017 scheduler telemetry. Always emitted.
+            "scheduling_pass": self.scheduling_pass,
+            "family_quota": self.family_quota,
+            "family_quota_rank": self.family_quota_rank,
+            "hcc_max_specs": self.hcc_max_specs,
         }
 
     @classmethod
@@ -1161,6 +1193,24 @@ class CoverageVector:
             diagonal_axis=str(d.get("diagonal_axis", "")),
             diagonal_order=str(d.get("diagonal_order", "")),
             diagonal_start_edge=str(d.get("diagonal_start_edge", "")),
+            # LESSON-017 scheduler telemetry. Lenient parsing for
+            # pre-LESSON-017 ledger rows.
+            scheduling_pass=str(d.get("scheduling_pass", "")),
+            family_quota=(
+                int(d["family_quota"])
+                if isinstance(d.get("family_quota"), int)
+                else None
+            ),
+            family_quota_rank=(
+                int(d["family_quota_rank"])
+                if isinstance(d.get("family_quota_rank"), int)
+                else None
+            ),
+            hcc_max_specs=(
+                int(d["hcc_max_specs"])
+                if isinstance(d.get("hcc_max_specs"), int)
+                else None
+            ),
         )
 
     @property
@@ -7400,6 +7450,309 @@ _DEFAULT_RAIL_FENCE_DEPTHS: tuple[int, ...] = (3, 5)
 _DEFAULT_ROUTE_GRIDS: tuple[tuple[int, int], ...] = ((7, 14), (10, 10))
 
 
+# ============================================================================
+# LESSON-017: stratified HCC bench-fast family quotas
+# ============================================================================
+#
+# Pre-LESSON-017 the validation tail truncated the spec stream from
+# the front: ``if len(validated) >= max_specs: break``. On clues
+# that fired many learned triggers (e.g. K4B-009 fired LESSON-014
+# boustrophedon + LESSON-015 row_reverse + LESSON-016 diagonal
+# simultaneously), 8,250 specs out of 18,250 were dropped — and
+# 23 entire families received zero dispatched specs.
+#
+# LESSON-017 replaces front-truncation with a deterministic two-pass
+# scheduler:
+#
+#   Pass 1 (quota): walk the original spec stream once. For each
+#     spec, retain it if its family has not yet hit its per-family
+#     quota AND total retained < max_specs. The quota guarantees
+#     bounded minimum exposure for every triggered family.
+#
+#   Pass 2 (residual): walk the same stream again. For each spec
+#     not retained in pass 1, retain it if total retained <
+#     max_specs. Pass 2 preserves the legacy emission-order fill
+#     beyond the quota guarantees.
+#
+# Output ordering: pass 1 specs first (in their original emission
+# order), then pass 2 specs (in their original emission order).
+# This preserves the K4B-001 cap-preservation invariant — at very
+# small caps (e.g. cap=4), the first 4 emitted specs are
+# columnar_vigenere, all retained by quota, all in the front of the
+# catalog. Larger caps get the full stratification benefit.
+#
+# Determinism: identical inputs (clue, keyword pool, max_specs)
+# produce identical scheduling output. The quota table is a fixed
+# module constant; the pass walks are fixed-order; no random
+# sampling.
+
+# Per-family quota classes. The classifier reads layer_family by
+# substring patterns; an unmatched family falls into the default
+# bucket. Conservative values: total quota budget across all 57
+# triggered families on K4B-009-shape clues sums to ~5500-6000,
+# leaving 4000-4500 for residual fill at cap=10000.
+_LESSON_017_FAMILY_QUOTAS: dict[str, int] = {
+    # Front-of-catalog legacy keyword-pair families. Higher quota
+    # protects the K4B-001 / K4B-006 critical paths against
+    # cap-pressure on multi-trigger clues. Quota=200 means each of
+    # these families gets ~200 specs in the catalog before residual
+    # fill kicks in.
+    "front_of_catalog": 200,
+
+    # Triggered route / row-reverse / diagonal families. Quota=80
+    # gives each LESSON-014 / LESSON-015 / LESSON-016 family enough
+    # exposure to surface its symmetry classes (axis × order ×
+    # start_edge × keyword × alphabet) without monopolizing the
+    # cap.
+    "trigger_route": 80,
+
+    # Three-layer sandwiches that combine multiple lessons.
+    # Quota=40 — these emit ~480-960 specs each at full scale; 40
+    # is a conservative guarantee that does NOT starve them while
+    # leaving budget for everything else.
+    "three_layer_sandwich": 40,
+
+    # Catch-all for smaller / less-common families (rail_fence_*,
+    # myszkowski_*, quagmire, route_*, route_boustrophedon (alone),
+    # row_reverse (alone), atbash combinations, caesar
+    # combinations).
+    "default": 40,
+}
+
+# Patterns that classify a layer_family into a quota class. First
+# match wins; order matters. Substring match against the family
+# label.
+_LESSON_017_FAMILY_CLASSIFIERS: tuple[tuple[str, str], ...] = (
+    # Three-layer sandwiches (LESSON-013, LESSON-014, LESSON-015,
+    # LESSON-016 cross-products). Identified by THREE
+    # underscore-separated segments where the middle segment is a
+    # transposition kind. Recognized exemplars below; pattern is
+    # by exact-prefix match.
+    ("three_layer_sandwich", "vigenere_route_boustrophedon_row_reverse"),
+    ("three_layer_sandwich", "beaufort_route_boustrophedon_row_reverse"),
+    ("three_layer_sandwich", "variant_beaufort_route_boustrophedon_row_reverse"),
+    ("three_layer_sandwich", "vigenere_route_boustrophedon_rail_fence"),
+    ("three_layer_sandwich", "beaufort_route_boustrophedon_rail_fence"),
+    ("three_layer_sandwich", "variant_beaufort_route_boustrophedon_rail_fence"),
+    ("three_layer_sandwich", "vigenere_route_boustrophedon_columnar"),
+    ("three_layer_sandwich", "beaufort_route_boustrophedon_columnar"),
+    ("three_layer_sandwich", "variant_beaufort_route_boustrophedon_columnar"),
+    ("three_layer_sandwich", "vigenere_route_row_reverse"),
+    ("three_layer_sandwich", "beaufort_route_row_reverse"),
+    ("three_layer_sandwich", "variant_beaufort_route_row_reverse"),
+    ("three_layer_sandwich", "vigenere_skip_route_rail_fence"),
+    ("three_layer_sandwich", "beaufort_skip_route_rail_fence"),
+    ("three_layer_sandwich", "variant_beaufort_skip_route_rail_fence"),
+    ("three_layer_sandwich", "vigenere_skip_route_atbash"),
+    ("three_layer_sandwich", "beaufort_skip_route_atbash"),
+    ("three_layer_sandwich", "variant_beaufort_skip_route_atbash"),
+    ("three_layer_sandwich", "vigenere_skip_route_caesar"),
+    ("three_layer_sandwich", "beaufort_skip_route_caesar"),
+    ("three_layer_sandwich", "variant_beaufort_skip_route_caesar"),
+    ("three_layer_sandwich", "vigenere_reverse_blocks_atbash"),
+    ("three_layer_sandwich", "beaufort_reverse_blocks_atbash"),
+    ("three_layer_sandwich", "variant_beaufort_reverse_blocks_atbash"),
+    ("three_layer_sandwich", "vigenere_reverse_blocks_caesar"),
+    ("three_layer_sandwich", "beaufort_reverse_blocks_caesar"),
+    ("three_layer_sandwich", "variant_beaufort_reverse_blocks_caesar"),
+    ("three_layer_sandwich", "vigenere_rail_fence_beaufort"),
+    ("three_layer_sandwich", "beaufort_rail_fence_vigenere"),
+    # LESSON-013 enumerated columnar three-layer.
+    ("front_of_catalog", "columnar_vigenere_rail_fence"),
+    ("front_of_catalog", "columnar_beaufort_rail_fence"),
+    ("front_of_catalog", "columnar_variant_beaufort_rail_fence"),
+    # Caesar three-layer sandwiches.
+    ("three_layer_sandwich", "caesar_columnar_atbash"),
+    ("three_layer_sandwich", "caesar_myszkowski_atbash"),
+    ("three_layer_sandwich", "caesar_rail_fence_atbash"),
+    ("three_layer_sandwich", "caesar_route_atbash"),
+    # Front-of-catalog (legacy keyword-pair, i3, standalone).
+    ("front_of_catalog", "i3_columnar_"),
+    ("front_of_catalog", "i3_myszkowski_"),
+    ("front_of_catalog", "i3_rail_fence_"),
+    ("front_of_catalog", "i3_route_"),
+    ("front_of_catalog", "columnar_vigenere"),
+    ("front_of_catalog", "columnar_beaufort"),
+    ("front_of_catalog", "columnar_variant_beaufort"),
+    ("front_of_catalog", "myszkowski_vigenere"),
+    ("front_of_catalog", "myszkowski_beaufort"),
+    ("front_of_catalog", "rail_fence_vigenere"),
+    ("front_of_catalog", "rail_fence_beaufort"),
+    ("front_of_catalog", "route_vigenere"),
+    ("front_of_catalog", "route_beaufort"),
+    ("front_of_catalog", "standalone_vigenere"),
+    ("front_of_catalog", "standalone_beaufort"),
+    ("front_of_catalog", "standalone_variant_beaufort"),
+    # Triggered route / row_reverse / diagonal pair families.
+    ("trigger_route", "route_boustrophedon_vigenere"),
+    ("trigger_route", "route_boustrophedon_beaufort"),
+    ("trigger_route", "route_boustrophedon_variant_beaufort"),
+    ("trigger_route", "route_boustrophedon_caesar"),
+    ("trigger_route", "route_boustrophedon_atbash"),
+    ("trigger_route", "route_boustrophedon_rail_fence"),
+    ("trigger_route", "route_diagonal_vigenere"),
+    ("trigger_route", "route_diagonal_beaufort"),
+    ("trigger_route", "route_diagonal_variant_beaufort"),
+    ("trigger_route", "route_diagonal_rail_fence"),
+    ("trigger_route", "row_reverse_vigenere"),
+    ("trigger_route", "row_reverse_beaufort"),
+    ("trigger_route", "row_reverse_variant_beaufort"),
+    ("trigger_route", "row_reverse_caesar"),
+    ("trigger_route", "row_reverse_atbash"),
+    ("trigger_route", "row_reverse_rail_fence"),
+    ("trigger_route", "skip_route_vigenere"),
+    ("trigger_route", "skip_route_beaufort"),
+    ("trigger_route", "skip_route_variant_beaufort"),
+    ("trigger_route", "skip_route_caesar"),
+    ("trigger_route", "skip_route_atbash"),
+    ("trigger_route", "skip_route_rail_fence"),
+    ("trigger_route", "reverse_blocks_vigenere"),
+    ("trigger_route", "reverse_blocks_beaufort"),
+    ("trigger_route", "reverse_blocks_variant_beaufort"),
+    ("trigger_route", "reverse_blocks_caesar"),
+    ("trigger_route", "reverse_blocks_atbash"),
+    ("trigger_route", "caesar_columnar"),
+    ("trigger_route", "caesar_myszkowski"),
+    ("trigger_route", "caesar_rail_fence"),
+    ("trigger_route", "caesar_route"),
+    ("trigger_route", "caesar_atbash"),
+    # Default catch-all (alone families and Quagmire).
+)
+
+
+def _quota_for_family(family_label: str) -> int:
+    """Return the per-family quota for a given layer_family label.
+
+    First-match-wins prefix lookup against
+    ``_LESSON_017_FAMILY_CLASSIFIERS``; falls back to the
+    ``"default"`` quota for unrecognised families.
+    """
+    for quota_class, prefix in _LESSON_017_FAMILY_CLASSIFIERS:
+        if family_label.startswith(prefix):
+            return _LESSON_017_FAMILY_QUOTAS.get(
+                quota_class, _LESSON_017_FAMILY_QUOTAS["default"],
+            )
+    return _LESSON_017_FAMILY_QUOTAS["default"]
+
+
+def _stratified_schedule(
+    specs: Sequence[GeneratedSpec],
+    max_specs: int,
+) -> list[GeneratedSpec]:
+    """Two-pass deterministic scheduler.
+
+    Walks the input spec stream twice. Pass 1 retains up to
+    each family's quota; pass 2 fills residual capacity. The
+    output preserves emission order WITHIN each pass.
+
+    Side effect: each retained spec's ``coverage`` is replaced with
+    a copy carrying scheduling-telemetry fields (scheduling_pass,
+    family_quota, family_quota_rank, hcc_max_specs). The original
+    GeneratedSpec is not mutated; ``dataclasses.replace`` produces
+    a fresh frozen copy.
+
+    Determinism: identical input + max_specs produces identical
+    output (same order, same telemetry).
+    """
+    import dataclasses
+
+    if max_specs < 0:
+        raise ValueError(f"max_specs must be >= 0; got {max_specs}")
+    if max_specs == 0:
+        return []
+
+    # Pass 1: quota.
+    family_counts: dict[str, int] = {}
+    pass1: list[GeneratedSpec] = []
+    pass1_indices: set[int] = set()
+    for i, gs in enumerate(specs):
+        if len(pass1) >= max_specs:
+            break
+        fam = gs.coverage.layer_family
+        quota = _quota_for_family(fam)
+        seen = family_counts.get(fam, 0)
+        if seen >= quota:
+            continue
+        family_counts[fam] = seen + 1
+        new_cov = dataclasses.replace(
+            gs.coverage,
+            scheduling_pass="quota",
+            family_quota=quota,
+            family_quota_rank=seen + 1,
+            hcc_max_specs=max_specs,
+        )
+        new_gs = dataclasses.replace(gs, coverage=new_cov)
+        pass1.append(new_gs)
+        pass1_indices.add(i)
+
+    # Pass 2: residual.
+    pass2: list[GeneratedSpec] = []
+    remaining_budget = max_specs - len(pass1)
+    if remaining_budget > 0:
+        for i, gs in enumerate(specs):
+            if len(pass2) >= remaining_budget:
+                break
+            if i in pass1_indices:
+                continue
+            fam = gs.coverage.layer_family
+            new_cov = dataclasses.replace(
+                gs.coverage,
+                scheduling_pass="residual",
+                family_quota=_quota_for_family(fam),
+                family_quota_rank=0,
+                hcc_max_specs=max_specs,
+            )
+            new_gs = dataclasses.replace(gs, coverage=new_cov)
+            pass2.append(new_gs)
+
+    # Final ordering: pass 1 first, then pass 2 — both in original
+    # emission order. Pass 1 first preserves the K4B-001
+    # cap-preservation invariant (small caps keep front-of-catalog
+    # families at the front).
+    return pass1 + pass2
+
+
+def coverage_audit_summary(
+    specs: Sequence[GeneratedSpec],
+    *,
+    total_generated_before_cap: Optional[int] = None,
+) -> dict[str, Any]:
+    """Lightweight summary of an HCC catalog after scheduling.
+
+    Returns a dict with:
+      total_retained, total_dropped, total_generated_before_cap (when
+      provided by caller), retained_by_family, dropped_by_family
+      (only when total_generated_before_cap is supplied), and
+      retained_by_scheduling_pass (the LESSON-017 split).
+
+    Designed for quick read-only audits of a generator pass; the
+    caller is expected to pass the FULL pre-cap stream length when
+    they have it (e.g. by re-running ``generate_layered_specs`` at
+    a high max_specs).
+    """
+    from collections import Counter
+
+    retained = list(specs)
+    by_family: Counter[str] = Counter()
+    by_pass: Counter[str] = Counter()
+    for gs in retained:
+        fam = gs.coverage.layer_family
+        by_family[fam] += 1
+        sp = gs.coverage.scheduling_pass or "<unscheduled>"
+        by_pass[sp] += 1
+    out: dict[str, Any] = {
+        "total_retained": len(retained),
+        "retained_by_family": dict(by_family),
+        "retained_by_scheduling_pass": dict(by_pass),
+    }
+    if total_generated_before_cap is not None:
+        out["total_generated_before_cap"] = int(total_generated_before_cap)
+        out["total_dropped"] = int(
+            max(0, total_generated_before_cap - len(retained))
+        )
+    return out
+
+
 def generate_layered_specs(
     clue_words: Sequence[str],
     *,
@@ -8469,6 +8822,12 @@ def generate_layered_specs(
     # kernel-side enforcement change could invalidate one of them and
     # we want fail-closed silence rather than cascading dispatch
     # failures inside the worker.
+    #
+    # 2026-04-29 (LESSON-017): validation runs on the FULL emitted
+    # stream (no front-truncation). The cap is then applied by the
+    # stratified two-pass scheduler so triggered families are not
+    # starved of dispatched specs when many lessons fire on the
+    # same clue.
     validated: list[GeneratedSpec] = []
     for gs in out:
         ok, errs = _spec_passes_validation(gs.raw_spec)
@@ -8479,9 +8838,10 @@ def generate_layered_specs(
             )
             continue
         validated.append(gs)
-        if len(validated) >= max_specs:
-            break
-    return validated
+    # LESSON-017: stratified scheduling (two-pass: quota then residual).
+    # When ``len(validated) <= max_specs`` the scheduler still runs so
+    # every retained spec carries scheduling_pass telemetry.
+    return _stratified_schedule(validated, max_specs)
 
 
 def _spec_passes_validation(raw: dict[str, Any]) -> tuple[bool, list[str]]:
