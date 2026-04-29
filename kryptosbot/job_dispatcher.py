@@ -906,13 +906,18 @@ def _translate_layer(layer: CipherLayer, binding: dict[str, Any]) -> dict[str, A
         #                           for any serpentine-Vigenère hypothesis.
         #   variant="spiral"      — outside-in spiral. Takes optional
         #                           'clockwise' bool.
-        # Both kernel primitives (serpentine_perm, spiral_perm) trim
-        # positions beyond `length` so rows*cols may exceed CT_LEN.
+        #   variant="diagonal"    — LESSON-016: diagonal grid-route.
+        #                           Takes axis ("main"|"anti"),
+        #                           order ("forward"|"reverse"),
+        #                           start_edge (axis-constrained).
+        # All three kernel primitives (serpentine_perm, spiral_perm,
+        # diagonal_perm) trim positions beyond `length` so rows*cols
+        # may exceed CT_LEN (ragged grids).
         variant = binding.get("variant")
-        if variant not in ("serpentine", "spiral"):
+        if variant not in ("serpentine", "spiral", "diagonal"):
             raise DispatcherError(
                 f"route layer requires variant in "
-                f"{{'serpentine', 'spiral'}}; got {variant!r}"
+                f"{{'serpentine', 'spiral', 'diagonal'}}; got {variant!r}"
             )
         rows = binding.get("rows")
         cols = binding.get("cols")
@@ -934,10 +939,53 @@ def _translate_layer(layer: CipherLayer, binding: dict[str, Any]) -> dict[str, A
             from kryptos.kernel.transforms.transposition import serpentine_perm
             vertical = bool(binding.get("vertical", False))
             perm = serpentine_perm(rows, cols, CT_LEN, vertical=vertical)
-        else:  # spiral
+        elif variant == "spiral":
             from kryptos.kernel.transforms.transposition import spiral_perm
             clockwise = bool(binding.get("clockwise", True))
             perm = spiral_perm(rows, cols, CT_LEN, clockwise=clockwise)
+        else:  # variant == "diagonal" — LESSON-016
+            # Validate axis / order / start_edge with explicit
+            # whitelists. Fail closed: unknown values raise
+            # DispatcherError, NEVER silently default.
+            axis = binding.get("diagonal_axis")
+            order = binding.get("diagonal_order")
+            start_edge = binding.get("diagonal_start_edge")
+            if axis not in ("main", "anti"):
+                raise DispatcherError(
+                    f"route variant='diagonal' requires "
+                    f"diagonal_axis in {{'main', 'anti'}}; "
+                    f"got {axis!r}"
+                )
+            if order not in ("forward", "reverse"):
+                raise DispatcherError(
+                    f"route variant='diagonal' requires "
+                    f"diagonal_order in {{'forward', 'reverse'}}; "
+                    f"got {order!r}"
+                )
+            valid_start = {
+                "main": ("top_then_left", "left_then_top"),
+                "anti": ("top_then_right", "right_then_top"),
+            }
+            if start_edge not in valid_start[axis]:
+                raise DispatcherError(
+                    f"route variant='diagonal' axis={axis!r} "
+                    f"requires diagonal_start_edge in "
+                    f"{valid_start[axis]}; got {start_edge!r}"
+                )
+            from kryptos.kernel.transforms.transposition import diagonal_perm
+            perm = diagonal_perm(
+                rows, cols, CT_LEN,
+                axis=axis, order=order, start_edge=start_edge,
+            )
+            if len(perm) != CT_LEN:
+                raise DispatcherError(
+                    f"diagonal route translator produced perm of length "
+                    f"{len(perm)} (expected {CT_LEN}); rows={rows}, "
+                    f"cols={cols}, axis={axis}, order={order}, "
+                    f"start_edge={start_edge}. This indicates a kernel "
+                    "primitive contract drift and is not safe to "
+                    "dispatch."
+                )
         return {
             "type": "transposition_full",
             "params": {
@@ -1600,7 +1648,27 @@ def execute(
         repo_root = here.parent
         artifact_root = repo_root / "results" / "dsl_jobs"
     artifact_root.mkdir(parents=True, exist_ok=True)
-    artifact_dir = artifact_root / f"{spec.hypothesis_id}_{spec.spec_hash}"
+    # Filename-safety: HCC-derived hypothesis_ids can be >200 chars
+    # for 3-layer route_boustrophedon + columnar enumerated specs
+    # (the layer_order + role_assignment + extras serialize into the
+    # slug). Linux/ext4 caps a SINGLE pathname component at 255 bytes,
+    # so a long id + spec_hash + the trailing artifact filename trips
+    # OSError errno 36 ("File name too long"). The 2026-04-28 real-K4
+    # HCC audit hit this failure mode on ~9700 of 28000 specs.
+    #
+    # Truncate long hypothesis_ids to a 180-char head plus the
+    # spec_hash; the spec_hash provides the full disambiguation
+    # (it's a 16-char sha256-16 over the canonical spec, so two
+    # specs with the same truncated head but different params get
+    # distinct directories via spec_hash). The truncation affects
+    # filesystem layout only; the JobResult.hypothesis_id field
+    # carries the full id so audit consumers don't lose
+    # information.
+    _ARTIFACT_DIR_HID_MAX = 180
+    safe_hid = spec.hypothesis_id
+    if len(safe_hid) > _ARTIFACT_DIR_HID_MAX:
+        safe_hid = safe_hid[:_ARTIFACT_DIR_HID_MAX]
+    artifact_dir = artifact_root / f"{safe_hid}_{spec.spec_hash}"
     artifact_dir.mkdir(parents=True, exist_ok=True)
     artifact_path = artifact_dir / "result.json"
 

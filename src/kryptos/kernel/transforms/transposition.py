@@ -188,6 +188,139 @@ def spiral_perm(
     return perm
 
 
+def diagonal_perm(
+    rows: int,
+    cols: int,
+    length: int = 97,
+    *,
+    axis: str = "main",
+    order: str = "forward",
+    start_edge: str = "top_then_left",
+) -> List[int]:
+    """Diagonal grid-route transposition (LESSON-016).
+
+    Reads an ``rows x cols`` grid in diagonal-stripe order and emits
+    a permutation in the standard ``output[i] = input[perm[i]]``
+    convention. Ragged grids are supported by trimming positions
+    >= ``length`` (mirrors ``serpentine_perm`` / ``spiral_perm``).
+
+    Length-preserving and bijective when ``rows * cols >= length``;
+    each grid cell maps to a unique input position and every position
+    in [0, length) is reached exactly once.
+
+    Parameters:
+
+      ``axis``
+        ``"main"``   — main diagonals (NW->SE / down-right). A main
+                        diagonal is the set of cells where
+                        ``r - c`` is constant. Indexed by
+                        ``a = r - c``, ranging from ``-(cols-1)`` to
+                        ``rows-1``.
+        ``"anti"``   — anti-diagonals (NE->SW / down-left). An
+                        anti-diagonal is the set of cells where
+                        ``r + c`` is constant. Indexed by
+                        ``d = r + c``, ranging from 0 to
+                        ``rows + cols - 2``.
+
+      ``order``
+        ``"forward"`` — visit diagonals in increasing index order
+                        (``a`` ascending for main, ``d`` ascending
+                        for anti).
+        ``"reverse"`` — visit diagonals in decreasing index order.
+
+      ``start_edge``
+        Within each diagonal there are two ends; ``start_edge``
+        names which end is read first. The valid values depend on
+        ``axis``:
+
+        For ``axis="main"``:
+          ``"top_then_left"`` — start at the smallest-row end (the
+                                 cell on the top or right edge of
+                                 the grid) and traverse down-right
+                                 to the largest-row end.
+          ``"left_then_top"`` — start at the largest-row end (the
+                                 cell on the left or bottom edge)
+                                 and traverse up-left to the
+                                 smallest-row end.
+
+        For ``axis="anti"``:
+          ``"top_then_right"``— start at the smallest-row end (top
+                                 or left edge) and traverse
+                                 down-left to the largest-row end.
+          ``"right_then_top"``— start at the largest-row end
+                                 (right or bottom edge) and
+                                 traverse up-right to the
+                                 smallest-row end.
+
+    Raises:
+      ValueError: if ``rows`` or ``cols`` < 1, or ``axis`` /
+        ``order`` / ``start_edge`` is invalid (the valid
+        ``start_edge`` values are constrained by ``axis``).
+    """
+    if rows < 1 or cols < 1:
+        raise ValueError(
+            f"diagonal_perm: rows={rows} cols={cols} must be >= 1"
+        )
+    if axis not in ("main", "anti"):
+        raise ValueError(
+            f"diagonal_perm: axis must be 'main' or 'anti'; got {axis!r}"
+        )
+    if order not in ("forward", "reverse"):
+        raise ValueError(
+            f"diagonal_perm: order must be 'forward' or 'reverse'; "
+            f"got {order!r}"
+        )
+    valid_start_edges = {
+        "main": ("top_then_left", "left_then_top"),
+        "anti": ("top_then_right", "right_then_top"),
+    }
+    if start_edge not in valid_start_edges[axis]:
+        raise ValueError(
+            f"diagonal_perm: start_edge {start_edge!r} not valid "
+            f"for axis={axis!r}; valid values: "
+            f"{valid_start_edges[axis]}"
+        )
+
+    diagonals: list[list[tuple[int, int]]] = []
+    if axis == "main":
+        # diagonal index a = r - c, range -(cols-1) to rows-1.
+        for a in range(-(cols - 1), rows):
+            cells: list[tuple[int, int]] = []
+            r_start = max(0, a)
+            r_stop = min(rows, a + cols)
+            for r in range(r_start, r_stop):
+                c = r - a
+                cells.append((r, c))
+            # cells now in increasing-r order = "top_then_left".
+            if start_edge == "left_then_top":
+                cells.reverse()
+            diagonals.append(cells)
+    else:  # axis == "anti"
+        # diagonal index d = r + c, range 0 to rows+cols-2.
+        for d in range(0, rows + cols - 1):
+            cells = []
+            r_start = max(0, d - cols + 1)
+            r_stop = min(rows, d + 1)
+            for r in range(r_start, r_stop):
+                c = d - r
+                cells.append((r, c))
+            # cells in increasing-r order = "top_then_right".
+            if start_edge == "right_then_top":
+                cells.reverse()
+            diagonals.append(cells)
+
+    if order == "reverse":
+        diagonals.reverse()
+
+    perm: list[int] = []
+    for diag in diagonals:
+        for r, c in diag:
+            pos = r * cols + c
+            if pos < length:
+                perm.append(pos)
+    return perm
+
+
 def strip_perm(width: int, strip_order: List[int], length: int = 97) -> List[int]:
     """Row/strip reordering transposition."""
     perm: list[int] = []

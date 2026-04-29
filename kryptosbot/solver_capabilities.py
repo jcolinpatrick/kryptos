@@ -55,6 +55,7 @@ patch spec:
     LESSON-013  arbitrary_columnar_order_enumeration
     LESSON-014  width_only_ragged_boustrophedon_route
     LESSON-015  alternate_row_reversal_folded_strip
+    LESSON-016  diagonal_grid_route_enumeration
 
 The constructor refuses to load any registry file containing
 forbidden fields, so a corrupted on-disk registry fails closed.
@@ -259,6 +260,31 @@ _VALID_TACTIC_KINDS: frozenset[str] = frozenset({
                                    # and (for three-layer families)
                                    # route + route_boustrophedon
                                    # (LESSON-015).
+    "diagonal_grid_route_enumeration",  # 2026-04-29: diagonal grid-
+                                   # route transposition. Generalizes
+                                   # K4B-009 into a reusable tactic.
+                                   # The existing transposition catalog
+                                   # had no diagonal-route primitive
+                                   # (serpentine_perm reads rows;
+                                   # spiral_perm reads outside-in;
+                                   # neither traces the NW->SE or
+                                   # NE->SW stripes a diagonal clue
+                                   # actually names). LESSON-016
+                                   # extends the existing ``route``
+                                   # kind with variant="diagonal" plus
+                                   # axis (main|anti) / order
+                                   # (forward|reverse) /
+                                   # start_edge (axis-constrained
+                                   # whitelist). The kernel's
+                                   # ``diagonal_perm`` produces a
+                                   # length-preserving bijection
+                                   # under ragged grids. Clue
+                                   # geometry words such as diagonal
+                                   # / oblique / slant / cross /
+                                   # lattice / stones / mason now
+                                   # instantiate route operations,
+                                   # not only keyword material
+                                   # (LESSON-016).
 })
 
 
@@ -1399,6 +1425,147 @@ def _default_lessons() -> list[Lesson]:
                     "(only row 0 exists; row 0 is even; parity=odd "
                     "selects no rows). Used by the catalog to "
                     "express substitution-alone-equivalent specs."
+                ),
+            },
+        ),
+        Lesson(
+            lesson_id="LESSON-016",
+            title="Diagonal grid-route enumeration",
+            description=(
+                "When clue-pack language gestures at a diagonal grid "
+                "read — words such as diagonal, diagonals, oblique, "
+                "slant, slanted, slash, backslash, cross, lattice, "
+                "rising, falling, stone(s), mason, masonry, course(s), "
+                "or compass shorthand NW-SE / NE-SW — the candidate "
+                "pipeline MUST enumerate a diagonal route "
+                "transposition layer. Pre-LESSON-016 the HCC "
+                "catalogue treated such clue tokens only as candidate "
+                "keyword material (substitution / alphabet / "
+                "transposition keys), which is the wrong granularity: "
+                "a clue that names a diagonal READ describes a route "
+                "operation, not a key.\n\n"
+                "The general lesson: clue geometry words such as "
+                "diagonal must instantiate route operations, not "
+                "only keyword material.\n\n"
+                "LESSON-016 extends the existing ``route`` DSL kind "
+                "with ``variant=\"diagonal\"`` plus three params:\n"
+                "  diagonal_axis        — 'main' (NW->SE) or 'anti' "
+                "                          (NE->SW)\n"
+                "  diagonal_order       — 'forward' or 'reverse' "
+                "                          (order in which diagonals "
+                "                          are visited)\n"
+                "  diagonal_start_edge  — within each diagonal, which "
+                "                          end is read first; "
+                "                          axis-constrained: "
+                "                          {top_then_left, "
+                "                          left_then_top} for main, "
+                "                          {top_then_right, "
+                "                          right_then_top} for anti\n"
+                "The kernel's ``diagonal_perm`` produces a length-"
+                "preserving bijection over [0, CT_LEN) under any "
+                "rows*cols >= CT_LEN grid (ragged supported). The "
+                "dispatcher rejects unknown axis / order / "
+                "start_edge values and rows*cols < CT_LEN with "
+                "DispatcherError; there are no silent defaults.\n\n"
+                "Grid sources: phrase-bound widths (reusing "
+                "LESSON-014's anchor parser so 'ten-wide grid' "
+                "produces both an 8-column boustrophedon and a "
+                "10-column diagonal candidate from the same clue), "
+                "clue keyword lengths in [3, 16], and a curated "
+                "default-grid set covering common K4-shape ragged "
+                "rectangles (10x10, 13x8, 8x13, 7x14, 14x7, ...).\n\n"
+                "Variant enumeration is bounded: alone family "
+                "enumerates the full 8 (axis × order × start_edge) "
+                "tuple per grid; substitution-paired and rail_fence-"
+                "paired families cap at the canonical 4 (main/anti × "
+                "forward/reverse with the natural top_then_* "
+                "start_edge for each axis) so the (sub × alpha × "
+                "grid × variant × layer-order) cartesian stays "
+                "within bench-fast budgets.\n\n"
+                "Coverage_vector telemetry: ``route_mode`` = "
+                "'route_diagonal'; ``route_rows`` / ``route_cols`` "
+                "/ ``route_width`` (cols mirror) / ``route_ragged`` "
+                "are populated like other route variants; new "
+                "``diagonal_axis`` / ``diagonal_order`` / "
+                "``diagonal_start_edge`` fields capture the read "
+                "geometry; ``operation_source`` records "
+                "phrase_bound_diagonal_width / clue_keyword_length / "
+                "default_set provenance.\n\n"
+                "The lesson is GENERALIZED: it stores trigger "
+                "vocabulary, grid-source priority rules, and family "
+                "pairings only — never benchmark-specific decryptions "
+                "or sealed material. It does NOT claim that the real "
+                "K4 mechanism is diagonal."
+            ),
+            tactic_kind="diagonal_grid_route_enumeration",
+            applies_to_families=[
+                "route_diagonal",
+                "route_diagonal_vigenere",
+                "route_diagonal_beaufort",
+                "route_diagonal_variant_beaufort",
+                "route_diagonal_rail_fence",
+            ],
+            generates_specs=True,
+            related_lesson_ids=[
+                "LESSON-002", "LESSON-006", "LESSON-007",
+                "LESSON-012", "LESSON-014",
+            ],
+            source_origin="k4bench-derived",
+            tactic_parameters={
+                "trigger_tokens": [
+                    "diagonal", "diagonals",
+                    "oblique", "obliques",
+                    "slant", "slants", "slanted", "slanting",
+                    "slash", "slashes",
+                    "backslash", "backslashes",
+                    "cross", "crosses", "crossed", "crossing",
+                    "lattice", "lattices",
+                    "rising", "falling",
+                    "nwse", "nesw",
+                    "mason", "masons", "masonry",
+                    "stone", "stones",
+                    "course", "courses",
+                ],
+                "trigger_phrases": [
+                    "nw-se", "nw to se", "nw->se",
+                    "ne-sw", "ne to sw", "ne->sw",
+                    "rising diagonal", "falling diagonal",
+                    "alternating diagonals",
+                ],
+                "axes": ["main", "anti"],
+                "orders": ["forward", "reverse"],
+                "start_edges_main": [
+                    "top_then_left", "left_then_top",
+                ],
+                "start_edges_anti": [
+                    "top_then_right", "right_then_top",
+                ],
+                "default_grids": [
+                    [10, 10], [13, 8], [8, 13], [7, 14],
+                    [14, 7], [12, 9], [9, 12], [11, 10], [10, 11],
+                ],
+                "trigger_match": "word_boundary_case_insensitive",
+                "applies_to_substitution_kinds": [
+                    "vigenere", "beaufort", "variant_beaufort",
+                ],
+                "applies_to_transposition_partners": [
+                    "rail_fence",
+                ],
+                "operation_source_labels": [
+                    "phrase_bound_diagonal_width",
+                    "clue_keyword_length",
+                    "default_set",
+                ],
+                "permutation_formula": (
+                    "kernel diagonal_perm(rows, cols, CT_LEN, "
+                    "axis, order, start_edge); ragged trim by "
+                    "kernel primitive"
+                ),
+                "length_preserving": True,
+                "bounded_universe": (
+                    "alone family enumerates 8 variants per grid; "
+                    "paired families cap at 4 to keep "
+                    "(sub × alpha × grid × variant) bounded"
                 ),
             },
         ),

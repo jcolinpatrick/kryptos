@@ -952,6 +952,23 @@ class CoverageVector:
     row_reverse_source: str = ""
     row_reverse_ragged: Optional[bool] = None
     row_reverse_start_row: Optional[int] = None
+    # 2026-04-29 (LESSON-016): diagonal grid-route telemetry. Empty
+    # when the spec does not include a route(variant='diagonal')
+    # layer; populated otherwise so downstream coverage analysis can
+    # answer "did we test main-axis forward top_then_left at width
+    # 10?". Reused fields:
+    #   route_mode  — set to "route_diagonal"
+    #   route_rows / route_cols / route_width / route_ragged —
+    #                 populated as for other route variants
+    # New fields:
+    #   diagonal_axis        — "main" | "anti"
+    #   diagonal_order       — "forward" | "reverse"
+    #   diagonal_start_edge  — axis-constrained: top_then_left /
+    #                          left_then_top / top_then_right /
+    #                          right_then_top
+    diagonal_axis: str = ""
+    diagonal_order: str = ""
+    diagonal_start_edge: str = ""
     # 2026-04-28 (LESSON-015 audit-hygiene): explicit identity flag.
     # ``row_reverse_identity=True`` means the (width, parity, start_row)
     # triple selects no row of length > 1, so the layer is the
@@ -1021,6 +1038,12 @@ class CoverageVector:
             "row_reverse_ragged": self.row_reverse_ragged,
             "row_reverse_start_row": self.row_reverse_start_row,
             "row_reverse_identity": self.row_reverse_identity,
+            # LESSON-016 fields. Always emitted so attempt artifact
+            # readers can tell "field absent in old data" from "field
+            # present but inapplicable here".
+            "diagonal_axis": self.diagonal_axis,
+            "diagonal_order": self.diagonal_order,
+            "diagonal_start_edge": self.diagonal_start_edge,
         }
 
     @classmethod
@@ -1133,6 +1156,11 @@ class CoverageVector:
                 if isinstance(d.get("row_reverse_identity"), bool)
                 else None
             ),
+            # LESSON-016 fields. Lenient parsing: older ledger rows
+            # that predate LESSON-016 read back as empty strings.
+            diagonal_axis=str(d.get("diagonal_axis", "")),
+            diagonal_order=str(d.get("diagonal_order", "")),
+            diagonal_start_edge=str(d.get("diagonal_start_edge", "")),
         )
 
     @property
@@ -2691,6 +2719,250 @@ def _reverse_blocks_layer(
             {"name": "block_mode", "values": [block_mode]},
         ],
     }
+
+
+# ============================================================================
+# LESSON-016: diagonal grid-route transposition
+# ============================================================================
+#
+# Clue language such as "diagonal", "oblique", "slant", "cross",
+# "lattice", "stones", "mason", "courses", or directional shorthand
+# ("NW-SE", "NE-SW") describes a grid-route transposition that reads
+# the ciphertext along diagonal stripes rather than rows or columns.
+# Pre-LESSON-016, the HCC catalogue had no diagonal-route family;
+# clue tokens like "diagonal" were consumed only as candidate keyword
+# material (substitution / alphabet / transposition keys), missing
+# the route operation the clue actually names.
+#
+# The general lesson: clue geometry words must instantiate route
+# operations, not only keyword material.
+#
+# Supported via the existing ``route`` DSL kind with
+# ``variant="diagonal"`` plus three params (axis, order,
+# start_edge). The dispatcher dispatches through the kernel's
+# ``diagonal_perm`` primitive.
+
+_DIAGONAL_TRIGGER_TOKENS: frozenset[str] = frozenset({
+    # Direct geometry vocabulary.
+    "diagonal", "diagonals",
+    "oblique", "obliques",
+    "slant", "slants", "slanted", "slanting",
+    "slash", "slashes",
+    "backslash", "backslashes",
+    "cross", "crosses", "crossed", "crossing",
+    "lattice", "lattices",
+    "rising", "falling",
+    # Compass shorthand for diagonal directions.
+    "nwse", "nesw",
+    # Masonry / stone-grid vocabulary; common public-puzzle phrasing
+    # for diagonal stone-course layouts.
+    "mason", "masons", "masonry",
+    "stone", "stones",
+    "course", "courses",
+})
+
+# Multi-word phrase triggers (case-insensitive substring).
+_DIAGONAL_TRIGGER_PHRASES: tuple[str, ...] = (
+    "nw-se", "nw to se", "nw->se",
+    "ne-sw", "ne to sw", "ne->sw",
+    "rising diagonal", "falling diagonal",
+    "alternating diagonals",
+)
+
+# Default rectangular grids that the audit and bench-fast HCC mode
+# may enumerate for diagonal routes. Each (rows, cols) pair has
+# rows*cols >= CT_LEN (97) so the dispatcher rows*cols guard does
+# not reject them; ragged trimming is handled by the kernel
+# primitive.
+_DEFAULT_DIAGONAL_GRIDS: tuple[tuple[int, int], ...] = (
+    (10, 10),    # 100 cells, ragged 3
+    (13, 8),     # 104 cells, ragged 7 — cols matches LESSON-014's
+                 #   8-column case
+    (8, 13),     # transpose
+    (7, 14),     # 98 cells, ragged 1
+    (14, 7),     # transpose
+    (12, 9),     # 108 cells
+    (9, 12),     # transpose
+    (11, 10),    # 110 cells (covers cols=10 grids)
+    (10, 11),
+)
+
+# Cap the number of (axis, order, start_edge) variants enumerated
+# per grid in the substitution-paired families. The full cartesian
+# is 2*2*2 = 8 per grid; capping at 4 picks the canonical set
+# (main/anti × forward/reverse with the natural top_then_*
+# start_edge for each axis) and skips the inverted start_edge to
+# bound the universe. The alone family enumerates all 8.
+_DIAGONAL_PAIR_VARIANT_CAP: int = 4
+
+
+def _diagonal_route_layer(
+    rows: int, cols: int,
+    *,
+    axis: str = "main",
+    order: str = "forward",
+    start_edge: str = "top_then_left",
+) -> dict[str, Any]:
+    """Build a route layer dict for the diagonal variant.
+
+    The dispatcher's ``route`` translator validates rows*cols >=
+    CT_LEN and the (axis, order, start_edge) whitelist; this builder
+    rejects only obvious shape errors so the dispatcher remains the
+    single source of truth for cipher-semantic validation.
+    """
+    if not isinstance(rows, int) or rows < 1:
+        raise ValueError(
+            f"_diagonal_route_layer: rows must be int >= 1; got {rows!r}"
+        )
+    if not isinstance(cols, int) or cols < 1:
+        raise ValueError(
+            f"_diagonal_route_layer: cols must be int >= 1; got {cols!r}"
+        )
+    if axis not in ("main", "anti"):
+        raise ValueError(
+            f"_diagonal_route_layer: axis must be 'main' or 'anti'; "
+            f"got {axis!r}"
+        )
+    return {
+        "kind": "route",
+        "alphabet": "AZ",
+        "params": [
+            {"name": "variant", "values": ["diagonal"]},
+            {"name": "rows", "values": [rows]},
+            {"name": "cols", "values": [cols]},
+            {"name": "diagonal_axis", "values": [axis]},
+            {"name": "diagonal_order", "values": [order]},
+            {"name": "diagonal_start_edge", "values": [start_edge]},
+        ],
+    }
+
+
+def _detect_diagonal_trigger(clue_text: str) -> bool:
+    """Return True iff the clue text contains any LESSON-016 trigger
+    token (single-word, word-boundary) or trigger phrase (substring).
+    """
+    if not isinstance(clue_text, str) or not clue_text:
+        return False
+    lower = clue_text.lower()
+    for phrase in _DIAGONAL_TRIGGER_PHRASES:
+        if phrase in lower:
+            return True
+    for token in _DIAGONAL_TRIGGER_TOKENS:
+        idx = 0
+        while True:
+            pos = lower.find(token, idx)
+            if pos < 0:
+                break
+            before_ok = pos == 0 or not lower[pos - 1].isalnum()
+            after_pos = pos + len(token)
+            after_ok = (
+                after_pos >= len(lower) or not lower[after_pos].isalnum()
+            )
+            if before_ok and after_ok:
+                return True
+            idx = pos + 1
+    return False
+
+
+def _diagonal_grids_for_payload(
+    clue_text: str,
+    clue_keywords: Sequence[str],
+    *,
+    ct_length: int = 97,
+) -> list[tuple[tuple[int, int], str]]:
+    """Resolve diagonal-route grids with provenance.
+
+    Priority:
+      1. ``phrase_bound_diagonal_width`` — width-anchor numerals
+         from LESSON-014's ``_extract_phrase_bound_route_widths``
+         (e.g. "ten-wide grid"). For each phrase-bound width W,
+         emit (ceil(CT_LEN/W), W).
+      2. ``clue_keyword_length`` — len(clue_keyword) used as a
+         cols dimension when in [3, 16] (the diagonal route gains
+         no resolution from very small or very large widths).
+      3. ``default_set`` — ``_DEFAULT_DIAGONAL_GRIDS``.
+
+    Returns a deduplicated list of ((rows, cols), source) entries.
+    LESSON-014's row/route/column phrase anchors are reused so a
+    single clue numeral binding ("ten-wide") feeds both lessons
+    consistently.
+    """
+    out: list[tuple[tuple[int, int], str]] = []
+    seen: set[tuple[int, int]] = set()
+
+    def _emit(rows: int, cols: int, source: str) -> None:
+        if rows < 1 or cols < 1 or rows * cols < ct_length:
+            return
+        key = (rows, cols)
+        if key in seen:
+            return
+        seen.add(key)
+        out.append((key, source))
+
+    # Priority 1: phrase-bound widths. Reuse LESSON-014's parser so
+    # a clue with "ten-wide grid" produces both an 8-column
+    # boustrophedon AND a 10-column diagonal candidate without
+    # duplicating the phrase taxonomy.
+    if isinstance(clue_text, str) and clue_text:
+        for w in _extract_phrase_bound_route_widths(
+            clue_text, ct_length=ct_length,
+        ):
+            if 3 <= w <= 16:
+                rows = (ct_length + w - 1) // w
+                _emit(rows, w, "phrase_bound_diagonal_width")
+
+    # Priority 2: clue keyword lengths.
+    for kw in clue_keywords:
+        if not isinstance(kw, str):
+            continue
+        upper = kw.upper().strip()
+        if not upper.isalpha():
+            continue
+        w = len(upper)
+        if 3 <= w <= 16:
+            rows = (ct_length + w - 1) // w
+            _emit(rows, w, "clue_keyword_length")
+
+    # Priority 3: default grids.
+    for rows, cols in _DEFAULT_DIAGONAL_GRIDS:
+        _emit(rows, cols, "default_set")
+
+    return out
+
+
+def _diagonal_variant_combinations(
+    *, cap: Optional[int] = None,
+) -> list[tuple[str, str, str]]:
+    """Return the canonical (axis, order, start_edge) variant list
+    for diagonal routes. Order:
+
+      1. main forward top_then_left (canonical NW->SE downward)
+      2. anti forward top_then_right (canonical NE->SW downward)
+      3. main reverse top_then_left
+      4. anti reverse top_then_right
+      5. main forward left_then_top (inverted within-diagonal)
+      6. anti forward right_then_top
+      7. main reverse left_then_top
+      8. anti reverse right_then_top
+
+    A ``cap`` truncates at the front so substitution-paired
+    families enumerate the canonical 4 by default.
+    """
+    full: list[tuple[str, str, str]] = [
+        ("main", "forward", "top_then_left"),
+        ("anti", "forward", "top_then_right"),
+        ("main", "reverse", "top_then_left"),
+        ("anti", "reverse", "top_then_right"),
+        ("main", "forward", "left_then_top"),
+        ("anti", "forward", "right_then_top"),
+        ("main", "reverse", "left_then_top"),
+        ("anti", "reverse", "right_then_top"),
+    ]
+    if cap is None or cap >= len(full):
+        return full
+    if cap < 1:
+        return []
+    return full[:cap]
 
 
 def _detect_block_reversal_trigger(clue_text: str) -> bool:
@@ -6778,6 +7050,262 @@ def _gen_row_reverse_route_three_layer_family(
     return out
 
 
+# ----------------------------------------------------------------------------
+# LESSON-016: diagonal grid-route family generators
+# ----------------------------------------------------------------------------
+
+
+def _diagonal_extras(
+    rows: int, cols: int, axis: str, order: str, start_edge: str,
+    *, ct_length: int = 97,
+) -> tuple[tuple[str, Any], ...]:
+    """Standard ``extras`` tuple for a LESSON-016 spec."""
+    return (
+        ("route_rows", rows),
+        ("route_cols", cols),
+        ("route_width", cols),
+        ("route_ragged", (rows * cols) > ct_length),
+        ("diagonal_axis", axis),
+        ("diagonal_order", order),
+        ("diagonal_start_edge", start_edge),
+    )
+
+
+def _gen_diagonal_alone_family(
+    *,
+    bench_slug: str,
+    grids: Sequence[tuple[tuple[int, int], str]],
+    variants: Optional[Sequence[tuple[str, str, str]]] = None,
+    ct_length: int = 97,
+) -> list[GeneratedSpec]:
+    """LESSON-016: diagonal route as a single-layer transposition.
+
+    Emits one spec per (grid × variant) combination. Variants
+    enumerate the canonical 8 (axis × order × start_edge) tuples
+    by default; callers may pass a smaller pre-capped list.
+    """
+    if variants is None:
+        variants = _diagonal_variant_combinations()
+    family_label = "route_diagonal"
+    out: list[GeneratedSpec] = []
+    for (rows, cols), source in grids:
+        ragged = (rows * cols) > ct_length
+        for axis, order, start_edge in variants:
+            layer = _diagonal_route_layer(
+                rows, cols, axis=axis, order=order, start_edge=start_edge,
+            )
+            cov = CoverageVector(
+                layer_family=family_label,
+                layer_order=("route_diagonal",),
+                role_assignment=(),
+                alphabet="AZ", n_layers=1,
+                extras=_diagonal_extras(
+                    rows, cols, axis, order, start_edge,
+                    ct_length=ct_length,
+                ),
+                operation_source=source,
+                route_mode="route_diagonal",
+                route_width=cols,
+                route_rows=rows,
+                route_cols=cols,
+                route_ragged=ragged,
+                route_direction=axis,
+                route_width_source=source,
+                diagonal_axis=axis,
+                diagonal_order=order,
+                diagonal_start_edge=start_edge,
+            )
+            out.append(_make_spec(
+                bench_slug=bench_slug, family_label=family_label,
+                pipeline=[layer], coverage=cov,
+                notes=(
+                    f"route_diagonal(rows={rows}, cols={cols}, "
+                    f"axis={axis}, order={order}, "
+                    f"start_edge={start_edge}) "
+                    f"[width_source={source}, ragged={ragged}]"
+                ),
+                crib_alignment="post_transposition",
+            ))
+    return out
+
+
+def _gen_diagonal_substitution_family(
+    *,
+    bench_slug: str,
+    sub_kind: str,                   # vigenere | beaufort | variant_beaufort
+    keyword_a: str,
+    keyword_b: str,
+    grids: Sequence[tuple[tuple[int, int], str]],
+    variants: Optional[Sequence[tuple[str, str, str]]] = None,
+    alphabet_modes: Optional[Sequence[AlphabetMode]] = None,
+    ct_length: int = 97,
+) -> list[GeneratedSpec]:
+    """LESSON-016: diagonal route paired with a keyword substitution
+    in BOTH layer orders (LESSON-002).
+    """
+    if sub_kind not in _SUBSTITUTION_KEYWORD_KINDS:
+        raise ValueError(f"unsupported sub_kind {sub_kind!r}")
+    if variants is None:
+        variants = _diagonal_variant_combinations(
+            cap=_DIAGONAL_PAIR_VARIANT_CAP,
+        )
+    family_label = f"route_diagonal_{sub_kind}"
+    if alphabet_modes is None:
+        alphabet_modes = (AlphabetMode("AZ", "AZ", None, "default"),)
+
+    out: list[GeneratedSpec] = []
+    for kw in (keyword_a, keyword_b):
+        if not isinstance(kw, str) or len(kw) < 1:
+            continue
+        for mode in alphabet_modes:
+            sub_layer = _keyword_substitution_layer(
+                sub_kind, kw,
+                alphabet=mode.dsl_alphabet,
+                alphabet_keyword=mode.alphabet_keyword,
+            )
+            for (rows, cols), source in grids:
+                ragged = (rows * cols) > ct_length
+                for axis, order, start_edge in variants:
+                    diag_layer = _diagonal_route_layer(
+                        rows, cols,
+                        axis=axis, order=order, start_edge=start_edge,
+                    )
+                    role = ((sub_kind, kw),)
+                    extras = _diagonal_extras(
+                        rows, cols, axis, order, start_edge,
+                        ct_length=ct_length,
+                    )
+                    common_kwargs = dict(
+                        layer_family=family_label,
+                        role_assignment=role,
+                        alphabet=mode.mode_label, n_layers=2,
+                        extras=extras,
+                        alphabet_mode=mode.mode_label,
+                        alphabet_source=mode.source,
+                        substitution_keyword=kw,
+                        alphabet_keyword=mode.alphabet_keyword or "",
+                        operation_source=source,
+                        route_mode="route_diagonal",
+                        route_width=cols,
+                        route_rows=rows,
+                        route_cols=cols,
+                        route_ragged=ragged,
+                        route_direction=axis,
+                        route_width_source=source,
+                        diagonal_axis=axis,
+                        diagonal_order=order,
+                        diagonal_start_edge=start_edge,
+                    )
+                    # Order 1: substitution first.
+                    out.append(_make_spec(
+                        bench_slug=bench_slug,
+                        family_label=family_label,
+                        pipeline=[sub_layer, diag_layer],
+                        coverage=CoverageVector(
+                            layer_order=(sub_kind, "route_diagonal"),
+                            **common_kwargs,
+                        ),
+                        notes=(
+                            f"{sub_kind}({kw}, alpha={mode.mode_label}) "
+                            f"∘ route_diagonal({rows}x{cols}, {axis}, "
+                            f"{order}, {start_edge}) [sub-first]"
+                        ),
+                    ))
+                    # Order 2: route first.
+                    out.append(_make_spec(
+                        bench_slug=bench_slug,
+                        family_label=family_label,
+                        pipeline=[diag_layer, sub_layer],
+                        coverage=CoverageVector(
+                            layer_order=("route_diagonal", sub_kind),
+                            **common_kwargs,
+                        ),
+                        notes=(
+                            f"route_diagonal({rows}x{cols}, {axis}, "
+                            f"{order}, {start_edge}) ∘ "
+                            f"{sub_kind}({kw}, alpha={mode.mode_label}) "
+                            "[route-first]"
+                        ),
+                    ))
+    return out
+
+
+def _gen_diagonal_rail_fence_family(
+    *,
+    bench_slug: str,
+    grids: Sequence[tuple[tuple[int, int], str]],
+    rail_fence_depths: Sequence[int],
+    variants: Optional[Sequence[tuple[str, str, str]]] = None,
+    ct_length: int = 97,
+) -> list[GeneratedSpec]:
+    """LESSON-016: diagonal route + rail_fence in BOTH layer orders.
+    Pure-transposition pair; no keyword roles.
+    """
+    if variants is None:
+        variants = _diagonal_variant_combinations(
+            cap=_DIAGONAL_PAIR_VARIANT_CAP,
+        )
+    family_label = "route_diagonal_rail_fence"
+    out: list[GeneratedSpec] = []
+    for depth in rail_fence_depths:
+        rf_layer = _rail_fence_layer(int(depth))
+        for (rows, cols), source in grids:
+            ragged = (rows * cols) > ct_length
+            for axis, order, start_edge in variants:
+                diag_layer = _diagonal_route_layer(
+                    rows, cols,
+                    axis=axis, order=order, start_edge=start_edge,
+                )
+                extras = _diagonal_extras(
+                    rows, cols, axis, order, start_edge,
+                    ct_length=ct_length,
+                ) + (("rail_fence_depth", int(depth)),)
+                common_kwargs = dict(
+                    layer_family=family_label,
+                    role_assignment=(),
+                    alphabet="AZ", n_layers=2,
+                    extras=extras,
+                    operation_source=source,
+                    route_mode="route_diagonal",
+                    route_width=cols,
+                    route_rows=rows,
+                    route_cols=cols,
+                    route_ragged=ragged,
+                    route_direction=axis,
+                    route_width_source=source,
+                    diagonal_axis=axis,
+                    diagonal_order=order,
+                    diagonal_start_edge=start_edge,
+                )
+                out.append(_make_spec(
+                    bench_slug=bench_slug, family_label=family_label,
+                    pipeline=[rf_layer, diag_layer],
+                    coverage=CoverageVector(
+                        layer_order=("rail_fence", "route_diagonal"),
+                        **common_kwargs,
+                    ),
+                    notes=(
+                        f"rail_fence({depth}) ∘ route_diagonal("
+                        f"{rows}x{cols}, {axis}, {order}, "
+                        f"{start_edge}) [rail-first]"
+                    ),
+                ))
+                out.append(_make_spec(
+                    bench_slug=bench_slug, family_label=family_label,
+                    pipeline=[diag_layer, rf_layer],
+                    coverage=CoverageVector(
+                        layer_order=("route_diagonal", "rail_fence"),
+                        **common_kwargs,
+                    ),
+                    notes=(
+                        f"route_diagonal({rows}x{cols}, {axis}, "
+                        f"{order}, {start_edge}) ∘ rail_fence({depth}) "
+                        "[route-first]"
+                    ),
+                ))
+    return out
+
+
 def _gen_three_layer_sandwich_family(
     *,
     bench_slug: str,
@@ -7083,6 +7611,20 @@ def generate_layered_specs(
                 "beaufort_route_boustrophedon_row_reverse",
                 "variant_beaufort_route_boustrophedon_row_reverse",
             }
+
+    # 2026-04-29 (LESSON-016): diagonal grid-route trigger. Detected
+    # alongside (not instead of) other route triggers — the same
+    # clue can fire boustrophedon AND diagonal families, and the
+    # generator is purely additive.
+    diagonal_triggered = _detect_diagonal_trigger(clue_text)
+    if diagonal_triggered:
+        default_families |= {
+            "route_diagonal",
+            "route_diagonal_vigenere",
+            "route_diagonal_beaufort",
+            "route_diagonal_variant_beaufort",
+            "route_diagonal_rail_fence",
+        }
 
     # 2026-04-28 (LESSON-014): width-only ragged boustrophedon route
     # trigger. Detected before the LESSON-011 trigger because clue
@@ -7648,6 +8190,53 @@ def generate_layered_specs(
                         ),
                         alphabet_modes=alphabet_modes,
                     ))
+
+    # --- LESSON-016: diagonal grid-route families ---------------------
+    # Trigger-driven (diagonal_triggered set above). When the clue
+    # pack contains no diagonal trigger token, every
+    # ``route_diagonal*`` family is absent from ``active`` and this
+    # block is a no-op. Real-K4 mode is unaffected because HCC is
+    # bench-mode only via _collect_hcc_seeds; the LESSON-016 entry
+    # remains visible to the LLM theorist as a generalized tactic.
+    #
+    # Placement note: emitted BEFORE LESSON-014 (boustrophedon) and
+    # LESSON-015 (row_reverse), AFTER LESSON-011 (skip_route). On
+    # K4B-009-shaped clues that fire BOTH diagonal and boustrophedon
+    # triggers, this ordering keeps LESSON-016 inside the
+    # _DEFAULT_MAX_SPECS=10000 bench-fast cap rather than being
+    # truncated by LESSON-014's ~5000 specs.
+    if diagonal_triggered:
+        diag_grids = _diagonal_grids_for_payload(
+            clue_text, cleaned,
+        )
+        # Cap the grid list for substitution-paired families so the
+        # (sub × alpha × grid × variant × layer-orders) cartesian
+        # stays bounded at bench-fast scale.
+        diag_grids_capped = diag_grids[:8]
+        if "route_diagonal" in active:
+            out.extend(_gen_diagonal_alone_family(
+                bench_slug=bench_slug,
+                grids=diag_grids,
+            ))
+        for sub_kind, label in (
+            ("vigenere", "route_diagonal_vigenere"),
+            ("beaufort", "route_diagonal_beaufort"),
+            ("variant_beaufort", "route_diagonal_variant_beaufort"),
+        ):
+            if label in active:
+                out.extend(_gen_diagonal_substitution_family(
+                    bench_slug=bench_slug,
+                    sub_kind=sub_kind,
+                    keyword_a=keyword_a, keyword_b=keyword_b,
+                    grids=diag_grids_capped,
+                    alphabet_modes=alphabet_modes,
+                ))
+        if "route_diagonal_rail_fence" in active:
+            out.extend(_gen_diagonal_rail_fence_family(
+                bench_slug=bench_slug,
+                grids=diag_grids_capped,
+                rail_fence_depths=tuple(rail_fence_depths),
+            ))
 
     # --- LESSON-014: width-only ragged boustrophedon families ---------
     # Trigger-driven (boustrophedon_triggered set above). When the
