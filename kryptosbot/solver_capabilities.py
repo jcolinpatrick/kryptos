@@ -57,6 +57,7 @@ patch spec:
     LESSON-015  alternate_row_reversal_folded_strip
     LESSON-016  diagonal_grid_route_enumeration
     LESSON-017  stratified_hcc_bench_fast_family_quotas
+    LESSON-018  numeric_clue_caesar_trigger_semantics
 
 The constructor refuses to load any registry file containing
 forbidden fields, so a corrupted on-disk registry fails closed.
@@ -306,6 +307,26 @@ _VALID_TACTIC_KINDS: frozenset[str] = frozenset({
                                    # order fill). Scheduler-only;
                                    # no new cipher primitive
                                    # (LESSON-017).
+    "numeric_clue_caesar_trigger_semantics",  # 2026-04-29: a salient
+                                   # unbound clue numeral in [1, 25]
+                                   # may be an operational ROT/Caesar
+                                   # shift even when no explicit
+                                   # shift / rotate / Caesar / rot
+                                   # trigger word appears. Numeric
+                                   # role classification distinguishes
+                                   # structurally-bound numerals
+                                   # (route width, rail depth, block
+                                   # size, skip step, object count)
+                                   # from free / tag / explicit-Caesar
+                                   # numerals; only the latter are
+                                   # promoted as Caesar shift
+                                   # candidates. Each promoted shift
+                                   # n produces both n (as_given) and
+                                   # 26-n (complement) entries to
+                                   # cover both encrypt / decrypt
+                                   # directions. Bench-only, scheduler
+                                   # composes with LESSON-017
+                                   # (LESSON-018).
 })
 
 
@@ -1697,6 +1718,148 @@ def _default_lessons() -> list[Lesson]:
                     "dispatched specs on K4B-009. Post-LESSON-017: "
                     "all 58 triggered families receive >= 26 specs."
                 ),
+            },
+        ),
+        Lesson(
+            lesson_id="LESSON-018",
+            title="Numeric clue to Caesar/ROT trigger semantics",
+            description=(
+                "A salient unbound clue numeral in [1, 25] may be an "
+                "operational ROT / Caesar shift even when no explicit "
+                "shift / rotate / Caesar / rot / step / offset / "
+                "additive / subtractive trigger word appears in the "
+                "clue. Pre-LESSON-018, the Caesar family generator "
+                "was gated by ``_detect_caesar_trigger`` matching one "
+                "of those explicit trigger tokens; clues with a "
+                "salient bare numeric (e.g. 'small tag says "
+                "seventeen', 'marker 17', 'label eight') would "
+                "extract the value but never emit Caesar specs.\n\n"
+                "The general lesson: numeric role classification is "
+                "the operative gate. A numeral may be:\n"
+                "  - structurally bound (route_width, grid_dimension, "
+                "    rail_depth, block_size, skip_step) — NOT a "
+                "    Caesar candidate\n"
+                "  - object_count (cardinal followed by physical-"
+                "    object plural noun like 'five stones', 'ten "
+                "    panels') — NOT a Caesar candidate\n"
+                "  - explicit_caesar (preceded by a shift/rotate/"
+                "    caesar/rot/additive/subtractive token) — IS a "
+                "    Caesar candidate (legacy explicit-trigger path)\n"
+                "  - free_numeric_tag (preceded by a tag/label/"
+                "    inscription/says/marked/code/value/reads "
+                "    precursor) — IS a Caesar candidate (LESSON-018)\n"
+                "  - ambiguous_numeric (no clear binding) — IS a "
+                "    Caesar candidate IF and ONLY IF no other "
+                "    occurrence of the same value has a stronger "
+                "    structural binding in the clue\n"
+                "  - ignored_out_of_range (value outside [1, 25]) — "
+                "    NOT a Caesar candidate\n\n"
+                "Caesar shift direction policy: Caesar dispatch uses "
+                "``C = (P + shift) mod 26``. Without knowing whether "
+                "the clue numeral describes the encrypt direction or "
+                "the decrypt direction, every promoted shift n "
+                "produces both:\n"
+                "  - shift_value = n (shift_direction='as_given')\n"
+                "  - shift_value = (26 - n) % 26 "
+                "    (shift_direction='complement')\n"
+                "Self-complement n=13 and identity n=0 entries are "
+                "skipped to avoid duplicate / no-op specs.\n\n"
+                "HCC emission: when numeric promotion fires AND the "
+                "explicit Caesar trigger does NOT fire, the generator "
+                "emits a small bounded matrix (caesar alone, "
+                "caesar + route_boustrophedon both orders if "
+                "boustro trigger fired, caesar + route_diagonal "
+                "both orders if diagonal trigger fired, caesar + "
+                "row_reverse both orders if row_reverse trigger "
+                "fired). Total emission for a single promoted shift "
+                "across all four cross-trigger combinations stays "
+                "well under bench-fast cardinality budgets.\n\n"
+                "Coverage_vector telemetry (LESSON-018 fields):\n"
+                "  shift_source       — 'clue_numeric_free' | "
+                "                        'clue_numeric_tag' | "
+                "                        'explicit_caesar_token'\n"
+                "  shift_token        — original token string ("
+                "                        'seventeen', '17')\n"
+                "  shift_role         — classifier result\n"
+                "  shift_direction    — 'as_given' | 'complement'\n"
+                "  numeric_trigger_without_caesar_word\n"
+                "                     — True for numerically-promoted "
+                "                        Caesar specs; False for "
+                "                        legacy explicit-trigger "
+                "                        Caesar specs\n"
+                "  operation_source   — set to "
+                "                        'numeric_caesar_trigger' "
+                "                        on numerically-promoted "
+                "                        specs\n\n"
+                "EXPLICIT CAVEATS:\n"
+                "  - This is a benchmark curriculum capability.\n"
+                "  - It does NOT imply real K4 uses Caesar.\n"
+                "  - It does NOT solve any specific benchmark unless "
+                "    independently evaluated.\n"
+                "  - Sealed-answer text must not enter repo "
+                "    artifacts."
+            ),
+            tactic_kind="numeric_clue_caesar_trigger_semantics",
+            applies_to_families=[
+                "caesar",
+                "caesar_route_boustrophedon",
+                "caesar_route_diagonal",
+                "caesar_row_reverse",
+            ],
+            generates_specs=True,
+            related_lesson_ids=[
+                "LESSON-009", "LESSON-012", "LESSON-014",
+                "LESSON-015", "LESSON-016", "LESSON-017",
+            ],
+            source_origin="k4bench-derived",
+            tactic_parameters={
+                "numeric_role_taxonomy": [
+                    "route_width", "grid_dimension", "rail_depth",
+                    "block_size", "skip_step", "object_count",
+                    "explicit_caesar", "free_numeric_tag",
+                    "ambiguous_numeric", "ignored_out_of_range",
+                ],
+                "promotion_eligible_roles": [
+                    "explicit_caesar", "free_numeric_tag",
+                    "ambiguous_numeric",
+                ],
+                "shift_direction_policy": "as_given_and_complement",
+                "self_complement_skipped": [13],
+                "shift_value_range": [1, 25],
+                "tag_precursor_tokens": [
+                    "tag", "tagged", "marked", "marking", "marker",
+                    "label", "labeled", "labelled", "inscription",
+                    "inscribed", "number", "numbered", "numeric",
+                    "code", "coded", "value", "valued",
+                    "says", "said", "reads", "read",
+                    "shows", "showed", "stamped", "etched",
+                    "engraved", "carved", "noted",
+                    "displays", "displayed",
+                    "indicates", "indicated",
+                ],
+                "explicit_caesar_precursor_tokens": [
+                    "shift", "shifted", "shifts",
+                    "rotate", "rotated", "rotation",
+                    "caesar", "rot",
+                    "additive", "subtractive",
+                ],
+                "structural_binding_after_tokens": [
+                    "wide", "column", "columns", "col", "cols",
+                    "row", "rows", "line", "lines", "grid",
+                    "deep", "depth", "rail", "rails", "fence",
+                ],
+                "structural_binding_before_tokens": [
+                    "step", "stepped", "stride", "skip", "skipped",
+                    "every", "offset", "depth",
+                    "block", "blocks", "groups", "group", "width",
+                ],
+                "object_count_after_tokens_examples": [
+                    "stones", "marbles", "letters", "characters",
+                    "panels", "pieces", "tiles", "bricks", "posts",
+                    "objects", "diagonals",
+                ],
+                "bench_only": True,
+                "no_new_primitive": True,
             },
         ),
     ]

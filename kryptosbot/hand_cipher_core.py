@@ -717,6 +717,395 @@ def _caesar_shifts_for_payload(clue_text: str) -> list[tuple[int, str]]:
         out.append((d, "default_set"))
     return out
 
+
+# ============================================================================
+# LESSON-018: numeric clue → Caesar/ROT trigger semantics
+# ============================================================================
+#
+# Pre-LESSON-018 the Caesar family generator was gated by
+# ``_detect_caesar_trigger`` matching one of the explicit trigger
+# words: shift / shifted / offset / rotate / rotated / rotation /
+# step / caesar / rot / additive / subtractive. Clues with a salient
+# but bare numeric (e.g. "small tag says seventeen", "marker 17",
+# "label 8") would extract the numeral but never emit Caesar
+# specs, because no trigger word fired.
+#
+# LESSON-018 adds a NUMERIC role classifier. For each numeric token
+# in the clue, the classifier assigns a role from a fixed taxonomy
+# based on surrounding context. Free / tag / explicit-Caesar
+# numerals are ELIGIBLE FOR PROMOTION as Caesar shift candidates
+# even without an explicit Caesar trigger word. Structurally bound
+# numerals (route width, grid dimension, rail depth, block size,
+# skip step, object count) are NOT promoted — they retain their
+# original role.
+#
+# This is a benchmark-curriculum capability that does NOT change
+# normal real-K4 mode (HCC remains bench-only via
+# _collect_hcc_seeds).
+
+# Tokens that, when appearing immediately BEFORE a numeral within
+# a small lookback window, mark the numeral as a free numeric tag /
+# label / inscription value. These are most strongly suggestive of
+# a Caesar/ROT shift value when the rest of the clue is silent
+# about the numeral's structural role.
+_NUMERIC_TAG_PRECURSOR_TOKENS: frozenset[str] = frozenset({
+    "tag", "tagged",
+    "marked", "marking", "marker",
+    "label", "labeled", "labelled",
+    "inscription", "inscribed",
+    "number", "numbered", "numeric",
+    "code", "coded",
+    "value", "valued",
+    "says", "said",
+    "reads", "read",
+    "shows", "showed",
+    "stamped",
+    "etched",
+    "engraved",
+    "carved",
+    "noted",
+    "displays", "displayed",
+    "indicates", "indicated",
+})
+
+# Tokens that, when appearing immediately BEFORE a numeral, mark
+# the numeral as belonging to an explicit Caesar/ROT operation
+# (this overlaps with _CAESAR_TRIGGER_TOKENS and reuses the same
+# vocabulary for clarity).
+_EXPLICIT_CAESAR_PRECURSOR_TOKENS: frozenset[str] = frozenset({
+    "shift", "shifted", "shifts",
+    "rotate", "rotated", "rotation",
+    "caesar",
+    "rot",
+    "additive", "subtractive",
+})
+
+# Tokens that, when appearing immediately AFTER a numeral, bind
+# the numeral to a structural role (NOT eligible for Caesar
+# promotion).
+_STRUCTURAL_ROLE_AFTER_TOKENS: dict[str, str] = {
+    # route width / grid dimension
+    "wide": "route_width",
+    "column": "route_width", "columns": "route_width",
+    "col": "route_width", "cols": "route_width",
+    "row": "route_width", "rows": "route_width",
+    "line": "route_width", "lines": "route_width",
+    "grid": "grid_dimension",
+    "deep": "rail_depth",
+    "depth": "rail_depth",
+    "rail": "rail_depth", "rails": "rail_depth",
+    "fence": "rail_depth",
+}
+
+# Tokens that, when appearing immediately BEFORE a numeral, bind
+# the numeral to a structural role (NOT eligible for Caesar
+# promotion). Distinct from _EXPLICIT_CAESAR_PRECURSOR_TOKENS
+# (which IS eligible).
+_STRUCTURAL_ROLE_BEFORE_TOKENS: dict[str, str] = {
+    "step": "skip_step", "stepped": "skip_step", "stride": "skip_step",
+    "skip": "skip_step", "skipped": "skip_step",
+    "every": "skip_step",
+    "offset": "skip_step",
+    "depth": "rail_depth",
+    "block": "block_size", "blocks": "block_size",
+    "groups": "block_size", "group": "block_size",
+    "width": "route_width",
+}
+
+# Plural object-count nouns that, when appearing immediately AFTER
+# a numeral, mark it as an object count (NOT eligible for Caesar
+# promotion). This is a defense against false-positive promotion
+# from cardinal-numeral + plural-noun phrases like "five stones".
+# We deliberately keep this list focused on physical-object plurals
+# that show up in K4Bench-style clue prose; structural plurals
+# (rows, columns, rails) are already in
+# _STRUCTURAL_ROLE_AFTER_TOKENS.
+_OBJECT_COUNT_AFTER_TOKENS: frozenset[str] = frozenset({
+    "stones", "stone",
+    "marbles", "marble",
+    "letters", "letter",
+    "characters", "character",
+    "words", "word",
+    "items", "item",
+    "panels", "panel",
+    "pieces", "piece",
+    "tiles", "tile",
+    "bricks", "brick",
+    "posts", "post",
+    "tags",   # "five tags" → object count, but "tag 5" → free tag
+              # (handled by precedence: tag-precursor checks BEFORE
+              # the numeral, object-count checks AFTER)
+    "labels",
+    "objects", "object",
+    "things", "thing",
+    "people", "person", "persons",
+    "guards", "guard",
+    "lanterns", "lantern",
+    "candles", "candle",
+    "doors", "door",
+    "gates", "gate",
+    "windows", "window",
+    "tomb", "tombs",
+    "arrows", "arrow",
+    "diagonals",  # "five diagonals" — object count of diagonal
+                  # stripes, NOT a Caesar shift
+})
+
+
+def _classify_numeric_roles(
+    clue_text: str,
+) -> list[dict[str, Any]]:
+    """Walk the clue text and classify every numeric token by role.
+
+    Returns a list of dicts, one per numeric token in document
+    order. Each dict carries:
+
+      ``value``        — int (or None if the value falls outside
+                          the in-range band [1, 25] used for
+                          Caesar promotion)
+      ``token``        — the original token string ("seventeen", "17")
+      ``role``         — classification from the LESSON-018
+                          taxonomy (route_width, grid_dimension,
+                          rail_depth, block_size, skip_step,
+                          object_count, explicit_caesar,
+                          free_numeric_tag, ambiguous_numeric,
+                          ignored_out_of_range)
+      ``position``     — 0-indexed token index within the
+                          tokenized clue
+      ``raw_value``    — int parsed from the token (may be outside
+                          [1, 25]; ``value`` is None in that case)
+
+    Classification rules (first match wins; precedence shown):
+      1. Out-of-range (value <= 0 or value > 25): "ignored_out_of_range"
+      2. Preceded by an explicit Caesar precursor token (within 1-2
+         tokens): "explicit_caesar"
+      3. Preceded by a tag/label/inscription/says precursor (within
+         1-3 tokens): "free_numeric_tag"
+      4. Preceded by a structural-role-before token (within 1-2
+         tokens): the corresponding structural role (route_width,
+         skip_step, block_size, rail_depth, ...)
+      5. Followed by a structural-role-after token (within 1-2
+         tokens): the corresponding structural role
+      6. Followed by an object-count plural noun (within 1-2
+         tokens): "object_count"
+      7. Hyphen-suffix patterns ("ten-wide", "8-row"): treated as
+         AFTER-anchor of the suffix token.
+      8. Otherwise: "ambiguous_numeric"
+    """
+    if not isinstance(clue_text, str) or not clue_text:
+        return []
+    import re
+    lower = clue_text.lower()
+    tokens: list[tuple[str, int, int]] = []
+    for m in re.finditer(r"[A-Za-z]+|\d+", lower):
+        tokens.append((m.group(0), m.start(), m.end()))
+
+    def _numeric_of(tok: str) -> Optional[int]:
+        if tok.isdigit():
+            try:
+                return int(tok)
+            except ValueError:
+                return None
+        return _NUMBER_WORDS.get(tok)
+
+    out: list[dict[str, Any]] = []
+    for i, (tok, start, end) in enumerate(tokens):
+        v = _numeric_of(tok)
+        if v is None:
+            continue
+        role: Optional[str] = None
+        if v < 1 or v > 25:
+            role = "ignored_out_of_range"
+        # Hyphen-suffix: numeral followed by '-' then a structural
+        # token (e.g. "ten-wide"). Recognised as AFTER-anchor.
+        hyphen_role: Optional[str] = None
+        if role is None and i + 1 < len(tokens):
+            next_tok, next_start, _ = tokens[i + 1]
+            if lower[end:next_start] == "-":
+                if next_tok in _STRUCTURAL_ROLE_AFTER_TOKENS:
+                    hyphen_role = _STRUCTURAL_ROLE_AFTER_TOKENS[next_tok]
+                elif next_tok in _OBJECT_COUNT_AFTER_TOKENS:
+                    hyphen_role = "object_count"
+        # Lookback for explicit Caesar (highest priority among
+        # precursors).
+        if role is None:
+            for j in (1, 2):
+                if i - j < 0:
+                    break
+                prev = tokens[i - j][0]
+                if prev in _EXPLICIT_CAESAR_PRECURSOR_TOKENS:
+                    role = "explicit_caesar"
+                    break
+        # Hyphen-suffix structural binding (e.g. "eight-column",
+        # "ten-wide", "five-stones") wins over the more permissive
+        # tag-precursor lookback because the hyphen makes the
+        # binding immediate and unambiguous, whereas
+        # ``_NUMERIC_TAG_PRECURSOR_TOKENS`` is searched up to 3
+        # tokens back (so e.g. "shows ... eight-column" would
+        # otherwise mis-classify as free_numeric_tag).
+        if role is None and hyphen_role is not None:
+            role = hyphen_role
+        # Lookback for tag/label precursor.
+        if role is None:
+            for j in (1, 2, 3):
+                if i - j < 0:
+                    break
+                prev = tokens[i - j][0]
+                if prev in _NUMERIC_TAG_PRECURSOR_TOKENS:
+                    role = "free_numeric_tag"
+                    break
+        # Lookback for structural-before tokens.
+        if role is None:
+            for j in (1, 2):
+                if i - j < 0:
+                    break
+                prev = tokens[i - j][0]
+                if prev in _STRUCTURAL_ROLE_BEFORE_TOKENS:
+                    role = _STRUCTURAL_ROLE_BEFORE_TOKENS[prev]
+                    break
+        if role is None:
+            for j in (1, 2):
+                if i + j >= len(tokens):
+                    break
+                nxt = tokens[i + j][0]
+                if nxt in _STRUCTURAL_ROLE_AFTER_TOKENS:
+                    role = _STRUCTURAL_ROLE_AFTER_TOKENS[nxt]
+                    break
+                if nxt in _OBJECT_COUNT_AFTER_TOKENS:
+                    role = "object_count"
+                    break
+        if role is None:
+            role = "ambiguous_numeric"
+        out.append({
+            "value": v if 1 <= v <= 25 else None,
+            "token": tok,
+            "role": role,
+            "position": i,
+            "raw_value": v,
+        })
+    return out
+
+
+# Roles that are eligible for Caesar promotion.
+_NUMERIC_CAESAR_ELIGIBLE_ROLES: frozenset[str] = frozenset({
+    "explicit_caesar",
+    "free_numeric_tag",
+    "ambiguous_numeric",
+})
+
+
+def _detect_numeric_caesar_promotion(
+    clue_text: str,
+) -> list[dict[str, Any]]:
+    """Return the list of clue numerals eligible for Caesar/ROT
+    promotion (LESSON-018).
+
+    Each entry carries:
+      ``value``        — int in [1, 25] (the candidate Caesar shift)
+      ``token``        — original token string
+      ``role``         — LESSON-018 role classifier result
+      ``shift_source`` — "explicit_caesar_token" |
+                          "clue_numeric_tag" |
+                          "clue_numeric_free"
+
+    De-duplicates by value (first occurrence wins) so a clue with
+    repeated numerals doesn't produce duplicate Caesar specs.
+
+    Filters: a numeral is eligible iff
+      (1) its role is in ``_NUMERIC_CAESAR_ELIGIBLE_ROLES``, AND
+      (2) NO OTHER occurrence of the same value in the clue has a
+          stronger structural binding (route_width, grid_dimension,
+          rail_depth, block_size, skip_step, object_count). This
+          conservative filter prevents promotion of "five" in
+          "five stones" even if "five" later appears as a free
+          numeric in the same clue (which would be unusual but
+          possible).
+    """
+    classifications = _classify_numeric_roles(clue_text)
+    # Build map: value → set(roles seen in clue)
+    roles_by_value: dict[int, set[str]] = {}
+    for c in classifications:
+        v = c["value"]
+        if v is None:
+            continue
+        roles_by_value.setdefault(v, set()).add(c["role"])
+
+    structural_roles: frozenset[str] = frozenset({
+        "route_width", "grid_dimension", "rail_depth",
+        "block_size", "skip_step", "object_count",
+    })
+
+    seen_values: set[int] = set()
+    out: list[dict[str, Any]] = []
+    for c in classifications:
+        v = c["value"]
+        if v is None:
+            continue
+        if v in seen_values:
+            continue
+        if c["role"] not in _NUMERIC_CAESAR_ELIGIBLE_ROLES:
+            continue
+        # Conservative filter: if this VALUE has any structural
+        # binding elsewhere in the clue, don't promote it. The
+        # exception is "explicit_caesar" — when an explicit Caesar
+        # word names this value, structural appearances elsewhere
+        # do not block the explicit binding.
+        if c["role"] != "explicit_caesar":
+            other_roles = roles_by_value.get(v, set())
+            if other_roles & structural_roles:
+                continue
+        seen_values.add(v)
+        if c["role"] == "explicit_caesar":
+            shift_source = "explicit_caesar_token"
+        elif c["role"] == "free_numeric_tag":
+            shift_source = "clue_numeric_tag"
+        else:  # ambiguous_numeric
+            shift_source = "clue_numeric_free"
+        out.append({
+            "value": v,
+            "token": c["token"],
+            "role": c["role"],
+            "shift_source": shift_source,
+        })
+    return out
+
+
+def _expand_caesar_shifts_with_complement(
+    promoted: Sequence[dict[str, Any]],
+) -> list[dict[str, Any]]:
+    """Each promoted shift n produces both directions:
+
+      as_given  — shift_value = n
+      complement — shift_value = (26 - n) % 26  (skipped when self-
+                  complement, i.e. n == 13 ⇒ same value)
+
+    Caesar dispatch uses ``C = (P + shift) mod 26``. Without
+    knowing whether the clue numeral describes the encrypt shift
+    (P → C) or the decrypt shift (C → P), we emit both and let
+    crib scoring decide. The 26 - n value is the corresponding
+    inverse direction.
+    """
+    out: list[dict[str, Any]] = []
+    for entry in promoted:
+        v = int(entry["value"])
+        out.append({
+            **entry,
+            "shift_value": v,
+            "shift_direction": "as_given",
+        })
+        comp = (26 - v) % 26
+        if comp == 0 or comp == v:
+            # 0 is identity (skip); v == 13 self-complements (skip
+            # to avoid duplicate).
+            continue
+        out.append({
+            **entry,
+            "shift_value": comp,
+            "shift_direction": "complement",
+        })
+    return out
+
+
 # Hard cap on the number of generated specs. With alphabet-mode
 # enumeration on top of (family × role × order), the universe is
 # bounded by:
@@ -1019,6 +1408,34 @@ class CoverageVector:
     family_quota: Optional[int] = None
     family_quota_rank: Optional[int] = None
     hcc_max_specs: Optional[int] = None
+    # 2026-04-29 (LESSON-018): numeric Caesar promotion telemetry.
+    # Populated when a Caesar layer's shift_value came from a clue
+    # numeral classified as eligible for promotion (free_numeric_tag,
+    # ambiguous_numeric, or explicit_caesar). Empty when shift_value
+    # came from the legacy default-shift set or when no Caesar layer
+    # is present.
+    #
+    #   shift_source        — "clue_numeric_free" |
+    #                          "clue_numeric_tag" |
+    #                          "explicit_caesar_token" |
+    #                          "default_set" | ""
+    #   shift_token         — original token string ("seventeen", "17")
+    #   shift_role          — classifier result for the source token
+    #                          (free_numeric_tag, ambiguous_numeric,
+    #                          explicit_caesar, etc.)
+    #   shift_direction     — "as_given" | "complement" | ""
+    #   numeric_trigger_without_caesar_word
+    #                       — True when the Caesar layer was emitted
+    #                          via numeric promotion (no explicit
+    #                          shift/rotate/caesar/rot trigger word
+    #                          in the clue); False when emitted via
+    #                          the legacy explicit-trigger path; None
+    #                          when no Caesar layer is present.
+    shift_source: str = ""
+    shift_token: str = ""
+    shift_role: str = ""
+    shift_direction: str = ""
+    numeric_trigger_without_caesar_word: Optional[bool] = None
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -1076,6 +1493,14 @@ class CoverageVector:
             "family_quota": self.family_quota,
             "family_quota_rank": self.family_quota_rank,
             "hcc_max_specs": self.hcc_max_specs,
+            # LESSON-018 numeric-Caesar-promotion telemetry.
+            "shift_source": self.shift_source,
+            "shift_token": self.shift_token,
+            "shift_role": self.shift_role,
+            "shift_direction": self.shift_direction,
+            "numeric_trigger_without_caesar_word": (
+                self.numeric_trigger_without_caesar_word
+            ),
         }
 
     @classmethod
@@ -1209,6 +1634,19 @@ class CoverageVector:
             hcc_max_specs=(
                 int(d["hcc_max_specs"])
                 if isinstance(d.get("hcc_max_specs"), int)
+                else None
+            ),
+            # LESSON-018 fields. Lenient parsing: pre-LESSON-018
+            # ledger rows read back as empty strings / None.
+            shift_source=str(d.get("shift_source", "")),
+            shift_token=str(d.get("shift_token", "")),
+            shift_role=str(d.get("shift_role", "")),
+            shift_direction=str(d.get("shift_direction", "")),
+            numeric_trigger_without_caesar_word=(
+                bool(d["numeric_trigger_without_caesar_word"])
+                if isinstance(
+                    d.get("numeric_trigger_without_caesar_word"), bool,
+                )
                 else None
             ),
         )
@@ -4927,6 +5365,179 @@ def _gen_caesar_three_layer_family(
     return out
 
 
+# ----------------------------------------------------------------------------
+# LESSON-018: numeric Caesar promotion family generators
+# ----------------------------------------------------------------------------
+#
+# These generators run when ``_detect_numeric_caesar_promotion``
+# returns non-empty AND ``_detect_caesar_trigger`` returns False (so
+# we don't double-emit Caesar specs already covered by the legacy
+# explicit-trigger path). The matrix is deliberately small:
+#
+#   - caesar alone (1 spec per shift)
+#   - caesar + route_boustrophedon (both layer orders) when the
+#     boustrophedon trigger also fired
+#   - caesar + route_diagonal (both layer orders) when the
+#     diagonal trigger also fired
+#   - caesar + row_reverse (both layer orders) when the row_reverse
+#     trigger also fired
+#
+# A shift n produces both n and (26 - n) % 26 entries (skipping
+# self-complement n=13 and the identity 0). All emitted specs
+# carry ``numeric_trigger_without_caesar_word=True`` plus the
+# LESSON-018 telemetry fields.
+
+
+def _coverage_kwargs_from_promoted(
+    p: dict[str, Any],
+    *,
+    numeric_only: bool,
+) -> dict[str, Any]:
+    """Build the LESSON-018 telemetry kwargs for a CoverageVector.
+
+    ``p`` is a single entry from
+    ``_expand_caesar_shifts_with_complement`` (so it carries
+    shift_value, shift_direction, role, token, shift_source,
+    value).
+    """
+    return {
+        "shift_value": int(p["shift_value"]),
+        "shift_source": str(p["shift_source"]),
+        "shift_token": str(p["token"]),
+        "shift_role": str(p["role"]),
+        "shift_direction": str(p["shift_direction"]),
+        "numeric_trigger_without_caesar_word": bool(numeric_only),
+    }
+
+
+def _gen_numeric_caesar_alone_family(
+    *,
+    bench_slug: str,
+    promoted_shifts: Sequence[dict[str, Any]],
+    numeric_only: bool,
+) -> list[GeneratedSpec]:
+    """Emit caesar-alone specs from numerically-promoted shifts.
+
+    Each promoted shift produces ONE spec. Shift 0 is excluded.
+    The coverage_vector carries the LESSON-018 telemetry plus the
+    legacy ``shift_value`` + ``operation_source`` fields so
+    downstream rollups continue to work.
+    """
+    family_label = "caesar"
+    out: list[GeneratedSpec] = []
+    for p in promoted_shifts:
+        shift = int(p["shift_value"])
+        if shift == 0:
+            continue
+        layer = _caesar_layer(shift)
+        cov_kwargs = _coverage_kwargs_from_promoted(
+            p, numeric_only=numeric_only,
+        )
+        cov = CoverageVector(
+            layer_family=family_label,
+            layer_order=("caesar",),
+            role_assignment=(("caesar_shift", str(shift)),),
+            alphabet="AZ", n_layers=1,
+            extras=(("caesar_shift", shift),),
+            operation_source="numeric_caesar_trigger",
+            **cov_kwargs,
+        )
+        out.append(_make_spec(
+            bench_slug=bench_slug, family_label=family_label,
+            pipeline=[layer], coverage=cov,
+            notes=(
+                f"caesar(shift={shift}) "
+                f"[numeric_promotion={p['shift_source']}, "
+                f"token={p['token']}, dir={p['shift_direction']}]"
+            ),
+            crib_alignment="direct_positional",
+        ))
+    return out
+
+
+def _gen_numeric_caesar_route_pair_family(
+    *,
+    bench_slug: str,
+    route_partner_kind: str,            # "route_boustrophedon" |
+                                         # "route_diagonal" |
+                                         # "row_reverse"
+    route_layer_factory,                 # callable() → list[layer dict]
+                                         # (each entry: a route layer
+                                         # ready for spec emission)
+    route_partner_extras_factory,        # callable(layer) → tuple[(k, v), ...]
+    promoted_shifts: Sequence[dict[str, Any]],
+    numeric_only: bool,
+    coverage_extras_factory=None,        # callable(layer) → dict
+                                         # (extra fields for CV)
+) -> list[GeneratedSpec]:
+    """Generic emitter: caesar + <route_partner> in BOTH layer orders.
+
+    The factory pattern decouples this from the specific route
+    family generators. Caller supplies a ``route_layer_factory()``
+    that returns one or more route layer dicts; for each route
+    layer × promoted shift, we emit both [caesar, route] and
+    [route, caesar] specs.
+    """
+    family_label = f"caesar_{route_partner_kind}"
+    out: list[GeneratedSpec] = []
+    route_layers = list(route_layer_factory())
+    for p in promoted_shifts:
+        shift = int(p["shift_value"])
+        if shift == 0:
+            continue
+        caesar_layer = _caesar_layer(shift)
+        cov_telemetry = _coverage_kwargs_from_promoted(
+            p, numeric_only=numeric_only,
+        )
+        for route_layer in route_layers:
+            partner_extras = route_partner_extras_factory(route_layer)
+            extras = (
+                ("caesar_shift", shift),
+            ) + partner_extras
+            extra_cov = (
+                coverage_extras_factory(route_layer)
+                if coverage_extras_factory else {}
+            )
+            common = {
+                "layer_family": family_label,
+                "role_assignment": (("caesar_shift", str(shift)),),
+                "alphabet": "AZ", "n_layers": 2,
+                "extras": extras,
+                "operation_source": "numeric_caesar_trigger",
+                **cov_telemetry,
+                **extra_cov,
+            }
+            # Order 1: caesar first.
+            out.append(_make_spec(
+                bench_slug=bench_slug, family_label=family_label,
+                pipeline=[caesar_layer, route_layer],
+                coverage=CoverageVector(
+                    layer_order=("caesar", route_partner_kind),
+                    **common,
+                ),
+                notes=(
+                    f"caesar({shift}) ∘ {route_partner_kind} "
+                    f"[caesar-first, numeric_promotion="
+                    f"{p['shift_source']}, dir={p['shift_direction']}]"
+                ),
+            ))
+            # Order 2: route first.
+            out.append(_make_spec(
+                bench_slug=bench_slug, family_label=family_label,
+                pipeline=[route_layer, caesar_layer],
+                coverage=CoverageVector(
+                    layer_order=(route_partner_kind, "caesar"),
+                    **common,
+                ),
+                notes=(
+                    f"{route_partner_kind} ∘ caesar({shift}) "
+                    f"[route-first, numeric_promotion="
+                    f"{p['shift_source']}, dir={p['shift_direction']}]"
+                ),
+            ))
+    return out
+
+
 def _gen_independent_three_role_keyword_family(
     *,
     bench_slug: str,
@@ -8590,6 +9201,181 @@ def generate_layered_specs(
                 grids=diag_grids_capped,
                 rail_fence_depths=tuple(rail_fence_depths),
             ))
+
+    # --- LESSON-018: numeric Caesar/ROT promotion ---------------------
+    # Placement note: emitted BEFORE LESSON-014 / -015 / -016 so the
+    # ~74-spec LESSON-018 block lands in the LESSON-017 quota pass
+    # (pass 1) even at smaller bench-fast caps. The block was
+    # originally at the end of generate_layered_specs; on K4B-009-
+    # shape clues the LESSON-014 / -015 emissions consumed the cap
+    # before LESSON-018 specs were reached.
+    if not caesar_triggered:
+        promoted_raw = _detect_numeric_caesar_promotion(clue_text)
+        if promoted_raw:
+            promoted_shifts = _expand_caesar_shifts_with_complement(
+                promoted_raw,
+            )
+            # caesar alone — ALWAYS emit when promotion fires.
+            out.extend(_gen_numeric_caesar_alone_family(
+                bench_slug=bench_slug,
+                promoted_shifts=promoted_shifts,
+                numeric_only=True,
+            ))
+            # caesar + route_boustrophedon, only if boustrophedon
+            # trigger also fired (so cross-trigger composition is
+            # plausible).
+            if boustrophedon_triggered:
+                rb_widths_for_caesar = (8, 10)
+
+                def _rb_layer_factory() -> list[dict[str, Any]]:
+                    layers: list[dict[str, Any]] = []
+                    for w in rb_widths_for_caesar:
+                        for vert in (False, True):
+                            layers.append(_route_boustrophedon_layer(
+                                w, vertical=vert,
+                            ))
+                    return layers
+
+                def _rb_extras(layer: dict[str, Any]) -> tuple[tuple[str, Any], ...]:
+                    params = {p["name"]: p["values"][0] for p in layer.get("params", [])}
+                    width = params.get("width")
+                    return (
+                        ("rb_width", width),
+                        ("rb_vertical", params.get("vertical", False)),
+                    )
+
+                def _rb_cov_extras(layer: dict[str, Any]) -> dict[str, Any]:
+                    params = {p["name"]: p["values"][0] for p in layer.get("params", [])}
+                    width = int(params.get("width"))
+                    vert = bool(params.get("vertical", False))
+                    rows = (97 + width - 1) // width
+                    return {
+                        "route_mode": "route_boustrophedon",
+                        "route_rows": rows,
+                        "route_cols": width,
+                        "route_width": width,
+                        "route_ragged": (97 % width) != 0,
+                        "route_direction": "vertical" if vert else "horizontal",
+                        "route_width_source": "default_set",
+                    }
+
+                out.extend(_gen_numeric_caesar_route_pair_family(
+                    bench_slug=bench_slug,
+                    route_partner_kind="route_boustrophedon",
+                    route_layer_factory=_rb_layer_factory,
+                    route_partner_extras_factory=_rb_extras,
+                    promoted_shifts=promoted_shifts,
+                    numeric_only=True,
+                    coverage_extras_factory=_rb_cov_extras,
+                ))
+            # caesar + route_diagonal.
+            if diagonal_triggered:
+                # Use the canonical 4 variants × 2 grid sizes as a
+                # bounded matrix (8 route layers × 2*N shifts × 2
+                # layer orders). At 1 shift n=17 with complement n=9,
+                # this produces 8 × 2 × 2 = 32 specs — well within
+                # bench-fast scale.
+                diag_grids_for_caesar = ((10, 10), (13, 8))
+                diag_variants_for_caesar = [
+                    ("main", "forward", "top_then_left"),
+                    ("anti", "forward", "top_then_right"),
+                    ("main", "reverse", "top_then_left"),
+                    ("anti", "reverse", "top_then_right"),
+                ]
+
+                def _diag_layer_factory() -> list[dict[str, Any]]:
+                    layers: list[dict[str, Any]] = []
+                    for rows, cols in diag_grids_for_caesar:
+                        for axis, order, start_edge in diag_variants_for_caesar:
+                            layers.append(_diagonal_route_layer(
+                                rows, cols,
+                                axis=axis, order=order,
+                                start_edge=start_edge,
+                            ))
+                    return layers
+
+                def _diag_extras(layer: dict[str, Any]) -> tuple[tuple[str, Any], ...]:
+                    params = {p["name"]: p["values"][0] for p in layer.get("params", [])}
+                    return (
+                        ("diag_rows", params.get("rows")),
+                        ("diag_cols", params.get("cols")),
+                        ("diag_axis", params.get("diagonal_axis")),
+                        ("diag_order", params.get("diagonal_order")),
+                        ("diag_start_edge", params.get("diagonal_start_edge")),
+                    )
+
+                def _diag_cov_extras(layer: dict[str, Any]) -> dict[str, Any]:
+                    params = {p["name"]: p["values"][0] for p in layer.get("params", [])}
+                    rows = int(params["rows"])
+                    cols = int(params["cols"])
+                    return {
+                        "route_mode": "route_diagonal",
+                        "route_rows": rows,
+                        "route_cols": cols,
+                        "route_width": cols,
+                        "route_ragged": (rows * cols) > 97,
+                        "route_direction": str(params["diagonal_axis"]),
+                        "diagonal_axis": str(params["diagonal_axis"]),
+                        "diagonal_order": str(params["diagonal_order"]),
+                        "diagonal_start_edge": str(
+                            params["diagonal_start_edge"]
+                        ),
+                    }
+
+                out.extend(_gen_numeric_caesar_route_pair_family(
+                    bench_slug=bench_slug,
+                    route_partner_kind="route_diagonal",
+                    route_layer_factory=_diag_layer_factory,
+                    route_partner_extras_factory=_diag_extras,
+                    promoted_shifts=promoted_shifts,
+                    numeric_only=True,
+                    coverage_extras_factory=_diag_cov_extras,
+                ))
+            # caesar + row_reverse.
+            if row_reverse_triggered:
+                rr_widths_for_caesar = (8, 10, 12)
+                rr_parities_for_caesar = ("odd", "even")
+
+                def _rr_layer_factory() -> list[dict[str, Any]]:
+                    layers: list[dict[str, Any]] = []
+                    for w in rr_widths_for_caesar:
+                        for parity in rr_parities_for_caesar:
+                            layers.append(_row_reverse_layer(
+                                w, parity, start_row=0,
+                            ))
+                    return layers
+
+                def _rr_extras(layer: dict[str, Any]) -> tuple[tuple[str, Any], ...]:
+                    params = {p["name"]: p["values"][0] for p in layer.get("params", [])}
+                    return (
+                        ("rr_width", params.get("width")),
+                        ("rr_parity", params.get("parity")),
+                    )
+
+                def _rr_cov_extras(layer: dict[str, Any]) -> dict[str, Any]:
+                    params = {p["name"]: p["values"][0] for p in layer.get("params", [])}
+                    w = int(params["width"])
+                    parity = str(params["parity"])
+                    return {
+                        "row_reverse_width": w,
+                        "row_reverse_parity": parity,
+                        "row_reverse_source": "default_set",
+                        "row_reverse_ragged": (97 % w) != 0,
+                        "row_reverse_start_row": 0,
+                        "row_reverse_identity": _row_reverse_is_identity(
+                            w, parity, 0,
+                        ),
+                    }
+
+                out.extend(_gen_numeric_caesar_route_pair_family(
+                    bench_slug=bench_slug,
+                    route_partner_kind="row_reverse",
+                    route_layer_factory=_rr_layer_factory,
+                    route_partner_extras_factory=_rr_extras,
+                    promoted_shifts=promoted_shifts,
+                    numeric_only=True,
+                    coverage_extras_factory=_rr_cov_extras,
+                ))
 
     # --- LESSON-014: width-only ragged boustrophedon families ---------
     # Trigger-driven (boustrophedon_triggered set above). When the
