@@ -61,6 +61,7 @@ patch spec:
     LESSON-019  numeric_route_columnar_three_layer_composition
     LESSON-020  diagonal_route_semantic_completeness
     LESSON-021  diagonal_canonical_width_alias
+    LESSON-022  independent_two_keyword_rail_fence_three_role_composition
 
 The constructor refuses to load any registry file containing
 forbidden fields, so a corrupted on-disk registry fails closed.
@@ -393,6 +394,28 @@ _VALID_TACTIC_KINDS: frozenset[str] = frozenset({
                                    # auditors can identify the
                                    # width-only convention directly
                                    # (LESSON-021).
+    "independent_two_keyword_rail_fence_three_role_composition",
+                                   # 2026-04-29: when a clue exposes
+                                   # two distinct keywords plus a
+                                   # phrase-bound rail-fence depth,
+                                   # HCC must compose substitution
+                                   # keyword, columnar keyword, and
+                                   # rail_fence depth as INDEPENDENT
+                                   # roles in a three-layer family.
+                                   # The pre-LESSON-022 L013
+                                   # ``columnar_<sub>_rail_fence``
+                                   # path uses ENUMERATED columnar
+                                   # widths/permutations; it never
+                                   # emits a clue keyword as the
+                                   # columnar key. LESSON-022 closes
+                                   # this composition gap with a
+                                   # bounded i3-style three-layer
+                                   # generator that takes both
+                                   # keyword orientations on the
+                                   # sub+columnar slots and any
+                                   # phrase-bound rail-fence depth on
+                                   # the third. No new cipher
+                                   # primitive (LESSON-022).
 })
 
 
@@ -2205,6 +2228,122 @@ def _default_lessons() -> list[Lesson]:
                 "no_new_primitive": True,
                 "bench_only": True,
                 "alias_only": True,
+            },
+        ),
+        Lesson(
+            lesson_id="LESSON-022",
+            title=(
+                "Independent two-keyword rail-fence three-role "
+                "composition"
+            ),
+            description=(
+                "When a clue independently exposes TWO distinct "
+                "keywords plus a phrase-bound rail-fence depth, HCC "
+                "must compose substitution keyword, columnar "
+                "keyword, and rail_fence depth as independent roles "
+                "in a three-layer family.\n\n"
+                "Pre-LESSON-022 the L013 ``columnar_<sub>_rail_"
+                "fence`` three-layer emitter used ENUMERATED columnar "
+                "widths and col_orders; it never assigned a clue "
+                "keyword to the columnar slot. The LESSON-010 i3 "
+                "independent-keyword family covered the two-layer "
+                "(sub + columnar) case but never extended to a "
+                "three-layer rail-fence sandwich. As a result, when "
+                "a clue specified e.g. 'OBSERVE and GARDEN ... "
+                "three-rail fence ... after the column labels', the "
+                "natural composition\n"
+                "  [sub=OBSERVE, columnar=GARDEN, rail_fence(3)]\n"
+                "(plus the keyword swap) was structurally absent "
+                "from the catalogue. This is purely a composition "
+                "gap; no new cipher primitive is added.\n\n"
+                "Family labels:\n"
+                "  i3_columnar_vigenere_rail_fence\n"
+                "  i3_columnar_beaufort_rail_fence\n"
+                "  i3_columnar_variant_beaufort_rail_fence\n\n"
+                "Trigger conditions (all required):\n"
+                "  1. >= 2 distinct usable clue keywords (length\n"
+                "     >= 2 each, after the standard A-Z normaliser)\n"
+                "  2. >= 1 phrase-bound rail_fence depth from\n"
+                "     ``extract_phrase_bound_numerics(rail_depth)``\n"
+                "     — default-only depths do NOT trigger this\n"
+                "     family\n\n"
+                "Layer-order policy: every emitted family covers "
+                "all SIX decrypt-direction permutations of the "
+                "(substitution, columnar, rail_fence) triple.\n\n"
+                "Cardinality bound:\n"
+                "  2 keyword orientations × 6 layer orders ×\n"
+                "  N_rail_depths (typically 1-2) ≈ 12-24 specs per\n"
+                "  sub_kind family. Three sub_kind families summed:\n"
+                "  ~36-72 specs total. LESSON-017 scheduler\n"
+                "  classifies each as three_layer_sandwich\n"
+                "  (quota=40 each).\n\n"
+                "CoverageVector telemetry:\n"
+                "  layer_family            — i3_columnar_<sub>_rail_fence\n"
+                "  layer_order             — one of six permutations\n"
+                "  n_layers                = 3\n"
+                "  substitution_keyword    — clue keyword KW_A\n"
+                "  transposition_keyword   — clue keyword KW_B (NOT empty)\n"
+                "  transposition_width     = len(KW_B)\n"
+                "  col_order               — keyword stable rank\n"
+                "  col_order_source        = 'clue_keyword'\n"
+                "  role_assignment         — full three-tuple with\n"
+                "                            (sub, KW_A) +\n"
+                "                            (columnar, KW_B) +\n"
+                "                            (rail_fence, depth)\n"
+                "  role_assignment_mode    =\n"
+                "    'independent_two_keyword_rail_fence_three_role'\n"
+                "  operation_source        =\n"
+                "    'independent_keyword_rail_fence_composition'\n\n"
+                "EXPLICIT CAVEATS:\n"
+                "  - Benchmark curriculum capability.\n"
+                "  - Does NOT imply real K4 uses this composition.\n"
+                "  - Does NOT solve any specific benchmark unless\n"
+                "    independently evaluated.\n"
+                "  - Sealed-answer text must not enter repo "
+                "    artifacts."
+            ),
+            tactic_kind=(
+                "independent_two_keyword_rail_fence_three_role_composition"
+            ),
+            applies_to_families=[
+                "i3_columnar_vigenere_rail_fence",
+                "i3_columnar_beaufort_rail_fence",
+                "i3_columnar_variant_beaufort_rail_fence",
+            ],
+            generates_specs=True,
+            related_lesson_ids=[
+                "LESSON-010", "LESSON-013", "LESSON-017",
+            ],
+            source_origin="k4bench-derived",
+            tactic_parameters={
+                "required_role_triple": [
+                    "substitution_keyword (clue keyword KW_A)",
+                    "columnar_keyword (clue keyword KW_B, distinct)",
+                    "rail_fence_depth (phrase-bound)",
+                ],
+                "layer_orders": [
+                    "sub -> columnar -> rail_fence",
+                    "sub -> rail_fence -> columnar",
+                    "columnar -> sub -> rail_fence",
+                    "columnar -> rail_fence -> sub",
+                    "rail_fence -> sub -> columnar",
+                    "rail_fence -> columnar -> sub",
+                ],
+                "substitution_kinds": [
+                    "vigenere", "beaufort", "variant_beaufort",
+                ],
+                "keyword_orientations": [
+                    "(sub=A, col=B)", "(sub=B, col=A)",
+                ],
+                "scheduler_quota_class": "three_layer_sandwich",
+                "scheduler_quota_value": 40,
+                "rail_fence_depth_source": (
+                    "extract_phrase_bound_numerics(rail_depth)"
+                ),
+                "role_pool_size": 2,
+                "no_new_primitive": True,
+                "bench_only": True,
+                "composition_only_gap": True,
             },
         ),
     ]

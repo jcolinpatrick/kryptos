@@ -5999,6 +5999,208 @@ def _gen_independent_three_role_keyword_family(
     return out
 
 
+# ----------------------------------------------------------------------------
+# LESSON-022: independent two-keyword + rail_fence three-role composition
+# ----------------------------------------------------------------------------
+#
+# Pre-LESSON-022 the L013 ``columnar_<sub>_rail_fence`` three-layer
+# emitter combined a clue-keyword substitution with an ENUMERATED
+# columnar (default-set widths × col_orders) plus rail_fence. When a
+# clue exposes TWO distinct keywords plus rail-fence depth language,
+# the natural composition is ``[sub=KW_A, columnar=KW_B,
+# rail_fence(depth)]`` — the LESSON-010 independent-three-role
+# assignment extended with rail_fence as the third layer. The L013
+# emitter does NOT cover this assignment because its columnar role
+# is enumerated rather than clue-keyword-derived; the LESSON-010 i3
+# emitter does NOT cover it because it is two-layer.
+#
+# LESSON-022 closes the gap with a small additive emitter:
+#   - 2 keyword orientations (KW_A→sub KW_B→col, KW_B→sub KW_A→col)
+#   - 3 substitution kinds (vigenere / beaufort / variant_beaufort)
+#   - clue-bound rail_fence depths (typically 1-2)
+#   - 6 layer-order permutations
+# ≈ 36-72 specs per (clue_keywords, depths) pair. LESSON-017
+# stratified scheduler classifies each LESSON-022 family as
+# three_layer_sandwich (quota=40 each).
+
+
+# Six decryption-order permutations over the role triple
+# {substitution, columnar, rail_fence}. Substitution kind is
+# substituted at emission time; the other two slots are fixed
+# placeholders.
+_LESSON_022_LAYER_ORDERS_TEMPLATE: tuple[tuple[str, str, str], ...] = (
+    ("<sub>",     "columnar",  "rail_fence"),
+    ("<sub>",     "rail_fence", "columnar"),
+    ("columnar",  "<sub>",     "rail_fence"),
+    ("columnar",  "rail_fence", "<sub>"),
+    ("rail_fence", "<sub>",    "columnar"),
+    ("rail_fence", "columnar", "<sub>"),
+)
+
+
+def _resolve_lesson_022_layer_orders(
+    sub_kind: str,
+) -> tuple[tuple[str, str, str], ...]:
+    """Substitute the concrete substitution kind into the layer-order
+    template."""
+    return tuple(
+        tuple(sub_kind if seg == "<sub>" else seg for seg in order)
+        for order in _LESSON_022_LAYER_ORDERS_TEMPLATE
+    )
+
+
+def _gen_independent_keyword_rail_fence_family(
+    *,
+    bench_slug: str,
+    sub_kind: str,                  # vigenere | beaufort | variant_beaufort
+    clue_keywords: Sequence[str],
+    rail_fence_depths: Sequence[int],
+    role_pool_size: int = 2,
+    ct_length: int = 97,
+) -> list[GeneratedSpec]:
+    """LESSON-022: substitution(KW_A) + columnar(KW_B) + rail_fence(depth)
+    three-layer composition with INDEPENDENT keyword role assignment
+    on substitution and columnar slots, AND clue-bound rail_fence
+    depth on the third slot.
+
+    Trigger: at least two distinct usable clue keywords (length >= 2)
+    AND at least one clue-bound rail_fence depth.
+
+    The keyword pool is capped at the first ``role_pool_size`` clue
+    keywords (default 2) — extending past 2 multiplies the role
+    matrix as O(N**2). Both keyword orientations
+    (kw_a→sub kw_b→col, kw_b→sub kw_a→col) are emitted; same-keyword
+    self-pairs are NOT emitted here (LESSON-013 enumerated-columnar
+    + same-keyword paths already cover those patterns). Distinct-
+    pair coverage is the load-bearing capability of this lesson.
+
+    Cardinality bound:
+      keyword_orientations (2) × layer_orders (6) × rail_depths (~1-2)
+        ≈ 12-24 specs / family / clue
+    Each of the three sub_kind families gets its own emitter.
+
+    CoverageVector telemetry (in addition to standard fields):
+      layer_family             — i3_columnar_<sub>_rail_fence
+      layer_order              — one of six permutations
+      n_layers                 = 3
+      substitution_keyword     — clue keyword KW_A
+      transposition_keyword    — clue keyword KW_B (NOT empty)
+      transposition_width      = len(KW_B)
+      col_order                — keyword stable-rank derived
+      col_order_source         = "clue_keyword"
+      role_assignment          — ((sub_kind, KW_A), ("columnar", KW_B),
+                                   ("rail_fence", str(depth)))
+      role_assignment_mode     =
+        "independent_two_keyword_rail_fence_three_role"
+      operation_source         =
+        "independent_keyword_rail_fence_composition"
+    """
+    if sub_kind not in _SUBSTITUTION_KEYWORD_KINDS:
+        raise ValueError(
+            f"_gen_independent_keyword_rail_fence_family: unsupported "
+            f"sub_kind {sub_kind!r}"
+        )
+    pool: list[str] = []
+    seen: set[str] = set()
+    for kw in clue_keywords:
+        if not isinstance(kw, str):
+            continue
+        upper = kw.upper().strip()
+        if not upper.isalpha() or len(upper) < 2 or upper in seen:
+            continue
+        seen.add(upper)
+        pool.append(upper)
+        if len(pool) >= role_pool_size:
+            break
+    if len(pool) < 2:
+        return []
+    depths = []
+    seen_d: set[int] = set()
+    for d in rail_fence_depths:
+        if isinstance(d, int) and d >= 2 and d not in seen_d:
+            seen_d.add(d)
+            depths.append(d)
+    if not depths:
+        return []
+
+    family_label = f"i3_columnar_{sub_kind}_rail_fence"
+    layer_orders = _resolve_lesson_022_layer_orders(sub_kind)
+    out: list[GeneratedSpec] = []
+    # Two keyword orientations: (sub, col) ∈ {(A,B), (B,A)}.
+    orientations: list[tuple[str, str]] = [
+        (pool[0], pool[1]),
+        (pool[1], pool[0]),
+    ]
+    # Emit shifts/depths innermost so leading slices of the stream
+    # contain both keyword orientations and both depths in roughly
+    # equal proportion (mirrors LESSON-019 inner-shift fix).
+    for kw_sub, kw_col in orientations:
+        sub_layer = _keyword_substitution_layer(
+            sub_kind, kw_sub,
+            alphabet="AZ", alphabet_keyword=None,
+        )
+        col_layer = _keyword_columnar_layer(kw_col)
+        col_order = _keyword_to_col_order(kw_col)
+        col_extras = (
+            ("columnar_keyword", kw_col),
+            ("columnar_width", len(kw_col)),
+            ("columnar_col_order", tuple(col_order)),
+        )
+        for layer_order in layer_orders:
+            for depth in depths:
+                rf_layer = _rail_fence_layer(int(depth))
+                role = (
+                    (sub_kind, kw_sub),
+                    ("columnar", kw_col),
+                    ("rail_fence", str(int(depth))),
+                )
+                extras = (
+                    ("substitution_keyword", kw_sub),
+                ) + col_extras + (
+                    ("rail_fence_depth", int(depth)),
+                )
+                layer_for_kind = {
+                    sub_kind:    sub_layer,
+                    "columnar":  col_layer,
+                    "rail_fence": rf_layer,
+                }
+                pipeline = [layer_for_kind[k] for k in layer_order]
+                cov = CoverageVector(
+                    layer_family=family_label,
+                    layer_order=layer_order,
+                    role_assignment=role,
+                    role_assignment_mode=(
+                        "independent_two_keyword_rail_fence_three_role"
+                    ),
+                    alphabet="AZ", n_layers=3,
+                    extras=extras,
+                    alphabet_mode="AZ",
+                    alphabet_source="default",
+                    substitution_keyword=kw_sub,
+                    alphabet_keyword="",
+                    transposition_keyword=kw_col,
+                    transposition_width=len(kw_col),
+                    col_order=tuple(col_order),
+                    col_order_source="clue_keyword",
+                    operation_source=(
+                        "independent_keyword_rail_fence_composition"
+                    ),
+                )
+                out.append(_make_spec(
+                    bench_slug=bench_slug,
+                    family_label=family_label,
+                    pipeline=pipeline,
+                    coverage=cov,
+                    notes=(
+                        f"i3 {sub_kind}(sub={kw_sub}) ∘ "
+                        f"columnar(col={kw_col}) ∘ "
+                        f"rail_fence(depth={depth}) "
+                        f"[order={'-'.join(layer_order)}]"
+                    ),
+                ))
+    return out
+
+
 def _gen_independent_three_role_keywordless_family(
     *,
     bench_slug: str,
@@ -8674,6 +8876,14 @@ _LESSON_017_FAMILY_CLASSIFIERS: tuple[tuple[str, str], ...] = (
     ),
     # LESSON-021: standalone canonical diagonal route alone family.
     ("trigger_route", "route_diagonal_canonical"),
+    # LESSON-022: independent two-keyword + rail_fence three-role
+    # composition. three_layer_sandwich quota=40 each.
+    ("three_layer_sandwich", "i3_columnar_vigenere_rail_fence"),
+    ("three_layer_sandwich", "i3_columnar_beaufort_rail_fence"),
+    (
+        "three_layer_sandwich",
+        "i3_columnar_variant_beaufort_rail_fence",
+    ),
     # Front-of-catalog (legacy keyword-pair, i3, standalone).
     ("front_of_catalog", "i3_columnar_"),
     ("front_of_catalog", "i3_myszkowski_"),
@@ -8976,6 +9186,15 @@ def generate_layered_specs(
             "columnar_vigenere_rail_fence",
             "columnar_beaufort_rail_fence",
             "columnar_variant_beaufort_rail_fence",
+            # LESSON-022: 3-layer independent two-keyword +
+            # rail_fence sandwich. Activated only when 2+ clue
+            # keywords AND a phrase-bound rail depth are present
+            # (gating happens at emission time; allow-listing here
+            # keeps the families opt-in via the standard families
+            # filter).
+            "i3_columnar_vigenere_rail_fence",
+            "i3_columnar_beaufort_rail_fence",
+            "i3_columnar_variant_beaufort_rail_fence",
         }
     # 2026-04-28 (LESSON-010): the i3_* family labels are part of the
     # default catalogue when there are 2+ clue keywords. Adding them
@@ -9555,6 +9774,51 @@ def generate_layered_specs(
                     clue_keywords=cleaned,
                 )
             )
+
+        # --- LESSON-022: independent two-keyword + rail_fence three-
+        # role composition. Fires only when (a) at least 2 distinct
+        # clue keywords (length >= 2) are available AND (b) at least
+        # one CLUE-BOUND rail_fence depth is available (default-only
+        # depths do NOT trigger this family). The L013 enumerated-
+        # columnar emission above remains untouched and continues to
+        # cover same-keyword + enumerated-columnar permutations; this
+        # new family covers the orthogonal independent-two-keyword
+        # case the L013 emitter cannot express.
+        if len(cleaned) >= 2:
+            phrase_bound_rail_depths = [
+                d for d in (
+                    extract_phrase_bound_numerics(
+                        clue_text, ct_length=97,
+                    ).get("rail_depth", [])
+                )
+                if isinstance(d, int) and d >= 2
+            ]
+            if phrase_bound_rail_depths:
+                independent_rf_specs: list[tuple[str, str]] = [
+                    (
+                        "i3_columnar_vigenere_rail_fence",
+                        "vigenere",
+                    ),
+                    (
+                        "i3_columnar_beaufort_rail_fence",
+                        "beaufort",
+                    ),
+                    (
+                        "i3_columnar_variant_beaufort_rail_fence",
+                        "variant_beaufort",
+                    ),
+                ]
+                for label, sub_kind in independent_rf_specs:
+                    if label not in active:
+                        continue
+                    out.extend(
+                        _gen_independent_keyword_rail_fence_family(
+                            bench_slug=bench_slug,
+                            sub_kind=sub_kind,
+                            clue_keywords=cleaned,
+                            rail_fence_depths=phrase_bound_rail_depths,
+                        )
+                    )
 
     # --- LESSON-011: skip / step / stride route families ---------------
     # Trigger-driven (skip_route_triggered set above). When the clue
