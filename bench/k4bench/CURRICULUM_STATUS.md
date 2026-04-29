@@ -13,28 +13,48 @@ exhausting the current capability set.
 
 ## K4B-009 — Mason diagonal stones
 
-- **Status:** DEFERRED (unsolved after LESSON-016/017/018)
-- **Best result:** crib_score 5/24
-- **HCC catalogue:** 10010 specs dispatched (K4B-009.sqlite),
-  500 attempts retained in attempts artifact
-- **Signal/Promising:** 0/0
-- **Crib histogram:** 0:3697  1:3835  2:1800  3:555  4:105  5:18
+- **Status:** DEFERRED (unsolved after LESSON-016/017/018/019/020/021)
+- **Best result:** crib_score 14/24
+- **HCC catalogue (final):** 11002 specs dispatched
+  (K4B-009.sqlite), 500 attempts retained in latest artifact
+  `K4B-009_lesson021_v2_attempt.json`
+- **Signal/Promising/Breakthrough:** 0 / 0 / 0
+- **Top crib_score=14/24 cluster:** 6 candidates total — 3 from
+  `caesar_route_diagonal_columnar` (LESSON-019/020 explicit-axis)
+  and 3 from `caesar_route_diagonal_canonical_columnar`
+  (LESSON-021 canonical) — all shift=17, MASON columnar keyword,
+  width=10 phrase-bound, three layer orders. The two route surfaces
+  produce the same permutation here because the canonical
+  convention is exactly the (axis="anti", order="forward",
+  start_edge="top_then_right", cell_order="forward") combination
+  the explicit emitter already enumerates.
 - **Lessons surfaced and accepted as generalized capabilities:**
   - LESSON-016 — diagonal grid-route enumeration
   - LESSON-017 — stratified HCC bench-fast family quotas
   - LESSON-018 — numeric clue → Caesar/ROT trigger semantics
-- **Coverage observed in retained sample:**
-  - route_diagonal seeds: 112
-  - row_reverse seeds: 86
-  - numeric Caesar seeds: 6 (shift=17 + complement shift=9 both
-    present)
-- **Why deferred:** The obvious generalized lessons exposed by
-  K4B-009 have been learned and applied. Continuing to add
-  primitives or cross-products solely to solve K4B-009 risks
-  benchmark-specific overfitting. Defer pending a later benchmark
-  that independently motivates additional capabilities.
+  - LESSON-019 — numeric + route + columnar three-layer
+    composition
+  - LESSON-020 — diagonal cell-order variants (forward / reverse /
+    alternate)
+  - LESSON-021 — canonical width-only diagonal route alias
+- **Lesson progression on K4B-009 max_crib:**
+  - pre-LESSON-019: 5/24
+  - post-LESSON-019: 14/24 (+9, role-complete composition closed)
+  - post-LESSON-020 (cell-order variants): 14/24 (no further gain)
+  - post-LESSON-021 (canonical alias): 14/24 (no further gain)
+- **Why deferred:** the lesson trajectory on K4B-009 plateaued at
+  14/24. Two successive generalized capabilities (LESSON-020
+  reverse cell-order, LESSON-021 canonical width-only alias) failed
+  to move the score. Continuing to add primitives or cross-products
+  solely to chase K4B-009 from 14/24 to 24/24 risks benchmark-
+  specific overfitting and is explicitly out-of-scope per the
+  closure directive. Defer pending a later benchmark that
+  independently motivates additional capabilities.
+- **No LESSON-022 from K4B-009.**
 - **No K4B-009 solve claimed.**
+- **No K4B-009-specific patch was made.**
 - **No real-K4 progress claimed.**
+- **Next bench in line:** K4B-011.
 
 ---
 
