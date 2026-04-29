@@ -1358,6 +1358,11 @@ class CoverageVector:
     diagonal_axis: str = ""
     diagonal_order: str = ""
     diagonal_start_edge: str = ""
+    # 2026-04-29 (LESSON-020): within-diagonal cell ordering. Empty
+    # string for non-diagonal routes and for legacy diagonal specs
+    # that predate LESSON-020. Populated values: "forward" |
+    # "reverse" | "alternate".
+    diagonal_cell_order: str = ""
     # 2026-04-28 (LESSON-015 audit-hygiene): explicit identity flag.
     # ``row_reverse_identity=True`` means the (width, parity, start_row)
     # triple selects no row of length > 1, so the layer is the
@@ -1488,6 +1493,7 @@ class CoverageVector:
             "diagonal_axis": self.diagonal_axis,
             "diagonal_order": self.diagonal_order,
             "diagonal_start_edge": self.diagonal_start_edge,
+            "diagonal_cell_order": self.diagonal_cell_order,
             # LESSON-017 scheduler telemetry. Always emitted.
             "scheduling_pass": self.scheduling_pass,
             "family_quota": self.family_quota,
@@ -1618,6 +1624,9 @@ class CoverageVector:
             diagonal_axis=str(d.get("diagonal_axis", "")),
             diagonal_order=str(d.get("diagonal_order", "")),
             diagonal_start_edge=str(d.get("diagonal_start_edge", "")),
+            # LESSON-020: lenient parsing for ledger rows that
+            # predate the cell_order field.
+            diagonal_cell_order=str(d.get("diagonal_cell_order", "")),
             # LESSON-017 scheduler telemetry. Lenient parsing for
             # pre-LESSON-017 ledger rows.
             scheduling_pass=str(d.get("scheduling_pass", "")),
@@ -3290,13 +3299,20 @@ def _diagonal_route_layer(
     axis: str = "main",
     order: str = "forward",
     start_edge: str = "top_then_left",
+    cell_order: str = "forward",
 ) -> dict[str, Any]:
     """Build a route layer dict for the diagonal variant.
 
     The dispatcher's ``route`` translator validates rows*cols >=
-    CT_LEN and the (axis, order, start_edge) whitelist; this builder
-    rejects only obvious shape errors so the dispatcher remains the
-    single source of truth for cipher-semantic validation.
+    CT_LEN and the (axis, order, start_edge, cell_order) whitelist;
+    this builder rejects only obvious shape errors so the dispatcher
+    remains the single source of truth for cipher-semantic
+    validation.
+
+    ``cell_order`` (LESSON-020): when "forward" (default), the
+    ``diagonal_cell_order`` param is OMITTED from the layer dict so
+    pre-LESSON-020 ledger replays produce byte-identical bindings.
+    Non-default values are emitted explicitly.
     """
     if not isinstance(rows, int) or rows < 1:
         raise ValueError(
@@ -3311,17 +3327,27 @@ def _diagonal_route_layer(
             f"_diagonal_route_layer: axis must be 'main' or 'anti'; "
             f"got {axis!r}"
         )
+    if cell_order not in ("forward", "reverse", "alternate"):
+        raise ValueError(
+            f"_diagonal_route_layer: cell_order must be 'forward', "
+            f"'reverse', or 'alternate'; got {cell_order!r}"
+        )
+    params: list[dict[str, Any]] = [
+        {"name": "variant", "values": ["diagonal"]},
+        {"name": "rows", "values": [rows]},
+        {"name": "cols", "values": [cols]},
+        {"name": "diagonal_axis", "values": [axis]},
+        {"name": "diagonal_order", "values": [order]},
+        {"name": "diagonal_start_edge", "values": [start_edge]},
+    ]
+    if cell_order != "forward":
+        params.append(
+            {"name": "diagonal_cell_order", "values": [cell_order]}
+        )
     return {
         "kind": "route",
         "alphabet": "AZ",
-        "params": [
-            {"name": "variant", "values": ["diagonal"]},
-            {"name": "rows", "values": [rows]},
-            {"name": "cols", "values": [cols]},
-            {"name": "diagonal_axis", "values": [axis]},
-            {"name": "diagonal_order", "values": [order]},
-            {"name": "diagonal_start_edge", "values": [start_edge]},
-        ],
+        "params": params,
     }
 
 
@@ -3451,6 +3477,40 @@ def _diagonal_variant_combinations(
     if cap < 1:
         return []
     return full[:cap]
+
+
+# LESSON-020: cell_order enumeration. Default keeps legacy "forward"
+# (existing spec hashes unchanged); HCC families that opt in for
+# LESSON-020 enumerate ("forward", "reverse"). "alternate" is
+# available at the kernel + dispatcher layer but NOT enumerated by
+# default to keep cardinality bounded.
+_DIAGONAL_CELL_ORDERS_LESSON_020: tuple[str, ...] = ("forward", "reverse")
+
+
+def _diagonal_variant_combinations_with_cell_order(
+    *,
+    cap: Optional[int] = None,
+    cell_orders: Sequence[str] = _DIAGONAL_CELL_ORDERS_LESSON_020,
+) -> list[tuple[str, str, str, str]]:
+    """LESSON-020 expansion of ``_diagonal_variant_combinations``.
+
+    Returns ``[(axis, order, start_edge, cell_order), ...]`` with the
+    same prefix order as the legacy 8-variant list, expanded by
+    ``cell_orders``. The default cell_order tuple keeps ("forward",
+    "reverse") — "alternate" is supported at the kernel layer but
+    not enumerated by HCC generators by default to keep cardinality
+    bounded.
+
+    The ``cap`` argument truncates the BASE 8-variant list before
+    cell_order expansion (so cap=4 with cell_orders=("forward",
+    "reverse") returns 8 items, not 4).
+    """
+    base = _diagonal_variant_combinations(cap=cap)
+    out: list[tuple[str, str, str, str]] = []
+    for axis, order, start_edge in base:
+        for co in cell_orders:
+            out.append((axis, order, start_edge, co))
+    return out
 
 
 def _detect_block_reversal_trigger(clue_text: str) -> bool:
@@ -5666,41 +5726,54 @@ def _gen_numeric_caesar_route_columnar_family(
     if not cleaned_kws:
         return []
     layer_orders = _resolve_lesson_019_layer_orders(route_partner_kind)
+    # Precompute per-shift state once so the interleaved loop below
+    # doesn't redo it per route layer.
+    shift_state: list[tuple[int, dict[str, Any]]] = []
     for p in promoted_shifts:
         shift = int(p["shift_value"])
         if shift == 0:
             continue
-        caesar_layer = _caesar_layer(shift)
         cov_telemetry = _coverage_kwargs_from_promoted(
             p, numeric_only=numeric_only,
         )
-        for route_layer in route_layers:
-            partner_extras = route_partner_extras_factory(route_layer)
-            extra_cov = coverage_extras_factory(route_layer)
-            for kw in cleaned_kws:
-                col_layer = _keyword_columnar_layer(kw)
-                col_order = _keyword_to_col_order(kw)
-                col_extras = (
-                    ("columnar_keyword", kw),
-                    ("columnar_width", len(kw)),
-                    ("columnar_col_order", tuple(col_order)),
-                )
-                extras = (
-                    ("caesar_shift", shift),
-                ) + partner_extras + col_extras
-                role_assignment = (
-                    ("caesar_shift", str(shift)),
-                    (route_partner_kind, ""),
-                    ("columnar", kw),
-                )
-                # Layer kind → layer dict. Used to assemble the
-                # pipeline once per layer_order.
-                layer_for_kind = {
-                    "caesar":   caesar_layer,
-                    "columnar": col_layer,
-                    route_partner_kind: route_layer,
-                }
-                for layer_order in layer_orders:
+        shift_state.append((shift, cov_telemetry))
+    if not shift_state:
+        return []
+    # Emission order: route_layer × keyword × layer_order ×
+    # shift (innermost). Putting ``shift`` innermost ensures every
+    # leading slice of the emission stream contains both shift values
+    # in roughly equal proportion, so the LESSON-017 quota pass
+    # retains both as_given AND complement under tight caps.
+    # LESSON-020 doubled route_layers count for the diagonal partner;
+    # without this interleaving, a (shift outermost) order would
+    # starve the complement shift under quota=40.
+    for route_layer in route_layers:
+        partner_extras = route_partner_extras_factory(route_layer)
+        extra_cov = coverage_extras_factory(route_layer)
+        for kw in cleaned_kws:
+            col_layer = _keyword_columnar_layer(kw)
+            col_order = _keyword_to_col_order(kw)
+            col_extras = (
+                ("columnar_keyword", kw),
+                ("columnar_width", len(kw)),
+                ("columnar_col_order", tuple(col_order)),
+            )
+            for layer_order in layer_orders:
+                for shift, cov_telemetry in shift_state:
+                    caesar_layer = _caesar_layer(shift)
+                    extras = (
+                        ("caesar_shift", shift),
+                    ) + partner_extras + col_extras
+                    role_assignment = (
+                        ("caesar_shift", str(shift)),
+                        (route_partner_kind, ""),
+                        ("columnar", kw),
+                    )
+                    layer_for_kind = {
+                        "caesar":   caesar_layer,
+                        "columnar": col_layer,
+                        route_partner_kind: route_layer,
+                    }
                     pipeline = [layer_for_kind[k] for k in layer_order]
                     common = {
                         "layer_family": family_label,
@@ -5730,8 +5803,9 @@ def _gen_numeric_caesar_route_columnar_family(
                             f"caesar({shift}) ∘ {route_partner_kind} ∘ "
                             f"columnar({kw}) "
                             f"[order={'-'.join(layer_order)}, "
-                            f"numeric_promotion={p['shift_source']}, "
-                            f"dir={p['shift_direction']}]"
+                            f"numeric_promotion="
+                            f"{cov_telemetry['shift_source']}, "
+                            f"dir={cov_telemetry['shift_direction']}]"
                         ),
                     ))
     return out
@@ -7917,10 +7991,17 @@ def _gen_row_reverse_route_three_layer_family(
 
 def _diagonal_extras(
     rows: int, cols: int, axis: str, order: str, start_edge: str,
+    cell_order: str = "forward",
     *, ct_length: int = 97,
 ) -> tuple[tuple[str, Any], ...]:
-    """Standard ``extras`` tuple for a LESSON-016 spec."""
-    return (
+    """Standard ``extras`` tuple for a LESSON-016 / LESSON-020 spec.
+
+    ``cell_order`` (LESSON-020): when "forward" (the backward-
+    compatible default), the field is OMITTED from extras so legacy
+    spec hashes are unchanged. Non-default values append a
+    ``("diagonal_cell_order", value)`` entry.
+    """
+    base: tuple[tuple[str, Any], ...] = (
         ("route_rows", rows),
         ("route_cols", cols),
         ("route_width", cols),
@@ -7929,6 +8010,9 @@ def _diagonal_extras(
         ("diagonal_order", order),
         ("diagonal_start_edge", start_edge),
     )
+    if cell_order != "forward":
+        base = base + (("diagonal_cell_order", cell_order),)
+    return base
 
 
 def _gen_diagonal_alone_family(
@@ -7936,13 +8020,20 @@ def _gen_diagonal_alone_family(
     bench_slug: str,
     grids: Sequence[tuple[tuple[int, int], str]],
     variants: Optional[Sequence[tuple[str, str, str]]] = None,
+    cell_orders: Sequence[str] = ("forward",),
     ct_length: int = 97,
 ) -> list[GeneratedSpec]:
     """LESSON-016: diagonal route as a single-layer transposition.
 
-    Emits one spec per (grid × variant) combination. Variants
-    enumerate the canonical 8 (axis × order × start_edge) tuples
-    by default; callers may pass a smaller pre-capped list.
+    Emits one spec per (grid × variant × cell_order) combination.
+    Variants enumerate the canonical 8 (axis × order × start_edge)
+    tuples by default; callers may pass a smaller pre-capped list.
+
+    ``cell_orders`` (LESSON-020): default is ("forward",) which
+    preserves pre-LESSON-020 emission and spec hashes bit-for-bit.
+    Callers that want the LESSON-020 cell-order expansion pass
+    ("forward", "reverse") explicitly. "alternate" is a valid
+    kernel value but NOT enumerated by default.
     """
     if variants is None:
         variants = _diagonal_variant_combinations()
@@ -7951,41 +8042,46 @@ def _gen_diagonal_alone_family(
     for (rows, cols), source in grids:
         ragged = (rows * cols) > ct_length
         for axis, order, start_edge in variants:
-            layer = _diagonal_route_layer(
-                rows, cols, axis=axis, order=order, start_edge=start_edge,
-            )
-            cov = CoverageVector(
-                layer_family=family_label,
-                layer_order=("route_diagonal",),
-                role_assignment=(),
-                alphabet="AZ", n_layers=1,
-                extras=_diagonal_extras(
-                    rows, cols, axis, order, start_edge,
-                    ct_length=ct_length,
-                ),
-                operation_source=source,
-                route_mode="route_diagonal",
-                route_width=cols,
-                route_rows=rows,
-                route_cols=cols,
-                route_ragged=ragged,
-                route_direction=axis,
-                route_width_source=source,
-                diagonal_axis=axis,
-                diagonal_order=order,
-                diagonal_start_edge=start_edge,
-            )
-            out.append(_make_spec(
-                bench_slug=bench_slug, family_label=family_label,
-                pipeline=[layer], coverage=cov,
-                notes=(
-                    f"route_diagonal(rows={rows}, cols={cols}, "
-                    f"axis={axis}, order={order}, "
-                    f"start_edge={start_edge}) "
-                    f"[width_source={source}, ragged={ragged}]"
-                ),
-                crib_alignment="post_transposition",
-            ))
+            for cell_order in cell_orders:
+                layer = _diagonal_route_layer(
+                    rows, cols,
+                    axis=axis, order=order, start_edge=start_edge,
+                    cell_order=cell_order,
+                )
+                cov = CoverageVector(
+                    layer_family=family_label,
+                    layer_order=("route_diagonal",),
+                    role_assignment=(),
+                    alphabet="AZ", n_layers=1,
+                    extras=_diagonal_extras(
+                        rows, cols, axis, order, start_edge,
+                        cell_order, ct_length=ct_length,
+                    ),
+                    operation_source=source,
+                    route_mode="route_diagonal",
+                    route_width=cols,
+                    route_rows=rows,
+                    route_cols=cols,
+                    route_ragged=ragged,
+                    route_direction=axis,
+                    route_width_source=source,
+                    diagonal_axis=axis,
+                    diagonal_order=order,
+                    diagonal_start_edge=start_edge,
+                    diagonal_cell_order=cell_order,
+                )
+                out.append(_make_spec(
+                    bench_slug=bench_slug, family_label=family_label,
+                    pipeline=[layer], coverage=cov,
+                    notes=(
+                        f"route_diagonal(rows={rows}, cols={cols}, "
+                        f"axis={axis}, order={order}, "
+                        f"start_edge={start_edge}, "
+                        f"cell_order={cell_order}) "
+                        f"[width_source={source}, ragged={ragged}]"
+                    ),
+                    crib_alignment="post_transposition",
+                ))
     return out
 
 
@@ -7997,11 +8093,16 @@ def _gen_diagonal_substitution_family(
     keyword_b: str,
     grids: Sequence[tuple[tuple[int, int], str]],
     variants: Optional[Sequence[tuple[str, str, str]]] = None,
+    cell_orders: Sequence[str] = ("forward",),
     alphabet_modes: Optional[Sequence[AlphabetMode]] = None,
     ct_length: int = 97,
 ) -> list[GeneratedSpec]:
     """LESSON-016: diagonal route paired with a keyword substitution
     in BOTH layer orders (LESSON-002).
+
+    ``cell_orders`` (LESSON-020): default ("forward",) preserves
+    pre-LESSON-020 emission. Callers opt in to LESSON-020 expansion
+    by passing ("forward", "reverse").
     """
     if sub_kind not in _SUBSTITUTION_KEYWORD_KINDS:
         raise ValueError(f"unsupported sub_kind {sub_kind!r}")
@@ -8026,67 +8127,73 @@ def _gen_diagonal_substitution_family(
             for (rows, cols), source in grids:
                 ragged = (rows * cols) > ct_length
                 for axis, order, start_edge in variants:
-                    diag_layer = _diagonal_route_layer(
-                        rows, cols,
-                        axis=axis, order=order, start_edge=start_edge,
-                    )
-                    role = ((sub_kind, kw),)
-                    extras = _diagonal_extras(
-                        rows, cols, axis, order, start_edge,
-                        ct_length=ct_length,
-                    )
-                    common_kwargs = dict(
-                        layer_family=family_label,
-                        role_assignment=role,
-                        alphabet=mode.mode_label, n_layers=2,
-                        extras=extras,
-                        alphabet_mode=mode.mode_label,
-                        alphabet_source=mode.source,
-                        substitution_keyword=kw,
-                        alphabet_keyword=mode.alphabet_keyword or "",
-                        operation_source=source,
-                        route_mode="route_diagonal",
-                        route_width=cols,
-                        route_rows=rows,
-                        route_cols=cols,
-                        route_ragged=ragged,
-                        route_direction=axis,
-                        route_width_source=source,
-                        diagonal_axis=axis,
-                        diagonal_order=order,
-                        diagonal_start_edge=start_edge,
-                    )
-                    # Order 1: substitution first.
-                    out.append(_make_spec(
-                        bench_slug=bench_slug,
-                        family_label=family_label,
-                        pipeline=[sub_layer, diag_layer],
-                        coverage=CoverageVector(
-                            layer_order=(sub_kind, "route_diagonal"),
-                            **common_kwargs,
-                        ),
-                        notes=(
-                            f"{sub_kind}({kw}, alpha={mode.mode_label}) "
-                            f"∘ route_diagonal({rows}x{cols}, {axis}, "
-                            f"{order}, {start_edge}) [sub-first]"
-                        ),
-                    ))
-                    # Order 2: route first.
-                    out.append(_make_spec(
-                        bench_slug=bench_slug,
-                        family_label=family_label,
-                        pipeline=[diag_layer, sub_layer],
-                        coverage=CoverageVector(
-                            layer_order=("route_diagonal", sub_kind),
-                            **common_kwargs,
-                        ),
-                        notes=(
-                            f"route_diagonal({rows}x{cols}, {axis}, "
-                            f"{order}, {start_edge}) ∘ "
-                            f"{sub_kind}({kw}, alpha={mode.mode_label}) "
-                            "[route-first]"
-                        ),
-                    ))
+                    for cell_order in cell_orders:
+                        diag_layer = _diagonal_route_layer(
+                            rows, cols,
+                            axis=axis, order=order,
+                            start_edge=start_edge,
+                            cell_order=cell_order,
+                        )
+                        role = ((sub_kind, kw),)
+                        extras = _diagonal_extras(
+                            rows, cols, axis, order, start_edge,
+                            cell_order, ct_length=ct_length,
+                        )
+                        common_kwargs = dict(
+                            layer_family=family_label,
+                            role_assignment=role,
+                            alphabet=mode.mode_label, n_layers=2,
+                            extras=extras,
+                            alphabet_mode=mode.mode_label,
+                            alphabet_source=mode.source,
+                            substitution_keyword=kw,
+                            alphabet_keyword=mode.alphabet_keyword or "",
+                            operation_source=source,
+                            route_mode="route_diagonal",
+                            route_width=cols,
+                            route_rows=rows,
+                            route_cols=cols,
+                            route_ragged=ragged,
+                            route_direction=axis,
+                            route_width_source=source,
+                            diagonal_axis=axis,
+                            diagonal_order=order,
+                            diagonal_start_edge=start_edge,
+                            diagonal_cell_order=cell_order,
+                        )
+                        # Order 1: substitution first.
+                        out.append(_make_spec(
+                            bench_slug=bench_slug,
+                            family_label=family_label,
+                            pipeline=[sub_layer, diag_layer],
+                            coverage=CoverageVector(
+                                layer_order=(sub_kind, "route_diagonal"),
+                                **common_kwargs,
+                            ),
+                            notes=(
+                                f"{sub_kind}({kw}, alpha={mode.mode_label}) "
+                                f"∘ route_diagonal({rows}x{cols}, {axis}, "
+                                f"{order}, {start_edge}, "
+                                f"cell_order={cell_order}) [sub-first]"
+                            ),
+                        ))
+                        # Order 2: route first.
+                        out.append(_make_spec(
+                            bench_slug=bench_slug,
+                            family_label=family_label,
+                            pipeline=[diag_layer, sub_layer],
+                            coverage=CoverageVector(
+                                layer_order=("route_diagonal", sub_kind),
+                                **common_kwargs,
+                            ),
+                            notes=(
+                                f"route_diagonal({rows}x{cols}, {axis}, "
+                                f"{order}, {start_edge}, "
+                                f"cell_order={cell_order}) ∘ "
+                                f"{sub_kind}({kw}, alpha={mode.mode_label}) "
+                                "[route-first]"
+                            ),
+                        ))
     return out
 
 
@@ -8096,10 +8203,15 @@ def _gen_diagonal_rail_fence_family(
     grids: Sequence[tuple[tuple[int, int], str]],
     rail_fence_depths: Sequence[int],
     variants: Optional[Sequence[tuple[str, str, str]]] = None,
+    cell_orders: Sequence[str] = ("forward",),
     ct_length: int = 97,
 ) -> list[GeneratedSpec]:
     """LESSON-016: diagonal route + rail_fence in BOTH layer orders.
     Pure-transposition pair; no keyword roles.
+
+    ``cell_orders`` (LESSON-020): default ("forward",) preserves
+    pre-LESSON-020 emission. Callers opt in to LESSON-020 expansion
+    by passing ("forward", "reverse").
     """
     if variants is None:
         variants = _diagonal_variant_combinations(
@@ -8112,57 +8224,62 @@ def _gen_diagonal_rail_fence_family(
         for (rows, cols), source in grids:
             ragged = (rows * cols) > ct_length
             for axis, order, start_edge in variants:
-                diag_layer = _diagonal_route_layer(
-                    rows, cols,
-                    axis=axis, order=order, start_edge=start_edge,
-                )
-                extras = _diagonal_extras(
-                    rows, cols, axis, order, start_edge,
-                    ct_length=ct_length,
-                ) + (("rail_fence_depth", int(depth)),)
-                common_kwargs = dict(
-                    layer_family=family_label,
-                    role_assignment=(),
-                    alphabet="AZ", n_layers=2,
-                    extras=extras,
-                    operation_source=source,
-                    route_mode="route_diagonal",
-                    route_width=cols,
-                    route_rows=rows,
-                    route_cols=cols,
-                    route_ragged=ragged,
-                    route_direction=axis,
-                    route_width_source=source,
-                    diagonal_axis=axis,
-                    diagonal_order=order,
-                    diagonal_start_edge=start_edge,
-                )
-                out.append(_make_spec(
-                    bench_slug=bench_slug, family_label=family_label,
-                    pipeline=[rf_layer, diag_layer],
-                    coverage=CoverageVector(
-                        layer_order=("rail_fence", "route_diagonal"),
-                        **common_kwargs,
-                    ),
-                    notes=(
-                        f"rail_fence({depth}) ∘ route_diagonal("
-                        f"{rows}x{cols}, {axis}, {order}, "
-                        f"{start_edge}) [rail-first]"
-                    ),
-                ))
-                out.append(_make_spec(
-                    bench_slug=bench_slug, family_label=family_label,
-                    pipeline=[diag_layer, rf_layer],
-                    coverage=CoverageVector(
-                        layer_order=("route_diagonal", "rail_fence"),
-                        **common_kwargs,
-                    ),
-                    notes=(
-                        f"route_diagonal({rows}x{cols}, {axis}, "
-                        f"{order}, {start_edge}) ∘ rail_fence({depth}) "
-                        "[route-first]"
-                    ),
-                ))
+                for cell_order in cell_orders:
+                    diag_layer = _diagonal_route_layer(
+                        rows, cols,
+                        axis=axis, order=order, start_edge=start_edge,
+                        cell_order=cell_order,
+                    )
+                    extras = _diagonal_extras(
+                        rows, cols, axis, order, start_edge,
+                        cell_order, ct_length=ct_length,
+                    ) + (("rail_fence_depth", int(depth)),)
+                    common_kwargs = dict(
+                        layer_family=family_label,
+                        role_assignment=(),
+                        alphabet="AZ", n_layers=2,
+                        extras=extras,
+                        operation_source=source,
+                        route_mode="route_diagonal",
+                        route_width=cols,
+                        route_rows=rows,
+                        route_cols=cols,
+                        route_ragged=ragged,
+                        route_direction=axis,
+                        route_width_source=source,
+                        diagonal_axis=axis,
+                        diagonal_order=order,
+                        diagonal_start_edge=start_edge,
+                        diagonal_cell_order=cell_order,
+                    )
+                    out.append(_make_spec(
+                        bench_slug=bench_slug, family_label=family_label,
+                        pipeline=[rf_layer, diag_layer],
+                        coverage=CoverageVector(
+                            layer_order=("rail_fence", "route_diagonal"),
+                            **common_kwargs,
+                        ),
+                        notes=(
+                            f"rail_fence({depth}) ∘ route_diagonal("
+                            f"{rows}x{cols}, {axis}, {order}, "
+                            f"{start_edge}, cell_order={cell_order}) "
+                            "[rail-first]"
+                        ),
+                    ))
+                    out.append(_make_spec(
+                        bench_slug=bench_slug, family_label=family_label,
+                        pipeline=[diag_layer, rf_layer],
+                        coverage=CoverageVector(
+                            layer_order=("route_diagonal", "rail_fence"),
+                            **common_kwargs,
+                        ),
+                        notes=(
+                            f"route_diagonal({rows}x{cols}, {axis}, "
+                            f"{order}, {start_edge}, "
+                            f"cell_order={cell_order}) "
+                            f"∘ rail_fence({depth}) [route-first]"
+                        ),
+                    ))
     return out
 
 
@@ -9382,10 +9499,17 @@ def generate_layered_specs(
         # (sub × alpha × grid × variant × layer-orders) cartesian
         # stays bounded at bench-fast scale.
         diag_grids_capped = diag_grids[:8]
+        # LESSON-020: opt the LESSON-016 family generators into the
+        # cell_order expansion. ("forward", "reverse") doubles per-
+        # variant cardinality; "alternate" is supported by the kernel
+        # + dispatcher but NOT enumerated here to keep the universe
+        # bounded under LESSON-017 quota policy.
+        l020_cell_orders = ("forward", "reverse")
         if "route_diagonal" in active:
             out.extend(_gen_diagonal_alone_family(
                 bench_slug=bench_slug,
                 grids=diag_grids,
+                cell_orders=l020_cell_orders,
             ))
         for sub_kind, label in (
             ("vigenere", "route_diagonal_vigenere"),
@@ -9398,6 +9522,7 @@ def generate_layered_specs(
                     sub_kind=sub_kind,
                     keyword_a=keyword_a, keyword_b=keyword_b,
                     grids=diag_grids_capped,
+                    cell_orders=l020_cell_orders,
                     alphabet_modes=alphabet_modes,
                 ))
         if "route_diagonal_rail_fence" in active:
@@ -9405,6 +9530,7 @@ def generate_layered_specs(
                 bench_slug=bench_slug,
                 grids=diag_grids_capped,
                 rail_fence_depths=tuple(rail_fence_depths),
+                cell_orders=l020_cell_orders,
             ))
 
     # --- LESSON-018: numeric Caesar/ROT promotion ---------------------
@@ -9676,6 +9802,14 @@ def generate_layered_specs(
                         ("main", "reverse", "top_then_left"),
                         ("anti", "reverse", "top_then_right"),
                     ]
+                    # LESSON-020: enumerate forward + reverse cell
+                    # orders for the LESSON-019 diagonal cross-product.
+                    # 2 grids × 4 variants × 2 cell_orders = 16 route
+                    # layers, then × shifts × keywords × 6 layer
+                    # orders. LESSON-017 quota=40 caps final
+                    # retention; "alternate" is supported at the
+                    # kernel layer but NOT enumerated here.
+                    l019_diag_cell_orders = ("forward", "reverse")
 
                     def _l019_diag_layer_factory() -> list[dict[str, Any]]:
                         layers: list[dict[str, Any]] = []
@@ -9683,11 +9817,13 @@ def generate_layered_specs(
                             for axis, order, start_edge in (
                                 l019_diag_variants
                             ):
-                                layers.append(_diagonal_route_layer(
-                                    rows, cols,
-                                    axis=axis, order=order,
-                                    start_edge=start_edge,
-                                ))
+                                for cell_order in l019_diag_cell_orders:
+                                    layers.append(_diagonal_route_layer(
+                                        rows, cols,
+                                        axis=axis, order=order,
+                                        start_edge=start_edge,
+                                        cell_order=cell_order,
+                                    ))
                         return layers
 
                     def _l019_diag_extras(
@@ -9697,6 +9833,11 @@ def generate_layered_specs(
                             p["name"]: p["values"][0]
                             for p in layer.get("params", [])
                         }
+                        # diagonal_cell_order may be omitted from
+                        # params when "forward" (backward-compat).
+                        cell_order = params.get(
+                            "diagonal_cell_order", "forward",
+                        )
                         return (
                             ("diag_rows", params.get("rows")),
                             ("diag_cols", params.get("cols")),
@@ -9704,6 +9845,7 @@ def generate_layered_specs(
                             ("diag_order", params.get("diagonal_order")),
                             ("diag_start_edge",
                              params.get("diagonal_start_edge")),
+                            ("diag_cell_order", cell_order),
                         )
 
                     def _l019_diag_cov_extras(
@@ -9715,6 +9857,9 @@ def generate_layered_specs(
                         }
                         rows = int(params["rows"])
                         cols = int(params["cols"])
+                        cell_order = params.get(
+                            "diagonal_cell_order", "forward",
+                        )
                         return {
                             "route_mode": "route_diagonal",
                             "route_rows": rows,
@@ -9728,6 +9873,7 @@ def generate_layered_specs(
                             "diagonal_start_edge": str(
                                 params["diagonal_start_edge"]
                             ),
+                            "diagonal_cell_order": str(cell_order),
                         }
 
                     out.extend(

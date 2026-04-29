@@ -59,6 +59,7 @@ patch spec:
     LESSON-017  stratified_hcc_bench_fast_family_quotas
     LESSON-018  numeric_clue_caesar_trigger_semantics
     LESSON-019  numeric_route_columnar_three_layer_composition
+    LESSON-020  diagonal_route_semantic_completeness
 
 The constructor refuses to load any registry file containing
 forbidden fields, so a corrupted on-disk registry fails closed.
@@ -347,6 +348,25 @@ _VALID_TACTIC_KINDS: frozenset[str] = frozenset({
                                    # 016/018 detectors. LESSON-017
                                    # scheduler classifies as
                                    # three_layer_sandwich (LESSON-019).
+    "diagonal_route_semantic_completeness",  # 2026-04-29: a diagonal
+                                   # route is not fully specified by
+                                   # width × axis × diagonal-group
+                                   # order × start_edge. Hand-cipher
+                                   # diagonal routes also vary by
+                                   # within-diagonal cell direction.
+                                   # Adds an explicit
+                                   # ``diagonal_cell_order`` parameter
+                                   # to the kernel primitive and the
+                                   # route dispatcher (forward /
+                                   # reverse / alternate); HCC
+                                   # LESSON-016 + LESSON-019 diagonal
+                                   # generators enumerate forward +
+                                   # reverse by default. forward
+                                   # preserves backward-compatible
+                                   # behavior; "alternate" is
+                                   # supported at the kernel layer
+                                   # but not enumerated by HCC. No
+                                   # new primitive (LESSON-020).
 })
 
 
@@ -1983,6 +2003,98 @@ def _default_lessons() -> list[Lesson]:
                 "no_new_primitive": True,
                 "bench_only": True,
                 "composition_only_gap": True,
+            },
+        ),
+        Lesson(
+            lesson_id="LESSON-020",
+            title="Diagonal route semantic completeness",
+            description=(
+                "A diagonal grid-route transposition is not fully "
+                "specified by (width × axis × diagonal-group order × "
+                "start_edge). Hand-cipher diagonal routes also vary "
+                "by the order of cells WITHIN each diagonal — once a "
+                "diagonal stripe is identified, an operator can read "
+                "its cells in either direction independently of "
+                "which end was chosen as the starting cell.\n\n"
+                "Pre-LESSON-020 the diagonal route primitive exposed "
+                "axis × order × start_edge but did not expose the "
+                "within-diagonal cell direction as a separate "
+                "parameter. The HCC LESSON-016 + LESSON-019 "
+                "generators emitted a single canonical cell-order "
+                "convention. LESSON-020 closes that semantic gap "
+                "without adding a new cipher primitive: it adds a "
+                "single new parameter ``diagonal_cell_order`` to "
+                "``diagonal_perm`` and the dispatcher route "
+                "translator, and opts the LESSON-016 + LESSON-019 "
+                "diagonal HCC family generators into the bounded "
+                "(forward, reverse) cell-order enumeration.\n\n"
+                "Parameter values:\n"
+                "  forward    — preserve cells as produced by\n"
+                "               start_edge selection. DEFAULT,\n"
+                "               backward-compatible.\n"
+                "  reverse    — reverse each diagonal's cell list\n"
+                "               AFTER start_edge / order are\n"
+                "               applied.\n"
+                "  alternate  — boustrophedon over the diagonal\n"
+                "               sequence: even-indexed diagonals\n"
+                "               forward, odd-indexed reversed.\n"
+                "               Supported at the kernel + dispatcher\n"
+                "               layer but NOT enumerated by HCC by\n"
+                "               default to keep cardinality bounded.\n"
+                "Unknown values fail closed at both the kernel "
+                "(ValueError) and the dispatcher (DispatcherError).\n\n"
+                "HCC opt-in: LESSON-016 ``_gen_diagonal_*`` family "
+                "generators accept a ``cell_orders`` keyword whose "
+                "default is ``('forward',)`` (preserves legacy "
+                "emission and spec hashes); the LESSON-016 callers "
+                "in ``generate_layered_specs`` opt in to "
+                "``('forward', 'reverse')``. The LESSON-019 "
+                "``caesar_route_diagonal_columnar`` family "
+                "enumerates both cell orders inside its bounded "
+                "route-layer matrix. The LESSON-017 stratified "
+                "scheduler caps per-family retention at quota=40 "
+                "for the three-layer sandwich, so the cell-order "
+                "doubling does not crowd out other learned "
+                "families.\n\n"
+                "CoverageVector telemetry:\n"
+                "  diagonal_cell_order — 'forward' | 'reverse' | "
+                "    'alternate' on diagonal route specs; empty "
+                "    string on non-diagonal specs.\n\n"
+                "EXPLICIT CAVEATS:\n"
+                "  - This is a benchmark curriculum capability.\n"
+                "  - It does NOT imply real K4 uses diagonal "
+                "    routing.\n"
+                "  - It does NOT solve any specific benchmark "
+                "    unless independently evaluated.\n"
+                "  - Sealed-answer text must not enter repo "
+                "    artifacts."
+            ),
+            tactic_kind="diagonal_route_semantic_completeness",
+            applies_to_families=[
+                "route_diagonal",
+                "route_diagonal_vigenere",
+                "route_diagonal_beaufort",
+                "route_diagonal_variant_beaufort",
+                "route_diagonal_rail_fence",
+                "caesar_route_diagonal_columnar",
+            ],
+            generates_specs=False,
+            related_lesson_ids=[
+                "LESSON-016", "LESSON-017", "LESSON-018", "LESSON-019",
+            ],
+            source_origin="k4bench-derived",
+            tactic_parameters={
+                "parameter_name": "diagonal_cell_order",
+                "cell_order_values": ["forward", "reverse", "alternate"],
+                "default_value": "forward",
+                "hcc_enumerated_values": ["forward", "reverse"],
+                "fail_closed_layers": [
+                    "kernel.transforms.transposition.diagonal_perm",
+                    "dispatcher.route variant=diagonal",
+                ],
+                "no_new_primitive": True,
+                "bench_only": True,
+                "semantic_completeness_only": True,
             },
         ),
     ]

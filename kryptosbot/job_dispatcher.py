@@ -943,13 +943,18 @@ def _translate_layer(layer: CipherLayer, binding: dict[str, Any]) -> dict[str, A
             from kryptos.kernel.transforms.transposition import spiral_perm
             clockwise = bool(binding.get("clockwise", True))
             perm = spiral_perm(rows, cols, CT_LEN, clockwise=clockwise)
-        else:  # variant == "diagonal" — LESSON-016
-            # Validate axis / order / start_edge with explicit
-            # whitelists. Fail closed: unknown values raise
+        else:  # variant == "diagonal" — LESSON-016 / LESSON-020
+            # Validate axis / order / start_edge / cell_order with
+            # explicit whitelists. Fail closed: unknown values raise
             # DispatcherError, NEVER silently default.
             axis = binding.get("diagonal_axis")
             order = binding.get("diagonal_order")
             start_edge = binding.get("diagonal_start_edge")
+            # LESSON-020: optional within-diagonal cell ordering.
+            # Defaults to "forward" so pre-LESSON-020 specs that omit
+            # the field continue to dispatch with identical kernel
+            # behavior.
+            cell_order = binding.get("diagonal_cell_order", "forward")
             if axis not in ("main", "anti"):
                 raise DispatcherError(
                     f"route variant='diagonal' requires "
@@ -972,19 +977,27 @@ def _translate_layer(layer: CipherLayer, binding: dict[str, Any]) -> dict[str, A
                     f"requires diagonal_start_edge in "
                     f"{valid_start[axis]}; got {start_edge!r}"
                 )
+            if cell_order not in ("forward", "reverse", "alternate"):
+                raise DispatcherError(
+                    f"route variant='diagonal' requires "
+                    f"diagonal_cell_order in "
+                    f"{{'forward', 'reverse', 'alternate'}}; "
+                    f"got {cell_order!r}"
+                )
             from kryptos.kernel.transforms.transposition import diagonal_perm
             perm = diagonal_perm(
                 rows, cols, CT_LEN,
                 axis=axis, order=order, start_edge=start_edge,
+                cell_order=cell_order,
             )
             if len(perm) != CT_LEN:
                 raise DispatcherError(
                     f"diagonal route translator produced perm of length "
                     f"{len(perm)} (expected {CT_LEN}); rows={rows}, "
                     f"cols={cols}, axis={axis}, order={order}, "
-                    f"start_edge={start_edge}. This indicates a kernel "
-                    "primitive contract drift and is not safe to "
-                    "dispatch."
+                    f"start_edge={start_edge}, cell_order={cell_order}. "
+                    "This indicates a kernel primitive contract drift "
+                    "and is not safe to dispatch."
                 )
         return {
             "type": "transposition_full",
