@@ -370,6 +370,89 @@ def diagonal_perm(
     return perm
 
 
+# ════════════════════════════════════════════════════════════════════════════
+# LESSON-021: canonical width-only diagonal route alias
+# ════════════════════════════════════════════════════════════════════════════
+#
+# Some hand-cipher descriptions specify a diagonal route ONLY by its
+# width — "diagonal grid of width N" — without exposing axis,
+# start-edge, or within-diagonal cell-order terms. The expanded
+# diagonal_perm parameter set (axis × order × start_edge × cell_order)
+# enumerates all combinations, but downstream telemetry can lose track
+# of WHICH combination is "the" canonical width-only reading. Bench
+# clue authors reasonably expect a single deterministic convention to
+# exist as its own auditable surface.
+#
+# LESSON-021 fixes the canonical convention:
+#
+#   axis        = "anti"
+#   order       = "forward"
+#   start_edge  = "top_then_right"
+#   cell_order  = "forward"
+#   rows        = ceil(length / width)
+#   cols        = width
+#
+# This is the natural top-left-to-bottom-right anti-diagonal reading
+# of a row-major-filled width-N rectangle: cells are visited in
+# strictly increasing (row + col) groups, and within each group cells
+# go top-then-right (smallest row first). It is one of the eight
+# (axis, order, start_edge) combinations diagonal_perm already
+# supports — LESSON-021 does NOT introduce a new kernel mechanism, it
+# just NAMES the canonical convention so HCC, dispatcher, and
+# downstream telemetry can refer to it directly.
+#
+# Backward compatibility: pre-LESSON-021 callers that want the same
+# permutation can call diagonal_perm directly with the four explicit
+# parameters above; they will get the same output.
+
+CANONICAL_DIAGONAL_AXIS: str = "anti"
+CANONICAL_DIAGONAL_ORDER: str = "forward"
+CANONICAL_DIAGONAL_START_EDGE: str = "top_then_right"
+CANONICAL_DIAGONAL_CELL_ORDER: str = "forward"
+
+
+def canonical_diagonal_perm(
+    width: int, length: int = 97,
+) -> List[int]:
+    """LESSON-021: canonical width-only diagonal route.
+
+    Width-only alias for ``diagonal_perm`` with the canonical
+    convention pinned (axis="anti", order="forward",
+    start_edge="top_then_right", cell_order="forward"). rows is
+    inferred as ceil(length / width); cols is width. Bijective and
+    length-preserving for any width >= 1 such that
+    ``ceil(length / width) * width >= length`` (always true by
+    construction).
+
+    Use this alias when a hand-cipher clue specifies "diagonal grid
+    of width N" without supplying axis / start-edge / cell-order
+    terms. Use ``diagonal_perm`` directly when those dimensions ARE
+    specified by the clue. The two paths produce identical output
+    when the explicit parameters match the canonical defaults.
+
+    Raises:
+      ValueError: if width < 1 or length < 1.
+    """
+    if not isinstance(width, int) or width < 1:
+        raise ValueError(
+            f"canonical_diagonal_perm: width must be int >= 1; "
+            f"got {width!r}"
+        )
+    if length < 1:
+        raise ValueError(
+            f"canonical_diagonal_perm: length must be >= 1; got {length!r}"
+        )
+    rows = (length + width - 1) // width
+    cols = width
+    return diagonal_perm(
+        rows, cols, length,
+        axis=CANONICAL_DIAGONAL_AXIS,
+        order=CANONICAL_DIAGONAL_ORDER,
+        start_edge=CANONICAL_DIAGONAL_START_EDGE,
+        cell_order=CANONICAL_DIAGONAL_CELL_ORDER,
+    )
+
+
 def strip_perm(width: int, strip_order: List[int], length: int = 97) -> List[int]:
     """Row/strip reordering transposition."""
     perm: list[int] = []
