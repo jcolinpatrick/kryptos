@@ -58,6 +58,7 @@ patch spec:
     LESSON-016  diagonal_grid_route_enumeration
     LESSON-017  stratified_hcc_bench_fast_family_quotas
     LESSON-018  numeric_clue_caesar_trigger_semantics
+    LESSON-019  numeric_route_columnar_three_layer_composition
 
 The constructor refuses to load any registry file containing
 forbidden fields, so a corrupted on-disk registry fails closed.
@@ -327,6 +328,25 @@ _VALID_TACTIC_KINDS: frozenset[str] = frozenset({
                                    # directions. Bench-only, scheduler
                                    # composes with LESSON-017
                                    # (LESSON-018).
+    "numeric_route_columnar_three_layer_composition",  # 2026-04-29:
+                                   # role-complete three-layer
+                                   # composition. When a clue
+                                   # independently surfaces a numeric
+                                   # Caesar/ROT role, a route/grid
+                                   # role, and a columnar/transposition
+                                   # keyword role, HCC must emit a
+                                   # bounded three-layer family
+                                   # combining caesar + route +
+                                   # columnar in all six layer
+                                   # orderings. This closes the
+                                   # composition gap where each role
+                                   # was detected independently but
+                                   # never combined into a three-layer
+                                   # candidate. No new primitive;
+                                   # purely additive over LESSON-014/
+                                   # 016/018 detectors. LESSON-017
+                                   # scheduler classifies as
+                                   # three_layer_sandwich (LESSON-019).
 })
 
 
@@ -1860,6 +1880,109 @@ def _default_lessons() -> list[Lesson]:
                 ],
                 "bench_only": True,
                 "no_new_primitive": True,
+            },
+        ),
+        Lesson(
+            lesson_id="LESSON-019",
+            title=(
+                "Role-complete numeric-route-columnar three-layer "
+                "composition"
+            ),
+            description=(
+                "When a clue INDEPENDENTLY exposes a numeric "
+                "operation role (LESSON-018 promoted shift), a "
+                "route/grid operation role (LESSON-014 boustrophedon "
+                "or LESSON-016 diagonal), AND a columnar/"
+                "transposition keyword role (clue keyword of "
+                "length >= 2), HCC must emit a bounded three-layer "
+                "composition family combining caesar + route + "
+                "columnar.\n\n"
+                "Pre-LESSON-019 each detector ran independently and "
+                "two-layer cross-products existed (LESSON-018 caesar +"
+                " route, LESSON-014 sub + route + columnar, etc.) "
+                "but no generator emitted the role-complete numeric "
+                "+ route + columnar three-layer composition. This "
+                "is purely a composition gap — no new primitive is "
+                "added by this lesson.\n\n"
+                "Family labels:\n"
+                "  caesar_route_boustrophedon_columnar — emitted when "
+                "    LESSON-018 numeric promotion AND boustrophedon "
+                "    trigger AND a clue keyword of length >= 2 are "
+                "    all present\n"
+                "  caesar_route_diagonal_columnar — emitted under the "
+                "    same gate with the diagonal trigger\n\n"
+                "Layer-order policy: every emitted family covers all "
+                "SIX decrypt-order permutations of the role triple "
+                "(caesar→route→columnar, caesar→columnar→route, "
+                "route→caesar→columnar, route→columnar→caesar, "
+                "columnar→caesar→route, columnar→route→caesar). "
+                "Encrypt vs decrypt direction is ambiguous in clue "
+                "language, so all six are emitted and the LESSON-017 "
+                "scheduler enforces per-family quota.\n\n"
+                "Cardinality bounds: each promoted shift × ≤8 route "
+                "layers × ≤2 columnar keywords × 6 layer orders. "
+                "Realistic upper bound per family on a multi-trigger "
+                "clue is ~192 specs; the LESSON-017 scheduler "
+                "classifies LESSON-019 families as "
+                "three_layer_sandwich (quota=40 each) so per-family "
+                "retention matches existing sandwich families.\n\n"
+                "CoverageVector telemetry (in addition to the "
+                "LESSON-018 numeric promotion fields):\n"
+                "  layer_family       — caesar_<route>_columnar\n"
+                "  layer_order        — one of six permutations\n"
+                "  role_assignment    — (caesar_shift, route, "
+                "    columnar) triple\n"
+                "  role_assignment_mode = "
+                "    'numeric_route_columnar_three_role'\n"
+                "  operation_source   = "
+                "    'numeric_route_columnar_composition'\n"
+                "  route_mode / route_width / route_rows / route_cols "
+                "    / route_width_source — from route layer\n"
+                "  transposition_keyword + col_order + "
+                "    col_order_source — from columnar keyword\n\n"
+                "EXPLICIT CAVEATS:\n"
+                "  - This is a benchmark curriculum capability.\n"
+                "  - It does NOT imply real K4 uses this "
+                "    composition.\n"
+                "  - It does NOT solve any specific benchmark unless "
+                "    independently evaluated.\n"
+                "  - Sealed-answer text must not enter repo "
+                "    artifacts."
+            ),
+            tactic_kind=(
+                "numeric_route_columnar_three_layer_composition"
+            ),
+            applies_to_families=[
+                "caesar_route_boustrophedon_columnar",
+                "caesar_route_diagonal_columnar",
+            ],
+            generates_specs=True,
+            related_lesson_ids=[
+                "LESSON-014", "LESSON-016", "LESSON-017", "LESSON-018",
+            ],
+            source_origin="k4bench-derived",
+            tactic_parameters={
+                "required_role_triple": [
+                    "numeric_caesar_promotion",
+                    "route_trigger (boustrophedon or diagonal)",
+                    "columnar_keyword (length >= 2)",
+                ],
+                "layer_orders": [
+                    "caesar -> route -> columnar",
+                    "caesar -> columnar -> route",
+                    "route -> caesar -> columnar",
+                    "route -> columnar -> caesar",
+                    "columnar -> caesar -> route",
+                    "columnar -> route -> caesar",
+                ],
+                "route_partner_kinds": [
+                    "route_boustrophedon", "route_diagonal",
+                ],
+                "scheduler_quota_class": "three_layer_sandwich",
+                "scheduler_quota_value": 40,
+                "no_new_primitive": True,
+                "bench_only": True,
+                "composition_only_gap": True,
             },
         ),
     ]

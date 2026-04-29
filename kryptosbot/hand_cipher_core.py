@@ -5538,6 +5538,205 @@ def _gen_numeric_caesar_route_pair_family(
     return out
 
 
+# ----------------------------------------------------------------------------
+# LESSON-019: role-complete numeric-route-columnar three-layer composition
+# ----------------------------------------------------------------------------
+#
+# Pre-LESSON-019 the controller had each role detector independently:
+#   - LESSON-018 promoted clue numerals to Caesar/ROT shifts,
+#   - LESSON-014 / LESSON-016 enumerated route_boustrophedon /
+#     route_diagonal layers from clue widths and grid wording,
+#   - the legacy keyword logic enumerated columnar layers from clue
+#     keywords.
+# But when ALL THREE role classes fired on the same clue, no family
+# generator emitted a three-layer composition combining them. This
+# is the role-complete composition gap LESSON-019 closes.
+#
+# The generator is purely additive over the existing role detectors:
+# it does NOT introduce any new primitive, does NOT widen any
+# detector vocabulary, and does NOT touch real-K4 mode (HCC is
+# bench-mode only via _collect_hcc_seeds).
+#
+# Cardinality bound on a multi-trigger clue:
+#   N_shifts (≤ ~4 from LESSON-018: as_given + complement, dedup'd)
+#   × N_route_layers (≤ ~8 — bounded by route_layer_factory caller)
+#   × N_columnar_keywords (≤ 2 — keyword_a, keyword_b)
+#   × 6 layer-order permutations
+# Per route partner: ≤ 4 × 8 × 2 × 6 = 384 specs in the worst case;
+# realistic K4B clues land at 96-192. The LESSON-017 stratified
+# scheduler classifies LESSON-019 families as three_layer_sandwich
+# (quota=40 each) so per-family retention stays bounded regardless
+# of the upstream cardinality.
+
+
+# Decryption-order layer-order permutations for the role-complete
+# three-layer composition. Six distinct orderings cover all valid
+# encrypt/decrypt-direction interpretations of "caesar + route +
+# columnar" without privileging one. The route_kind placeholder is
+# substituted with the concrete route_partner_kind at emission
+# time.
+_LESSON_019_LAYER_ORDERS: tuple[tuple[str, str, str], ...] = (
+    ("caesar",   "<route>",  "columnar"),  # caesar → route → columnar
+    ("caesar",   "columnar", "<route>"),   # caesar → columnar → route
+    ("<route>",  "caesar",   "columnar"),  # route  → caesar → columnar
+    ("<route>",  "columnar", "caesar"),    # route  → columnar → caesar
+    ("columnar", "caesar",   "<route>"),   # columnar → caesar → route
+    ("columnar", "<route>",  "caesar"),    # columnar → route → caesar
+)
+
+
+def _resolve_lesson_019_layer_orders(
+    route_partner_kind: str,
+) -> tuple[tuple[str, str, str], ...]:
+    """Substitute the concrete route partner kind into
+    ``_LESSON_019_LAYER_ORDERS`` to get the actual ordering tuples.
+    """
+    return tuple(
+        tuple(
+            route_partner_kind if seg == "<route>" else seg
+            for seg in order
+        )
+        for order in _LESSON_019_LAYER_ORDERS
+    )
+
+
+def _gen_numeric_caesar_route_columnar_family(
+    *,
+    bench_slug: str,
+    route_partner_kind: str,             # "route_boustrophedon" |
+                                         # "route_diagonal"
+    route_layer_factory,                 # callable() → list[layer dict]
+    route_partner_extras_factory,        # callable(layer) → tuple[(k, v), ...]
+    coverage_extras_factory,             # callable(layer) → dict
+    promoted_shifts: Sequence[dict[str, Any]],
+    columnar_keywords: Sequence[str],
+    numeric_only: bool = True,
+) -> list[GeneratedSpec]:
+    """LESSON-019: caesar + route + columnar three-layer family.
+
+    Emits one spec per (promoted_shift, route_layer, columnar_keyword,
+    layer_order) tuple. Six layer-order permutations cover all
+    decrypt-direction interpretations of the role triple. Caller is
+    expected to pre-cap ``route_layer_factory`` output and
+    ``columnar_keywords`` so the cartesian universe stays bounded;
+    the LESSON-017 scheduler enforces a final per-family quota.
+
+    Required role triple:
+      - numeric Caesar/ROT shift (from LESSON-018 promotion)
+      - route layer (from LESSON-014 boustrophedon or LESSON-016
+        diagonal generators)
+      - columnar keyword (length >= 2 — single-character keywords
+        produce degenerate column orders and are silently skipped)
+
+    All emitted specs carry:
+      - layer_family = "caesar_<route_partner_kind>_columnar"
+      - layer_order  = one of six permutations
+      - operation_source = "numeric_route_columnar_composition"
+      - role_assignment_mode = "numeric_route_columnar_three_role"
+      - LESSON-018 numeric-promotion telemetry (shift_*,
+        numeric_trigger_without_caesar_word)
+      - route telemetry from coverage_extras_factory (route_mode,
+        route_width, route_rows, route_cols, route_width_source, ...)
+      - transposition_keyword + col_order from the columnar keyword
+    """
+    if route_partner_kind not in (
+        "route_boustrophedon", "route_diagonal",
+    ):
+        raise ValueError(
+            f"unsupported route_partner_kind {route_partner_kind!r}"
+        )
+    family_label = f"caesar_{route_partner_kind}_columnar"
+    out: list[GeneratedSpec] = []
+    route_layers = list(route_layer_factory())
+    if not route_layers:
+        return []
+    # Filter columnar keywords to those usable as a column order.
+    cleaned_kws: list[str] = []
+    seen_kw: set[str] = set()
+    for kw in columnar_keywords:
+        if not isinstance(kw, str):
+            continue
+        upper = kw.upper().strip()
+        if not upper.isalpha() or len(upper) < 2:
+            continue
+        if upper in seen_kw:
+            continue
+        seen_kw.add(upper)
+        cleaned_kws.append(upper)
+    if not cleaned_kws:
+        return []
+    layer_orders = _resolve_lesson_019_layer_orders(route_partner_kind)
+    for p in promoted_shifts:
+        shift = int(p["shift_value"])
+        if shift == 0:
+            continue
+        caesar_layer = _caesar_layer(shift)
+        cov_telemetry = _coverage_kwargs_from_promoted(
+            p, numeric_only=numeric_only,
+        )
+        for route_layer in route_layers:
+            partner_extras = route_partner_extras_factory(route_layer)
+            extra_cov = coverage_extras_factory(route_layer)
+            for kw in cleaned_kws:
+                col_layer = _keyword_columnar_layer(kw)
+                col_order = _keyword_to_col_order(kw)
+                col_extras = (
+                    ("columnar_keyword", kw),
+                    ("columnar_width", len(kw)),
+                    ("columnar_col_order", tuple(col_order)),
+                )
+                extras = (
+                    ("caesar_shift", shift),
+                ) + partner_extras + col_extras
+                role_assignment = (
+                    ("caesar_shift", str(shift)),
+                    (route_partner_kind, ""),
+                    ("columnar", kw),
+                )
+                # Layer kind → layer dict. Used to assemble the
+                # pipeline once per layer_order.
+                layer_for_kind = {
+                    "caesar":   caesar_layer,
+                    "columnar": col_layer,
+                    route_partner_kind: route_layer,
+                }
+                for layer_order in layer_orders:
+                    pipeline = [layer_for_kind[k] for k in layer_order]
+                    common = {
+                        "layer_family": family_label,
+                        "layer_order": layer_order,
+                        "role_assignment": role_assignment,
+                        "role_assignment_mode": (
+                            "numeric_route_columnar_three_role"
+                        ),
+                        "alphabet": "AZ", "n_layers": 3,
+                        "extras": extras,
+                        "operation_source": (
+                            "numeric_route_columnar_composition"
+                        ),
+                        "transposition_keyword": kw,
+                        "col_order": tuple(col_order),
+                        "col_order_source": "clue_keyword",
+                        **cov_telemetry,
+                        **extra_cov,
+                    }
+                    cov = CoverageVector(**common)
+                    out.append(_make_spec(
+                        bench_slug=bench_slug,
+                        family_label=family_label,
+                        pipeline=pipeline,
+                        coverage=cov,
+                        notes=(
+                            f"caesar({shift}) ∘ {route_partner_kind} ∘ "
+                            f"columnar({kw}) "
+                            f"[order={'-'.join(layer_order)}, "
+                            f"numeric_promotion={p['shift_source']}, "
+                            f"dir={p['shift_direction']}]"
+                        ),
+                    ))
+    return out
+
+
 def _gen_independent_three_role_keyword_family(
     *,
     bench_slug: str,
@@ -8177,6 +8376,12 @@ _LESSON_017_FAMILY_CLASSIFIERS: tuple[tuple[str, str], ...] = (
     ("three_layer_sandwich", "caesar_myszkowski_atbash"),
     ("three_layer_sandwich", "caesar_rail_fence_atbash"),
     ("three_layer_sandwich", "caesar_route_atbash"),
+    # LESSON-019: role-complete numeric-route-columnar three-layer
+    # composition. Two route-partner variants; both classified as
+    # three_layer_sandwich (quota=40 each) so per-family retention
+    # matches the other LESSON-013/-014 sandwich families.
+    ("three_layer_sandwich", "caesar_route_boustrophedon_columnar"),
+    ("three_layer_sandwich", "caesar_route_diagonal_columnar"),
     # Front-of-catalog (legacy keyword-pair, i3, standalone).
     ("front_of_catalog", "i3_columnar_"),
     ("front_of_catalog", "i3_myszkowski_"),
@@ -9376,6 +9581,167 @@ def generate_layered_specs(
                     numeric_only=True,
                     coverage_extras_factory=_rr_cov_extras,
                 ))
+
+            # --- LESSON-019: role-complete numeric + route + columnar
+            # three-layer composition. Fires only when ALL THREE role
+            # classes are present: a numeric Caesar/ROT shift
+            # (LESSON-018 promotion), a route trigger (boustrophedon
+            # OR diagonal), and at least one columnar keyword (clue
+            # pool ``cleaned`` has length >= 1 and a usable keyword
+            # of length >= 2). Each route partner emits its own
+            # bounded family so the LESSON-017 scheduler can apply
+            # per-family quotas independently.
+            #
+            # The same factories used inside the LESSON-018 cross-
+            # product blocks are re-instantiated here against the
+            # canonical bounded route-layer matrices (top-2 widths
+            # for boustrophedon; (10,10)+(13,8) × 4 axis variants
+            # for diagonal). Columnar keyword pool is bounded to
+            # ``[keyword_a, keyword_b]`` (deduplicated, len>=2 only)
+            # so the cartesian universe stays inside three_layer_
+            # sandwich quota policy.
+            l019_columnar_keywords: list[str] = []
+            for _kw in (keyword_a, keyword_b):
+                if (
+                    isinstance(_kw, str)
+                    and _kw.isalpha()
+                    and len(_kw) >= 2
+                    and _kw not in l019_columnar_keywords
+                ):
+                    l019_columnar_keywords.append(_kw)
+            if l019_columnar_keywords:
+                if boustrophedon_triggered:
+                    l019_rb_widths = (8, 10)
+
+                    def _l019_rb_layer_factory() -> list[dict[str, Any]]:
+                        layers: list[dict[str, Any]] = []
+                        for w in l019_rb_widths:
+                            for vert in (False, True):
+                                layers.append(_route_boustrophedon_layer(
+                                    w, vertical=vert,
+                                ))
+                        return layers
+
+                    def _l019_rb_extras(
+                        layer: dict[str, Any],
+                    ) -> tuple[tuple[str, Any], ...]:
+                        params = {
+                            p["name"]: p["values"][0]
+                            for p in layer.get("params", [])
+                        }
+                        return (
+                            ("rb_width", params.get("width")),
+                            ("rb_vertical", params.get("vertical", False)),
+                        )
+
+                    def _l019_rb_cov_extras(
+                        layer: dict[str, Any],
+                    ) -> dict[str, Any]:
+                        params = {
+                            p["name"]: p["values"][0]
+                            for p in layer.get("params", [])
+                        }
+                        width = int(params.get("width"))
+                        vert = bool(params.get("vertical", False))
+                        rows = (97 + width - 1) // width
+                        return {
+                            "route_mode": "route_boustrophedon",
+                            "route_rows": rows,
+                            "route_cols": width,
+                            "route_width": width,
+                            "route_ragged": (97 % width) != 0,
+                            "route_direction": (
+                                "vertical" if vert else "horizontal"
+                            ),
+                            "route_width_source": "default_set",
+                        }
+
+                    out.extend(
+                        _gen_numeric_caesar_route_columnar_family(
+                            bench_slug=bench_slug,
+                            route_partner_kind="route_boustrophedon",
+                            route_layer_factory=_l019_rb_layer_factory,
+                            route_partner_extras_factory=_l019_rb_extras,
+                            coverage_extras_factory=_l019_rb_cov_extras,
+                            promoted_shifts=promoted_shifts,
+                            columnar_keywords=l019_columnar_keywords,
+                            numeric_only=True,
+                        )
+                    )
+                if diagonal_triggered:
+                    l019_diag_grids = ((10, 10), (13, 8))
+                    l019_diag_variants = [
+                        ("main", "forward", "top_then_left"),
+                        ("anti", "forward", "top_then_right"),
+                        ("main", "reverse", "top_then_left"),
+                        ("anti", "reverse", "top_then_right"),
+                    ]
+
+                    def _l019_diag_layer_factory() -> list[dict[str, Any]]:
+                        layers: list[dict[str, Any]] = []
+                        for rows, cols in l019_diag_grids:
+                            for axis, order, start_edge in (
+                                l019_diag_variants
+                            ):
+                                layers.append(_diagonal_route_layer(
+                                    rows, cols,
+                                    axis=axis, order=order,
+                                    start_edge=start_edge,
+                                ))
+                        return layers
+
+                    def _l019_diag_extras(
+                        layer: dict[str, Any],
+                    ) -> tuple[tuple[str, Any], ...]:
+                        params = {
+                            p["name"]: p["values"][0]
+                            for p in layer.get("params", [])
+                        }
+                        return (
+                            ("diag_rows", params.get("rows")),
+                            ("diag_cols", params.get("cols")),
+                            ("diag_axis", params.get("diagonal_axis")),
+                            ("diag_order", params.get("diagonal_order")),
+                            ("diag_start_edge",
+                             params.get("diagonal_start_edge")),
+                        )
+
+                    def _l019_diag_cov_extras(
+                        layer: dict[str, Any],
+                    ) -> dict[str, Any]:
+                        params = {
+                            p["name"]: p["values"][0]
+                            for p in layer.get("params", [])
+                        }
+                        rows = int(params["rows"])
+                        cols = int(params["cols"])
+                        return {
+                            "route_mode": "route_diagonal",
+                            "route_rows": rows,
+                            "route_cols": cols,
+                            "route_width": cols,
+                            "route_ragged": (rows * cols) > 97,
+                            "route_direction": str(params["diagonal_axis"]),
+                            "route_width_source": "default_set",
+                            "diagonal_axis": str(params["diagonal_axis"]),
+                            "diagonal_order": str(params["diagonal_order"]),
+                            "diagonal_start_edge": str(
+                                params["diagonal_start_edge"]
+                            ),
+                        }
+
+                    out.extend(
+                        _gen_numeric_caesar_route_columnar_family(
+                            bench_slug=bench_slug,
+                            route_partner_kind="route_diagonal",
+                            route_layer_factory=_l019_diag_layer_factory,
+                            route_partner_extras_factory=_l019_diag_extras,
+                            coverage_extras_factory=_l019_diag_cov_extras,
+                            promoted_shifts=promoted_shifts,
+                            columnar_keywords=l019_columnar_keywords,
+                            numeric_only=True,
+                        )
+                    )
 
     # --- LESSON-014: width-only ragged boustrophedon families ---------
     # Trigger-driven (boustrophedon_triggered set above). When the
