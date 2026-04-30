@@ -183,6 +183,171 @@ def parse_args() -> argparse.Namespace:
             "create a parallel solver."
         ),
     )
+    # ------------------------------------------------------------------
+    # Real-K4 HCC capability audit (2026-04-28).
+    #
+    # An explicit, opt-in audit mode that exercises the HandCipherCore
+    # deterministic seed catalogue against the REAL Kryptos K4 cipher
+    # using only PUBLIC, project-safe clue material. Zero LLM calls;
+    # the audit dispatches every HCC seed through the kernel directly
+    # and emits a structured artifact recording layers, coverage
+    # vector, crib_score, public-crib match map, and which lessons
+    # each candidate exercised (LESSON-001..LESSON-015 plus the
+    # LESSON-015-identity wrapper variant).
+    #
+    # Mutually exclusive with --bench-challenge. Normal real-K4 mode
+    # is unaffected unless this flag is supplied.
+    # ------------------------------------------------------------------
+    parser.add_argument(
+        "--real-k4-hcc-audit",
+        action="store_true",
+        help=(
+            "Run the real-K4 HCC capability audit and exit. Builds "
+            "a real-K4 ProblemContext from public K4 facts (CT, "
+            "cribs) plus a project-safe clue registry "
+            "(kryptosbot.real_k4_clue_registry), generates the full "
+            "deterministic HCC seed catalogue, dispatches every seed "
+            "through the kernel, and emits an audit artifact. NO LLM "
+            "calls. NO K4Bench data is consulted (firewall-tested). "
+            "Use --real-k4-hcc-audit-out to set the artifact path. "
+            "Mutually exclusive with --bench-challenge."
+        ),
+    )
+    parser.add_argument(
+        "--real-k4-hcc-audit-out",
+        type=str,
+        default=None,
+        help=(
+            "Output path for the --real-k4-hcc-audit artifact. "
+            "Defaults to "
+            "results/real_k4_hcc_audit/audit_<timestamp>.json. "
+            "Only meaningful when --real-k4-hcc-audit is set."
+        ),
+    )
+    parser.add_argument(
+        "--real-k4-hcc-audit-max-specs",
+        type=int,
+        default=10000,
+        metavar="N",
+        help=(
+            "Cap the HCC seed catalogue at N specs during the "
+            "real-K4 HCC audit (default 10000 — the production HCC "
+            "ceiling). Lower values produce a faster audit at the "
+            "cost of catalog coverage."
+        ),
+    )
+    parser.add_argument(
+        "--real-k4-hcc-audit-tiers",
+        type=str,
+        default=None,
+        metavar="SELECTOR",
+        help=(
+            "Real-K4 HCC audit tier selector. Accepts a preset name "
+            "('core', 'core_legacy', 'core_legacy_sculpture', 'full') "
+            "or a comma-separated list of tier names "
+            "(core_public_cribs / kryptos_plaintext_legacy / "
+            "sculpture_context / geodetic_coordinate / "
+            "procedural_terms). Default (None) = all tiers. "
+            "Trigger-only entries (procedural_terms) are always "
+            "excluded from keyword pools regardless of tier "
+            "selection."
+        ),
+    )
+    parser.add_argument(
+        "--real-k4-hcc-audit-max-keywords",
+        type=int,
+        default=30,
+        metavar="N",
+        help=(
+            "Cap the keyword pool fed to HCC at N entries during "
+            "the real-K4 HCC audit (default 30). The HCC catalog's "
+            "role-permutation matrix consumes only the first 3-15 "
+            "keywords meaningfully; the cap prevents the v2 "
+            "registry's full vocabulary from exploding the dispatch "
+            "universe via the standalone substitution family."
+        ),
+    )
+    # ------------------------------------------------------------------
+    # Real-K4 LLM↔HCC interpretive bridge (2026-04-29).
+    #
+    # The bridge dispatches HCC against real K4 from STRUCTURED
+    # PSEUDO-CLUE PACKS (LLM-generated or fixture-loaded), not from
+    # the static project-safe clue registry. Each pack carries
+    # provenance per role; the deterministic compiler routes packs
+    # to existing HCC family generators; the audit emits an artifact
+    # with null-baseline calibration and an explicit non-claim
+    # banner. This is an opt-in audit mode; normal real-K4 behavior
+    # is unaffected unless the explicit flag is supplied.
+    # ------------------------------------------------------------------
+    parser.add_argument(
+        "--real-k4-hcc-bridge-audit",
+        action="store_true",
+        help=(
+            "Run the real-K4 LLM↔HCC interpretive bridge audit and "
+            "exit. Loads structured pseudo-clue packs (from "
+            "--bridge-packs-dir for fixture/LLM-disabled mode), "
+            "compiles each pack to HCC GeneratedSpec lists via the "
+            "deterministic compiler, dispatches through the kernel, "
+            "scores against public K4 cribs, and emits an audit "
+            "artifact with null-baseline calibration. Use "
+            "--real-k4-hcc-bridge-audit-out to set the artifact "
+            "path. NO sealed-answer access. NO K4Bench data. "
+            "Mutually exclusive with --bench-challenge and "
+            "--real-k4-hcc-audit."
+        ),
+    )
+    parser.add_argument(
+        "--real-k4-hcc-bridge-audit-out",
+        type=str,
+        default=None,
+        help=(
+            "Output path for the bridge audit artifact. Defaults to "
+            "results/real_k4_hcc_bridge_audit/audit_<timestamp>.json. "
+            "Only meaningful with --real-k4-hcc-bridge-audit."
+        ),
+    )
+    parser.add_argument(
+        "--bridge-packs-dir",
+        type=str,
+        default=None,
+        metavar="DIR",
+        help=(
+            "Directory of pseudo-clue pack JSON files (one pack per "
+            "*.json file). Required for the bridge audit's "
+            "LLM-disabled mode. Real-K4 only — never reads sealed "
+            "K4Bench data."
+        ),
+    )
+    parser.add_argument(
+        "--real-k4-hcc-bridge-audit-max-specs",
+        type=int,
+        default=2000,
+        metavar="N",
+        help=(
+            "Global cap on compiled specs across all packs in a "
+            "bridge audit run (default 2000). Per-pack bounds are "
+            "enforced FIRST; this cap applies to the merged stream."
+        ),
+    )
+    parser.add_argument(
+        "--real-k4-hcc-bridge-skip-null",
+        action="store_true",
+        help=(
+            "Skip null-baseline calibration on the bridge audit. "
+            "Requires --real-k4-hcc-bridge-skip-null-reason to be "
+            "set with a non-empty justification string. Skipping "
+            "downgrades the artifact's classification ceiling."
+        ),
+    )
+    parser.add_argument(
+        "--real-k4-hcc-bridge-skip-null-reason",
+        type=str,
+        default="",
+        help=(
+            "Required when --real-k4-hcc-bridge-skip-null is set. "
+            "Free-text justification recorded in the audit artifact."
+        ),
+    )
     parser.add_argument(
         "--bench-attempts-out",
         type=str,
@@ -350,6 +515,51 @@ def parse_args() -> argparse.Namespace:
         )
     if args.hcc_seeds is not None and args.hcc_seeds < 0:
         parser.error("--hcc-seeds N requires N >= 0; for disable use --no-hcc-seeds.")
+    # 2026-04-28: --real-k4-hcc-audit and --bench-challenge are
+    # mutually exclusive. The audit is a real-K4-only mode; the bench
+    # path installs synthetic kernel overrides at module import time
+    # and would corrupt the audit's public-K4 facts.
+    # 2026-04-29: bridge audit is mutually exclusive with the other
+    # explicit modes. Defensive guards before any heavy work.
+    if args.real_k4_hcc_bridge_audit and args.bench_challenge is not None:
+        parser.error(
+            "--real-k4-hcc-bridge-audit and --bench-challenge are "
+            "mutually exclusive."
+        )
+    if args.real_k4_hcc_bridge_audit and args.real_k4_hcc_audit:
+        parser.error(
+            "--real-k4-hcc-bridge-audit and --real-k4-hcc-audit are "
+            "mutually exclusive."
+        )
+    if args.real_k4_hcc_bridge_audit:
+        if args.bridge_packs_dir is None:
+            parser.error(
+                "--real-k4-hcc-bridge-audit requires --bridge-packs-dir "
+                "(LLM-disabled mode loads fixture packs from this dir)."
+            )
+        if args.real_k4_hcc_bridge_audit_max_specs <= 0:
+            parser.error(
+                "--real-k4-hcc-bridge-audit-max-specs requires a "
+                "positive integer."
+            )
+        if args.real_k4_hcc_bridge_skip_null and not (
+            args.real_k4_hcc_bridge_skip_null_reason or ""
+        ).strip():
+            parser.error(
+                "--real-k4-hcc-bridge-skip-null requires "
+                "--real-k4-hcc-bridge-skip-null-reason to be set."
+            )
+
+    if args.real_k4_hcc_audit and args.bench_challenge is not None:
+        parser.error(
+            "--real-k4-hcc-audit and --bench-challenge are mutually "
+            "exclusive. The audit must run against the REAL K4 cipher, "
+            "not a benchmark challenge."
+        )
+    if args.real_k4_hcc_audit_max_specs <= 0:
+        parser.error(
+            "--real-k4-hcc-audit-max-specs requires a positive integer."
+        )
     return args
 
 
@@ -763,6 +973,210 @@ async def main() -> None:
             )
             sys.exit(1)
         print(f"[{ts_done}] transport-verify: PROCEED")
+
+    # ------------------------------------------------------------------
+    # Real-K4 HCC capability audit (2026-04-28).
+    #
+    # Explicit, opt-in mode. Bypasses the normal controller cycle
+    # entirely: builds a real-K4 ProblemContext, generates the HCC
+    # seed catalogue from the project-safe clue registry, dispatches
+    # every seed through the kernel, and writes a structured audit
+    # artifact. Zero LLM calls. No bench data is consulted.
+    #
+    # Normal real-K4 mode (no --real-k4-hcc-audit flag) is unchanged.
+    # ------------------------------------------------------------------
+    if args.real_k4_hcc_audit:
+        from datetime import datetime, timezone
+        from kryptosbot.real_k4_audit import (
+            RealK4AuditConfig,
+            run_real_k4_hcc_audit,
+        )
+
+        # Default output path: results/real_k4_hcc_audit/audit_<ts>.json.
+        if args.real_k4_hcc_audit_out:
+            out_path = Path(args.real_k4_hcc_audit_out)
+        else:
+            ts = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%SZ")
+            out_path = (
+                _ROOT
+                / "results"
+                / "real_k4_hcc_audit"
+                / f"audit_{ts}.json"
+            )
+
+        audit_config = RealK4AuditConfig(
+            output_path=out_path,
+            max_specs=args.real_k4_hcc_audit_max_specs,
+            workers=args.workers,
+            tier_selector=args.real_k4_hcc_audit_tiers,
+            max_keywords=args.real_k4_hcc_audit_max_keywords,
+        )
+        print(
+            f"[real_k4_hcc_audit] starting "
+            f"(tiers={audit_config.tier_selector or 'full'}, "
+            f"max_specs={audit_config.max_specs}, "
+            f"max_keywords={audit_config.max_keywords}, "
+            f"workers={audit_config.workers}, "
+            f"output={audit_config.output_path})"
+        )
+        summary = run_real_k4_hcc_audit(audit_config)
+        print()
+        print("[real_k4_hcc_audit] === Summary ===")
+        print(f"  artifact_path: {summary['artifact_path']}")
+        print(f"  active_tiers: {summary['active_tiers']}")
+        print(f"  n_keywords: {summary['n_keywords']}")
+        print(f"  n_specs_generated: {summary['n_specs_generated']}")
+        print(f"  n_candidates: {summary['n_candidates']}")
+        print(
+            f"  rejected={summary['n_admissibility_rejected']} "
+            f"errored={summary['n_dispatch_error']} "
+            f"no_candidate={summary['n_no_candidate']}"
+        )
+        print(f"  max_crib_score: {summary['max_crib_score']}")
+        print(f"  wall_time_sec: {summary['wall_time_sec']:.1f}")
+        nb = summary["null_baseline"]
+        print()
+        print("[real_k4_hcc_audit] === Null baseline ===")
+        print(
+            f"  expected_max_crib (random A-Z null): "
+            f"{nb['expected_max_crib']:.2f}"
+        )
+        print(f"  observed_max_crib: {nb['observed_max_crib']}")
+        print(
+            f"  P(max >= observed | null): "
+            f"{nb['p_value_for_observed_max']:.4e}"
+        )
+        print(f"  classification: {nb['classification'].upper()}")
+        print()
+        print("[real_k4_hcc_audit] Top 5 candidates:")
+        for c in summary["top_5_candidates"]:
+            tiers_str = ",".join(c.get("tiers") or []) or "(none)"
+            print(
+                f"  crib={c['crib_score']:>2}  "
+                f"family={c['layer_family']:<48} "
+                f"keyword={c.get('substitution_keyword') or '—':<12} "
+                f"alpha={c.get('alphabet_mode') or '—':<14} "
+                f"tiers={tiers_str}"
+            )
+        print()
+        print("[real_k4_hcc_audit] Coverage by lesson:")
+        for lesson in sorted(summary["coverage_by_lesson"]):
+            entry = summary["coverage_by_lesson"][lesson]
+            print(
+                f"  {lesson:<22}  n={entry['n_candidates']:>5}  "
+                f"max_crib={entry['max_crib_score']:>2}  "
+                f"families={entry['distinct_families']}"
+            )
+        if summary.get("coverage_by_tier"):
+            print()
+            print("[real_k4_hcc_audit] Coverage by tier:")
+            for tier in sorted(summary["coverage_by_tier"]):
+                entry = summary["coverage_by_tier"][tier]
+                print(
+                    f"  {tier:<28}  n={entry['n_candidates']:>5}  "
+                    f"max_crib={entry['max_crib_score']:>2}  "
+                    f"families={entry['distinct_families']}"
+                )
+        if summary.get("coverage_by_provenance"):
+            print()
+            print(
+                "[real_k4_hcc_audit] Coverage by provenance "
+                "(top 10):"
+            )
+            sorted_provs = sorted(
+                summary["coverage_by_provenance"].items(),
+                key=lambda kv: (
+                    -kv[1]["max_crib_score"], -kv[1]["n_candidates"],
+                ),
+            )
+            for prov, entry in sorted_provs[:10]:
+                print(
+                    f"  {prov:<32}  n={entry['n_candidates']:>5}  "
+                    f"max_crib={entry['max_crib_score']:>2}"
+                )
+        return
+
+    # ------------------------------------------------------------------
+    # Real-K4 LLM↔HCC bridge audit (2026-04-29).
+    # ------------------------------------------------------------------
+    if args.real_k4_hcc_bridge_audit:
+        from datetime import datetime, timezone
+        from kryptosbot.real_k4_bridge_audit import (
+            RealK4BridgeAuditConfig,
+            run_real_k4_bridge_audit,
+        )
+
+        if args.real_k4_hcc_bridge_audit_out:
+            out_path = Path(args.real_k4_hcc_bridge_audit_out)
+        else:
+            ts = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%SZ")
+            out_path = (
+                _ROOT
+                / "results"
+                / "real_k4_hcc_bridge_audit"
+                / f"audit_{ts}.json"
+            )
+
+        bridge_config = RealK4BridgeAuditConfig(
+            output_path=out_path,
+            packs_dir=Path(args.bridge_packs_dir),
+            global_max_specs=args.real_k4_hcc_bridge_audit_max_specs,
+            workers=args.workers,
+            skip_null_calibration=args.real_k4_hcc_bridge_skip_null,
+            skip_null_calibration_reason=(
+                args.real_k4_hcc_bridge_skip_null_reason
+            ),
+        )
+        print(
+            f"[real_k4_hcc_bridge_audit] starting "
+            f"(packs_dir={bridge_config.packs_dir}, "
+            f"global_max_specs={bridge_config.global_max_specs}, "
+            f"workers={bridge_config.workers}, "
+            f"output={bridge_config.output_path})"
+        )
+        artifact = run_real_k4_bridge_audit(bridge_config)
+        print()
+        print("[real_k4_hcc_bridge_audit] === Summary ===")
+        print(f"  output_path:        {bridge_config.output_path}")
+        print(f"  run_id:             {artifact['run_id']}")
+        print(f"  n_packs_loaded:     {artifact['n_packs_loaded']}")
+        print(f"  n_specs_compiled:   {artifact['n_specs_compiled']}")
+        print(f"  n_specs_dispatched: {artifact['n_specs_dispatched']}")
+        print(f"  n_candidates:       {artifact['n_candidates_scored']}")
+        print(
+            f"  rejected={artifact['n_admissibility_rejected']} "
+            f"errored={artifact['n_dispatch_error']} "
+            f"no_candidate={artifact['n_no_candidate_plaintext']}"
+        )
+        print(f"  max_crib_score:     {artifact['max_crib_score']}/24")
+        print(f"  classification:     {artifact['classification'].upper()}")
+        print(f"  wall_time_sec:      {artifact['wall_time_sec']:.1f}")
+        nb = artifact.get("null_baseline") or {}
+        if nb.get("skipped"):
+            print(f"  null_baseline:      SKIPPED ({nb.get('reason')})")
+        else:
+            print(
+                f"  null expected_max:  {nb.get('expected_max_crib','?')}"
+                f"  observed: {nb.get('observed_max_crib','?')}"
+                f"  p={nb.get('p_value_for_observed_max', '?')}"
+            )
+        print()
+        print("[real_k4_hcc_bridge_audit] Top 5 candidates:")
+        for c in artifact.get("top_candidates", [])[:5]:
+            sub = (c.get("substitution_keyword") or "—").ljust(10)
+            col = (c.get("transposition_keyword") or "—").ljust(10)
+            print(
+                f"  crib={c['crib_score']:>2}  "
+                f"family={c['layer_family']:<48} "
+                f"sub={sub} col={col} "
+                f"pack={c.get('pack_id','—')[:24]}"
+            )
+        print()
+        print(
+            "[real_k4_hcc_bridge_audit] NON-CLAIM BANNER: This is an "
+            "interpretive pipeline test. No real-K4 solve is claimed."
+        )
+        return
 
     project_root = _ROOT
     # Campaign-C flag semantics (2026-04-24):

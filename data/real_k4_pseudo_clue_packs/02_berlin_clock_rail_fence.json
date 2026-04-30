@@ -1,0 +1,101 @@
+{
+  "pack_id": "real-k4-pack-02-berlin-clock-rail-fence",
+  "title": "BERLIN + CLOCK + rail-fence three-role (LESSON-022 shape)",
+  "hypothesis_summary": "Same two-keyword hypothesis as pack 01, extended with rail_fence as a third operation. Hand ciphers commonly combine a substitution layer, a keyed columnar layer, and a rail-fence transposition. Speculative depth pool covers small rail counts plausible for a 97-character text.",
+  "provenance_items": [
+    {
+      "source_id": "CRIB-BERLIN-64-69",
+      "source_type": "crib",
+      "quote_or_summary": "Disclosed plaintext span BERLIN.",
+      "confidence": 0.99
+    },
+    {
+      "source_id": "CRIB-CLOCK-70-74",
+      "source_type": "crib",
+      "quote_or_summary": "Disclosed plaintext span CLOCK.",
+      "confidence": 0.99
+    },
+    {
+      "source_id": "REGISTRY-RAIL-FENCE-DEFAULTS",
+      "source_type": "registry",
+      "quote_or_summary": "Project-safe default rail-fence depth set: 3, 4, 5.",
+      "confidence": 0.5,
+      "url_or_registry_key": "kryptosbot.real_k4_pseudo_clue_compiler._DEFAULT_RAIL_DEPTHS"
+    }
+  ],
+  "evidence_tier": "tier_4_inference",
+  "keywords": [
+    {
+      "token": "BERLIN",
+      "role_hint": "substitution",
+      "source_ids": ["CRIB-BERLIN-64-69"],
+      "confidence": 0.4
+    },
+    {
+      "token": "CLOCK",
+      "role_hint": "columnar",
+      "source_ids": ["CRIB-CLOCK-70-74"],
+      "confidence": 0.4
+    }
+  ],
+  "numeric_roles": [
+    {
+      "value": 3,
+      "token": "three",
+      "role_hint": "depth",
+      "source_ids": ["REGISTRY-RAIL-FENCE-DEFAULTS"],
+      "confidence": 0.3
+    },
+    {
+      "value": 4,
+      "token": "four",
+      "role_hint": "depth",
+      "source_ids": ["REGISTRY-RAIL-FENCE-DEFAULTS"],
+      "confidence": 0.3
+    }
+  ],
+  "operation_hints": [
+    {
+      "operation": "vigenere",
+      "role": "optional",
+      "source_ids": ["CRIB-BERLIN-64-69"],
+      "confidence": 0.4
+    },
+    {
+      "operation": "columnar",
+      "role": "optional",
+      "source_ids": ["CRIB-CLOCK-70-74"],
+      "confidence": 0.4
+    },
+    {
+      "operation": "rail_fence",
+      "role": "optional",
+      "source_ids": ["REGISTRY-RAIL-FENCE-DEFAULTS"],
+      "confidence": 0.3
+    }
+  ],
+  "composition_templates": [
+    {
+      "layer_kinds": ["vigenere", "columnar", "rail_fence"],
+      "ordered": false,
+      "rationale": "LESSON-022 family: sub-keyword + columnar-keyword + rail_fence depth — extension of pack 01 with a third operation.",
+      "confidence": 0.3,
+      "max_layers": 3
+    }
+  ],
+  "bounds": {
+    "max_specs": 200,
+    "allowed_depths": [3, 4, 5],
+    "allow_project_safe_defaults": true,
+    "allow_default_widths": false
+  },
+  "constraints": [
+    "Three-role independent assignment; LESSON-022 generator handles both keyword orientations and all six layer orderings."
+  ],
+  "caveats": [
+    "Rail-fence as a real-K4 layer is speculative: the disclosed cribs and CT alone do not constrain it.",
+    "Default depth pool used in absence of stronger evidence."
+  ],
+  "generated_by": "human_fixture",
+  "generation_run_id": "bootstrap-001"
+}
