@@ -243,6 +243,21 @@
       "owner_doc": "docs/REAL_K4_EVIDENCE_GAP_REGISTER.md",
       "red_team_status": "operational corollary of accepted C-SANBORN-01 policy; closes only if a future creator-attested mechanism statement carries a specific structural commitment AND independent measurable corroboration lands",
       "notes": "Governance / status, not immutable policy. Sanborn has historically been extremely careful not to release operational K4 mechanism clues; campaign 001 family F2 (5 packs, 630 specs) treated non-crib comments as composition-template triggers and was null. Records the empirical lesson and the operational rule that prevents the lesson from being relearned. Public comments alone, no matter how suggestive, cannot reopen a bridge campaign."
+    },
+    {
+      "claim_id": "C-WANCHOR-SWAP-01",
+      "statement": "Within the tested scope of five W-anchored swap/reversal transforms (NONE, SEG_ORDER_IMAGE, SEG_ORDER_W_LED, FULL_REV, REFL_W58), three additive cipher variants (Vigenere, Beaufort, Variant Beaufort), two alphabets (standard A-Z, KRYPTOS-mixed KA), and 719 thematic keywords drawn from wordlists/thematic_keywords_v2.txt, the construction 'W-anchored permutation followed by single-keyword additive substitution' produced no STORE/SIGNAL/BREAKTHROUGH result on the carved 97-character K4 ciphertext under direct positional crib mapping. Best crib_score was 6/24, expected at order-one frequency under the Binomial(24, 1/26) null across 21,570 trials. Bounded negative within the stated scope; NOT a global W-delimiter elimination.",
+      "class": "internal_result",
+      "status": "live",
+      "scope": "5 W-anchored CT-side permutations x 3 additive variants x 2 alphabets x 719 thematic keywords (21,570 configurations) on carved 97-char CT under direct positional crib mapping. Does NOT cover: source-constrained long-key/running-key second layers, non-additive substitution systems (Quagmire, Polybius/fractionation, ADFGVX, autokey), multi-layer constructions, untested W-anchored geometries (sliding windows, asymmetric exchanges, partial reflections without fixed-point preservation), or physical/installation use of W's.",
+      "depends_on": ["C-COMP-01", "C-STATE-01", "C-STATE-02"],
+      "supersedes": [],
+      "superseded_by": [],
+      "artifact": "reports/w_anchor_reversal_bounded_negative_2026_04_30.md, results/w_anchor_reversal_v1/sweep_results.json",
+      "repro_reference": "PYTHONPATH=src python3 -u scratch/w_swap_seg_order_thematic_sweep.py",
+      "owner_doc": "reports/w_anchor_reversal_bounded_negative_2026_04_30.md",
+      "red_team_status": "deterministic rerun on 2026-04-30 reproduced original result exactly (21,570 configs, 0 STORE, best 6/24 = SEG_ORDER_W_LED + FACADE + VIG + AZ); per-cell bests bit-identical",
+      "notes": "Allowed downstream uses: summary, prompt context, duplicate-avoidance / ranking-down feature, bounded elimination basis WITHIN the tested family only. NOT to be used as: hard global constraint, tier-1 elimination, basis to deprioritize the W-as-structural-anchor hypothesis at large. Complementary to project_w_anchor_hypothesis_eliminated_2026_04_29 (memory) which addresses W-as-cipher-event substitution mechanisms — this entry covers W-as-CT-permutation-anchor with simple keyword substitution, a different mechanism family. Do-not-revive policy: arbitrary W-anchored single-keyword additive sweeps and broader keyword-list enlargement (e.g. english.txt) without source provenance are decided no-go until new provenance-grade evidence motivates a specific source corpus. Single residual admissible follow-up: source-constrained long-key/running-key after SEG_ORDER_IMAGE or other W-anchored transform IF the key/source corpus is independently motivated by Sanborn / Kryptos archival provenance."
     }
   ]
 }
