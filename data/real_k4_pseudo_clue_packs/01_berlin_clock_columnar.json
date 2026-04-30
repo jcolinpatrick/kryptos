@@ -1,0 +1,73 @@
+{
+  "pack_id": "real-k4-pack-01-berlin-clock-columnar",
+  "title": "BERLIN/CLOCK as substitution + columnar role pair",
+  "hypothesis_summary": "The BERLIN crib at 64-69 and the CLOCK crib at 70-74 are the two strongest plaintext anchors in real K4. A natural hand-cipher composition would place one as a substitution keyword and the other as a columnar transposition key. This pack enumerates that pairing in two-layer Vig/Beau/VarBeau columnar combinations.",
+  "provenance_items": [
+    {
+      "source_id": "CRIB-BERLIN-64-69",
+      "source_type": "crib",
+      "quote_or_summary": "Disclosed plaintext span BERLIN at indices 64-69 (Sanborn confirmation 2010).",
+      "confidence": 0.99
+    },
+    {
+      "source_id": "CRIB-CLOCK-70-74",
+      "source_type": "crib",
+      "quote_or_summary": "Disclosed plaintext span CLOCK at indices 70-74 (Sanborn confirmation 2014).",
+      "confidence": 0.99
+    }
+  ],
+  "evidence_tier": "tier_1_public_fact",
+  "keywords": [
+    {
+      "token": "BERLIN",
+      "role_hint": "substitution",
+      "source_ids": ["CRIB-BERLIN-64-69"],
+      "confidence": 0.5
+    },
+    {
+      "token": "CLOCK",
+      "role_hint": "columnar",
+      "source_ids": ["CRIB-CLOCK-70-74"],
+      "confidence": 0.5
+    }
+  ],
+  "numeric_roles": [],
+  "operation_hints": [
+    {
+      "operation": "vigenere",
+      "role": "optional",
+      "source_ids": ["CRIB-BERLIN-64-69"],
+      "confidence": 0.4
+    },
+    {
+      "operation": "columnar",
+      "role": "optional",
+      "source_ids": ["CRIB-CLOCK-70-74"],
+      "confidence": 0.4
+    }
+  ],
+  "composition_templates": [
+    {
+      "layer_kinds": ["vigenere", "columnar"],
+      "ordered": false,
+      "rationale": "Two-layer keyword sub + keyed columnar — the simplest hand cipher compatible with two named clue keywords.",
+      "confidence": 0.4,
+      "max_layers": 2
+    }
+  ],
+  "bounds": {
+    "max_specs": 200,
+    "allow_project_safe_defaults": true,
+    "allow_default_widths": false
+  },
+  "constraints": [
+    "Both keywords must be tried in both substitution and columnar roles (LESSON-010 i3 generator handles this).",
+    "No sealed-answer text consulted."
+  ],
+  "caveats": [
+    "BERLIN/CLOCK are KNOWN plaintext spans, not necessarily keys. The pack is testing whether they could ALSO function as keys — a structurally independent question.",
+    "Tier-1 evidence on the spans does NOT translate to tier-1 evidence on a key role."
+  ],
+  "generated_by": "human_fixture",
+  "generation_run_id": "bootstrap-001"
+}

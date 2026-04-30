@@ -1,0 +1,73 @@
+{
+  "pack_id": "real-k4-pack-03-kryptos-palimpsest-substitution",
+  "title": "KRYPTOS / PALIMPSEST / ABSCISSA legacy keys as substitution candidates",
+  "hypothesis_summary": "K1, K2, K3 used PALIMPSEST, ABSCISSA, and Vigenere/columnar keys with KRYPTOS-mixed alphabets. The construction artist's keyword reuse is documented across the K1-K3 chain; K4 plausibly reuses a member of the same legacy keyword family in a substitution role. This pack enumerates the legacy keys as substitution candidates with KRYPTOS-mixed alphabet, not as a solve attempt.",
+  "provenance_items": [
+    {
+      "source_id": "REGISTRY-K1-K2-K3-LEGACY",
+      "source_type": "registry",
+      "quote_or_summary": "K1=PALIMPSEST(Vigenere/KRYPTOS), K2=ABSCISSA(Vigenere/KRYPTOS), K3=KRYPTOS-related transposition. All published 1998-99.",
+      "confidence": 0.9,
+      "url_or_registry_key": "<internal>: kryptos_plaintext_legacy tier"
+    }
+  ],
+  "evidence_tier": "tier_2_derived_fact",
+  "keywords": [
+    {
+      "token": "PALIMPSEST",
+      "role_hint": "substitution",
+      "source_ids": ["REGISTRY-K1-K2-K3-LEGACY"],
+      "confidence": 0.5
+    },
+    {
+      "token": "ABSCISSA",
+      "role_hint": "substitution",
+      "source_ids": ["REGISTRY-K1-K2-K3-LEGACY"],
+      "confidence": 0.5
+    },
+    {
+      "token": "KRYPTOS",
+      "role_hint": "alphabet",
+      "source_ids": ["REGISTRY-K1-K2-K3-LEGACY"],
+      "confidence": 0.6
+    }
+  ],
+  "numeric_roles": [],
+  "operation_hints": [
+    {
+      "operation": "vigenere",
+      "role": "required",
+      "source_ids": ["REGISTRY-K1-K2-K3-LEGACY"],
+      "confidence": 0.5
+    },
+    {
+      "operation": "columnar",
+      "role": "optional",
+      "source_ids": ["REGISTRY-K1-K2-K3-LEGACY"],
+      "confidence": 0.4
+    }
+  ],
+  "composition_templates": [
+    {
+      "layer_kinds": ["vigenere", "columnar"],
+      "ordered": false,
+      "rationale": "K1-K3 legacy is Vig + columnar; K4 plausibly extends the family. This template enumerates Vig+col with legacy keys as substitution candidates.",
+      "confidence": 0.4,
+      "max_layers": 2
+    }
+  ],
+  "bounds": {
+    "max_specs": 200,
+    "allow_project_safe_defaults": true,
+    "allow_default_widths": false
+  },
+  "constraints": [
+    "PALIMPSEST and ABSCISSA are the public Vig keys for K1/K2 — they are Tier 2 derived facts about the construction, not Tier 1 facts about K4."
+  ],
+  "caveats": [
+    "K4's two-system disclosure (Sanborn) means K1-K3 keys are NOT guaranteed to apply directly. This pack tests the keyword family hypothesis, not the specific keyword.",
+    "KRYPTOS-mixed alphabet support depends on existing AlphabetMode handling; the compiler currently uses default AZ for keyword pair families."
+  ],
+  "generated_by": "human_fixture",
+  "generation_run_id": "bootstrap-001"
+}

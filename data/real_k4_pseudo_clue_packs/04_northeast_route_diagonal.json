@@ -1,0 +1,76 @@
+{
+  "pack_id": "real-k4-pack-04-northeast-route-diagonal",
+  "title": "NORTHEAST as directional/route hint",
+  "hypothesis_summary": "The NORTHEAST crib at indices 25-33 (disclosed plaintext) is a directional word; in hand-cipher conventions a directional word can hint at a diagonal-route reading. This pack tests whether NORTHEAST functions as both a substitution keyword AND signals a route_diagonal layer, alongside the canonical width-only diagonal alias added in LESSON-021.",
+  "provenance_items": [
+    {
+      "source_id": "CRIB-NORTHEAST-25-33",
+      "source_type": "crib",
+      "quote_or_summary": "Disclosed plaintext span NORTHEAST at indices 25-33 (Sanborn confirmation 2014).",
+      "confidence": 0.99
+    }
+  ],
+  "evidence_tier": "tier_4_inference",
+  "keywords": [
+    {
+      "token": "NORTHEAST",
+      "role_hint": "substitution",
+      "source_ids": ["CRIB-NORTHEAST-25-33"],
+      "confidence": 0.4
+    }
+  ],
+  "numeric_roles": [
+    {
+      "value": 9,
+      "token": "nine",
+      "role_hint": "width",
+      "source_ids": ["CRIB-NORTHEAST-25-33"],
+      "confidence": 0.3
+    },
+    {
+      "value": 10,
+      "token": "ten",
+      "role_hint": "width",
+      "source_ids": ["CRIB-NORTHEAST-25-33"],
+      "confidence": 0.3
+    }
+  ],
+  "operation_hints": [
+    {
+      "operation": "vigenere",
+      "role": "optional",
+      "source_ids": ["CRIB-NORTHEAST-25-33"],
+      "confidence": 0.4
+    },
+    {
+      "operation": "route_diagonal",
+      "role": "speculative",
+      "source_ids": ["CRIB-NORTHEAST-25-33"],
+      "confidence": 0.2
+    }
+  ],
+  "composition_templates": [
+    {
+      "layer_kinds": ["vigenere", "route_diagonal"],
+      "ordered": false,
+      "rationale": "Directional crib word + diagonal route — NORTHEAST may be a hand-cipher directional hint coupled to a Vigenere layer.",
+      "confidence": 0.2,
+      "max_layers": 2
+    }
+  ],
+  "bounds": {
+    "max_specs": 200,
+    "allowed_widths": [9, 10],
+    "allow_project_safe_defaults": true,
+    "allow_default_widths": false
+  },
+  "constraints": [
+    "Width pool restricted to len(NORTHEAST)=9 and 10 only."
+  ],
+  "caveats": [
+    "Inferring a route layer from a directional word is speculative. Confidence scores reflect this.",
+    "Width=9 is len(NORTHEAST); width=10 is included as a near-neighbour given the K4 grid context."
+  ],
+  "generated_by": "human_fixture",
+  "generation_run_id": "bootstrap-001"
+}
