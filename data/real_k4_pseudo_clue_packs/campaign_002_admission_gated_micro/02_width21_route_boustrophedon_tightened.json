@@ -1,0 +1,41 @@
+{
+  "pack_id": "tor-002-02-width21-route-boustrophedon-tightened",
+  "title": "Width-21 anomaly: route_boustrophedon + vigenere only, BERLIN-only keyword",
+  "hypothesis_summary": "Tightening of campaign-001 pack F5-51 (width-21 proponent). F5-51 used three composition templates (vig+col, beau+col, route_boustrophedon+vig) and three keywords (BERLIN, CLOCK, EAST) at width=21. This pack drops the two columnar templates entirely — keeping only route_boustrophedon+vigenere — and narrows the keyword pool to BERLIN alone. The narrowing is motivated structurally: the width-21 vertical-bigram anomaly is a route/grid property of the carved CT, so a route layer is the structurally faithful interpretation, while the columnar interpretation muddles that. Predicted side-effect: ngram floor improvement — a winning candidate must produce a plaintext that scores ngram >= -8 at the same time as a non-trivial crib score. campaign_001_coverage: tightened.",
+  "provenance_items": [
+    {"source_id": "ANOMALY-E0e-WIDTH21", "source_type": "anomaly", "quote_or_summary": "Anomaly E0e: writing K4 at width 21 yields 11 repeated vertical bigrams out of 76; expected for random ~1/6750. Bean 2021 §2.1 (Hannon 2010 / LaTurner 2016 / Kirchner 2003).", "confidence": 0.85, "url_or_registry_key": "docs/anomaly_registry.md#E0e"},
+    {"source_id": "REGISTRY-CORE-PUBLIC-CRIBS", "source_type": "registry", "quote_or_summary": "BERLIN registered TIER_CORE_PUBLIC_CRIBS.", "confidence": 0.9, "url_or_registry_key": "kryptosbot.real_k4_clue_registry: TIER_CORE_PUBLIC_CRIBS"}
+  ],
+  "evidence_tier": "tier_2_derived_fact",
+  "keywords": [
+    {"token": "BERLIN", "role_hint": "substitution", "source_ids": ["REGISTRY-CORE-PUBLIC-CRIBS"], "confidence": 0.4}
+  ],
+  "numeric_roles": [
+    {"value": 21, "token": "width-21", "role_hint": "width", "source_ids": ["ANOMALY-E0e-WIDTH21"], "confidence": 0.55}
+  ],
+  "operation_hints": [
+    {"operation": "vigenere", "role": "required", "source_ids": ["REGISTRY-CORE-PUBLIC-CRIBS"], "confidence": 0.4},
+    {"operation": "route_boustrophedon", "role": "required", "source_ids": ["ANOMALY-E0e-WIDTH21"], "confidence": 0.45}
+  ],
+  "composition_templates": [
+    {"layer_kinds": ["route_boustrophedon", "vigenere"], "ordered": false, "rationale": "Width-21 boustrophedon route + Vigenere substitution. Route-only because a route layer is the structurally faithful interpretation of a vertical-bigram anomaly; the F5-51 columnar templates are dropped.", "confidence": 0.4, "max_layers": 2}
+  ],
+  "bounds": {
+    "max_specs": 100,
+    "allowed_keywords": ["BERLIN"],
+    "allowed_widths": [21],
+    "allow_project_safe_defaults": false,
+    "allow_default_widths": false
+  },
+  "constraints": [
+    "Single keyword (BERLIN), single width (21), single composition (route_boustrophedon + vigenere). Hardest tightening of F5-51 within the route_boustrophedon family."
+  ],
+  "caveats": [
+    "campaign_001_coverage: tightened. Strictly narrower than F5-51 (drops 2 of 3 composition templates and 2 of 3 keywords; same width). Distinct mechanism from F5-52 (route_diagonal) and F5-53/54/55 (post-null widths 10/17, columnar).",
+    "Predicted side-effect (ngram floor improvement): a winning candidate's plaintext must score ngram >= -8 (i.e., better than the noise floor under English quadgram statistics). If a candidate reaches crib_score >= 12 with ngram_score < -8 the side-effect prediction is FALSIFIED — the candidate is decrypting the cribs to letters but not producing English-shaped plaintext, which under width-21 + Vigenere would indicate the structural commitment is wrong even if a coincidental crib match occurs.",
+    "Pack passes if any candidate reaches crib_score >= 18 AND ngram_score >= -8. predeclared success criterion. The ngram floor of -8 is calibrated to the kernel's quadgram noise floor (NOISE=6 / STORE=10 / SIGNAL=18 in crib_score; ngram_score around -8 is 'plausibly English-shaped' in the noise band).",
+    "The width-21 anomaly disappears under null extraction (memory/width21_bigram_73char.md). This pack commits to the 'raw-CT, no nulls' interpretation; if width-21 is a stego artifact the pack is structurally wrong from the start."
+  ],
+  "generated_by": "human_curator",
+  "generation_run_id": "campaign-002-admission-gated"
+}

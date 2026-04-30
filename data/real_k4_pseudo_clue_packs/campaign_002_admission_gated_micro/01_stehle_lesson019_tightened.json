@@ -1,0 +1,45 @@
+{
+  "pack_id": "tor-002-01-stehle-lesson019-tightened",
+  "title": "Stehle anomaly: LESSON-019 caesar+columnar+route, BERLIN-only keyword",
+  "hypothesis_summary": "Tightening of campaign-001 pack F3-31 (Stehle proponent). F3-31 used Caesar shift=5, width=4, and the keyword pool {BERLIN, CLOCK}. This pack drops CLOCK from the keyword pool — leaving BERLIN alone — because the Stehle interval-4 +5 segment DIAWINFBN at carved positions 55-63 sits adjacent to the BERLINCLOCK crib's left edge (63-73), so if the Stehle property and the BERLIN crib share a structural key the BERLIN side is the one with the closer positional anchor. The composition (caesar + columnar + route_boustrophedon) is preserved; only the columnar keyword pool is narrowed. Predicted side-effect: bean_passed=True must hold for any candidate that reaches a non-trivial crib_score, because the Bean constraint is variant-independent and crib-position-bound — a winning candidate cannot be cipher-class-correct without satisfying it. campaign_001_coverage: tightened.",
+  "provenance_items": [
+    {"source_id": "ANOMALY-E0a-STEHLE", "source_type": "anomaly", "quote_or_summary": "Anomaly E0a: DIAWINFBN constant-difference property at carved positions 55-63; pairs 4 apart differ by 5 (mod 26). Bean 2021 §2.3, citing Stehle 2000.", "confidence": 0.7, "url_or_registry_key": "docs/anomaly_registry.md#E0a"},
+    {"source_id": "CRIB-BERLIN-64-69", "source_type": "crib", "quote_or_summary": "BERLIN crib at positions 64-69 — adjacent to the Stehle window's right edge.", "confidence": 0.99, "url_or_registry_key": "kryptos.kernel.constants.CRIB_DICT"},
+    {"source_id": "REGISTRY-CORE-PUBLIC-CRIBS", "source_type": "registry", "quote_or_summary": "BERLIN registered TIER_CORE_PUBLIC_CRIBS.", "confidence": 0.9, "url_or_registry_key": "kryptosbot.real_k4_clue_registry: TIER_CORE_PUBLIC_CRIBS"}
+  ],
+  "evidence_tier": "tier_2_derived_fact",
+  "keywords": [
+    {"token": "BERLIN", "role_hint": "columnar", "source_ids": ["CRIB-BERLIN-64-69", "REGISTRY-CORE-PUBLIC-CRIBS"], "confidence": 0.4}
+  ],
+  "numeric_roles": [
+    {"value": 5, "token": "stehle-shift-5", "role_hint": "shift", "source_ids": ["ANOMALY-E0a-STEHLE"], "confidence": 0.55},
+    {"value": 4, "token": "stehle-period-4", "role_hint": "width", "source_ids": ["ANOMALY-E0a-STEHLE"], "confidence": 0.5}
+  ],
+  "operation_hints": [
+    {"operation": "caesar", "role": "required", "source_ids": ["ANOMALY-E0a-STEHLE"], "confidence": 0.5},
+    {"operation": "columnar", "role": "required", "source_ids": ["CRIB-BERLIN-64-69"], "confidence": 0.4},
+    {"operation": "route_boustrophedon", "role": "required", "source_ids": ["ANOMALY-E0a-STEHLE"], "confidence": 0.35}
+  ],
+  "composition_templates": [
+    {"layer_kinds": ["caesar", "columnar", "route_boustrophedon"], "ordered": false, "rationale": "LESSON-019 numeric-Caesar + route_boustrophedon + keyed columnar with the Stehle parameters — same composition as F3-31, narrower keyword pool.", "confidence": 0.4, "max_layers": 3}
+  ],
+  "bounds": {
+    "max_specs": 200,
+    "allowed_keywords": ["BERLIN"],
+    "allowed_widths": [4],
+    "allowed_shifts": [5],
+    "allow_project_safe_defaults": false,
+    "allow_default_widths": false
+  },
+  "constraints": [
+    "Single columnar keyword (BERLIN), single Caesar shift (5), single boustrophedon width (4). Hardest tightening of F3-31's parameter set without changing the composition family."
+  ],
+  "caveats": [
+    "campaign_001_coverage: tightened. Strictly narrower than F3-31 (drops CLOCK from the columnar keyword pool, holding all other parameters fixed). Strictly different from F3-32 (which used Caesar alone, no columnar/route) and F3-33/34 (which used different shift/width assignments).",
+    "Predicted side-effect (Bean constraint behavior): a winning candidate MUST also have bean_passed=True. The Bean constraint is variant-independent and crib-position-bound, so a cipher-class-correct decrypt at the cribs implies Bean satisfaction. If a candidate reaches crib_score >= 12 with bean_passed=False, the side-effect prediction is FALSIFIED and the pack is ruled out without needing higher crib scores.",
+    "Pack passes if any candidate reaches crib_score >= 18 AND bean_passed=True. predeclared success criterion. If the audit produces crib_score >= 12 with bean_passed=False that is treated as side-effect FALSIFICATION even if no candidate reaches the success threshold.",
+    "Stehle E0a is locally measured at positions 55-63; extrapolating shift=5 to a global Caesar layer is structurally aggressive — confidence is set on the operation hint, not the anomaly itself."
+  ],
+  "generated_by": "human_curator",
+  "generation_run_id": "campaign-002-admission-gated"
+}

@@ -193,6 +193,26 @@
         {"family": "F6", "name": "NDYAHR / YAR shifted-letter", "n_packs": 4, "n_specs": 391, "max_crib": 3, "bean_pass_any": false, "ngram_gt_zero_any": false, "disposition": "no signal under campaign_001 encoding"},
         {"family": "F7", "name": "K2/K3 provenance analogy (PALIMPSEST/ABSCISSA/KRYPTOS, K3 widths)", "n_packs": 4, "n_specs": 90, "max_crib": 5, "bean_pass_any": false, "ngram_gt_zero_any": false, "disposition": "no signal under campaign_001 encoding"}
       ]
+    },
+    {
+      "claim_id": "C-BRIDGE-02",
+      "statement": "Real-K4 LLM<->HCC interpretive bridge campaign 002 (admission-gated micro, 3 packs, 30 specs) closed null_level on 2026-04-30. Max crib 1/24, expected null max 3.24, p(max>=1) ~ 1.0, no top-20 candidate passed Bean or had ngram>0. Histogram is degenerate at scores {0:15, 1:15} - no candidate reached crib_score 2. All three packs were tightened from campaign 001 (Stehle F3-31, width-21 F5-51, BCL VB F4-43) and carried predicted side-effects activating at crib_score >= 12; no candidate reached the activation threshold, so all three side-effect predictions are unfired (neither corroborated nor falsified).",
+      "class": "internal_result",
+      "status": "live",
+      "scope": "real-K4 interpretive bridge audit, raw 97-char carved CT, direct-positional crib mapping, three admission-gated tightened encodings",
+      "depends_on": ["C-BRIDGE-01", "C-STATE-01", "C-COMP-01"],
+      "supersedes": [],
+      "superseded_by": [],
+      "artifact": "data/real_k4_pseudo_clue_packs/campaign_002_admission_gated_micro/CLOSURE.md, data/real_k4_pseudo_clue_packs/campaign_002_admission_gated_micro/README.md, results/real_k4_hcc_bridge_audit/campaign_002_admission_gated_micro.json",
+      "repro_reference": "PYTHONPATH=src python3 -u kryptosbot/run_controller.py --real-k4-hcc-bridge-audit --bridge-packs-dir data/real_k4_pseudo_clue_packs/campaign_002_admission_gated_micro --real-k4-hcc-bridge-audit-out results/real_k4_hcc_bridge_audit/campaign_002_admission_gated_micro.json --real-k4-hcc-bridge-audit-max-specs 5000",
+      "owner_doc": "data/real_k4_pseudo_clue_packs/campaign_002_admission_gated_micro/CLOSURE.md",
+      "red_team_status": "campaign closure self-audit; admission validator (scripts/_infra/validate_pseudo_clue_pack_admission.py) cleared all three packs before dispatch",
+      "notes": "First campaign run under the admission standard at docs/REAL_K4_PSEUDO_CLUE_PACK_ADMISSION.md. The admission-gated micro-campaign approach is validated end-to-end: 30 specs in 0.2s, clean null with zero false-promotion risk. The unfired side-effect predictions are preserved for any future tighter pack that produces a candidate above the activation gate. Rejects the encodings, NOT the families.",
+      "per_pack_rollup": [
+        {"pack_id": "tor-002-01-stehle-lesson019-tightened", "tightens": "F3-31", "provenance": "E0a Stehle + BERLIN crib", "mechanism": "LESSON-019 (caesar+columnar+route_boustrophedon), shift=5 width=4 keyword=BERLIN", "n_specs": 12, "max_crib": 1, "side_effect_predicted": "bean_passed=True at crib_score>=12", "side_effect_outcome": "unfired"},
+        {"pack_id": "tor-002-02-width21-route-boustrophedon-tightened", "tightens": "F5-51", "provenance": "E0e width-21 + BERLIN crib", "mechanism": "route_boustrophedon + vigenere, width=21 keyword=BERLIN", "n_specs": 12, "max_crib": 1, "side_effect_predicted": "ngram_score>=-8 at crib_score>=12", "side_effect_outcome": "unfired"},
+        {"pack_id": "tor-002-03-bcl-variant-beaufort-kryptos-tightened", "tightens": "F4-43", "provenance": "E0b KRYPTOS-distance + KRYPTOS keyword", "mechanism": "columnar + variant_beaufort, single keyword KRYPTOS", "n_specs": 6, "max_crib": 1, "side_effect_predicted": "bean_passed=True at crib_score>=12", "side_effect_outcome": "unfired"}
+      ]
     }
   ]
 }
