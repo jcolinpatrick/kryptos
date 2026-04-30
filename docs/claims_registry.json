@@ -213,6 +213,21 @@
         {"pack_id": "tor-002-02-width21-route-boustrophedon-tightened", "tightens": "F5-51", "provenance": "E0e width-21 + BERLIN crib", "mechanism": "route_boustrophedon + vigenere, width=21 keyword=BERLIN", "n_specs": 12, "max_crib": 1, "side_effect_predicted": "ngram_score>=-8 at crib_score>=12", "side_effect_outcome": "unfired"},
         {"pack_id": "tor-002-03-bcl-variant-beaufort-kryptos-tightened", "tightens": "F4-43", "provenance": "E0b KRYPTOS-distance + KRYPTOS keyword", "mechanism": "columnar + variant_beaufort, single keyword KRYPTOS", "n_specs": 6, "max_crib": 1, "side_effect_predicted": "bean_passed=True at crib_score>=12", "side_effect_outcome": "unfired"}
       ]
+    },
+    {
+      "claim_id": "C-BRIDGE-03",
+      "statement": "Real-K4 LLM<->HCC interpretive bridge campaign line is currently in a paused research state pending new admissible evidence. The bridge pipeline is validated end-to-end across two closed null campaigns (C-BRIDGE-01 broad, C-BRIDGE-02 admission-gated). The current evidence pool has been exhausted at the bridge campaign level: every gap that the bridge can compile against is documented in the evidence gap register and stays open until new measurement, new provenance, or new mechanism specificity arrives. Adding more packs against existing evidence is anti-productive at this point because the maximum-of-N null threshold grows with search breadth.",
+      "class": "internal_result",
+      "status": "live",
+      "scope": "current research state of the real-K4 interpretive bridge campaign line; not a project-wide policy",
+      "depends_on": ["C-BRIDGE-01", "C-BRIDGE-02", "C-STATE-01"],
+      "supersedes": [],
+      "superseded_by": [],
+      "artifact": "docs/REAL_K4_EVIDENCE_GAP_REGISTER.md, docs/REAL_K4_PSEUDO_CLUE_PACK_ADMISSION.md",
+      "repro_reference": null,
+      "owner_doc": "docs/REAL_K4_EVIDENCE_GAP_REGISTER.md",
+      "red_team_status": "self-recorded research status; closes when one of the GAP-* rows in the register transitions to closed or partially_closed",
+      "notes": "Status, not policy. The pause is a research-state observation about what the bridge can usefully do RIGHT NOW given the current evidence pool. It does not forbid future campaigns; it states the gating constraint. When a new admissible piece of evidence closes any GAP-* row, that row's closure is the signal to open the next campaign. The register lists ten open gaps (GAP-01 through GAP-10) at this commit; high-priority gaps are GAP-03 (BCL E0b side-effect operationalization), GAP-09 (null-mask / stego evidence), and GAP-10 (crib-bound positional mechanism evidence)."
     }
   ]
 }
