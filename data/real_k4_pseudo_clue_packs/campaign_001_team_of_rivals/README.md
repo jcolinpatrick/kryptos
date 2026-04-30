@@ -1,5 +1,12 @@
 # Real-K4 Bridge Campaign 001 — Team-of-Rivals
 
+> **STATUS: CLOSED (null result, 2026-04-30).** See `CLOSURE.md` in this
+> directory for the full closure note. The pipeline is validated; the
+> tested pseudo-clue families produced no real-K4 signal at this search
+> breadth and **must not be expanded blindly**. See
+> `docs/REAL_K4_PSEUDO_CLUE_PACK_ADMISSION.md` for the stricter standard
+> any future pack must meet.
+
 Generated 2026-04-30 by curated authoring (`human_curator`, run id `campaign-001-tor-f*`).
 
 ## What this is

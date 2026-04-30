@@ -169,6 +169,30 @@
       "owner_doc": "docs/history/README.md",
       "red_team_status": "demoted 2026-04-09 during epistemic control-plane refactor",
       "notes": "Both files carry in-file HISTORICAL SNAPSHOT banners. They remain in the repo for traceability and link stability."
+    },
+    {
+      "claim_id": "C-BRIDGE-01",
+      "statement": "Real-K4 LLM↔HCC interpretive bridge campaign 001 (Team-of-Rivals, 31 packs, 1730 specs) closed null_level on 2026-04-30. Max crib 5/24, expected null max 5.35, p(max>=5)=0.965, no top-20 candidate passed Bean or had ngram>0. Tested seven hypothesis families (F1 public-crib geometry, F2 Sanborn/Scheidt two-systems, F3 Stehle anomaly, F4 BCL Beaufort, F5 width-21 bigrams, F6 NDYAHR/YAR shifts, F7 K2/K3 analogy); no signal under campaign_001 encoding for any family.",
+      "class": "internal_result",
+      "status": "live",
+      "scope": "real-K4 interpretive bridge audit, raw 97-char carved CT, direct-positional crib mapping, the seven family encodings authored in campaign_001",
+      "depends_on": ["C-STATE-01", "C-STATE-02", "C-COMP-01", "C-SANBORN-01"],
+      "supersedes": [],
+      "superseded_by": [],
+      "artifact": "data/real_k4_pseudo_clue_packs/campaign_001_team_of_rivals/CLOSURE.md, data/real_k4_pseudo_clue_packs/campaign_001_team_of_rivals/README.md, results/real_k4_hcc_bridge_audit/campaign_001_team_of_rivals.json",
+      "repro_reference": "PYTHONPATH=src python3 -u kryptosbot/run_controller.py --real-k4-hcc-bridge-audit --bridge-packs-dir data/real_k4_pseudo_clue_packs/campaign_001_team_of_rivals --real-k4-hcc-bridge-audit-out results/real_k4_hcc_bridge_audit/campaign_001_team_of_rivals.json --real-k4-hcc-bridge-audit-max-specs 5000",
+      "owner_doc": "data/real_k4_pseudo_clue_packs/campaign_001_team_of_rivals/CLOSURE.md",
+      "red_team_status": "campaign closure self-audit; no rival panel commissioned (closure is a null result, not a positive promotion)",
+      "notes": "The bridge pipeline is validated. The seven family encodings produced no signal at this search breadth. This rejects the encodings, NOT the families. Future packs must meet the stricter admission standard at docs/REAL_K4_PSEUDO_CLUE_PACK_ADMISSION.md. Per-family rollup table lives in CLOSURE.md.",
+      "per_family_rollup": [
+        {"family": "F1", "name": "public crib geometry (BERLIN/CLOCK, EAST/NORTHEAST as keys)", "n_packs": 5, "n_specs": 204, "max_crib": 4, "bean_pass_any": false, "ngram_gt_zero_any": false, "disposition": "no signal under campaign_001 encoding"},
+        {"family": "F2", "name": "Sanborn/Scheidt two-systems / masked-English (Tier-3 hearsay)", "n_packs": 5, "n_specs": 630, "max_crib": 4, "bean_pass_any": false, "ngram_gt_zero_any": false, "disposition": "no signal under campaign_001 encoding"},
+        {"family": "F3", "name": "Stehle anomaly (+5 / spacing-4)", "n_packs": 4, "n_specs": 103, "max_crib": 3, "bean_pass_any": false, "ngram_gt_zero_any": false, "disposition": "no signal under campaign_001 encoding"},
+        {"family": "F4", "name": "BCL Beaufort (post-retired-palette policy)", "n_packs": 4, "n_specs": 60, "max_crib": 3, "bean_pass_any": false, "ngram_gt_zero_any": false, "disposition": "no signal under campaign_001 encoding"},
+        {"family": "F5", "name": "width-21 vertical bigrams (and post-null w10/w17)", "n_packs": 5, "n_specs": 252, "max_crib": 4, "bean_pass_any": false, "ngram_gt_zero_any": false, "disposition": "no signal under campaign_001 encoding"},
+        {"family": "F6", "name": "NDYAHR / YAR shifted-letter", "n_packs": 4, "n_specs": 391, "max_crib": 3, "bean_pass_any": false, "ngram_gt_zero_any": false, "disposition": "no signal under campaign_001 encoding"},
+        {"family": "F7", "name": "K2/K3 provenance analogy (PALIMPSEST/ABSCISSA/KRYPTOS, K3 widths)", "n_packs": 4, "n_specs": 90, "max_crib": 5, "bean_pass_any": false, "ngram_gt_zero_any": false, "disposition": "no signal under campaign_001 encoding"}
+      ]
     }
   ]
 }
