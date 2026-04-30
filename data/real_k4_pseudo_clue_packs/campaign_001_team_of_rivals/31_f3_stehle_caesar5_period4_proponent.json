@@ -1,0 +1,35 @@
+{
+  "pack_id": "tor-f3-31-stehle-caesar5-period4-proponent",
+  "title": "F3 proponent: Stehle anomaly as Caesar shift=5 + width=4 columnar",
+  "hypothesis_summary": "Anomaly E0a (Stehle 2000, measured by Bean 2021): the 9-character segment DIAWINFBN at carved positions 55-63 has the property that each pair of letters 4 positions apart differs by exactly 5 (mod 26). This is locally interesting but Bean wrote 'harder to measure, explain or exploit'. The proponent reading interprets this as a structural hint at a key offset of 5 operating at interval 4 — i.e. a Caesar shift=5 layer composed with a width-4 columnar route, against the disclosed-crib keyword pool.",
+  "provenance_items": [
+    {"source_id": "ANOMALY-E0a-STEHLE", "source_type": "anomaly", "quote_or_summary": "Anomaly E0a: DIAWINFBN constant-difference property; pairs 4 apart differ by 5 (mod 26). Bean 2021 §2.3, citing Stehle 2000.", "confidence": 0.7, "url_or_registry_key": "docs/anomaly_registry.md E0a"},
+    {"source_id": "REGISTRY-CORE-PUBLIC-CRIBS", "source_type": "registry", "quote_or_summary": "Core public-crib keyword tier.", "confidence": 0.9, "url_or_registry_key": "kryptosbot.real_k4_clue_registry: TIER_CORE_PUBLIC_CRIBS"}
+  ],
+  "evidence_tier": "tier_2_derived_fact",
+  "keywords": [
+    {"token": "BERLIN", "role_hint": "columnar", "source_ids": ["REGISTRY-CORE-PUBLIC-CRIBS"], "confidence": 0.4},
+    {"token": "CLOCK", "role_hint": "columnar", "source_ids": ["REGISTRY-CORE-PUBLIC-CRIBS"], "confidence": 0.4}
+  ],
+  "numeric_roles": [
+    {"value": 5, "token": "stehle-shift-5", "role_hint": "shift", "source_ids": ["ANOMALY-E0a-STEHLE"], "confidence": 0.5},
+    {"value": 4, "token": "stehle-period-4", "role_hint": "width", "source_ids": ["ANOMALY-E0a-STEHLE"], "confidence": 0.45}
+  ],
+  "operation_hints": [
+    {"operation": "caesar", "role": "required", "source_ids": ["ANOMALY-E0a-STEHLE"], "confidence": 0.5},
+    {"operation": "columnar", "role": "required", "source_ids": ["ANOMALY-E0a-STEHLE"], "confidence": 0.4},
+    {"operation": "route_boustrophedon", "role": "optional", "source_ids": ["ANOMALY-E0a-STEHLE"], "confidence": 0.3}
+  ],
+  "composition_templates": [
+    {"layer_kinds": ["caesar"], "ordered": true, "rationale": "Pure Caesar shift=5 — Stehle anomaly as standalone shift.", "confidence": 0.4, "max_layers": 1},
+    {"layer_kinds": ["caesar", "columnar", "route_boustrophedon"], "ordered": false, "rationale": "LESSON-019 numeric-Caesar + route + columnar: Stehle shift composed with width=4 route and crib-keyword columnar.", "confidence": 0.3, "max_layers": 3}
+  ],
+  "bounds": {"max_specs": 250, "allowed_keywords": ["BERLIN", "CLOCK"], "allowed_widths": [4], "allowed_shifts": [5], "allow_project_safe_defaults": false, "allow_default_widths": false},
+  "constraints": ["Shift pool restricted to {5}; width pool restricted to {4}; keywords restricted to BERLIN/CLOCK."],
+  "caveats": [
+    "PROPONENT framing for a published statistical anomaly; Bean himself flagged it as hard to exploit.",
+    "Stehle property is local to a 9-letter window; extrapolating to a global Caesar shift is structurally aggressive."
+  ],
+  "generated_by": "human_curator",
+  "generation_run_id": "campaign-001-tor-f3"
+}

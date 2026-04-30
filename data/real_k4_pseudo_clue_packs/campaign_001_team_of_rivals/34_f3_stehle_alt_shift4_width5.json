@@ -1,0 +1,33 @@
+{
+  "pack_id": "tor-f3-34-stehle-alt-shift4-width5",
+  "title": "F3 alt: Stehle role-swap (shift=4, width=5)",
+  "hypothesis_summary": "Second alternative reading of the Stehle anomaly. F3-31 mapped 'difference 5 at interval 4' to (shift=5, width=4); this pack swaps the role assignment to (shift=4, width=5). The mapping from a static difference/interval pair to dynamic Caesar/route roles is itself underdetermined; this pack exists to test whether the proponent reading's role assignment is privileged or arbitrary.",
+  "provenance_items": [
+    {"source_id": "ANOMALY-E0a-STEHLE", "source_type": "anomaly", "quote_or_summary": "Stehle anomaly: pairs 4 apart differ by 5 (mod 26).", "confidence": 0.7, "url_or_registry_key": "docs/anomaly_registry.md E0a"}
+  ],
+  "evidence_tier": "tier_2_derived_fact",
+  "keywords": [
+    {"token": "BERLIN", "role_hint": "columnar", "source_ids": ["ANOMALY-E0a-STEHLE"], "confidence": 0.3},
+    {"token": "CLOCK", "role_hint": "columnar", "source_ids": ["ANOMALY-E0a-STEHLE"], "confidence": 0.3}
+  ],
+  "numeric_roles": [
+    {"value": 4, "token": "swap-shift-4", "role_hint": "shift", "source_ids": ["ANOMALY-E0a-STEHLE"], "confidence": 0.4},
+    {"value": 5, "token": "swap-width-5", "role_hint": "width", "source_ids": ["ANOMALY-E0a-STEHLE"], "confidence": 0.4}
+  ],
+  "operation_hints": [
+    {"operation": "caesar", "role": "required", "source_ids": ["ANOMALY-E0a-STEHLE"], "confidence": 0.4},
+    {"operation": "columnar", "role": "required", "source_ids": ["ANOMALY-E0a-STEHLE"], "confidence": 0.35},
+    {"operation": "route_boustrophedon", "role": "optional", "source_ids": ["ANOMALY-E0a-STEHLE"], "confidence": 0.3}
+  ],
+  "composition_templates": [
+    {"layer_kinds": ["caesar"], "ordered": true, "rationale": "Caesar shift=4 alone (role-swap baseline).", "confidence": 0.35, "max_layers": 1},
+    {"layer_kinds": ["caesar", "columnar", "route_boustrophedon"], "ordered": false, "rationale": "LESSON-019 with role-swapped Stehle parameters.", "confidence": 0.3, "max_layers": 3}
+  ],
+  "bounds": {"max_specs": 250, "allowed_keywords": ["BERLIN", "CLOCK"], "allowed_widths": [5], "allowed_shifts": [4], "allow_project_safe_defaults": false, "allow_default_widths": false},
+  "constraints": ["Shift restricted to {4}; width restricted to {5}; explicit role-swap of F3-31."],
+  "caveats": [
+    "ALTERNATIVE-MECHANISM framing — purely tests sensitivity of F3-31 to the chosen role assignment."
+  ],
+  "generated_by": "human_curator",
+  "generation_run_id": "campaign-001-tor-f3"
+}

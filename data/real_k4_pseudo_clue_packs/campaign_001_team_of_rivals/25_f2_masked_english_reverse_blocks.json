@@ -1,0 +1,37 @@
+{
+  "pack_id": "tor-f2-25-masked-english-reverse-blocks",
+  "title": "F2 alt: 'masked English' as substitution + reverse_blocks transposition",
+  "hypothesis_summary": "Sanborn's 'masked English' phrase is sometimes read as 'plaintext is English but locally permuted'. This pack tests that as a substitution + reverse_blocks composition (LESSON-018-related), with block sizes at 4 / 5 / 7 — small enough that adjacent-letter English digrams remain partially preserved under reversal. Tested against the disclosed-crib keyword pool.",
+  "provenance_items": [
+    {"source_id": "PUBCOMMENT-SANBORN-MASKED-ENGLISH", "source_type": "public_comment", "quote_or_summary": "Sanborn 'masked English' phrase, interpreted as locally-permuted English plaintext (Tier-3 hearsay).", "confidence": 0.35, "url_or_registry_key": "feedback_sanborn_epistemic_weight"},
+    {"source_id": "REGISTRY-CORE-PUBLIC-CRIBS", "source_type": "registry", "quote_or_summary": "Core public-crib keyword tier.", "confidence": 0.9, "url_or_registry_key": "kryptosbot.real_k4_clue_registry: TIER_CORE_PUBLIC_CRIBS"}
+  ],
+  "evidence_tier": "tier_3_creator_statement",
+  "keywords": [
+    {"token": "BERLIN", "role_hint": "substitution", "source_ids": ["REGISTRY-CORE-PUBLIC-CRIBS"], "confidence": 0.35},
+    {"token": "CLOCK", "role_hint": "substitution", "source_ids": ["REGISTRY-CORE-PUBLIC-CRIBS"], "confidence": 0.3},
+    {"token": "EAST", "role_hint": "substitution", "source_ids": ["REGISTRY-CORE-PUBLIC-CRIBS"], "confidence": 0.3}
+  ],
+  "numeric_roles": [
+    {"value": 4, "token": "block-4", "role_hint": "period", "source_ids": ["PUBCOMMENT-SANBORN-MASKED-ENGLISH"], "confidence": 0.3},
+    {"value": 5, "token": "block-5", "role_hint": "period", "source_ids": ["PUBCOMMENT-SANBORN-MASKED-ENGLISH"], "confidence": 0.3},
+    {"value": 7, "token": "block-7", "role_hint": "period", "source_ids": ["PUBCOMMENT-SANBORN-MASKED-ENGLISH"], "confidence": 0.3}
+  ],
+  "operation_hints": [
+    {"operation": "vigenere", "role": "optional", "source_ids": ["PUBCOMMENT-SANBORN-MASKED-ENGLISH"], "confidence": 0.3},
+    {"operation": "beaufort", "role": "optional", "source_ids": ["PUBCOMMENT-SANBORN-MASKED-ENGLISH"], "confidence": 0.3},
+    {"operation": "reverse_blocks", "role": "required", "source_ids": ["PUBCOMMENT-SANBORN-MASKED-ENGLISH"], "confidence": 0.3}
+  ],
+  "composition_templates": [
+    {"layer_kinds": ["reverse_blocks", "vigenere"], "ordered": false, "rationale": "Sub + reverse_blocks: 'masked English' as small-block local reversal under a substitution layer.", "confidence": 0.3, "max_layers": 2},
+    {"layer_kinds": ["beaufort", "reverse_blocks"], "ordered": false, "rationale": "Beaufort + reverse_blocks.", "confidence": 0.3, "max_layers": 2}
+  ],
+  "bounds": {"max_specs": 250, "allowed_keywords": ["BERLIN", "CLOCK", "EAST"], "allow_project_safe_defaults": false, "allow_default_widths": false},
+  "constraints": ["Block sizes drawn from period role only; project-safe defaults off."],
+  "caveats": [
+    "ALTERNATIVE-MECHANISM framing within F2.",
+    "'Masked English' is loose phrasing; this pack picks one structural realization (small-block local reversal) and stamps confidence accordingly."
+  ],
+  "generated_by": "human_curator",
+  "generation_run_id": "campaign-001-tor-f2"
+}

@@ -1,0 +1,30 @@
+{
+  "pack_id": "tor-f1-13-cribs-skeptic-minimal",
+  "title": "F1 skeptic-minimal: KRYPTOS-only sub + columnar (the disciplined null)",
+  "hypothesis_summary": "Skeptic-minimal counterpart to the F1 proponents. It refuses to elevate disclosed crib spans to key-role status without independent evidence. Instead it tests only the construction-attested keyword KRYPTOS (the sculpture's name and the alphabet keyword used in K1/K2/K3) as a substitution + columnar key. This is the disciplined null version of the disclosed-crib pack family — if the cribs DO function as keys, F1-11/12 should beat this pack; if they do not, this pack defines the within-family floor.",
+  "provenance_items": [
+    {"source_id": "REGISTRY-KRYPTOS-NAME", "source_type": "registry", "quote_or_summary": "KRYPTOS is the sculpture name and the K1/K2/K3 alphabet keyword (TIER_SCULPTURE_CONTEXT in the project clue registry).", "confidence": 0.9, "url_or_registry_key": "kryptosbot.real_k4_clue_registry: TIER_SCULPTURE_CONTEXT"}
+  ],
+  "evidence_tier": "tier_2_derived_fact",
+  "keywords": [
+    {"token": "KRYPTOS", "role_hint": "substitution", "source_ids": ["REGISTRY-KRYPTOS-NAME"], "confidence": 0.5}
+  ],
+  "numeric_roles": [],
+  "operation_hints": [
+    {"operation": "vigenere", "role": "optional", "source_ids": ["REGISTRY-KRYPTOS-NAME"], "confidence": 0.4},
+    {"operation": "beaufort", "role": "optional", "source_ids": ["REGISTRY-KRYPTOS-NAME"], "confidence": 0.4},
+    {"operation": "columnar", "role": "optional", "source_ids": ["REGISTRY-KRYPTOS-NAME"], "confidence": 0.3}
+  ],
+  "composition_templates": [
+    {"layer_kinds": ["vigenere", "columnar"], "ordered": false, "rationale": "Single-keyword sub + columnar with KRYPTOS in both roles. Within-family floor.", "confidence": 0.35, "max_layers": 2},
+    {"layer_kinds": ["beaufort", "columnar"], "ordered": false, "rationale": "Beaufort form of the same role-pair.", "confidence": 0.3, "max_layers": 2}
+  ],
+  "bounds": {"max_specs": 100, "allowed_keywords": ["KRYPTOS"], "allow_project_safe_defaults": false, "allow_default_widths": false},
+  "constraints": ["KRYPTOS is the only keyword. Single-keyword fallback path in the i3 emitter."],
+  "caveats": [
+    "SKEPTIC-MINIMAL framing — establishes the floor against which F1-11/12 must outperform to claim crib-as-key signal.",
+    "KRYPTOS as a Vigenere key has been tested historically; confidence reflects this."
+  ],
+  "generated_by": "human_curator",
+  "generation_run_id": "campaign-001-tor-f1"
+}

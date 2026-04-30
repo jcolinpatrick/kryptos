@@ -1,0 +1,30 @@
+{
+  "pack_id": "tor-f4-41-bcl-beaufort-kryptos-proponent",
+  "title": "F4 proponent: Beaufort + KRYPTOS substitution context (BCL enrichment family)",
+  "hypothesis_summary": "The BCL (BERLIN-CLOCK Letter) Beaufort enrichment was based on an A=0 Beaufort-keystream observation at the BERLINCLOCK crib region. The underlying palette construct {B,G,I,K,O,W,Z} was RETIRED 2026-04-01 as a post-hoc selection artifact (memory/retired/bcl_palette_keystream.md). The proponent reading retains the structural intuition — Beaufort substitution remains the natural arithmetic for the disclosed crib region — but uses the public KRYPTOS keyword from the construction record as the substitution key and explicitly disclaims the retired palette construct. This is the project-policy-clean version of the BCL family.",
+  "provenance_items": [
+    {"source_id": "ANOMALY-E0b-KRYPTOS-DISTANCE", "source_type": "anomaly", "quote_or_summary": "Anomaly E0b (Materna 2020 / Bean 2021 §2.4): for the 10 of 24 known PT positions where PT in {K,R,Y,P,T,O,S}, CT letters cluster very near in standard alphabet (mean delta 2.1, p ~ 1/5520). Strong evidence the cipher alphabet is keyword-mixed near KRYPTOS.", "confidence": 0.7, "url_or_registry_key": "docs/anomaly_registry.md E0b"},
+    {"source_id": "REGISTRY-KRYPTOS-NAME", "source_type": "registry", "quote_or_summary": "KRYPTOS is the K1/K2/K3 alphabet keyword.", "confidence": 0.9, "url_or_registry_key": "kryptosbot.real_k4_clue_registry: TIER_SCULPTURE_CONTEXT"}
+  ],
+  "evidence_tier": "tier_2_derived_fact",
+  "keywords": [
+    {"token": "KRYPTOS", "role_hint": "substitution", "source_ids": ["ANOMALY-E0b-KRYPTOS-DISTANCE", "REGISTRY-KRYPTOS-NAME"], "confidence": 0.5},
+    {"token": "BERLIN", "role_hint": "columnar", "source_ids": ["ANOMALY-E0b-KRYPTOS-DISTANCE"], "confidence": 0.4}
+  ],
+  "numeric_roles": [],
+  "operation_hints": [
+    {"operation": "beaufort", "role": "required", "source_ids": ["ANOMALY-E0b-KRYPTOS-DISTANCE"], "confidence": 0.45},
+    {"operation": "columnar", "role": "optional", "source_ids": ["REGISTRY-KRYPTOS-NAME"], "confidence": 0.35}
+  ],
+  "composition_templates": [
+    {"layer_kinds": ["beaufort", "columnar"], "ordered": false, "rationale": "Beaufort substitution + keyed columnar with KRYPTOS / BERLIN keyword pair. The Beaufort arithmetic is the ONE structural commitment carried over from the BCL family.", "confidence": 0.4, "max_layers": 2}
+  ],
+  "bounds": {"max_specs": 200, "allowed_keywords": ["KRYPTOS", "BERLIN"], "allow_project_safe_defaults": false, "allow_default_widths": false},
+  "constraints": ["Beaufort required. Keyword pool restricted to KRYPTOS and BERLIN. NO retired palette construct ({B,G,I,K,O,W,Z}) is referenced."],
+  "caveats": [
+    "PROPONENT framing built around the SURVIVING evidence (anomaly E0b), NOT the retired palette construct.",
+    "The original BCL palette {B,G,I,K,O,W,Z} was retired as post-hoc selection artifact — see memory/retired/bcl_palette_keystream.md and docs/a1_score_conditioned_null_report.md. This pack does NOT cite that palette."
+  ],
+  "generated_by": "human_curator",
+  "generation_run_id": "campaign-001-tor-f4"
+}

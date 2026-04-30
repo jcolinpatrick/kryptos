@@ -1,0 +1,39 @@
+{
+  "pack_id": "tor-f1-14-crib-position-anchors-alt",
+  "title": "F1 alt-mechanism: crib boundary positions as numeric width/depth roles",
+  "hypothesis_summary": "Alternative-mechanism counterpart to the F1 proponents. Same evidence (disclosed crib spans) but a structurally different reading: the crib boundary indices (21, 24, 25, 33, 64, 69, 70, 73) carry the cipher hint, not the crib WORDS. We project the boundary indices into hand-cipher numeric roles — widths in the 7-13 / 21-33 ranges, rail-fence depths from the small-divisor projections — and test whether the existing core public-crib keywords compose with those numeric roles. The 21 / 33 / 73 indices are inherited as widths; depths are taken from boundary-difference values 4 / 5 / 9 / 11 (intervals between adjacent crib endpoints).",
+  "provenance_items": [
+    {"source_id": "CRIB-EASTNORTHEAST-21-33", "source_type": "crib", "quote_or_summary": "EASTNORTHEAST occupies indices 21-33 (span endpoints 21 and 33).", "confidence": 0.99},
+    {"source_id": "CRIB-BERLINCLOCK-63-73", "source_type": "crib", "quote_or_summary": "BERLINCLOCK occupies indices 63-73 (span endpoints 63 and 73).", "confidence": 0.99},
+    {"source_id": "REGISTRY-CORE-PUBLIC-CRIBS", "source_type": "registry", "quote_or_summary": "Core public cribs registered as keyword pool (TIER_CORE_PUBLIC_CRIBS).", "confidence": 0.9, "url_or_registry_key": "kryptosbot.real_k4_clue_registry: TIER_CORE_PUBLIC_CRIBS"}
+  ],
+  "evidence_tier": "tier_4_inference",
+  "keywords": [
+    {"token": "EAST", "role_hint": "substitution", "source_ids": ["REGISTRY-CORE-PUBLIC-CRIBS"], "confidence": 0.35},
+    {"token": "BERLIN", "role_hint": "columnar", "source_ids": ["REGISTRY-CORE-PUBLIC-CRIBS"], "confidence": 0.35}
+  ],
+  "numeric_roles": [
+    {"value": 11, "token": "berlinclock-len", "role_hint": "width", "source_ids": ["CRIB-BERLINCLOCK-63-73"], "confidence": 0.3},
+    {"value": 13, "token": "eastnortheast-len", "role_hint": "width", "source_ids": ["CRIB-EASTNORTHEAST-21-33"], "confidence": 0.3},
+    {"value": 21, "token": "eastnortheast-start", "role_hint": "width", "source_ids": ["CRIB-EASTNORTHEAST-21-33"], "confidence": 0.25},
+    {"value": 4, "token": "depth-from-25-21", "role_hint": "depth", "source_ids": ["CRIB-EASTNORTHEAST-21-33"], "confidence": 0.25},
+    {"value": 5, "token": "depth-from-69-64", "role_hint": "depth", "source_ids": ["CRIB-BERLINCLOCK-63-73"], "confidence": 0.25}
+  ],
+  "operation_hints": [
+    {"operation": "vigenere", "role": "optional", "source_ids": ["REGISTRY-CORE-PUBLIC-CRIBS"], "confidence": 0.35},
+    {"operation": "columnar", "role": "optional", "source_ids": ["REGISTRY-CORE-PUBLIC-CRIBS"], "confidence": 0.35},
+    {"operation": "rail_fence", "role": "optional", "source_ids": ["CRIB-BERLINCLOCK-63-73"], "confidence": 0.25}
+  ],
+  "composition_templates": [
+    {"layer_kinds": ["columnar", "rail_fence", "vigenere"], "ordered": false, "rationale": "Three-role: sub-keyword + columnar + rail-fence depth from crib endpoint differences.", "confidence": 0.25, "max_layers": 3},
+    {"layer_kinds": ["rail_fence", "vigenere"], "ordered": false, "rationale": "Two-layer Vig + rail_fence with crib-derived depths.", "confidence": 0.3, "max_layers": 2}
+  ],
+  "bounds": {"max_specs": 250, "allowed_keywords": ["EAST", "BERLIN"], "allow_project_safe_defaults": false, "allow_default_widths": false},
+  "constraints": ["Numeric roles drawn ONLY from crib endpoints and endpoint-differences within the disclosed spans."],
+  "caveats": [
+    "ALTERNATIVE-MECHANISM framing — uses the SAME evidence as the F1 proponents but treats numeric span structure as the cipher hint instead of crib content.",
+    "Confidence kept low: numerology from positions is easily overfit. The pack exists to be CHECKED against the proponents, not to support its own conclusions."
+  ],
+  "generated_by": "human_curator",
+  "generation_run_id": "campaign-001-tor-f1"
+}

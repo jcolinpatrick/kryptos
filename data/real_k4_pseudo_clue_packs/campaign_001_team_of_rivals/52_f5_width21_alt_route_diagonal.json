@@ -1,0 +1,31 @@
+{
+  "pack_id": "tor-f5-52-width21-alt-route-diagonal",
+  "title": "F5 alt-mechanism: width-21 as diagonal/route grid (not columnar)",
+  "hypothesis_summary": "Alternative-mechanism reading of E0e. F5-51 read width-21 as a columnar partition; this pack reads it as a route_diagonal grid with rows = ceil(97/21) = 5. Tests whether the bigram structure reflects a diagonal-route reading instead of a columnar one.",
+  "provenance_items": [
+    {"source_id": "ANOMALY-E0e-WIDTH21", "source_type": "anomaly", "quote_or_summary": "Width-21 vertical bigram anomaly (Bean 2021).", "confidence": 0.85, "url_or_registry_key": "docs/anomaly_registry.md E0e"},
+    {"source_id": "REGISTRY-CORE-PUBLIC-CRIBS", "source_type": "registry", "quote_or_summary": "Core public-crib keyword tier.", "confidence": 0.9, "url_or_registry_key": "kryptosbot.real_k4_clue_registry: TIER_CORE_PUBLIC_CRIBS"}
+  ],
+  "evidence_tier": "tier_2_derived_fact",
+  "keywords": [
+    {"token": "BERLIN", "role_hint": "substitution", "source_ids": ["REGISTRY-CORE-PUBLIC-CRIBS"], "confidence": 0.35},
+    {"token": "CLOCK", "role_hint": "substitution", "source_ids": ["REGISTRY-CORE-PUBLIC-CRIBS"], "confidence": 0.35}
+  ],
+  "numeric_roles": [
+    {"value": 21, "token": "diag-w21", "role_hint": "width", "source_ids": ["ANOMALY-E0e-WIDTH21"], "confidence": 0.45}
+  ],
+  "operation_hints": [
+    {"operation": "vigenere", "role": "optional", "source_ids": ["REGISTRY-CORE-PUBLIC-CRIBS"], "confidence": 0.3},
+    {"operation": "beaufort", "role": "optional", "source_ids": ["REGISTRY-CORE-PUBLIC-CRIBS"], "confidence": 0.3},
+    {"operation": "route_diagonal", "role": "required", "source_ids": ["ANOMALY-E0e-WIDTH21"], "confidence": 0.35}
+  ],
+  "composition_templates": [
+    {"layer_kinds": ["route_diagonal", "vigenere"], "ordered": false, "rationale": "Width-21 diagonal route + sub.", "confidence": 0.3, "max_layers": 2},
+    {"layer_kinds": ["beaufort", "route_diagonal"], "ordered": false, "rationale": "Beaufort + width-21 diagonal.", "confidence": 0.3, "max_layers": 2}
+  ],
+  "bounds": {"max_specs": 250, "allowed_keywords": ["BERLIN", "CLOCK"], "allowed_widths": [21], "allow_project_safe_defaults": false, "allow_default_widths": false},
+  "constraints": ["Width pool restricted to {21}; diagonal-route required."],
+  "caveats": ["ALTERNATIVE-MECHANISM framing within F5."],
+  "generated_by": "human_curator",
+  "generation_run_id": "campaign-001-tor-f5"
+}

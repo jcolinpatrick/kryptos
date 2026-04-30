@@ -1,0 +1,29 @@
+{
+  "pack_id": "tor-f4-43-bcl-alt-variant-beaufort",
+  "title": "F4 alt-mechanism: Variant-Beaufort substitution (sign-flip alternative)",
+  "hypothesis_summary": "Alternative-mechanism reading of the BCL family. The BCL keystream observation depends on the Beaufort arithmetic convention; under Variant-Beaufort the same crib content yields a different keystream value. This pack tests variant_beaufort + columnar with KRYPTOS / BERLIN keyword pool to detect convention-flip sensitivity.",
+  "provenance_items": [
+    {"source_id": "ANOMALY-E0b-KRYPTOS-DISTANCE", "source_type": "anomaly", "quote_or_summary": "Anomaly E0b: KRYPTOS-set distances cluster near identity. Bean 2021 §2.4.", "confidence": 0.7, "url_or_registry_key": "docs/anomaly_registry.md E0b"},
+    {"source_id": "REGISTRY-KRYPTOS-NAME", "source_type": "registry", "quote_or_summary": "KRYPTOS keyword.", "confidence": 0.9, "url_or_registry_key": "kryptosbot.real_k4_clue_registry: TIER_SCULPTURE_CONTEXT"}
+  ],
+  "evidence_tier": "tier_2_derived_fact",
+  "keywords": [
+    {"token": "KRYPTOS", "role_hint": "substitution", "source_ids": ["ANOMALY-E0b-KRYPTOS-DISTANCE", "REGISTRY-KRYPTOS-NAME"], "confidence": 0.45},
+    {"token": "BERLIN", "role_hint": "columnar", "source_ids": ["ANOMALY-E0b-KRYPTOS-DISTANCE"], "confidence": 0.4}
+  ],
+  "numeric_roles": [],
+  "operation_hints": [
+    {"operation": "variant_beaufort", "role": "required", "source_ids": ["ANOMALY-E0b-KRYPTOS-DISTANCE"], "confidence": 0.4},
+    {"operation": "columnar", "role": "optional", "source_ids": ["REGISTRY-KRYPTOS-NAME"], "confidence": 0.35}
+  ],
+  "composition_templates": [
+    {"layer_kinds": ["columnar", "variant_beaufort"], "ordered": false, "rationale": "Variant-Beaufort + keyed columnar — sign-flip alternative to F4-41 Beaufort.", "confidence": 0.35, "max_layers": 2}
+  ],
+  "bounds": {"max_specs": 200, "allowed_keywords": ["KRYPTOS", "BERLIN"], "allow_project_safe_defaults": false, "allow_default_widths": false},
+  "constraints": ["Variant-Beaufort required. Keyword pool restricted to KRYPTOS / BERLIN."],
+  "caveats": [
+    "ALTERNATIVE-MECHANISM framing — convention sensitivity check on F4-41."
+  ],
+  "generated_by": "human_curator",
+  "generation_run_id": "campaign-001-tor-f4"
+}

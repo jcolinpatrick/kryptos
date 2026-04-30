@@ -1,0 +1,25 @@
+{
+  "pack_id": "tor-f7-72-palimpsest-only-skeptic",
+  "title": "F7 skeptic: PALIMPSEST alone (K1's keyword)",
+  "hypothesis_summary": "Skeptic-minimal counterpart to F7-71. Tests ONLY PALIMPSEST as a substitution key. Falsification check on F7-71: if F7-71 outperforms this pack, the additional legacy keys (ABSCISSA, KRYPTOS) contributed; if not, the proponent reading is over-fit on a single legacy-key analogy.",
+  "provenance_items": [
+    {"source_id": "REGISTRY-LEGACY-KEYWORDS", "source_type": "registry", "quote_or_summary": "PALIMPSEST as K1 cipher keyword.", "confidence": 0.95, "url_or_registry_key": "kryptosbot.real_k4_clue_registry: TIER_KRYPTOS_PLAINTEXT_LEGACY"}
+  ],
+  "evidence_tier": "tier_2_derived_fact",
+  "keywords": [
+    {"token": "PALIMPSEST", "role_hint": "substitution", "source_ids": ["REGISTRY-LEGACY-KEYWORDS"], "confidence": 0.4}
+  ],
+  "numeric_roles": [],
+  "operation_hints": [
+    {"operation": "vigenere", "role": "optional", "source_ids": ["REGISTRY-LEGACY-KEYWORDS"], "confidence": 0.4},
+    {"operation": "columnar", "role": "optional", "source_ids": ["REGISTRY-LEGACY-KEYWORDS"], "confidence": 0.3}
+  ],
+  "composition_templates": [
+    {"layer_kinds": ["vigenere", "columnar"], "ordered": false, "rationale": "PALIMPSEST single-keyword fallback for sub+columnar.", "confidence": 0.35, "max_layers": 2}
+  ],
+  "bounds": {"max_specs": 80, "allowed_keywords": ["PALIMPSEST"], "allow_project_safe_defaults": false, "allow_default_widths": false},
+  "constraints": ["Single-keyword fallback only."],
+  "caveats": ["SKEPTIC-MINIMAL within F7."],
+  "generated_by": "human_curator",
+  "generation_run_id": "campaign-001-tor-f7"
+}

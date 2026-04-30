@@ -1,0 +1,32 @@
+{
+  "pack_id": "tor-f4-44-bcl-palette-acknowledged-retired",
+  "title": "F4 explicit-retired: tier-5 placeholder pack flagging the retired BCL palette",
+  "hypothesis_summary": "Explicit Tier-5 placeholder pack within F4. The retired BCL palette construct {B,G,I,K,O,W,Z} appeared productive in 2026-03 but was retired 2026-04-01 as a post-hoc selection artifact (score-conditioned null published in docs/a1_score_conditioned_null_report.md). Project policy disallows building hypotheses on retired claims. This pack exists ONLY to keep the audit trail visible: it cites the retired memo, declares tier_5_speculation, and tests a single fixed-keyword Beaufort spec so a reviewer can see that the pack ran and produced no additional signal beyond the surviving F4-41/42/43 packs. NO new claim is built on top of the retired construct.",
+  "provenance_items": [
+    {"source_id": "RETIRED-BCL-PALETTE", "source_type": "registry", "quote_or_summary": "Retired claim: BCL palette {B,G,I,K,O,W,Z}. Retired 2026-04-01 per memory/retired/bcl_palette_keystream.md; superseded by docs/a1_score_conditioned_null_report.md.", "confidence": 0.05, "url_or_registry_key": "memory/retired/bcl_palette_keystream.md"},
+    {"source_id": "REGISTRY-KRYPTOS-NAME", "source_type": "registry", "quote_or_summary": "KRYPTOS keyword (kept here ONLY for spec validity, not as evidence for the retired palette).", "confidence": 0.9, "url_or_registry_key": "kryptosbot.real_k4_clue_registry: TIER_SCULPTURE_CONTEXT"}
+  ],
+  "evidence_tier": "tier_5_speculation",
+  "keywords": [
+    {"token": "KRYPTOS", "role_hint": "substitution", "source_ids": ["REGISTRY-KRYPTOS-NAME"], "confidence": 0.2}
+  ],
+  "numeric_roles": [],
+  "operation_hints": [
+    {"operation": "beaufort", "role": "required", "source_ids": ["RETIRED-BCL-PALETTE"], "confidence": 0.1}
+  ],
+  "composition_templates": [
+    {"layer_kinds": ["beaufort", "columnar"], "ordered": false, "rationale": "Single-keyword KRYPTOS Beaufort+columnar fallback purely for audit-trail visibility.", "confidence": 0.1, "max_layers": 2}
+  ],
+  "bounds": {"max_specs": 30, "allowed_keywords": ["KRYPTOS"], "allow_project_safe_defaults": false, "allow_default_widths": false},
+  "constraints": ["Single-keyword fallback only. Pack confidence < 0.2 throughout; Tier-5 self-flag."],
+  "excluded_reasons": [
+    "Original BCL palette {B,G,I,K,O,W,Z} explicitly NOT included as a keyword or alphabet hint — retired claim, post-hoc selection artifact.",
+    "No new compute should be invested behind this pack."
+  ],
+  "caveats": [
+    "TIER-5 SELF-FLAGGED. Pack exists to make the retired claim VISIBLE in the audit, not to test it.",
+    "If this pack outperforms F4-41/42/43, that itself is evidence the retired construct deserves a re-examination — but project policy still requires opening a methodological audit before treating it as live."
+  ],
+  "generated_by": "human_curator",
+  "generation_run_id": "campaign-001-tor-f4"
+}

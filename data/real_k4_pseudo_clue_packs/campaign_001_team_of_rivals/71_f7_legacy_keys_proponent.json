@@ -1,0 +1,33 @@
+{
+  "pack_id": "tor-f7-71-legacy-keys-proponent",
+  "title": "F7 proponent: K1/K2 legacy keys (PALIMPSEST + ABSCISSA + KRYPTOS) as substitution candidates",
+  "hypothesis_summary": "K1, K2, K3 are public-fact-solved with construction-attested keywords PALIMPSEST (K1), ABSCISSA (K2), and KRYPTOS-mixed alphabets (all of K1-K3). Sanborn's two-systems claim does NOT guarantee K1-K3 keys apply to K4, but the keyword family's documented reuse is the strongest WEAK analogy available. The proponent reading enumerates these legacy keys as substitution candidates composed with a keyed columnar transposition.",
+  "provenance_items": [
+    {"source_id": "REGISTRY-LEGACY-KEYWORDS", "source_type": "registry", "quote_or_summary": "PALIMPSEST (K1 cipher keyword), ABSCISSA (K2 cipher keyword), KRYPTOS (alphabet keyword for K1-K3) — registered in TIER_KRYPTOS_PLAINTEXT_LEGACY.", "confidence": 0.95, "url_or_registry_key": "kryptosbot.real_k4_clue_registry: TIER_KRYPTOS_PLAINTEXT_LEGACY"}
+  ],
+  "evidence_tier": "tier_2_derived_fact",
+  "keywords": [
+    {"token": "PALIMPSEST", "role_hint": "substitution", "source_ids": ["REGISTRY-LEGACY-KEYWORDS"], "confidence": 0.4},
+    {"token": "ABSCISSA", "role_hint": "substitution", "source_ids": ["REGISTRY-LEGACY-KEYWORDS"], "confidence": 0.4},
+    {"token": "KRYPTOS", "role_hint": "alphabet", "source_ids": ["REGISTRY-LEGACY-KEYWORDS"], "confidence": 0.5}
+  ],
+  "numeric_roles": [],
+  "operation_hints": [
+    {"operation": "vigenere", "role": "optional", "source_ids": ["REGISTRY-LEGACY-KEYWORDS"], "confidence": 0.4},
+    {"operation": "beaufort", "role": "optional", "source_ids": ["REGISTRY-LEGACY-KEYWORDS"], "confidence": 0.35},
+    {"operation": "columnar", "role": "required", "source_ids": ["REGISTRY-LEGACY-KEYWORDS"], "confidence": 0.4}
+  ],
+  "composition_templates": [
+    {"layer_kinds": ["vigenere", "columnar"], "ordered": false, "rationale": "Sub + columnar with legacy keyword pool.", "confidence": 0.35, "max_layers": 2},
+    {"layer_kinds": ["beaufort", "columnar"], "ordered": false, "rationale": "Beaufort sub + columnar with legacy keyword pool.", "confidence": 0.3, "max_layers": 2}
+  ],
+  "bounds": {"max_specs": 300, "allowed_keywords": ["PALIMPSEST", "ABSCISSA", "KRYPTOS"], "allow_project_safe_defaults": false, "allow_default_widths": false},
+  "constraints": ["Allowed keyword pool restricted to legacy-keyword set."],
+  "caveats": [
+    "PROPONENT framing.",
+    "Sanborn's two-systems disclosure means K1-K3 keys are NOT guaranteed to apply directly. This pack tests the keyword-family analogy, not the specific keyword.",
+    "Compiler limitation: the bridge currently uses default AZ alphabet for keyword-pair families; KRYPTOS as 'alphabet' role hint is logged but the alphabet keyword machinery is not yet wired through this emitter."
+  ],
+  "generated_by": "human_curator",
+  "generation_run_id": "campaign-001-tor-f7"
+}

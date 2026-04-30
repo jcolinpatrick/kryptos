@@ -1,0 +1,34 @@
+{
+  "pack_id": "tor-f7-74-k3-columnar-widths-alt",
+  "title": "F7 alt: K3 columnar-transposition widths as numeric width hints",
+  "hypothesis_summary": "K3 was solved as a route-and-columnar transposition with documented widths around 8 and 14 in published K3-solver reproductions. This pack tests K4 with K3's specific widths as columnar widths against the disclosed-crib keyword pool. Same evidence class as F7-71 (K1-K3 construction analogy) but uses the K3 NUMERIC parameters instead of K1/K2 keyword content.",
+  "provenance_items": [
+    {"source_id": "K3-COLUMNAR-WIDTHS", "source_type": "public_comment", "quote_or_summary": "K3 solution uses route + columnar transposition with widths around 8 and 14 (documented in published K3 solvers).", "confidence": 0.7, "url_or_registry_key": "docs/kryptos_ground_truth.md K3 section"},
+    {"source_id": "REGISTRY-CORE-PUBLIC-CRIBS", "source_type": "registry", "quote_or_summary": "Core public-crib keyword tier.", "confidence": 0.9, "url_or_registry_key": "kryptosbot.real_k4_clue_registry: TIER_CORE_PUBLIC_CRIBS"}
+  ],
+  "evidence_tier": "tier_4_inference",
+  "keywords": [
+    {"token": "BERLIN", "role_hint": "substitution", "source_ids": ["REGISTRY-CORE-PUBLIC-CRIBS"], "confidence": 0.35},
+    {"token": "CLOCK", "role_hint": "columnar", "source_ids": ["REGISTRY-CORE-PUBLIC-CRIBS"], "confidence": 0.35}
+  ],
+  "numeric_roles": [
+    {"value": 8, "token": "k3-w8", "role_hint": "width", "source_ids": ["K3-COLUMNAR-WIDTHS"], "confidence": 0.3},
+    {"value": 14, "token": "k3-w14", "role_hint": "width", "source_ids": ["K3-COLUMNAR-WIDTHS"], "confidence": 0.3}
+  ],
+  "operation_hints": [
+    {"operation": "vigenere", "role": "optional", "source_ids": ["REGISTRY-CORE-PUBLIC-CRIBS"], "confidence": 0.3},
+    {"operation": "columnar", "role": "required", "source_ids": ["K3-COLUMNAR-WIDTHS"], "confidence": 0.35}
+  ],
+  "composition_templates": [
+    {"layer_kinds": ["vigenere", "columnar"], "ordered": false, "rationale": "Sub + columnar at K3-derived widths.", "confidence": 0.3, "max_layers": 2},
+    {"layer_kinds": ["beaufort", "columnar"], "ordered": false, "rationale": "Beaufort + columnar at K3-derived widths.", "confidence": 0.25, "max_layers": 2}
+  ],
+  "bounds": {"max_specs": 250, "allowed_keywords": ["BERLIN", "CLOCK"], "allowed_widths": [8, 14], "allow_project_safe_defaults": false, "allow_default_widths": false},
+  "constraints": ["Width pool restricted to K3-derived {8, 14}."],
+  "caveats": [
+    "ALTERNATIVE-MECHANISM framing — uses K3 PARAMETERS instead of K1/K2 keywords as the construction analogy.",
+    "K3-K4 width transfer is a weak analogy: K3 plaintext is ~336 chars vs K4's 97."
+  ],
+  "generated_by": "human_curator",
+  "generation_run_id": "campaign-001-tor-f7"
+}

@@ -172,6 +172,27 @@ class TestDiagonalCanonical:
         assert "route_diagonal_canonical" in fams
 
 
+class TestReverseBlocks:
+    def test_routes_to_reverse_blocks_family(self):
+        p = _pack(
+            keywords=(_kw("BERLIN", "substitution"),),
+            numeric_roles=(_num(5, "period"),),
+            composition_templates=(_ct(("reverse_blocks", "vigenere"), max_layers=2),),
+        )
+        specs = compile_pack(p)
+        fams = {s.coverage.layer_family for s in specs}
+        assert any("reverse_blocks" in f for f in fams)
+
+    def test_block_size_below_two_filtered(self):
+        p = _pack(
+            keywords=(_kw("BERLIN", "substitution"),),
+            numeric_roles=(_num(1, "period"),),
+            composition_templates=(_ct(("reverse_blocks", "vigenere"), max_layers=2),),
+        )
+        specs = compile_pack(p)
+        assert specs == []
+
+
 # ---------------------------------------------------------------------------
 # Bounds + provenance
 # ---------------------------------------------------------------------------

@@ -1,0 +1,37 @@
+{
+  "pack_id": "tor-f5-51-width21-proponent",
+  "title": "F5 proponent: width-21 vertical bigrams as columnar/route width",
+  "hypothesis_summary": "Anomaly E0e (Bean 2021 §2.1, originally Hannon/LaTurner/Kirchner): writing K4 at width 21 yields 11 repeated vertical bigrams out of 76 — random expectation ~1/6750. The proponent reading interprets this as evidence of a width-21 columnar or route structure on the raw 97-char ciphertext, applied with the disclosed-crib keyword pool. Note: per project memory (memory/width21_bigram_73char.md), the anomaly disappears after null extraction, so the proponent reading commits to the 'no nulls' branch — included intentionally so the rival pack F5-53 can challenge that commitment.",
+  "provenance_items": [
+    {"source_id": "ANOMALY-E0e-WIDTH21", "source_type": "anomaly", "quote_or_summary": "Anomaly E0e: width-21 vertical bigrams; 11/76 repeated, p ~ 1/6750 (Bean 2021 §2.1).", "confidence": 0.85, "url_or_registry_key": "docs/anomaly_registry.md E0e"},
+    {"source_id": "REGISTRY-CORE-PUBLIC-CRIBS", "source_type": "registry", "quote_or_summary": "Core public-crib keyword tier.", "confidence": 0.9, "url_or_registry_key": "kryptosbot.real_k4_clue_registry: TIER_CORE_PUBLIC_CRIBS"}
+  ],
+  "evidence_tier": "tier_2_derived_fact",
+  "keywords": [
+    {"token": "BERLIN", "role_hint": "substitution", "source_ids": ["REGISTRY-CORE-PUBLIC-CRIBS"], "confidence": 0.4},
+    {"token": "CLOCK", "role_hint": "columnar", "source_ids": ["REGISTRY-CORE-PUBLIC-CRIBS"], "confidence": 0.4},
+    {"token": "EAST", "role_hint": "substitution", "source_ids": ["REGISTRY-CORE-PUBLIC-CRIBS"], "confidence": 0.35}
+  ],
+  "numeric_roles": [
+    {"value": 21, "token": "width-21", "role_hint": "width", "source_ids": ["ANOMALY-E0e-WIDTH21"], "confidence": 0.55}
+  ],
+  "operation_hints": [
+    {"operation": "vigenere", "role": "optional", "source_ids": ["REGISTRY-CORE-PUBLIC-CRIBS"], "confidence": 0.4},
+    {"operation": "beaufort", "role": "optional", "source_ids": ["REGISTRY-CORE-PUBLIC-CRIBS"], "confidence": 0.35},
+    {"operation": "columnar", "role": "required", "source_ids": ["ANOMALY-E0e-WIDTH21"], "confidence": 0.45},
+    {"operation": "route_boustrophedon", "role": "optional", "source_ids": ["ANOMALY-E0e-WIDTH21"], "confidence": 0.4}
+  ],
+  "composition_templates": [
+    {"layer_kinds": ["vigenere", "columnar"], "ordered": false, "rationale": "Width-21 columnar with crib-keyword sub.", "confidence": 0.4, "max_layers": 2},
+    {"layer_kinds": ["beaufort", "columnar"], "ordered": false, "rationale": "Beaufort + width-21 columnar.", "confidence": 0.35, "max_layers": 2},
+    {"layer_kinds": ["route_boustrophedon", "vigenere"], "ordered": false, "rationale": "Width-21 boustrophedon route + sub.", "confidence": 0.35, "max_layers": 2}
+  ],
+  "bounds": {"max_specs": 350, "allowed_keywords": ["BERLIN", "CLOCK", "EAST"], "allowed_widths": [21], "allow_project_safe_defaults": false, "allow_default_widths": false},
+  "constraints": ["Width pool restricted to {21}."],
+  "caveats": [
+    "PROPONENT framing.",
+    "Width-21 anomaly disappears under null extraction (memory/width21_bigram_73char.md). The pack commits to the 'raw-CT, no nulls' interpretation."
+  ],
+  "generated_by": "human_curator",
+  "generation_run_id": "campaign-001-tor-f5"
+}

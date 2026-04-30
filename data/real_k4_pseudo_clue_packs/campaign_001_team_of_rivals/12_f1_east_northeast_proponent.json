@@ -1,0 +1,34 @@
+{
+  "pack_id": "tor-f1-12-east-northeast-proponent",
+  "title": "F1 proponent: EAST/NORTHEAST/EASTNORTHEAST as substitution + columnar keys",
+  "hypothesis_summary": "The first disclosed K4 crib EASTNORTHEAST occupies positions 21-33. It splits naturally into EAST and NORTHEAST. The proponent reading mirrors F1-11: these crib words ALSO function as cipher keywords under a Vig/Beau substitution + keyed columnar composition. This pack is the EAST/NORTHEAST counterpart to the BERLIN/CLOCK proponent pack and exists explicitly so the two halves of the disclosed-crib evidence are tested as independent rival keyword-source claims rather than merged into one over-claiming pack.",
+  "provenance_items": [
+    {"source_id": "CRIB-EAST-21-24", "source_type": "crib", "quote_or_summary": "Disclosed plaintext EAST at indices 21-24 (Sanborn).", "confidence": 0.99, "url_or_registry_key": "kryptos.kernel.constants.CRIB_DICT"},
+    {"source_id": "CRIB-NORTHEAST-25-33", "source_type": "crib", "quote_or_summary": "Disclosed plaintext NORTHEAST at indices 25-33 (Sanborn 2014).", "confidence": 0.99, "url_or_registry_key": "kryptos.kernel.constants.CRIB_DICT"},
+    {"source_id": "CRIB-EASTNORTHEAST-21-33", "source_type": "crib", "quote_or_summary": "Disclosed compound plaintext EASTNORTHEAST at indices 21-33.", "confidence": 0.99, "url_or_registry_key": "kryptos.kernel.constants.CRIB_DICT"}
+  ],
+  "evidence_tier": "tier_4_inference",
+  "keywords": [
+    {"token": "EAST", "role_hint": "substitution", "source_ids": ["CRIB-EAST-21-24"], "confidence": 0.4},
+    {"token": "NORTHEAST", "role_hint": "columnar", "source_ids": ["CRIB-NORTHEAST-25-33"], "confidence": 0.4},
+    {"token": "EASTNORTHEAST", "role_hint": "substitution", "source_ids": ["CRIB-EASTNORTHEAST-21-33"], "confidence": 0.35}
+  ],
+  "numeric_roles": [],
+  "operation_hints": [
+    {"operation": "vigenere", "role": "optional", "source_ids": ["CRIB-EAST-21-24"], "confidence": 0.4},
+    {"operation": "beaufort", "role": "optional", "source_ids": ["CRIB-NORTHEAST-25-33"], "confidence": 0.35},
+    {"operation": "columnar", "role": "required", "source_ids": ["CRIB-NORTHEAST-25-33"], "confidence": 0.4}
+  ],
+  "composition_templates": [
+    {"layer_kinds": ["vigenere", "columnar"], "ordered": false, "rationale": "Two/three-keyword sub + keyed columnar across the EAST family.", "confidence": 0.4, "max_layers": 2},
+    {"layer_kinds": ["beaufort", "columnar"], "ordered": false, "rationale": "Beaufort sub + keyed columnar.", "confidence": 0.35, "max_layers": 2}
+  ],
+  "bounds": {"max_specs": 300, "allowed_keywords": ["EAST", "NORTHEAST", "EASTNORTHEAST"], "allow_project_safe_defaults": false, "allow_default_widths": false},
+  "constraints": ["Allowed keyword pool restricted to EAST family only."],
+  "caveats": [
+    "Same caveat as F1-11: crib spans need not be keys.",
+    "PROPONENT framing — included for symmetric coverage of the disclosed-crib evidence."
+  ],
+  "generated_by": "human_curator",
+  "generation_run_id": "campaign-001-tor-f1"
+}

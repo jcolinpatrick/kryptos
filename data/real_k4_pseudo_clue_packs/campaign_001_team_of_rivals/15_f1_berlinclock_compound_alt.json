@@ -1,0 +1,31 @@
+{
+  "pack_id": "tor-f1-15-berlinclock-compound-alt",
+  "title": "F1 alt: BERLINCLOCK / EASTNORTHEAST compound keywords as single sub keys",
+  "hypothesis_summary": "Alternative reading of the disclosed-crib evidence. Where F1-11/12 try BERLIN+CLOCK and EAST+NORTHEAST as TWO independent keyword candidates, this pack tests the compound forms BERLINCLOCK and EASTNORTHEAST as SINGLE substitution keys. The compounds appear in the public clue registry's core public-cribs tier as the full disclosed spans. This pack falsifies (or supports) the split-vs-compound role distinction.",
+  "provenance_items": [
+    {"source_id": "REGISTRY-COMPOUND-CRIBS", "source_type": "registry", "quote_or_summary": "BERLINCLOCK and EASTNORTHEAST registered as TIER_CORE_PUBLIC_CRIBS compound entries.", "confidence": 0.9, "url_or_registry_key": "kryptosbot.real_k4_clue_registry: TIER_CORE_PUBLIC_CRIBS"}
+  ],
+  "evidence_tier": "tier_4_inference",
+  "keywords": [
+    {"token": "BERLINCLOCK", "role_hint": "substitution", "source_ids": ["REGISTRY-COMPOUND-CRIBS"], "confidence": 0.4},
+    {"token": "EASTNORTHEAST", "role_hint": "substitution", "source_ids": ["REGISTRY-COMPOUND-CRIBS"], "confidence": 0.4}
+  ],
+  "numeric_roles": [],
+  "operation_hints": [
+    {"operation": "vigenere", "role": "optional", "source_ids": ["REGISTRY-COMPOUND-CRIBS"], "confidence": 0.35},
+    {"operation": "beaufort", "role": "optional", "source_ids": ["REGISTRY-COMPOUND-CRIBS"], "confidence": 0.3},
+    {"operation": "columnar", "role": "optional", "source_ids": ["REGISTRY-COMPOUND-CRIBS"], "confidence": 0.3}
+  ],
+  "composition_templates": [
+    {"layer_kinds": ["vigenere", "columnar"], "ordered": false, "rationale": "Compound keywords as both sub and columnar role across the i3 emitter.", "confidence": 0.35, "max_layers": 2},
+    {"layer_kinds": ["beaufort", "columnar"], "ordered": false, "rationale": "Beaufort form of the same role pairing.", "confidence": 0.3, "max_layers": 2}
+  ],
+  "bounds": {"max_specs": 200, "allowed_keywords": ["BERLINCLOCK", "EASTNORTHEAST"], "allow_project_safe_defaults": false, "allow_default_widths": false},
+  "constraints": ["Allowed keyword pool restricted to compound disclosed spans only."],
+  "caveats": [
+    "ALTERNATIVE-MECHANISM framing relative to F1-11/12 (split keywords) and F1-13 (KRYPTOS-only floor).",
+    "Long compound keywords reduce the substitution period to a single repeat over 11-13 of 97 positions; this is a structural commitment of this pack."
+  ],
+  "generated_by": "human_curator",
+  "generation_run_id": "campaign-001-tor-f1"
+}

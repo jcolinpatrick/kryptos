@@ -1,0 +1,35 @@
+{
+  "pack_id": "tor-f3-33-stehle-alt-period4-columnar",
+  "title": "F3 alt-mechanism: Stehle as width=4 columnar (no Caesar shift)",
+  "hypothesis_summary": "Alternative-mechanism reading of the Stehle anomaly. F3-31 read interval-4 as a width and shift-5 as a Caesar; this pack drops the Caesar interpretation and reads ONLY interval-4 as a width=4 columnar key. Tests crib-keyword columnar at width 4 with substitution layers from the disclosed-crib pool.",
+  "provenance_items": [
+    {"source_id": "ANOMALY-E0a-STEHLE", "source_type": "anomaly", "quote_or_summary": "Stehle interval-4 property. Bean 2021 §2.3.", "confidence": 0.7, "url_or_registry_key": "docs/anomaly_registry.md E0a"},
+    {"source_id": "REGISTRY-CORE-PUBLIC-CRIBS", "source_type": "registry", "quote_or_summary": "Core public-crib keyword tier.", "confidence": 0.9, "url_or_registry_key": "kryptosbot.real_k4_clue_registry: TIER_CORE_PUBLIC_CRIBS"}
+  ],
+  "evidence_tier": "tier_2_derived_fact",
+  "keywords": [
+    {"token": "BERLIN", "role_hint": "substitution", "source_ids": ["REGISTRY-CORE-PUBLIC-CRIBS"], "confidence": 0.4},
+    {"token": "CLOCK", "role_hint": "columnar", "source_ids": ["REGISTRY-CORE-PUBLIC-CRIBS"], "confidence": 0.4},
+    {"token": "EAST", "role_hint": "columnar", "source_ids": ["REGISTRY-CORE-PUBLIC-CRIBS"], "confidence": 0.35}
+  ],
+  "numeric_roles": [
+    {"value": 4, "token": "stehle-interval-4", "role_hint": "width", "source_ids": ["ANOMALY-E0a-STEHLE"], "confidence": 0.45}
+  ],
+  "operation_hints": [
+    {"operation": "vigenere", "role": "optional", "source_ids": ["REGISTRY-CORE-PUBLIC-CRIBS"], "confidence": 0.4},
+    {"operation": "beaufort", "role": "optional", "source_ids": ["REGISTRY-CORE-PUBLIC-CRIBS"], "confidence": 0.35},
+    {"operation": "columnar", "role": "required", "source_ids": ["ANOMALY-E0a-STEHLE"], "confidence": 0.4}
+  ],
+  "composition_templates": [
+    {"layer_kinds": ["vigenere", "columnar"], "ordered": false, "rationale": "Sub + columnar with width hint from Stehle.", "confidence": 0.35, "max_layers": 2},
+    {"layer_kinds": ["beaufort", "columnar"], "ordered": false, "rationale": "Beaufort + columnar.", "confidence": 0.3, "max_layers": 2}
+  ],
+  "bounds": {"max_specs": 250, "allowed_keywords": ["BERLIN", "CLOCK", "EAST"], "allowed_widths": [4], "allow_project_safe_defaults": false, "allow_default_widths": false},
+  "constraints": ["Width pool restricted to {4}; no Caesar layer."],
+  "caveats": [
+    "ALTERNATIVE-MECHANISM framing.",
+    "Width=4 produces 25 columns of length ~3-4 — quite short rows, with weak transposition diffusion."
+  ],
+  "generated_by": "human_curator",
+  "generation_run_id": "campaign-001-tor-f3"
+}

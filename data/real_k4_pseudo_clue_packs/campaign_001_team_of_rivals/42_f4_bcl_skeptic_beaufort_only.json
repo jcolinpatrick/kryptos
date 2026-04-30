@@ -1,0 +1,28 @@
+{
+  "pack_id": "tor-f4-42-bcl-skeptic-beaufort-only",
+  "title": "F4 skeptic: Beaufort substitution alone, KRYPTOS-only key",
+  "hypothesis_summary": "Skeptic-minimal counterpart to F4-41. The KRYPTOS-distance anomaly (E0b) supports a keyword-mixed substitution near KRYPTOS but does NOT inherently require a transposition layer. This pack tests Beaufort substitution alone with KRYPTOS as the only keyword. If F4-41 outperforms this floor, the columnar layer earned its keep; if not, the proponent reading is over-fit.",
+  "provenance_items": [
+    {"source_id": "ANOMALY-E0b-KRYPTOS-DISTANCE", "source_type": "anomaly", "quote_or_summary": "Anomaly E0b: KRYPTOS-set cipher distances cluster near identity. Bean 2021 §2.4.", "confidence": 0.7, "url_or_registry_key": "docs/anomaly_registry.md E0b"},
+    {"source_id": "REGISTRY-KRYPTOS-NAME", "source_type": "registry", "quote_or_summary": "KRYPTOS is the K1-K3 alphabet keyword.", "confidence": 0.9, "url_or_registry_key": "kryptosbot.real_k4_clue_registry: TIER_SCULPTURE_CONTEXT"}
+  ],
+  "evidence_tier": "tier_2_derived_fact",
+  "keywords": [
+    {"token": "KRYPTOS", "role_hint": "substitution", "source_ids": ["ANOMALY-E0b-KRYPTOS-DISTANCE", "REGISTRY-KRYPTOS-NAME"], "confidence": 0.5}
+  ],
+  "numeric_roles": [],
+  "operation_hints": [
+    {"operation": "beaufort", "role": "required", "source_ids": ["ANOMALY-E0b-KRYPTOS-DISTANCE"], "confidence": 0.5}
+  ],
+  "composition_templates": [
+    {"layer_kinds": ["beaufort", "columnar"], "ordered": false, "rationale": "Single-keyword fallback path: KRYPTOS in both sub and columnar slot for the i3 single-keyword degenerate emit.", "confidence": 0.35, "max_layers": 2}
+  ],
+  "bounds": {"max_specs": 80, "allowed_keywords": ["KRYPTOS"], "allow_project_safe_defaults": false, "allow_default_widths": false},
+  "constraints": ["KRYPTOS-only keyword pool — single-keyword fallback in the i3 emitter."],
+  "caveats": [
+    "SKEPTIC-MINIMAL framing.",
+    "Within the bridge compiler the only Beaufort-substitution-bearing emitters require a transposition partner; this pack uses the single-keyword fallback for sub+columnar with KRYPTOS in both roles. The 'Beaufort alone' claim is approximated, not exact."
+  ],
+  "generated_by": "human_curator",
+  "generation_run_id": "campaign-001-tor-f4"
+}

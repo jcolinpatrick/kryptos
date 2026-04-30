@@ -1,0 +1,36 @@
+{
+  "pack_id": "tor-f5-53-width21-skeptic-post-null-w10w17",
+  "title": "F5 skeptic: post-null-extraction widths 10 and 17 (rival to width-21)",
+  "hypothesis_summary": "Skeptic counterpart to F5-51/52. Project memory (memory/width21_bigram_73char.md, 2026-03-15) shows that the width-21 anomaly DISAPPEARS after null extraction, while NEW high-significance vertical-bigram anomalies appear at widths 10 (p=0.006) and 17 (p=0.008) on the null-extracted CT73. If the bigram structure is genuine and stego-mediated, F5-53 should match or beat F5-51/52. If F5-51/52 win, the raw-CT interpretation is preferred. Tests width-10 and width-17 columnar with sub layers.",
+  "provenance_items": [
+    {"source_id": "MEMORY-WIDTH21-CT73", "source_type": "human_note", "quote_or_summary": "memory/width21_bigram_73char.md (2026-03-15): width-21 anomaly disappears after null extraction; widths 10 (p=0.006) and 17 (p=0.008) become HIGH-significance on CT73.", "confidence": 0.6, "url_or_registry_key": "memory/width21_bigram_73char.md"},
+    {"source_id": "REGISTRY-CORE-PUBLIC-CRIBS", "source_type": "registry", "quote_or_summary": "Core public-crib keyword tier.", "confidence": 0.9, "url_or_registry_key": "kryptosbot.real_k4_clue_registry: TIER_CORE_PUBLIC_CRIBS"}
+  ],
+  "evidence_tier": "tier_4_inference",
+  "keywords": [
+    {"token": "BERLIN", "role_hint": "columnar", "source_ids": ["REGISTRY-CORE-PUBLIC-CRIBS"], "confidence": 0.35},
+    {"token": "CLOCK", "role_hint": "columnar", "source_ids": ["REGISTRY-CORE-PUBLIC-CRIBS"], "confidence": 0.35},
+    {"token": "EAST", "role_hint": "substitution", "source_ids": ["REGISTRY-CORE-PUBLIC-CRIBS"], "confidence": 0.35}
+  ],
+  "numeric_roles": [
+    {"value": 10, "token": "post-null-w10", "role_hint": "width", "source_ids": ["MEMORY-WIDTH21-CT73"], "confidence": 0.4},
+    {"value": 17, "token": "post-null-w17", "role_hint": "width", "source_ids": ["MEMORY-WIDTH21-CT73"], "confidence": 0.4}
+  ],
+  "operation_hints": [
+    {"operation": "vigenere", "role": "optional", "source_ids": ["REGISTRY-CORE-PUBLIC-CRIBS"], "confidence": 0.35},
+    {"operation": "beaufort", "role": "optional", "source_ids": ["REGISTRY-CORE-PUBLIC-CRIBS"], "confidence": 0.3},
+    {"operation": "columnar", "role": "required", "source_ids": ["MEMORY-WIDTH21-CT73"], "confidence": 0.4}
+  ],
+  "composition_templates": [
+    {"layer_kinds": ["vigenere", "columnar"], "ordered": false, "rationale": "Sub + columnar at post-null widths 10 and 17.", "confidence": 0.35, "max_layers": 2},
+    {"layer_kinds": ["beaufort", "columnar"], "ordered": false, "rationale": "Beaufort + columnar at post-null widths.", "confidence": 0.3, "max_layers": 2}
+  ],
+  "bounds": {"max_specs": 300, "allowed_keywords": ["BERLIN", "CLOCK", "EAST"], "allowed_widths": [10, 17], "allow_project_safe_defaults": false, "allow_default_widths": false},
+  "constraints": ["Width pool restricted to {10, 17} — post-null-extraction widths."],
+  "caveats": [
+    "SKEPTIC framing relative to F5-51/52 (raw-CT widths).",
+    "The bridge compiler operates on raw CT, so this pack tests widths 10/17 ON RAW CT — not on CT73. The post-null finding is the EVIDENCE for 10/17 as candidate widths, not the evaluation surface."
+  ],
+  "generated_by": "human_curator",
+  "generation_run_id": "campaign-001-tor-f5"
+}

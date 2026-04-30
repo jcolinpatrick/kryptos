@@ -1,0 +1,38 @@
+{
+  "pack_id": "tor-f6-64-dyaro-5-shifts-alt",
+  "title": "F6 alt: extended DYARO sequence as five-shift period-5 hint",
+  "hypothesis_summary": "Some observers (solvingkryptos.com) report that the misalignment may extend beyond YAR to DYARO — five characters. With A=0 numbering: D=3, Y=24, A=0, R=17, O=14. The proponent extension reads this as five Caesar-period values suggesting period-5 polyalphabetic structure. This pack tests Caesar shift values from the non-trivial members of {3, 14, 17, 24} (excludes A=0) composed with crib-keyword columnar.",
+  "provenance_items": [
+    {"source_id": "ANOMALY-A5-DYARO-EXTENSION", "source_type": "anomaly", "quote_or_summary": "Anomaly A5 extended: solvingkryptos.com observation that DYARO (five characters) may all be misaligned. D=3, Y=24, A=0, R=17, O=14.", "confidence": 0.4, "url_or_registry_key": "docs/anomaly_registry.md A5 (DYARO note)"},
+    {"source_id": "REGISTRY-CORE-PUBLIC-CRIBS", "source_type": "registry", "quote_or_summary": "Core public-crib keyword tier.", "confidence": 0.9, "url_or_registry_key": "kryptosbot.real_k4_clue_registry: TIER_CORE_PUBLIC_CRIBS"}
+  ],
+  "evidence_tier": "tier_5_speculation",
+  "keywords": [
+    {"token": "BERLIN", "role_hint": "columnar", "source_ids": ["REGISTRY-CORE-PUBLIC-CRIBS"], "confidence": 0.3},
+    {"token": "CLOCK", "role_hint": "columnar", "source_ids": ["REGISTRY-CORE-PUBLIC-CRIBS"], "confidence": 0.3}
+  ],
+  "numeric_roles": [
+    {"value": 3, "token": "dyaro-D", "role_hint": "shift", "source_ids": ["ANOMALY-A5-DYARO-EXTENSION"], "confidence": 0.3},
+    {"value": 14, "token": "dyaro-O", "role_hint": "shift", "source_ids": ["ANOMALY-A5-DYARO-EXTENSION"], "confidence": 0.3},
+    {"value": 17, "token": "dyaro-R", "role_hint": "shift", "source_ids": ["ANOMALY-A5-DYARO-EXTENSION"], "confidence": 0.3},
+    {"value": 24, "token": "dyaro-Y", "role_hint": "shift", "source_ids": ["ANOMALY-A5-DYARO-EXTENSION"], "confidence": 0.3},
+    {"value": 5, "token": "dyaro-period-5", "role_hint": "period", "source_ids": ["ANOMALY-A5-DYARO-EXTENSION"], "confidence": 0.25}
+  ],
+  "operation_hints": [
+    {"operation": "caesar", "role": "required", "source_ids": ["ANOMALY-A5-DYARO-EXTENSION"], "confidence": 0.3},
+    {"operation": "columnar", "role": "required", "source_ids": ["ANOMALY-A5-DYARO-EXTENSION"], "confidence": 0.3},
+    {"operation": "route_boustrophedon", "role": "optional", "source_ids": ["ANOMALY-A5-DYARO-EXTENSION"], "confidence": 0.25}
+  ],
+  "composition_templates": [
+    {"layer_kinds": ["caesar"], "ordered": true, "rationale": "Caesar shifts from DYARO letters, single-layer (each tested independently).", "confidence": 0.3, "max_layers": 1},
+    {"layer_kinds": ["caesar", "columnar", "route_boustrophedon"], "ordered": false, "rationale": "DYARO shift + crib-keyword columnar + boustrophedon route.", "confidence": 0.25, "max_layers": 3}
+  ],
+  "bounds": {"max_specs": 300, "allowed_keywords": ["BERLIN", "CLOCK"], "allowed_widths": [5, 7, 10], "allowed_shifts": [3, 14, 17, 24], "allow_project_safe_defaults": false, "allow_default_widths": false},
+  "constraints": ["Shifts restricted to {3, 14, 17, 24}. Width pool includes 5 (DYARO length)."],
+  "caveats": [
+    "ALTERNATIVE-MECHANISM framing — explicitly Tier-5 speculation.",
+    "DYARO extension is community speculation; even the base YAR observation is not creator-confirmed."
+  ],
+  "generated_by": "human_curator",
+  "generation_run_id": "campaign-001-tor-f6"
+}

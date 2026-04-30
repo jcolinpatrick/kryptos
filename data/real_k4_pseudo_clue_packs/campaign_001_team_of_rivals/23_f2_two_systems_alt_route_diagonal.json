@@ -1,0 +1,38 @@
+{
+  "pack_id": "tor-f2-23-two-systems-alt-route-diagonal",
+  "title": "F2 alt-mechanism: two-systems as substitution + diagonal route",
+  "hypothesis_summary": "Alternative-mechanism reading of the Sanborn 'two systems' claim. F2-21 used columnar+rail; F2-22 used columnar alone. This pack reads the second 'system' as a route_diagonal layer (LESSON-016 family) instead of a keyed columnar. K3 is documented to use a route reading; the analogy is weak but not zero. The pack tests whether a substitution + diagonal-route composition fits the disclosed cribs better, equally, or worse than the columnar variants.",
+  "provenance_items": [
+    {"source_id": "PUBCOMMENT-SANBORN-TWO-SYSTEMS", "source_type": "public_comment", "quote_or_summary": "Sanborn two-systems claim, Tier-3 hearsay.", "confidence": 0.4, "url_or_registry_key": "feedback_sanborn_epistemic_weight"},
+    {"source_id": "K3-ROUTE-PUBLIC-METHOD", "source_type": "public_comment", "quote_or_summary": "K3 method is documented as a route/columnar reading; analogy permits route as a candidate second-system primitive.", "confidence": 0.5, "url_or_registry_key": "docs/kryptos_ground_truth.md K3 section"},
+    {"source_id": "REGISTRY-CORE-PUBLIC-CRIBS", "source_type": "registry", "quote_or_summary": "Core public-crib keyword tier.", "confidence": 0.9, "url_or_registry_key": "kryptosbot.real_k4_clue_registry: TIER_CORE_PUBLIC_CRIBS"}
+  ],
+  "evidence_tier": "tier_3_creator_statement",
+  "keywords": [
+    {"token": "BERLIN", "role_hint": "substitution", "source_ids": ["REGISTRY-CORE-PUBLIC-CRIBS"], "confidence": 0.35},
+    {"token": "CLOCK", "role_hint": "substitution", "source_ids": ["REGISTRY-CORE-PUBLIC-CRIBS"], "confidence": 0.35},
+    {"token": "EAST", "role_hint": "substitution", "source_ids": ["REGISTRY-CORE-PUBLIC-CRIBS"], "confidence": 0.35}
+  ],
+  "numeric_roles": [
+    {"value": 7, "token": "diag-w7", "role_hint": "width", "source_ids": ["K3-ROUTE-PUBLIC-METHOD"], "confidence": 0.3},
+    {"value": 10, "token": "diag-w10", "role_hint": "width", "source_ids": ["K3-ROUTE-PUBLIC-METHOD"], "confidence": 0.3},
+    {"value": 13, "token": "diag-w13", "role_hint": "width", "source_ids": ["K3-ROUTE-PUBLIC-METHOD"], "confidence": 0.3}
+  ],
+  "operation_hints": [
+    {"operation": "vigenere", "role": "optional", "source_ids": ["PUBCOMMENT-SANBORN-TWO-SYSTEMS"], "confidence": 0.35},
+    {"operation": "beaufort", "role": "optional", "source_ids": ["PUBCOMMENT-SANBORN-TWO-SYSTEMS"], "confidence": 0.3},
+    {"operation": "route_diagonal", "role": "required", "source_ids": ["K3-ROUTE-PUBLIC-METHOD"], "confidence": 0.3}
+  ],
+  "composition_templates": [
+    {"layer_kinds": ["route_diagonal", "vigenere"], "ordered": false, "rationale": "Substitution + diagonal route as the second system.", "confidence": 0.3, "max_layers": 2},
+    {"layer_kinds": ["beaufort", "route_diagonal"], "ordered": false, "rationale": "Beaufort + diagonal route.", "confidence": 0.3, "max_layers": 2}
+  ],
+  "bounds": {"max_specs": 300, "allowed_keywords": ["BERLIN", "CLOCK", "EAST"], "allowed_widths": [7, 10, 13], "allow_project_safe_defaults": false, "allow_default_widths": false},
+  "constraints": ["Width pool restricted to {7, 10, 13} — small grids that fit 97 chars without excessive padding."],
+  "caveats": [
+    "ALTERNATIVE-MECHANISM framing.",
+    "K3-route analogy is weak; K3 used a specific composition that may or may not generalize to K4."
+  ],
+  "generated_by": "human_curator",
+  "generation_run_id": "campaign-001-tor-f2"
+}

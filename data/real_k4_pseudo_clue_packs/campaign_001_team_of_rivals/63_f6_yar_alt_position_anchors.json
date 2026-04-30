@@ -1,0 +1,32 @@
+{
+  "pack_id": "tor-f6-63-yar-alt-position-anchors",
+  "title": "F6 alt: YAR as positional cue (line-15 width hint)",
+  "hypothesis_summary": "Alternative-mechanism reading of A5. F6-61/62 read YAR as numeric SHIFTS; this pack reads YAR as a POSITIONAL cue — the superscript marks 'something special at line 15'. Cipher-side line 15 width on the sculpture is 30 letters; the K4 ciphertext (97 chars) does not directly inherit the 30-wide grid, but width 15 (line index) and 30 (line width) are tested as columnar widths in this rival.",
+  "provenance_items": [
+    {"source_id": "ANOMALY-A5-YAR-LINE15", "source_type": "anomaly", "quote_or_summary": "YAR superscript on line 15 of cipher-side panel.", "confidence": 0.7, "url_or_registry_key": "docs/anomaly_registry.md A5"},
+    {"source_id": "REGISTRY-CORE-PUBLIC-CRIBS", "source_type": "registry", "quote_or_summary": "Core public-crib keyword tier.", "confidence": 0.9, "url_or_registry_key": "kryptosbot.real_k4_clue_registry: TIER_CORE_PUBLIC_CRIBS"}
+  ],
+  "evidence_tier": "tier_5_speculation",
+  "keywords": [
+    {"token": "BERLIN", "role_hint": "columnar", "source_ids": ["REGISTRY-CORE-PUBLIC-CRIBS"], "confidence": 0.3}
+  ],
+  "numeric_roles": [
+    {"value": 15, "token": "yar-line-index", "role_hint": "width", "source_ids": ["ANOMALY-A5-YAR-LINE15"], "confidence": 0.25},
+    {"value": 30, "token": "yar-line-width", "role_hint": "width", "source_ids": ["ANOMALY-A5-YAR-LINE15"], "confidence": 0.25}
+  ],
+  "operation_hints": [
+    {"operation": "vigenere", "role": "optional", "source_ids": ["REGISTRY-CORE-PUBLIC-CRIBS"], "confidence": 0.3},
+    {"operation": "columnar", "role": "required", "source_ids": ["ANOMALY-A5-YAR-LINE15"], "confidence": 0.3}
+  ],
+  "composition_templates": [
+    {"layer_kinds": ["vigenere", "columnar"], "ordered": false, "rationale": "Sub + columnar with widths drawn from line-15/line-width interpretation of YAR.", "confidence": 0.25, "max_layers": 2}
+  ],
+  "bounds": {"max_specs": 150, "allowed_keywords": ["BERLIN"], "allowed_widths": [15, 30], "allow_project_safe_defaults": false, "allow_default_widths": false},
+  "constraints": ["Widths restricted to {15, 30}."],
+  "caveats": [
+    "ALTERNATIVE-MECHANISM framing — explicitly speculative (Tier-5).",
+    "Width-30 is at the edge of the bounds-allowed range and produces 4-row grids; weak transposition diffusion."
+  ],
+  "generated_by": "human_curator",
+  "generation_run_id": "campaign-001-tor-f6"
+}

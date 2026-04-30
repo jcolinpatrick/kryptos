@@ -1,0 +1,25 @@
+{
+  "pack_id": "tor-f7-73-abscissa-only-alt",
+  "title": "F7 alt: ABSCISSA alone (K2's keyword)",
+  "hypothesis_summary": "Symmetric alternative to F7-72. Tests ONLY ABSCISSA as a substitution key. K2 is closer in panel position to K4 than K1 is, so the analogy chain K2→K4 is arguably tighter than K1→K4. Falsification check.",
+  "provenance_items": [
+    {"source_id": "REGISTRY-LEGACY-KEYWORDS", "source_type": "registry", "quote_or_summary": "ABSCISSA as K2 cipher keyword.", "confidence": 0.95, "url_or_registry_key": "kryptosbot.real_k4_clue_registry: TIER_KRYPTOS_PLAINTEXT_LEGACY"}
+  ],
+  "evidence_tier": "tier_2_derived_fact",
+  "keywords": [
+    {"token": "ABSCISSA", "role_hint": "substitution", "source_ids": ["REGISTRY-LEGACY-KEYWORDS"], "confidence": 0.4}
+  ],
+  "numeric_roles": [],
+  "operation_hints": [
+    {"operation": "vigenere", "role": "optional", "source_ids": ["REGISTRY-LEGACY-KEYWORDS"], "confidence": 0.4},
+    {"operation": "columnar", "role": "optional", "source_ids": ["REGISTRY-LEGACY-KEYWORDS"], "confidence": 0.3}
+  ],
+  "composition_templates": [
+    {"layer_kinds": ["vigenere", "columnar"], "ordered": false, "rationale": "ABSCISSA single-keyword fallback.", "confidence": 0.35, "max_layers": 2}
+  ],
+  "bounds": {"max_specs": 80, "allowed_keywords": ["ABSCISSA"], "allow_project_safe_defaults": false, "allow_default_widths": false},
+  "constraints": ["Single-keyword fallback only."],
+  "caveats": ["ALTERNATIVE-MECHANISM split-out for attribution within F7."],
+  "generated_by": "human_curator",
+  "generation_run_id": "campaign-001-tor-f7"
+}

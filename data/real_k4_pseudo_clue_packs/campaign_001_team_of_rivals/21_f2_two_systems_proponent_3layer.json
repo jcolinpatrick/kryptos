@@ -1,0 +1,38 @@
+{
+  "pack_id": "tor-f2-21-two-systems-proponent-3layer",
+  "title": "F2 proponent: two-systems / masked-English / stego as 3-layer composition (LESSON-022 shape)",
+  "hypothesis_summary": "Sanborn has publicly stated K4 uses 'two systems' and contains 'masked English'. The project's epistemic policy treats Sanborn's statements as Tier-3 community hearsay, NOT public fact (see feedback_sanborn_epistemic_weight). The proponent reading interprets this as a 3-layer hand-cipher composition: a substitution layer, a keyed columnar transposition, and a rail-fence transposition (LESSON-022 shape). Tested with the disclosed-crib core keyword pool (BERLIN, CLOCK, EAST, NORTHEAST, KRYPTOS) so that the 'masked English' reading retains Tier-1 keyword evidence even when the composition framing is Tier-3.",
+  "provenance_items": [
+    {"source_id": "PUBCOMMENT-SANBORN-TWO-SYSTEMS", "source_type": "public_comment", "quote_or_summary": "Sanborn publicly stated K4 uses two encryption systems. Tier-3 hearsay per project policy.", "confidence": 0.4, "url_or_registry_key": "feedback_sanborn_epistemic_weight"},
+    {"source_id": "REGISTRY-CORE-PUBLIC-CRIBS", "source_type": "registry", "quote_or_summary": "Core public-crib keyword tier.", "confidence": 0.9, "url_or_registry_key": "kryptosbot.real_k4_clue_registry: TIER_CORE_PUBLIC_CRIBS"}
+  ],
+  "evidence_tier": "tier_3_creator_statement",
+  "keywords": [
+    {"token": "BERLIN", "role_hint": "substitution", "source_ids": ["REGISTRY-CORE-PUBLIC-CRIBS"], "confidence": 0.4},
+    {"token": "CLOCK", "role_hint": "columnar", "source_ids": ["REGISTRY-CORE-PUBLIC-CRIBS"], "confidence": 0.4},
+    {"token": "EAST", "role_hint": "substitution", "source_ids": ["REGISTRY-CORE-PUBLIC-CRIBS"], "confidence": 0.35},
+    {"token": "NORTHEAST", "role_hint": "columnar", "source_ids": ["REGISTRY-CORE-PUBLIC-CRIBS"], "confidence": 0.35}
+  ],
+  "numeric_roles": [
+    {"value": 3, "token": "rail-depth-3", "role_hint": "depth", "source_ids": ["PUBCOMMENT-SANBORN-TWO-SYSTEMS"], "confidence": 0.3},
+    {"value": 4, "token": "rail-depth-4", "role_hint": "depth", "source_ids": ["PUBCOMMENT-SANBORN-TWO-SYSTEMS"], "confidence": 0.3},
+    {"value": 5, "token": "rail-depth-5", "role_hint": "depth", "source_ids": ["PUBCOMMENT-SANBORN-TWO-SYSTEMS"], "confidence": 0.3}
+  ],
+  "operation_hints": [
+    {"operation": "vigenere", "role": "optional", "source_ids": ["PUBCOMMENT-SANBORN-TWO-SYSTEMS"], "confidence": 0.35},
+    {"operation": "columnar", "role": "required", "source_ids": ["PUBCOMMENT-SANBORN-TWO-SYSTEMS"], "confidence": 0.4},
+    {"operation": "rail_fence", "role": "required", "source_ids": ["PUBCOMMENT-SANBORN-TWO-SYSTEMS"], "confidence": 0.35}
+  ],
+  "composition_templates": [
+    {"layer_kinds": ["vigenere", "columnar", "rail_fence"], "ordered": false, "rationale": "LESSON-022 three-role: substitution + keyed columnar + rail-fence depth. The 'two systems' phrase admits a sub+trans+trans reading.", "confidence": 0.35, "max_layers": 3},
+    {"layer_kinds": ["beaufort", "columnar", "rail_fence"], "ordered": false, "rationale": "Beaufort variant of the same three-role composition.", "confidence": 0.3, "max_layers": 3}
+  ],
+  "bounds": {"max_specs": 400, "allowed_keywords": ["BERLIN", "CLOCK", "EAST", "NORTHEAST"], "allowed_depths": [3, 4, 5], "allow_project_safe_defaults": false, "allow_default_widths": false},
+  "constraints": ["Three-role independent assignment per LESSON-022 generator. Allowed depths restricted to small rail counts."],
+  "caveats": [
+    "PROPONENT framing for the Tier-3 'two-systems' claim. The claim ITSELF is creator-statement hearsay; this pack tests one structural realization of it.",
+    "Sanborn's two-systems claim does not specify what 'system' means — it could mean two cipher layers, two alphabets, or stego+cipher. This pack picks one structural interpretation."
+  ],
+  "generated_by": "human_curator",
+  "generation_run_id": "campaign-001-tor-f2"
+}

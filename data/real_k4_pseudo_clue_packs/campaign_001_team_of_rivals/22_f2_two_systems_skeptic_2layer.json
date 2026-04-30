@@ -1,0 +1,36 @@
+{
+  "pack_id": "tor-f2-22-two-systems-skeptic-2layer",
+  "title": "F2 skeptic: two-systems as 2-layer minimum (sub + columnar)",
+  "hypothesis_summary": "Skeptic counterpart to F2-21. Reads Sanborn's 'two systems' as the LITERAL minimum: exactly two layers, one substitution and one transposition, no rail-fence padding, no extra moving parts. Tests with the same core-crib keyword pool. If F2-21 outperforms F2-22 the third layer is necessary; if it does not, the proponent reading is over-fit relative to the literal claim.",
+  "provenance_items": [
+    {"source_id": "PUBCOMMENT-SANBORN-TWO-SYSTEMS-LITERAL", "source_type": "public_comment", "quote_or_summary": "Literal reading of Sanborn 'two systems' = exactly 2 layers (Tier-3 hearsay).", "confidence": 0.4, "url_or_registry_key": "feedback_sanborn_epistemic_weight"},
+    {"source_id": "REGISTRY-CORE-PUBLIC-CRIBS", "source_type": "registry", "quote_or_summary": "Core public-crib keyword tier.", "confidence": 0.9, "url_or_registry_key": "kryptosbot.real_k4_clue_registry: TIER_CORE_PUBLIC_CRIBS"}
+  ],
+  "evidence_tier": "tier_3_creator_statement",
+  "keywords": [
+    {"token": "BERLIN", "role_hint": "substitution", "source_ids": ["REGISTRY-CORE-PUBLIC-CRIBS"], "confidence": 0.4},
+    {"token": "CLOCK", "role_hint": "columnar", "source_ids": ["REGISTRY-CORE-PUBLIC-CRIBS"], "confidence": 0.4},
+    {"token": "EAST", "role_hint": "substitution", "source_ids": ["REGISTRY-CORE-PUBLIC-CRIBS"], "confidence": 0.35},
+    {"token": "NORTHEAST", "role_hint": "columnar", "source_ids": ["REGISTRY-CORE-PUBLIC-CRIBS"], "confidence": 0.35}
+  ],
+  "numeric_roles": [],
+  "operation_hints": [
+    {"operation": "vigenere", "role": "optional", "source_ids": ["PUBCOMMENT-SANBORN-TWO-SYSTEMS-LITERAL"], "confidence": 0.4},
+    {"operation": "beaufort", "role": "optional", "source_ids": ["PUBCOMMENT-SANBORN-TWO-SYSTEMS-LITERAL"], "confidence": 0.4},
+    {"operation": "variant_beaufort", "role": "optional", "source_ids": ["PUBCOMMENT-SANBORN-TWO-SYSTEMS-LITERAL"], "confidence": 0.35},
+    {"operation": "columnar", "role": "required", "source_ids": ["PUBCOMMENT-SANBORN-TWO-SYSTEMS-LITERAL"], "confidence": 0.4}
+  ],
+  "composition_templates": [
+    {"layer_kinds": ["vigenere", "columnar"], "ordered": false, "rationale": "Literal 2-layer reading of two-systems claim.", "confidence": 0.4, "max_layers": 2},
+    {"layer_kinds": ["beaufort", "columnar"], "ordered": false, "rationale": "Beaufort version of the literal 2-layer reading.", "confidence": 0.35, "max_layers": 2},
+    {"layer_kinds": ["columnar", "variant_beaufort"], "ordered": false, "rationale": "Variant-Beaufort 2-layer reading.", "confidence": 0.3, "max_layers": 2}
+  ],
+  "bounds": {"max_specs": 300, "allowed_keywords": ["BERLIN", "CLOCK", "EAST", "NORTHEAST"], "allow_project_safe_defaults": false, "allow_default_widths": false},
+  "constraints": ["Strictly two layers. No rail_fence, no route, no third operation."],
+  "caveats": [
+    "SKEPTIC-MINIMAL — literal reading of the Tier-3 claim. Designed as a falsification check on F2-21 over-fit.",
+    "If this pack scores comparably to F2-21, the third layer of F2-21 contributed nothing — and F2-21 is preferring complexity over evidence."
+  ],
+  "generated_by": "human_curator",
+  "generation_run_id": "campaign-001-tor-f2"
+}

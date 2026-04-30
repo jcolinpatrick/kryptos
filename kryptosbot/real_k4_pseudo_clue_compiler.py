@@ -553,6 +553,11 @@ def _emit_reverse_blocks_substitution(
     block_sizes = _pool_numerics(pack, "period") or _pool_numerics(pack, "width")
     if not all_kws or not block_sizes:
         return []
+    block_size_pairs = tuple(
+        (int(b), "pack_numeric_role") for b in block_sizes[:3] if int(b) >= 2
+    )
+    if not block_size_pairs:
+        return []
     out: list[GeneratedSpec] = []
     for sub_kind in _SUB_KINDS:
         out.extend(_gen_reverse_blocks_substitution_family(
@@ -560,8 +565,8 @@ def _emit_reverse_blocks_substitution(
             sub_kind=sub_kind,
             keyword_a=all_kws[0],
             keyword_b=all_kws[1] if len(all_kws) > 1 else all_kws[0],
-            block_sizes=tuple(int(b) for b in block_sizes[:3]),
-            block_modes=("reverse_full", "reverse_partial"),
+            block_sizes=block_size_pairs,
+            block_modes=("reverse_partial", "truncate"),
         ))
     return out
 

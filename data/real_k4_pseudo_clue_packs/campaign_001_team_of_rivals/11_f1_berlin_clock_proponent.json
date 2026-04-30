@@ -1,0 +1,55 @@
+{
+  "pack_id": "tor-f1-11-berlin-clock-proponent",
+  "title": "F1 proponent: BERLIN + CLOCK as substitution + columnar key pair",
+  "hypothesis_summary": "BERLIN (positions 64-69) and CLOCK (positions 70-74) are the two strongest disclosed plaintext anchors. The proponent reading is that they ALSO function as cipher keywords — one substitution, one columnar — under a Vig/Beau/varBeau substitution layer composed with a keyed columnar transposition. This is the simplest structurally honest reading of the disclosed-crib evidence under a hand-cipher hypothesis.",
+  "provenance_items": [
+    {
+      "source_id": "CRIB-BERLIN-64-69",
+      "source_type": "crib",
+      "quote_or_summary": "Disclosed plaintext span BERLIN at indices 64-69 (Sanborn 2010).",
+      "confidence": 0.99,
+      "url_or_registry_key": "kryptos.kernel.constants.CRIB_DICT"
+    },
+    {
+      "source_id": "CRIB-CLOCK-70-74",
+      "source_type": "crib",
+      "quote_or_summary": "Disclosed plaintext span CLOCK at indices 70-74 (Sanborn 2014).",
+      "confidence": 0.99,
+      "url_or_registry_key": "kryptos.kernel.constants.CRIB_DICT"
+    },
+    {
+      "source_id": "REGISTRY-CORE-PUBLIC-CRIBS",
+      "source_type": "registry",
+      "quote_or_summary": "Tier-1 entries BERLIN, CLOCK, BERLINCLOCK in the project clue registry.",
+      "confidence": 0.9,
+      "url_or_registry_key": "kryptosbot.real_k4_clue_registry: TIER_CORE_PUBLIC_CRIBS"
+    }
+  ],
+  "evidence_tier": "tier_4_inference",
+  "keywords": [
+    {"token": "BERLIN", "role_hint": "substitution", "source_ids": ["CRIB-BERLIN-64-69", "REGISTRY-CORE-PUBLIC-CRIBS"], "confidence": 0.45},
+    {"token": "CLOCK", "role_hint": "columnar", "source_ids": ["CRIB-CLOCK-70-74", "REGISTRY-CORE-PUBLIC-CRIBS"], "confidence": 0.45}
+  ],
+  "numeric_roles": [],
+  "operation_hints": [
+    {"operation": "vigenere", "role": "optional", "source_ids": ["REGISTRY-CORE-PUBLIC-CRIBS"], "confidence": 0.4},
+    {"operation": "beaufort", "role": "optional", "source_ids": ["REGISTRY-CORE-PUBLIC-CRIBS"], "confidence": 0.4},
+    {"operation": "columnar", "role": "required", "source_ids": ["CRIB-CLOCK-70-74"], "confidence": 0.45}
+  ],
+  "composition_templates": [
+    {"layer_kinds": ["vigenere", "columnar"], "ordered": false, "rationale": "Two-keyword sub + keyed columnar. Simplest hand-cipher form compatible with both keywords as keys.", "confidence": 0.4, "max_layers": 2},
+    {"layer_kinds": ["beaufort", "columnar"], "ordered": false, "rationale": "Beaufort sub + keyed columnar. Same role pairing under Beaufort arithmetic.", "confidence": 0.35, "max_layers": 2},
+    {"layer_kinds": ["columnar", "variant_beaufort"], "ordered": false, "rationale": "Variant-Beaufort sub + keyed columnar.", "confidence": 0.3, "max_layers": 2}
+  ],
+  "bounds": {"max_specs": 300, "allowed_keywords": ["BERLIN", "CLOCK"], "allow_project_safe_defaults": false, "allow_default_widths": false},
+  "constraints": [
+    "Both keywords must be tried in both substitution and columnar roles (i3 generator handles this).",
+    "Allowed keyword pool restricted to BERLIN and CLOCK only — no project defaults."
+  ],
+  "caveats": [
+    "BERLIN/CLOCK are KNOWN plaintext spans. The pack tests whether they could ALSO function as keys — a structurally independent question. Tier-1 evidence on the spans does NOT translate to tier-1 evidence on a key role.",
+    "PROPONENT framing — the same evidence supports much weaker readings."
+  ],
+  "generated_by": "human_curator",
+  "generation_run_id": "campaign-001-tor-f1"
+}

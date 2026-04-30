@@ -1,0 +1,29 @@
+{
+  "pack_id": "tor-f5-55-width17-post-null-proponent",
+  "title": "F5 alt: width=17 alone (post-null-extraction proponent)",
+  "hypothesis_summary": "Width-17 split-out from F5-53. The post-null CT73 vertical-bigram analysis showed width=17 produces 6 repeated bigrams vs MC mean 2.0 (z=3.09, p=0.008) — the second strongest post-null signal. This pack tests width-17 columnar with crib-keyword sub.",
+  "provenance_items": [
+    {"source_id": "MEMORY-WIDTH21-CT73", "source_type": "human_note", "quote_or_summary": "memory/width21_bigram_73char.md: width-17 vertical bigrams on CT73 give 6 repeated vs MC mean 2.0 (p=0.008).", "confidence": 0.6, "url_or_registry_key": "memory/width21_bigram_73char.md"},
+    {"source_id": "REGISTRY-CORE-PUBLIC-CRIBS", "source_type": "registry", "quote_or_summary": "Core public-crib keyword tier.", "confidence": 0.9, "url_or_registry_key": "kryptosbot.real_k4_clue_registry: TIER_CORE_PUBLIC_CRIBS"}
+  ],
+  "evidence_tier": "tier_4_inference",
+  "keywords": [
+    {"token": "BERLIN", "role_hint": "substitution", "source_ids": ["REGISTRY-CORE-PUBLIC-CRIBS"], "confidence": 0.35},
+    {"token": "CLOCK", "role_hint": "columnar", "source_ids": ["REGISTRY-CORE-PUBLIC-CRIBS"], "confidence": 0.35}
+  ],
+  "numeric_roles": [
+    {"value": 17, "token": "post-null-w17", "role_hint": "width", "source_ids": ["MEMORY-WIDTH21-CT73"], "confidence": 0.4}
+  ],
+  "operation_hints": [
+    {"operation": "vigenere", "role": "optional", "source_ids": ["REGISTRY-CORE-PUBLIC-CRIBS"], "confidence": 0.35},
+    {"operation": "columnar", "role": "required", "source_ids": ["MEMORY-WIDTH21-CT73"], "confidence": 0.4}
+  ],
+  "composition_templates": [
+    {"layer_kinds": ["vigenere", "columnar"], "ordered": false, "rationale": "Sub + width-17 columnar.", "confidence": 0.35, "max_layers": 2}
+  ],
+  "bounds": {"max_specs": 200, "allowed_keywords": ["BERLIN", "CLOCK"], "allowed_widths": [17], "allow_project_safe_defaults": false, "allow_default_widths": false},
+  "constraints": ["Width restricted to {17}."],
+  "caveats": ["ALTERNATIVE-MECHANISM split-out for attribution; same caveat as F5-53 about raw-CT vs CT73."],
+  "generated_by": "human_curator",
+  "generation_run_id": "campaign-001-tor-f5"
+}

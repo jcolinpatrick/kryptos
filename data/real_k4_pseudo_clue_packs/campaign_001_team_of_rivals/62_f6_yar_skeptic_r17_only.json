@@ -1,0 +1,27 @@
+{
+  "pack_id": "tor-f6-62-yar-skeptic-r17-only",
+  "title": "F6 skeptic: only R=17 (the lone non-trivial YAR shift)",
+  "hypothesis_summary": "Skeptic-minimal counterpart to F6-61. Y=24 is congruent to -2 (a near-trivial shift) and A=0 is the identity; only R=17 is a non-trivial Caesar shift. This pack drops Y and A and tests Caesar shift=17 alone. Falsification check on F6-61: if F6-61 outperforms this floor, the additional shifts contributed; if not, F6-61 is over-reaching from a single-letter cue.",
+  "provenance_items": [
+    {"source_id": "ANOMALY-A5-YAR-LINE15", "source_type": "anomaly", "quote_or_summary": "YAR superscript anomaly. R=17 as the only non-degenerate shift.", "confidence": 0.7, "url_or_registry_key": "docs/anomaly_registry.md A5"}
+  ],
+  "evidence_tier": "tier_4_inference",
+  "keywords": [],
+  "numeric_roles": [
+    {"value": 17, "token": "yar-R-only", "role_hint": "shift", "source_ids": ["ANOMALY-A5-YAR-LINE15"], "confidence": 0.4}
+  ],
+  "operation_hints": [
+    {"operation": "caesar", "role": "required", "source_ids": ["ANOMALY-A5-YAR-LINE15"], "confidence": 0.4}
+  ],
+  "composition_templates": [
+    {"layer_kinds": ["caesar"], "ordered": true, "rationale": "Caesar shift=17 alone.", "confidence": 0.4, "max_layers": 1}
+  ],
+  "bounds": {"max_specs": 30, "allowed_shifts": [17], "allow_project_safe_defaults": false, "allow_default_widths": false},
+  "constraints": ["Single-layer Caesar with shift restricted to {17}."],
+  "caveats": [
+    "SKEPTIC-MINIMAL within F6.",
+    "Single-shift Caesar is historically eliminated for K4 under direct correspondence; this pack functions as a within-family floor."
+  ],
+  "generated_by": "human_curator",
+  "generation_run_id": "campaign-001-tor-f6"
+}

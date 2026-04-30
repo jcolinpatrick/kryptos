@@ -1,0 +1,35 @@
+{
+  "pack_id": "tor-f6-61-yar-shifts-3-24-0-17-proponent",
+  "title": "F6 proponent: YAR superscript letters as Caesar shifts {Y=24, A=0, R=17}",
+  "hypothesis_summary": "Anomaly A5 (Elonka 2002 rubbings, undiscussed by Sanborn): three letters Y-A-R in the cipher-side line 15 are physically raised. With A=0 numbering, Y=24, A=0, R=17. The proponent reading interprets these as Caesar shift values to compose with the disclosed-crib keyword pool — in particular Y=24 as a primary near-zero shift (equivalent to -2) and R=17 as a secondary shift. Excludes A=0 (zero shift is degenerate at the Caesar layer).",
+  "provenance_items": [
+    {"source_id": "ANOMALY-A5-YAR-LINE15", "source_type": "anomaly", "quote_or_summary": "Anomaly A5: superscript YAR on cipher-side line 15. Y=24, A=0, R=17 (A=0 numbering). Elonka 2002 rubbings.", "confidence": 0.7, "url_or_registry_key": "docs/anomaly_registry.md A5"},
+    {"source_id": "REGISTRY-CORE-PUBLIC-CRIBS", "source_type": "registry", "quote_or_summary": "Core public-crib keyword tier.", "confidence": 0.9, "url_or_registry_key": "kryptosbot.real_k4_clue_registry: TIER_CORE_PUBLIC_CRIBS"}
+  ],
+  "evidence_tier": "tier_4_inference",
+  "keywords": [
+    {"token": "BERLIN", "role_hint": "columnar", "source_ids": ["REGISTRY-CORE-PUBLIC-CRIBS"], "confidence": 0.35},
+    {"token": "CLOCK", "role_hint": "columnar", "source_ids": ["REGISTRY-CORE-PUBLIC-CRIBS"], "confidence": 0.35}
+  ],
+  "numeric_roles": [
+    {"value": 24, "token": "yar-Y", "role_hint": "shift", "source_ids": ["ANOMALY-A5-YAR-LINE15"], "confidence": 0.4},
+    {"value": 17, "token": "yar-R", "role_hint": "shift", "source_ids": ["ANOMALY-A5-YAR-LINE15"], "confidence": 0.4}
+  ],
+  "operation_hints": [
+    {"operation": "caesar", "role": "required", "source_ids": ["ANOMALY-A5-YAR-LINE15"], "confidence": 0.4},
+    {"operation": "columnar", "role": "required", "source_ids": ["ANOMALY-A5-YAR-LINE15"], "confidence": 0.35},
+    {"operation": "route_boustrophedon", "role": "optional", "source_ids": ["ANOMALY-A5-YAR-LINE15"], "confidence": 0.3}
+  ],
+  "composition_templates": [
+    {"layer_kinds": ["caesar"], "ordered": true, "rationale": "Caesar shift from YAR letters, single-layer.", "confidence": 0.3, "max_layers": 1},
+    {"layer_kinds": ["caesar", "columnar", "route_boustrophedon"], "ordered": false, "rationale": "LESSON-019 numeric-Caesar + route + columnar with YAR shift values.", "confidence": 0.3, "max_layers": 3}
+  ],
+  "bounds": {"max_specs": 250, "allowed_keywords": ["BERLIN", "CLOCK"], "allowed_widths": [7, 10], "allowed_shifts": [17, 24], "allow_project_safe_defaults": false, "allow_default_widths": false},
+  "constraints": ["Shifts restricted to {17, 24} (A=0 of YAR excluded as degenerate)."],
+  "caveats": [
+    "PROPONENT framing.",
+    "A5 was downgraded to Tier-2 in the project anomaly registry (2026-04-03 audit) — not eliminated, but the cipher-significance interpretation is weak. Confidence reflects this."
+  ],
+  "generated_by": "human_curator",
+  "generation_run_id": "campaign-001-tor-f6"
+}
