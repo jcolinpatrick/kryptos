@@ -205,6 +205,23 @@ if [ -n "$violations" ]; then
   exit 1
 fi
 
+# Content scan: catch proprietary terminology that lives in *public-path*
+# files (which the path filter above can't see). This is the gate that
+# would have caught the 2026-04-30 Team-of-Rivals leak.
+SCANNER="$REPO_ROOT/ops/publish/scan_content.sh"
+if [ -x "$SCANNER" ]; then
+  echo "Scanning _publish tree for forbidden content patterns..."
+  if ! "$SCANNER" --tree _publish; then
+    echo "Aborting publish — scrub the flagged content before retrying." >&2
+    exit 1
+  fi
+  echo "✓ Content scan clean."
+  echo ""
+else
+  echo "WARNING: scan_content.sh not found or not executable at $SCANNER" >&2
+  echo "Skipping content scan. Path filter alone is not sufficient." >&2
+fi
+
 echo "Diff vs origin/main:"
 git diff origin/main.._publish --stat | tail -20
 echo ""

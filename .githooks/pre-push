@@ -104,4 +104,34 @@ if [ "$violations" -gt 0 ]; then
   exit 1
 fi
 
+# Content-pattern scan: catches proprietary terminology in *public-path*
+# files (the leak class that the path filter above misses). Only runs for
+# pushes to public remotes — private mirrors are exempt the same way the
+# path check above is.
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+SCANNER="$REPO_ROOT/ops/publish/scan_content.sh"
+if [ -x "$SCANNER" ]; then
+  content_violations=0
+  while read -r local_ref local_sha remote_ref remote_sha; do
+    [ "$local_sha" = "$zero_sha" ] && continue
+    if [ "$remote_sha" = "$zero_sha" ]; then
+      range="$local_sha --not --remotes=$remote_name"
+    else
+      range="$remote_sha..$local_sha"
+    fi
+    if ! "$SCANNER" --commits "$range" 1>&2; then
+      content_violations=$((content_violations + 1))
+    fi
+  done < <(cat <&0 2>/dev/null || true)
+
+  if [ "$content_violations" -gt 0 ]; then
+    echo "" >&2
+    echo "PRE-PUSH BLOCK: forbidden-content patterns above prevent push." >&2
+    echo "Either edit the affected file(s), or (if a pattern is over-broad)" >&2
+    echo "update ops/publish/forbidden_content.txt and document the change." >&2
+    echo "" >&2
+    exit 1
+  fi
+fi
+
 exit 0

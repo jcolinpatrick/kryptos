@@ -1,0 +1,57 @@
+# forbidden_content.txt — Content patterns blocked from public publishing.
+#
+# Format: <regex>\t<reason>
+# Lines starting with `#` are comments. Empty lines are ignored.
+# Patterns are evaluated with `grep -i -E` (extended regex, case-insensitive).
+#
+# Loaded by ops/publish/scan_content.sh — invoked from both
+# ops/publish/publish_to_github.sh (post-build, pre-push) and
+# .githooks/pre-push (defense in depth on direct pushes).
+#
+# When adding a pattern, write a *specific* regex. Avoid bare common words
+# (e.g., "review", "agent") — they will false-positive on legitimate content.
+# Test with: ops/publish/scan_content.sh <file1> <file2> ...
+
+# === Proprietary agent paradigm ===
+[Tt]eam[ -_]?[Oo]f[ -_]?[Rr]ivals	team-of-rivals proprietary paradigm name
+team_of_rivals	team-of-rivals snake_case path/identifier
+\b[Rr]ival[ -_]audit\b	rival audit doctrine name
+\b[Pp]antheon\b	internal review system name (proprietary)
+
+# === Specific Claude agent identifiers ===
+# NOTE: kebab-case form is the agent identifier. snake_case forms (e.g.
+# `keystream_forensics`) are topic descriptors used in research scripts
+# and are intentionally NOT blocked.
+research-chancellor	internal agent name
+red-team-disprover	internal agent name
+escape-room-cryptanalyst	internal agent name
+keystream-forensics\b	internal agent name
+stego-analyst	internal agent name
+cipher-discovery-builder	internal agent name
+forensic-photo-analyst	internal agent name
+statistical-auditor	internal agent name
+archivist-historian	internal agent name
+results-analyst	internal agent name
+script-auditor	internal agent name
+kryptos-corpus-forensics	internal agent name
+# Title-case role attributions (function comments / docstrings):
+\bRole: Statistical-Auditor	internal agent role attribution
+\bRole: Archivist-Historian	internal agent role attribution
+\bRole: Research-Chancellor	internal agent role attribution
+\bRole: Red-Team-Disprover	internal agent role attribution
+
+# === Internal subproject directory references ===
+\bkryptosbot/[A-Za-z_]	internal subproject path reference
+docs/maturation/	internal docs path reference
+docs/superpowers/	historical internal planning docs path
+
+# === Personal correspondence markers ===
+kimmo[_ ]?reply[_ ]?draft	personal correspondence draft
+reply[_ ]?draft[_ ]?2026	personal correspondence draft
+reference/correspondence/	personal correspondence directory
+
+# === Construction/architecture descriptors ===
+\bpersona[-_]routed\b	internal architecture descriptor
+\btheorist persona\b	internal architecture descriptor
+\bsibling adversarial\b	internal architecture descriptor
+\bcandidate generator persona\b	internal architecture descriptor
