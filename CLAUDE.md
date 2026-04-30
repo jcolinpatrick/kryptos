@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This repo has one purpose: determine the **true plaintext** and the **full encryption method** of **Kryptos K4**.
 
-**Contents:** [Pre-flight](#pre-flight-every-task--do-not-skip) · [K4 Problem](#the-k4-problem--quick-reference) · [Dev Setup](#development-setup--commands) · [Architecture](#architecture) · [Gotchas](#key-gotchas) · [Scores](#interpreting-scores) · [Compute](#compute-environment--high-power-vm) · [Truth Taxonomy](#truth-taxonomy-mandatory) · [Reference Docs](#reference-documents) · [Memory](#persistent-memory-claude-and-memory) · [Multi-Agent](#multi-agent-mode--solve-k4)
+**Contents:** [Pre-flight](#pre-flight-every-task--do-not-skip) · [K4 Problem](#the-k4-problem--quick-reference) · [Dev Setup](#development-setup--commands) · [Architecture](#architecture) · [Gotchas](#key-gotchas) · [Scores](#interpreting-scores) · [Compute](#compute-environment--high-power-vm) · [Truth Taxonomy](#truth-taxonomy-mandatory) · [Reference Docs](#reference-documents)
 
 ---
 
@@ -22,10 +22,8 @@ This repo has one purpose: determine the **true plaintext** and the **full encry
 6. If the task matches anything in the briefing's TIER 1 / DO NOT TEST sections or the `MEMORY.md` do-not-revive list → **STOP, tell the user, do NOT re-run**.
 7. `run_attack.py --list --verbose | grep KEYWORD` — search before writing new code.
 8. **If the task involves CPU-bound work**: `bash scripts/vm_capability_report.sh` — establish runtime capabilities (see [Compute Environment](#compute-environment--high-power-vm)).
-9. **If the task involves the internalloop**: read `<internal>` (~5 min) — one-page operator onboarding for the research runner. Covers the three commands, where truth lives, and 5 common failure modes.
-10. **If the task modifies the kernel's scoring or transforms**: run `PYTHONPATH=src python3 <internal> --panel all --mode dry-run` — falsification test that K1/K2 are still rediscoverable. Takes ~1 second. Added in framework internal phase 7 (2026-04-21) as the project's standing fitness check.
 
-Skipping these steps and re-testing an eliminated hypothesis wastes 28 CPU cores and burns API tokens for zero value.
+Skipping these steps and re-testing an eliminated hypothesis wastes compute for zero value.
 
 ---
 
@@ -46,7 +44,7 @@ Historical strategy snapshots live in `docs/history/` and `reports/final_synthes
 
 ## Development Setup & Commands
 
-**Python 3.11+** required (uses `tomllib` from stdlib; dev environment runs 3.12.3). **No external runtime dependencies** — stdlib only. `pytest` is the only dev dependency. No `pyproject.toml` or `setup.py` for the core project — `pip install -e .` will not work. All commands require `PYTHONPATH=src`. (`<internal>/` has its own `pyproject.toml` for the Agent SDK dependency — that's separate.) **Repo:** `github.com/jcolinpatrick/kryptos`.
+**Python 3.11+** required (uses `tomllib` from stdlib; dev environment runs 3.12.3). **No external runtime dependencies** — stdlib only. `pytest` is the only dev dependency. No `pyproject.toml` or `setup.py` for the core project — `pip install -e .` will not work. All commands require `PYTHONPATH=src`. **Repo:** `github.com/jcolinpatrick/kryptos`.
 
 Common kernel symbols (`CT`, `CRIB_POSITIONS`, `BEAN_EQ`/`BEAN_INEQ`, `KA`, `score_candidate`, `decrypt_vigenere`/`decrypt_beaufort`) live under `kryptos.kernel.{constants,alphabet,scoring.aggregate,transforms.vigenere}`. Grep there before assuming a name.
 
@@ -79,9 +77,6 @@ PYTHONPATH=src python3 run_attack.py --exhaustion-summary | grep -i FAMILY
 PYTHONPATH=src python3 run_attack.py --list --verbose | grep -i KEYWORD
 
 # Benchmark: PYTHONPATH=src python3 bench/cli.py run --suite bench/suites/tier0_smoke.jsonl
-
-# K4Bench (synthetic calibration; redirects ledger to db/k4bench/, never touches real-K4 state)
-PYTHONPATH=src python3 -u <internal> --bench-challenge bench/k4bench/challenges/K4B-001.json [--bench-attempts-out <out.json>]
 ```
 
 For site builder, API server, and deployment commands, see [`docs/operations.md`](docs/operations.md).
@@ -112,15 +107,8 @@ Four layers with strict dependency direction: **kernel → pipeline → novelty 
 - **cipher_discovery/** — DB-backed pipeline for hand-executable cipher variants relevant to K4 (seed expansion, KB construction, classification, dedup). Separate from attack scripts.
 - **cli/** — Thin wrappers for `doctor`, `sweep`, `reproduce`, `novelty`, `report`.
 
-**`<internal>/` (separate subproject, NOT under `src/kryptos/`)** — Research runner on Agent SDK. Has its own `pyproject.toml`, `.env` (see `<internal>`), runbook (`RUNBOOK.md`), depends on `agent-sdk`. **Don't confuse with core `kryptos`** — independent deps, different API key env vars. Core kryptos stays stdlib-only; internalmay use anything in its own venv.
-
-**K4Bench mode (`bench/k4bench/` + `<internal>` + `bench_records.py`)** — Synthetic calibration suite of 25 K4-shaped challenges. `--bench-challenge <path>` on `run_controller.py` installs kernel overrides **before** any `kryptos.kernel` import, swaps ledger to `db/k4bench/`, suppresses real-K4 prompt surfaces, emits attempts in `k4bench.attempts.v1` schema. `bench_load` rejects answer-like keys at load; sealed answers must never reach controller paths. See MEMORY.md `project_k4bench_mode_pipeline_gates_landed_2026_04_26.md`.
-
 **`external/` (repo root)** — Third-party reference material:
 - `external/bean_k4testing/` — Bean's C/SageMath reference (`k4-bean3.c`, `k4-perm-test.c`, `kryptos-k4-sage.txt`, `k4testing.py`). **Authoritative cross-check** for `kernel/constants.py` Bean values; diff against this when verifying Bean-derived claims, don't re-derive from the paper.
-- `external/claude-plugins-official/` — Unpinned plugin source, reference only.
-
-**`copy/` (repo root)** — Curated software-review snapshot of internal(114 files, flat layout). **Don't edit directly** — changes belong in `<internal>/`. Exclude from grep when working on the live controller.
 
 ### Data flow
 
@@ -225,10 +213,7 @@ These are non-obvious pitfalls discovered through prior sessions. Check these fi
 - **Always import constants, never hardcode**: For CT/cribs/Bean values, import from `kryptos.kernel.constants`. A prior session fabricated null positions sharing only 3/17 values with consensus — silently invalid. **Caveat on `CONSENSUS_NULL_POSITIONS`**: the 17-position null mask is pending retraction (derived from retired palette hypothesis, no independent verification). Don't cite as established fact. See `memory/project_consensus_nulls_epistemic_status_2026_04_14.md`.
 - **`doctor` Bean checks are authoritative**: `python3 -m kryptos doctor` now verifies the current Bean constants (`bean_eq_count == 1`, `bean_ineq_count == 242`, `bean_linear_count == 101`). Any Bean-related `doctor` failure is a real pre-flight failure to diagnose before trusting downstream scoring.
 - **Exhaustion log — one authoritative source**: Root `exhaustion_log.json` is the single source of truth. The former second log at `scripts/EXHAUSTION.json` was retired and renamed to `scripts/EXHAUSTION.json.RETIRED` (see `scripts/EXHAUSTION.json.RETIRED.README` for the retirement note). If any script or doc still references `scripts/EXHAUSTION.json`, that's a stale pointer — fix it to read the root log.
-- **Two `.env` files — don't mix them up**: `.env` (root) = `ANTHROPIC_API_KEY` + `KBOT_CLASSIFY_API_KEY` + `NTFY_TOPIC`. `<internal>` = Agent SDK API key (see `<internal>`). Loading the wrong one gives silent auth failures.
-- **K4Bench sealed answers must not enter prompt context**: any `bench/k4bench/answers/*` (when present) and any answer-keyed JSON are off-limits to controller paths. `bench_load.load_k4bench_challenge()` rejects answer-like keys at load time — that's the boundary. Don't add helpers that bypass it; sealed answer leakage invalidates the calibration run.
-- **Quagmire III requires explicit convention args**: `quagmire_encrypt`/`quagmire_decrypt` in `transforms/quagmire.py` only reproduce K1/K2 convention with `pt_alphabet_keyword=..., ct_alphabet_keyword='KRYPTOS', indicator='K'`. Wrong shape does NOT raise — silently fails K1/K2 regression. `scripts/campaigns/f_w10_quagmire_iii_v1.py` was historically misconfigured; K1/K2 regression tests (landed 2026-04-21) are the standing guard. Verify regression passes before trusting new Quagmire results.
-- **Never `git push origin main` directly — use the publish script**: `<internal>/` and `<internal>` are private, excluded from the public mirror. Pre-push hook `.githooks/pre-push` blocks any push containing those paths (deletions allowed; additions blocked). To publish, run `ops/publish/publish_to_github.sh` — isolated worktree filters private paths, falls back to `git apply --3way` then cherry-pick on conflicts. Privacy boundary is deliberate; never propose un-ignoring or removing the hook. See `feedback_publish_workflow.md`, `feedback_internal_gitignored_by_design.md`.
+- **Quagmire III requires explicit convention args**: `quagmire_encrypt`/`quagmire_decrypt` in `transforms/quagmire.py` only reproduce K1/K2 convention with `pt_alphabet_keyword=..., ct_alphabet_keyword='KRYPTOS', indicator='K'`. Wrong shape does NOT raise — silently fails K1/K2 regression. K1/K2 regression tests are the standing guard. Verify regression passes before trusting new Quagmire results.
 
 ---
 
@@ -351,11 +336,6 @@ Results are not trusted until they pass:
 - **`docs/research_questions.md`** — Prioritized unknowns (RQ-1 through RQ-13)
 - **`docs/two_ground_truths.md`** — Physical sculpture vs creator intent
 - **`docs/anomaly_registry.md`** — Physical anomalies in the sculpture
-- **`docs/operations.md`** — Supporting systems, deployment, service management
-- **`<internal>`** — One-page operator onboarding for the research runner. Start here for any task that touches the internalloop. Authored in framework internal phase 9 (2026-04-21).
-- **`<internal>`** — Full architecture: controller cycle, DSL + dispatcher, null baselines, alert path. Updated 2026-04-21 for Phases 4-6.
-- **`<internal>`** — Phases 1-9 handoff summary. Every phase, every artifact, every test delta, every behavior change.
-- **`<internal>/K4_SYNTHETIC_T1_POSTMORTEM_CHECKLIST.md`** — Working example of a preregistered postmortem with binding pass/fail criteria; canonical reference for how synthetic-calibration runs are reviewed without post-hoc relaxation.
 
 ### Historical / retired (not authoritative — do not cite as current)
 
@@ -363,8 +343,6 @@ Results are not trusted until they pass:
 - **`reports/final_synthesis.md`** — 2026-02-20 synthesis, kept at original path for link stability, in-file HISTORICAL SNAPSHOT banner
 - **`memory/retired/`** — Retired research notes (palette/null-mask family, retired 2026-04-01)
 - **`docs/retired_claims/`** — Landing page for retired claims
-- **`<historical-planning>/`** — Historical March 2026 research planning (specs/plans). Demoted 2026-04-09; many stego plans rest on the retired palette construct. **Not current doctrine** — see the directory's own `README.md` banner before citing anything under it.
-
 ### External primary references
 
 - [Bean 2021](https://ecp.ep.liu.se/index.php/histocrypt/article/view/153) — "Cryptodiagnosis of Kryptos K4," HistoCrypt 2021 (source of Bean equality/inequality constraints)
@@ -372,41 +350,6 @@ Results are not trusted until they pass:
 - [`reference/ed_scheidt_dossier.md`](reference/ed_scheidt_dossier.md) — What the co-creator has revealed publicly
 - [`reference/sanborn_open_letter_aug2025.md`](reference/sanborn_open_letter_aug2025.md) — AI verification, K5 confirmed
 - [`reference/cia_1996_memo.md`](reference/cia_1996_memo.md) — **Tier-3 hearsay**, mirrored from the Oranchak repo 2026-04-21. Three of its four cipher diagnoses are known-wrong; its "K4 = OTP" claim carries no evidentiary weight. Cite with the Tier-3 banner and never as support for an OTP hypothesis. Related mirrored assets: `data/k4_candidate_fills_oranchak.csv`, `wordlists/quagmire[34]_keywords_oranchak.txt`.
-
-### Operations quick-reference
-
-The live site (`internal.com`) runs on this machine. Full details in [`docs/operations.md`](docs/operations.md).
-
-```bash
-sudo systemctl status|restart internal-api.service   # API on 127.0.0.1:8321
-journalctl -u internal-api -f                         # API logs
-source venv/bin/activate && python3 ops/site_builder/build.py  # Rebuild site
-python3 ops/api/admin.py list|test|publish|reject <id>         # Theory admin
-ops/deploy/cron_update.sh --force                              # Force deploy
-```
-
----
-
-## Persistent Memory (`.claude/` and `memory/`)
-
-Two `memory/` directories exist — don't confuse them:
-
-- **`.claude/projects/.../memory/`** — Claude Code's session-persistent memory. Read via Claude Code's memory system (not filesystem paths).
-- **`memory/`** (repo root) — Checked-in research notes. Live notes at `memory/*.md`. **Retired notes quarantined under `memory/retired/`** — do not cite as evidence; each file carries a RETIRED banner and the old path carries a stub pointer. See `memory/retired/README.md`.
-
-**`MEMORY.md`** (auto-loaded) is the **live control document**: current state, hard blockers, active bins, open audits, do-not-revive list. Short by design. CLAUDE.md holds durable operational doctrine; MEMORY.md holds volatile live state. Structured claims live in `docs/claims_registry.json`; open audits in `docs/methodological_audits.md`; historical snapshots in `docs/history/`.
-
----
-
-## Multi-Agent Mode — Solve K4
-
-- **KryptosBot controller (live entry point):** `PYTHONPATH=src python3 -u <internal>`. See `<internal>` (one-page guide) + `<internal>` (full). Legacy `solve.py` and `campaign_v2.py` were quarantined in internal phase 1; `campaign_v2.py` survives only as an `ImportError` stub at `<internal>`. `<internal>` is a redirect stub → `ORIENT.md`.
-- **Post-R3 control flow (2026-04-21):** Controller worker path dispatches through `dispatcher.execute()`; Category-A workers no longer call Claude directly; kernel overrule preserved across DSL handoff. R3-0.5 extended DSL to 9 kinds (added procedural/grille/polybius translators). **`<internal>/K4_RUN_PROTOCOL_R3.md` supersedes `round2/K4_RUN_PROTOCOL.md`**; don't follow R2.
-- **internal review system (current research system):** candidate generators + adversarial review + statistical-review gate + lead evaluator. Live state in `MEMORY.md` under "Project (current state)" — read those for what's actually running. Two cycle loops exist (`controller.run` and `run_controller.do_run`); any phase addition must patch **both**.
-- **AGENTS.md** (repo root) — operating instructions. Codex does debugging/hardening as an independent auditor. Hard constraints: free text never drives control flow, worker scores never trusted, timeout means inconclusive. Autonomous fix scope: off-by-one, resume bugs, weak tests, misleading docs. Caution areas: kernel constants, Bean logic, elimination semantics. Treats prior Claude conclusions as hypotheses, not facts.
-- **Historical reference:** `archive/legacy_harness/`, `archive/session_reports/`, `docs/history/`, [`reports/final_synthesis.md`](reports/final_synthesis.md) (HISTORICAL SNAPSHOT).
-
----
 
 ## Kryptos project context
 - Primary objective: detect recurring, evidence-backed visual anomalies or
@@ -421,4 +364,4 @@ Two `memory/` directories exist — don't confuse them:
 
 ---
 
-*Last updated: 2026-04-26. CLAUDE.md = **operational doctrine only**; live research state in MEMORY.md, structured claims in `docs/claims_registry.json`, audits in `docs/methodological_audits.md`, entry index in `docs/README_current_state.md`. Author: Colin Patrick + Claude. Conflict rule: verify freshness via `git log -1 --format=%cd CLAUDE.md MEMORY.md`; if they disagree on research state, trust MEMORY.md. Operational doctrine in CLAUDE.md is always authoritative regardless of date.*
+*Last updated: 2026-04-30. CLAUDE.md = **operational doctrine only**. Author: Colin Patrick + Claude.*
