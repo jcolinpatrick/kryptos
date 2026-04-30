@@ -1,0 +1,39 @@
+{
+  "pack_id": "tor-002-03-bcl-variant-beaufort-kryptos-tightened",
+  "title": "BCL anomaly: Variant Beaufort + columnar, KRYPTOS-only keyword",
+  "hypothesis_summary": "Tightening of campaign-001 pack F4-43 (BCL alt-mechanism: Variant Beaufort + columnar with {KRYPTOS, BERLIN}). F4-43 mixed two keywords; this pack drops BERLIN and uses KRYPTOS alone, exercising the bridge compiler's single-keyword fallback path which places KRYPTOS in BOTH the substitution and the columnar role. The narrowing is motivated by anomaly E0b: cipher distances cluster near identity exactly at the 10 of 24 disclosed-plaintext positions where PT in {K,R,Y,P,T,O,S}, which is direct evidence the cipher alphabet is keyword-mixed near KRYPTOS — that places KRYPTOS in the alphabet/substitution slot, NOT in the columnar transposition slot. Variant Beaufort is the convention sweep alternative to F4-41's Beaufort. Predicted side-effect: bean_passed=True must hold for any candidate with non-trivial crib_score, because the Bean equality and inequalities are variant-independent (kernel/constants.py: bean_eq_count=1, bean_ineq_count=242, bean_linear_count=101 verified by doctor). campaign_001_coverage: tightened.",
+  "provenance_items": [
+    {"source_id": "ANOMALY-E0b-KRYPTOS-DISTANCE", "source_type": "anomaly", "quote_or_summary": "Anomaly E0b (Materna 2020 / Bean 2021 §2.4): for the 10 of 24 known PT positions where PT in {K,R,Y,P,T,O,S}, CT letters cluster very near in the standard alphabet (mean delta 2.1, p ~ 1/5520).", "confidence": 0.7, "url_or_registry_key": "docs/anomaly_registry.md#E0b"},
+    {"source_id": "REGISTRY-KRYPTOS-NAME", "source_type": "registry", "quote_or_summary": "KRYPTOS registered TIER_SCULPTURE_CONTEXT, also the K1/K2/K3 alphabet keyword.", "confidence": 0.9, "url_or_registry_key": "<internal>: TIER_SCULPTURE_CONTEXT"}
+  ],
+  "evidence_tier": "tier_2_derived_fact",
+  "keywords": [
+    {"token": "KRYPTOS", "role_hint": "substitution", "source_ids": ["ANOMALY-E0b-KRYPTOS-DISTANCE", "REGISTRY-KRYPTOS-NAME"], "confidence": 0.5}
+  ],
+  "numeric_roles": [],
+  "operation_hints": [
+    {"operation": "variant_beaufort", "role": "required", "source_ids": ["ANOMALY-E0b-KRYPTOS-DISTANCE"], "confidence": 0.45},
+    {"operation": "columnar", "role": "required", "source_ids": ["ANOMALY-E0b-KRYPTOS-DISTANCE"], "confidence": 0.35}
+  ],
+  "composition_templates": [
+    {"layer_kinds": ["columnar", "variant_beaufort"], "ordered": false, "rationale": "Variant Beaufort substitution + keyed columnar. Single-keyword fallback (KRYPTOS in both roles) under the i3 emitter's degenerate path.", "confidence": 0.4, "max_layers": 2}
+  ],
+  "bounds": {
+    "max_specs": 60,
+    "allowed_keywords": ["KRYPTOS"],
+    "allow_project_safe_defaults": false,
+    "allow_default_widths": false
+  },
+  "constraints": [
+    "Single keyword (KRYPTOS), single composition (Variant Beaufort + columnar). Hardest tightening of F4-43 within its composition family.",
+    "The single-keyword fallback uses _gen_keyword_pair_family with KRYPTOS in both sub and columnar roles."
+  ],
+  "caveats": [
+    "campaign_001_coverage: tightened. Strictly narrower than F4-43 (drops BERLIN from the keyword pool). Distinct from F4-41 (Beaufort, not Variant Beaufort), F4-42 (Beaufort, KRYPTOS-only — same keyword, different convention), and F4-44 (Tier-5 retired-palette placeholder).",
+    "Predicted side-effect (Bean constraint behavior): a winning candidate MUST also have bean_passed=True. The Bean constraint set (1 equality + 242 inequalities + 101 linear constraints) is variant-independent and crib-position-bound; a cipher-class-correct decrypt at the cribs implies Bean satisfaction. If a candidate reaches crib_score >= 12 with bean_passed=False the side-effect prediction is FALSIFIED.",
+    "Pack passes if any candidate reaches crib_score >= 18 AND bean_passed=True. predeclared success criterion. If the audit produces crib_score >= 12 with bean_passed=False that is treated as side-effect FALSIFICATION even if no candidate reaches the success threshold.",
+    "The bridge compiler's _emit_sub_columnar emits all three substitution kinds (vigenere/beaufort/variant_beaufort) regardless of operation_hints — that's a known limitation in the compiler's required-op gate (template-level only, not spec-level). The predeclared success criterion applies to Variant-Beaufort specs specifically; if the search-wide best is a Vigenere or Beaufort candidate the prediction is implicitly falsified for the Variant-Beaufort hypothesis."
+  ],
+  "generated_by": "human_curator",
+  "generation_run_id": "campaign-002-admission-gated"
+}
