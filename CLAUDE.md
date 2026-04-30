@@ -42,6 +42,8 @@ CLAUDE.md is **operational doctrine only**: how to work, where truth lives, how 
 
 Historical strategy snapshots live in `docs/history/` and `reports/final_synthesis.md` (both banner-labelled HISTORICAL SNAPSHOT). Retired research notes live in `memory/retired/`. Do not cite either as current doctrine.
 
+**Posture as of 2026-04-30:** Real-K4 attack work is **paused** pending evidence-gap closure (see `docs/REAL_K4_CURRENT_POSITION.md`). Active work runs on synthetic K4Bench challenges, not the real ciphertext. Verify current posture in MEMORY.md before proposing real-K4 compute.
+
 ---
 
 ## Development Setup & Commands
@@ -227,6 +229,7 @@ These are non-obvious pitfalls discovered through prior sessions. Check these fi
 - **Exhaustion log — one authoritative source**: Root `exhaustion_log.json` is the single source of truth. The former second log at `scripts/EXHAUSTION.json` was retired and renamed to `scripts/EXHAUSTION.json.RETIRED` (see `scripts/EXHAUSTION.json.RETIRED.README` for the retirement note). If any script or doc still references `scripts/EXHAUSTION.json`, that's a stale pointer — fix it to read the root log.
 - **Two `.env` files — don't mix them up**: `.env` (root) = `ANTHROPIC_API_KEY` + `KBOT_CLASSIFY_API_KEY` + `NTFY_TOPIC`. `kryptosbot/.env` = Agent SDK API key (see `kryptosbot/.env.template`). Loading the wrong one gives silent auth failures.
 - **K4Bench sealed answers must not enter prompt context**: any `bench/k4bench/answers/*` (when present) and any answer-keyed JSON are off-limits to controller paths. `bench_loader.load_k4bench_challenge()` rejects answer-like keys at load time — that's the boundary. Don't add helpers that bypass it; sealed answer leakage invalidates the calibration run.
+- **`KRYPTOS_CRIB_DICT_OVERRIDE` is K4Bench-only**: env var that swaps the crib dictionary for synthetic challenges. Must be installed *before* `kryptos.kernel.constants` imports (handled by `bench_loader`). Setting it manually for real-K4 work is a correctness violation — real cribs come from disclosure, not env. The K4Bench loader is the only legitimate caller.
 - **Quagmire III requires explicit convention args**: `quagmire_encrypt`/`quagmire_decrypt` in `transforms/quagmire.py` only reproduce K1/K2 convention with `pt_alphabet_keyword=..., ct_alphabet_keyword='KRYPTOS', indicator='K'`. Wrong shape does NOT raise — silently fails K1/K2 regression. `scripts/campaigns/f_w10_quagmire_iii_v1.py` was historically misconfigured; K1/K2 regression tests (landed 2026-04-21) are the standing guard. Verify regression passes before trusting new Quagmire results.
 - **Never `git push origin main` directly — use the publish script**: `kryptosbot/` and `docs/maturation/` are private, excluded from the public mirror. Pre-push hook `.githooks/pre-push` blocks any push containing those paths (deletions allowed; additions blocked). To publish, run `ops/publish/publish_to_github.sh` — isolated worktree filters private paths, falls back to `git apply --3way` then cherry-pick on conflicts. Privacy boundary is deliberate; never propose un-ignoring or removing the hook. See `feedback_publish_workflow.md`, `feedback_kryptosbot_gitignored_by_design.md`.
 
@@ -345,6 +348,10 @@ Results are not trusted until they pass:
 
 ### Durable domain & invariant docs
 
+- **`docs/REAL_K4_CURRENT_POSITION.md`** — Authoritative status report for real-K4 work: what KryptosBot can and cannot do, why public-data-only K4 is judged underdetermined, the explicit non-claim statement. Read before making any progress claim.
+- **`docs/REAL_K4_EVIDENCE_GAP_REGISTER.md`** — Ten open evidence gaps (GAP-01..GAP-10) with admission-grade closure conditions.
+- **`docs/REAL_K4_EVIDENCE_ACQUISITION_PLAN.md`** — Recommended first action and priority order across the high-priority gaps.
+- **`docs/REAL_K4_PSEUDO_CLUE_PACK_ADMISSION.md`** — Eleven-rule admission gate, including the Sanborn public-comment doctrine (rule 11).
 - **`docs/kryptos_ground_truth.md`** — Public facts (CT, cribs, 2025 disclosures), internal results policy, hypothesis classes
 - **`docs/invariants.md`** — Verified computational invariants (keystream, Bean constraints, alphabets, eliminated hypotheses)
 - **`docs/elimination_tiers.md`** — Elimination confidence tiers. Tier 1 = proven under stated assumptions; Tier 2 = exhaustively searched (single-layer only — **OPEN as one layer of multi-layer**); Tier 4 = untested bespoke methods. **Critical framing:** All Tier 1/2 eliminations assume direct positional correspondence `CT[i] → PT[i]`. The "SOURCE-INDEPENDENT" wording on Tier 1 columnar rows is currently **disputed** — see `docs/methodological_audits.md` AUDIT-1 before citing.
@@ -421,4 +428,4 @@ Two `memory/` directories exist — don't confuse them:
 
 ---
 
-*Last updated: 2026-04-26. CLAUDE.md = **operational doctrine only**; live research state in MEMORY.md, structured claims in `docs/claims_registry.json`, audits in `docs/methodological_audits.md`, entry index in `docs/README_current_state.md`. Author: Colin Patrick + Claude. Conflict rule: verify freshness via `git log -1 --format=%cd CLAUDE.md MEMORY.md`; if they disagree on research state, trust MEMORY.md. Operational doctrine in CLAUDE.md is always authoritative regardless of date.*
+*Last updated: 2026-04-30. CLAUDE.md = **operational doctrine only**; live research state in MEMORY.md, structured claims in `docs/claims_registry.json`, audits in `docs/methodological_audits.md`, entry index in `docs/README_current_state.md`. Author: Colin Patrick + Claude. Conflict rule: verify freshness via `git log -1 --format=%cd CLAUDE.md MEMORY.md`; if they disagree on research state, trust MEMORY.md. Operational doctrine in CLAUDE.md is always authoritative regardless of date.*
