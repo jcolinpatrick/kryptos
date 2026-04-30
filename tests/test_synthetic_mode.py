@@ -212,6 +212,20 @@ class TestOverrideValidation:
         assert result.returncode != 0
         assert "uppercase A-Z only" in result.stderr
 
+    def test_crib_override_duplicate_normalized_position_rejected(self):
+        result = _run_with_env(
+            "import kryptos.kernel.constants",
+            {
+                "KRYPTOS_CT_OVERRIDE": SYNTHETIC_CT_FIXTURE,
+                "KRYPTOS_CRIB_DICT_OVERRIDE": json.dumps({
+                    "1": "A",
+                    "01": "B",
+                }),
+            },
+        )
+        assert result.returncode != 0
+        assert "duplicate position 1" in result.stderr
+
 
 # ── Round-trip: synthetic CT correctly preserved through Bean ────────────
 
