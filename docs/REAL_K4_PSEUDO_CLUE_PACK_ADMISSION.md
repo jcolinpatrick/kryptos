@@ -171,6 +171,64 @@ that require judgment.
   A pack that does not predeclare its success criterion is **not**
   admissible.
 
+### 11. Sanborn / Scheidt public-comment doctrine
+
+Jim Sanborn has historically been extremely careful not to release
+operational K4 mechanism clues. The confirmed useful disclosures are
+**crib / plaintext anchors** — `EAST` (21 — 24), `NORTHEAST` (25 — 33),
+`EASTNORTHEAST` (21 — 33), `BERLIN` (64 — 69), `CLOCK` (70 — 74),
+`BERLINCLOCK` (63 — 73). These remain admissible as PUBLIC FACT.
+
+Broader public statements ("two systems", "masked English", "stego",
+"there's a third system", and similar) are **contextual provenance
+only**. They are Tier-3 community hearsay (project policy
+`C-SANBORN-01`, `C-SANBORN-02`); they do not specify what they mean
+structurally; they have already produced one closed null campaign
+(campaign 001 F2).
+
+A pack that draws ANY role from a non-crib Sanborn / Scheidt public
+comment is **NOT admissible** unless **all five** sub-criteria below
+are satisfied:
+
+11a. **Confirmed source / provenance.** The pack must cite the
+     specific public statement (date, venue, source URL or repo
+     file) — not a paraphrase, not a community-attributed
+     impression, and not a generic label like "Sanborn says K4
+     uses two systems".
+
+11b. **Explicit separation of crib disclosure vs contextual
+     comment.** The pack must declare, per provenance item, whether
+     the cited statement is (a) a disclosed plaintext span (PUBLIC
+     FACT), or (b) a contextual comment (Tier-3 hearsay). The
+     `provenance_items[*].source_type` field SHOULD be `crib` for
+     (a) and `public_comment` for (b); mixed-type provenance is
+     not admissible without per-item separation in the pack's
+     `caveats`.
+
+11c. **Independent measurable evidence.** Any role triggered by a
+     non-crib Sanborn comment must be paired with at least one
+     independent piece of evidence — a statistical anomaly with a
+     calibrated null, a measured sculpture-geometry observation, a
+     Bean-derived structural property, or an archival primary
+     source. The independent evidence must be the LOAD-BEARING
+     justification; the comment is the contextual prior, not the
+     trigger.
+
+11d. **Bounded parameter extraction.** Same standard as rule 3 —
+     ≤ 8 entries per parameter, each entry citation-traceable to
+     the independent evidence (NOT to the comment itself).
+
+11e. **Side-effect prediction beyond crib score.** Same standard
+     as rule 7. The side-effect must derive from the independent
+     evidence, not from the comment.
+
+A pack that satisfies rule 11 will, in practice, also satisfy rules
+1 — 10 because the independent evidence carries the admission load.
+Rule 11 is therefore not an additional bar; it is an explicit
+guard against the temptation to use a creator quote as a free
+admission ticket. **Public comments alone — no matter how suggestive
+— cannot reopen a bridge campaign.**
+
 ---
 
 ## Worked example (admissible)

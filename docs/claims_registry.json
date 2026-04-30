@@ -228,6 +228,21 @@
       "owner_doc": "docs/REAL_K4_EVIDENCE_GAP_REGISTER.md",
       "red_team_status": "self-recorded research status; closes when one of the GAP-* rows in the register transitions to closed or partially_closed",
       "notes": "Status, not policy. The pause is a research-state observation about what the bridge can usefully do RIGHT NOW given the current evidence pool. It does not forbid future campaigns; it states the gating constraint. When a new admissible piece of evidence closes any GAP-* row, that row's closure is the signal to open the next campaign. The register lists ten open gaps (GAP-01 through GAP-10) at this commit; high-priority gaps are GAP-03 (BCL E0b side-effect operationalization), GAP-09 (null-mask / stego evidence), and GAP-10 (crib-bound positional mechanism evidence)."
+    },
+    {
+      "claim_id": "C-SANBORN-02",
+      "statement": "Operational version of C-SANBORN-01 for the real-K4 LLM<->HCC bridge campaign line: non-crib Sanborn / Scheidt public comments are NOT treated as operational bridge-pack triggers without independent measurable corroboration. Confirmed crib disclosures (EAST 21-24, NORTHEAST 25-33, EASTNORTHEAST 21-33, BERLIN 64-69, CLOCK 70-74, BERLINCLOCK 63-73) remain admissible as PUBLIC FACT. Broader public statements ('two systems', 'masked English', 'stego', and similar) are contextual provenance only and may supply weak contextual priors only - they must not directly trigger HCC roles, keywords, numeric parameters, or composition templates unless paired with independent measurable evidence AND a predeclared side-effect prediction. Enforced by admission rule 11 in docs/REAL_K4_PSEUDO_CLUE_PACK_ADMISSION.md and by the Sanborn public-comment doctrine section in docs/REAL_K4_EVIDENCE_GAP_REGISTER.md.",
+      "class": "internal_result",
+      "status": "live",
+      "scope": "research governance for the real-K4 interpretive bridge campaign line; not a project-wide policy",
+      "depends_on": ["C-SANBORN-01", "C-BRIDGE-01", "C-BRIDGE-02"],
+      "supersedes": [],
+      "superseded_by": [],
+      "artifact": "docs/REAL_K4_EVIDENCE_GAP_REGISTER.md, docs/REAL_K4_PSEUDO_CLUE_PACK_ADMISSION.md",
+      "repro_reference": null,
+      "owner_doc": "docs/REAL_K4_EVIDENCE_GAP_REGISTER.md",
+      "red_team_status": "operational corollary of accepted C-SANBORN-01 policy; closes only if a future creator-attested mechanism statement carries a specific structural commitment AND independent measurable corroboration lands",
+      "notes": "Governance / status, not immutable policy. Sanborn has historically been extremely careful not to release operational K4 mechanism clues; campaign 001 family F2 (5 packs, 630 specs) treated non-crib comments as composition-template triggers and was null. Records the empirical lesson and the operational rule that prevents the lesson from being relearned. Public comments alone, no matter how suggestive, cannot reopen a bridge campaign."
     }
   ]
 }

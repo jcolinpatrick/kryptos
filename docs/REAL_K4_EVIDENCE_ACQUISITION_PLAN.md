@@ -209,9 +209,15 @@ construct:
 3. **Creator-statement-derived mask.** A null mask whose positions
    are dictated by an explicit creator statement (Sanborn / Scheidt)
    that names a specific position class. Project policy treats
-   creator statements as Tier-3 hearsay (`C-SANBORN-01`), so this
-   pathway is admissible **only with corroborating physical or
-   statistical evidence**.
+   creator statements as Tier-3 hearsay (`C-SANBORN-01`,
+   `C-SANBORN-02`); per the Sanborn public-comment doctrine in
+   [`docs/REAL_K4_EVIDENCE_GAP_REGISTER.md`](REAL_K4_EVIDENCE_GAP_REGISTER.md)
+   and admission rule 11 in
+   [`docs/REAL_K4_PSEUDO_CLUE_PACK_ADMISSION.md`](REAL_K4_PSEUDO_CLUE_PACK_ADMISSION.md),
+   this pathway is admissible **only with independent measurable
+   corroboration AND a predeclared side-effect prediction** —
+   public comments alone cannot reopen a bridge campaign even if
+   they specify a position class.
 
 ### What is currently too weak
 
