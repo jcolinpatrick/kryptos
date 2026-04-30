@@ -11,8 +11,9 @@ If the environment variable ``KRYPTOS_CT_OVERRIDE`` is set at module-import
 time, this module loads the override CT instead of the real K4 ciphertext
 and propagates it through Bean derivation. This is intended ONLY for
 controlled synthetic-signal calibration runs (see
-``<internal>/SYNTHETIC_SIGNAL_CALIBRATION_SPEC.md``); synthetic
-results MUST never be merged with real-K4 work.
+``<internal>/SYNTHETIC_SIGNAL_CALIBRATION_SPEC.md`` and the
+K4Bench harness); synthetic results MUST never be merged with real-K4
+work.
 
 The override:
 - replaces ``CT`` with the override string (which must be 97 uppercase A-Z chars),
@@ -21,15 +22,22 @@ The override:
   positions, Bean inequality count, Bean linear count) so they don't fire
   on synthetic CTs whose derivation differs from K4's.
 
-Crib positions and content are NOT overridden — synthetic plaintexts must
-contain ``EASTNORTHEAST`` at 21-33 and ``BERLINCLOCK`` at 63-73 verbatim
-to keep the rest of the kernel coherent.
+If ``KRYPTOS_CRIB_DICT_OVERRIDE`` is also set (JSON object mapping
+position-string to single uppercase letter), the kernel rebuilds
+``CRIB_DICT``, ``CRIB_WORDS``, ``CRIB_ENTRIES``, ``CRIB_POSITIONS``,
+``N_CRIBS``, ``SELF_ENCRYPTING``, and re-derives the Bean constraint sets
+against the override cribs. This is what the K4Bench loader sets so that
+each synthetic challenge has its own crib content while preserving the
+0-indexed 21-33 / 63-73 span structure. ``KRYPTOS_CRIB_DICT_OVERRIDE``
+without ``KRYPTOS_CT_OVERRIDE`` is rejected — crib content overrides
+are valid only inside synthetic mode.
 
 The boolean ``_SYNTHETIC_MODE`` is exported for downstream sentinel
 handling (e.g., DB taint files, log warnings).
 """
 from __future__ import annotations
 
+import json
 import os
 import sys
 from typing import Dict, FrozenSet, Tuple
@@ -76,24 +84,114 @@ KRYPTOS_ALPHABET: str = "KRYPTOSABCDEFGHIJLMNQUVWXZ"
 
 # ── Cribs (0-indexed) ────────────────────────────────────────────────────
 
-CRIB_WORDS: Tuple[Tuple[int, str], ...] = (
-    (21, "EASTNORTHEAST"),   # positions 21–33, 13 chars
-    (63, "BERLINCLOCK"),     # positions 63–73, 11 chars
-)
+_CRIB_OVERRIDE: str | None = os.environ.get("KRYPTOS_CRIB_DICT_OVERRIDE")
+if _CRIB_OVERRIDE is not None and not _SYNTHETIC_MODE:
+    raise ValueError(
+        "KRYPTOS_CRIB_DICT_OVERRIDE requires KRYPTOS_CT_OVERRIDE to also be "
+        "set (synthetic mode). Crib-content overrides on the real K4 CT "
+        "are not permitted; they would corrupt downstream analysis."
+    )
 
-CRIB_ENTRIES: Tuple[Tuple[int, str], ...] = tuple(
-    (start + i, ch)
-    for start, word in CRIB_WORDS
-    for i, ch in enumerate(word)
-)
 
-N_CRIBS: int = 24
-CRIB_DICT: Dict[int, str] = dict(CRIB_ENTRIES)
-CRIB_POSITIONS: FrozenSet[int] = frozenset(CRIB_DICT.keys())
+def _parse_crib_override(payload: str) -> Dict[int, str]:
+    """Parse the KRYPTOS_CRIB_DICT_OVERRIDE JSON payload.
 
-# ── Self-encrypting positions ─────────────────────────────────────────────
+    Expected shape: ``{"21": "S", "22": "E", ...}`` with integer-string
+    keys and single-letter uppercase values. The K4Bench loader writes
+    this verbatim from the public challenge JSON.
+    """
+    try:
+        raw = json.loads(payload)
+    except json.JSONDecodeError as exc:
+        raise ValueError(
+            f"KRYPTOS_CRIB_DICT_OVERRIDE is not valid JSON: {exc}"
+        ) from exc
+    if not isinstance(raw, dict) or not raw:
+        raise ValueError(
+            "KRYPTOS_CRIB_DICT_OVERRIDE must be a non-empty JSON object "
+            "of {position: letter}"
+        )
+    out: Dict[int, str] = {}
+    for k, v in raw.items():
+        try:
+            pos = int(k)
+        except (TypeError, ValueError) as exc:
+            raise ValueError(
+                f"KRYPTOS_CRIB_DICT_OVERRIDE key {k!r} is not an integer"
+            ) from exc
+        if not isinstance(v, str) or len(v) != 1 or not v.isupper() or not v.isalpha():
+            raise ValueError(
+                f"KRYPTOS_CRIB_DICT_OVERRIDE value at key {k!r} must be a "
+                f"single uppercase A-Z letter; got {v!r}"
+            )
+        if pos < 0 or pos >= CT_LEN:
+            raise ValueError(
+                f"KRYPTOS_CRIB_DICT_OVERRIDE position {pos} is out of "
+                f"range [0, {CT_LEN})"
+            )
+        if pos in out:
+            raise ValueError(
+                f"KRYPTOS_CRIB_DICT_OVERRIDE duplicate position {pos} "
+                f"after normalizing key {k!r}"
+            )
+        out[pos] = v
+    return out
 
-SELF_ENCRYPTING: Dict[int, str] = {32: "S", 73: "K"}
+
+def _spans_from_dict(d: Dict[int, str]) -> Tuple[Tuple[int, str], ...]:
+    """Group consecutive crib positions into ``(start, word)`` spans.
+
+    Mirrors the legacy ``CRIB_WORDS`` shape so every consumer that walks
+    spans (rather than the dict) keeps working under crib-override mode.
+    """
+    if not d:
+        return ()
+    positions = sorted(d.keys())
+    spans: list[tuple[int, str]] = []
+    span_start = positions[0]
+    span_chars = [d[span_start]]
+    for prev, p in zip(positions, positions[1:]):
+        if p == prev + 1:
+            span_chars.append(d[p])
+        else:
+            spans.append((span_start, "".join(span_chars)))
+            span_start = p
+            span_chars = [d[p]]
+    spans.append((span_start, "".join(span_chars)))
+    return tuple(spans)
+
+
+if _CRIB_OVERRIDE is not None:
+    CRIB_DICT: Dict[int, str] = _parse_crib_override(_CRIB_OVERRIDE)
+    CRIB_WORDS: Tuple[Tuple[int, str], ...] = _spans_from_dict(CRIB_DICT)
+    CRIB_ENTRIES: Tuple[Tuple[int, str], ...] = tuple(
+        sorted(CRIB_DICT.items())
+    )
+    N_CRIBS: int = len(CRIB_DICT)
+    CRIB_POSITIONS: FrozenSet[int] = frozenset(CRIB_DICT.keys())
+    # Self-encrypting positions are derived from the synthetic CT and
+    # crib content. A position is self-encrypting iff CT[pos] == PT[pos].
+    SELF_ENCRYPTING: Dict[int, str] = {
+        pos: ch for pos, ch in CRIB_DICT.items() if CT[pos] == ch
+    }
+else:
+    CRIB_WORDS: Tuple[Tuple[int, str], ...] = (
+        (21, "EASTNORTHEAST"),   # positions 21–33, 13 chars
+        (63, "BERLINCLOCK"),     # positions 63–73, 11 chars
+    )
+
+    CRIB_ENTRIES: Tuple[Tuple[int, str], ...] = tuple(
+        (start + i, ch)
+        for start, word in CRIB_WORDS
+        for i, ch in enumerate(word)
+    )
+
+    N_CRIBS: int = 24
+    CRIB_DICT: Dict[int, str] = dict(CRIB_ENTRIES)
+    CRIB_POSITIONS: FrozenSet[int] = frozenset(CRIB_DICT.keys())
+
+    # ── Self-encrypting positions ────────────────────────────────────
+    SELF_ENCRYPTING: Dict[int, str] = {32: "S", 73: "K"}
 
 # ── Bean constraints ──────────────────────────────────────────────────────
 
@@ -242,22 +340,29 @@ def _verify() -> None:
 
     Under synthetic mode (``_SYNTHETIC_MODE`` True), K4-specific assertions
     are skipped: CT boundary chars, self-encrypt positions, and the K4
-    Bean count invariants. Crib content and structural alphabet checks
-    still run unconditionally because they are properties of the kernel
-    contract, not of any specific CT.
+    Bean count invariants. Crib content checks are also skipped when a
+    crib override is active, because K4Bench challenges deliberately
+    install non-K4 crib text. Structural alphabet checks still run
+    unconditionally because they are properties of the kernel contract,
+    not of any specific CT.
     """
     # Always-on: structural invariants of the kernel contract
     assert len(CT) == CT_LEN, f"CT length {len(CT)} != {CT_LEN}"
     assert CT.isalpha() and CT.isupper(), "CT must be uppercase A-Z"
     assert len(CRIB_ENTRIES) == N_CRIBS, f"Crib count {len(CRIB_ENTRIES)} != {N_CRIBS}"
-    assert CRIB_DICT[21] == "E" and CRIB_DICT[33] == "T", "ENE crib check failed"
-    assert CRIB_DICT[63] == "B" and CRIB_DICT[73] == "K", "BC crib check failed"
-    assert 74 not in CRIB_DICT, "Position 74 should not be a crib"
-    assert CRIB_DICT[32] == "S", "Crib content @ 32 must be S"
-    assert CRIB_DICT[73] == "K", "Crib content @ 73 must be K"
     assert len(ALPH) == MOD and len(set(ALPH)) == MOD, "ALPH malformed"
     assert len(KRYPTOS_ALPHABET) == MOD and len(set(KRYPTOS_ALPHABET)) == MOD, "KA malformed"
     assert set(KRYPTOS_ALPHABET) == set(ALPH), "KA and ALPH char sets differ"
+
+    # Crib content checks are K4-specific. Skip when an explicit crib
+    # override is active; the K4Bench loader installs different content
+    # at the same span positions (21-33, 63-73) per challenge.
+    if _CRIB_OVERRIDE is None:
+        assert CRIB_DICT[21] == "E" and CRIB_DICT[33] == "T", "ENE crib check failed"
+        assert CRIB_DICT[63] == "B" and CRIB_DICT[73] == "K", "BC crib check failed"
+        assert 74 not in CRIB_DICT, "Position 74 should not be a crib"
+        assert CRIB_DICT[32] == "S", "Crib content @ 32 must be S"
+        assert CRIB_DICT[73] == "K", "Crib content @ 73 must be K"
 
     if not _SYNTHETIC_MODE:
         # K4-specific: real CT boundary, self-encrypt CT==PT, and
