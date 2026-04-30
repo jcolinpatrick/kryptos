@@ -1,7 +1,10 @@
 # Real-K4 Evidence Gap Register
 
 **Created:** 2026-04-30. Owner: this document. Companion to
-[`docs/REAL_K4_PSEUDO_CLUE_PACK_ADMISSION.md`](REAL_K4_PSEUDO_CLUE_PACK_ADMISSION.md).
+[`docs/REAL_K4_PSEUDO_CLUE_PACK_ADMISSION.md`](REAL_K4_PSEUDO_CLUE_PACK_ADMISSION.md)
+and [`docs/REAL_K4_EVIDENCE_ACQUISITION_PLAN.md`](REAL_K4_EVIDENCE_ACQUISITION_PLAN.md)
+(the acquisition plan names the concrete actions that would close the
+high-priority gaps GAP-03 / GAP-09 / GAP-10).
 Tracks the gaps the bridge campaigns CANNOT close until new evidence
 arrives.
 
