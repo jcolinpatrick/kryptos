@@ -20,9 +20,9 @@
 
 ## What is this?
 
-**Kryptos** is an encrypted sculpture at CIA headquarters in Langley, Virginia. Installed in 1990 by artist Jim Sanborn with cryptographic assistance from Ed Scheidt (retired Chairman of the CIA Cryptographic Center), it contains four encrypted messages. The first three (K1–K3) were solved in 1998–1999. **The fourth, K4, remains unsolved after 36 years.**
+**Kryptos** is an encrypted sculpture at CIA headquarters in Langley, Virginia. Installed in 1990 by artist Jim Sanborn with cryptographic assistance from Ed Scheidt (retired Chairman of the CIA Cryptographic Center), it contains four encrypted messages. The first three (K1–K3) were solved in 1998–1999. **The fourth, K4, remains unsolved after over 35 years.**
 
-This repository is a systematic attempt to solve K4. At a minimum, it rigorously documents what doesn't work within clearly stated assumptions.
+This repository is a systematic attempt to solve K4. At a minimum, it rigorously documents what doesn't work within clearly stated assumptions. **No K4 solution is claimed by this project; no real-K4 progress is currently claimed; K4 is not proven impossible. Public-data-only K4 is judged underdetermined from the current public evidence pool — see [`docs/REAL_K4_CURRENT_POSITION.md`](docs/REAL_K4_CURRENT_POSITION.md) for the authoritative status report.**
 
 ### K4 at a glance
 
@@ -117,7 +117,7 @@ The [internal.com](https://internal.com/browse/) site currently documents 494 fo
 
 None of these are proven. They represent live hypothesis surfaces or residual coverage gaps. Status as of April 2026.
 
-1. **Two systems.** Sanborn's 1990 dedication speech states K4 uses "two systems of enciphering," distinct from the Vigenere used for K1-K3. That public statement is evidence; any specific mechanistic interpretation remains a hypothesis.
+1. **Two systems.** Sanborn has publicly stated K4 uses "two systems of enciphering," distinct from the Vigenere used for K1-K3. The project treats this as **Tier-3 contextual hearsay** (per claims-registry entries `C-SANBORN-01` and `C-SANBORN-02`), not as a load-bearing piece of operational evidence. The phrase admits multiple mutually-incompatible structural interpretations and has so far not produced a non-arbitrary cipher mechanism. Any specific mechanistic interpretation remains a hypothesis that must be paired with independent measurable evidence before it gains evidentiary weight. See the [pseudo-clue-pack admission standard](docs/REAL_K4_PSEUDO_CLUE_PACK_ADMISSION.md) rule 11.
 2. **CT perturbation.** The currently primary anomaly surface. Evidence from photographed coding charts in Sanborn's archive at the Smithsonian suggests the canonical 97-character ciphertext may include a small number of transcription errors. If real, modest CT corrections could unlock cipher families that currently fail by a small margin. Open and actively explored.
 3. **W-delimiter structural hypothesis.** The five carved `W`s at positions 20, 36, 48, 58, and 74 explain the old width-21 vertical-bigram anomaly. As a *single-layer* construction the W-segmentation hypothesis has been saturated (80+ tested, no signal); it remains admissible as one layer within multi-layer constructions. Whether the `W`s are delimiters, nulls, row markers, or something else remains open.
 4. **Null insertion or procedural markers.** Some positions in K4 may be filler or marker symbols. The number, placement, and interpretation remain unknown. The older statistical "null palette" family is retired and should not be treated as evidence.
@@ -137,7 +137,14 @@ The whole point of open-sourcing this is to get more eyes on K4.
 
 **Report an error:** If you think an elimination is wrong, [open an issue](https://github.com/jcolinpatrick/kryptos/issues/new).
 
-## Key references
+## Project research-state documents
+
+- [Real-K4 current position](docs/REAL_K4_CURRENT_POSITION.md): authoritative status report — what KryptosBot can and cannot do, why public-data-only K4 is judged underdetermined, and the explicit non-claim statement.
+- [Evidence gap register](docs/REAL_K4_EVIDENCE_GAP_REGISTER.md): ten open evidence gaps (GAP-01…GAP-10) with admission-grade closure conditions.
+- [Evidence acquisition plan](docs/REAL_K4_EVIDENCE_ACQUISITION_PLAN.md): recommended first action and priority order across the high-priority gaps.
+- [Pseudo-clue-pack admission standard](docs/REAL_K4_PSEUDO_CLUE_PACK_ADMISSION.md): eleven-rule admission gate including the Sanborn public-comment doctrine.
+
+## Key external references
 
 - [Bean 2021](https://ecp.ep.liu.se/index.php/histocrypt/article/view/153): "Cryptodiagnosis of Kryptos K4," HistoCrypt 2021.
 - [Elonka Dunin's Kryptos page](https://elonka.com/kryptos/): community hub and transcription.
