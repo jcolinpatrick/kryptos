@@ -10,6 +10,8 @@ This repo has one purpose: determine the **true plaintext** and the **full encry
 
 ## Pre-flight (EVERY task — do NOT skip)
 
+**Always:**
+
 1. Read this entire CLAUDE.md (operational doctrine only — not research state).
 2. **Run the session briefing** — authoritative derived state:
    ```bash
@@ -21,9 +23,12 @@ This repo has one purpose: determine the **true plaintext** and the **full encry
 5. Check **`docs/methodological_audits.md`** for any open audit that touches your task. Disputed claims block new compute until their audit closes.
 6. If the task matches anything in the briefing's TIER 1 / DO NOT TEST sections or the `MEMORY.md` do-not-revive list → **STOP, tell the user, do NOT re-run**.
 7. `run_attack.py --list --verbose | grep KEYWORD` — search before writing new code.
-8. **If the task involves CPU-bound work**: `bash scripts/vm_capability_report.sh` — establish runtime capabilities (see [Compute Environment](#compute-environment--high-power-vm)).
-9. **If the task involves the kryptosbot loop**: read `kryptosbot/ORIENT.md` (~5 min) — one-page operator onboarding for the multi-agent runner. Covers the three commands, where truth lives, and 5 common failure modes.
-10. **If the task modifies the kernel's scoring or transforms**: run `PYTHONPATH=src python3 kryptosbot/self_test.py --panel all --mode dry-run` — falsification test that K1/K2 are still rediscoverable. Takes ~1 second. Added in framework maturation Phase 7 (2026-04-21) as the project's standing fitness check.
+
+**Conditional (only if the task involves the named area):**
+
+8. **CPU-bound work**: `bash scripts/vm_capability_report.sh` — establish runtime capabilities (see [Compute Environment](#compute-environment--high-power-vm)).
+9. **kryptosbot loop**: read `kryptosbot/ORIENT.md` (~5 min) — one-page operator onboarding. Covers the three commands, where truth lives, and 5 common failure modes.
+10. **Modifying kernel scoring or transforms**: `PYTHONPATH=src python3 kryptosbot/self_test.py --panel all --mode dry-run` — ~1s falsification test that K1/K2 are still rediscoverable. The project's standing fitness check (Phase 7, 2026-04-21).
 
 Skipping these steps and re-testing an eliminated hypothesis wastes 28 CPU cores and burns API tokens for zero value.
 
@@ -82,7 +87,7 @@ PYTHONPATH=src python3 run_attack.py --list --verbose | grep -i KEYWORD
 
 # Benchmark: PYTHONPATH=src python3 bench/cli.py run --suite bench/suites/tier0_smoke.jsonl
 
-# K4Bench (synthetic calibration; redirects ledger to db/k4bench/, never touches real-K4 state)
+# K4Bench (synthetic calibration mode — see Architecture § K4Bench for what it overrides)
 PYTHONPATH=src python3 -u kryptosbot/run_controller.py --bench-challenge bench/k4bench/challenges/K4B-001.json [--bench-attempts-out <out.json>]
 ```
 
@@ -232,6 +237,7 @@ These are non-obvious pitfalls discovered through prior sessions. Check these fi
 - **`KRYPTOS_CRIB_DICT_OVERRIDE` is K4Bench-only**: env var that swaps the crib dictionary for synthetic challenges. Must be installed *before* `kryptos.kernel.constants` imports (handled by `bench_loader`). Setting it manually for real-K4 work is a correctness violation — real cribs come from disclosure, not env. The K4Bench loader is the only legitimate caller.
 - **Quagmire III requires explicit convention args**: `quagmire_encrypt`/`quagmire_decrypt` in `transforms/quagmire.py` only reproduce K1/K2 convention with `pt_alphabet_keyword=..., ct_alphabet_keyword='KRYPTOS', indicator='K'`. Wrong shape does NOT raise — silently fails K1/K2 regression. `scripts/campaigns/f_w10_quagmire_iii_v1.py` was historically misconfigured; K1/K2 regression tests (landed 2026-04-21) are the standing guard. Verify regression passes before trusting new Quagmire results.
 - **Never `git push origin main` directly — use the publish script**: `kryptosbot/` and `docs/maturation/` are private, excluded from the public mirror. Pre-push hook `.githooks/pre-push` blocks any push containing those paths (deletions allowed; additions blocked). To publish, run `ops/publish/publish_to_github.sh` — isolated worktree filters private paths, falls back to `git apply --3way` then cherry-pick on conflicts. Privacy boundary is deliberate; never propose un-ignoring or removing the hook. See `feedback_publish_workflow.md`, `feedback_kryptosbot_gitignored_by_design.md`.
+- **Image-analysis output goes under `analysis_runs/`**: chart-scan comparisons are registered-document workflows; physical-surface (sculpture) imagery is a separate workflow — don't conflate them. Use repo-relative paths in prompts, scripts, and reports. Stable confirmed findings belong in project records (claims registry / docs), not only in agent memory.
 
 ---
 
@@ -412,19 +418,6 @@ Two `memory/` directories exist — don't confuse them:
 - **Pantheon (current multi-agent system):** persona-routed theorists + sibling red-team-disprover + statistical-audit gate + lead-pursuit evaluator. Live state in `MEMORY.md` under "Project (current state)" — read those for what's actually running. Two cycle loops exist (`controller.run` and `run_controller.do_run`); any phase addition must patch **both**.
 - **AGENTS.md** (repo root) — Codex operating instructions. Codex does debugging/hardening as an independent auditor. Hard constraints: free text never drives control flow, worker scores never trusted, timeout means inconclusive. Autonomous fix scope: off-by-one, resume bugs, weak tests, misleading docs. Caution areas: kernel constants, Bean logic, elimination semantics. Treats prior Claude conclusions as hypotheses, not facts.
 - **Historical reference:** `archive/legacy_harness/`, `archive/session_reports/`, `docs/history/`, [`reports/final_synthesis.md`](reports/final_synthesis.md) (HISTORICAL SNAPSHOT).
-
----
-
-## Kryptos project context
-- Primary objective: detect recurring, evidence-backed visual anomalies or
-  structural clues in Kryptos-related image corpora without overcalling
-  artifacts.
-- Maintain repo-relative paths in prompts, scripts, and reports.
-- Treat chart images as registered document comparisons when possible.
-- Treat physical surface imagery separately from document scans.
-- Project artifacts should be written under `analysis_runs/` unless a task says
-  otherwise.
-- Stable confirmed findings belong in project records, not only in agent memory.
 
 ---
 
