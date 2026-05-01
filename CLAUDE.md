@@ -47,7 +47,7 @@ CLAUDE.md is **operational doctrine only**: how to work, where truth lives, how 
 
 Historical strategy snapshots live in `docs/history/` and `reports/final_synthesis.md` (both banner-labelled HISTORICAL SNAPSHOT). Retired research notes live in `memory/retired/`. Do not cite either as current doctrine.
 
-**Posture as of 2026-04-30:** Real-K4 attack work is **paused** pending evidence-gap closure (see `docs/REAL_K4_CURRENT_POSITION.md`). Active work runs on synthetic K4Bench challenges, not the real ciphertext. Verify current posture in MEMORY.md before proposing real-K4 compute.
+**Posture as of 2026-05-01:** Real-K4 attack work is **active**. Per Colin's directive, pursue any path with non-zero chance of solve, including infinitesimally-small-probability swings. Evidence-gap closure (`docs/REAL_K4_EVIDENCE_GAP_REGISTER.md`) and synthetic K4Bench calibration remain open in parallel; they are not gates.
 
 ---
 
