@@ -34,6 +34,7 @@ class TheoryStatus(str, Enum):
     COMPLETED = "completed"        # experiment finished, outcome recorded
     ELIMINATED = "eliminated"      # conclusively disproved
     PROMISING = "promising"        # partial signal, warrants follow-up
+    ERROR = "error"                # worker errored / transport failed; not a real test
     SUPERSEDED = "superseded"      # replaced by a more refined theory
     WITHDRAWN = "withdrawn"        # manually removed from consideration
 

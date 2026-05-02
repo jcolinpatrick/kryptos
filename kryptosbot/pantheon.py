@@ -598,6 +598,25 @@ _WORKER_MODE_PREFACE = """\
 #   • Write scratch files only to the directory specified in the user
 #     prompt. NEVER to scripts/, tests/, or src/.
 #
+# COMPUTE EFFICIENCY (added 2026-04-30 after live-run audit):
+# This host has ~28 vCPUs. The CLAUDE.md compute policy is explicit:
+# "For CPU-bound, safely parallelizable workloads, aggressive
+# multi-core execution is the DEFAULT, not an optional enhancement."
+# When you write Python that sweeps configurations:
+#
+#   • If your sweep is >= 10,000 configurations OR you expect runtime
+#     >= 60 seconds on a single core, use ``multiprocessing.Pool`` with
+#     ``max(1, cpu_count() - 2)`` workers. The audit observed legacy
+#     workers running ~6,000 cfg/sec single-threaded on 2.54M-config
+#     sweeps; multiprocessing makes that ~150,000+ cfg/sec.
+#   • Pickle-safe: define worker functions at module top level (not
+#     nested), keep arguments to JSON-serializable types where possible.
+#   • For very small sweeps (<10K configs, <30s runtime) single-threaded
+#     is fine — multiprocessing overhead exceeds the speedup.
+#   • Don't rebuild what already exists. The DSL dispatcher
+#     (kryptosbot/job_dispatcher.py) and ``run_attack.py`` already
+#     handle multi-core dispatch for declarative sweeps.
+#
 # ESCALATION NOTE:
 # You are NOT the controller. You execute one test and report one
 # structured result. Do not propose follow-up hypotheses, do not
@@ -630,6 +649,24 @@ NON_AGENT_FILENAMES = frozenset({
     "MIGRATION.md",
     "README.md",
 })
+
+_PROVENANCE_GUARDRAIL = """# Project Provenance Guardrail
+
+If any persona text below conflicts with current `claim_policy.py`,
+`claims_registry.py`, or `EPISTEMIC_PROVENANCE.md`, the current policy
+wins. Bean-reported or statistical anomalies are prompt context/ranking
+features only unless a policy gate explicitly allows stronger use.
+Retired claims, including the historical null-palette claim
+`{B,G,I,K,O,W,Z}`, must not be revived, used as hard constraints, or
+treated as "must explain" requirements without formal rehabilitation.
+Files under `.claude/agent-memory/` and generated skill-eval outputs are
+archival evidence only; they cannot override the current claims registry
+or provenance policy when constructing live prompts."""
+
+
+def _guarded_agent_body(body: str) -> str:
+    """Prepend live provenance policy to loaded agent prompt text."""
+    return f"{_PROVENANCE_GUARDRAIL}\n\n{body.strip()}"
 
 
 @dataclass
@@ -666,8 +703,8 @@ class AgentSpec:
         """
         if include_description:
             header = f"# Role: {self.name}\n\n{self.description.strip()}\n\n---\n\n"
-            return header + self.body.strip()
-        return self.body.strip()
+            return header + _guarded_agent_body(self.body)
+        return _guarded_agent_body(self.body)
 
     def theorist_system_prompt(self) -> str:
         """
@@ -698,7 +735,7 @@ class AgentSpec:
         """
         header = _THEORIST_MODE_PREFACE.format(agent_name=self.name)
         footer = _THEORIST_MODE_REMINDER
-        return f"{header}\n\n{self.body.strip()}\n\n{footer}"
+        return f"{header}\n\n{_guarded_agent_body(self.body)}\n\n{footer}"
 
     def redteam_precheck_system_prompt(self) -> str:
         """
@@ -723,7 +760,7 @@ class AgentSpec:
         """
         header = _REDTEAM_PRECHECK_PREFACE.format(agent_name=self.name)
         footer = _REDTEAM_PRECHECK_REMINDER
-        return f"{header}\n\n{self.body.strip()}\n\n{footer}"
+        return f"{header}\n\n{_guarded_agent_body(self.body)}\n\n{footer}"
 
     def worker_system_prompt(self) -> str:
         """
@@ -760,7 +797,7 @@ class AgentSpec:
         """
         header = _WORKER_MODE_PREFACE.format(agent_name=self.name)
         footer = _WORKER_MODE_REMINDER
-        return f"{header}\n\n{self.body.strip()}\n\n{footer}"
+        return f"{header}\n\n{_guarded_agent_body(self.body)}\n\n{footer}"
 
     def stat_audit_system_prompt(self) -> str:
         """
@@ -779,7 +816,7 @@ class AgentSpec:
         """
         header = _STAT_AUDIT_PREFACE.format(agent_name=self.name)
         footer = _STAT_AUDIT_REMINDER
-        return f"{header}\n\n{self.body.strip()}\n\n{footer}"
+        return f"{header}\n\n{_guarded_agent_body(self.body)}\n\n{footer}"
 
     def synthesis_system_prompt(self) -> str:
         """
@@ -794,7 +831,7 @@ class AgentSpec:
         """
         header = _SYNTHESIS_PREFACE.format(agent_name=self.name)
         footer = _SYNTHESIS_REMINDER
-        return f"{header}\n\n{self.body.strip()}\n\n{footer}"
+        return f"{header}\n\n{_guarded_agent_body(self.body)}\n\n{footer}"
 
     def pursuit_system_prompt(self) -> str:
         """
@@ -811,7 +848,7 @@ class AgentSpec:
         """
         header = _PURSUIT_PREFACE.format(agent_name=self.name)
         footer = _PURSUIT_REMINDER
-        return f"{header}\n\n{self.body.strip()}\n\n{footer}"
+        return f"{header}\n\n{_guarded_agent_body(self.body)}\n\n{footer}"
 
 
 # ---------------------------------------------------------------------------

@@ -104,6 +104,8 @@ def _render_prompt_claim(claim_id: str) -> str:
 
 _PROMPT_PERIODIC_POLY = _render_prompt_claim("periodic_poly_eliminated_h1")
 _PROMPT_PURE_TRANSPOSITION = _render_prompt_claim("pure_transposition_impossible")
+_PROMPT_BEAN_MINOR_DIFFS = _render_prompt_claim("bean_minor_diffs")
+_PROMPT_STEHLE_DELTA5 = _render_prompt_claim("stehle_delta5")
 
 K4_SYSTEM_PROMPT = f"""You are an expert cryptanalyst solving Kryptos K4, the last unsolved section of the CIA sculpture. Your role is to propose novel, testable hypotheses about the encryption method.
 
@@ -187,16 +189,20 @@ NOT assume a project anomaly is a hard constraint unless the prompt says so.
 5. WIDTH-13 = 8 ROWS matches "8 lines" from Sanborn's legal pad. Width-14 has
    both cribs starting at same column. Both worth exploring with non-standard paths.
 
-## Bean 2021 Statistical Insights (Context, Not Hard Constraints On Product Ciphers)
+## Bean 2021 Statistical Insights (Soft Context, Not Constraints)
 
-Bean's paper analyzed the DIRECT CT↔PT relationship and found:
-- Minor differences (p≈1/5520): KRYPTOS letters map close in alphabet. Suggests near-standard cipher alphabet.
-- One-to-one substitution evidence: CT letters for same PT are close (mean 3.6, 10/13 < 5).
-- Width-21 bigram repeats (p≈1/6750). Reversed-KA mod-5 pattern (p≈1/1470).
-- Stehle Δ4=5 constant-difference property in DIAWINFBN segment — UNTESTED in combination.
+These are direct CT↔PT crib-position observations under H1-style
+alignment assumptions. They may guide ranking or bounded tests, but they
+are not hard constraints, must-explain requirements, or elimination bases.
 
-CRITICAL: Bean analyzed the outer (substitution) layer. His stats are about the CT↔PT mapping
-AFTER transposition. They constrain the substitution layer, not the transposition layer.
+- {_PROMPT_BEAN_MINOR_DIFFS}
+- {_PROMPT_STEHLE_DELTA5}
+- Repeated-plaintext-letter CT-distance observations remain reported or
+  descriptive unless a specific statistic and correction family are
+  pre-registered.
+
+CRITICAL: Do not claim these statistics constrain a hidden product-cipher
+layer unless the tested mechanism derives that implication explicitly.
 
 ## Key Constants
 

@@ -14,7 +14,7 @@ def test_resolve_anomaly_display_text_adds_provenance_badges():
     assert _resolve_anomaly_display_text({
         "title": "Minor crib diffs",
         "claim_id": "bean_minor_diffs",
-    }).endswith("[Bean-reported, not project-rerun]")
+    }).endswith("[project-verified anomaly, ranking feature]")
 
     assert _resolve_anomaly_display_text({
         "title": "Width-21 bigrams",
@@ -86,7 +86,7 @@ def test_print_landscape_shows_counts_and_badged_anomalies(capsys):
 
     out = capsys.readouterr().out
     assert "Prompt anomalies (2 active / 3 registry-open)" in out
-    assert "Minor crib diffs [Bean-reported, not project-rerun]" in out
+    assert "Minor crib diffs [project-verified anomaly, ranking feature]" in out
     assert "Width-21 bigrams [project-verified anomaly, ranking feature]" in out
     assert "unaddressed" in out
 

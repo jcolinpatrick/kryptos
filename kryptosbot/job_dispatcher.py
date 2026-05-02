@@ -587,9 +587,21 @@ def _keyword_to_key_ints(
     return [idx_table[ord(c) - 65] for c in keyword]
 
 
+def _translation_text_length(text_length: Optional[int]) -> int:
+    """Return the active text length for permutation-producing translators."""
+    if text_length is None:
+        from kryptos.kernel.constants import CT_LEN
+        return CT_LEN
+    if not isinstance(text_length, int) or isinstance(text_length, bool) or text_length <= 0:
+        raise DispatcherError(f"text_length must be a positive int; got {text_length!r}")
+    return text_length
+
+
 def _build_pipeline_config(
     spec: HypothesisSpec,
     bindings: tuple[tuple[str, Any], ...],
+    *,
+    text_length: Optional[int] = None,
 ) -> dict[str, Any]:
     """Translate one parameter binding across the pipeline into a
     serializable PipelineConfig dict.
@@ -612,7 +624,7 @@ def _build_pipeline_config(
     steps: list[dict[str, Any]] = []
     for i, layer in enumerate(spec.pipeline):
         binding = per_layer.get(i, {})
-        step = _translate_layer(layer, binding)
+        step = _translate_layer(layer, binding, text_length=text_length)
         steps.append(step)
 
     return {
@@ -622,7 +634,12 @@ def _build_pipeline_config(
     }
 
 
-def _translate_layer(layer: CipherLayer, binding: dict[str, Any]) -> dict[str, Any]:
+def _translate_layer(
+    layer: CipherLayer,
+    binding: dict[str, Any],
+    *,
+    text_length: Optional[int] = None,
+) -> dict[str, Any]:
     """Translate one CipherLayer + its param binding into a
     serializable TransformConfig dict (dict form because multiprocessing
     needs pickleable step lists).
@@ -630,6 +647,7 @@ def _translate_layer(layer: CipherLayer, binding: dict[str, Any]) -> dict[str, A
     Raises ``DispatcherError`` on unsupported kinds.
     """
     kind = layer.kind
+    CT_LEN = _translation_text_length(text_length)
     if kind == "identity":
         return {"type": "identity", "params": {}}
 
@@ -681,7 +699,6 @@ def _translate_layer(layer: CipherLayer, binding: dict[str, Any]) -> dict[str, A
                 f"columnar col_order {col_order} is not a permutation of [0, {width})"
             )
         # Build the full-text columnar permutation via the kernel helper.
-        from kryptos.kernel.constants import CT_LEN
         from kryptos.kernel.transforms.transposition import columnar_perm
         perm = columnar_perm(width, list(col_order), CT_LEN)
         return {
@@ -831,7 +848,6 @@ def _translate_layer(layer: CipherLayer, binding: dict[str, Any]) -> dict[str, A
                 f"grille hole_mask must be list/tuple; "
                 f"got {type(mask_raw).__name__}"
             )
-        from kryptos.kernel.constants import CT_LEN
         from kryptos.kernel.transforms.grille import validate_grille_mask
         errors = validate_grille_mask(mask_raw, CT_LEN)
         if errors:
@@ -854,7 +870,6 @@ def _translate_layer(layer: CipherLayer, binding: dict[str, Any]) -> dict[str, A
             raise DispatcherError(
                 f"rail_fence layer requires int 'depth' >= 2; got {depth!r}"
             )
-        from kryptos.kernel.constants import CT_LEN
         from kryptos.kernel.transforms.transposition import rail_fence_perm
         if depth >= CT_LEN:
             raise DispatcherError(
@@ -881,7 +896,6 @@ def _translate_layer(layer: CipherLayer, binding: dict[str, Any]) -> dict[str, A
                 f"myszkowski layer requires str 'keyword' with len >= 2; "
                 f"got {keyword!r}"
             )
-        from kryptos.kernel.constants import CT_LEN
         from kryptos.kernel.transforms.transposition import myszkowski_perm
         perm = myszkowski_perm(keyword.upper(), CT_LEN)
         return {
@@ -905,7 +919,9 @@ def _translate_layer(layer: CipherLayer, binding: dict[str, Any]) -> dict[str, A
         #                           — this variant is the natural anchor
         #                           for any serpentine-Vigenère hypothesis.
         #   variant="spiral"      — outside-in spiral. Takes optional
-        #                           'clockwise' bool.
+        #                           'clockwise' bool and 'start_corner'
+        #                           ("top_left" default, "top_right",
+        #                           "bottom_right", "bottom_left").
         #   variant="diagonal"    — LESSON-016: diagonal grid-route.
         #                           Takes axis ("main"|"anti"),
         #                           order ("forward"|"reverse"),
@@ -927,7 +943,6 @@ def _translate_layer(layer: CipherLayer, binding: dict[str, Any]) -> dict[str, A
         # rows/cols are inferred from width and CT_LEN. Translation
         # branches early so the rows/cols validation below applies
         # only to the row-major variants.
-        from kryptos.kernel.constants import CT_LEN
         if variant == "diagonal_canonical":
             width = binding.get("width")
             if not (isinstance(width, int) and width >= 1):
@@ -976,7 +991,22 @@ def _translate_layer(layer: CipherLayer, binding: dict[str, Any]) -> dict[str, A
         elif variant == "spiral":
             from kryptos.kernel.transforms.transposition import spiral_perm
             clockwise = bool(binding.get("clockwise", True))
-            perm = spiral_perm(rows, cols, CT_LEN, clockwise=clockwise)
+            start_corner = binding.get("start_corner", "top_left")
+            if start_corner not in (
+                "top_left", "top_right", "bottom_right", "bottom_left",
+            ):
+                raise DispatcherError(
+                    f"route variant='spiral' requires start_corner in "
+                    f"{{'top_left', 'top_right', 'bottom_right', "
+                    f"'bottom_left'}}; got {start_corner!r}"
+                )
+            perm = spiral_perm(
+                rows,
+                cols,
+                CT_LEN,
+                clockwise=clockwise,
+                start_corner=start_corner,
+            )
         else:  # variant == "diagonal" — LESSON-016 / LESSON-020
             # Validate axis / order / start_edge / cell_order with
             # explicit whitelists. Fail closed: unknown values raise
@@ -1067,7 +1097,6 @@ def _translate_layer(layer: CipherLayer, binding: dict[str, Any]) -> dict[str, A
                 f"reverse_blocks layer requires block_mode in "
                 f"{{'reverse_partial', 'truncate'}}; got {block_mode!r}"
             )
-        from kryptos.kernel.constants import CT_LEN
         if block_size > CT_LEN:
             raise DispatcherError(
                 f"reverse_blocks block_size={block_size} exceeds "
@@ -1131,7 +1160,6 @@ def _translate_layer(layer: CipherLayer, binding: dict[str, Any]) -> dict[str, A
             raise DispatcherError(
                 f"skip_route layer requires int 'offset'; got {offset!r}"
             )
-        from kryptos.kernel.constants import CT_LEN
         if not 1 <= step < CT_LEN:
             raise DispatcherError(
                 f"skip_route step={step} must be in "
@@ -1196,7 +1224,6 @@ def _translate_layer(layer: CipherLayer, binding: dict[str, Any]) -> dict[str, A
                 f"route_boustrophedon layer requires int 'width'; "
                 f"got {width!r}"
             )
-        from kryptos.kernel.constants import CT_LEN
         if not 2 <= width < CT_LEN:
             raise DispatcherError(
                 f"route_boustrophedon width={width} must be in "
@@ -1257,7 +1284,6 @@ def _translate_layer(layer: CipherLayer, binding: dict[str, Any]) -> dict[str, A
             raise DispatcherError(
                 f"row_reverse layer requires int 'width'; got {width!r}"
             )
-        from kryptos.kernel.constants import CT_LEN
         if not 2 <= width <= CT_LEN:
             raise DispatcherError(
                 f"row_reverse width={width} must be in [2, {CT_LEN}]; "
@@ -1484,7 +1510,12 @@ def _config_id(spec_hash: str, bindings: tuple[tuple[str, Any], ...]) -> str:
     return f"{spec_hash}_" + "|".join(parts)
 
 
-def _universe_hash(spec_hash: str, config_ids: list[str]) -> str:
+def _universe_hash(
+    spec_hash: str,
+    config_ids: list[str],
+    *,
+    run_context_hash: str = "",
+) -> str:
     """Deterministic hash over the full tested universe.
 
     Folds config IDs in insertion order (they come from deterministic
@@ -1492,10 +1523,170 @@ def _universe_hash(spec_hash: str, config_ids: list[str]) -> str:
     universe_hash. Used by exhaustion-log matching.
     """
     payload = json.dumps(
-        {"spec_hash": spec_hash, "config_ids": sorted(config_ids)},
+        {
+            "spec_hash": spec_hash,
+            "config_ids": sorted(config_ids),
+            "run_context_hash": run_context_hash,
+        },
         separators=(",", ":"),
     )
     return hashlib.sha256(payload.encode()).hexdigest()[:16]
+
+
+def _challenge_context_hash(
+    ciphertext: Optional[str],
+    crib_dict: Optional[dict[int, str]],
+) -> str:
+    """Hash challenge-only inputs so non-K4 universes do not alias real K4."""
+    if ciphertext is None and crib_dict is None:
+        return ""
+    payload = json.dumps(
+        {
+            "challenge_ciphertext_sha256": hashlib.sha256((ciphertext or "").encode()).hexdigest(),
+            "challenge_length": len(ciphertext or ""),
+            "challenge_cribs": sorted((crib_dict or {}).items()),
+        },
+        sort_keys=True,
+        separators=(",", ":"),
+    )
+    return hashlib.sha256(payload.encode()).hexdigest()[:16]
+
+
+# Additive cipher variants used to infer Bean status from a candidate
+# plaintext. This mirrors the contract-boundary verifier: dispatcher
+# artifacts are not trusted for control flow, but they should still carry
+# the kernel-verifiable Bean signal when the candidate implies one.
+_BEAN_VARIANT_DERIVERS: tuple[tuple[str, Callable[[int, int], int]], ...] = (
+    ("vigenere",         lambda c, p: (c - p) % 26),
+    ("beaufort",         lambda c, p: (c + p) % 26),
+    ("variant_beaufort", lambda c, p: (p - c) % 26),
+)
+
+
+def _candidate_bean_status(ct: str, pt: str) -> tuple[bool, Optional[str]]:
+    """Return Bean PASS status implied by ``ct``/``pt`` under additive variants.
+
+    The aggregate scorer intentionally does not guess the cipher variant.
+    For dispatcher audit artifacts, however, a candidate plaintext plus CT
+    determines a keystream under each additive convention. Accept Bean PASS
+    only when the kernel constraint verifier accepts one of those exact
+    keystreams.
+    """
+    try:
+        from kryptos.kernel.constraints.bean import verify_bean_simple
+        from kryptos.kernel.text import text_to_nums
+
+        ct_nums = text_to_nums(ct)
+        pt_nums = text_to_nums(pt)
+        for variant_name, derive in _BEAN_VARIANT_DERIVERS:
+            keystream = [derive(c, p) for c, p in zip(ct_nums, pt_nums)]
+            if verify_bean_simple(keystream):
+                return (True, variant_name)
+    except Exception:
+        logger.debug("Bean status inference failed for dispatcher candidate", exc_info=True)
+    return (False, None)
+
+
+def _score_known_cribs(candidate_pt: str, crib_dict: dict[int, str]) -> int:
+    """Score candidate text against an explicit crib dictionary.
+
+    This is used only for dispatcher challenge mode, where the caller
+    supplies a synthetic CT and crib registry. The default real-K4 path
+    still uses the canonical kernel scorer.
+    """
+    score = 0
+    for pos, expected in crib_dict.items():
+        if 0 <= pos < len(candidate_pt) and candidate_pt[pos] == expected:
+            score += 1
+    return score
+
+
+def _validate_challenge_inputs(
+    ciphertext: Optional[str],
+    crib_dict: Optional[dict[int, str]],
+) -> tuple[Optional[str], Optional[dict[int, str]]]:
+    """Validate optional dispatcher challenge-mode inputs.
+
+    Challenge mode supplies an arbitrary uppercase A-Z ciphertext and an
+    explicit crib registry. Permutation-producing translators are parameterized
+    by this ciphertext length, so non-K4 known-answer fixtures can exercise the
+    same dispatcher path as real K4 candidates.
+    """
+    if ciphertext is None and crib_dict is None:
+        return (None, None)
+    if not isinstance(ciphertext, str) or not ciphertext:
+        raise DispatcherError("challenge ciphertext must be a non-empty A-Z string")
+    if not ciphertext.isalpha() or not ciphertext.isupper():
+        raise DispatcherError("challenge ciphertext must contain uppercase A-Z letters only")
+    if not isinstance(crib_dict, dict) or not crib_dict:
+        raise DispatcherError("challenge crib_dict must be a non-empty dict[int, str]")
+    normalized: dict[int, str] = {}
+    for raw_pos, raw_ch in crib_dict.items():
+        if not isinstance(raw_pos, int) or isinstance(raw_pos, bool):
+            raise DispatcherError(f"challenge crib position {raw_pos!r} is not an int")
+        if not 0 <= raw_pos < len(ciphertext):
+            raise DispatcherError(
+                f"challenge crib position {raw_pos} outside ciphertext length {len(ciphertext)}"
+            )
+        if not isinstance(raw_ch, str) or len(raw_ch) != 1 or raw_ch not in "ABCDEFGHIJKLMNOPQRSTUVWXYZ":
+            raise DispatcherError(
+                f"challenge crib at position {raw_pos} must be one uppercase A-Z character"
+            )
+        normalized[raw_pos] = raw_ch
+    return (ciphertext, normalized)
+
+
+def _matched_null_family_from_kinds(kinds: list[str]) -> str:
+    """Map dispatcher pipeline kinds to a calibrated matched-null family."""
+    if len(kinds) == 1:
+        k = kinds[0]
+        if k == "columnar":
+            return "columnar_single"
+        if k in ("beaufort", "variant_beaufort", "vigenere"):
+            return k
+        return ""
+    if len(kinds) == 2 and kinds[0] == "columnar" and kinds[1] == "columnar":
+        return "columnar_double"
+    return ""
+
+
+def _annotate_best_candidate_p_values(
+    *,
+    best: Optional[dict[str, Any]],
+    spec: HypothesisSpec,
+    n_tests: int,
+    universe_hash: str,
+    challenge_mode: bool,
+) -> Optional[float]:
+    """Populate p-value annotations on the best candidate when meaningful."""
+    if best is None or challenge_mode:
+        return None
+    try:
+        from .null_baselines import family_wise_p_value, p_value_for_alert
+
+        family = _matched_null_family_from_kinds([layer.kind for layer in spec.pipeline])
+        p, status = p_value_for_alert(
+            str(best.get("candidate_pt", "")),
+            int(best.get("crib_score", 0) or 0),
+            family=family,
+        )
+        best["p_value_status"] = status
+        best["matched_null_family"] = family
+        if p is None:
+            return None
+        correction = family_wise_p_value(
+            p,
+            n_tests=max(1, n_tests),
+            universe_hash=universe_hash,
+        )
+        best["candidate_p_value_vs_null"] = p
+        best["family_wise_p_value_vs_null"] = correction
+        return correction["bonferroni_p_value"]
+    except Exception as exc:
+        logger.warning("Failed to annotate dispatcher p-values: %s", exc)
+        if best is not None:
+            best["p_value_status"] = "error"
+        return None
 
 
 # ─── Worker function (top-level for multiprocessing picklability) ────────────
@@ -1518,8 +1709,11 @@ def _evaluate_one(work_item: dict[str, Any]) -> dict[str, Any]:
 
     config_id = work_item["config_id"]
     pipeline_dict = work_item["pipeline_dict"]
+    challenge_ciphertext = work_item.get("challenge_ciphertext")
+    challenge_crib_dict = work_item.get("challenge_crib_dict")
 
     try:
+        ct = challenge_ciphertext if challenge_ciphertext is not None else CT
         steps = tuple(
             TransformConfig(
                 transform_type=TransformType(s["type"]),
@@ -1534,22 +1728,36 @@ def _evaluate_one(work_item: dict[str, Any]) -> dict[str, Any]:
             direction=pipeline_dict.get("direction", "decrypt"),
         )
         fn = build_pipeline(pipeline)
-        candidate_pt = fn(CT)
-        if len(candidate_pt) != len(CT):
+        candidate_pt = fn(ct)
+        if len(candidate_pt) != len(ct):
             return {
                 "config_id": config_id,
-                "error": f"pipeline output length {len(candidate_pt)} != CT length {len(CT)}",
+                "error": f"pipeline output length {len(candidate_pt)} != CT length {len(ct)}",
             }
-        breakdown = score_candidate(candidate_pt)
+        if challenge_crib_dict is not None:
+            crib_score = _score_known_cribs(candidate_pt, challenge_crib_dict)
+            bean_passed = False
+            bean_variant = None
+            classification = (
+                "challenge_known_answer"
+                if crib_score == len(challenge_crib_dict)
+                else "challenge_crib_mismatch"
+            )
+        else:
+            breakdown = score_candidate(candidate_pt)
+            crib_score = int(breakdown.crib_score)
+            bean_passed, bean_variant = _candidate_bean_status(ct, candidate_pt)
+            classification = getattr(breakdown, "crib_classification", "unknown")
+        from kryptos.kernel.scoring.ngram import get_default_scorer
+        ngram_score = float(get_default_scorer().score_per_char(candidate_pt))
         return {
             "config_id": config_id,
             "candidate_pt": candidate_pt,
-            "crib_score": int(breakdown.crib_score),
-            "bean_passed": bool(breakdown.bean_passed),
-            "ngram_score": float(getattr(breakdown, "ngram_score", 0.0) or 0.0),
-            "classification": getattr(
-                breakdown, "crib_classification", "unknown"
-            ),
+            "crib_score": int(crib_score),
+            "bean_passed": bool(bean_passed),
+            "bean_variant": bean_variant,
+            "ngram_score": ngram_score,
+            "classification": classification,
         }
     except Exception as exc:  # pragma: no cover - defensive
         return {"config_id": config_id, "error": f"{type(exc).__name__}: {exc}"}
@@ -1566,6 +1774,8 @@ def execute(
     exhaustion_log: Optional[dict[str, Any]] = None,
     store_threshold: Optional[int] = None,
     bench_mode: bool = False,
+    challenge_ciphertext: Optional[str] = None,
+    challenge_crib_dict: Optional[dict[int, str]] = None,
 ) -> JobResult:
     """Run a HypothesisSpec end-to-end and return a JobResult.
 
@@ -1586,9 +1796,32 @@ def execute(
                             skipped. All other admissibility checks
                             (validation, translation, cardinality budget)
                             still fire. See ``check_admissibility``.
+        challenge_ciphertext / challenge_crib_dict:
+                            Optional synthetic challenge inputs for
+                            independent known-answer tests. When set,
+                            workers decrypt this CT and score against
+                            these cribs instead of the real-K4 constants.
+                            Permutation translators use len(challenge_ct),
+                            so non-K4 lengths exercise the live dispatcher
+                            path without importing real K4 CT.
     """
     t_wall_start = time.monotonic()
     t_cpu_start = time.process_time()
+    try:
+        challenge_ciphertext, challenge_crib_dict = _validate_challenge_inputs(
+            challenge_ciphertext, challenge_crib_dict,
+        )
+    except DispatcherError as exc:
+        return JobResult(
+            hypothesis_id=spec.hypothesis_id,
+            spec_hash=spec.spec_hash,
+            universe_hash="",
+            admissibility_verdict="rejected",
+            admissibility_reasons=[f"challenge inputs: {exc}"],
+            wall_time_sec=time.monotonic() - t_wall_start,
+            cpu_time_sec=time.process_time() - t_cpu_start,
+            assumption_bundle=list(spec.assumption_bundle),
+        )
 
     # R3-0.5-1: expand any procedural layers before admissibility so the
     # cardinality check sees the real parameter universe. A bad recipe
@@ -1634,6 +1867,8 @@ def execute(
     # Enumerate work items.
     work_items: list[dict[str, Any]] = []
     config_ids: list[str] = []
+    challenge_length = len(challenge_ciphertext) if challenge_ciphertext is not None else None
+    run_context_hash = _challenge_context_hash(challenge_ciphertext, challenge_crib_dict)
     # K4Bench attempt-replay: index from config_id -> bindings so we can
     # recover the parameter binding that produced the best candidate
     # without re-parsing the human-readable config_id string.
@@ -1641,7 +1876,11 @@ def execute(
     for bindings in _enumerate_bindings(spec):
         cfg_id = _config_id(spec.spec_hash, bindings)
         try:
-            pipeline_dict = _build_pipeline_config(spec, bindings)
+            pipeline_dict = _build_pipeline_config(
+                spec,
+                bindings,
+                text_length=challenge_length,
+            )
         except DispatcherError as exc:
             # A translation error makes the whole spec un-executable.
             return JobResult(
@@ -1655,7 +1894,12 @@ def execute(
                 assumption_bundle=list(spec.assumption_bundle),
                 dispatched_dsl_spec=spec.to_dict(),
             )
-        work_items.append({"config_id": cfg_id, "pipeline_dict": pipeline_dict})
+        work_items.append({
+            "config_id": cfg_id,
+            "pipeline_dict": pipeline_dict,
+            "challenge_ciphertext": challenge_ciphertext,
+            "challenge_crib_dict": challenge_crib_dict,
+        })
         config_ids.append(cfg_id)
         bindings_by_config_id[cfg_id] = bindings
 
@@ -1745,14 +1989,28 @@ def execute(
         best_bindings_tuple = bindings_by_config_id[best["config_id"]]
         best_bindings_list = [[k, v] for k, v in best_bindings_tuple]
 
+    universe_hash = _universe_hash(
+        spec.spec_hash,
+        config_ids,
+        run_context_hash=run_context_hash,
+    )
+    best_family_p = _annotate_best_candidate_p_values(
+        best=best,
+        spec=spec,
+        n_tests=len(config_ids),
+        universe_hash=universe_hash,
+        challenge_mode=challenge_crib_dict is not None,
+    )
+
     result = JobResult(
         hypothesis_id=spec.hypothesis_id,
         spec_hash=spec.spec_hash,
-        universe_hash=_universe_hash(spec.spec_hash, config_ids),
+        universe_hash=universe_hash,
         total_tested=len(results) - total_errors,
         total_stored=len(stored),
         best_candidate=best,
         best_score=float(best["crib_score"]) if best and "crib_score" in best else 0.0,
+        best_p_value_vs_null=best_family_p,
         information_gain_bits_realized=0.0,  # Phase 6 populates
         wall_time_sec=wall_time,
         cpu_time_sec=cpu_time,

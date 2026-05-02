@@ -1367,10 +1367,34 @@ class ResearchController:
                     logger.exception("Lead pursuit raised (continuing)")
                     cb.emit("on_cycle_error", self.state.cycle_number, exc)
 
-                # Step 6: Persist state
+                # Step 6: Persist state.
+                # Wrapped in its own try so a transient SQLite I/O glitch
+                # (lock contention, WAL checkpoint conflict, etc.) does
+                # NOT propagate up and halt the cycle. Live-run audit
+                # 2026-04-30 found controller_state.cycle_number stuck
+                # at 197 even though the run reached 250, suggesting
+                # silent persistence failures somewhere in cycles 198-250.
+                # With this guard, persistence failures get logged and
+                # the run continues; cycle counts in theories/experiments
+                # tables remain authoritative. The final post-loop save
+                # below also writes the last-known state.
                 self._update_state_counts()
-                self.ledger.save_controller_state(self.state)
-                self.ledger.refresh_family_stats()
+                try:
+                    self.ledger.save_controller_state(self.state)
+                except Exception as exc:  # noqa: BLE001
+                    logger.exception(
+                        "save_controller_state failed at cycle %d "
+                        "(continuing): %s",
+                        self.state.cycle_number, exc,
+                    )
+                try:
+                    self.ledger.refresh_family_stats()
+                except Exception as exc:  # noqa: BLE001
+                    logger.exception(
+                        "refresh_family_stats failed at cycle %d "
+                        "(continuing): %s",
+                        self.state.cycle_number, exc,
+                    )
 
                 # Step 6b: Day 5 — end-of-cycle results synthesis. Produces
                 # a structured CycleSynthesis written to self._last_synthesis
@@ -1386,8 +1410,17 @@ class ResearchController:
 
             except Exception as exc:
                 logger.exception("Error in cycle %d", self.state.cycle_number)
-                # Persist state even on error so we don't lose progress
-                self.ledger.save_controller_state(self.state)
+                # Persist state even on error so we don't lose progress.
+                # Same swallow-and-log treatment as the success path: a
+                # save failure here previously raised and bubbled up.
+                try:
+                    self.ledger.save_controller_state(self.state)
+                except Exception as save_exc:  # noqa: BLE001
+                    logger.exception(
+                        "save_controller_state failed in error handler "
+                        "at cycle %d (continuing): %s",
+                        self.state.cycle_number, save_exc,
+                    )
                 cb.emit("on_cycle_error", self.state.cycle_number, exc)
 
             # Campaign-A hardening (2026-04-22): break the cycle loop
@@ -1403,6 +1436,23 @@ class ResearchController:
                 )
                 cb.emit("on_run_halt", self.state.halt_reason_hardening)
                 break
+
+        # Final post-loop save. Belt-and-suspenders against the audit
+        # 2026-04-30 finding where cycle_number got stuck at 197 with
+        # the run reaching 250 — a single persistence write at the end
+        # ensures the run-end state always lands in the ledger,
+        # regardless of whether mid-cycle saves intermittently failed.
+        try:
+            self._update_state_counts()
+            self.ledger.save_controller_state(self.state)
+            logger.info(
+                "Final controller_state persisted: cycle_number=%d",
+                self.state.cycle_number,
+            )
+        except Exception as final_exc:  # noqa: BLE001
+            logger.exception(
+                "Final save_controller_state failed: %s", final_exc,
+            )
 
     # ------------------------------------------------------------------
     # Step 1: Assess landscape
@@ -2276,13 +2326,31 @@ class ResearchController:
             # borderline cases too aggressively, the correct response is
             # for it to use residual_caution for those cases, not for the
             # controller to hedge on duplicate_family.
+            # 2026-04-30 extension: same pattern for unbounded_search and
+            # exhausted_source_material. Live-run audit (cycles 176-250)
+            # found 7-of-8 CONCERNED theories per cycle dispatched anyway
+            # with these risk values. The audit memo explicitly named
+            # "v7 is the 4th cipher pivot against the same fixed
+            # CT-perturbation list — needs a hard stop after this round"
+            # and the controller dispatched CT-v7 anyway. The risk
+            # taxonomy defines all three of these as logical rejections,
+            # not borderline cases, so all three should escalate. This
+            # leaves residual_caution as the only CONCERNED-with-risk
+            # value that still dispatches, matching the agent's intended
+            # semantics for "I looked and found no structural problem."
+            HARD_GATE_RISKS = {
+                "duplicate_family",
+                "unbounded_search",
+                "exhausted_source_material",
+            }
+            risk_value = (verdict.search_space_risk or "none")
             if (
                 verdict.verdict == "concerned"
-                and (verdict.search_space_risk or "none") == "duplicate_family"
+                and risk_value in HARD_GATE_RISKS
             ):
                 logger.warning(
-                    "  ↑ ESCALATED concerned→reject by duplicate_family "
-                    "policy: %s — %s",
+                    "  ↑ ESCALATED concerned→reject by %s policy: %s — %s",
+                    risk_value,
                     theory.title[:60],
                     verdict.reasons[0] if verdict.reasons else "no reason given",
                 )
@@ -2290,8 +2358,8 @@ class ResearchController:
                 if theory.critic_verdict is not None:
                     theory.critic_verdict.reasons = list(theory.critic_verdict.reasons)
                     theory.critic_verdict.reasons.append(
-                        "controller escalated concerned→reject on "
-                        "search_space_risk=duplicate_family"
+                        f"controller escalated concerned→reject on "
+                        f"search_space_risk={risk_value}"
                     )
                 self.ledger.upsert_theory(theory)
                 continue
@@ -3838,6 +3906,14 @@ Output ONLY the JSON array. No commentary."""
                     status=WorkerStatus.TIMEOUT,
                     error=f"Timed out after {self.config.worker_timeout_minutes} minutes",
                 )
+                # Record the experiment row with completed_at filled in
+                # so downstream "active workers" telemetry doesn't see
+                # this as still-in-flight, and theory_ledger.upsert_theory
+                # doesn't audit-annotate as "no experiment trail".
+                # See feedback_silent_failure_hunter doctrine.
+                exp.completed_at = _now_iso()
+                exp.result = timeout_contract
+                self._record_experiment_and_link(exp)
                 # Even on timeout, clean up any artifacts the worker dropped
                 # before the timer fired.
                 self._cleanup_worker_artifacts(theory, timeout_contract)
@@ -3850,6 +3926,13 @@ Output ONLY the JSON array. No commentary."""
                     status=WorkerStatus.ERROR,
                     error=str(exc),
                 )
+                # Same as the timeout branch: record the experiment so
+                # the SDK transport silent-fail path does not leak rows
+                # with empty completed_at and does not require the
+                # ledger's audit annotation as a fallback.
+                exp.completed_at = _now_iso()
+                exp.result = exc_contract
+                self._record_experiment_and_link(exp)
                 # Even on exception, clean up any artifacts the worker
                 # dropped before the exception.
                 self._cleanup_worker_artifacts(theory, exc_contract)
@@ -4398,8 +4481,14 @@ field empty. The controller will record the verification gap and your status
                 status_map = {
                     WorkerStatus.DISPROVED: TheoryStatus.ELIMINATED,
                     WorkerStatus.INCONCLUSIVE: TheoryStatus.COMPLETED,
-                    WorkerStatus.ERROR: TheoryStatus.COMPLETED,
-                    WorkerStatus.TIMEOUT: TheoryStatus.COMPLETED,
+                    # ERROR / TIMEOUT mean the worker did not produce a
+                    # trustworthy result. Mapping these to COMPLETED
+                    # historically polluted the score-ranking surface
+                    # (see live-run audit 2026-04-30). They now route
+                    # to TheoryStatus.ERROR so downstream queries can
+                    # exclude un-tested theories from completion stats.
+                    WorkerStatus.ERROR: TheoryStatus.ERROR,
+                    WorkerStatus.TIMEOUT: TheoryStatus.ERROR,
                 }
                 new_status = status_map.get(contract.status, TheoryStatus.COMPLETED)
 

@@ -159,17 +159,51 @@ def serpentine_perm(
 
 
 def spiral_perm(
-    rows: int, cols: int, length: int = 97, clockwise: bool = True,
+    rows: int,
+    cols: int,
+    length: int = 97,
+    clockwise: bool = True,
+    *,
+    start_corner: str = "top_left",
 ) -> List[int]:
-    """Spiral reading from outside in."""
+    """Spiral reading from outside in.
+
+    ``start_corner`` defaults to the historical repo behavior:
+    top-left start, moving right for clockwise spirals and down for
+    counter-clockwise spirals.
+    """
     visited = [[False] * cols for _ in range(rows)]
+    starts = {
+        "top_left": (0, 0),
+        "top_right": (0, cols - 1),
+        "bottom_right": (rows - 1, cols - 1),
+        "bottom_left": (rows - 1, 0),
+    }
+    clockwise_dirs = {
+        "top_left": [(0, 1), (1, 0), (0, -1), (-1, 0)],
+        "top_right": [(1, 0), (0, -1), (-1, 0), (0, 1)],
+        "bottom_right": [(0, -1), (-1, 0), (0, 1), (1, 0)],
+        "bottom_left": [(-1, 0), (0, 1), (1, 0), (0, -1)],
+    }
+    counterclockwise_dirs = {
+        "top_left": [(1, 0), (0, 1), (-1, 0), (0, -1)],
+        "top_right": [(0, -1), (1, 0), (0, 1), (-1, 0)],
+        "bottom_right": [(-1, 0), (0, -1), (1, 0), (0, 1)],
+        "bottom_left": [(0, 1), (-1, 0), (0, -1), (1, 0)],
+    }
+    if start_corner not in starts:
+        raise ValueError(
+            "start_corner must be one of "
+            "{'top_left', 'top_right', 'bottom_right', 'bottom_left'}"
+        )
     dirs = (
-        [(0, 1), (1, 0), (0, -1), (-1, 0)]
+        clockwise_dirs[start_corner]
         if clockwise
-        else [(1, 0), (0, 1), (-1, 0), (0, -1)]
+        else counterclockwise_dirs[start_corner]
     )
     perm: list[int] = []
-    r, c, d = 0, 0, 0
+    r, c = starts[start_corner]
+    d = 0
     for _ in range(rows * cols):
         pos = r * cols + c
         if pos < length:

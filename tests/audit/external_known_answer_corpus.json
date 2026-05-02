@@ -1,0 +1,130 @@
+[
+  {
+    "id": "caesar_cipherlab_attack_at_dawn_shift3",
+    "family": "caesar",
+    "plaintext": "ATTACKATDAWN",
+    "ciphertext": "DWWDFNDWGDZQ",
+    "params": {"shift": 3},
+    "source_name": "The Cipher Lab Caesar worked example",
+    "source_url": "https://thecipherlab.org/ciphers/caesar",
+    "source_note": "Externally published Caesar shift-3 example; spaces removed for A-Z dispatcher challenge mode."
+  },
+  {
+    "id": "vigenere_wikipedia_helloworld_key",
+    "family": "vigenere",
+    "plaintext": "HELLOWORLD",
+    "ciphertext": "RIJVSUYVJN",
+    "params": {"keyword": "KEY"},
+    "source_name": "Wikipedia Vigenere cipher tabula recta example",
+    "source_url": "https://en.wikipedia.org/wiki/Vigen%C3%A8re_cipher",
+    "source_note": "Externally published Vigenere example; normalized to uppercase A-Z."
+  },
+  {
+    "id": "beaufort_stanford_fortification_defend_castle",
+    "family": "beaufort",
+    "plaintext": "DEFENDTHEEASTWALLOFTHECASTLE",
+    "ciphertext": "CKMPVCPVWPIWUJOGIUAPVWRIWUUK",
+    "params": {"keyword": "FORTIFICATION"},
+    "source_name": "Stanford CS106AJ Beaufort exam handout",
+    "source_url": "https://web.stanford.edu/class/cs106aj/res/handouts/51-CS106AJ-Final.pdf",
+    "source_note": "Externally published Beaufort example; source formatting includes a leading display space before the keyword, omitted here."
+  },
+  {
+    "id": "atbash_cryptool_crypto",
+    "family": "atbash",
+    "plaintext": "CRYPTO",
+    "ciphertext": "XIBKGL",
+    "params": {},
+    "source_name": "CrypTool Atbash worked example",
+    "source_url": "https://legacy.cryptool.org/en/cto/atbash.html",
+    "source_note": "Externally published Atbash mapping example; normalized to uppercase A-Z."
+  },
+  {
+    "id": "rail_fence_wikipedia_flee_at_once_depth3",
+    "family": "rail_fence",
+    "plaintext": "WEAREDISCOVEREDFLEEATONCE",
+    "ciphertext": "WECRLTEERDSOEEFEAOCAIVDEN",
+    "params": {"depth": 3},
+    "source_name": "Wikipedia transposition cipher rail-fence example",
+    "source_url": "https://en.wikipedia.org/wiki/Transposition_cipher",
+    "source_note": "Externally published rail-fence example; spaces and block grouping removed."
+  },
+  {
+    "id": "rail_fence_wikipedia_run_at_once_depth3",
+    "family": "rail_fence",
+    "plaintext": "WEAREDISCOVEREDRUNATONCE",
+    "ciphertext": "WECRUOERDSOEERNTNEAIVDAC",
+    "params": {"depth": 3},
+    "source_name": "Wikipedia rail fence cipher worked example",
+    "source_url": "https://en.wikipedia.org/wiki/Rail_fence_cipher",
+    "source_note": "Externally published rail-fence example; spaces and block grouping removed."
+  },
+  {
+    "id": "columnar_wikipedia_cipher_thisiswikipedia",
+    "family": "columnar",
+    "plaintext": "THISISWIKIPEDIA",
+    "ciphertext": "TWDIPSIHIIIKASE",
+    "params": {"width": 6, "col_order": [0, 3, 4, 2, 1, 5]},
+    "source_name": "Wikipedia transposition cipher columnar example",
+    "source_url": "https://en.wikipedia.org/wiki/Transposition_cipher",
+    "source_note": "Externally published irregular columnar example for keyword CIPHER; spaces and block grouping removed."
+  },
+  {
+    "id": "myszkowski_wikipedia_tomato_discovered",
+    "family": "myszkowski",
+    "plaintext": "WEAREDISCOVEREDFLEEATONCE",
+    "ciphertext": "ROFOACDTEDSEEEACWEIVRLENE",
+    "params": {"keyword": "TOMATO"},
+    "source_name": "Wikipedia transposition cipher Myszkowski example",
+    "source_url": "https://en.wikipedia.org/wiki/Transposition_cipher",
+    "source_note": "Externally published Myszkowski example; spaces and block grouping removed."
+  },
+  {
+    "id": "route_cryptoit_brighton_spiral_top_right",
+    "family": "route",
+    "plaintext": "BRIGHTONANDHOVE",
+    "ciphertext": "ITAHEVONOGBRHND",
+    "params": {
+      "variant": "spiral",
+      "rows": 5,
+      "cols": 3,
+      "clockwise": true,
+      "start_corner": "top_right"
+    },
+    "source_name": "Crypto-IT route cipher worked example",
+    "source_url": "https://www.crypto-it.net/eng/simple/route-cipher.html",
+    "source_note": "Externally published row-filled route example; reads clockwise inward from the top-right corner."
+  },
+  {
+    "id": "bifid_wikipedia_delastelle_square_flee_at_once",
+    "family": "polybius",
+    "plaintext": "FLEEATONCE",
+    "ciphertext": "UAEOLWRINS",
+    "params": {
+      "square_keyword": "BGWKZQPNDSIOAXEFCLUMTHYVR",
+      "variant": "bifid",
+      "merge": "IJ",
+      "period": 10,
+      "direction": "decrypt"
+    },
+    "source_name": "Wikipedia Bifid cipher operation example",
+    "source_url": "https://en.wikipedia.org/wiki/Bifid_cipher",
+    "source_note": "Externally published Bifid example; square serialized row-major, with I/J merged."
+  },
+  {
+    "id": "quagmire_iii_mountainvista_beneath",
+    "family": "quagmire",
+    "plaintext": "BENEATH",
+    "ciphertext": "THNTCZY",
+    "params": {
+      "period_keyword": "SEARCH",
+      "indicator": "A",
+      "ct_alphabet_keyword": "STRONGCIPHER",
+      "pt_alphabet_keyword": "STRONGCIPHER",
+      "variant": "quagmire_iii"
+    },
+    "source_name": "Mountain Vista Quagmire 3 worked example",
+    "source_url": "https://www.mountainvistasoft.com/cryptoden/index.php/algorithms/quagmire-3.html",
+    "source_note": "Externally published Quagmire III example; normalized to uppercase A-Z."
+  }
+]

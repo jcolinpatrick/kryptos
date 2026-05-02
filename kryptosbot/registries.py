@@ -15,6 +15,7 @@ import hashlib
 from pathlib import Path
 from typing import Any
 
+from .models import _now_iso  # noqa: F401  (used by bootstrap_local_reruns)
 from .models import (
     AnomalyRecord, AnomalyStatus,
     FamilyRecord, FamilyStatus,
@@ -465,15 +466,15 @@ KNOWN_ANOMALIES: list[dict[str, Any]] = [
     },
     {
         "anomaly_id": "stehle_delta5_lag4",
-        "title": "Stehle constant-difference Δ5 at lag 4 (positions 55-63) — cipher fingerprint",
+        "title": "Stehle constant-difference Δ5 at lag 4 (positions 55-63) — local regularity",
         "description": "Every 4th character in carved positions 55-63 (DIAWINFBN) differs by exactly 5 mod 26. "
-                        "Corrected for 712 spacing × difference tests, p ~ 1/642. First noted by Stehle (2000). "
-                        "This is a LOCAL REGULARITY — a fingerprint of whatever key generation or substitution "
-                        "rule operates in this segment. A physical procedure that uses a step of 5 (e.g., "
-                        "a grid with 5 columns, a 5-position offset, or a mod-5 key component) would produce "
-                        "exactly this pattern. Combined with width-21 (21 = 4×5 + 1), this may reveal the "
-                        "grid dimensions of the procedure. This anomaly is a WEAKNESS to exploit, not just "
-                        "a pattern to observe.",
+                        "Codex audit reproduces the post-hoc 712 spacing × difference Bonferroni calculation "
+                        "at p ~ 1/642. First noted by Stehle (2000). "
+                        "This is a LOCAL REGULARITY, not currently a hard cryptanalytic constraint. "
+                        "It can motivate bounded tests involving step-5, mod-5, or width-21 procedures, "
+                        "but no mechanism has yet shown that valid candidates must reproduce or explain "
+                        "the pattern. Use as prompt context or a soft ranking feature only unless a "
+                        "specific hand-executable family derives it as a predicate.",
         "source": "Bean 2021 Section 2.3, citing Stehle (2000)",
         "priority": 2,
         "status": "open",
@@ -1405,11 +1406,20 @@ def bootstrap_local_reruns(
                         f"see logs {', '.join(log_files)}"
                     ),
                 )
+                # bootstrap_local_reruns runs synchronously: by the time
+                # we record the experiment the rerun is already complete,
+                # so completed_at must be filled in. Without this, the row
+                # stays "active" forever and pollutes any "active workers"
+                # telemetry. See the live-run audit 2026-04-30 that
+                # surfaced 8 such leaked rows.
+                _now = _now_iso()
                 ledger.record_experiment(
                     ExperimentRecord(
                         experiment_id=exp_id,
                         hypothesis_id=hypothesis_id,
                         worker_role="local_rerun",
+                        started_at=_now,
+                        completed_at=_now,
                         config={
                             "source": "results/reruns manifest",
                             "target": target,

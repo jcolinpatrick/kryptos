@@ -803,3 +803,72 @@ def test_do_run_snapshots_session_baseline_before_first_cycle(
         f"Expected baseline_eliminated=1, got "
         f"{controller._session_baseline_eliminated}"
     )
+
+
+# ──────────────────────────────────────────────────────────────────────
+# Test H: save_controller_state failure does NOT abort the cycle loop
+# ──────────────────────────────────────────────────────────────────────
+#
+# Added 2026-04-30 after a live-run audit found that
+# controller_state.cycle_number was stuck at 197 even though the run
+# reached cycle 250. The hypothesis is that an intermittent SQLite I/O
+# glitch raised inside save_controller_state and cascaded out of the
+# cycle. Pre-patch: the inner save was wrapped in the cycle's outer
+# try/except, but the except handler ALSO called save_controller_state,
+# which would re-raise and propagate further. Post-patch: each save
+# is wrapped in its own swallow-and-log try, plus a final post-loop
+# save guarantees the run-end state always lands.
+
+def test_save_controller_state_failure_does_not_abort_loop(
+    tmp_path, monkeypatch,
+):
+    """An exception from save_controller_state must be swallowed and
+    the cycle counter must still advance."""
+    from kryptosbot.theory_ledger import TheoryLedger
+
+    project_root = tmp_path / "save_failure"
+    project_root.mkdir(parents=True, exist_ok=True)
+    cfg = _make_config(project_root)
+    cfg.max_cycles = 2
+
+    monkeypatch.setattr(
+        "kryptosbot.controller.safe_query",
+        _make_safe_query_mock(),
+    )
+
+    controller = ResearchController(cfg)
+
+    # Inject a save failure on the FIRST in-cycle save call only.
+    # The post-loop final save still runs and persists state.
+    original_save = controller.ledger.save_controller_state
+    call_count = {"n": 0}
+
+    def flaky_save(state):
+        call_count["n"] += 1
+        if call_count["n"] == 1:
+            raise sqlite3.OperationalError("simulated I/O glitch")
+        original_save(state)
+
+    import sqlite3  # local import: error class only used here
+    controller.ledger.save_controller_state = flaky_save
+
+    asyncio.run(controller.run())
+
+    # Despite the failure, the loop progressed to cycle 2.
+    assert controller.state.cycle_number == 2, (
+        f"Expected loop to complete 2 cycles, got "
+        f"{controller.state.cycle_number}"
+    )
+
+    # Final post-loop save persisted the run-end state.
+    fresh = TheoryLedger(cfg.ledger_db_path)
+    persisted = fresh.load_controller_state()
+    assert persisted.cycle_number == 2, (
+        f"Expected persisted cycle_number=2 from post-loop save, "
+        f"got {persisted.cycle_number}"
+    )
+    # And the flaky save was hit at least once (the swallow path fired).
+    assert call_count["n"] >= 2, (
+        f"Expected save_controller_state to be invoked at least twice "
+        f"(once flaky + final), got {call_count['n']}"
+    )

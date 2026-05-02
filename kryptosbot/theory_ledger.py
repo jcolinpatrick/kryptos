@@ -412,6 +412,7 @@ class TheoryLedger:
             TheoryStatus.COMPLETED,
             TheoryStatus.ELIMINATED,
             TheoryStatus.PROMISING,
+            TheoryStatus.ERROR,
         }
         if theory.status in outcome_statuses:
             with self._connect() as conn:
@@ -548,6 +549,7 @@ class TheoryLedger:
             TheoryStatus.COMPLETED,
             TheoryStatus.ELIMINATED,
             TheoryStatus.PROMISING,
+            TheoryStatus.ERROR,
         }
         if status in outcome_statuses:
             with self._connect() as conn:

@@ -63,10 +63,12 @@ def test_h1_conditional_renders_with_hedge():
     assert "Under H1" in text
 
 
-def test_bean_reported_renders_as_not_rerun():
+def test_bean_minor_diffs_renders_as_soft_project_verified_anomaly():
     claim = CANONICAL_CLAIMS_BY_ID["bean_minor_diffs"]
     text = render_claim_inline(claim)
-    assert "not independently re-derived" in text.lower()
+    assert claim.epistemic_class is EpistemicClass.PROJECT_REVERIFIED_STATISTICAL_ANOMALY
+    assert "project-verified anomaly" in text.lower()
+    assert "not a mandatory constraint" in text.lower()
 
 
 def test_624_renders_as_crib_position_only():

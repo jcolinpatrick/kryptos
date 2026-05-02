@@ -352,7 +352,14 @@ def _register_route() -> None:
             cols = params["cols"]
             if route_type == "spiral":
                 clockwise = params.get("clockwise", True)
-                perm = spiral_perm(rows, cols, length, clockwise)
+                start_corner = params.get("start_corner", "top_left")
+                perm = spiral_perm(
+                    rows,
+                    cols,
+                    length,
+                    clockwise,
+                    start_corner=start_corner,
+                )
             elif route_type == "serpentine":
                 vertical = params.get("vertical", False)
                 perm = serpentine_perm(rows, cols, length, vertical)

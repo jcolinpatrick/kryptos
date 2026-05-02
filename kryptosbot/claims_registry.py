@@ -8,7 +8,8 @@ allowed_downstream_uses, and where relevant a dependency_chain.
 Red-team invariants enforced here:
 - All Bean-derived claims carry assumes_direct_positional_crib_alignment=True.
 - Bean "624" claim explicitly scopes to the 24 crib positions.
-- Bean-reported (not project-rerun) statistics are BEAN_REPORTED_NOT_RERUN.
+- Bean-reported statistics remain BEAN_REPORTED_NOT_RERUN until an audit script
+  independently reproduces the exact statistic and records its scope.
 - Physical anomalies are split into EXISTENCE + INTERPRETATION claims.
 - Retired palette is RETIRED_CLAIM, SUMMARY-only.
 - Periodic-poly elimination is CONDITIONAL_ELIMINATION (direct positional
@@ -435,7 +436,7 @@ CANONICAL_CLAIMS: list[ProvenanceClaim] = [
         tags=["ic", "statistical"],
     ),
 
-    # === BEAN-REPORTED (NOT RE-RUN IN PROJECT) ===================================
+    # === BEAN / REPORTED STATISTICAL CLAIMS ======================================
 
     _pc(
         claim_id="stehle_delta5",
@@ -443,24 +444,26 @@ CANONICAL_CLAIMS: list[ProvenanceClaim] = [
             "Every 4th character in carved positions 55-63 (DIAWINFBN) differs by "
             "exactly 5 mod 26 — a local [5,5,5,5,5] delta sequence."
         ),
-        epistemic_class=EC.BEAN_REPORTED_NOT_RERUN,
+        epistemic_class=EC.PROJECT_REVERIFIED_STATISTICAL_ANOMALY,
         scope_conditions=ScopeConditions(
             independently_project_rerun=True,
-            depends_on_external_author_statistic=True,
+            depends_on_external_author_statistic=False,
             uses_post_hoc_subset_selection=True,
             multiplicity_corrected_in_project=False,
             scope_notes=(
-                "EXISTENCE of the delta sequence is directly verified in project. "
-                "Bean's claimed corrected p ≈ 1/642 (712 spacing×difference tests) "
-                "has NOT been independently re-derived here."
+                "EXISTENCE of the delta sequence and the 712-test Bonferroni "
+                "p≈1/642 calculation are directly reproduced by Codex audit "
+                "2026-05-01. This remains a post-hoc descriptive statistic, "
+                "not a pre-registered cryptanalytic predicate."
             ),
         ),
-        source_basis="Bean 2021 Section 2.3, citing Stehle (2000)",
-        verification_status=VS.EXTERNAL_AUTHOR_REPORTED,
-        reproducibility_status=RS.REPRODUCIBLE_WITH_INSTRUCTIONS,
+        source_basis="Bean 2021 Section 2.3, citing Stehle (2000); scripts/audit/audit_stehle_significance.py",
+        verification_status=VS.PROJECT_VERIFIED,
+        reproducibility_status=RS.REPRODUCIBLE_FROM_CODE,
         caveats=[
             "Existence of the [5,5,5,5,5] delta sequence is verified directly.",
-            "Bean's claimed corrected p ≈ 1/642 has NOT been independently re-derived in this project.",
+            "The p≈1/642 value is reproduced only as a 712-test Bonferroni descriptive calculation.",
+            "This is post-hoc and not a pre-registered cipher-family test.",
             "The pattern is local (9 chars at one position) and its cryptographic interpretation is open.",
         ],
         allowed_downstream_uses=[AU.SUMMARY, AU.RANKING_FEATURE, AU.PROMPT_CONTEXT],
@@ -473,30 +476,41 @@ CANONICAL_CLAIMS: list[ProvenanceClaim] = [
         claim_text=(
             "At the 24 known PT positions, the 10 where PT ∈ {K,R,Y,P,T,O,S} have CT "
             "letters very close in the standard alphabet (sum of distances=21, mean=2.1). "
-            "Bean 2021 reports Monte Carlo p ≈ 1/5520."
+            "Bean 2021 reports Monte Carlo p ≈ 1/5520; Codex audit 2026-05-01 "
+            "reproduces the statistic under a K4-multiset permutation null at "
+            "p≈0.000186."
         ),
-        epistemic_class=EC.BEAN_REPORTED_NOT_RERUN,
+        epistemic_class=EC.PROJECT_REVERIFIED_STATISTICAL_ANOMALY,
         scope_conditions=ScopeConditions(
             assumes_direct_positional_crib_alignment=True,
             applies_only_to_crib_positions=True,
-            depends_on_external_author_statistic=True,
+            independently_project_rerun=True,
+            depends_on_external_author_statistic=False,
             uses_post_hoc_subset_selection=True,
             multiplicity_corrected_in_project=False,
             scope_notes=(
                 "The KRYPTOS-letter subset selection is post-hoc — the subset spells "
-                "the project's name and the K1-K3 keyword."
+                "the project's name and the K1-K3 keyword. Codex audit also reports "
+                "an exact IID p≈4.89e-5; K4-multiset permutation null is closer to "
+                "Bean's reported value."
             ),
         ),
-        source_basis="Bean 2021 Section 2.4 (Materna 2020)",
-        verification_status=VS.EXTERNAL_AUTHOR_REPORTED,
-        reproducibility_status=RS.REPRODUCIBLE_WITH_INSTRUCTIONS,
+        source_basis="Bean 2021 Section 2.4 (Materna 2020); scripts/audit/audit_bean_reported_statistics.py",
+        verification_status=VS.PROJECT_VERIFIED,
+        reproducibility_status=RS.REPRODUCIBLE_FROM_CODE,
         caveats=[
-            "Bean 2021 reports MC p ≈ 1/5520. NOT independently re-derived in project.",
+            "H1-conditional crib-position statistic.",
             "The KRYPTOS-letter subset selection is post-hoc (the subset spells the project's name and the K1-K3 keyword).",
+            "Not a hard constraint or elimination basis; use as soft statistical context only.",
         ],
         allowed_downstream_uses=[AU.SUMMARY, AU.RANKING_FEATURE, AU.PROMPT_CONTEXT],
         related_anomaly_id="bean_minor_diffs",
-        tags=["bean_reported"],
+        last_verified_by="Codex audit 2026-05-01",
+        evidence_links=[
+            "results/audit/bean_reported_statistics.json",
+            "docs/audits/bean_reported_statistics.md",
+        ],
+        tags=["bean_reported", "project_rerun", "statistical"],
     ),
 
     _pc(

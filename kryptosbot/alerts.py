@@ -89,12 +89,22 @@ class AlertEvent:
     #   "matched_family_ungated"— matched-family null consulted, p > gate
     #   "matched_null_miss"     — matched family requested, cache missed,
     #                             fell back to random_text
+    #   "stale_cache"           — cache exists but was built against an
+    #                             older kernel commit
     #   "cache_miss"            — no null cache at all
     #
     # Per R3 §5 halt condition 1, a BREAKTHROUGH alert with status
     # matched_null_miss or cache_miss halts the controller so calibration
     # can be rebuilt before the alert is treated as signal.
     p_value_status: str = ""
+    p_value_null_method: str = ""
+    p_value_null_family: str = ""
+    p_value_null_cache_key: str = ""
+    p_value_null_n_samples: int = 0
+    candidate_p_value_vs_null: Optional[float] = None
+    family_wise_p_value_vs_null: dict[str, Any] = field(default_factory=dict)
+    p_value_sample_floor: float = -1.0
+    universe_hash: str = ""
     # Gate parameterization (brief: raise n_samples + parameterize gate):
     # the gate value actually enforced when this alert was classified.
     # Equals ALERT_P_VALUE_GATE when the null cache's empirical support is
@@ -231,6 +241,99 @@ def _effective_gate_for_family(family: str) -> float:
     return _eg(null, ALERT_P_VALUE_GATE)
 
 
+def _contract_universe_hash(contract: WorkerContract) -> str:
+    raw = contract.raw_artifacts or {}
+    job = raw.get("job_result") if isinstance(raw.get("job_result"), dict) else {}
+    return str(raw.get("universe_hash") or job.get("universe_hash") or "")
+
+
+def _contract_n_tests(contract: WorkerContract) -> int:
+    raw = contract.raw_artifacts or {}
+    job = raw.get("job_result") if isinstance(raw.get("job_result"), dict) else {}
+    for value in (job.get("total_tested"), raw.get("total_tested")):
+        try:
+            n = int(value)
+        except (TypeError, ValueError):
+            continue
+        if n > 0:
+            return n
+    return 1
+
+
+def _sample_floor(null: Any) -> float:
+    if null is None or getattr(null, "n_samples", 0) <= 0:
+        return -1.0
+    if getattr(null, "parametric_model", None):
+        return 0.0
+    return 10.0 / float(null.n_samples)
+
+
+def _alert_calibration_metadata(
+    contract: WorkerContract,
+    *,
+    family: str,
+    p_value_status: str,
+) -> dict[str, Any]:
+    """Return p-value metadata persisted with every alert artifact."""
+    meta: dict[str, Any] = {
+        "p_value_null_method": "",
+        "p_value_null_family": "",
+        "p_value_null_cache_key": "",
+        "p_value_null_n_samples": 0,
+        "candidate_p_value_vs_null": None,
+        "family_wise_p_value_vs_null": {},
+        "p_value_sample_floor": -1.0,
+        "universe_hash": _contract_universe_hash(contract),
+    }
+    try:
+        from .null_baselines import (
+            family_wise_p_value,
+            get_cached,
+            p_value_for_alert,
+        )
+
+        p, _raw_status = p_value_for_alert(
+            contract.best_plaintext,
+            int(contract.crib_score or 0),
+            family=family,
+        )
+        null = None
+        if p_value_status in ("ok_matched_family", "matched_family_ungated"):
+            null = get_cached(
+                "crib_score", "matched_variant_family", 97, "AZ",
+                family=family,
+            )
+        elif p_value_status in (
+            "ok_gated", "ok_ungated", "matched_null_miss", "ok",
+        ):
+            null = get_cached("crib_score", "random_text", 97, "AZ")
+        elif p_value_status == "stale_cache":
+            null = (
+                get_cached("crib_score", "matched_variant_family", 97, "AZ", family=family)
+                if family else None
+            ) or get_cached("crib_score", "random_text", 97, "AZ")
+
+        if null is not None:
+            meta.update({
+                "p_value_null_method": null.method,
+                "p_value_null_family": getattr(null, "family", "") or "",
+                "p_value_null_cache_key": null.cache_key,
+                "p_value_null_n_samples": int(null.n_samples),
+                "p_value_sample_floor": _sample_floor(null),
+            })
+        if p is not None:
+            n_tests = _contract_n_tests(contract)
+            meta["candidate_p_value_vs_null"] = p
+            meta["family_wise_p_value_vs_null"] = family_wise_p_value(
+                p,
+                n_tests=n_tests,
+                universe_hash=meta["universe_hash"],
+            )
+    except Exception as exc:
+        logger.warning("Failed to build alert calibration metadata: %s", exc)
+    return meta
+
+
 def _p_value_gate_passes(
     plaintext: str,
     crib_score_value: int,
@@ -246,6 +349,9 @@ def _p_value_gate_passes(
       "matched_family_ungated" — R3-2: matched-family null, p > gate (suppressed)
       "matched_null_miss"   — R3-2: caller gave family but matched cache
                               missing; fell back to random_text null
+      "stale_cache"         — null cache exists but was built against an
+                              older kernel commit; passes_gate=True
+                              (legacy fallback) with a logged warning
       "cache_miss"          — null cache unavailable; passes_gate=True (legacy fallback)
                               with a logged warning that the alert is uncalibrated
       "error"               — unexpected failure; passes_gate=True (fail-open, legacy)
@@ -279,6 +385,14 @@ def _p_value_gate_passes(
             hypothesis_id,
         )
         return (True, "cache_miss")
+    if status == "stale_cache":
+        logger.warning(
+            "Alert is UNCALIBRATED: null baseline cache is stale for "
+            "hypothesis %s. Rebuild null baselines for the current kernel "
+            "commit before treating this alert as calibrated.",
+            hypothesis_id,
+        )
+        return (True, "stale_cache")
     if status == "matched_null_miss":
         # Got a p-value from random_text fallback; keep enforcing the
         # gate but mark the alert's status so downstream records the
@@ -643,6 +757,11 @@ def process_alerts(
             # widened it (indicates recalibration is overdue).
             matched_family = _matched_null_family_from_contract(contract)
             gate_used = _effective_gate_for_family(matched_family)
+            calibration = _alert_calibration_metadata(
+                contract,
+                family=matched_family,
+                p_value_status=p_value_status,
+            )
 
             event = AlertEvent(
                 triggered_at=datetime.now(timezone.utc).isoformat(),
@@ -660,6 +779,14 @@ def process_alerts(
                 theory_family=theory_info.get("family", ""),
                 theory_mechanism=theory_info.get("mechanism", ""),
                 p_value_status=p_value_status,
+                p_value_null_method=calibration["p_value_null_method"],
+                p_value_null_family=calibration["p_value_null_family"],
+                p_value_null_cache_key=calibration["p_value_null_cache_key"],
+                p_value_null_n_samples=calibration["p_value_null_n_samples"],
+                candidate_p_value_vs_null=calibration["candidate_p_value_vs_null"],
+                family_wise_p_value_vs_null=calibration["family_wise_p_value_vs_null"],
+                p_value_sample_floor=calibration["p_value_sample_floor"],
+                universe_hash=calibration["universe_hash"],
                 effective_p_value_gate=gate_used,
             )
 

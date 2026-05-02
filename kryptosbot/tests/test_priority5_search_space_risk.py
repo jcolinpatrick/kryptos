@@ -533,12 +533,15 @@ class TestDuplicateFamilyAutoRejectInFilter:
         assert survivors == [t_ok]
         assert t_ok.status != TheoryStatus.CRITICIZED
 
-    def test_concerned_unbounded_search_still_dispatches(
+    def test_concerned_unbounded_search_is_escalated_to_reject(
         self, tmp_path, monkeypatch
     ):
-        # unbounded_search produces a worker-prompt injection (BOUNDED-
-        # SEARCH POLICY) but should still dispatch. The escalation
-        # policy is narrow — only duplicate_family escalates.
+        """2026-04-30 policy change: unbounded_search now escalates.
+
+        Live-run audit (cycles 176-250) found unbounded_search verdicts
+        repeatedly dispatched anyway and consumed 5-7 minute long-sweep
+        slots producing noise. Escalation now matches duplicate_family.
+        """
         ctrl = _make_controller_for_redteam(tmp_path)
         t_unb = _make_theory("unb-1")
         _patch_redteam_call(monkeypatch, {
@@ -550,15 +553,24 @@ class TestDuplicateFamilyAutoRejectInFilter:
             ),
         })
         survivors = asyncio.run(ctrl._red_team_filter([t_unb]))
-        assert survivors == [t_unb]
-        assert t_unb.status != TheoryStatus.CRITICIZED
+        assert survivors == []
+        assert t_unb.status == TheoryStatus.CRITICIZED
+        reloaded = ctrl.ledger.get_theory("unb-1")
+        reasons_text = " ".join(reloaded.critic_verdict.reasons)
+        assert "unbounded_search" in reasons_text
+        assert "controller escalated" in reasons_text
 
-    def test_concerned_exhausted_and_underconstrained_still_dispatch(
+    def test_concerned_exhausted_source_material_is_escalated_to_reject(
         self, tmp_path, monkeypatch
     ):
+        """2026-04-30: exhausted_source_material also escalates.
+
+        The CT-perturbation v4→v7 pivot loop in cycles 176-250 was the
+        canonical example: red-team flagged exhausted_source_material
+        on every cycle, controller dispatched anyway, all produced 0/24.
+        """
         ctrl = _make_controller_for_redteam(tmp_path)
         t_exh = _make_theory("exh-1")
-        t_und = _make_theory("und-1")
         _patch_redteam_call(monkeypatch, {
             "exh-1": RedTeamVerdict(
                 verdict="concerned",
@@ -566,6 +578,23 @@ class TestDuplicateFamilyAutoRejectInFilter:
                 reasons=["Source anomaly already exhausted by prior scripts."],
                 search_space_risk="exhausted_source_material",
             ),
+        })
+        survivors = asyncio.run(ctrl._red_team_filter([t_exh]))
+        assert survivors == []
+        assert t_exh.status == TheoryStatus.CRITICIZED
+        reloaded = ctrl.ledger.get_theory("exh-1")
+        reasons_text = " ".join(reloaded.critic_verdict.reasons)
+        assert "exhausted_source_material" in reasons_text
+
+    def test_concerned_underconstrained_still_dispatches(
+        self, tmp_path, monkeypatch
+    ):
+        """underconstrained is borderline (kill criteria vacuous), worker
+        gets a prompt-side note and still runs. Distinguishes 'risky but
+        could yield' from 'logically rejected'."""
+        ctrl = _make_controller_for_redteam(tmp_path)
+        t_und = _make_theory("und-1")
+        _patch_redteam_call(monkeypatch, {
             "und-1": RedTeamVerdict(
                 verdict="concerned",
                 confidence=0.7,
@@ -573,8 +602,8 @@ class TestDuplicateFamilyAutoRejectInFilter:
                 search_space_risk="underconstrained",
             ),
         })
-        survivors = asyncio.run(ctrl._red_team_filter([t_exh, t_und]))
-        assert set(s.hypothesis_id for s in survivors) == {"exh-1", "und-1"}
+        survivors = asyncio.run(ctrl._red_team_filter([t_und]))
+        assert set(s.hypothesis_id for s in survivors) == {"und-1"}
 
     def test_reject_verdict_still_downgrades_regardless_of_risk(
         self, tmp_path, monkeypatch

@@ -1,0 +1,32 @@
+[
+  {
+    "id": "caesar5_then_row_reverse_width8_35",
+    "plaintext": "THEQUICKBROWNFOXIUMPSOVERTHELAZYDOG",
+    "ciphertext": "YMJVZNHPCTKSBTWGNZRUXTAJDEFQJMYWITL",
+    "pipeline": [
+      {"kind": "caesar", "params": {"shift": 5}},
+      {"kind": "row_reverse", "params": {"width": 8, "parity": "odd", "start_row": 0}}
+    ],
+    "source_note": "local audit composite; decrypt order is Caesar then row-reversal"
+  },
+  {
+    "id": "columnar6_then_vigenere_orbit_35",
+    "plaintext": "THEQUICKBROWNFOXIUMPSOVERTHELAZYDOG",
+    "ciphertext": "YLNIHPYKLFFWHTOUKNNCZWTZWNVMTFJHGYE",
+    "pipeline": [
+      {"kind": "columnar", "params": {"width": 6, "col_order": [2, 0, 5, 1, 3, 4]}},
+      {"kind": "vigenere", "params": {"keyword": "ORBIT"}}
+    ],
+    "source_note": "local audit composite; decrypt order is columnar undo then Vigenere"
+  },
+  {
+    "id": "beaufort_fort_then_reverse_blocks6_35",
+    "plaintext": "THEQUICKBROWNFOXIUMPSOVERTHELAZYDOG",
+    "ciphertext": "XUBPYVVFONHRLGUFABNYRWCHFDNMMXLFCQS",
+    "pipeline": [
+      {"kind": "beaufort", "params": {"keyword": "FORT"}},
+      {"kind": "reverse_blocks", "params": {"block_size": 6, "block_mode": "reverse_partial"}}
+    ],
+    "source_note": "local audit composite; decrypt order is Beaufort then block reversal"
+  }
+]

@@ -1,0 +1,14 @@
+[
+  {
+    "id": "double_columnar_wikipedia_zebras_then_stripe",
+    "plaintext": "WEAREDISCOVEREDFLEEATONCE",
+    "ciphertext": "CAEENSOIAEDRLEFWEDREEVTOC",
+    "pipeline": [
+      {"kind": "columnar", "params": {"width": 6, "col_order": [4, 5, 3, 1, 2, 0]}},
+      {"kind": "columnar", "params": {"width": 6, "col_order": [5, 2, 1, 3, 0, 4]}}
+    ],
+    "source_name": "Wikipedia transposition cipher double-columnar example",
+    "source_url": "https://en.wikipedia.org/wiki/Transposition_cipher",
+    "source_note": "Externally published two-stage irregular columnar example. The dispatcher pipeline lists decryption order: undo STRIPE, then undo ZEBRAS."
+  }
+]

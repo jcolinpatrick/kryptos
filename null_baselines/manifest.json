@@ -2,7 +2,8 @@
   "distributions": {
     "crib_score__matched_variant_family__AZ__n97": {
       "alphabet": "AZ",
-      "kernel_commit": "e1afbff13b2254840a242947d248a6eab2007823",
+      "family": "",
+      "kernel_commit": "acfe266e624cb882d2ce8a870257a055e04990e9",
       "max": 7.0,
       "mean": 0.92097,
       "method": "matched_variant_family",
@@ -30,7 +31,7 @@
     "crib_score__matched_variant_family__AZ__n97__beaufort": {
       "alphabet": "AZ",
       "family": "beaufort",
-      "kernel_commit": "b20b100899a3e801b6c5726c794045ffbdfe4fa3",
+      "kernel_commit": "acfe266e624cb882d2ce8a870257a055e04990e9",
       "max": 9.0,
       "mean": 0.9231124,
       "method": "matched_variant_family",
@@ -58,7 +59,7 @@
     "crib_score__matched_variant_family__AZ__n97__columnar_double": {
       "alphabet": "AZ",
       "family": "columnar_double",
-      "kernel_commit": "b20b100899a3e801b6c5726c794045ffbdfe4fa3",
+      "kernel_commit": "acfe266e624cb882d2ce8a870257a055e04990e9",
       "max": 9.0,
       "mean": 1.0225654,
       "method": "matched_variant_family",
@@ -86,7 +87,7 @@
     "crib_score__matched_variant_family__AZ__n97__columnar_single": {
       "alphabet": "AZ",
       "family": "columnar_single",
-      "kernel_commit": "b20b100899a3e801b6c5726c794045ffbdfe4fa3",
+      "kernel_commit": "acfe266e624cb882d2ce8a870257a055e04990e9",
       "max": 8.0,
       "mean": 1.0220203,
       "method": "matched_variant_family",
@@ -114,7 +115,7 @@
     "crib_score__matched_variant_family__AZ__n97__variant_beaufort": {
       "alphabet": "AZ",
       "family": "variant_beaufort",
-      "kernel_commit": "b20b100899a3e801b6c5726c794045ffbdfe4fa3",
+      "kernel_commit": "acfe266e624cb882d2ce8a870257a055e04990e9",
       "max": 8.0,
       "mean": 0.9226298,
       "method": "matched_variant_family",
@@ -142,7 +143,7 @@
     "crib_score__random_text__AZ__n97": {
       "alphabet": "AZ",
       "family": "",
-      "kernel_commit": "8bfc62e3765eccde965b8c898b413142235594e9",
+      "kernel_commit": "acfe266e624cb882d2ce8a870257a055e04990e9",
       "max": 7.0,
       "mean": 0.92372,
       "method": "random_text",
@@ -169,7 +170,8 @@
     },
     "crib_score__random_text__KA__n97": {
       "alphabet": "KA",
-      "kernel_commit": "e1afbff13b2254840a242947d248a6eab2007823",
+      "family": "",
+      "kernel_commit": "acfe266e624cb882d2ce8a870257a055e04990e9",
       "max": 7.0,
       "mean": 0.9265,
       "method": "random_text",
@@ -196,7 +198,8 @@
     },
     "crib_score__shuffled_ct__AZ__n97": {
       "alphabet": "AZ",
-      "kernel_commit": "e1afbff13b2254840a242947d248a6eab2007823",
+      "family": "",
+      "kernel_commit": "acfe266e624cb882d2ce8a870257a055e04990e9",
       "max": 8.0,
       "mean": 1.01627,
       "method": "shuffled_ct",
@@ -224,7 +227,7 @@
     "ngram_score__matched_variant_family__AZ__n97__columnar_double": {
       "alphabet": "AZ",
       "family": "columnar_double",
-      "kernel_commit": "3a5ef59d67a603bdd6bbdd9bc86ea031adf75eb8",
+      "kernel_commit": "acfe266e624cb882d2ce8a870257a055e04990e9",
       "max": -6.057269372340423,
       "mean": -6.406195107324678,
       "method": "matched_variant_family",
@@ -252,7 +255,7 @@
     "ngram_score__matched_variant_family__AZ__n97__columnar_single": {
       "alphabet": "AZ",
       "family": "columnar_single",
-      "kernel_commit": "3a5ef59d67a603bdd6bbdd9bc86ea031adf75eb8",
+      "kernel_commit": "acfe266e624cb882d2ce8a870257a055e04990e9",
       "max": -6.062984744680849,
       "mean": -6.401475545078296,
       "method": "matched_variant_family",
@@ -280,7 +283,7 @@
     "ngram_score__random_text__AZ__n97": {
       "alphabet": "AZ",
       "family": "",
-      "kernel_commit": "8bfc62e3765eccde965b8c898b413142235594e9",
+      "kernel_commit": "acfe266e624cb882d2ce8a870257a055e04990e9",
       "max": -5.912654265957446,
       "mean": -6.426264987916275,
       "method": "random_text",
@@ -305,9 +308,38 @@
       "seed": 42,
       "stdev": 0.08245721046875486
     },
+    "ngram_score__random_text__KA__n97": {
+      "alphabet": "KA",
+      "family": "",
+      "kernel_commit": "acfe266e624cb882d2ce8a870257a055e04990e9",
+      "max": -5.968102925531913,
+      "mean": -6.4264197995217005,
+      "method": "random_text",
+      "min": -6.632160999999997,
+      "n_chars": 97,
+      "n_samples": 50000,
+      "p_value_tail_method": "normal_approx",
+      "parametric_model": "normal",
+      "percentiles": {
+        "p01": -6.5798583085106355,
+        "p05": -6.547303244680848,
+        "p10": -6.526390521276593,
+        "p25": -6.485917042553189,
+        "p50": -6.434421755319146,
+        "p75": -6.375080542553189,
+        "p90": -6.316472606382976,
+        "p95": -6.279125351063827,
+        "p99": -6.203865499999997,
+        "p999": -6.108550031914894
+      },
+      "scorer_name": "ngram_score",
+      "seed": 42,
+      "stdev": 0.08241218236500647
+    },
     "ngram_score__shuffled_ct__AZ__n97": {
       "alphabet": "AZ",
-      "kernel_commit": "e1afbff13b2254840a242947d248a6eab2007823",
+      "family": "",
+      "kernel_commit": "acfe266e624cb882d2ce8a870257a055e04990e9",
       "max": -6.076616914893617,
       "mean": -6.407284957190849,
       "method": "shuffled_ct",
@@ -333,6 +365,6 @@
       "stdev": 0.06479467769433293
     }
   },
-  "kernel_commit_at_latest_write": "8bfc62e3765eccde965b8c898b413142235594e9",
-  "updated_at": "2026-04-30T11:31:08Z"
+  "kernel_commit_at_latest_write": "acfe266e624cb882d2ce8a870257a055e04990e9",
+  "updated_at": "2026-05-02T17:56:24Z"
 }

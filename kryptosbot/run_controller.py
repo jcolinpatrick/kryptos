@@ -8,7 +8,11 @@ Usage:
 Options:
     --cycles N          Max controller cycles (default: 10)
     --theories N        Theories per cycle (default: 5)
-    --workers N         Max concurrent workers (default: 4)
+    --workers N         Max concurrent workers (default: 8; bump higher on
+                        28-vCPU hosts to better saturate compute. Live-run
+                        audit 2026-04-30 found avg slot utilization at 2.7/4
+                        meaning the prior default left the host at ~10% of
+                        its parallelism ceiling.)
     --timeout N         Worker timeout in minutes (default: 30)
     --dry-run           Generate + critic only, no dispatch
     --skip-critic       Skip the critic stage
@@ -92,7 +96,12 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--cycles", type=int, default=10, help="Max controller cycles")
     parser.add_argument("--theories", type=int, default=5, help="Theories per cycle")
-    parser.add_argument("--workers", type=int, default=4, help="Max concurrent workers")
+    parser.add_argument(
+        "--workers", type=int, default=8,
+        help="Max concurrent workers (default 8 — bumped from 4 on "
+             "2026-04-30 after live-run audit showed 10%% host "
+             "parallelism utilization at the old default)",
+    )
     parser.add_argument("--timeout", type=int, default=30, help="Worker timeout in minutes (default: 30)")
     parser.add_argument("--dry-run", action="store_true", help="Generate + critic only")
     parser.add_argument("--skip-critic", action="store_true", help="Skip critic stage")

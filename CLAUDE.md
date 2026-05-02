@@ -121,6 +121,8 @@ Four layers with strict dependency direction: **kernel → pipeline → novelty 
 
 **`kryptosbot/` (separate subproject, NOT under `src/kryptos/`)** — Multi-agent runner on Claude Agent SDK. Has its own `pyproject.toml`, `.env` (see `kryptosbot/.env.template`), runbook (`RUNBOOK.md`), depends on `claude-agent-sdk`. **Don't confuse with core `kryptos`** — independent deps, different API key env vars. Core kryptos stays stdlib-only; kryptosbot may use anything in its own venv.
 
+**`kryptosbot/ct_perturbation.py` (Stage A CT-parametric harness, 2026-05-01)** — Hamming-1 CT-perturbation campaign infrastructure. **Design contract:** every CT-dependent computation accepts CT as an explicit argument; Bean equality / inequality / linear sets are **re-derived** from perturbed CT against the canonical crib dictionary, never read from frozen `kernel.constants`. No global mutation, no `KRYPTOS_CT_OVERRIDE` for real-K4 paths (the override is K4Bench-only — see Gotchas). Pre-registration, coverage audit, and triage reports live under `docs/campaigns/ct_perturbation_stage_a_*.md`. Companion campaign runner: `scripts/campaigns/ct_perturbation_stage_a.py`. When extending CT-parametric work, follow the same explicit-CT contract — don't introduce env-var overrides for real-K4 paths.
+
 **K4Bench mode (`bench/k4bench/` + `kryptosbot/bench_loader.py` + `bench_attempts.py`)** — Synthetic calibration suite of 25 K4-shaped challenges. `--bench-challenge <path>` on `run_controller.py` installs kernel overrides **before** any `kryptos.kernel` import, swaps ledger to `db/k4bench/`, suppresses real-K4 prompt surfaces, emits attempts in `k4bench.attempts.v1` schema. `bench_loader` rejects answer-like keys at load; sealed answers must never reach controller paths. See MEMORY.md `project_k4bench_mode_pipeline_gates_landed_2026_04_26.md`.
 
 **`external/` (repo root)** — Third-party reference material:
@@ -149,7 +151,7 @@ kernel/persistence/sqlite.py (results DB) + JsonlWriter (logs)
 
 Several hundred attack scripts across ~40 subdirectories in `scripts/` (run `ls scripts/` for the current list). For current counts and exhaustion state, run `PYTHONPATH=src python3 run_attack.py --exhaustion-summary` — **do not cite hardcoded numbers**, they drift. Each script has a metadata header; tracked in root `exhaustion_log.json` (authoritative — ignore `scripts/EXHAUSTION.json`). Some scripts live at the `scripts/` root level (e.g. `blitz_*.py`, `geometric_null_mask_*.py`) rather than in subdirectories.
 
-**Subdirectories:** Run `ls scripts/` for the full list. Key families: `substitution/`, `transposition/`, `fractionation/`, `grille/`, `polyalphabetic/`, `running_key/`, `encoding/`, `multi_layer/`, `novel/`, `blitz/` (fast hypothesis sweeps), `analysis/` (non-attack analytical scripts), `_infra/` (utilities), `hypothesis_tests/` (harness scripts — h_* prefix), `stego_mechanism/`, `tableau/`, `statistical/`, `cfm/` (crypto field manual hypotheses), `two_system/`, `yar/`, `team/`. Additional research threads: `antipodes/`, `archive_evidence/`, `crib_analysis/`, `exploration/`, `geodetic/`, `geometry/`, `k2_coords/`, `k3_continuity/`, `mirror_ka/`, `overlay/`, `thematic/` (subdirs: `berlin_clock/`, `sculpture_physical/`).
+**Subdirectories:** Run `ls scripts/` for the full list. Key families: `substitution/`, `transposition/`, `fractionation/`, `grille/`, `polyalphabetic/`, `running_key/`, `encoding/`, `multi_layer/`, `novel/`, `blitz/` (fast hypothesis sweeps), `analysis/` (non-attack analytical scripts), `audit/` (audit harnesses backing `docs/audits/`), `campaigns/` (formal multi-stage campaign runners — e.g. `ct_perturbation_stage_a.py`), `_infra/` (utilities), `hypothesis_tests/` (harness scripts — h_* prefix), `stego_mechanism/`, `tableau/`, `statistical/`, `cfm/` (crypto field manual hypotheses), `two_system/`, `yar/`, `team/`. Additional research threads: `antipodes/`, `archive_evidence/`, `crib_analysis/`, `exploration/`, `geodetic/`, `geometry/`, `k2_coords/`, `k3_continuity/`, `mirror_ka/`, `overlay/`, `thematic/` (subdirs: `berlin_clock/`, `sculpture_physical/`).
 
 **`scripts/lib/`** — Shared infrastructure for experiment scripts: `header.py` (metadata header parsing), `exhaustion.py` (exhaustion log CRUD), `discover.py` (script discovery). Used by `run_attack.py`.
 
@@ -358,6 +360,8 @@ Results are not trusted until they pass:
 - **`docs/REAL_K4_EVIDENCE_GAP_REGISTER.md`** — Ten open evidence gaps (GAP-01..GAP-10) with admission-grade closure conditions.
 - **`docs/REAL_K4_EVIDENCE_ACQUISITION_PLAN.md`** — Recommended first action and priority order across the high-priority gaps.
 - **`docs/REAL_K4_PSEUDO_CLUE_PACK_ADMISSION.md`** — Eleven-rule admission gate, including the Sanborn public-comment doctrine (rule 11).
+- **`docs/audits/`** — Audit dossiers for individual claims (bean constraints, DSL dispatcher semantics, null baselines, provenance leakage, Stehle mechanisms, known-answer battery, elimination-harness accounting). Each pairs with a runner under `scripts/audit/`. Cite these for *evidence behind* a claim, vs. `docs/methodological_audits.md` for *open epistemic disputes*.
+- **`docs/campaigns/`** — Per-campaign pre-registration, coverage audit, and triage reports (e.g. `ct_perturbation_stage_a_prereg.md`). Pre-reg lives here so threshold-setting happens before results land.
 - **`docs/kryptos_ground_truth.md`** — Public facts (CT, cribs, 2025 disclosures), internal results policy, hypothesis classes
 - **`docs/invariants.md`** — Verified computational invariants (keystream, Bean constraints, alphabets, eliminated hypotheses)
 - **`docs/elimination_tiers.md`** — Elimination confidence tiers. Tier 1 = proven under stated assumptions; Tier 2 = exhaustively searched (single-layer only — **OPEN as one layer of multi-layer**); Tier 4 = untested bespoke methods. **Critical framing:** All Tier 1/2 eliminations assume direct positional correspondence `CT[i] → PT[i]`. The "SOURCE-INDEPENDENT" wording on Tier 1 columnar rows is currently **disputed** — see `docs/methodological_audits.md` AUDIT-1 before citing.
@@ -396,6 +400,7 @@ journalctl -u kryptosbot-api -f                         # API logs
 source venv/bin/activate && python3 ops/site_builder/build.py  # Rebuild site
 python3 ops/api/admin.py list|test|publish|reject <id>         # Theory admin
 ops/deploy/cron_update.sh --force                              # Force deploy
+python3 k4_monitor.py [--log results/long_run_*.log] [--once|--demo]  # NOC/SOC live ledger monitor
 ```
 
 ---

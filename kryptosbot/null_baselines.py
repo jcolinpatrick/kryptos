@@ -636,6 +636,42 @@ def p_value(score: float, dist: NullDistribution) -> float:
     return dist.p_value(score)
 
 
+def family_wise_p_value(
+    candidate_p_value: float,
+    *,
+    n_tests: int,
+    universe_hash: str = "",
+) -> dict[str, Any]:
+    """Return simple family-wise corrections for a candidate-local p-value.
+
+    The alert path deliberately gates on candidate-local p-values because
+    it is a contradiction detector. Audit artifacts need the broader view:
+    "given this many tested configurations, how surprising is at least one
+    hit this good?" This helper records both conservative Bonferroni and
+    Sidak independent-trial corrections without pretending either covers
+    post-hoc garden-of-forking-paths risk outside the declared universe.
+    """
+    if not isinstance(n_tests, int) or isinstance(n_tests, bool) or n_tests < 1:
+        raise ValueError(f"n_tests must be a positive int; got {n_tests!r}")
+    p = float(candidate_p_value)
+    if not math.isfinite(p) or p < 0.0 or p > 1.0:
+        raise ValueError(f"candidate_p_value must be finite in [0, 1]; got {candidate_p_value!r}")
+    bonferroni = min(1.0, p * n_tests)
+    sidak = 1.0 - ((1.0 - p) ** n_tests)
+    return {
+        "candidate_p_value": p,
+        "n_tests": n_tests,
+        "universe_hash": universe_hash,
+        "bonferroni_p_value": bonferroni,
+        "sidak_p_value": sidak,
+        "method": "candidate-local p corrected over dispatcher config universe",
+        "caveat": (
+            "Does not correct for post-hoc hypothesis generation, repeated "
+            "controller cycles, or unlogged search families."
+        ),
+    }
+
+
 # ─── Alert gate parameterization (brief: raise n_samples + parameterize) ────
 #
 # Invariant the project relies on: the configured p-value gate
@@ -718,6 +754,9 @@ def p_value_for_alert(
                                   p-value was computed from the random_text
                                   fallback and the alert is flagged
                                   uncalibrated-for-family
+        "stale_cache"           — a requested null cache exists but was
+                                  built against a different kernel commit;
+                                  p-value is None
         "cache_miss"            — null cache not available at all,
                                   p-value is None
         "error"                 — unexpected failure, p-value is None
@@ -730,10 +769,23 @@ def p_value_for_alert(
     behaviour (random_text null only).
 
     Callers should fall back to legacy crib_score-only alert gating when
-    status in {"cache_miss", "error"} and emit a WARNING that the alert
-    is uncalibrated.
+    status in {"cache_miss", "stale_cache", "error"} and emit a WARNING
+    that the alert is uncalibrated. The helper deliberately refuses to
+    consume stale p-values; a stale cache can describe old scoring
+    semantics and must not be treated as calibrated evidence.
     """
     try:
+        def _stale(dist: NullDistribution, label: str) -> bool:
+            if not calibration_stale(dist):
+                return False
+            logger.warning(
+                "Null baseline cache %s is stale for alert p-value "
+                "(cache_key=%s, cache_commit=%s, current_commit=%s); "
+                "refusing to consume stale calibration.",
+                label, dist.cache_key, dist.kernel_commit, _KERNEL_COMMIT,
+            )
+            return True
+
         # R3-2: try matched-family first when caller gave a family hint.
         if family:
             matched = get_cached(
@@ -741,6 +793,8 @@ def p_value_for_alert(
                 family=family,
             )
             if matched is not None:
+                if _stale(matched, "matched_family"):
+                    return (None, "stale_cache")
                 p = matched.p_value(float(crib_score_value))
                 return (p, "ok_matched_family")
             logger.warning(
@@ -751,12 +805,16 @@ def p_value_for_alert(
             dist = get_cached("crib_score", "random_text", 97, "AZ")
             if dist is None:
                 return (None, "cache_miss")
+            if _stale(dist, "random_text_fallback"):
+                return (None, "stale_cache")
             p = dist.p_value(float(crib_score_value))
             return (p, "matched_null_miss")
 
         dist = get_cached("crib_score", "random_text", 97, "AZ")
         if dist is None:
             return (None, "cache_miss")
+        if _stale(dist, "random_text"):
+            return (None, "stale_cache")
         p = dist.p_value(float(crib_score_value))
         return (p, "ok")
     except Exception as exc:  # pragma: no cover - defensive
@@ -772,6 +830,7 @@ __all__ = [
     "save_to_cache",
     "calibration_stale",
     "p_value",
+    "family_wise_p_value",
     "p_value_for_alert",
     "effective_gate",
     "_KERNEL_COMMIT",
