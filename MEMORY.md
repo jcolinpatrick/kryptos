@@ -12,8 +12,44 @@ see `docs/README_current_state.md`. For historical strategy snapshots see
 
 ---
 
-## 1. Current Project State (2026-04-10)
+## 1. Current Project State (2026-05-02)
 
+- **Codex hardening round 2 + Stage A campaign + audit infrastructure
+  landed (commit `ffaf5a0`, 2026-05-02).** Tests: 3924 green (1862 core +
+  2062 kryptosbot). Codex Master Mathematical Audit verdict:
+  **PARTIALLY TRUSTWORTHY** — bounded components are trustworthy
+  (CT97 constants, Bean H1 crib-position constraints, recalibrated null
+  caches, kernel-overruled worker scores, dispatcher known-answer
+  challenges, provenance-guarded prompts); not yet a production-grade
+  general classical-cryptanalysis instrument. Strongest results remain
+  conditional on exact tested universe.
+- **Alert path provenance hardened.** Every alert artifact carries
+  `p_value_null_method`, `p_value_null_family`, `p_value_null_cache_key`,
+  `p_value_null_n_samples`, `candidate_p_value_vs_null`,
+  `family_wise_p_value_vs_null`, `p_value_sample_floor`, `universe_hash`.
+  New `stale_cache` alert status. The "BREAKTHROUGH overfit" failure
+  mode is now structurally suppressed end-to-end.
+- **Null calibration unified.** All distributions in
+  `null_baselines/manifest.json` recalibrated against current kernel
+  commit `acfe266` (was split across `b20b100`, `e1afbff`, `8bfc62e` —
+  silent drift hazard).
+- **Stehle Δ5 + KRYPTOS-letter proximity promoted** from
+  `BEAN_REPORTED_NOT_RERUN` to `PROJECT_REVERIFIED_STATISTICAL_ANOMALY`.
+  Stehle Δ5 mechanism audit (additive leakage, simple grid, equal-delta
+  scans, single-deletion null, finite-geometry predicates) found
+  **no hard predicate** — use as soft ranking/prompt context only.
+- **Persona prompts gain provenance guardrail.** `_PROVENANCE_GUARDRAIL`
+  prepended to every persona; retired claims (null palette `{B,G,I,K,O,W,Z}`)
+  cannot be revived even under prompt drift.
+- **CT-perturbation Stage A clean negative.** 10,465,764 configs across
+  2,425 H1 single-character substitutions × {Vig,Beau,VarBeau} × {AZ,KA}
+  × 719-keyword curated list. **0 Bean passes, 0 alerts.** Under direct-
+  positional additive setup with explicit-CT contract. Coverage matrix
+  excludes Hamming-≥2, archive-anchored substitution (Stage B), and
+  outer-transposition + crib-mapping break.
+- **DSL dispatcher coverage:** 19 DSL kinds, 18 dispatcher kinds —
+  `key_tape` is the explicit named gap (per
+  `docs/audits/dsl_dispatcher_semantics.md`).
 - **No credible decrypt path.** All positive findings are descriptive
   anomalies, not solution candidates. (registry: `C-STATE-01`)
 - **Bean linear constraints added (2026-04-10):** 101 Groebner-derived
@@ -215,14 +251,28 @@ in `docs/claims_registry.json` and a new audit close.
   for $0.0282 (`results/self_test/r2_5_real_k1.json`). Pre-K4 readiness protocol
   at `docs/maturation/round2/K4_RUN_PROTOCOL.md` — operator review required before
   any K4 run.
+- **Codex hardening round 2 (2026-05-02, commit `ffaf5a0`):** alert-path
+  provenance (universe_hash, null identity per artifact, stale_cache status),
+  null calibration unified at kernel `acfe266`, persona prompts get
+  `_PROVENANCE_GUARDRAIL`, Stehle/KRYPTOS-proximity promoted to
+  PROJECT_REVERIFIED, audit infrastructure (10 audit scripts under
+  `scripts/audit/` + 12 dossiers under `docs/audits/` + dispatcher
+  known-answer fixtures under `tests/audit/`). Codex Master Mathematical
+  Audit verdict in `docs/audits/codex_master_mathematical_audit.md`:
+  PARTIALLY TRUSTWORTHY.
+- **CT-perturbation Stage A (2026-05-01):** Hamming-1 harness with
+  explicit-CT contract. 10,465,764 configs, 0 Bean passes. See
+  `docs/campaigns/ct_perturbation_stage_a_*.md`. Stage B (archive-anchored
+  H2 substitution) is the natural next extension; framework already in
+  place.
 - **Live research notes (repo `memory/`):** `keystream_forensics_v2.md`,
   `ticom_archive_research.md`, `width10_17_deep_investigation.md`,
   `width21_bigram_73char.md`, `bruteforce_7remaining.md`,
   `keystream_ap_investigation.md`
 
-Last updated: 2026-04-21 (framework maturation Round 1 Phases 1-9 +
-Round 2 Phases R2-1 through R2-6 complete: K3 dry-run gap closed,
-KA alphabet in dispatcher, exhaustion-overlap override, matched
-nulls for columnar + variant families, real-API K1 self-test passed
-$0.0282 one-shot, K4_RUN_PROTOCOL.md authored awaiting operator
-review).
+Last updated: 2026-05-02 (Codex hardening round 2 + CT-perturbation
+Stage A campaign + audit infrastructure landed in commit `ffaf5a0`;
+3924 tests green; Codex Master Mathematical Audit verdict PARTIALLY
+TRUSTWORTHY; null calibration unified at kernel `acfe266`; alert
+path provenance hardened end-to-end; Stehle Δ5 + KRYPTOS-proximity
+promoted to PROJECT_REVERIFIED; explicit DSL gap = `key_tape`).
