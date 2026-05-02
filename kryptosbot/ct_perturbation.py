@@ -842,16 +842,305 @@ def assert_canonical_bean_reproduction() -> None:
     )
 
 
+# ── Stage B: archive-anchored Hamming-2 framework ────────────────────────
+#
+# See docs/campaigns/ct_perturbation_stage_b_prereg.md for the binding
+# specification. Stage B is constrained to position-pair perturbations
+# where BOTH positions live in an operator-supplied predeclared
+# ambiguous-position set A. The "second position only in A" reading was
+# rejected because of cardinality (2,425 × |A| × 25 ≈ 60,625|A|, too
+# large to defend under the same alert bar as Stage A). See prereg §3.4.
+#
+# This module exposes the framework primitives only:
+#   - the AmbiguousPositionsManifest schema validator
+#   - the H2 enumerator parameterized by A
+#   - cardinality computation
+#
+# The full campaign runner is deferred until the operator supplies an
+# A via --ambiguous-positions PATH plus a decision-gate document.
+
+CAMPAIGN_ID_STAGE_B = "ct_perturbation_stage_b"
+AMBIGUOUS_POSITIONS_SCHEMA_VERSION = "ct_perturbation_stage_b.ambiguous_positions.v1"
+STAGE_B_K_MAX_DEFAULT = 20
+
+
+@dataclass(frozen=True)
+class CTVariantH2:
+    """A Hamming-2 CT variant — two-position substitution.
+
+    Both ``pos1`` and ``pos2`` live in the operator-supplied
+    ambiguous-position set, with ``pos1 < pos2``. The perturbations are
+    applied independently to ``ct`` to produce ``new_ct``.
+    """
+    variant_id: str
+    distance: int  # always 2
+    pos1: int
+    old1: str
+    new1: str
+    pos2: int
+    old2: str
+    new2: str
+    ct: str
+    ct_sha256: str
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "variant_id": self.variant_id,
+            "distance": self.distance,
+            "pos_pair": [self.pos1, self.pos2],
+            "chars_pair": [self.old1, self.new1, self.old2, self.new2],
+            "ct": self.ct,
+            "ct_sha256": self.ct_sha256,
+        }
+
+
+@dataclass(frozen=True)
+class AmbiguousPositionsManifest:
+    """Operator-supplied predeclared ambiguous-position set for Stage B.
+
+    Loaded from a JSON file by ``load_ambiguous_positions``; the loader
+    enforces schema, range, uniqueness, and checksum invariants. The
+    manifest is immutable once loaded and is copied verbatim into
+    ``ambiguous_positions_manifest.json`` in the run artifact directory.
+    """
+    schema_version: str
+    archive_provenance: Dict[str, Any]
+    positions: FrozenSet[int]
+    rationale_per_position: Dict[int, str]
+    checksum_sha256: str
+
+    @property
+    def k(self) -> int:
+        return len(self.positions)
+
+    def position_pairs(self) -> Iterator[Tuple[int, int]]:
+        """Yield (i, j) pairs with i < j over the manifest positions."""
+        sorted_positions = sorted(self.positions)
+        for i_idx in range(len(sorted_positions)):
+            for j_idx in range(i_idx + 1, len(sorted_positions)):
+                yield (sorted_positions[i_idx], sorted_positions[j_idx])
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "schema_version": self.schema_version,
+            "archive_provenance": self.archive_provenance,
+            "positions": sorted(self.positions),
+            "rationale_per_position": {
+                str(p): self.rationale_per_position[p]
+                for p in sorted(self.positions)
+            },
+            "checksum": {"sha256_of_positions_sorted": self.checksum_sha256},
+        }
+
+
+def _sha256_of_positions(positions: Iterable[int]) -> str:
+    """Canonical checksum for a position set: sha256 of sorted CSV."""
+    payload = ",".join(str(p) for p in sorted(positions)).encode("ascii")
+    return hashlib.sha256(payload).hexdigest()
+
+
+def load_ambiguous_positions(
+    path: str,
+    *,
+    k_max: int = STAGE_B_K_MAX_DEFAULT,
+    allow_large: bool = False,
+) -> AmbiguousPositionsManifest:
+    """Load and validate a Stage B ambiguous-positions JSON file.
+
+    Raises:
+        FileNotFoundError: if ``path`` does not exist.
+        ValueError: on any schema, range, uniqueness, checksum, or
+            ``k > k_max`` violation. ``allow_large=True`` permits
+            ``k > k_max`` but does not skip the other checks.
+    """
+    with open(path, "r", encoding="utf-8") as fh:
+        raw = json.load(fh)
+
+    if not isinstance(raw, dict):
+        raise ValueError("manifest must be a JSON object")
+
+    schema = raw.get("schema_version")
+    if schema != AMBIGUOUS_POSITIONS_SCHEMA_VERSION:
+        raise ValueError(
+            f"schema_version must be {AMBIGUOUS_POSITIONS_SCHEMA_VERSION!r}; "
+            f"got {schema!r}"
+        )
+
+    provenance = raw.get("archive_provenance")
+    if not isinstance(provenance, dict) or not provenance:
+        raise ValueError(
+            "archive_provenance must be a non-empty object — Stage B "
+            "requires explicit archive citation per prereg §3.2"
+        )
+    for required in ("primary_source", "evaluator", "evaluation_date", "method"):
+        if not provenance.get(required):
+            raise ValueError(
+                f"archive_provenance.{required} must be set and non-empty"
+            )
+
+    positions_raw = raw.get("positions")
+    if not isinstance(positions_raw, list) or not positions_raw:
+        raise ValueError("positions must be a non-empty list of ints")
+    positions: List[int] = []
+    for p in positions_raw:
+        if not isinstance(p, int) or isinstance(p, bool):
+            raise ValueError(f"position {p!r} must be an int (0-indexed)")
+        if p < 0 or p >= CT_LEN:
+            raise ValueError(
+                f"position {p} out of range [0, {CT_LEN}); positions are 0-indexed"
+            )
+        positions.append(p)
+    if len(positions) != len(set(positions)):
+        raise ValueError(f"positions must be unique; got duplicates in {positions}")
+
+    k = len(positions)
+    if k < 2:
+        raise ValueError(
+            f"Hamming-2 requires at least 2 ambiguous positions; got k={k}"
+        )
+    if k > k_max and not allow_large:
+        raise ValueError(
+            f"k={k} exceeds k_max={k_max}; pass allow_large=True with a "
+            f"separate documented review to override (see prereg §3.3)"
+        )
+
+    rationale_raw = raw.get("rationale_per_position", {})
+    if not isinstance(rationale_raw, dict):
+        raise ValueError("rationale_per_position must be an object")
+    rationale: Dict[int, str] = {}
+    for key, value in rationale_raw.items():
+        try:
+            pos_int = int(key)
+        except (TypeError, ValueError):
+            raise ValueError(
+                f"rationale_per_position keys must be int-convertible; got {key!r}"
+            )
+        if pos_int not in set(positions):
+            raise ValueError(
+                f"rationale_per_position has key {pos_int} not in positions"
+            )
+        if not isinstance(value, str) or not value.strip():
+            raise ValueError(
+                f"rationale_per_position[{pos_int}] must be a non-empty string"
+            )
+        rationale[pos_int] = value
+    missing = set(positions) - set(rationale.keys())
+    if missing:
+        raise ValueError(
+            f"rationale_per_position missing entries for positions {sorted(missing)}"
+        )
+
+    checksum = raw.get("checksum", {}).get("sha256_of_positions_sorted")
+    expected = _sha256_of_positions(positions)
+    if checksum != expected:
+        raise ValueError(
+            f"checksum mismatch: file claims {checksum!r}, "
+            f"computed {expected!r} from positions"
+        )
+
+    return AmbiguousPositionsManifest(
+        schema_version=schema,
+        archive_provenance=dict(provenance),
+        positions=frozenset(positions),
+        rationale_per_position=rationale,
+        checksum_sha256=expected,
+    )
+
+
+def stage_b_universe_size(
+    manifest: AmbiguousPositionsManifest,
+    n_keywords: int,
+    *,
+    n_families: int = len(SUPPORTED_FAMILIES),
+    n_alphabets: int = len(SUPPORTED_ALPHABET_KINDS),
+    alphabet_size: int = MOD,
+) -> Dict[str, int]:
+    """Compute Stage B Hamming-2 universe cardinality from manifest size.
+
+    Returns a dict with ``k``, ``position_pairs``, ``substitution_pairs``,
+    ``h2_variants``, ``configs_per_variant``, and ``total_configs``.
+    """
+    k = manifest.k
+    position_pairs = (k * (k - 1)) // 2
+    substitution_pairs = (alphabet_size - 1) ** 2
+    h2_variants = position_pairs * substitution_pairs
+    configs_per_variant = n_families * n_alphabets * n_keywords
+    return {
+        "k": k,
+        "position_pairs": position_pairs,
+        "substitution_pairs": substitution_pairs,
+        "h2_variants": h2_variants,
+        "configs_per_variant": configs_per_variant,
+        "total_configs": h2_variants * configs_per_variant,
+    }
+
+
+def enumerate_hamming2_variants_constrained(
+    ct: str,
+    manifest: AmbiguousPositionsManifest,
+    alphabet: str = DEFAULT_VARIANT_ALPHABET,
+) -> Iterator[CTVariantH2]:
+    """Yield every Hamming-2 perturbation of ``ct`` with both positions
+    in ``manifest.positions``.
+
+    Order is deterministic: position pair ascending (i<j), then new1
+    ascending, then new2 ascending, skipping replacements equal to the
+    original character. For ``k = |manifest.positions|`` and the
+    standard 26-letter alphabet, yields exactly ``C(k,2) * 25 * 25`` =
+    ``625 * k(k-1)/2`` variants.
+    """
+    _validate_ct(ct)
+    if len(set(alphabet)) != len(alphabet):
+        raise ValueError("variant alphabet must have no duplicates")
+    if not all(c.isupper() and c.isalpha() for c in alphabet):
+        raise ValueError("variant alphabet must be uppercase A-Z chars")
+
+    for pos1, pos2 in manifest.position_pairs():
+        old1 = ct[pos1]
+        old2 = ct[pos2]
+        for new1 in alphabet:
+            if new1 == old1:
+                continue
+            for new2 in alphabet:
+                if new2 == old2:
+                    continue
+                # Apply both substitutions (pos1 < pos2 guaranteed).
+                new_ct = (
+                    ct[:pos1] + new1 + ct[pos1 + 1:pos2] + new2 + ct[pos2 + 1:]
+                )
+                variant_id = (
+                    f"H2_p{pos1:02d}_{old1}->{new1}"
+                    f"_p{pos2:02d}_{old2}->{new2}"
+                )
+                yield CTVariantH2(
+                    variant_id=variant_id,
+                    distance=2,
+                    pos1=pos1,
+                    old1=old1,
+                    new1=new1,
+                    pos2=pos2,
+                    old2=old2,
+                    new2=new2,
+                    ct=new_ct,
+                    ct_sha256=_ct_sha256(new_ct),
+                )
+
+
 __all__ = [
     "AlertPolicy",
+    "AMBIGUOUS_POSITIONS_SCHEMA_VERSION",
     "ARTIFACT_SCHEMA_VERSION",
+    "AmbiguousPositionsManifest",
     "CAMPAIGN_ID",
+    "CAMPAIGN_ID_STAGE_B",
     "CTVariant",
+    "CTVariantH2",
     "CandidateScore",
     "CRIB_POSITION_H1_VARIANTS",
     "H0_VARIANT_COUNT",
     "H1_VARIANT_COUNT",
     "NONCRIB_POSITION_H1_VARIANTS",
+    "STAGE_B_K_MAX_DEFAULT",
     "ScorerContext",
     "SUPPORTED_ALPHABET_KINDS",
     "SUPPORTED_FAMILIES",
@@ -868,8 +1157,11 @@ __all__ = [
     "decrypt_with_keyword",
     "derive_bean_constraints",
     "enumerate_hamming1_variants",
+    "enumerate_hamming2_variants_constrained",
     "fisher_combine",
+    "load_ambiguous_positions",
     "recover_keystream_at_cribs",
     "score_candidate_ct_parametric",
+    "stage_b_universe_size",
     "verify_bean_against_keystream",
 ]
