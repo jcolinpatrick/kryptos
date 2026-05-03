@@ -112,3 +112,37 @@ class TestKeyTapeVarBeaufort:
             direction="decrypt", alphabet=AZ,
         )
         assert recovered == pt
+
+
+class TestKeyTapeAlphabet:
+    def test_ka_differs_from_az(self):
+        pt = "KRYPTOS"
+        tape = (1, 2, 3, 4, 5, 6, 7)
+        ct_az = apply_key_tape(
+            pt, tape=tape,
+            variant=CipherVariant.VIGENERE,
+            direction="encrypt", alphabet=AZ,
+        )
+        ct_ka = apply_key_tape(
+            pt, tape=tape,
+            variant=CipherVariant.VIGENERE,
+            direction="encrypt", alphabet=KA,
+        )
+        # KA reorders the alphabet, so identical tape under same variant
+        # produces a different CT under different alphabets.
+        assert ct_az != ct_ka
+
+    def test_ka_roundtrip(self):
+        pt = "KRYPTOS"
+        tape = (1, 2, 3, 4, 5, 6, 7)
+        ct = apply_key_tape(
+            pt, tape=tape,
+            variant=CipherVariant.VIGENERE,
+            direction="encrypt", alphabet=KA,
+        )
+        recovered = apply_key_tape(
+            ct, tape=tape,
+            variant=CipherVariant.VIGENERE,
+            direction="decrypt", alphabet=KA,
+        )
+        assert recovered == pt
