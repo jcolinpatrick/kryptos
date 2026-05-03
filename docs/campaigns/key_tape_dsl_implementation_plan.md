@@ -83,8 +83,10 @@ _VALID_NULL_RULES: frozenset[str] = frozenset({"skip", "consume"})
 # Supported additive variants for key_tape (matches Stage A/B exclusion
 # list — no autokey, no Quagmire, no running-key).
 _VALID_KEY_TAPE_VARIANTS: frozenset[str] = frozenset({
-    "vigenere", "beaufort", "variant_beaufort",
+    "vigenere", "beaufort", "var_beaufort",
 })
+
+# Variant strings match ``CipherVariant`` enum values verbatim (no DSL→kernel mapping layer needed).
 ```
 
 Required parameters per layer instance:
@@ -303,7 +305,7 @@ raises tape-exhaustion per §1).
 3. Verify the dispatcher correctly recovers PT from CT given the same
    parameters with `direction=decrypt`. Round-trip equality is exact
    on non-null positions; null positions are `?` in PT.
-4. Repeat (1)–(3) for `variant=beaufort` and `variant=variant_beaufort`
+4. Repeat (1)–(3) for `variant=beaufort` and `variant=var_beaufort`
    to confirm both reciprocal and non-reciprocal variants round-trip
    correctly.
 

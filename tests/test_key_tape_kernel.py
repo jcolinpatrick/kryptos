@@ -242,3 +242,32 @@ class TestKeyTapeNulls:
                 null_rule="consume",
                 alphabet=AZ,
             )
+
+
+class TestKeyTapeCompose:
+    def test_transform_type_key_tape_exists(self):
+        from kryptos.kernel.transforms.compose import TransformType
+        assert TransformType.KEY_TAPE.value == "key_tape"
+
+    def test_compose_pipeline_with_key_tape(self):
+        # Build a single-step pipeline that applies key_tape and confirm
+        # it produces the same output as direct apply_key_tape.
+        from kryptos.kernel.transforms.compose import (
+            TransformConfig, TransformType, PipelineConfig, build_pipeline,
+        )
+        ct = "BCDEF"
+        tape = (1, 1, 1, 1, 1)
+        cfg = TransformConfig(
+            transform_type=TransformType.KEY_TAPE,
+            params={
+                "tape": tape,
+                "variant": "vigenere",
+                "direction": "decrypt",
+                "null_positions": frozenset(),
+                "null_rule": "skip",
+                "alphabet": "AZ",
+            },
+        )
+        pipeline_cfg = PipelineConfig(name="test_key_tape", steps=(cfg,))
+        pipeline = build_pipeline(pipeline_cfg)
+        assert pipeline(ct) == "ABCDE"

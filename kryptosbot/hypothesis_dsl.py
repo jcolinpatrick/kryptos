@@ -134,6 +134,14 @@ _VALID_CIPHER_KINDS: frozenset[str] = frozenset(
 AlphabetKind = Literal["AZ", "KA", "keyword_mixed"]
 _VALID_ALPHABET_KINDS: frozenset[str] = frozenset(["AZ", "KA", "keyword_mixed"])
 
+# key_tape DSL constants (B-DSL-expanded 2026-05-03). Variant strings
+# match CipherVariant enum values verbatim — no DSL→kernel mapping needed.
+NullRule = Literal["skip", "consume"]
+_VALID_NULL_RULES: frozenset[str] = frozenset({"skip", "consume"})
+_VALID_KEY_TAPE_VARIANTS: frozenset[str] = frozenset({
+    "vigenere", "beaufort", "var_beaufort",
+})
+
 CribAlignment = Literal["direct_positional", "post_transposition", "free"]
 _VALID_CRIB_ALIGNMENTS: frozenset[str] = frozenset(
     ["direct_positional", "post_transposition", "free"]

@@ -37,6 +37,10 @@ class TransformType(str, Enum):
     # the transform just calls the kernel function with the params it
     # receives.
     QUAGMIRE = "quagmire"
+    # B-DSL-expanded (2026-05-03): finite-tape additive cipher with optional
+    # null insertion. Dispatches to
+    # kryptos.kernel.transforms.key_tape.apply_key_tape.
+    KEY_TAPE = "key_tape"
     IDENTITY = "identity"
     CUSTOM = "custom"
 
@@ -237,6 +241,29 @@ def build_transform(config: TransformConfig) -> TransformFn:
                        cak=ct_alphabet_keyword, pak=pt_alphabet_keyword:
                 quagmire_encrypt(text, pk, ind, cak, pak)
             )
+
+    elif t == TransformType.KEY_TAPE:
+        # B-DSL-expanded (2026-05-03): finite-tape additive cipher with
+        # optional null insertion. Dispatches to apply_key_tape in the
+        # kernel. Variant string is passed as a CipherVariant enum value
+        # (str, Enum — construction from string works directly).
+        from kryptos.kernel.transforms.key_tape import apply_key_tape
+        from kryptos.kernel.transforms.vigenere import CipherVariant
+        from kryptos.kernel.alphabet import AZ, KA
+        tape = tuple(p["tape"])
+        variant_str = p["variant"]
+        variant = CipherVariant(variant_str)
+        direction = p.get("direction", "decrypt")
+        null_positions = frozenset(p.get("null_positions", frozenset()))
+        null_rule = p.get("null_rule", "skip")
+        alphabet_str = p.get("alphabet", "AZ")
+        alpha = AZ if alphabet_str == "AZ" else KA
+        return (
+            lambda text, tp=tape, v=variant, d=direction,
+                   np=null_positions, nr=null_rule, a=alpha:
+            apply_key_tape(text, tp, variant=v, direction=d,
+                           null_positions=np, null_rule=nr, alphabet=a)
+        )
 
     elif t == TransformType.CUSTOM:
         raise ValueError("Custom transforms must be provided as functions, not configs")
