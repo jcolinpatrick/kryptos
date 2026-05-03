@@ -84,3 +84,31 @@ class TestKeyTapeBeaufort:
             direction="encrypt", alphabet=AZ,
         )
         assert ct == "B"
+
+
+class TestKeyTapeVarBeaufort:
+    def test_var_beaufort_decrypt_known_value(self):
+        # VarBeau decrypt: PT = (CT + K) mod 26 (per
+        # src/kryptos/kernel/transforms/vigenere.py::varbeau_decrypt).
+        # CT='B' (1), K=2 -> PT = (1+2) mod 26 = 3 -> 'D'.
+        pt = apply_key_tape(
+            "B", tape=(2,),
+            variant=CipherVariant.VAR_BEAUFORT,
+            direction="decrypt", alphabet=AZ,
+        )
+        assert pt == "D"
+
+    def test_var_beaufort_roundtrip(self):
+        pt = "HELLO"
+        tape = (3, 1, 4, 1, 5)
+        ct = apply_key_tape(
+            pt, tape=tape,
+            variant=CipherVariant.VAR_BEAUFORT,
+            direction="encrypt", alphabet=AZ,
+        )
+        recovered = apply_key_tape(
+            ct, tape=tape,
+            variant=CipherVariant.VAR_BEAUFORT,
+            direction="decrypt", alphabet=AZ,
+        )
+        assert recovered == pt
