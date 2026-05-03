@@ -168,6 +168,10 @@ class TestKeyTapeNulls:
     def test_consume_null_rule(self):
         # CONSUME advances tape on every position (including nulls).
         # 6-char text, 2 nulls at {1,4}, tape length = 6 (full).
+        # All-zero tape: identity for Vigenère. Tape values at null
+        # positions are still range-validated by the kernel (so we use
+        # 0, not arbitrary "ignored" values like 99 -- those would fail
+        # the [0,25] validation rule in apply_key_tape's preflight).
         ct = apply_key_tape(
             "ABCDEF",
             tape=(0, 0, 0, 0, 0, 0),
@@ -225,4 +229,16 @@ class TestKeyTapeNulls:
             apply_key_tape(
                 "AB", tape=(),
                 variant=CipherVariant.VIGENERE, alphabet=AZ,
+            )
+
+    def test_consume_null_exhaustion_in_null_branch(self):
+        # Tape used at pos 0 (non-null). At pos 1 (null, consume rule),
+        # the tape is already exhausted -> ValueError from the consume-null branch.
+        with pytest.raises(ValueError, match="under consume rule"):
+            apply_key_tape(
+                "AB", tape=(0,),
+                variant=CipherVariant.VIGENERE,
+                null_positions=frozenset({1}),
+                null_rule="consume",
+                alphabet=AZ,
             )
