@@ -725,6 +725,78 @@ def repair_spec_shape(
     return out, report
 
 
+# ─── Per-kind layer validation ───────────────────────────────────────────────
+
+def validate_layer_for_kind(kind: str, params: dict[str, Any]) -> list[str]:
+    """Validate the parameter dict for a specific cipher kind.
+
+    Returns a list of error strings (empty list = valid). Each error
+    message begins with ``<kind>: `` for easy filtering.
+
+    Currently handles: ``key_tape``. Other kinds are accepted without
+    error (the CipherLayer.validate() method handles kind-level checks;
+    this function provides additional parameter-level validation for
+    kinds whose param structure is non-trivial).
+
+    Callers should invoke this *after* CipherLayer.validate() passes.
+    """
+    if kind == "key_tape":
+        from kryptos.kernel.constants import CT_LEN
+        errors: list[str] = []
+
+        tape = params.get("tape")
+        if tape is None:
+            errors.append("key_tape: missing required parameter 'tape'")
+        elif len(tape) == 0:
+            errors.append("key_tape: 'tape' must be non-empty")
+        else:
+            for i, v in enumerate(tape):
+                if not isinstance(v, int) or not (0 <= v <= 25):
+                    errors.append(
+                        f"key_tape: tape[{i}] = {v!r} not in range [0, 25]"
+                    )
+                    break
+            if len(tape) > CT_LEN:
+                errors.append(
+                    f"key_tape: tape length {len(tape)} exceeds CT_LEN {CT_LEN}"
+                )
+
+        variant = params.get("variant")
+        if variant not in _VALID_KEY_TAPE_VARIANTS:
+            errors.append(
+                f"key_tape: variant {variant!r} not in {sorted(_VALID_KEY_TAPE_VARIANTS)}"
+            )
+
+        alphabet = params.get("alphabet")
+        if alphabet not in {"AZ", "KA"}:
+            errors.append(f"key_tape: alphabet {alphabet!r} must be 'AZ' or 'KA'")
+
+        null_positions = params.get("null_positions", ())
+        null_rule = params.get("null_rule")
+        if null_positions:
+            for p in null_positions:
+                if not isinstance(p, int) or not (0 <= p < CT_LEN):
+                    errors.append(
+                        f"key_tape: null_positions value {p!r} not in [0, {CT_LEN})"
+                    )
+                    break
+            if null_rule is None:
+                errors.append(
+                    "key_tape: null_rule required when null_positions is non-empty"
+                )
+            elif null_rule not in _VALID_NULL_RULES:
+                errors.append(
+                    f"key_tape: null_rule {null_rule!r} not in {sorted(_VALID_NULL_RULES)}"
+                )
+
+        return errors
+
+    # Unknown / unhandled kinds pass through without error — CipherLayer.validate()
+    # handles kind-level checks; this function only adds param-level validation
+    # for explicitly supported kinds.
+    return []
+
+
 # ─── Boundary validation ─────────────────────────────────────────────────────
 
 def validate_hypothesis_spec(raw: str | dict[str, Any]) -> ParseResult[HypothesisSpec]:
@@ -791,6 +863,8 @@ __all__ = [
     "RepairReport",
     # Boundary validator
     "validate_hypothesis_spec",
+    # Per-kind layer parameter validator
+    "validate_layer_for_kind",
     # Pre-validation repair (K4Bench wiring)
     "repair_spec_shape",
 ]
