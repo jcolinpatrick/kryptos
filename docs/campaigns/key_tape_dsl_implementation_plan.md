@@ -1,6 +1,7 @@
 # `key_tape` DSL Kind — Implementation Plan
 
-**Status:** ACTIVE — scope locked 2026-05-03
+**Status:** LANDED — workstream complete 2026-05-03
+**Landed:** 2026-05-03 — closure criteria §11 all green. Final commit: <TBD>
 **Author:** Colin Patrick + Claude (KryptosBot)
 **Date authored:** 2026-05-02 · **Promoted to active:** 2026-05-03
 **Closes:** the explicit deferred DSL gap identified in
@@ -364,15 +365,15 @@ full text length, since CONSUME advances on every position).
 
 The gap closes when:
 
-- [ ] `scripts/audit/audit_dsl_dispatcher_semantics.py` reports
-      `Valid without translation: []`.
-- [ ] All tests in §6 pass.
-- [ ] Synthetic recovery test in §7 passes.
-- [ ] `_kind_has_translation("key_tape") is True` (dispatcher exposes
-      it; critic admits it automatically via `_SUPPORTED_KINDS`).
-- [ ] CLAUDE.md and `kryptosbot/ARCHITECTURE.md` are updated.
-- [ ] `docs/audits/dsl_dispatcher_semantics.md` is regenerated and
-      shows DSL-valid kinds equal to dispatcher-supported kinds.
+- [x] `scripts/audit/audit_dsl_dispatcher_semantics.py` reports
+      `Valid without translation: []`. — closed Task 10 (fd02a6b)
+- [x] All tests in §6 pass. — closed across Tasks 1-9 (kernel + DSL + dispatcher tests)
+- [x] Synthetic recovery test in §7 passes. — closed Task 11 (066d4a2)
+- [x] `_kind_has_translation("key_tape") is True` (dispatcher exposes
+      it; critic admits it automatically via `_SUPPORTED_KINDS`). — closed Task 9 (419d90d)
+- [x] CLAUDE.md and `kryptosbot/ARCHITECTURE.md` are updated. — closing in this Task 13
+- [x] `docs/audits/dsl_dispatcher_semantics.md` is regenerated and
+      shows DSL-valid kinds equal to dispatcher-supported kinds. — closed Task 10
 
 ---
 

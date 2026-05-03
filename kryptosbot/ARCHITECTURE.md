@@ -167,9 +167,9 @@ Theorist → HypothesisSpec (JSON)
 
 ### DSL coverage (Phase 4 + 8 + R2-2 + R3-0.5 + B-DSL-expanded)
 
-The dispatcher's `_SUPPORTED_KINDS` set has grown over five separate
-expansions. As of 2026-04-26 the only DSL-valid kind without dispatcher
-translation is `key_tape`. To get the live count programmatically:
+The dispatcher's `_SUPPORTED_KINDS` set has grown over six separate
+expansions. As of 2026-05-03 all DSL-valid kinds have dispatcher
+translations (including `key_tape`, landed 2026-05-03). To get the live count programmatically:
 
 ```bash
 PYTHONPATH=src python3 -c "
@@ -186,7 +186,7 @@ print('GAPS:', sorted(_VALID_CIPHER_KINDS - _SUPPORTED_KINDS))"
 | `grille` (Cardano permutation-only) | ✅ via TransformType.GRILLE | R3-0.5-2 (2026-04-21) |
 | `procedural` with `recipe_id` | ✅ via procedural_enumerator.py | Phase 8 |
 | KA alphabet for Vigenère-family | ✅ R2-2 (2026-04-21) — Phase 4 was AZ-only | Quagmire III enforces K1/K2 convention |
-| `key_tape` | ❌ DSL-valid, no dispatcher translation | Deferred-kind contract; needs new kernel infrastructure for finite tape + null insertion |
+| `key_tape` | ✅ via `apply_key_tape()` kernel transform | Finite-tape additive cipher with optional null insertion (M1-M5 keystream-forensics class). Params: `tape` (tuple[int,...]), `variant` (vigenere/beaufort/var_beaufort), `direction`, `null_positions`, `null_rule` (skip/consume), `alphabet` (AZ/KA). Landed 2026-05-03. |
 
 ### Null-baseline calibration (Phase 6)
 

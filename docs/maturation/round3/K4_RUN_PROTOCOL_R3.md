@@ -33,7 +33,7 @@ Resolved since Round 2's protocol:
 
 Open after R3:
 
-1. **Five cipher kinds still lack translators:** `rail_fence, route, myszkowski, quagmire, key_tape`. Theorist-proposed theories using any of these get `dsl_untranslatable` rejection at the critic. Operator should expect a non-zero rate of such rejections in the mortality table; they are the framework honestly reporting "this cipher family can't be tested yet," not errors.
+1. **Four cipher kinds still lack translators:** `rail_fence, route, myszkowski, quagmire`. (`key_tape` was deferred here; translator landed 2026-05-03 — see `docs/campaigns/key_tape_dsl_implementation_plan.md`.) Theorist-proposed theories using any of the remaining four get `dsl_untranslatable` rejection at the critic. Operator should expect a non-zero rate of such rejections in the mortality table; they are the framework honestly reporting "this cipher family can't be tested yet," not errors.
 
 2. **`TokenAccountant` not wired into the controller.** The R2-5 infrastructure is still standalone. Token telemetry for a live K4 run is still recovered post-hoc from Claude Code session transcripts, same as the 2026-04-21 postmortem §6.1.5 did. A later brief wires it.
 
