@@ -70,12 +70,10 @@ NON_DSL_FAMILIES: frozenset[str] = frozenset({
 #
 # B-DSL-expanded (2026-04-22) shrank this set from 5 to 1: rail_fence,
 # route, myszkowski, and quagmire all got first-class dispatcher
-# translators. Only ``key_tape`` remains deferred — it needs new
-# kernel-level infrastructure (finite tape + null insertion mechanism)
-# that this project doesn't yet have.
-_DEFERRED_DSL_FAMILY_NAMES: frozenset[str] = frozenset({
-    "key_tape",
-})
+# translators. key_tape was the last deferred kind; its kernel transform +
+# dispatcher translator landed in Tasks 1-9 (2026-05-03). The set is now
+# empty — every DSL-valid kind has a translator and no family is deferred.
+_DEFERRED_DSL_FAMILY_NAMES: frozenset[str] = frozenset()
 
 # Minimum fields required for a theory to be testable
 REQUIRED_FIELDS = {"core_claim", "mechanism", "family"}

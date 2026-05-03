@@ -3208,12 +3208,11 @@ Valid enum/value domains for dsl_spec fields:
 
 Untranslatable kinds (proposing one triggers CriticDecision.
 REJECT_UNDERCONSTRAINED with reason "dsl_untranslatable"):
-  key_tape
+  none — all DSL-valid kinds now have dispatcher translators as of 2026-05-03.
 
-Family and dsl_spec must describe the SAME mechanism class. Do not label a
-theory as a deferred family (for example key_tape) and then smuggle it
-through a supported pipeline kind (for example vigenere). "free_search" is
-INVALID; the only free-alignment enum value is "free".
+Family and dsl_spec must describe the SAME mechanism class. Do not use a
+pipeline kind that does not match the declared family mechanism. "free_search"
+is INVALID; the only free-alignment enum value is "free".
 
 Example A — single-layer Vigenere on KA alphabet:
   "dsl_spec": {{

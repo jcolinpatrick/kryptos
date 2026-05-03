@@ -55,7 +55,7 @@ CipherKind = Literal[
     "atbash",
     "procedural",           # maps to a recipe_id in procedural_anomaly_recipes.md
     "grille",               # R3-0.5-2: Cardano-grille gather (permutation-only)
-    "key_tape",             # B-DSL-expanded (2026-04-22): DEFERRED (no translator)
+    "key_tape",             # B-DSL-expanded (2026-04-22); translator landed 2026-05-03 (Task 9)
     "reverse_blocks",       # 2026-04-28 (LESSON-008): fixed-size in-block
                             #   reversal as a hand-cipher transposition
                             #   primitive. Params: block_size (int >= 2),
@@ -110,9 +110,9 @@ CipherKind = Literal[
 _VALID_CIPHER_KINDS: frozenset[str] = frozenset(
     # Keep in lock-step with CipherKind Literal above. The Literal is for
     # static type-checkers; this frozenset is for runtime validation.
-    # ``key_tape`` is listed here but absent from job_dispatcher._SUPPORTED_KINDS
-    # — proposals validate through DSL but admissibility rejects with a
-    # "no dispatcher translation" pointer (the deferred-kind contract).
+    # All kinds in this set also appear in job_dispatcher._SUPPORTED_KINDS
+    # as of 2026-05-03 (key_tape translator landed in Task 9, closing the
+    # last DSL/dispatcher gap). Add to both sets when extending.
     [
         "identity",
         "vigenere", "beaufort", "variant_beaufort",
@@ -120,7 +120,7 @@ _VALID_CIPHER_KINDS: frozenset[str] = frozenset(
         "polybius", "quagmire", "atbash",
         "procedural",
         "grille",  # R3-0.5-2
-        "key_tape",  # B-DSL-expanded (2026-04-22): deferred
+        "key_tape",  # B-DSL-expanded (2026-04-22); translator 2026-05-03
         "reverse_blocks",  # 2026-04-28: LESSON-008 block-reversal primitive
         "caesar",  # 2026-04-28: LESSON-009 canonical Caesar / ROT shift
         "skip_route",  # 2026-04-28: LESSON-011 modular skip-route transposition

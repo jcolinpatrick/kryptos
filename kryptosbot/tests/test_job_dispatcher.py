@@ -85,14 +85,22 @@ class TestAdmissibility:
         assert admissible is False
         assert any("hypothesis_id" in r for r in reasons)
 
-    def test_unsupported_kind_rejected_with_pointer(self):
+    def test_unsupported_kind_rejected_with_pointer(self, monkeypatch):
         """A DSL-valid but dispatcher-unsupported kind must fail
-        admissibility with a clear pointer. Pre-R3-0.5 used polybius
-        as the exemplar; R3-0.5-3 wired polybius. Pre-B-DSL-expanded
-        used rail_fence; B-DSL-expanded (2026-04-22) wired four more
-        kinds (rail_fence, myszkowski, route, quagmire) so this test
-        now uses ``key_tape`` — the last remaining member of
-        _VALID_CIPHER_KINDS that isn't in _SUPPORTED_KINDS."""
+        admissibility with a clear pointer.
+
+        key_tape was the last deferred kind; its translator landed in
+        Task 9 (2026-05-03) so the gap is now empty. This test simulates
+        the pre-translation state by temporarily removing key_tape from
+        _SUPPORTED_KINDS via monkeypatch, keeping the mechanism test
+        meaningful without requiring a real unsupported kind.
+        """
+        import kryptosbot.job_dispatcher as _disp
+        monkeypatch.setattr(
+            _disp,
+            "_SUPPORTED_KINDS",
+            _disp._SUPPORTED_KINDS - {"key_tape"},
+        )
         spec = HypothesisSpec(
             hypothesis_id="T", pipeline=[CipherLayer(kind="key_tape")],
             compute_budget_cpu_minutes=1,
@@ -516,11 +524,21 @@ class TestExecuteEndToEnd:
         assert spec.hypothesis_id in result.eliminated_claim
         assert "STORE_THRESHOLD" in result.eliminated_claim
 
-    def test_admissibility_rejection_short_circuits(self, tmp_path: Path):
+    def test_admissibility_rejection_short_circuits(self, tmp_path: Path, monkeypatch):
         """Rejected spec returns early — total_tested stays 0.
 
-        Uses ``key_tape`` — the only _VALID_CIPHER_KINDS member still
-        absent from _SUPPORTED_KINDS after B-DSL-expanded (2026-04-22)."""
+        key_tape was the last deferred kind; its translator landed in
+        Task 9 (2026-05-03). Monkeypatch removes key_tape from
+        _SUPPORTED_KINDS to simulate the rejection path and confirm
+        execute() short-circuits on admissibility failure without running
+        any workers.
+        """
+        import kryptosbot.job_dispatcher as _disp
+        monkeypatch.setattr(
+            _disp,
+            "_SUPPORTED_KINDS",
+            _disp._SUPPORTED_KINDS - {"key_tape"},
+        )
         spec = HypothesisSpec(
             hypothesis_id="T", pipeline=[CipherLayer(kind="key_tape")],
             compute_budget_cpu_minutes=1,

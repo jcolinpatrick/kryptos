@@ -219,13 +219,20 @@ def test_critic_rejects_cipher_family_without_dsl_spec():
     assert any("dsl_untranslatable" in r for r in verdict.reasons)
 
 
-def test_critic_rejects_cipher_family_with_untranslatable_kind():
-    """Category C: cipher family + spec uses a deferred kind → reject.
+def test_critic_rejects_cipher_family_with_untranslatable_kind(monkeypatch):
+    """Category C: cipher family + spec uses an untranslatable kind → reject.
 
-    B-DSL-expanded (2026-04-22) promoted rail_fence, route, myszkowski,
-    and quagmire out of the deferred set, so this test now uses
-    ``key_tape`` — the only remaining kind in _VALID_CIPHER_KINDS
-    that is NOT in _SUPPORTED_KINDS."""
+    key_tape was the last deferred kind; its translator landed in Task 9
+    (2026-05-03). Monkeypatch removes key_tape from _SUPPORTED_KINDS so
+    the rejection path remains exercised without requiring a permanently
+    deferred kind.
+    """
+    import kryptosbot.job_dispatcher as _disp
+    monkeypatch.setattr(
+        _disp,
+        "_SUPPORTED_KINDS",
+        _disp._SUPPORTED_KINDS - {"key_tape"},
+    )
     critic = TheoryCritic(_tmp_ledger())
     bad_spec = {
         "hypothesis_id": "t-kt",
@@ -244,10 +251,21 @@ def test_critic_rejects_cipher_family_with_untranslatable_kind():
                for r in verdict.reasons)
 
 
-def test_critic_rejects_deferred_family_with_supported_kind_spec():
+def test_critic_rejects_deferred_family_with_supported_kind_spec(monkeypatch):
     """Deferred family names must not launder themselves through a supported
-    pipeline kind. key_tape is explicitly deferred, so a vigenere dsl_spec
-    is a family/spec mismatch and must reject at the critic."""
+    pipeline kind.
+
+    key_tape was the last deferred family; its translator landed in Task 9
+    (2026-05-03) so _DEFERRED_DSL_FAMILY_NAMES is now empty. Monkeypatch
+    restores key_tape as deferred so the kind-smuggling detection path
+    stays exercised and meaningful.
+    """
+    import kryptosbot.critic as _critic
+    monkeypatch.setattr(
+        _critic,
+        "_DEFERRED_DSL_FAMILY_NAMES",
+        frozenset({"key_tape"}),
+    )
     critic = TheoryCritic(_tmp_ledger())
     bad_spec = {
         "hypothesis_id": "t-key-tape",

@@ -379,6 +379,15 @@ _SUPPORTED_KINDS: frozenset[str] = frozenset({
     # inverse is the same perm so encrypt/decrypt direction is
     # unambiguous. Length-preserving, deterministic.
     "row_reverse",
+    # 2026-05-03 (key_tape DSL build Task 9): finite substitution key tape
+    # with optional null positions. The tape is a concrete integer sequence
+    # (not a sweepable parameter), variant ∈ {vigenere, beaufort,
+    # variant_beaufort}, null_rule ∈ {skip, consume}. The translator reads
+    # directly from layer.params (a dict on the concrete layer) and delegates
+    # to TransformType.KEY_TAPE in compose.py → apply_key_tape in the kernel.
+    # validate_layer_for_kind is called first so all 9 DSL rules are enforced
+    # on the production path (not test-only).
+    "key_tape",
 })
 
 
@@ -1434,6 +1443,38 @@ def _translate_layer(
                 "pt_alphabet_keyword": pt_kw,
                 "direction": direction,
             },
+        }
+
+    if kind == "key_tape":
+        # 2026-05-03 (key_tape DSL build Task 9): finite substitution key
+        # tape with optional null positions. Parameters live directly on
+        # layer.params (a dict on the concrete layer — NOT on binding) because
+        # the tape is a fixed-size sequence, not a sweepable keyword.
+        # validate_layer_for_kind is called first to enforce all 9 DSL rules
+        # on the production path; without this call the rules are test-only.
+        from kryptosbot.hypothesis_dsl import (
+            validate_layer_for_kind,
+        )
+        params = layer.params  # dict on the concrete layer
+        errors = validate_layer_for_kind("key_tape", params)
+        if errors:
+            raise ValueError("; ".join(errors))
+
+        tape = tuple(params.get("tape", ()))
+        variant = params.get("variant")
+        direction = params.get("direction", "decrypt")
+        null_positions = frozenset(params.get("null_positions", ()))
+        null_rule = params.get("null_rule")
+        alphabet_kind = params.get("alphabet", "AZ")
+
+        return {
+            "type": "key_tape",
+            "tape": tape,
+            "variant": variant,
+            "direction": direction,
+            "null_positions": null_positions,
+            "null_rule": null_rule if null_rule is not None else "skip",
+            "alphabet": alphabet_kind,
         }
 
     if kind == "procedural":

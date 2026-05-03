@@ -198,11 +198,23 @@ def test_bench_mode_admissibility_skips_exhaustion_overlap():
     assert not any("exhaustion overlap" in r.lower() for r in reasons_bench)
 
 
-def test_bench_mode_admissibility_still_rejects_untranslatable_kind():
+def test_bench_mode_admissibility_still_rejects_untranslatable_kind(monkeypatch):
     """Negative path: a spec whose layer kind has no dispatcher
-    translation (e.g. ``key_tape``, the only deferred kind) is still
-    rejected in bench mode. The bypass is narrowly scoped to real-K4
-    exhaustion overlap — every other admissibility gate still fires."""
+    translation is still rejected in bench mode. The bypass is narrowly
+    scoped to real-K4 exhaustion overlap — every other admissibility
+    gate still fires.
+
+    key_tape was the last deferred kind; its translator landed in Task 9
+    (2026-05-03). Monkeypatch removes key_tape from _SUPPORTED_KINDS so
+    this rejection path remains exercised without a permanently deferred
+    kind.
+    """
+    import kryptosbot.job_dispatcher as _disp
+    monkeypatch.setattr(
+        _disp,
+        "_SUPPORTED_KINDS",
+        _disp._SUPPORTED_KINDS - {"key_tape"},
+    )
     parsed = validate_hypothesis_spec({
         "hypothesis_id": "bench-untranslatable",
         "pipeline": [
@@ -211,9 +223,8 @@ def test_bench_mode_admissibility_still_rejects_untranslatable_kind():
         "compute_budget_cpu_minutes": 1,
     })
     assert parsed.is_valid, (
-        "fixture sanity: key_tape is a valid DSL kind, just unsupported "
-        "by the dispatcher; it should pass DSL validation but fail "
-        "admissibility"
+        "fixture sanity: key_tape is a valid DSL kind; it should pass DSL "
+        "validation but fail admissibility when removed from _SUPPORTED_KINDS"
     )
     spec = parsed.value
     admissible, reasons = check_admissibility(spec, bench_mode=True)

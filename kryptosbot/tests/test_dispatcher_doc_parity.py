@@ -57,20 +57,20 @@ _KRYPTOSBOT = _REPO_ROOT / "kryptosbot"
 # ---------------------------------------------------------------------------
 
 
-def test_only_key_tape_lacks_translator():
-    """Every DSL-valid kind has a dispatcher translation, except key_tape.
+def test_all_dsl_kinds_have_translator():
+    """Every DSL-valid kind has a dispatcher translation.
 
-    ``key_tape`` is the documented deferred kind (finite tape + null
-    insertion needs new kernel infrastructure). If anything else shows
-    up in the gap set, either a kind was added to the DSL without a
-    translator, or a translator was lost.
+    key_tape was the last deferred kind (finite tape + null insertion);
+    its translator landed in Task 9 (2026-05-03). The gap is now empty.
+    If a kind was added to the DSL without a translator, it will appear
+    here. Wire a translator into job_dispatcher._SUPPORTED_KINDS and
+    _translate_layer before merging.
     """
     gap = _VALID_CIPHER_KINDS - _SUPPORTED_KINDS
-    assert gap == {"key_tape"}, (
-        f"Expected only {{'key_tape'}} to lack a dispatcher translator; "
-        f"got {sorted(gap)}. If you added a new cipher kind, also wire "
-        f"a translator into job_dispatcher._SUPPORTED_KINDS and "
-        f"_translate_layer."
+    assert gap == set(), (
+        f"DSL-valid kinds that lack a dispatcher translator: "
+        f"{sorted(gap)}. Wire a translator for each missing kind into "
+        f"job_dispatcher._SUPPORTED_KINDS and _translate_layer."
     )
 
 

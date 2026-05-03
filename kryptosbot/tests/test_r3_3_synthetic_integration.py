@@ -94,14 +94,24 @@ def _bare_controller(tmp_path: Path) -> tuple[ResearchController, TheoryLedger]:
     return controller, ledger
 
 
-def test_r3_3_synthetic_integration_covers_mortality_battery(tmp_path):
+def test_r3_3_synthetic_integration_covers_mortality_battery(tmp_path, monkeypatch):
     """Brief §4.2: one synthetic-theory cycle must exercise every new
     code surface the R3-2 cutover introduced.
 
     The test constructs a mixed theory batch, runs them through the
     critic and _dispatch_theories, then asserts the mortality-table
     signals the brief's falsification targets demand.
+
+    key_tape was the last deferred kind; its translator landed in Task 9
+    (2026-05-03). Monkeypatch removes key_tape from _SUPPORTED_KINDS so
+    the translation-error path stays exercised.
     """
+    import kryptosbot.job_dispatcher as _disp
+    monkeypatch.setattr(
+        _disp,
+        "_SUPPORTED_KINDS",
+        _disp._SUPPORTED_KINDS - {"key_tape"},
+    )
     controller, ledger = _bare_controller(tmp_path)
     critic = TheoryCritic(ledger)
 
@@ -172,10 +182,10 @@ def test_r3_3_synthetic_integration_covers_mortality_battery(tmp_path):
         dsl_spec={},  # empty — Category C
     )
 
-    # 5. Cipher-family with translation error. B-DSL-expanded
-    #    (2026-04-22) added translators for rail_fence/route/myszkowski/
-    #    quagmire, leaving ``key_tape`` as the only deferred kind. Use
-    #    it as the untranslatable-kind exemplar here.
+    # 5. Cipher-family with translation error. key_tape was the last
+    #    deferred kind (translator landed 2026-05-03). Monkeypatch removes
+    #    it from _SUPPORTED_KINDS above so it still serves as the
+    #    untranslatable-kind exemplar for this integration test.
     t_translation_error = _make_theory(
         "t-transerr",
         "novel",
@@ -222,7 +232,7 @@ def test_r3_3_synthetic_integration_covers_mortality_battery(tmp_path):
         CriticDecision.REJECT_UNDERCONSTRAINED
     )
     assert any(
-        "dsl_untranslatable" in r and "rail_fence" in r
+        "dsl_untranslatable" in r and "key_tape" in r
         for r in critic_results["t-transerr"].reasons
     )
     # Category A / B survivors.

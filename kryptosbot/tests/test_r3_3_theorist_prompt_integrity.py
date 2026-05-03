@@ -93,27 +93,21 @@ def test_theorist_prompt_disambiguates_procedural_paradigm_from_dsl_kind(tmp_pat
 
 def test_theorist_prompt_lists_untranslatable_kinds(tmp_path):
     prompt = _get_prompt(tmp_path)
-    # After B-DSL-expanded (2026-04-22), only ``key_tape`` remains
-    # deferred. The other four (rail_fence, route, myszkowski,
-    # quagmire) got first-class dispatcher translators and no longer
-    # belong on the untranslatable list. A future brief may add
-    # key_tape or other families — update this test to match.
-    for kind in ("key_tape",):
-        assert kind in prompt, (
-            f"theorist prompt should flag {kind!r} as untranslatable"
-        )
-    # Guard against regression: families that B-DSL-expanded moved into
-    # _SUPPORTED_KINDS must NOT appear in the theorist's
-    # untranslatable-kinds listing (a specific line in DSL_SPEC_CONTRACT).
+    # After key_tape DSL build Task 9 (2026-05-03), ALL DSL-valid kinds have
+    # dispatcher translators — the untranslatable list is now empty. The
+    # prompt must still declare the "Untranslatable kinds" header (so the
+    # section doesn't vanish silently), but it must explicitly state that no
+    # kinds are deferred. No kinds must appear on the deferred list.
     import re
-    untranslatable_line = re.search(
+    untranslatable_section = re.search(
         r"Untranslatable kinds.*?:\s*\n\s*([^\n]+)", prompt, re.DOTALL,
     )
-    assert untranslatable_line, (
-        "theorist prompt must declare an 'Untranslatable kinds' line"
+    assert untranslatable_section, (
+        "theorist prompt must declare an 'Untranslatable kinds' section"
     )
-    for kind in ("rail_fence", "route", "myszkowski", "quagmire"):
-        assert kind not in untranslatable_line.group(1), (
+    # All previously-deferred kinds must be absent from the section.
+    for kind in ("rail_fence", "route", "myszkowski", "quagmire", "key_tape"):
+        assert kind not in untranslatable_section.group(1), (
             f"{kind!r} is now supported and must not appear on the "
             f"untranslatable-kinds listing"
         )
