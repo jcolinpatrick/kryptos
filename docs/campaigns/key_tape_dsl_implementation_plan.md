@@ -1,7 +1,7 @@
 # `key_tape` DSL Kind — Implementation Plan
 
 **Status:** LANDED — workstream complete 2026-05-03
-**Landed:** 2026-05-03 — closure criteria §11 all green. Final commit: <TBD>
+**Landed:** 2026-05-03 — closure criteria §11 all green. Implementation final commit: `d998264` (kryptosbot tests aligned to nested-params + binding model). 39 new tests added; key_tape suite + K1/K2 self-test + audit dossier all green. See `MEMORY.md` → `project_key_tape_dsl_landed_2026_05_03.md` for the full outcome record.
 **Author:** Colin Patrick + Claude (KryptosBot)
 **Date authored:** 2026-05-02 · **Promoted to active:** 2026-05-03
 **Closes:** the explicit deferred DSL gap identified in
