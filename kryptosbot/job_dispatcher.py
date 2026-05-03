@@ -306,10 +306,9 @@ _SUPPORTED_KINDS: frozenset[str] = frozenset({
     # The translator accepts variant="bifid" only.
     "polybius",
     # B-DSL-expanded (2026-04-22): four additional cipher families that
-    # were listed in R3 protocol §2.1 as deferred. With these live the
-    # only remaining deferred kind is ``key_tape`` (finite tape + null-
-    # insertion, needs new kernel infrastructure). All four route
-    # through existing kernel primitives:
+    # were listed in R3 protocol §2.1 as deferred. (`key_tape`, the last
+    # deferred kind, was promoted to supported on 2026-05-03 — see its
+    # entry below.) All four route through existing kernel primitives:
     #   rail_fence  → transposition_full via rail_fence_perm
     #   myszkowski  → transposition_full via myszkowski_perm
     #   route       → transposition_full via serpentine_perm / spiral_perm
