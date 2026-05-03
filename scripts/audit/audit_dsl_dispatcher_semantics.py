@@ -226,9 +226,10 @@ def write_markdown(payload: dict[str, Any]) -> None:
         f"- Valid without translation: {payload['valid_without_translation']}",
         f"- Supported but not DSL-valid: {payload['supported_not_valid']}",
         "",
-        "The deferred `key_tape` gap is explicit. The dispatcher uses the "
-        "canonical kernel scoring path, and worker self-reports are overruled "
-        "by the kernel verifier.",
+        "DSL-valid kinds and dispatcher-supported kinds agree (the "
+        "previously deferred `key_tape` gap closed 2026-05-03). The dispatcher "
+        "uses the canonical kernel scoring path, and worker self-reports are "
+        "overruled by the kernel verifier.",
         "",
         "Challenge-mode transposition translators are parameterized by the "
         "challenge text length; the audit columnar fixture emits a valid "

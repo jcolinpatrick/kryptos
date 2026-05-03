@@ -3,11 +3,11 @@
 ## Verdict
 
 - DSL-valid kinds: 19
-- Dispatcher-supported kinds: 18
-- Valid without translation: ['key_tape']
+- Dispatcher-supported kinds: 19
+- Valid without translation: []
 - Supported but not DSL-valid: []
 
-The deferred `key_tape` gap is explicit. The dispatcher uses the canonical kernel scoring path, and worker self-reports are overruled by the kernel verifier.
+DSL-valid kinds and dispatcher-supported kinds agree (the previously deferred `key_tape` gap closed 2026-05-03). The dispatcher uses the canonical kernel scoring path, and worker self-reports are overruled by the kernel verifier.
 
 Challenge-mode transposition translators are parameterized by the challenge text length; the audit columnar fixture emits a valid 35-position permutation and executes 1 candidate for the one-point search universe.
 
