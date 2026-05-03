@@ -146,3 +146,83 @@ class TestKeyTapeAlphabet:
             direction="decrypt", alphabet=KA,
         )
         assert recovered == pt
+
+
+class TestKeyTapeNulls:
+    def test_skip_null_rule(self):
+        # 6-char text, 2 nulls at {1,4}, 4 non-null positions.
+        # Tape length = 4 (matches non-null count under SKIP).
+        ct = apply_key_tape(
+            "ABCDEF",
+            tape=(0, 0, 0, 0),
+            variant=CipherVariant.VIGENERE,
+            direction="decrypt",
+            null_positions=frozenset({1, 4}),
+            null_rule="skip",
+            alphabet=AZ,
+        )
+        # tape (0,0,0,0) is identity for Vigenere; non-null positions
+        # decrypt to themselves; null positions become '?'.
+        assert ct == "A?CD?F"
+
+    def test_consume_null_rule(self):
+        # CONSUME advances tape on every position (including nulls).
+        # 6-char text, 2 nulls at {1,4}, tape length = 6 (full).
+        ct = apply_key_tape(
+            "ABCDEF",
+            tape=(0, 0, 0, 0, 0, 0),
+            variant=CipherVariant.VIGENERE,
+            direction="decrypt",
+            null_positions=frozenset({1, 4}),
+            null_rule="consume",
+            alphabet=AZ,
+        )
+        assert ct == "A?CD?F"
+
+    def test_skip_short_tape_raises(self):
+        # 6 non-null positions, tape length 3 -> exhaustion -> ValueError.
+        with pytest.raises(ValueError, match="tape exhausted"):
+            apply_key_tape(
+                "ABCDEF",
+                tape=(0, 0, 0),
+                variant=CipherVariant.VIGENERE,
+                null_positions=frozenset(),
+                null_rule="skip",
+                alphabet=AZ,
+            )
+
+    def test_consume_short_tape_raises(self):
+        # 6 positions total under CONSUME, tape length 3 -> exhaustion at pos 3.
+        with pytest.raises(ValueError, match="tape exhausted"):
+            apply_key_tape(
+                "ABCDEF",
+                tape=(0, 0, 0),
+                variant=CipherVariant.VIGENERE,
+                null_positions=frozenset({1, 4}),
+                null_rule="consume",
+                alphabet=AZ,
+            )
+
+    def test_tape_value_out_of_range_raises(self):
+        with pytest.raises(ValueError, match=r"tape\[\d+\]"):
+            apply_key_tape(
+                "AB", tape=(26,),  # 26 is out of range
+                variant=CipherVariant.VIGENERE, alphabet=AZ,
+            )
+
+    def test_null_position_out_of_range_raises(self):
+        with pytest.raises(ValueError, match="null_positions"):
+            apply_key_tape(
+                "AB", tape=(0, 0),
+                variant=CipherVariant.VIGENERE,
+                null_positions=frozenset({99}),
+                null_rule="skip",
+                alphabet=AZ,
+            )
+
+    def test_empty_tape_raises(self):
+        with pytest.raises(ValueError, match="tape must be non-empty"):
+            apply_key_tape(
+                "AB", tape=(),
+                variant=CipherVariant.VIGENERE, alphabet=AZ,
+            )
