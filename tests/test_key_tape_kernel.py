@@ -57,3 +57,30 @@ class TestKeyTapeEncrypt:
             direction="decrypt", alphabet=AZ,
         )
         assert recovered == pt
+
+
+class TestKeyTapeBeaufort:
+    def test_beaufort_self_reciprocal(self):
+        # Beaufort: out = (K - in) mod 26. Same formula for encrypt and decrypt.
+        pt = "ABCDE"
+        tape = (5, 10, 15, 20, 25)
+        ct = apply_key_tape(
+            pt, tape=tape,
+            variant=CipherVariant.BEAUFORT,
+            direction="encrypt", alphabet=AZ,
+        )
+        recovered = apply_key_tape(
+            ct, tape=tape,
+            variant=CipherVariant.BEAUFORT,
+            direction="decrypt", alphabet=AZ,
+        )
+        assert recovered == pt
+
+    def test_beaufort_known_value(self):
+        # PT='A' (0), K=1 -> Beaufort out = (1-0) mod 26 = 1 -> 'B'
+        ct = apply_key_tape(
+            "A", tape=(1,),
+            variant=CipherVariant.BEAUFORT,
+            direction="encrypt", alphabet=AZ,
+        )
+        assert ct == "B"
