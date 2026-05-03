@@ -23,8 +23,8 @@ A separate pytest battery now runs independent known-answer challenges through `
 ## Static Known-Answer Corpus
 
 - Corpus path: `tests/audit/known_answer_corpus.json`
-- Corpus fixture count: 17
-- Families include: atbash, beaufort, caesar, columnar, grille, identity, myszkowski, polybius, quagmire, rail_fence, reverse_blocks, route, route_boustrophedon, row_reverse, skip_route, variant_beaufort, vigenere.
+- Corpus fixture count: 18
+- Families include: atbash, beaufort, caesar, columnar, grille, identity, key_tape, myszkowski, polybius, quagmire, rail_fence, reverse_blocks, route, route_boustrophedon, row_reverse, skip_route, variant_beaufort, vigenere.
 
 ## External Known-Answer Corpus
 

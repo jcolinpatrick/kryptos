@@ -190,11 +190,17 @@ def test_family_wise_p_value_reports_search_universe_corrections():
     assert "post-hoc" in got["caveat"]
 
 
-def test_every_dsl_cipher_kind_except_key_tape_has_dispatcher_translation():
+def test_every_dsl_cipher_kind_has_dispatcher_translation():
+    # 2026-05-03 (key_tape DSL build Task 12): key_tape gained its dispatcher
+    # translation in Task 9. All DSL kinds now have translations; the
+    # previous assertion that key_tape was the one missing kind is obsolete.
     from kryptosbot.hypothesis_dsl import _VALID_CIPHER_KINDS
     from kryptosbot.job_dispatcher import _SUPPORTED_KINDS
 
-    assert sorted(set(_VALID_CIPHER_KINDS) - set(_SUPPORTED_KINDS)) == ["key_tape"]
+    assert not (set(_VALID_CIPHER_KINDS) - set(_SUPPORTED_KINDS)), (
+        "Every DSL cipher kind must have a dispatcher translation; "
+        f"missing: {sorted(set(_VALID_CIPHER_KINDS) - set(_SUPPORTED_KINDS))}"
+    )
     assert not (set(_SUPPORTED_KINDS) - set(_VALID_CIPHER_KINDS))
 
 

@@ -1447,15 +1447,16 @@ def _translate_layer(
 
     if kind == "key_tape":
         # 2026-05-03 (key_tape DSL build Task 9): finite substitution key
-        # tape with optional null positions. Parameters live directly on
-        # layer.params (a dict on the concrete layer — NOT on binding) because
-        # the tape is a fixed-size sequence, not a sweepable keyword.
-        # validate_layer_for_kind is called first to enforce all 9 DSL rules
-        # on the production path; without this call the rules are test-only.
+        # tape with optional null positions. Parameters are resolved from
+        # ``binding`` (the concrete param dict produced by the Cartesian
+        # enumeration step) — NOT from layer.params, which is a list of
+        # ParamRange objects. validate_layer_for_kind is called first to
+        # enforce all 9 DSL rules on the production path; without this call
+        # the rules are test-only.
         from kryptosbot.hypothesis_dsl import (
             validate_layer_for_kind,
         )
-        params = layer.params  # dict on the concrete layer
+        params = binding  # resolved concrete values from the enumeration step
         errors = validate_layer_for_kind("key_tape", params)
         if errors:
             raise ValueError("; ".join(errors))
@@ -1467,14 +1468,20 @@ def _translate_layer(
         null_rule = params.get("null_rule")
         alphabet_kind = params.get("alphabet", "AZ")
 
+        # All other translators wrap step-specific fields in a nested
+        # ``"params"`` dict (consumed by compose.py via TransformConfig.params
+        # → _build_transform step). Matching that shape here is required so
+        # _evaluate_one can construct TransformConfig with params=s["params"].
         return {
             "type": "key_tape",
-            "tape": tape,
-            "variant": variant,
-            "direction": direction,
-            "null_positions": null_positions,
-            "null_rule": null_rule if null_rule is not None else "skip",
-            "alphabet": alphabet_kind,
+            "params": {
+                "tape": tape,
+                "variant": variant,
+                "direction": direction,
+                "null_positions": null_positions,
+                "null_rule": null_rule if null_rule is not None else "skip",
+                "alphabet": alphabet_kind,
+            },
         }
 
     if kind == "procedural":

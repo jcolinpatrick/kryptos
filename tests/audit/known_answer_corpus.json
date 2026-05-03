@@ -134,5 +134,18 @@
     "ciphertext": "THEQUICKXOFNWORBIUMPSOVEYZALEHTRDOG",
     "params": {"width": 8, "parity": "odd", "start_row": 0},
     "source_note": "static independent audit fixture generated outside dispatcher path"
+  },
+  {
+    "id": "key_tape_vigenere_az_abcdefgh",
+    "family": "key_tape",
+    "plaintext": "ABCDEFGH",
+    "ciphertext": "BDFHJLNP",
+    "params": {
+      "tape": [1, 2, 3, 4, 5, 6, 7, 8],
+      "variant": "vigenere",
+      "alphabet": "AZ",
+      "direction": "decrypt"
+    },
+    "source_note": "key_tape Vigenere AZ 8-char fixture; CT=BDFHJLNP produced by encrypting ABCDEFGH with tape [1..8]; decrypt direction recovers PT. Hand-verified via apply_key_tape (2026-05-03, key_tape DSL build Task 12)"
   }
 ]

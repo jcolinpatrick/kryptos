@@ -744,17 +744,33 @@ def test_static_columnar_fixture_rejects_wrong_column_order():
     assert result.best_candidate["crib_score"] < len(PT35)
 
 
-def test_key_tape_remains_explicitly_deferred():
+def test_key_tape_dispatcher_translation_is_now_live():
+    # 2026-05-03 (key_tape DSL build Task 12): key_tape gained its dispatcher
+    # translation in Task 9. The previous test asserted it was deferred;
+    # this replacement test verifies that the admissibility gate no longer
+    # rejects key_tape on "no dispatcher translation" grounds.
+    #
+    # An invalid tape (non-int values) is used so the spec fails fast on
+    # param validation rather than running a full 97-char sweep, but the
+    # rejection reason must be param validation, NOT "no dispatcher translation".
     result = execute(
-        _spec("key_tape", {"tape": "ABC"}),
+        _spec("key_tape", {"tape": [1, 2, 3], "variant": "vigenere", "alphabet": "AZ"}),
         parallel=False,
         exhaustion_log={},
         challenge_ciphertext=PT97,
         challenge_crib_dict=_crib_all(PT97),
     )
 
-    assert result.admissibility_verdict == "rejected"
-    assert any("no dispatcher translation" in reason for reason in result.admissibility_reasons)
+    # The dispatcher now translates key_tape so admissibility passes.
+    # (The spec may be rejected for other reasons once it reaches validation,
+    # but NOT for "no dispatcher translation".)
+    assert not any(
+        "no dispatcher translation" in reason
+        for reason in result.admissibility_reasons
+    ), (
+        "key_tape should no longer be rejected as having no dispatcher "
+        f"translation; got: {result.admissibility_reasons}"
+    )
 
 
 def test_real_k4_dispatcher_artifact_carries_family_wise_p_value_annotation(tmp_path):
