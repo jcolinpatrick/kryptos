@@ -319,14 +319,15 @@
   ```python
   class TestKeyTapeVarBeaufort:
       def test_var_beaufort_decrypt_known_value(self):
-          # VarBeau decrypt: PT = (K - CT) mod 26.
-          # CT='B' (1), K=2 -> PT = (2-1) mod 26 = 1 -> 'B'.
+          # VarBeau decrypt: PT = (CT + K) mod 26 (per
+          # src/kryptos/kernel/transforms/vigenere.py::varbeau_decrypt).
+          # CT='B' (1), K=2 -> PT = (1+2) mod 26 = 3 -> 'D'.
           pt = apply_key_tape(
               "B", tape=(2,),
               variant=CipherVariant.VAR_BEAUFORT,
               direction="decrypt", alphabet=AZ,
           )
-          assert pt == "B"
+          assert pt == "D"
 
       def test_var_beaufort_roundtrip(self):
           pt = "HELLO"
@@ -353,12 +354,18 @@
 
   Replace the `else` arm:
 
+  Note: the implementer's Task 1 commit already covers VAR_BEAUFORT
+  via the `_OP_TABLE` dispatch into `vigenere.py::varbeau_{decrypt,encrypt}`,
+  so no `_apply_one` extension is needed. If the Task 1 implementation
+  was instead the plan's inline-if/elif scaffold (it was not), the
+  correct branch would be:
+
   ```python
       elif variant == CipherVariant.VAR_BEAUFORT:
-          # decrypt: PT = (K - CT) mod 26
+          # decrypt: PT = (CT + K) mod 26
           # encrypt: CT = (PT - K) mod 26
           if direction == "decrypt":
-              out = (key_val - idx) % 26
+              out = (idx + key_val) % 26
           else:
               out = (idx - key_val) % 26
       else:

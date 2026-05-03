@@ -175,9 +175,13 @@ def apply_key_tape(
 Both directions live in one function (single source of validation
 logic). Synthetic recovery (§7) uses encrypt-then-decrypt with the
 same parameters. The encrypt path internally inverts variant rules
-that are not self-reciprocal (Vigenère's `K = (CT - PT) mod 26`
+that are not self-reciprocal: Vigenère's `K = (CT - PT) mod 26`
 inverts to `CT = (PT + K) mod 26`; Beaufort is self-reciprocal;
-Variant Beaufort `K = (PT - CT) mod 26` inverts to `CT = (PT - K) mod 26`).
+Variant Beaufort's `K = (PT - CT) mod 26` inverts to `CT = (PT - K) mod 26`,
+and the inverse decrypt direction is `PT = (CT + K) mod 26`. The
+authoritative reference for these formulas is
+`src/kryptos/kernel/transforms/vigenere.py` (DECRYPT_FN/ENCRYPT_FN
+dicts) — re-derive only if those change.
 
 ### 4.2 Compose integration
 
