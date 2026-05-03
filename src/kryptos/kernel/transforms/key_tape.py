@@ -58,6 +58,8 @@ def apply_key_tape(
         Transformed text; null positions are replaced with '?'.
     """
     fn = _OP_TABLE[direction][variant]
+    idx_table = alphabet.index_table
+    seq = alphabet.sequence
     out: list[str] = []
     tape_idx = 0
     for pos, ch in enumerate(text):
@@ -67,8 +69,8 @@ def apply_key_tape(
                 tape_idx += 1
             continue
         key_val = tape[tape_idx]
-        raw_idx = alphabet.char_to_idx(ch)
+        raw_idx = idx_table[ord(ch) - 65]
         out_idx = fn(raw_idx, key_val)
-        out.append(alphabet.idx_to_char(out_idx))
+        out.append(seq[out_idx % 26])
         tape_idx += 1
     return "".join(out)
