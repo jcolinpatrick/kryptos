@@ -255,9 +255,23 @@ def build_transform(config: TransformConfig) -> TransformFn:
         variant = CipherVariant(variant_str)
         direction = p.get("direction", "decrypt")
         null_positions = frozenset(p.get("null_positions", frozenset()))
-        null_rule = p.get("null_rule", "skip")
+        null_rule = p.get("null_rule")
+        if null_rule is None:
+            if null_positions:
+                raise ValueError(
+                    "key_tape: null_rule required when null_positions is non-empty"
+                )
+            null_rule = "skip"
         alphabet_str = p.get("alphabet", "AZ")
-        alpha = AZ if alphabet_str == "AZ" else KA
+        if alphabet_str == "AZ":
+            alpha = AZ
+        elif alphabet_str == "KA":
+            alpha = KA
+        else:
+            raise ValueError(
+                f"key_tape: unsupported alphabet {alphabet_str!r}; "
+                "expected 'AZ' or 'KA'"
+            )
         return (
             lambda text, tp=tape, v=variant, d=direction,
                    np=null_positions, nr=null_rule, a=alpha:

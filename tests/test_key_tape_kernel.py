@@ -271,3 +271,39 @@ class TestKeyTapeCompose:
         pipeline_cfg = PipelineConfig(name="test_key_tape", steps=(cfg,))
         pipeline = build_pipeline(pipeline_cfg)
         assert pipeline(ct) == "ABCDE"
+
+    def test_compose_rejects_unknown_alphabet(self):
+        from kryptos.kernel.transforms.compose import (
+            TransformConfig, TransformType, PipelineConfig, build_pipeline,
+        )
+        cfg = TransformConfig(
+            transform_type=TransformType.KEY_TAPE,
+            params={
+                "tape": (1, 1, 1),
+                "variant": "vigenere",
+                "direction": "decrypt",
+                "null_positions": frozenset(),
+                "null_rule": "skip",
+                "alphabet": "ASCII",  # invalid
+            },
+        )
+        with pytest.raises(ValueError, match="unsupported alphabet"):
+            build_pipeline(PipelineConfig(name="test_bad_alpha", steps=(cfg,)))
+
+    def test_compose_rejects_nulls_without_rule(self):
+        from kryptos.kernel.transforms.compose import (
+            TransformConfig, TransformType, PipelineConfig, build_pipeline,
+        )
+        cfg = TransformConfig(
+            transform_type=TransformType.KEY_TAPE,
+            params={
+                "tape": (1, 1, 1),
+                "variant": "vigenere",
+                "direction": "decrypt",
+                "null_positions": frozenset({0}),
+                # null_rule omitted — must raise
+                "alphabet": "AZ",
+            },
+        )
+        with pytest.raises(ValueError, match="null_rule required"):
+            build_pipeline(PipelineConfig(name="test_missing_rule", steps=(cfg,)))
