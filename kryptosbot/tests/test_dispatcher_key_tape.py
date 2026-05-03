@@ -16,35 +16,35 @@ class TestKeyTapeDispatcher:
         assert _kind_has_translation("key_tape") is True
 
     def test_translator_emits_dict(self):
-        # Minimal duck-typed mock: layer.params is a dict (not a list of
-        # ParamRange) so validate_layer_for_kind can call .get() on it
-        # directly without requiring the full CipherLayer machinery.
+        # Concrete params live in `binding` (the resolved dict from the
+        # Cartesian enumeration step), not on layer.params (which is the
+        # ParamRange list at spec time). The translator returns a nested
+        # dict matching the convention of other translators:
+        #   {"type": "key_tape", "params": {tape, variant, ...}}
         class _Layer:
-            def __init__(self, params):
-                self.kind = "key_tape"
-                self.params = params
+            kind = "key_tape"
+            params = []  # ParamRange list — not exercised in this test
 
-        layer = _Layer({
+        binding = {
             "tape": (1, 2, 3, 4, 5),
             "variant": "vigenere",
             "direction": "decrypt",
             "null_positions": (),
             "null_rule": "skip",
             "alphabet": "AZ",
-        })
-        cfg = _translate_layer(layer, binding={}, text_length=97)
+        }
+        cfg = _translate_layer(_Layer(), binding=binding, text_length=97)
         assert isinstance(cfg, dict)
         assert cfg["type"] == "key_tape"
-        assert cfg["tape"] == (1, 2, 3, 4, 5)
-        assert cfg["variant"] == "vigenere"
-        assert cfg["alphabet"] == "AZ"
+        assert cfg["params"]["tape"] == (1, 2, 3, 4, 5)
+        assert cfg["params"]["variant"] == "vigenere"
+        assert cfg["params"]["alphabet"] == "AZ"
 
     def test_translator_rejects_empty_tape(self):
         class _Layer:
-            def __init__(self, params):
-                self.kind = "key_tape"
-                self.params = params
+            kind = "key_tape"
+            params = []
 
-        layer = _Layer({"tape": (), "variant": "vigenere", "alphabet": "AZ"})
-        with pytest.raises(ValueError):
-            _translate_layer(layer, binding={}, text_length=97)
+        binding = {"tape": (), "variant": "vigenere", "alphabet": "AZ"}
+        with pytest.raises(ValueError, match="tape"):
+            _translate_layer(_Layer(), binding=binding, text_length=97)
