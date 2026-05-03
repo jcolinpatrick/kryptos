@@ -1,12 +1,34 @@
 # `key_tape` DSL Kind — Implementation Plan
 
-**Status:** PLAN — implementation not started
+**Status:** ACTIVE — scope locked 2026-05-03
 **Author:** Colin Patrick + Claude (KryptosBot)
-**Date authored:** 2026-05-02
+**Date authored:** 2026-05-02 · **Promoted to active:** 2026-05-03
 **Closes:** the explicit deferred DSL gap identified in
 `docs/audits/dsl_dispatcher_semantics.md`
 (Codex audit 2026-05-02: "DSL-valid kinds: 19, Dispatcher-supported
 kinds: 18; Valid without translation: ['key_tape']")
+
+---
+
+## 0. Scope decision (locked 2026-05-03)
+
+**Scope (c): capability-only.** This project delivers the kernel
+transform, DSL validation, dispatcher translator, known-answer
+fixture, and synthetic recovery. It does **NOT** implement an
+enumeration runner or simulated-annealing search over tapes — those
+are separate projects layered on top, each requiring their own
+brainstorm (neighbor function, restart strategy, parallelism plumbing,
+null-position generation).
+
+**Rationale:** the DSL/dispatcher gap is a capability ceiling
+(Codex-flagged); closing it unblocks the keystream-forensics line and
+lets theorists propose tape-based attacks. Search design is a
+follow-up that composes cleanly on top of (c).
+
+**Out-of-scope confirmation:** §10 below already excludes infinite
+tapes, autokey, CT-feedback, and stateful tapes. Adding to that:
+**no automated keyspace search** (enumeration or SA) is delivered by
+this project.
 
 ---
 
@@ -101,47 +123,61 @@ either skip the tape (M4 default) or consume it without contributing
 to plaintext (alternative).
 """
 
-from typing import FrozenSet, Tuple, Literal
+from typing import FrozenSet, Literal, Tuple
 from kryptos.kernel.alphabet import AZ, KA, Alphabet
-from kryptos.kernel.transforms.vigenere import (
-    CipherVariant, KEY_RECOVERY,
-)
+from kryptos.kernel.transforms.vigenere import CipherVariant
 
 NullRule = Literal["skip", "consume"]
+Direction = Literal["encrypt", "decrypt"]
 
 
 def apply_key_tape(
-    ct: str,
+    text: str,
     tape: Tuple[int, ...],
     *,
     variant: CipherVariant,
+    direction: Direction = "decrypt",
     null_positions: FrozenSet[int] = frozenset(),
     null_rule: NullRule = "skip",
     alphabet: Alphabet = AZ,
 ) -> str:
-    """Apply finite-tape additive cipher with null insertion to CT.
+    """Apply finite-tape additive cipher with null insertion.
 
-    Returns plaintext where null positions are filled with '?' and
-    non-null positions are decrypted under the chosen variant using
-    the running tape index.
+    With ``direction="decrypt"``, ``text`` is CT and the return value
+    is PT (with '?' at null positions). With ``direction="encrypt"``,
+    ``text`` is PT and the return value is CT (the inverse operation
+    under the same tape and variant).
+
+    The kernel default null_rule of "skip" matches M4-default semantics
+    (`memory/keystream_forensics_v2.md`); the DSL layer (§3) requires
+    callers to declare null_rule explicitly when null_positions is
+    non-empty so campaign manifests are unambiguous.
 
     Raises ValueError on:
         - tape contents out of [0, 25]
-        - null_positions out of range
+        - null_positions out of [0, len(text))
         - tape exhaustion (insufficient tape under chosen rule)
     """
     # Implementation:
     # 1. Validate inputs.
-    # 2. Walk CT positions. Maintain tape_index.
+    # 2. Walk text positions. Maintain tape_index.
     # 3. If pos in null_positions:
-    #    - SKIP: PT[pos] = '?'; tape_index unchanged
-    #    - CONSUME: PT[pos] = '?'; tape_index += 1 (raise if past end)
+    #    - SKIP: out[pos] = '?'; tape_index unchanged
+    #    - CONSUME: out[pos] = '?'; tape_index += 1 (raise if past end)
     # 4. Otherwise:
     #    - tape_value = tape[tape_index] (raise if past end)
-    #    - PT[pos] = decrypt_one(ct[pos], tape_value, variant, alphabet)
+    #    - out[pos] = apply_one(text[pos], tape_value, variant,
+    #                            direction, alphabet)
     #    - tape_index += 1
-    # 5. Return ''.join(PT).
+    # 5. Return ''.join(out).
 ```
+
+Both directions live in one function (single source of validation
+logic). Synthetic recovery (§7) uses encrypt-then-decrypt with the
+same parameters. The encrypt path internally inverts variant rules
+that are not self-reciprocal (Vigenère's `K = (CT - PT) mod 26`
+inverts to `CT = (PT + K) mod 26`; Beaufort is self-reciprocal;
+Variant Beaufort `K = (PT - CT) mod 26` inverts to `CT = (PT - K) mod 26`).
 
 ### 4.2 Compose integration
 
@@ -193,10 +229,22 @@ def _translate_key_tape(
     }
 ```
 
-Add `"key_tape"` to `_SUPPORTED_KINDS` and the `_translate_layer()`
-dispatch.
+Add `"key_tape"` to `_SUPPORTED_KINDS` (the dispatcher's
+`frozenset[str]` of supported kinds) and to the `_translate_layer()`
+dispatch arm. Translator return type is `dict[str, Any]` to match
+existing translators (the dispatcher emits dicts so configs travel
+across multiprocessing worker boundaries via the standard
+serialization that the worker pool uses for arguments).
 
-Remove from `kryptosbot/critic.py` `_DEFERRED_KINDS`.
+`kryptosbot/critic.py` does not maintain a separate `_DEFERRED_KINDS`
+constant; it gates kind admission via `_SUPPORTED_KINDS` imported from
+`job_dispatcher`. Once `key_tape` is added to `_SUPPORTED_KINDS`, the
+critic accepts it automatically. Verify in the dispatcher tests
+(§6.3) by asserting `_kind_has_translation("key_tape") is True`.
+
+`CT_LEN` is imported from `kryptos.kernel.constants` (matches the
+existing translators). For text-length validation the translator uses
+`_translation_text_length(text_length)` like the other translators.
 
 ## 6. Tests
 
@@ -239,16 +287,25 @@ Add at least one external known-answer fixture. Candidates:
 
 ## 7. Synthetic recovery test (mandatory before declaring complete)
 
-Mirroring Stage A/B's synthetic recovery pattern:
+Mirroring Stage A/B's synthetic recovery pattern. The fixture is sized
+so tape length equals non-null count under SKIP (otherwise the kernel
+raises tape-exhaustion per §1).
 
-1. Build synthetic 30-char PT: `KRYPTOSEXAMPLEPLAINTEXTNULLABCD`.
-2. Encrypt under key_tape with `variant=vigenere`, `tape=(7,3,1,2,5,8,11,4,9,0)`,
-   `null_positions={4, 9, 14, 19, 24, 29}`, `null_rule=skip`,
-   `alphabet=AZ`.
+1. Build synthetic 16-char PT: `KRYPTOSEXAMPLEAB` (length 16).
+2. Encrypt under key_tape with `variant=vigenere`, `direction=encrypt`,
+   `tape=(7,3,1,2,5,8,11,4,9,0)` (length 10),
+   `null_positions={2, 5, 8, 11, 14, 15}` (6 positions ⇒ 10 non-null),
+   `null_rule=skip`, `alphabet=AZ`.
 3. Verify the dispatcher correctly recovers PT from CT given the same
-   parameters.
-4. Verify that with `null_rule=consume`, a *shorter* tape produces a
-   different valid recovery (different non-null positions decoded).
+   parameters with `direction=decrypt`. Round-trip equality is exact
+   on non-null positions; null positions are `?` in PT.
+4. Repeat (1)–(3) for `variant=beaufort` and `variant=variant_beaufort`
+   to confirm both reciprocal and non-reciprocal variants round-trip
+   correctly.
+
+The CONSUME null rule is exercised in `tests/test_key_tape_kernel.py`
+(§6.1) with a separate fixture sized appropriately (tape length ≥
+full text length, since CONSUME advances on every position).
 
 ## 8. Estimated cost
 
@@ -305,16 +362,20 @@ The gap closes when:
       `Valid without translation: []`.
 - [ ] All tests in §6 pass.
 - [ ] Synthetic recovery test in §7 passes.
-- [ ] `kryptosbot/critic.py` `_DEFERRED_KINDS` no longer includes
-      `key_tape`.
+- [ ] `_kind_has_translation("key_tape") is True` (dispatcher exposes
+      it; critic admits it automatically via `_SUPPORTED_KINDS`).
 - [ ] CLAUDE.md and `kryptosbot/ARCHITECTURE.md` are updated.
 - [ ] `docs/audits/dsl_dispatcher_semantics.md` is regenerated and
       shows DSL-valid kinds equal to dispatcher-supported kinds.
 
 ---
 
-*Last updated 2026-05-02. Implementation plan only; no code written.
-The plan is concrete enough that any contributor can pick it up. The
-keystream-forensics agent's conventions (memory/keystream_forensics_v2.md)
-are the authoritative reference for the M4 SKIP / CONSUME semantics
-this implements.*
+*Last updated 2026-05-03 (scope locked). The plan is concrete enough
+that any contributor can pick it up. The keystream-forensics agent's
+conventions (memory/keystream_forensics_v2.md) are the authoritative
+reference for the M4 SKIP / CONSUME semantics this implements. Spec
+ambiguities resolved 2026-05-03: `KEY_RECOVERY` import dropped (does
+not exist; only `CipherVariant` is imported), `apply_key_tape` now
+explicitly accepts a `direction` argument so synthetic recovery (§7)
+can encrypt and decrypt in one function, `_DEFERRED_KINDS` reference
+removed (critic gates via `_SUPPORTED_KINDS`), `CT_LEN` source named.*
