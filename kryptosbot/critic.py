@@ -227,6 +227,50 @@ _CONSENSUS_NULL_MASK_PATTERNS = [
     re.compile(r"\bconsensus[-\s]+null[-\s]+(?:mask|positions?)\b", re.IGNORECASE),
 ]
 
+# Disclaimer-context check (2026-05-04): the original regex caught any
+# mention of "17-position mask" as a revival, including disclaimers like
+# "(NOT the retired 17-position mask)" used by personas to explicitly
+# distinguish their own non-retired derivation from the retired construct.
+# Cycle 203 of long_run 2026-05-03 saw a legitimate keystream-forensics
+# proposal (411d202fdf25, "Beaufort-KA finite tape using K1 plaintext...")
+# get rejected because its mechanism text said:
+#   "...under a preregistered W-position null mask drawn from the
+#    W_DELIMITER_SEGMENTS anchor (NOT the retired 17-position mask)."
+# This is the OPPOSITE of revival — the persona was being careful. The
+# context check below treats matches that fall within a ~50-char window
+# preceded by an exclusion phrase as disclaimers rather than revivals.
+_DISCLAIMER_CONTEXT_PHRASES = (
+    "not the retired",
+    "not retired",
+    "not the deprecated",
+    "not deprecated",
+    "without invoking",
+    "without the retired",
+    "without using the retired",
+    "excluding the retired",
+    "rather than the retired",
+    "instead of the retired",
+    "distinct from the retired",
+    "separate from the retired",
+    "independent of the retired",
+    "unlike the retired",
+    "superseded by",
+    "no longer relying on",
+    "(not ",  # parenthetical disclaimer pattern, e.g., "(NOT the retired 17-position mask)"
+)
+
+
+def _is_disclaimer_context(text: str, match_start: int) -> bool:
+    """Return True if the match at ``match_start`` is preceded within ~50
+    chars by a disclaimer phrase. The window covers parenthetical
+    disclaimers ("(NOT the retired 17-position mask)") and inline
+    rejections ("which is distinct from the retired 17-position mask").
+    Case-insensitive.
+    """
+    window_start = max(0, match_start - 50)
+    preceding = text[window_start:match_start].lower()
+    return any(phrase in preceding for phrase in _DISCLAIMER_CONTEXT_PHRASES)
+
 
 def _detect_consensus_null_positions_revival(text: str) -> Optional[str]:
     """Return a human-readable reason string if the theory text invokes the
@@ -241,6 +285,11 @@ def _detect_consensus_null_positions_revival(text: str) -> Optional[str]:
     matcher handles theories that invoke the position mask without the
     letter subset.
 
+    Disclaimer mentions (e.g., "(NOT the retired 17-position mask)") are
+    excluded by the context check — these are the OPPOSITE of revival,
+    they're personas explicitly distinguishing their own non-retired
+    derivation from the retired construct.
+
     Import-level revival (i.e. a module adding
     `from kryptos.kernel.retired import CONSENSUS_NULL_POSITIONS` outside
     the allow-list) is caught by `tests/test_retired_usage.py`, not here.
@@ -252,6 +301,8 @@ def _detect_consensus_null_positions_revival(text: str) -> Optional[str]:
     for pattern in _CONSENSUS_NULL_MASK_PATTERNS:
         m = pattern.search(text)
         if m is not None:
+            if _is_disclaimer_context(text, m.start()):
+                continue
             return (
                 f"CONSENSUS_NULL_POSITIONS revival: theory references "
                 f"'{m.group(0)}'. The 17-position null mask is pending "

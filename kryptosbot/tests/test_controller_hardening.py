@@ -750,6 +750,41 @@ class TestConsensusNullMaskCriticHardening:
         assert "Retired palette revival" not in reasons_text
         assert "CONSENSUS_NULL_POSITIONS revival" not in reasons_text
 
+    def test_disclaimer_mention_is_not_falsely_rejected(self, tmp_path):
+        """Disclaimer mentions are the OPPOSITE of revival.
+
+        Cycle 203 of long_run 2026-05-03 saw a legitimate keystream-forensics
+        proposal (411d202fdf25) get rejected because its mechanism text
+        explicitly disclaimed the retired construct:
+            "...a preregistered W-position null mask drawn from the
+             W_DELIMITER_SEGMENTS anchor (NOT the retired 17-position mask)."
+        The persona was being careful — distinguishing its own non-retired
+        derivation from the retired construct. The matcher must NOT reject
+        such disclaimers.
+        """
+        ledger = TheoryLedger(tmp_path / "ledger.sqlite")
+        critic = TheoryCritic(ledger)
+        theory = TheoryRecord(
+            hypothesis_id="disclaimer-mention",
+            title="Beaufort-KA finite tape with W-anchor null mask",
+            core_claim=(
+                "A finite key tape with nulls at W positions decrypts K4 "
+                "under Beaufort-KA. The null set is drawn from the "
+                "W_DELIMITER_SEGMENTS anchor, NOT the retired 17-position "
+                "mask."
+            ),
+            mechanism=(
+                "Beaufort decryption with K = first 73 chars of K1 plaintext. "
+                "Null mask is the W_DELIMITER_SEGMENTS positions "
+                "(NOT the retired 17-position mask, which we explicitly avoid)."
+            ),
+            family="key_tape",
+        )
+        verdict = critic.evaluate(theory)
+        # May still be rejected for OTHER reasons, but NOT as a revival.
+        reasons_text = " ".join(verdict.reasons)
+        assert "CONSENSUS_NULL_POSITIONS revival" not in reasons_text
+
     def test_theorist_prompt_names_consensus_null_positions_retraction(self, tmp_path):
         from kryptosbot.controller import ResearchController, ControllerConfig
 
