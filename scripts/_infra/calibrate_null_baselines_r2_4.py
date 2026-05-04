@@ -48,8 +48,17 @@ from kryptosbot.null_baselines import (
 )
 
 
-# R2-4 §5.1 — six new distributions.
+# R2-4 §5.1 — six new distributions, plus vigenere added 2026-05-04.
+# The vigenere family job was added because the alert path in
+# kryptosbot/alerts.py requests family='vigenere' for Vigenere-tagged
+# theories, but R2-4 only built beaufort/var_beaufort/columnar_*. The
+# legacy "" cache (built by calibrate_null_baselines.py, encrypts random
+# PT under random key) is semantically distinct from the explicit-vigenere
+# cache (decrypts real CT under random key) — the explicit form is what
+# the alert lookup needs. Without this job, the alert path falls back to
+# random_text null silently, degrading p-value gating for Vigenere theories.
 _R2_4_JOBS: list[dict] = [
+    {"scorer_name": "crib_score",  "family": "vigenere"},
     {"scorer_name": "crib_score",  "family": "beaufort"},
     {"scorer_name": "crib_score",  "family": "variant_beaufort"},
     {"scorer_name": "crib_score",  "family": "columnar_single"},
