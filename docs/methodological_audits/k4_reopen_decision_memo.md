@@ -201,3 +201,120 @@ The substantive next step is Phase 2.1. Everything else is downstream of that ca
 ---
 
 *Authored 2026-05-04 by Claude Opus 4.7 acting as principal research engineer / epistemic auditor. The decision is to **continue the no-new-search moratorium** and **authorize Phase 2.1 only**. This is the most productive next direction per the project's discipline: do not search wider until the project can distinguish signal from admitted-theory overfit.*
+
+---
+
+## Update — 2026-05-04 (Tier 1 `.claude` hardening pass)
+
+**This update does not rewrite the original memo. The decision context
+above remains historically accurate. The status below reflects what
+happened after Phase 2.1 was authorized.**
+
+### Phase 2.1 attempted and completed; result inconclusive
+
+Phase 2.1 (methodological-family conditional null calibration) was
+implemented and run. Outputs:
+
+- `scripts/_infra/calibrate_methodological_null.py` (v1.0)
+- `null_baselines/methodological_null_manifest.json`
+- `results/null_baselines/methodological_null/<family>__v1.jsonl`
+- `results/null_baselines/methodological_null/ledger_comparison.json`
+- `docs/methodological_audits/methodological_null_decision_memo.md`
+  (the calibration's own decision memo)
+
+**Headline answer per the original directive's allowed answers:**
+`inconclusive due to insufficient sampling or invalid synthetic model`.
+Specifically: invalid synthetic model for **4 of 6 families**.
+
+| Family | Max ratio (synth / ledger) | Faithful regime? |
+|---|---:|---|
+| k2_coords | 1.00 | yes |
+| encoding | 0.86 | yes |
+| geometry | 0.38 | no |
+| k3_continuity | 0.25 | no |
+| key_tape | 0.25 | no |
+| archive_evidence | 0.21 | no |
+
+For the two faithful families (`k2_coords`, `encoding`) the mean
+elevation is small (+1.04, +0.20) and within ~1σ of the synthetic null
+— consistent with admissibility-bias rather than cryptographic content.
+This generalizes only to those two families.
+
+For the four non-faithful families the synthetic null does NOT reach
+the ledger BREAKTHROUGH regime because uniform parameter sampling does
+not construct the algebraic-degeneracy / structural-overfit patterns
+that drove the score-24 ledger artifacts. The ledger's high means in
+those families are pulled up by documented overfits (Bean-invariance
+under non-crib edits, period-impossibility-with-prime-grid, bounded
+keyword exhaustion, primer search saturation). Phase 2.1's uniform
+sampler is structurally too weak to fairly bound these regimes.
+
+**The honest verdict is therefore: the Phase 2.1 result does NOT
+discharge the no-new-search moratorium.** The original framing of the
+memo (no broad reopening until Phase 2.1 lands) is unchanged in
+spirit; what changed is that Phase 2.1 landing produced an
+inconclusive result, not a closure.
+
+### What this means for the verdict in the body of this memo
+
+The body says the no-new-search moratorium continues with one
+authorized item: complete Phase 2.1. That item is now done in the
+sense that the calibrator exists, has been run, and the comparison has
+been produced. **The next authorized item is Phase 2.2**:
+mechanism-aware family-specific synthetic generators that do construct
+the algebraic-degeneracy regimes ledger theorists explored.
+
+Phase 2.2 design is committed at
+`docs/methodological_audits/methodological_null_phase2_2_design.md`.
+Implementation has not been authorized in this Tier 1 pass; that is its
+own scope decision.
+
+### What this means alongside Tier 1 `.claude` hardening (2026-05-04)
+
+In parallel with the Phase 2.1 outcome, the Claude prompt-layer audit
+(`docs/methodological_audits/claude_agents_skills_adversarial_audit.md`)
+produced a PARTIAL verdict on the `.claude` layer. Tier 1 hardening was
+implemented on 2026-05-04 and adds:
+
+- four critical skills: `known-answer-validation`,
+  `dispatcher-dsl-contract`, `conditional-null-methodology`,
+  `prompt-contract-lint`;
+- repaired stale skills: `project-onboarding`, `results-protocol`,
+  `disproof-protocol`, `k4-stego-cracker`,
+  `otp-null-keystream-forensics`;
+- repaired stale agents: `stego-analyst`, `forensic-photo-analyst`,
+  `kryptos-corpus-forensics`, `script-auditor`,
+  `escape-room-cryptanalyst`, `cipher-discovery-builder`,
+  `research-chancellor` — manual-only markers and controller-context
+  blocks added;
+- `.claude/settings.local.json` retired-constant import allow-rule
+  removed;
+- a deterministic `.claude` linter test suite at
+  `kryptosbot/tests/test_claude_prompt_layer.py`;
+- a single readiness gate at
+  `docs/methodological_audits/k4_campaign_readiness_gate.md`.
+
+### Combined posture as of 2026-05-04
+
+1. **No-new-search moratorium continues.** Original gate held.
+2. **Phase 2.1 was attempted and is inconclusive for 4 of 6 families.**
+   Original "complete Phase 2.1" item is closed; result does not
+   reopen search.
+3. **Phase 2.2 mechanism-aware methodological null is now the
+   authorized next constructive step.** Design committed; implementation
+   pending.
+4. **Tier 1 `.claude` hardening landed.** The prompt layer is no longer
+   the documented primary blocker. The new linter test must run green
+   on every change; the readiness gate is the single decision surface.
+5. **Even with both Phase 2.2 and Tier 1 green, K4 search reopening
+   requires a positive decision through the readiness gate**, not just
+   a green check elsewhere.
+
+The original "claims that must not be made" list at the bottom of this
+memo's body is unchanged and remains binding. Specifically: no
+"K4 has no signal" claim, no "framework can solve K4" claim, no
+rehabilitation of retired claims through Tier 1 cleanup.
+
+*Update authored 2026-05-04 as part of the Tier 1 `.claude` hardening
+pass. The original 2026-05-04 memo above is preserved verbatim as
+historical record.*
