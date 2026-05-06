@@ -1,8 +1,8 @@
 {
   "schema_version": "methodological_null.manifest.v1",
-  "generated_at_utc": "2026-05-04T13:29:06Z",
-  "git_commit": "5329e483444bacdf123b913dd8451540428bd926",
-  "kernel_commit": "7105ac297264deaed2d29a8dc6aab497dcbc264e",
+  "generated_at_utc": "2026-05-06T19:38:05Z",
+  "git_commit": "dd5d30ca2eed4191a2cefedf9962361bca940690",
+  "kernel_commit": "dd5d30ca2eed4191a2cefedf9962361bca940690",
   "script_version": "v1.0",
   "default_seed": 42,
   "samples_per_family": 10000,

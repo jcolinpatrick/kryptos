@@ -41,7 +41,14 @@ from kryptosbot.null_baselines import (
 # Standard coverage matrix. Keep this list small so rebuilds stay
 # checkpointable. The Phase-6 acceptance criterion is that the manifest
 # contains entries for (crib_score, ngram_score) × (random_text,
-# shuffled_ct) × AZ × n=97.
+# shuffled_ct) × AZ × n=97. KA × random_text added 2026-05-06: those
+# entries were drifting stale because dsl_tools.get_cached(...,
+# alphabet="KA") consumes them when KA-alphabet null distributions are
+# requested; the consumer was lazy-building, but the gate doc's
+# "after any commit rerun BOTH calibrators" doctrine implies eager
+# rebuild. The shuffled_ct × KA cell is intentionally omitted —
+# shuffled_ct is alphabet-invariant (the shuffle drops the alphabet
+# choice), so KA shuffled_ct would duplicate AZ shuffled_ct.
 _STANDARD_JOBS: list[dict] = [
     {"scorer_name": "crib_score",  "method": "random_text",  "alphabet": "AZ"},
     {"scorer_name": "crib_score",  "method": "shuffled_ct",  "alphabet": "AZ"},
@@ -49,6 +56,8 @@ _STANDARD_JOBS: list[dict] = [
     {"scorer_name": "ngram_score", "method": "shuffled_ct",  "alphabet": "AZ"},
     {"scorer_name": "crib_score",  "method": "matched_variant_family",
      "alphabet": "AZ"},
+    {"scorer_name": "crib_score",  "method": "random_text",  "alphabet": "KA"},
+    {"scorer_name": "ngram_score", "method": "random_text",  "alphabet": "KA"},
 ]
 
 # Quick-mode sample counts (for smoke / CI).  Full run uses 100_000 for
