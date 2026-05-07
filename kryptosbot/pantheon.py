@@ -24,7 +24,8 @@ Design notes:
   - The parser handles: scalar key:value, '>' folded block scalars,
     '"..."' quoted strings with backslash escapes, '[a, b]' inline lists,
     and '- item' block lists.
-  - PANTHEON.md, AGENT_TEMPLATE.md, USAGE.md, MIGRATION.md and any other
+  - PANTHEON.md, AGENT_TEMPLATE.md (now relocated to .claude/templates/),
+    USAGE.md, MIGRATION.md and any other
     non-agent markdown in .claude/agents/ are automatically skipped
     (they lack the 'name:' frontmatter field).
 """

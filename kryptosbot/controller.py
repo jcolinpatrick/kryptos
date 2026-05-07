@@ -2798,46 +2798,82 @@ class ResearchController:
     def _render_manual_focus_for_prompt(self) -> str:
         """Render operator-injected focus areas that should guide generation.
 
-        Keep this block narrow and procedural. It exists for cases where the
-        project has a credible workflow-level lead that is too weak to promote
-        to an anomaly but strong enough to prioritize over generic theorizing.
+        Re-seed pass 2026-05-07: ~50 cycles (466-515) returned 0 genuine
+        signal. Two 24/24 events were crib-paste fabrications caught by
+        stat-audit. Theorist proposals concentrated on five anchors that
+        are now either eliminated, saturated, or producing only revivals.
+        This block freezes those anchors and redirects to lanes the
+        proposal stream has not yet exercised.
         """
         return (
-            "MANUAL PRIORITY FOCUS:\n"
-            "  - Rotate across the under-explored anomaly surface. The "
-            "open_anomalies list in the landscape is now ranked by exploration "
-            "depth (lowest explored_by count first); take that ranking seriously "
-            "and bias generation toward the top of the list.\n"
-            "  - ct_perturbation is the currently under-mined, archive-anchored "
-            "lead. Published Sanborn coding charts prove specific transcription "
-            "errors in the carved K1-K3 plaintexts (IQLUSION, UNDERGRUUND, "
-            "DESPARATLY). Strong proposals here test whether analogous "
-            "perturbations of K4 CT — a preregistered short variant list derived "
-            "from archive evidence, NOT arbitrary single-char sweeps — change "
-            "the behavior of already-eliminated cipher families.\n"
-            "  - w_delimiter_segments is SATURATED as a single-layer lead "
-            "(80+ theories tested, all eliminated). It remains admissible only "
-            "as one layer of a multi-layer construction or with a genuinely "
-            "novel mechanism that is not a rehash of reset / segment-tape / "
-            "digit-key / compass-rotation / strip-permutation / Chaocipher "
-            "variants already disproved. Do not propose another single-layer "
-            "W variant unless it clears that bar.\n"
-            "  - width21_vertical_bigrams is a ranking feature, not a clue "
-            "surface. Do not build new theories on it; use it only to rank "
-            "candidates that arise from other anchors.\n"
-            "  - aaa_coordinate_lie: the archive evidence is real, but "
-            "multiple specific mechanisms (true-coord digits, coord-lie delta, "
-            "coord-delta Gronsfeld) have been cleanly disproved. Per "
-            "accept-specific-disproofs doctrine, new coord-lie mechanisms must "
-            "either fix the specific error of a prior disproof or propose a "
-            "genuinely different mechanism class — not a pivot that preserves "
-            "the coordinate commitment while dodging the last disproof.\n"
-            "  - aaa_compass_cipher is mature; new proposals should either "
-            "tie to physical-sculpture geometry specifically or be set aside.\n"
-            "  - Do NOT use rescue parameters such as optional truncation, "
-            "optional wrap, or choose-among-plausible-rectangles geometry. "
-            "A valid theory must have one preregistered geometry and one "
-            "preregistered parameter envelope."
+            "MANUAL PRIORITY FOCUS (re-seed pass, effective 2026-05-07):\n"
+            "\n"
+            "FROZEN ANCHORS — do NOT propose theories built on these for "
+            "the duration of this re-seed pass:\n"
+            "  - w_delimiter_segments: 11 elimination families across "
+            "21,570+ configs (project_w_anchor_hypothesis_eliminated_"
+            "2026_04_29). Multi-layer rebrandings keep getting flagged "
+            "and rejected by red-team. Set aside until a genuinely novel "
+            "mechanism class appears that does not depend on W positions, "
+            "W-segment lengths, W-derived col_orders, or W-rank as a "
+            "permutation source.\n"
+            "  - aaa_compass_cipher: e_compass_route_01 (576 configs, "
+            "best 4/24), E-ANTIPODES-11 (9588 configs), Kimmo compass-"
+            "cipher base-rate sweep, and 8+ controller cycles in the "
+            "preceding run all returned noise. Bearing-indexed indicator "
+            "schedules, compass-rose grid masks, and lodestone-bearing "
+            "route reads are all in the eliminated set. Set aside.\n"
+            "  - aaa_coordinate_lie: 5+ specific mechanisms cleanly "
+            "disproved in the preceding run alone (true-coord Beaufort, "
+            "delta-Beaufort, Gronsfeld delta, Quagmire IV dual-key "
+            "seeding, ROUTE reading-order). Per accept-specific-disproofs "
+            "doctrine, the next coord-lie proposal must fix the specific "
+            "mechanical error of one prior disproof, not pivot to "
+            "preserve the coordinate commitment. Default posture: do "
+            "not propose new coord-lie theories this pass.\n"
+            "  - width21_vertical_bigrams: ranking feature only. Do not "
+            "build new theories on it.\n"
+            "  - ct_perturbation Stage A (single-character Hamming-1 "
+            "archive-agnostic): exhausted by the 2026-05-01 hardened "
+            "rerun (10,465,764 configs over 2,425 H1 variants). Do not "
+            "propose Stage A revivals under any cipher family. Stage B "
+            "(archive-anchored Hamming-2) is the only ct_perturbation "
+            "variant still admissible.\n"
+            "\n"
+            "REDIRECT — propose into these underexplored lanes:\n"
+            "  1. Finite-tape keystream models (key_tape DSL kind, "
+            "landed 2026-05-03). Models M1-M5 from keystream-forensics "
+            "are now first-class dispatcher targets: finite tape with "
+            "null-skip vs null-consume rules, segmented tape (split at "
+            "self-encrypting positions), tape-with-interrupt. The DSL "
+            "supports tape arrays of length <= 97, variants vigenere/"
+            "beaufort/var_beaufort, alphabet AZ or KA, and "
+            "null_positions with null_rule skip|consume. This lane has "
+            "NOT been mined by recent cycles.\n"
+            "  2. Obscure / poorly-evidenced ciphers from the cipher-"
+            "discovery KB. The KB currently holds 10 untested entries "
+            "in 'probable_but_poorly_evidenced' status. Propose tests "
+            "of those that are hand-executable by a 1989 sculptor (run "
+            "`PYTHONPATH=src python3 -m kryptos.cipher_discovery.cli "
+            "query <term>` to look one up before proposing).\n"
+            "  3. Multi-layer compositions where neither layer is a "
+            "frozen anchor. Specifically: key_tape (inner) X CT-"
+            "perturbation Stage B (outer), or cipher-discovery "
+            "candidate X Stage B. The intersection of two productive-"
+            "but-sparsely-tested lanes is the obvious unswept region.\n"
+            "  4. Mechanism classes that do not have a clue-anchor "
+            "justification at all (no AAA quote, no sculpture geometry, "
+            "no coordinate notebook). The accept-specific-disproofs "
+            "doctrine cuts both ways: revivals tied to known anchors "
+            "are penalized, but a genuinely novel mechanism with no "
+            "anchor justification is admissible if it has a bounded "
+            "search and a concrete kill criterion.\n"
+            "\n"
+            "Hard rules unchanged: preregistered geometry / parameter "
+            "envelope, no rescue parameters (optional truncation, "
+            "optional wrap, choose-among-plausible-rectangles), no "
+            "retired-claim revival (null-palette, 17-position mask, "
+            "Sanborn-self-reference keywords like SCULPTOR/ARTIST)."
         )
 
     def _build_theorist_prompt(self, landscape: dict[str, Any]) -> str:
@@ -3114,23 +3150,28 @@ verification. Theories that rest on the 17-position mask are building on
 historical weight, not epistemic support, and will be rejected by the
 critic. See memory/project_consensus_nulls_epistemic_status_2026_04_14.md.
 
-ACTIVE ANOMALY SURFACE (RESET 2026-04-15, W EMPHASIS ROTATED OUT 2026-04-20):
-Only the following investigable anomalies are admissible as active prompt
-anchors for new theories: ct_perturbation, aaa_coordinate_lie,
-aaa_compass_cipher, w_delimiter_segments, width21_vertical_bigrams.
-Ranking is self-tuning: the open_anomalies list above is sorted by
-exploration depth (lowest explored_by count first), so whichever anchor is
-currently under-mined surfaces at the top. Follow that ranking.
-Treat ct_perturbation as the PRIMARY under-mined anchor: archive-evidence
-anchored, bounded (archive-derived preregistered variant list), and least
-explored. Treat w_delimiter_segments as SATURATED for single-layer work
-(80+ theories tested, all eliminated across cycles 125-133); it remains
-admissible as a LAYER in a multi-layer proposal but is not a standalone
-primary anchor. Treat width21 as a derived ranking feature largely
-explained by W placement, not as an independent clue surface. Other
-historical anomalies remain in the ledger for audit but are demoted from
-active prompting unless a future hardening pass restores them with new
-finite evidence.
+ACTIVE ANOMALY SURFACE (RE-SEEDED 2026-05-07):
+The five-anchor surface (w_delimiter_segments, aaa_compass_cipher,
+aaa_coordinate_lie, width21_vertical_bigrams, ct_perturbation) has
+returned 0 genuine signal across the most recent ~50 cycles, with
+proposal flow concentrating on revivals of already-eliminated
+families. This pass FREEZES four of the five anchors and treats only
+ct_perturbation Stage B (archive-anchored Hamming-2) as an active
+anchor. See MANUAL PRIORITY FOCUS for the redirect lanes
+(key_tape DSL finite-tape models, cipher-discovery untested entries,
+multi-layer compositions where neither layer is a frozen anchor).
+
+Frozen anchors for this pass: w_delimiter_segments,
+aaa_compass_cipher, aaa_coordinate_lie, width21_vertical_bigrams.
+Active anchor: ct_perturbation (Stage B only; Stage A exhausted
+2026-05-01).
+
+Open-anomaly entries from the landscape JSON above are surfaced for
+audit context; treat them as evidence the proposal may NOT build on
+unless the entry is the active ct_perturbation anchor. Other
+historical anomalies remain in the ledger but are demoted from
+active prompting until a future hardening pass restores them with
+new finite evidence.
 
 OUTPUT FORMAT (JSON array):
 [

@@ -564,22 +564,24 @@ class TestRetiredPaletteCriticHardening:
         assert "aaa_compass_cipher" in prompt
         assert "w_delimiter_segments" in prompt
         assert "width21_vertical_bigrams" in prompt
-        assert "Only the following investigable anomalies are admissible" in prompt
-        # Rotation 2026-04-20: ct_perturbation is the PRIMARY anchor;
-        # w_delimiter_segments is SATURATED and demoted from primary.
-        assert "PRIMARY under-mined anchor" in prompt
-        assert "SATURATED for single-layer work" in prompt
-        assert "Treat width21 as a derived ranking feature" in prompt
-        assert "explained by W placement" in prompt
+        # Re-seed pass 2026-05-07: four of the five legacy anchors are
+        # frozen; ct_perturbation Stage B is the only active anchor.
+        # See _render_manual_focus_for_prompt and the inline ACTIVE
+        # ANOMALY SURFACE block in _build_theorist_prompt.
+        assert "FROZEN ANCHORS" in prompt
+        assert "ct_perturbation Stage B" in prompt
+        assert "key_tape DSL" in prompt
+        assert "RE-SEEDED 2026-05-07" in prompt
         assert "historical anomalies" in prompt
-        assert "ledger for audit" in prompt
         assert "MANUAL PRIORITY FOCUS" in prompt
-        # Rotation 2026-04-20: manual focus points at the ranked under-mined
-        # surface, not W specifically.
-        assert "Rotate across the under-explored anomaly surface" in prompt
-        assert "ct_perturbation is the currently under-mined" in prompt
-        assert "w_delimiter_segments is SATURATED" in prompt
-        assert "Do NOT use rescue parameters" in prompt
+        # Re-seed 2026-05-07: manual focus hard-freezes four anchors
+        # and redirects to key_tape DSL, cipher-discovery, and
+        # multi-layer compositions.
+        assert "FROZEN ANCHORS" in prompt
+        assert "REDIRECT" in prompt
+        assert "cipher-discovery" in prompt
+        # Hard rules carried forward from the prior policy.
+        assert "rescue parameters" in prompt
         assert "accept-specific-disproofs doctrine" in prompt
 
     def test_landscape_ranks_least_explored_anomaly_first(self, tmp_path):
