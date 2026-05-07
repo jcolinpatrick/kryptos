@@ -1452,10 +1452,23 @@ def _translate_layer(
         # ParamRange objects. validate_layer_for_kind is called first to
         # enforce all 9 DSL rules on the production path; without this call
         # the rules are test-only.
+        #
+        # 2026-05-07: alphabet is a CipherLayer-level attribute, not part
+        # of the enumerated binding. Fold the layer-level alphabet into a
+        # local copy of the binding before validation so the validator
+        # sees the same value the kernel will receive (the kernel reads
+        # ``alphabet`` from the params dict at compose.py:265). Without
+        # this, every real-world key_tape spec from the theorist hits
+        # ``alphabet None must be 'AZ' or 'KA'`` and the worker errors
+        # out before any kernel call. See
+        # project_key_tape_alphabet_passthrough_fix_2026_05_07.md.
         from kryptosbot.hypothesis_dsl import (
             validate_layer_for_kind,
         )
-        params = binding  # resolved concrete values from the enumeration step
+        params = dict(binding)  # local copy; do not mutate binding
+        # getattr defends against test fakes that omit the attribute
+        # entirely; CipherLayer always has alphabet defaulted to "AZ".
+        params.setdefault("alphabet", getattr(layer, "alphabet", "AZ"))
         errors = validate_layer_for_kind("key_tape", params)
         if errors:
             raise ValueError("; ".join(errors))

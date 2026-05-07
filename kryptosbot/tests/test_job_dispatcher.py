@@ -409,6 +409,88 @@ class TestQuagmireTranslation:
         )
 
 
+class TestKeyTapeTranslation:
+    """Regression tests for the 2026-05-07 layer-level alphabet bug.
+
+    The key_tape DSL puts ``alphabet`` at the CipherLayer level (a
+    sibling of ``params``), not inside the enumerated param bindings.
+    Pre-fix the translator passed only the binding to the validator,
+    which then rejected every real-world spec with ``alphabet None
+    must be 'AZ' or 'KA'``. The fix folds layer.alphabet into the
+    binding before validation.
+    """
+
+    def _binding_for(self, tape, variant="vigenere", **extra):
+        return {"tape": list(tape), "variant": variant, **extra}
+
+    def test_key_tape_uses_layer_level_alphabet(self):
+        """Layer-level alphabet must reach the kernel param dict."""
+        layer = CipherLayer(kind="key_tape", alphabet="KA")
+        binding = self._binding_for(tuple(range(26)))
+        step = _translate_layer(layer, binding)
+        assert step["type"] == "key_tape"
+        assert step["params"]["alphabet"] == "KA"
+
+    def test_key_tape_defaults_alphabet_to_az(self):
+        """Default CipherLayer.alphabet is 'AZ'; translator forwards it."""
+        layer = CipherLayer(kind="key_tape")  # default alphabet="AZ"
+        binding = self._binding_for(tuple(range(26)))
+        step = _translate_layer(layer, binding)
+        assert step["params"]["alphabet"] == "AZ"
+
+    def test_key_tape_explicit_binding_alphabet_wins(self):
+        """If a future ParamRange names 'alphabet' explicitly, the
+        binding-level value wins over the layer-level default — same
+        precedence rule as ``dict.setdefault``."""
+        layer = CipherLayer(kind="key_tape", alphabet="AZ")
+        binding = self._binding_for(tuple(range(26)))
+        binding["alphabet"] = "KA"
+        step = _translate_layer(layer, binding)
+        assert step["params"]["alphabet"] == "KA"
+
+    def test_key_tape_rejects_invalid_alphabet(self):
+        """A bogus layer-level alphabet still trips the validator
+        rather than silently falling back to AZ."""
+        layer = CipherLayer(kind="key_tape", alphabet="NONSENSE")
+        binding = self._binding_for(tuple(range(26)))
+        # CipherLayer.validate() catches the alphabet at layer level;
+        # _translate_layer's validator is the second line of defense.
+        # A bogus alphabet on the layer means the spec was constructed
+        # bypassing CipherLayer.validate, which is exactly the
+        # threat model the dispatcher's per-kind validation guards.
+        with pytest.raises(ValueError, match="alphabet"):
+            _translate_layer(layer, binding)
+
+    def test_key_tape_real_world_spec_executes(self):
+        """End-to-end smoke: a spec the LLM theorist actually emits
+        (alphabet at layer level, params Cartesian-multiplied) must
+        translate without raising. Pre-fix this whole pipeline_config
+        build raised ValueError because the layer-level alphabet
+        was not folded into the binding."""
+        from kryptosbot.job_dispatcher import _build_pipeline_config
+        layer = CipherLayer(
+            kind="key_tape",
+            alphabet="AZ",
+            params=[
+                ParamRange(name="tape", values=[[i % 26 for i in range(97)]]),
+                ParamRange(name="variant", values=["vigenere"]),
+            ],
+        )
+        spec = HypothesisSpec(hypothesis_id="t-keytape-smoke", pipeline=[layer])
+        bindings_iter = _enumerate_bindings(spec)
+        bindings = next(bindings_iter)
+        # _build_pipeline_config is the same call site execute() uses
+        # (job_dispatcher.py:1937); re-using it pins the real production
+        # path, not just the unit-level _translate_layer call.
+        pipeline_dict = _build_pipeline_config(spec, bindings)
+        assert len(pipeline_dict["steps"]) == 1
+        step = pipeline_dict["steps"][0]
+        assert step["type"] == "key_tape"
+        assert step["params"]["alphabet"] == "AZ"
+        assert step["params"]["variant"] == "vigenere"
+        assert len(step["params"]["tape"]) == 97
+
+
 # ─── Universe enumeration ───────────────────────────────────────────────────
 
 class TestUniverseEnumeration:
