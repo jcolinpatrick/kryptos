@@ -771,3 +771,107 @@ class TestSupportedKinds:
             assert expected in _SUPPORTED_KINDS, (
                 f"expected {expected!r} in _SUPPORTED_KINDS for Phase 4"
             )
+
+
+# Module-level so it is picklable by multiprocessing.Pool. Hangs for the
+# duration the work_item asks for; used by TestPoolPerTaskTimeout to verify
+# that a single hung worker can no longer deadlock the pool dispatch.
+def _hang_for_test(work_item: dict) -> dict:
+    import time as _time
+    _time.sleep(work_item["secs"])
+    return {"completed_after": work_item["secs"], "config_id": work_item.get("config_id", "")}
+
+
+def _normal_for_test(work_item: dict) -> dict:
+    return {"crib_score": 0, "ngram_score": -7.0, "config_id": work_item.get("config_id", "")}
+
+
+class TestPoolPerTaskTimeout:
+    """Regression coverage for feedback_pool_worker_no_per_task_timeout.
+
+    Before the fix, ``Pool.imap_unordered`` had no per-task timeout and a
+    single hung evaluator deadlocked the controller indefinitely (cycle
+    245, 2026-05-06; Quagmire III BEARING). The fix replaces the
+    imap_unordered call with apply_async + per-future timeout via the
+    ``_dispatch_pool`` helper.
+    """
+
+    def test_hung_worker_does_not_deadlock_pool(self):
+        """A worker that exceeds per_task_timeout_sec must yield control."""
+        import time
+        from kryptosbot.job_dispatcher import _dispatch_pool
+
+        items = [{"config_id": "cfg-A", "secs": 30}]  # well past the timeout
+        t0 = time.monotonic()
+        results = _dispatch_pool(
+            items,
+            workers=2,
+            per_task_timeout_sec=1.0,
+            evaluator=_hang_for_test,
+        )
+        elapsed = time.monotonic() - t0
+
+        # Bound generously so flakiness on a busy CI host does not bite.
+        assert elapsed < 8.0, f"timeout did not fire promptly: elapsed={elapsed:.2f}s"
+        assert len(results) == 1
+        assert results[0].get("error") == "per_task_timeout"
+        assert results[0].get("config_id") == "cfg-A"
+
+    def test_mixed_normal_and_hung_workers(self):
+        """Healthy workers' results survive alongside a hung worker's timeout."""
+        import time
+        from kryptosbot.job_dispatcher import _dispatch_pool
+
+        items = [
+            {"config_id": "cfg-A", "secs": 0.0},
+            {"config_id": "cfg-B", "secs": 30.0},
+            {"config_id": "cfg-C", "secs": 0.0},
+        ]
+        t0 = time.monotonic()
+        results = _dispatch_pool(
+            items,
+            workers=3,
+            per_task_timeout_sec=1.0,
+            evaluator=_hang_for_test,
+        )
+        elapsed = time.monotonic() - t0
+
+        assert elapsed < 8.0, f"slowest path exceeded budget: elapsed={elapsed:.2f}s"
+        assert len(results) == 3
+        # Order must match input order so the aggregator can correlate
+        # with config_ids if needed.
+        assert results[0].get("config_id") == "cfg-A"
+        assert results[1].get("error") == "per_task_timeout"
+        assert results[1].get("config_id") == "cfg-B"
+        assert results[2].get("config_id") == "cfg-C"
+
+    def test_normal_path_unaffected_by_timeout_parameter(self):
+        """When no worker hangs, results pass through unchanged."""
+        from kryptosbot.job_dispatcher import _dispatch_pool
+
+        items = [
+            {"config_id": "cfg-A"},
+            {"config_id": "cfg-B"},
+        ]
+        results = _dispatch_pool(
+            items,
+            workers=2,
+            per_task_timeout_sec=10.0,
+            evaluator=_normal_for_test,
+        )
+        assert len(results) == 2
+        assert all("error" not in r for r in results)
+        assert {r["config_id"] for r in results} == {"cfg-A", "cfg-B"}
+
+    def test_default_evaluator_is_evaluate_one(self):
+        """When evaluator is None, the helper uses production _evaluate_one."""
+        from kryptosbot.job_dispatcher import _dispatch_pool, _evaluate_one
+        # Inspect the default rather than executing — _evaluate_one needs
+        # a fully-built pipeline_dict and CT, which is overkill for this
+        # contract test.
+        import inspect
+        sig = inspect.signature(_dispatch_pool)
+        assert "evaluator" in sig.parameters
+        # Default of None resolves to _evaluate_one inside the helper;
+        # see the helper's body. We assert the default sentinel.
+        assert sig.parameters["evaluator"].default is None

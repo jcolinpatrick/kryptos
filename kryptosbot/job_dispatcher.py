@@ -41,7 +41,7 @@ import logging
 import os
 import time
 from dataclasses import asdict, dataclass, field
-from multiprocessing import Pool, cpu_count
+from multiprocessing import Pool, TimeoutError as PoolTimeoutError, cpu_count
 from pathlib import Path
 from typing import Any, Callable, Iterator, Optional
 
@@ -1823,6 +1823,60 @@ def _evaluate_one(work_item: dict[str, Any]) -> dict[str, Any]:
         return {"config_id": config_id, "error": f"{type(exc).__name__}: {exc}"}
 
 
+# ─── Pool dispatch helper ────────────────────────────────────────────────────
+
+# Default per-task wall budget for a single Pool worker. A single
+# pathological config (e.g., Quagmire III with a keyword that triggers
+# the convention foot-gun) can otherwise hang indefinitely; before this
+# bound was in place, one hung worker deadlocked controller cycle 245 on
+# 2026-05-06 for 3+ hours. Tune via the per_task_timeout_sec parameter
+# of execute(). 60 seconds comfortably covers every kernel-side cipher
+# evaluation observed in production while still bounding pathological
+# cases.
+DEFAULT_PER_TASK_TIMEOUT_SEC: float = 60.0
+
+
+def _dispatch_pool(
+    work_items: list[dict[str, Any]],
+    workers: int,
+    per_task_timeout_sec: float,
+    evaluator: Optional[Any] = None,
+) -> list[dict[str, Any]]:
+    """Run ``work_items`` through a Pool with a per-task timeout.
+
+    Replaces the prior ``pool.imap_unordered(_evaluate_one, work_items)``
+    call which had no per-task bound. ``apply_async`` + ``fut.get(timeout=)``
+    bounds each individual evaluation; a single hung worker yields a
+    synthetic ``{"error": "per_task_timeout", ...}`` result and the rest
+    of the batch proceeds. The hung worker is left for the pool's
+    context-manager exit to reap; we do NOT block on its termination.
+
+    Result order matches input order so callers can correlate with
+    ``config_id`` deterministically.
+
+    The ``evaluator`` parameter exists primarily for tests; production
+    code passes ``None`` to use ``_evaluate_one``.
+    """
+    if evaluator is None:
+        evaluator = _evaluate_one
+    with Pool(processes=workers) as pool:
+        futures = [
+            (item.get("config_id", ""), pool.apply_async(evaluator, (item,)))
+            for item in work_items
+        ]
+        results: list[dict[str, Any]] = []
+        for cfg_id, fut in futures:
+            try:
+                results.append(fut.get(timeout=per_task_timeout_sec))
+            except PoolTimeoutError:
+                results.append({
+                    "error": "per_task_timeout",
+                    "config_id": cfg_id,
+                    "timeout_sec": per_task_timeout_sec,
+                })
+    return results
+
+
 # ─── Main dispatch entrypoint ────────────────────────────────────────────────
 
 def execute(
@@ -1836,6 +1890,7 @@ def execute(
     bench_mode: bool = False,
     challenge_ciphertext: Optional[str] = None,
     challenge_crib_dict: Optional[dict[int, str]] = None,
+    per_task_timeout_sec: float = DEFAULT_PER_TASK_TIMEOUT_SEC,
 ) -> JobResult:
     """Run a HypothesisSpec end-to-end and return a JobResult.
 
@@ -1970,8 +2025,15 @@ def execute(
         workers = max(1, cpu_count() - 2)
 
     if parallel and workers > 1 and len(work_items) > 1:
-        with Pool(processes=workers) as pool:
-            results = list(pool.imap_unordered(_evaluate_one, work_items))
+        # Per-task timeout bounds any single hung worker. Without it, one
+        # pathological config (Quagmire III convention foot-gun was the
+        # 2026-05-06 trigger) could deadlock the entire dispatch and the
+        # controller indefinitely. See feedback_pool_worker_no_per_task_timeout.
+        results = _dispatch_pool(
+            work_items,
+            workers=workers,
+            per_task_timeout_sec=per_task_timeout_sec,
+        )
     else:
         results = [_evaluate_one(item) for item in work_items]
 
