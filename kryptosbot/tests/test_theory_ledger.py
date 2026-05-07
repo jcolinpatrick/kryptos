@@ -579,6 +579,74 @@ class TestTheoryLedger:
         assert retrieved.critic_verdict.decision == CriticDecision.APPROVE
         assert retrieved.critic_verdict.confidence == 0.9
 
+    def test_recent_outcomes_tolerates_trailing_garbage_in_critic_verdict(
+        self, tmp_ledger, caplog
+    ):
+        # Regression: a single row whose critic_verdict has trailing
+        # non-JSON bytes (e.g. hand-authored audit text appended via
+        # SQL "cv = cv || ' ... '") used to wedge recent_outcomes() and
+        # therefore the controller's _assess_landscape() — see cycles
+        # 340-465 of the 2026-05-06 run. The read path must recover the
+        # JSON prefix and continue, with a WARNING that names the row.
+        import sqlite3
+
+        good = TheoryRecord(
+            core_claim="Good row", mechanism="M", family="F",
+            status=TheoryStatus.ELIMINATED,
+            critic_verdict=CriticVerdict(
+                decision=CriticDecision.APPROVE,
+                confidence=0.5, reasons=["fine"],
+            ),
+        )
+        bad = TheoryRecord(
+            core_claim="Corrupted row", mechanism="M", family="F",
+            status=TheoryStatus.ELIMINATED,
+            critic_verdict=CriticVerdict(
+                decision=CriticDecision.REJECT_DUPLICATE,
+                confidence=0.7, reasons=["duplicate of X"],
+            ),
+        )
+        tmp_ledger.upsert_theory(good)
+        tmp_ledger.upsert_theory(bad)
+
+        # Hand-corrupt the bad row's critic_verdict the same way the
+        # 2026-05-06 manual SQL update did: append literal " || manual
+        # cleanup ..." after the closing brace.
+        with sqlite3.connect(tmp_ledger.db_path) as conn:
+            row = conn.execute(
+                "SELECT critic_verdict FROM theories WHERE hypothesis_id=?",
+                (bad.hypothesis_id,),
+            ).fetchone()
+            poisoned = row[0] + " || manual cleanup 2026-05-06: cycle 245 deadlock"
+            conn.execute(
+                "UPDATE theories SET critic_verdict=? WHERE hypothesis_id=?",
+                (poisoned, bad.hypothesis_id),
+            )
+            conn.commit()
+
+        caplog.set_level("WARNING", logger="kryptosbot.theory_ledger")
+
+        # Must not raise.
+        recent = tmp_ledger.recent_outcomes(limit=10)
+
+        assert {t.hypothesis_id for t in recent} == {
+            good.hypothesis_id, bad.hypothesis_id,
+        }
+        recovered = next(t for t in recent if t.hypothesis_id == bad.hypothesis_id)
+        assert recovered.critic_verdict is not None
+        assert recovered.critic_verdict.decision == CriticDecision.REJECT_DUPLICATE
+        assert recovered.critic_verdict.confidence == 0.7
+
+        warnings_for_row = [
+            rec for rec in caplog.records
+            if rec.levelname == "WARNING"
+            and bad.hypothesis_id in rec.getMessage()
+        ]
+        assert warnings_for_row, (
+            "expected a WARNING naming the corrupted hypothesis_id; "
+            f"saw: {[r.getMessage() for r in caplog.records]}"
+        )
+
 
 # ---------------------------------------------------------------------------
 # Critic tests

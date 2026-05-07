@@ -34,6 +34,38 @@ from .provenance import (
 logger = logging.getLogger("kryptosbot.theory_ledger")
 
 
+def _safe_load_object_json(
+    raw: Optional[str], hypothesis_id: str, column: str,
+) -> dict:
+    # Recover from rows whose JSON column has trailing non-JSON bytes
+    # (e.g. hand-authored audit text appended via SQL `cv = cv || '...'`).
+    # Without this, one malformed row in `recent_outcomes()` poisons the
+    # whole batch and wedges the controller's per-cycle `_assess_landscape()`
+    # — a deadlock burned cycles 340-465 on 2026-05-06.
+    if not raw:
+        return {}
+    try:
+        return json.loads(raw)
+    except json.JSONDecodeError:
+        pass
+    try:
+        obj, end = json.JSONDecoder().raw_decode(raw)
+    except json.JSONDecodeError as exc:
+        logger.warning(
+            "theory %s: %s column is unparseable JSON (%s); using empty dict",
+            hypothesis_id, column, exc,
+        )
+        return {}
+    trailing = raw[end:]
+    logger.warning(
+        "theory %s: %s column has %d trailing non-JSON bytes after a "
+        "valid prefix (%r); recovered the prefix",
+        hypothesis_id, column, len(trailing),
+        trailing[:80] + ("..." if len(trailing) > 80 else ""),
+    )
+    return obj if isinstance(obj, dict) else {}
+
+
 def _now_iso() -> str:
     return datetime.now(timezone.utc).isoformat()
 
@@ -864,7 +896,9 @@ class TheoryLedger:
         )
 
     def _row_to_theory(self, row: sqlite3.Row) -> TheoryRecord:
-        cv_data = json.loads(row["critic_verdict"]) if row["critic_verdict"] else {}
+        cv_data = _safe_load_object_json(
+            row["critic_verdict"], row["hypothesis_id"], "critic_verdict",
+        )
         cv = CriticVerdict.from_dict(cv_data) if cv_data else None
 
         return TheoryRecord(
