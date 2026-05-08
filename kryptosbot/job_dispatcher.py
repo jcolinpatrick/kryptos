@@ -1835,44 +1835,91 @@ def _evaluate_one(work_item: dict[str, Any]) -> dict[str, Any]:
 # cases.
 DEFAULT_PER_TASK_TIMEOUT_SEC: float = 60.0
 
+# Default ceiling on total wall time for one ``_dispatch_pool`` call.
+# Per-task timeout alone is not enough: with N hung configs and W workers,
+# sequential ``fut.get(timeout=...)`` polls cost N × per_task_timeout, which
+# at 500 configs × 60s = 8+ hours. A total budget caps this so a pathological
+# hypothesis can only consume a bounded slice of the cycle.
+DEFAULT_TOTAL_DISPATCH_BUDGET_SEC: float = 600.0
+
+
+def _compute_total_budget_sec(
+    n_items: int, workers: int, per_task_timeout_sec: float,
+) -> float:
+    """Default total wall budget for ``_dispatch_pool``.
+
+    Formula: bounded between 5 and 30 minutes; sized to cover
+    a healthy 5s-per-config workload plus a per-task slack for the
+    initial worker-pool batch in the all-hung worst case. The clamp
+    keeps us from spending more than 30 minutes on a single hypothesis
+    even for very large enumerations.
+    """
+    healthy = (n_items / max(1, workers)) * 5.0
+    worst_case_initial_batch = per_task_timeout_sec * (workers + 4)
+    return max(300.0, min(1800.0, healthy + worst_case_initial_batch))
+
 
 def _dispatch_pool(
     work_items: list[dict[str, Any]],
     workers: int,
     per_task_timeout_sec: float,
     evaluator: Optional[Any] = None,
+    total_budget_sec: Optional[float] = None,
 ) -> list[dict[str, Any]]:
-    """Run ``work_items`` through a Pool with a per-task timeout.
+    """Run ``work_items`` through a Pool with per-task and total timeouts.
 
     Replaces the prior ``pool.imap_unordered(_evaluate_one, work_items)``
-    call which had no per-task bound. ``apply_async`` + ``fut.get(timeout=)``
-    bounds each individual evaluation; a single hung worker yields a
-    synthetic ``{"error": "per_task_timeout", ...}`` result and the rest
-    of the batch proceeds. The hung worker is left for the pool's
-    context-manager exit to reap; we do NOT block on its termination.
+    call which had no time bounds. Two layered budgets:
 
-    Result order matches input order so callers can correlate with
-    ``config_id`` deterministically.
+    * ``per_task_timeout_sec`` — bounds any single ``evaluator`` call.
+      A hung config yields ``{"error": "per_task_timeout", ...}`` and the
+      next future is polled.
+    * ``total_budget_sec`` — bounds the whole dispatch. When exhausted,
+      remaining futures are abandoned with
+      ``{"error": "total_dispatch_budget_exhausted", ...}``. The pool's
+      ``__exit__`` SIGTERMs in-flight workers; we do not block on their
+      termination.
 
-    The ``evaluator`` parameter exists primarily for tests; production
-    code passes ``None`` to use ``_evaluate_one``.
+    Without the total budget, 500 hung configs × 60s per-task = 8 hours
+    of futile polling. With both, even a fully-hung dispatch returns in
+    bounded wall time and the controller can move on.
+
+    Result order matches input order so callers can correlate by
+    ``config_id``. The ``evaluator`` parameter exists primarily for
+    tests; production callers pass ``None`` to use ``_evaluate_one``.
     """
     if evaluator is None:
         evaluator = _evaluate_one
+    if total_budget_sec is None:
+        total_budget_sec = _compute_total_budget_sec(
+            len(work_items), workers, per_task_timeout_sec,
+        )
+    deadline = time.monotonic() + total_budget_sec
+
+    results: list[dict[str, Any]] = []
     with Pool(processes=workers) as pool:
         futures = [
             (item.get("config_id", ""), pool.apply_async(evaluator, (item,)))
             for item in work_items
         ]
-        results: list[dict[str, Any]] = []
         for cfg_id, fut in futures:
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
+                # Budget exhausted; abandon this and the rest.
+                results.append({
+                    "error": "total_dispatch_budget_exhausted",
+                    "config_id": cfg_id,
+                    "total_budget_sec": total_budget_sec,
+                })
+                continue
+            timeout = min(per_task_timeout_sec, remaining)
             try:
-                results.append(fut.get(timeout=per_task_timeout_sec))
+                results.append(fut.get(timeout=timeout))
             except PoolTimeoutError:
                 results.append({
                     "error": "per_task_timeout",
                     "config_id": cfg_id,
-                    "timeout_sec": per_task_timeout_sec,
+                    "timeout_sec": timeout,
                 })
     return results
 

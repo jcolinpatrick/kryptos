@@ -875,3 +875,78 @@ class TestPoolPerTaskTimeout:
         # Default of None resolves to _evaluate_one inside the helper;
         # see the helper's body. We assert the default sentinel.
         assert sig.parameters["evaluator"].default is None
+
+    def test_total_budget_caps_many_hung_workers(self):
+        """A dispatch where every config hangs cannot run longer than the
+        total budget, regardless of how large the per-task timeout is.
+
+        This is the second arm of the deadlock-fix: per-task timeout
+        bounds individual hangs, but a 500-config dispatch with all hung
+        configs would sequentially time out 500 × 60s = 8 hours under
+        per-task alone. The total budget cuts that off.
+        """
+        import time
+        from kryptosbot.job_dispatcher import _dispatch_pool
+
+        # 30 hung configs × 30s per-task would be 900s without the total
+        # budget; 5s total budget bounds it tightly.
+        items = [{"config_id": f"cfg-{i}", "secs": 30} for i in range(30)]
+        t0 = time.monotonic()
+        results = _dispatch_pool(
+            items,
+            workers=2,
+            per_task_timeout_sec=30.0,
+            evaluator=_hang_for_test,
+            total_budget_sec=5.0,
+        )
+        elapsed = time.monotonic() - t0
+
+        # Budget=5s, per-task=30s. The first 1-2 futures will hit per-task
+        # timeout (each ~5s actually because we min(per_task, remaining)),
+        # then the rest get total_dispatch_budget_exhausted instantly.
+        assert elapsed < 12.0, f"total budget did not cap dispatch: elapsed={elapsed:.2f}s"
+        assert len(results) == 30
+        budget_exhausted = sum(
+            1 for r in results
+            if r.get("error") == "total_dispatch_budget_exhausted"
+        )
+        per_task_timeouts = sum(
+            1 for r in results if r.get("error") == "per_task_timeout"
+        )
+        # Most results should be budget-exhausted; at most a handful are
+        # per-task timeouts (one per worker that started before the budget
+        # ran out).
+        assert budget_exhausted >= 20, (
+            f"expected most futures abandoned via total budget; "
+            f"got budget_exhausted={budget_exhausted}, "
+            f"per_task_timeouts={per_task_timeouts}"
+        )
+
+    def test_total_budget_does_not_fire_for_fast_workers(self):
+        """When workers complete quickly, total budget is never consulted."""
+        from kryptosbot.job_dispatcher import _dispatch_pool
+
+        items = [{"config_id": f"cfg-{i}"} for i in range(10)]
+        results = _dispatch_pool(
+            items,
+            workers=2,
+            per_task_timeout_sec=10.0,
+            evaluator=_normal_for_test,
+            total_budget_sec=30.0,
+        )
+        assert len(results) == 10
+        assert all("error" not in r for r in results)
+
+    def test_default_total_budget_is_clamped(self):
+        """The auto-computed default total budget is bounded between 5
+        and 30 minutes regardless of input size."""
+        from kryptosbot.job_dispatcher import _compute_total_budget_sec
+
+        # Tiny dispatch: floor of 5 minutes
+        tiny = _compute_total_budget_sec(n_items=1, workers=8, per_task_timeout_sec=60.0)
+        assert tiny >= 300.0
+        assert tiny <= 1800.0
+
+        # Huge dispatch: ceiling of 30 minutes
+        huge = _compute_total_budget_sec(n_items=10000, workers=8, per_task_timeout_sec=60.0)
+        assert huge <= 1800.0
