@@ -32,3 +32,27 @@ def test_mod_n_known_pattern_1_in_5():
     pos = _mod_n_positions(N=5, residues=frozenset({0}), text_len=97)
     assert len(pos) == 20
     assert pos == frozenset({0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95})
+
+
+def test_boundary_masks_only_in_gap_regions():
+    from kryptosbot.swing_k1_masks import enumerate_boundary_region_masks
+    crib_positions = frozenset(range(21, 34)) | frozenset(range(63, 74))
+    for m in enumerate_boundary_region_masks(target_null_counts=(17, 20, 24, 28)):
+        # No null position may coincide with a crib position.
+        assert not (m.positions & crib_positions)
+        assert all(p in range(0, 21) or p in range(34, 63) or p in range(74, 97)
+                   for p in m.positions)
+
+
+def test_boundary_masks_distinct_patterns():
+    from kryptosbot.swing_k1_masks import enumerate_boundary_region_masks
+    masks = list(enumerate_boundary_region_masks(target_null_counts=(17, 20, 24, 28)))
+    assert len(masks) >= 4  # at minimum one per null count
+    positions_sets = {m.positions for m in masks}
+    assert len(positions_sets) == len(masks)  # no duplicates
+
+
+def test_boundary_masks_target_null_counts_respected():
+    from kryptosbot.swing_k1_masks import enumerate_boundary_region_masks
+    for m in enumerate_boundary_region_masks(target_null_counts=(20,)):
+        assert m.null_count == 20

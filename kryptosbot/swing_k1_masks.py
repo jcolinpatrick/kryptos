@@ -64,3 +64,79 @@ def enumerate_mod_n_masks(
                     positions=positions,
                     params=params,
                 )
+
+
+# Gap regions (positions NOT covered by any disclosed crib).
+CRIB_POSITIONS_LITERAL = frozenset(range(21, 34)) | frozenset(range(63, 74))
+GAP_REGIONS: tuple[range, ...] = (range(0, 21), range(34, 63), range(74, 97))
+
+
+def _boundary_positions_evenly_spaced(total_null_count: int) -> FrozenSet[int]:
+    """Distribute total_null_count evenly across the three gap regions, then evenly within each."""
+    gap_lens = [len(r) for r in GAP_REGIONS]
+    total_gap = sum(gap_lens)
+    # Allocate per region in proportion to gap length, rounded.
+    alloc = [round(total_null_count * gl / total_gap) for gl in gap_lens]
+    # Fix any rounding drift to ensure sum equals total_null_count.
+    drift = total_null_count - sum(alloc)
+    alloc[0] += drift
+    out: set[int] = set()
+    for r, count in zip(GAP_REGIONS, alloc):
+        if count <= 0:
+            continue
+        step = max(1, len(r) // count)
+        positions = [r.start + i * step for i in range(count)]
+        # Clamp to range.
+        positions = [p for p in positions if r.start <= p < r.stop]
+        out.update(positions[:count])
+    return frozenset(out)
+
+
+def _boundary_positions_contiguous_block(total_null_count: int, anchor: str) -> FrozenSet[int]:
+    """Place a contiguous block of total_null_count positions at the start, middle, or end of the gap union."""
+    flat = []
+    for r in GAP_REGIONS:
+        flat.extend(r)
+    if anchor == "start":
+        return frozenset(flat[:total_null_count])
+    elif anchor == "middle":
+        mid = (len(flat) - total_null_count) // 2
+        return frozenset(flat[mid:mid + total_null_count])
+    elif anchor == "end":
+        return frozenset(flat[-total_null_count:])
+    else:
+        raise ValueError(f"unknown anchor {anchor!r}")
+
+
+def enumerate_boundary_region_masks(
+    target_null_counts: Tuple[int, ...] = DEFAULT_NULL_COUNTS,
+) -> Iterable[Mask]:
+    """Boundary-region masks: nulls confined to gap regions (no crib position is null).
+
+    Two sub-patterns:
+    1. Evenly-spaced: nulls distributed proportionally across the three gap regions.
+    2. Contiguous block: a contiguous run anchored at start, middle, or end of the gap union.
+    """
+    seen: set[FrozenSet[int]] = set()
+    for count in target_null_counts:
+        evenly = _boundary_positions_evenly_spaced(count)
+        if evenly not in seen and len(evenly) == count:
+            seen.add(evenly)
+            params = (("pattern", "evenly_spaced"), ("null_count", count))
+            yield Mask(
+                mask_id=_mask_id_for("boundary_region", params),
+                class_label="boundary_region",
+                positions=evenly,
+                params=params,
+            )
+        for anchor in ("start", "middle", "end"):
+            block = _boundary_positions_contiguous_block(count, anchor)
+            if block not in seen and len(block) == count:
+                seen.add(block)
+                params = (("pattern", f"block_{anchor}"), ("null_count", count))
+                yield Mask(
+                    mask_id=_mask_id_for("boundary_region", params),
+                    class_label="boundary_region",
+                    positions=block,
+                    params=params,
+                )
