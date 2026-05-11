@@ -665,3 +665,119 @@ class TestExecuteFullCli:
         )
         assert summary["status"] in ("completed", "incomplete")
         assert summary["candidates_evaluated"] > 0
+
+
+class TestPreregManifests:
+    def test_ambiguous_positions_manifest_copied(self, tmp_path):
+        import json
+        from scripts.campaigns.ct_perturbation_stage_b import (
+            SweepConfig, run_h2_sweep,
+        )
+        from kryptosbot.ct_perturbation import (
+            AMBIGUOUS_POSITIONS_SCHEMA_VERSION, _sha256_of_positions,
+            load_ambiguous_positions,
+        )
+        from kryptos.kernel.constants import CT
+
+        positions = [3, 50, 95]
+        payload = {
+            "schema_version": AMBIGUOUS_POSITIONS_SCHEMA_VERSION,
+            "archive_provenance": {
+                "primary_source": "test fixture",
+                "evaluator": "unit test",
+                "evaluation_date": "2026-05-11",
+                "method": "synthetic",
+            },
+            "positions": positions,
+            "rationale_per_position": {str(p): "test" for p in positions},
+            "checksum": {
+                "sha256_of_positions_sorted": _sha256_of_positions(positions),
+            },
+        }
+        manifest_path = tmp_path / "amb.json"
+        manifest_path.write_text(json.dumps(payload))
+        manifest = load_ambiguous_positions(str(manifest_path))
+
+        cfg = SweepConfig(
+            ct=CT, keywords=["PALIMPSEST"], manifest=manifest,
+            universe_size=18, max_h2_variants=3,
+        )
+        artifact_dir = tmp_path / "run"
+        run_h2_sweep(
+            cfg, artifact_dir=artifact_dir, run_id="t1", workers=1,
+            run_metadata={
+                "canonical_ct_sha256": "test",
+                "ambiguous_positions_sha256": manifest.checksum_sha256,
+                "k": manifest.k,
+                "h2_variants_executed": 3,
+                "expected_total_config_cardinality": 18,
+            },
+        )
+
+        amb_artifact = artifact_dir / "ambiguous_positions_manifest.json"
+        assert amb_artifact.exists()
+        copy = json.loads(amb_artifact.read_text())
+        assert sorted(copy["positions"]) == sorted(positions)
+        assert copy["checksum"]["sha256_of_positions_sorted"] == manifest.checksum_sha256
+        assert copy["archive_provenance"]["evaluator"] == "unit test"
+
+    def test_universe_manifest_written(self, tmp_path):
+        import json
+        from scripts.campaigns.ct_perturbation_stage_b import (
+            SweepConfig, run_h2_sweep,
+        )
+        from kryptosbot.ct_perturbation import (
+            AMBIGUOUS_POSITIONS_SCHEMA_VERSION, _sha256_of_positions,
+            load_ambiguous_positions,
+        )
+        from kryptos.kernel.constants import CT
+
+        positions = [3, 50, 95]
+        payload = {
+            "schema_version": AMBIGUOUS_POSITIONS_SCHEMA_VERSION,
+            "archive_provenance": {
+                "primary_source": "test fixture",
+                "evaluator": "unit test",
+                "evaluation_date": "2026-05-11",
+                "method": "synthetic",
+            },
+            "positions": positions,
+            "rationale_per_position": {str(p): "test" for p in positions},
+            "checksum": {
+                "sha256_of_positions_sorted": _sha256_of_positions(positions),
+            },
+        }
+        manifest_path = tmp_path / "amb.json"
+        manifest_path.write_text(json.dumps(payload))
+        manifest = load_ambiguous_positions(str(manifest_path))
+
+        cfg = SweepConfig(
+            ct=CT, keywords=["PALIMPSEST"], manifest=manifest,
+            universe_size=18, max_h2_variants=3,
+        )
+        artifact_dir = tmp_path / "run"
+        run_h2_sweep(
+            cfg, artifact_dir=artifact_dir, run_id="t2", workers=1,
+            run_metadata={
+                "canonical_ct_sha256": "test",
+                "ambiguous_positions_sha256": manifest.checksum_sha256,
+                "k": manifest.k,
+                "h2_variants_executed": 3,
+                "expected_total_config_cardinality": 18,
+            },
+        )
+
+        uni_artifact = artifact_dir / "universe_manifest.json"
+        assert uni_artifact.exists()
+        u = json.loads(uni_artifact.read_text())
+        assert u["schema_version"] == "ct_perturbation_stage_b.universe_manifest.v1"
+        assert u["k"] == 3
+        assert u["position_pairs"] == 3  # C(3, 2) = 3
+        assert u["substitution_pairs"] == 25 * 25
+        assert u["h2_variants"] == 3 * 625
+        # 3 explicit (i, j) pairs
+        assert sorted(tuple(p) for p in u["position_pair_list"]) == [(3, 50), (3, 95), (50, 95)]
+        assert u["families"] == ["vigenere", "beaufort", "var_beaufort"]
+        assert u["alphabet_kinds"] == ["AZ", "KA"]
+        assert u["n_keywords"] == 1
+        assert u["max_h2_variants"] == 3

@@ -536,6 +536,38 @@ def run_h2_sweep(
     if trace_first_configs:
         trace_path.write_text("")
 
+    # Prereg §3.2 / §8: copy the operator-supplied manifest verbatim into
+    # the run directory, and emit a derived universe_manifest so the run
+    # is fully reproducible from its artifacts alone.
+    if cfg.manifest is not None:
+        atomic_write_json(
+            artifact_dir / "ambiguous_positions_manifest.json",
+            cfg.manifest.to_dict(),
+        )
+        universe = stage_b_universe_size(cfg.manifest, n_keywords=len(cfg.keywords))
+        universe_payload: dict[str, Any] = {
+            "schema_version": "ct_perturbation_stage_b.universe_manifest.v1",
+            "campaign_id": CAMPAIGN_ID_STAGE_B,
+            "run_id": run_id,
+            "k": universe["k"],
+            "position_pairs": universe["position_pairs"],
+            "substitution_pairs": universe["substitution_pairs"],
+            "h2_variants": universe["h2_variants"],
+            "configs_per_variant": universe["configs_per_variant"],
+            "total_configs": universe["total_configs"],
+            "position_pair_list": [
+                list(pair) for pair in cfg.manifest.position_pairs()
+            ],
+            "families": [f.value for f in cfg.families],
+            "alphabet_kinds": list(cfg.alphabet_kinds),
+            "n_keywords": len(cfg.keywords),
+            "keyword_limit": cfg.keyword_limit,
+            "max_h2_variants": cfg.max_h2_variants,
+        }
+        atomic_write_json(
+            artifact_dir / "universe_manifest.json", universe_payload,
+        )
+
     # Pre-build scorer + null distribution lookups once.
     try:
         ngram_scorer = get_default_scorer()
