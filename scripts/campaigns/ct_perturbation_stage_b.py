@@ -88,6 +88,13 @@ from kryptosbot.ct_perturbation import (  # noqa: E402
     score_candidate_ct_parametric,
     stage_b_universe_size,
 )
+from scripts.campaigns.ct_perturbation_stage_a import (  # noqa: E402
+    KeywordSource,
+    atomic_write_json,
+    load_keywords,
+    _git_commit,
+    _module_sha,
+)
 
 
 _K_MAX_DEFAULT = 20  # prereg §3.3
