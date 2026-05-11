@@ -1,12 +1,5 @@
 #!/usr/bin/env python3
-"""CT-Perturbation Stage B — campaign runner stub + synthetic-recovery test.
-
-Status: STUB v0.2 (2026-05-06). The full Stage B sweep runner is still
-deferred per ``docs/campaigns/ct_perturbation_stage_b_prereg.md``; this
-revision adds the prereg's mandatory pre-launch synthetic-recovery
-test (§7) without yet building the H2 × keyword × family × alphabet
-sweep loop. The full v1 sweep runner is its own brainstorm/plan/build
-cycle (Stage A's runner is 1836 lines; Stage B v1 will be similar).
+"""CT-Perturbation Stage B campaign runner + synthetic-recovery test.
 
 What this module does:
     - Validates the ``--ambiguous-positions PATH`` JSON manifest using
@@ -22,23 +15,16 @@ What this module does:
               from canonical (Bean is invariant under non-crib edits).
       Each case runs against BOTH cipher fixtures the prereg requires:
       Vigenère + AZ + ``PALIMPSEST`` and Beaufort + KA + ``KRYPTOS``.
-    - Refuses ``--execute-full`` until the v1 sweep runner lands, with
-      an instructive message.
-
-What this module does NOT do:
-    - Enumerate the full Stage B universe and execute it. That is the
-      v1 sweep loop and is deferred.
-    - Use the parallel worker pool, JSONL writer, or checkpointing
-      infrastructure from Stage A. The recovery test is single-process
-      and runs the H2 enumeration directly via the helpers in
-      ``kryptosbot.ct_perturbation``.
+    - Enumerates the full Stage B universe and runs the sweep under
+      ``--execute-full``. The v1 loop inherits Stage A's worker pool
+      and JSONL artifact schema; the H2 row schema extends Stage A's
+      with ``pos_pair``, ``chars_pair``, and ``crib_overlapping``.
 
 Exit codes:
     0  manifest validated; recovery test passed (if requested);
-       dry-run summary printed.
+       dry-run summary printed; or ``--execute-full`` sweep completed.
     2  configuration error (missing arg, schema invalid, k>20 without
        override, etc.).
-    3  ``--execute-full`` requested but full runner not yet implemented.
     4  ``--synthetic-recovery-test`` requested and one or both probes
        failed.
 
@@ -47,10 +33,7 @@ Usage:
         --ambiguous-positions PATH/TO/A.json \\
         [--allow-large-ambiguous-set] \\
         [--synthetic-recovery-test [--recovery-artifact-dir DIR]] \\
-        [--dry-run]
-
-The full runner v1 must be specified separately (brainstorm + writing-plans
-+ subagent-driven build) before ``--execute-full`` is supported.
+        [--dry-run | --execute-full]
 """
 from __future__ import annotations
 
@@ -1058,8 +1041,8 @@ def synthetic_recovery_test(
 def _build_argparser() -> argparse.ArgumentParser:
     ap = argparse.ArgumentParser(
         description=(
-            "CT-Perturbation Stage B — STUB v0.2. Manifest validation + "
-            "synthetic-recovery test. Full sweep runner deferred. See "
+            "CT-Perturbation Stage B. Manifest validation, synthetic-"
+            "recovery test, and full H2 sweep runner. See "
             f"{_PREREG_PATH}."
         ),
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -1197,8 +1180,6 @@ def _print_summary(manifest: AmbiguousPositionsManifest, n_keywords: int) -> Non
             print(f"    {key:30s} {value}")
     print()
     print("=" * 72)
-    print("  Status: STUB v0.2 — synthetic-recovery test wired; full")
-    print("  sweep runner not yet built.")
     print(f"  See {_PREREG_PATH} for full campaign spec.")
     print("=" * 72)
     print()
