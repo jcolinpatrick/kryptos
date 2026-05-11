@@ -81,7 +81,9 @@ from kryptos.kernel.transforms.vigenere import (  # noqa: E402
 from kryptosbot.ct_perturbation import (  # noqa: E402
     AlertPolicy,
     AmbiguousPositionsManifest,
+    CAMPAIGN_ID_STAGE_B,
     CANONICAL_CRIB_DICT,
+    CandidateScore,
     CTVariantH2,
     ScorerContext,
     SUPPORTED_ALPHABET_KINDS,
@@ -192,6 +194,86 @@ class VariantEvalResult:
     bean_pass_count: int
     rejection_reason_counts: dict[str, int]
     trace_rows: list[dict[str, Any]]
+
+
+# ─── H2 candidate row + helpers ──────────────────────────────────────────
+
+
+_CRIB_POSITIONS_SET: frozenset[int] = frozenset(CANONICAL_CRIB_DICT.keys())
+
+
+def _rejection_reason_bucket(reason: str | None) -> str:
+    if not reason:
+        return "kept"
+    if "crib" in reason:
+        return "crib_floor"
+    if "bean" in reason:
+        return "bean_fail"
+    if "ngram" in reason:
+        return "ngram_floor"
+    if "null" in reason:
+        return "null_unavailable"
+    return "other"
+
+
+def _h2_candidate_row(
+    run_id: str,
+    variant: CTVariantH2,
+    family: CipherVariant,
+    alphabet_kind: str,
+    keyword: str,
+    score: CandidateScore,
+    pt: str,
+) -> dict[str, Any]:
+    crib_overlapping = sum(
+        1 for p in (variant.pos1, variant.pos2) if p in _CRIB_POSITIONS_SET
+    )
+    return {
+        "run_id": run_id,
+        "campaign_id": CAMPAIGN_ID_STAGE_B,
+        "variant_id": variant.variant_id,
+        "distance": variant.distance,
+        "pos_pair": [variant.pos1, variant.pos2],
+        "chars_pair": [variant.old1, variant.new1, variant.old2, variant.new2],
+        "crib_overlapping": crib_overlapping,
+        "ct_sha256": variant.ct_sha256,
+        "family": family.value,
+        "alphabet": alphabet_kind,
+        "keyword": keyword,
+        "effective_keyword_period": len(keyword),
+        "pt": pt,
+        "score": {
+            "crib_score": score.crib_score,
+            "crib_total": score.crib_total,
+            "bean_passed": score.bean_passed,
+            "bean_variant": score.bean_variant,
+            "ngram_score": score.ngram_score,
+            "crib_p_raw": score.crib_p_raw,
+            "ngram_p_raw": score.ngram_p_raw,
+            "ngram_null_available": score.ngram_null_available,
+            "p_combined_raw": score.p_combined_raw,
+            "p_adjusted": score.p_adjusted,
+            "alert_class": score.alert_class,
+            "rejection_reason": score.rejection_reason,
+        },
+    }
+
+
+def _h2_summary_only(row: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "variant_id": row["variant_id"],
+        "pos_pair": row["pos_pair"],
+        "chars_pair": row["chars_pair"],
+        "crib_overlapping": row["crib_overlapping"],
+        "family": row["family"],
+        "alphabet": row["alphabet"],
+        "keyword": row["keyword"],
+        "crib_score": row["score"]["crib_score"],
+        "bean_passed": row["score"]["bean_passed"],
+        "ngram_score": row["score"]["ngram_score"],
+        "p_adjusted": row["score"]["p_adjusted"],
+        "alert_class": row["score"]["alert_class"],
+    }
 
 
 # ─── synthetic recovery test ─────────────────────────────────────────────

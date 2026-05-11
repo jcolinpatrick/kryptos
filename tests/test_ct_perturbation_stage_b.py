@@ -368,3 +368,35 @@ class TestSweepResults:
         )
         assert v.variant_id == "H2_test"
         assert v.n_evaluated == 4
+
+
+class TestH2CandidateRow:
+    def test_h2_candidate_row_schema(self):
+        from scripts.campaigns.ct_perturbation_stage_b import _h2_candidate_row
+        from kryptosbot.ct_perturbation import CTVariantH2, CandidateScore, _ct_sha256
+        from kryptos.kernel.constants import CT
+        from kryptos.kernel.transforms.vigenere import CipherVariant
+
+        new_ct = "A" + CT[1:21] + "Z" + CT[22:]
+        v = CTVariantH2(
+            variant_id="H2_p00_F->A_p21_F->Z", distance=2,
+            pos1=0, old1=CT[0], new1="A", pos2=21, old2=CT[21], new2="Z",
+            ct=new_ct, ct_sha256=_ct_sha256(new_ct),
+        )
+        score = CandidateScore(
+            crib_score=18, crib_total=24, bean_passed=True, bean_variant="vigenere",
+            ngram_score=-3.4, crib_p_raw=1e-10, ngram_p_raw=1e-3,
+            ngram_null_available=True, p_combined_raw=1e-13, p_adjusted=1e-7,
+            alert_class="watchlist", rejection_reason="",
+        )
+        row = _h2_candidate_row(
+            run_id="test_run", variant=v, family=CipherVariant.VIGENERE,
+            alphabet_kind="AZ", keyword="PALIMPSEST", score=score, pt="X" * 97,
+        )
+        assert row["run_id"] == "test_run"
+        assert row["distance"] == 2
+        assert row["pos_pair"] == [0, 21]
+        # pos 21 is a crib position; pos 0 is not. crib_overlapping == 1
+        assert row["crib_overlapping"] == 1
+        assert row["family"] == "vigenere"
+        assert row["score"]["crib_score"] == 18
