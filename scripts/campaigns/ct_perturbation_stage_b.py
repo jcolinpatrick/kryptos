@@ -101,6 +101,7 @@ from scripts.campaigns.ct_perturbation_stage_a import (  # noqa: E402
     load_keywords,
     _git_commit,
     _module_sha,
+    _rejection_reason_bucket,
 )
 
 
@@ -200,20 +201,6 @@ class VariantEvalResult:
 
 
 _CRIB_POSITIONS_SET: frozenset[int] = frozenset(CANONICAL_CRIB_DICT.keys())
-
-
-def _rejection_reason_bucket(reason: str | None) -> str:
-    if not reason:
-        return "kept"
-    if "crib" in reason:
-        return "crib_floor"
-    if "bean" in reason:
-        return "bean_fail"
-    if "ngram" in reason:
-        return "ngram_floor"
-    if "null" in reason:
-        return "null_unavailable"
-    return "other"
 
 
 def _h2_candidate_row(

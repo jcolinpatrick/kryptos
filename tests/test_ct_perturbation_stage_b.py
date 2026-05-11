@@ -400,3 +400,27 @@ class TestH2CandidateRow:
         assert row["crib_overlapping"] == 1
         assert row["family"] == "vigenere"
         assert row["score"]["crib_score"] == 18
+
+
+class TestRejectionReasonBucket:
+    def test_empty_reason_returns_alert(self):
+        from scripts.campaigns.ct_perturbation_stage_b import _rejection_reason_bucket
+        assert _rejection_reason_bucket("") == "alert"
+
+    def test_ngram_floor_normalized(self):
+        from scripts.campaigns.ct_perturbation_stage_b import _rejection_reason_bucket
+        assert _rejection_reason_bucket("ngram -3.5 below floor -4.0") == "ngram below floor"
+
+    def test_p_adjusted_normalized(self):
+        from scripts.campaigns.ct_perturbation_stage_b import _rejection_reason_bucket
+        # match Stage A's regex
+        assert _rejection_reason_bucket("p_adjusted 0.5 above 0.01") == "p_adjusted above threshold"
+
+    def test_uncalibrated_passes_through(self):
+        from scripts.campaigns.ct_perturbation_stage_b import _rejection_reason_bucket
+        # this case used to silently fall to "other"; now passes through verbatim
+        assert _rejection_reason_bucket("p-value gate uncalibrated") == "p-value gate uncalibrated"
+
+    def test_bean_failed_passes_through(self):
+        from scripts.campaigns.ct_perturbation_stage_b import _rejection_reason_bucket
+        assert _rejection_reason_bucket("h0: bean failed") == "h0: bean failed"
