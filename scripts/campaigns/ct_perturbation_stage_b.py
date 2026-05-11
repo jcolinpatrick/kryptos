@@ -263,6 +263,106 @@ def _h2_summary_only(row: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+# ─── per-variant evaluator ───────────────────────────────────────────────
+
+
+def evaluate_one_h2_variant(
+    variant: CTVariantH2,
+    cfg: SweepConfig,
+    *,
+    ngram_scorer: Any,
+    ngram_dist_az: Any,
+    ngram_dist_ka: Any,
+    trace_first_configs: int = 0,
+) -> VariantEvalResult:
+    """Score every (family x alphabet x keyword) cell for one H2 variant.
+
+    ScorerContext.build is duck-type compatible: CTVariantH2 exposes
+    .ct, .ct_sha256, .distance, .variant_id, same fields ScorerContext
+    reads from a CTVariant.
+    """
+    keywords = (
+        cfg.keywords if cfg.keyword_limit is None
+        else cfg.keywords[: cfg.keyword_limit]
+    )
+    alerts: list[dict[str, Any]] = []
+    watch: list[dict[str, Any]] = []
+    heap_items: list[tuple[float, dict[str, Any]]] = []
+    bean_pass = 0
+    n_eval = 0
+    rejection_counts: dict[str, int] = {}
+    trace_rows: list[dict[str, Any]] = []
+
+    ctx_by_kind = {
+        "AZ": ScorerContext.build(
+            variant, cfg.crib_dict, ngram_dist=ngram_dist_az, alphabet_kind="AZ",  # type: ignore[arg-type]
+        ),
+        "KA": ScorerContext.build(
+            variant, cfg.crib_dict, ngram_dist=ngram_dist_ka, alphabet_kind="KA",  # type: ignore[arg-type]
+        ),
+    }
+
+    for family in cfg.families:
+        for kind in cfg.alphabet_kinds:
+            ctx = ctx_by_kind[kind]
+            for keyword in keywords:
+                if cfg.max_configs is not None and n_eval >= cfg.max_configs:
+                    return VariantEvalResult(
+                        variant_id=variant.variant_id, n_evaluated=n_eval,
+                        alerts=alerts, watchlist=watch,
+                        top_candidates=heap_items, bean_pass_count=bean_pass,
+                        rejection_reason_counts=rejection_counts,
+                        trace_rows=trace_rows,
+                    )
+                score, pt = score_candidate_ct_parametric(
+                    ctx, keyword=keyword, family=family,
+                    alphabet_kind=kind, universe_size=cfg.universe_size,
+                    policy=cfg.policy, ngram_scorer=ngram_scorer,
+                )
+                n_eval += 1
+                reason = _rejection_reason_bucket(score.rejection_reason)
+                rejection_counts[reason] = rejection_counts.get(reason, 0) + 1
+                if score.bean_passed:
+                    bean_pass += 1
+                if len(trace_rows) < trace_first_configs:
+                    trace_rows.append({
+                        "variant_id": variant.variant_id,
+                        "variant_distance": variant.distance,
+                        "pos_pair": [variant.pos1, variant.pos2],
+                        "family": family.value,
+                        "alphabet": kind,
+                        "keyword": keyword,
+                        "effective_keyword_period": len(keyword),
+                        "rejection_reason": score.rejection_reason,
+                        "alert_class": score.alert_class,
+                    })
+                if score.alert_class in ("alert", "watchlist", "watchlist_null_unavailable"):
+                    payload = _h2_candidate_row(
+                        cfg.run_id_for_logging, variant, family, kind,
+                        keyword, score, pt,
+                    )
+                    if score.alert_class == "alert":
+                        alerts.append(payload)
+                    else:
+                        watch.append(payload)
+                key = float(score.crib_score) * 1000.0 + float(
+                    score.ngram_score if score.ngram_score is not None else -10.0
+                )
+                if score.crib_score >= 10:
+                    payload = _h2_candidate_row(
+                        cfg.run_id_for_logging, variant, family, kind,
+                        keyword, score, pt,
+                    )
+                    heap_items.append((key, payload))
+
+    return VariantEvalResult(
+        variant_id=variant.variant_id, n_evaluated=n_eval,
+        alerts=alerts, watchlist=watch, top_candidates=heap_items,
+        bean_pass_count=bean_pass, rejection_reason_counts=rejection_counts,
+        trace_rows=trace_rows,
+    )
+
+
 # ─── synthetic recovery test ─────────────────────────────────────────────
 
 

@@ -424,3 +424,51 @@ class TestRejectionReasonBucket:
     def test_bean_failed_passes_through(self):
         from scripts.campaigns.ct_perturbation_stage_b import _rejection_reason_bucket
         assert _rejection_reason_bucket("h0: bean failed") == "h0: bean failed"
+
+
+class TestEvaluateOneH2Variant:
+    def test_evaluate_one_h2_variant_under_canonical_ct(self):
+        from scripts.campaigns.ct_perturbation_stage_b import (
+            SweepConfig, evaluate_one_h2_variant,
+        )
+        from kryptosbot.ct_perturbation import CTVariantH2, _ct_sha256
+        from kryptos.kernel.constants import CT
+
+        new_ct = CT[:5] + "A" + CT[6:90] + "B" + CT[91:]
+        v = CTVariantH2(
+            variant_id="H2_p05_X->A_p90_X->B", distance=2,
+            pos1=5, old1=CT[5], new1="A", pos2=90, old2=CT[90], new2="B",
+            ct=new_ct, ct_sha256=_ct_sha256(new_ct),
+        )
+        cfg = SweepConfig(
+            ct=CT, keywords=["PALIMPSEST", "ABSCISSA"],
+            manifest=None, universe_size=4_500,
+        )
+        result = evaluate_one_h2_variant(
+            v, cfg, ngram_scorer=None, ngram_dist_az=None, ngram_dist_ka=None,
+        )
+        # 3 families x 2 alphabets x 2 keywords = 12 configs
+        assert result.n_evaluated == 12
+        assert result.alerts == []
+
+    def test_evaluate_one_h2_variant_respects_max_configs(self):
+        from scripts.campaigns.ct_perturbation_stage_b import (
+            SweepConfig, evaluate_one_h2_variant,
+        )
+        from kryptosbot.ct_perturbation import CTVariantH2, _ct_sha256
+        from kryptos.kernel.constants import CT
+
+        new_ct = CT[:5] + "A" + CT[6:90] + "B" + CT[91:]
+        v = CTVariantH2(
+            variant_id="H2_test_cap", distance=2,
+            pos1=5, old1=CT[5], new1="A", pos2=90, old2=CT[90], new2="B",
+            ct=new_ct, ct_sha256=_ct_sha256(new_ct),
+        )
+        cfg = SweepConfig(
+            ct=CT, keywords=["A", "B", "C", "D"],
+            manifest=None, universe_size=24, max_configs=3,
+        )
+        result = evaluate_one_h2_variant(
+            v, cfg, ngram_scorer=None, ngram_dist_az=None, ngram_dist_ka=None,
+        )
+        assert result.n_evaluated == 3
