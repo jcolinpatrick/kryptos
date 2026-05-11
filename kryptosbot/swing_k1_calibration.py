@@ -1,9 +1,10 @@
 """Swing K-1 shuffled-CT null calibration."""
 from __future__ import annotations
 
+import math
 import random
 from dataclasses import dataclass, field
-from typing import List, Optional
+from typing import List, Literal, Optional
 
 from kryptos.kernel.constants import CT
 
@@ -50,3 +51,42 @@ def run_baseline_calibration(
         seed=seed,
         joint_event_counts=counts,
     )
+
+
+@dataclass(frozen=True)
+class EscalationResult:
+    method: Literal["analytical_binomial", "monte_carlo_1m"]
+    p_value: float
+    n_trials: int
+
+
+def analytical_binomial_pvalue(n: int, k: int, single_trial_p: float) -> float:
+    """P(X >= k) where X ~ Binomial(n, single_trial_p)."""
+    if k <= 0:
+        return 1.0
+    # P(X >= k) = 1 - sum_{i=0}^{k-1} C(n,i) p^i (1-p)^(n-i)
+    cum = 0.0
+    for i in range(k):
+        log_term = (
+            math.lgamma(n + 1) - math.lgamma(i + 1) - math.lgamma(n - i + 1)
+            + i * math.log(single_trial_p) + (n - i) * math.log(1 - single_trial_p)
+        )
+        cum += math.exp(log_term)
+    return max(0.0, 1.0 - cum)
+
+
+def escalate_to_stage_2(
+    observed_joint_event_count: int,
+    baseline_max: int,
+    n_baseline_trials: int,
+    method_preference: Literal["analytical", "monte_carlo"] = "analytical",
+    single_trial_p_estimate: Optional[float] = None,
+) -> EscalationResult:
+    """When a candidate passes the 10K baseline, escalate to p <= 1e-6 calibration."""
+    if method_preference == "analytical" and single_trial_p_estimate is not None:
+        p = analytical_binomial_pvalue(
+            n=n_baseline_trials, k=observed_joint_event_count, single_trial_p=single_trial_p_estimate
+        )
+        return EscalationResult(method="analytical_binomial", p_value=p, n_trials=n_baseline_trials)
+    # Fall back to Monte Carlo escalation. Runner wires this to 1M trials.
+    return EscalationResult(method="monte_carlo_1m", p_value=float("nan"), n_trials=1_000_000)
