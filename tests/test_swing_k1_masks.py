@@ -56,3 +56,41 @@ def test_boundary_masks_target_null_counts_respected():
     from kryptosbot.swing_k1_masks import enumerate_boundary_region_masks
     for m in enumerate_boundary_region_masks(target_null_counts=(20,)):
         assert m.null_count == 20
+
+
+def test_full_catalog_is_union_of_classes():
+    from kryptosbot.swing_k1_masks import build_mask_catalog
+    catalog = build_mask_catalog()
+    mod_n = [m for m in catalog if m.class_label == "mod_n"]
+    boundary = [m for m in catalog if m.class_label == "boundary_region"]
+    assert len(mod_n) > 0
+    assert len(boundary) > 0
+    assert len(catalog) == len(mod_n) + len(boundary)
+
+
+def test_full_catalog_no_crib_collisions_strict_when_required():
+    """Strict catalog (no crib-position collisions) keeps only crib-safe masks."""
+    from kryptosbot.swing_k1_masks import build_mask_catalog
+    crib_positions = frozenset(range(21, 34)) | frozenset(range(63, 74))
+    catalog = build_mask_catalog(strict_crib_safe=True)
+    for m in catalog:
+        assert not (m.positions & crib_positions), f"mask {m.mask_id} collides with cribs"
+
+
+def test_full_catalog_default_is_inclusive():
+    """Default catalog allows mod-N masks that may overlap cribs (M3 handles via projection)."""
+    from kryptosbot.swing_k1_masks import build_mask_catalog
+    catalog_default = build_mask_catalog()
+    catalog_strict = build_mask_catalog(strict_crib_safe=True)
+    assert len(catalog_default) >= len(catalog_strict)
+
+
+def test_catalog_serializes_to_json():
+    import json
+    from kryptosbot.swing_k1_masks import build_mask_catalog, serialize_catalog
+    catalog = build_mask_catalog()
+    serialized = serialize_catalog(catalog)
+    rt = json.loads(json.dumps(serialized))  # round-trip safe
+    assert "masks" in rt
+    assert len(rt["masks"]) == len(catalog)
+    assert all("mask_id" in m and "positions" in m for m in rt["masks"])

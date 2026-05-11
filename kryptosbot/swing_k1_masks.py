@@ -140,3 +140,43 @@ def enumerate_boundary_region_masks(
                     positions=block,
                     params=params,
                 )
+
+
+def build_mask_catalog(
+    target_null_counts: Tuple[int, ...] = DEFAULT_NULL_COUNTS,
+    strict_crib_safe: bool = False,
+) -> tuple[Mask, ...]:
+    """Build the full Tier 1 mask catalog.
+
+    If strict_crib_safe is True, mod-N masks that overlap crib positions are
+    excluded. Default (False) keeps them: M3 (null-skip) re-projects cribs to
+    CT73 coordinates, so a null at a crib position is a legitimate model.
+    """
+    masks: list[Mask] = []
+    for m in enumerate_mod_n_masks(target_null_counts=target_null_counts):
+        if strict_crib_safe and (m.positions & CRIB_POSITIONS_LITERAL):
+            continue
+        masks.append(m)
+    for m in enumerate_boundary_region_masks(target_null_counts=target_null_counts):
+        # Boundary masks are crib-safe by construction.
+        masks.append(m)
+    # Sort by mask_id for deterministic order.
+    masks.sort(key=lambda m: m.mask_id)
+    return tuple(masks)
+
+
+def serialize_catalog(catalog: tuple[Mask, ...]) -> dict:
+    return {
+        "schema_version": "swing_k1.mask_catalog.v1",
+        "mask_count": len(catalog),
+        "masks": [
+            {
+                "mask_id": m.mask_id,
+                "class_label": m.class_label,
+                "null_count": m.null_count,
+                "positions": sorted(m.positions),
+                "params": [list(p) for p in m.params],
+            }
+            for m in catalog
+        ],
+    }
