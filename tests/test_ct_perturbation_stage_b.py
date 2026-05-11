@@ -330,3 +330,18 @@ class TestScopeExclusion:
 
     def test_campaign_id_constant_present(self):
         assert CAMPAIGN_ID_STAGE_B == "ct_perturbation_stage_b"
+
+
+class TestSweepConfig:
+    def test_sweep_config_defaults(self):
+        from scripts.campaigns.ct_perturbation_stage_b import SweepConfig
+        from kryptosbot.ct_perturbation import SUPPORTED_FAMILIES, SUPPORTED_ALPHABET_KINDS
+
+        cfg = SweepConfig(ct="A" * 97, keywords=["TEST"], manifest=None)
+        assert cfg.families == SUPPORTED_FAMILIES
+        assert cfg.alphabet_kinds == SUPPORTED_ALPHABET_KINDS
+        assert cfg.universe_size == 1
+        assert cfg.include_h0 is False
+        assert cfg.max_h2_variants is None
+        assert cfg.max_configs is None
+        assert cfg.keyword_limit is None

@@ -59,6 +59,7 @@ import hashlib
 import json
 import sys
 import time
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Iterable
 
@@ -80,8 +81,11 @@ from kryptos.kernel.transforms.vigenere import (  # noqa: E402
 from kryptosbot.ct_perturbation import (  # noqa: E402
     AlertPolicy,
     AmbiguousPositionsManifest,
+    CANONICAL_CRIB_DICT,
     CTVariantH2,
     ScorerContext,
+    SUPPORTED_ALPHABET_KINDS,
+    SUPPORTED_FAMILIES,
     derive_bean_constraints,
     enumerate_hamming2_variants_constrained,
     load_ambiguous_positions,
@@ -130,6 +134,31 @@ _SELECTIVE_PROBE_POSITIONS: tuple[int, int] = (21, 63)
 # Non-crib positions used for the §7.2 structural probe. Chosen from
 # regions outside the cribs (positions 0-20, 34-62, 74-96).
 _STRUCTURAL_PROBE_POSITIONS: tuple[int, int] = (10, 80)
+
+
+# ─── sweep config ────────────────────────────────────────────────────────
+
+
+@dataclass
+class SweepConfig:
+    """Internal config bundle for the Stage B H2 sweep driver.
+
+    Mirrors Stage A's SweepConfig but typed against ``AmbiguousPositionsManifest``
+    and uses ``max_h2_variants`` rather than the H1 ``max_ct_variants`` cap.
+    """
+    ct: str
+    keywords: list[str]
+    manifest: AmbiguousPositionsManifest | None
+    families: tuple[CipherVariant, ...] = SUPPORTED_FAMILIES
+    alphabet_kinds: tuple[str, ...] = SUPPORTED_ALPHABET_KINDS
+    universe_size: int = 1
+    policy: AlertPolicy = field(default_factory=AlertPolicy)
+    include_h0: bool = False
+    max_h2_variants: int | None = None
+    max_configs: int | None = None
+    keyword_limit: int | None = None
+    crib_dict: dict[int, str] = field(default_factory=lambda: dict(CANONICAL_CRIB_DICT))
+    run_id_for_logging: str = ""
 
 
 # ─── synthetic recovery test ─────────────────────────────────────────────
