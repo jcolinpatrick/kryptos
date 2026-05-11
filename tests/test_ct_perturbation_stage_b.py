@@ -472,3 +472,31 @@ class TestEvaluateOneH2Variant:
             v, cfg, ngram_scorer=None, ngram_dist_az=None, ngram_dist_ka=None,
         )
         assert result.n_evaluated == 3
+
+
+class TestWorkerEvaluateH2:
+    def test_worker_eval_matches_inprocess(self):
+        from scripts.campaigns.ct_perturbation_stage_b import (
+            SweepConfig, evaluate_one_h2_variant, _worker_evaluate_h2,
+        )
+        from kryptosbot.ct_perturbation import CTVariantH2, _ct_sha256
+        from kryptos.kernel.constants import CT
+
+        new_ct = CT[:5] + "A" + CT[6:90] + "B" + CT[91:]
+        v = CTVariantH2(
+            variant_id="H2_mp_smoke", distance=2,
+            pos1=5, old1=CT[5], new1="A", pos2=90, old2=CT[90], new2="B",
+            ct=new_ct, ct_sha256=_ct_sha256(new_ct),
+        )
+        cfg = SweepConfig(
+            ct=CT, keywords=["PALIMPSEST"], manifest=None, universe_size=6,
+        )
+        inproc = evaluate_one_h2_variant(
+            v, cfg, ngram_scorer=None, ngram_dist_az=None, ngram_dist_ka=None,
+        )
+        worker = _worker_evaluate_h2((v, cfg))
+        assert inproc.variant_id == worker.variant_id
+        assert inproc.n_evaluated == worker.n_evaluated
+        assert inproc.bean_pass_count == worker.bean_pass_count
+        assert len(inproc.alerts) == len(worker.alerts)
+        assert len(inproc.watchlist) == len(worker.watchlist)

@@ -74,6 +74,7 @@ if str(_ROOT) not in sys.path:
 
 from kryptos.kernel.alphabet import AZ as _AZ, KA as _KA  # noqa: E402
 from kryptos.kernel.constants import CRIB_DICT, CT  # noqa: E402
+from kryptos.kernel.scoring.ngram import get_default_scorer  # noqa: E402
 from kryptos.kernel.transforms.vigenere import (  # noqa: E402
     CipherVariant,
     encrypt_text,
@@ -360,6 +361,36 @@ def evaluate_one_h2_variant(
         alerts=alerts, watchlist=watch, top_candidates=heap_items,
         bean_pass_count=bean_pass, rejection_reason_counts=rejection_counts,
         trace_rows=trace_rows,
+    )
+
+
+# ─── multiprocessing worker entry ────────────────────────────────────────
+
+
+def _worker_evaluate_h2(args: tuple[CTVariantH2, SweepConfig]) -> VariantEvalResult:
+    """Multiprocessing worker entry. Reconstructs scorer + null dist lazily
+    in each subprocess so the parent doesn't have to serialize them.
+
+    Per ``feedback_pool_worker_no_per_task_timeout.md`` the caller is
+    responsible for per-future timeout. This worker function itself is
+    best-effort and has no internal timeout."""
+    variant, cfg = args
+    try:
+        ngram_scorer = get_default_scorer()
+    except FileNotFoundError:
+        ngram_scorer = None
+    try:
+        from kryptosbot.null_baselines import get_cached as _get_cached
+        ngram_dist_az = _get_cached("ngram_score", "random_text", 97, "AZ")
+        ngram_dist_ka = _get_cached("ngram_score", "random_text", 97, "KA")
+    except Exception:
+        ngram_dist_az = None
+        ngram_dist_ka = None
+    return evaluate_one_h2_variant(
+        variant, cfg,
+        ngram_scorer=ngram_scorer,
+        ngram_dist_az=ngram_dist_az,
+        ngram_dist_ka=ngram_dist_ka,
     )
 
 
