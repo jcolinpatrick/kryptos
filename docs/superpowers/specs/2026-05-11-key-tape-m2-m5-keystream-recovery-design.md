@@ -254,15 +254,26 @@ For each config:
 
 ### 5.2 Bean filter
 
-Apply `kryptos.kernel.constraints.bean.verify_bean(k, variant)`. The
-function returns a structured verdict with `bean_passed: bool` plus
-per-constraint detail. Admit if `bean_passed == True`. Reject
-otherwise. Persist all configs (admitted and rejected) to
-`configs.jsonl` so the rejection rate is part of the artifact.
+Apply `kryptos.kernel.constraints.bean.verify_bean_from_implied(implied_keys)`
+from `src/kryptos/kernel/constraints/bean.py:283`. Pass a dict
+`{position: keystream_value}` over the (re-projected) crib positions
+only. The kernel function is variant-independent (per CLAUDE.md
+gotcha "Bean constraint is variant-independent"). It returns
+`bool`, checking only the constraints that have all required
+positions populated. The Phase A runner wraps the call in
+`bean_filter_wrapper(implied: dict) -> BeanVerdict` where
+`BeanVerdict` is a small dataclass with fields `passed: bool`,
+`eq_checked: int`, `ineq_checked: int`, `linear_checked: int`,
+`failures: list[str]` -- per-constraint detail computed by the
+wrapper, not by the kernel function. Admit if `passed == True`.
+Persist all configs (admitted and rejected) to `configs.jsonl` so
+the rejection rate is part of the artifact.
 
-Expected admit rate per config: 0 to ~ 1 of every `26^24 / 624`
-random configs. Real admit rate will be dominated by structural
-biases in the parametric mask class and is itself diagnostic.
+Expected admit rate per config: 624 admissible 24-vectors over the
+`26^24` random space, so a uniformly-random 24-position keystream
+has admit probability `624 / 26^24` ~ `1.7e-32`. Real admit rate
+under structured (mask, model, variant) constraints will be
+dominated by the keystream-derivation step and is itself diagnostic.
 
 ### 5.3 Structural-identification suite (admitted configs only)
 
