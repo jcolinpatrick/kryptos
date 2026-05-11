@@ -86,6 +86,7 @@ from kryptosbot.ct_perturbation import (  # noqa: E402
     ScorerContext,
     SUPPORTED_ALPHABET_KINDS,
     SUPPORTED_FAMILIES,
+    TopNHeap,
     derive_bean_constraints,
     enumerate_hamming2_variants_constrained,
     load_ambiguous_positions,
@@ -159,6 +160,38 @@ class SweepConfig:
     keyword_limit: int | None = None
     crib_dict: dict[int, str] = field(default_factory=lambda: dict(CANONICAL_CRIB_DICT))
     run_id_for_logging: str = ""
+
+
+# ─── sweep state accumulators ────────────────────────────────────────────
+
+
+@dataclass
+class SweepResults:
+    """Accumulator for H2 sweep state."""
+    candidates_evaluated: int = 0
+    alerts: list[dict[str, Any]] = field(default_factory=list)
+    watchlist: list[dict[str, Any]] = field(default_factory=list)
+    top_n: TopNHeap = field(default_factory=lambda: TopNHeap(capacity=100))
+    bean_pass_count: int = 0
+    by_family_alert_count: dict[str, int] = field(default_factory=dict)
+    by_alphabet_alert_count: dict[str, int] = field(default_factory=dict)
+    rejection_reason_counts: dict[str, int] = field(default_factory=dict)
+    variants_completed: int = 0
+    last_completed_variant_id: str | None = None
+    errors: list[str] = field(default_factory=list)
+
+
+@dataclass
+class VariantEvalResult:
+    """Per-H2-variant result emitted by evaluate_one_h2_variant."""
+    variant_id: str
+    n_evaluated: int
+    alerts: list[dict[str, Any]]
+    watchlist: list[dict[str, Any]]
+    top_candidates: list[tuple[float, dict[str, Any]]]
+    bean_pass_count: int
+    rejection_reason_counts: dict[str, int]
+    trace_rows: list[dict[str, Any]]
 
 
 # ─── synthetic recovery test ─────────────────────────────────────────────

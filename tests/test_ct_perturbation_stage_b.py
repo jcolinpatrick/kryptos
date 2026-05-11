@@ -345,3 +345,26 @@ class TestSweepConfig:
         assert cfg.max_h2_variants is None
         assert cfg.max_configs is None
         assert cfg.keyword_limit is None
+
+
+class TestSweepResults:
+    def test_sweep_results_defaults(self):
+        from scripts.campaigns.ct_perturbation_stage_b import SweepResults
+        r = SweepResults()
+        assert r.candidates_evaluated == 0
+        assert r.alerts == []
+        assert r.watchlist == []
+        assert r.bean_pass_count == 0
+        assert r.variants_completed == 0
+        assert r.last_completed_variant_id is None
+        assert r.errors == []
+
+    def test_variant_eval_result_shape(self):
+        from scripts.campaigns.ct_perturbation_stage_b import VariantEvalResult
+        v = VariantEvalResult(
+            variant_id="H2_test", n_evaluated=4, alerts=[], watchlist=[],
+            top_candidates=[], bean_pass_count=0, rejection_reason_counts={},
+            trace_rows=[],
+        )
+        assert v.variant_id == "H2_test"
+        assert v.n_evaluated == 4
