@@ -102,3 +102,27 @@ def test_universe_size_reported():
     assert summary["per_model"]["M1"] == 6  # 3 variants x 2 alphabets, control arm
     for model in ("M2", "M3", "M4", "M5"):
         assert summary["per_model"][model] > 0
+
+
+def test_universe_hash_pinned_exact_value():
+    """Pin the exact universe hash so any silent drift in the universe is caught immediately."""
+    from kryptosbot.swing_k1_universe import compute_universe_hash
+    # Captured at Plan Task 9 landing; any change here means the universe changed.
+    assert compute_universe_hash() == "e6c61157db433da121113ab82b86e3f3893116e559857a8bc5ba253836f470fe"
+
+
+def test_universe_hash_independent_of_pythonhashseed():
+    """The universe hash must not depend on Python hash randomization."""
+    import subprocess
+    import sys
+    out = subprocess.check_output(
+        [sys.executable, "-c",
+         "import sys; sys.path.insert(0, 'src'); "
+         "from kryptosbot.swing_k1_universe import compute_universe_hash; "
+         "print(compute_universe_hash())"],
+        env={"PATH": "/usr/bin", "PYTHONHASHSEED": "0", "PYTHONPATH": "src"},
+        text=True,
+        cwd="/home/cpatrick/kryptos",
+    ).strip()
+    from kryptosbot.swing_k1_universe import compute_universe_hash
+    assert out == compute_universe_hash()
