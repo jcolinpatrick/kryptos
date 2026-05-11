@@ -500,3 +500,54 @@ class TestWorkerEvaluateH2:
         assert inproc.bean_pass_count == worker.bean_pass_count
         assert len(inproc.alerts) == len(worker.alerts)
         assert len(inproc.watchlist) == len(worker.watchlist)
+
+
+class TestH2Checkpoint:
+    def test_h2_checkpoint_payload(self, tmp_path):
+        import json
+        from scripts.campaigns.ct_perturbation_stage_b import (
+            SweepResults, _h2_checkpoint,
+        )
+        results = SweepResults()
+        results.candidates_evaluated = 100
+        results.variants_completed = 4
+        results.last_completed_variant_id = "H2_test"
+        results.bean_pass_count = 2
+        path = tmp_path / "progress.json"
+        _h2_checkpoint(
+            path, results, started_at=0.0, started_at_iso="2026-01-01T00:00:00Z",
+            variants_total=10, expected_total=10000, workers=4, status="running",
+        )
+        payload = json.loads(path.read_text())
+        assert payload["status"] == "running"
+        assert payload["variants_completed"] == 4
+        assert payload["variants_total"] == 10
+        assert payload["candidates_evaluated"] == 100
+        assert payload["expected_total_config_cardinality"] == 10000
+        assert payload["bean_pass_count"] == 2
+        assert payload["last_completed_variant_id"] == "H2_test"
+
+    def test_build_h2_summary_minimum_fields(self):
+        from scripts.campaigns.ct_perturbation_stage_b import (
+            SweepResults, _build_h2_summary,
+        )
+        results = SweepResults()
+        results.candidates_evaluated = 75
+        results.variants_completed = 3
+        results.bean_pass_count = 1
+        summary = _build_h2_summary(
+            run_id="run_smoke", results=results, started_at=0.0,
+            status="completed", workers=2, expected_total=75,
+            run_metadata={
+                "canonical_ct_sha256": "deadbeef", "k": 3,
+                "h2_variants_executed": 3,
+                "ambiguous_positions_sha256": "cafebabe",
+                "keyword_count": 1, "keyword_hash": "empty",
+            },
+        )
+        assert summary["run_id"] == "run_smoke"
+        assert summary["status"] == "completed"
+        assert summary["candidates_evaluated"] == 75
+        assert summary["expected_total_config_cardinality"] == 75
+        assert summary["ambiguous_positions_sha256"] == "cafebabe"
+        assert summary["k"] == 3

@@ -55,6 +55,7 @@ The full runner v1 must be specified separately (brainstorm + writing-plans
 from __future__ import annotations
 
 import argparse
+import datetime as _dt
 import hashlib
 import json
 import sys
@@ -80,6 +81,7 @@ from kryptos.kernel.transforms.vigenere import (  # noqa: E402
     encrypt_text,
 )
 from kryptosbot.ct_perturbation import (  # noqa: E402
+    ARTIFACT_SCHEMA_VERSION,
     AlertPolicy,
     AmbiguousPositionsManifest,
     CAMPAIGN_ID_STAGE_B,
@@ -392,6 +394,102 @@ def _worker_evaluate_h2(args: tuple[CTVariantH2, SweepConfig]) -> VariantEvalRes
         ngram_dist_az=ngram_dist_az,
         ngram_dist_ka=ngram_dist_ka,
     )
+
+
+# ─── checkpoint and summary writers ──────────────────────────────────────
+
+
+def _h2_checkpoint(
+    path: Path,
+    results: SweepResults,
+    started_at: float,
+    started_at_iso: str,
+    *,
+    variants_total: int,
+    expected_total: int,
+    workers: int,
+    status: str,
+) -> None:
+    updated_at = _dt.datetime.now(_dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    payload = {
+        "campaign_id": CAMPAIGN_ID_STAGE_B,
+        "started_at": started_at_iso,
+        "updated_at": updated_at,
+        "status": status,
+        "variants_completed": results.variants_completed,
+        "variants_processed": results.variants_completed,
+        "variants_total": variants_total,
+        "candidates_evaluated": results.candidates_evaluated,
+        "expected_total_config_cardinality": expected_total,
+        "bean_pass_count": results.bean_pass_count,
+        "alerts_count": len(results.alerts),
+        "watchlist_count": len(results.watchlist),
+        "elapsed_seconds": time.time() - started_at,
+        "workers": workers,
+        "last_completed_variant_id": results.last_completed_variant_id,
+        "errors": results.errors,
+    }
+    atomic_write_json(path, payload)
+
+
+def _build_h2_summary(
+    *,
+    run_id: str,
+    results: SweepResults,
+    started_at: float,
+    status: str,
+    workers: int,
+    expected_total: int,
+    run_metadata: dict[str, Any],
+) -> dict[str, Any]:
+    wall_time = time.time() - started_at
+    configs_per_sec = (
+        results.candidates_evaluated / wall_time if wall_time > 0 else 0.0
+    )
+    summary: dict[str, Any] = {
+        "run_id": run_id,
+        "campaign_id": CAMPAIGN_ID_STAGE_B,
+        "status": status,
+        "artifact_schema_version": ARTIFACT_SCHEMA_VERSION,
+        "canonical_ct_sha256": run_metadata.get("canonical_ct_sha256"),
+        "ambiguous_positions_sha256": run_metadata.get("ambiguous_positions_sha256"),
+        "k": run_metadata.get("k", 0),
+        "h2_variants_executed": run_metadata.get(
+            "h2_variants_executed", results.variants_completed,
+        ),
+        "families": [f.value for f in SUPPORTED_FAMILIES],
+        "alphabets": list(SUPPORTED_ALPHABET_KINDS),
+        "keyword_count": run_metadata.get("keyword_count", 0),
+        "keyword_hash": run_metadata.get("keyword_hash", "empty"),
+        "period_policy": "keyword_length",
+        "expected_total_config_cardinality": expected_total,
+        "candidates_evaluated": results.candidates_evaluated,
+        "bean_pass_total": results.bean_pass_count,
+        "bean_pass_count": results.bean_pass_count,
+        "watchlist_total": len(results.watchlist),
+        "alerts_total": len(results.alerts),
+        "watchlist_count": len(results.watchlist),
+        "alerts_count": len(results.alerts),
+        "by_family_alert_count": dict(results.by_family_alert_count),
+        "by_alphabet_alert_count": dict(results.by_alphabet_alert_count),
+        "rejection_reason_counts": dict(results.rejection_reason_counts),
+        "wall_time_seconds": wall_time,
+        "configs_per_sec": configs_per_sec,
+        "workers": workers,
+        "errors": results.errors,
+        "alerts": [_h2_summary_only(row) for row in results.alerts],
+        "watchlist_preview": [
+            _h2_summary_only(row) for row in results.watchlist[:25]
+        ],
+        "top_candidates_preview": [
+            _h2_summary_only(payload)
+            for payload in results.top_n.sorted_payloads()[:25]
+        ],
+    }
+    summary.update({
+        k: v for k, v in run_metadata.items() if k not in summary
+    })
+    return summary
 
 
 # ─── synthetic recovery test ─────────────────────────────────────────────
