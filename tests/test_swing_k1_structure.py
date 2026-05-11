@@ -126,3 +126,38 @@ def test_s3_period_repeat_detects_period_5():
     assert hit is not None
     assert hit.generator == "period_5"
     assert hit.seed == tuple(base)
+
+
+def test_s4_ngram_score_orders_english_above_random():
+    from kryptosbot.swing_k1_structure import ngram_score, _str_to_idx_seq
+    english = _str_to_idx_seq("THEQUICKBROWNFOXJUMPSOVERT")[:24]
+    random_seq = [11, 17, 22, 25, 6, 0, 13, 19, 14, 7, 11, 24, 2, 18, 21, 4, 9, 15, 20, 23, 1, 16, 12, 10]
+    s_eng = ngram_score(english)
+    s_rand = ngram_score(random_seq)
+    assert s_eng > s_rand, "English-letter ngram score must rank above random"
+
+
+def test_promotion_check_requires_structure_match():
+    from kryptosbot.swing_k1_structure import StructureVerdict, evaluate_structure_promotion
+    v = StructureVerdict(
+        s1=None,
+        s2=None,
+        s3=None,
+        s4_score=999.0,  # high ngram alone is NOT sufficient
+    )
+    promote, _ = evaluate_structure_promotion(v)
+    assert promote is False  # spec §5.4: Bean PASS + S1/S2/S3, not S4
+
+
+def test_promotion_check_fires_on_any_of_s1_s2_s3():
+    from kryptosbot.swing_k1_structure import StructureVerdict, evaluate_structure_promotion
+    from kryptosbot.swing_k1_structure import S1Hit
+    v = StructureVerdict(
+        s1=S1Hit(source_id="test", offset=0, match_len=24),
+        s2=None,
+        s3=None,
+        s4_score=-5.0,
+    )
+    promote, reason = evaluate_structure_promotion(v)
+    assert promote is True
+    assert "S1" in reason

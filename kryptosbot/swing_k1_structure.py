@@ -214,3 +214,61 @@ def match_generator(seq: Sequence[int]) -> Optional[S3Hit]:
         if hit is not None:
             return hit
     return None
+
+
+# Simple letter-bigram log-probabilities derived from English. For Phase A we
+# use a small static table; refinement via the quadgram corpus is a Phase B
+# improvement.
+_ENGLISH_BIGRAM_LOGP = {
+    "TH": -1.8, "HE": -2.0, "IN": -2.2, "ER": -2.3, "AN": -2.4, "RE": -2.4,
+    "ON": -2.5, "AT": -2.5, "EN": -2.6, "ND": -2.6, "TI": -2.7, "ES": -2.7,
+    "OR": -2.7, "TE": -2.8, "OF": -2.8, "ED": -2.8, "IS": -2.9, "IT": -2.9,
+    "AL": -3.0, "AR": -3.0, "ST": -3.0, "TO": -3.0, "NT": -3.0,
+    # Mid-frequency bigrams covering common letter pairs in English prose.
+    "NG": -3.1, "SE": -3.1, "HA": -3.1, "AS": -3.1, "OU": -3.1, "IO": -3.1,
+    "LE": -3.2, "VE": -3.2, "CO": -3.2, "ME": -3.2, "DE": -3.2, "HI": -3.2,
+    "RI": -3.3, "RO": -3.3, "IC": -3.3, "NE": -3.3, "EA": -3.3, "RA": -3.3,
+    "CE": -3.4, "LI": -3.4, "CH": -3.4, "LL": -3.4, "BE": -3.4, "MA": -3.4,
+    "SI": -3.5, "OM": -3.5, "UR": -3.5, "CA": -3.5, "EL": -3.5, "TA": -3.5,
+    "LA": -3.6, "NS": -3.6, "DI": -3.6, "FO": -3.6, "HO": -3.6, "PE": -3.6,
+    "EC": -3.7, "PR": -3.7, "NO": -3.7, "CT": -3.7, "US": -3.7, "AC": -3.7,
+    "OT": -3.8, "IL": -3.8, "TR": -3.8, "LY": -3.8, "NA": -3.8, "NI": -3.8,
+    "SS": -3.9, "MO": -3.9, "MI": -3.9, "PA": -3.9, "OL": -3.9, "UN": -3.9,
+    # Cover Q-U specifically — Q is almost always followed by U in English.
+    "QU": -3.2,
+    # Other bigrams found in common English: BROWN FOX JUMPS OVER LAZY DOG etc.
+    "OW": -3.5, "WN": -3.7, "BR": -3.7, "OX": -4.2, "JU": -4.2, "UM": -3.8,
+    "MP": -3.8, "PS": -3.8, "SO": -3.6, "OV": -3.8, "CK": -3.7, "UI": -4.0,
+}
+
+
+def ngram_score(seq: Sequence[int]) -> float:
+    if len(seq) < 2:
+        return 0.0
+    total = 0.0
+    for a, b in zip(seq[:-1], seq[1:]):
+        bigram = AZ.idx_to_char(a) + AZ.idx_to_char(b)
+        total += _ENGLISH_BIGRAM_LOGP.get(bigram, -5.0)
+    return total / (len(seq) - 1)
+
+
+@dataclass(frozen=True)
+class StructureVerdict:
+    s1: Optional[S1Hit]
+    s2: Optional[S2Hit]
+    s3: Optional[S3Hit]
+    s4_score: float
+
+
+def evaluate_structure_promotion(v: StructureVerdict) -> Tuple[bool, str]:
+    """Return (promote_eligible, reason). Per spec §5.4, S4 alone is not signal."""
+    reasons = []
+    if v.s1 is not None and v.s1.match_len >= 24:
+        reasons.append("S1 source-text full match")
+    if v.s2 is not None and v.s2.match_len >= 8:
+        reasons.append("S2 keyword-expansion prefix match")
+    if v.s3 is not None and v.s3.match_strength >= 0.95:
+        reasons.append("S3 generator match")
+    if reasons:
+        return True, "; ".join(reasons)
+    return False, "no structure channel fired at promotion threshold"
