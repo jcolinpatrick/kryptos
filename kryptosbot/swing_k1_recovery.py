@@ -47,3 +47,43 @@ def derive_keystream_ct97(
         pt_idx = alpha.char_to_idx(pt_char)
         out[pos] = _ks_value(ct_idx, pt_idx, variant)
     return out
+
+
+def project_crib_positions_ct73(null_positions: FrozenSet[int]) -> Dict[int, int]:
+    """Map each crib CT97 position to its CT73 index after null extraction.
+
+    Crib positions that coincide with nulls are NOT in the output (they are dropped).
+    """
+    sorted_nulls = sorted(null_positions)
+    projection: Dict[int, int] = {}
+    for ct97_pos in sorted(CRIB_DICT.keys()):
+        if ct97_pos in null_positions:
+            continue
+        # Count nulls strictly less than ct97_pos to compute the shift.
+        n_lt = sum(1 for n in sorted_nulls if n < ct97_pos)
+        projection[ct97_pos] = ct97_pos - n_lt
+    return projection
+
+
+def derive_keystream_ct73(
+    variant: Variant,
+    alphabet: AlphaName,
+    null_positions: FrozenSet[int],
+) -> Dict[int, int]:
+    """Derive 24-position keystream in CT73 space (M3, null-skip semantics).
+
+    The dict keys are CT73 indices. Crib positions that coincide with nulls are dropped.
+    """
+    alpha = _ALPHA[alphabet]
+    projection = project_crib_positions_ct73(null_positions)
+    out: Dict[int, int] = {}
+    # CT73 is CT97 with null positions removed
+    ct97_positions_kept = sorted(p for p in range(len(CT)) if p not in null_positions)
+    ct73 = "".join(CT[p] for p in ct97_positions_kept)
+    for ct97_pos, ct73_idx in projection.items():
+        pt_char = CRIB_DICT[ct97_pos]
+        ct_char = ct73[ct73_idx]
+        ct_idx = alpha.char_to_idx(ct_char)
+        pt_idx = alpha.char_to_idx(pt_char)
+        out[ct73_idx] = _ks_value(ct_idx, pt_idx, variant)
+    return out
