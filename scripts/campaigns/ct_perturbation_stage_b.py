@@ -93,6 +93,15 @@ from scripts.campaigns.ct_perturbation_stage_a import (  # noqa: E402
     _module_sha,
     _rejection_reason_bucket,
 )
+from kryptosbot.ambiguity_manifest import (  # noqa: E402
+    AmbiguityManifestV2,
+    ManifestValidationError,
+    SCHEMA_VERSION as AMBIGUITY_V2_SCHEMA,
+    compute_universe_hash,
+    iter_h2_variants as _iter_h2_v2_tuples,
+    load_v2,
+    h2_universe_size as _h2_universe_size_v2,
+)
 
 
 logger = logging.getLogger("ct_perturbation_stage_b")
@@ -139,12 +148,19 @@ _STRUCTURAL_PROBE_POSITIONS: tuple[int, int] = (10, 80)
 class SweepConfig:
     """Internal config bundle for the Stage B H2 sweep driver.
 
-    Mirrors Stage A's SweepConfig but typed against ``AmbiguousPositionsManifest``
-    and uses ``max_h2_variants`` rather than the H1 ``max_ct_variants`` cap.
+    Mirrors Stage A's SweepConfig but typed against an
+    ``AmbiguousPositionsManifest`` (v1 schema) or an
+    ``AmbiguityManifestV2`` (evidence-anchored v2 schema). When
+    ``manifest_v2`` is set, per-position candidate substitutions are
+    honored exactly (no fall-back to all 25 letters). When only
+    ``manifest`` (v1) is set, the legacy 25-letter enumeration is used;
+    Stage B refuses ``--execute-full`` on v1 manifests, so this path is
+    reserved for dry-run and synthetic-recovery flows.
     """
     ct: str
     keywords: list[str]
     manifest: AmbiguousPositionsManifest | None
+    manifest_v2: "AmbiguityManifestV2 | None" = None
     families: tuple[CipherVariant, ...] = SUPPORTED_FAMILIES
     alphabet_kinds: tuple[str, ...] = SUPPORTED_ALPHABET_KINDS
     universe_size: int = 1
@@ -155,6 +171,7 @@ class SweepConfig:
     keyword_limit: int | None = None
     crib_dict: dict[int, str] = field(default_factory=lambda: dict(CANONICAL_CRIB_DICT))
     run_id_for_logging: str = ""
+    keywords_sha256: str = ""
 
 
 # ─── sweep state accumulators ────────────────────────────────────────────
@@ -207,10 +224,17 @@ def _h2_candidate_row(
     crib_overlapping = sum(
         1 for p in (variant.pos1, variant.pos2) if p in _CRIB_POSITIONS_SET
     )
+    # config_id is the deterministic tie-breaker for the TopNHeap; without
+    # it equal-score candidates collide on the empty-string default and
+    # ordering becomes non-deterministic across runs.
+    config_id = (
+        f"{variant.variant_id}|{family.value}|{alphabet_kind}|{keyword}"
+    )
     return {
         "run_id": run_id,
         "campaign_id": CAMPAIGN_ID_STAGE_B,
         "variant_id": variant.variant_id,
+        "config_id": config_id,
         "distance": variant.distance,
         "pos_pair": [variant.pos1, variant.pos2],
         "chars_pair": [variant.old1, variant.new1, variant.old2, variant.new2],
@@ -430,10 +454,19 @@ def _build_h2_summary(
     workers: int,
     expected_total: int,
     run_metadata: dict[str, Any],
+    families: tuple[CipherVariant, ...] | None = None,
+    alphabet_kinds: tuple[str, ...] | None = None,
 ) -> dict[str, Any]:
     wall_time = time.time() - started_at
     configs_per_sec = (
         results.candidates_evaluated / wall_time if wall_time > 0 else 0.0
+    )
+    # Honor cfg-supplied families/alphabets if provided; fall back to the
+    # canonical defaults for backward compatibility with callers that
+    # have not yet been updated to pass them.
+    effective_families = families if families is not None else SUPPORTED_FAMILIES
+    effective_alphabets = (
+        alphabet_kinds if alphabet_kinds is not None else SUPPORTED_ALPHABET_KINDS
     )
     summary: dict[str, Any] = {
         "run_id": run_id,
@@ -446,8 +479,8 @@ def _build_h2_summary(
         "h2_variants_executed": run_metadata.get(
             "h2_variants_executed", results.variants_completed,
         ),
-        "families": [f.value for f in SUPPORTED_FAMILIES],
-        "alphabets": list(SUPPORTED_ALPHABET_KINDS),
+        "families": [f.value for f in effective_families],
+        "alphabets": list(effective_alphabets),
         "keyword_count": run_metadata.get("keyword_count", 0),
         "keyword_hash": run_metadata.get("keyword_hash", "empty"),
         "period_policy": "keyword_length",
@@ -482,8 +515,43 @@ def _build_h2_summary(
 
 
 def _iter_h2_variants(cfg: SweepConfig) -> Iterator[CTVariantH2]:
-    """Yield CTVariantH2 instances from the manifest, respecting the
-    optional max_h2_variants cap."""
+    """Yield CTVariantH2 instances from the manifest.
+
+    Dispatches:
+      - v2 manifest present: use per-position candidate substitutions
+        (operator-curated, typically a short list). Honors max_h2_variants.
+      - v1 manifest present: use legacy 25-letter enumeration.
+
+    Both branches honor cfg.max_h2_variants. The v2 branch is the only
+    path accepted by --execute-full (legacy v1 enumeration is reserved
+    for --dry-run and --synthetic-recovery-test).
+    """
+    if cfg.manifest_v2 is not None:
+        seen = 0
+        for pos1, old1, new1, pos2, old2, new2 in _iter_h2_v2_tuples(
+            cfg.ct, cfg.manifest_v2,
+        ):
+            new_ct = (
+                cfg.ct[:pos1] + new1
+                + cfg.ct[pos1 + 1:pos2] + new2
+                + cfg.ct[pos2 + 1:]
+            )
+            variant_id = (
+                f"H2_p{pos1:02d}_{old1}->{new1}"
+                f"_p{pos2:02d}_{old2}->{new2}"
+            )
+            from kryptosbot.ct_perturbation import _ct_sha256 as _sha
+            yield CTVariantH2(
+                variant_id=variant_id,
+                distance=2,
+                pos1=pos1, old1=old1, new1=new1,
+                pos2=pos2, old2=old2, new2=new2,
+                ct=new_ct, ct_sha256=_sha(new_ct),
+            )
+            seen += 1
+            if cfg.max_h2_variants is not None and seen >= cfg.max_h2_variants:
+                return
+        return
     if cfg.manifest is None:
         return
     seen = 0
@@ -539,8 +607,55 @@ def run_h2_sweep(
 
     # Prereg §3.2 / §8: copy the operator-supplied manifest verbatim into
     # the run directory, and emit a derived universe_manifest so the run
-    # is fully reproducible from its artifacts alone.
-    if cfg.manifest is not None:
+    # is fully reproducible from its artifacts alone. v2 manifests carry
+    # per-position candidate substitutions and a hash-pinned schema; v1
+    # manifests are positions-only and reserved for dry-run flows.
+    manifest_hash_for_summary: str = ""
+    universe_hash_for_summary: str = ""
+    if cfg.manifest_v2 is not None:
+        m2 = cfg.manifest_v2
+        atomic_write_json(
+            artifact_dir / "ambiguous_positions_manifest.json",
+            m2.to_dict(include_hash=True),
+        )
+        v2_universe_h2 = _h2_universe_size_v2(m2)
+        configs_per_variant = (
+            len(cfg.families) * len(cfg.alphabet_kinds) * len(cfg.keywords)
+        )
+        universe_hash_for_summary = compute_universe_hash(
+            m2.allowed_selections(),
+            tuple(f.value for f in cfg.families),
+            tuple(cfg.alphabet_kinds),
+            cfg.keywords_sha256,
+            len(cfg.keywords),
+        )
+        manifest_hash_for_summary = m2.manifest_hash
+        universe_payload_v2: dict[str, Any] = {
+            "schema_version": "ct_perturbation_stage_b.universe_manifest.v2",
+            "campaign_id": CAMPAIGN_ID_STAGE_B,
+            "run_id": run_id,
+            "manifest_hash": manifest_hash_for_summary,
+            "universe_hash": universe_hash_for_summary,
+            "k": m2.k(),
+            "h2_variants": v2_universe_h2,
+            "configs_per_variant": configs_per_variant,
+            "total_configs": v2_universe_h2 * configs_per_variant,
+            "allowed_positions": list(m2.allowed_positions()),
+            "candidate_substitutions": {
+                str(p.pos0): sorted(p.candidate_substitutions)
+                for p in m2.allowed_selections()
+            },
+            "families": [f.value for f in cfg.families],
+            "alphabet_kinds": list(cfg.alphabet_kinds),
+            "n_keywords": len(cfg.keywords),
+            "keywords_sha256": cfg.keywords_sha256,
+            "keyword_limit": cfg.keyword_limit,
+            "max_h2_variants": cfg.max_h2_variants,
+        }
+        atomic_write_json(
+            artifact_dir / "universe_manifest.json", universe_payload_v2,
+        )
+    elif cfg.manifest is not None:
         atomic_write_json(
             artifact_dir / "ambiguous_positions_manifest.json",
             cfg.manifest.to_dict(),
@@ -568,6 +683,12 @@ def run_h2_sweep(
         atomic_write_json(
             artifact_dir / "universe_manifest.json", universe_payload,
         )
+
+    # Stash hashes for inclusion in summary metadata downstream.
+    if manifest_hash_for_summary:
+        run_metadata.setdefault("manifest_hash", manifest_hash_for_summary)
+    if universe_hash_for_summary:
+        run_metadata.setdefault("universe_hash", universe_hash_for_summary)
 
     # Pre-build scorer + null distribution lookups once.
     try:
@@ -697,6 +818,8 @@ def run_h2_sweep(
             workers=workers,
             expected_total=expected_total,
             run_metadata=run_metadata,
+            families=cfg.families,
+            alphabet_kinds=cfg.alphabet_kinds,
         )
         atomic_write_json(summary_path, summary)
         raise
@@ -715,6 +838,8 @@ def run_h2_sweep(
         workers=workers,
         expected_total=expected_total,
         run_metadata=run_metadata,
+        families=cfg.families,
+        alphabet_kinds=cfg.alphabet_kinds,
     )
     atomic_write_json(summary_path, summary)
     _h2_checkpoint(
@@ -1180,7 +1305,7 @@ def _check_null_cache_freshness(
     )
 
 
-# ─── stub CLI ────────────────────────────────────────────────────────────
+# ─── CLI ─────────────────────────────────────────────────────────────────
 
 
 def _build_argparser() -> argparse.ArgumentParser:
@@ -1197,11 +1322,34 @@ def _build_argparser() -> argparse.ArgumentParser:
         type=Path,
         required=False,
         help=(
-            "Path to operator-predeclared ambiguous-position JSON. "
-            "Required for manifest validation; not required for "
-            "--synthetic-recovery-test (which constructs its own A "
-            "in-memory). Schema: ct_perturbation_stage_b.ambiguous_positions.v1. "
+            "Path to operator-predeclared ambiguous-position JSON (v1 schema, "
+            "positions-only). Accepted for --dry-run and "
+            "--synthetic-recovery-test. NOT accepted for --execute-full; "
+            "main-campaign launches require --ambiguous-positions-manifest "
+            "with the v2 evidence-anchored schema. "
+            "v1 schema: ct_perturbation_stage_b.ambiguous_positions.v1. "
             "See prereg §3.2."
+        ),
+    )
+    ap.add_argument(
+        "--ambiguous-positions-manifest",
+        type=Path,
+        required=False,
+        help=(
+            "Path to a v2 evidence-anchored ambiguity manifest. Required "
+            "for --execute-full. Carries per-position candidate substitutions, "
+            "evidence tiers, source ids, considered-and-excluded list, and "
+            "manifest_hash. Schema: "
+            f"{AMBIGUITY_V2_SCHEMA}."
+        ),
+    )
+    ap.add_argument(
+        "--allow-empty-excluded-for-test-only",
+        action="store_true",
+        help=(
+            "Test-only override: permit a v2 manifest with empty "
+            "excluded_positions. Forbidden under --execute-full. Use "
+            "only for synthetic fixtures and CI."
         ),
     )
     ap.add_argument(
@@ -1384,9 +1532,16 @@ def _print_recovery_report(report: dict[str, Any]) -> None:
 def main(argv: list[str] | None = None) -> int:
     args = _build_argparser().parse_args(argv)
 
-    # If --synthetic-recovery-test is requested, run it FIRST. The recovery
-    # test does not require an operator-supplied --ambiguous-positions
-    # because it constructs its own ambiguous-position set in-memory.
+    # --per-task-timeout-sec must be positive when used in MP mode.
+    if args.per_task_timeout_sec is not None and args.per_task_timeout_sec <= 0:
+        print(
+            "ERROR: --per-task-timeout-sec must be > 0 (per-future timeout "
+            "is the safety mechanism from "
+            "feedback_pool_worker_no_per_task_timeout.md).",
+            file=sys.stderr,
+        )
+        return 2
+
     if args.synthetic_recovery_test:
         report = synthetic_recovery_test(
             artifact_dir=args.recovery_artifact_dir,
@@ -1400,79 +1555,109 @@ def main(argv: list[str] | None = None) -> int:
                 file=sys.stderr,
             )
             return 4
-        # If only --synthetic-recovery-test was requested (no manifest
-        # validation), exit successfully here.
-        if args.ambiguous_positions is None:
+        if (
+            args.ambiguous_positions is None
+            and args.ambiguous_positions_manifest is None
+        ):
             return 0
 
-    # Manifest validation path (requires --ambiguous-positions).
-    if args.ambiguous_positions is None:
-        if not args.synthetic_recovery_test:
+    # --execute-full requires the v2 manifest. v1 (--ambiguous-positions)
+    # is accepted for validation and dry-run paths only.
+    if args.execute_full and args.ambiguous_positions_manifest is None:
+        if args.ambiguous_positions is not None:
             print(
-                "ERROR: --ambiguous-positions is required unless "
-                "running --synthetic-recovery-test alone.",
+                "ERROR: --execute-full requires --ambiguous-positions-manifest "
+                "(v2 evidence-anchored schema). The v1 --ambiguous-positions "
+                "flag is reserved for --dry-run and --synthetic-recovery-test.",
                 file=sys.stderr,
             )
-            print(f"\nSee {_PREREG_PATH} §3 for the schema.", file=sys.stderr)
-            return 2
-        return 0  # recovery-test-only path already handled
-
-    if not args.ambiguous_positions.exists():
-        print(
-            f"ERROR: --ambiguous-positions path does not exist: "
-            f"{args.ambiguous_positions}",
-            file=sys.stderr,
-        )
-        print(
-            f"\nStage B requires an operator-predeclared ambiguous-position "
-            f"set per prereg §3.\nSee {_PREREG_PATH} for the schema.",
-            file=sys.stderr,
-        )
+            print(
+                f"\nv2 schema: {AMBIGUITY_V2_SCHEMA}\n"
+                f"See {_PREREG_PATH} §3.2.",
+                file=sys.stderr,
+            )
+        else:
+            print(
+                "ERROR: --execute-full requires --ambiguous-positions-manifest.",
+                file=sys.stderr,
+            )
         return 2
 
-    try:
-        manifest = load_ambiguous_positions(
-            args.ambiguous_positions,
-            allow_large=args.allow_large_ambiguous_set,
-        )
-    except (ValueError, json.JSONDecodeError) as e:
-        print(
-            f"ERROR: --ambiguous-positions failed schema validation: {e}",
-            file=sys.stderr,
-        )
-        print(
-            f"\nSee {_PREREG_PATH} §3.2 for the v1 schema and §3.1 for the "
-            f"operator-decision contract.",
-            file=sys.stderr,
-        )
-        return 2
-
-    k = len(manifest.positions)
-    if k > _K_MAX_DEFAULT and not args.allow_large_ambiguous_set:
-        print(
-            f"ERROR: |A| = {k} exceeds k_max_default = {_K_MAX_DEFAULT}; "
-            f"pass --allow-large-ambiguous-set to override.",
-            file=sys.stderr,
-        )
-        print(
-            f"\nLarger archive evidence sets monotonically increase the "
-            f"search universe; see prereg §3.3 cardinality table.",
-            file=sys.stderr,
-        )
-        return 2
-
-    _print_summary(manifest, n_keywords=args.keyword_count)
-
-    if args.execute_full:
-        if manifest is None:
-            logger.error(
-                "--execute-full requires --ambiguous-positions <manifest>"
+    if args.ambiguous_positions_manifest is not None:
+        if not args.ambiguous_positions_manifest.exists():
+            print(
+                f"ERROR: --ambiguous-positions-manifest path does not exist: "
+                f"{args.ambiguous_positions_manifest}",
+                file=sys.stderr,
             )
             return 2
+        # v2 launch-gate enforcement: when --execute-full, require frozen,
+        # excluded_positions, fresh kernel_commit.
+        for_main = bool(args.execute_full)
+        require_fresh = bool(args.execute_full)
+        try:
+            current_kernel = _current_kernel_commit()
+        except Exception:
+            current_kernel = "unknown"
+        if (
+            args.execute_full
+            and args.allow_empty_excluded_for_test_only
+        ):
+            print(
+                "ERROR: --allow-empty-excluded-for-test-only is forbidden "
+                "under --execute-full. The 'considered and excluded' list is "
+                "a hard preregistration requirement; see prereg §13.2.",
+                file=sys.stderr,
+            )
+            return 2
+        try:
+            m2 = load_v2(
+                args.ambiguous_positions_manifest,
+                for_main_campaign=for_main,
+                allow_empty_excluded_for_test_only=(
+                    args.allow_empty_excluded_for_test_only
+                ),
+                current_kernel_commit=current_kernel,
+                require_fresh_kernel_commit=require_fresh,
+            )
+        except ManifestValidationError as e:
+            print(
+                f"ERROR: v2 manifest validation failed: {e}",
+                file=sys.stderr,
+            )
+            print(
+                f"\nv2 schema: {AMBIGUITY_V2_SCHEMA}\n"
+                f"See {_PREREG_PATH} §3 and the archive-review checklist.",
+                file=sys.stderr,
+            )
+            return 2
+        print()
+        print("=" * 72)
+        print("  CT-Perturbation Stage B — v2 manifest validated")
+        print("=" * 72)
+        print(f"  schema_version:      {m2.schema_version}")
+        print(f"  campaign_id:         {m2.campaign_id}")
+        print(f"  created_at_utc:      {m2.created_at_utc}")
+        print(f"  kernel_commit:       {m2.kernel_commit}")
+        print(f"  ct_source:           {m2.ct_source}")
+        print(f"  frozen:              {m2.frozen}")
+        print(f"  manifest_hash:       {m2.manifest_hash}")
+        print(f"  k (allowed):         {m2.k()}")
+        print(f"  max_k:               {m2.max_k}")
+        print(f"  excluded count:      {len(m2.excluded_positions)}")
+        print(f"  evidence sources:    {len(m2.evidence_sources)}")
+        print(f"  selection_policy:    "
+              f"min_tier={m2.selection_policy.min_tier_for_main_campaign}, "
+              f"max_k={m2.selection_policy.max_k}")
+        print("=" * 72)
+        print(f"  See {_PREREG_PATH} for full campaign spec.")
+        print("=" * 72)
+        print()
 
-        # Prereg §5/§9: refuse to launch if the null-baseline cache is
-        # stale relative to the current kernel commit, or is entirely
-        # absent. Each refusal has an explicit operator override.
+        if not args.execute_full:
+            return 0
+
+        # --execute-full path with v2 manifest.
         ok, reason = _check_null_cache_freshness(
             allow_stale=args.allow_stale_null_cache,
             allow_missing=args.allow_null_unavailable,
@@ -1495,16 +1680,14 @@ def main(argv: list[str] | None = None) -> int:
             "%Y%m%dT%H%M%SZ_full"
         )
         artifact_dir = args.artifact_root / run_id
-        universe = stage_b_universe_size(
-            manifest, n_keywords=len(keywords_src.normalized)
-        )
         effective_keywords = (
             args.keyword_limit if args.keyword_limit is not None
             else len(keywords_src.normalized)
         )
+        v2_universe_size = _h2_universe_size_v2(m2)
         effective_variants = (
             args.max_h2_variants if args.max_h2_variants is not None
-            else universe["h2_variants"]
+            else v2_universe_size
         )
         expected_total = (
             effective_variants
@@ -1513,15 +1696,20 @@ def main(argv: list[str] | None = None) -> int:
             * effective_keywords
         )
         cfg = SweepConfig(
-            ct=CT, keywords=list(keywords_src.normalized), manifest=manifest,
-            universe_size=universe["total_configs"],
+            ct=CT,
+            keywords=list(keywords_src.normalized),
+            manifest=None,
+            manifest_v2=m2,
+            universe_size=expected_total,
             max_h2_variants=args.max_h2_variants,
             keyword_limit=args.keyword_limit,
+            keywords_sha256=keywords_src.normalized_sha256,
         )
         run_metadata = {
             "canonical_ct_sha256": _ct_sha256(CT),
-            "ambiguous_positions_sha256": manifest.checksum_sha256,
-            "k": manifest.k,
+            "manifest_hash": m2.manifest_hash,
+            "manifest_schema_version": m2.schema_version,
+            "k": m2.k(),
             "h2_variants_executed": effective_variants,
             "expected_total_config_cardinality": expected_total,
             "keyword_count": effective_keywords,
@@ -1534,6 +1722,49 @@ def main(argv: list[str] | None = None) -> int:
         )
         return 0
 
+    # Legacy v1 path (validation + dry-run only — no --execute-full).
+    if args.ambiguous_positions is None:
+        if not args.synthetic_recovery_test:
+            print(
+                "ERROR: --ambiguous-positions or "
+                "--ambiguous-positions-manifest is required unless running "
+                "--synthetic-recovery-test alone.",
+                file=sys.stderr,
+            )
+            print(f"\nSee {_PREREG_PATH} §3 for the schema.", file=sys.stderr)
+            return 2
+        return 0
+
+    if not args.ambiguous_positions.exists():
+        print(
+            f"ERROR: --ambiguous-positions path does not exist: "
+            f"{args.ambiguous_positions}",
+            file=sys.stderr,
+        )
+        return 2
+
+    try:
+        manifest = load_ambiguous_positions(
+            args.ambiguous_positions,
+            allow_large=args.allow_large_ambiguous_set,
+        )
+    except (ValueError, json.JSONDecodeError) as e:
+        print(
+            f"ERROR: --ambiguous-positions failed schema validation: {e}",
+            file=sys.stderr,
+        )
+        return 2
+
+    k = len(manifest.positions)
+    if k > _K_MAX_DEFAULT and not args.allow_large_ambiguous_set:
+        print(
+            f"ERROR: |A| = {k} exceeds k_max_default = {_K_MAX_DEFAULT}; "
+            f"pass --allow-large-ambiguous-set to override.",
+            file=sys.stderr,
+        )
+        return 2
+
+    _print_summary(manifest, n_keywords=args.keyword_count)
     return 0
 
 

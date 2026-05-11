@@ -1,14 +1,19 @@
-"""Tests for the CT-perturbation Stage B framework primitives.
+"""Tests for the CT-perturbation Stage B framework primitives and runner.
 
 Covers:
-    1. AmbiguousPositionsManifest schema validation (positive + negative)
-    2. Hamming-2 enumerator correctness, count, determinism, scope
-    3. Universe cardinality formula
-    4. Scope exclusion: no H1, no H3, no running-key, no corpus
+    1. AmbiguousPositionsManifest (v1) schema validation
+    2. AmbiguityManifestV2 evidence-anchored validator (16 rejection paths)
+    3. Hamming-2 enumerator correctness, count, determinism, scope
+    4. Universe cardinality formula (v1 and v2)
+    5. Scope exclusion: no H1, no H3, no running-key, no corpus
+    6. Full sweep runner (run_h2_sweep) with v1 and v2 manifests
+    7. Stale null cache guard
+    8. v2 synthetic recovery: universe includes intended correction
+    9. v2 manifest_hash and universe_hash propagation into artifacts
 
-Stage B framework only — full campaign runner is deferred until
-operator supplies a predeclared ambiguous-position set per
-docs/campaigns/ct_perturbation_stage_b_prereg.md §3.
+See docs/campaigns/ct_perturbation_stage_b_prereg.md for the binding
+campaign spec and the archive-review checklist for the operator
+authoring workflow.
 """
 from __future__ import annotations
 
@@ -618,35 +623,82 @@ class TestRunH2Sweep:
         assert summary["k"] == 3
 
 
+def _build_v2_fixture_payload(
+    *,
+    kernel_commit: str = "f" * 40,
+    selected_positions: list[int] | None = None,
+    frozen: bool = True,
+    include_excluded: bool = True,
+) -> dict:
+    """Shared v2-manifest fixture builder for CLI/sweep tests.
+
+    Default: 2 selected positions at non-crib slots (so canonical Bean
+    constraints are unchanged by the perturbation), each with a small
+    candidate set, evidence_sources, and an excluded list. Suitable for
+    integration tests that exercise --execute-full + the freshness gate.
+    """
+    from kryptos.kernel.constants import CT
+    from kryptosbot.ambiguity_manifest import (
+        SelectedPosition, ExcludedPosition, EvidenceSource,
+        SelectionPolicy, build_payload,
+    )
+    if selected_positions is None:
+        selected_positions = [3, 50]
+    sel = [
+        SelectedPosition(
+            pos0=p, carved_char=CT[p],
+            candidate_substitutions=("A", "B"),
+            evidence_tier="tier_1_direct_transcription_conflict",
+            evidence_type="transcription_disagreement",
+            rationale=f"test fixture for position {p}",
+            source_ids=("src_test",),
+            allowed_in_main_campaign=True,
+        )
+        for p in selected_positions
+    ]
+    exc = (
+        [
+            ExcludedPosition(
+                pos0=10, carved_char=CT[10],
+                reason_excluded="excluded for test fixture",
+            )
+        ]
+        if include_excluded else []
+    )
+    return build_payload(
+        campaign_id="ct_perturbation_stage_b",
+        kernel_commit=kernel_commit,
+        ct_source="carved_panel_v2026_canonical",
+        selected_positions=sel,
+        excluded_positions=exc,
+        evidence_sources=[
+            EvidenceSource(
+                id="src_test", type="photo",
+                description="test fixture source",
+            )
+        ],
+        selection_policy=SelectionPolicy(
+            min_tier_for_main_campaign="tier_2_visible_physical_ambiguity",
+            max_k=10,
+        ),
+        max_k=10,
+        frozen=frozen,
+    )
+
+
 class TestExecuteFullCli:
     def test_execute_full_runs_sweep(self, tmp_path):
         import json, subprocess, sys
-        from kryptosbot.ct_perturbation import (
-            AMBIGUOUS_POSITIONS_SCHEMA_VERSION, _sha256_of_positions,
-        )
-        positions = [3, 50, 95]
-        payload = {
-            "schema_version": AMBIGUOUS_POSITIONS_SCHEMA_VERSION,
-            "archive_provenance": {
-                "primary_source": "test fixture",
-                "evaluator": "cli integration test",
-                "evaluation_date": "2026-05-11",
-                "method": "synthetic",
-            },
-            "positions": positions,
-            "rationale_per_position": {str(p): "test" for p in positions},
-            "checksum": {
-                "sha256_of_positions_sorted": _sha256_of_positions(positions),
-            },
-        }
-        manifest_path = tmp_path / "amb.json"
+
+        payload = _build_v2_fixture_payload(kernel_commit="e" * 40)
+        manifest_path = tmp_path / "amb_v2.json"
         manifest_path.write_text(json.dumps(payload))
         artifact_root = tmp_path / "artifacts"
 
         result = subprocess.run(
             [
                 sys.executable, "scripts/campaigns/ct_perturbation_stage_b.py",
-                "--ambiguous-positions", str(manifest_path),
+                "--ambiguous-positions-manifest", str(manifest_path),
                 "--execute-full",
                 # Smoke-only: bypass the prereg §5/§9 freshness gate so
                 # this test does not depend on the live null cache being
@@ -654,7 +706,7 @@ class TestExecuteFullCli:
                 # in TestStaleNullCacheGuard.
                 "--allow-stale-null-cache",
                 "--allow-null-unavailable",
-                "--max-h2-variants", "3",
+                "--max-h2-variants", "1",
                 "--keyword-count", "1",
                 "--keyword-limit", "1",
                 "--artifact-root", str(artifact_root),
@@ -662,7 +714,10 @@ class TestExecuteFullCli:
                 "--workers", "1",
             ],
             capture_output=True, text=True,
-            env={"PYTHONPATH": "src", "PATH": "/usr/bin:/bin"},
+            env={
+                "PYTHONPATH": "src", "PATH": "/usr/bin:/bin",
+                "KRYPTOSBOT_KERNEL_COMMIT": "e" * 40,
+            },
             cwd="/home/cpatrick/kryptos",
         )
         assert result.returncode == 0, f"stderr: {result.stderr}"
@@ -671,6 +726,14 @@ class TestExecuteFullCli:
         )
         assert summary["status"] in ("completed", "incomplete")
         assert summary["candidates_evaluated"] > 0
+        # v2-specific assertions: manifest_hash and universe_hash propagate
+        # into the summary metadata.
+        assert "manifest_hash" in summary
+        assert "universe_hash" in summary
+        # The artifact-dir-relative manifests must both be present.
+        run_dir = artifact_root / "cli_test"
+        assert (run_dir / "ambiguous_positions_manifest.json").exists()
+        assert (run_dir / "universe_manifest.json").exists()
 
 
 class TestPreregManifests:
@@ -794,23 +857,15 @@ class TestStaleNullCacheGuard:
     relative to the current kernel commit. See prereg §5/§9."""
 
     def _build_manifest_payload(self, positions):
-        from kryptosbot.ct_perturbation import (
-            AMBIGUOUS_POSITIONS_SCHEMA_VERSION, _sha256_of_positions,
+        """Return a v2 manifest payload pinned to a known kernel_commit
+        so the v2 validator's kernel_commit freshness check succeeds
+        in this test class (the test pins KRYPTOSBOT_KERNEL_COMMIT to
+        the same value via env override below). The null-cache check
+        is what's under test, NOT the manifest freshness check."""
+        return _build_v2_fixture_payload(
+            kernel_commit="f" * 40,
+            selected_positions=positions[:2],  # keep k small for speed
         )
-        return {
-            "schema_version": AMBIGUOUS_POSITIONS_SCHEMA_VERSION,
-            "archive_provenance": {
-                "primary_source": "test fixture",
-                "evaluator": "stale-cache test",
-                "evaluation_date": "2026-05-11",
-                "method": "synthetic",
-            },
-            "positions": positions,
-            "rationale_per_position": {str(p): "test" for p in positions},
-            "checksum": {
-                "sha256_of_positions_sorted": _sha256_of_positions(positions),
-            },
-        }
 
     def test_stale_null_cache_refuses_launch(self, tmp_path):
         """If null_baselines manifest shows a different kernel_commit than
@@ -842,7 +897,7 @@ class TestStaleNullCacheGuard:
         result = subprocess.run(
             [
                 sys.executable, "scripts/campaigns/ct_perturbation_stage_b.py",
-                "--ambiguous-positions", str(manifest_path),
+                "--ambiguous-positions-manifest", str(manifest_path),
                 "--execute-full",
                 "--max-h2-variants", "1",
                 "--keyword-count", "1",
@@ -893,7 +948,7 @@ class TestStaleNullCacheGuard:
         result = subprocess.run(
             [
                 sys.executable, "scripts/campaigns/ct_perturbation_stage_b.py",
-                "--ambiguous-positions", str(manifest_path),
+                "--ambiguous-positions-manifest", str(manifest_path),
                 "--execute-full",
                 "--allow-stale-null-cache",
                 "--max-h2-variants", "1",
@@ -926,11 +981,15 @@ class TestStaleNullCacheGuard:
             "PYTHONPATH": "src",
             "PATH": "/usr/bin:/bin",
             "KRYPTOS_NULL_BASELINES_MANIFEST": str(nonexistent),
+            # Pin so the v2 manifest's kernel_commit ('f'*40) matches
+            # 'current'; this test exercises null-cache absence, not
+            # manifest freshness.
+            "KRYPTOSBOT_KERNEL_COMMIT": "f" * 40,
         }
         result = subprocess.run(
             [
                 sys.executable, "scripts/campaigns/ct_perturbation_stage_b.py",
-                "--ambiguous-positions", str(manifest_path),
+                "--ambiguous-positions-manifest", str(manifest_path),
                 "--execute-full",
                 "--max-h2-variants", "1",
                 "--keyword-count", "1",
@@ -967,11 +1026,15 @@ class TestStaleNullCacheGuard:
             "PYTHONPATH": "src",
             "PATH": "/usr/bin:/bin",
             "KRYPTOS_NULL_BASELINES_MANIFEST": str(nonexistent),
+            # Pin so the v2 manifest's kernel_commit ('f'*40) matches
+            # 'current'; this test exercises null-cache absence, not
+            # manifest freshness.
+            "KRYPTOSBOT_KERNEL_COMMIT": "f" * 40,
         }
         result = subprocess.run(
             [
                 sys.executable, "scripts/campaigns/ct_perturbation_stage_b.py",
-                "--ambiguous-positions", str(manifest_path),
+                "--ambiguous-positions-manifest", str(manifest_path),
                 "--execute-full",
                 "--allow-null-unavailable",
                 "--max-h2-variants", "1",
@@ -985,3 +1048,360 @@ class TestStaleNullCacheGuard:
             cwd="/home/cpatrick/kryptos",
         )
         assert result.returncode == 0, f"stderr={result.stderr}"
+
+
+# ─── v2 ambiguity manifest tests ────────────────────────────────────────
+
+
+class TestAmbiguityManifestV2Validator:
+    """Per-rejection-condition coverage for the v2 manifest validator.
+
+    Each test mutates a freshly-built valid payload to violate one rule
+    and asserts the validator fails with a recognizable diagnostic.
+    """
+
+    def _valid_payload(self):
+        return _build_v2_fixture_payload(kernel_commit="abc123")
+
+    def _validate(self, payload, **kwargs):
+        from kryptosbot.ambiguity_manifest import (
+            validate_dict, ManifestValidationError,
+        )
+        try:
+            validate_dict(payload, **kwargs)
+            return None
+        except ManifestValidationError as e:
+            return str(e)
+
+    def test_valid_passes(self):
+        err = self._validate(self._valid_payload(), for_main_campaign=True)
+        assert err is None, err
+
+    def test_duplicate_position_rejected(self):
+        from kryptosbot.ambiguity_manifest import (
+            SelectedPosition, ExcludedPosition, EvidenceSource,
+            SelectionPolicy, build_payload,
+        )
+        from kryptos.kernel.constants import CT
+        # Construct via build_payload so the hash is correct, but use
+        # two SelectedPosition entries at the same pos0.
+        sel = [
+            SelectedPosition(
+                pos0=3, carved_char=CT[3], candidate_substitutions=("A",),
+                evidence_tier="tier_1_direct_transcription_conflict",
+                evidence_type="t", rationale="r", source_ids=("s",),
+            ),
+            SelectedPosition(
+                pos0=3, carved_char=CT[3], candidate_substitutions=("B",),
+                evidence_tier="tier_1_direct_transcription_conflict",
+                evidence_type="t", rationale="r2", source_ids=("s",),
+            ),
+        ]
+        payload = build_payload(
+            campaign_id="x", kernel_commit="c", ct_source="carved_panel_v2026_canonical",
+            selected_positions=sel,
+            excluded_positions=[ExcludedPosition(pos0=10, carved_char=CT[10], reason_excluded="x")],
+            evidence_sources=[EvidenceSource(id="s", type="t", description="d")],
+            frozen=True,
+        )
+        err = self._validate(payload, for_main_campaign=True)
+        assert err and "duplicate selected position" in err.lower()
+
+    def test_position_out_of_range_rejected(self):
+        from kryptosbot.ambiguity_manifest import (
+            SelectedPosition, ExcludedPosition, EvidenceSource, build_payload,
+        )
+        from kryptos.kernel.constants import CT
+        sel = [
+            SelectedPosition(
+                pos0=200, carved_char="A",  # out of range, but we
+                candidate_substitutions=("B",),
+                evidence_tier="tier_1_direct_transcription_conflict",
+                evidence_type="t", rationale="r", source_ids=("s",),
+            )
+        ]
+        payload = build_payload(
+            campaign_id="x", kernel_commit="c", ct_source="carved_panel_v2026_canonical",
+            selected_positions=sel,
+            excluded_positions=[ExcludedPosition(pos0=10, carved_char=CT[10], reason_excluded="x")],
+            evidence_sources=[EvidenceSource(id="s", type="t", description="d")],
+            frozen=True,
+        )
+        err = self._validate(payload, for_main_campaign=True)
+        assert err and "out of range" in err
+
+    def test_carved_char_mismatch_rejected(self):
+        from kryptos.kernel.constants import CT
+        payload = self._valid_payload()
+        # First selected position; force carved_char wrong
+        wrong = "A" if CT[payload["selected_positions"][0]["pos0"]] != "A" else "B"
+        payload["selected_positions"][0]["carved_char"] = wrong
+        # Note: hash will mismatch too; that's fine — validator emits
+        # multiple errors and the mismatch we care about appears.
+        err = self._validate(payload, for_main_campaign=True)
+        assert err and "does not match canonical" in err
+
+    def test_candidate_equals_carved_rejected(self):
+        from kryptos.kernel.constants import CT
+        payload = self._valid_payload()
+        carved = CT[payload["selected_positions"][0]["pos0"]]
+        payload["selected_positions"][0]["candidate_substitutions"] = [carved]
+        err = self._validate(payload, for_main_campaign=True)
+        assert err and "equals carved_char" in err
+
+    def test_empty_candidate_substitutions_rejected(self):
+        payload = self._valid_payload()
+        payload["selected_positions"][0]["candidate_substitutions"] = []
+        err = self._validate(payload, for_main_campaign=True)
+        assert err and "at least one candidate" in err
+
+    def test_missing_evidence_tier_rejected(self):
+        payload = self._valid_payload()
+        payload["selected_positions"][0]["evidence_tier"] = ""
+        err = self._validate(payload, for_main_campaign=True)
+        assert err and "missing evidence_tier" in err
+
+    def test_missing_rationale_rejected(self):
+        payload = self._valid_payload()
+        payload["selected_positions"][0]["rationale"] = ""
+        err = self._validate(payload, for_main_campaign=True)
+        assert err and "missing rationale" in err
+
+    def test_missing_source_ids_rejected(self):
+        payload = self._valid_payload()
+        payload["selected_positions"][0]["source_ids"] = []
+        err = self._validate(payload, for_main_campaign=True)
+        assert err and "source_ids must" in err
+
+    def test_unknown_source_id_rejected(self):
+        payload = self._valid_payload()
+        payload["selected_positions"][0]["source_ids"] = ["does_not_exist"]
+        err = self._validate(payload, for_main_campaign=True)
+        assert err and "unknown source_id" in err
+
+    def test_tier_weaker_than_policy_rejected(self):
+        payload = self._valid_payload()
+        payload["selected_positions"][0]["evidence_tier"] = "tier_4_weak_contextual_only"
+        err = self._validate(payload, for_main_campaign=True)
+        assert err and "weaker than" in err
+
+    def test_max_k_exceeded_rejected(self):
+        from kryptosbot.ambiguity_manifest import (
+            SelectedPosition, ExcludedPosition, EvidenceSource, build_payload,
+            SelectionPolicy,
+        )
+        from kryptos.kernel.constants import CT
+        # 21 positions (5..45 step 2), max_k=10
+        sel = [
+            SelectedPosition(
+                pos0=p, carved_char=CT[p],
+                candidate_substitutions=("A",),
+                evidence_tier="tier_1_direct_transcription_conflict",
+                evidence_type="t", rationale="r", source_ids=("s",),
+            )
+            for p in range(5, 46, 2)
+        ]
+        payload = build_payload(
+            campaign_id="x", kernel_commit="c", ct_source="carved_panel_v2026_canonical",
+            selected_positions=sel,
+            excluded_positions=[ExcludedPosition(pos0=80, carved_char=CT[80], reason_excluded="x")],
+            evidence_sources=[EvidenceSource(id="s", type="t", description="d")],
+            selection_policy=SelectionPolicy(
+                min_tier_for_main_campaign="tier_2_visible_physical_ambiguity",
+                max_k=10,
+            ),
+            max_k=10,
+            frozen=True,
+        )
+        err = self._validate(payload, for_main_campaign=True)
+        assert err and "exceed max_k" in err
+
+    def test_frozen_false_rejected_for_main_campaign(self):
+        payload = _build_v2_fixture_payload(kernel_commit="c", frozen=False)
+        err = self._validate(payload, for_main_campaign=True)
+        assert err and "frozen" in err.lower()
+
+    def test_empty_excluded_rejected_for_main_campaign(self):
+        payload = _build_v2_fixture_payload(kernel_commit="c", include_excluded=False)
+        err = self._validate(payload, for_main_campaign=True)
+        assert err and "excluded_positions is empty" in err
+
+    def test_empty_excluded_allowed_via_test_override(self):
+        payload = _build_v2_fixture_payload(kernel_commit="c", include_excluded=False)
+        err = self._validate(
+            payload,
+            for_main_campaign=True,
+            allow_empty_excluded_for_test_only=True,
+        )
+        assert err is None, err
+
+    def test_stale_manifest_kernel_commit_rejected(self):
+        payload = self._valid_payload()
+        err = self._validate(
+            payload,
+            for_main_campaign=True,
+            current_kernel_commit="different_sha",
+            require_fresh_kernel_commit=True,
+        )
+        assert err and "stale_manifest_kernel_commit" in err
+
+    def test_manifest_hash_mismatch_rejected(self):
+        payload = self._valid_payload()
+        payload["selected_positions"][0]["rationale"] = "TAMPERED"
+        # Do NOT recompute the hash; the validator must catch the drift.
+        err = self._validate(payload, for_main_campaign=True)
+        assert err and "manifest_hash mismatch" in err
+
+    def test_deterministic_manifest_hash(self):
+        """Same logical content -> same hash, regardless of insertion order."""
+        from kryptosbot.ambiguity_manifest import compute_manifest_hash
+        a = self._valid_payload()
+        b = self._valid_payload()
+        assert a["manifest_hash"] == b["manifest_hash"]
+        # And independent recomputation matches the stored hash
+        assert compute_manifest_hash(a) == a["manifest_hash"]
+
+
+class TestV2SyntheticRecovery:
+    """End-to-end check that a v2 frozen manifest with an intentional
+    perturbation candidate yields a universe that includes the intended
+    correction, and that the manifest_hash and universe_hash are stable."""
+
+    def test_v2_universe_includes_intended_correction(self, tmp_path):
+        import json
+        from kryptosbot.ambiguity_manifest import (
+            iter_h2_variants, compute_universe_hash, h2_universe_size,
+            validate_dict,
+        )
+        from kryptos.kernel.constants import CT
+
+        # Pick two non-crib, non-excluded positions and a candidate at
+        # each. The helper's default excluded position is pos0=10 so we
+        # use [3, 80] to avoid the selected/excluded conflict.
+        payload = _build_v2_fixture_payload(
+            kernel_commit="abc",
+            selected_positions=[3, 80],
+        )
+        # Replace the canned candidates with a known target.
+        for sp in payload["selected_positions"]:
+            sp["candidate_substitutions"] = ["Z", "Q"]
+        # Recompute hash after editing the payload (would have failed
+        # without recomputation; this is the legitimate authoring flow).
+        from kryptosbot.ambiguity_manifest import compute_manifest_hash
+        payload["manifest_hash"] = compute_manifest_hash(payload)
+
+        m = validate_dict(payload, for_main_campaign=True)
+        size = h2_universe_size(m)
+        # k=2 positions, 2 candidates each (one may equal carved):
+        # universe = (effective_cands_pos1) * (effective_cands_pos2)
+        # 'Z','Q' minus carved at each position. CT[3] and CT[80] are
+        # neither Z nor Q, so both candidate counts = 2.
+        assert size == 2 * 2
+
+        # Enumerate and look for the intended correction tuple.
+        intended = (3, CT[3], "Z", 80, CT[80], "Q")
+        all_tuples = list(iter_h2_variants(CT, m))
+        assert intended in all_tuples, f"missing {intended}; got {all_tuples}"
+
+        # Universe hash is deterministic for fixed inputs.
+        allowed = m.allowed_selections()
+        h1 = compute_universe_hash(
+            allowed, ("vigenere", "beaufort"), ("AZ",),
+            "deadbeef", 1,
+        )
+        h2 = compute_universe_hash(
+            allowed, ("vigenere", "beaufort"), ("AZ",),
+            "deadbeef", 1,
+        )
+        assert h1 == h2
+
+        # Hash changes when keyword pool changes.
+        h3 = compute_universe_hash(
+            allowed, ("vigenere", "beaufort"), ("AZ",),
+            "cafebabe", 1,
+        )
+        assert h3 != h1
+
+    def test_invalid_v2_fails_closed(self, tmp_path):
+        """A v2 manifest with no excluded_positions, no frozen flag, and
+        a wrong carved_char must fail before any Stage B execution path
+        is reachable."""
+        from kryptosbot.ambiguity_manifest import (
+            SelectedPosition, EvidenceSource, build_payload, validate_dict,
+            ManifestValidationError,
+        )
+        from kryptos.kernel.constants import CT
+        bad_sel = [
+            SelectedPosition(
+                pos0=10, carved_char="Z",  # wrong
+                candidate_substitutions=("A",),
+                evidence_tier="tier_1_direct_transcription_conflict",
+                evidence_type="t", rationale="r", source_ids=("s",),
+            )
+        ]
+        payload = build_payload(
+            campaign_id="x", kernel_commit="c",
+            ct_source="carved_panel_v2026_canonical",
+            selected_positions=bad_sel,
+            excluded_positions=[],
+            evidence_sources=[EvidenceSource(id="s", type="t", description="d")],
+            frozen=False,
+        )
+        try:
+            validate_dict(payload, for_main_campaign=True)
+        except ManifestValidationError as e:
+            msg = str(e)
+            # Multiple errors expected
+            assert "does not match canonical" in msg
+            assert "frozen" in msg.lower()
+            assert "excluded_positions is empty" in msg
+        else:
+            raise AssertionError("validator did not fail closed")
+
+
+class TestV2ManifestHashedArtifacts:
+    """Stage B run with v2 manifest writes hashes into artifacts."""
+
+    def test_v2_run_writes_manifest_and_universe_hashes(self, tmp_path):
+        import json
+        from scripts.campaigns.ct_perturbation_stage_b import (
+            SweepConfig, run_h2_sweep,
+        )
+        from kryptosbot.ambiguity_manifest import validate_dict
+        from kryptos.kernel.constants import CT
+
+        payload = _build_v2_fixture_payload(kernel_commit="abc")
+        m2 = validate_dict(payload, for_main_campaign=True)
+
+        cfg = SweepConfig(
+            ct=CT, keywords=["PALIMPSEST"], manifest=None, manifest_v2=m2,
+            universe_size=6, max_h2_variants=1,
+            keywords_sha256="testhash",
+        )
+        artifact_dir = tmp_path / "run_v2"
+        results = run_h2_sweep(
+            cfg, artifact_dir=artifact_dir, run_id="v2_smoke", workers=1,
+            run_metadata={
+                "canonical_ct_sha256": "test",
+                "k": m2.k(),
+                "h2_variants_executed": 1,
+                "expected_total_config_cardinality": 6,
+            },
+        )
+        # 1 variant x 3 families x 2 alphabets x 1 keyword = 6 configs
+        assert results.candidates_evaluated == 6
+
+        # universe_manifest.json reflects the v2 schema
+        uni = json.loads(
+            (artifact_dir / "universe_manifest.json").read_text()
+        )
+        assert uni["schema_version"] == "ct_perturbation_stage_b.universe_manifest.v2"
+        assert uni["manifest_hash"] == m2.manifest_hash
+        assert uni["universe_hash"].startswith("sha256:")
+        assert isinstance(uni["candidate_substitutions"], dict)
+
+        # summary.json carries the manifest_hash and universe_hash from
+        # run_metadata setdefault.
+        summary = json.loads((artifact_dir / "summary.json").read_text())
+        assert summary["manifest_hash"] == m2.manifest_hash
+        assert summary["universe_hash"] == uni["universe_hash"]
