@@ -33,3 +33,30 @@ def test_s1_partial_match_below_threshold_does_not_promote():
     ks24 = _str_to_idx_seq("ABCDEFGHIJKLMNOPQRSTUVWX")
     hit = scan_source_text(ks24, fake_entries, threshold_len=24)
     assert hit is None  # exact 24 not present
+
+
+def test_s1_prepared_finds_substring():
+    """scan_source_text_prepared returns same hit as scan_source_text on same input."""
+    from kryptosbot.swing_k1_structure import (
+        prepare_corpus, scan_source_text, scan_source_text_prepared, _str_to_idx_seq,
+    )
+    plant = "ABCDEFGHIJKLMNOPQRSTUVWX"
+    fake_text = "JUNK" + plant + "MOREJUNK"
+    fake_entries = [type("E", (), {"id": "fake", "text": lambda self=None: fake_text})()]
+    prepared = prepare_corpus(fake_entries)
+    keystream_idx = _str_to_idx_seq(plant)
+    legacy_hit = scan_source_text(keystream_idx, fake_entries)
+    prepared_hit = scan_source_text_prepared(keystream_idx, prepared)
+    assert legacy_hit is not None and prepared_hit is not None
+    assert legacy_hit.source_id == prepared_hit.source_id == "fake"
+    assert legacy_hit.offset == prepared_hit.offset == 4
+    assert legacy_hit.match_len == prepared_hit.match_len == 24
+
+
+def test_s1_prepared_returns_none_when_no_match():
+    from kryptosbot.swing_k1_structure import prepare_corpus, scan_source_text_prepared, _str_to_idx_seq
+    fake_entries = [type("E", (), {"id": "fake", "text": lambda self=None: "ENGLISHTEXTWITHNORANDOMKEYSEQUENCE"})()]
+    prepared = prepare_corpus(fake_entries)
+    random_ks = _str_to_idx_seq("ZZQXJVQXJVQXJVQXJVQXJVQX")
+    hit = scan_source_text_prepared(random_ks, prepared)
+    assert hit is None
