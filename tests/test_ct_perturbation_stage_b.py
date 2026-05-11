@@ -551,3 +551,68 @@ class TestH2Checkpoint:
         assert summary["expected_total_config_cardinality"] == 75
         assert summary["ambiguous_positions_sha256"] == "cafebabe"
         assert summary["k"] == 3
+
+
+class TestRunH2Sweep:
+    @staticmethod
+    def _make_manifest(tmp_path):
+        import json
+        from kryptosbot.ct_perturbation import (
+            AMBIGUOUS_POSITIONS_SCHEMA_VERSION, _sha256_of_positions,
+            load_ambiguous_positions,
+        )
+        positions = [3, 50, 95]
+        payload = {
+            "schema_version": AMBIGUOUS_POSITIONS_SCHEMA_VERSION,
+            "archive_provenance": {
+                "primary_source": "test fixture, not real archive",
+                "evaluator": "unit test",
+                "evaluation_date": "2026-05-11",
+                "method": "synthetic",
+            },
+            "positions": positions,
+            "rationale_per_position": {
+                str(p): "synthetic" for p in positions
+            },
+            "checksum": {
+                "sha256_of_positions_sorted": _sha256_of_positions(positions),
+            },
+        }
+        path = tmp_path / "amb.json"
+        path.write_text(json.dumps(payload))
+        return load_ambiguous_positions(str(path))
+
+    def test_run_h2_sweep_smoke(self, tmp_path):
+        import json
+        from scripts.campaigns.ct_perturbation_stage_b import (
+            SweepConfig, run_h2_sweep,
+        )
+        from kryptos.kernel.constants import CT
+
+        manifest = self._make_manifest(tmp_path)
+        cfg = SweepConfig(
+            ct=CT, keywords=["PALIMPSEST"], manifest=manifest,
+            universe_size=18, max_h2_variants=3,
+        )
+        artifact_dir = tmp_path / "run"
+        results = run_h2_sweep(
+            cfg, artifact_dir=artifact_dir, run_id="test_smoke", workers=1,
+            run_metadata={
+                "canonical_ct_sha256": "test",
+                "ambiguous_positions_sha256": manifest.checksum_sha256,
+                "k": manifest.k,
+                "h2_variants_executed": 3,
+                "expected_total_config_cardinality": 18,
+            },
+        )
+        # 3 variants x 3 families x 2 alphabets x 1 keyword = 18
+        assert results.candidates_evaluated == 18
+        assert results.variants_completed == 3
+        assert (artifact_dir / "alerts.jsonl").exists()
+        assert (artifact_dir / "watchlist.jsonl").exists()
+        assert (artifact_dir / "top_candidates.jsonl").exists()
+        assert (artifact_dir / "progress.json").exists()
+        assert (artifact_dir / "summary.json").exists()
+        summary = json.loads((artifact_dir / "summary.json").read_text())
+        assert summary["candidates_evaluated"] == 18
+        assert summary["k"] == 3

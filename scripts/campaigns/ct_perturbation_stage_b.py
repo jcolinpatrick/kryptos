@@ -58,11 +58,13 @@ import argparse
 import datetime as _dt
 import hashlib
 import json
+import logging
+import multiprocessing as mp
 import sys
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any, Iterable, Iterator
 
 # Standalone bootstrap (script lives 2 levels deep under repo root).
 _HERE = Path(__file__).resolve()
@@ -107,6 +109,8 @@ from scripts.campaigns.ct_perturbation_stage_a import (  # noqa: E402
     _rejection_reason_bucket,
 )
 
+
+logger = logging.getLogger("ct_perturbation_stage_b")
 
 _K_MAX_DEFAULT = 20  # prereg §3.3
 _PREREG_PATH = "docs/campaigns/ct_perturbation_stage_b_prereg.md"
@@ -490,6 +494,218 @@ def _build_h2_summary(
         k: v for k, v in run_metadata.items() if k not in summary
     })
     return summary
+
+
+def _iter_h2_variants(cfg: SweepConfig) -> Iterator[CTVariantH2]:
+    """Yield CTVariantH2 instances from the manifest, respecting the
+    optional max_h2_variants cap."""
+    if cfg.manifest is None:
+        return
+    seen = 0
+    for v in enumerate_hamming2_variants_constrained(cfg.ct, cfg.manifest):
+        yield v
+        seen += 1
+        if cfg.max_h2_variants is not None and seen >= cfg.max_h2_variants:
+            return
+
+
+# ─── orchestrator ────────────────────────────────────────────────────────
+
+
+def run_h2_sweep(
+    cfg: SweepConfig,
+    *,
+    artifact_dir: Path,
+    run_id: str,
+    workers: int,
+    progress_every_n_variants: int = 25,
+    run_metadata: dict[str, Any] | None = None,
+    trace_first_configs: int = 0,
+    per_task_timeout_sec: float | None = None,
+) -> SweepResults:
+    """Drive the Stage B H2 sweep over CT variants enumerated from the
+    ambiguous-position manifest. Writes JSONL artifacts and a progress
+    checkpoint after each batch of variants. Single-process when
+    ``workers <= 1`` or ``trace_first_configs > 0``; otherwise engages
+    a ``spawn`` multiprocessing pool with per-future timeout enforcement.
+
+    Per ``feedback_pool_worker_no_per_task_timeout.md`` the MP branch
+    uses ``apply_async`` + ``.get(timeout=per_task_timeout_sec)`` rather
+    than ``imap_unordered`` so a single hung worker cannot deadlock the
+    entire sweep. ``multiprocessing.TimeoutError`` is recorded into
+    ``results.errors`` as ``per_task_timeout`` and the sweep continues.
+    """
+    cfg.run_id_for_logging = run_id
+    artifact_dir.mkdir(parents=True, exist_ok=True)
+    run_metadata = dict(run_metadata or {})
+
+    alerts_path = artifact_dir / "alerts.jsonl"
+    watch_path = artifact_dir / "watchlist.jsonl"
+    top_path = artifact_dir / "top_candidates.jsonl"
+    trace_path = artifact_dir / "trace_first_configs.jsonl"
+    progress_path = artifact_dir / "progress.json"
+    summary_path = artifact_dir / "summary.json"
+    chk_dir = artifact_dir / "checkpoints"
+    chk_dir.mkdir(parents=True, exist_ok=True)
+    for jsonl_path in (alerts_path, watch_path, top_path):
+        jsonl_path.touch(exist_ok=True)
+    if trace_first_configs:
+        trace_path.write_text("")
+
+    # Pre-build scorer + null distribution lookups once.
+    try:
+        ngram_scorer = get_default_scorer()
+    except FileNotFoundError:
+        logger.warning("ngram quadgram file missing; ngram scoring disabled")
+        ngram_scorer = None
+
+    try:
+        from kryptosbot.null_baselines import get_cached as _get_cached
+        ngram_dist_az = _get_cached("ngram_score", "random_text", 97, "AZ")
+        ngram_dist_ka = _get_cached("ngram_score", "random_text", 97, "KA")
+    except Exception:  # pragma: no cover — defensive
+        ngram_dist_az = None
+        ngram_dist_ka = None
+
+    logger.info(
+        "null cache: ngram_AZ=%s ngram_KA=%s",
+        "present" if ngram_dist_az is not None else "missing",
+        "present" if ngram_dist_ka is not None else "missing",
+    )
+
+    results = SweepResults()
+
+    started_at = time.time()
+    started_at_iso = _dt.datetime.now(_dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    variants_total = int(run_metadata.get("h2_variants_executed", 0))
+    expected_total = int(run_metadata.get("expected_total_config_cardinality", cfg.universe_size))
+    trace_remaining = max(0, trace_first_configs)
+
+    def _write_trace(rows: list[dict[str, Any]]) -> None:
+        if not rows:
+            return
+        with trace_path.open("a", encoding="utf-8") as fh:
+            for row in rows:
+                fh.write(json.dumps(row, sort_keys=True) + "\n")
+
+    def _merge_variant_result(result: VariantEvalResult) -> None:
+        results.candidates_evaluated += result.n_evaluated
+        results.bean_pass_count += result.bean_pass_count
+        results.variants_completed += 1
+        results.last_completed_variant_id = result.variant_id
+        for reason, count in result.rejection_reason_counts.items():
+            results.rejection_reason_counts[reason] = (
+                results.rejection_reason_counts.get(reason, 0) + count
+            )
+        for row in result.alerts:
+            with alerts_path.open("a", encoding="utf-8") as fh:
+                fh.write(json.dumps(row, sort_keys=True) + "\n")
+            results.alerts.append(_h2_summary_only(row))
+            fam = row["family"]; alpha = row["alphabet"]
+            results.by_family_alert_count[fam] = results.by_family_alert_count.get(fam, 0) + 1
+            results.by_alphabet_alert_count[alpha] = results.by_alphabet_alert_count.get(alpha, 0) + 1
+        for row in result.watchlist:
+            with watch_path.open("a", encoding="utf-8") as fh:
+                fh.write(json.dumps(row, sort_keys=True) + "\n")
+            results.watchlist.append(_h2_summary_only(row))
+        for key, payload in result.top_candidates:
+            results.top_n.push(key, payload)
+        _write_trace(result.trace_rows)
+
+    def _process_one(variant: CTVariantH2, trace_limit: int = 0) -> VariantEvalResult:
+        return evaluate_one_h2_variant(
+            variant, cfg,
+            ngram_scorer=ngram_scorer,
+            ngram_dist_az=ngram_dist_az,
+            ngram_dist_ka=ngram_dist_ka,
+            trace_first_configs=trace_limit,
+        )
+
+    _h2_checkpoint(
+        progress_path, results, started_at, started_at_iso,
+        variants_total=variants_total, expected_total=expected_total,
+        workers=workers, status="running",
+    )
+
+    try:
+        if workers <= 1 or trace_first_configs:
+            for variant in _iter_h2_variants(cfg):
+                trace_limit = trace_remaining
+                result = _process_one(variant, trace_limit=trace_limit)
+                if trace_remaining:
+                    trace_remaining = max(0, trace_remaining - len(result.trace_rows))
+                _merge_variant_result(result)
+                if results.variants_completed % progress_every_n_variants == 0:
+                    _h2_checkpoint(
+                        progress_path, results, started_at, started_at_iso,
+                        variants_total=variants_total, expected_total=expected_total,
+                        workers=workers, status="running",
+                    )
+        else:
+            # Multiprocessing path: apply_async + per-future .get(timeout=...)
+            # so a single hung worker cannot deadlock the parent. See
+            # feedback_pool_worker_no_per_task_timeout.md (cycle 245 hang).
+            with mp.get_context("spawn").Pool(workers) as pool:
+                async_results = [
+                    pool.apply_async(_worker_evaluate_h2, ((v, cfg),))
+                    for v in _iter_h2_variants(cfg)
+                ]
+                for ar in async_results:
+                    try:
+                        result = ar.get(timeout=per_task_timeout_sec)
+                    except mp.TimeoutError:
+                        results.errors.append(
+                            "per_task_timeout: H2 variant exceeded budget"
+                        )
+                        continue
+                    _merge_variant_result(result)
+                    if results.variants_completed % progress_every_n_variants == 0:
+                        _h2_checkpoint(
+                            progress_path, results, started_at, started_at_iso,
+                            variants_total=variants_total, expected_total=expected_total,
+                            workers=workers, status="running",
+                        )
+    except Exception as exc:
+        results.errors.append(f"{type(exc).__name__}: {exc}")
+        _h2_checkpoint(
+            progress_path, results, started_at, started_at_iso,
+            variants_total=variants_total, expected_total=expected_total,
+            workers=workers, status="failed",
+        )
+        summary = _build_h2_summary(
+            run_id=run_id,
+            results=results,
+            started_at=started_at,
+            status="failed",
+            workers=workers,
+            expected_total=expected_total,
+            run_metadata=run_metadata,
+        )
+        atomic_write_json(summary_path, summary)
+        raise
+
+    # Finalize artifacts.
+    with top_path.open("w", encoding="utf-8") as fh:
+        for payload in results.top_n.sorted_payloads():
+            fh.write(json.dumps(payload, sort_keys=True) + "\n")
+
+    status = "completed" if results.candidates_evaluated == expected_total else "incomplete"
+    summary = _build_h2_summary(
+        run_id=run_id,
+        results=results,
+        started_at=started_at,
+        status=status,
+        workers=workers,
+        expected_total=expected_total,
+        run_metadata=run_metadata,
+    )
+    atomic_write_json(summary_path, summary)
+    _h2_checkpoint(
+        progress_path, results, started_at, started_at_iso,
+        variants_total=variants_total, expected_total=expected_total,
+        workers=workers, status=status,
+    )
+    return results
 
 
 # ─── synthetic recovery test ─────────────────────────────────────────────
