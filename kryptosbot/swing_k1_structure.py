@@ -183,9 +183,16 @@ def _try_gronsfeld(seq: Sequence[int]) -> Optional[S3Hit]:
     return None
 
 
-def _try_autokey(seq: Sequence[int], primer_lens: Tuple[int, ...] = tuple(range(4, 13))) -> Optional[S3Hit]:
-    """Autokey: k[i] = primer[i] for i < L, k[i] = seq[i - L] for i >= L.
-    Check whether the observed sequence is self-consistent for any primer length L.
+def _try_period_repeat(seq: Sequence[int], primer_lens: Tuple[int, ...] = tuple(range(4, 13))) -> Optional[S3Hit]:
+    """Keystream period-L self-repeat detector: k[i] == k[i - L] for all i >= L.
+
+    NOTE: This is NOT autokey detection. True Vigenere autokey is
+    k[i] = pt[i - L] where pt is the plaintext, not the keystream.
+    This check fires only when the recovered keystream is itself
+    L-periodic, which is a sibling property to S2 keyword expansion
+    (a periodic keystream is what S2 already covers structurally).
+    Kept as a fallback channel in case S2 misses a period not in the
+    VETTED_KEYWORDS list.
     """
     for L in primer_lens:
         if len(seq) < L + 1:
@@ -193,7 +200,7 @@ def _try_autokey(seq: Sequence[int], primer_lens: Tuple[int, ...] = tuple(range(
         consistent = all(seq[i] == seq[i - L] for i in range(L, len(seq)))
         if consistent:
             return S3Hit(
-                generator=f"autokey_primer_{L}",
+                generator=f"period_{L}",
                 seed=tuple(seq[:L]),
                 match_strength=1.0,
             )
@@ -201,8 +208,8 @@ def _try_autokey(seq: Sequence[int], primer_lens: Tuple[int, ...] = tuple(range(
 
 
 def match_generator(seq: Sequence[int]) -> Optional[S3Hit]:
-    """Try generators in priority order: Fibonacci > Autokey > Gronsfeld."""
-    for fn in (_try_fibonacci, _try_autokey, _try_gronsfeld):
+    """Try generators in priority order: Fibonacci > Period > Gronsfeld."""
+    for fn in (_try_fibonacci, _try_period_repeat, _try_gronsfeld):
         hit = fn(seq)
         if hit is not None:
             return hit

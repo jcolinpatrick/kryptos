@@ -115,3 +115,14 @@ def test_s3_no_match_for_random():
     random_ks = [11, 17, 22, 25, 6, 0, 13, 19, 14, 7, 11, 24, 2, 18, 21, 4, 9, 15, 20, 23, 1, 16, 12, 10]
     hit = match_generator(random_ks)
     assert hit is None
+
+
+def test_s3_period_repeat_detects_period_5():
+    """A period-5 keystream returns generator='period_5'."""
+    from kryptosbot.swing_k1_structure import match_generator
+    base = [11, 17, 22, 25, 6]  # period 5
+    seq = (base * 5)[:24]
+    hit = match_generator(seq)
+    assert hit is not None
+    assert hit.generator == "period_5"
+    assert hit.seed == tuple(base)
