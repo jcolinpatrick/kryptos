@@ -43,6 +43,7 @@ import hashlib
 import json
 import logging
 import multiprocessing as mp
+import os
 import sys
 import time
 from dataclasses import dataclass, field
@@ -1067,6 +1068,118 @@ def synthetic_recovery_test(
     return report
 
 
+# ─── Null-baseline cache freshness gate (prereg §5/§9) ───────────────────
+
+_DEFAULT_NULL_BASELINES_MANIFEST = _ROOT / "null_baselines" / "manifest.json"
+
+
+def _resolve_null_manifest_path() -> Path:
+    """Path to the null-baseline cache summary manifest.
+
+    Honors the ``KRYPTOS_NULL_BASELINES_MANIFEST`` env override so test
+    runners can point the freshness gate at a fixture without mutating
+    the live cache directory.
+    """
+    override = os.environ.get("KRYPTOS_NULL_BASELINES_MANIFEST")
+    if override:
+        return Path(override)
+    return _DEFAULT_NULL_BASELINES_MANIFEST
+
+
+def _current_kernel_commit() -> str:
+    """Return the current kernel git HEAD, mirroring the helper used by
+    the null-baseline writer (kryptosbot.null_baselines).
+
+    Honors ``KRYPTOSBOT_KERNEL_COMMIT`` env override (same convention as
+    the writer), so the freshness check resolves the SAME sha both sides
+    of the comparison would see in the same process environment.
+    """
+    try:
+        from kryptosbot.null_baselines import _compute_kernel_commit
+        return _compute_kernel_commit()
+    except Exception:
+        # Fallback: best-effort local computation. Treated as 'unknown'
+        # if git is unavailable, which the staleness check downgrades to
+        # 'cannot determine drift' (permissive — mirrors writer behavior).
+        return "unknown"
+
+
+def _check_null_cache_freshness(
+    *,
+    allow_stale: bool,
+    allow_missing: bool,
+) -> tuple[bool, str]:
+    """Decide whether the null-baseline cache is fresh enough to launch.
+
+    Returns ``(ok, reason)``. ``reason`` is a one-line diagnostic safe to
+    print at launch refusal. When ``ok`` is True, ``reason`` may still be
+    a non-empty advisory (e.g. operator used an override flag).
+
+    Prereg §5/§9: the cache MUST agree with the current kernel commit
+    before launch. Drift means the cache describes a different scoring
+    semantic than what the runner will compute, so any p-value gating on
+    it is uncalibrated. Whole-cache absence is a separate failure mode:
+    no calibration at all means the gate is structurally unreachable.
+    Each refusal has an explicit operator override so a deliberate
+    calibration rebuild can proceed.
+    """
+    manifest_path = _resolve_null_manifest_path()
+    current = _current_kernel_commit()
+
+    if not manifest_path.exists():
+        msg = (
+            f"null_cache_missing: null-baseline manifest not found at "
+            f"{manifest_path}. The Stage B p-value gate requires a "
+            f"calibrated null cache. Rebuild with "
+            f"`PYTHONPATH=src python3 -u scripts/_infra/calibrate_null_baselines.py` "
+            f"or pass --allow-null-unavailable to launch without it."
+        )
+        if allow_missing:
+            return (True, f"OVERRIDE: {msg}")
+        return (False, msg)
+
+    try:
+        manifest = json.loads(manifest_path.read_text())
+    except (OSError, json.JSONDecodeError) as e:
+        msg = (
+            f"null_cache_missing: failed to read null-baseline manifest "
+            f"at {manifest_path}: {e!s}"
+        )
+        if allow_missing:
+            return (True, f"OVERRIDE: {msg}")
+        return (False, msg)
+
+    cache_commit = str(manifest.get("kernel_commit_at_latest_write", "unknown"))
+
+    # Permissive case: either side reports 'unknown' (git unavailable).
+    # Mirror kryptosbot.null_baselines.calibration_stale: don't treat
+    # 'unknown' as drift because it is not the operator's fault.
+    if cache_commit == "unknown" or current == "unknown":
+        return (
+            True,
+            f"null_cache_unknown_commit: cache_commit={cache_commit!r} "
+            f"current={current!r}; cannot determine drift, proceeding.",
+        )
+
+    if cache_commit != current:
+        msg = (
+            f"stale_null_cache: null-baseline manifest at {manifest_path} "
+            f"was built against kernel_commit={cache_commit!r} but the "
+            f"current kernel commit is {current!r}. The p-value gate "
+            f"would be uncalibrated. Rebuild with "
+            f"`PYTHONPATH=src python3 -u scripts/_infra/calibrate_null_baselines.py` "
+            f"or pass --allow-stale-null-cache to launch with the drift."
+        )
+        if allow_stale:
+            return (True, f"OVERRIDE: {msg}")
+        return (False, msg)
+
+    return (
+        True,
+        f"null_cache_fresh: cache_commit={cache_commit} matches current.",
+    )
+
+
 # ─── stub CLI ────────────────────────────────────────────────────────────
 
 
@@ -1176,6 +1289,26 @@ def _build_argparser() -> argparse.ArgumentParser:
         help=(
             "Per-H2-variant timeout (seconds) in MP mode. Default 60.0 per "
             "feedback_pool_worker_no_per_task_timeout.md."
+        ),
+    )
+    ap.add_argument(
+        "--allow-stale-null-cache",
+        action="store_true",
+        help=(
+            "Override the prereg §5/§9 freshness gate: launch even when "
+            "the null-baseline cache's kernel_commit differs from the "
+            "current kernel. Use only when a calibration rebuild is "
+            "intentionally deferred; the p-value gate will be uncalibrated."
+        ),
+    )
+    ap.add_argument(
+        "--allow-null-unavailable",
+        action="store_true",
+        help=(
+            "Launch even when the null-baseline cache manifest is "
+            "entirely absent. Use only when running explicitly without "
+            "p-value gating; the alert path will fall back to legacy "
+            "crib-only classification."
         ),
     )
     return ap
@@ -1336,6 +1469,23 @@ def main(argv: list[str] | None = None) -> int:
                 "--execute-full requires --ambiguous-positions <manifest>"
             )
             return 2
+
+        # Prereg §5/§9: refuse to launch if the null-baseline cache is
+        # stale relative to the current kernel commit, or is entirely
+        # absent. Each refusal has an explicit operator override.
+        ok, reason = _check_null_cache_freshness(
+            allow_stale=args.allow_stale_null_cache,
+            allow_missing=args.allow_null_unavailable,
+        )
+        if not ok:
+            print(f"ERROR: {reason}", file=sys.stderr)
+            print(
+                f"\nSee {_PREREG_PATH} §5 and §9 for the freshness contract.",
+                file=sys.stderr,
+            )
+            return 2
+        logger.info("null_cache_freshness_check: %s", reason)
+
         keywords_src = load_keywords(
             args.keywords if args.keywords is not None
             else Path("data/keywords_curated_v1.txt"),

@@ -648,6 +648,12 @@ class TestExecuteFullCli:
                 sys.executable, "scripts/campaigns/ct_perturbation_stage_b.py",
                 "--ambiguous-positions", str(manifest_path),
                 "--execute-full",
+                # Smoke-only: bypass the prereg §5/§9 freshness gate so
+                # this test does not depend on the live null cache being
+                # rebuilt against every HEAD. The gate itself is tested
+                # in TestStaleNullCacheGuard.
+                "--allow-stale-null-cache",
+                "--allow-null-unavailable",
                 "--max-h2-variants", "3",
                 "--keyword-count", "1",
                 "--keyword-limit", "1",
@@ -781,3 +787,201 @@ class TestPreregManifests:
         assert u["alphabet_kinds"] == ["AZ", "KA"]
         assert u["n_keywords"] == 1
         assert u["max_h2_variants"] == 3
+
+
+class TestStaleNullCacheGuard:
+    """Stage B refuses to launch when the null-baseline cache is stale
+    relative to the current kernel commit. See prereg §5/§9."""
+
+    def _build_manifest_payload(self, positions):
+        from kryptosbot.ct_perturbation import (
+            AMBIGUOUS_POSITIONS_SCHEMA_VERSION, _sha256_of_positions,
+        )
+        return {
+            "schema_version": AMBIGUOUS_POSITIONS_SCHEMA_VERSION,
+            "archive_provenance": {
+                "primary_source": "test fixture",
+                "evaluator": "stale-cache test",
+                "evaluation_date": "2026-05-11",
+                "method": "synthetic",
+            },
+            "positions": positions,
+            "rationale_per_position": {str(p): "test" for p in positions},
+            "checksum": {
+                "sha256_of_positions_sorted": _sha256_of_positions(positions),
+            },
+        }
+
+    def test_stale_null_cache_refuses_launch(self, tmp_path):
+        """If null_baselines manifest shows a different kernel_commit than
+        the current kernel commit, the runner exits 2 with stale_null_cache."""
+        import json, subprocess, sys
+
+        positions = [3, 50, 95]
+        manifest_path = tmp_path / "amb.json"
+        manifest_path.write_text(json.dumps(self._build_manifest_payload(positions)))
+        artifact_root = tmp_path / "artifacts"
+
+        # Build a fake null_baselines manifest with a deliberately-wrong commit.
+        fake_null_manifest = tmp_path / "fake_nulls" / "manifest.json"
+        fake_null_manifest.parent.mkdir(parents=True)
+        fake_null_manifest.write_text(json.dumps({
+            "kernel_commit_at_latest_write": "0" * 40,
+            "distributions": {},
+        }))
+
+        # Pin current kernel commit to a known sha that differs from
+        # the fake manifest's recorded sha. KRYPTOSBOT_KERNEL_COMMIT is
+        # the existing override hook in kryptosbot.null_baselines.
+        env = {
+            "PYTHONPATH": "src",
+            "PATH": "/usr/bin:/bin",
+            "KRYPTOS_NULL_BASELINES_MANIFEST": str(fake_null_manifest),
+            "KRYPTOSBOT_KERNEL_COMMIT": "f" * 40,
+        }
+        result = subprocess.run(
+            [
+                sys.executable, "scripts/campaigns/ct_perturbation_stage_b.py",
+                "--ambiguous-positions", str(manifest_path),
+                "--execute-full",
+                "--max-h2-variants", "1",
+                "--keyword-count", "1",
+                "--keyword-limit", "1",
+                "--artifact-root", str(artifact_root),
+                "--run-id", "stale_test",
+                "--workers", "1",
+            ],
+            capture_output=True, text=True, env=env,
+            cwd="/home/cpatrick/kryptos",
+        )
+        assert result.returncode == 2, (
+            f"got {result.returncode}; stderr={result.stderr}"
+        )
+        combined = (result.stderr + result.stdout).lower()
+        assert "stale_null_cache" in combined, (
+            f"missing stale_null_cache diagnostic; stderr={result.stderr}"
+        )
+        # Both SHAs should appear in the diagnostic so an operator can
+        # see exactly what drifted.
+        assert "0000000000000000000000000000000000000000" in (
+            result.stderr + result.stdout
+        )
+        assert "f" * 40 in (result.stderr + result.stdout)
+
+    def test_allow_stale_null_cache_override(self, tmp_path):
+        """The --allow-stale-null-cache flag permits launching despite drift."""
+        import json, subprocess, sys
+
+        positions = [3, 50, 95]
+        manifest_path = tmp_path / "amb.json"
+        manifest_path.write_text(json.dumps(self._build_manifest_payload(positions)))
+        artifact_root = tmp_path / "artifacts"
+
+        fake_null_manifest = tmp_path / "fake_nulls" / "manifest.json"
+        fake_null_manifest.parent.mkdir(parents=True)
+        fake_null_manifest.write_text(json.dumps({
+            "kernel_commit_at_latest_write": "0" * 40,
+            "distributions": {},
+        }))
+
+        env = {
+            "PYTHONPATH": "src",
+            "PATH": "/usr/bin:/bin",
+            "KRYPTOS_NULL_BASELINES_MANIFEST": str(fake_null_manifest),
+            "KRYPTOSBOT_KERNEL_COMMIT": "f" * 40,
+        }
+        result = subprocess.run(
+            [
+                sys.executable, "scripts/campaigns/ct_perturbation_stage_b.py",
+                "--ambiguous-positions", str(manifest_path),
+                "--execute-full",
+                "--allow-stale-null-cache",
+                "--max-h2-variants", "1",
+                "--keyword-count", "1",
+                "--keyword-limit", "1",
+                "--artifact-root", str(artifact_root),
+                "--run-id", "override_test",
+                "--workers", "1",
+            ],
+            capture_output=True, text=True, env=env,
+            cwd="/home/cpatrick/kryptos",
+        )
+        assert result.returncode == 0, f"stderr={result.stderr}"
+
+    def test_missing_null_cache_refuses_launch(self, tmp_path):
+        """If the null cache manifest is entirely absent, refuse launch."""
+        import json, subprocess, sys
+
+        positions = [3, 50, 95]
+        manifest_path = tmp_path / "amb.json"
+        manifest_path.write_text(json.dumps(self._build_manifest_payload(positions)))
+        artifact_root = tmp_path / "artifacts"
+
+        nonexistent = tmp_path / "no_such_dir" / "manifest.json"
+        # Do NOT create the file or its parent. The check must observe
+        # absence and refuse.
+        assert not nonexistent.exists()
+
+        env = {
+            "PYTHONPATH": "src",
+            "PATH": "/usr/bin:/bin",
+            "KRYPTOS_NULL_BASELINES_MANIFEST": str(nonexistent),
+        }
+        result = subprocess.run(
+            [
+                sys.executable, "scripts/campaigns/ct_perturbation_stage_b.py",
+                "--ambiguous-positions", str(manifest_path),
+                "--execute-full",
+                "--max-h2-variants", "1",
+                "--keyword-count", "1",
+                "--keyword-limit", "1",
+                "--artifact-root", str(artifact_root),
+                "--run-id", "missing_cache_test",
+                "--workers", "1",
+            ],
+            capture_output=True, text=True, env=env,
+            cwd="/home/cpatrick/kryptos",
+        )
+        assert result.returncode == 2, (
+            f"got {result.returncode}; stderr={result.stderr}"
+        )
+        combined = (result.stderr + result.stdout).lower()
+        assert "null_cache_missing" in combined or "null cache" in combined, (
+            f"missing absence diagnostic; stderr={result.stderr}"
+        )
+
+    def test_allow_null_unavailable_override(self, tmp_path):
+        """The --allow-null-unavailable flag permits launching when the
+        null cache is entirely absent."""
+        import json, subprocess, sys
+
+        positions = [3, 50, 95]
+        manifest_path = tmp_path / "amb.json"
+        manifest_path.write_text(json.dumps(self._build_manifest_payload(positions)))
+        artifact_root = tmp_path / "artifacts"
+
+        nonexistent = tmp_path / "no_such_dir" / "manifest.json"
+        assert not nonexistent.exists()
+
+        env = {
+            "PYTHONPATH": "src",
+            "PATH": "/usr/bin:/bin",
+            "KRYPTOS_NULL_BASELINES_MANIFEST": str(nonexistent),
+        }
+        result = subprocess.run(
+            [
+                sys.executable, "scripts/campaigns/ct_perturbation_stage_b.py",
+                "--ambiguous-positions", str(manifest_path),
+                "--execute-full",
+                "--allow-null-unavailable",
+                "--max-h2-variants", "1",
+                "--keyword-count", "1",
+                "--keyword-limit", "1",
+                "--artifact-root", str(artifact_root),
+                "--run-id", "absent_override_test",
+                "--workers", "1",
+            ],
+            capture_output=True, text=True, env=env,
+            cwd="/home/cpatrick/kryptos",
+        )
+        assert result.returncode == 0, f"stderr={result.stderr}"
