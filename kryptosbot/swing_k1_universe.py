@@ -130,3 +130,39 @@ def enumerate_universe() -> Iterable[Config]:
                 # M5: 7 segmentation sets.
                 for seg in M5_SEGMENTATIONS:
                     yield _make_config("M5", v, a, m, "skip", None, seg, False)
+
+
+def compute_universe_hash(target_null_counts: Tuple[int, ...] = (17, 20, 24, 28)) -> str:
+    """SHA-256 over the sorted, canonical serialization of every spec_hash in the universe."""
+    from kryptosbot.swing_k1_masks import build_mask_catalog
+    catalog = build_mask_catalog(target_null_counts=target_null_counts)
+    spec_hashes: list[str] = []
+    variants: tuple[Variant, ...] = ("beaufort", "var_beaufort", "vigenere")
+    alphabets: tuple[Alphabet, ...] = ("AZ", "KA")
+    for v in variants:
+        for a in alphabets:
+            spec_hashes.append(
+                _make_config("M1", v, a, _EMPTY_MASK, "skip", None, None, True).spec_hash
+            )
+            for m in catalog:
+                spec_hashes.append(_make_config("M2", v, a, m, "consume", None, None, False).spec_hash)
+                spec_hashes.append(_make_config("M3", v, a, m, "skip", None, None, False).spec_hash)
+                for L in M4_TAPE_LENGTHS:
+                    spec_hashes.append(_make_config("M4", v, a, m, "skip", L, None, False).spec_hash)
+                for seg in M5_SEGMENTATIONS:
+                    spec_hashes.append(_make_config("M5", v, a, m, "skip", None, seg, False).spec_hash)
+    spec_hashes.sort()
+    return hashlib.sha256("\n".join(spec_hashes).encode("utf-8")).hexdigest()
+
+
+def universe_summary() -> dict:
+    per_model = {"M1": 0, "M2": 0, "M3": 0, "M4": 0, "M5": 0}
+    total = 0
+    for c in enumerate_universe():
+        per_model[c.model_variant] += 1
+        total += 1
+    return {
+        "total_config_count": total,
+        "per_model": per_model,
+        "universe_hash": compute_universe_hash(),
+    }

@@ -76,3 +76,29 @@ def test_m1_uses_sentinel_class_label():
     assert len(m1_configs) == 6
     # All M1 configs reuse the sentinel mask_id
     assert {c.mask_id for c in m1_configs} == {"EMPTY_MASK"}
+
+
+def test_universe_hash_stable_across_calls():
+    """spec §8.3 required test: test_runner_universe_hash_stable."""
+    from kryptosbot.swing_k1_universe import compute_universe_hash
+    h1 = compute_universe_hash()
+    h2 = compute_universe_hash()
+    assert h1 == h2
+    assert len(h1) == 64
+
+
+def test_universe_hash_changes_when_target_counts_change():
+    from kryptosbot.swing_k1_universe import compute_universe_hash
+    h_default = compute_universe_hash()
+    # Forcing a different mask-catalog null-count set must change the hash.
+    h_alt = compute_universe_hash(target_null_counts=(20,))
+    assert h_default != h_alt
+
+
+def test_universe_size_reported():
+    from kryptosbot.swing_k1_universe import universe_summary
+    summary = universe_summary()
+    assert summary["total_config_count"] > 0
+    assert summary["per_model"]["M1"] == 6  # 3 variants x 2 alphabets, control arm
+    for model in ("M2", "M3", "M4", "M5"):
+        assert summary["per_model"][model] > 0
