@@ -60,3 +60,30 @@ def test_s1_prepared_returns_none_when_no_match():
     random_ks = _str_to_idx_seq("ZZQXJVQXJVQXJVQXJVQXJVQX")
     hit = scan_source_text_prepared(random_ks, prepared)
     assert hit is None
+
+
+def test_s2_finds_known_keyword_expansion():
+    """A keystream that equals the first 8+ chars of a KA expansion of KRYPTOS hits."""
+    from kryptosbot.swing_k1_structure import match_keyword_expansion, _str_to_idx_seq
+    # The KRYPTOS keyword expanded into a 24-char repeating tape via AZ indexing
+    keyword = "KRYPTOS"
+    expansion = (keyword * 4)[:24]
+    ks_idx = _str_to_idx_seq(expansion)
+    hit = match_keyword_expansion(ks_idx, candidate_keywords=("KRYPTOS",))
+    assert hit is not None
+    assert hit.keyword == "KRYPTOS"
+    assert hit.match_len >= 8
+
+
+def test_s2_no_match_for_random_keystream():
+    from kryptosbot.swing_k1_structure import match_keyword_expansion
+    random_ks = [0, 1, 5, 19, 11, 4, 22, 18, 7, 14, 2, 6, 17, 9, 13, 0, 20, 3, 24, 8, 16, 12, 25, 23]
+    hit = match_keyword_expansion(random_ks, candidate_keywords=("KRYPTOS", "ABSCISSA", "BERLIN"))
+    assert hit is None
+
+
+def test_s2_rejects_self_referential_keywords_by_default():
+    """Per feedback_k4_keywords_must_fit_public_art_context.md, SCULPTOR/ARTIST are excluded."""
+    from kryptosbot.swing_k1_structure import VETTED_KEYWORDS
+    assert "SCULPTOR" not in VETTED_KEYWORDS
+    assert "ARTIST" not in VETTED_KEYWORDS

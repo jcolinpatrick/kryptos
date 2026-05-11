@@ -97,3 +97,60 @@ def scan_source_text_prepared(
         if off != -1:
             return S1Hit(source_id=entry.id, offset=off, match_len=threshold_len)
     return None
+
+
+VETTED_KEYWORDS: Tuple[str, ...] = (
+    "KRYPTOS",
+    "ABSCISSA",
+    "BERLIN",
+    "CLOCK",
+    "BERLINCLOCK",
+    "NORTHEAST",
+    "EAST",
+    "SCHEIDT",
+    "PALIMPSEST",
+    "NDYAHR",
+    "DYAHR",
+    "SCIREALM",
+    "MUENCHEN",
+)
+# Self-referential keywords (SCULPTOR, ARTIST) explicitly excluded.
+
+
+@dataclass(frozen=True)
+class S2Hit:
+    keyword: str
+    match_len: int
+
+
+def match_keyword_expansion(
+    keystream_idx: Sequence[int],
+    candidate_keywords: Tuple[str, ...] = VETTED_KEYWORDS,
+    min_match_len: int = 8,
+) -> Optional[S2Hit]:
+    """Test whether the keystream is a prefix or substring of any candidate keyword's expansion.
+
+    The expansion is the keyword repeated to length 24, AZ-indexed.
+    """
+    if len(keystream_idx) < min_match_len:
+        return None
+    for kw in candidate_keywords:
+        if not kw:
+            continue
+        expansion = (kw * (24 // len(kw) + 2))[:24]
+        exp_idx = _str_to_idx_seq(expansion)
+        # Sliding match: find longest run-prefix of keystream matching any offset in expansion.
+        best = 0
+        for off in range(len(exp_idx)):
+            run = 0
+            while (
+                off + run < len(exp_idx)
+                and run < len(keystream_idx)
+                and exp_idx[off + run] == keystream_idx[run]
+            ):
+                run += 1
+            if run > best:
+                best = run
+        if best >= min_match_len:
+            return S2Hit(keyword=kw, match_len=best)
+    return None
