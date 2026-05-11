@@ -9,7 +9,8 @@ from dataclasses import dataclass
 from typing import Dict, FrozenSet, Literal, Tuple
 
 from kryptos.kernel.alphabet import AZ, KA, Alphabet
-from kryptos.kernel.constants import CT, CRIB_DICT
+from kryptos.kernel.constants import CT, CRIB_DICT, BEAN_EQ, BEAN_INEQ, BEAN_LINEAR
+from kryptos.kernel.constraints.bean import verify_bean_from_implied
 
 Variant = Literal["vigenere", "beaufort", "var_beaufort"]
 AlphaName = Literal["AZ", "KA"]
@@ -87,3 +88,61 @@ def derive_keystream_ct73(
         pt_idx = alpha.char_to_idx(pt_char)
         out[ct73_idx] = _ks_value(ct_idx, pt_idx, variant)
     return out
+
+
+@dataclass(frozen=True)
+class BeanVerdict:
+    passed: bool
+    eq_checked: int
+    ineq_checked: int
+    linear_checked: int
+    failures: Tuple[str, ...]
+
+
+def _count_checkable(constraints, available_positions):
+    """Count how many constraints have ALL required positions in available_positions."""
+    count = 0
+    for c in constraints:
+        if hasattr(c, "positions"):
+            positions_required = set(c.positions)
+        elif isinstance(c, tuple):
+            # Fallback for tuple-shaped constraints; pull integer fields.
+            positions_required = {x for x in c if isinstance(x, int) and 0 <= x < 97}
+        else:
+            positions_required = set()
+        if positions_required.issubset(available_positions):
+            count += 1
+    return count
+
+
+def bean_filter(implied: Dict[int, int]) -> BeanVerdict:
+    """Wrap verify_bean_from_implied with per-constraint accounting.
+
+    The kernel function returns bool (skipping constraints with missing positions).
+    This wrapper additionally counts how many constraints were checkable so the
+    artifact can record per-constraint detail.
+    """
+    passed = verify_bean_from_implied(implied)
+    available = set(implied.keys())
+    eq_checked = (
+        _count_checkable(BEAN_EQ, available)
+        if isinstance(BEAN_EQ, (list, tuple))
+        else (1 if 27 in available and 65 in available else 0)
+    )
+    ineq_checked = (
+        _count_checkable(BEAN_INEQ, available)
+        if isinstance(BEAN_INEQ, (list, tuple))
+        else 0
+    )
+    linear_checked = (
+        _count_checkable(BEAN_LINEAR, available)
+        if isinstance(BEAN_LINEAR, (list, tuple))
+        else 0
+    )
+    return BeanVerdict(
+        passed=passed,
+        eq_checked=eq_checked,
+        ineq_checked=ineq_checked,
+        linear_checked=linear_checked,
+        failures=tuple(),  # populated by escalation if/when needed
+    )

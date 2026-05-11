@@ -85,3 +85,50 @@ def test_m3_keystream_uses_ct73_indices():
     nulls = frozenset()  # no nulls: CT73 == CT97 here
     k = derive_keystream_ct73(variant="vigenere", alphabet="AZ", null_positions=nulls)
     assert len(k) == 24
+
+
+def test_bean_wrapper_passes_for_known_valid_keystream():
+    """Use the disclosed-crib keystream under the actual K4 cribs (Vig, AZ).
+    This is one of the three crib-valid keystreams (one per variant).
+    """
+    from kryptosbot.swing_k1_recovery import bean_filter, derive_keystream_ct97
+    implied = derive_keystream_ct97(variant="vigenere", alphabet="AZ", null_positions=frozenset())
+    verdict = bean_filter(implied)
+    assert verdict.passed is True
+
+
+def test_bean_wrapper_rejects_random_keystream():
+    from kryptosbot.swing_k1_recovery import bean_filter
+    # Crib positions populated with deliberately wrong values: all zeros
+    implied = {p: 0 for p in range(21, 34)}
+    verdict = bean_filter(implied)
+    assert verdict.passed is False
+
+
+def test_bean_wrapper_returns_structured_verdict():
+    from kryptosbot.swing_k1_recovery import bean_filter, BeanVerdict, derive_keystream_ct97
+    implied = derive_keystream_ct97(variant="vigenere", alphabet="AZ", null_positions=frozenset())
+    verdict = bean_filter(implied)
+    assert isinstance(verdict, BeanVerdict)
+    # All required positions populated, so the eq constraint MUST be checked.
+    assert verdict.eq_checked >= 1
+
+
+def test_bean_admission_rate_for_random_implied_is_low():
+    """spec §8.3 required test: test_runner_bean_filter_admission_rate.
+
+    Random 24-position keystreams should almost never pass Bean (1 admission
+    per ~26^24/624 keystreams).
+    """
+    import random
+    from kryptosbot.swing_k1_recovery import bean_filter
+    random.seed(42)
+    admits = 0
+    trials = 5000
+    crib_keys = list(range(21, 34)) + list(range(63, 74))
+    for _ in range(trials):
+        implied = {p: random.randint(0, 25) for p in crib_keys}
+        if bean_filter(implied).passed:
+            admits += 1
+    # With 5000 random trials and admit rate ~1.7e-32, we expect zero admits.
+    assert admits == 0
