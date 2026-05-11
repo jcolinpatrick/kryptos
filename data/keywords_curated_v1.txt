@@ -1,0 +1,31 @@
+# Stage B Curated Keyword List v1
+#
+# Purpose: small, hand-curated keyword pool for the CT-perturbation
+# Stage B campaign default. One keyword per line, uppercase A-Z only.
+# Lines starting with '#' and blank lines are ignored by load_keywords.
+#
+# Scope (per feedback_k4_keywords_must_fit_public_art_context.md):
+#   - Tableau-source words used in K1-K3 (PALIMPSEST, ABSCISSA, KRYPTOS)
+#   - Attested Sanborn-corpus crib terms used in K4 (BERLINCLOCK, NORTHEAST,
+#     EAST, NORTH, BERLIN, CLOCK)
+#   - Sculpture-physical references (COMPASS, BEARING, LODESTONE)
+#   - Operator-context references (LANGLEY, INTELLIGENCE)
+#
+# This list intentionally excludes Sanborn-self-reference noise
+# (SCULPTOR, ARTIST, etc.) per the public-art-context feedback.
+#
+# Schema: text/plain, one A-Z token per non-comment line.
+PALIMPSEST
+ABSCISSA
+KRYPTOS
+BERLINCLOCK
+NORTHEAST
+EAST
+NORTH
+BERLIN
+CLOCK
+COMPASS
+BEARING
+LODESTONE
+LANGLEY
+INTELLIGENCE

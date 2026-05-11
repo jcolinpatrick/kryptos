@@ -616,3 +616,52 @@ class TestRunH2Sweep:
         summary = json.loads((artifact_dir / "summary.json").read_text())
         assert summary["candidates_evaluated"] == 18
         assert summary["k"] == 3
+
+
+class TestExecuteFullCli:
+    def test_execute_full_runs_sweep(self, tmp_path):
+        import json, subprocess, sys
+        from kryptosbot.ct_perturbation import (
+            AMBIGUOUS_POSITIONS_SCHEMA_VERSION, _sha256_of_positions,
+        )
+        positions = [3, 50, 95]
+        payload = {
+            "schema_version": AMBIGUOUS_POSITIONS_SCHEMA_VERSION,
+            "archive_provenance": {
+                "primary_source": "test fixture",
+                "evaluator": "cli integration test",
+                "evaluation_date": "2026-05-11",
+                "method": "synthetic",
+            },
+            "positions": positions,
+            "rationale_per_position": {str(p): "test" for p in positions},
+            "checksum": {
+                "sha256_of_positions_sorted": _sha256_of_positions(positions),
+            },
+        }
+        manifest_path = tmp_path / "amb.json"
+        manifest_path.write_text(json.dumps(payload))
+        artifact_root = tmp_path / "artifacts"
+
+        result = subprocess.run(
+            [
+                sys.executable, "scripts/campaigns/ct_perturbation_stage_b.py",
+                "--ambiguous-positions", str(manifest_path),
+                "--execute-full",
+                "--max-h2-variants", "3",
+                "--keyword-count", "1",
+                "--keyword-limit", "1",
+                "--artifact-root", str(artifact_root),
+                "--run-id", "cli_test",
+                "--workers", "1",
+            ],
+            capture_output=True, text=True,
+            env={"PYTHONPATH": "src", "PATH": "/usr/bin:/bin"},
+            cwd="/home/cpatrick/kryptos",
+        )
+        assert result.returncode == 0, f"stderr: {result.stderr}"
+        summary = json.loads(
+            (artifact_root / "cli_test" / "summary.json").read_text()
+        )
+        assert summary["status"] in ("completed", "incomplete")
+        assert summary["candidates_evaluated"] > 0

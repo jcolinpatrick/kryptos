@@ -94,6 +94,7 @@ from kryptosbot.ct_perturbation import (  # noqa: E402
     SUPPORTED_ALPHABET_KINDS,
     SUPPORTED_FAMILIES,
     TopNHeap,
+    _ct_sha256,
     derive_bean_constraints,
     enumerate_hamming2_variants_constrained,
     load_ambiguous_positions,
@@ -1113,8 +1114,53 @@ def _build_argparser() -> argparse.ArgumentParser:
         "--execute-full",
         action="store_true",
         help=(
-            "Reserved for v1 runner; in this stub, exits with code 3 and "
-            "instructions for the v1 build."
+            "Run the full Stage B H2 sweep over the manifest. Requires "
+            "--ambiguous-positions."
+        ),
+    )
+    ap.add_argument(
+        "--keyword-limit",
+        type=int,
+        default=None,
+        help="Cap effective keyword count after loading (smoke).",
+    )
+    ap.add_argument(
+        "--max-h2-variants",
+        type=int,
+        default=None,
+        help="Cap H2 variant enumeration (smoke). Default: full universe.",
+    )
+    ap.add_argument(
+        "--workers",
+        type=int,
+        default=1,
+        help="Multiprocessing pool size for H2 variant evaluation.",
+    )
+    ap.add_argument(
+        "--run-id",
+        type=str,
+        default=None,
+        help="Run identifier (default: UTC timestamp).",
+    )
+    ap.add_argument(
+        "--artifact-root",
+        type=Path,
+        default=Path("results/ct_perturbation_stage_b"),
+        help="Root directory for per-run artifact directories.",
+    )
+    ap.add_argument(
+        "--keywords",
+        type=Path,
+        default=None,
+        help="Path to keyword list (one per line, uppercase A-Z).",
+    )
+    ap.add_argument(
+        "--per-task-timeout-sec",
+        type=float,
+        default=60.0,
+        help=(
+            "Per-H2-variant timeout (seconds) in MP mode. Default 60.0 per "
+            "feedback_pool_worker_no_per_task_timeout.md."
         ),
     )
     return ap
@@ -1272,23 +1318,58 @@ def main(argv: list[str] | None = None) -> int:
     _print_summary(manifest, n_keywords=args.keyword_count)
 
     if args.execute_full:
-        print(
-            "\nERROR: --execute-full is not supported in this stub (v0.2).",
-            file=sys.stderr,
+        if manifest is None:
+            logger.error(
+                "--execute-full requires --ambiguous-positions <manifest>"
+            )
+            return 2
+        keywords_src = load_keywords(
+            args.keywords if args.keywords is not None
+            else Path("data/keywords_curated_v1.txt"),
+            cap=args.keyword_count,
         )
-        print(
-            "\nThe full Stage B sweep runner is a separate project requiring "
-            "its own brainstorm/plan/build cycle (Stage A's runner is 1836 "
-            f"lines; Stage B will be similar). See {_PREREG_PATH} §9 for "
-            "the binding CLI spec.",
-            file=sys.stderr,
+        run_id = args.run_id or _dt.datetime.now(_dt.timezone.utc).strftime(
+            "%Y%m%dT%H%M%SZ_full"
         )
-        print(
-            "\nUntil then, this stub validates manifests, computes universe "
-            "sizes, and runs the prereg §7 synthetic-recovery test.",
-            file=sys.stderr,
+        artifact_dir = args.artifact_root / run_id
+        universe = stage_b_universe_size(
+            manifest, n_keywords=len(keywords_src.normalized)
         )
-        return 3
+        effective_keywords = (
+            args.keyword_limit if args.keyword_limit is not None
+            else len(keywords_src.normalized)
+        )
+        effective_variants = (
+            args.max_h2_variants if args.max_h2_variants is not None
+            else universe["h2_variants"]
+        )
+        expected_total = (
+            effective_variants
+            * len(SUPPORTED_FAMILIES)
+            * len(SUPPORTED_ALPHABET_KINDS)
+            * effective_keywords
+        )
+        cfg = SweepConfig(
+            ct=CT, keywords=list(keywords_src.normalized), manifest=manifest,
+            universe_size=universe["total_configs"],
+            max_h2_variants=args.max_h2_variants,
+            keyword_limit=args.keyword_limit,
+        )
+        run_metadata = {
+            "canonical_ct_sha256": _ct_sha256(CT),
+            "ambiguous_positions_sha256": manifest.checksum_sha256,
+            "k": manifest.k,
+            "h2_variants_executed": effective_variants,
+            "expected_total_config_cardinality": expected_total,
+            "keyword_count": effective_keywords,
+            "keyword_hash": keywords_src.normalized_sha256,
+        }
+        run_h2_sweep(
+            cfg, artifact_dir=artifact_dir, run_id=run_id,
+            workers=args.workers, run_metadata=run_metadata,
+            per_task_timeout_sec=args.per_task_timeout_sec,
+        )
+        return 0
 
     return 0
 
