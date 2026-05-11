@@ -1,0 +1,187 @@
+{
+  "schema_version": "swing_k1.tier_a.v1",
+  "frozen_at": "2026-05-11",
+  "purpose": "Promotion-eligible source-text corpus for Swing K-1 keystream identification.",
+  "entries": [
+    {
+      "id": "k1_plaintext",
+      "kind": "inline_plaintext",
+      "text": "BETWEEN SUBTLE SHADING AND THE ABSENCE OF LIGHT LIES THE NUANCE OF IQLUSION",
+      "sha256": "COMPUTE_AT_LOAD_TIME"
+    },
+    {
+      "id": "k2_plaintext",
+      "kind": "inline_plaintext",
+      "text": "IT WAS TOTALLY INVISIBLE HOWS THAT POSSIBLE THEY USED THE EARTHS MAGNETIC FIELD X THE INFORMATION WAS GATHERED AND TRANSMITTED UNDERGRUUND TO AN UNKNOWN LOCATION X DOES LANGLEY KNOW ABOUT THIS THEY SHOULD ITS BURIED OUT THERE SOMEWHERE X WHO KNOWS THE EXACT LOCATION ONLY WW THIS WAS HIS LAST MESSAGE X THIRTY EIGHT DEGREES FIFTY SEVEN MINUTES SIX POINT FIVE SECONDS NORTH SEVENTY SEVEN DEGREES EIGHT MINUTES FORTY FOUR SECONDS WEST X LAYER TWO",
+      "sha256": "COMPUTE_AT_LOAD_TIME"
+    },
+    {
+      "id": "k3_plaintext",
+      "kind": "inline_plaintext",
+      "text": "SLOWLY DESPARATLY SLOWLY THE REMAINS OF PASSAGE DEBRIS THAT ENCUMBERED THE LOWER PART OF THE DOORWAY WAS REMOVED WITH TREMBLING HANDS I MADE A TINY BREACH IN THE UPPER LEFT HAND CORNER AND THEN WIDENING THE HOLE A LITTLE I INSERTED THE CANDLE AND PEERED IN THE HOT AIR ESCAPING FROM THE CHAMBER CAUSED THE FLAME TO FLICKER BUT PRESENTLY DETAILS OF THE ROOM WITHIN EMERGED FROM THE MIST X CAN YOU SEE ANYTHING Q",
+      "sha256": "COMPUTE_AT_LOAD_TIME"
+    },
+    {
+      "id": "reference_sanborn_handwriting_analysis",
+      "kind": "file",
+      "path": "reference/SANBORN_HANDWRITING_ANALYSIS.md",
+      "sha256": "758599e15b5c8add995664de7ec4e8c03ccfbf1e7d7cd6ea1c0eb1bd2c16f6c7"
+    },
+    {
+      "id": "reference_sanborn_handwriting_profile",
+      "kind": "file",
+      "path": "reference/SANBORN_HANDWRITING_PROFILE.md",
+      "sha256": "2f5a2e43dfcc5cb4752a142d563f793ba3fa5b1da31c380eaacd044546b04e31"
+    },
+    {
+      "id": "reference_archive_photo_evidence_inventory",
+      "kind": "file",
+      "path": "reference/archive_photo_evidence_inventory.md",
+      "sha256": "ca16d6c1449d0e735ba327cec8c7106cf65864397d938d0f685bcef773c38785"
+    },
+    {
+      "id": "reference_cia_1996_memo",
+      "kind": "file",
+      "path": "reference/cia_1996_memo.md",
+      "sha256": "d02795502b411e1723a85312fc9cb7eec6cc0f547e2266021d8160bfa1c332b3"
+    },
+    {
+      "id": "reference_cia_fac_minutes_1988",
+      "kind": "file",
+      "path": "reference/cia_fac_minutes_1988.md",
+      "sha256": "0603da87d2e6567ad6943e498bd37e7492cabe6002c0452d4165da3a186cf6c5"
+    },
+    {
+      "id": "reference_cia_kryptos_page",
+      "kind": "file",
+      "path": "reference/cia_kryptos_page.md",
+      "sha256": "4ee28a98c39e80cccd6724ea75070843fe28ebb1f5265f668563415ac8161b9b"
+    },
+    {
+      "id": "reference_ed_scheidt_dossier",
+      "kind": "file",
+      "path": "reference/ed_scheidt_dossier.md",
+      "sha256": "3706ae9087a4cfe317ec5e00dac47302d61445f1946a7f25766762e323f43931"
+    },
+    {
+      "id": "reference_elonka_pn26_kryptos",
+      "kind": "file",
+      "path": "reference/elonka_pn26_kryptos.md",
+      "sha256": "f1ba6140ac59758bdc8a3d248260d2a6aa5612063f228efff6b457eb48dc2fe2"
+    },
+    {
+      "id": "reference_john_le_carre_dossier",
+      "kind": "file",
+      "path": "reference/john_le_carre_dossier.md",
+      "sha256": "7c672bd3a728e6f7b2eb6e993389c7482bda19d65f150470c90b7421c36b8722"
+    },
+    {
+      "id": "reference_k4_plaintext_analysis",
+      "kind": "file",
+      "path": "reference/k4_plaintext_analysis.md",
+      "sha256": "74d6f38c9ccdb67006c1493ff9476fcbae7570212b3322e7f07b369f05b81536"
+    },
+    {
+      "id": "reference_kryptosfan_findings",
+      "kind": "file",
+      "path": "reference/kryptosfan_findings.md",
+      "sha256": "024c238a4e7ce99e57c841e2dee83eeda244016012c27dd791b19358bd8959c9"
+    },
+    {
+      "id": "reference_museumvisit",
+      "kind": "file",
+      "path": "reference/museumvisit.md",
+      "sha256": "040e12004527ce29d0a7d991bf1bdf221a9014f0808610b401549a23cec8e793"
+    },
+    {
+      "id": "reference_nova_sciencenow_kryptos",
+      "kind": "file",
+      "path": "reference/nova_sciencenow_kryptos.md",
+      "sha256": "c8a7eb085add5ed1bf7f57dbafce837648039c8c17b180f1b53cbe7aed6ae030"
+    },
+    {
+      "id": "reference_sanborn_body_of_work",
+      "kind": "file",
+      "path": "reference/sanborn_body_of_work.md",
+      "sha256": "5e61d6b5d206f8434b61713ad3da4de04c85640d23e338a796af3e261c07ffd6"
+    },
+    {
+      "id": "reference_sanborn_correspondence",
+      "kind": "file",
+      "path": "reference/sanborn_correspondence.md",
+      "sha256": "3f36bd1f52ae462f4f35aa0841350f38fc771d3c2895943e5f775d7eb3444fa6"
+    },
+    {
+      "id": "reference_sanborn_open_letter_aug2025",
+      "kind": "file",
+      "path": "reference/sanborn_open_letter_aug2025.md",
+      "sha256": "c7a04a2067543066c7ef26e9c8034ce4514250101ca36e8e49f0a5ea2b39685a"
+    },
+    {
+      "id": "reference_smithsonian_archive",
+      "kind": "file",
+      "path": "reference/smithsonian_archive.md",
+      "sha256": "7768e17f3d9d1557d90b0fe55698b752a5c4846d20c93d03a4815ae1672196fe"
+    },
+    {
+      "id": "reference_william_h_webster",
+      "kind": "file",
+      "path": "reference/william_h_webster.md",
+      "sha256": "5fc2afcefab84706d5910f7b34e46db3aabe0fdd5a4239eebbe9dfcdc5a55be0"
+    },
+    {
+      "id": "reference_youtube_transcript",
+      "kind": "file",
+      "path": "reference/youtube_transcript.md",
+      "sha256": "eb1da9ac61bd133f760789f2a562be001c915487007c1947b6b1e4d726cad8f3"
+    },
+    {
+      "id": "reference_carter_tomb",
+      "kind": "file",
+      "path": "reference/Carter_Tomb.txt",
+      "sha256": "35479684a1b0ee13ffcc480d9bfef948bef46fb5eef214c2769a7c45e6a79306"
+    },
+    {
+      "id": "reference_lemmino_transcript",
+      "kind": "file",
+      "path": "reference/LEMMiNO Transcript.txt",
+      "sha256": "c20d325dc5c20048156083add6deed8db055cc6ec7d48d758396d120036eca92"
+    },
+    {
+      "id": "reference_npr_interviews",
+      "kind": "file",
+      "path": "reference/NPR Interviews.txt",
+      "sha256": "e91f3f38bad87ae9d8f6ef296690158a7e24ad80291630ec4821963b6807a68e"
+    },
+    {
+      "id": "reference_wikipedia_otp",
+      "kind": "file",
+      "path": "reference/Wikipedia OTP.txt",
+      "sha256": "aa1c2c3d3f7dfe092d61d0c4d80e4477e351c32877f854e62b31fd020e5d5ee6"
+    },
+    {
+      "id": "reference_carter_gutenberg",
+      "kind": "file",
+      "path": "reference/carter_gutenberg.txt",
+      "sha256": "1572d66f18e4fc4acb1c015cb119cc5c73d9420586529f7356bbbf74ba99f066"
+    },
+    {
+      "id": "reference_carter_vol1",
+      "kind": "file",
+      "path": "reference/carter_vol1.txt",
+      "sha256": "f2bfdb3fc4098344f01338b2b1bee3c4626c3feb14f70e02384fc9b3b155d477"
+    },
+    {
+      "id": "reference_great_big_story_cracking_the_uncrackable_code_2019",
+      "kind": "file",
+      "path": "reference/great_big_story_cracking_the_uncrackable_code_2019.txt",
+      "sha256": "998732ef9b27ac8437284dc5083db760b1b036d920cbca5b836c0e3933b05c05"
+    },
+    {
+      "id": "reference_parse_stats",
+      "kind": "file",
+      "path": "reference/parse_stats.txt",
+      "sha256": "f6cea6b965f3cc885077de476f794c02df92efd7fb4a4198bd32585bf2613605"
+    }
+  ]
+}
