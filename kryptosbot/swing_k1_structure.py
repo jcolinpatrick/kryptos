@@ -154,3 +154,56 @@ def match_keyword_expansion(
         if best >= min_match_len:
             return S2Hit(keyword=kw, match_len=best)
     return None
+
+
+@dataclass(frozen=True)
+class S3Hit:
+    generator: str
+    seed: Tuple[int, ...]
+    match_strength: float  # 1.0 = perfect, fraction otherwise
+
+
+def _try_fibonacci(seq: Sequence[int]) -> Optional[S3Hit]:
+    if len(seq) < 3:
+        return None
+    # Test ALL (k0, k1) seeds; the seed is the first two values of seq
+    k0, k1 = seq[0], seq[1]
+    a, b = k0, k1
+    for i in range(2, len(seq)):
+        expected = (a + b) % 26
+        if seq[i] != expected:
+            return None
+        a, b = b, seq[i]
+    return S3Hit(generator="fibonacci_mod_26", seed=(k0, k1), match_strength=1.0)
+
+
+def _try_gronsfeld(seq: Sequence[int]) -> Optional[S3Hit]:
+    if all(0 <= v <= 9 for v in seq):
+        return S3Hit(generator="gronsfeld_0_9", seed=tuple(seq[:1]), match_strength=1.0)
+    return None
+
+
+def _try_autokey(seq: Sequence[int], primer_lens: Tuple[int, ...] = tuple(range(4, 13))) -> Optional[S3Hit]:
+    """Autokey: k[i] = primer[i] for i < L, k[i] = seq[i - L] for i >= L.
+    Check whether the observed sequence is self-consistent for any primer length L.
+    """
+    for L in primer_lens:
+        if len(seq) < L + 1:
+            continue
+        consistent = all(seq[i] == seq[i - L] for i in range(L, len(seq)))
+        if consistent:
+            return S3Hit(
+                generator=f"autokey_primer_{L}",
+                seed=tuple(seq[:L]),
+                match_strength=1.0,
+            )
+    return None
+
+
+def match_generator(seq: Sequence[int]) -> Optional[S3Hit]:
+    """Try generators in priority order: Fibonacci > Autokey > Gronsfeld."""
+    for fn in (_try_fibonacci, _try_autokey, _try_gronsfeld):
+        hit = fn(seq)
+        if hit is not None:
+            return hit
+    return None

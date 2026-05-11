@@ -87,3 +87,31 @@ def test_s2_rejects_self_referential_keywords_by_default():
     from kryptosbot.swing_k1_structure import VETTED_KEYWORDS
     assert "SCULPTOR" not in VETTED_KEYWORDS
     assert "ARTIST" not in VETTED_KEYWORDS
+
+
+def test_s3_fibonacci_match_known_seed():
+    """k_i = (k_{i-1} + k_{i-2}) mod 26 with k0=3, k1=7."""
+    from kryptosbot.swing_k1_structure import match_generator
+    seq = [3, 7]
+    while len(seq) < 24:
+        seq.append((seq[-1] + seq[-2]) % 26)
+    hit = match_generator(seq[:24])
+    assert hit is not None
+    assert hit.generator == "fibonacci_mod_26"
+    assert hit.seed == (3, 7)
+
+
+def test_s3_gronsfeld_match():
+    """k_i in {0..9} for all i -> Gronsfeld."""
+    from kryptosbot.swing_k1_structure import match_generator
+    seq = [1, 4, 2, 7, 3, 9, 0, 5, 6, 8, 2, 1, 4, 4, 9, 3, 7, 0, 6, 5, 8, 2, 1, 9]
+    hit = match_generator(seq)
+    assert hit is not None
+    assert hit.generator == "gronsfeld_0_9"
+
+
+def test_s3_no_match_for_random():
+    from kryptosbot.swing_k1_structure import match_generator
+    random_ks = [11, 17, 22, 25, 6, 0, 13, 19, 14, 7, 11, 24, 2, 18, 21, 4, 9, 15, 20, 23, 1, 16, 12, 10]
+    hit = match_generator(random_ks)
+    assert hit is None
