@@ -92,7 +92,7 @@ def _make_config(
 # A synthetic "empty mask" sentinel for M1 control-arm configs.
 _EMPTY_MASK = Mask(
     mask_id="EMPTY_MASK",
-    class_label="mod_n",  # arbitrary; M1 ignores mask
+    class_label="sentinel",  # sentinel class for M1 control arm; never a real mask
     positions=frozenset(),
     params=(("special", "control_arm_empty"),),
 )

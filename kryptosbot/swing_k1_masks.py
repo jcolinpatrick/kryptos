@@ -13,7 +13,7 @@ DEFAULT_NULL_COUNTS = (17, 20, 24, 28)
 @dataclass(frozen=True)
 class Mask:
     mask_id: str
-    class_label: Literal["mod_n", "boundary_region"]
+    class_label: Literal["mod_n", "boundary_region", "sentinel"]
     positions: FrozenSet[int]
     params: tuple[Tuple[str, object], ...]  # (key, value) pairs for reproducibility
 

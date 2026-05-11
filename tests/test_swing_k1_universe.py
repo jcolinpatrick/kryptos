@@ -65,3 +65,14 @@ def test_universe_size_bounded_below_50k():
     # Phase A target ~20K; verify the universe is in the order-of-magnitude range.
     n = sum(1 for _ in enumerate_universe())
     assert 5_000 <= n <= 50_000, f"universe size out of range: {n}"
+
+
+def test_m1_uses_sentinel_class_label():
+    """M1 control arm must not bucket into mod_n or boundary_region for downstream grouping."""
+    from kryptosbot.swing_k1_universe import enumerate_universe, _EMPTY_MASK
+    assert _EMPTY_MASK.class_label == "sentinel"
+    # And reachable through a config:
+    m1_configs = [c for c in enumerate_universe() if c.model_variant == "M1"]
+    assert len(m1_configs) == 6
+    # All M1 configs reuse the sentinel mask_id
+    assert {c.mask_id for c in m1_configs} == {"EMPTY_MASK"}
