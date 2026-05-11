@@ -27,10 +27,11 @@ def test_inline_plaintext_hashes_resolved():
 def test_file_entry_hash_matches_disk():
     import hashlib
     from kryptosbot.swing_k1_corpus import load_tier_a
+    REPO_ROOT = Path(__file__).resolve().parent.parent  # tests/.. = repo root
     corpus = load_tier_a()
     for entry in corpus.entries:
         if entry.kind == "file":
-            with open(entry.path, "rb") as f:
+            with open(REPO_ROOT / entry.path, "rb") as f:
                 expected = hashlib.sha256(f.read()).hexdigest()
             assert entry.sha256 == expected, f"hash mismatch for {entry.path}"
 
@@ -45,7 +46,7 @@ def test_corpus_hash_stable():
 def test_tier_b_empty_in_phase_a():
     from kryptosbot.swing_k1_corpus import load_tier_b
     corpus = load_tier_b()
-    assert corpus.entries == []
+    assert list(corpus.entries) == []
 
 
 def test_uppercase_normalized_text():

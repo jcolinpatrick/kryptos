@@ -5,7 +5,7 @@ import hashlib
 import json
 from dataclasses import dataclass
 from pathlib import Path
-from typing import List, Literal
+from typing import Literal
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 TIER_A_PATH = REPO_ROOT / "data" / "swing_k1" / "tier_a_manifest.json"
@@ -28,7 +28,7 @@ class CorpusEntry:
 class Corpus:
     tier: Literal["A", "B"]
     manifest_hash: str
-    entries: list[CorpusEntry]
+    entries: tuple[CorpusEntry, ...]
 
 
 def _normalize_text(raw: str) -> str:
@@ -76,7 +76,7 @@ def _load_manifest(path: Path, tier: Literal["A", "B"]) -> Corpus:
             )
         else:
             raise ValueError(f"unknown corpus entry kind: {raw_entry['kind']}")
-    return Corpus(tier=tier, manifest_hash=manifest_hash, entries=list(entries))
+    return Corpus(tier=tier, manifest_hash=manifest_hash, entries=tuple(entries))
 
 
 def load_tier_a() -> Corpus:
