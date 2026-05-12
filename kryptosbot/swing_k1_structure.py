@@ -12,7 +12,10 @@ def _str_to_idx_seq(s: str) -> List[int]:
 
 
 def _text_to_idx_seq(text: str) -> List[int]:
-    return [AZ.char_to_idx(c) for c in text if c.isalpha()]
+    # Restrict to ASCII A..Z so unicode-aware .isalpha() does not let accented
+    # characters (e.g. È, É, Cyrillic К) through and crash AZ.char_to_idx.
+    # Mirrors the guard in _text_to_idx_bytes used by scan_source_text_prepared.
+    return [AZ.char_to_idx(c) for c in text if "A" <= c <= "Z"]
 
 
 def _text_to_idx_bytes(text: str) -> bytes:
