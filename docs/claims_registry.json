@@ -258,6 +258,33 @@
       "owner_doc": "reports/w_anchor_reversal_bounded_negative_2026_04_30.md",
       "red_team_status": "deterministic rerun on 2026-04-30 reproduced original result exactly (21,570 configs, 0 STORE, best 6/24 = SEG_ORDER_W_LED + FACADE + VIG + AZ); per-cell bests bit-identical",
       "notes": "Allowed downstream uses: summary, prompt context, duplicate-avoidance / ranking-down feature, bounded elimination basis WITHIN the tested family only. NOT to be used as: hard global constraint, tier-1 elimination, basis to deprioritize the W-as-structural-anchor hypothesis at large. Complementary to project_w_anchor_hypothesis_eliminated_2026_04_29 (memory) which addresses W-as-cipher-event substitution mechanisms — this entry covers W-as-CT-permutation-anchor with simple keyword substitution, a different mechanism family. Do-not-revive policy: arbitrary W-anchored single-keyword additive sweeps and broader keyword-list enlargement (e.g. english.txt) without source provenance are decided no-go until new provenance-grade evidence motivates a specific source corpus. Single residual admissible follow-up: source-constrained long-key/running-key after SEG_ORDER_IMAGE or other W-anchored transform IF the key/source corpus is independently motivated by Sanborn / Kryptos archival provenance."
+    },
+    {
+      "claim_id": "C-KEYTAPE-M2M5-01",
+      "statement": "Swing K-1: the key_tape M2..M5 keystream-recovery campaign on the real K4 cribs closed null_level on 2026-05-11. 30,696 configurations were evaluated across the preregistered tier-1 mask universe (M2..M5 mechanisms x three additive variants {Vigenere, Beaufort, Variant Beaufort} x two alphabets {AZ, KA} x 341 parametric masks), 15,336 were Bean-admitted (~50%, structurally consistent with the AZ alphabet path passing crib-valid keystreams and KA failing), and 0 candidates reached the structure-channel promotion gate (S1 source-text match >=24, S2 keyword expansion >=8, S3 generator strength >=0.95). Tier B exploratory hits: 0. The p<=1e-6 null-calibration threshold was not invoked because no candidate fired the structure gate; null_calibration.json records method=\"not_run_no_promotion_candidates\". Bounded null verdict within the tier-1 universe; NOT a global key_tape elimination.",
+      "class": "internal_result",
+      "status": "live",
+      "scope": "tier_1_masks_only: preregistered tier-1 mask universe (universe_hash e6c61157db433da121113ab82b86e3f3893116e559857a8bc5ba253836f470fe) covering M2..M5 keystream-recovery mechanisms x {Vigenere, Beaufort, Variant Beaufort} x {AZ, KA} x 341 parametric masks on the carved 97-char K4 CT under direct positional crib mapping. Does NOT cover: tier 2 geometry-derived masks, M4/M5 with consume null_rule, alternate PT-length hypotheses (anything other than 73/97), multi-layer constructions wrapping key_tape, non-additive substitution systems, or source-text corpora outside the tier-1 manifest.",
+      "depends_on": ["C-STATE-01", "C-STATE-02", "C-COMP-01", "C-AUTOKEY-01"],
+      "supersedes": [],
+      "superseded_by": [],
+      "artifact": "analysis_runs/key_tape_m2_m5_2026_05_11/ (manifest.json, configs.jsonl, admitted_keystreams.jsonl, null_calibration.json, verdict.md)",
+      "repro_reference": "docs/superpowers/specs/2026-05-11-key-tape-m2-m5-keystream-recovery-design.md; docs/superpowers/plans/2026-05-11-swing-k1-key-tape-m2-m5.md; kernel_commit a300833d8b66182f279d84dfc55ed383dac54366; universe_hash pinned by tests/test_universe_hash_pinned_exact_value (committed at a3aa443)",
+      "owner_doc": "docs/superpowers/plans/2026-05-11-swing-k1-key-tape-m2-m5.md",
+      "red_team_status": "preregistered design with pinned universe hash and pinned kernel_commit; full sweep completed in 266 seconds on 24 workers; manifest universe_hash matches preregistered pin",
+      "notes": "Evidence: null_at_p_le_1e-6 (vacuous - structure gate never fired, so the p-value threshold was not actually exercised). Non-claim banner: K4 is NOT proven impossible by this verdict. The verdict rejects the preregistered tier-1 mask universe under M2..M5 at the structure-channel promotion gate. Tier 2 geometry-derived masks, M4/M5 with consume null_rule, and PT-length hypotheses other than 73/97 remain untested under this design. Per-configuration summary: total_configs_evaluated=30696, bean_admitted=15336, promotion_eligible=0, tier_b_hits=0, elapsed_seconds=266. The Bean admit rate (~50%) is the AZ-alphabet path passing while KA fails - structurally expected, not a finding.",
+      "campaign_summary": {
+        "total_configs_evaluated": 30696,
+        "bean_admitted": 15336,
+        "promotion_eligible": 0,
+        "tier_b_hits": 0,
+        "elapsed_seconds": 266,
+        "universe_hash": "e6c61157db433da121113ab82b86e3f3893116e559857a8bc5ba253836f470fe",
+        "kernel_commit": "a300833d8b66182f279d84dfc55ed383dac54366",
+        "evidence": "null_at_p_le_1e-6",
+        "scope_tag": "tier_1_masks_only",
+        "registered_at": "2026-05-11"
+      }
     }
   ]
 }
