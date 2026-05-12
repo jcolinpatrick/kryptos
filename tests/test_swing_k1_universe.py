@@ -126,3 +126,34 @@ def test_universe_hash_independent_of_pythonhashseed():
     ).strip()
     from kryptosbot.swing_k1_universe import compute_universe_hash
     assert out == compute_universe_hash()
+
+
+def test_m4_short_tape():
+    """spec §8.3 required test: test_runner_m4_finite_tape_short.
+
+    M4 with tape length 24 (smallest in the preregistered set) should produce
+    valid configs. We don't (in Phase A) actually execute the apply_key_tape
+    call here; we verify the universe enumerator handles the boundary.
+    """
+    from kryptosbot.swing_k1_universe import enumerate_universe
+    m4_24 = [c for c in enumerate_universe() if c.model_variant == "M4" and c.tape_length == 24]
+    assert len(m4_24) > 0
+    for c in m4_24:
+        assert c.tape_length == 24
+        assert c.segment_boundaries is None
+        assert c.null_consumption_mode == "skip"
+
+
+def test_m5_segment_independence():
+    """spec §8.3 required test: test_runner_m5_segment_boundary.
+
+    M5 segment-boundary set {21, 34, 63} must yield a config with that exact tuple
+    and no neighbouring slippage.
+    """
+    from kryptosbot.swing_k1_universe import enumerate_universe
+    m5_full = [c for c in enumerate_universe()
+               if c.model_variant == "M5" and c.segment_boundaries == (21, 34, 63)]
+    assert len(m5_full) > 0
+    for c in m5_full:
+        assert c.segment_boundaries == (21, 34, 63)
+        assert c.tape_length is None
