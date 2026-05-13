@@ -61,6 +61,27 @@ case "${1:-}" in
     ;;
 esac
 
+# Files exempt from content scanning. The privacy machinery itself
+# necessarily contains the patterns it blocks (the pattern file lists
+# them; the scanner and publish script reference them by name in
+# comments). Self-exempt these three files to prevent the scanner
+# from blocking its own publication.
+SCAN_EXEMPT=(
+  "ops/publish/forbidden_content.txt"
+  "ops/publish/scan_content.sh"
+  "ops/publish/publish_to_github.sh"
+)
+
+is_scan_exempt() {
+  local p="$1"
+  for exempt in "${SCAN_EXEMPT[@]}"; do
+    if [ "$p" = "$exempt" ]; then
+      return 0
+    fi
+  done
+  return 1
+}
+
 # Load patterns: one regex per line, with the reason kept for reporting.
 patterns=()
 reasons=()
@@ -141,6 +162,11 @@ for p in "${patterns[@]}"; do
 done
 
 for path in "${files_to_scan[@]}"; do
+  # Self-exempt the privacy-machinery files (they necessarily contain
+  # the patterns they block).
+  if is_scan_exempt "$path"; then
+    continue
+  fi
   # Bulk pre-check: one grep call, exit-status-only (-q), with -m 1 so we
   # stop on the first match. Skip non-matching files cheaply.
   if [ "$mode" = "files" ]; then

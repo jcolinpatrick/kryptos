@@ -1,7 +1,7 @@
 """Finite-tape additive cipher with optional null insertion.
 
-Implements the M1-M5 hypothesis class from the keystream-forensics
-agent (memory/keystream_forensics_v2.md). The tape is finite; nulls
+Implements the M1-M5 finite-tape hypothesis class. See
+memory/keystream_forensics_v2.md for the underlying research. The tape is finite; nulls
 either skip the tape (M4 default, "skip" rule) or consume it without
 contributing to plaintext ("consume" rule).
 

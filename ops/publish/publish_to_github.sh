@@ -43,9 +43,10 @@ PUBLIC_PATHSPECS=(
   ':!tests/test_kryptosbot_oracle_hardening.py'
   ':!tests/test_historical_eliminations.py'
   ':!docs/maturation/'
+  ':!docs/superpowers/'
 )
 
-FORBIDDEN_REGEX='^(kryptosbot/|scripts/_infra/calibrate_null_baselines|tests/test_polybius_scorer\.py$|tests/test_kryptosbot_oracle_hardening\.py$|tests/test_historical_eliminations\.py$|docs/maturation/)'
+FORBIDDEN_REGEX='^(kryptosbot/|scripts/_infra/calibrate_null_baselines|tests/test_polybius_scorer\.py$|tests/test_kryptosbot_oracle_hardening\.py$|tests/test_historical_eliminations\.py$|docs/maturation/|docs/superpowers/)'
 
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 cd "$REPO_ROOT"
@@ -207,7 +208,7 @@ fi
 
 # Content scan: catch proprietary terminology that lives in *public-path*
 # files (which the path filter above can't see). This is the gate that
-# would have caught the 2026-04-30 Team-of-Rivals leak.
+# would have caught the 2026-04-30 internal-vocabulary leak.
 SCANNER="$REPO_ROOT/ops/publish/scan_content.sh"
 if [ -x "$SCANNER" ]; then
   echo "Scanning _publish tree for forbidden content patterns..."

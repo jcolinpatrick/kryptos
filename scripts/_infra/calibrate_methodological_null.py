@@ -296,8 +296,8 @@ def gen_key_tape(rng: random.Random, keywords: list[str]) -> dict[str, Any]:
     null_positions is empty). Tape length must be ≥ CT_LEN under SKIP
     with no nulls — so we pad the tape by repetition to CT_LEN.
 
-    Mirrors the M1-M5 finite-tape theories the keystream-forensics
-    persona proposes.
+    Mirrors the M1-M5 finite-tape theories from the keystream
+    forensics research line.
     """
     tape_len = rng.randint(4, 30)
     base_tape = tuple(rng.randint(0, 25) for _ in range(tape_len))

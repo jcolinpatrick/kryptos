@@ -1,7 +1,6 @@
 """CLI entry point for Swing K-1 keystream-recovery campaign.
 
-Spec: docs/superpowers/specs/2026-05-11-key-tape-m2-m5-keystream-recovery-design.md
-Plan: docs/superpowers/plans/2026-05-11-swing-k1-key-tape-m2-m5.md
+Design and execution plan tracked in internal project notes.
 
 Examples
 --------
