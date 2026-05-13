@@ -33,7 +33,7 @@ Predicted outcomes (locked here, NOT post-hoc):
     K-panel-shuffles, the predicted outcome is: peak falls within the null
     distribution and the Cryptosclue claim collapses to selection bias.
   - A surprise outcome (peak meaningfully outside the null) would warrant
-    a proper red-team and statistical-auditor pass before any propagation.
+    a closer review pass before any propagation.
 
 All positions 0-indexed. Output: results/cryptosclue_replication_YYYYMMDD.json
 """
@@ -256,7 +256,7 @@ def main():
     print(f"  p-value of real peak vs null:  {p_value:.4f}")
 
     if p_value < 0.01:
-        verdict = "PEAK_OUTSIDE_NULL (p < 0.01) -- warrants red-team + statistical-auditor"
+        verdict = "PEAK_OUTSIDE_NULL (p < 0.01) -- warrants closer review"
     elif p_value < 0.05:
         verdict = "PEAK_MARGINAL (0.01 <= p < 0.05) -- not actionable, document"
     else:
