@@ -186,3 +186,63 @@ class TestKBCandidateNoveltyVerdict:
                 mechanism_signature="", signature_seen=False,
                 dispatcher_testable=False, verdict=verdict, reasons=(),
             )
+
+
+from kryptosbot.kb_injection import CipherDiscoverySuggestion
+
+
+class TestCipherDiscoverySuggestion:
+    def _example(self, **overrides):
+        base = dict(
+            kb_record_id="rec-abc-123",
+            canonical_name="Test Cipher",
+            kb_cipher_family="columnar",
+            mapped_ledger_families=("columnar_single", "double_columnar"),
+            mechanism_signature="0123456789abcdef",
+            signature_schema_version=KB_SIGNATURE_SCHEMA_VERSION,
+            dispatcher_testable=True,
+            k4_relevance_score=42.5,
+            sketch_class="dsl_testable",
+            one_line_sketch="A short prose sketch.",
+            bounded_kill_criterion="Score must exceed X on Y trials.",
+            source_verdict="allow",
+        )
+        base.update(overrides)
+        return CipherDiscoverySuggestion(**base)
+
+    def test_dataclass_shape(self):
+        s = self._example()
+        assert s.canonical_name == "Test Cipher"
+        assert s.mapped_ledger_families == ("columnar_single", "double_columnar")
+        assert s.signature_schema_version == "kb_mechanism_sig_v1"
+
+    def test_to_dict_round_trip(self):
+        s = self._example()
+        d = s.to_dict()
+        assert isinstance(d, dict)
+        # Tuples become lists in JSON.
+        assert isinstance(d["mapped_ledger_families"], list)
+        assert d["canonical_name"] == "Test Cipher"
+        # JSON serializable end-to-end.
+        json_blob = json.dumps(d, sort_keys=True)
+        reloaded = json.loads(json_blob)
+        s2 = CipherDiscoverySuggestion.from_dict(reloaded)
+        assert s2 == s
+
+    def test_from_dict_tolerates_missing_optional_fields(self):
+        d = {
+            "kb_record_id": "x",
+            "canonical_name": "X",
+            "kb_cipher_family": "",
+            "mapped_ledger_families": [],
+            "mechanism_signature": "",
+            "signature_schema_version": KB_SIGNATURE_SCHEMA_VERSION,
+            "dispatcher_testable": False,
+            "k4_relevance_score": 0.0,
+            "sketch_class": "unknown",
+            "one_line_sketch": "",
+            "bounded_kill_criterion": "",
+            "source_verdict": "allow",
+        }
+        s = CipherDiscoverySuggestion.from_dict(d)
+        assert s.mapped_ledger_families == ()

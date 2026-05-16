@@ -115,3 +115,64 @@ class KBCandidateNoveltyVerdict:
     dispatcher_testable: bool
     verdict: NoveltyVerdictKind
     reasons: tuple[str, ...]
+
+
+SketchClass = Literal["dsl_testable", "category_b", "unknown"]
+
+
+@dataclass(frozen=True)
+class CipherDiscoverySuggestion:
+    """Single rendered suggestion attached to an EmpiricalDeathRejectionPayload.
+
+    Carries enough structure for the critic to ledger and the controller
+    to aggregate and render, but never enough to auto-dispatch.
+    Suggestions are prompt context only — the theorist must still draft
+    a HypothesisSpec and the critic must still admit it.
+    """
+    kb_record_id: str
+    canonical_name: str
+    kb_cipher_family: str
+    mapped_ledger_families: tuple[str, ...]
+    mechanism_signature: str
+    signature_schema_version: str
+    dispatcher_testable: bool
+    k4_relevance_score: float
+    sketch_class: SketchClass
+    one_line_sketch: str
+    bounded_kill_criterion: str
+    source_verdict: Literal["allow"]
+
+    def to_dict(self) -> dict:
+        return {
+            "kb_record_id": self.kb_record_id,
+            "canonical_name": self.canonical_name,
+            "kb_cipher_family": self.kb_cipher_family,
+            "mapped_ledger_families": list(self.mapped_ledger_families),
+            "mechanism_signature": self.mechanism_signature,
+            "signature_schema_version": self.signature_schema_version,
+            "dispatcher_testable": bool(self.dispatcher_testable),
+            "k4_relevance_score": float(self.k4_relevance_score),
+            "sketch_class": self.sketch_class,
+            "one_line_sketch": self.one_line_sketch,
+            "bounded_kill_criterion": self.bounded_kill_criterion,
+            "source_verdict": self.source_verdict,
+        }
+
+    @classmethod
+    def from_dict(cls, d: dict) -> "CipherDiscoverySuggestion":
+        return cls(
+            kb_record_id=str(d.get("kb_record_id", "")),
+            canonical_name=str(d.get("canonical_name", "")),
+            kb_cipher_family=str(d.get("kb_cipher_family", "")),
+            mapped_ledger_families=tuple(d.get("mapped_ledger_families") or ()),
+            mechanism_signature=str(d.get("mechanism_signature", "")),
+            signature_schema_version=str(
+                d.get("signature_schema_version", KB_SIGNATURE_SCHEMA_VERSION)
+            ),
+            dispatcher_testable=bool(d.get("dispatcher_testable", False)),
+            k4_relevance_score=float(d.get("k4_relevance_score", 0.0)),
+            sketch_class=d.get("sketch_class", "unknown"),
+            one_line_sketch=str(d.get("one_line_sketch", "")),
+            bounded_kill_criterion=str(d.get("bounded_kill_criterion", "")),
+            source_verdict="allow",
+        )
