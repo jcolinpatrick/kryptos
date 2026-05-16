@@ -115,7 +115,8 @@ def valid_ledger_family_universe() -> frozenset[str]:
     Authoritative validity check for KB_TO_LEDGER_FAMILY values. Grows
     as new families are added to either source. Pure function; no I/O.
     """
-    # Local import — registries imports kryptos kernel which is heavy.
+    # Local import — keeps this module stdlib-only at import time per the
+    # module docstring; registries may grow heavier transitive deps.
     from kryptosbot.registries import KNOWN_FAMILIES
     registry_ids = frozenset(f["family_id"] for f in KNOWN_FAMILIES)
     return registry_ids | _HISTORICAL_LEDGER_FAMILIES
