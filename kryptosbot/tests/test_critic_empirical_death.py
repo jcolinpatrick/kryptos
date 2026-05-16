@@ -4,6 +4,8 @@ Eight branches: dead/healthy x bypass-eligible/ineligible x normal/shadow.
 """
 from __future__ import annotations
 
+import pytest
+
 from kryptosbot.critic import TheoryCritic
 from kryptosbot.family_yield import (
     FamilyYieldPolicy,
@@ -15,6 +17,51 @@ from kryptosbot.models import (
     TheoryRecord,
     TheoryStatus,
 )
+
+
+# ── Shared pytest fixtures (consumed by Task-15 KB-injection tests) ────────
+#
+# The pre-existing class-style tests use the helper functions defined below
+# (_verdict, _theory, _critic_with_indices); the Task-15 tests prefer
+# fixtures because they need to reference the same theory shape multiple
+# times across cache-hit / bypass / missing-DB assertions.
+
+@pytest.fixture
+def dead_encoding_yield() -> FamilyYieldVerdict:
+    """An ``encoding`` family verdict in ``empirically_dead`` status."""
+    stats = FamilyYieldStats("encoding", 826, 0.78, 7.0, 0, 825)
+    return FamilyYieldVerdict("encoding", "empirically_dead", ("r",), stats)
+
+
+@pytest.fixture
+def encoding_theory() -> TheoryRecord:
+    """A bypass-INELIGIBLE encoding theory (subfamily / sig already seen).
+
+    Tests that consume this fixture also seed ``prior_subfamilies`` and
+    ``prior_signatures`` so the bypass cannot fire and the empirical-death
+    gate triggers the KB query.
+    """
+    return TheoryRecord(
+        hypothesis_id="hid_kb_test",
+        title="t", core_claim="c", mechanism="m",
+        family="encoding", subfamily="vigenere",
+        status=TheoryStatus.PROPOSED,
+    )
+
+
+@pytest.fixture
+def encoding_theory_with_novel_subfamily_and_signature() -> TheoryRecord:
+    """A bypass-ELIGIBLE encoding theory.
+
+    Both subfamily (``brand_new_subfamily``) and the computed mechanism
+    signature are absent from the priors that the consuming test installs.
+    """
+    return TheoryRecord(
+        hypothesis_id="hid_kb_test_bypass",
+        title="t", core_claim="c", mechanism="m",
+        family="encoding", subfamily="brand_new_subfamily",
+        status=TheoryStatus.PROPOSED,
+    )
 
 
 def _verdict(family, status="empirically_dead", n=826, mean=0.78, best=7.0):
@@ -38,8 +85,17 @@ def _theory(
 
 
 class FakeLedger:
-    """Minimal ledger stub that the critic uses only via attribute access."""
+    """Minimal ledger stub that the critic uses only via attribute access.
+
+    The Task-15 KB-injection tests route through ``TheoryCritic.evaluate``
+    (not just ``_check_family_empirically_dead``), which queries the
+    ledger for similar theories and prior override justifications. Both
+    paths return empty for this stub — sufficient because the tests only
+    care about the empirical-death gate's KB-query path.
+    """
     def get_family(self, *_): return None
+    def get_theories_by_family(self, *_): return []
+    def get_theories_by_status(self, *_): return []
 
 
 def _critic_with_indices(yield_idx, prior_subfams, prior_sigs, policy=None):
@@ -135,18 +191,23 @@ class TestCheckFamilyEmpiricallyDead:
         assert verdict.empirical_death is not None
         assert len(verdict.empirical_death.bypass_failed_reasons) >= 1
 
-    def test_suggested_mechanisms_empty_in_phase_1(self):
-        # Phase 2 renamed the field to suggested_mechanism_records.
-        # The critic constructor (Task 15 lands the populate path) still
-        # emits an empty tuple at the Task-11 stage.
+    def test_suggested_mechanisms_empty_when_kb_db_missing(self, tmp_path):
+        # Phase 2 renamed the field to suggested_mechanism_records and
+        # Task 15 lands the populate path. When the KB DB does not exist,
+        # ``query_suggestions`` returns ``()`` and the gate emits an empty
+        # tuple with ``suggestion_source="none"`` — the historical
+        # Phase-1 shape preserved as the missing-DB fallback.
         c = _critic_with_indices(
             yield_idx={"encoding": _verdict("encoding")},
             prior_subfams={"encoding": frozenset({"vigenere"})},
             prior_sigs={"encoding": frozenset({"sig_known"})},
         )
+        c._kb_db_path = str(tmp_path / "no_such_db.sqlite")
+        c._kb_cache.clear()
         t = _theory(family="encoding", subfamily="vigenere")
         verdict = c._check_family_empirically_dead(t, "encoding")
         assert verdict.empirical_death.suggested_mechanism_records == ()
+        assert verdict.empirical_death.suggestion_source == "none"
 
 
 class TestCriticOrdering:
@@ -246,3 +307,151 @@ class TestBenchModeBehavior:
         )
         t = _theory(family="encoding", subfamily="vigenere")
         assert c._check_family_empirically_dead(t, "encoding") is None
+
+
+# ── Task 15: KB query + per-cycle cache ─────────────────────────────────────
+
+from pathlib import Path
+
+from kryptosbot.kb_injection import (
+    KB_SIGNATURE_SCHEMA_VERSION,
+    CipherDiscoverySuggestion,
+)
+
+
+PHASE2_FIXTURE_DB = (
+    Path(__file__).resolve().parent / "fixtures" / "cipher_discovery_phase2_fixture.sqlite"
+)
+
+
+class TestKBSuggestionInjection:
+    def _critic_under_test(
+        self,
+        *,
+        yield_index,
+        prior_subfamilies=None,
+        prior_signatures=None,
+        blocked_families_in_cycle=None,
+        static_exhaustion_blocklist=None,
+    ):
+        from kryptosbot.critic import TheoryCritic
+        critic = TheoryCritic(
+            ledger=FakeLedger(),
+            yield_index=yield_index,
+            prior_subfamilies=prior_subfamilies or {},
+            prior_signatures=prior_signatures or {},
+            blocked_families_in_cycle=blocked_families_in_cycle or frozenset(),
+            static_exhaustion_blocklist=static_exhaustion_blocklist or frozenset(),
+            kb_db_path=str(PHASE2_FIXTURE_DB),
+        )
+        return critic
+
+    def test_kb_query_populates_suggestions_on_empirical_death(
+        self, dead_encoding_yield, encoding_theory
+    ):
+        """Spec acceptance #3: REJECT_EMPIRICALLY_DEAD on encoding yields
+        non-empty suggested_mechanism_records when fixture KB has at least
+        one record mapped to a non-blocked ledger family with unseen sig."""
+        # Seed priors so the bypass cannot fire and the gate must reject.
+        from kryptosbot.family_yield import mechanism_signature_for_theory
+        sig = mechanism_signature_for_theory({
+            "family": "encoding", "subfamily": "vigenere",
+            "mechanism": "m", "dsl_spec": None,
+            "anomalies_exploited": [], "clue_anchors_used": [],
+            "novelty_basis": "", "minimal_test_spec": {},
+        })
+        critic = self._critic_under_test(
+            yield_index={"encoding": dead_encoding_yield},
+            prior_subfamilies={"encoding": frozenset({"vigenere"})},
+            prior_signatures={"encoding": frozenset({sig})},
+            blocked_families_in_cycle=frozenset({"encoding"}),
+        )
+        verdict = critic.evaluate(encoding_theory)
+        assert verdict.decision.value == "reject_empirically_dead"
+        ed = verdict.empirical_death
+        assert ed is not None
+        assert ed.suggestion_source == "cipher_discovery_kb"
+        assert len(ed.suggested_mechanism_records) >= 1
+        for s in ed.suggested_mechanism_records:
+            assert isinstance(s, CipherDiscoverySuggestion)
+            assert s.source_verdict == "allow"
+            assert s.signature_schema_version == KB_SIGNATURE_SCHEMA_VERSION
+
+    def test_cache_hit_on_repeat_family_signature(
+        self, dead_encoding_yield, encoding_theory
+    ):
+        from kryptosbot.family_yield import mechanism_signature_for_theory
+        sig = mechanism_signature_for_theory({
+            "family": "encoding", "subfamily": "vigenere",
+            "mechanism": "m", "dsl_spec": None,
+            "anomalies_exploited": [], "clue_anchors_used": [],
+            "novelty_basis": "", "minimal_test_spec": {},
+        })
+        critic = self._critic_under_test(
+            yield_index={"encoding": dead_encoding_yield},
+            prior_subfamilies={"encoding": frozenset({"vigenere"})},
+            prior_signatures={"encoding": frozenset({sig})},
+            blocked_families_in_cycle=frozenset({"encoding"}),
+        )
+        # First call populates cache; second call must use cache (no
+        # re-query). We assert by patching iter_kb_records to fail the
+        # second time and confirming we still get suggestions.
+        v1 = critic.evaluate(encoding_theory)
+        assert v1.empirical_death is not None
+        import kryptosbot.kb_injection as kbi
+
+        def _boom(*a, **kw):
+            raise RuntimeError("must not re-query")
+
+        orig = kbi.iter_kb_records
+        try:
+            kbi.iter_kb_records = _boom
+            # SAME theory => same (family, signature) cache key.
+            v2 = critic.evaluate(encoding_theory)
+        finally:
+            kbi.iter_kb_records = orig
+        assert v2.empirical_death is not None
+        assert len(v2.empirical_death.suggested_mechanism_records) == len(
+            v1.empirical_death.suggested_mechanism_records
+        )
+
+    def test_no_kb_query_when_bypass_satisfied(
+        self, dead_encoding_yield, encoding_theory_with_novel_subfamily_and_signature
+    ):
+        critic = self._critic_under_test(
+            yield_index={"encoding": dead_encoding_yield},
+            # Empty prior_subfamilies / prior_signatures — bypass should fire.
+            blocked_families_in_cycle=frozenset({"encoding"}),
+        )
+        verdict = critic.evaluate(encoding_theory_with_novel_subfamily_and_signature)
+        # Bypass means the empirical-death gate falls through; the gate's
+        # KB query does not run; downstream checks may still reject for
+        # other reasons, but if they pass, no empirical_death payload.
+        if verdict.decision.value == "reject_empirically_dead":
+            raise AssertionError("Bypass should have prevented empirical-death rejection")
+
+    def test_kb_db_missing_falls_back_to_none_source(
+        self, dead_encoding_yield, encoding_theory, tmp_path
+    ):
+        from kryptosbot.family_yield import mechanism_signature_for_theory
+        sig = mechanism_signature_for_theory({
+            "family": "encoding", "subfamily": "vigenere",
+            "mechanism": "m", "dsl_spec": None,
+            "anomalies_exploited": [], "clue_anchors_used": [],
+            "novelty_basis": "", "minimal_test_spec": {},
+        })
+        missing_path = tmp_path / "no_such_db.sqlite"
+        critic = self._critic_under_test(
+            yield_index={"encoding": dead_encoding_yield},
+            prior_subfamilies={"encoding": frozenset({"vigenere"})},
+            prior_signatures={"encoding": frozenset({sig})},
+            blocked_families_in_cycle=frozenset({"encoding"}),
+        )
+        critic._kb_db_path = str(missing_path)
+        # Clear any cache populated by a previous suite run.
+        critic._kb_cache.clear()
+        verdict = critic.evaluate(encoding_theory)
+        ed = verdict.empirical_death
+        assert ed is not None
+        assert ed.suggestion_source == "none"
+        assert ed.suggested_mechanism_records == ()

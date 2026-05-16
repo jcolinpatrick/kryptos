@@ -347,18 +347,57 @@ class TheoryCritic:
         ledger: TheoryLedger,
         *,
         bench_mode: bool = False,
+        yield_index: Optional[dict[str, "FamilyYieldVerdict"]] = None,
+        prior_subfamilies: Optional[dict[str, frozenset[str]]] = None,
+        prior_signatures: Optional[dict[str, frozenset[str]]] = None,
+        blocked_families_in_cycle: Optional[frozenset[str]] = None,
+        static_exhaustion_blocklist: Optional[frozenset[str]] = None,
+        kb_db_path: Optional[str] = None,
     ) -> None:
         self.ledger = ledger
         self.bench_mode = bench_mode
 
         # Yield-feedback Phase 1: per-cycle indices injected by the
         # controller before evaluate-batch starts. Defaults to empty so
-        # standalone-test construction works.
-        self.yield_index: dict[str, "FamilyYieldVerdict"] = {}
-        self.prior_subfamilies: dict[str, frozenset[str]] = {}
-        self.prior_signatures: dict[str, frozenset[str]] = {}
+        # standalone-test construction works. Phase 2 promotes these to
+        # constructor kwargs so the controller (and tests) can install the
+        # full Phase-2 KB-injection context up front.
+        self.yield_index: dict[str, "FamilyYieldVerdict"] = (
+            dict(yield_index) if yield_index is not None else {}
+        )
+        self.prior_subfamilies: dict[str, frozenset[str]] = (
+            dict(prior_subfamilies) if prior_subfamilies is not None else {}
+        )
+        self.prior_signatures: dict[str, frozenset[str]] = (
+            dict(prior_signatures) if prior_signatures is not None else {}
+        )
         from kryptosbot.family_yield import DEFAULT_POLICY
         self.policy = DEFAULT_POLICY
+
+        # Yield-feedback Phase 2: KB-injection context. When the controller
+        # constructs the critic it now supplies the cycle's blocked-family
+        # set, the project-wide static exhaustion blocklist, and the path
+        # to the cipher-discovery KB. Each has a safe default so existing
+        # callers / standalone tests keep working.
+        self.blocked_families_in_cycle: frozenset[str] = (
+            frozenset(blocked_families_in_cycle)
+            if blocked_families_in_cycle is not None
+            else frozenset(
+                f for f, v in (self.yield_index or {}).items()
+                if getattr(v, "status", "") == "empirically_dead"
+            )
+        )
+        self.static_exhaustion_blocklist: frozenset[str] = (
+            frozenset(static_exhaustion_blocklist)
+            if static_exhaustion_blocklist is not None
+            else frozenset()
+        )
+        self._kb_db_path: str = kb_db_path or "db/cipher_discovery.sqlite"
+        # Per-instance, per-cycle cache keyed on (family_lower,
+        # blocked_signature). The controller constructs a new critic per
+        # cycle (or clears _kb_cache between cycles), so the cache
+        # lifetime is bounded to one cycle's worth of theorist output.
+        self._kb_cache: dict[tuple[str, str], tuple] = {}
 
     def evaluate(self, theory: TheoryRecord) -> CriticVerdict:
         """
@@ -971,6 +1010,38 @@ class TheoryCritic:
             )
             return None
 
+        # ── Phase 2 (Task 15): query the cipher-discovery KB for
+        # structurally-novel escape candidates. Result is cached per
+        # (family, blocked_signature) so the same family/theory shape
+        # reused inside a single cycle costs O(1) after the first call.
+        cache_key = (family_lower, sig)
+        if cache_key in self._kb_cache:
+            suggestions = self._kb_cache[cache_key]
+        else:
+            # Lazy import: kb_injection pulls in sqlite3 + cipher_discovery
+            # schema. Keep the empirical-death path cheap when the
+            # critic is hot-looping over healthy/low-yield families.
+            from kryptosbot.kb_injection import (
+                KB_SIGNATURE_SCHEMA_VERSION,
+                query_suggestions,
+            )
+            suggestions = query_suggestions(
+                blocked_family=family_lower,
+                blocked_signature=sig,
+                prior_signatures=self.prior_signatures,
+                blocked_families_in_cycle=self.blocked_families_in_cycle,
+                static_exhaustion_blocklist=self.static_exhaustion_blocklist,
+                db_path=self._kb_db_path,
+            )
+            self._kb_cache[cache_key] = suggestions
+
+        # Re-import KB_SIGNATURE_SCHEMA_VERSION outside the cache branch so
+        # the payload below sees it on both cache-hit and cache-miss paths
+        # without paying for the full module re-import.
+        from kryptosbot.kb_injection import KB_SIGNATURE_SCHEMA_VERSION
+
+        suggestion_source = "cipher_discovery_kb" if suggestions else "none"
+
         s = verdict.stats
         return CriticVerdict(
             decision=CriticDecision.REJECT_EMPIRICALLY_DEAD,
@@ -986,7 +1057,17 @@ class TheoryCritic:
                 family=family_lower,
                 verdict=verdict,
                 bypass_failed_reasons=tuple(reasons),
-                suggested_mechanism_records=(),  # Task 15 populates from KB
+                suggested_mechanism_records=suggestions,
+                suggestion_source=suggestion_source,
+                suggestion_query_scope={
+                    "blocked_family": family_lower,
+                    "blocked_signature_prefix": sig[:8],
+                    "blocked_families_in_cycle": sorted(
+                        self.blocked_families_in_cycle
+                    ),
+                    "max_per_call": 12,
+                    "kb_signature_schema_version": KB_SIGNATURE_SCHEMA_VERSION,
+                },
             ),
         )
 
