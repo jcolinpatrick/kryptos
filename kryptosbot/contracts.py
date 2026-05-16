@@ -81,6 +81,66 @@ def _safe_float(val: Any) -> float:
         return 0.0
 
 
+# ---------------------------------------------------------------------------
+# Phase 2 yield-feedback: crib-paste artifact detector
+# ---------------------------------------------------------------------------
+
+# 0-indexed half-open crib ranges. Match kernel.constants.CRIB_POSITIONS.
+_CRIB_EAST_SLICE = slice(21, 34)    # EASTNORTHEAST, 13 chars
+_CRIB_BERLIN_SLICE = slice(63, 74)  # BERLINCLOCK, 11 chars
+
+
+def _non_crib_ngram_per_char(pt: str) -> float:
+    """Score the PT with crib positions masked, divided by non-crib length.
+
+    Returns a very negative sentinel value (-99.0) on degenerate inputs
+    (wrong length, no ngram scorer available). The caller treats anything
+    <= -6.2 as crib-paste evidence in conjunction with verified_crib == 24.
+    """
+    try:
+        if not isinstance(pt, str) or len(pt) != 97:
+            return -99.0
+        non_crib_chars: list[str] = []
+        for i, ch in enumerate(pt):
+            if (_CRIB_EAST_SLICE.start <= i < _CRIB_EAST_SLICE.stop):
+                continue
+            if (_CRIB_BERLIN_SLICE.start <= i < _CRIB_BERLIN_SLICE.stop):
+                continue
+            non_crib_chars.append(ch)
+        if not non_crib_chars:
+            return -99.0
+        non_crib_text = "".join(non_crib_chars)
+        # Reuse the kernel's ngram scorer singleton (canonical Phase 1
+        # pattern in kryptosbot/alerts.py and kryptosbot/job_dispatcher.py).
+        # Import here so the rest of contracts.py stays loadable without
+        # the kernel ngram path.
+        from kryptos.kernel.scoring.ngram import get_default_scorer
+        scorer = get_default_scorer()
+        total = scorer.score(non_crib_text)
+        return float(total) / float(len(non_crib_text))
+    except Exception:
+        return -99.0
+
+
+# Pre-registered threshold. Versioned 'crib_paste_artifact:v1' in error
+# strings. Tightening or partial-paste extension requires v2 + new spec.
+_CRIB_PASTE_NGRAM_FLOOR = -6.2
+
+
+def _is_crib_paste_artifact(
+    pt: str,
+    *,
+    verified_crib: int,
+    non_crib_ngram_per_char: float,
+) -> bool:
+    """True iff the worker result is a literal crib paste over a
+    Bean-valid keystream. Boolean only; caller mutates the contract.
+    """
+    if verified_crib != 24:
+        return False
+    return float(non_crib_ngram_per_char) <= _CRIB_PASTE_NGRAM_FLOOR
+
+
 def _verify_against_kernel(contract: WorkerContract) -> None:
     """Recompute crib_score, bean_passed, and score from best_plaintext.
 
