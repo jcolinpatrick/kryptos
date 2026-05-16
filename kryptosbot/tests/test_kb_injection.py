@@ -96,3 +96,51 @@ class TestKBMechanismSignature:
         finally:
             kbi.KB_SIGNATURE_SCHEMA_VERSION = orig_version
         assert orig_sig != new_sig
+
+
+from kryptosbot.kb_injection import dispatcher_testable
+
+
+class TestDispatcherTestable:
+    def test_columnar_is_supported(self):
+        r = _make_record(cipher_family="columnar")
+        assert dispatcher_testable(r) is True
+
+    def test_polybius_transposition_is_supported(self):
+        r = _make_record(cipher_family="polybius transposition")
+        assert dispatcher_testable(r) is True
+
+    def test_grille_is_supported(self):
+        r = _make_record(cipher_family="grille")
+        assert dispatcher_testable(r) is True
+
+    def test_unknown_family_is_not_supported(self):
+        r = _make_record(cipher_family="completely fictional ciphersystem")
+        assert dispatcher_testable(r) is False
+
+    def test_empty_family_is_not_supported(self):
+        r = _make_record(cipher_family="")
+        assert dispatcher_testable(r) is False
+
+    def test_case_insensitive(self):
+        r = _make_record(cipher_family="COLUMNAR")
+        assert dispatcher_testable(r) is True
+
+    def test_kb_to_dsl_kind_is_filtered_by_supported_kinds(self):
+        """Even if KB_TO_DSL_KIND maps to a kind, dispatcher_testable must
+        re-check against the dispatcher's _SUPPORTED_KINDS at call time.
+        This guards against drift: if a kind is removed from the
+        dispatcher, dispatcher_testable immediately stops reporting True
+        for it without requiring an edit to kb_family_map.py."""
+        import kryptosbot.kb_family_map as km
+        import kryptosbot.job_dispatcher as jd
+        orig_supported = jd._SUPPORTED_KINDS
+        orig_map = dict(km.KB_TO_DSL_KIND)
+        try:
+            # Pretend "columnar" got pulled from the dispatcher.
+            jd._SUPPORTED_KINDS = frozenset(orig_supported) - {"columnar"}
+            r = _make_record(cipher_family="columnar")
+            assert dispatcher_testable(r) is False
+        finally:
+            jd._SUPPORTED_KINDS = orig_supported
+            km.KB_TO_DSL_KIND = orig_map

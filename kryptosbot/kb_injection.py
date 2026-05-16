@@ -73,3 +73,18 @@ def kb_mechanism_signature(record) -> str:
     }
     blob = json.dumps(payload, sort_keys=True, separators=(",", ":")).encode("utf-8")
     return hashlib.sha256(blob).hexdigest()[:16]
+
+
+def dispatcher_testable(record) -> bool:
+    """True iff the record's cipher_family maps to a dispatcher-supported kind.
+
+    Two-step: KB cipher_family → KB_TO_DSL_KIND → kind → _SUPPORTED_KINDS.
+    The second step is re-evaluated at every call so dispatcher changes
+    take effect immediately.
+    """
+    from kryptosbot.kb_family_map import KB_TO_DSL_KIND, normalize_kb_family
+    from kryptosbot.job_dispatcher import _SUPPORTED_KINDS
+
+    key = normalize_kb_family(getattr(record, "cipher_family", ""))
+    kind = KB_TO_DSL_KIND.get(key)
+    return bool(kind and kind in _SUPPORTED_KINDS)
