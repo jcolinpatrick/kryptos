@@ -351,6 +351,15 @@ class TheoryCritic:
         self.ledger = ledger
         self.bench_mode = bench_mode
 
+        # Yield-feedback Phase 1: per-cycle indices injected by the
+        # controller before evaluate-batch starts. Defaults to empty so
+        # standalone-test construction works.
+        self.yield_index: dict[str, "FamilyYieldVerdict"] = {}
+        self.prior_subfamilies: dict[str, frozenset[str]] = {}
+        self.prior_signatures: dict[str, frozenset[str]] = {}
+        from kryptosbot.family_yield import DEFAULT_POLICY
+        self.policy = DEFAULT_POLICY
+
     def evaluate(self, theory: TheoryRecord) -> CriticVerdict:
         """
         Run all critic checks on a theory. Returns a CriticVerdict.
@@ -886,6 +895,90 @@ class TheoryCritic:
                 f"{family.elimination_tier} per the family registry.",
                 f"Evidence: {evidence}..." if evidence else "Evidence: (none recorded)",
             ],
+        )
+
+    def _check_family_empirically_dead(
+        self,
+        theory: TheoryRecord,
+        family_lower: str,
+    ) -> Optional[CriticVerdict]:
+        """Reject theories in empirically-dead families unless structurally novel.
+
+        Returns a CriticVerdict with REJECT_EMPIRICALLY_DEAD when:
+          - family_lower is classified empirically_dead in self.yield_index, AND
+          - the theory does not satisfy structural-novelty bypass.
+
+        Returns None (fall-through) when:
+          - the family is not in yield_index, OR
+          - the family's status is not empirically_dead, OR
+          - the theory is bypass-eligible, OR
+          - shadow_mode is enabled (logs would-reject and returns None).
+
+        Reads only self.yield_index / self.prior_subfamilies /
+        self.prior_signatures / self.policy. Never queries the ledger.
+        """
+        from kryptosbot.family_yield import (
+            check_bypass_eligibility,
+            mechanism_signature_for_theory,
+            _normalize_subfamily,
+        )
+        from kryptosbot.models import EmpiricalDeathRejectionPayload
+
+        verdict = (self.yield_index or {}).get(family_lower)
+        if verdict is None or verdict.status != "empirically_dead":
+            return None
+
+        # Reconstruct a theory dict shape for mechanism_signature_for_theory.
+        theory_for_sig = {
+            "family": theory.family,
+            "subfamily": theory.subfamily or "",
+            "mechanism": theory.mechanism or "",
+            "dsl_spec": theory.dsl_spec,
+            "anomalies_exploited": theory.anomalies_exploited or [],
+            "clue_anchors_used": theory.clue_anchors_used or [],
+            "novelty_basis": theory.novelty_basis or "",
+            "minimal_test_spec": theory.minimal_test_spec or {},
+        }
+        sig = mechanism_signature_for_theory(theory_for_sig)
+
+        eligible, reasons = check_bypass_eligibility(
+            family=family_lower,
+            subfamily=_normalize_subfamily(theory.subfamily or ""),
+            mechanism_signature=sig,
+            prior_subfamilies_in_family=(self.prior_subfamilies or {}).get(
+                family_lower, frozenset(),
+            ),
+            prior_mechanism_signatures_in_family=(self.prior_signatures or {}).get(
+                family_lower, frozenset(),
+            ),
+        )
+        if eligible:
+            return None
+
+        if getattr(self.policy, "shadow_mode", False):
+            logger.warning(
+                "[shadow] would_reject_empirically_dead: family=%s reasons=%s",
+                family_lower, reasons,
+            )
+            return None
+
+        s = verdict.stats
+        return CriticVerdict(
+            decision=CriticDecision.REJECT_EMPIRICALLY_DEAD,
+            confidence=0.9,
+            reasons=[
+                f"Family '{theory.family}' empirically dead "
+                f"(n={s.trials}, mean={s.mean_score:.2f}, "
+                f"best={s.best_score:.1f}, promotions={s.promotions}); "
+                f"bypass not satisfied",
+                *reasons,
+            ],
+            empirical_death=EmpiricalDeathRejectionPayload(
+                family=family_lower,
+                verdict=verdict,
+                bypass_failed_reasons=tuple(reasons),
+                suggested_mechanisms=(),  # Phase 2 populates
+            ),
         )
 
     def _check_contradictions(self, theory: TheoryRecord) -> list[str]:
