@@ -377,3 +377,104 @@ def classify_kb_candidate(
         verdict=verdict,
         reasons=tuple(reasons),
     )
+
+
+def _one_line_sketch(record) -> str:
+    """Return a short prose sketch for the suggestion render.
+
+    Prefers operational_mechanics, falls back to description, then
+    canonical_name. Truncated to 160 chars."""
+    for attr in ("operational_mechanics", "description"):
+        val = getattr(record, attr, "") or ""
+        val = _WHITESPACE_RE.sub(" ", val).strip()
+        if val:
+            return val[:160]
+    return _normalize(getattr(record, "canonical_name", ""))[:160] or ""
+
+
+def _bounded_kill_criterion(record) -> str:
+    """One-line guidance the theorist can adapt into a kill criterion."""
+    from kryptosbot.kb_family_map import KB_TO_DSL_KIND, normalize_kb_family
+
+    key = normalize_kb_family(getattr(record, "cipher_family", ""))
+    kind = KB_TO_DSL_KIND.get(key)
+    if kind:
+        return (
+            f"If the {kind} translator yields zero crib_score >= 18 across "
+            f"its bounded parameter space, treat the mechanism as inert."
+        )
+    return (
+        "Specify a bounded, hand-executable test method and a per-trial "
+        "crib_score / Bean-pass criterion before dispatch."
+    )
+
+
+def _sketch_class(record) -> SketchClass:
+    if dispatcher_testable(record):
+        return "dsl_testable"
+    from kryptosbot.kb_family_map import map_kb_family_to_ledger_families
+    mapped = map_kb_family_to_ledger_families(getattr(record, "cipher_family", ""))
+    if mapped:
+        return "category_b"
+    return "unknown"
+
+
+def query_suggestions(
+    *,
+    blocked_family: str,
+    blocked_signature: str,
+    prior_signatures: dict,
+    blocked_families_in_cycle: frozenset,
+    static_exhaustion_blocklist: frozenset,
+    db_path: str = "db/cipher_discovery.sqlite",
+    max_per_call: int = 12,
+) -> tuple[CipherDiscoverySuggestion, ...]:
+    """Return ranked allow-list of suggestions for one blocked rejection.
+
+    Failure modes:
+      Missing DB → ().
+      Corrupt row → skipped via iter_kb_records.
+    Ranking key: (not dispatcher_testable, -k4_relevance_score, canonical_name).
+    """
+    allow_pairs: list[tuple[KBCandidateNoveltyVerdict, object]] = []
+    for record in iter_kb_records(db_path):
+        verdict = classify_kb_candidate(
+            record,
+            prior_signatures=prior_signatures,
+            blocked_families_in_cycle=blocked_families_in_cycle,
+            static_exhaustion_blocklist=static_exhaustion_blocklist,
+        )
+        if verdict.verdict == "allow":
+            allow_pairs.append((verdict, record))
+        elif verdict.verdict == "defer_needs_mapping":
+            logger.warning(
+                "kb_injection: defer_needs_mapping kb_record_id=%r kb_cipher_family=%r",
+                verdict.kb_record_id, verdict.kb_cipher_family,
+            )
+
+    def _rank(pair: tuple[KBCandidateNoveltyVerdict, object]) -> tuple:
+        v, r = pair
+        return (
+            not v.dispatcher_testable,
+            -float(getattr(r, "k4_relevance_score", 0.0) or 0.0),
+            (getattr(r, "canonical_name", "") or "").lower(),
+        )
+
+    allow_pairs.sort(key=_rank)
+    out: list[CipherDiscoverySuggestion] = []
+    for verdict, record in allow_pairs[:max_per_call]:
+        out.append(CipherDiscoverySuggestion(
+            kb_record_id=verdict.kb_record_id,
+            canonical_name=getattr(record, "canonical_name", "") or "",
+            kb_cipher_family=verdict.kb_cipher_family,
+            mapped_ledger_families=verdict.mapped_ledger_families,
+            mechanism_signature=verdict.mechanism_signature,
+            signature_schema_version=KB_SIGNATURE_SCHEMA_VERSION,
+            dispatcher_testable=verdict.dispatcher_testable,
+            k4_relevance_score=float(getattr(record, "k4_relevance_score", 0.0) or 0.0),
+            sketch_class=_sketch_class(record),
+            one_line_sketch=_one_line_sketch(record),
+            bounded_kill_criterion=_bounded_kill_criterion(record),
+            source_verdict="allow",
+        ))
+    return tuple(out)

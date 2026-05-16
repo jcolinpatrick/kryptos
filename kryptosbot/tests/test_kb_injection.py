@@ -376,3 +376,97 @@ class TestClassifyKBCandidate:
         )
         assert v.verdict == "reject"
         assert v.static_exhaustion_blocked is True
+
+
+from kryptosbot.kb_injection import query_suggestions
+
+
+class TestQuerySuggestions:
+    def test_returns_only_allow_verdicts(self):
+        out = query_suggestions(
+            blocked_family="encoding",
+            blocked_signature="prev-signature",
+            prior_signatures={},
+            blocked_families_in_cycle=frozenset({"encoding"}),
+            static_exhaustion_blocklist=frozenset(),
+            db_path=str(FIXTURE_DB),
+        )
+        for s in out:
+            assert s.source_verdict == "allow"
+
+    def test_excludes_exhausted_fixture_row(self):
+        out = query_suggestions(
+            blocked_family="encoding",
+            blocked_signature="prev-signature",
+            prior_signatures={},
+            blocked_families_in_cycle=frozenset({"encoding"}),
+            static_exhaustion_blocklist=frozenset(),
+            db_path=str(FIXTURE_DB),
+        )
+        names = {s.canonical_name for s in out}
+        assert "Compass Cipher" not in names
+
+    def test_excludes_unmapped_fixture_row(self):
+        out = query_suggestions(
+            blocked_family="encoding",
+            blocked_signature="prev-signature",
+            prior_signatures={},
+            blocked_families_in_cycle=frozenset({"encoding"}),
+            static_exhaustion_blocklist=frozenset(),
+            db_path=str(FIXTURE_DB),
+        )
+        names = {s.canonical_name for s in out}
+        assert "Mystery Cipher" not in names
+
+    def test_ranks_dispatcher_testable_first_then_by_k4_relevance(self):
+        out = query_suggestions(
+            blocked_family="encoding",
+            blocked_signature="prev-signature",
+            prior_signatures={},
+            blocked_families_in_cycle=frozenset({"encoding"}),
+            static_exhaustion_blocklist=frozenset(),
+            db_path=str(FIXTURE_DB),
+        )
+        # Both Swagman and ADFGVX are dispatcher_testable; Astrolabe is not.
+        first_three = [s.canonical_name for s in out[:3]]
+        assert "Astrolabe Cipher" not in first_three[:2], (
+            "dispatcher-testable rows should sort before non-testable"
+        )
+
+    def test_max_per_call_caps_returned_count(self):
+        out = query_suggestions(
+            blocked_family="encoding",
+            blocked_signature="prev-signature",
+            prior_signatures={},
+            blocked_families_in_cycle=frozenset({"encoding"}),
+            static_exhaustion_blocklist=frozenset(),
+            db_path=str(FIXTURE_DB),
+            max_per_call=2,
+        )
+        assert len(out) <= 2
+
+    def test_missing_db_returns_empty(self, tmp_path):
+        out = query_suggestions(
+            blocked_family="encoding",
+            blocked_signature="x",
+            prior_signatures={},
+            blocked_families_in_cycle=frozenset(),
+            static_exhaustion_blocklist=frozenset(),
+            db_path=str(tmp_path / "missing.sqlite"),
+        )
+        assert out == ()
+
+    def test_skips_signature_seen_in_mapped_family(self):
+        # Compute the Swagman signature, mark it as seen in columnar_single.
+        rec = next(r for r in iter_kb_records(str(FIXTURE_DB)) if r.record_id == "fx-swagman")
+        sig = kb_mechanism_signature(rec)
+        out = query_suggestions(
+            blocked_family="encoding",
+            blocked_signature="x",
+            prior_signatures={"columnar_single": frozenset({sig})},
+            blocked_families_in_cycle=frozenset(),
+            static_exhaustion_blocklist=frozenset(),
+            db_path=str(FIXTURE_DB),
+        )
+        names = {s.canonical_name for s in out}
+        assert "Swagman Cipher" not in names
