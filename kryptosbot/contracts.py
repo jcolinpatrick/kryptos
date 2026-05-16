@@ -264,6 +264,55 @@ def _verify_against_kernel(contract: WorkerContract) -> None:
         contract.score = 0.0
         return
 
+    # ── Phase 2 yield-feedback: crib-paste artifact detector ───────────────
+    # When the kernel agrees crib_score == 24, check whether the plaintext
+    # is a literal crib paste (random garbage / repeated chars surrounding
+    # canonical cribs over a Bean-valid keystream). This pattern is
+    # mathematically allowed (624 Bean-valid keystreams admit arbitrary
+    # crib-position plaintexts) but is never legitimate signal.
+    #
+    # Local try/except is required — DO NOT rely on the outer kernel-
+    # verification try/except. Spec §4.4: detector failure must fail
+    # CLOSED, not let a 24/24 paste through.
+    if verified_crib == 24:
+        try:
+            ngram_pc = _non_crib_ngram_per_char(pt)
+            is_paste = _is_crib_paste_artifact(
+                pt,
+                verified_crib=verified_crib,
+                non_crib_ngram_per_char=ngram_pc,
+            )
+        except Exception as exc:
+            # Fail-closed: treat as artifact. Worker self-report is
+            # already snapshotted above.
+            ngram_pc = float("nan")
+            is_paste = True
+            logger.warning("crib_paste_detector raised: %s", exc)
+
+        if is_paste:
+            if contract.raw_artifacts is None:
+                contract.raw_artifacts = {}
+            contract.raw_artifacts["artifact_class"] = "crib_paste"
+            contract.raw_artifacts["kernel_verified_before_artifact_filter"] = {
+                "crib_score": int(verified_crib),
+                "bean_passed": bool(verified_bean),
+                "score": float(verified_score),
+                "bean_variant": verified_variant,
+                "non_crib_ngram_per_char": float(ngram_pc),
+            }
+            contract.crib_score = 0
+            contract.score = 0.0
+            contract.bean_passed = False
+            contract.bean_variant = None
+            contract.fields_overwritten = True
+            contract.worker_self_report = worker_claim
+            contract.verification_error = (
+                f"crib_paste_artifact:v1: verified_crib=24, "
+                f"non_crib_ngram_per_char={ngram_pc:.2f} <= -6.2"
+            )
+            contract.status = WorkerStatus.INCONCLUSIVE
+            return
+
     # Compare worker claims to kernel truth. If anything disagrees, record
     # the worker's self-report and overwrite with kernel values.
     disagreement = (

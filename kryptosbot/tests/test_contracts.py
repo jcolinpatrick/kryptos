@@ -155,23 +155,26 @@ def _ct97_with_cribs_only() -> str:
 class TestVerificationKernelPath:
     """Kernel-recompute path on CT97-shaped plaintexts.
 
-    KNOWN RESIDUAL GAP (documented here so future readers don't trip on it):
-    Bean was derived from the cribs themselves and is variant-independent.
-    Therefore ANY CT97 plaintext with correct crib characters at the
-    canonical positions 21-33 and 63-73 will satisfy Bean, even if the
-    surrounding filler is gibberish. The verification fix narrows the
-    fabrication surface from "any worker that types crib_score=24 in JSON"
-    to "any worker that types correctly-positioned CT97-space cribs", which
-    is a major improvement but not airtight. A future hardening step
-    (Day 6 lead-pursuit) can layer an ngram threshold on top.
+    PHASE 1 GAP (closed in Phase 2, 2026-05-16): Bean was derived from the
+    cribs themselves and is variant-independent. Therefore ANY CT97
+    plaintext with correct crib characters at the canonical positions
+    21-33 and 63-73 will satisfy Bean, even if the surrounding filler is
+    gibberish. Phase 1 verification narrowed the fabrication surface
+    from "any worker that types crib_score=24 in JSON" to "any worker
+    that types correctly-positioned CT97-space cribs", which was a major
+    improvement but not airtight. The Phase 2 crib-paste detector
+    (`_is_crib_paste_artifact` + `_non_crib_ngram_per_char`) closes the
+    residual gap by re-scoring the non-crib positions; an X-filler or
+    random-garbage paste produces a non-crib ngram per-char below -6.2
+    and is reclassified as `artifact_class=crib_paste` with status
+    INCONCLUSIVE and zeroed score fields.
     """
 
-    def test_ct97_with_all_cribs_pasted_passes_bean_by_construction(self):
-        # Document the residual gap: cribs at correct CT97 positions ARE
-        # Bean-consistent regardless of filler (Bean was derived from these
-        # very positions). The honest "this worker did the right thing"
-        # case where crib=24 and bean=True is indistinguishable at this
-        # layer from a fabricated-cribs-pasted case.
+    def test_ct97_with_all_cribs_pasted_is_classified_as_paste_artifact(self):
+        # Phase 2: X-filler crib paste with verified_crib=24 must be
+        # reclassified as a crib-paste artifact. The signal fields are
+        # zeroed and status is forced to INCONCLUSIVE so no alert can
+        # fire and the controller cannot promote it to BREAKTHROUGH.
         pt = _ct97_with_cribs_only()
         raw = _wrap({
             "hypothesis_id": "h4",
@@ -182,18 +185,29 @@ class TestVerificationKernelPath:
             "best_plaintext": pt,
         })
         c = validate_worker_contract(raw, "h4").value
-        assert c.crib_score == 24
-        assert c.bean_passed is True
-        # Worker and kernel agree → no overwrite, no flag.
-        assert c.fields_overwritten is False
-        assert c.verification_error == ""
+        # Detector fires → signal fields zeroed.
+        assert c.crib_score == 0
+        assert c.bean_passed is False
+        assert c.score == 0.0
+        # Status downgraded to INCONCLUSIVE (NOT DISPROVED — paste is an
+        # artifact, not exhaustion).
+        from kryptosbot.models import WorkerStatus
+        assert c.status == WorkerStatus.INCONCLUSIVE
+        # Audit trail.
+        assert c.fields_overwritten is True
+        assert "crib_paste_artifact:v1" in c.verification_error
+        assert c.raw_artifacts.get("artifact_class") == "crib_paste"
+        snapshot = c.raw_artifacts.get("kernel_verified_before_artifact_filter")
+        assert isinstance(snapshot, dict)
+        assert snapshot.get("crib_score") == 24
+        assert snapshot.get("bean_passed") is True
 
-    def test_ct97_with_cribs_overwrites_underreported_bean(self):
+    def test_ct97_with_cribs_underreported_bean_still_paste_artifact(self):
         # Worker honestly pastes cribs but underreports bean_passed=False.
-        # Kernel derives keystream, finds Bean DOES pass under at least one
-        # variant (Bean is variant-independent at the crib positions), and
-        # overwrites the worker's pessimistic claim. fields_overwritten flag
-        # surfaces the disagreement so downstream auditing can see it.
+        # Phase 2: the kernel STILL detects the crib-paste shape (ngram
+        # floor below -6.2) and reclassifies as artifact. The worker's
+        # underreported bean=False is moot — the result is INCONCLUSIVE
+        # regardless of what the worker claimed.
         pt = _ct97_with_cribs_only()
         raw = _wrap({
             "hypothesis_id": "h5",
@@ -204,9 +218,15 @@ class TestVerificationKernelPath:
             "best_plaintext": pt,
         })
         c = validate_worker_contract(raw, "h5").value
-        assert c.crib_score == 24
-        assert c.bean_passed is True          # kernel overrules
-        assert c.fields_overwritten is True
+        # Detector fires before the disagreement comparison runs.
+        assert c.crib_score == 0
+        assert c.bean_passed is False
+        assert c.raw_artifacts.get("artifact_class") == "crib_paste"
+        # Pre-mutation kernel values preserved for audit.
+        snapshot = c.raw_artifacts.get("kernel_verified_before_artifact_filter")
+        assert snapshot.get("crib_score") == 24
+        assert snapshot.get("bean_passed") is True
+        # Worker self-report preserved.
         assert c.worker_self_report["bean_passed"] is False
 
     def test_ct97_random_text_collapses_inflated_crib_claim(self):
