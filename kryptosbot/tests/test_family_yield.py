@@ -8,6 +8,7 @@ from kryptosbot.family_yield import (
     FamilyYieldPolicy,
     FamilyYieldStats,
     FamilyYieldVerdict,
+    classify_family_yield,
 )
 
 
@@ -52,3 +53,55 @@ class TestDataclasses:
         )
         assert v.status == "healthy"
         assert v.stats is s
+
+
+def _stats(family="x", trials=100, mean=0.5, best=0.0, promotions=0, eliminated=0):
+    return FamilyYieldStats(family, trials, mean, best, promotions, eliminated)
+
+
+class TestClassifyFamilyYield:
+    def test_insufficient_data_when_below_min_trials(self):
+        s = _stats(trials=49, mean=0.0, promotions=0)
+        v = classify_family_yield(s)
+        assert v.status == "insufficient_data"
+
+    def test_boundary_min_trials_49_not_dead(self):
+        # n=49 with same metrics that WOULD be dead at n=50 must stay healthy.
+        s = _stats(trials=49, mean=0.5, best=5.0, promotions=0)
+        v = classify_family_yield(s)
+        assert v.status == "insufficient_data"
+
+    def test_boundary_min_trials_50_can_be_dead(self):
+        s = _stats(trials=50, mean=0.5, best=5.0, promotions=0)
+        v = classify_family_yield(s)
+        assert v.status == "empirically_dead"
+
+    def test_empirically_dead_full_match(self):
+        # The 4 audit families.
+        s = _stats(family="encoding", trials=826, mean=0.78, best=7.0, promotions=0)
+        v = classify_family_yield(s)
+        assert v.status == "empirically_dead"
+        assert "n=826" in " ".join(v.reasons)
+
+    def test_low_yield_when_mean_low_but_best_at_or_above_store(self):
+        # best_score >= STORE_THRESHOLD (10) blocks empirically_dead; falls
+        # back to low_yield because mean is still under the low_yield threshold.
+        s = _stats(trials=200, mean=1.0, best=12.0, promotions=0)
+        v = classify_family_yield(s)
+        assert v.status == "low_yield"
+
+    def test_healthy_when_promotions_present(self):
+        s = _stats(trials=200, mean=0.5, best=5.0, promotions=1)
+        v = classify_family_yield(s)
+        assert v.status == "healthy"
+
+    def test_healthy_when_mean_above_low_yield_threshold(self):
+        s = _stats(trials=200, mean=3.0, best=5.0, promotions=0)
+        v = classify_family_yield(s)
+        assert v.status == "healthy"
+
+    def test_classifier_is_deterministic_for_same_inputs(self):
+        s = _stats(trials=100, mean=0.5, best=5.0, promotions=0)
+        a = classify_family_yield(s)
+        b = classify_family_yield(s)
+        assert a == b

@@ -65,3 +65,86 @@ class FamilyYieldVerdict:
 
 
 DEFAULT_POLICY = FamilyYieldPolicy()
+
+
+def _store_threshold() -> int:
+    """Return the kernel's STORE threshold. Imported lazily so the
+    pure module stays importable without the full kernel chain (used
+    by some lightweight test contexts)."""
+    from kryptos.kernel.constants import STORE_THRESHOLD
+    return STORE_THRESHOLD
+
+
+def classify_family_yield(
+    stats: FamilyYieldStats,
+    policy: FamilyYieldPolicy = DEFAULT_POLICY,
+) -> FamilyYieldVerdict:
+    """Classify a family's empirical yield against the policy.
+
+    Order of checks matters: insufficient_data wins over every other
+    status because the floor on trials is a precondition for any
+    yield-based judgment. empirically_dead requires meeting ALL of
+    {n >= min_trials, mean low, no promotions, best below store};
+    low_yield is the same except for the best-score requirement.
+    """
+    if stats.trials < policy.min_trials:
+        return FamilyYieldVerdict(
+            family=stats.family,
+            status="insufficient_data",
+            reasons=(
+                f"n={stats.trials} < min_trials={policy.min_trials}",
+            ),
+            stats=stats,
+        )
+
+    mean_low = stats.mean_score < policy.mean_score_below
+    no_promos = (stats.promotions == 0) if policy.require_zero_promotions else True
+    best_low = (
+        stats.best_score < _store_threshold()
+        if policy.require_best_below_store_threshold
+        else True
+    )
+
+    if mean_low and no_promos and best_low:
+        return FamilyYieldVerdict(
+            family=stats.family,
+            status="empirically_dead",
+            reasons=(
+                f"n={stats.trials}, mean={stats.mean_score:.2f}, "
+                f"best={stats.best_score:.1f}, "
+                f"promotions={stats.promotions}",
+                f"empirically_dead: mean < {policy.mean_score_below}, "
+                f"zero promotions, best < STORE_THRESHOLD",
+            ),
+            stats=stats,
+        )
+
+    low_yield_mean = stats.mean_score < policy.low_yield_mean_below
+    if (
+        stats.trials >= policy.low_yield_trials
+        and low_yield_mean
+        and no_promos
+    ):
+        return FamilyYieldVerdict(
+            family=stats.family,
+            status="low_yield",
+            reasons=(
+                f"n={stats.trials}, mean={stats.mean_score:.2f}, "
+                f"best={stats.best_score:.1f}, "
+                f"promotions={stats.promotions}",
+                f"low_yield: mean < {policy.low_yield_mean_below}, "
+                f"zero promotions, but best_score >= STORE_THRESHOLD",
+            ),
+            stats=stats,
+        )
+
+    return FamilyYieldVerdict(
+        family=stats.family,
+        status="healthy",
+        reasons=(
+            f"n={stats.trials}, mean={stats.mean_score:.2f}, "
+            f"best={stats.best_score:.1f}, "
+            f"promotions={stats.promotions}",
+        ),
+        stats=stats,
+    )
