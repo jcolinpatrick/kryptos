@@ -1490,3 +1490,97 @@ class TestFailClosedTheoryProposals:
 That's my suggestion."""
         report = validate_theory_proposals(raw)
         assert len(report.valid) == 1
+
+
+# ---------------------------------------------------------------------------
+# Yield-feedback ledger query tests (Task 6)
+# ---------------------------------------------------------------------------
+
+from kryptosbot.family_yield import FamilyYieldStats
+
+
+class TestFamilyYieldQueries:
+    """Tests for the three new read queries on TheoryLedger."""
+
+    def test_family_yield_stats_empty_ledger(self, tmp_path):
+        from kryptosbot.theory_ledger import TheoryLedger
+        ledger = TheoryLedger(tmp_path / "ledger.sqlite")
+        rows = ledger.family_yield_stats()
+        assert rows == []
+
+    def test_family_yield_stats_aggregates_correctly(self, tmp_path):
+        from kryptosbot.theory_ledger import TheoryLedger
+        from kryptosbot.models import TheoryRecord, TheoryStatus
+        ledger = TheoryLedger(tmp_path / "ledger.sqlite")
+        # Three encoding theories, one elimination, one promotion, one open.
+        for i, (status, score) in enumerate([
+            (TheoryStatus.ELIMINATED, 0.0),
+            (TheoryStatus.PROMISING, 18.0),
+            (TheoryStatus.COMPLETED, 3.0),
+        ]):
+            ledger.upsert_theory(TheoryRecord(
+                hypothesis_id=f"hid_{i:03d}",
+                title=f"t{i}", core_claim="c", mechanism="m",
+                family="encoding", subfamily="vigenere",
+                status=status, best_score=score,
+            ))
+        # One grille theory, no eliminations or promotions.
+        ledger.upsert_theory(TheoryRecord(
+            hypothesis_id="hid_grille_1",
+            title="g", core_claim="c", mechanism="m",
+            family="grille", subfamily="spiral",
+            status=TheoryStatus.PROPOSED, best_score=1.0,
+        ))
+
+        rows = ledger.family_yield_stats()
+        rows_by_family = {r.family: r for r in rows}
+        enc = rows_by_family["encoding"]
+        assert enc.trials == 3
+        assert abs(enc.mean_score - (0.0 + 18.0 + 3.0) / 3.0) < 1e-9
+        assert enc.best_score == 18.0
+        assert enc.promotions == 1
+        assert enc.eliminated == 1
+
+        grille = rows_by_family["grille"]
+        assert grille.trials == 1
+        assert grille.eliminated == 0
+        assert grille.promotions == 0
+
+    def test_subfamily_index_groups_by_family(self, tmp_path):
+        from kryptosbot.theory_ledger import TheoryLedger
+        from kryptosbot.models import TheoryRecord, TheoryStatus
+        ledger = TheoryLedger(tmp_path / "ledger.sqlite")
+        for i, (family, subfamily) in enumerate([
+            ("encoding", "vigenere"),
+            ("encoding", "beaufort"),
+            ("encoding", "vigenere"),   # dup is collapsed by frozenset
+            ("grille", "spiral"),
+        ]):
+            ledger.upsert_theory(TheoryRecord(
+                hypothesis_id=f"hid_{i:03d}",
+                title=f"t{i}", core_claim="c", mechanism="m",
+                family=family, subfamily=subfamily,
+                status=TheoryStatus.PROPOSED,
+            ))
+        idx = ledger.subfamily_index()
+        assert idx["encoding"] == frozenset({"vigenere", "beaufort"})
+        assert idx["grille"] == frozenset({"spiral"})
+
+    def test_mechanism_signature_index_groups_by_family(self, tmp_path):
+        from kryptosbot.theory_ledger import TheoryLedger
+        from kryptosbot.models import TheoryRecord, TheoryStatus
+        ledger = TheoryLedger(tmp_path / "ledger.sqlite")
+        ledger.upsert_theory(TheoryRecord(
+            hypothesis_id="hid_001",
+            title="t", core_claim="c", mechanism="vig keyword X",
+            family="encoding", subfamily="vigenere",
+            status=TheoryStatus.PROPOSED,
+            dsl_spec={"layers": [{"kind": "vigenere", "keyword": "X"}]},
+        ))
+        idx = ledger.mechanism_signature_index()
+        assert "encoding" in idx
+        sigs = idx["encoding"]
+        assert isinstance(sigs, frozenset)
+        assert len(sigs) == 1
+        sig = next(iter(sigs))
+        assert isinstance(sig, str) and len(sig) >= 8

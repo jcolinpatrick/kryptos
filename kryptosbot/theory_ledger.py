@@ -1312,6 +1312,109 @@ class TheoryLedger:
         return {r["status"]: int(r["n"]) for r in rows}
 
     # ------------------------------------------------------------------
+    # Empirical-yield queries (Phase 1 yield-feedback loop).
+    # See docs/specs/2026-05-16-yield-feedback-design.md §4.2.
+    # ------------------------------------------------------------------
+    def family_yield_stats(self) -> list["FamilyYieldStats"]:
+        """One row per family: trials, mean/max score, promotions, eliminations.
+
+        Reads only the ``theories`` table. NULL ``best_score`` rows count
+        as 0.0 in the average (SQLite AVG behavior) but their COUNT(*) is
+        still incremented, which matches "trial happened, no score yet."
+        """
+        from kryptosbot.family_yield import FamilyYieldStats
+
+        with self._connect() as conn:
+            rows = conn.execute(
+                """
+                SELECT family,
+                       COUNT(*) AS trials,
+                       COALESCE(AVG(best_score), 0.0) AS mean_score,
+                       COALESCE(MAX(best_score), 0.0) AS best_score,
+                       SUM(CASE WHEN status = 'promising'  THEN 1 ELSE 0 END) AS promotions,
+                       SUM(CASE WHEN status = 'eliminated' THEN 1 ELSE 0 END) AS eliminated
+                  FROM theories
+                 WHERE family IS NOT NULL AND family <> ''
+                 GROUP BY family
+                """
+            ).fetchall()
+        return [
+            FamilyYieldStats(
+                family=r[0],
+                trials=int(r[1]),
+                mean_score=float(r[2] or 0.0),
+                best_score=float(r[3] or 0.0),
+                promotions=int(r[4] or 0),
+                eliminated=int(r[5] or 0),
+            )
+            for r in rows
+        ]
+
+    def subfamily_index(self) -> dict[str, frozenset[str]]:
+        """Map family -> frozenset of normalized subfamilies seen in priors."""
+        from kryptosbot.family_yield import _normalize_subfamily
+
+        with self._connect() as conn:
+            rows = conn.execute(
+                """
+                SELECT family, subfamily
+                  FROM theories
+                 WHERE family IS NOT NULL AND family <> ''
+                """
+            ).fetchall()
+        out: dict[str, set[str]] = {}
+        for family, subfamily in rows:
+            norm = _normalize_subfamily(subfamily or "")
+            if not norm:
+                continue
+            out.setdefault(family.lower(), set()).add(norm)
+        return {k: frozenset(v) for k, v in out.items()}
+
+    def mechanism_signature_index(self) -> dict[str, frozenset[str]]:
+        """Map family -> frozenset of mechanism signatures seen in priors.
+
+        Computes signatures via family_yield.mechanism_signature_for_theory
+        from each row's reconstructed dict shape. Full table scan; once
+        per cycle this is dominated by every other phase.
+        """
+        from kryptosbot.family_yield import mechanism_signature_for_theory
+
+        with self._connect() as conn:
+            rows = conn.execute(
+                """
+                SELECT family, subfamily, mechanism, dsl_spec,
+                       anomalies_exploited, clue_anchors_used,
+                       minimal_test_spec
+                  FROM theories
+                 WHERE family IS NOT NULL AND family <> ''
+                """
+            ).fetchall()
+        out: dict[str, set[str]] = {}
+        for r in rows:
+            family = r[0]
+            subfamily = r[1]
+            mechanism = r[2]
+            dsl_spec = r[3]
+            anomalies = r[4]
+            anchors = r[5]
+            mts = r[6]
+            theory_dict = {
+                "family": family,
+                "subfamily": subfamily or "",
+                "mechanism": mechanism or "",
+                "dsl_spec": json.loads(dsl_spec) if dsl_spec and dsl_spec != "{}" else None,
+                "anomalies_exploited":
+                    json.loads(anomalies) if anomalies else [],
+                "clue_anchors_used":
+                    json.loads(anchors) if anchors else [],
+                "minimal_test_spec":
+                    json.loads(mts) if mts else {},
+            }
+            sig = mechanism_signature_for_theory(theory_dict)
+            out.setdefault(family.lower(), set()).add(sig)
+        return {k: frozenset(v) for k, v in out.items()}
+
+    # ------------------------------------------------------------------
     # Lifecycle
     # ------------------------------------------------------------------
 
