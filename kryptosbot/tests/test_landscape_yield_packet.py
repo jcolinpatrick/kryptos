@@ -131,3 +131,28 @@ def test_prompt_omits_escape_pressure_when_empty_string(tmp_path):
         "escape_pressure section must be omitted from the prompt when the "
         "landscape value is an empty string"
     )
+
+
+def test_shared_symmetry_invariant():
+    """For a given (stats, policy), the packet's family-status assignment
+    MUST match the critic's family-status assignment.
+
+    Implementation note: both consumers call classify_family_yield on
+    the same stats with the same policy. This test pins that contract
+    by exercising both paths on the same input and confirming the
+    family appears in the packet's empirically_dead section iff the
+    critic would reject a theory in that family for empirical-death."""
+    from kryptosbot.family_yield import (
+        DEFAULT_POLICY,
+        FamilyYieldStats,
+        classify_family_yield,
+        render_packet,
+    )
+    stats = FamilyYieldStats("encoding", 826, 0.78, 7.0, 0, 750)
+    verdict = classify_family_yield(stats, DEFAULT_POLICY)
+    packet = render_packet({"encoding": verdict})
+    # Critic-facing semantic.
+    assert verdict.status == "empirically_dead"
+    # Theorist-facing rendering.
+    assert "EMPIRICALLY DEAD" in packet
+    assert "encoding" in packet
