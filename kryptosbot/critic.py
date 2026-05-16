@@ -986,7 +986,7 @@ class TheoryCritic:
                 family=family_lower,
                 verdict=verdict,
                 bypass_failed_reasons=tuple(reasons),
-                suggested_mechanisms=(),  # Phase 2 populates
+                suggested_mechanism_records=(),  # Task 15 populates from KB
             ),
         )
 

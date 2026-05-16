@@ -19,7 +19,7 @@ def test_empirical_death_payload_dataclass_shape():
         verdict=verdict,
         bypass_failed_reasons=("subfamily already represented",),
     )
-    assert payload.suggested_mechanisms == ()  # Phase-1 default
+    assert payload.suggested_mechanism_records == ()  # Phase 2 default
     assert payload.family == "encoding"
 
 

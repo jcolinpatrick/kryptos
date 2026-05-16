@@ -232,8 +232,11 @@ class TheoryRecord:
 class EmpiricalDeathRejectionPayload:
     """Structured payload attached to REJECT_EMPIRICALLY_DEAD verdicts.
 
-    Phase 1 always emits suggested_mechanisms=(). Phase 2 populates from
-    the cipher-discovery KB. See docs/specs/2026-05-16-yield-feedback-design.md §4.3.
+    Phase 1 emitted suggested_mechanisms: tuple[str, ...] = (). Phase 2
+    renames and widens to suggested_mechanism_records: tuple[
+    CipherDiscoverySuggestion, ...] and populates from the cipher-discovery
+    KB at REJECT_EMPIRICALLY_DEAD time. See
+    docs/specs/2026-05-16-yield-feedback-phase2-design.md §4.3.
     """
     family: str
     # Optional only because from_dict may receive a malformed/legacy
@@ -241,16 +244,46 @@ class EmpiricalDeathRejectionPayload:
     # (critic gate Task 9) always populate this with a real verdict.
     verdict: Optional["FamilyYieldVerdict"] = None
     bypass_failed_reasons: tuple[str, ...] = ()
-    suggested_mechanisms: tuple[str, ...] = ()
+    # NEW Phase 2. Structured KB suggestion records, JSON-serializable
+    # via CipherDiscoverySuggestion.to_dict / from_dict. Always () when
+    # KB DB is missing or no candidate survives the novelty join.
+    # Typed as bare `tuple` to avoid a circular import on
+    # CipherDiscoverySuggestion (lives in kryptosbot.kb_injection, which
+    # itself imports nothing from models).
+    suggested_mechanism_records: tuple = ()
+    suggestion_source: str = "none"  # "cipher_discovery_kb" | "none"
+    suggestion_query_scope: dict = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        d = asdict(self)
-        # FamilyYieldVerdict serializes via asdict; tuples stay as lists.
-        return d
+        # Avoid asdict() so we can serialize the suggestion records
+        # through their own to_dict and avoid nested-dataclass round-trip
+        # surprises.
+        verdict_d: Optional[dict[str, Any]] = None
+        if self.verdict is not None:
+            # FamilyYieldVerdict is a frozen dataclass — asdict works.
+            verdict_d = asdict(self.verdict)
+        recs: list[dict[str, Any]] = []
+        for rec in self.suggested_mechanism_records or ():
+            if hasattr(rec, "to_dict"):
+                recs.append(rec.to_dict())
+            elif isinstance(rec, dict):
+                recs.append(dict(rec))
+            # else: silently skip — Phase-1 strings cannot round-trip
+            #  through the Phase-2 typed reader anyway. The from_dict
+            #  helper enforces this asymmetry on read.
+        return {
+            "family": self.family,
+            "verdict": verdict_d,
+            "bypass_failed_reasons": list(self.bypass_failed_reasons or ()),
+            "suggested_mechanism_records": recs,
+            "suggestion_source": self.suggestion_source,
+            "suggestion_query_scope": dict(self.suggestion_query_scope or {}),
+        }
 
     @classmethod
     def from_dict(cls, d: dict[str, Any]) -> EmpiricalDeathRejectionPayload:
         from kryptosbot.family_yield import FamilyYieldStats, FamilyYieldVerdict
+        from kryptosbot.kb_injection import CipherDiscoverySuggestion
 
         d = dict(d)
         verdict_d = d.get("verdict") or {}
@@ -271,11 +304,30 @@ class EmpiricalDeathRejectionPayload:
                 stats=stats,
             )
 
+        # Read new key first; fall back to legacy key (Phase 1 emitted
+        # an empty tuple of strings under "suggested_mechanisms").
+        rec_payload = d.get("suggested_mechanism_records")
+        if rec_payload is None:
+            # Legacy key tolerated; non-record-shaped entries are dropped.
+            legacy = d.get("suggested_mechanisms") or []
+            rec_payload = [
+                r for r in legacy if isinstance(r, dict)
+            ]
+        recs: list[CipherDiscoverySuggestion] = []
+        for r in rec_payload or ():
+            if isinstance(r, dict):
+                try:
+                    recs.append(CipherDiscoverySuggestion.from_dict(r))
+                except Exception:
+                    continue
+
         return cls(
             family=d.get("family", ""),
             verdict=verdict,
             bypass_failed_reasons=tuple(d.get("bypass_failed_reasons") or ()),
-            suggested_mechanisms=tuple(d.get("suggested_mechanisms") or ()),
+            suggested_mechanism_records=tuple(recs),
+            suggestion_source=d.get("suggestion_source", "none"),
+            suggestion_query_scope=dict(d.get("suggestion_query_scope") or {}),
         )
 
 
@@ -302,9 +354,15 @@ class CriticVerdict:
     def to_dict(self) -> dict[str, Any]:
         d = asdict(self)
         d["decision"] = self.decision.value
-        # asdict handles nested dataclasses; ensure None stays None.
+        # Route empirical_death through its own to_dict so the Phase 2
+        # CipherDiscoverySuggestion records serialize via their explicit
+        # to_dict (frozen dataclass + tuple field — asdict's recursion
+        # would still work for the fixture shape today, but the explicit
+        # call avoids drift if either schema evolves).
         if self.empirical_death is None:
             d["empirical_death"] = None
+        else:
+            d["empirical_death"] = self.empirical_death.to_dict()
         return d
 
     @classmethod

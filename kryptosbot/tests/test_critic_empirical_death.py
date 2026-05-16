@@ -136,6 +136,9 @@ class TestCheckFamilyEmpiricallyDead:
         assert len(verdict.empirical_death.bypass_failed_reasons) >= 1
 
     def test_suggested_mechanisms_empty_in_phase_1(self):
+        # Phase 2 renamed the field to suggested_mechanism_records.
+        # The critic constructor (Task 15 lands the populate path) still
+        # emits an empty tuple at the Task-11 stage.
         c = _critic_with_indices(
             yield_idx={"encoding": _verdict("encoding")},
             prior_subfams={"encoding": frozenset({"vigenere"})},
@@ -143,7 +146,7 @@ class TestCheckFamilyEmpiricallyDead:
         )
         t = _theory(family="encoding", subfamily="vigenere")
         verdict = c._check_family_empirically_dead(t, "encoding")
-        assert verdict.empirical_death.suggested_mechanisms == ()
+        assert verdict.empirical_death.suggested_mechanism_records == ()
 
 
 class TestCriticOrdering:
