@@ -72,6 +72,7 @@ from .theory_ledger import TheoryLedger
 from .claims_registry import CANONICAL_CLAIMS, CANONICAL_CLAIMS_BY_ID
 from .claim_rendering import render_claim_inline
 from .claim_policy import can_use_in_prompt
+from .family_yield import FamilyYieldStats
 
 # Reverse map anomaly_id -> claim_id (for interpretive claims, which are what
 # the controller actually surfaces in prompts). Existence claims are not used
@@ -983,6 +984,73 @@ class ResearchController:
             return reason
 
         return None
+
+    # ------------------------------------------------------------------
+    # Yield-feedback Phase 1: escape telemetry chokepoint.
+    # See docs/specs/2026-05-16-yield-feedback-design.md §5.3.
+    # ------------------------------------------------------------------
+    _ESCAPE_BLOCKED_CAP = 10
+
+    def _truncate_blocked_families(
+        self,
+        blocked_with_stats: list[tuple[str, "FamilyYieldStats"]],
+    ) -> list[str]:
+        """Return top-N family names by severity.
+
+        Sort key: (eliminated DESC, trials DESC, family_id ASC).
+        Eliminated count is the proxy for "blocked severity" in Phase 1
+        because every blocked family has accumulated eliminations.
+        """
+        ranked = sorted(
+            blocked_with_stats,
+            key=lambda kv: (-kv[1].eliminated, -kv[1].trials, kv[0]),
+        )
+        return [name for name, _ in ranked[: self._ESCAPE_BLOCKED_CAP]]
+
+    def _write_cycle_escape_summary(
+        self,
+        *,
+        status: str,
+        families_blocked: list[str],
+        blocked_stats: Optional[
+            list[tuple[str, "FamilyYieldStats"]]
+        ] = None,
+    ) -> None:
+        """Single chokepoint for writing per-cycle escape telemetry.
+
+        Called from every cycle-exit path (no-candidates early-continue,
+        all-rejected early-continue, success-path end-of-synthesis) so
+        the streak counter is updated from one code path.
+
+        Streak semantics (see spec §5.4):
+          - "needed_but_unavailable" increments
+          - everything else resets to 0
+        """
+        blocked_total = len(families_blocked)
+        if blocked_stats:
+            blocked_top = self._truncate_blocked_families(blocked_stats)
+        else:
+            blocked_top = families_blocked[: self._ESCAPE_BLOCKED_CAP]
+
+        if status == "needed_but_unavailable":
+            self.state.escape_needed_streak += 1
+        else:
+            self.state.escape_needed_streak = 0
+
+        self.state.last_escape_status = status
+        self.state.last_escape_families_blocked = blocked_top
+        self.state.last_escape_families_blocked_total = blocked_total
+        self.state.last_escape_cycle = self.state.cycle_number
+
+        if status == "partial_empirical_block":
+            self.state.last_partial_empirical_block_count = len(
+                families_blocked
+            )
+        elif status not in ("none",):
+            # Leave the partial count untouched so a partial cycle's
+            # count survives subsequent non-partial cycles, allowing the
+            # operator to see "last cycle that had partial blocking".
+            pass
 
     def _classify_agent_failure(self, error_text: str) -> tuple[bool, str]:
         """Classify whether an SDK/CLI failure should halt the remaining run.
