@@ -298,6 +298,8 @@ is the project's actual current product.
    nothing." 70% of the theorist budget is currently going into four such
    families.
 
+**Update 2026-05-16:** Tier A recommendation #4 (empirical-yield re-weighting in the critic) LANDED as Phase 1 of the yield-feedback feedback loop. See `docs/specs/2026-05-16-yield-feedback-design.md` for design and `docs/plans/2026-05-16-yield-feedback-implementation.md` for the implementation plan. Phase 2 (Tier A #1: crib-paste detector + cipher-discovery KB injection) and Phase 3 (Tier C: few-shot library) designed for, not built. Smoke-tested 2026-05-16 against live ledger: encoding (n=826) and k2_coords (n=177) classified empirically_dead; key_tape and archive_evidence remain low_yield because crib-paste artifacts at best=24 protect them under the current policy (closes under Phase 2's crib-paste detector).
+
 5. **Tighten the exhaustion-overlap heuristic** (`kryptosbot/job_dispatcher.py
    ::_exhaustion_overlap`). The current substring match against
    `exhaustion_log.json` family fields produces ~140 false positives (50 % of

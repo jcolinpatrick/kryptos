@@ -426,3 +426,35 @@ The controller replaces campaign_v2 as the primary entrypoint.
 
 campaign_v2.py is preserved for backward compatibility but is no longer
 the recommended entrypoint.
+
+## Family-Yield Feedback Loop (Phase 1, 2026-05-16)
+
+A memory-to-prompt feedback loop driven by ledger yield statistics.
+
+**Authority model:**
+
+| authority           | surface                                    |
+| ------------------- | ------------------------------------------ |
+| ledger              | source of record (theories.* columns)      |
+| family_yield.py     | source of derived policy truth             |
+| theorist prompt     | advisory rendering for proposal shaping    |
+| critic              | enforcement (REJECT_EMPIRICALLY_DEAD)      |
+
+`_assess_landscape` snapshots `family_yield_stats()`, `subfamily_index()`,
+and `mechanism_signature_index()` once per cycle. Both the theorist
+prompt (advisory) and the critic gate (enforcement) read the same
+snapshot; divergence is structurally impossible.
+
+Bypass criteria for an empirically-dead family: the theory must
+specify a subfamily NOT in `prior_subfamilies_in_family` AND a
+`mechanism_signature` (canonical DSL hash for Category-A, structured
+hash of family+subfamily+mechanism_tokens+anomalies+anchors+method
+for Category-B) NOT in `prior_mechanism_signatures_in_family`.
+`novelty_basis` prose explains the bypass but does not define it.
+
+Escape telemetry is written by the single chokepoint
+`_write_cycle_escape_summary`, called from every cycle-exit path
+(no-candidates, all-rejected, success). State persisted on
+`ControllerState.escape_needed_streak` and four sibling fields.
+
+See `docs/specs/2026-05-16-yield-feedback-design.md` for full spec.

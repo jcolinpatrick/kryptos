@@ -12,7 +12,11 @@ see `docs/README_current_state.md`. For historical strategy snapshots see
 
 ---
 
-## 1. Current Project State (2026-05-02)
+## 1. Current Project State (2026-05-16)
+
+- [Yield-feedback Phase 1 landed 2026-05-16](docs/specs/2026-05-16-yield-feedback-design.md) -- New `kryptosbot/family_yield.py` shared policy; `CriticDecision.REJECT_EMPIRICALLY_DEAD` with structural-novelty bypass; controller-owned `_write_cycle_escape_summary` chokepoint with streak counter on `ControllerState`. Closes the memory-to-prompt feedback loop on the 70% noise-floor allocation pattern identified in the 2026-05-16 maturity audit. Phase 2 (cipher-discovery KB injection) and Phase 3 (few-shot library) designed for, not built.
+
+## Prior State (2026-05-02)
 
 - **Codex hardening round 2 + Stage A campaign + audit infrastructure
   landed (commit `ffaf5a0`, 2026-05-02).** Tests: 3924 green (1862 core +

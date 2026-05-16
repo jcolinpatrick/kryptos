@@ -149,6 +149,36 @@ result = execute(spec, exhaustion_log={})   # skip the overlap check
 print(result.to_dict())
 ```
 
+### 5.6 Critic rejected my theory with REJECT_EMPIRICALLY_DEAD
+
+The theory is in a family with >= 50 prior trials, mean score < 2.0,
+zero promotions, and max score below STORE_THRESHOLD. The empirical-
+death gate (yield-feedback Phase 1) rejects new theories in such
+families unless the theory has BOTH:
+
+- a subfamily not previously seen in this family, AND
+- a mechanism signature (canonical DSL hash for Category-A; structured
+  hash of family + subfamily + mechanism_tokens + anomalies + anchors
+  + minimal_test_method for Category-B) not previously seen in this family.
+
+`novelty_basis` prose is preserved on the theory but is NOT part of
+the bypass check. To pass, change the structural shape, not the prose.
+
+To diagnose:
+
+```bash
+PYTHONPATH=src python3 -c "
+from kryptosbot.theory_ledger import TheoryLedger
+from kryptosbot.family_yield import classify_family_yield, DEFAULT_POLICY
+ledger = TheoryLedger('db/theory_ledger.sqlite')
+for s in ledger.family_yield_stats():
+    v = classify_family_yield(s, DEFAULT_POLICY)
+    print(f'{s.family:25s} status={v.status:18s} n={s.trials} mean={s.mean_score:.2f}')
+"
+```
+
+See `docs/specs/2026-05-16-yield-feedback-design.md` for full spec.
+
 ---
 
 ## 6. Command catalogue
