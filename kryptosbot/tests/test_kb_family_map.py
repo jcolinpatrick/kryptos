@@ -41,3 +41,53 @@ class TestConstants:
         for v in KB_TO_DSL_KIND.values():
             assert isinstance(v, str)
             assert v
+
+
+from kryptosbot.kb_family_map import (
+    map_kb_family_to_ledger_families,
+    normalize_kb_family,
+)
+
+
+class TestNormalize:
+    def test_lowercases(self):
+        assert normalize_kb_family("Columnar") == "columnar"
+
+    def test_collapses_whitespace(self):
+        assert normalize_kb_family("Polybius   Transposition") == "polybius transposition"
+
+    def test_strips(self):
+        assert normalize_kb_family("  columnar  ") == "columnar"
+
+    def test_empty(self):
+        assert normalize_kb_family("") == ""
+        assert normalize_kb_family("   ") == ""
+
+    def test_none_safe(self):
+        # KB rows may have NULL family; treat as empty string.
+        assert normalize_kb_family(None) == ""
+
+
+class TestMapKBFamily:
+    def test_known_family(self):
+        assert map_kb_family_to_ledger_families("columnar") == frozenset(
+            {"columnar_single", "double_columnar", "route_cipher"}
+        )
+
+    def test_case_insensitive(self):
+        assert map_kb_family_to_ledger_families("COLUMNAR") == frozenset(
+            {"columnar_single", "double_columnar", "route_cipher"}
+        )
+
+    def test_whitespace_insensitive(self):
+        assert map_kb_family_to_ledger_families("polybius  transposition") == frozenset(
+            {"fractionation", "multi_layer"}
+        )
+
+    def test_unmapped_returns_none(self):
+        # Phase 2 invariant 3: unmapped KB family → defer, not silent allow.
+        assert map_kb_family_to_ledger_families("xyzzy never seen") is None
+
+    def test_empty_returns_none(self):
+        assert map_kb_family_to_ledger_families("") is None
+        assert map_kb_family_to_ledger_families(None) is None

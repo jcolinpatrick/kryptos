@@ -18,7 +18,8 @@ See docs/specs/2026-05-16-yield-feedback-phase2-design.md §4.1.
 """
 from __future__ import annotations
 
-from typing import Mapping
+import re
+from typing import Mapping, Optional
 
 
 # Lowercase, whitespace-collapsed KB cipher_family strings → ledger family ids.
@@ -52,3 +53,31 @@ KB_TO_DSL_KIND: Mapping[str, str] = {
     "grille":                 "grille",
     "procedural":             "procedural",
 }
+
+
+_WHITESPACE_RE = re.compile(r"\s+")
+
+
+def normalize_kb_family(name: Optional[str]) -> str:
+    """Lowercase, collapse internal whitespace, strip edges.
+
+    None and pathological inputs collapse to "". Calling code treats ""
+    as "no KB family declared" which maps to None (defer_needs_mapping).
+    """
+    if not name or not isinstance(name, str):
+        return ""
+    s = _WHITESPACE_RE.sub(" ", name).strip().lower()
+    return s
+
+
+def map_kb_family_to_ledger_families(kb_family: Optional[str]) -> Optional[frozenset[str]]:
+    """Return mapped ledger families for a KB cipher_family string.
+
+    Returns None when the KB family is empty, missing, or unmapped.
+    Callers route None to verdict="defer_needs_mapping" — they do NOT
+    silently allow.
+    """
+    key = normalize_kb_family(kb_family)
+    if not key:
+        return None
+    return KB_TO_LEDGER_FAMILY.get(key)
