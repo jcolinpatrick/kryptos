@@ -11,7 +11,8 @@ from __future__ import annotations
 import hashlib
 import json
 import re
-from typing import Iterable, Optional
+from dataclasses import dataclass
+from typing import Iterable, Literal, Optional
 
 
 KB_SIGNATURE_SCHEMA_VERSION = "kb_mechanism_sig_v1"
@@ -88,3 +89,29 @@ def dispatcher_testable(record) -> bool:
     key = normalize_kb_family(getattr(record, "cipher_family", ""))
     kind = KB_TO_DSL_KIND.get(key)
     return bool(kind and kind in _SUPPORTED_KINDS)
+
+
+NoveltyVerdictKind = Literal["allow", "reject", "defer_needs_mapping"]
+
+
+@dataclass(frozen=True)
+class KBCandidateNoveltyVerdict:
+    """Per-row novelty join result. Constructed once per candidate row.
+
+    ``verdict`` is the actionable output:
+    - "allow"              — candidate survives all filters; emit suggestion.
+    - "reject"             — failed one or more eligibility / novelty checks.
+    - "defer_needs_mapping" — KB cipher_family is not in KB_TO_LEDGER_FAMILY.
+                             Operator review path; never silently rendered.
+    """
+    kb_record_id: str
+    kb_cipher_family: str
+    mapped_ledger_families: tuple[str, ...]
+    tested_status_ok: bool
+    family_blocked: bool
+    static_exhaustion_blocked: bool
+    mechanism_signature: str
+    signature_seen: bool
+    dispatcher_testable: bool
+    verdict: NoveltyVerdictKind
+    reasons: tuple[str, ...]

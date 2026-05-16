@@ -144,3 +144,45 @@ class TestDispatcherTestable:
         finally:
             jd._SUPPORTED_KINDS = orig_supported
             km.KB_TO_DSL_KIND = orig_map
+
+
+from kryptosbot.kb_injection import KBCandidateNoveltyVerdict
+
+
+class TestKBCandidateNoveltyVerdict:
+    def test_dataclass_shape(self):
+        v = KBCandidateNoveltyVerdict(
+            kb_record_id="abc",
+            kb_cipher_family="columnar",
+            mapped_ledger_families=("columnar_single", "double_columnar"),
+            tested_status_ok=True,
+            family_blocked=False,
+            static_exhaustion_blocked=False,
+            mechanism_signature="0123456789abcdef",
+            signature_seen=False,
+            dispatcher_testable=True,
+            verdict="allow",
+            reasons=("ok",),
+        )
+        assert v.kb_record_id == "abc"
+        assert v.verdict == "allow"
+        assert v.mapped_ledger_families == ("columnar_single", "double_columnar")
+
+    def test_dataclass_is_frozen(self):
+        v = KBCandidateNoveltyVerdict(
+            kb_record_id="x", kb_cipher_family="", mapped_ledger_families=(),
+            tested_status_ok=False, family_blocked=False, static_exhaustion_blocked=False,
+            mechanism_signature="", signature_seen=False,
+            dispatcher_testable=False, verdict="reject", reasons=(),
+        )
+        with pytest.raises((AttributeError, Exception)):
+            v.verdict = "allow"
+
+    def test_valid_verdict_values(self):
+        for verdict in ("allow", "reject", "defer_needs_mapping"):
+            KBCandidateNoveltyVerdict(
+                kb_record_id="x", kb_cipher_family="", mapped_ledger_families=(),
+                tested_status_ok=False, family_blocked=False, static_exhaustion_blocked=False,
+                mechanism_signature="", signature_seen=False,
+                dispatcher_testable=False, verdict=verdict, reasons=(),
+            )
