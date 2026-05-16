@@ -465,6 +465,14 @@ class ControllerConfig:
     deterministic_critic: bool = False
     redteam_min_crib_score: int = 0
 
+    # Yield-feedback Phase 1: policy used by the critic empirical-death gate
+    # and the landscape packet renderer. See spec §6.1.
+    family_yield_policy: "FamilyYieldPolicy" = field(
+        default_factory=lambda: __import__(
+            "kryptosbot.family_yield", fromlist=["DEFAULT_POLICY"]
+        ).DEFAULT_POLICY
+    )
+
     @property
     def is_bench_mode(self) -> bool:
         """True iff the controller is running a K4Bench challenge.
@@ -1651,6 +1659,35 @@ class ResearchController:
             ),
         }
 
+        # Yield-feedback Phase 1: snapshot family yield stats once per
+        # cycle. Fail-open: if the ledger query raises, leave indices
+        # empty so the critic gate becomes a no-op for this cycle while
+        # every other gate (Tier-1, Tier-2, duplicate, contradiction,
+        # DSL, exhaustion, red-team, kernel verifier) still applies.
+        from kryptosbot.family_yield import (
+            classify_family_yield,
+            render_packet,
+            render_escape_pressure,
+        )
+        try:
+            yield_stats_rows = self.ledger.family_yield_stats()
+            self._cycle_yield_index = {
+                s.family.lower(): classify_family_yield(
+                    s, self.config.family_yield_policy,
+                )
+                for s in yield_stats_rows
+            }
+            self._cycle_prior_subfamilies = self.ledger.subfamily_index()
+            self._cycle_prior_signatures = self.ledger.mechanism_signature_index()
+        except Exception:
+            logger.warning(
+                "family_yield query failed; empirical-death brake disabled for this cycle",
+                exc_info=True,
+            )
+            self._cycle_yield_index = {}
+            self._cycle_prior_subfamilies = {}
+            self._cycle_prior_signatures = {}
+
         return {
             "status_counts": status_counts,
             "cycle_delta": delta,
@@ -1750,6 +1787,13 @@ class ResearchController:
                     source_verdict=PURSUIT_SOURCE_SKIP_VARIANTS,
                 )
             ],
+            "family_yield": render_packet(self._cycle_yield_index),
+            "escape_pressure": render_escape_pressure(
+                streak=self.state.escape_needed_streak,
+                last_status=self.state.last_escape_status,
+                blocked=self.state.last_escape_families_blocked,
+                blocked_total=self.state.last_escape_families_blocked_total,
+            ),
         }
 
     def _safe_get_open_pursuit_leads(

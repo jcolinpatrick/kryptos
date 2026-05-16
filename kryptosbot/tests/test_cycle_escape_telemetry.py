@@ -115,3 +115,65 @@ class TestWriteCycleEscapeSummary:
         )
         assert len(c.state.last_escape_families_blocked) == 10
         assert c.state.last_escape_families_blocked_total == 17
+
+
+class TestAssessLandscapeYield:
+
+    def test_landscape_includes_family_yield_packet(self, tmp_path):
+        from kryptosbot.controller import ControllerConfig, ResearchController
+        from kryptosbot.theory_ledger import TheoryLedger
+        from kryptosbot.models import TheoryRecord, TheoryStatus
+
+        cfg = ControllerConfig(
+            project_root=Path(tmp_path),
+            ledger_db_path=Path(tmp_path) / "l.sqlite",
+            max_cycles=1,
+            theories_per_cycle=1,
+        )
+        c = ResearchController(cfg)
+        # Seed 50+ encoding theories to drive an empirically_dead verdict.
+        for i in range(60):
+            c.ledger.upsert_theory(TheoryRecord(
+                hypothesis_id=f"hid_{i:03d}",
+                title=f"t{i}", core_claim="c", mechanism="m",
+                family="encoding", subfamily="vigenere",
+                status=TheoryStatus.ELIMINATED, best_score=0.5,
+            ))
+        landscape = c._assess_landscape()
+        assert "family_yield" in landscape
+        text = landscape["family_yield"]
+        assert "EMPIRICALLY DEAD" in text
+        assert "encoding" in text
+
+    def test_landscape_caches_indices_on_controller(self, tmp_path):
+        from kryptosbot.controller import ControllerConfig, ResearchController
+        cfg = ControllerConfig(
+            project_root=Path(tmp_path),
+            ledger_db_path=Path(tmp_path) / "l.sqlite",
+            max_cycles=1, theories_per_cycle=1,
+        )
+        c = ResearchController(cfg)
+        c._assess_landscape()
+        assert hasattr(c, "_cycle_yield_index")
+        assert hasattr(c, "_cycle_prior_subfamilies")
+        assert hasattr(c, "_cycle_prior_signatures")
+
+    def test_fail_open_when_yield_stats_raises(self, tmp_path, monkeypatch):
+        from kryptosbot.controller import ControllerConfig, ResearchController
+        cfg = ControllerConfig(
+            project_root=Path(tmp_path),
+            ledger_db_path=Path(tmp_path) / "l.sqlite",
+            max_cycles=1, theories_per_cycle=1,
+        )
+        c = ResearchController(cfg)
+
+        def boom(self):
+            raise RuntimeError("simulated query failure")
+        monkeypatch.setattr(
+            "kryptosbot.theory_ledger.TheoryLedger.family_yield_stats",
+            boom,
+        )
+        landscape = c._assess_landscape()
+        # Brake is off; landscape is non-empty; indices are empty dicts.
+        assert c._cycle_yield_index == {}
+        assert "family_yield" in landscape
