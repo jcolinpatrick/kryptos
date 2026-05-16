@@ -177,7 +177,96 @@ class TestCheckBypassEligibility:
         assert any("empty mechanism signature" in r.lower() for r in reasons)
 
 
-from kryptosbot.family_yield import render_packet, render_escape_pressure
+from kryptosbot.family_yield import (
+    render_packet,
+    render_escape_pressure,
+    mechanism_signature_for_theory,
+    NON_DSL_INVESTIGATIVE_FAMILIES,
+)
+
+
+class TestMechanismSignature:
+    def test_category_a_signature_uses_dsl_spec(self):
+        theory_a = {
+            "family": "polyalphabetic",
+            "subfamily": "vigenere",
+            "mechanism": "vig + col",
+            "dsl_spec": {"layers": [{"kind": "vigenere", "keyword": "X"}]},
+            "anomalies_exploited": [],
+            "clue_anchors_used": [],
+            "novelty_basis": "totally novel!",
+            "minimal_test_spec": {},
+        }
+        theory_b = dict(theory_a)
+        # Same dsl_spec but very different novelty_basis prose.
+        theory_b["novelty_basis"] = "different prose"
+        sig_a = mechanism_signature_for_theory(theory_a)
+        sig_b = mechanism_signature_for_theory(theory_b)
+        assert sig_a == sig_b  # novelty_basis must not affect the hash
+        assert isinstance(sig_a, str) and len(sig_a) >= 8
+
+    def test_category_a_signature_differs_when_dsl_layers_differ(self):
+        theory_a = {
+            "family": "polyalphabetic",
+            "subfamily": "vigenere",
+            "mechanism": "x",
+            "dsl_spec": {"layers": [{"kind": "vigenere", "keyword": "X"}]},
+            "anomalies_exploited": [],
+            "clue_anchors_used": [],
+            "novelty_basis": "",
+            "minimal_test_spec": {},
+        }
+        theory_b = dict(theory_a)
+        theory_b["dsl_spec"] = {"layers": [{"kind": "beaufort", "keyword": "X"}]}
+        assert mechanism_signature_for_theory(theory_a) != mechanism_signature_for_theory(theory_b)
+
+    def test_category_b_signature_uses_structured_fields(self):
+        theory = {
+            "family": "geometry",
+            "subfamily": "spiral",
+            "mechanism": "spiral walk on width 21",
+            "dsl_spec": None,
+            "anomalies_exploited": ["width21_vertical_bigrams"],
+            "clue_anchors_used": ["width21"],
+            "novelty_basis": "anything",
+            "minimal_test_spec": {"method": "spiral_walk"},
+        }
+        sig = mechanism_signature_for_theory(theory)
+        assert isinstance(sig, str) and len(sig) >= 8
+
+    def test_category_b_signature_excludes_novelty_basis(self):
+        a = {
+            "family": "geometry",
+            "subfamily": "spiral",
+            "mechanism": "spiral walk on width 21",
+            "dsl_spec": None,
+            "anomalies_exploited": [],
+            "clue_anchors_used": [],
+            "novelty_basis": "this is novel because reasons",
+            "minimal_test_spec": {"method": "x"},
+        }
+        b = dict(a)
+        b["novelty_basis"] = "completely different prose"
+        assert mechanism_signature_for_theory(a) == mechanism_signature_for_theory(b)
+
+    def test_category_b_membership_is_explicit(self):
+        # Spec §4.4: NON_DSL_INVESTIGATIVE_FAMILIES is a frozenset we
+        # control. physical_overlay must be added deliberately; do not
+        # auto-route every novel-mechanism theory.
+        assert "geometry" in NON_DSL_INVESTIGATIVE_FAMILIES
+        assert "k2_coords" in NON_DSL_INVESTIGATIVE_FAMILIES
+        assert "archive_evidence" in NON_DSL_INVESTIGATIVE_FAMILIES
+
+    def test_category_a_signature_normalizes_subfamily_case(self):
+        a = {
+            "family": "polyalphabetic", "subfamily": "Vigenere",
+            "mechanism": "v", "dsl_spec": {"layers": [{"kind": "vigenere"}]},
+            "anomalies_exploited": [], "clue_anchors_used": [],
+            "novelty_basis": "", "minimal_test_spec": {},
+        }
+        b = dict(a)
+        b["subfamily"] = "  VIGENERE  "
+        assert mechanism_signature_for_theory(a) == mechanism_signature_for_theory(b)
 
 
 class TestRenderPacket:

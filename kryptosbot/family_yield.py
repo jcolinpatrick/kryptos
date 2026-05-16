@@ -11,8 +11,11 @@ See docs/specs/2026-05-16-yield-feedback-design.md.
 """
 from __future__ import annotations
 
+import hashlib
+import json
+import re
 from dataclasses import dataclass
-from typing import Literal
+from typing import Any, Literal
 
 # Imported lazily inside functions to avoid kernel import side effects
 # in pure-module contexts. STORE_THRESHOLD = 10 in current kernel.
@@ -322,3 +325,100 @@ def render_escape_pressure(
         )
 
     return f"=== ESCAPE PRESSURE (cross-cycle, streak={streak}) ===\n  {header}\n  {body}\n"
+
+
+# Families that are intentionally Category-B (investigative, non-DSL).
+# Adding a family here is a deliberate decision. The empirical-death gate
+# applies to BOTH Category-A and Category-B; this frozenset only governs
+# which signature path is used.
+NON_DSL_INVESTIGATIVE_FAMILIES: frozenset[str] = frozenset({
+    "geometry",
+    "k2_coords",
+    "archive_evidence",
+    "antipodes",
+    "geodetic",
+    "k3_continuity",
+    "novel",
+})
+
+
+def _normalize_subfamily(s: str) -> str:
+    """Lowercase, strip whitespace, collapse internal whitespace."""
+    if not s:
+        return ""
+    return re.sub(r"\s+", " ", s.strip().lower())
+
+
+def _normalize_token_list(items: list[str]) -> tuple[str, ...]:
+    """Lowercased, trimmed, deduped, sorted."""
+    seen: set[str] = set()
+    out: list[str] = []
+    for item in items or ():
+        normalized = (item or "").strip().lower()
+        if normalized and normalized not in seen:
+            seen.add(normalized)
+            out.append(normalized)
+    return tuple(sorted(out))
+
+
+def _content_tokens(mechanism: str) -> tuple[str, ...]:
+    """Normalize the free-text mechanism field to a stable token bag.
+
+    Splits on non-alphanumeric, lowercases, drops empty tokens, dedups,
+    sorts. Intentionally lossy: this is the Category-B fallback when
+    a true structural hash is unavailable, not a precise representation.
+    """
+    if not mechanism:
+        return ()
+    tokens = re.findall(r"[a-z0-9]+", mechanism.lower())
+    return tuple(sorted(set(tokens)))
+
+
+def _canonical_dsl_spec(dsl_spec: Any) -> str:
+    """Canonicalize a DSL spec dict to a stable JSON string."""
+    if dsl_spec is None:
+        return ""
+    return json.dumps(dsl_spec, sort_keys=True, separators=(",", ":"))
+
+
+def mechanism_signature_for_theory(theory: dict) -> str:
+    """Compute the structural mechanism signature for a theory.
+
+    For Category-A (has a non-null dsl_spec): hash the canonical DSL
+    plus family + normalized subfamily.
+
+    For Category-B (no dsl_spec): hash family + normalized subfamily +
+    normalized mechanism tokens + sorted anomalies_exploited +
+    sorted clue_anchors_used + minimal_test_spec.method.
+
+    novelty_basis is NEVER part of the hash (spec §4.4: prose explains
+    novelty, it does not define it).
+    """
+    family = (theory.get("family") or "").lower()
+    subfamily = _normalize_subfamily(theory.get("subfamily") or "")
+
+    if theory.get("dsl_spec"):
+        payload = {
+            "kind": "category_a",
+            "family": family,
+            "subfamily": subfamily,
+            "dsl_spec": _canonical_dsl_spec(theory["dsl_spec"]),
+        }
+    else:
+        anomalies = _normalize_token_list(theory.get("anomalies_exploited") or [])
+        anchors = _normalize_token_list(theory.get("clue_anchors_used") or [])
+        mts = theory.get("minimal_test_spec") or {}
+        payload = {
+            "kind": "category_b",
+            "family": family,
+            "subfamily": subfamily,
+            "mechanism_tokens": _content_tokens(theory.get("mechanism") or ""),
+            "anomalies_exploited": anomalies,
+            "clue_anchors_used": anchors,
+            "minimal_test_method": (mts.get("method") or "").lower().strip(),
+        }
+
+    canonical = json.dumps(
+        payload, sort_keys=True, separators=(",", ":"), default=list,
+    )
+    return hashlib.sha256(canonical.encode("utf-8")).hexdigest()[:16]
