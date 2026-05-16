@@ -1417,6 +1417,28 @@ class ResearchController:
                     continue
 
                 if self.config.dry_run:
+                    # Yield-feedback Phase 1: write escape telemetry even
+                    # in dry_run so integration tests for partial_empirical_block
+                    # can assert on state without dispatching real workers.
+                    if self._cycle_empirical_dead_rejections:
+                        _blocked = [
+                            r.family for r in self._cycle_empirical_dead_rejections
+                        ]
+                        _blocked_stats = [
+                            (r.family, r.verdict.stats)
+                            for r in self._cycle_empirical_dead_rejections
+                            if r.verdict is not None and r.verdict.stats is not None
+                        ]
+                        self._write_cycle_escape_summary(
+                            status="partial_empirical_block",
+                            families_blocked=_blocked,
+                            blocked_stats=_blocked_stats,
+                        )
+                    else:
+                        self._write_cycle_escape_summary(
+                            status="none",
+                            families_blocked=[],
+                        )
                     logger.info("DRY RUN — skipping dispatch")
                     cb.emit("on_dry_run_skip")
                     continue
