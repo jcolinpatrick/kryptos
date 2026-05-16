@@ -203,3 +203,43 @@ class TestCriticOrdering:
             )
             verdict = c.evaluate(duplicate)
             assert verdict.decision == CriticDecision.REJECT_DUPLICATE
+
+
+class TestBenchModeBehavior:
+    """Phase 1 bench-mode contract: `_check_family_empirically_dead` stays
+    inert because `_assess_landscape_bench()` (the bench-mode landscape path)
+    does NOT populate `_cycle_yield_index`. The controller injects empty
+    dicts via `getattr(..., {})`, so every family lookup returns None and
+    the gate returns None.
+
+    This is the documented Phase-1 bench-mode behavior. The bypass is
+    achieved by absent attributes defaulting to empty, not by an explicit
+    `if self.bench_mode` guard. Final-review note: this is safe today
+    because K4Bench ledgers are fresh per challenge, but Phase 2 should
+    add either an explicit guard or expand this test if bench ledgers
+    ever persist across sessions.
+    """
+
+    def test_empty_yield_index_returns_none_regardless_of_family(self):
+        """An empirically-dead family in a different (real-K4) context
+        would reject, but with an empty yield_index every call falls
+        through to None. This pins the bench-mode behavior."""
+        c = _critic_with_indices(
+            yield_idx={},
+            prior_subfams={},
+            prior_sigs={},
+        )
+        t = _theory(family="encoding", subfamily="vigenere")
+        assert c._check_family_empirically_dead(t, "encoding") is None
+
+    def test_bench_mode_inert_even_when_priors_present(self):
+        """Even if a stale prior-subfamily index leaks through to the
+        critic, an empty yield_index means no family is classified
+        empirically_dead, so no rejection fires."""
+        c = _critic_with_indices(
+            yield_idx={},  # bench mode never populates this
+            prior_subfams={"encoding": frozenset({"vigenere"})},  # leak simulation
+            prior_sigs={"encoding": frozenset({"sig"})},
+        )
+        t = _theory(family="encoding", subfamily="vigenere")
+        assert c._check_family_empirically_dead(t, "encoding") is None
