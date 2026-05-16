@@ -148,3 +148,52 @@ def classify_family_yield(
         ),
         stats=stats,
     )
+
+
+def check_bypass_eligibility(
+    *,
+    family: str,
+    subfamily: str,
+    mechanism_signature: str,
+    prior_subfamilies_in_family: frozenset[str],
+    prior_mechanism_signatures_in_family: frozenset[str],
+) -> tuple[bool, tuple[str, ...]]:
+    """Decide whether a theory in an empirically-dead family bypasses the gate.
+
+    The bypass is STRUCTURAL ONLY. Returns ``(eligible, reasons)`` where
+    ``reasons`` lists EVERY blocker (not just the first one) so the critic
+    can surface a complete diagnostic. Eligibility requires:
+
+    - non-empty subfamily, normalized form not in prior_subfamilies_in_family
+    - non-empty mechanism_signature, value not in prior_mechanism_signatures_in_family
+
+    `novelty_basis` prose is intentionally NOT consulted here. The bypass is
+    about whether the theory is structurally new, not whether it is
+    described as new.
+    """
+    reasons: list[str] = []
+
+    if not subfamily:
+        reasons.append(
+            "empty subfamily: cannot prove structural novelty without a "
+            "subfamily distinct from prior trials"
+        )
+    elif subfamily in prior_subfamilies_in_family:
+        reasons.append(
+            f"subfamily '{subfamily}' already represented in prior trials "
+            f"for family '{family}'"
+        )
+
+    if not mechanism_signature:
+        reasons.append(
+            "empty mechanism signature: cannot prove structural novelty "
+            "without a signature distinct from prior trials"
+        )
+    elif mechanism_signature in prior_mechanism_signatures_in_family:
+        reasons.append(
+            f"mechanism signature '{mechanism_signature[:16]}...' "
+            f"already represented in prior trials for family '{family}'"
+        )
+
+    eligible = len(reasons) == 0
+    return (eligible, tuple(reasons))

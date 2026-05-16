@@ -8,6 +8,7 @@ from kryptosbot.family_yield import (
     FamilyYieldPolicy,
     FamilyYieldStats,
     FamilyYieldVerdict,
+    check_bypass_eligibility,
     classify_family_yield,
 )
 
@@ -105,3 +106,72 @@ class TestClassifyFamilyYield:
         a = classify_family_yield(s)
         b = classify_family_yield(s)
         assert a == b
+
+
+class TestCheckBypassEligibility:
+    def test_eligible_when_both_subfamily_and_signature_are_new(self):
+        eligible, reasons = check_bypass_eligibility(
+            family="encoding",
+            subfamily="new_subfamily_v1",
+            mechanism_signature="sig_abc",
+            prior_subfamilies_in_family=frozenset({"old1", "old2"}),
+            prior_mechanism_signatures_in_family=frozenset({"sig_old"}),
+        )
+        assert eligible is True
+        assert reasons == ()
+
+    def test_ineligible_when_subfamily_already_tried(self):
+        eligible, reasons = check_bypass_eligibility(
+            family="encoding",
+            subfamily="old1",
+            mechanism_signature="sig_abc",
+            prior_subfamilies_in_family=frozenset({"old1"}),
+            prior_mechanism_signatures_in_family=frozenset({"sig_old"}),
+        )
+        assert eligible is False
+        assert any("subfamily" in r.lower() for r in reasons)
+
+    def test_ineligible_when_signature_already_tried(self):
+        eligible, reasons = check_bypass_eligibility(
+            family="encoding",
+            subfamily="new_subfamily_v1",
+            mechanism_signature="sig_old",
+            prior_subfamilies_in_family=frozenset({"old1"}),
+            prior_mechanism_signatures_in_family=frozenset({"sig_old"}),
+        )
+        assert eligible is False
+        assert any("signature" in r.lower() for r in reasons)
+
+    def test_ineligible_when_both_already_tried(self):
+        eligible, reasons = check_bypass_eligibility(
+            family="encoding",
+            subfamily="old1",
+            mechanism_signature="sig_old",
+            prior_subfamilies_in_family=frozenset({"old1"}),
+            prior_mechanism_signatures_in_family=frozenset({"sig_old"}),
+        )
+        assert eligible is False
+        assert len(reasons) == 2
+
+    def test_subfamily_empty_string_is_ineligible(self):
+        # Empty subfamily cannot prove structural novelty.
+        eligible, reasons = check_bypass_eligibility(
+            family="encoding",
+            subfamily="",
+            mechanism_signature="sig_new",
+            prior_subfamilies_in_family=frozenset(),
+            prior_mechanism_signatures_in_family=frozenset(),
+        )
+        assert eligible is False
+        assert any("empty subfamily" in r.lower() for r in reasons)
+
+    def test_signature_empty_string_is_ineligible(self):
+        eligible, reasons = check_bypass_eligibility(
+            family="encoding",
+            subfamily="new_subfam",
+            mechanism_signature="",
+            prior_subfamilies_in_family=frozenset(),
+            prior_mechanism_signatures_in_family=frozenset(),
+        )
+        assert eligible is False
+        assert any("empty mechanism signature" in r.lower() for r in reasons)
