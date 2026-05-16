@@ -206,3 +206,109 @@ def check_bypass_eligibility(
 
     eligible = len(reasons) == 0
     return (eligible, tuple(reasons))
+
+
+_STATUS_ORDER: tuple[YieldStatus, ...] = (
+    "empirically_dead",
+    "low_yield",
+    "healthy",
+    "insufficient_data",
+)
+
+_STATUS_HEADERS: dict[YieldStatus, str] = {
+    "empirically_dead": (
+        "EMPIRICALLY DEAD (the critic will reject new theories in these "
+        "families unless you specify a subfamily not previously tried, "
+        "supply a structured mechanism signature distinct from prior "
+        "trials, and document why this is not a relabeling)"
+    ),
+    "low_yield": "LOW YIELD",
+    "healthy": "HEALTHY",
+    "insufficient_data": "UNDEREXPLORED (insufficient data)",
+}
+
+
+def render_packet(yield_index: dict[str, FamilyYieldVerdict]) -> str:
+    """Render the per-cycle yield index for the theorist prompt.
+
+    Pure function. Deterministic ordering: by status (dead first, then
+    low, then healthy, then insufficient_data), then alphabetical within
+    each status. The output is human-readable plain text; the critic
+    does NOT read this string (it reads the dict directly).
+    """
+    if not yield_index:
+        return "=== RECENT FAMILY YIELD (advisory) ===\n  (no family yield data available this cycle)\n"
+
+    by_status: dict[YieldStatus, list[FamilyYieldVerdict]] = {
+        s: [] for s in _STATUS_ORDER
+    }
+    for v in yield_index.values():
+        by_status.setdefault(v.status, []).append(v)
+
+    lines: list[str] = ["=== RECENT FAMILY YIELD (advisory) ==="]
+    for status in _STATUS_ORDER:
+        verdicts = sorted(by_status.get(status, ()), key=lambda v: v.family)
+        if not verdicts:
+            continue
+        lines.append("")
+        lines.append(_STATUS_HEADERS[status] + ":")
+        for v in verdicts:
+            s = v.stats
+            lines.append(
+                f"  - {v.family:<20s} n={s.trials:<4d} "
+                f"mean={s.mean_score:<5.2f} "
+                f"best={s.best_score:<5.1f} "
+                f"promotions={s.promotions}"
+            )
+
+    lines.append("")
+    return "\n".join(lines)
+
+
+def render_escape_pressure(
+    *,
+    streak: int,
+    last_status: str,
+    blocked: list[str],
+    blocked_total: int,
+) -> str:
+    """Render cross-cycle escape pressure for the theorist prompt.
+
+    Returns the empty string when there is no pressure worth surfacing
+    (streak == 0 and last_status not in the pressure set). Escalates
+    language at streak 1, 2, and >= 3.
+    """
+    if streak <= 0:
+        return ""
+
+    truncation_note = ""
+    if blocked_total > len(blocked):
+        truncation_note = f"; showing top {len(blocked)}"
+
+    families_line = (
+        f"{blocked_total} families blocked{truncation_note}: "
+        + ", ".join(blocked)
+    )
+
+    if streak == 1:
+        header = "PRIOR CYCLE NEEDED ESCAPE"
+        body = (
+            f"{families_line}. Consider proposing in healthy or "
+            f"underexplored families this cycle, or supply a structurally "
+            f"new mechanism if revisiting a blocked one."
+        )
+    elif streak == 2:
+        header = "SECOND CONSECUTIVE ESCAPE-NEEDED CYCLE"
+        body = (
+            f"{families_line}. Avoid blocked families unless "
+            f"mechanism_signature is new."
+        )
+    else:
+        header = "REPEATED ESCAPE FAILURE"
+        body = (
+            f"{families_line}. This cycle MUST prioritize families "
+            f"outside the blocked set; reusing blocked families requires a "
+            f"structurally new mechanism."
+        )
+
+    return f"=== ESCAPE PRESSURE (cross-cycle, streak={streak}) ===\n  {header}\n  {body}\n"

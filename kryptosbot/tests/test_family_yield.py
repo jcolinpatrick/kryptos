@@ -175,3 +175,93 @@ class TestCheckBypassEligibility:
         )
         assert eligible is False
         assert any("empty mechanism signature" in r.lower() for r in reasons)
+
+
+from kryptosbot.family_yield import render_packet, render_escape_pressure
+
+
+class TestRenderPacket:
+    def _verdict(self, family, status, trials=100, mean=0.5, best=0.0, promo=0):
+        s = FamilyYieldStats(family, trials, mean, best, promo, 0)
+        return FamilyYieldVerdict(
+            family=family, status=status, reasons=(), stats=s,
+        )
+
+    def test_empty_index_returns_no_pressure_marker(self):
+        out = render_packet({})
+        assert "no family yield data" in out.lower()
+
+    def test_groups_by_status(self):
+        idx = {
+            "encoding": self._verdict("encoding", "empirically_dead", 826, 0.78, 7.0),
+            "grille":   self._verdict("grille",   "low_yield",       162, 0.64, 24.0),
+            "novel":    self._verdict("novel",    "insufficient_data", 7, 0.0, 0.0),
+            "fractionation": self._verdict("fractionation", "healthy", 100, 5.0, 18.0, promo=1),
+        }
+        out = render_packet(idx)
+        assert "EMPIRICALLY DEAD" in out
+        assert "LOW YIELD" in out
+        assert "encoding" in out
+        assert "grille" in out
+        # n, mean, best, promotions must all surface for at least one family
+        assert "826" in out
+        assert "0.78" in out
+
+    def test_deterministic_ordering(self):
+        idx = {
+            "z_family": self._verdict("z_family", "empirically_dead", 100, 0.5),
+            "a_family": self._verdict("a_family", "empirically_dead", 100, 0.5),
+        }
+        a = render_packet(idx)
+        b = render_packet(idx)
+        assert a == b
+
+
+class TestRenderEscapePressure:
+    def test_no_pressure_when_streak_zero(self):
+        out = render_escape_pressure(
+            streak=0,
+            last_status="none",
+            blocked=[],
+            blocked_total=0,
+        )
+        assert out.strip() == ""
+
+    def test_streak_one(self):
+        out = render_escape_pressure(
+            streak=1,
+            last_status="needed_but_unavailable",
+            blocked=["encoding", "key_tape"],
+            blocked_total=2,
+        )
+        assert "PRIOR CYCLE NEEDED ESCAPE" in out
+        assert "2 families blocked" in out
+
+    def test_streak_two_escalates(self):
+        out = render_escape_pressure(
+            streak=2,
+            last_status="needed_but_unavailable",
+            blocked=["encoding"],
+            blocked_total=1,
+        )
+        assert "SECOND CONSECUTIVE ESCAPE-NEEDED CYCLE" in out
+        assert "1 families blocked" in out
+
+    def test_streak_three_escalates(self):
+        out = render_escape_pressure(
+            streak=3,
+            last_status="needed_but_unavailable",
+            blocked=["encoding"],
+            blocked_total=1,
+        )
+        assert "REPEATED ESCAPE FAILURE" in out
+
+    def test_truncation_note_visible(self):
+        out = render_escape_pressure(
+            streak=1,
+            last_status="needed_but_unavailable",
+            blocked=["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"],
+            blocked_total=17,
+        )
+        assert "17 families blocked" in out
+        assert "showing top 10" in out.lower()
