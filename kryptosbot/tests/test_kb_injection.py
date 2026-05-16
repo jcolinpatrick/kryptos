@@ -301,3 +301,78 @@ class TestKBRowLoader:
         records = list(iter_kb_records(str(db)))
         # Single valid row.
         assert any(r.canonical_name == "OK Cipher" for r in records)
+
+
+from kryptosbot.kb_injection import classify_kb_candidate
+
+
+class TestClassifyKBCandidate:
+    def test_allow_unblocked_unseen_signature(self):
+        rec = next(r for r in iter_kb_records(str(FIXTURE_DB)) if r.record_id == "fx-swagman")
+        v = classify_kb_candidate(
+            rec,
+            prior_signatures={"columnar_single": frozenset(), "double_columnar": frozenset()},
+            blocked_families_in_cycle=frozenset({"encoding"}),
+            static_exhaustion_blocklist=frozenset(),
+        )
+        assert v.verdict == "allow"
+        assert v.tested_status_ok is True
+        assert v.signature_seen is False
+        assert v.family_blocked is False
+
+    def test_reject_when_exhausted(self):
+        rec = next(r for r in iter_kb_records(str(FIXTURE_DB)) if r.record_id == "fx-compass-exhausted")
+        v = classify_kb_candidate(
+            rec,
+            prior_signatures={},
+            blocked_families_in_cycle=frozenset(),
+            static_exhaustion_blocklist=frozenset(),
+        )
+        assert v.verdict == "reject"
+        assert v.tested_status_ok is False
+        assert "exhausted" in " ".join(v.reasons).lower()
+
+    def test_reject_when_family_blocked(self):
+        rec = next(r for r in iter_kb_records(str(FIXTURE_DB)) if r.record_id == "fx-swagman")
+        v = classify_kb_candidate(
+            rec,
+            prior_signatures={},
+            blocked_families_in_cycle=frozenset({"columnar_single"}),
+            static_exhaustion_blocklist=frozenset(),
+        )
+        assert v.verdict == "reject"
+        assert v.family_blocked is True
+
+    def test_reject_when_signature_seen(self):
+        rec = next(r for r in iter_kb_records(str(FIXTURE_DB)) if r.record_id == "fx-swagman")
+        sig = kb_mechanism_signature(rec)
+        v = classify_kb_candidate(
+            rec,
+            prior_signatures={"columnar_single": frozenset({sig})},
+            blocked_families_in_cycle=frozenset(),
+            static_exhaustion_blocklist=frozenset(),
+        )
+        assert v.verdict == "reject"
+        assert v.signature_seen is True
+
+    def test_defer_when_unmapped(self):
+        rec = next(r for r in iter_kb_records(str(FIXTURE_DB)) if r.record_id == "fx-unmapped")
+        v = classify_kb_candidate(
+            rec,
+            prior_signatures={},
+            blocked_families_in_cycle=frozenset(),
+            static_exhaustion_blocklist=frozenset(),
+        )
+        assert v.verdict == "defer_needs_mapping"
+        assert v.mapped_ledger_families == ()
+
+    def test_reject_when_static_exhaustion(self):
+        rec = next(r for r in iter_kb_records(str(FIXTURE_DB)) if r.record_id == "fx-swagman")
+        v = classify_kb_candidate(
+            rec,
+            prior_signatures={},
+            blocked_families_in_cycle=frozenset(),
+            static_exhaustion_blocklist=frozenset({"columnar_single"}),
+        )
+        assert v.verdict == "reject"
+        assert v.static_exhaustion_blocked is True

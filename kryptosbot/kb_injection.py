@@ -284,3 +284,96 @@ def iter_kb_records(db_path: str):
     finally:
         if conn is not None:
             conn.close()
+
+
+_EXHAUSTED_STATUSES = frozenset({"exhausted"})
+
+
+def classify_kb_candidate(
+    record,
+    *,
+    prior_signatures: dict,
+    blocked_families_in_cycle: frozenset,
+    static_exhaustion_blocklist: frozenset,
+) -> KBCandidateNoveltyVerdict:
+    """Per-row novelty join. Pure: no I/O, no SQL.
+
+    Determines verdict by sequentially checking:
+    1. KB cipher_family mapping — None → defer_needs_mapping.
+    2. tested_in_project / exhaustion_status — exhausted → reject.
+    3. mapped_ledger_families ∩ blocked_families_in_cycle — overlap → reject.
+    4. mapped_ledger_families ∩ static_exhaustion_blocklist — overlap → reject.
+    5. mechanism_signature ∈ prior_signatures[family] for any mapped family — reject.
+    Otherwise → allow.
+    """
+    from kryptosbot.kb_family_map import map_kb_family_to_ledger_families
+
+    reasons: list[str] = []
+    kb_record_id = getattr(record, "record_id", "") or ""
+    kb_cipher_family = getattr(record, "cipher_family", "") or ""
+
+    mapped = map_kb_family_to_ledger_families(kb_cipher_family)
+    if mapped is None:
+        return KBCandidateNoveltyVerdict(
+            kb_record_id=kb_record_id,
+            kb_cipher_family=kb_cipher_family,
+            mapped_ledger_families=(),
+            tested_status_ok=False,
+            family_blocked=False,
+            static_exhaustion_blocked=False,
+            mechanism_signature=kb_mechanism_signature(record),
+            signature_seen=False,
+            dispatcher_testable=False,
+            verdict="defer_needs_mapping",
+            reasons=(f"unmapped KB cipher_family: {kb_cipher_family!r}",),
+        )
+
+    mapped_tuple = tuple(sorted(mapped))
+    exhaustion_status = (getattr(record, "exhaustion_status", "") or "").lower()
+    tested = bool(getattr(record, "tested_in_project", False))
+    tested_status_ok = (not tested) or (exhaustion_status not in _EXHAUSTED_STATUSES)
+    if not tested_status_ok:
+        reasons.append(
+            f"exhausted: tested_in_project={tested} exhaustion_status={exhaustion_status!r}"
+        )
+
+    family_blocked = bool(mapped & blocked_families_in_cycle)
+    if family_blocked:
+        overlap = sorted(mapped & blocked_families_in_cycle)
+        reasons.append(f"mapped families overlap blocked cycle families: {overlap}")
+
+    static_exhaustion_blocked = bool(mapped & static_exhaustion_blocklist)
+    if static_exhaustion_blocked:
+        overlap = sorted(mapped & static_exhaustion_blocklist)
+        reasons.append(f"mapped families overlap static exhaustion list: {overlap}")
+
+    signature = kb_mechanism_signature(record)
+    signature_seen = any(
+        signature in (prior_signatures.get(fam) or frozenset())
+        for fam in mapped
+    )
+    if signature_seen:
+        reasons.append(f"mechanism_signature {signature!r} already seen in a mapped family")
+
+    dispatcher_supported = dispatcher_testable(record)
+
+    if tested_status_ok and not family_blocked and not static_exhaustion_blocked and not signature_seen:
+        verdict: NoveltyVerdictKind = "allow"
+        if not reasons:
+            reasons.append("ok")
+    else:
+        verdict = "reject"
+
+    return KBCandidateNoveltyVerdict(
+        kb_record_id=kb_record_id,
+        kb_cipher_family=kb_cipher_family,
+        mapped_ledger_families=mapped_tuple,
+        tested_status_ok=tested_status_ok,
+        family_blocked=family_blocked,
+        static_exhaustion_blocked=static_exhaustion_blocked,
+        mechanism_signature=signature,
+        signature_seen=signature_seen,
+        dispatcher_testable=dispatcher_supported,
+        verdict=verdict,
+        reasons=tuple(reasons),
+    )
