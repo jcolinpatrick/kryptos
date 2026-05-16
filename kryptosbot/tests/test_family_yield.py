@@ -252,10 +252,19 @@ class TestMechanismSignature:
     def test_category_b_membership_is_explicit(self):
         # Spec §4.4: NON_DSL_INVESTIGATIVE_FAMILIES is a frozenset we
         # control. physical_overlay must be added deliberately; do not
-        # auto-route every novel-mechanism theory.
-        assert "geometry" in NON_DSL_INVESTIGATIVE_FAMILIES
-        assert "k2_coords" in NON_DSL_INVESTIGATIVE_FAMILIES
-        assert "archive_evidence" in NON_DSL_INVESTIGATIVE_FAMILIES
+        # auto-route every novel-mechanism theory. Lock the exact set
+        # contents so any addition is a deliberate edit reviewed
+        # alongside this test.
+        expected = frozenset({
+            "geometry",
+            "k2_coords",
+            "archive_evidence",
+            "antipodes",
+            "geodetic",
+            "k3_continuity",
+            "novel",
+        })
+        assert NON_DSL_INVESTIGATIVE_FAMILIES == expected
 
     def test_category_a_signature_normalizes_subfamily_case(self):
         a = {

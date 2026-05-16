@@ -421,4 +421,7 @@ def mechanism_signature_for_theory(theory: dict) -> str:
     canonical = json.dumps(
         payload, sort_keys=True, separators=(",", ":"), default=list,
     )
+    # 16 hex chars = 64 bits of entropy; collision risk ~1e-13 for the
+    # current ledger size (~2000 theories). Birthday-bound expansion if
+    # ledger grows past ~1e8 theories.
     return hashlib.sha256(canonical.encode("utf-8")).hexdigest()[:16]
