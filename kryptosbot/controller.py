@@ -1295,6 +1295,10 @@ class ResearchController:
                         )
                         break
                     logger.info("No candidates generated, ending cycle")
+                    self._write_cycle_escape_summary(
+                        status="no_candidates",
+                        families_blocked=[],
+                    )
                     cb.emit("on_no_candidates")
                     continue
 
@@ -1303,6 +1307,14 @@ class ResearchController:
                 # Step 3: Critic pass
                 cb.emit("on_critic_start")
                 approved = []
+                # Yield-feedback Phase 1: inject per-cycle yield indices
+                # into the critic so each evaluate() runs O(1) without
+                # re-querying the ledger.
+                self.critic.yield_index = getattr(self, "_cycle_yield_index", {})
+                self.critic.prior_subfamilies = getattr(self, "_cycle_prior_subfamilies", {})
+                self.critic.prior_signatures = getattr(self, "_cycle_prior_signatures", {})
+                self.critic.policy = self.config.family_yield_policy
+                self._cycle_empirical_dead_rejections = []
                 for theory in candidates:
                     if self.config.skip_critic:
                         theory.status = TheoryStatus.APPROVED
@@ -1333,6 +1345,13 @@ class ResearchController:
                                 verdict.decision.value, theory.title,
                                 verdict.reasons[0] if verdict.reasons else "no reason",
                             )
+                            if (
+                                verdict.decision == CriticDecision.REJECT_EMPIRICALLY_DEAD
+                                and verdict.empirical_death is not None
+                            ):
+                                self._cycle_empirical_dead_rejections.append(
+                                    verdict.empirical_death
+                                )
 
                         cb.emit(
                             "on_critic_result",
@@ -1354,7 +1373,27 @@ class ResearchController:
                 self._close_referenced_pursuit_leads(approved)
 
                 if not approved:
-                    logger.info("No theories survived critic, ending cycle")
+                    blocked = [
+                        r.family for r in self._cycle_empirical_dead_rejections
+                    ]
+                    blocked_stats = [
+                        (r.family, r.verdict.stats)
+                        for r in self._cycle_empirical_dead_rejections
+                        if r.verdict is not None and r.verdict.stats is not None
+                    ]
+                    status = (
+                        "needed_but_unavailable"
+                        if blocked else "no_candidates"
+                    )
+                    self._write_cycle_escape_summary(
+                        status=status,
+                        families_blocked=blocked,
+                        blocked_stats=blocked_stats,
+                    )
+                    logger.info(
+                        "No theories survived critic, ending cycle (escape=%s)",
+                        status,
+                    )
                     continue
 
                 # Step 3b: Red-team pre-check (Day 3 Pantheon integration)
@@ -1442,6 +1481,30 @@ class ResearchController:
                 except Exception as exc:
                     logger.exception("Lead pursuit raised (continuing)")
                     cb.emit("on_cycle_error", self.state.cycle_number, exc)
+
+                # Yield-feedback Phase 1: success-path escape telemetry.
+                # If any candidate was rejected by empirical-death but
+                # others survived, log partial_empirical_block (streak
+                # resets). Otherwise log none.
+                if self._cycle_empirical_dead_rejections:
+                    blocked = [
+                        r.family for r in self._cycle_empirical_dead_rejections
+                    ]
+                    blocked_stats = [
+                        (r.family, r.verdict.stats)
+                        for r in self._cycle_empirical_dead_rejections
+                        if r.verdict is not None and r.verdict.stats is not None
+                    ]
+                    self._write_cycle_escape_summary(
+                        status="partial_empirical_block",
+                        families_blocked=blocked,
+                        blocked_stats=blocked_stats,
+                    )
+                else:
+                    self._write_cycle_escape_summary(
+                        status="none",
+                        families_blocked=[],
+                    )
 
                 # Step 6: Persist state.
                 # Wrapped in its own try so a transient SQLite I/O glitch

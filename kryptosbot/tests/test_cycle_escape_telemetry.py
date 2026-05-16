@@ -177,3 +177,65 @@ class TestAssessLandscapeYield:
         # Brake is off; landscape is non-empty; indices are empty dicts.
         assert c._cycle_yield_index == {}
         assert "family_yield" in landscape
+
+
+class TestCycleExitTelemetry:
+    """The three cycle-exit paths each write _write_cycle_escape_summary."""
+
+    def test_no_candidates_exit_writes_summary(self, tmp_path, monkeypatch):
+        # Force theorist to return zero candidates.
+        from kryptosbot.controller import ControllerConfig, ResearchController
+        cfg = ControllerConfig(
+            project_root=Path(tmp_path),
+            ledger_db_path=Path(tmp_path) / "l.sqlite",
+            max_cycles=1, theories_per_cycle=1, dry_run=True,
+        )
+        c = ResearchController(cfg)
+
+        async def empty_theories(*_a, **_kw):
+            return []
+        monkeypatch.setattr(c, "_generate_theories", empty_theories)
+
+        import asyncio
+        asyncio.run(c.run())
+
+        assert c.state.last_escape_status == "no_candidates"
+        assert c.state.escape_needed_streak == 0  # reset
+
+    def test_all_rejected_by_empirical_death_writes_needed_but_unavailable(
+        self, tmp_path, monkeypatch,
+    ):
+        # Seed enough encoding theories to drive empirically_dead, then
+        # have the theorist generate a single encoding theory that fails
+        # bypass.
+        from kryptosbot.controller import ControllerConfig, ResearchController
+        from kryptosbot.models import TheoryRecord, TheoryStatus
+        cfg = ControllerConfig(
+            project_root=Path(tmp_path),
+            ledger_db_path=Path(tmp_path) / "l.sqlite",
+            max_cycles=1, theories_per_cycle=1, dry_run=True,
+        )
+        c = ResearchController(cfg)
+        for i in range(60):
+            c.ledger.upsert_theory(TheoryRecord(
+                hypothesis_id=f"hid_seed_{i:03d}",
+                title=f"t{i}", core_claim="c", mechanism="m",
+                family="encoding", subfamily="vigenere",
+                status=TheoryStatus.ELIMINATED, best_score=0.5,
+            ))
+
+        async def dead_candidate(*_a, **_kw):
+            return [TheoryRecord(
+                hypothesis_id="hid_new",
+                title="t", core_claim="c", mechanism="m",
+                family="encoding", subfamily="vigenere",
+                status=TheoryStatus.PROPOSED,
+            )]
+        monkeypatch.setattr(c, "_generate_theories", dead_candidate)
+
+        import asyncio
+        asyncio.run(c.run())
+
+        assert c.state.last_escape_status == "needed_but_unavailable"
+        assert c.state.escape_needed_streak == 1
+        assert "encoding" in c.state.last_escape_families_blocked
