@@ -170,6 +170,15 @@ def check_bypass_eligibility(
     `novelty_basis` prose is intentionally NOT consulted here. The bypass is
     about whether the theory is structurally new, not whether it is
     described as new.
+
+    Input contract: ``subfamily`` and ``mechanism_signature`` are assumed
+    pre-normalized by the caller. The critic gate (Task 9) calls
+    ``_normalize_subfamily()`` on the theory's subfamily and computes the
+    canonical mechanism signature via ``mechanism_signature_for_theory()``
+    before invoking this function. The priors frozensets are built from
+    the ledger using the same normalization, so set membership comparison
+    is exact. Whitespace-only or empty inputs are treated as ineligible
+    (they cannot prove structural novelty).
     """
     reasons: list[str] = []
 
