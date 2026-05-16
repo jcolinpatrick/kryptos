@@ -44,6 +44,7 @@ class CriticDecision(str, Enum):
     APPROVE = "approve"            # novel, well-constrained, worth testing
     REJECT_DUPLICATE = "reject_duplicate"
     REJECT_ELIMINATED = "reject_eliminated"
+    REJECT_EMPIRICALLY_DEAD = "reject_empirically_dead"  # NEW: yield-feedback Phase 1
     REJECT_UNDERCONSTRAINED = "reject_underconstrained"
     REJECT_LOW_INFORMATION = "reject_low_information"
     REJECT_CONTRADICTED = "reject_contradicted"
@@ -228,6 +229,50 @@ class TheoryRecord:
 
 
 @dataclass
+class EmpiricalDeathRejectionPayload:
+    """Structured payload attached to REJECT_EMPIRICALLY_DEAD verdicts.
+
+    Phase 1 always emits suggested_mechanisms=(). Phase 2 populates from
+    the cipher-discovery KB. See docs/specs/2026-05-16-yield-feedback-design.md §4.3.
+    """
+    family: str
+    verdict: "FamilyYieldVerdict"
+    bypass_failed_reasons: tuple[str, ...] = ()
+    suggested_mechanisms: tuple[str, ...] = ()
+
+    def to_dict(self) -> dict[str, Any]:
+        d = asdict(self)
+        # FamilyYieldVerdict serializes via asdict; tuples stay as lists.
+        return d
+
+    @classmethod
+    def from_dict(cls, d: dict[str, Any]) -> EmpiricalDeathRejectionPayload:
+        from kryptosbot.family_yield import FamilyYieldStats, FamilyYieldVerdict
+
+        d = dict(d)
+        verdict_d = d.get("verdict") or {}
+        stats_d = verdict_d.get("stats") or {}
+        stats = FamilyYieldStats(**{
+            k: stats_d.get(k) for k in (
+                "family", "trials", "mean_score", "best_score",
+                "promotions", "eliminated",
+            )
+        }) if stats_d else None
+        verdict = FamilyYieldVerdict(
+            family=verdict_d.get("family", ""),
+            status=verdict_d.get("status", "healthy"),
+            reasons=tuple(verdict_d.get("reasons") or ()),
+            stats=stats,
+        ) if verdict_d else None
+        return cls(
+            family=d.get("family", ""),
+            verdict=verdict,
+            bypass_failed_reasons=tuple(d.get("bypass_failed_reasons") or ()),
+            suggested_mechanisms=tuple(d.get("suggested_mechanisms") or ()),
+        )
+
+
+@dataclass
 class CriticVerdict:
     """
     Structured output from the critic stage.
@@ -242,10 +287,17 @@ class CriticVerdict:
     contradicting_facts: list[str] = field(default_factory=list)
     estimated_information_gain: str = ""
     reviewed_at: str = field(default_factory=_now_iso)
+    # NEW (yield-feedback Phase 1). None for every decision other than
+    # REJECT_EMPIRICALLY_DEAD. Backward-compat: absent on pre-Phase-1
+    # ledger rows; from_dict treats absence as None.
+    empirical_death: Optional["EmpiricalDeathRejectionPayload"] = None
 
     def to_dict(self) -> dict[str, Any]:
         d = asdict(self)
         d["decision"] = self.decision.value
+        # asdict handles nested dataclasses; ensure None stays None.
+        if self.empirical_death is None:
+            d["empirical_death"] = None
         return d
 
     @classmethod
@@ -253,6 +305,11 @@ class CriticVerdict:
         d = dict(d)
         if "decision" in d and isinstance(d["decision"], str):
             d["decision"] = CriticDecision(d["decision"])
+        ed = d.get("empirical_death")
+        if ed is not None and isinstance(ed, dict):
+            d["empirical_death"] = EmpiricalDeathRejectionPayload.from_dict(ed)
+        elif ed is None:
+            d["empirical_death"] = None
         return cls(**{k: v for k, v in d.items() if k in cls.__dataclass_fields__})
 
 
