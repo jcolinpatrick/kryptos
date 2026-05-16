@@ -236,7 +236,10 @@ class EmpiricalDeathRejectionPayload:
     the cipher-discovery KB. See docs/specs/2026-05-16-yield-feedback-design.md §4.3.
     """
     family: str
-    verdict: "FamilyYieldVerdict"
+    # Optional only because from_dict may receive a malformed/legacy
+    # row where the verdict block is empty. Production code paths
+    # (critic gate Task 9) always populate this with a real verdict.
+    verdict: Optional["FamilyYieldVerdict"] = None
     bypass_failed_reasons: tuple[str, ...] = ()
     suggested_mechanisms: tuple[str, ...] = ()
 
@@ -252,18 +255,22 @@ class EmpiricalDeathRejectionPayload:
         d = dict(d)
         verdict_d = d.get("verdict") or {}
         stats_d = verdict_d.get("stats") or {}
-        stats = FamilyYieldStats(**{
-            k: stats_d.get(k) for k in (
-                "family", "trials", "mean_score", "best_score",
-                "promotions", "eliminated",
+
+        verdict: Optional[FamilyYieldVerdict] = None
+        if verdict_d and stats_d:
+            stats = FamilyYieldStats(**{
+                k: stats_d.get(k) for k in (
+                    "family", "trials", "mean_score", "best_score",
+                    "promotions", "eliminated",
+                )
+            })
+            verdict = FamilyYieldVerdict(
+                family=verdict_d.get("family", ""),
+                status=verdict_d.get("status", "healthy"),
+                reasons=tuple(verdict_d.get("reasons") or ()),
+                stats=stats,
             )
-        }) if stats_d else None
-        verdict = FamilyYieldVerdict(
-            family=verdict_d.get("family", ""),
-            status=verdict_d.get("status", "healthy"),
-            reasons=tuple(verdict_d.get("reasons") or ()),
-            stats=stats,
-        ) if verdict_d else None
+
         return cls(
             family=d.get("family", ""),
             verdict=verdict,
@@ -308,8 +315,9 @@ class CriticVerdict:
         ed = d.get("empirical_death")
         if ed is not None and isinstance(ed, dict):
             d["empirical_death"] = EmpiricalDeathRejectionPayload.from_dict(ed)
-        elif ed is None:
-            d["empirical_death"] = None
+        # else: ed is None or missing; d already has None (or no key, which
+        #       falls through to dataclass default via __dataclass_fields__
+        #       filter below).
         return cls(**{k: v for k, v in d.items() if k in cls.__dataclass_fields__})
 
 
