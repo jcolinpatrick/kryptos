@@ -1584,3 +1584,49 @@ class TestFamilyYieldQueries:
         assert len(sigs) == 1
         sig = next(iter(sigs))
         assert isinstance(sig, str) and len(sig) >= 8
+
+    def test_mechanism_signature_index_handles_malformed_json(self, tmp_path):
+        """A row with malformed JSON in one of the four JSON columns
+        must not break the index build. Reviewer flag: a single bad
+        row used to poison the entire per-cycle snapshot.
+        """
+        import sqlite3
+        from datetime import datetime, timezone
+        from kryptosbot.theory_ledger import TheoryLedger
+        from kryptosbot.models import TheoryRecord, TheoryStatus
+        ledger = TheoryLedger(tmp_path / "ledger.sqlite")
+        # Seed one valid row.
+        ledger.upsert_theory(TheoryRecord(
+            hypothesis_id="hid_good",
+            title="t", core_claim="c", mechanism="m",
+            family="encoding", subfamily="vigenere",
+            status=TheoryStatus.PROPOSED,
+            dsl_spec={"layers": [{"kind": "vigenere", "keyword": "X"}]},
+        ))
+
+        # Inject a malformed-JSON row by direct SQL (simulating data
+        # corruption or a hand-authored audit row).
+        now = datetime.now(timezone.utc).isoformat()
+        with sqlite3.connect(tmp_path / "ledger.sqlite") as conn:
+            conn.execute(
+                "INSERT INTO theories (hypothesis_id, title, core_claim, "
+                "mechanism, family, subfamily, status, dsl_spec, "
+                "created_at, updated_at) "
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                (
+                    "hid_bad", "t2", "c", "m", "encoding", "beaufort",
+                    "proposed",
+                    "not valid json!!!",   # malformed
+                    now, now,
+                ),
+            )
+            conn.commit()
+
+        # Index build must succeed; the malformed row falls back to
+        # default empty dict / list / None per safe-loader contract.
+        idx = ledger.mechanism_signature_index()
+        assert "encoding" in idx
+        # Two distinct signatures: one from the valid row, one from
+        # the fallback (Category-B path, since dsl_spec was malformed
+        # and defaulted to None).
+        assert len(idx["encoding"]) == 2

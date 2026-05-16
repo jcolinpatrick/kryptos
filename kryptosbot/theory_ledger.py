@@ -1376,8 +1376,22 @@ class TheoryLedger:
         Computes signatures via family_yield.mechanism_signature_for_theory
         from each row's reconstructed dict shape. Full table scan; once
         per cycle this is dominated by every other phase.
+
+        Robustness: A single malformed JSON row in dsl_spec / anomalies_exploited /
+        clue_anchors_used / minimal_test_spec must not poison the entire index.
+        Each json.loads call is wrapped with safe parsing that falls back to
+        defaults (None for dicts, [] for lists) on JSONDecodeError.
         """
         from kryptosbot.family_yield import mechanism_signature_for_theory
+
+        def _safe_json_load(raw: str | None, default: Any) -> Any:
+            """Parse JSON text, returning default on error or empty input."""
+            if not raw:
+                return default
+            try:
+                return json.loads(raw)
+            except (json.JSONDecodeError, TypeError, ValueError):
+                return default
 
         with self._connect() as conn:
             rows = conn.execute(
@@ -1402,13 +1416,13 @@ class TheoryLedger:
                 "family": family,
                 "subfamily": subfamily or "",
                 "mechanism": mechanism or "",
-                "dsl_spec": json.loads(dsl_spec) if dsl_spec and dsl_spec != "{}" else None,
+                "dsl_spec": _safe_json_load(dsl_spec, None) if dsl_spec and dsl_spec != "{}" else None,
                 "anomalies_exploited":
-                    json.loads(anomalies) if anomalies else [],
+                    _safe_json_load(anomalies, []),
                 "clue_anchors_used":
-                    json.loads(anchors) if anchors else [],
+                    _safe_json_load(anchors, []),
                 "minimal_test_spec":
-                    json.loads(mts) if mts else {},
+                    _safe_json_load(mts, {}),
             }
             sig = mechanism_signature_for_theory(theory_dict)
             out.setdefault(family.lower(), set()).add(sig)
