@@ -285,6 +285,51 @@
         "scope_tag": "tier_1_masks_only",
         "registered_at": "2026-05-11"
       }
+    },
+    {
+      "claim_id": "C-MODELB-RKSA-01",
+      "statement": "The SIGNAL verdict emitted on 2026-03-16 by scripts/running_key/e_model_b_running_key_sa.py is retracted. The script optimises 73 free key positions for English quadgram quality under a fixed 24-position crib constraint, with no matched-shuffle null. Per E-FRAC-54 / C-EFRAC54-01, the quadgram scorer is provably unable to discriminate at >13 mono DOF on n=97 strings; 73 free DOF is 5.6x the saturation bound. The observed best key_qg values (-4.22 to -4.31) are therefore structurally guaranteed for any CT of matching length and letter distribution, including pure shuffles. The recovered 'keys' contain forced gibberish blocks at exactly the 24 crib positions (k = CT + PT mod 26 is determined there), proving the SA cannot reconstruct a contiguous running-key passage. Verdict relabelled to NOISE_RELABELED in results/e_model_b_running_key_sa.json; verdict-emit logic in the source script downgraded SIGNAL/INTERESTING -> UNCALIBRATED pending a preregistered matched-shuffle null at p<=0.01.",
+      "class": "retired_claim",
+      "status": "live",
+      "scope": "Single script and its 2026-03-16 result artifact. Retracts the SIGNAL label only; does NOT eliminate Model B running-key as a hypothesis class.",
+      "depends_on": ["C-EFRAC54-01"],
+      "supersedes": [],
+      "superseded_by": [],
+      "artifact": "results/e_model_b_running_key_sa.json (verdict_history field); scripts/running_key/e_model_b_running_key_sa.py (verdict-emit logic patched 2026-05-15)",
+      "repro_reference": "Inspect top_10[*].key_text in results/e_model_b_running_key_sa.json: every entry contains the same gibberish substring at positions 21-33 and 63-73, which are the forced crib-derived key values. This pattern is structurally impossible for a contiguous English running key.",
+      "owner_doc": "docs/claims_registry.json",
+      "red_team_status": "self-evident from artifact inspection; no compute required for the disproof",
+      "notes": "The proper disproof is in-artifact: the top-10 key_text fields contain non-English blocks at exactly the crib positions in every restart. A matched-shuffle Monte Carlo null would confirm the structural argument but is not necessary. To re-promote any Model B running-key script to SIGNAL, the design must (a) preregister a matched-shuffle CT null, (b) commit to p<=0.01 on the best-of-K max statistic before observing data, (c) demonstrate that the recovered key forms a contiguous English passage across all 97 positions including the crib-forced ones (which it cannot, by construction of the forcing equation)."
+    },
+    {
+      "claim_id": "C-AUTOKEY-K4-EMIT-01",
+      "statement": "The BREAKTHROUGH verdict emitted by scripts/grille/e_autokey_k4.py is retracted. Top-10 hits in the 2026-03 result artifact are ten copies of the same primer at primer_len 76..85, with plaintext = 'A' x 21 + 'EASTNORTHEAST' + 'A' x 29 + 'BERLINCLOCK' + 'A' x 24 and bean=False for every hit. The score 24/24 is a degenerate consequence of a primer that hardcodes the crib substrings; no decryption is occurring. Additionally, all autokey variants (Vigenere, Beaufort, Variant Beaufort, ciphertext-autokey) are Tier-1 eliminated on K4 under direct positional crib mapping by structural proof (PT-max 16/24, CT-max 21/24); see CLAUDE.md DO-NOT-TEST list and docs/elimination_tiers.md. The verdict-emit logic was patched 2026-05-15 to require bean_passed=True before BREAKTHROUGH/SIGNAL/INTERESTING labels; high-score non-bean hits now degrade to NOISE_RELABELED.",
+      "class": "retired_claim",
+      "status": "live",
+      "scope": "Single script and its result artifact. Retracts the BREAKTHROUGH label and patches the verdict-emit gate. Does NOT add a new elimination; the autokey class was already Tier-1 eliminated.",
+      "depends_on": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "artifact": "results/e_autokey_k4.json (verdict_history field); scripts/grille/e_autokey_k4.py (verdict-emit gate patched 2026-05-15)",
+      "repro_reference": "Inspect top_10[*].pt in results/e_autokey_k4.json: every entry is 'A'*21 + 'EASTNORTHEAST' + 'A'*29 + 'BERLINCLOCK' + 'A'*24 with bean=False. The primer trivially contains the cribs as substrings; score 24/24 is not decryption.",
+      "owner_doc": "docs/claims_registry.json",
+      "red_team_status": "self-evident from artifact inspection",
+      "notes": "Two independent reasons the verdict is wrong: (1) the primer encodes the cribs as substrings, so 24/24 is a tautology, not a decrypt; (2) the cipher class is Tier-1 eliminated. A correct script for this hypothesis class would (a) require bean_passed before promotion, (b) reject primers that contain the crib substrings, and (c) acknowledge that any positive result must overturn the existing structural proof."
+    },
+    {
+      "claim_id": "C-BCLOCK-ROUTE-EMIT-01",
+      "statement": "The INTERESTING verdict emitted by scripts/fractionation/e_berlin_clock_route.py is retracted. The 2026-03-23 result artifact contains 4 'interesting' hits out of 437 walks, all with fragments_found=['CK'] only. The 28-fragment detector dictionary contains 2-letter CK and K4-themed tokens BER/LIN/CLO; the 24-letter input (BEAUFORT_KEYSTREAM_AT_CRIBS) by construction (k = CT + PT mod 26 at crib positions) contains the letters of BERLINCLOCK. Finding CK in permutations of letters that include C and K is circular; the detector finds what the input contains. The verdict-emit logic was patched 2026-05-15: fragment-only hits no longer promote above NOISE; INTERESTING now requires period_matches OR keyword_matches >= 18.",
+      "class": "retired_claim",
+      "status": "live",
+      "scope": "Single script and its result artifact. Retracts the INTERESTING label and tightens the verdict-emit gate. Does NOT eliminate the underlying Berlin Clock routing hypothesis as a hypothesis class.",
+      "depends_on": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "artifact": "results/e_berlin_clock_route.json (verdict_history field); scripts/fractionation/e_berlin_clock_route.py (verdict-emit gate patched 2026-05-15)",
+      "repro_reference": "Inspect all_results in results/e_berlin_clock_route.json: every entry shows fragments_found=['CK'] only. The dictionary in scripts/fractionation/e_berlin_clock_route.py line 141-145 contains 'BER','LIN','CLO','CK','KRY','PTO' which are substrings of the cribs and CT.",
+      "owner_doc": "docs/claims_registry.json",
+      "red_team_status": "self-evident from artifact inspection",
+      "notes": "Steelman: a Berlin Clock routing hypothesis is testable in principle (some permutation of the 24 keystream values might reveal periodicity, keyword match, or readable text). A correct test would (a) use >=3-letter fragments, (b) use a CT/crib-independent dictionary, (c) preregister a matched-shuffle null, (d) apply Bonferroni or similar across walks x fragments. The current script does none of these."
     }
   ]
 }
