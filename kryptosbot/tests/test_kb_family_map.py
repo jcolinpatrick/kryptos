@@ -4,6 +4,8 @@ from __future__ import annotations
 from kryptosbot.kb_family_map import (
     KB_TO_DSL_KIND,
     KB_TO_LEDGER_FAMILY,
+    map_kb_family_to_ledger_families,
+    normalize_kb_family,
 )
 
 
@@ -41,12 +43,6 @@ class TestConstants:
         for v in KB_TO_DSL_KIND.values():
             assert isinstance(v, str)
             assert v
-
-
-from kryptosbot.kb_family_map import (
-    map_kb_family_to_ledger_families,
-    normalize_kb_family,
-)
 
 
 class TestNormalize:
