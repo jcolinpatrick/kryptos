@@ -81,3 +81,41 @@ def map_kb_family_to_ledger_families(kb_family: Optional[str]) -> Optional[froze
     if not key:
         return None
     return KB_TO_LEDGER_FAMILY.get(key)
+
+
+# Historical ledger families that are NOT yet in KNOWN_FAMILIES but are
+# legitimate empirical labels observed in production ledger snapshots.
+# Adding here keeps the universe stable across ledger churn without
+# forcing a KNOWN_FAMILIES entry for every transient ledger string.
+# Audit by re-running:
+#   SELECT DISTINCT family FROM theories WHERE family <> ''
+# and reconciling. Spec §4.1 — Task 3 acceptance.
+_HISTORICAL_LEDGER_FAMILIES: frozenset[str] = frozenset({
+    "admissibility",
+    "antipodes",
+    "archive_evidence",
+    "campaigns_final_checklist",
+    "crib_analysis",
+    "encoding",
+    "fractionation",
+    "geodetic",
+    "geometry",
+    "k2_coords",
+    "k3_continuity",
+    "mirror_ka",
+    "overlay",
+    "polyalphabetic",
+    "transposition",
+})
+
+
+def valid_ledger_family_universe() -> frozenset[str]:
+    """Union of KNOWN_FAMILIES.family_id and historical ledger families.
+
+    Authoritative validity check for KB_TO_LEDGER_FAMILY values. Grows
+    as new families are added to either source. Pure function; no I/O.
+    """
+    # Local import — registries imports kryptos kernel which is heavy.
+    from kryptosbot.registries import KNOWN_FAMILIES
+    registry_ids = frozenset(f["family_id"] for f in KNOWN_FAMILIES)
+    return registry_ids | _HISTORICAL_LEDGER_FAMILIES
