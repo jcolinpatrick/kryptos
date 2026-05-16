@@ -570,6 +570,15 @@ class TheoryCritic:
                 similar_hypotheses=[dup_id],
             )
 
+        # --- Check 3.5: Empirical-death family gate (yield-feedback Phase 1) ---
+        # Inserted after Tier-1/Tier-2 and duplicate detection, before
+        # contradiction. See docs/specs/2026-05-16-yield-feedback-design.md §4.4.
+        empirical_death_verdict = self._check_family_empirically_dead(
+            theory, family_lower,
+        )
+        if empirical_death_verdict is not None:
+            return empirical_death_verdict
+
         # --- Check 4: Contradiction check ---
         # Skip in bench mode: the contradictions are all keyed to real-K4
         # facts (Bifid alphabet, autokey crib feedback, K4 IC). The

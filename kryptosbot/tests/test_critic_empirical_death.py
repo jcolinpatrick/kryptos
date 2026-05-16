@@ -144,3 +144,62 @@ class TestCheckFamilyEmpiricallyDead:
         t = _theory(family="encoding", subfamily="vigenere")
         verdict = c._check_family_empirically_dead(t, "encoding")
         assert verdict.empirical_death.suggested_mechanisms == ()
+
+
+class TestCriticOrdering:
+    """Empirical-death goes AFTER tier-1/tier-2 and AFTER duplicate detection,
+    but BEFORE contradiction and DSL-translatability."""
+
+    def test_tier_1_wins_over_empirical_death(self):
+        from kryptosbot.critic import TheoryCritic, TIER_1_FAMILIES
+        # Pick a family that's BOTH Tier-1 AND empirically_dead in our index.
+        tier_1_family = next(iter(TIER_1_FAMILIES))
+        c = TheoryCritic(ledger=FakeLedger())
+        c.yield_index = {tier_1_family: _verdict(tier_1_family)}
+        c.prior_subfamilies = {tier_1_family: frozenset({"old"})}
+        c.prior_signatures = {tier_1_family: frozenset({"sig_known"})}
+        t = TheoryRecord(
+            hypothesis_id="hid_tier1",
+            title="t", core_claim="c", mechanism="m",
+            family=tier_1_family, subfamily="old",
+            status=TheoryStatus.PROPOSED,
+        )
+        verdict = c.evaluate(t)
+        # Tier-1 wins. The verdict reason mentions Tier-1, not empirically-dead.
+        assert verdict.decision == CriticDecision.REJECT_ELIMINATED
+        assert verdict.empirical_death is None
+
+    def test_duplicate_wins_over_empirical_death(self):
+        # A theory that is a duplicate of an existing one in a dead family
+        # must get REJECT_DUPLICATE, not REJECT_EMPIRICALLY_DEAD.
+        # Setup: build a ledger with an existing 'encoding' theory and a
+        # second proposal with the same hypothesis_id / dsl_spec.
+        # (Specific implementation depends on existing duplicate-detection;
+        # the assertion is that ordering puts duplicate first.)
+        from kryptosbot.theory_ledger import TheoryLedger
+        import tempfile, pathlib
+        with tempfile.TemporaryDirectory() as tmpd:
+            ledger = TheoryLedger(pathlib.Path(tmpd) / "l.sqlite")
+            existing = TheoryRecord(
+                hypothesis_id="hid_existing",
+                title="t", core_claim="c", mechanism="vig",
+                family="encoding", subfamily="vigenere",
+                status=TheoryStatus.ELIMINATED,
+                dsl_spec={"layers": [{"kind": "vigenere", "keyword": "X"}]},
+            )
+            ledger.upsert_theory(existing)
+
+            c = TheoryCritic(ledger=ledger)
+            c.yield_index = {"encoding": _verdict("encoding")}
+            c.prior_subfamilies = {"encoding": frozenset({"vigenere"})}
+            c.prior_signatures = {"encoding": frozenset({"sig_dummy"})}
+
+            duplicate = TheoryRecord(
+                hypothesis_id="hid_new",  # different id
+                title="t", core_claim="c", mechanism="vig",
+                family="encoding", subfamily="vigenere",
+                status=TheoryStatus.PROPOSED,
+                dsl_spec={"layers": [{"kind": "vigenere", "keyword": "X"}]},
+            )
+            verdict = c.evaluate(duplicate)
+            assert verdict.decision == CriticDecision.REJECT_DUPLICATE
