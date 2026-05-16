@@ -3068,6 +3068,14 @@ class ResearchController:
         else:
             serpentine_block = ""
 
+        # Yield-feedback loop sections (Phase-1, 2026-05-16).
+        # Rendered as standalone sections AFTER the JSON landscape dump so
+        # the model sees them as advisory context rather than raw data.
+        # Both are skipped when empty, preserving pre-Phase-1 prompt shape
+        # for cold-start / no-pressure cycles.
+        family_yield_block = landscape.get("family_yield") or ""
+        escape_pressure_block = landscape.get("escape_pressure") or ""
+
         # K4Bench input mode replaces the real-K4 anchor prelude with
         # the synthetic-challenge prompt block. The block is fully
         # self-contained (CT, cribs, clue text, solver contract) and
@@ -3471,7 +3479,7 @@ supported kinds, DO NOT fabricate one. Set "dsl_spec": null and accept
 rejection — the framework will later extend the DSL rather than you
 launder an untranslatable theory through a fake spec.
 
-Output ONLY the JSON array. No commentary."""
+{"" if not family_yield_block.strip() else family_yield_block + chr(10) + chr(10)}{"" if not escape_pressure_block.strip() else escape_pressure_block + chr(10) + chr(10)}Output ONLY the JSON array. No commentary."""
 
     def _programmatic_fallback(
         self, landscape: dict[str, Any]
