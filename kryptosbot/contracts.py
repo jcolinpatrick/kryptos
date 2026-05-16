@@ -141,6 +141,25 @@ def _verify_against_kernel(contract: WorkerContract) -> None:
         contract.score = 0.0
         return
 
+    # Non-A-Z characters (typically '?' placeholders for unknown positions)
+    # bypass the length check above but silently fail downstream: text_to_nums
+    # drops them, the resulting num list is shorter than 97, and the kernel's
+    # verify_bean_simple raises a ValueError that leaks into verification_error
+    # as if the verifier itself were broken. Reject these explicitly so the
+    # error message describes what actually happened.
+    if not pt.isalpha() or not pt.isascii():
+        contract.fields_overwritten = True
+        contract.worker_self_report = worker_claim
+        contract.verification_error = (
+            f"best_plaintext contains non-A-Z characters; CT97 space requires "
+            f"uppercase A-Z only (got {len(pt) - sum(1 for c in pt if 'A' <= c <= 'Z')} "
+            f"non-alphabetic char(s)); worker self-reported scores discarded"
+        )
+        contract.crib_score = 0
+        contract.bean_passed = False
+        contract.score = 0.0
+        return
+
     # Plaintext is CT97-shaped. Recompute crib_score and bean_passed from
     # the kernel directly. We deliberately do NOT call score_candidate here
     # because (a) alerts.classify_outcome only gates on crib_score and

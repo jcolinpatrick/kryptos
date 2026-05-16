@@ -403,15 +403,15 @@ class TestCategory5_EmptyPlaintextWithNonZeroClaim:
 # ─── Category 6: unicode / non-A-Z smuggling ─────────────────────────────────
 
 class TestCategory6_UnicodeSmuggling:
-    """Non-A-Z characters slip past strip/upper. The kernel's verify_bean_simple
-    fails (because text_to_nums silently drops non-alphabetics, yielding a
-    short keystream), raising ValueError — caught by the verifier's exception
-    branch."""
+    """Non-A-Z characters slip past strip/upper. As of 2026-05-16 these are
+    rejected explicitly at the pt.isalpha() guard, BEFORE the kernel call —
+    previously they fell through and produced a misleading "Kernel verification
+    raised: verify_bean_simple requires a length-97 keystream, got N" error
+    when text_to_nums silently dropped the non-A-Z chars."""
 
-    def test_accented_char_triggers_exception_branch(self):
-        """A single accented char in an otherwise 97-char PT causes
-        text_to_nums to drop it, shortening the keystream, which
-        verify_bean_simple rejects with ValueError."""
+    def test_accented_char_rejected_at_alphabet_guard(self):
+        """A single accented char in an otherwise 97-char PT is rejected at
+        the alphabet guard with a clear error message."""
         pt = _correct_cribs_pt("X")[:50] + "é" + _correct_cribs_pt("X")[51:]
         assert len(pt) == 97
         c = _build_contract(pt, crib_score=24, bean_passed=True, score=24.0)
@@ -420,7 +420,9 @@ class TestCategory6_UnicodeSmuggling:
 
         _assert_zero_score_fields(c)
         assert c.fields_overwritten is True
-        assert c.verification_error.startswith("Kernel verification raised:")
+        assert c.verification_error.startswith(
+            "best_plaintext contains non-A-Z characters"
+        )
         assert c.worker_self_report == {
             "crib_score": 24, "bean_passed": True, "score": 24.0,
         }
@@ -435,12 +437,12 @@ class TestCategory6_UnicodeSmuggling:
 
         _assert_zero_score_fields(c)
         assert c.fields_overwritten is True
-        # Falls through the length branch, not the exception branch.
+        # Falls through the length branch, not the alphabet branch.
         assert c.verification_error.startswith("best_plaintext length 98 != 97")
 
-    def test_cyrillic_homoglyph_triggers_exception_branch(self):
+    def test_cyrillic_homoglyph_rejected_at_alphabet_guard(self):
         """Cyrillic 'А' (U+0410) looks like Latin 'A' but is a different
-        codepoint. text_to_nums drops it."""
+        codepoint. Rejected explicitly at the alphabet guard."""
         # Replace the first crib letter E at position 21 with Cyrillic А (U+0410).
         pt_base = _correct_cribs_pt("X")
         pt = pt_base[:21] + "А" + pt_base[22:]
@@ -451,7 +453,28 @@ class TestCategory6_UnicodeSmuggling:
 
         _assert_zero_score_fields(c)
         assert c.fields_overwritten is True
-        assert c.verification_error.startswith("Kernel verification raised:")
+        assert c.verification_error.startswith(
+            "best_plaintext contains non-A-Z characters"
+        )
+
+    def test_question_mark_placeholder_rejected_cleanly(self):
+        """Workers sometimes emit '?' for unknown positions. With len==97 these
+        used to leak the kernel's "got N != 97" error; now caught at the
+        alphabet guard with a clear message. Regression for the 2026-05-08
+        audit finding (controller_maturity_audit_2026_05_16.md)."""
+        pt = "?NTM??X?LJ?VDH?D?APVUUCYFNFWFDSAXQ?WUKNVHQZO?BABV?AMTR?C??D?ERFAEZBDRJLZLMERPBQXVYDT?SK?W????EI?A"
+        assert len(pt) == 97
+        c = _build_contract(pt, crib_score=4, bean_passed=False, score=4.0)
+
+        _verify_against_kernel(c)
+
+        _assert_zero_score_fields(c)
+        assert c.fields_overwritten is True
+        assert c.verification_error.startswith(
+            "best_plaintext contains non-A-Z characters"
+        )
+        # Sanity check: the count in the message matches reality.
+        assert "got 21 non-alphabetic char(s)" in c.verification_error
 
 
 # ─── Category 7: numeric field type confusion ────────────────────────────────
