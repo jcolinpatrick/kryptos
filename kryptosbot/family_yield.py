@@ -11,7 +11,7 @@ See docs/specs/2026-05-16-yield-feedback-design.md.
 """
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Literal
 
 # Imported lazily inside functions to avoid kernel import side effects
