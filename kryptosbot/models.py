@@ -597,6 +597,14 @@ class ControllerState:
     # after halt starts clean only after operator acknowledgment.
     halt_reason_hardening: str = ""
 
+    # Yield-feedback Phase 1 escape telemetry. See spec §6.2.
+    escape_needed_streak: int = 0
+    last_escape_status: str = "none"
+    last_escape_families_blocked: list[str] = field(default_factory=list)
+    last_escape_families_blocked_total: int = 0
+    last_escape_cycle: int = 0
+    last_partial_empirical_block_count: int = 0
+
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
 
