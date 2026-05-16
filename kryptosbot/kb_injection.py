@@ -176,3 +176,111 @@ class CipherDiscoverySuggestion:
             bounded_kill_criterion=str(d.get("bounded_kill_criterion", "")),
             source_verdict="allow",
         )
+
+
+import logging
+import sqlite3
+from pathlib import Path
+
+logger = logging.getLogger(__name__)
+
+
+# Columns we strictly require from the cipher_records table. Other columns
+# are read opportunistically; missing values fall back to dataclass defaults.
+_CORE_COLUMNS = (
+    "record_id",
+    "canonical_name",
+    "cipher_family",
+    "cipher_type",
+    "taxonomy",
+    "description",
+    "operational_mechanics",
+    "k4_relevance_score",
+    "tested_in_project",
+    "exhaustion_status",
+)
+
+
+def iter_kb_records(db_path: str):
+    """Yield CipherRecord-compatible objects from ``db_path``.
+
+    Missing DB → empty iterator (no exception). Corrupt rows → skipped
+    with WARNING. Schema-version drift on the cipher_records table is
+    tolerated as long as the columns in _CORE_COLUMNS are present.
+    """
+    from kryptos.cipher_discovery.schema import CipherRecord
+
+    if not Path(db_path).exists():
+        return
+
+    conn = None
+    try:
+        conn = sqlite3.connect(str(db_path))
+        conn.row_factory = sqlite3.Row
+        # Introspect which of the core columns are actually present so
+        # we tolerate schema drift / minimal fixtures gracefully.
+        try:
+            info = conn.execute("PRAGMA table_info(cipher_records)").fetchall()
+        except sqlite3.Error as exc:
+            logger.warning("kb_injection: table_info failed: %s", exc)
+            return
+        present = {r["name"] for r in info}
+        if not present:
+            logger.warning("kb_injection: cipher_records table missing or empty schema")
+            return
+        select_cols = [c for c in _CORE_COLUMNS if c in present]
+        if "record_id" not in select_cols or "canonical_name" not in select_cols:
+            logger.warning(
+                "kb_injection: cipher_records missing required columns; have %r",
+                sorted(present),
+            )
+            return
+        try:
+            cursor = conn.execute(
+                f"SELECT {','.join(select_cols)} FROM cipher_records"
+            )
+        except sqlite3.Error as exc:
+            logger.warning("kb_injection: cipher_records query failed: %s", exc)
+            return
+        for row in cursor:
+            try:
+                keys = set(row.keys())
+                rec = CipherRecord(
+                    record_id=(row["record_id"] if "record_id" in keys else "") or "",
+                    canonical_name=(row["canonical_name"] if "canonical_name" in keys else "") or "",
+                    cipher_family=(row["cipher_family"] if "cipher_family" in keys else "") or "",
+                    description=(row["description"] if "description" in keys else "") or "",
+                    operational_mechanics=(row["operational_mechanics"] if "operational_mechanics" in keys else "") or "",
+                )
+                # Patch the bare-string enum-typed columns onto the
+                # CipherRecord via direct attribute assignment so we
+                # don't have to construct the actual enums (and so
+                # taxonomy/cipher_type drift doesn't crash the loader).
+                if "cipher_type" in keys:
+                    try:
+                        rec.cipher_type = row["cipher_type"] or ""
+                    except Exception:
+                        pass
+                if "taxonomy" in keys:
+                    try:
+                        rec.taxonomy = row["taxonomy"] or ""
+                    except Exception:
+                        pass
+                if "k4_relevance_score" in keys:
+                    rec.k4_relevance_score = float(row["k4_relevance_score"] or 0.0)
+                if "tested_in_project" in keys:
+                    rec.tested_in_project = bool(row["tested_in_project"])
+                if "exhaustion_status" in keys:
+                    rec.exhaustion_status = row["exhaustion_status"] or ""
+                yield rec
+            except Exception as exc:
+                rid = row["record_id"] if "record_id" in row.keys() else "?"
+                logger.warning(
+                    "kb_injection: skipping corrupt row %r: %s", rid, exc
+                )
+                continue
+    except sqlite3.Error as exc:
+        logger.warning("kb_injection: sqlite open failed: %s", exc)
+    finally:
+        if conn is not None:
+            conn.close()

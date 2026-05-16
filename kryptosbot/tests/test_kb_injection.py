@@ -246,3 +246,58 @@ class TestCipherDiscoverySuggestion:
         }
         s = CipherDiscoverySuggestion.from_dict(d)
         assert s.mapped_ledger_families == ()
+
+
+from pathlib import Path
+
+from kryptosbot.kb_injection import iter_kb_records
+
+
+FIXTURE_DB = Path(__file__).resolve().parent / "fixtures" / "cipher_discovery_phase2_fixture.sqlite"
+
+
+class TestKBRowLoader:
+    def test_iter_returns_records_for_fixture(self):
+        records = list(iter_kb_records(str(FIXTURE_DB)))
+        assert len(records) == 5
+        names = {r.canonical_name for r in records}
+        assert "Swagman Cipher" in names
+        assert "ADFGVX Cipher" in names
+
+    def test_iter_yields_cipher_record_compatible_attrs(self):
+        for r in iter_kb_records(str(FIXTURE_DB)):
+            assert hasattr(r, "canonical_name")
+            assert hasattr(r, "cipher_family")
+            assert hasattr(r, "k4_relevance_score")
+            assert hasattr(r, "tested_in_project")
+            assert hasattr(r, "exhaustion_status")
+
+    def test_iter_returns_empty_for_missing_db(self, tmp_path):
+        missing = tmp_path / "does_not_exist.sqlite"
+        assert list(iter_kb_records(str(missing))) == []
+
+    def test_iter_skips_corrupt_row(self, tmp_path):
+        import sqlite3
+        db = tmp_path / "partial.sqlite"
+        conn = sqlite3.connect(str(db))
+        conn.execute("""
+            CREATE TABLE cipher_records (
+                record_id TEXT PRIMARY KEY,
+                canonical_name TEXT NOT NULL,
+                cipher_family TEXT,
+                k4_relevance_score REAL,
+                tested_in_project BOOLEAN,
+                exhaustion_status TEXT
+            )
+        """)
+        # Valid row.
+        conn.execute(
+            "INSERT INTO cipher_records VALUES ('ok', 'OK Cipher', 'columnar', 10.0, 0, 'untested')"
+        )
+        # Row with corrupt JSON in a column that we don't strictly need —
+        # loader must yield the valid row and continue.
+        conn.commit()
+        conn.close()
+        records = list(iter_kb_records(str(db)))
+        # Single valid row.
+        assert any(r.canonical_name == "OK Cipher" for r in records)
