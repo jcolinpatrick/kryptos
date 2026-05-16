@@ -51,7 +51,7 @@ class FamilyYieldStats:
     trials: int
     mean_score: float
     best_score: float
-    promotions: int
+    promotions: int        # count of theories advanced to PROMISING status
     eliminated: int
 
 
@@ -60,7 +60,7 @@ class FamilyYieldVerdict:
     """Classifier output for one family."""
     family: str
     status: YieldStatus
-    reasons: tuple[str, ...]
+    reasons: tuple[str, ...]  # always non-empty for low_yield/empirically_dead; may be empty for healthy
     stats: FamilyYieldStats
 
 
