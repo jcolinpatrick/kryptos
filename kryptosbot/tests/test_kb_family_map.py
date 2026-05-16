@@ -1,8 +1,6 @@
 """Tests for kryptosbot/kb_family_map.py: curated namespace bridge."""
 from __future__ import annotations
 
-import pytest
-
 from kryptosbot.kb_family_map import (
     KB_TO_DSL_KIND,
     KB_TO_LEDGER_FAMILY,

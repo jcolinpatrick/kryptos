@@ -18,7 +18,7 @@ See docs/specs/2026-05-16-yield-feedback-phase2-design.md §4.1.
 """
 from __future__ import annotations
 
-from typing import Mapping, Optional
+from typing import Mapping
 
 
 # Lowercase, whitespace-collapsed KB cipher_family strings → ledger family ids.
