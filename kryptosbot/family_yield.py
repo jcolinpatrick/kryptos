@@ -254,6 +254,9 @@ def render_packet(yield_index: dict[str, FamilyYieldVerdict]) -> str:
         lines.append(_STATUS_HEADERS[status] + ":")
         for v in verdicts:
             s = v.stats
+            # Column widths are tuned for readability in the LLM prompt; long
+            # family names exceed 20 chars and break alignment, which is
+            # acceptable since the next column's label preserves field identity.
             lines.append(
                 f"  - {v.family:<20s} n={s.trials:<4d} "
                 f"mean={s.mean_score:<5.2f} "
@@ -280,6 +283,13 @@ def render_escape_pressure(
     """
     if streak <= 0:
         return ""
+
+    # Defensive guard: blocked must be a (possibly truncated) subset of the
+    # full set whose size is blocked_total. If a caller passes inconsistent
+    # values, cap blocked to blocked_total entries to avoid the misleading
+    # "N families blocked: <more than N families>" output.
+    if blocked_total < len(blocked):
+        blocked = list(blocked[:blocked_total])
 
     truncation_note = ""
     if blocked_total > len(blocked):

@@ -1,0 +1,44 @@
+  ✓ Bootstrap  no changes
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ KRYPTOSBOT CONTROLLER ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃                                                                                                                                                                                                      ┃
+┃  Starting cycle    466                                                                                                                                                                               ┃
+┃  Max cycles        100                                                                                                                                                                               ┃
+┃  Theories/cycle    10                                                                                                                                                                                ┃
+┃  Workers           26                                                                                                                                                                                ┃
+┃  Timeout           15m per worker                                                                                                                                                                    ┃
+┃                                                                                                                                                                                                      ┃
+┃  1468 proposed  907 tested  632 eliminated                                                                                                                                                           ┃
+┃                                                                                                                                                                                                      ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+
+════════════════════════════════════════════════════════════════════════════════════════════ CYCLE 466/565 ═════════════════════════════════════════════════════════════════════════════════════════════
+
+╭───────────────────────────────────────────────────────────────────────────────────────────── LANDSCAPE ──────────────────────────────────────────────────────────────────────────────────────────────╮
+│  5 standing constraints active                                                                                                                                                                       │
+│  Active families:                                                                                                                                                                                    │
+│  Antipodes                  ▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪     30                                                                                                                                                   │
+│  Archive Evidence           ▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪    145                                                                                                                                                   │
+│  Crib Analysis              ▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪     89                                                                                                                                                   │
+│  Encoding                   ▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪    511                                                                                                                                                   │
+│  Finite Key Tape (OTP-like) ▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪    148                                                                                                                                                   │
+│  Geodetic                   ▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪     18                                                                                                                                                   │
+│  Geometry                   ▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪    122                                                                                                                                                   │
+│  Grille / Cardan            ▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪    145                                                                                                                                                   │
+│  Prompt anomalies (5 active / 22 registry-open)                                                                                                                                                      │
+│    · 'He lied' — two coordinate sets in Sanborn's hand, circled annotation (IMG_1381-1389)  39 explored                                                                                              │
+│    · Width-21 gives 11 repeated vertical bigrams (p≈1/6750) [project-verified anomaly, ranking feature]  132 explored                                                                                │
+│    · CT perturbation evidence: transcription errors provable from published coding charts  151 explored                                                                                              │
+│    · 5 W's divide K4 into 6 segments (20,15,11,9,15,22); removing W's kills the width-21 bigram anomaly  155 explored                                                                                │
+│    · Sanborn's handwritten phrase 'compass cipher' + the physical compass rose slab  158 explored                                                                                                    │
+│  Recent outcomes:                                                                                                                                                                                    │
+│    × True coordinate digits as Beaufort key (pre-falsification values from 'He lied' notebook) [k2_coords]                                                                                           │
+│    × Coordinate-Lie Delta Digits as Beaufort Keystream [k2_coords]                                                                                                                                   │
+│    × Coordinate delta key: false-vs-true coordinate difference as Gronsfeld keystream [k2_coords]                                                                                                    │
+│    × Compass Grid-Walk Cipher on KA-Keyed 5x5+1 Board [geometry]                                                                                                                                     │
+│    × Systematic Single-Character CT Perturbation Sweep [crib_analysis]                                                                                                                               │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+
+    · Theorist: [persona] archivist-historian (claude-opus-4-7)
+  ▸ GENERATE

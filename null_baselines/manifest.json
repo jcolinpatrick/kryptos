@@ -171,7 +171,7 @@
     "crib_score__random_text__AZ__n97": {
       "alphabet": "AZ",
       "family": "",
-      "kernel_commit": "46787a46f8b42baf202974a9f78c7b704e267fde",
+      "kernel_commit": "cc517456ca10a5255cf1e71d9389c5df287c2d87",
       "max": 7.0,
       "mean": 0.92372,
       "method": "random_text",
@@ -393,6 +393,6 @@
       "stdev": 0.06479467769433293
     }
   },
-  "kernel_commit_at_latest_write": "46787a46f8b42baf202974a9f78c7b704e267fde",
-  "updated_at": "2026-05-11T15:31:16Z"
+  "kernel_commit_at_latest_write": "cc517456ca10a5255cf1e71d9389c5df287c2d87",
+  "updated_at": "2026-05-16T13:49:07Z"
 }

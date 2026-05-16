@@ -265,3 +265,20 @@ class TestRenderEscapePressure:
         )
         assert "17 families blocked" in out
         assert "showing top 10" in out.lower()
+
+    def test_inconsistent_blocked_total_is_clipped(self):
+        # Defensive guard: if a caller passes more blocked items than the
+        # claimed total, the function must clip rather than emit a
+        # contradiction like "3 families blocked: a, b, c, d, e".
+        out = render_escape_pressure(
+            streak=1,
+            last_status="needed_but_unavailable",
+            blocked=["a", "b", "c", "d", "e"],
+            blocked_total=3,
+        )
+        assert "3 families blocked" in out
+        # The output should not list 'd' or 'e' since the guard clipped them.
+        # Check that only the first 3 families are in the join.
+        assert "a, b, c" in out
+        assert ", d," not in out
+        assert ", e" not in out
