@@ -458,3 +458,40 @@ Escape telemetry is written by the single chokepoint
 `ControllerState.escape_needed_streak` and four sibling fields.
 
 See `docs/specs/2026-05-16-yield-feedback-design.md` for full spec.
+
+### Phase 2: crib-paste detector + cipher-discovery KB injection (2026-05-16)
+
+Phase 2 closes two gaps Phase 1 left open: (1) the false-promotion path
+for `crib_score == 24` results whose plaintext is a literal crib paste
+over a Bean-valid keystream, and (2) the lack of structurally-novel
+redirect when the empirical-death gate blocks a cycle.
+
+**Crib-paste detector** (`kryptosbot/contracts.py::_verify_against_kernel`):
+After the kernel recomputes `verified_crib`, if `verified_crib == 24`
+AND `non_crib_ngram_per_char <= -6.2`, the contract's score fields are
+zeroed, `status` is forced to `WorkerStatus.INCONCLUSIVE`, and the
+kernel-verified values are preserved in
+`raw_artifacts.kernel_verified_before_artifact_filter`. Pre-registered
+threshold; versioned `crib_paste_artifact:v1`. Fails CLOSED -- detector
+exception treats the result as a paste.
+
+**Cipher-discovery KB injection** (`kryptosbot/kb_injection.py`,
+`kryptosbot/kb_family_map.py`): On every `REJECT_EMPIRICALLY_DEAD`,
+the critic queries `db/cipher_discovery.sqlite` for KB cipher records
+that (a) are not exhausted, (b) map to a ledger family not in the
+cycle's blocked set, (c) have an unseen `kb_mechanism_signature`, and
+(d) are not in the static Tier-1/Tier-2 exhaustion registry. Surviving
+candidates populate `EmpiricalDeathRejectionPayload.suggested_mechanism_records`.
+Per-cycle cache keyed on `(family, blocked_signature)`. Fails OPEN --
+missing DB yields `suggestion_source='none'` with a once-per-cycle WARNING.
+
+The controller's existing Phase 1 chokepoint
+(`_write_cycle_escape_summary`) aggregates the per-rejection suggestions
+before any early-continue, capping at 3 per family and 24 total in
+storage. The next cycle's theorist prompt renders with hard caps:
+8 total / 3 per family on `needed_but_unavailable`, 3 advisory on
+`partial_empirical_block`, none on other statuses. Rejection aggregation
+is NEVER routed through `_absorb_outcomes` -- that path is unreachable
+on all-rejected cycles.
+
+See `docs/specs/2026-05-16-yield-feedback-phase2-design.md`.

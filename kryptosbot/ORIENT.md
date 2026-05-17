@@ -179,6 +179,36 @@ for s in ledger.family_yield_stats():
 
 See `docs/specs/2026-05-16-yield-feedback-design.md` for full spec.
 
+### §5.7 Critic populated `suggested_mechanism_records` / Worker contract rejected as `crib_paste`
+
+**Symptom A.** Theorist sees `=== ESCAPE CANDIDATES (cipher-discovery KB) ===`
+in the next cycle's prompt.
+
+Explanation: the prior cycle had at least one `REJECT_EMPIRICALLY_DEAD`
+rejection. The KB query found unmapped-to-blocked-family mechanisms with
+unseen signatures and packaged them into
+`ControllerState.last_escape_suggestions`. They are advisory only -- the
+theorist must still propose a HypothesisSpec, and Phase 1's
+structural-novelty bypass still applies.
+
+**Symptom B.** Worker contract returns with
+`raw_artifacts.artifact_class == "crib_paste"`, `status=INCONCLUSIVE`,
+zeroed score fields, and `verification_error` starting with
+`crib_paste_artifact:v1`.
+
+Explanation: the kernel verified `crib_score == 24`, but the plaintext
+at non-crib positions had ngram per-char <= -6.2 (garbage filler around
+canonical cribs). This is a Bean-algebra artifact, never a real
+candidate. The kernel-verified values are preserved in
+`raw_artifacts.kernel_verified_before_artifact_filter` for audit.
+No action required.
+
+**When the WARNING `kb_injection: defer_needs_mapping ...` appears:** a
+KB record's `cipher_family` is not in
+`kryptosbot.kb_family_map.KB_TO_LEDGER_FAMILY`. Operator path: review
+the record, add a mapping entry if appropriate. Until added, the
+suggestion is silently dropped from the prompt.
+
 ---
 
 ## 6. Command catalogue
