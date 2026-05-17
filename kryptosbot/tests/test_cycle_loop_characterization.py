@@ -968,3 +968,146 @@ class TestPhase2AllRejectedWritesSummaryBeforeContinue:
             "through _absorb_outcomes - that path is unreachable on "
             "all-rejected cycles."
         )
+
+
+# ──────────────────────────────────────────────────────────────────────
+# Test J: hardening halt_reason cross-run persistence (regression guard)
+# ──────────────────────────────────────────────────────────────────────
+
+
+class TestHardeningHaltReasonClearedOnHealthyCycle:
+    """Regression guard for the cross-run halt-reason persistence bug
+    (2026-05-17).
+
+    Pre-fix behavior: once any halt condition tripped in cycle N, the
+    halt reason persisted in ControllerState across runs. On every
+    subsequent cold run the outer loop's
+    ``if self.state.halt_reason_hardening: break``
+    check at controller.py:1803 fired after a single cycle even when
+    the counters had reset to zero. Cycle 528 halted on D-zero streak,
+    then cycles 529 and 530 (each with non-zero REJECTED_ADMISSIBILITY
+    outcomes that correctly reset the counter) still halted after one
+    cycle because the reason field was never cleared.
+
+    Fix: `_check_cycle_hardening_halts` clears
+    ``state.halt_reason_hardening`` at function entry; each Halt 1/2/3
+    check re-sets it only if its condition still trips. This test
+    pins that contract.
+    """
+
+    def _bare_controller(self):
+        from kryptosbot.controller import ResearchController
+        from kryptosbot.models import ControllerState
+        c = ResearchController.__new__(ResearchController)
+        c.state = ControllerState(cycle_number=1)
+
+        # _check_cycle_hardening_halts reads self.config.hcc_only in the
+        # D-zero halt branch. A minimal stand-in is enough.
+        class _BareConfig:
+            hcc_only = False
+        c.config = _BareConfig()
+        return c
+
+    def _theorist_candidate(self):
+        # origin != "programmatic_fallback" so Halt 2 does not fire.
+        # ``minimal_test_spec`` is read by the _is_hcc_seed bench-mode
+        # carve-out; an empty dict makes the candidate look non-bench.
+        class _Candidate:
+            origin = "theorist_agent"
+            minimal_test_spec: dict = {}
+        return _Candidate()
+
+    def _admissibility_reject_outcome(self):
+        # status == REJECTED_ADMISSIBILITY so Halt 3's d_count > 0 and
+        # consecutive_d_zero_cycles resets.
+        from kryptosbot.models import WorkerStatus
+
+        class _Outcome:
+            status = WorkerStatus.REJECTED_ADMISSIBILITY
+        return _Outcome()
+
+    def test_stale_halt_reason_is_cleared_on_healthy_cycle(self):
+        """A controller that boots with a stale halt_reason from a
+        prior run must clear it when the current cycle's counters
+        are healthy."""
+        c = self._bare_controller()
+        # Simulate the cross-run state: prior cycle halted and the
+        # reason persisted.
+        c.state.halt_reason_hardening = (
+            "test-induced-prior-halt-reason-from-cycle-528"
+        )
+        c.state.consecutive_d_zero_cycles = 0
+        c.state.consecutive_fallback_cycles = 0
+
+        result = c._check_cycle_hardening_halts(
+            candidates=[self._theorist_candidate()],
+            outcomes=[self._admissibility_reject_outcome()],
+            triggered_alerts=[],
+        )
+
+        assert result is None, (
+            f"Healthy cycle returned halt reason: {result!r}"
+        )
+        assert c.state.halt_reason_hardening == "", (
+            "Stale halt_reason_hardening from a prior run must be "
+            "cleared at the top of _check_cycle_hardening_halts. "
+            f"Got: {c.state.halt_reason_hardening!r}"
+        )
+
+    def test_current_cycle_halt_still_sets_reason(self):
+        """Clearing at function entry must not break the case where
+        the CURRENT cycle has a legitimate halt condition. With
+        consecutive_d_zero_cycles already at threshold-1 and zero
+        REJECTED_ADMISSIBILITY in this cycle's outcomes, the D-zero
+        halt should still trip."""
+        from kryptosbot.controller import D_ZERO_HALT_STREAK
+        from kryptosbot.models import WorkerStatus
+
+        c = self._bare_controller()
+        c.state.halt_reason_hardening = ""  # Clean start
+        c.state.consecutive_d_zero_cycles = D_ZERO_HALT_STREAK - 1
+        c.state.consecutive_fallback_cycles = 0
+
+        # Outcome that is NOT REJECTED_ADMISSIBILITY -> d_count stays 0
+        # -> consecutive_d_zero_cycles increments to threshold -> halt.
+        class _DisprovedOutcome:
+            status = WorkerStatus.DISPROVED
+
+        result = c._check_cycle_hardening_halts(
+            candidates=[self._theorist_candidate()],
+            outcomes=[_DisprovedOutcome()],
+            triggered_alerts=[],
+        )
+
+        assert result is not None, (
+            "D-zero streak should have tripped with "
+            f"consecutive_d_zero_cycles={c.state.consecutive_d_zero_cycles} "
+            f">= threshold={D_ZERO_HALT_STREAK}"
+        )
+        assert "D column" in result
+        assert c.state.halt_reason_hardening == result
+
+    def test_dispatched_zero_does_not_clear_or_increment(self):
+        """An empty outcomes list (no dispatch) must NOT advance the
+        D-zero counter (per the function docstring: 'no dispatched
+        contracts' is not a meaningful D=0 signal). Combined with the
+        stale-reason clear, this means a cycle that dispatches nothing
+        still benefits from the reason-clear."""
+        c = self._bare_controller()
+        c.state.halt_reason_hardening = "stale-from-prior-run"
+        c.state.consecutive_d_zero_cycles = 2  # below threshold
+        c.state.consecutive_fallback_cycles = 0
+
+        result = c._check_cycle_hardening_halts(
+            candidates=[self._theorist_candidate()],
+            outcomes=[],          # No dispatch this cycle.
+            triggered_alerts=[],
+        )
+
+        assert result is None
+        assert c.state.halt_reason_hardening == "", (
+            "Stale halt_reason should be cleared even on a "
+            "no-dispatch cycle."
+        )
+        # Counter unchanged: dispatched=0 does not advance D-zero streak.
+        assert c.state.consecutive_d_zero_cycles == 2

@@ -930,6 +930,15 @@ class ResearchController:
         ``self.state.halt_reason_hardening``. Resets counters on
         streak-break so a single good cycle clears the running window.
 
+        ``self.state.halt_reason_hardening`` is cleared at function entry
+        and re-set only if a check below trips. Without this clear, a
+        one-time halt (e.g. cycle 528 D-zero streak) persists in
+        ControllerState across runs and causes every subsequent cold
+        run to break out of the cycle loop after a single cycle even
+        when the underlying counter has reset. Pre-2026-05-17 builds
+        had no run-start clear, which made the controller act
+        permanently-halted after any historical hardening trip.
+
         Args:
             candidates: theories generated this cycle (theorist output
                 or programmatic fallback). Empty list means no theorist
@@ -950,6 +959,14 @@ class ResearchController:
             reason is returned, ``self.state.halt_reason_hardening`` is
             also set so the post-loop code can see it.
         """
+        # Clear any halt reason carried over from a prior cycle so this
+        # cycle's checks own the field. Each check below re-sets the
+        # field if its condition still trips. See docstring for the
+        # cross-run persistence bug this fixes. Empty string (not None)
+        # to preserve the ControllerState.halt_reason_hardening: str
+        # type contract.
+        self.state.halt_reason_hardening = ""
+
         # ── Halt 1: BREAKTHROUGH with unreliable null cache ─────────
         # A BREAKTHROUGH alert whose p-value status is matched_null_miss
         # or cache_miss is uncalibrated — the operator must rebuild the
