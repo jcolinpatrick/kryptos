@@ -239,3 +239,92 @@ class TestCycleExitTelemetry:
         assert c.state.last_escape_status == "needed_but_unavailable"
         assert c.state.escape_needed_streak == 1
         assert "encoding" in c.state.last_escape_families_blocked
+
+
+class TestKBDBMissingLoggedOncePerCycle:
+    """Phase 2 yield-feedback Task 17: ResearchController.
+
+    `_kb_db_missing_logged_this_cycle` is a per-cycle latch so the
+    KB-missing WARNING (raised when ``db/cipher_discovery.sqlite`` is
+    absent during the empirical-death KB query) fires at most once per
+    cycle instead of once per rejected theory. The flag must reset at
+    the cycle-boundary chokepoint `_begin_cycle_phase_state`.
+    """
+
+    def test_flag_resets_in_begin_cycle_phase_state(self):
+        from kryptosbot.controller import ResearchController
+
+        c = ResearchController.__new__(ResearchController)
+        # Minimal state required by _begin_cycle_phase_state.
+        c._cycle_empirical_dead_rejections = []
+        # Pre-set the flag to True; the cycle-boundary call must clear it.
+        c._kb_db_missing_logged_this_cycle = True
+        c.critic = None
+        c._begin_cycle_phase_state()
+        assert c._kb_db_missing_logged_this_cycle is False
+
+
+class TestCriticKBCacheClearedBetweenCycles:
+    """Per the Task 15 review: TheoryCritic's _kb_cache must be cleared at
+    cycle boundary because the controller does not re-instantiate the
+    critic. Without this clear, suggestions cached in cycle N would be
+    returned verbatim in cycle N+1 even though prior_signatures may have
+    grown to include some of those mechanisms.
+    """
+
+    def test_kb_cache_cleared_at_cycle_boundary(self):
+        from kryptosbot.controller import ResearchController
+        from kryptosbot.critic import TheoryCritic
+
+        c = ResearchController.__new__(ResearchController)
+        c._cycle_empirical_dead_rejections = []
+        c._kb_db_missing_logged_this_cycle = False
+
+        # Bare critic with a populated cache; bypass __init__ so we don't
+        # need a real ledger for this state-transition test.
+        critic = TheoryCritic.__new__(TheoryCritic)
+        critic._kb_cache = {("encoding", "abc123"): ("dummy_suggestion",)}
+        # Yield_index empty → blocked_families_in_cycle empty, which is
+        # the cycle-boundary refresh contract.
+        critic.yield_index = {}
+        critic.blocked_families_in_cycle = frozenset({"stale_family_from_prev_cycle"})
+        c.critic = critic
+
+        c._begin_cycle_phase_state()
+        assert critic._kb_cache == {}
+
+    def test_blocked_families_in_cycle_refreshed_from_yield_index(self):
+        """The critic.blocked_families_in_cycle must be refreshed from
+        yield_index at cycle boundary so the KB-novelty join uses the
+        current cycle's empirically-dead snapshot, not a stale set.
+        """
+        from kryptosbot.controller import ResearchController
+        from kryptosbot.critic import TheoryCritic
+        from kryptosbot.family_yield import FamilyYieldVerdict, FamilyYieldStats
+
+        c = ResearchController.__new__(ResearchController)
+        c._cycle_empirical_dead_rejections = []
+        c._kb_db_missing_logged_this_cycle = False
+
+        critic = TheoryCritic.__new__(TheoryCritic)
+        critic._kb_cache = {}
+        # yield_index reflects this cycle's families; encoding empirically
+        # dead, key_tape healthy.
+        stats_dead = FamilyYieldStats("encoding", 100, 0.0, 0.0, 0, 100)
+        stats_healthy = FamilyYieldStats("key_tape", 10, 8.0, 12.0, 1, 0)
+        critic.yield_index = {
+            "encoding": FamilyYieldVerdict(
+                family="encoding", status="empirically_dead", stats=stats_dead,
+                reasons=("n>=50, no_signal",),
+            ),
+            "key_tape": FamilyYieldVerdict(
+                family="key_tape", status="healthy", stats=stats_healthy,
+                reasons=(),
+            ),
+        }
+        # Pre-existing stale snapshot from a prior cycle.
+        critic.blocked_families_in_cycle = frozenset({"stale_only"})
+        c.critic = critic
+
+        c._begin_cycle_phase_state()
+        assert critic.blocked_families_in_cycle == frozenset({"encoding"})

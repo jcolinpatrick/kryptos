@@ -693,6 +693,12 @@ class ResearchController:
         self._last_synthesis: Optional[CycleSynthesis] = None
         self._fatal_agent_error: Optional[str] = None
 
+        # Phase 2 yield-feedback (Task 17): per-cycle latch so the
+        # KB-missing WARNING fires at most once per cycle, not once per
+        # rejected theory. Initialised here in case _begin_cycle_phase_state
+        # has not been called yet (cold-start tests).
+        self._kb_db_missing_logged_this_cycle: bool = False
+
         # Inject ledger into research tools
         set_ledger(self.ledger)
         self._load_canonical_facts()
@@ -731,6 +737,38 @@ class ResearchController:
         self._cycle_alert_events = []
         self._cycle_pursuit_verdicts = {}
         self._cycle_pursuit_leads_opened = []
+
+        # Phase 2 yield-feedback (Task 17): per-cycle flag so the
+        # KB-missing WARNING (raised when ``db/cipher_discovery.sqlite``
+        # is absent during the empirical-death KB query) fires at most
+        # once per cycle, never once per rejection.
+        self._kb_db_missing_logged_this_cycle = False
+
+        # Phase 2 yield-feedback (Task 15 review): the controller mutates
+        # the critic's per-cycle indices in place each cycle rather than
+        # re-instantiating; without an explicit clear, the critic's
+        # _kb_cache and the derived blocked_families_in_cycle would leak
+        # across cycles. Refresh both here at the cycle boundary.
+        critic = getattr(self, "critic", None)
+        if critic is not None:
+            if hasattr(critic, "_kb_cache"):
+                critic._kb_cache.clear()
+            # Re-derive blocked_families_in_cycle from the (possibly
+            # stale) yield_index currently installed on the critic.
+            # _run_cycle_loop will overwrite yield_index a few lines
+            # later from the freshly-computed per-cycle index; this
+            # call still matters when the critic enters the cycle with
+            # a non-empty yield_index from the prior cycle and the
+            # caller relies on blocked_families_in_cycle being a
+            # snapshot of "what we know right now". static_exhaustion_
+            # blocklist is not refreshed here because it is loaded once
+            # from a static elimination registry and does not change
+            # between cycles.
+            yi = getattr(critic, "yield_index", {}) or {}
+            critic.blocked_families_in_cycle = frozenset(
+                f for f, v in yi.items()
+                if getattr(v, "status", "") == "empirically_dead"
+            )
 
     def _record_theorist_parse_diagnostics(self, diagnostics: dict[str, Any]) -> None:
         """Persist compact theorist parse telemetry into controller state."""
