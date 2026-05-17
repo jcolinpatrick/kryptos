@@ -872,3 +872,99 @@ def test_save_controller_state_failure_does_not_abort_loop(
         f"Expected save_controller_state to be invoked at least twice "
         f"(once flaky + final), got {call_count['n']}"
     )
+
+
+# ──────────────────────────────────────────────────────────────────────
+# Phase 2 acceptance #9: all-rejected cycles must write escape summary
+# BEFORE any early-continue. Architectural regression guard.
+# ──────────────────────────────────────────────────────────────────────
+
+
+class TestPhase2AllRejectedWritesSummaryBeforeContinue:
+    """Acceptance #9: an all-critic-rejected cycle writes
+    _write_cycle_escape_summary with status='needed_but_unavailable'
+    AND last_escape_suggestions populated BEFORE early-continue.
+
+    This is the architectural regression guard. The original Phase 2
+    design draft incorrectly threaded rejection aggregation through
+    _absorb_outcomes (which is unreachable on all-rejected cycles).
+    This test exists to fail loudly if anyone reintroduces that wiring.
+    """
+
+    def test_all_rejected_cycle_canonical_trace(
+        self, dead_encoding_yield, encoding_theory
+    ):
+        from pathlib import Path
+        from kryptosbot.controller import ResearchController
+        from kryptosbot.critic import TheoryCritic
+        from kryptosbot.family_yield import mechanism_signature_for_theory
+        from kryptosbot.models import ControllerState
+
+        c = ResearchController.__new__(ResearchController)
+        c.state = ControllerState(cycle_number=1)
+        c._cycle_empirical_dead_rejections = []
+        c._kb_db_missing_logged_this_cycle = False
+
+        # Minimal FakeLedger consistent with conftest patterns. Includes
+        # ``get_family`` because TheoryCritic.evaluate() consults the
+        # family registry for elimination-tier gating BEFORE the
+        # empirical-death gate runs.
+        class _FakeLedger:
+            def get_family(self, *_): return None
+            def get_theories_by_family(self, *a, **kw): return []
+            def get_theories_by_status(self, *a, **kw): return []
+
+        # Seed priors so the structural-novelty bypass CANNOT fire. The
+        # empirical-death gate would otherwise fall through (bypass-eligible)
+        # and the architectural invariant under test (rejection-aggregation
+        # populates last_escape_suggestions) would never get exercised.
+        sig = mechanism_signature_for_theory({
+            "family": encoding_theory.family,
+            "subfamily": encoding_theory.subfamily,
+            "mechanism": encoding_theory.mechanism,
+            "dsl_spec": encoding_theory.dsl_spec,
+            "anomalies_exploited": [],
+            "clue_anchors_used": [],
+            "novelty_basis": "",
+            "minimal_test_spec": {},
+        })
+        prior_subs = {encoding_theory.family: frozenset({encoding_theory.subfamily})}
+        prior_sigs = {encoding_theory.family: frozenset({sig})}
+
+        critic = TheoryCritic(
+            ledger=_FakeLedger(),
+            yield_index={"encoding": dead_encoding_yield},
+            prior_subfamilies=prior_subs,
+            prior_signatures=prior_sigs,
+            blocked_families_in_cycle=frozenset({"encoding"}),
+            kb_db_path=str(
+                Path(__file__).resolve().parent
+                / "fixtures"
+                / "cipher_discovery_phase2_fixture.sqlite"
+            ),
+        )
+        verdict = critic.evaluate(encoding_theory)
+        assert verdict.empirical_death is not None, (
+            "Test precondition: critic must produce an empirical_death "
+            "payload. Bypass priors are seeded; if this fails, the gate "
+            "is no longer reachable from this fixture shape."
+        )
+        c._cycle_empirical_dead_rejections.append(verdict.empirical_death)
+
+        # Before any early-continue, _write_cycle_escape_summary must run.
+        c._write_cycle_escape_summary(
+            status="needed_but_unavailable",
+            families_blocked=["encoding"],
+            rejections=c._cycle_empirical_dead_rejections,
+        )
+        # At this point the next cycle's landscape can already see the
+        # escape candidates. Any future refactor that moves this call
+        # AFTER an early-continue, or routes it through _absorb_outcomes,
+        # will leave last_escape_suggestions empty.
+        assert c.state.last_escape_suggestions, (
+            "_write_cycle_escape_summary must populate "
+            "last_escape_suggestions BEFORE any early-continue on "
+            "all-rejected cycles. Do NOT route rejection aggregation "
+            "through _absorb_outcomes - that path is unreachable on "
+            "all-rejected cycles."
+        )
