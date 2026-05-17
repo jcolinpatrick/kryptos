@@ -294,9 +294,16 @@ class TestCriticKBCacheClearedBetweenCycles:
         assert critic._kb_cache == {}
 
     def test_blocked_families_in_cycle_refreshed_from_yield_index(self):
-        """The critic.blocked_families_in_cycle must be refreshed from
-        yield_index at cycle boundary so the KB-novelty join uses the
-        current cycle's empirically-dead snapshot, not a stale set.
+        """The critic.blocked_families_in_cycle must be refreshed from the
+        CURRENT cycle's yield_index at the injection site
+        (``_refresh_critic_cycle_state``), not from a stale set carried
+        over from the previous cycle.
+
+        Task 17a: the derivation was originally placed inside
+        ``_begin_cycle_phase_state``, which runs BEFORE
+        ``_assess_landscape`` populates ``_cycle_yield_index``. This test
+        exercises the corrected injection site that runs AFTER
+        ``_assess_landscape``.
         """
         from kryptosbot.controller import ResearchController
         from kryptosbot.critic import TheoryCritic
@@ -308,11 +315,22 @@ class TestCriticKBCacheClearedBetweenCycles:
 
         critic = TheoryCritic.__new__(TheoryCritic)
         critic._kb_cache = {}
-        # yield_index reflects this cycle's families; encoding empirically
-        # dead, key_tape healthy.
+        # Simulate the critic entering the cycle with stale state from
+        # the prior cycle: a non-empty blocked_families_in_cycle snapshot
+        # and a different yield_index than the one ``_assess_landscape``
+        # is about to compute.
+        critic.yield_index = {}
+        critic.prior_subfamilies = {}
+        critic.prior_signatures = {}
+        critic.blocked_families_in_cycle = frozenset({"stale_only"})
+        c.critic = critic
+
+        # ``_assess_landscape`` writes the fresh per-cycle indices onto
+        # the controller; ``_refresh_critic_cycle_state`` then installs
+        # them onto the critic. Simulate that ordering here.
         stats_dead = FamilyYieldStats("encoding", 100, 0.0, 0.0, 0, 100)
         stats_healthy = FamilyYieldStats("key_tape", 10, 8.0, 12.0, 1, 0)
-        critic.yield_index = {
+        c._cycle_yield_index = {
             "encoding": FamilyYieldVerdict(
                 family="encoding", status="empirically_dead", stats=stats_dead,
                 reasons=("n>=50, no_signal",),
@@ -322,9 +340,57 @@ class TestCriticKBCacheClearedBetweenCycles:
                 reasons=(),
             ),
         }
-        # Pre-existing stale snapshot from a prior cycle.
-        critic.blocked_families_in_cycle = frozenset({"stale_only"})
+        c._cycle_prior_subfamilies = {}
+        c._cycle_prior_signatures = {}
+
+        c._refresh_critic_cycle_state()
+        assert critic.blocked_families_in_cycle == frozenset({"encoding"})
+        # yield_index, prior_subfamilies, prior_signatures must be
+        # installed too — this is the single critic-state injection
+        # chokepoint.
+        assert critic.yield_index is c._cycle_yield_index
+        assert critic.prior_subfamilies == {}
+        assert critic.prior_signatures == {}
+
+    def test_begin_cycle_phase_state_does_not_use_stale_yield_index(self):
+        """Regression guard for Task 17a: ``_begin_cycle_phase_state``
+        must NOT derive ``blocked_families_in_cycle`` from the critic's
+        currently-installed (possibly previous-cycle) yield_index.
+
+        If a future change re-introduces a derivation at the cycle-start
+        chokepoint, the staleness bug returns. This test pins the
+        contract: with a stale yield_index already on the critic at
+        cycle start, the cycle-start chokepoint must leave
+        blocked_families_in_cycle untouched (the value will be refreshed
+        later by ``_refresh_critic_cycle_state``).
+        """
+        from kryptosbot.controller import ResearchController
+        from kryptosbot.critic import TheoryCritic
+        from kryptosbot.family_yield import FamilyYieldVerdict, FamilyYieldStats
+
+        c = ResearchController.__new__(ResearchController)
+        c._cycle_empirical_dead_rejections = []
+        c._kb_db_missing_logged_this_cycle = False
+
+        critic = TheoryCritic.__new__(TheoryCritic)
+        critic._kb_cache = {}
+        # Stale yield_index from a previous cycle, plus a stale
+        # blocked_families_in_cycle that doesn't match it.
+        stats_dead = FamilyYieldStats("prev_dead", 100, 0.0, 0.0, 0, 100)
+        critic.yield_index = {
+            "prev_dead": FamilyYieldVerdict(
+                family="prev_dead", status="empirically_dead",
+                stats=stats_dead, reasons=("stale",),
+            ),
+        }
+        sentinel_before = frozenset({"sentinel_unchanged"})
+        critic.blocked_families_in_cycle = sentinel_before
         c.critic = critic
 
         c._begin_cycle_phase_state()
-        assert critic.blocked_families_in_cycle == frozenset({"encoding"})
+
+        # _begin_cycle_phase_state must NOT have re-derived blocked_
+        # families_in_cycle from the stale yield_index (which would
+        # have produced frozenset({"prev_dead"})). The sentinel passes
+        # through untouched until _refresh_critic_cycle_state runs.
+        assert critic.blocked_families_in_cycle is sentinel_before

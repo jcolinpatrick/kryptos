@@ -747,28 +747,43 @@ class ResearchController:
         # Phase 2 yield-feedback (Task 15 review): the controller mutates
         # the critic's per-cycle indices in place each cycle rather than
         # re-instantiating; without an explicit clear, the critic's
-        # _kb_cache and the derived blocked_families_in_cycle would leak
-        # across cycles. Refresh both here at the cycle boundary.
+        # _kb_cache would leak across cycles. Clear it here at the cycle
+        # boundary. The derived ``blocked_families_in_cycle`` is NOT
+        # recomputed here — see Task 17a. ``_begin_cycle_phase_state``
+        # runs BEFORE ``_assess_landscape`` populates
+        # ``self._cycle_yield_index``, so any derivation at this point
+        # would read the previous cycle's yield_index. The correct
+        # injection site is ``_refresh_critic_cycle_state``, called from
+        # ``_run_cycle_loop`` immediately after ``_assess_landscape``.
         critic = getattr(self, "critic", None)
-        if critic is not None:
-            if hasattr(critic, "_kb_cache"):
-                critic._kb_cache.clear()
-            # Re-derive blocked_families_in_cycle from the (possibly
-            # stale) yield_index currently installed on the critic.
-            # _run_cycle_loop will overwrite yield_index a few lines
-            # later from the freshly-computed per-cycle index; this
-            # call still matters when the critic enters the cycle with
-            # a non-empty yield_index from the prior cycle and the
-            # caller relies on blocked_families_in_cycle being a
-            # snapshot of "what we know right now". static_exhaustion_
-            # blocklist is not refreshed here because it is loaded once
-            # from a static elimination registry and does not change
-            # between cycles.
-            yi = getattr(critic, "yield_index", {}) or {}
-            critic.blocked_families_in_cycle = frozenset(
-                f for f, v in yi.items()
-                if getattr(v, "status", "") == "empirically_dead"
-            )
+        if critic is not None and hasattr(critic, "_kb_cache"):
+            critic._kb_cache.clear()
+
+    def _refresh_critic_cycle_state(self) -> None:
+        """Install the freshly-computed per-cycle indices onto the critic.
+
+        Called from ``_run_cycle_loop`` AFTER ``_assess_landscape`` has
+        populated ``self._cycle_yield_index`` / ``_cycle_prior_subfamilies``
+        / ``_cycle_prior_signatures`` for the current cycle. Deriving
+        ``blocked_families_in_cycle`` here (rather than in
+        ``_begin_cycle_phase_state``) guarantees the critic's
+        KB-novelty join uses the current cycle's empirical-death
+        snapshot, not the previous cycle's.
+
+        ``static_exhaustion_blocklist`` is not refreshed here because it
+        is loaded once from a static elimination registry and does not
+        change between cycles.
+        """
+        critic = getattr(self, "critic", None)
+        if critic is None:
+            return
+        critic.yield_index = getattr(self, "_cycle_yield_index", {}) or {}
+        critic.prior_subfamilies = getattr(self, "_cycle_prior_subfamilies", {}) or {}
+        critic.prior_signatures = getattr(self, "_cycle_prior_signatures", {}) or {}
+        critic.blocked_families_in_cycle = frozenset(
+            f for f, v in (critic.yield_index or {}).items()
+            if getattr(v, "status", "") == "empirically_dead"
+        )
 
     def _record_theorist_parse_diagnostics(self, diagnostics: dict[str, Any]) -> None:
         """Persist compact theorist parse telemetry into controller state."""
@@ -1345,12 +1360,13 @@ class ResearchController:
                 # Step 3: Critic pass
                 cb.emit("on_critic_start")
                 approved = []
-                # Yield-feedback Phase 1: inject per-cycle yield indices
-                # into the critic so each evaluate() runs O(1) without
-                # re-querying the ledger.
-                self.critic.yield_index = getattr(self, "_cycle_yield_index", {})
-                self.critic.prior_subfamilies = getattr(self, "_cycle_prior_subfamilies", {})
-                self.critic.prior_signatures = getattr(self, "_cycle_prior_signatures", {})
+                # Yield-feedback Phase 1 + Task 17a: install the fresh
+                # per-cycle yield indices onto the critic so each
+                # evaluate() runs O(1) without re-querying the ledger,
+                # and re-derive blocked_families_in_cycle from the
+                # CURRENT cycle's yield_index (not the previous cycle's,
+                # which is what _begin_cycle_phase_state would see).
+                self._refresh_critic_cycle_state()
                 self.critic.policy = self.config.family_yield_policy
                 self._cycle_empirical_dead_rejections = []
                 for theory in candidates:
