@@ -699,6 +699,13 @@ class ResearchController:
         # has not been called yet (cold-start tests).
         self._kb_db_missing_logged_this_cycle: bool = False
 
+        # Phase 2 yield-feedback (Task 19): empirical-dead rejections
+        # accumulated within the current cycle. Initialised here for
+        # cold-start tests that call ``_write_cycle_escape_summary``
+        # directly without entering a cycle loop. Reset by
+        # ``_begin_cycle_phase_state`` at every cycle boundary.
+        self._cycle_empirical_dead_rejections: list = []
+
         # Inject ledger into research tools
         set_ledger(self.ledger)
         self._load_canonical_facts()
@@ -737,6 +744,13 @@ class ResearchController:
         self._cycle_alert_events = []
         self._cycle_pursuit_verdicts = {}
         self._cycle_pursuit_leads_opened = []
+
+        # Phase 2 yield-feedback (Task 19): initialize empirical-dead
+        # rejections list here so the no-candidates early-exit path can
+        # thread it into ``_write_cycle_escape_summary`` before the
+        # critic loop (which is the normal init site at line ~1418)
+        # has had a chance to run.
+        self._cycle_empirical_dead_rejections = []
 
         # Phase 2 yield-feedback (Task 17): per-cycle flag so the
         # KB-missing WARNING (raised when ``db/cipher_discovery.sqlite``
@@ -1397,6 +1411,7 @@ class ResearchController:
                     self._write_cycle_escape_summary(
                         status="no_candidates",
                         families_blocked=[],
+                        rejections=self._cycle_empirical_dead_rejections,
                     )
                     cb.emit("on_no_candidates")
                     continue
@@ -1489,6 +1504,7 @@ class ResearchController:
                         status=status,
                         families_blocked=blocked,
                         blocked_stats=blocked_stats,
+                        rejections=self._cycle_empirical_dead_rejections,
                     )
                     logger.info(
                         "No theories survived critic, ending cycle (escape=%s)",
@@ -1533,11 +1549,13 @@ class ResearchController:
                             status="partial_empirical_block",
                             families_blocked=_blocked,
                             blocked_stats=_blocked_stats,
+                            rejections=self._cycle_empirical_dead_rejections,
                         )
                     else:
                         self._write_cycle_escape_summary(
                             status="none",
                             families_blocked=[],
+                            rejections=self._cycle_empirical_dead_rejections,
                         )
                     logger.info("DRY RUN — skipping dispatch")
                     cb.emit("on_dry_run_skip")
@@ -1621,11 +1639,13 @@ class ResearchController:
                         status="partial_empirical_block",
                         families_blocked=blocked,
                         blocked_stats=blocked_stats,
+                        rejections=self._cycle_empirical_dead_rejections,
                     )
                 else:
                     self._write_cycle_escape_summary(
                         status="none",
                         families_blocked=[],
+                        rejections=self._cycle_empirical_dead_rejections,
                     )
 
                 # Step 6: Persist state.
