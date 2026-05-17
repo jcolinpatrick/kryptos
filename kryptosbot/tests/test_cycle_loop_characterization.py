@@ -1006,6 +1006,15 @@ class TestHardeningHaltReasonClearedOnHealthyCycle:
         class _BareConfig:
             hcc_only = False
         c.config = _BareConfig()
+
+        # 2026-05-17: the widened upstream-filtering signal reads
+        # _cycle_critic_reject_count and _cycle_redteam_reject_count
+        # via getattr on the controller. Initialise both to zero on
+        # the bare instance so test cases that exercise the halt
+        # branch don't trip on AttributeError. Individual tests
+        # override these as needed.
+        c._cycle_critic_reject_count = 0
+        c._cycle_redteam_reject_count = 0
         return c
 
     def _theorist_candidate(self):
@@ -1058,8 +1067,8 @@ class TestHardeningHaltReasonClearedOnHealthyCycle:
         """Clearing at function entry must not break the case where
         the CURRENT cycle has a legitimate halt condition. With
         consecutive_d_zero_cycles already at threshold-1 and zero
-        REJECTED_ADMISSIBILITY in this cycle's outcomes, the D-zero
-        halt should still trip."""
+        upstream filtering in this cycle (critic=0, redteam=0,
+        dispatcher=0), the halt should still trip."""
         from kryptosbot.controller import D_ZERO_HALT_STREAK
         from kryptosbot.models import WorkerStatus
 
@@ -1067,8 +1076,12 @@ class TestHardeningHaltReasonClearedOnHealthyCycle:
         c.state.halt_reason_hardening = ""  # Clean start
         c.state.consecutive_d_zero_cycles = D_ZERO_HALT_STREAK - 1
         c.state.consecutive_fallback_cycles = 0
+        # All three upstream filtering layers silent this cycle.
+        c._cycle_critic_reject_count = 0
+        c._cycle_redteam_reject_count = 0
 
         # Outcome that is NOT REJECTED_ADMISSIBILITY -> d_count stays 0
+        # -> total upstream filtering = 0
         # -> consecutive_d_zero_cycles increments to threshold -> halt.
         class _DisprovedOutcome:
             status = WorkerStatus.DISPROVED
@@ -1080,11 +1093,15 @@ class TestHardeningHaltReasonClearedOnHealthyCycle:
         )
 
         assert result is not None, (
-            "D-zero streak should have tripped with "
+            "Upstream-filtering-zero streak should have tripped with "
             f"consecutive_d_zero_cycles={c.state.consecutive_d_zero_cycles} "
             f">= threshold={D_ZERO_HALT_STREAK}"
         )
-        assert "D column" in result
+        # 2026-05-17: halt message updated for widened signal — see the
+        # `Halt 3` block in controller._check_cycle_hardening_halts.
+        assert "Upstream filtering" in result
+        assert "critic rejects" in result
+        assert "red-team rejects" in result
         assert c.state.halt_reason_hardening == result
 
     def test_dispatched_zero_does_not_clear_or_increment(self):
@@ -1111,3 +1128,149 @@ class TestHardeningHaltReasonClearedOnHealthyCycle:
         )
         # Counter unchanged: dispatched=0 does not advance D-zero streak.
         assert c.state.consecutive_d_zero_cycles == 2
+
+    def test_critic_rejections_reset_counter_even_with_d_zero(self):
+        """2026-05-17 widened signal: when the dispatcher's
+        admissibility check passes everything BUT the critic rejected
+        some theorist proposals upstream, that's the critic doing its
+        job — counter must reset, halt must not fire.
+
+        Pre-widening: this scenario tripped Halt 3 after 3 cycles
+        because d_count was zero. Post-widening: critic_reject_count > 0
+        contributes to total upstream filtering and resets the counter.
+        """
+        from kryptosbot.controller import D_ZERO_HALT_STREAK
+        from kryptosbot.models import WorkerStatus
+
+        c = self._bare_controller()
+        c.state.halt_reason_hardening = ""
+        c.state.consecutive_d_zero_cycles = D_ZERO_HALT_STREAK - 1
+        c.state.consecutive_fallback_cycles = 0
+        # Critic rejected 2 theories this cycle; red-team and
+        # dispatcher are clean.
+        c._cycle_critic_reject_count = 2
+        c._cycle_redteam_reject_count = 0
+
+        class _DisprovedOutcome:
+            status = WorkerStatus.DISPROVED
+
+        result = c._check_cycle_hardening_halts(
+            candidates=[self._theorist_candidate()],
+            outcomes=[_DisprovedOutcome()],
+            triggered_alerts=[],
+        )
+
+        assert result is None, (
+            "Critic rejections (count=2) must count toward upstream "
+            "filtering and reset the D-zero counter; halt should NOT fire."
+        )
+        assert c.state.consecutive_d_zero_cycles == 0, (
+            "Counter must reset when ANY upstream layer filtered "
+            f"something. Got {c.state.consecutive_d_zero_cycles}."
+        )
+
+    def test_redteam_rejections_reset_counter_even_with_d_zero(self):
+        """Symmetric to the critic test: when red-team rejected some
+        critic-approved theories upstream of the dispatcher, that's
+        the red-team doing its job — counter must reset.
+        """
+        from kryptosbot.controller import D_ZERO_HALT_STREAK
+        from kryptosbot.models import WorkerStatus
+
+        c = self._bare_controller()
+        c.state.halt_reason_hardening = ""
+        c.state.consecutive_d_zero_cycles = D_ZERO_HALT_STREAK - 1
+        c.state.consecutive_fallback_cycles = 0
+        # Red-team rejected 3 theories this cycle (REJECT or
+        # ESCALATED->REJECT). Critic and dispatcher clean.
+        c._cycle_critic_reject_count = 0
+        c._cycle_redteam_reject_count = 3
+
+        class _DisprovedOutcome:
+            status = WorkerStatus.DISPROVED
+
+        result = c._check_cycle_hardening_halts(
+            candidates=[self._theorist_candidate()],
+            outcomes=[_DisprovedOutcome()],
+            triggered_alerts=[],
+        )
+
+        assert result is None
+        assert c.state.consecutive_d_zero_cycles == 0
+
+    def test_all_three_layers_silent_increments_counter(self):
+        """When critic AND red-team AND dispatcher all approve every
+        theorist spec this cycle, the counter advances. The halt
+        message must mention all three layers."""
+        from kryptosbot.controller import D_ZERO_HALT_STREAK
+        from kryptosbot.models import WorkerStatus
+
+        c = self._bare_controller()
+        c.state.halt_reason_hardening = ""
+        c.state.consecutive_d_zero_cycles = D_ZERO_HALT_STREAK - 1
+        c.state.consecutive_fallback_cycles = 0
+        # All three layers silent.
+        c._cycle_critic_reject_count = 0
+        c._cycle_redteam_reject_count = 0
+
+        class _DisprovedOutcome:
+            status = WorkerStatus.DISPROVED
+
+        result = c._check_cycle_hardening_halts(
+            candidates=[self._theorist_candidate()],
+            outcomes=[_DisprovedOutcome(), _DisprovedOutcome()],
+            triggered_alerts=[],
+        )
+
+        assert result is not None
+        # Halt message must surface all three layer names so an
+        # operator can diagnose which gate stopped firing.
+        assert "critic" in result.lower()
+        assert "red-team" in result.lower()
+        assert "admissibility" in result.lower()
+        # State preserves the trip.
+        assert c.state.consecutive_d_zero_cycles >= D_ZERO_HALT_STREAK
+
+    def test_widened_signal_unblocks_well_filtered_cycle(self):
+        """Regression guard for the 2026-05-17 cycle 545-547 scenario:
+        3 consecutive cycles each had robust upstream filtering
+        (critic + red-team rejected many) but the dispatcher saw
+        nothing to reject because the upstream gates already filtered
+        out the bad specs. Pre-widening this tripped Halt 3; post-
+        widening it doesn't, because critic+redteam rejection count > 0.
+        """
+        from kryptosbot.models import WorkerStatus
+
+        c = self._bare_controller()
+        c.state.halt_reason_hardening = ""
+        c.state.consecutive_d_zero_cycles = 0
+        c.state.consecutive_fallback_cycles = 0
+
+        class _DisprovedOutcome:
+            status = WorkerStatus.DISPROVED
+
+        # Simulate three cycles of "robust upstream filtering,
+        # dispatcher silent" — the exact 545-547 pattern.
+        for cycle_n in range(3):
+            c._cycle_critic_reject_count = 4   # critic rejected 4
+            c._cycle_redteam_reject_count = 2  # red-team rejected 2
+            # All dispatched results came back disproved cleanly;
+            # NONE were rejected_admissibility.
+            result = c._check_cycle_hardening_halts(
+                candidates=[self._theorist_candidate()],
+                outcomes=[_DisprovedOutcome(), _DisprovedOutcome(),
+                          _DisprovedOutcome(), _DisprovedOutcome()],
+                triggered_alerts=[],
+            )
+            assert result is None, (
+                f"Cycle {cycle_n}: halt fired spuriously despite "
+                f"critic+redteam doing the filtering work. "
+                f"Reason: {result!r}"
+            )
+
+        # After three robust-upstream cycles, counter still at 0.
+        assert c.state.consecutive_d_zero_cycles == 0, (
+            "Counter must stay at 0 across all three cycles since "
+            f"upstream filtering > 0 each time. Got "
+            f"{c.state.consecutive_d_zero_cycles}."
+        )

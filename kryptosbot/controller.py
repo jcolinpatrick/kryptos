@@ -706,6 +706,14 @@ class ResearchController:
         # ``_begin_cycle_phase_state`` at every cycle boundary.
         self._cycle_empirical_dead_rejections: list = []
 
+        # 2026-05-17: per-cycle upstream filtering counters. The D-zero
+        # halt is re-aimed at total upstream filtering (critic +
+        # red-team + dispatcher admissibility) rather than dispatcher
+        # alone. Cold-start init is here; per-cycle reset is in
+        # ``_begin_cycle_phase_state``.
+        self._cycle_critic_reject_count: int = 0
+        self._cycle_redteam_reject_count: int = 0
+
         # Inject ledger into research tools
         set_ledger(self.ledger)
         self._load_canonical_facts()
@@ -757,6 +765,18 @@ class ResearchController:
         # is absent during the empirical-death KB query) fires at most
         # once per cycle, never once per rejection.
         self._kb_db_missing_logged_this_cycle = False
+
+        # 2026-05-17: D-zero halt re-aimed at total upstream filtering
+        # rather than dispatcher admissibility alone. Phase 1 + Phase 2
+        # gates (family-yield, structural-novelty, red-team escalation
+        # policies) are now sophisticated enough that the dispatcher
+        # admissibility check often finds nothing to reject — that's
+        # the upstream gates working as designed, not a regression.
+        # ``_check_cycle_hardening_halts`` sums these per-cycle counts
+        # plus the dispatcher D-count; only when ALL three layers go
+        # silent does the halt fire.
+        self._cycle_critic_reject_count = 0
+        self._cycle_redteam_reject_count = 0
 
         # Phase 2 yield-feedback (Task 15 review): the controller mutates
         # the critic's per-cycle indices in place each cycle rather than
@@ -1036,28 +1056,60 @@ class ResearchController:
             self.state.halt_reason_hardening = reason
             return reason
 
-        # ── Halt 3: D-column-zero streak ────────────────────────────
-        # D column = WorkerContract with status=REJECTED_ADMISSIBILITY.
-        # Only count cycles that actually dispatched; a dry-run cycle
-        # or one where critic/red-team eliminated everything is not a
-        # meaningful "D=0".
+        # ── Halt 3: upstream-filtering-zero streak ──────────────────
+        # Re-aimed 2026-05-17 (was D-column-zero streak).
         #
-        # Bench-mode HCC-only carve-out (2026-04-29): the
-        # deterministic HCC seed catalogue is pre-validated and
-        # produces zero admissibility rejections by construction.
-        # Counting those cycles toward the D-zero streak halt is the
-        # same category error as the fallback-streak halt; same
-        # carve-out applies.
+        # Original signal: count of REJECTED_ADMISSIBILITY worker
+        # contracts ("D column"). The halt fired when D=0 for 3
+        # consecutive dispatched cycles. The premise was that healthy
+        # operation has SOME admissibility rejections, and D=0
+        # indicates either trivially-admissible specs or a silenced
+        # DSL path.
+        #
+        # By 2026-05-17 the premise had become wrong. Phase 1's
+        # family-yield gate + structural-novelty bypass + red-team's
+        # exhausted_source_material / unbounded_search /
+        # duplicate_family escalation policies do so much upstream
+        # filtering that the dispatcher admissibility check often
+        # finds nothing left to reject — that's the upstream gates
+        # working as designed, not a regression. Cycles 545/546/547
+        # on 2026-05-17 each dispatched 3-6 well-filtered theories,
+        # ALL of which translated cleanly and ran in the kernel; the
+        # old counter tripped after 3 such cycles and halted the run.
+        #
+        # New signal: total upstream filtering = critic rejections +
+        # red-team rejections (REJECT or ESCALATED→REJECT) + dispatcher
+        # admissibility rejections. The halt only fires when ALL three
+        # layers go silent simultaneously — that genuinely indicates a
+        # filtering-pipeline regression, not just a healthy upstream.
+        #
+        # State field ``consecutive_d_zero_cycles`` is kept under its
+        # old name for schema-load compatibility; its semantic has
+        # widened to "consecutive cycles with zero upstream filtering".
+        #
+        # Bench-mode HCC-only carve-out (2026-04-29): the deterministic
+        # HCC seed catalogue is pre-validated and produces zero
+        # admissibility rejections by construction. Same carve-out
+        # applies to the widened metric.
         dispatched_this_cycle = len(outcomes)
         if self.config.hcc_only or all_hcc_seeds:
-            # Deterministic HCC seeds: D=0 by design, not a signal.
+            # Deterministic HCC seeds: filtering=0 by design, not a signal.
             self.state.consecutive_d_zero_cycles = 0
         elif dispatched_this_cycle > 0:
             d_count = sum(
                 1 for o in outcomes
                 if o.status == WorkerStatus.REJECTED_ADMISSIBILITY
             )
-            if d_count == 0:
+            critic_rejects = int(
+                getattr(self, "_cycle_critic_reject_count", 0) or 0
+            )
+            redteam_rejects = int(
+                getattr(self, "_cycle_redteam_reject_count", 0) or 0
+            )
+            upstream_filtering_count = (
+                critic_rejects + redteam_rejects + d_count
+            )
+            if upstream_filtering_count == 0:
                 self.state.consecutive_d_zero_cycles += 1
             else:
                 self.state.consecutive_d_zero_cycles = 0
@@ -1065,12 +1117,13 @@ class ResearchController:
 
         if self.state.consecutive_d_zero_cycles >= D_ZERO_HALT_STREAK:
             reason = (
-                f"Admissibility rejections (D column) were zero for "
+                f"Upstream filtering (critic rejects + red-team rejects + "
+                f"dispatcher admissibility rejects) was zero for "
                 f"{self.state.consecutive_d_zero_cycles} consecutive "
                 f"dispatched cycles (threshold={D_ZERO_HALT_STREAK}). "
-                f"Either all theorist specs are trivially admissible or "
-                f"the DSL path is not being exercised; operator review "
-                f"required."
+                f"All filtering layers approved every theorist spec, "
+                f"which suggests a regression in the filtering pipeline; "
+                f"operator review required."
             )
             self.state.halt_reason_hardening = reason
             return reason
@@ -1587,6 +1640,11 @@ class ResearchController:
                 self._refresh_critic_cycle_state()
                 self.critic.policy = self.config.family_yield_policy
                 self._cycle_empirical_dead_rejections = []
+                # 2026-05-17: reset upstream filtering counters at the
+                # start of every critic pass so the D-zero halt counter
+                # sees only THIS cycle's filtering rate.
+                self._cycle_critic_reject_count = 0
+                self._cycle_redteam_reject_count = 0
                 for theory in candidates:
                     if self.config.skip_critic:
                         theory.status = TheoryStatus.APPROVED
@@ -1612,6 +1670,10 @@ class ResearchController:
                                 theory.title, verdict.confidence,
                             )
                         else:
+                            # 2026-05-17: count this rejection toward
+                            # upstream filtering so the D-zero halt does
+                            # not fire when critic is doing the work.
+                            self._cycle_critic_reject_count += 1
                             logger.info(
                                 "  REJECTED [%s]: %s — %s",
                                 verdict.decision.value, theory.title,
@@ -2841,6 +2903,10 @@ class ResearchController:
                         f"search_space_risk={risk_value}"
                     )
                 self.ledger.upsert_theory(theory)
+                # 2026-05-17: count this rejection toward upstream
+                # filtering so the D-zero halt does not fire when
+                # red-team is doing the work.
+                self._cycle_redteam_reject_count += 1
                 continue
 
             if verdict.verdict == "reject":
@@ -2852,6 +2918,8 @@ class ResearchController:
                     theory.title,
                     verdict.reasons[0] if verdict.reasons else "no reason given",
                 )
+                # 2026-05-17: count this rejection toward upstream filtering.
+                self._cycle_redteam_reject_count += 1
                 continue
 
             if verdict.verdict == "concerned":
