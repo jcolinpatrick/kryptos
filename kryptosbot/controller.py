@@ -1984,7 +1984,7 @@ class ResearchController:
             self._cycle_prior_subfamilies = {}
             self._cycle_prior_signatures = {}
 
-        return {
+        landscape = {
             "status_counts": status_counts,
             "cycle_delta": delta,
             "theorist_parse_telemetry": {
@@ -2091,6 +2091,11 @@ class ResearchController:
                 blocked_total=self.state.last_escape_families_blocked_total,
             ),
         }
+        landscape["escape_candidates"] = self._render_escape_candidates(
+            status=self.state.last_escape_status,
+            suggestions=self.state.last_escape_suggestions,
+        )
+        return landscape
 
     def _safe_get_open_pursuit_leads(
         self,
