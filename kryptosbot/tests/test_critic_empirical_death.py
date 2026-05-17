@@ -19,50 +19,16 @@ from kryptosbot.models import (
 )
 
 
-# ── Shared pytest fixtures (consumed by Task-15 KB-injection tests) ────────
+# ── Shared pytest fixtures consumed by Task-15 KB-injection tests ─────────
+# live in ``kryptosbot/tests/conftest.py`` (promoted there in Task 23 so
+# the Phase 2 acceptance suite can reuse them without duplication):
+#   - dead_encoding_yield
+#   - encoding_theory
+#   - encoding_theory_with_novel_subfamily_and_signature
 #
-# The pre-existing class-style tests use the helper functions defined below
-# (_verdict, _theory, _critic_with_indices); the Task-15 tests prefer
-# fixtures because they need to reference the same theory shape multiple
-# times across cache-hit / bypass / missing-DB assertions.
-
-@pytest.fixture
-def dead_encoding_yield() -> FamilyYieldVerdict:
-    """An ``encoding`` family verdict in ``empirically_dead`` status."""
-    stats = FamilyYieldStats("encoding", 826, 0.78, 7.0, 0, 825)
-    return FamilyYieldVerdict("encoding", "empirically_dead", ("r",), stats)
-
-
-@pytest.fixture
-def encoding_theory() -> TheoryRecord:
-    """A bypass-INELIGIBLE encoding theory (subfamily / sig already seen).
-
-    Tests that consume this fixture also seed ``prior_subfamilies`` and
-    ``prior_signatures`` so the bypass cannot fire and the empirical-death
-    gate triggers the KB query.
-    """
-    return TheoryRecord(
-        hypothesis_id="hid_kb_test",
-        title="t", core_claim="c", mechanism="m",
-        family="encoding", subfamily="vigenere",
-        status=TheoryStatus.PROPOSED,
-    )
-
-
-@pytest.fixture
-def encoding_theory_with_novel_subfamily_and_signature() -> TheoryRecord:
-    """A bypass-ELIGIBLE encoding theory.
-
-    Both subfamily (``brand_new_subfamily``) and the computed mechanism
-    signature are absent from the priors that the consuming test installs.
-    """
-    return TheoryRecord(
-        hypothesis_id="hid_kb_test_bypass",
-        title="t", core_claim="c", mechanism="m",
-        family="encoding", subfamily="brand_new_subfamily",
-        status=TheoryStatus.PROPOSED,
-    )
-
+# The pre-existing class-style tests use the helper functions defined
+# below (_verdict, _theory, _critic_with_indices); those stay local
+# because they parameterize per-test setup.
 
 def _verdict(family, status="empirically_dead", n=826, mean=0.78, best=7.0):
     stats = FamilyYieldStats(family, n, mean, best, 0, n - 1)
