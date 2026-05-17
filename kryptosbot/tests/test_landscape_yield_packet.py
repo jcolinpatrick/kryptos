@@ -278,3 +278,166 @@ class TestTheoristPromptReceivesEscapeCandidates:
             "escape_candidates section must be omitted when the landscape "
             "key is missing"
         )
+
+
+# ────────────────────────────────────────────────────────────────────────
+# Prior-cycle-synthesis rendering — closes Tier-C #8 from the 2026-05-16
+# controller-maturity audit. Before 2026-05-17, results-analyst's
+# recommended_next_focus was computed and stored on the landscape but
+# never rendered into _build_theorist_prompt — the recommendation
+# surfaced for human visibility at end-of-cycle and dead-ended there.
+# These tests pin the new rendering invariant: when
+# previous_synthesis is present with non-empty content, the prompt
+# carries a "PRIOR CYCLE SYNTHESIS" section OUTSIDE the JSON landscape;
+# when absent / empty, the prompt is unchanged.
+# ────────────────────────────────────────────────────────────────────────
+
+
+_PRIOR_SYNTHESIS_TOKEN = "x9c4-prior-synth-marker-9w2k"
+
+
+class TestTheoristPromptReceivesPriorSynthesis:
+    """Regression guard for the 2026-05-17 fix that threads
+    previous_synthesis.recommended_next_focus into the theorist prompt.
+
+    Tier-C #8 documented bug: ``recommended_next_focus`` was computed by
+    results-analyst, persisted on ``self._last_synthesis``, and forwarded
+    to ``landscape["previous_synthesis"]`` — but ``_build_theorist_prompt``
+    never read the key. The fix adds ``_render_previous_synthesis`` and
+    inserts the rendered block ahead of the yield-feedback blocks so the
+    steer reaches the theorist before the per-family pressure / KB
+    suggestions.
+    """
+
+    def test_prompt_includes_recommended_next_focus_when_present(self, tmp_path):
+        ctrl = _make_controller(tmp_path)
+        landscape = {
+            **_BASE_LANDSCAPE,
+            "family_yield": "",
+            "escape_pressure": "",
+            "escape_candidates": "",
+            "previous_synthesis": {
+                "headline": "Cycle N produced zero signal across 5 dispatches.",
+                "recommended_next_focus": (
+                    f"Bias toward w_delimiter_segments anomaly lane "
+                    f"({_PRIOR_SYNTHESIS_TOKEN})"
+                ),
+                "family_movements": [],
+                "evidence_added": [],
+                "dispatched_count": 5,
+                "disproved_count": 1,
+                "signal_count": 0,
+                "risk_breakdown": {},
+            },
+        }
+        prompt = ctrl._build_theorist_prompt(landscape)
+        assert _PRIOR_SYNTHESIS_TOKEN in prompt, (
+            "recommended_next_focus must appear somewhere in the prompt"
+        )
+        assert _prompt_outside_json(prompt, _PRIOR_SYNTHESIS_TOKEN), (
+            "previous_synthesis block must render as a standalone "
+            "section OUTSIDE the JSON landscape dump (this is the "
+            "Tier-C #8 bug: pre-fix the recommendation was inside the "
+            "landscape JSON but no standalone block)"
+        )
+        assert "PRIOR CYCLE SYNTHESIS" in prompt, (
+            "expected a 'PRIOR CYCLE SYNTHESIS' heading in the rendered block"
+        )
+        # Override-affordance line must accompany the recommendation so the
+        # theorist knows it can disagree without silently ignoring.
+        assert "override" in prompt.lower(), (
+            "the override-allowed affordance line must accompany the "
+            "recommended_next_focus so the theorist can disagree explicitly"
+        )
+
+    def test_prompt_omits_block_when_previous_synthesis_is_none(self, tmp_path):
+        """First cycle of a session: _last_synthesis is None, the
+        landscape carries previous_synthesis=None. Builder must not
+        crash and must not render the section."""
+        ctrl = _make_controller(tmp_path)
+        landscape = {
+            **_BASE_LANDSCAPE,
+            "family_yield": "",
+            "escape_pressure": "",
+            "escape_candidates": "",
+            "previous_synthesis": None,
+        }
+        prompt = ctrl._build_theorist_prompt(landscape)
+        assert "PRIOR CYCLE SYNTHESIS" not in prompt
+
+    def test_prompt_omits_block_when_key_missing(self, tmp_path):
+        """Legacy callers / bench-mode paths that don't populate the
+        key at all must not crash and must not render the section."""
+        ctrl = _make_controller(tmp_path)
+        landscape = {
+            **_BASE_LANDSCAPE,
+            "family_yield": "",
+            "escape_pressure": "",
+            "escape_candidates": "",
+            # previous_synthesis intentionally omitted
+        }
+        prompt = ctrl._build_theorist_prompt(landscape)
+        assert "PRIOR CYCLE SYNTHESIS" not in prompt
+
+    def test_prompt_omits_block_when_both_fields_empty(self, tmp_path):
+        """A previous_synthesis dict with empty headline AND empty
+        recommended_next_focus contributes no actionable content;
+        the block must be suppressed entirely (no empty heading)."""
+        ctrl = _make_controller(tmp_path)
+        landscape = {
+            **_BASE_LANDSCAPE,
+            "family_yield": "",
+            "escape_pressure": "",
+            "escape_candidates": "",
+            "previous_synthesis": {
+                "headline": "",
+                "recommended_next_focus": "",
+                "family_movements": [],
+                "evidence_added": [],
+                "dispatched_count": 0,
+                "disproved_count": 0,
+                "signal_count": 0,
+                "risk_breakdown": {},
+            },
+        }
+        prompt = ctrl._build_theorist_prompt(landscape)
+        assert "PRIOR CYCLE SYNTHESIS" not in prompt, (
+            "block must not render when both headline and "
+            "recommended_next_focus are empty strings"
+        )
+
+    def test_prompt_renders_headline_only_when_next_focus_empty(self, tmp_path):
+        """If a cycle produces a headline but no next-focus recommendation
+        (e.g. the analyst couldn't suggest anything actionable), the
+        block should still surface the headline so the theorist knows
+        what happened last cycle. The override-affordance is omitted
+        because there is no recommendation to override."""
+        ctrl = _make_controller(tmp_path)
+        marker = "x9c4-headline-only-marker"
+        landscape = {
+            **_BASE_LANDSCAPE,
+            "family_yield": "",
+            "escape_pressure": "",
+            "escape_candidates": "",
+            "previous_synthesis": {
+                "headline": f"Cycle N status report: {marker}",
+                "recommended_next_focus": "",
+                "family_movements": [],
+                "evidence_added": [],
+                "dispatched_count": 0,
+                "disproved_count": 0,
+                "signal_count": 0,
+                "risk_breakdown": {},
+            },
+        }
+        prompt = ctrl._build_theorist_prompt(landscape)
+        assert marker in prompt
+        assert _prompt_outside_json(prompt, marker)
+        # No recommendation means no override-affordance line.
+        # (The line is only emitted when next_focus is non-empty.)
+        assert "override" not in (
+            prompt.split("PRIOR CYCLE SYNTHESIS", 1)[1].split("===", 1)[0].lower()
+        ), (
+            "override-affordance line must only render alongside a "
+            "non-empty recommended_next_focus"
+        )

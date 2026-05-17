@@ -1281,6 +1281,55 @@ class ResearchController:
         )
         return "\n".join(lines)
 
+    def _render_previous_synthesis(
+        self, prev: Optional[dict[str, Any]],
+    ) -> str:
+        """Render the prior cycle's results-analyst synthesis as theorist context.
+
+        Closes Tier-C #8 from
+        docs/audits/controller_maturity_audit_2026_05_16.md: the
+        synthesis ``recommended_next_focus`` field was computed and
+        persisted, but ``_build_theorist_prompt`` never read it. The
+        recommendation surfaced at end-of-cycle for human visibility
+        and then dead-ended; consecutive cycles produced the same
+        recommendation (w_delimiter_segments / X-Q-Z marker semantics)
+        without the theorist ever seeing it.
+
+        Returns ``""`` when there is no prior synthesis (cold-start
+        first cycle of a session, or the synthesis pass errored / was
+        skipped). Empty string preserves the pre-fix prompt shape.
+
+        Args:
+            prev: the ``landscape["previous_synthesis"]`` dict, or None.
+                Expected keys: ``headline`` (str), ``recommended_next_focus``
+                (str), plus auxiliary fields the renderer ignores.
+
+        Returns:
+            A rendered prompt block, or "" when there is nothing to say.
+        """
+        if not prev:
+            return ""
+        headline = str(prev.get("headline") or "").strip()
+        next_focus = str(prev.get("recommended_next_focus") or "").strip()
+        if not headline and not next_focus:
+            return ""
+
+        lines: list[str] = ["=== PRIOR CYCLE SYNTHESIS ==="]
+        if headline:
+            lines.append(f"Last cycle: {headline}")
+        if next_focus:
+            if headline:
+                lines.append("")
+            lines.append("Results-analyst recommends for this cycle:")
+            lines.append(f"  -> {next_focus}")
+            lines.append("")
+            lines.append(
+                "You may follow this recommendation or override it. If you "
+                "override, your novelty_basis must briefly explain why your "
+                "direction is more promising than the recommended one."
+            )
+        return "\n".join(lines)
+
     def _classify_agent_failure(self, error_text: str) -> tuple[bool, str]:
         """Classify whether an SDK/CLI failure should halt the remaining run.
 
@@ -3340,6 +3389,19 @@ class ResearchController:
         escape_pressure_block = landscape.get("escape_pressure") or ""
         escape_candidates_block = landscape.get("escape_candidates") or ""
 
+        # Prior-cycle synthesis (2026-05-17). Closes Tier-C #8 from the
+        # 2026-05-16 controller-maturity audit: results-analyst
+        # produces a recommended_next_focus per cycle and stores it on
+        # the landscape, but _build_theorist_prompt previously did not
+        # read it. That made the recommendation a phantom signal —
+        # printed at end-of-cycle for human visibility but never reaching
+        # the theorist's prompt. Rendered before the yield-feedback
+        # blocks so the steer arrives ahead of the pressure / candidate
+        # signals.
+        previous_synthesis_block = self._render_previous_synthesis(
+            landscape.get("previous_synthesis")
+        )
+
         # K4Bench input mode replaces the real-K4 anchor prelude with
         # the synthetic-challenge prompt block. The block is fully
         # self-contained (CT, cribs, clue text, solver contract) and
@@ -3743,7 +3805,7 @@ supported kinds, DO NOT fabricate one. Set "dsl_spec": null and accept
 rejection — the framework will later extend the DSL rather than you
 launder an untranslatable theory through a fake spec.
 
-{"" if not family_yield_block.strip() else family_yield_block + chr(10) + chr(10)}{"" if not escape_pressure_block.strip() else escape_pressure_block + chr(10) + chr(10)}{"" if not escape_candidates_block.strip() else escape_candidates_block + chr(10) + chr(10)}Output ONLY the JSON array. No commentary."""
+{"" if not previous_synthesis_block.strip() else previous_synthesis_block + chr(10) + chr(10)}{"" if not family_yield_block.strip() else family_yield_block + chr(10) + chr(10)}{"" if not escape_pressure_block.strip() else escape_pressure_block + chr(10) + chr(10)}{"" if not escape_candidates_block.strip() else escape_candidates_block + chr(10) + chr(10)}Output ONLY the JSON array. No commentary."""
 
     def _programmatic_fallback(
         self, landscape: dict[str, Any]
