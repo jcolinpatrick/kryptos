@@ -15,6 +15,7 @@ see `docs/README_current_state.md`. For historical strategy snapshots see
 ## 1. Current Project State (2026-05-16)
 
 - [Yield-feedback Phase 1 landed 2026-05-16](docs/specs/2026-05-16-yield-feedback-design.md) -- New `kryptosbot/family_yield.py` shared policy; `CriticDecision.REJECT_EMPIRICALLY_DEAD` with structural-novelty bypass; controller-owned `_write_cycle_escape_summary` chokepoint with streak counter on `ControllerState`. Closes the memory-to-prompt feedback loop on the 70% noise-floor allocation pattern identified in the 2026-05-16 maturity audit. Phase 2 (cipher-discovery KB injection) and Phase 3 (few-shot library) designed for, not built.
+- [Yield-feedback Phase 2 landed 2026-05-16](docs/specs/2026-05-16-yield-feedback-phase2-design.md) -- Crib-paste detector inside `_verify_against_kernel` (fail-closed) + cipher-discovery KB injection per `REJECT_EMPIRICALLY_DEAD` (fail-open via per-cycle cache). Next-cycle theorist render is conditional on `escape_status` with hard caps (8/3 full block, 3 advisory partial, 0 otherwise). Pre-registered crib-paste threshold `verified_crib == 24 AND non_crib_ngram_per_char <= -6.2` versioned `crib_paste_artifact:v1`. Phase 3 (curated few-shot library) remains deferred.
 
 ## Prior State (2026-05-02)
 
