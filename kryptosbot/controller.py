@@ -1076,6 +1076,7 @@ class ResearchController:
         blocked_stats: Optional[
             list[tuple[str, "FamilyYieldStats"]]
         ] = None,
+        rejections: Optional[list] = None,
     ) -> None:
         """Single chokepoint for writing per-cycle escape telemetry.
 
@@ -1086,6 +1087,11 @@ class ResearchController:
         Streak semantics (see spec §5.4):
           - "needed_but_unavailable" increments
           - everything else resets to 0
+
+        Phase 2 Task 18: aggregates ``rejections``' KB suggestions into
+        ``self.state.last_escape_suggestions`` for the next cycle's
+        prompt. Per-family cap of 3, total storage cap of 24 (render-side
+        caps in Task 20 are tighter; the two layers are independent).
         """
         blocked_total = len(families_blocked)
         if blocked_stats:
@@ -1112,6 +1118,46 @@ class ResearchController:
             # count survives subsequent non-partial cycles, allowing the
             # operator to see "last cycle that had partial blocking".
             pass
+
+        # ── Phase 2 Task 18: aggregate KB suggestions for the next-cycle prompt.
+        # Storage caps (3-per-family, 24-total) are SPEC-MANDATED here;
+        # render-side caps live in Task 20's renderer. Empty/missing
+        # ``rejections`` simply yields an empty list — non-empirical-death
+        # exit paths therefore clear stale suggestions naturally.
+        from kryptosbot.kb_injection import CipherDiscoverySuggestion
+
+        suggestions_by_family: dict[str, list[CipherDiscoverySuggestion]] = {}
+        for r in rejections or ():
+            recs = getattr(r, "suggested_mechanism_records", ()) or ()
+            if not recs:
+                continue
+            suggestions_by_family.setdefault(r.family, []).extend(recs)
+
+        aggregated: list[dict] = []
+        for fam in sorted(suggestions_by_family.keys()):
+            seen_sigs: set[str] = set()
+            per_fam: list[CipherDiscoverySuggestion] = []
+            for rec in suggestions_by_family[fam]:
+                if rec.mechanism_signature in seen_sigs:
+                    continue
+                seen_sigs.add(rec.mechanism_signature)
+                per_fam.append(rec)
+            per_fam.sort(key=lambda s: (
+                not s.dispatcher_testable,
+                -float(s.k4_relevance_score),
+                s.canonical_name.lower(),
+            ))
+            for rec in per_fam[:3]:                  # 3-per-family cap at storage
+                entry = rec.to_dict()
+                entry["blocked_family"] = fam
+                aggregated.append(entry)
+
+        aggregated.sort(key=lambda d: (
+            not bool(d.get("dispatcher_testable")),
+            -float(d.get("k4_relevance_score", 0.0)),
+            str(d.get("canonical_name", "")).lower(),
+        ))
+        self.state.last_escape_suggestions = aggregated[:24]   # storage hard cap
 
     def _classify_agent_failure(self, error_text: str) -> tuple[bool, str]:
         """Classify whether an SDK/CLI failure should halt the remaining run.

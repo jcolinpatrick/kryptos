@@ -394,3 +394,105 @@ class TestCriticKBCacheClearedBetweenCycles:
         # have produced frozenset({"prev_dead"})). The sentinel passes
         # through untouched until _refresh_critic_cycle_state runs.
         assert critic.blocked_families_in_cycle is sentinel_before
+
+
+class TestEscapeSummaryAggregatesSuggestions:
+    def _bare_controller(self):
+        from kryptosbot.controller import ResearchController, ControllerState
+        c = ResearchController.__new__(ResearchController)
+        c.state = ControllerState(cycle_number=1)
+        c._cycle_empirical_dead_rejections = []
+        c._kb_db_missing_logged_this_cycle = False
+        return c
+
+    def _example_rejection(self, family, n_suggestions=2):
+        from kryptosbot.models import EmpiricalDeathRejectionPayload
+        from kryptosbot.kb_injection import (
+            KB_SIGNATURE_SCHEMA_VERSION,
+            CipherDiscoverySuggestion,
+        )
+        suggestions = tuple(
+            CipherDiscoverySuggestion(
+                kb_record_id=f"rec-{family}-{i}",
+                canonical_name=f"Cipher {family} {i}",
+                kb_cipher_family="columnar",
+                mapped_ledger_families=("columnar_single",),
+                mechanism_signature=f"sig-{family}-{i:02d}".ljust(16, "x")[:16],
+                signature_schema_version=KB_SIGNATURE_SCHEMA_VERSION,
+                dispatcher_testable=True,
+                k4_relevance_score=50.0 - i,
+                sketch_class="dsl_testable",
+                one_line_sketch="sketch",
+                bounded_kill_criterion="kill",
+                source_verdict="allow",
+            )
+            for i in range(n_suggestions)
+        )
+        return EmpiricalDeathRejectionPayload(
+            family=family,
+            verdict=None,
+            bypass_failed_reasons=("x",),
+            suggested_mechanism_records=suggestions,
+            suggestion_source="cipher_discovery_kb",
+            suggestion_query_scope={},
+        )
+
+    def test_aggregates_suggestions_into_state(self):
+        c = self._bare_controller()
+        rejections = [
+            self._example_rejection("encoding", n_suggestions=2),
+            self._example_rejection("k2_coords", n_suggestions=2),
+        ]
+        c._write_cycle_escape_summary(
+            status="needed_but_unavailable",
+            families_blocked=["encoding", "k2_coords"],
+            rejections=rejections,
+        )
+        stored = c.state.last_escape_suggestions
+        assert isinstance(stored, list)
+        # All entries are dicts (JSON-storage shape).
+        for d in stored:
+            assert isinstance(d, dict)
+            assert "blocked_family" in d
+            assert "canonical_name" in d
+        assert {d["blocked_family"] for d in stored} == {"encoding", "k2_coords"}
+
+    def test_caps_storage_at_3_per_family(self):
+        c = self._bare_controller()
+        big = self._example_rejection("encoding", n_suggestions=10)
+        c._write_cycle_escape_summary(
+            status="needed_but_unavailable",
+            families_blocked=["encoding"],
+            rejections=[big],
+        )
+        encoding_entries = [d for d in c.state.last_escape_suggestions if d["blocked_family"] == "encoding"]
+        assert len(encoding_entries) <= 3
+
+    def test_caps_storage_at_24_total(self):
+        c = self._bare_controller()
+        # 10 families with 10 suggestions each — 100 total before cap.
+        rejections = [self._example_rejection(f"fam_{i}", n_suggestions=10) for i in range(10)]
+        c._write_cycle_escape_summary(
+            status="needed_but_unavailable",
+            families_blocked=[r.family for r in rejections],
+            rejections=rejections,
+        )
+        assert len(c.state.last_escape_suggestions) <= 24
+
+    def test_dedupe_by_mechanism_signature_within_family(self):
+        c = self._bare_controller()
+        dup = self._example_rejection("encoding", n_suggestions=1)
+        # Two payloads carrying the same signature in encoding.
+        c._write_cycle_escape_summary(
+            status="needed_but_unavailable",
+            families_blocked=["encoding"],
+            rejections=[dup, dup],
+        )
+        sigs = {d["mechanism_signature"] for d in c.state.last_escape_suggestions}
+        assert len(sigs) == 1
+
+    def test_none_status_clears_or_skips(self):
+        c = self._bare_controller()
+        # Empty rejections + status=none should NOT populate suggestions.
+        c._write_cycle_escape_summary(status="none", families_blocked=[], rejections=[])
+        assert c.state.last_escape_suggestions == []
