@@ -201,13 +201,20 @@ class TestRecordExperimentResultHardening:
 
         This also guards against an over-aggressive fix that refuses to
         ever promote via this tool.
+
+        Phase 2 note: uses plausible English filler at non-crib positions
+        so the result passes through ``_verify_against_kernel``'s
+        crib-paste artifact detector. X-filler would be classified as
+        crib_paste and zeroed — that case is covered by the
+        TestVerifyAgainstKernelIntegration suite in
+        test_crib_paste_detector.py.
         """
         theory = _seed_theory(tmp_ledger, "hyp-real-signal")
 
         # Build a 97-char plaintext with cribs at the canonical 0-indexed
-        # positions. Filler is 'X' so it cannot accidentally look like
-        # extra cribs.
-        filler = ["X"] * 97
+        # positions and English-looking filler elsewhere — same pattern as
+        # tests/test_crib_paste_detector.py::test_non_paste_24_24_is_preserved.
+        filler = list(("THEQUICKBROWNFOXJUMPSOVERLAZYDOG" * 4)[:97])
         east = "EASTNORTHEAST"
         bclk = "BERLINCLOCK"
         for i, c in enumerate(east):
@@ -327,7 +334,12 @@ class TestVerifiedOutcomeIntegration:
     def test_verified_signal_flows_into_ledger_and_recent_learnings(self, tmp_ledger):
         theory = _seed_theory(tmp_ledger, "hyp-summary-signal")
 
-        filler = ["X"] * 97
+        # Use English filler at non-crib positions so the Phase 2 crib-paste
+        # detector in _verify_against_kernel does not classify this as an
+        # artifact and zero the score fields. See
+        # test_success_with_real_crib_bearing_plaintext_is_promising above
+        # for the rationale.
+        filler = list(("THEQUICKBROWNFOXJUMPSOVERLAZYDOG" * 4)[:97])
         for i, c in enumerate("EASTNORTHEAST"):
             filler[21 + i] = c
         for i, c in enumerate("BERLINCLOCK"):

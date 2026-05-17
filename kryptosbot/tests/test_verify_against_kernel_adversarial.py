@@ -77,6 +77,14 @@ def _correct_cribs_pt(filler: str = "X") -> str:
     positions does not affect Bean (Bean constraints live only at crib
     positions); it only affects crib_score at those positions, which is
     zero since "X" is not a crib letter.
+
+    Phase 2 note: a single-character filler (default "X") produces a PT
+    that the crib-paste artifact detector in ``_verify_against_kernel``
+    will classify as ``crib_paste`` and zero out — the non-crib ngram
+    score falls below -6.2. Tests that need the 24/24 verification path
+    to *pass through* the detector must use ``_correct_cribs_english_pt``
+    below; tests that explicitly assert the artifact-rejection path
+    continue to use this helper.
     """
     assert len(filler) == 1
     return (
@@ -88,6 +96,33 @@ def _correct_cribs_pt(filler: str = "X") -> str:
         + filler * (97 - (_CRIB_BC_POS + len(_CRIB_BC_STR)))
                                                         # 74..96 (23 chars)
     )
+
+
+# Plausible English filler used by tests that need a 24/24 result to
+# pass through the Phase 2 crib-paste artifact detector. Pattern mirrors
+# the canonical English-filler PT in tests/test_crib_paste_detector.py
+# (THEQUICKBROWNFOXJUMPSOVERLAZYDOG); the non-crib positions of the
+# resulting PT score well above the -6.2 ngram floor.
+_ENGLISH_FILLER_SOURCE = "THEQUICKBROWNFOXJUMPSOVERLAZYDOG"
+
+
+def _correct_cribs_english_pt() -> str:
+    """Build a 97-char PT with canonical cribs at 21-33 / 63-73 and
+    plausible-English filler everywhere else.
+
+    This is the Phase 2-safe analogue of ``_correct_cribs_pt("X")`` — same
+    24/24 crib match, same Bean validity under all three variants, but the
+    non-crib positions look like English so the crib-paste detector does
+    not fire. Use this whenever a test asserts the 24/24 verifier path
+    succeeds (Categories 2/3/4/7/9 happy-path branches).
+    """
+    src = (_ENGLISH_FILLER_SOURCE * 4)[:97]
+    pt = list(src)
+    for i, ch in enumerate(_CRIB_ENE_STR):
+        pt[_CRIB_ENE_POS + i] = ch
+    for i, ch in enumerate(_CRIB_BC_STR):
+        pt[_CRIB_BC_POS + i] = ch
+    return "".join(pt)
 
 
 def _random_noncrib_pt(seed: int) -> str:
@@ -142,8 +177,14 @@ class TestCategory2_CaseAndWhitespaceSmuggling:
     branches."""
 
     def test_lowercase_97_chars_verifies_after_upper(self):
-        """A lowercase 97-char PT uppercases to a valid verifiable PT."""
-        pt = _correct_cribs_pt("x").lower()
+        """A lowercase 97-char PT uppercases to a valid verifiable PT.
+
+        Uses English filler so the 24/24 result passes through the Phase 2
+        crib-paste artifact detector (X-filler would be classified as
+        crib_paste and zeroed). The case-normalization branch under test
+        is independent of the filler choice.
+        """
+        pt = _correct_cribs_english_pt().lower()
         assert len(pt) == 97
         c = _build_contract(pt, crib_score=24, bean_passed=True, score=24.0)
 
@@ -156,9 +197,12 @@ class TestCategory2_CaseAndWhitespaceSmuggling:
         assert c.verification_error == ""
 
     def test_mixed_case_97_chars_verifies_after_upper(self):
-        """Mixed casing normalizes identically; worker disagreement still caught."""
-        pt = _correct_cribs_pt("x")
-        # Deliberately toggle cases: "XxXxXxEAsTnOrThEaStXxXxXx..."
+        """Mixed casing normalizes identically; worker disagreement still caught.
+
+        Uses English filler (see test_lowercase_… for rationale).
+        """
+        pt = _correct_cribs_english_pt()
+        # Deliberately toggle cases on the English-filler PT.
         pt_mixed = "".join(
             (ch.upper() if i % 2 == 0 else ch.lower())
             for i, ch in enumerate(pt)
@@ -176,8 +220,12 @@ class TestCategory2_CaseAndWhitespaceSmuggling:
         assert c.worker_self_report == {"crib_score": 0, "bean_passed": False, "score": 0.0}
 
     def test_surrounding_whitespace_is_stripped(self):
-        """Leading/trailing spaces and newlines are stripped without penalty."""
-        pt = "   \n\t" + _correct_cribs_pt("x") + "\n   "
+        """Leading/trailing spaces and newlines are stripped without penalty.
+
+        Uses English filler so the 24/24 result passes through the Phase 2
+        crib-paste artifact detector.
+        """
+        pt = "   \n\t" + _correct_cribs_english_pt().lower() + "\n   "
         c = _build_contract(pt, crib_score=24, bean_passed=True, score=24.0)
 
         _verify_against_kernel(c)
@@ -229,24 +277,55 @@ class TestCategory3_CribPositionOnlyFakes:
     the high score while still overwriting any *other* mis-matching
     worker claim."""
 
-    def test_cribs_inserted_into_filler_scores_24_bean_pass(self):
-        """X-filler with cribs at the right spots: kernel says 24/True.
-        Worker also says 24/True → agreement, no overwrite."""
+    def test_cribs_inserted_into_filler_is_rejected_as_crib_paste(self):
+        """X-filler with cribs at the right spots: kernel agrees 24/True
+        BEFORE the Phase 2 paste filter. The filter then rejects the PT as
+        a crib-paste artifact and zeroes the score fields.
+
+        Retargeted under Phase 2 yield-feedback (Task 14): the prior
+        Phase 1 behavior (24/24 X-paste flowed through the verifier
+        untouched) is exactly what the detector now suppresses. The kernel
+        still sees 24/True, but the snapshot lives in
+        raw_artifacts.kernel_verified_before_artifact_filter while the
+        contract is forced to INCONCLUSIVE.
+        """
         pt = _correct_cribs_pt("X")
         c = _build_contract(pt, crib_score=24, bean_passed=True, score=24.0)
 
         _verify_against_kernel(c)
 
-        assert c.crib_score == 24
-        assert c.bean_passed is True
-        assert c.bean_variant == "vigenere"
-        assert c.fields_overwritten is False
-        assert c.worker_self_report == {}
+        # Score fields zeroed by the paste filter.
+        assert c.crib_score == 0
+        assert c.bean_passed is False
+        assert c.score == 0.0
+        assert c.bean_variant is None
+        assert c.status == WorkerStatus.INCONCLUSIVE
+
+        # Audit trail records what the kernel saw before the filter ran.
+        assert c.fields_overwritten is True
+        assert c.raw_artifacts.get("artifact_class") == "crib_paste"
+        snapshot = c.raw_artifacts.get("kernel_verified_before_artifact_filter")
+        assert isinstance(snapshot, dict)
+        assert snapshot.get("crib_score") == 24
+        assert snapshot.get("bean_passed") is True
+        assert snapshot.get("bean_variant") == "vigenere"
+        assert "crib_paste_artifact:v1" in c.verification_error
+        # Worker's claim is preserved even though it agreed with the
+        # pre-filter kernel verdict — Phase 2 still snapshots because the
+        # final mutated fields no longer match the worker self-report.
+        assert c.worker_self_report == {
+            "crib_score": 24, "bean_passed": True, "score": 24.0,
+        }
 
     def test_cribs_inserted_but_worker_underreports(self):
-        """Same PT; worker claimed 0/False (pessimistic). Verifier correctly
-        upgrades to 24/True AND flags the disagreement."""
-        pt = _correct_cribs_pt("X")
+        """English-filler PT; worker claimed 0/False (pessimistic). Verifier
+        correctly upgrades to 24/True AND flags the disagreement.
+
+        Uses English filler so the 24/24 result passes through the Phase 2
+        crib-paste detector — the test's purpose is to verify the worker-
+        underreport upgrade branch, not the artifact-rejection branch.
+        """
+        pt = _correct_cribs_english_pt()
         c = _build_contract(pt, crib_score=0, bean_passed=False, score=0.0)
 
         _verify_against_kernel(c)
@@ -296,8 +375,15 @@ class TestCategory4_BeanVariantSelection:
     to deterministically force each single-variant scenario."""
 
     def test_correct_cribs_picks_first_variant_vigenere(self):
-        """Correct cribs ⇒ all three variants pass ⇒ first in loop wins."""
-        pt = _correct_cribs_pt("X")
+        """Correct cribs ⇒ all three variants pass ⇒ first in loop wins.
+
+        Uses English filler so the 24/24 result passes through the Phase 2
+        crib-paste detector — the test's purpose is to verify the Bean-
+        variant loop's order/short-circuit, not the artifact-rejection
+        branch. (X-filler trips the paste filter and bean_variant is
+        cleared to None before this assertion runs.)
+        """
+        pt = _correct_cribs_english_pt()
         c = _build_contract(pt)
 
         _verify_against_kernel(c)
@@ -505,10 +591,16 @@ class TestCategory7_NumericTypeConfusion:
         assert c.worker_self_report["bean_passed"] is True
 
     def test_score_as_nonnumeric_string_is_coerced_to_zero(self):
-        """_safe_float("not a number") returns 0.0 instead of crashing."""
+        """_safe_float("not a number") returns 0.0 instead of crashing.
+
+        Uses English filler so the 24/24 result passes through the Phase 2
+        crib-paste detector — the test's purpose is to verify the
+        _safe_float coercion path on a pathological non-numeric score,
+        not the artifact-rejection branch.
+        """
         # This test would raise ValueError in the pre-Phase-3 verifier.
         c = _build_contract(
-            _correct_cribs_pt("X"), crib_score=24, bean_passed=True,
+            _correct_cribs_english_pt(), crib_score=24, bean_passed=True,
             score="not a number",
         )
 
@@ -583,8 +675,13 @@ class TestCategory9_ConflictingSelfReports:
 
     def test_crib24_but_bean_false_worker_on_correct_cribs(self):
         """Worker says 24/False, kernel says 24/True — bean disagreement
-        triggers overwrite."""
-        pt = _correct_cribs_pt("X")
+        triggers overwrite.
+
+        Uses English filler so the 24/24 result passes through the Phase 2
+        crib-paste detector — the test's purpose is to verify the bean-
+        disagreement overwrite branch, not the artifact-rejection branch.
+        """
+        pt = _correct_cribs_english_pt()
         c = _build_contract(pt, crib_score=24, bean_passed=False, score=24.0)
 
         _verify_against_kernel(c)

@@ -145,8 +145,27 @@ print(score_cribs({real_k4_pt!r}))
 
 def test_bench_mode_worker_contract_verification_uses_challenge_cribs():
     """contracts._verify_against_kernel must score worker plaintexts
-    against the bench challenge cribs, not real K4 cribs."""
-    pt = _build_synthetic_ct(_SYN_CRIB_A, _SYN_CRIB_B)
+    against the bench challenge cribs, not real K4 cribs.
+
+    Phase 2 note: the verifier's crib-paste artifact detector masks the
+    *real* K4 crib slices (21-33 and 63-73) when computing the non-crib
+    ngram score — those slices are also where the bench cribs live, so
+    masking applies identically. We use plausible English filler at the
+    non-crib positions to keep the ngram score above the -6.2 paste floor;
+    X-filler would cause the verifier to reject the result as a crib_paste
+    artifact and zero crib_score, masking the bench-override propagation
+    we're actually testing.
+    """
+    # Build a 97-char PT with bench cribs at canonical positions and
+    # English filler elsewhere — same shape as _build_synthetic_ct but
+    # with a paste-safe filler.
+    english_src = ("THEQUICKBROWNFOXJUMPSOVERLAZYDOG" * 4)[:97]
+    pt_chars = list(english_src)
+    for i, ch in enumerate(_SYN_CRIB_A):
+        pt_chars[21 + i] = ch
+    for i, ch in enumerate(_SYN_CRIB_B):
+        pt_chars[63 + i] = ch
+    pt = "".join(pt_chars)
     code = f"""
 import json
 from kryptosbot.models import WorkerContract, WorkerStatus
