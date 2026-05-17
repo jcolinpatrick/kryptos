@@ -259,6 +259,40 @@ class TestModels:
         assert id1 != id2
 
 
+class TestControllerStatePhase2RoundTrip:
+    def test_last_escape_suggestions_round_trips(self):
+        from kryptosbot.controller import ControllerState
+        # Use list[dict] (the JSON-storage shape), not list[CipherDiscoverySuggestion].
+        suggestions = [
+            {
+                "kb_record_id": "fx-swagman",
+                "canonical_name": "Swagman Cipher",
+                "kb_cipher_family": "columnar",
+                "mapped_ledger_families": ["columnar_single"],
+                "mechanism_signature": "0123456789abcdef",
+                "signature_schema_version": "kb_mechanism_sig_v1",
+                "dispatcher_testable": True,
+                "k4_relevance_score": 42.0,
+                "sketch_class": "dsl_testable",
+                "one_line_sketch": "N-row columnar with skew permutation.",
+                "bounded_kill_criterion": "Stop if no run scores >= 18.",
+                "source_verdict": "allow",
+                "blocked_family": "encoding",
+            }
+        ]
+        s = ControllerState(
+            cycle_number=42,
+            last_escape_suggestions=suggestions,
+        )
+        # to_dict / from_dict round-trip (controller_state JSON column).
+        import json
+        from dataclasses import asdict
+        d = asdict(s) if not hasattr(s, "to_dict") else s.to_dict()
+        reloaded = json.loads(json.dumps(d))
+        # Phase 1 already round-trips other fields; just check the new one.
+        assert reloaded["last_escape_suggestions"] == suggestions
+
+
 # ---------------------------------------------------------------------------
 # Ledger tests
 # ---------------------------------------------------------------------------

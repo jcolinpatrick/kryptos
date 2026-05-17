@@ -663,6 +663,13 @@ class ControllerState:
     last_escape_cycle: int = 0
     last_partial_empirical_block_count: int = 0
 
+    # NEW Phase 2: aggregated KB suggestions from the prior cycle's
+    # REJECT_EMPIRICALLY_DEAD rejections. Stored as JSON-friendly list[dict]
+    # (CipherDiscoverySuggestion.to_dict + a blocked_family key per entry)
+    # rather than as a nested dataclass to avoid round-trip surprises
+    # through the controller_state JSON column.
+    last_escape_suggestions: list[dict] = field(default_factory=list)
+
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
 
