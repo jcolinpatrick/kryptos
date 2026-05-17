@@ -205,3 +205,76 @@ class TestLandscapeIncludesEscapeCandidates:
             )
         assert "escape_candidates" in landscape
         assert "Sample Cipher" in landscape["escape_candidates"]
+
+
+# Sentinel for the escape_candidates block: a unique token that should only
+# appear in the rendered section, not inside any JSON key.
+_CANDIDATES_TOKEN = "ESCAPE_CANDIDATES_SENTINEL_XQ7"
+
+
+class TestTheoristPromptReceivesEscapeCandidates:
+    """Task 22 (Phase 2 yield-feedback): the theorist prompt builder
+    (ResearchController._build_theorist_prompt — see module docstring above
+    for why this is a method, not a free function in pantheon.py) MUST
+    render the landscape["escape_candidates"] string as a standalone
+    section OUTSIDE the JSON landscape dump when non-empty, and MUST
+    omit the section entirely when the value is empty.
+
+    Closes the redirect direction of the yield-feedback loop: cycle N hits
+    `needed_but_unavailable` → Task 18 aggregates suggestions → Task 21
+    surfaces them via _assess_landscape → Task 22 renders them in cycle
+    N+1's theorist prompt.
+    """
+
+    def test_prompt_includes_escape_candidates_when_present(self, tmp_path):
+        ctrl = _make_controller(tmp_path)
+        landscape = {
+            **_BASE_LANDSCAPE,
+            "family_yield": "",
+            "escape_pressure": "",
+            "escape_candidates": (
+                "=== ESCAPE CANDIDATES (cipher-discovery KB) ===\n"
+                f"  - Sample Cipher [dispatcher-testable] {_CANDIDATES_TOKEN}\n"
+            ),
+        }
+        prompt = ctrl._build_theorist_prompt(landscape)
+        assert _CANDIDATES_TOKEN in prompt, (
+            "escape_candidates token must appear somewhere in the prompt"
+        )
+        assert _prompt_outside_json(prompt, _CANDIDATES_TOKEN), (
+            "escape_candidates block must be rendered as a standalone "
+            "section OUTSIDE the JSON landscape dump, not only embedded "
+            "within it"
+        )
+
+    def test_prompt_omits_escape_candidates_when_empty_string(self, tmp_path):
+        ctrl = _make_controller(tmp_path)
+        landscape = {
+            **_BASE_LANDSCAPE,
+            "family_yield": "",
+            "escape_pressure": "",
+            "escape_candidates": "",
+        }
+        prompt = ctrl._build_theorist_prompt(landscape)
+        assert not _prompt_outside_json(prompt, "ESCAPE CANDIDATES"), (
+            "escape_candidates section must be omitted from the prompt "
+            "when the landscape value is an empty string"
+        )
+
+    def test_prompt_omits_escape_candidates_when_key_missing(self, tmp_path):
+        """Defensive: even when the landscape dict doesn't carry the
+        escape_candidates key at all (e.g. legacy callers, Phase-1-only
+        cycles), the builder must not crash and must not render the
+        section."""
+        ctrl = _make_controller(tmp_path)
+        landscape = {
+            **_BASE_LANDSCAPE,
+            "family_yield": "",
+            "escape_pressure": "",
+            # escape_candidates intentionally omitted
+        }
+        prompt = ctrl._build_theorist_prompt(landscape)
+        assert not _prompt_outside_json(prompt, "ESCAPE CANDIDATES"), (
+            "escape_candidates section must be omitted when the landscape "
+            "key is missing"
+        )
