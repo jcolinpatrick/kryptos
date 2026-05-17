@@ -1173,6 +1173,97 @@ class ResearchController:
         ))
         self.state.last_escape_suggestions = aggregated[:24]   # storage hard cap
 
+    # ------------------------------------------------------------------
+    # Yield-feedback Phase 2: next-cycle escape-candidates renderer.
+    # See docs/specs/2026-05-16-yield-feedback-design.md §5.4.
+    # ------------------------------------------------------------------
+    _ESCAPE_RENDER_CAPS = {
+        "needed_but_unavailable": (8, 3),   # (total cap, per-family cap)
+        "partial_empirical_block": (3, 3),
+    }
+
+    def _render_escape_candidates(
+        self,
+        *,
+        status: str,
+        suggestions: list,
+    ) -> str:
+        """Render the next-cycle 'ESCAPE CANDIDATES' / advisory block.
+
+        Conditional on prior cycle's escape_status. Storage caps (set in
+        _write_cycle_escape_summary) bound the input; rendering caps further
+        trim what the theorist actually sees.
+        """
+        caps = self._ESCAPE_RENDER_CAPS.get(status)
+        if caps is None:
+            return ""
+        total_cap, per_family_cap = caps
+        if not suggestions:
+            return ""
+
+        # Bucket by family, sort within each, take up to per_family_cap from each.
+        by_family: dict[str, list[dict]] = {}
+        for s in suggestions:
+            by_family.setdefault(s.get("blocked_family", "?"), []).append(s)
+        ordered: list[dict] = []
+        for fam in sorted(by_family.keys()):
+            recs = by_family[fam]
+            recs.sort(key=lambda d: (
+                not bool(d.get("dispatcher_testable")),
+                -float(d.get("k4_relevance_score", 0.0)),
+                str(d.get("canonical_name", "")).lower(),
+            ))
+            ordered.extend(recs[:per_family_cap])
+
+        ordered.sort(key=lambda d: (
+            not bool(d.get("dispatcher_testable")),
+            -float(d.get("k4_relevance_score", 0.0)),
+            str(d.get("canonical_name", "")).lower(),
+        ))
+        ordered = ordered[:total_cap]
+
+        lines: list[str] = []
+        if status == "needed_but_unavailable":
+            lines.append("=== ESCAPE CANDIDATES (cipher-discovery KB) ===")
+            lines.append(
+                "The prior cycle blocked all candidates with REJECT_EMPIRICALLY_DEAD."
+            )
+            lines.append(
+                "Candidates below are dispatcher-testable or Category-B investigative "
+                "options whose mechanism signature is unseen in the blocked ledger families."
+            )
+            lines.append("")
+        else:  # partial_empirical_block
+            lines.append("=== KB advisory (some candidates blocked) ===")
+            lines.append(
+                "The prior cycle partially blocked candidates. The mechanisms below "
+                "are advisory only -- your existing approach is still valid."
+            )
+            lines.append("")
+
+        for d in ordered:
+            tag = "dispatcher-testable" if d.get("dispatcher_testable") else "Category-B"
+            lines.append(
+                f"  - {d['canonical_name']} [{tag}] "
+                f"(family={d.get('kb_cipher_family','?')}, "
+                f"k4_relevance={d.get('k4_relevance_score',0):.1f}, "
+                f"blocked={d.get('blocked_family','?')})"
+            )
+            sketch = d.get("one_line_sketch") or ""
+            if sketch:
+                lines.append(f"    Sketch: {sketch}")
+            kill = d.get("bounded_kill_criterion") or ""
+            if kill:
+                lines.append(f"    Kill criterion: {kill}")
+            lines.append("")
+
+        lines.append(
+            "Proposing a theory under one of these mechanisms must still present "
+            "an unseen mechanism_signature AND unseen subfamily to bypass the "
+            "empirical-death gate. Phase 1's structural-novelty discipline is unchanged."
+        )
+        return "\n".join(lines)
+
     def _classify_agent_failure(self, error_text: str) -> tuple[bool, str]:
         """Classify whether an SDK/CLI failure should halt the remaining run.
 
