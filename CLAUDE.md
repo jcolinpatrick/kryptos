@@ -6,7 +6,7 @@ This repo has one purpose: determine the **true plaintext** and the **full encry
 
 CLAUDE.md is **operational doctrine only** — how to work, where truth lives, how to classify claims, how to avoid re-testing dead hypotheses. It does not describe the current favorite theory or what the project is "close" to. For research state see `MEMORY.md` (auto-loaded), `docs/README_current_state.md` (entry index), `docs/claims_registry.json` (live/disputed/retired claims), `docs/methodological_audits.md` (open audits). Historical snapshots: `docs/history/`, `reports/final_synthesis.md` (banner-labelled). Retired notes: `memory/retired/`. Do not cite either as current doctrine.
 
-**Posture as of 2026-05-15:** Real-K4 attack work is **active**. Per Colin's directive, pursue any path with non-zero chance of solve, including infinitesimally-small-probability swings. Evidence-gap closure (`docs/REAL_K4_EVIDENCE_GAP_REGISTER.md`) and synthetic K4Bench calibration are parallel, not gates.
+**Posture as of 2026-05-19:** Real-K4 attack work is **active**. Per Colin's directive, pursue any path with non-zero chance of solve, including infinitesimally-small-probability swings. Evidence-gap closure (`docs/REAL_K4_EVIDENCE_GAP_REGISTER.md`) and synthetic K4Bench calibration are parallel, not gates.
 
 ---
 
@@ -49,7 +49,7 @@ Skipping these and re-testing an eliminated hypothesis wastes 28 CPU cores and b
 Common kernel symbols (`CT`, `CRIB_POSITIONS`, `BEAN_EQ`/`BEAN_INEQ`, `KA`, `score_candidate`, `decrypt_vigenere`/`decrypt_beaufort`) live under `kryptos.kernel.{constants,alphabet,scoring.aggregate,transforms.vigenere}`. Grep there before assuming a name.
 
 ```bash
-# Run all tests (~2 minutes, ~1900 tests in tests/, plus ~2100 in kryptosbot/tests/, no expected failures).
+# Run all tests (~2 minutes, ~2048 tests in tests/, plus ~2453 in kryptosbot/tests/, no expected failures).
 # Exact count drifts; authoritative: `PYTHONPATH=src pytest tests/ --collect-only -q | tail -1`
 PYTHONPATH=src pytest tests/
 
@@ -328,8 +328,9 @@ Two `memory/` directories — don't confuse them:
 - **Live entry point:** `PYTHONPATH=src python3 -u kryptosbot/run_controller.py`. See `kryptosbot/ORIENT.md` (one-page) + `kryptosbot/ARCHITECTURE.md` (full). Legacy `solve.py`/`campaign_v2.py` quarantined; `kryptosbot/RUNBOOK.md` redirects to `ORIENT.md`.
 - **Post-R3 control flow (2026-04-21):** Worker path dispatches through `job_dispatcher.execute()`; Category-A workers no longer call Claude directly; kernel overrule preserved across DSL handoff. R3-0.5 extended DSL to 9 kinds. **`docs/maturation/round3/K4_RUN_PROTOCOL_R3.md` supersedes R2** — don't follow R2.
 - **Pantheon:** persona-routed theorists + sibling red-team-disprover + statistical-audit gate + lead-pursuit evaluator. Live state in `MEMORY.md`. **Two cycle loops exist** (`controller.run` and `run_controller.do_run`); any phase addition must patch BOTH.
+- **Yield-feedback loop (Phase 1+2, landed 2026-05-16/17):** ledger family-yield stats feed the critic's `REJECT_EMPIRICALLY_DEAD` gate (Phase 1) and the theorist's `escape_candidates` block (Phase 2, status-conditional caps). Crib-paste detector inside `_verify_against_kernel` is fail-closed; cipher-discovery KB injection on empirical-dead families is fail-open. Controller chokepoint: `_write_cycle_escape_summary`. See `kryptosbot/ARCHITECTURE.md` §"Family-Yield Feedback Loop" and `docs/specs/2026-05-16-yield-feedback-{design,phase2-design}.md`.
 - **`AGENTS.md` (repo root)** — Codex operating instructions. Codex audits independently. Hard constraints: free text never drives control flow, worker scores never trusted, timeout = inconclusive. Treats prior Claude conclusions as hypotheses, not facts.
 
 ---
 
-*Last updated: 2026-05-15. CLAUDE.md = **operational doctrine only**; live research state in MEMORY.md, structured claims in `docs/claims_registry.json`, audits in `docs/methodological_audits.md`, entry index in `docs/README_current_state.md`. Conflict rule: verify freshness via `git log -1 --format=%cd CLAUDE.md MEMORY.md`; if they disagree on research state, trust MEMORY.md. Operational doctrine in CLAUDE.md is always authoritative regardless of date.*
+*Last updated: 2026-05-19. CLAUDE.md = **operational doctrine only**; live research state in MEMORY.md, structured claims in `docs/claims_registry.json`, audits in `docs/methodological_audits.md`, entry index in `docs/README_current_state.md`. Conflict rule: verify freshness via `git log -1 --format=%cd CLAUDE.md MEMORY.md`; if they disagree on research state, trust MEMORY.md. Operational doctrine in CLAUDE.md is always authoritative regardless of date.*
