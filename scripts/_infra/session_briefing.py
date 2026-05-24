@@ -1,612 +1,1258 @@
 #!/usr/bin/env python3
-"""Session briefing generator — produces a concise, current summary of the
-K4 research state from authoritative data sources.
+"""Session briefing generator — a renderer + validator for K4 research state.
 
 Run at the start of every Claude Code session:
     PYTHONPATH=src python3 scripts/_infra/session_briefing.py
 
-Sources (in priority order):
-  1. exhaustion_log.json     — 939 entries, family/status tracking
-  2. results/*.json          — 309 result files, 156 with verdicts
-  3. docs/elimination_tiers.md — Tier 1 mathematical proofs
-  4. memory/*.md             — Checked-in research notes
-  5. src/kryptos/kernel/constants.py — CT, cribs, null positions
+DESIGN CONTRACT
+---------------
+This script is a *renderer + validator*. The structured source files are the
+source of truth; the script's job is to surface them concisely and to FAIL
+LOUDLY (not silently) when a canonical source is missing or malformed. It
+must never broaden a claim beyond its source-supported scope, and it must
+never present a sampled or empirical negative as a mathematical proof.
 
-Output: structured briefing to stdout (~120-150 lines).
+REQUIRED sources (missing/malformed => briefing is DEGRADED; --strict exits 1):
+  - kryptos.kernel.constants            (CT, cribs, Bean constants) — hard requirement
+  - exhaustion_log.json                 (family/status landscape)
+  - docs/session_briefing_claims.json   (externalized doctrine; embedded fallback if absent)
+  - docs/claims_registry.json           (canonical disputed/retired/superseded claims)
+
+OPTIONAL sources (missing => warn, continue):
+  - results/*.json, results/*/summary.json, results/*/result.json (campaign verdicts)
+  - bin-C artifact JSON/markdown files
+  - docs/elimination_tiers.md (referenced for humans; NOT parsed by this script)
+
+EVIDENCE-CLASS SEMANTICS
+------------------------
+Only `mathematical_proof` / `structural_proof` claims may render with
+permanent / never language. `exhaustive_search`, `sampled_search`,
+`empirical_negative`, and `admissibility` claims are rendered with
+scope-limited language ("within declared scope", "sampled — not proof",
+"blocked pending source"). This is enforced by EVIDENCE_CLASS_LANGUAGE.
+
+SCALE NOTE
+----------
+results/ contains >140k JSON files (mostly per-job outputs under
+results/dsl_jobs/). Parsing all of them at session start would hang the
+tool, so file *counts* are computed by walking filenames only (fast), while
+*verdict parsing* is scoped to campaign-level artifacts: top-level
+results/*.json plus one level of nested summary.json / result.json. Deep
+per-job files are counted but not parsed; the footer says so.
+
+CLI flags (all optional; bare invocation is the normal startup path):
+  --strict   exit nonzero if any required source is missing/malformed
+  --debug    include parse-error detail in the SOURCE HEALTH section
+  --json     emit machine-readable diagnostics/state instead of the briefing
+  --self-test  run built-in assertions on the pure helpers and exit
 """
 
-import sys
-import os
+from __future__ import annotations
+
+import argparse
 import json
-import glob
-import re
-from collections import Counter, defaultdict
-from datetime import datetime, timedelta
+import os
+import sys
+from dataclasses import dataclass, field
+from datetime import datetime
+from enum import Enum
+from typing import Any, Iterable, Optional
 
 _ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, os.path.join(_ROOT, "src"))
 
-from kryptos.kernel.constants import (
-    CT, CT_LEN, N_CRIBS,
-    BEAN_EQ, BEAN_INEQ, BEAN_LINEAR, CRIB_WORDS,
-)
-
-# ── Data loading ─────────────────────────────────────────────────────────────
-
-def load_exhaustion_log():
-    path = os.path.join(_ROOT, "exhaustion_log.json")
-    with open(path) as f:
-        return json.load(f)
-
-
-def scan_results():
-    """Scan results/*.json for verdicts, scores, timestamps."""
-    entries = []
-    for rf in sorted(glob.glob(os.path.join(_ROOT, "results", "*.json"))):
-        try:
-            with open(rf) as f:
-                d = json.load(f)
-            if not isinstance(d, dict):
-                continue
-            name = os.path.basename(rf).replace(".json", "")
-            verdict = d.get("verdict") or d.get("verdict_status") or d.get("conclusion")
-            if isinstance(verdict, dict):
-                # Extract string summary from dict verdicts
-                verdict = verdict.get("summary", str(verdict)[:60])
-            best = d.get("best_score") or d.get("best_crib_score")
-            ts = d.get("timestamp") or d.get("date")
-            configs = d.get("total_configs") or d.get("configs_tested") or d.get("keyspace_tested")
-            entries.append({
-                "name": name,
-                "verdict": str(verdict).upper()[:50] if verdict else None,
-                "best_score": best,
-                "timestamp": str(ts) if ts else None,
-                "configs": configs,
-            })
-        except (json.JSONDecodeError, OSError):
-            pass
-    return entries
+# Kernel constants are a HARD requirement: without them the script cannot
+# describe K4 at all. Failure here is fatal regardless of --strict.
+try:
+    from kryptos.kernel.constants import (  # noqa: E402
+        CT, CT_LEN, N_CRIBS,
+        BEAN_EQ, BEAN_INEQ, BEAN_LINEAR, CRIB_WORDS,
+        SELF_ENCRYPTING, IC_RANDOM, IC_ENGLISH,
+    )
+    from kryptos.kernel.scoring.ic import ic as _kernel_ic  # noqa: E402
+    _KERNEL_OK = True
+    _KERNEL_ERR = None
+except Exception as exc:  # pragma: no cover - exercised only on broken install
+    _KERNEL_OK = False
+    _KERNEL_ERR = repr(exc)
 
 
-def scan_results_subdirs():
-    """Scan results/*/summary.json for campaign-level verdicts."""
-    entries = []
-    for sd in sorted(glob.glob(os.path.join(_ROOT, "results", "*", "summary.json"))):
-        try:
-            with open(sd) as f:
-                d = json.load(f)
-            name = os.path.basename(os.path.dirname(sd))
-            verdict = d.get("verdict") or d.get("status")
-            best = d.get("best_score") or d.get("best_crib_score")
-            configs = d.get("total_configs") or d.get("configs_tested")
-            entries.append({
-                "name": name,
-                "verdict": str(verdict)[:50] if verdict else None,
-                "best_score": best,
-                "configs": configs,
-            })
-        except (json.JSONDecodeError, OSError):
-            pass
-    return entries
+# ── Diagnostics ───────────────────────────────────────────────────────────────
+
+@dataclass
+class Diagnostics:
+    """Collects warnings/errors so source failures are visible, not silent."""
+    warnings: list[str] = field(default_factory=list)
+    errors: list[str] = field(default_factory=list)
+    notes: list[str] = field(default_factory=list)
+    debug: bool = False
+
+    def warn(self, msg: str) -> None:
+        self.warnings.append(msg)
+
+    def error(self, msg: str) -> None:
+        self.errors.append(msg)
+
+    def note(self, msg: str) -> None:
+        self.notes.append(msg)
+
+    @property
+    def degraded(self) -> bool:
+        return bool(self.errors)
 
 
-def count_results_files():
-    """Count all results files including subdirectories."""
-    json_files = glob.glob(os.path.join(_ROOT, "results", "*.json"))
-    subdirs = glob.glob(os.path.join(_ROOT, "results", "*/"))
-    return len(json_files), len(subdirs)
+# ── Pure helpers ──────────────────────────────────────────────────────────────
 
+def first_present(d: dict[str, Any], keys: Iterable[str]) -> Any:
+    """Return the first key whose value is not None.
 
-def count_scripts():
-    """Count experiment scripts."""
-    scripts = glob.glob(os.path.join(_ROOT, "scripts", "**", "e_*.py"), recursive=True)
-    scripts += glob.glob(os.path.join(_ROOT, "scripts", "**", "f_*.py"), recursive=True)
-    scripts += glob.glob(os.path.join(_ROOT, "scripts", "**", "blitz_*.py"), recursive=True)
-    return len(scripts)
-
-
-# ── Formatters ───────────────────────────────────────────────────────────────
-
-def format_number(n):
-    if n is None:
-        return "?"
-    if isinstance(n, str):
-        return n
-    if n >= 1e9:
-        return f"{n/1e9:.1f}B"
-    if n >= 1e6:
-        return f"{n/1e6:.1f}M"
-    if n >= 1e3:
-        return f"{n/1e3:.1f}K"
-    return str(n)
-
-
-# ── Briefing sections ───────────────────────────────────────────────────────
-
-def section_header():
-    print("=" * 72)
-    print("K4 SESSION BRIEFING")
-    print(f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M')}  |  "
-          f"CT: {CT_LEN} chars  |  Cribs: {N_CRIBS} positions  |  "
-          f"Bean: {len(BEAN_EQ)} eq + {len(BEAN_INEQ)} ineq + {len(BEAN_LINEAR)} linear")
-    print("=" * 72)
-
-
-def section_exhaustion_summary(elog):
-    """Compact family-level elimination summary."""
-    print()
-    print("── ELIMINATION LANDSCAPE ──────────────────────────────────────────")
-    print()
-
-    # Group by family
-    families = defaultdict(lambda: {"exhausted": 0, "active": 0, "total": 0})
-    for k, v in elog.items():
-        fam = v.get("family", "_unknown")
-        status = v.get("status", "unknown")
-        families[fam]["total"] += 1
-        if status == "exhausted":
-            families[fam]["exhausted"] += 1
-        else:
-            families[fam]["active"] += 1
-
-    total = sum(f["total"] for f in families.values())
-    total_exh = sum(f["exhausted"] for f in families.values())
-    total_act = sum(f["active"] for f in families.values())
-
-    print(f"  Scripts tracked: {total}  |  Exhausted: {total_exh}  |  Active: {total_act}")
-    print()
-
-    # Show families with most exhausted (the elimination evidence)
-    print(f"  {'Family':<30s} {'Exh':>4s} {'Act':>4s} {'Tot':>4s}  Status")
-    print(f"  {'-'*30} {'-'*4} {'-'*4} {'-'*4}  {'-'*20}")
-
-    # Sort: fully exhausted families first, then by total descending
-    sorted_fams = sorted(families.items(),
-                         key=lambda x: (-x[1]["exhausted"], -x[1]["total"]))
-
-    for fam, counts in sorted_fams:
-        if counts["total"] < 2 and counts["exhausted"] == 0:
-            continue  # Skip trivial active-only entries
-        pct = counts["exhausted"] / counts["total"] * 100 if counts["total"] > 0 else 0
-        if counts["exhausted"] == counts["total"]:
-            status = "FULLY ELIMINATED"
-        elif counts["exhausted"] > 0:
-            status = f"{pct:.0f}% eliminated"
-        else:
-            status = "active"
-        print(f"  {fam:<30s} {counts['exhausted']:>4d} {counts['active']:>4d} "
-              f"{counts['total']:>4d}  {status}")
-
-    print()
-
-
-def section_tier1_proofs():
-    """Permanent mathematical eliminations — the things that can NEVER work."""
-    print("── TIER 1: MATHEMATICAL PROOFS (permanent, do NOT re-test) ────────")
-    print()
-    proofs = [
-        "Pure transposition (CT has 2 E's, PT needs 3)",
-        "ALL periodic polyalphabetic (periods 1-26, all variants, direct correspondence)",
-        "ALL autokey variants + arbitrary transposition (structural: PT-max=16/24, CT-max=21/24)",
-        "ALL fractionation families (bifid, trifid, ADFGVX, four-square — structural proofs)",
-        "Hill 2x2/3x3 (algebraic impossibility)",
-        "Gromark/Vimark (orders 1-8, 8.74B configs)",
-        "Progressive key (Bean: delta in {0,13} only)",
-        "Quadratic key (0/676 survive Bean)",
-        "Fibonacci key (0/676 survive Bean)",
-        "Columnar w5,w7: ZERO Bean passes across all orderings",
-        "Columnar w6,w8,w9: exhaustive, max 13-14/24 = noise",
-        "Columnar w10-15: sampled 100K each, all max 14/24 = noise",
-        "ALL simple transposition families + periodic sub: max 13/24",
-        "Double columnar (9 Bean-compatible width pairs): max 15/24 = random",
-        "Myszkowski w5-13: max 15/24 = random",
-        "AMSCO/Nihilist/Swapped w8-13: ZERO Bean passes",
-        "ANY transposition + periodic key at 17 of 25 periods (Bean impossibility proof)",
-        "Null mask (any 24 positions) + periodic sub p=1-23 (algebraic proof)",
-        "Three-layer Sub+Trans+Sub at p1*p2<=50: ZERO candidates",
-        "Mono+Trans+Periodic at periods 3-7: ZERO candidates (bipartite too stringent)",
-    ]
-    for p in proofs:
-        print(f"  ✗ {p}")
-    print()
-
-
-def section_results_verdicts(results):
-    """Key results with their verdicts."""
-    print("── RECENT RESULTS WITH VERDICTS ───────────────────────────────────")
-    print()
-
-    # Categorize verdicts
-    eliminated = []
-    noise = []
-    interesting = []
-    other = []
-
-    for r in results:
-        v = r["verdict"]
-        if v is None:
-            continue
-        if "ELIMINAT" in v or "DISPROVED" in v or "STRUCTURALLY" in v:
-            eliminated.append(r)
-        elif "NOISE" in v or "NOT SIGNIFICANT" in v:
-            noise.append(r)
-        elif "INTEREST" in v or "SIGNAL" in v or "PROMISING" in v or "ELEVATED" in v:
-            interesting.append(r)
-        else:
-            other.append(r)
-
-    print(f"  Eliminated: {len(eliminated)}  |  Noise: {len(noise)}  |  "
-          f"Interesting: {len(interesting)}  |  Other: {len(other)}")
-    print()
-
-    # Show eliminated results (these are the important ones)
-    if eliminated:
-        print(f"  ELIMINATED ({len(eliminated)}):")
-        for r in eliminated[:15]:
-            score_str = f" best={r['best_score']}" if r["best_score"] is not None else ""
-            print(f"    {r['name'][:45]:<45s} {r['verdict'][:25]}{score_str}")
-        if len(eliminated) > 15:
-            print(f"    ... and {len(eliminated)-15} more")
-        print()
-
-    # Show interesting (these need attention)
-    if interesting:
-        print(f"  INTERESTING/SIGNAL ({len(interesting)}):")
-        for r in interesting:
-            score_str = f" best={r['best_score']}" if r["best_score"] is not None else ""
-            ts_str = f" ({r['timestamp'][:10]})" if r["timestamp"] else ""
-            print(f"    {r['name'][:45]:<45s} {r['verdict'][:25]}{score_str}{ts_str}")
-        print()
-
-
-def section_confirmed_anomalies():
-    """Anomalies — separating surviving from retired."""
-    print("── SURVIVING ANOMALIES (real but not yet exploitable) ───────────")
-    print()
-    surviving = [
-        ("Width-21 bigram on CT97", "p=1.6e-4",
-         "STEGO artifact — disappears after null extraction (documented, not actionable)"),
-        ("Width-10/17 bigrams on CT73", "p=6e-3/8e-3",
-         "CIPHER layer — destroyed by col7 undo (col7 mathematical artifact)"),
-        ("Stehle constant-difference (pos 55-63)", "p~1/642 (corrected)",
-         "Unique in K4; local coincidence, not a mechanism"),
-    ]
-    for name, pval, note in surviving:
-        print(f"  • {name} ({pval})")
-        print(f"    {note}")
-    print()
-    print("── RETIRED ANOMALIES (April 2026 audit) ────────────────────────")
-    print()
-    retired = [
-        ("Null palette {B,G,I,K,O,W,Z}", "RETIRED",
-         "Score-conditioned null: SA produces 11 distinct on K4 (p=0.30 vs shuffled)"),
-        ("SA palette provenance (0/40K)", "RETIRED",
-         "Moot — the palette claim itself is circular (post-hoc position selection)"),
-        ("KA mod-5 column structure", "RETIRED",
-         "Dependent on palette definition; fails all corrections"),
-        ("BCL Beaufort keystream 7/8 palette", "RETIRED",
-         "Dependent on palette; does not survive Bonferroni (corrected p=0.65)"),
-        ("Beaufort keystream AP {G,K,O} 12/24", "RETIRED",
-         "Look-elsewhere: 312 APs tested, corrected p=0.001 → Bonferroni dead"),
-        ("14-col grid asymmetry", "RETIRED",
-         "Dependent on palette positions; fails correction"),
-        ("Mod-35 KRYPTOS×SEVEN table", "RETIRED",
-         "LOO-CV accuracy 47% (below 49% baseline); zero predictive power"),
-    ]
-    for name, status, note in retired:
-        print(f"  ✗ {name} — {status}")
-        print(f"    {note}")
-    print()
-
-
-def section_do_not_test():
-    """Hard stop list — things proven impossible or exhaustively tested."""
-    print("── DO NOT TEST (without a materially new assumption) ──────────────")
-    print()
-    items = [
-        "Any autokey variant (structural proof, all 4 variants × arbitrary transposition)",
-        "DEFECTOR/PALIMPSEST as keywords (15/24 ceiling exhaustively confirmed)",
-        "K2 numbers as keys (tested, noise)",
-        "YES WONDERFUL THINGS as PT[0:18] (tested, noise)",
-        "CIA cryptonym digraphs / Cold War keyword families (tested, noise)",
-        "RS44 grid-mask (905.6M configs, noise)",
-        "Full VIC pipeline (52M+ configs, noise)",
-        "Wheatstone clock (327M configs, noise)",
-        "ITA-2 XOR / Baudot mod-31 / Wilson prime mask / Sawtooth mask",
-        "Interrupted-key Vigenere (14.7M configs)",
-        "Ubchi null insertion / Soviet three-step / Sanborn matrix",
-        "72+1 delimiter model",
-        "NDYAHR (all 5 variants)",
-        "K1-K3 PT as literal keys",
-        "OBKOGBOWWKWIWGZIG as key material",
-        "Periodic substitution on null-extracted CT73 at any period 1-23 (algebraic proof)",
-    ]
-    for item in items:
-        print(f"  ✗ {item}")
-    print()
-
-
-def _bin_c_status(campaign_id):
-    """Detect the actual closure state of a bin-C campaign.
-
-    Returns (status, verdict, artifact_path) where status is one of
-    {'CLOSED', 'TESTABLE', 'DEFERRED', 'UNKNOWN'}.  Reads result JSONs
-    directly so the briefing never lies about already-closed work.
-
-    Closure detection order (for each campaign):
-      1. Campaign-specific result JSON with a `verdict` field
-      2. Combined multi-campaign JSON where an entry's `campaign` == id
-      3. Fall through to TESTABLE/DEFERRED per static hardcoded policy
+    Preserves valid falsy values (0, "", []), unlike `a or b`, which would
+    discard a legitimate best_score of 0.
     """
-    # Map campaign id → list of (path, optional inner-campaign key)
-    # relative to the repo root.  First match wins.
-    artifact_map = {
-        "C7": [
-            # C7 closure comes from the admissibility sweep result.
-            # Presence of this file with no UNCLEAR entries implies C7
-            # work is done; for safety we also fall back to the
-            # exhaustion certificate's existence.
-            (os.path.join("results", "admissibility_elimination_v1",
-                          "running_key_policy.json"), None),
-            (os.path.join("docs", "exhaustion_certificate_2026_04_08.md"), None),
-        ],
-        "C1": [
-            (os.path.join("results", "f_final_checklist_c1_c2.json"), "C1"),
-            (os.path.join("results", "c1_carter_columnar_admissibility_v1",
-                          "result.json"), None),
-        ],
-        "C2": [
-            (os.path.join("results", "f_final_checklist_c1_c2.json"), "C2"),
-            (os.path.join("results", "c2_kahn_columnar_admissibility_v1",
-                          "result.json"), None),
-        ],
-        "C6": [
-            (os.path.join("results", "f_final_checklist_c6.json"), None),
-        ],
-    }
-    deferred = {"C3", "C4", "C5", "C8"}
-    if campaign_id in deferred:
-        return ("DEFERRED", None, None)
-
-    for rel_path, inner_key in artifact_map.get(campaign_id, []):
-        full_path = os.path.join(_ROOT, rel_path)
-        if not os.path.exists(full_path):
-            continue
-
-        # Non-JSON fallback: existence of the exhaustion certificate
-        # markdown is itself a closure signal for C7.
-        if full_path.endswith(".md"):
-            return ("CLOSED", "CERTIFIED", rel_path)
-
-        try:
-            with open(full_path) as f:
-                data = json.load(f)
-        except (OSError, json.JSONDecodeError):
-            continue
-
-        # Combined multi-campaign JSON: look for nested entry.
-        if inner_key and isinstance(data, dict) and "campaigns" in data:
-            for entry in data["campaigns"]:
-                if isinstance(entry, dict) and entry.get("campaign") == inner_key:
-                    return ("CLOSED", entry.get("verdict", "UNKNOWN"), rel_path)
-
-        # Flat single-campaign JSON.
-        verdict = data.get("verdict") if isinstance(data, dict) else None
-        if verdict:
-            return ("CLOSED", str(verdict).upper(), rel_path)
-
-    return ("TESTABLE", None, None)
+    if not isinstance(d, dict):
+        return None
+    for key in keys:
+        if key in d and d[key] is not None:
+            return d[key]
+    return None
 
 
-def section_open_attack_surface():
-    """What remains viable. Bins from docs/exhaustion_audit_2026_04_08.md.
-
-    Bin-C items are annotated with their actual closure state as detected
-    from artifact files on disk (see `_bin_c_status`).  Closed items stay
-    in the listing for audit continuity but are marked ✓ with their
-    verdict and a pointer to the result JSON.
-    """
-    print("── FINAL CHECKLIST — BIN C (execution state) ──────────────────────")
-    print()
-    # (id, name, detail) — status is resolved at runtime
-    bin_c = [
-        ("C7", "Admissibility backlog",
-         "Manual provenance review of ASSUMPTION_UNMET running-key scripts. "
-         "Declare source, add license, or archive."),
-        ("C1", "Carter Vol 1 + columnar w6/8/9 × 3 variants",
-         "Admissibility-gated. Source: carter_tomb_vol1 (ARTIST_STATEMENT). "
-         "Pre-registered thresholds: docs/preregistered_thresholds_2026_04_08.md"),
-        ("C2", "Kahn Codebreakers + columnar w6/8/9 × 3 variants",
-         "Admissibility-gated. Source: kahn_codebreakers (CREATOR_STATEMENT). "
-         "Same thresholds."),
-        ("C6", "Non-columnar 3-layer enumeration",
-         "{additive,vig,beau} outer × {myszkowski,rail_fence,route,block} middle "
-         "× {additive,vig,beau} inner."),
-        ("C3", "Bifid as composition OUTER (DEFERRED)",
-         "Only run if C1/C2/C6 escalates — priors too low otherwise."),
-        ("C4", "Four-square as composition OUTER (DEFERRED)",
-         "Only run if C1/C2/C6 escalates — priors too low otherwise."),
-        ("C5", "Homophonic as composition OUTER (DEFERRED)",
-         "Only run if earlier bin-C campaigns escalate."),
-        ("C8", "Stateful seed-space expansion (DEFERRED)",
-         "Only run if earlier bin-C campaigns escalate."),
-    ]
-
-    n_closed = 0
-    n_testable = 0
-    n_deferred = 0
-    for cid, name, detail in bin_c:
-        status, verdict, artifact = _bin_c_status(cid)
-        if status == "CLOSED":
-            n_closed += 1
-            marker = "✓"
-            tag = f"CLOSED ({verdict})" if verdict else "CLOSED"
-        elif status == "DEFERRED":
-            n_deferred += 1
-            marker = "⊘"
-            tag = "DEFERRED"
-        else:
-            n_testable += 1
-            marker = "→"
-            tag = "TESTABLE NOW"
-        print(f"  {marker} {cid:<3s} {name} — {tag}")
-        print(f"      {detail}")
-        if artifact:
-            print(f"      artifact: {artifact}")
-    print()
-    print(f"  Summary: {n_closed} closed, {n_testable} testable, "
-          f"{n_deferred} deferred")
-    if n_testable == 0 and n_closed > 0:
-        print(f"  ⚠ All non-deferred bin-C campaigns are CLOSED. Running-key "
-              f"and/or non-columnar 3-layer may already be downgraded — "
-              f"consult docs/exhaustion_certificate_*.md before starting "
-              f"new compute in these families.")
-    print()
-    print("── BIN D — weakly testable (engineering, not compute) ─────────────")
-    print()
-    bin_d = [
-        ("Mono+Trans+Running-key",
-         "E-FRAC-54: 13 mono DOF saturate detection. Needs new detector, not more sweeps."),
-        ("Running-key from unknown NON-English text",
-         "E-FRAC-51 bound is English-specific. Needs pre-declared language + CorpusLicense."),
-        ("Archive-term operationalization (ABSCISSA, ATBASH, '4,8,10,26=Col')",
-         "Needs parametric mapping from archive term to cipher family."),
-        ("Pre-ENE (0-20) as separate sub-cipher",
-         "E-FRAC-19: IC 'anomaly' Bonferroni p=1.0. No crib at 0-20."),
-    ]
-    for name, detail in bin_d:
-        print(f"  → {name}")
-        print(f"    {detail}")
-    print()
-    print("── BIN E — untestable under current clues (waiting list) ──────────")
-    print()
-    bin_e = [
-        "Bespoke chart-based cipher — needs public chart OR CipherProcedureLicense schema",
-        "Model-free null mask search — no defined statistic; palette retired April 2026",
-        "K5 ciphertext cross-constraint — not published",
-        "Circled letters IMG_1223-1235 — needs forensic archive extraction",
-        "Photogrammetric sculpture data — needs primary-source field measurement",
-        "Sanborn's private coding system — not public",
-    ]
-    for item in bin_e:
-        print(f"  ⊘ {item}")
-    print()
-    print("  These are prerequisites for new testable hypotheses, not open families.")
-    print()
-
-
-def load_claims_registry():
-    """Load docs/claims_registry.json, return [] on any error (briefing
-    must not fail if the registry is absent or malformed)."""
-    path = os.path.join(_ROOT, "docs", "claims_registry.json")
+def load_json(path: str, diag: Diagnostics, required: bool = False) -> Optional[Any]:
+    """Load a JSON file. On failure: error (required) or warn (optional)."""
     try:
         with open(path) as f:
-            data = json.load(f)
-        return data.get("claims", [])
-    except (FileNotFoundError, json.JSONDecodeError, OSError):
-        return []
+            return json.load(f)
+    except FileNotFoundError:
+        msg = f"missing: {os.path.relpath(path, _ROOT)}"
+        (diag.error if required else diag.warn)(msg)
+        return None
+    except (json.JSONDecodeError, OSError) as exc:
+        detail = f" ({exc})" if diag.debug else ""
+        msg = f"malformed: {os.path.relpath(path, _ROOT)}{detail}"
+        (diag.error if required else diag.warn)(msg)
+        return None
 
 
-def section_registry_flags():
-    """Surface disputed and retired claim IDs from the canonical claims
-    registry so that a session-start reader cannot silently inherit
-    retired or disputed claims as live signal."""
-    claims = load_claims_registry()
+class VerdictClass(Enum):
+    CLOSED = "closed"      # eliminated / disproved / exhausted / certified
+    NOISE = "noise"        # ran, indistinguishable from random
+    RETIRED = "retired"    # withdrawn / superseded claim
+    OPEN = "open"          # interesting / signal / needs attention
+    BLOCKED = "blocked"    # cannot run under current assumptions
+    UNKNOWN = "unknown"    # unrecognized / ambiguous / absent
+
+
+# A verdict is "terminal" (safe to treat as closed for bin-C purposes) only
+# for these classes. OPEN/BLOCKED/UNKNOWN must never read as closed.
+_TERMINAL_CLASSES = {VerdictClass.CLOSED, VerdictClass.NOISE, VerdictClass.RETIRED}
+
+
+def is_terminal(vc: VerdictClass) -> bool:
+    return vc in _TERMINAL_CLASSES
+
+
+def _coerce_verdict_str(value: Any) -> Optional[str]:
+    """Extract the underlying verdict string (handles dict-shaped verdicts)."""
+    if value is None:
+        return None
+    if isinstance(value, dict):
+        value = first_present(value, ("summary", "status", "verdict", "conclusion"))
+        if value is None:
+            return None
+    s = str(value).strip()
+    return s or None
+
+
+def normalize_verdict(value: Any) -> Optional[str]:
+    """Normalize a verdict value to an UPPER_SNAKE token string, or None.
+
+    Accepts strings or dicts (extracts a summary/status/verdict field).
+    Collapses spaces, hyphens, em dashes, and punctuation to underscores so
+    downstream matching is stable.
+    """
+    s = _coerce_verdict_str(value)
+    if s is None:
+        return None
+    text = s.upper()
+    out: list[str] = []
+    for ch in text:
+        out.append(ch if ch.isalnum() else "_")
+    norm = "_".join(tok for tok in "".join(out).split("_") if tok)
+    return norm or None
+
+
+def _verdict_head(s: str) -> str:
+    """The leading verdict token: text before the first ':' or '('.
+
+    Project verdicts are prose like "ELIMINATED (audit ...): ... NO SIGNAL".
+    The semantic verdict is the head; the tail is human explanation that
+    must NOT drive classification (it routinely mentions SIGNAL, INVESTIGATE,
+    DO NOT TEST, etc. inside an ELIMINATED verdict).
+    """
+    for sep in (":", "("):
+        idx = s.find(sep)
+        if idx != -1:
+            s = s[:idx]
+    return s
+
+
+# Ordered (substring, class) rules. ORDER MATTERS: open/negation guards are
+# checked before closed substrings so "FAILED_TO_ELIMINATE" and
+# "NOT_ELIMINATED" never read as ELIMINATED.
+_VERDICT_RULES: tuple[tuple[str, VerdictClass], ...] = (
+    # Negation / open guards FIRST.
+    ("NOT_ELIMINAT", VerdictClass.OPEN),
+    ("FAILED_TO_ELIMINAT", VerdictClass.UNKNOWN),
+    ("CANNOT_ELIMINAT", VerdictClass.OPEN),
+    ("NO_SIGNIFICANT", VerdictClass.NOISE),
+    ("NOT_SIGNIFICANT", VerdictClass.NOISE),
+    ("NO_SIGNAL", VerdictClass.NOISE),
+    ("BELOW_SIGNAL", VerdictClass.NOISE),
+    ("ZERO_SIGNAL", VerdictClass.NOISE),
+    # Noise family (ran, indistinguishable from random).
+    ("NOISE", VerdictClass.NOISE),
+    ("PEAK_WITHIN_NULL", VerdictClass.NOISE),
+    ("LOW_DIVERSITY", VerdictClass.NOISE),
+    # Retired / superseded.
+    ("RETIRED", VerdictClass.RETIRED),
+    ("SUPERSEDED", VerdictClass.RETIRED),
+    ("WITHDRAWN", VerdictClass.RETIRED),
+    # Open / needs attention.
+    ("INTEREST", VerdictClass.OPEN),
+    ("SIGNAL", VerdictClass.OPEN),
+    ("PROMISING", VerdictClass.OPEN),
+    ("ELEVATED", VerdictClass.OPEN),
+    ("ESCALATE", VerdictClass.OPEN),
+    ("INVESTIGATE", VerdictClass.OPEN),
+    ("NEAR_MISS", VerdictClass.OPEN),
+    ("LIKELY_OPEN", VerdictClass.OPEN),
+    ("SUCCESS", VerdictClass.OPEN),
+    # Blocked / cannot run.
+    ("ASSUMPTION_UNMET", VerdictClass.BLOCKED),
+    ("BLOCKED", VerdictClass.BLOCKED),
+    ("LOW_INFORMATION", VerdictClass.BLOCKED),
+    ("NEEDS_SOURCE", VerdictClass.BLOCKED),
+    # Ambiguous / incomplete -> UNKNOWN (never closed).
+    ("UNCLEAR", VerdictClass.UNKNOWN),
+    ("INCONCLUSIVE", VerdictClass.UNKNOWN),
+    ("INCOMPLETE", VerdictClass.UNKNOWN),
+    ("UNDERDETERMINED", VerdictClass.UNKNOWN),
+    ("MARGINAL", VerdictClass.UNKNOWN),
+    ("WEAK", VerdictClass.UNKNOWN),
+    ("TBD", VerdictClass.UNKNOWN),
+    ("TODO", VerdictClass.UNKNOWN),
+    # Closed (terminal). Checked AFTER negation guards above.
+    ("STRUCTURALLY", VerdictClass.CLOSED),
+    ("MATHEMATICALLY", VerdictClass.CLOSED),
+    ("ELIMINAT", VerdictClass.CLOSED),
+    ("DISPROV", VerdictClass.CLOSED),
+    ("EXHAUST", VerdictClass.CLOSED),
+    ("CERTIFIED", VerdictClass.CLOSED),
+    ("ADMISSIBILITY_REJECT", VerdictClass.CLOSED),
+    ("INVALID", VerdictClass.CLOSED),
+    ("EMPTY", VerdictClass.CLOSED),
+    ("NO_PERIODIC_CIPHER", VerdictClass.CLOSED),
+)
+
+
+def classify_verdict(value: Any) -> VerdictClass:
+    """Classify a raw verdict value conservatively.
+
+    Strategy: classify the verdict HEAD (leading token before ':' or '(')
+    first, since that carries the semantic verdict; only if the head is
+    unrecognized do we scan the full string. This prevents prose in the tail
+    of an ELIMINATED verdict (e.g. "... NO SIGNAL", "... INVESTIGATE later")
+    from flipping the classification. Negation phrases are checked before
+    closed substrings, and unrecognized/absent verdicts are UNKNOWN, never
+    CLOSED.
+    """
+    s = _coerce_verdict_str(value)
+    if s is None:
+        return VerdictClass.UNKNOWN
+    full = normalize_verdict(s)
+    if not full:
+        return VerdictClass.UNKNOWN
+    head = normalize_verdict(_verdict_head(s)) or full
+    for needle, vclass in _VERDICT_RULES:
+        if needle in head:
+            return vclass
+    for needle, vclass in _VERDICT_RULES:
+        if needle in full:
+            return vclass
+    return VerdictClass.UNKNOWN
+
+
+def parse_timestamp(value: Any) -> Optional[datetime]:
+    """Best-effort timestamp parse. Returns None when unparseable."""
+    if value is None:
+        return None
+    text = str(value).strip()
+    if not text:
+        return None
+    # Try ISO-8601 first (handles trailing Z and offsets on 3.11+).
+    # Return tz-naive so dated entries are mutually comparable when sorting.
+    iso = text.replace("Z", "+00:00")
+    try:
+        return datetime.fromisoformat(iso).replace(tzinfo=None)
+    except ValueError:
+        pass
+    for fmt in ("%Y-%m-%d %H:%M:%S", "%Y-%m-%d %H:%M", "%Y-%m-%d", "%Y/%m/%d"):
+        try:
+            return datetime.strptime(text[: len(fmt) + 6], fmt)
+        except ValueError:
+            continue
+    return None
+
+
+def compute_ic(text: str) -> float:
+    """Index of coincidence. Uses the kernel implementation when available."""
+    if _KERNEL_OK:
+        return float(_kernel_ic(text))
+    counts: dict[str, int] = {}
+    letters = [c for c in text.upper() if c.isalpha()]
+    n = len(letters)
+    if n < 2:
+        return 0.0
+    for c in letters:
+        counts[c] = counts.get(c, 0) + 1
+    num = sum(v * (v - 1) for v in counts.values())
+    return num / (n * (n - 1))
+
+
+def self_encrypting_positions() -> dict[int, str]:
+    """Positions where CT[i] == PT[i], sourced from kernel SELF_ENCRYPTING."""
+    if _KERNEL_OK:
+        return dict(SELF_ENCRYPTING)
+    return {}
+
+
+# ── Result data model + scanning ──────────────────────────────────────────────
+
+@dataclass
+class ResultEntry:
+    name: str
+    path: str
+    verdict: Optional[str]
+    verdict_class: VerdictClass
+    best_score: Any = None
+    timestamp: Optional[str] = None
+    timestamp_dt: Optional[datetime] = None
+    configs: Any = None
+
+
+_VERDICT_KEYS = ("verdict", "verdict_status", "conclusion", "status")
+_SCORE_KEYS = ("best_score", "best_crib_score", "max_crib_score", "max_score")
+_TS_KEYS = ("timestamp", "date", "produced_at", "started_at", "completed_at")
+_CONFIG_KEYS = ("total_configs", "configs_tested", "keyspace_tested", "orderings_tested")
+
+
+def _entry_from_dict(name: str, path: str, d: dict[str, Any]) -> ResultEntry:
+    raw_verdict = first_present(d, _VERDICT_KEYS)
+    norm = normalize_verdict(raw_verdict)
+    ts_raw = first_present(d, _TS_KEYS)
+    return ResultEntry(
+        name=name,
+        path=os.path.relpath(path, _ROOT),
+        verdict=norm,
+        verdict_class=classify_verdict(raw_verdict),
+        best_score=first_present(d, _SCORE_KEYS),
+        timestamp=str(ts_raw) if ts_raw is not None else None,
+        timestamp_dt=parse_timestamp(ts_raw),
+        configs=first_present(d, _CONFIG_KEYS),
+    )
+
+
+def scan_result_files(diag: Diagnostics) -> list[ResultEntry]:
+    """Parse campaign-level result artifacts only (scoped, fast).
+
+    Scope: results/*.json + results/*/summary.json + results/*/result.json.
+    Deep per-job files (results/dsl_jobs/**, etc.) are intentionally NOT
+    parsed here — they are counted in count_result_files(). Dedupe is by
+    logical campaign (top-level filename, or the immediate parent dir for
+    nested artifacts) so a dir with both summary.json and result.json counts
+    once (summary wins).
+    """
+    import glob
+
+    results_dir = os.path.join(_ROOT, "results")
+    entries: list[ResultEntry] = []
+    seen_dirs: set[str] = set()
+
+    def _load(path: str, name: str) -> Optional[dict]:
+        try:
+            with open(path) as f:
+                data = json.load(f)
+        except (json.JSONDecodeError, OSError) as exc:
+            detail = f" ({exc})" if diag.debug else ""
+            diag.warn(f"unparseable result: {os.path.relpath(path, _ROOT)}{detail}")
+            return None
+        return data if isinstance(data, dict) else None
+
+    # Top-level campaign files.
+    for rf in sorted(glob.glob(os.path.join(results_dir, "*.json"))):
+        data = _load(rf, os.path.basename(rf))
+        if data is not None:
+            name = os.path.basename(rf)[: -len(".json")]
+            entries.append(_entry_from_dict(name, rf, data))
+
+    # One level of nested campaign artifacts: summary.json preferred.
+    for sd in sorted(glob.glob(os.path.join(results_dir, "*", "summary.json"))):
+        seen_dirs.add(os.path.dirname(sd))
+        data = _load(sd, os.path.basename(os.path.dirname(sd)))
+        if data is not None:
+            entries.append(_entry_from_dict(os.path.basename(os.path.dirname(sd)), sd, data))
+    for rd in sorted(glob.glob(os.path.join(results_dir, "*", "result.json"))):
+        parent = os.path.dirname(rd)
+        if parent in seen_dirs:
+            continue  # summary.json already covered this campaign
+        seen_dirs.add(parent)
+        data = _load(rd, os.path.basename(parent))
+        if data is not None:
+            entries.append(_entry_from_dict(os.path.basename(parent), rd, data))
+
+    return entries
+
+
+def count_result_files() -> dict[str, int]:
+    """Count result JSON files recursively by walking filenames only (fast).
+
+    Does NOT parse contents (there are >140k files). Parse stats belong to
+    the scoped scan in scan_result_files().
+    """
+    results_dir = os.path.join(_ROOT, "results")
+    total = top_level = nested = result_json = summary_json = 0
+    subdirs = 0
+    for root, dirs, files in os.walk(results_dir):
+        if root == results_dir:
+            subdirs = len(dirs)
+        is_top = (root == results_dir)
+        for fn in files:
+            if not fn.endswith(".json"):
+                continue
+            total += 1
+            if is_top:
+                top_level += 1
+            else:
+                nested += 1
+            if fn == "result.json":
+                result_json += 1
+            elif fn == "summary.json":
+                summary_json += 1
+    return {
+        "total": total,
+        "top_level": top_level,
+        "nested": nested,
+        "result_json": result_json,
+        "summary_json": summary_json,
+        "subdirs": subdirs,
+    }
+
+
+def count_scripts() -> int:
+    import glob
+    patterns = ("e_*.py", "f_*.py", "blitz_*.py")
+    total = 0
+    for pat in patterns:
+        total += len(glob.glob(os.path.join(_ROOT, "scripts", "**", pat), recursive=True))
+    return total
+
+
+# ── Exhaustion-log status buckets ─────────────────────────────────────────────
+
+_EXHAUSTED_STATUSES = {"exhausted"}
+_ACTIVE_STATUSES = {"active", "testable", "running", "queued", "promising",
+                    "in_progress", "open"}
+_BLOCKED_STATUSES = {"blocked", "assumption_unmet", "needs_source", "deferred"}
+_RETIRED_STATUSES = {"retired", "superseded", "invalid", "archived", "deprecated"}
+
+
+def _bucket_status(status: str) -> str:
+    s = (status or "").lower()
+    if s in _EXHAUSTED_STATUSES:
+        return "exhausted"
+    if s in _ACTIVE_STATUSES:
+        return "active"
+    if s in _BLOCKED_STATUSES:
+        return "blocked"
+    if s in _RETIRED_STATUSES:
+        return "retired"
+    return "unknown"
+
+
+# ── Section-claims registry (externalized doctrine) ───────────────────────────
+
+# Embedded fallback used ONLY when docs/session_briefing_claims.json is
+# missing/malformed. Kept compact; the canonical, fully-sourced version lives
+# in the JSON registry. Use of this fallback is announced in SOURCE HEALTH.
+_FALLBACK_SECTION_CLAIMS: dict[str, list[dict]] = {
+    "proofs": [
+        {"evidence_class": "mathematical_proof",
+         "statement": "Pure transposition impossible (CT has 2 E's, PT needs 3).",
+         "scope": "pure transposition, direct correspondence"},
+        {"evidence_class": "mathematical_proof",
+         "statement": "ALL periodic polyalphabetic (periods 1-26) eliminated via full 242 Bean set.",
+         "scope": "direct correspondence"},
+        {"evidence_class": "structural_proof",
+         "statement": "ALL autokey variants + arbitrary transposition (PT-max 16/24, CT-max 21/24).",
+         "scope": "autokey family"},
+        {"evidence_class": "sampled_search",
+         "statement": "Columnar w10-15 SAMPLED 100K each, max 14/24 (not exhaustive).",
+         "scope": "columnar w10-15, sampled"},
+    ],
+    "do_not_test": [
+        {"evidence_class": "structural_proof",
+         "statement": "Any autokey variant (structural).", "scope": "autokey"},
+        {"evidence_class": "exhaustive_search",
+         "statement": "DEFECTOR/PALIMPSEST keywords (15/24 ceiling).", "scope": "those keywords"},
+        {"evidence_class": "mathematical_proof",
+         "statement": "Periodic substitution on null-extracted CT73, periods 1-23 (algebraic).",
+         "scope": "CT73 periodic"},
+    ],
+    "surviving_anomaly": [
+        {"evidence_class": "empirical_negative",
+         "statement": "Width-21 bigram on CT97 (p=1.6e-4) — STEGO artifact, not actionable.",
+         "scope": "CT97"},
+    ],
+    "retired_anomaly": [
+        {"evidence_class": "methodological_audit", "status": "retired",
+         "statement": "Null palette {B,G,I,K,O,W,Z} — score-conditioned, retired April 2026.",
+         "scope": "palette"},
+    ],
+    "bin_d": [
+        {"evidence_class": "operational_prerequisite", "status": "blocked",
+         "statement": "Mono+Trans+Running-key — needs a new detector, not more sweeps.",
+         "scope": "E-FRAC-54"},
+    ],
+    "bin_e": [
+        {"evidence_class": "operational_prerequisite", "status": "blocked",
+         "statement": "Bespoke chart-based cipher — needs public chart or procedure license.",
+         "scope": "chart cipher"},
+    ],
+    "pitfall": [
+        {"statement": "ALL positions 0-indexed (cribs at 21-33, 63-73)."},
+        {"statement": "Every command needs PYTHONPATH=src."},
+        {"statement": "Import constants from kryptos.kernel.constants — NEVER hardcode."},
+        {"statement": "Vigenere K=(CT-PT)%26 | Beaufort K=(CT+PT)%26 | VarBeau K=(PT-CT)%26."},
+        {"statement": "High scores at large periods are ALWAYS false positives."},
+        {"statement": "Root exhaustion_log.json is authoritative (NOT scripts/EXHAUSTION.json)."},
+    ],
+}
+
+
+def load_section_claims(diag: Diagnostics) -> tuple[dict[str, list[dict]], bool]:
+    """Load docs/session_briefing_claims.json grouped by section.
+
+    Returns (sections, used_fallback). Required source: a missing/malformed
+    registry is an ERROR (degrades the briefing) and triggers the embedded
+    fallback with a visible warning.
+    """
+    path = os.path.join(_ROOT, "docs", "session_briefing_claims.json")
+    data = load_json(path, diag, required=True)
+    if not isinstance(data, dict) or "claims" not in data:
+        diag.warn("using embedded fallback for doctrine sections "
+                  "(docs/session_briefing_claims.json unavailable/invalid)")
+        return _FALLBACK_SECTION_CLAIMS, True
+
+    sections: dict[str, list[dict]] = {}
+    required_fields = ("section", "status", "evidence_class", "statement")
+    for c in data["claims"]:
+        if not isinstance(c, dict):
+            diag.warn("claims_registry section entry is not an object; skipped")
+            continue
+        missing = [f for f in required_fields if not c.get(f)]
+        if missing:
+            cid = c.get("claim_id", "?")
+            diag.warn(f"section claim {cid} missing fields {missing}")
+        sec = c.get("section", "unknown")
+        sections.setdefault(sec, []).append(c)
+    return sections, False
+
+
+# ── Evidence-class presentation ───────────────────────────────────────────────
+
+# Maps evidence_class -> (heading, marker, scope-limited?) for the proofs
+# section. Only proof classes may use permanent/never framing.
+_EVIDENCE_GROUPS: tuple[tuple[str, tuple[str, ...]], ...] = (
+    ("MATHEMATICALLY IMPOSSIBLE (permanent)", ("mathematical_proof",)),
+    ("STRUCTURALLY IMPOSSIBLE (permanent)", ("structural_proof",)),
+    ("EXHAUSTIVELY ELIMINATED WITHIN DECLARED SCOPE", ("exhaustive_search",)),
+    ("SAMPLED NEGATIVE — LOW PRIOR, NOT PROOF", ("sampled_search",)),
+    ("EMPIRICALLY NEGATIVE / LOW PRIOR", ("empirical_negative",)),
+    ("ADMISSIBILITY-REJECTED / PROVENANCE-BLOCKED", ("admissibility",)),
+)
+
+
+# ── Briefing sections ─────────────────────────────────────────────────────────
+
+def section_header() -> None:
+    print("=" * 72)
+    print("K4 SESSION BRIEFING")
+    bean = (f"Bean: {len(BEAN_EQ)} eq + {len(BEAN_INEQ)} ineq + "
+            f"{len(BEAN_LINEAR)} linear") if _KERNEL_OK else "Bean: <kernel unavailable>"
+    ct_info = f"CT: {CT_LEN} chars  |  Cribs: {N_CRIBS} positions" if _KERNEL_OK \
+        else "CT: <kernel unavailable>"
+    print(f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M')}  |  {ct_info}  |  {bean}")
+    print("=" * 72)
+
+
+def section_operating_contract() -> None:
+    print()
+    print("── SESSION OPERATING CONTRACT ─────────────────────────────────────")
+    print()
+    print("  1. Do not launch compute unless the family is TESTABLE NOW.")
+    print("  2. Mathematical/structural proofs are permanent; empirical and")
+    print("     sampled negatives are scope-limited (reopenable with new assumptions).")
+    print("  3. Retired/disputed/superseded claims are NOT live evidence.")
+    print("  4. If a required source is missing/malformed, the briefing is DEGRADED.")
+    print("  5. Any new test requires: hypothesis, scope delta, source artifact,")
+    print("     pre-registered threshold, and a retest justification.")
+    print()
+
+
+def section_critical_constants(diag: Diagnostics) -> None:
+    print("── CRITICAL CONSTANTS ─────────────────────────────────────────────")
+    print()
+    if not _KERNEL_OK:
+        print("  ⚠ kernel constants unavailable — cannot render CT/cribs/Bean.")
+        print()
+        return
+    print(f"  CT: {CT}")
+    for start, word in CRIB_WORDS:
+        print(f"  Crib: positions {start}-{start + len(word) - 1}: {word}")
+    print(f"  Bean equality: k[{BEAN_EQ[0][0]}] = k[{BEAN_EQ[0][1]}]  "
+          f"({len(BEAN_INEQ)} inequalities + {len(BEAN_LINEAR)} linear constraints)")
+    print("  [DERIVED FACT] These admit exactly 624 valid keystreams at the 24 "
+          "crib positions (see memory/bean_linear_constraints_624.md).")
+    # Self-encrypting positions sourced from kernel constant, not hardcoded text.
+    se = self_encrypting_positions()
+    se_str = ", ".join(f"CT[{p}]=PT[{p}]={c}" for p, c in sorted(se.items())) or "none"
+    print(f"  Self-encrypting (kernel SELF_ENCRYPTING): {se_str}")
+    # IC computed live from CT, compared to the kernel's random baseline.
+    ic_val = compute_ic(CT)
+    rel = "below" if ic_val < IC_RANDOM else "above"
+    print(f"  IC (computed from CT): {ic_val:.4f} — {rel} random baseline "
+          f"{IC_RANDOM:.4f} (English {IC_ENGLISH:.4f}).")
+    print("    Significance: NOT significant for n=97 (sourced: docs/elimination_tiers.md "
+          "E-FRAC-13; this script does not recompute the test).")
+    print()
+    # Null-palette / consensus-null-positions intentionally NOT printed
+    # (retired claim C-PALETTE-01 / SBR-001). Do not re-add.
+
+
+def section_source_health(diag: Diagnostics, used_fallback: bool,
+                          counts: dict[str, int], n_elog: int) -> None:
+    print("── SOURCE HEALTH ──────────────────────────────────────────────────")
+    print()
+    if _KERNEL_OK:
+        print("  ✓ kernel constants loaded from kryptos.kernel.constants")
+    else:
+        print(f"  ✗ kernel constants FAILED to import: {_KERNEL_ERR}")
+    print(f"  {'✓' if n_elog else '✗'} exhaustion_log.json: {n_elog} entries")
+    print(f"  ✓ result JSON files counted: {counts['total']} "
+          f"({counts['top_level']} top-level, {counts['nested']} nested)")
+    if used_fallback:
+        print("  ⚠ doctrine sections: EMBEDDED FALLBACK in use "
+              "(docs/session_briefing_claims.json unavailable)")
+    else:
+        print("  ✓ doctrine sections loaded from docs/session_briefing_claims.json")
+    for w in diag.warnings:
+        print(f"  ⚠ {w}")
+    for e in diag.errors:
+        print(f"  ✗ {e}")
+    if diag.degraded:
+        print()
+        print("  ‼ BRIEFING DEGRADED — a required source is missing/malformed.")
+        print("     Treat the state below as incomplete. Re-run with --debug for detail,")
+        print("     or --strict to fail the session-start gate.")
+    print()
+
+
+def section_registry_flags(registry_data: Any) -> None:
+    """Surface disputed/retired/superseded claims from the canonical registry."""
+    claims = registry_data.get("claims", []) if isinstance(registry_data, dict) else []
     if not claims:
         return
-    disputed = [c for c in claims if c.get("status") == "disputed"]
-    retired = [c for c in claims if c.get("status") == "retired"]
-    superseded = [c for c in claims if c.get("status") == "superseded"]
-    if not (disputed or retired or superseded):
+    buckets = (
+        ("DISPUTED", [c for c in claims if c.get("status") == "disputed"]),
+        ("RETIRED", [c for c in claims if c.get("status") == "retired"]),
+        ("SUPERSEDED", [c for c in claims if c.get("status") == "superseded"]),
+    )
+    if not any(b for _, b in buckets):
         return
     print("── CLAIM REGISTRY — DISPUTED / RETIRED / SUPERSEDED ───────────────")
     print()
-    print("  From docs/claims_registry.json. Do NOT cite these as live")
-    print("  evidence without first checking docs/methodological_audits.md.")
+    print("  From docs/claims_registry.json. Do NOT cite as live evidence")
+    print("  without first checking docs/methodological_audits.md.")
     print()
-    for bucket_name, bucket in (
-        ("DISPUTED", disputed),
-        ("RETIRED", retired),
-        ("SUPERSEDED", superseded),
-    ):
+    for name, bucket in buckets:
         if not bucket:
             continue
-        print(f"  {bucket_name}:")
+        print(f"  {name}:")
         for c in bucket:
             cid = c.get("claim_id", "?")
             stmt = c.get("statement", "")
-            short = (stmt[:120] + "…") if len(stmt) > 120 else stmt
+            short = (stmt[:118] + "…") if len(stmt) > 118 else stmt
             print(f"    • {cid}: {short}")
         print()
 
 
-def section_critical_constants():
-    """Key constants every session needs."""
-    print("── CRITICAL CONSTANTS ─────────────────────────────────────────────")
+def section_exhaustion_summary(elog: dict, diag: Diagnostics) -> None:
+    from collections import defaultdict
+    print("── ELIMINATION LANDSCAPE ──────────────────────────────────────────")
     print()
-    print(f"  CT: {CT}")
-    for start, word in CRIB_WORDS:
-        print(f"  Crib: positions {start}-{start+len(word)-1}: {word}")
-    print(f"  Bean equality: k[{BEAN_EQ[0][0]}] = k[{BEAN_EQ[0][1]}]  "
-          f"({len(BEAN_INEQ)} inequalities + {len(BEAN_LINEAR)} linear constraints; "
-          f"624 valid keystreams at crib positions)")
-    # Null-palette / consensus-null-positions intentionally NOT printed.
-    # That family is retired (claim_id: null_palette_retired,
-    # memory/project_consensus_nulls_epistemic_status_2026_04_14.md).
-    # Surfacing it on every session start was a prompt-embedded poison
-    # per the 2026-04-14 audit. Do not re-add.
-    print(f"  Self-encrypting: CT[32]=PT[32]=S, CT[73]=PT[73]=K")
-    print(f"  IC: 0.0361 (below random 0.0385, NOT significant for n=97)")
+    if not elog:
+        print("  ⚠ exhaustion_log.json unavailable — landscape cannot be rendered.")
+        print()
+        return
+
+    families: dict[str, dict[str, int]] = defaultdict(
+        lambda: {"exhausted": 0, "active": 0, "blocked": 0, "retired": 0,
+                 "unknown": 0, "total": 0, "certified": 0})
+    for v in elog.values():
+        fam = v.get("family", "_unknown")
+        bucket = _bucket_status(v.get("status", "unknown"))
+        families[fam][bucket] += 1
+        families[fam]["total"] += 1
+        if v.get("phase2_certificate") or v.get("coverage_certificate"):
+            families[fam]["certified"] += 1
+
+    total = sum(f["total"] for f in families.values())
+    tot_exh = sum(f["exhausted"] for f in families.values())
+    tot_act = sum(f["active"] for f in families.values())
+    tot_other = total - tot_exh - tot_act
+    print(f"  Scripts tracked: {total}  |  Exhausted: {tot_exh}  |  "
+          f"Active: {tot_act}  |  Blocked/retired/unknown: {tot_other}")
+    print()
+    print(f"  {'Family':<28s} {'Exh':>4s} {'Act':>4s} {'Tot':>4s}  Status")
+    print(f"  {'-'*28} {'-'*4} {'-'*4} {'-'*4}  {'-'*30}")
+
+    sorted_fams = sorted(families.items(),
+                         key=lambda x: (-x[1]["exhausted"], -x[1]["total"]))
+    shown = 0
+    max_rows = 20
+    hidden = 0
+    for fam, c in sorted_fams:
+        if c["total"] < 2 and c["exhausted"] == 0:
+            continue
+        if shown >= max_rows:
+            hidden += 1
+            continue
+        shown += 1
+        if c["exhausted"] == c["total"] and c["total"] > 0:
+            if c["certified"] > 0:
+                status = "COVERAGE-CERTIFIED ELIMINATED"
+            else:
+                status = "ALL TRACKED SCRIPTS EXHAUSTED"
+        elif c["exhausted"] > 0:
+            pct = c["exhausted"] / c["total"] * 100
+            status = f"PARTIALLY EXHAUSTED ({pct:.0f}%)"
+        elif c["blocked"] > 0 and c["active"] == 0:
+            status = "BLOCKED"
+        elif c["retired"] > 0 and c["active"] == 0 and c["exhausted"] == 0:
+            status = "RETIRED"
+        elif c["active"] > 0:
+            status = "ACTIVE / TESTABLE"
+        else:
+            status = "UNKNOWN STATUS"
+        print(f"  {fam[:28]:<28s} {c['exhausted']:>4d} {c['active']:>4d} "
+              f"{c['total']:>4d}  {status}")
+    if hidden:
+        print(f"  ... and {hidden} more families with fewer exhausted scripts "
+              f"(see exhaustion_log.json)")
+    print()
+    print("  Note: 'ALL TRACKED SCRIPTS EXHAUSTED' means every tracked script in")
+    print("  that family is marked exhausted — NOT a coverage-certified proof of")
+    print("  family-wide impossibility unless tagged COVERAGE-CERTIFIED.")
     print()
 
 
-def section_pitfalls():
-    """Non-obvious traps."""
+def _render_claim_lines(claims: list[dict], marker: str, scope_limited: bool) -> None:
+    for c in claims:
+        stmt = c.get("statement", "")
+        scope = c.get("scope")
+        if scope_limited and scope:
+            print(f"  {marker} {stmt}  [scope: {scope}]")
+        else:
+            print(f"  {marker} {stmt}")
+
+
+def section_proofs(sections: dict[str, list[dict]]) -> None:
+    proofs = sections.get("proofs", [])
+    print("── PROVEN / CERTIFIED CLOSURES (by evidence class) ────────────────")
+    print()
+    if not proofs:
+        print("  ⚠ no proof claims available.")
+        print()
+        return
+    by_class: dict[str, list[dict]] = {}
+    for c in proofs:
+        by_class.setdefault(c.get("evidence_class", "unknown"), []).append(c)
+    for heading, classes in _EVIDENCE_GROUPS:
+        group = [c for cl in classes for c in by_class.get(cl, [])]
+        if not group:
+            continue
+        permanent = any(cl in ("mathematical_proof", "structural_proof") for cl in classes)
+        marker = "✗" if permanent else "·"
+        scope_limited = not permanent
+        print(f"  {heading}")
+        _render_claim_lines(group, marker, scope_limited)
+        print()
+
+
+def section_do_not_test(sections: dict[str, list[dict]]) -> None:
+    items = sections.get("do_not_test", [])
+    print("── DO NOT TEST (without a materially new assumption) ──────────────")
+    print()
+    if not items:
+        print("  ⚠ no do-not-test claims available.")
+        print()
+        return
+    for c in items:
+        ec = c.get("evidence_class", "unknown")
+        permanent = ec in ("mathematical_proof", "structural_proof")
+        marker = "✗" if permanent else "·"
+        stmt = c.get("statement", "")
+        tag = "" if permanent else f"  [{ec}]"
+        print(f"  {marker} {stmt}{tag}")
+    print()
+
+
+def section_anomalies(sections: dict[str, list[dict]]) -> None:
+    surviving = sections.get("surviving_anomaly", [])
+    retired = sections.get("retired_anomaly", [])
+    print("── SURVIVING ANOMALIES (real but not exploitable) ─────────────────")
+    print()
+    if surviving:
+        for c in surviving:
+            print(f"  • {c.get('statement', '')}")
+    else:
+        print("  (none recorded)")
+    print()
+    print("── RETIRED ANOMALIES (do NOT revive as live evidence) ─────────────")
+    print()
+    if retired:
+        for c in retired:
+            print(f"  ✗ {c.get('statement', '')}")
+    else:
+        print("  (none recorded)")
+    print()
+
+
+def section_results_verdicts(results: list[ResultEntry]) -> None:
+    print("── RESULTS WITH VERDICTS ──────────────────────────────────────────")
+    print()
+    from collections import Counter
+    by_class = Counter(r.verdict_class for r in results if r.verdict is not None)
+    closed = by_class[VerdictClass.CLOSED]
+    noise = by_class[VerdictClass.NOISE]
+    retired = by_class[VerdictClass.RETIRED]
+    openc = by_class[VerdictClass.OPEN]
+    blocked = by_class[VerdictClass.BLOCKED]
+    unknown = by_class[VerdictClass.UNKNOWN]
+    print(f"  Closed: {closed}  |  Noise: {noise}  |  Retired: {retired}  |  "
+          f"Open: {openc}  |  Blocked: {blocked}  |  Unknown: {unknown}")
+    print(f"  (scoped scan: {len(results)} campaign-level artifacts parsed; "
+          f"deep per-job files not parsed)")
+    print()
+
+    # OPEN / signal results need attention — show all.
+    open_results = [r for r in results if r.verdict_class == VerdictClass.OPEN]
+    if open_results:
+        print(f"  OPEN / NEEDS ATTENTION ({len(open_results)}):")
+        for r in open_results:
+            score = f" best={r.best_score}" if r.best_score is not None else ""
+            ts = f" ({r.timestamp[:10]})" if r.timestamp else ""
+            print(f"    {r.name[:44]:<44s} {(r.verdict or '')[:22]}{score}{ts}")
+        print()
+
+    # Recently-closed results, timestamp-sorted (undated last).
+    closed_results = [r for r in results
+                      if r.verdict_class in (VerdictClass.CLOSED, VerdictClass.NOISE)]
+    closed_results.sort(
+        key=lambda r: (r.timestamp_dt is not None, r.timestamp_dt or datetime.min),
+        reverse=True)
+    dated = [r for r in closed_results if r.timestamp_dt is not None]
+    if dated:
+        print(f"  MOST RECENT CLOSED/NOISE (by timestamp, {len(dated)} dated):")
+        for r in dated[:10]:
+            score = f" best={r.best_score}" if r.best_score is not None else ""
+            print(f"    {r.timestamp[:10]}  {r.name[:40]:<40s} {(r.verdict or '')[:18]}{score}")
+        if len(closed_results) > len(dated):
+            print(f"    ... plus {len(closed_results) - len(dated)} undated closed/noise results")
+        print()
+
+    # Only flag results that HAD a verdict string we could not classify — not
+    # results that simply lack a verdict field (those are merely uncategorized).
+    unknown_results = [r for r in results
+                       if r.verdict_class == VerdictClass.UNKNOWN and r.verdict is not None]
+    if unknown_results:
+        print(f"  ⚠ {len(unknown_results)} result(s) have unrecognized verdict strings "
+              f"(classified UNKNOWN, NOT closed):")
+        for r in unknown_results[:6]:
+            print(f"    {r.name[:44]:<44s} {(r.verdict or '')[:24]}")
+        if len(unknown_results) > 6:
+            print(f"    ... and {len(unknown_results) - 6} more")
+        print()
+
+
+def _md_has_closure_language(path: str) -> bool:
+    try:
+        with open(path) as f:
+            text = f.read().lower()
+    except OSError:
+        return False
+    needles = ("certificate", "formally closes", "exhaustion complete",
+               "final checklist complete", "no candidates escalated", "closed the bin")
+    return any(n in text for n in needles)
+
+
+def _bin_c_status(campaign_id: str, diag: Diagnostics) -> dict[str, Any]:
+    """Resolve the real closure state of a bin-C campaign from artifacts.
+
+    Returns {status, verdict, artifact, warnings}. status is one of
+    CLOSED / TESTABLE / DEFERRED / OPEN / UNKNOWN / DEGRADED.
+
+    Closure requires an EXPLICIT terminal classified verdict, a structured
+    completion signal (campaign ran with zero escalated candidates), or
+    content-verified closure language — never the mere existence of a file
+    or a JSON entry.
+    """
+    warnings: list[str] = []
+    artifact_map = {
+        "C7": [
+            (os.path.join("results", "admissibility_elimination_v1",
+                          "running_key_policy.json"), None),
+            (os.path.join("docs", "exhaustion_certificate_2026_04_08.md"), None),
+        ],
+        "C1": [(os.path.join("results", "f_final_checklist_c1_c2.json"), "carter_tomb_vol1")],
+        "C2": [(os.path.join("results", "f_final_checklist_c1_c2.json"), "kahn_codebreakers")],
+        "C6": [(os.path.join("results", "f_final_checklist_c6.json"), None)],
+    }
+    deferred = {"C3", "C4", "C5", "C8"}
+    if campaign_id in deferred:
+        return {"status": "DEFERRED", "verdict": None, "artifact": None, "warnings": []}
+
+    for rel_path, inner_key in artifact_map.get(campaign_id, []):
+        full = os.path.join(_ROOT, rel_path)
+        if not os.path.exists(full):
+            continue
+
+        # Markdown fallback: closure ONLY if content has closure language.
+        if full.endswith(".md"):
+            if _md_has_closure_language(full):
+                return {"status": "CLOSED", "verdict": "CERTIFIED (content-verified)",
+                        "artifact": rel_path, "warnings": warnings}
+            warnings.append(f"{rel_path} present but no closure language found")
+            continue
+
+        try:
+            with open(full) as f:
+                data = json.load(f)
+        except (OSError, json.JSONDecodeError) as exc:
+            detail = f" ({exc})" if diag.debug else ""
+            warnings.append(f"malformed artifact {rel_path}{detail}")
+            continue
+        if not isinstance(data, dict):
+            warnings.append(f"artifact {rel_path} is not an object")
+            continue
+
+        # C7-style structured policy signal: unclear == 0 means certified.
+        if "unclear" in data and "n_scripts" in data:
+            if data.get("unclear") == 0:
+                acc, rej = data.get("accepted", "?"), data.get("rejected", "?")
+                return {"status": "CLOSED",
+                        "verdict": f"CERTIFIED (unclear=0, accepted={acc}, rejected={rej})",
+                        "artifact": rel_path, "warnings": warnings}
+            warnings.append(f"{rel_path} has {data.get('unclear')} UNCLEAR entries — not closed")
+            return {"status": "OPEN", "verdict": "UNCLEAR entries remain",
+                    "artifact": rel_path, "warnings": warnings}
+
+        # Combined multi-campaign JSON: find the named campaign entry.
+        if inner_key and "campaigns" in data:
+            for entry in data["campaigns"]:
+                if not isinstance(entry, dict) or entry.get("source_id") != inner_key:
+                    continue
+                raw_verdict = first_present(entry, _VERDICT_KEYS)
+                if raw_verdict is not None:
+                    vc = classify_verdict(raw_verdict)
+                    if is_terminal(vc):
+                        return {"status": "CLOSED", "verdict": normalize_verdict(raw_verdict),
+                                "artifact": rel_path, "warnings": warnings}
+                    return {"status": "OPEN", "verdict": normalize_verdict(raw_verdict),
+                            "artifact": rel_path, "warnings": warnings}
+                # No verdict string: derive from structured completion metrics.
+                escalated = entry.get("escalated_candidates")
+                max_score = first_present(entry, ("max_crib_score", "max_score"))
+                ran = first_present(entry, ("orderings_tested", "offsets_scanned",
+                                            "bean_passing_orderings"))
+                if isinstance(escalated, list) and len(escalated) > 0:
+                    return {"status": "OPEN",
+                            "verdict": f"{len(escalated)} escalated candidate(s)",
+                            "artifact": rel_path, "warnings": warnings}
+                if isinstance(escalated, list) and ran is not None:
+                    return {"status": "CLOSED",
+                            "verdict": f"NO_ESCALATION (max_crib_score={max_score})",
+                            "artifact": rel_path, "warnings": warnings}
+                warnings.append(f"{rel_path} campaign {inner_key} has neither verdict "
+                                f"nor completion metrics")
+                return {"status": "UNKNOWN", "verdict": None,
+                        "artifact": rel_path, "warnings": warnings}
+            warnings.append(f"{rel_path} has no campaign entry for {inner_key}")
+            continue
+
+        # Flat single-campaign JSON: require a terminal classified verdict.
+        raw_verdict = first_present(data, _VERDICT_KEYS)
+        if raw_verdict is not None:
+            vc = classify_verdict(raw_verdict)
+            status = "CLOSED" if is_terminal(vc) else "OPEN"
+            return {"status": status, "verdict": normalize_verdict(raw_verdict),
+                    "artifact": rel_path, "warnings": warnings}
+        # C6-style: outer/middle/inner enumeration with escalation list.
+        escalated = first_present(data, ("escalated_candidates", "candidates"))
+        ran = first_present(data, ("total_configs", "configs_tested", "combos_tested"))
+        if isinstance(escalated, list) and len(escalated) > 0:
+            return {"status": "OPEN", "verdict": f"{len(escalated)} escalated",
+                    "artifact": rel_path, "warnings": warnings}
+        if isinstance(escalated, list) and ran is not None:
+            return {"status": "CLOSED", "verdict": "NO_ESCALATION",
+                    "artifact": rel_path, "warnings": warnings}
+        warnings.append(f"{rel_path} has no verdict and no recognizable completion signal")
+        return {"status": "UNKNOWN", "verdict": None,
+                "artifact": rel_path, "warnings": warnings}
+
+    return {"status": "TESTABLE", "verdict": None, "artifact": None, "warnings": warnings}
+
+
+_BIN_C_DESCRIPTIONS = [
+    ("C7", "Admissibility backlog (running-key provenance review)"),
+    ("C1", "Carter Vol 1 + columnar w6/8/9 x 3 variants (admissibility-gated)"),
+    ("C2", "Kahn Codebreakers + columnar w6/8/9 x 3 variants (admissibility-gated)"),
+    ("C6", "Non-columnar 3-layer enumeration"),
+    ("C3", "Bifid as composition OUTER"),
+    ("C4", "Four-square as composition OUTER"),
+    ("C5", "Homophonic as composition OUTER"),
+    ("C8", "Stateful seed-space expansion"),
+]
+
+
+def section_open_attack_surface(sections: dict[str, list[dict]],
+                                bin_c_status: dict[str, dict]) -> None:
+    print("── FINAL CHECKLIST — BIN C (execution state) ──────────────────────")
+    print()
+    n_closed = n_testable = n_deferred = n_other = 0
+    for cid, name in _BIN_C_DESCRIPTIONS:
+        st = bin_c_status[cid]
+        status, verdict, artifact = st["status"], st["verdict"], st["artifact"]
+        if status == "CLOSED":
+            n_closed += 1; marker = "✓"; tag = f"CLOSED ({verdict})" if verdict else "CLOSED"
+        elif status == "DEFERRED":
+            n_deferred += 1; marker = "⊘"; tag = "DEFERRED (run only if upstream escalates)"
+        elif status == "TESTABLE":
+            n_testable += 1; marker = "→"; tag = "TESTABLE NOW"
+        elif status == "OPEN":
+            n_other += 1; marker = "!"; tag = f"OPEN ({verdict})" if verdict else "OPEN"
+        else:
+            n_other += 1; marker = "?"; tag = f"{status}"
+        print(f"  {marker} {cid:<3s} {name} — {tag}")
+        if artifact:
+            print(f"      artifact: {artifact}")
+    print()
+    print(f"  Summary: {n_closed} closed, {n_testable} testable, "
+          f"{n_deferred} deferred, {n_other} open/unknown")
+    print()
+
+    print("── BIN D — weakly testable (engineering, not compute) ─────────────")
+    print()
+    bin_d = sections.get("bin_d", [])
+    if bin_d:
+        for c in bin_d:
+            print(f"  → {c.get('statement', '')}")
+    else:
+        print("  ⚠ no bin-D claims available.")
+    print()
+    print("── BIN E — untestable under current clues (waiting list) ──────────")
+    print()
+    bin_e = sections.get("bin_e", [])
+    if bin_e:
+        for c in bin_e:
+            print(f"  ⊘ {c.get('statement', '')}")
+    else:
+        print("  ⚠ no bin-E claims available.")
+    print()
+    print("  Bin D/E are prerequisites for new testable hypotheses, not open families.")
+    print()
+
+
+def section_pitfalls(sections: dict[str, list[dict]]) -> None:
     print("── PITFALLS ───────────────────────────────────────────────────────")
     print()
-    pitfalls = [
-        "ALL positions 0-indexed (cribs at 21-33, 63-73)",
-        "Every command needs PYTHONPATH=src",
-        "Import constants from kryptos.kernel.constants — NEVER hardcode",
-        "Vigenere: K=(CT-PT)%26 | Beaufort: K=(CT+PT)%26 | VarBeau: K=(PT-CT)%26",
-        "High scores at large periods are ALWAYS false positives (underdetermination)",
-        "KA ordering: KRYPTOSABCDEFGHIJLMNQUVWXZ (non-standard, all 26 letters)",
-        "Null positions are MODEL-DEPENDENT — state which model when reporting",
-        "scoring/ is at kernel/scoring/, NOT a top-level module",
-        "Root exhaustion_log.json is authoritative (NOT scripts/EXHAUSTION.json)",
-    ]
-    for p in pitfalls:
-        print(f"  ⚠ {p}")
+    for c in sections.get("pitfall", []):
+        print(f"  ⚠ {c.get('statement', '')}")
     print()
 
 
-# ── Main ─────────────────────────────────────────────────────────────────────
-
-def main():
-    elog = load_exhaustion_log()
-    results = scan_results()
-    n_json, n_subdirs = count_results_files()
-    n_scripts = count_scripts()
-
-    section_header()
-    section_critical_constants()
-    section_registry_flags()
-    section_exhaustion_summary(elog)
-    section_tier1_proofs()
-    section_do_not_test()
-    section_confirmed_anomalies()
-    section_results_verdicts(results)
-    section_open_attack_surface()
-    section_pitfalls()
-
+def section_footer(counts: dict[str, int], n_elog: int, n_scripts: int,
+                   diag: Diagnostics) -> None:
     print("=" * 72)
-    print(f"Data sources: exhaustion_log.json ({len(elog)} entries) | "
-          f"results/ ({n_json} JSON + {n_subdirs} subdirs) | "
+    print(f"Data sources: exhaustion_log.json ({n_elog} entries) | "
+          f"results/ ({counts['total']} JSON: {counts['top_level']} top-level, "
+          f"{counts['nested']} nested, {counts['result_json']} result.json, "
+          f"{counts['summary_json']} summary.json across {counts['subdirs']} subdirs) | "
           f"{n_scripts} scripts")
-    print(f"For detailed elimination proofs: docs/elimination_tiers.md")
-    print(f"For experiment search: PYTHONPATH=src python3 run_attack.py --list --verbose | grep KEYWORD")
+    if diag.degraded:
+        print("STATUS: ‼ DEGRADED — see SOURCE HEALTH above.")
+    else:
+        print(f"STATUS: ok ({len(diag.warnings)} warning(s))")
+    print("Detailed proofs: docs/elimination_tiers.md | "
+          "Doctrine registry: docs/session_briefing_claims.json")
+    print("Search experiments: PYTHONPATH=src python3 run_attack.py --list --verbose | grep KEYWORD")
     print("=" * 72)
+
+
+# ── Orchestration ─────────────────────────────────────────────────────────────
+
+def build_state(diag: Diagnostics) -> dict[str, Any]:
+    """Load and resolve ALL sources up front so SOURCE HEALTH (rendered near
+    the top) reflects every warning — including those from bin-C artifact
+    resolution and the claims registry. Render is a pure consumer of state."""
+    elog = load_json(os.path.join(_ROOT, "exhaustion_log.json"), diag, required=True)
+    if not isinstance(elog, dict):
+        elog = {}
+    sections, used_fallback = load_section_claims(diag)
+    registry = load_json(os.path.join(_ROOT, "docs", "claims_registry.json"),
+                         diag, required=True)
+    results = scan_result_files(diag)
+    counts = count_result_files()
+    bin_c_status: dict[str, dict] = {}
+    for cid, _name in _BIN_C_DESCRIPTIONS:
+        st = _bin_c_status(cid, diag)
+        for w in st["warnings"]:
+            diag.warn(f"bin-{cid}: {w}")
+        bin_c_status[cid] = st
+    return {
+        "elog": elog,
+        "sections": sections,
+        "used_fallback": used_fallback,
+        "registry": registry,
+        "results": results,
+        "counts": counts,
+        "n_scripts": count_scripts(),
+        "bin_c_status": bin_c_status,
+    }
+
+
+def render(state: dict[str, Any], diag: Diagnostics) -> None:
+    section_header()
+    section_critical_constants(diag)
+    section_operating_contract()
+    # SOURCE HEALTH near the top: all diagnostics were already collected in
+    # build_state(), so this panel is complete.
+    section_source_health(diag, state["used_fallback"], state["counts"], len(state["elog"]))
+    section_registry_flags(state["registry"])
+    section_exhaustion_summary(state["elog"], diag)
+    section_proofs(state["sections"])
+    section_do_not_test(state["sections"])
+    section_anomalies(state["sections"])
+    section_results_verdicts(state["results"])
+    section_open_attack_surface(state["sections"], state["bin_c_status"])
+    section_pitfalls(state["sections"])
+    section_footer(state["counts"], len(state["elog"]), state["n_scripts"], diag)
+
+
+def emit_json(state: dict[str, Any], diag: Diagnostics) -> None:
+    payload = {
+        "generated": datetime.now().isoformat(timespec="seconds"),
+        "degraded": diag.degraded,
+        "kernel_ok": _KERNEL_OK,
+        "counts": state["counts"],
+        "n_elog": len(state["elog"]),
+        "n_scripts": state["n_scripts"],
+        "used_fallback_doctrine": state["used_fallback"],
+        "results_by_class": {},
+        "bin_c": {},
+        "warnings": diag.warnings,
+        "errors": diag.errors,
+    }
+    from collections import Counter
+    by_class = Counter(r.verdict_class.value for r in state["results"] if r.verdict)
+    payload["results_by_class"] = dict(by_class)
+    for cid, st in state["bin_c_status"].items():
+        payload["bin_c"][cid] = {"status": st["status"], "verdict": st["verdict"]}
+    print(json.dumps(payload, indent=2))
+
+
+# ── Self-test (lightweight; full suite in tests/test_session_briefing.py) ──────
+
+def run_self_test() -> int:
+    checks = []
+
+    def ok(cond, label):
+        checks.append((bool(cond), label))
+
+    ok(classify_verdict("ELIMINATED") == VerdictClass.CLOSED, "ELIMINATED->CLOSED")
+    ok(classify_verdict("CERTIFIED") == VerdictClass.CLOSED, "CERTIFIED->CLOSED")
+    ok(classify_verdict("INTERESTING") == VerdictClass.OPEN, "INTERESTING->OPEN")
+    ok(classify_verdict("SIGNAL") == VerdictClass.OPEN, "SIGNAL->OPEN")
+    ok(classify_verdict("FAILED_TO_ELIMINATE") != VerdictClass.CLOSED,
+       "FAILED_TO_ELIMINATE not CLOSED")
+    ok(classify_verdict("NOT ELIMINATED") != VerdictClass.CLOSED, "NOT ELIMINATED not CLOSED")
+    ok(classify_verdict("UNCLEAR") in (VerdictClass.UNKNOWN, VerdictClass.OPEN),
+       "UNCLEAR open/unknown")
+    ok(classify_verdict("") == VerdictClass.UNKNOWN, "empty->UNKNOWN")
+    ok(classify_verdict(None) == VerdictClass.UNKNOWN, "None->UNKNOWN")
+    ok(classify_verdict("NOISE -- 6/24") == VerdictClass.NOISE, "NOISE phrase->NOISE")
+    ok(classify_verdict("MARGINAL -- LIKELY NOISE") == VerdictClass.NOISE,
+       "MARGINAL+NOISE->NOISE")
+    ok(first_present({"a": 0, "b": 5}, ("a", "b")) == 0, "first_present preserves 0")
+    ok(first_present({"a": None, "b": 5}, ("a", "b")) == 5, "first_present skips None")
+    ok(parse_timestamp("2026-04-08T14:18:44") is not None, "iso timestamp parses")
+    ok(parse_timestamp("garbage") is None, "garbage timestamp -> None")
+    if _KERNEL_OK:
+        ok(abs(compute_ic(CT) - 0.0361) < 0.001, "IC(CT) stable ~0.0361")
+        ok(set(self_encrypting_positions()) == {32, 73}, "self-encrypting {32,73}")
+    ok(compute_ic("AAAA") == 1.0, "IC all-same == 1.0")
+
+    failed = [label for cond, label in checks if not cond]
+    for cond, label in checks:
+        print(f"  {'PASS' if cond else 'FAIL'}  {label}")
+    print(f"\n{len(checks) - len(failed)}/{len(checks)} checks passed")
+    return 1 if failed else 0
+
+
+def main(argv: Optional[list[str]] = None) -> int:
+    parser = argparse.ArgumentParser(description="K4 session briefing (renderer + validator)")
+    parser.add_argument("--strict", action="store_true",
+                        help="exit nonzero if a required source is missing/malformed")
+    parser.add_argument("--debug", action="store_true",
+                        help="include parse-error detail in SOURCE HEALTH")
+    parser.add_argument("--json", action="store_true",
+                        help="emit machine-readable diagnostics/state and exit")
+    parser.add_argument("--self-test", action="store_true",
+                        help="run built-in helper assertions and exit")
+    args = parser.parse_args(argv)
+
+    if args.self_test:
+        return run_self_test()
+
+    if not _KERNEL_OK:
+        print(f"FATAL: kernel constants unavailable ({_KERNEL_ERR}). "
+              f"Run with PYTHONPATH=src.", file=sys.stderr)
+        return 2
+
+    diag = Diagnostics(debug=args.debug)
+    state = build_state(diag)
+
+    if args.json:
+        emit_json(state, diag)
+    else:
+        render(state, diag)
+
+    if args.strict and diag.degraded:
+        print("\n--strict: exiting nonzero due to degraded required source(s).",
+              file=sys.stderr)
+        return 1
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
