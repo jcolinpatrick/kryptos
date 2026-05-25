@@ -96,6 +96,16 @@ REJECTION_CAUSE_SATISFIED = "satisfied"
 REJECTION_CAUSE_EMITTED_AND_ADMISSIBLE = "emitted_and_admissible"
 
 
+# Causes that count as the obligation being closed. Referenced by both
+# _aggregate_pass (the `passed` boolean) and build_report
+# (obligations_satisfied / closure_rate) — keep them on one definition so
+# a future satisfying cause can't be added to one site and missed at the other.
+_SATISFYING_CAUSES: frozenset[str] = frozenset({
+    REJECTION_CAUSE_SATISFIED,
+    REJECTION_CAUSE_EMITTED_AND_ADMISSIBLE,
+})
+
+
 # ─── Event records (one-shot, append-only) ───────────────────────────────────
 
 
@@ -564,6 +574,8 @@ class CoverageAuditCollector:
                 "tested_count": 1,
             }
 
+        # Any single satisfying outcome on any matching spec closes the
+        # obligation (mirrors how any_tested wins over sibling rejections).
         if any_admissible_only:
             return {
                 "matching_spec_ids": matching_ids,
@@ -628,13 +640,9 @@ class CoverageAuditCollector:
             # but guard anyway.
             return (False, [f"profile {self.profile.profile_id!r} has no obligations"])
         fail_reasons: list[str] = []
-        _SATISFYING = {
-            REJECTION_CAUSE_SATISFIED,
-            REJECTION_CAUSE_EMITTED_AND_ADMISSIBLE,
-        }
         for ob in self.profile.obligations:
             diag = self._evaluate_obligation(ob)
-            if diag["cause"] not in _SATISFYING:
+            if diag["cause"] not in _SATISFYING_CAUSES:
                 fail_reasons.append(diag["cause_detail"])
         return (not fail_reasons, fail_reasons)
 
@@ -687,10 +695,7 @@ class CoverageAuditCollector:
         obligations_total = len(self.profile.obligations)
         obligations_satisfied = sum(
             1 for o in per_obligation
-            if o["cause"] in (
-                REJECTION_CAUSE_SATISFIED,
-                REJECTION_CAUSE_EMITTED_AND_ADMISSIBLE,
-            )
+            if o["cause"] in _SATISFYING_CAUSES
         )
         closure_rate = (
             obligations_satisfied / obligations_total
