@@ -162,7 +162,10 @@ def _derive_bean_inequalities(
 ) -> tuple[tuple[int, int], ...]:
     """Variant-independent Bean inequalities: pairs (a, b) where the key
     at a CANNOT equal the key at b under any of the three Vig/Beau/VarBeau
-    variants. The construction mirrors kryptos.kernel.constants._derive_bean_ineq.
+    variants. The construction mirrors the approach in
+    ``kryptos.kernel.constraints.derive.derive_bean_constraints`` (the
+    canonical shared implementation, which superseded the deleted
+    ``kryptos.kernel.constants._derive_bean_ineq``).
     """
     positions = sorted(crib_dict.keys())
 

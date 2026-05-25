@@ -429,7 +429,8 @@ class WorkerContract:
     # three additive variants the kernel accepted — the variant matters
     # for interpreting the derived keystream, even though Bean validity
     # itself is variant-independent at correct cribs (see
-    # kryptos.kernel.constants._derive_bean_ineq).
+    # kryptos.kernel.constraints.derive.derive_bean_constraints, which
+    # superseded the deleted kryptos.kernel.constants._derive_bean_ineq).
     bean_variant: Optional[str] = None
 
     def to_dict(self) -> dict[str, Any]:

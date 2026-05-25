@@ -73,7 +73,8 @@ def _correct_cribs_pt(filler: str = "X") -> str:
 
     Under all three additive variants, this PT produces a keystream that
     satisfies Bean at the 24 crib positions (variant-independence — see
-    kryptos.kernel.constants._derive_bean_ineq). The filler at non-crib
+    kryptos.kernel.constraints.derive.derive_bean_constraints, which
+    superseded the deleted kryptos.kernel.constants._derive_bean_ineq). The filler at non-crib
     positions does not affect Bean (Bean constraints live only at crib
     positions); it only affects crib_score at those positions, which is
     zero since "X" is not a crib letter.
