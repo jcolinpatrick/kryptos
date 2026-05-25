@@ -225,71 +225,9 @@ def enumerate_hamming1_variants(
 
 # ── CT-parametric Bean derivation ────────────────────────────────────────
 
-def derive_bean_constraints(
-    ct: str,
-    crib_dict: Optional[Dict[int, str]] = None,
-    alphabet: Alphabet = AZ,
-) -> Tuple[
-    Tuple[Tuple[int, int], ...],
-    Tuple[Tuple[int, int], ...],
-    Tuple[Tuple[int, int, int, int], ...],
-]:
-    """Re-derive variant-independent Bean (eq, ineq, linear) constraint
-    sets from the supplied CT and crib mapping.
-
-    The supplied alphabet's index table is used for the
-    variant-independence test. For canonical CT, canonical cribs, and
-    AZ indexing this returns the same triple the kernel computed at
-    import time — the identity-reproduction invariant is asserted by
-    tests. KA candidates must use KA-derived constraints; the KA index
-    permutation is not algebraically equivalent to AZ.
-
-    Output sets are in 0-indexed CT coordinates.
-    """
-    _validate_ct(ct)
-    cribs = dict(crib_dict) if crib_dict is not None else dict(CANONICAL_CRIB_DICT)
-    positions = sorted(cribs.keys())
-    idx = alphabet.index_table
-
-    eq: List[Tuple[int, int]] = []
-    ineq: List[Tuple[int, int]] = []
-    linear: List[Tuple[int, int, int, int]] = []
-
-    n = len(positions)
-    # Pairwise eq / ineq
-    for i in range(n):
-        for j in range(i + 1, n):
-            a, b = positions[i], positions[j]
-            ca, pa = idx[ord(ct[a]) - 65], idx[ord(cribs[a]) - 65]
-            cb, pb = idx[ord(ct[b]) - 65], idx[ord(cribs[b]) - 65]
-            vig = (ca - pa) % MOD == (cb - pb) % MOD
-            beau = (ca + pa) % MOD == (cb + pb) % MOD
-            vbeau = (pa - ca) % MOD == (pb - cb) % MOD
-            if vig and beau and vbeau:
-                eq.append((a, b))
-            elif not vig and not beau and not vbeau:
-                ineq.append((a, b))
-
-    # 4-position linear (rank-1 over Z; matches kernel)
-    for i in range(n):
-        for j in range(i + 1, n):
-            for k in range(j + 1, n):
-                for l in range(k + 1, n):
-                    a, b, c, d = positions[i], positions[j], positions[k], positions[l]
-                    for p1, p2, p3, p4 in (
-                        (a, b, c, d), (a, c, b, d), (a, d, b, c),
-                    ):
-                        ca, pa = idx[ord(ct[p1]) - 65], idx[ord(cribs[p1]) - 65]
-                        cb, pb = idx[ord(ct[p2]) - 65], idx[ord(cribs[p2]) - 65]
-                        cc, pc = idx[ord(ct[p3]) - 65], idx[ord(cribs[p3]) - 65]
-                        cd, pd = idx[ord(ct[p4]) - 65], idx[ord(cribs[p4]) - 65]
-                        vig = ((ca - pa) - (cb - pb) - (cc - pc) + (cd - pd)) % MOD
-                        beau = ((ca + pa) - (cb + pb) - (cc + pc) + (cd + pd)) % MOD
-                        vbeau = ((pa - ca) - (pb - cb) - (pc - cc) + (pd - cd)) % MOD
-                        if vig == 0 and beau == 0 and vbeau == 0:
-                            linear.append((p1, p2, p3, p4))
-
-    return tuple(eq), tuple(ineq), tuple(linear)
+# Bean derivation now lives in the core kernel (single source of truth).
+# Re-exported here so existing call sites keep their import path.
+from kryptos.kernel.constraints.bean import derive_bean_constraints  # noqa: E402,F401
 
 
 # ── Keystream recovery at crib positions (CT- and family-parametric) ────
