@@ -73,7 +73,61 @@ def _fresh_collector() -> CoverageAuditCollector:
 
 def test_schema_version_is_pinned() -> None:
     """Schema bumps require an explicit version change."""
-    assert SCHEMA_VERSION == "coverage_report.v1"
+    assert SCHEMA_VERSION == "coverage_report.v2"
+
+
+def test_emitted_and_admissible_is_satisfied(tmp_path: Path) -> None:
+    from kryptosbot.coverage_audit import (
+        CoverageAuditCollector, REJECTION_CAUSE_EMITTED_AND_ADMISSIBLE,
+    )
+    from kryptosbot.synthetic_profiles import get_profile
+    profile = get_profile("T1_SERPENTINE_QUAGMIRE")
+    c = CoverageAuditCollector(profile=profile)
+    c.record_emitted_spec(
+        hypothesis_id="h1", title="t", family="quagmire_iii",
+        layers=[{
+            "kind": "quagmire", "alphabet": "KA",
+            "params": [
+                {"name": "variant", "values": ["quagmire_iii"]},
+                {"name": "period_keyword", "values": ["SERPENTINE"]},
+            ],
+        }],
+    )
+    c.record_dispatcher_outcome(
+        hypothesis_id="h1", admissibility_verdict="ok",
+        admissibility_only=True, total_tested=0,
+    )
+    report = c.build_report()
+    causes = [o["cause"] for o in report.per_obligation]
+    assert REJECTION_CAUSE_EMITTED_AND_ADMISSIBLE in causes
+    assert report.passed is True
+
+
+def test_admissibility_only_false_still_halts(tmp_path: Path) -> None:
+    from kryptosbot.coverage_audit import (
+        CoverageAuditCollector, REJECTION_CAUSE_HALTED_BEFORE_DISPATCH,
+    )
+    from kryptosbot.synthetic_profiles import get_profile
+    profile = get_profile("T1_SERPENTINE_QUAGMIRE")
+    c = CoverageAuditCollector(profile=profile)
+    c.record_emitted_spec(
+        hypothesis_id="h1", title="t", family="quagmire_iii",
+        layers=[{
+            "kind": "quagmire", "alphabet": "KA",
+            "params": [
+                {"name": "variant", "values": ["quagmire_iii"]},
+                {"name": "period_keyword", "values": ["SERPENTINE"]},
+            ],
+        }],
+    )
+    c.record_dispatcher_outcome(
+        hypothesis_id="h1", admissibility_verdict="ok",
+        admissibility_only=False, total_tested=0,
+    )
+    report = c.build_report()
+    causes = [o["cause"] for o in report.per_obligation]
+    assert REJECTION_CAUSE_HALTED_BEFORE_DISPATCH in causes
+    assert report.passed is False
 
 
 def test_empty_run_fails_with_never_emitted() -> None:

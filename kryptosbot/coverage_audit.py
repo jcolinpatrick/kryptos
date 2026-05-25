@@ -34,6 +34,10 @@ Artifact schema lives in ``CoverageReport.to_dict``. The schema version
 is pinned at ``schema_version="coverage_report.v1"`` for downstream
 parsers. A schema bump requires a new version string and a migration
 note in this docstring.
+
+v2 (2026-05-25): adds the emitted_and_admissible cause and the
+DispatcherOutcomeRecord.admissibility_only field for the deterministic
+coverage scheduler. v1 parsers remain valid for v1 artifacts.
 """
 
 from __future__ import annotations
@@ -59,7 +63,7 @@ logger = logging.getLogger("kryptosbot.coverage_audit")
 # ─── Constants ──────────────────────────────────────────────────────────────
 
 
-SCHEMA_VERSION = "coverage_report.v1"
+SCHEMA_VERSION = "coverage_report.v2"
 
 
 # Default signal threshold mirrors the kernel scoring layer's SIGNAL=18.
@@ -84,6 +88,12 @@ REJECTION_CAUSE_TESTED_NO_SIGNAL = "tested_but_no_signal"
 # admissibility failure that didn't actually happen.
 REJECTION_CAUSE_HALTED_BEFORE_DISPATCH = "halted_before_dispatch"
 REJECTION_CAUSE_SATISFIED = "satisfied"
+# v2: the obligation's matching spec was emitted AND passed the
+# dispatcher's admissibility/translation gate, but execution was
+# intentionally skipped (coverage scheduler, Approach A). Counts as
+# SATISFIED. Distinct from REJECTION_CAUSE_HALTED_BEFORE_DISPATCH, which
+# is an "ok"-but-no-marker dry-run/halt with no admissibility_only flag.
+REJECTION_CAUSE_EMITTED_AND_ADMISSIBLE = "emitted_and_admissible"
 
 
 # ─── Event records (one-shot, append-only) ───────────────────────────────────
@@ -180,6 +190,7 @@ class DispatcherOutcomeRecord:
     universe_hash: str = ""
     signal_alert: bool = False
     breakthrough_alert: bool = False
+    admissibility_only: bool = False
     recorded_at: str = ""
 
     def to_dict(self) -> dict[str, Any]:
@@ -195,6 +206,7 @@ class DispatcherOutcomeRecord:
             "universe_hash": self.universe_hash,
             "signal_alert": self.signal_alert,
             "breakthrough_alert": self.breakthrough_alert,
+            "admissibility_only": self.admissibility_only,
             "recorded_at": self.recorded_at,
         }
 
@@ -406,6 +418,7 @@ class CoverageAuditCollector:
         universe_hash: str = "",
         signal_alert: bool = False,
         breakthrough_alert: bool = False,
+        admissibility_only: bool = False,
     ) -> None:
         try:
             reasons = list(admissibility_reasons or [])
@@ -425,6 +438,7 @@ class CoverageAuditCollector:
                     universe_hash=universe_hash,
                     signal_alert=bool(signal_alert),
                     breakthrough_alert=bool(breakthrough_alert),
+                    admissibility_only=bool(admissibility_only),
                     recorded_at=_now_iso(),
                 )
             )
@@ -508,6 +522,7 @@ class CoverageAuditCollector:
 
         # Check dispatcher outcomes.
         any_tested = False
+        any_admissible_only = False
         any_rejected_admissibility = False
         any_exhaustion_overlap = False
         best_score_seen = 0.0
@@ -519,6 +534,8 @@ class CoverageAuditCollector:
                 if d.total_tested > 0:
                     any_tested = True
                     best_score_seen = max(best_score_seen, d.best_score)
+                elif d.admissibility_only:
+                    any_admissible_only = True
             else:
                 any_rejected_admissibility = True
                 if d.is_exhaustion_overlap:
@@ -545,6 +562,18 @@ class CoverageAuditCollector:
                     f"{self.signal_threshold}"
                 ),
                 "tested_count": 1,
+            }
+
+        if any_admissible_only:
+            return {
+                "matching_spec_ids": matching_ids,
+                "cause": REJECTION_CAUSE_EMITTED_AND_ADMISSIBLE,
+                "cause_detail": (
+                    "obligation matched and the closing spec passed the "
+                    "dispatcher admissibility gate; execution intentionally "
+                    "skipped (coverage scheduler, emitted+admissible)"
+                ),
+                "tested_count": 0,
             }
 
         if any_exhaustion_overlap:
@@ -599,9 +628,13 @@ class CoverageAuditCollector:
             # but guard anyway.
             return (False, [f"profile {self.profile.profile_id!r} has no obligations"])
         fail_reasons: list[str] = []
+        _SATISFYING = {
+            REJECTION_CAUSE_SATISFIED,
+            REJECTION_CAUSE_EMITTED_AND_ADMISSIBLE,
+        }
         for ob in self.profile.obligations:
             diag = self._evaluate_obligation(ob)
-            if diag["cause"] != REJECTION_CAUSE_SATISFIED:
+            if diag["cause"] not in _SATISFYING:
                 fail_reasons.append(diag["cause_detail"])
         return (not fail_reasons, fail_reasons)
 
@@ -654,7 +687,10 @@ class CoverageAuditCollector:
         obligations_total = len(self.profile.obligations)
         obligations_satisfied = sum(
             1 for o in per_obligation
-            if o["cause"] == REJECTION_CAUSE_SATISFIED
+            if o["cause"] in (
+                REJECTION_CAUSE_SATISFIED,
+                REJECTION_CAUSE_EMITTED_AND_ADMISSIBLE,
+            )
         )
         closure_rate = (
             obligations_satisfied / obligations_total
@@ -882,6 +918,7 @@ __all__ = [
     "REJECTION_CAUSE_TESTED_NO_SIGNAL",
     "REJECTION_CAUSE_HALTED_BEFORE_DISPATCH",
     "REJECTION_CAUSE_SATISFIED",
+    "REJECTION_CAUSE_EMITTED_AND_ADMISSIBLE",
     "CoverageAuditCollector",
     "CoverageReport",
     "EmittedSpecRecord",
