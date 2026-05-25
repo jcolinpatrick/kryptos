@@ -29,8 +29,12 @@ def derive_bean_constraints(
     positions = sorted(crib_dict.keys())
     n = len(positions)
 
-    def cp(pos: int) -> Tuple[int, int]:
-        return index_table[ord(ct[pos]) - 65], index_table[ord(crib_dict[pos]) - 65]
+    # Pre-materialise per-position (ct_idx, pt_idx) pairs once.  Avoids a
+    # closure-call overhead that becomes significant when this function is
+    # invoked thousands of times (e.g., once per Hamming-1 CT variant in the
+    # Stage-A sweep).
+    ci = [index_table[ord(ct[p]) - 65] for p in positions]
+    pi = [index_table[ord(crib_dict[p]) - 65] for p in positions]
 
     eq: list[Tuple[int, int]] = []
     ineq: list[Tuple[int, int]] = []
@@ -39,8 +43,8 @@ def derive_bean_constraints(
     for i in range(n):
         for j in range(i + 1, n):
             a, b = positions[i], positions[j]
-            ca, pa = cp(a)
-            cb, pb = cp(b)
+            ca, pa = ci[i], pi[i]
+            cb, pb = ci[j], pi[j]
             vig = (ca - pa) % mod == (cb - pb) % mod
             beau = (ca + pa) % mod == (cb + pb) % mod
             vbeau = (pa - ca) % mod == (pb - cb) % mod
@@ -54,15 +58,15 @@ def derive_bean_constraints(
             for k in range(j + 1, n):
                 for l in range(k + 1, n):
                     a, b, c, d = positions[i], positions[j], positions[k], positions[l]
-                    for p1, p2, p3, p4 in ((a, b, c, d), (a, c, b, d), (a, d, b, c)):
-                        ca, pa = cp(p1)
-                        cb, pb = cp(p2)
-                        cc, pc = cp(p3)
-                        cd, pd = cp(p4)
+                    for ri, rj, rk, rl in ((i, j, k, l), (i, k, j, l), (i, l, j, k)):
+                        ca, pa = ci[ri], pi[ri]
+                        cb, pb = ci[rj], pi[rj]
+                        cc, pc = ci[rk], pi[rk]
+                        cd, pd = ci[rl], pi[rl]
                         vig = ((ca - pa) - (cb - pb) - (cc - pc) + (cd - pd)) % mod
                         beau = ((ca + pa) - (cb + pb) - (cc + pc) + (cd + pd)) % mod
                         vbeau = ((pa - ca) - (pb - cb) - (pc - cc) + (pd - cd)) % mod
                         if vig == 0 and beau == 0 and vbeau == 0:
-                            linear.append((p1, p2, p3, p4))
+                            linear.append((positions[ri], positions[rj], positions[rk], positions[rl]))
 
     return tuple(eq), tuple(ineq), tuple(linear)

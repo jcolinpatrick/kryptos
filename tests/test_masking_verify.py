@@ -91,3 +91,22 @@ def test_solve_interface_is_defined_but_deferred():
     with pytest.raises(NotImplementedError):
         next(solve(mask_universe=[frozenset()], mechanism_family=None,
                    constraint_oracle=verify_masked_candidate))
+
+
+# ---------------------------------------------------------------------------
+# Task 9: empty-mask known-answer reduction guard
+# ---------------------------------------------------------------------------
+
+def test_empty_mask_matches_unmasked_crib_score():
+    from kryptos.kernel.transforms.vigenere import decrypt_text, CipherVariant
+    from kryptos.kernel.alphabet import AZ
+    from kryptos.kernel.scoring.aggregate import score_candidate
+    from kryptos.kernel.constants import CT, CRIB_DICT
+    from kryptos.kernel.masking.verify import verify_masked_candidate
+    key = [0] * 97
+    pt = decrypt_text(CT, key, CipherVariant.VIGENERE, alphabet=AZ)
+    ref = score_candidate(pt).crib_score
+    res = verify_masked_candidate(CT, frozenset(), CipherVariant.VIGENERE, key,
+                                  crib_dict=CRIB_DICT, alphabet=AZ)
+    assert res.crib_score == ref
+    assert res.pt_len == 97
