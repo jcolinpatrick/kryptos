@@ -12,6 +12,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Dict, List, Optional, Tuple
 
+from kryptos.kernel.alphabet import AZ, Alphabet
 from kryptos.kernel.constants import (
     ALPH_IDX,
     BEAN_EQ,
@@ -21,6 +22,10 @@ from kryptos.kernel.constants import (
     CT,
     CT_LEN,
     MOD,
+)
+from kryptos.kernel.constraints.derive import (
+    BeanConstraints,
+    derive_bean_constraints as _derive_core,
 )
 
 
@@ -56,6 +61,53 @@ class BeanResult:
         return f"FAIL: {'; '.join(parts)}"
 
 
+def derive_bean_constraints(
+    ct: str,
+    crib_dict: Optional[Dict[int, str]] = None,
+    alphabet: Alphabet = AZ,
+) -> BeanConstraints:
+    """Alphabet-aware Bean derivation. Canonical args reproduce the kernel's
+    frozen sets; masked / KA callers pass their own ct/crib_dict/alphabet."""
+    cribs = dict(crib_dict) if crib_dict is not None else dict(CRIB_DICT)
+    return _derive_core(ct, cribs, alphabet.index_table, MOD)
+
+
+def check_bean(
+    keystream: List[int],
+    eq: Tuple[Tuple[int, int], ...],
+    ineq: Tuple[Tuple[int, int], ...],
+    linear: Tuple[Tuple[int, int, int, int], ...],
+    mod: int = MOD,
+) -> BeanResult:
+    """Verify a keystream against EXPLICIT constraint sets (any length).
+
+    Used for per-mask verification where the keystream length is 97-|mask|
+    and the constraint sets are re-derived for that mask. Positions referenced
+    by the sets must be in range for `keystream`.
+    """
+    eq_failures: list[tuple[int, int, int, int]] = []
+    ineq_failures: list[tuple[int, int, int]] = []
+    linear_failures: list[tuple[int, int, int, int, int]] = []
+    for a, b in eq:
+        if keystream[a] != keystream[b]:
+            eq_failures.append((a, b, keystream[a], keystream[b]))
+    for a, b in ineq:
+        if keystream[a] == keystream[b]:
+            ineq_failures.append((a, b, keystream[a]))
+    for a, b, c, d in linear:
+        residue = (keystream[a] - keystream[b] - keystream[c] + keystream[d]) % mod
+        if residue != 0:
+            linear_failures.append((a, b, c, d, residue))
+    return BeanResult(
+        passed=(not eq_failures and not ineq_failures and not linear_failures),
+        eq_satisfied=len(eq) - len(eq_failures), eq_total=len(eq),
+        ineq_satisfied=len(ineq) - len(ineq_failures), ineq_total=len(ineq),
+        linear_satisfied=len(linear) - len(linear_failures), linear_total=len(linear),
+        eq_failures=eq_failures, ineq_failures=ineq_failures,
+        linear_failures=linear_failures,
+    )
+
+
 def verify_bean(keystream: List[int]) -> BeanResult:
     """Verify Bean constraints on a full-length CT97 keystream.
 
@@ -86,43 +138,7 @@ def verify_bean(keystream: List[int]) -> BeanResult:
             f"verify_bean requires a length-{CT_LEN} keystream, got {len(keystream)}. "
             f"For sparse / partial keystreams use verify_bean_from_implied(dict)."
         )
-
-    eq_failures: list[tuple[int, int, int, int]] = []
-    ineq_failures: list[tuple[int, int, int]] = []
-    linear_failures: list[tuple[int, int, int, int, int]] = []
-
-    for a, b in BEAN_EQ:
-        if keystream[a] != keystream[b]:
-            eq_failures.append((a, b, keystream[a], keystream[b]))
-
-    for a, b in BEAN_INEQ:
-        if keystream[a] == keystream[b]:
-            ineq_failures.append((a, b, keystream[a]))
-
-    for a, b, c, d in BEAN_LINEAR:
-        residue = (keystream[a] - keystream[b]
-                   - keystream[c] + keystream[d]) % MOD
-        if residue != 0:
-            linear_failures.append((a, b, c, d, residue))
-
-    eq_sat = len(BEAN_EQ) - len(eq_failures)
-    ineq_sat = len(BEAN_INEQ) - len(ineq_failures)
-    linear_sat = len(BEAN_LINEAR) - len(linear_failures)
-
-    return BeanResult(
-        passed=(len(eq_failures) == 0
-                and len(ineq_failures) == 0
-                and len(linear_failures) == 0),
-        eq_satisfied=eq_sat,
-        eq_total=len(BEAN_EQ),
-        ineq_satisfied=ineq_sat,
-        ineq_total=len(BEAN_INEQ),
-        linear_satisfied=linear_sat,
-        linear_total=len(BEAN_LINEAR),
-        eq_failures=eq_failures,
-        ineq_failures=ineq_failures,
-        linear_failures=linear_failures,
-    )
+    return check_bean(keystream, BEAN_EQ, BEAN_INEQ, BEAN_LINEAR, MOD)
 
 
 def verify_bean_simple(keystream: List[int]) -> bool:
