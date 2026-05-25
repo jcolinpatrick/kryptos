@@ -104,6 +104,9 @@ def run_coverage_schedule(
 
     Returns the built CoverageReport. The caller (run_controller) writes
     it to disk via the existing collector.write_report path.
+
+    project_root is accepted for caller-signature symmetry (run_controller
+    passes it; the report is written to disk by the caller, not here).
     """
     collector.add_note("coverage-scheduler: Approach A (emitted+admissible, no execution)")
 
@@ -112,15 +115,16 @@ def run_coverage_schedule(
             f"coverage-scheduler refused blocked profile: {profile.blocked_reason}"
         )
         report = collector.build_report()
-        # Surface the refusal in fail_reasons so callers (and the PR1
-        # report contract) see an explicit "blocked" cause, not only the
-        # generic "no obligations" guard. The scheduler refuses blocked
-        # profiles by construction, mirroring PR1's launch refusal.
+        # Replace fail_reasons with a single clear blocked cause so callers
+        # (and the PR1 report contract) see an explicit "blocked" message,
+        # not the generic "no obligations" guard alongside it. The scheduler
+        # refuses blocked profiles by construction, mirroring PR1's launch
+        # refusal.
         report.passed = False
-        report.fail_reasons.append(
-            f"coverage-scheduler refused blocked profile "
-            f"{profile.profile_id!r}: {profile.blocked_reason}"
-        )
+        report.fail_reasons = [
+            f"coverage-scheduler refused blocked profile {profile.profile_id!r}: "
+            f"{profile.blocked_reason}"
+        ]
         return report
 
     consistency_errors = verify_profile_closing_spec(profile)
