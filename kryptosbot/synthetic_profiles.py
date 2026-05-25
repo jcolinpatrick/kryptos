@@ -179,6 +179,18 @@ class SyntheticProfile:
     blocked_reason: str = ""            # required when status="blocked"
     required_kinds: tuple[str, ...] = ()  # DSL cipher kinds the profile needs supported
     obligations: tuple[ParameterObligation, ...] = ()
+    # PR 2: explicit, auditable closing spec for the coverage scheduler.
+    # A DSL HypothesisSpec in dict form (round-trips via
+    # HypothesisSpec.from_dict). The obligation-relevant axis is pinned
+    # to the required value so the scheduler can emit+admit a spec that
+    # closes the obligation deterministically, independent of the LLM.
+    # Required for "available" profiles; forbidden for "blocked".
+    # NOTE: kept as a raw dict to preserve this module's data-only,
+    # dependency-free posture. Structural consistency (the spec actually
+    # satisfies the obligation) is verified by
+    # coverage_scheduler.verify_profile_closing_spec, NOT here, to avoid
+    # importing the DSL into the registry module.
+    closing_spec: Optional[dict[str, Any]] = None
     notes: str = ""
 
     def __post_init__(self) -> None:
@@ -200,6 +212,16 @@ class SyntheticProfile:
                 f"SyntheticProfile {self.profile_id!r}: available status "
                 f"requires at least one obligation"
             )
+        if self.status == "available" and not self.closing_spec:
+            raise ValueError(
+                f"SyntheticProfile {self.profile_id!r}: available status "
+                f"requires a closing_spec (PR 2 coverage scheduler)"
+            )
+        if self.status == "blocked" and self.closing_spec:
+            raise ValueError(
+                f"SyntheticProfile {self.profile_id!r}: blocked status "
+                f"must NOT carry a closing_spec"
+            )
 
     def pass_condition_summary(self) -> str:
         """One-line description of what must be observed to pass."""
@@ -220,6 +242,7 @@ class SyntheticProfile:
             "status": self.status,
             "blocked_reason": self.blocked_reason,
             "required_kinds": list(self.required_kinds),
+            "closing_spec": self.closing_spec,
             "notes": self.notes,
             "obligations": [
                 {
@@ -348,6 +371,24 @@ _T1_SERPENTINE_QUAGMIRE = SyntheticProfile(
             minimum_expected_dispatch=1,
         ),
     ),
+    closing_spec={
+        "hypothesis_id": "T1_SERPENTINE_QUAGMIRE__closing",
+        "pipeline": [
+            {
+                "kind": "quagmire",
+                "alphabet": "KA",
+                "params": [
+                    {"name": "variant", "values": ["quagmire_iii"]},
+                    {"name": "period_keyword", "values": ["SERPENTINE"]},
+                    {"name": "ct_alphabet_keyword", "values": ["KRYPTOS"]},
+                    {"name": "pt_alphabet_keyword", "values": ["KRYPTOS"]},
+                ],
+            }
+        ],
+        "null_baseline": {"method": "random_text", "n_samples": 10000},
+        "compute_budget_cpu_minutes": 30,
+        "notes": "PR2 closing spec for T1_SERPENTINE_QUAGMIRE obligation.",
+    },
     notes=(
         "Postmortem reference: SERPENTINE existed in the proposal "
         "distribution but never reached the dispatcher under the "
@@ -385,6 +426,21 @@ _T1_BERLINKLOCK_COLUMNAR = SyntheticProfile(
             minimum_expected_dispatch=1,
         ),
     ),
+    closing_spec={
+        "hypothesis_id": "T1_BERLINKLOCK_COLUMNAR__closing",
+        "pipeline": [
+            {
+                "kind": "columnar",
+                "alphabet": "AZ",
+                "params": [
+                    {"name": "keyword", "values": ["BERLINKLOCK"]},
+                ],
+            }
+        ],
+        "null_baseline": {"method": "random_text", "n_samples": 10000},
+        "compute_budget_cpu_minutes": 30,
+        "notes": "PR2 closing spec for T1_BERLINKLOCK_COLUMNAR obligation.",
+    },
     notes=(
         "Berlin Clock anchor exposure check. The columnar keyword axis "
         "is the natural target; alternate spellings (BERLINCLOCK, "
@@ -420,6 +476,21 @@ _T1_ABSCISSA_ROUTE = SyntheticProfile(
             minimum_expected_dispatch=1,
         ),
     ),
+    closing_spec={
+        "hypothesis_id": "T1_ABSCISSA_ROUTE__closing",
+        "pipeline": [
+            {
+                "kind": "route",
+                "alphabet": "AZ",
+                "params": [
+                    {"name": "keyword", "values": ["ABSCISSA"]},
+                ],
+            }
+        ],
+        "null_baseline": {"method": "random_text", "n_samples": 10000},
+        "compute_budget_cpu_minutes": 30,
+        "notes": "PR2 closing spec for T1_ABSCISSA_ROUTE obligation.",
+    },
     notes=(
         "ABSCISSA is one of the AAA-archive procedural terms. The "
         "obligation pins it on the route layer; vigenere-keyword "

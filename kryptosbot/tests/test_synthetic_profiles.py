@@ -281,6 +281,43 @@ def test_all_profiles_returns_in_stable_order() -> None:
     assert all(isinstance(p, SyntheticProfile) for p in profiles)
 
 
+def test_available_profiles_carry_closing_spec() -> None:
+    from kryptosbot.synthetic_profiles import all_profiles
+    for p in all_profiles():
+        if p.status == "available":
+            assert p.closing_spec, (
+                f"available profile {p.profile_id} must carry a closing_spec"
+            )
+            assert isinstance(p.closing_spec, dict)
+            assert p.closing_spec.get("pipeline"), (
+                f"{p.profile_id} closing_spec needs a non-empty pipeline"
+            )
+
+
+def test_blocked_profile_has_no_closing_spec() -> None:
+    from kryptosbot.synthetic_profiles import get_profile
+    p = get_profile("T1_TAPE_K3PT")
+    assert p.status == "blocked"
+    assert not p.closing_spec
+
+
+def test_available_without_closing_spec_raises() -> None:
+    from kryptosbot.synthetic_profiles import (
+        SyntheticProfile, ParameterObligation,
+    )
+    import pytest
+    with pytest.raises(ValueError):
+        SyntheticProfile(
+            profile_id="X", description="d", status="available",
+            obligations=(ParameterObligation(
+                expected_family="f", expected_layer_kind="columnar",
+                expected_parameter_axis="keyword",
+                expected_parameter_value="K",
+            ),),
+            closing_spec=None,
+        )
+
+
 def test_profile_to_dict_round_trips_serializable() -> None:
     """SyntheticProfile.to_dict() must produce a JSON-serializable shape.
 
