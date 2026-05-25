@@ -17,24 +17,41 @@ def score_cribs(text: str) -> int:
     )
 
 
-def score_cribs_detailed(text: str) -> Dict[str, object]:
+def score_cribs_detailed(
+    text: str,
+    crib_dict: Optional[Dict[int, str]] = None,
+) -> Dict[str, object]:
     """Detailed crib scoring with breakdown.
+
+    Args:
+        text: Candidate plaintext (uppercase A-Z).
+        crib_dict: Optional mapping of {position: expected_char}.  When
+            None (the default) the canonical CRIB_DICT from
+            ``kryptos.kernel.constants`` is used, preserving exact
+            backward-compatibility for all existing callers.  Pass a
+            custom dict to score against remapped crib positions (e.g.
+            after mask extraction for a masked-CT hypothesis).
 
     Returns dict with:
     - score: total matching positions
-    - total: 24
-    - ene_score: EASTNORTHEAST matches (0-13)
-    - bc_score: BERLINCLOCK matches (0-11)
+    - total: len(cribs) — 24 for the canonical dict, or len(crib_dict)
+             for a custom one
+    - ene_score: EASTNORTHEAST matches (0-13); 0 when using a custom dict
+                 whose positions fall outside 21-33
+    - bc_score: BERLINCLOCK matches (0-11); 0 when using a custom dict
+                whose positions fall outside 63-73
     - matched_positions: list of matching positions
     - failed_positions: list of non-matching positions with expected/actual
     - classification: 'noise' | 'interesting' | 'signal' | 'breakthrough'
     """
+    cribs = CRIB_DICT if crib_dict is None else crib_dict
+
     matched: list[int] = []
     failed: list[dict] = []
     ene_score = 0
     bc_score = 0
 
-    for pos, expected in CRIB_DICT.items():
+    for pos, expected in cribs.items():
         if pos < len(text) and text[pos] == expected:
             matched.append(pos)
             if 21 <= pos <= 33:
@@ -58,7 +75,7 @@ def score_cribs_detailed(text: str) -> Dict[str, object]:
 
     return {
         "score": score,
-        "total": N_CRIBS,
+        "total": len(cribs),
         "ene_score": ene_score,
         "bc_score": bc_score,
         "matched_positions": matched,

@@ -113,6 +113,7 @@ def score_candidate(
     ngram_scorer=None,
     word_scorer=None,
     include_p_values: bool = False,
+    crib_dict: Optional[Dict[int, str]] = None,
 ) -> ScoreBreakdown:
     """Score a plaintext candidate through the canonical evaluation path.
 
@@ -123,13 +124,18 @@ def score_candidate(
         bean_result: Optional pre-computed Bean result
         ngram_scorer: Optional NgramScorer for language quality
         word_scorer: Optional WordScorer for word-level English detection
+        crib_dict: Optional mapping of {position: expected_char}.  When
+            None (the default) the canonical CRIB_DICT is used, preserving
+            exact backward-compatibility.  Pass a custom dict for masked
+            hypotheses where cribs land at remapped positions.
 
     Returns:
         ScoreBreakdown with full diagnostic information
     """
     # Crib scoring
-    detail = score_cribs_detailed(plaintext)
+    detail = score_cribs_detailed(plaintext, crib_dict=crib_dict)
     crib_sc = detail["score"]
+    crib_total = len(crib_dict) if crib_dict is not None else N_CRIBS
 
     # IC
     ic_val = ic(plaintext)
@@ -168,7 +174,7 @@ def score_candidate(
 
     return ScoreBreakdown(
         crib_score=crib_sc,
-        crib_total=N_CRIBS,
+        crib_total=crib_total,
         ene_score=detail["ene_score"],
         bc_score=detail["bc_score"],
         crib_classification=detail["classification"],
