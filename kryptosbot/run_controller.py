@@ -550,10 +550,12 @@ def parse_args() -> argparse.Namespace:
         "--coverage-scheduler-enabled",
         action="store_true",
         help=(
-            "PR 2 scope (deterministic coverage scheduler). PARSED BUT "
-            "INERT in PR 1 — recorded in coverage_report.extra_notes "
-            "for audit and reserved for PR 2 wiring. Setting this in "
-            "PR 1 does NOT alter generation."
+            "Run the deterministic coverage scheduler instead of the LLM "
+            "cycle. Requires --synthetic-profile. For each available "
+            "profile, builds the explicit closing_spec and records whether "
+            "it is emitted + admissible (passes the dispatcher admissibility "
+            "gate); never executes the kernel. Writes the coverage report as "
+            "usual."
         ),
     )
 

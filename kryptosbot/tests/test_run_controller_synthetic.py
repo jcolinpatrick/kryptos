@@ -60,6 +60,8 @@ def test_scheduler_flag_with_profile_advertised_in_help() -> None:
     result = _run_cli("--help")
     assert result.returncode == 0
     assert "--coverage-scheduler-enabled" in result.stdout
+    assert "INERT" not in result.stdout
+    assert "does NOT alter" not in result.stdout
 
 
 def test_unknown_profile_id_rejected() -> None:
