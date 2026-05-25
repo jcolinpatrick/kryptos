@@ -44,3 +44,16 @@ def test_universe_hash_is_deterministic_and_present():
     u = _universe()
     assert u.universe_hash == _universe().universe_hash
     assert len(u.universe_hash) == 64  # sha256 hex
+
+def test_universe_hash_is_order_independent():
+    a = MaskUniverse(masks=(frozenset({0}), frozenset({1, 2})), description="x")
+    b = MaskUniverse(masks=(frozenset({1, 2}), frozenset({0})), description="x")
+    assert a.universe_hash == b.universe_hash
+
+def test_whitespace_stop_rule_rejected():
+    h = MaskHypothesis(
+        mask_universe=MaskUniverse(masks=(frozenset(),), description="d"),
+        alignment_model="arbitrary_null_mask", provenance="p",
+        assumption_bundle=(), tier="secondary_exploratory", stop_rule="   ",
+    )
+    assert any("stop_rule" in e for e in validate_mask_hypothesis(h))

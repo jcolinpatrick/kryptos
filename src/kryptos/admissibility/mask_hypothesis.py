@@ -27,9 +27,10 @@ class MaskUniverse:
 
     @property
     def universe_hash(self) -> str:
-        payload = "|".join(
+        canon = sorted(
             ",".join(str(p) for p in sorted(m)) for m in self.masks
         )
+        payload = "|".join(canon)
         return hashlib.sha256(payload.encode("utf-8")).hexdigest()
 
 
@@ -50,7 +51,7 @@ def validate_mask_hypothesis(h: MaskHypothesis) -> list[str]:
         errors.append(f"unknown alignment_model {h.alignment_model!r}")
     if not h.mask_universe.masks:
         errors.append("mask_universe is empty (no bounded universe)")
-    if not h.stop_rule:
+    if not h.stop_rule.strip():
         errors.append("missing stop_rule")
     if h.tier == "primary_evidentiary" and not h.provenance.strip():
         errors.append("primary_evidentiary tier requires a provenance artifact")
