@@ -28,6 +28,13 @@ AUDITED_DISPATCH_SITES: dict[str, str] = {
     "kryptosbot/controller.py": "value_check_only",
     "kryptosbot/research_tools.py": "import_only",
     "kryptosbot/theory_ledger.py": "import_only",
+    # PR 1 (2026-05-17): coverage_audit stores decision as a string
+    # (CriticDecision.value) and compares only against the literal
+    # "approve" sentinel inside _evaluate_obligation. Any new
+    # CriticDecision variant falls through to the "rejected" side of
+    # the comparison — the safe default. No CriticDecision import; only
+    # a comment in the EmittedSpecRecord schema docstring.
+    "kryptosbot/coverage_audit.py": "value_check_only",
 }
 
 

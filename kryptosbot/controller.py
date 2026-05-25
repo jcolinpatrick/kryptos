@@ -473,6 +473,23 @@ class ControllerConfig:
         ).DEFAULT_POLICY
     )
 
+    # PR 1 (2026-05-17) synthetic profile observability. When non-None,
+    # the cycle loop and dispatcher emit record_* events through this
+    # collector so a coverage report can be assembled at end-of-run.
+    # None (default) preserves pre-PR-1 behavior bit-for-bit.
+    #
+    # The collector is owned by run_controller.main; the controller does
+    # NOT instantiate one of its own. PR 2 (coverage scheduler) will read
+    # the same collector to drive deterministic spec emission, but in PR
+    # 1 the collector is observability-only.
+    coverage_collector: Optional[Any] = None
+
+    # PR 1: parsed-but-inert flag for the coverage scheduler. Recorded
+    # on the config so PR 2 can land behind a flag without re-touching
+    # CLI plumbing. PR 1 reads this only to surface it on the coverage
+    # report's extra_notes for audit; it does NOT alter generation.
+    coverage_scheduler_enabled: bool = False
+
     @property
     def is_bench_mode(self) -> bool:
         """True iff the controller is running a K4Bench challenge.
@@ -737,6 +754,28 @@ class ResearchController:
                 "Pantheon roster unavailable (%s) — theorist will fall back "
                 "to generic system prompt for this session.",
                 exc,
+            )
+
+    # PR 1 (2026-05-17): synthetic profile coverage collector helper.
+    # All call sites that want to feed events to the optional collector
+    # go through this single chokepoint. If the collector is None
+    # (the default — real-K4 runs, every test that does not opt in),
+    # this is a fast no-op. If the collector raises, the exception is
+    # swallowed: a synthetic-profile observability bug must NEVER break
+    # the cycle. Matches the policy on CycleCallbacks.emit.
+    def _coverage_record(self, method_name: str, **kwargs: Any) -> None:
+        collector = getattr(self.config, "coverage_collector", None)
+        if collector is None:
+            return
+        method = getattr(collector, method_name, None)
+        if method is None:
+            return
+        try:
+            method(**kwargs)
+        except Exception:
+            logger.exception(
+                "coverage collector method %s raised; ignored",
+                method_name,
             )
 
     def _begin_cycle_phase_state(self) -> None:
@@ -1606,6 +1645,23 @@ class ResearchController:
                 )
                 logger.info("Generated %d candidate theories", len(candidates))
 
+                # PR 1 (2026-05-17): emit one record_emitted_spec event
+                # per generated theory so the coverage collector sees the
+                # post-generation spec surface. The dsl_spec dict contains
+                # the layer/param structure the obligation matcher reads.
+                # No-op when coverage_collector is None.
+                for _c in candidates:
+                    _layers = (_c.dsl_spec or {}).get("pipeline", []) or []
+                    self._coverage_record(
+                        "record_emitted_spec",
+                        hypothesis_id=_c.hypothesis_id,
+                        title=_c.title or "",
+                        family=_c.family or "",
+                        spec_hash=(_c.dsl_spec or {}).get("spec_hash", ""),
+                        layers=_layers,
+                        origin=_c.origin or "theorist_agent",
+                    )
+
                 if not candidates:
                     if self.should_abort_run():
                         logger.warning(
@@ -1653,9 +1709,27 @@ class ResearchController:
                             "on_critic_result",
                             theory.title, "approve", 1.0, "",
                         )
+                        # PR 1: skip-critic path still records an
+                        # "approve" outcome so the coverage collector
+                        # sees the spec progressed past the critic gate.
+                        self._coverage_record(
+                            "record_critic_outcome",
+                            hypothesis_id=theory.hypothesis_id,
+                            decision="approve",
+                            confidence=1.0,
+                            reasons=["skip_critic flag set"],
+                        )
                     else:
                         verdict = self.critic.evaluate(theory)
                         theory.critic_verdict = verdict
+                        # PR 1: record the critic verdict for coverage.
+                        self._coverage_record(
+                            "record_critic_outcome",
+                            hypothesis_id=theory.hypothesis_id,
+                            decision=verdict.decision.value,
+                            confidence=verdict.confidence,
+                            reasons=list(verdict.reasons),
+                        )
                         theory.status = (
                             TheoryStatus.APPROVED
                             if verdict.decision == CriticDecision.APPROVE
@@ -4207,6 +4281,16 @@ launder an untranslatable theory through a fake spec.
                         "dsl_spec_hash": spec.spec_hash,
                     },
                 )
+                # PR 1: dispatcher-outcome event for the admissibility-
+                # rejected branch. The "exhaustion overlap" detail is
+                # in `reasons`; the collector classifies that on its own.
+                self._coverage_record(
+                    "record_dispatcher_outcome",
+                    hypothesis_id=theory.hypothesis_id,
+                    spec_hash=spec.spec_hash,
+                    admissibility_verdict="rejected",
+                    admissibility_reasons=list(reasons),
+                )
                 if on_message:
                     on_message(
                         theory.hypothesis_id, "done",
@@ -4249,6 +4333,18 @@ launder an untranslatable theory through a fake spec.
                     error=f"dispatch raised: {type(exc).__name__}: {exc}",
                     duration_seconds=elapsed,
                 )
+                # PR 1: dispatcher raised — record as an admissibility
+                # error (the spec never produced a JobResult). Treat
+                # equivalently to admissibility-rejected for coverage.
+                self._coverage_record(
+                    "record_dispatcher_outcome",
+                    hypothesis_id=theory.hypothesis_id,
+                    spec_hash=spec.spec_hash,
+                    admissibility_verdict="error",
+                    admissibility_reasons=[
+                        f"dispatch raised: {type(exc).__name__}: {exc}"
+                    ],
+                )
                 exp.completed_at = _now_iso()
                 exp.result = contract
                 self._record_experiment_and_link(exp)
@@ -4264,6 +4360,26 @@ launder an untranslatable theory through a fake spec.
             )
             contract.duration_seconds = elapsed
             contract.worker_role = "dsl_dispatcher"
+
+            # PR 1: dispatcher-outcome event for the successful path.
+            # Signal/breakthrough booleans are derived from the kernel-
+            # verified contract crib_score (the canonical signal source),
+            # not the worker self-report.
+            _crib = float(getattr(contract, "crib_score", 0.0) or 0.0)
+            _bean = bool(getattr(contract, "bean_passed", False))
+            self._coverage_record(
+                "record_dispatcher_outcome",
+                hypothesis_id=theory.hypothesis_id,
+                spec_hash=spec.spec_hash,
+                admissibility_verdict="ok",
+                admissibility_reasons=[],
+                total_tested=job_result.total_tested,
+                best_score=_crib,
+                best_p_value_vs_null=job_result.best_p_value_vs_null,
+                universe_hash=job_result.universe_hash,
+                signal_alert=(_crib >= 18.0),
+                breakthrough_alert=(_crib >= 24.0 and _bean),
+            )
 
             # Preserve pipeline layer kinds in raw_artifacts for the
             # alert gate's matched-family null lookup (DSL_CUTOVER_CONTRACT

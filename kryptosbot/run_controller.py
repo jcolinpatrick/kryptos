@@ -506,6 +506,57 @@ def parse_args() -> argparse.Namespace:
             "--bench-fast."
         ),
     )
+    # PR 1 (2026-05-17): synthetic profile registry + per-run coverage
+    # audit artifact. Three flags:
+    #   --synthetic-profile PROFILE_ID
+    #       Run against a registered synthetic profile. Forces an
+    #       isolated ledger under db/synthetic_profiles/ (refuses
+    #       db/theory_ledger.sqlite) and emits a coverage_report.json
+    #       at end-of-run. PR 1 does not implement the coverage
+    #       scheduler — this flag is observability only.
+    #   --coverage-report PATH_OR_DIR
+    #       Override the coverage report's on-disk destination. If a
+    #       directory, the report is stamped with a UTC timestamp.
+    #       Default: results/coverage_reports/<ts>_<profile_id>...json
+    #   --coverage-scheduler-enabled
+    #       Parsed-but-inert flag. Reserved for PR 2; recorded in the
+    #       coverage report's extra_notes.
+    parser.add_argument(
+        "--synthetic-profile",
+        type=str,
+        default=None,
+        metavar="PROFILE_ID",
+        help=(
+            "Run against a registered synthetic profile (e.g. "
+            "T1_SERPENTINE_QUAGMIRE). Forces an isolated ledger under "
+            "db/synthetic_profiles/<profile_id>.sqlite and emits a "
+            "coverage_report.json at end-of-run. Refuses blocked "
+            "profiles. See kryptosbot.synthetic_profiles."
+        ),
+    )
+    parser.add_argument(
+        "--coverage-report",
+        type=str,
+        default=None,
+        metavar="PATH_OR_DIR",
+        help=(
+            "Override the destination for the coverage report JSON. "
+            "May be a file path or a directory. Only meaningful with "
+            "--synthetic-profile. Default: "
+            "results/coverage_reports/<ts>_<profile_id>_coverage_report.json"
+        ),
+    )
+    parser.add_argument(
+        "--coverage-scheduler-enabled",
+        action="store_true",
+        help=(
+            "PR 2 scope (deterministic coverage scheduler). PARSED BUT "
+            "INERT in PR 1 — recorded in coverage_report.extra_notes "
+            "for audit and reserved for PR 2 wiring. Setting this in "
+            "PR 1 does NOT alter generation."
+        ),
+    )
+
     args = parser.parse_args()
     # Validate mutually-exclusive HCC flag combinations. argparse's
     # add_mutually_exclusive_group can't express "either of these two
@@ -569,6 +620,57 @@ def parse_args() -> argparse.Namespace:
         parser.error(
             "--real-k4-hcc-audit-max-specs requires a positive integer."
         )
+
+    # PR 1 synthetic-profile validation. We do this in parse_args (not
+    # in main) so a malformed flag exits BEFORE any kernel import or
+    # ledger touch — failing fast keeps "blocked profile" cases from
+    # mutating ledger state. Validation is mutually-exclusive with the
+    # bench / HCC audit modes; the profile registry assumes the real
+    # kernel CT is loaded.
+    if args.synthetic_profile is not None:
+        if args.bench_challenge is not None:
+            parser.error(
+                "--synthetic-profile and --bench-challenge are mutually "
+                "exclusive. Synthetic profiles describe mechanism "
+                "obligations against the real K4 kernel; --bench-challenge "
+                "overrides the kernel CT."
+            )
+        if args.real_k4_hcc_audit:
+            parser.error(
+                "--synthetic-profile and --real-k4-hcc-audit are mutually "
+                "exclusive. Use one or the other."
+            )
+        if args.real_k4_hcc_bridge_audit:
+            parser.error(
+                "--synthetic-profile and --real-k4-hcc-bridge-audit are "
+                "mutually exclusive."
+            )
+        # Profile-registry lookup. SyntheticProfileError / KeyError get
+        # surfaced as a parser.error so the exit code is consistent with
+        # other CLI rejections.
+        from kryptosbot.synthetic_profiles import (
+            get_profile,
+            is_profile_runnable,
+            list_profile_ids,
+        )
+        try:
+            get_profile(args.synthetic_profile)
+        except KeyError:
+            parser.error(
+                f"--synthetic-profile {args.synthetic_profile!r} is not in "
+                f"the registry. Valid IDs: {list_profile_ids()}"
+            )
+        runnable, reason = is_profile_runnable(args.synthetic_profile)
+        if not runnable:
+            parser.error(
+                f"--synthetic-profile refusing to launch: {reason}"
+            )
+    elif args.coverage_report is not None:
+        parser.error(
+            "--coverage-report requires --synthetic-profile to be set. "
+            "The coverage report is bound to a profile's obligations."
+        )
+
     return args
 
 
@@ -1231,6 +1333,28 @@ async def main() -> None:
         # community references into a synthetic-challenge prompt.
         include_oranchak_corpora = False
         include_serpentine_anchor = False
+    elif args.synthetic_profile is not None:
+        # PR 1: synthetic profile mode forces an isolated ledger under
+        # db/synthetic_profiles/. The path helper refuses the real-K4
+        # default outright; passing --db db/theory_ledger.sqlite exits
+        # nonzero with a clear message rather than silently writing
+        # synthetic-profile data into the real ledger.
+        from kryptosbot.synthetic_profiles import (
+            SyntheticProfileError,
+            derive_synthetic_profile_ledger_path,
+        )
+        requested = (
+            None if Path(args.db) == db_default_real else Path(args.db)
+        )
+        try:
+            ledger_path = derive_synthetic_profile_ledger_path(
+                args.synthetic_profile,
+                project_root=project_root,
+                requested=requested,
+            )
+        except SyntheticProfileError as exc:
+            print(f"error: {exc}", file=sys.stderr)
+            sys.exit(2)
     else:
         ledger_path = Path(args.db)
 
@@ -1266,6 +1390,22 @@ async def main() -> None:
     if args.bench_fast and redteam_min_crib_score == 0:
         redteam_min_crib_score = 1
 
+    # PR 1: build the coverage collector before instantiating
+    # ControllerConfig so the same object reference is shared with the
+    # controller AND the end-of-run report writer.
+    coverage_collector = None
+    if args.synthetic_profile is not None:
+        from kryptosbot.coverage_audit import build_collector_for_profile
+        coverage_collector = build_collector_for_profile(
+            args.synthetic_profile,
+            synthetic_mode=True,
+            ledger_db_path=str(ledger_path),
+        )
+        coverage_collector.add_note(
+            f"--coverage-scheduler-enabled={bool(args.coverage_scheduler_enabled)} "
+            f"(PR 1: parsed but inert)"
+        )
+
     config = ControllerConfig(
         project_root=project_root,
         ledger_db_path=ledger_path,
@@ -1293,6 +1433,8 @@ async def main() -> None:
         skip_stat_audit=skip_stat_audit,
         deterministic_critic=deterministic_critic,
         redteam_min_crib_score=redteam_min_crib_score,
+        coverage_collector=coverage_collector,
+        coverage_scheduler_enabled=bool(args.coverage_scheduler_enabled),
     )
 
     if args.status:
@@ -1310,18 +1452,45 @@ async def main() -> None:
     # Redirect stderr to suppress SDK subprocess noise during runs.
     # Restore on exit so interactive shells aren't affected.
     import os
-    if args.quiet:
-        _devnull_fd = os.open(os.devnull, os.O_WRONLY)
-        _saved_stderr_fd = os.dup(2)
-        os.dup2(_devnull_fd, 2)
-        try:
+    try:
+        if args.quiet:
+            _devnull_fd = os.open(os.devnull, os.O_WRONLY)
+            _saved_stderr_fd = os.dup(2)
+            os.dup2(_devnull_fd, 2)
+            try:
+                await do_run(config)
+            finally:
+                os.dup2(_saved_stderr_fd, 2)
+                os.close(_devnull_fd)
+                os.close(_saved_stderr_fd)
+        else:
             await do_run(config)
-        finally:
-            os.dup2(_saved_stderr_fd, 2)
-            os.close(_devnull_fd)
-            os.close(_saved_stderr_fd)
-    else:
-        await do_run(config)
+    finally:
+        # PR 1: ALWAYS emit the coverage report when --synthetic-profile
+        # is set. The whole point of PR 1 is that coverage failure is
+        # mechanically observable even if the controller halted, crashed,
+        # or had zero progress. Writing the report is best-effort: if
+        # the writer itself raises, we print and continue (the underlying
+        # CycleCallbacks/collector errors are already logged inside
+        # record_*).
+        if coverage_collector is not None:
+            from kryptosbot.coverage_audit import resolve_report_path
+            try:
+                report_path = resolve_report_path(
+                    profile_id=args.synthetic_profile,
+                    coverage_report_arg=args.coverage_report,
+                    project_root=project_root,
+                )
+                written = coverage_collector.write_report(report_path)
+                print(
+                    f"coverage-report: wrote artifact -> {written} "
+                    f"(profile={args.synthetic_profile})"
+                )
+            except Exception as exc:  # noqa: BLE001 — boundary; never crash
+                print(
+                    f"coverage-report: WARNING — failed to write artifact: {exc}",
+                    file=sys.stderr,
+                )
 
     # Bench mode: emit the attempt artifact JSON so the offline
     # evaluator can score the run against the sealed answer file. The
