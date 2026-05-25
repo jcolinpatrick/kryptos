@@ -48,6 +48,20 @@ def test_help_advertises_pr1_flags() -> None:
     assert "--coverage-scheduler-enabled" in result.stdout
 
 
+def test_scheduler_flag_without_profile_rejected() -> None:
+    """--coverage-scheduler-enabled alone is meaningless and exits nonzero."""
+    result = _run_cli("--coverage-scheduler-enabled")
+    assert result.returncode != 0
+    assert "requires --synthetic-profile" in result.stderr
+
+
+def test_scheduler_flag_with_profile_advertised_in_help() -> None:
+    """The flag remains visible on --help (regression guard)."""
+    result = _run_cli("--help")
+    assert result.returncode == 0
+    assert "--coverage-scheduler-enabled" in result.stdout
+
+
 def test_unknown_profile_id_rejected() -> None:
     """A bogus profile_id exits nonzero with a registry-listing error."""
     result = _run_cli("--synthetic-profile", "DEFINITELY_NOT_REAL")

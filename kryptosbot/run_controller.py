@@ -670,6 +670,10 @@ def parse_args() -> argparse.Namespace:
             "--coverage-report requires --synthetic-profile to be set. "
             "The coverage report is bound to a profile's obligations."
         )
+    elif args.coverage_scheduler_enabled:
+        parser.error(
+            "--coverage-scheduler-enabled requires --synthetic-profile to be set."
+        )
 
     return args
 
@@ -1403,7 +1407,7 @@ async def main() -> None:
         )
         coverage_collector.add_note(
             f"--coverage-scheduler-enabled={bool(args.coverage_scheduler_enabled)} "
-            f"(PR 1: parsed but inert)"
+            f"(PR 2: active — scheduler phase replaces the LLM cycle when set)"
         )
 
     config = ControllerConfig(
@@ -1449,6 +1453,21 @@ async def main() -> None:
         do_inventory(config.ledger_db_path)
         return
 
+    async def _run_phase() -> None:
+        if (
+            args.synthetic_profile is not None
+            and args.coverage_scheduler_enabled
+            and coverage_collector is not None
+        ):
+            from kryptosbot.coverage_scheduler import run_coverage_schedule
+            run_coverage_schedule(
+                coverage_collector.profile,
+                coverage_collector,
+                project_root=project_root,
+            )
+        else:
+            await do_run(config)
+
     # Redirect stderr to suppress SDK subprocess noise during runs.
     # Restore on exit so interactive shells aren't affected.
     import os
@@ -1458,13 +1477,13 @@ async def main() -> None:
             _saved_stderr_fd = os.dup(2)
             os.dup2(_devnull_fd, 2)
             try:
-                await do_run(config)
+                await _run_phase()
             finally:
                 os.dup2(_saved_stderr_fd, 2)
                 os.close(_devnull_fd)
                 os.close(_saved_stderr_fd)
         else:
-            await do_run(config)
+            await _run_phase()
     finally:
         # PR 1: ALWAYS emit the coverage report when --synthetic-profile
         # is set. The whole point of PR 1 is that coverage failure is
