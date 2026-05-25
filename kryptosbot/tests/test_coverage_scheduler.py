@@ -63,6 +63,24 @@ def test_run_coverage_schedule_refuses_blocked() -> None:
     assert any("blocked" in r.lower() for r in report.fail_reasons)
 
 
+def test_blocked_profile_reason_persists_to_artifact(tmp_path) -> None:
+    # The curated blocked reason must survive a write_report/build_report
+    # round-trip (the controller persists via collector.write_report, NOT
+    # the run_coverage_schedule return value).
+    import json
+    from kryptosbot.coverage_audit import CoverageAuditCollector
+    profile = get_profile("T1_TAPE_K3PT")
+    collector = CoverageAuditCollector(profile=profile)
+    run_coverage_schedule(
+        profile, collector, project_root=Path("/home/cpatrick/kryptos"),
+    )
+    out = tmp_path / "report.json"
+    collector.write_report(out)
+    d = json.loads(out.read_text())
+    assert d["pass"] is False
+    assert any("blocked" in r.lower() for r in d["fail_reasons"]), d["fail_reasons"]
+
+
 def test_run_coverage_schedule_never_executes_kernel(monkeypatch) -> None:
     import kryptosbot.job_dispatcher as jd
     called = {"execute": False}

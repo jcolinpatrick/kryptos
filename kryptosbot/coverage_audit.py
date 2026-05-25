@@ -345,6 +345,12 @@ class CoverageAuditCollector:
 
     extra_notes: list[str] = field(default_factory=list)
 
+    # When set, this reason is surfaced in the built report's fail_reasons
+    # and forces pass=False. Used by the coverage scheduler for blocked
+    # profiles so the persisted artifact (built via build_report) carries
+    # the curated blocked cause, not just the generic no-obligations guard.
+    forced_fail_reason: Optional[str] = None
+
     # ── record_* methods (single chokepoint per event) ──────────────
 
     def record_emitted_spec(
@@ -652,6 +658,9 @@ class CoverageAuditCollector:
         if not self.run_finished_at:
             self.run_finished_at = _now_iso()
         passed, fail_reasons = self._aggregate_pass()
+        if self.forced_fail_reason:
+            passed = False
+            fail_reasons = [self.forced_fail_reason]
         per_obligation = [
             {
                 "obligation": ob.describe(),

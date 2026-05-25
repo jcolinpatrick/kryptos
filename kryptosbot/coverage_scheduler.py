@@ -111,21 +111,20 @@ def run_coverage_schedule(
     collector.add_note("coverage-scheduler: Approach A (emitted+admissible, no execution)")
 
     if profile.status == "blocked":
-        collector.add_note(
-            f"coverage-scheduler refused blocked profile: {profile.blocked_reason}"
+        # Surface a single clear blocked cause through the collector so it
+        # flows via build_report() into BOTH the returned report and any
+        # subsequently-persisted artifact (the controller persists via
+        # collector.write_report, which re-runs build_report and would
+        # otherwise re-derive the generic "no obligations" guard). The
+        # scheduler refuses blocked profiles by construction, mirroring
+        # PR1's launch refusal.
+        reason = (
+            f"coverage-scheduler refused blocked profile "
+            f"{profile.profile_id!r}: {profile.blocked_reason}"
         )
-        report = collector.build_report()
-        # Replace fail_reasons with a single clear blocked cause so callers
-        # (and the PR1 report contract) see an explicit "blocked" message,
-        # not the generic "no obligations" guard alongside it. The scheduler
-        # refuses blocked profiles by construction, mirroring PR1's launch
-        # refusal.
-        report.passed = False
-        report.fail_reasons = [
-            f"coverage-scheduler refused blocked profile {profile.profile_id!r}: "
-            f"{profile.blocked_reason}"
-        ]
-        return report
+        collector.add_note(reason)
+        collector.forced_fail_reason = reason
+        return collector.build_report()
 
     consistency_errors = verify_profile_closing_spec(profile)
     if consistency_errors:
