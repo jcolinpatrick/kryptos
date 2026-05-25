@@ -194,106 +194,18 @@ else:
     SELF_ENCRYPTING: Dict[int, str] = {32: "S", 73: "K"}
 
 # ── Bean constraints ──────────────────────────────────────────────────────
+# Single canonical derivation via the dependency-free core. AZ indexing here
+# is the identity table because ALPH == "ABC...Z"; a masked / KA derivation
+# supplies its own index table (see kernel.constraints.bean.derive_bean_constraints).
+from kryptos.kernel.constraints.derive import (  # noqa: E402
+    derive_bean_constraints as _derive_bean_constraints,
+)
 
-def _derive_bean_eq() -> Tuple[Tuple[int, int], ...]:
-    """Derive variant-independent Bean equality constraints.
+_AZ_INDEX_TABLE: Tuple[int, ...] = tuple(range(MOD))
 
-    A pair (a, b) is in BEAN_EQ iff the implied keystream values are
-    EQUAL under ALL three additive cipher variants (Vigenère, Beaufort,
-    Variant Beaufort). For real K4, this yields exactly ((27, 65),) —
-    the position pair where both CT and PT chars match (CT[27]=CT[65]=P,
-    PT[27]=PT[65]=R).
-
-    Under synthetic CTs the derivation runs against the override CT and
-    may produce a different (often empty) set; this is correct.
-    """
-    positions = sorted(CRIB_DICT.keys())
-    pairs: list[tuple[int, int]] = []
-    for i in range(len(positions)):
-        for j in range(i + 1, len(positions)):
-            a, b = positions[i], positions[j]
-            ca, pa = ALPH_IDX[CT[a]], ALPH_IDX[CRIB_DICT[a]]
-            cb, pb = ALPH_IDX[CT[b]], ALPH_IDX[CRIB_DICT[b]]
-            vig_eq = (ca - pa) % MOD == (cb - pb) % MOD
-            beau_eq = (ca + pa) % MOD == (cb + pb) % MOD
-            vbeau_eq = (pa - ca) % MOD == (pb - cb) % MOD
-            if vig_eq and beau_eq and vbeau_eq:
-                pairs.append((a, b))
-    return tuple(pairs)
-
-
-BEAN_EQ: Tuple[Tuple[int, int], ...] = _derive_bean_eq()
-
-def _derive_bean_ineq() -> Tuple[Tuple[int, int], ...]:
-    """Derive the full variant-independent Bean inequality set.
-
-    A pair (a, b) is a variant-independent inequality iff the derived
-    keystream values differ for ALL three cipher variants (Vigenère,
-    Beaufort, Variant Beaufort).  This ensures the constraint holds
-    regardless of which additive variant is correct.
-
-    Previous versions hardcoded only 21 of 242 pairs, causing false
-    PASSes for keywords with repeated letters (KOLOPHON, DEFECTOR, etc.).
-    """
-    positions = sorted(CRIB_DICT.keys())
-    pairs: list[tuple[int, int]] = []
-    for i in range(len(positions)):
-        for j in range(i + 1, len(positions)):
-            a, b = positions[i], positions[j]
-            ca, pa = ALPH_IDX[CT[a]], ALPH_IDX[CRIB_DICT[a]]
-            cb, pb = ALPH_IDX[CT[b]], ALPH_IDX[CRIB_DICT[b]]
-            vig_eq = (ca - pa) % MOD == (cb - pb) % MOD
-            beau_eq = (ca + pa) % MOD == (cb + pb) % MOD
-            vbeau_eq = (pa - ca) % MOD == (pb - cb) % MOD
-            if not vig_eq and not beau_eq and not vbeau_eq:
-                pairs.append((a, b))
-    return tuple(pairs)
-
-
-BEAN_INEQ: Tuple[Tuple[int, int], ...] = _derive_bean_ineq()
-
-
-def _derive_bean_linear() -> Tuple[Tuple[int, int, int, int], ...]:
-    """Derive variant-independent 4-position linear constraints on keystream.
-
-    For each 4-tuple of crib positions (a, b, c, d), check whether
-    k[a] - k[b] - k[c] + k[d] ≡ 0 (mod 26) holds under ALL three
-    additive cipher variants (Vigenère, Beaufort, Variant Beaufort).
-
-    These constraints encode that key DIFFERENCES at crib positions are
-    fully determined (up to the global additive constant). Together with
-    the pairwise equality/inequality constraints, they reduce the valid
-    keystream space from 26^24 to exactly 624 solutions.
-
-    Derived from the Gröbner basis of the crib system (cf. Bean's
-    kryptos-k4-sage.txt, HistoCrypt 2021). The full set has 101
-    constraints; only 22 are independent (rank 22 over Z, plus the
-    1 equality = rank 23 total, leaving 1 free variable over Q).
-    """
-    positions = sorted(CRIB_DICT.keys())
-    n = len(positions)
-    constraints: list[tuple[int, int, int, int]] = []
-
-    for i in range(n):
-        for j in range(i + 1, n):
-            for k in range(j + 1, n):
-                for l in range(k + 1, n):
-                    a, b, c, d = positions[i], positions[j], positions[k], positions[l]
-                    for p1, p2, p3, p4 in ((a, b, c, d), (a, c, b, d), (a, d, b, c)):
-                        ca, pa = ALPH_IDX[CT[p1]], ALPH_IDX[CRIB_DICT[p1]]
-                        cb, pb = ALPH_IDX[CT[p2]], ALPH_IDX[CRIB_DICT[p2]]
-                        cc, pc = ALPH_IDX[CT[p3]], ALPH_IDX[CRIB_DICT[p3]]
-                        cd, pd = ALPH_IDX[CT[p4]], ALPH_IDX[CRIB_DICT[p4]]
-                        vig = ((ca - pa) - (cb - pb) - (cc - pc) + (cd - pd)) % MOD
-                        beau = ((ca + pa) - (cb + pb) - (cc + pc) + (cd + pd)) % MOD
-                        vbeau = ((pa - ca) - (pb - cb) - (pc - cc) + (pd - cd)) % MOD
-                        if vig == 0 and beau == 0 and vbeau == 0:
-                            constraints.append((p1, p2, p3, p4))
-
-    return tuple(constraints)
-
-
-BEAN_LINEAR: Tuple[Tuple[int, int, int, int], ...] = _derive_bean_linear()
+BEAN_EQ, BEAN_INEQ, BEAN_LINEAR = _derive_bean_constraints(
+    CT, CRIB_DICT, _AZ_INDEX_TABLE, MOD
+)
 
 # ── Known keystream values (verified at crib positions) ───────────────────
 
