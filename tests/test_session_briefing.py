@@ -395,3 +395,136 @@ def test_main_runs_clean_on_real_repo():
 
 def test_self_test_passes():
     assert sb.run_self_test() == 0
+
+
+# ── Assumption boundaries (alignment / plaintext-length models) ────────────────
+#
+# Contract: eliminations proven under direct CT[i]->PT[i] mapping must NOT be
+# rendered as closing null-bearing / variable-length / non-direct-alignment
+# space. The briefing must enumerate the alignment-model taxonomy, declare each
+# elimination's model, surface the mandated scoped-exhaustion statement, and
+# warn (with a cautionary line) when an assumption-boundary source is missing.
+
+EXPECTED_ALIGNMENT_KEYS = {
+    "direct_ct_pt", "fixed_len_97", "ct73_null_extracted",
+    "arbitrary_null_mask", "non_direct_alignment", "joint_mask_mechanism",
+}
+
+
+def test_alignment_models_taxonomy_complete():
+    keys = {k for k, _desc in sb.ALIGNMENT_MODELS}
+    assert keys == EXPECTED_ALIGNMENT_KEYS
+    ordered = [k for k, _ in sb.ALIGNMENT_MODELS]
+    assert ordered[0] == "direct_ct_pt"          # narrowest first
+    assert ordered[-1] == "joint_mask_mechanism"  # broadest last
+
+
+def test_boundary_summary_direct_proof_does_not_close_broad_models():
+    """A direct-mapping proof must not surface as a closure of broader models."""
+    sections = {"proofs": [
+        {"evidence_class": "mathematical_proof",
+         "statement": "periodic sub p1-26 eliminated",
+         "alignment_model": "direct_ct_pt", "scope": "raw 97 direct"},
+    ]}
+    summary = {row["key"]: row for row in sb.assumption_boundary_summary(sections)}
+    assert summary["direct_ct_pt"]["has_closure"] is True
+    for broad in ("arbitrary_null_mask", "non_direct_alignment", "joint_mask_mechanism"):
+        assert summary[broad]["has_closure"] is False
+        assert summary[broad]["closure_claims"] == []
+
+
+def test_boundary_summary_groups_claim_under_its_model():
+    """A narrow CT73-null closure must not read as closing the general mask space."""
+    sections = {"do_not_test": [
+        {"evidence_class": "mathematical_proof",
+         "statement": "periodic sub on null-extracted CT73 p1-23",
+         "alignment_model": "ct73_null_extracted"},
+    ]}
+    summary = {row["key"]: row for row in sb.assumption_boundary_summary(sections)}
+    assert summary["ct73_null_extracted"]["has_closure"] is True
+    assert len(summary["ct73_null_extracted"]["closure_claims"]) == 1
+    assert summary["arbitrary_null_mask"]["has_closure"] is False
+    assert summary["joint_mask_mechanism"]["has_closure"] is False
+
+
+def test_section_assumption_boundaries_lists_all_models_and_statement(capsys):
+    sections = {"proofs": [
+        {"evidence_class": "mathematical_proof", "statement": "x",
+         "alignment_model": "direct_ct_pt"}]}
+    sb.section_assumption_boundaries(sections, sb.Diagnostics())
+    out = capsys.readouterr().out
+    for key, _desc in sb.ALIGNMENT_MODELS:
+        assert key in out, f"model {key} not rendered"
+    # Mandated scoped-exhaustion acceptance statement.
+    assert "outside the closure certificate" in out
+    assert "Null-bearing" in out
+    # Broad models with no closure must render NOT CLOSED.
+    assert "NOT CLOSED" in out
+
+
+def test_claim_missing_alignment_model_is_flagged():
+    sections = {"proofs": [
+        {"evidence_class": "mathematical_proof", "statement": "no model here"}]}
+    assert len(sb.claims_missing_alignment_model(sections)) == 1
+
+
+def test_real_proof_and_dnt_claims_declare_alignment_model():
+    """Every real proofs / do_not_test claim must declare a valid alignment model."""
+    path = os.path.join(_ROOT, "docs", "session_briefing_claims.json")
+    with open(path) as f:
+        data = json.load(f)
+    valid = {k for k, _ in sb.ALIGNMENT_MODELS}
+    offenders = [(c.get("claim_id"), c.get("alignment_model"))
+                 for c in data["claims"]
+                 if c.get("section") in ("proofs", "do_not_test")
+                 and c.get("alignment_model") not in valid]
+    assert offenders == [], f"claims without a valid alignment_model: {offenders}"
+
+
+def test_assumption_boundary_sources_present_when_all_exist(tmp_path):
+    (tmp_path / "docs").mkdir()
+    (tmp_path / "docs" / "REAL_K4_CURRENT_POSITION.md").write_text("x")
+    (tmp_path / "docs" / "methodological_audits.md").write_text("x")
+    mem = tmp_path / "mem"
+    mem.mkdir()
+    (mem / "feedback_pt_length_open_question.md").write_text("x")
+    (mem / "project_stego_mechanism_family_cleanup_2026_05_15.md").write_text("x")
+    resolved = sb.resolve_assumption_boundary_sources(str(tmp_path), mem_dirs=[str(mem)])
+    assert resolved, "expected at least one source row"
+    assert all(found for _label, found in resolved)
+
+
+def test_assumption_boundary_sources_missing_warns(tmp_path):
+    diag = sb.Diagnostics()
+    missing = sb.check_assumption_boundary_sources(diag, root=str(tmp_path))
+    assert missing  # nothing exists under an empty root
+    assert any("assumption-boundary source unavailable" in w for w in diag.warnings)
+
+
+def test_do_not_test_renders_alignment_model_inline(capsys):
+    sections = {"do_not_test": [
+        {"evidence_class": "mathematical_proof",
+         "statement": "periodic sub on null-extracted CT73",
+         "alignment_model": "ct73_null_extracted"}]}
+    sb.section_do_not_test(sections)
+    out = capsys.readouterr().out
+    assert "ct73_null_extracted" in out
+
+
+def test_section_prints_cautionary_line_when_source_missing(tmp_path, monkeypatch, capsys):
+    """Missing assumption-boundary source => the mandated WARNING line renders."""
+    monkeypatch.setattr(sb, "_ROOT", str(tmp_path))  # empty root: nothing resolves
+    sb.section_assumption_boundaries({"proofs": []}, sb.Diagnostics())
+    out = capsys.readouterr().out
+    assert "assumption-boundary source unavailable" in out
+    assert "do not treat" in out
+
+
+def test_proofs_render_alignment_model_inline(capsys):
+    sections = {"proofs": [
+        {"evidence_class": "mathematical_proof",
+         "statement": "periodic sub p1-26",
+         "alignment_model": "direct_ct_pt", "scope": "raw 97 direct"}]}
+    sb.section_proofs(sections)
+    out = capsys.readouterr().out
+    assert "direct_ct_pt" in out

@@ -582,6 +582,153 @@ _EVIDENCE_GROUPS: tuple[tuple[str, tuple[str, ...]], ...] = (
 )
 
 
+# ── Assumption boundaries (alignment / plaintext-length models) ───────────────
+#
+# Every elimination is proven under SOME assumption about how the 97 carved
+# ciphertext characters map to plaintext positions. The vast majority assume a
+# DIRECT positional mapping CT[i] -> PT[i] with fixed CT_LEN=97 and fixed public
+# crib positions. Such a proof closes ONLY its own alignment model; it does NOT
+# close null-bearing, variable-PT-length, non-direct-alignment, or joint
+# mask x mechanism inference models. The briefing must make this explicit so a
+# direct-mapping closure is never silently read as a global elimination.
+#
+# Ordered narrowest (most assumptions) -> broadest (fewest assumptions). A proof
+# under a narrow model says nothing about a broader one below it.
+ALIGNMENT_MODELS: tuple[tuple[str, str], ...] = (
+    ("direct_ct_pt",
+     "Direct CT[i] -> PT[i] crib mapping (each carved char decrypts in place)."),
+    ("fixed_len_97",
+     "Fixed CT_LEN=97 / fixed public crib positions 21-33, 63-73 (no nulls)."),
+    ("ct73_null_extracted",
+     "Specific null-extracted CT73-style models (a fixed 24-position extraction)."),
+    ("arbitrary_null_mask",
+     "Arbitrary null-mask / variable-PT-length models (mask positions unknown)."),
+    ("non_direct_alignment",
+     "Non-direct crib-alignment models (outer layer reorders CT before decrypt)."),
+    ("joint_mask_mechanism",
+     "Joint mask x mechanism inference (mask and cipher solved together)."),
+)
+
+_ALIGNMENT_MODEL_KEYS: frozenset[str] = frozenset(k for k, _ in ALIGNMENT_MODELS)
+
+# Mandated acceptance statement: the briefing must always assert that current
+# exhaustion is scoped to the models that actually have a proving artifact.
+SCOPED_EXHAUSTION_STATEMENT = (
+    "Current exhaustion is SCOPED. Direct-mapping, public-crib-compiled "
+    "classical hand-cipher space may be exhausted. Null-bearing / "
+    "variable-length / non-direct-mapping space is only closed where a "
+    "specific artifact proves THAT model; otherwise it remains outside the "
+    "closure certificate."
+)
+
+# Cautionary line printed when an assumption-boundary source cannot be located.
+_ASSUMPTION_BOUNDARY_WARNING = (
+    "WARNING: assumption-boundary source unavailable; do not treat "
+    "direct-mapping eliminations as global eliminations."
+)
+
+# Sources that back the assumption-boundary discipline. Doc sources are
+# repo-relative (any candidate path present satisfies the row). Memory sources
+# are research notes that may live in repo memory/ or in Claude Code's
+# auto-memory dir; they are searched across candidate directories.
+_ASSUMPTION_BOUNDARY_DOC_SOURCES: tuple[tuple[str, tuple[str, ...]], ...] = (
+    ("docs/REAL_K4_CURRENT_POSITION.md", ("docs/REAL_K4_CURRENT_POSITION.md",)),
+    ("AUDIT-1 (docs/methodological_audits.md)",
+     ("docs/methodological_audits.md", "docs/methodological_audits")),
+)
+_ASSUMPTION_BOUNDARY_MEM_SOURCES: tuple[tuple[str, str], ...] = (
+    ("feedback_pt_length_open_question.md", "feedback_pt_length_open_question.md"),
+    ("project_stego_mechanism_family_cleanup_2026_05_15.md",
+     "project_stego_mechanism_family_cleanup_2026_05_15.md"),
+)
+
+
+# ── Assumption-boundary helpers ───────────────────────────────────────────────
+
+def _auto_memory_dir(root: str) -> str:
+    """Derive Claude Code's auto-memory dir for this repo from its path.
+
+    /home/cpatrick/kryptos -> ~/.claude/projects/-home-cpatrick-kryptos/memory
+    """
+    slug = "-" + root.strip("/").replace("/", "-")
+    return os.path.expanduser(os.path.join("~", ".claude", "projects", slug, "memory"))
+
+
+def resolve_assumption_boundary_sources(
+    root: str, mem_dirs: Optional[list[str]] = None
+) -> list[tuple[str, bool]]:
+    """Resolve each assumption-boundary source to (label, found).
+
+    Doc sources are checked relative to `root`. Memory sources are searched
+    across `mem_dirs` (defaults to repo memory/, memory/retired/, and the
+    derived auto-memory dir). A source is `found` if any candidate exists.
+    """
+    if mem_dirs is None:
+        mem_dirs = [
+            os.path.join(root, "memory"),
+            os.path.join(root, "memory", "retired"),
+            _auto_memory_dir(root),
+        ]
+    resolved: list[tuple[str, bool]] = []
+    for label, candidates in _ASSUMPTION_BOUNDARY_DOC_SOURCES:
+        found = any(os.path.exists(os.path.join(root, c)) for c in candidates)
+        resolved.append((label, found))
+    for label, filename in _ASSUMPTION_BOUNDARY_MEM_SOURCES:
+        found = any(os.path.exists(os.path.join(d, filename)) for d in mem_dirs)
+        resolved.append((label, found))
+    return resolved
+
+
+def check_assumption_boundary_sources(diag: Diagnostics,
+                                      root: Optional[str] = None) -> list[str]:
+    """Warn for each missing assumption-boundary source; return missing labels."""
+    resolved = resolve_assumption_boundary_sources(root if root is not None else _ROOT)
+    missing = [label for label, found in resolved if not found]
+    for label in missing:
+        diag.warn(f"assumption-boundary source unavailable: {label}")
+    return missing
+
+
+def claims_missing_alignment_model(sections: dict[str, list[dict]]) -> list[str]:
+    """Elimination claims (proofs / do_not_test) lacking a valid alignment model.
+
+    Enforces the rule that every elimination must declare which alignment /
+    plaintext-length model it assumes. Returns claim_ids (or statement
+    prefixes) of offenders.
+    """
+    offenders: list[str] = []
+    for sec in ("proofs", "do_not_test"):
+        for c in sections.get(sec, []):
+            if c.get("alignment_model") not in _ALIGNMENT_MODEL_KEYS:
+                offenders.append(c.get("claim_id") or (c.get("statement", "")[:40]))
+    return offenders
+
+
+def assumption_boundary_summary(sections: dict[str, list[dict]]) -> list[dict]:
+    """Group elimination claims by their declared alignment model.
+
+    Returns one row per model (in taxonomy order):
+      {key, description, closure_claims: [claim...], has_closure: bool}
+
+    `has_closure` means "at least one elimination is scoped to this model" —
+    NOT that the model is globally closed. A claim tagged to a narrow model
+    never appears under a broader one, so a direct-mapping proof can never make
+    the null-bearing / non-direct / joint models read as closed.
+    """
+    elim_claims = list(sections.get("proofs", [])) + list(sections.get("do_not_test", []))
+    by_model: dict[str, list[dict]] = {k: [] for k, _ in ALIGNMENT_MODELS}
+    for c in elim_claims:
+        model = c.get("alignment_model")
+        if model in by_model:
+            by_model[model].append(c)
+    rows: list[dict] = []
+    for key, desc in ALIGNMENT_MODELS:
+        claims = by_model[key]
+        rows.append({"key": key, "description": desc,
+                     "closure_claims": claims, "has_closure": bool(claims)})
+    return rows
+
+
 # ── Briefing sections ─────────────────────────────────────────────────────────
 
 def section_header() -> None:
@@ -766,14 +913,21 @@ def section_exhaustion_summary(elog: dict, diag: Diagnostics) -> None:
     print()
 
 
+def _align_tag(c: dict) -> str:
+    """Inline alignment-model tag for an elimination claim, or '' if absent."""
+    model = c.get("alignment_model")
+    return f"  [align: {model}]" if model in _ALIGNMENT_MODEL_KEYS else ""
+
+
 def _render_claim_lines(claims: list[dict], marker: str, scope_limited: bool) -> None:
     for c in claims:
         stmt = c.get("statement", "")
         scope = c.get("scope")
+        align = _align_tag(c)
         if scope_limited and scope:
-            print(f"  {marker} {stmt}  [scope: {scope}]")
+            print(f"  {marker} {stmt}  [scope: {scope}]{align}")
         else:
-            print(f"  {marker} {stmt}")
+            print(f"  {marker} {stmt}{align}")
 
 
 def section_proofs(sections: dict[str, list[dict]]) -> None:
@@ -813,8 +967,78 @@ def section_do_not_test(sections: dict[str, list[dict]]) -> None:
         marker = "✗" if permanent else "·"
         stmt = c.get("statement", "")
         tag = "" if permanent else f"  [{ec}]"
-        print(f"  {marker} {stmt}{tag}")
+        print(f"  {marker} {stmt}{tag}{_align_tag(c)}")
     print()
+
+
+def section_assumption_boundaries(sections: dict[str, list[dict]],
+                                  diag: Diagnostics) -> None:
+    """Render the alignment / plaintext-length model boundary for eliminations.
+
+    Makes explicit which alignment model each closure assumes, and refuses to
+    let a direct-mapping closure read as closing null-bearing / variable-length
+    / non-direct space. Always ends with the mandated scoped-exhaustion
+    statement.
+    """
+    print("── ASSUMPTION BOUNDARIES (alignment / plaintext-length models) ────")
+    print()
+    print("  Every elimination below assumes a specific mapping from the 97")
+    print("  carved CT chars to plaintext positions. A proof under a NARROW")
+    print("  model does NOT close a BROADER model. Models are ordered narrowest")
+    print("  (most assumptions) to broadest (fewest):")
+    print()
+    summary = assumption_boundary_summary(sections)
+    for row in summary:
+        key, desc = row["key"], row["description"]
+        claims = row["closure_claims"]
+        if claims:
+            print(f"  • {key}")
+            print(f"      {desc}")
+            print(f"      SCOPED CLOSURES ({len(claims)}) — apply only within this model:")
+            for c in claims:
+                stmt = c.get("statement", "")
+                scope = c.get("scope")
+                scope_str = f"  [scope: {scope}]" if scope else ""
+                print(f"        - {stmt}{scope_str}")
+        else:
+            print(f"  • {key} — NOT CLOSED")
+            print(f"      {desc}")
+            print("      No artifact proves any closure under this model; it remains")
+            print("      outside the closure certificate.")
+    print()
+
+    # Flag any elimination claim that failed to declare its alignment model.
+    missing = claims_missing_alignment_model(sections)
+    if missing:
+        diag.warn(f"{len(missing)} elimination claim(s) lack a declared "
+                  f"alignment_model: {', '.join(missing[:6])}"
+                  + (" ..." if len(missing) > 6 else ""))
+        print(f"  ⚠ {len(missing)} elimination claim(s) do NOT declare an alignment")
+        print("    model. Treat them as direct-mapping-scoped only — they do NOT")
+        print("    close null-bearing, variable-length, or non-direct space.")
+        print()
+
+    # Surface assumption-boundary source availability and, if any is missing,
+    # the mandated cautionary line.
+    sources = resolve_assumption_boundary_sources(_ROOT)
+    missing_sources = [label for label, found in sources if not found]
+    if missing_sources:
+        print("  Assumption-boundary sources:")
+        for label, found in sources:
+            print(f"    {'✓' if found else '✗'} {label}")
+        print(f"  ‼ {_ASSUMPTION_BOUNDARY_WARNING}")
+        print()
+
+    print("  " + _scoped_statement_block())
+    print()
+
+
+def _scoped_statement_block() -> str:
+    """The mandated scoped-exhaustion statement, wrapped for the briefing."""
+    import textwrap
+    wrapped = textwrap.fill(SCOPED_EXHAUSTION_STATEMENT, width=68,
+                            subsequent_indent="  ")
+    return wrapped
 
 
 def section_anomalies(sections: dict[str, list[dict]]) -> None:
@@ -1121,6 +1345,9 @@ def build_state(diag: Diagnostics) -> dict[str, Any]:
     sections, used_fallback = load_section_claims(diag)
     registry = load_json(os.path.join(_ROOT, "docs", "claims_registry.json"),
                          diag, required=True)
+    # Assumption-boundary sources are warn-level (not degrade): a missing one
+    # triggers the cautionary line in the ASSUMPTION BOUNDARIES section.
+    check_assumption_boundary_sources(diag)
     results = scan_result_files(diag)
     counts = count_result_files()
     bin_c_status: dict[str, dict] = {}
@@ -1152,6 +1379,7 @@ def render(state: dict[str, Any], diag: Diagnostics) -> None:
     section_exhaustion_summary(state["elog"], diag)
     section_proofs(state["sections"])
     section_do_not_test(state["sections"])
+    section_assumption_boundaries(state["sections"], diag)
     section_anomalies(state["sections"])
     section_results_verdicts(state["results"])
     section_open_attack_surface(state["sections"], state["bin_c_status"])

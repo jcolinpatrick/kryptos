@@ -47,7 +47,8 @@
       "source": "docs/elimination_tiers.md (letter-multiset proof)",
       "artifact": null,
       "last_reviewed": "2026-04-08",
-      "retest_rule": "never — letter-count invariant under permutation"
+      "retest_rule": "never — letter-count invariant under permutation",
+      "alignment_model": "direct_ct_pt"
     },
     {
       "claim_id": "SBP-002",
@@ -59,7 +60,8 @@
       "source": "docs/elimination_tiers.md; CLAUDE.md 'Interpreting Scores'",
       "artifact": null,
       "last_reviewed": "2026-04-21",
-      "retest_rule": "do not retest under direct correspondence; multi-layer context is a separate question"
+      "retest_rule": "do not retest under direct correspondence; multi-layer context is a separate question",
+      "alignment_model": "direct_ct_pt"
     },
     {
       "claim_id": "SBP-003",
@@ -71,7 +73,8 @@
       "source": "docs/elimination_tiers.md (E-FRAC-37)",
       "artifact": null,
       "last_reviewed": "2026-02-21",
-      "retest_rule": "never — structural ceiling below crib requirement"
+      "retest_rule": "never — structural ceiling below crib requirement",
+      "alignment_model": "direct_ct_pt"
     },
     {
       "claim_id": "SBP-004",
@@ -83,7 +86,8 @@
       "source": "docs/elimination_tiers.md (E-FRAC-21); CLAUDE.md Bifid gotcha",
       "artifact": null,
       "last_reviewed": "2026-02-21",
-      "retest_rule": "never — 25-letter-alphabet families incompatible with 26-letter CT"
+      "retest_rule": "never — 25-letter-alphabet families incompatible with 26-letter CT",
+      "alignment_model": "fixed_len_97"
     },
     {
       "claim_id": "SBP-005",
@@ -95,7 +99,8 @@
       "source": "docs/elimination_tiers.md",
       "artifact": null,
       "last_reviewed": "2026-02-21",
-      "retest_rule": "never — algebraic"
+      "retest_rule": "never — algebraic",
+      "alignment_model": "direct_ct_pt"
     },
     {
       "claim_id": "SBP-006",
@@ -107,7 +112,8 @@
       "source": "docs/elimination_tiers.md (E-FRAC-38)",
       "artifact": null,
       "last_reviewed": "2026-02-21",
-      "retest_rule": "never under additive-key Level A assumptions"
+      "retest_rule": "never under additive-key Level A assumptions",
+      "alignment_model": "direct_ct_pt"
     },
     {
       "claim_id": "SBP-007",
@@ -119,7 +125,8 @@
       "source": "docs/elimination_tiers.md (E-FRAC-35)",
       "artifact": null,
       "last_reviewed": "2026-02-21",
-      "retest_rule": "never — Bean impossibility over the permutation group"
+      "retest_rule": "never — Bean impossibility over the permutation group",
+      "alignment_model": "direct_ct_pt"
     },
     {
       "claim_id": "SBP-008",
@@ -131,7 +138,8 @@
       "source": "docs/elimination_tiers.md; CLAUDE.md",
       "artifact": null,
       "last_reviewed": "2026-04-08",
-      "retest_rule": "never — algebraic for the stated mask/period family"
+      "retest_rule": "never — algebraic for the stated mask/period family",
+      "alignment_model": "ct73_null_extracted"
     },
     {
       "claim_id": "SBP-009",
@@ -143,7 +151,8 @@
       "source": "docs/elimination_tiers.md (E-FRAC-26/27)",
       "artifact": null,
       "last_reviewed": "2026-02-21",
-      "retest_rule": "do not retest standalone; multi-layer context separate"
+      "retest_rule": "do not retest standalone; multi-layer context separate",
+      "alignment_model": "direct_ct_pt"
     },
     {
       "claim_id": "SBP-010",
@@ -155,7 +164,8 @@
       "source": "docs/elimination_tiers.md (E-FRAC-29/12)",
       "artifact": null,
       "last_reviewed": "2026-02-21",
-      "retest_rule": "do not retest standalone within this scope"
+      "retest_rule": "do not retest standalone within this scope",
+      "alignment_model": "direct_ct_pt"
     },
     {
       "claim_id": "SBP-011",
@@ -167,7 +177,8 @@
       "source": "docs/elimination_tiers.md (E-FRAC-30)",
       "artifact": null,
       "last_reviewed": "2026-02-21",
-      "retest_rule": "low prior; full enumeration not done — reopen only with a materially new assumption or multi-layer context"
+      "retest_rule": "low prior; full enumeration not done — reopen only with a materially new assumption or multi-layer context",
+      "alignment_model": "direct_ct_pt"
     },
     {
       "claim_id": "SBP-012",
@@ -179,7 +190,8 @@
       "source": "docs/elimination_tiers.md (E-FRAC-32)",
       "artifact": null,
       "last_reviewed": "2026-02-21",
-      "retest_rule": "do not retest within this scope"
+      "retest_rule": "do not retest within this scope",
+      "alignment_model": "direct_ct_pt"
     },
     {
       "claim_id": "SBP-013",
@@ -191,7 +203,8 @@
       "source": "docs/elimination_tiers.md",
       "artifact": null,
       "last_reviewed": "2026-02-21",
-      "retest_rule": "do not retest the Bean-compatible pairs within this scope"
+      "retest_rule": "do not retest the Bean-compatible pairs within this scope",
+      "alignment_model": "direct_ct_pt"
     },
     {
       "claim_id": "SBP-014",
@@ -203,7 +216,8 @@
       "source": "docs/elimination_tiers.md",
       "artifact": null,
       "last_reviewed": "2026-02-21",
-      "retest_rule": "do not retest within this scope"
+      "retest_rule": "do not retest within this scope",
+      "alignment_model": "direct_ct_pt"
     },
     {
       "claim_id": "SBP-015",
@@ -215,7 +229,8 @@
       "source": "docs/elimination_tiers.md",
       "artifact": null,
       "last_reviewed": "2026-02-21",
-      "retest_rule": "do not retest within this scope"
+      "retest_rule": "do not retest within this scope",
+      "alignment_model": "direct_ct_pt"
     },
     {
       "claim_id": "SBP-016",
@@ -227,7 +242,8 @@
       "source": "docs/elimination_tiers.md (E-FRAC-52)",
       "artifact": null,
       "last_reviewed": "2026-02-21",
-      "retest_rule": "scope-limited; p1*p2>50 region produced only gibberish, not retested as solution path"
+      "retest_rule": "scope-limited; p1*p2>50 region produced only gibberish, not retested as solution path",
+      "alignment_model": "direct_ct_pt"
     },
     {
       "claim_id": "SBP-017",
@@ -239,7 +255,8 @@
       "source": "docs/elimination_tiers.md (E-FRAC-53)",
       "artifact": null,
       "last_reviewed": "2026-02-21",
-      "retest_rule": "scope-limited; do not retest periods 3-7 within this model"
+      "retest_rule": "scope-limited; do not retest periods 3-7 within this model",
+      "alignment_model": "direct_ct_pt"
     },
     {
       "claim_id": "SBP-018",
@@ -251,7 +268,8 @@
       "source": "cipher-gromark skill; MEMORY.md",
       "artifact": null,
       "last_reviewed": "2026-05-01",
-      "retest_rule": "do not retest within this scope"
+      "retest_rule": "do not retest within this scope",
+      "alignment_model": "ct73_null_extracted"
     },
     {
       "claim_id": "SBD-001",
@@ -263,7 +281,8 @@
       "source": "docs/elimination_tiers.md (E-FRAC-37)",
       "artifact": null,
       "last_reviewed": "2026-02-21",
-      "retest_rule": "never — structural"
+      "retest_rule": "never — structural",
+      "alignment_model": "direct_ct_pt"
     },
     {
       "claim_id": "SBD-002",
@@ -275,7 +294,8 @@
       "source": "MEMORY.md; exhaustion_log.json",
       "artifact": null,
       "last_reviewed": "2026-04-08",
-      "retest_rule": "do not retest these keywords standalone"
+      "retest_rule": "do not retest these keywords standalone",
+      "alignment_model": "direct_ct_pt"
     },
     {
       "claim_id": "SBD-003",
@@ -287,7 +307,8 @@
       "source": "MEMORY.md; exhaustion_log.json",
       "artifact": null,
       "last_reviewed": "2026-04-08",
-      "retest_rule": "do not retest these specific hypotheses"
+      "retest_rule": "do not retest these specific hypotheses",
+      "alignment_model": "direct_ct_pt"
     },
     {
       "claim_id": "SBD-004",
@@ -299,7 +320,8 @@
       "source": "MEMORY.md; exhaustion_log.json",
       "artifact": null,
       "last_reviewed": "2026-04-08",
-      "retest_rule": "do not retest within stated config budgets"
+      "retest_rule": "do not retest within stated config budgets",
+      "alignment_model": "direct_ct_pt"
     },
     {
       "claim_id": "SBD-005",
@@ -311,7 +333,8 @@
       "source": "MEMORY.md; exhaustion_log.json",
       "artifact": null,
       "last_reviewed": "2026-04-08",
-      "retest_rule": "do not retest these specific hypotheses"
+      "retest_rule": "do not retest these specific hypotheses",
+      "alignment_model": "direct_ct_pt"
     },
     {
       "claim_id": "SBD-006",
@@ -323,7 +346,8 @@
       "source": "docs/elimination_tiers.md",
       "artifact": null,
       "last_reviewed": "2026-04-08",
-      "retest_rule": "never within stated scope"
+      "retest_rule": "never within stated scope",
+      "alignment_model": "ct73_null_extracted"
     },
     {
       "claim_id": "SBA-001",
@@ -672,6 +696,32 @@
       "artifact": null,
       "last_reviewed": "2026-05-19",
       "retest_rule": "n/a — convention"
+    }
+  ],
+  "alignment_models": [
+    {
+      "key": "direct_ct_pt",
+      "description": "Direct CT[i]->PT[i] crib mapping (each carved char decrypts in place)."
+    },
+    {
+      "key": "fixed_len_97",
+      "description": "Fixed CT_LEN=97 / fixed public crib positions 21-33, 63-73 (no nulls)."
+    },
+    {
+      "key": "ct73_null_extracted",
+      "description": "Specific null-extracted CT73-style models (a fixed 24-position extraction)."
+    },
+    {
+      "key": "arbitrary_null_mask",
+      "description": "Arbitrary null-mask / variable-PT-length models (mask positions unknown)."
+    },
+    {
+      "key": "non_direct_alignment",
+      "description": "Non-direct crib-alignment models (outer layer reorders CT before decrypt)."
+    },
+    {
+      "key": "joint_mask_mechanism",
+      "description": "Joint mask x mechanism inference (mask and cipher solved together)."
     }
   ]
 }
