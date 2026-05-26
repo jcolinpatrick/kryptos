@@ -318,6 +318,40 @@ def test_available_without_closing_spec_raises() -> None:
         )
 
 
+def test_recovery_targets_are_quagmire_and_columnar() -> None:
+    from kryptosbot.synthetic_profiles import all_profiles
+    targets = {p.profile_id for p in all_profiles() if p.recovery_target}
+    assert targets == {"T1_SERPENTINE_QUAGMIRE", "T1_BERLINCLOCK_COLUMNAR"}
+
+
+def test_recovery_target_implies_available_with_closing_spec() -> None:
+    from kryptosbot.synthetic_profiles import all_profiles
+    for p in all_profiles():
+        if p.recovery_target:
+            assert p.status == "available"
+            assert p.closing_spec
+
+
+def test_blocked_profile_cannot_be_recovery_target() -> None:
+    from kryptosbot.synthetic_profiles import SyntheticProfile
+    import pytest
+    with pytest.raises(ValueError):
+        SyntheticProfile(
+            profile_id="X", description="d", status="blocked",
+            blocked_reason="r", recovery_target=True,
+        )
+
+
+def test_columnar_closing_spec_carries_executable_params() -> None:
+    from kryptosbot.synthetic_profiles import get_profile
+    p = get_profile("T1_BERLINCLOCK_COLUMNAR")
+    layer = p.closing_spec["pipeline"][0]
+    names = {pr["name"]: pr for pr in layer["params"]}
+    assert names["keyword"]["values"] == ["BERLINCLOCK"]
+    assert names["width"]["values"] == [11]
+    assert names["col_order"]["values"] == [[0, 3, 10, 6, 4, 8, 1, 7, 9, 2, 5]]
+
+
 def test_profile_to_dict_round_trips_serializable() -> None:
     """SyntheticProfile.to_dict() must produce a JSON-serializable shape.
 

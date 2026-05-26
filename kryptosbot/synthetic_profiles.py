@@ -191,6 +191,12 @@ class SyntheticProfile:
     # coverage_scheduler.verify_profile_closing_spec, NOT here, to avoid
     # importing the DSL into the registry module.
     closing_spec: Optional[dict[str, Any]] = None
+    # PR 3: when True, the coverage scheduler generates a synthetic CT from
+    # this profile's mechanism, dispatches the closing_spec against it, and
+    # requires real recovery (crib_score >= SIGNAL) — not just admissibility.
+    # Fail-closed: a recovery target whose CT generation/dispatch fails is a
+    # hard failure, never a silent downgrade to emitted_and_admissible.
+    recovery_target: bool = False
     notes: str = ""
 
     def __post_init__(self) -> None:
@@ -222,6 +228,17 @@ class SyntheticProfile:
                 f"SyntheticProfile {self.profile_id!r}: blocked status "
                 f"must NOT carry a closing_spec"
             )
+        if self.recovery_target:
+            if self.status != "available":
+                raise ValueError(
+                    f"SyntheticProfile {self.profile_id!r}: recovery_target "
+                    f"requires status=='available'"
+                )
+            if not self.closing_spec:
+                raise ValueError(
+                    f"SyntheticProfile {self.profile_id!r}: recovery_target "
+                    f"requires a closing_spec"
+                )
 
     def pass_condition_summary(self) -> str:
         """One-line description of what must be observed to pass."""
@@ -243,6 +260,7 @@ class SyntheticProfile:
             "blocked_reason": self.blocked_reason,
             "required_kinds": list(self.required_kinds),
             "closing_spec": self.closing_spec,
+            "recovery_target": self.recovery_target,
             "notes": self.notes,
             "obligations": [
                 {
@@ -389,6 +407,7 @@ _T1_SERPENTINE_QUAGMIRE = SyntheticProfile(
         "compute_budget_cpu_minutes": 30,
         "notes": "PR2 closing spec for T1_SERPENTINE_QUAGMIRE obligation.",
     },
+    recovery_target=True,
     notes=(
         "Postmortem reference: SERPENTINE existed in the proposal "
         "distribution but never reached the dispatcher under the "
@@ -434,6 +453,9 @@ _T1_BERLINCLOCK_COLUMNAR = SyntheticProfile(
                 "alphabet": "AZ",
                 "params": [
                     {"name": "keyword", "values": ["BERLINCLOCK"]},
+                    {"name": "width", "values": [11]},
+                    {"name": "col_order",
+                     "values": [[0, 3, 10, 6, 4, 8, 1, 7, 9, 2, 5]]},
                 ],
             }
         ],
@@ -441,6 +463,7 @@ _T1_BERLINCLOCK_COLUMNAR = SyntheticProfile(
         "compute_budget_cpu_minutes": 30,
         "notes": "PR2 closing spec for T1_BERLINCLOCK_COLUMNAR obligation.",
     },
+    recovery_target=True,
     notes=(
         "Berlin Clock anchor exposure check. BERLINCLOCK is the canonical "
         "English crib token (see kryptosbot.constants CRIBS, positions "
