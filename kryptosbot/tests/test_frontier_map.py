@@ -114,3 +114,12 @@ def test_frontier_cell_for_theory_classifies(tmp_path):
     assert cell is not None
     assert cell.family == "vigenere"
     assert cell.alignment_model in ("direct_ct_pt", "fixed_len_97")
+
+
+def test_session_briefing_render_helper_is_importable_and_safe(tmp_path):
+    # The briefing reuses render_open_frontier; verify a built map renders
+    # without raising when the ledger path is missing-tolerant.
+    db = _make_ledger(tmp_path, [])
+    fm = build_frontier_map(ledger_db_path=db)
+    out = render_open_frontier(fm, limit=8)
+    assert isinstance(out, str)

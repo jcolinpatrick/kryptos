@@ -1026,6 +1026,27 @@ def _scoped_statement_block() -> str:
     return wrapped
 
 
+def section_open_frontier() -> None:
+    """Print the open-frontier map's top open cells (read-only)."""
+    try:
+        import sys as _sys
+        from pathlib import Path as _Path
+        _root = _Path(__file__).resolve().parents[2]
+        if str(_root) not in _sys.path:
+            _sys.path.insert(0, str(_root))
+        from kryptosbot.frontier_map import build_frontier_map, render_open_frontier
+        db = _root / "db" / "theory_ledger.sqlite"
+        if not db.exists():
+            return
+        fm = build_frontier_map(ledger_db_path=db)
+        block = render_open_frontier(fm, limit=12)
+        if block:
+            print()
+            print(block)
+    except Exception as exc:  # briefing must never crash on an optional section
+        print(f"  [open-frontier section unavailable: {exc}]")
+
+
 def section_anomalies(sections: dict[str, list[dict]]) -> None:
     surviving = sections.get("surviving_anomaly", [])
     retired = sections.get("retired_anomaly", [])
@@ -1365,6 +1386,7 @@ def render(state: dict[str, Any], diag: Diagnostics) -> None:
     section_proofs(state["sections"])
     section_do_not_test(state["sections"])
     section_assumption_boundaries(state["sections"], diag)
+    section_open_frontier()
     section_anomalies(state["sections"])
     section_results_verdicts(state["results"])
     section_open_attack_surface(state["sections"], state["bin_c_status"])
