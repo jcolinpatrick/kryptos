@@ -93,11 +93,21 @@ real K4 ciphertext is never touched.
   `CANONICAL_PLAINTEXT`.)
 - `generate_synthetic_challenge(closing_spec: dict) -> tuple[str, dict[int, str]]`:
   1. Parse via `HypothesisSpec.from_dict`; expand procedural layers (none expected).
-  2. Build the single-config binding (the closing_spec pins each param to one value)
-     and call the dispatcher's `_build_pipeline_config(spec, bindings, text_length=97)`
-     to get the pipeline_dict.
-  3. Set `pipeline_dict["direction"] = "encrypt"`.
-  4. Build via `kryptos.kernel.transforms.compose.build_pipeline` and apply to
+  2. Get the single-config binding via `_enumerate_bindings(spec)` (the closing_spec
+     pins each param to one value, so it yields exactly one binding tuple) and call the
+     dispatcher's `_build_pipeline_config(spec, bindings, text_length=97)` to get the
+     pipeline_dict.
+  3. Set each STEP's `params["direction"] = "encrypt"`. NOTE: `build_pipeline` ignores
+     `PipelineConfig.direction` — the compose step builders read `direction` from each
+     step's own params (transposition: default `"undo"`=decrypt, so any non-`"undo"`
+     value encrypts; vigenere/quagmire/bifid: default `"decrypt"`, so any
+     non-`"decrypt"` value encrypts). The literal `"encrypt"` selects the encrypt
+     branch uniformly across all step types. (The decrypt dispatch via `execute()`
+     builds its own pipeline_dict with the default directions, using the SAME
+     `_translate_layer` output, so encrypt and decrypt are true inverses.)
+  4. Build a `PipelineConfig` from the (direction-patched) steps — mirroring
+     `_evaluate_one`'s `TransformConfig`/`PipelineConfig` construction — call
+     `kryptos.kernel.transforms.compose.build_pipeline`, and apply to
      `CANONICAL_PLAINTEXT` → synthetic CT (length 97).
   5. `crib_dict = {pos: CANONICAL_PLAINTEXT[pos] for pos in CRIB_POSITIONS}`.
   6. Return `(ct, crib_dict)`.
