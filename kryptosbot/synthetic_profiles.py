@@ -451,9 +451,17 @@ _T1_BERLINCLOCK_COLUMNAR = SyntheticProfile(
             {
                 "kind": "columnar",
                 "alphabet": "AZ",
+                # Dual-purpose: `keyword` pins the obligation (the matcher
+                # reads the keyword axis); `width`/`col_order` make the spec
+                # executable for PR3 real-recovery dispatch (the dispatcher's
+                # columnar translator reads width/col_order and ignores keyword).
                 "params": [
                     {"name": "keyword", "values": ["BERLINCLOCK"]},
                     {"name": "width", "values": [11]},
+                    # col_order == keyword_to_order("BERLINCLOCK", 11). Written
+                    # as a literal because this module is intentionally
+                    # dependency-free (no kernel import). If BERLINCLOCK or
+                    # width changes, re-derive this permutation.
                     {"name": "col_order",
                      "values": [[0, 3, 10, 6, 4, 8, 1, 7, 9, 2, 5]]},
                 ],
