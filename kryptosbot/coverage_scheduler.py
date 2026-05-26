@@ -1,21 +1,29 @@
-"""Deterministic coverage scheduler for synthetic profiles (PR 2).
+"""Deterministic coverage scheduler for synthetic profiles (PR 2/PR 3).
 
-PR 1 made coverage failure observable; PR 2 closes obligations by
-construction. When --coverage-scheduler-enabled, this module builds the
-profile's explicit closing_spec and proves it is EMITTED + ADMISSIBLE:
-it runs only the dispatcher's pre-kernel preamble
-(_expand_procedural_layers -> check_admissibility) and records the
-verdict through the PR1 collector. It never calls job_dispatcher.execute
-or any kernel scoring path, never touches the real ledger, and makes no
-LLM/API call. Blocked profiles (T1_TAPE_K3PT) are refused, mirroring
-PR1's launch refusal.
+PR 1 made coverage failure observable; PR 2 closed obligations by
+construction; PR 3 adds scoring for recovery targets. When
+--coverage-scheduler-enabled, this module builds the profile's explicit
+closing_spec and either:
 
-Closure semantics: "emitted + admissible". The T1 postmortem gap was
-about emission/admission, not scoring. Synthetic profiles carry a
-mechanism contract, not a synthetic ciphertext, so executing the closing
-spec would mean running against the real K4 CT - out of scope and
-contrary to the no-real-K4 posture. The scheduler stops at the
-admissibility boundary.
+  * (recovery_target=False, e.g. route) proves it is EMITTED + ADMISSIBLE:
+    runs only the dispatcher's pre-kernel preamble
+    (_expand_procedural_layers -> check_admissibility) and records the
+    verdict through the PR1 collector. It never calls
+    job_dispatcher.execute or any kernel scoring path for these profiles.
+
+  * (recovery_target=True, e.g. serpentine/columnar) GENERATES a synthetic
+    97-char ciphertext from the closing_spec (coverage_synthetic), then
+    dispatches the spec against that SYNTHETIC CT via
+    job_dispatcher.execute(bench_mode=True) and records the real
+    best_score. The PR1 ladder reaches `satisfied` when best_score>=18.
+    Fail-closed: any generation/dispatch failure on a recovery target is
+    a HARD failure (forced_fail_reason), never a downgrade to
+    emitted_and_admissible.
+
+It never runs against the real K4 CT (recovery-target dispatch uses the
+synthetic CT only), never touches the real ledger, and makes no LLM/API
+call. Blocked profiles (T1_TAPE_K3PT) are refused, mirroring PR1's launch
+refusal.
 """
 
 from __future__ import annotations
@@ -25,6 +33,7 @@ from pathlib import Path
 from typing import Any
 
 from kryptosbot.coverage_audit import CoverageAuditCollector, CoverageReport
+from kryptosbot.coverage_synthetic import generate_synthetic_challenge
 from kryptosbot.synthetic_profiles import SyntheticProfile
 
 logger = logging.getLogger("kryptosbot.coverage_scheduler")
@@ -136,10 +145,58 @@ def run_coverage_schedule(
 
     spec_dict = profile.closing_spec or {}
     hyp_id = spec_dict.get("hypothesis_id", f"{profile.profile_id}__closing")
+    family = profile.obligations[0].expected_family if profile.obligations else ""
+
+    if profile.recovery_target:
+        # PR3: recovery targets are SCORED, not stopped at the
+        # admissibility boundary. Generate a synthetic CT from the
+        # closing_spec, dispatch the spec against it (bench_mode isolates
+        # the synthetic profile from real-K4 surfaces), and record the
+        # real best_score so the PR1 ladder can reach `satisfied`.
+        # Fail-closed: any generation/dispatch failure on a recovery
+        # target is a hard failure - NEVER a silent downgrade to
+        # emitted_and_admissible.
+        from kryptosbot import job_dispatcher
+        from kryptosbot.hypothesis_dsl import HypothesisSpec
+        collector.record_emitted_spec(
+            hypothesis_id=hyp_id,
+            title=f"{profile.profile_id} recovery-target closing spec",
+            family=family,
+            layers=list(spec_dict.get("pipeline") or []),
+            origin="coverage_scheduler",
+        )
+        try:
+            ct, cribs = generate_synthetic_challenge(spec_dict)
+            result = job_dispatcher.execute(
+                HypothesisSpec.from_dict(spec_dict),
+                challenge_ciphertext=ct,
+                challenge_crib_dict=cribs,
+                bench_mode=True,
+                parallel=False,
+            )
+        except Exception as exc:  # fail-closed: never downgrade to admissible
+            reason = (
+                f"coverage-scheduler recovery FAILED for "
+                f"{profile.profile_id!r}: {exc}"
+            )
+            collector.add_note(reason)
+            collector.forced_fail_reason = reason
+            return collector.build_report()
+        collector.record_dispatcher_outcome(
+            hypothesis_id=hyp_id,
+            admissibility_verdict=result.admissibility_verdict or "ok",
+            admissibility_reasons=list(result.admissibility_reasons),
+            total_tested=result.total_tested,
+            best_score=result.best_score,
+            admissibility_only=False,
+        )
+        return collector.build_report()
+
+    # --- non-recovery-target (route): PR2 emitted+admissible path (unchanged) ---
     collector.record_emitted_spec(
         hypothesis_id=hyp_id,
         title=f"{profile.profile_id} deterministic closing spec",
-        family=(profile.obligations[0].expected_family if profile.obligations else ""),
+        family=family,
         layers=list(spec_dict.get("pipeline") or []),
         origin="coverage_scheduler",
     )
