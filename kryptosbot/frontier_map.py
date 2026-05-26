@@ -160,16 +160,37 @@ _MODEL_DESC = {k: d for k, d in ALIGNMENT_MODELS}
 
 
 def render_open_frontier(fm: FrontierMap, *, limit: int = 12) -> str:
-    """Theorist prompt block listing top open cells. Empty string if none."""
-    opens = open_cells(fm)
-    if not opens:
+    """Theorist prompt block summarizing the unexplored non-direct alignment
+    frontier. Empty string if no open non-direct cells.
+
+    Surfaces ONLY non-direct alignment models. The map's status is derived
+    from the kryptosbot ledger alone, so a direct-carving cell reading "open"
+    is unreliable: project-wide eliminations recorded in exhaustion_log /
+    elimination_tiers are not visible here, and most direct-carving cells are
+    in fact eliminated. The non-direct columns, by contrast, are genuinely
+    unexplored everywhere — that is the real, trustworthy frontier signal. One
+    summary line per open non-direct model, with example families.
+    """
+    from collections import defaultdict
+    fams_by_model: dict[str, set[str]] = defaultdict(set)
+    for c in fm.cells:
+        if c.status == "open" and c.alignment_model in NON_DIRECT_MODELS:
+            fams_by_model[c.alignment_model].add(c.family)
+    if not fams_by_model:
         return ""
-    lines = ["OPEN FRONTIER (unexplored family x alignment-model cells — "
-             "candidates for novel mechanisms; non-direct alignment first):"]
-    for c in opens[:limit]:
-        lines.append(f"- {c.family} x {c.alignment_model}: "
-                     f"{_MODEL_DESC[c.alignment_model]} UNEXPLORED.")
-    return "\n".join(lines)
+    lines = ["OPEN FRONTIER (unexplored non-direct alignment models — the "
+             "highest-value untested directions; pair a cipher family with a "
+             "non-direct crib alignment):"]
+    for model, _desc in ALIGNMENT_MODELS:
+        if model not in NON_DIRECT_MODELS:
+            continue
+        fams = sorted(fams_by_model.get(model, set()))
+        if not fams:
+            continue
+        examples = ", ".join(fams[:4])
+        lines.append(f"- {model}: UNEXPLORED across {len(fams)} cipher "
+                     f"families (e.g. {examples}). {_MODEL_DESC[model]}")
+    return "\n".join(lines[:1 + limit])
 
 
 def frontier_cell_for_theory(theory: dict, fm: FrontierMap) -> FrontierCell | None:

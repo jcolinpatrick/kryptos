@@ -145,3 +145,19 @@ def test_family_universe_excludes_non_cipher_junk():
     assert "vigenere" in fams and "beaufort" in fams
     assert "admissibility" not in fams
     assert "campaigns_final_checklist" not in fams
+
+
+def test_render_summarizes_only_non_direct_models(tmp_path):
+    # All cells open. Render must advertise the four non-direct alignment
+    # models as a per-model summary and must NOT advertise direct-carving
+    # cells (their "open" status is unreliable under the ledger-only view).
+    db = _make_ledger(tmp_path, [])
+    fm = build_frontier_map(ledger_db_path=db,
+                            family_universe=["vigenere", "beaufort"])
+    out = render_open_frontier(fm, limit=12)
+    assert "direct_ct_pt" not in out
+    assert "fixed_len_97" not in out
+    for m in ("ct73_null_extracted", "arbitrary_null_mask",
+              "non_direct_alignment", "joint_mask_mechanism"):
+        assert m in out
+    assert "UNEXPLORED across" in out
