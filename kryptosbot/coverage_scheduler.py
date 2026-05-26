@@ -117,8 +117,6 @@ def run_coverage_schedule(
     project_root is accepted for caller-signature symmetry (run_controller
     passes it; the report is written to disk by the caller, not here).
     """
-    collector.add_note("coverage-scheduler: Approach A (emitted+admissible, no execution)")
-
     if profile.status == "blocked":
         # Surface a single clear blocked cause through the collector so it
         # flows via build_report() into BOTH the returned report and any
@@ -165,6 +163,10 @@ def run_coverage_schedule(
             layers=list(spec_dict.get("pipeline") or []),
             origin="coverage_scheduler",
         )
+        collector.add_note(
+            "coverage-scheduler: recovery target — generating synthetic CT, "
+            "dispatching, and scoring (synthetic CT only; real K4 CT untouched)."
+        )
         try:
             ct, cribs = generate_synthetic_challenge(spec_dict)
             result = job_dispatcher.execute(
@@ -175,6 +177,9 @@ def run_coverage_schedule(
                 parallel=False,
             )
         except Exception as exc:  # fail-closed: never downgrade to admissible
+            logger.exception(
+                "coverage-scheduler recovery failed for %s", profile.profile_id
+            )
             reason = (
                 f"coverage-scheduler recovery FAILED for "
                 f"{profile.profile_id!r}: {exc}"
@@ -193,6 +198,9 @@ def run_coverage_schedule(
         return collector.build_report()
 
     # --- non-recovery-target (route): PR2 emitted+admissible path (unchanged) ---
+    collector.add_note(
+        "coverage-scheduler: emitted+admissible only (no kernel execution)."
+    )
     collector.record_emitted_spec(
         hypothesis_id=hyp_id,
         title=f"{profile.profile_id} deterministic closing spec",
