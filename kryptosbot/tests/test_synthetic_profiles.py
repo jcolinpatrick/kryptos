@@ -36,7 +36,7 @@ def test_registry_exposes_pr1_profile_ids() -> None:
     ids = list_profile_ids()
     assert ids == [
         "T1_ABSCISSA_ROUTE",
-        "T1_BERLINKLOCK_COLUMNAR",
+        "T1_BERLINCLOCK_COLUMNAR",
         "T1_SERPENTINE_QUAGMIRE",
         "T1_TAPE_K3PT",
     ]

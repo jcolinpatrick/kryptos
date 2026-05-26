@@ -31,7 +31,7 @@ def test_check_spec_admissibility_rejects_malformed() -> None:
     bad = {
         "hypothesis_id": "bad",
         "pipeline": [{"kind": "columnar", "alphabet": "ZZ", "params": [
-            {"name": "keyword", "values": ["BERLINKLOCK"]}
+            {"name": "keyword", "values": ["BERLINCLOCK"]}
         ]}],
         "compute_budget_cpu_minutes": 30,
     }

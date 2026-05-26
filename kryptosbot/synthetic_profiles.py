@@ -399,19 +399,19 @@ _T1_SERPENTINE_QUAGMIRE = SyntheticProfile(
 )
 
 
-# T1_BERLINKLOCK_COLUMNAR
+# T1_BERLINCLOCK_COLUMNAR
 #
-# Synthetic columnar transposition keyed with BERLINKLOCK (Berlin Clock
+# Synthetic columnar transposition keyed with BERLINCLOCK (Berlin Clock
 # anchor). Available because columnar is a supported dispatcher kind.
 # Obligation is on the columnar layer with a keyword parameter
-# materializing to BERLINKLOCK.
-_T1_BERLINKLOCK_COLUMNAR = SyntheticProfile(
-    profile_id="T1_BERLINKLOCK_COLUMNAR",
+# materializing to BERLINCLOCK.
+_T1_BERLINCLOCK_COLUMNAR = SyntheticProfile(
+    profile_id="T1_BERLINCLOCK_COLUMNAR",
     description=(
-        "Synthetic columnar transposition keyed with BERLINKLOCK. "
+        "Synthetic columnar transposition keyed with BERLINCLOCK. "
         "Passes when at least one dispatched HypothesisSpec includes a "
         "columnar layer whose keyword parameter materializes to "
-        "BERLINKLOCK."
+        "BERLINCLOCK."
     ),
     status="available",
     blocked_reason="",
@@ -422,29 +422,30 @@ _T1_BERLINKLOCK_COLUMNAR = SyntheticProfile(
             expected_layer_kind="columnar",
             expected_layer_variant=None,
             expected_parameter_axis="keyword",
-            expected_parameter_value="BERLINKLOCK",
+            expected_parameter_value="BERLINCLOCK",
             minimum_expected_dispatch=1,
         ),
     ),
     closing_spec={
-        "hypothesis_id": "T1_BERLINKLOCK_COLUMNAR__closing",
+        "hypothesis_id": "T1_BERLINCLOCK_COLUMNAR__closing",
         "pipeline": [
             {
                 "kind": "columnar",
                 "alphabet": "AZ",
                 "params": [
-                    {"name": "keyword", "values": ["BERLINKLOCK"]},
+                    {"name": "keyword", "values": ["BERLINCLOCK"]},
                 ],
             }
         ],
         "null_baseline": {"method": "random_text", "n_samples": 10000},
         "compute_budget_cpu_minutes": 30,
-        "notes": "PR2 closing spec for T1_BERLINKLOCK_COLUMNAR obligation.",
+        "notes": "PR2 closing spec for T1_BERLINCLOCK_COLUMNAR obligation.",
     },
     notes=(
-        "Berlin Clock anchor exposure check. The columnar keyword axis "
-        "is the natural target; alternate spellings (BERLINCLOCK, "
-        "WELTZEITUHR) would be separate profiles."
+        "Berlin Clock anchor exposure check. BERLINCLOCK is the canonical "
+        "English crib token (see kryptosbot.constants CRIBS, positions "
+        "63-73). The columnar keyword axis is the natural target; alternate "
+        "spellings (e.g. the German WELTZEITUHR) would be separate profiles."
     ),
 )
 
@@ -553,7 +554,7 @@ _T1_TAPE_K3PT = SyntheticProfile(
 
 _REGISTRY: dict[str, SyntheticProfile] = {
     _T1_SERPENTINE_QUAGMIRE.profile_id: _T1_SERPENTINE_QUAGMIRE,
-    _T1_BERLINKLOCK_COLUMNAR.profile_id: _T1_BERLINKLOCK_COLUMNAR,
+    _T1_BERLINCLOCK_COLUMNAR.profile_id: _T1_BERLINCLOCK_COLUMNAR,
     _T1_ABSCISSA_ROUTE.profile_id: _T1_ABSCISSA_ROUTE,
     _T1_TAPE_K3PT.profile_id: _T1_TAPE_K3PT,
 }
