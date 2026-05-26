@@ -434,6 +434,10 @@ def _make_controller_for_redteam(tmp_path):
     ctrl.state = MagicMock()
     ctrl.state.cycle_number = 10
     ctrl._cycle_redteam_verdicts = {}
+    # ResearchController.__init__ initializes this counter; this helper
+    # constructs via __new__ (bypassing __init__), so mirror the init here —
+    # the red-team downgrade path increments it with a bare +=.
+    ctrl._cycle_redteam_reject_count = 0
     ctrl._pantheon_roster = _make_redteam_roster()
     return ctrl
 
