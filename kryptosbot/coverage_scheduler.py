@@ -197,7 +197,9 @@ def run_coverage_schedule(
         )
         return collector.build_report()
 
-    # --- non-recovery-target (route): PR2 emitted+admissible path (unchanged) ---
+    # --- non-recovery-target: PR2 emitted+admissible path (unchanged) ---
+    # (Profile-agnostic: no registry profile is non-recovery as of PR4; this
+    # branch is exercised by an inline test fixture. Kept for future profiles.)
     collector.add_note(
         "coverage-scheduler: emitted+admissible only (no kernel execution)."
     )
