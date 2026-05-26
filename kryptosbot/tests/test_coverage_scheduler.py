@@ -119,6 +119,7 @@ def test_non_recovery_profile_reaches_emitted_and_admissible() -> None:
     )
     profile = _make_non_recovery_available_profile()
     assert profile.recovery_target is False
+    assert verify_profile_closing_spec(profile) == []
     collector = CoverageAuditCollector(profile=profile)
     report = run_coverage_schedule(
         profile, collector, project_root=Path("/home/cpatrick/kryptos"),

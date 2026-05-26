@@ -19,9 +19,9 @@ def test_generated_ct_is_97_chars_and_differs_from_pt() -> None:
     ):
         spec = get_profile(pid).closing_spec
         ct, cribs = generate_synthetic_challenge(spec)
-        assert len(ct) == 97
-        assert ct != CANONICAL_PLAINTEXT  # mechanism actually transformed it
-        assert len(cribs) == 24
+        assert len(ct) == 97, pid
+        assert ct != CANONICAL_PLAINTEXT, pid  # mechanism actually transformed it
+        assert len(cribs) == 24, pid
 
 
 def test_cribs_are_canonical_pt_at_standard_positions() -> None:
