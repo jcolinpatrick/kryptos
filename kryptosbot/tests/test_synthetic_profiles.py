@@ -352,6 +352,20 @@ def test_columnar_closing_spec_carries_executable_params() -> None:
     assert names["col_order"]["values"] == [[0, 3, 10, 6, 4, 8, 1, 7, 9, 2, 5]]
 
 
+def test_columnar_col_order_matches_keyword_derivation() -> None:
+    # The col_order literal in the columnar closing_spec must equal the
+    # canonical keyword-derived column order, so a hand-edit that desyncs
+    # from BERLINCLOCK is caught (the module itself is dependency-free and
+    # stores the literal; this test holds it to keyword_to_order).
+    from kryptos.kernel.transforms.transposition import keyword_to_order
+    from kryptosbot.synthetic_profiles import get_profile
+    layer = get_profile("T1_BERLINCLOCK_COLUMNAR").closing_spec["pipeline"][0]
+    names = {pr["name"]: pr for pr in layer["params"]}
+    width = names["width"]["values"][0]
+    col_order = names["col_order"]["values"][0]
+    assert col_order == list(keyword_to_order("BERLINCLOCK", width))
+
+
 def test_profile_to_dict_round_trips_serializable() -> None:
     """SyntheticProfile.to_dict() must produce a JSON-serializable shape.
 

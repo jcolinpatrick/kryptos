@@ -67,6 +67,9 @@ def generate_synthetic_challenge(
     # build_pipeline ignores PipelineConfig.direction; the encrypt branch
     # is selected per-step via params["direction"]="encrypt" (non-"undo"
     # for transposition, non-"decrypt" for vigenere/quagmire/bifid).
+    # NOTE: this TransformConfig/PipelineConfig reconstruction mirrors the
+    # dispatcher's per-config worker (job_dispatcher._evaluate_one); keep the
+    # two in sync if the step-dict shape changes. The round-trip test guards drift.
     steps = []
     for s in pipeline_dict["steps"]:
         params = dict(s.get("params", {}))
