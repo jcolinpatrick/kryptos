@@ -66,16 +66,16 @@ real K4 ciphertext is never touched.
 
 - Add field `recovery_target: bool = False` to `SyntheticProfile`.
   - `T1_SERPENTINE_QUAGMIRE` → `True`.
-  - `T1_BERLINKLOCK_COLUMNAR` → `True`.
+  - `T1_BERLINCLOCK_COLUMNAR` → `True`.
   - `T1_ABSCISSA_ROUTE` → `False` (stays emitted+admissible).
   - `T1_TAPE_K3PT` → `False` (blocked).
 - New `__post_init__` invariant: `recovery_target` implies `status == "available"` and
   a non-empty `closing_spec`. A `blocked` profile must not be a recovery target.
 - Enrich the **columnar** `closing_spec` so it is dispatch-executable while still
   satisfying the keyword obligation. The columnar layer params become:
-  - `keyword=["BERLINKLOCK"]` (obligation axis — unchanged),
+  - `keyword=["BERLINCLOCK"]` (obligation axis — unchanged),
   - `width=[11]`,
-  - `col_order=[<keyword_to_order("BERLINKLOCK", 11) as a list>]`.
+  - `col_order=[<keyword_to_order("BERLINCLOCK", 11) as a list>]`.
   The dispatcher reads `width`/`col_order`; the obligation matcher reads `keyword`;
   the extra `keyword` param is ignored by the translator. The `col_order` value is
   computed once from `kryptos.kernel.transforms.transposition.keyword_to_order` and
