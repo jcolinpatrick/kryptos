@@ -68,3 +68,59 @@ def alignment_models_for_row(family: str, mechanism: str, tags: list[str]) -> fr
     if not models:
         return DIRECT_CARVING_MODELS
     return frozenset(models)
+
+
+def _family_universe() -> list[str]:
+    from kryptosbot.kb_family_map import valid_ledger_family_universe
+    return sorted(valid_ledger_family_universe())
+
+
+def build_frontier_map(*, ledger_db_path, family_universe=None, now=None) -> FrontierMap:
+    """Build the family x alignment_model frontier map from ledger evidence.
+
+    Status per cell: open (no tested theories), explored_shallow (1.._DEEP_THRESHOLD-1
+    tested, no signal), explored_deep (>=_DEEP_THRESHOLD tested, best_crib < SIGNAL).
+    """
+    families = list(family_universe) if family_universe is not None else _family_universe()
+    fam_set = set(families)
+
+    agg: dict[tuple[str, str], dict] = {}
+    conn = sqlite3.connect(f"file:{Path(ledger_db_path)}?mode=ro", uri=True)
+    try:
+        cur = conn.execute(
+            "SELECT family, mechanism, tags, best_score, status FROM theories "
+            "WHERE status IN ('eliminated', 'completed')")
+        rows = cur.fetchall()
+    finally:
+        conn.close()
+
+    for family, mechanism, tags_json, best_score, _status in rows:
+        if family not in fam_set:
+            continue
+        try:
+            tags = json.loads(tags_json) if tags_json else []
+        except (ValueError, TypeError):
+            tags = []
+        for model in alignment_models_for_row(family, mechanism or "", tags):
+            entry = agg.setdefault((family, model), {"n": 0, "best": 0})
+            entry["n"] += 1
+            entry["best"] = max(entry["best"], int(best_score or 0))
+
+    cells: list[FrontierCell] = []
+    for family in families:
+        for model, _desc in ALIGNMENT_MODELS:
+            entry = agg.get((family, model))
+            if not entry or entry["n"] == 0:
+                cells.append(FrontierCell(family, model, "open", 0, 0))
+                continue
+            n, best = entry["n"], entry["best"]
+            if best >= _SIGNAL:
+                status = "explored_shallow"
+            elif n >= _DEEP_THRESHOLD:
+                status = "explored_deep"
+            else:
+                status = "explored_shallow"
+            cells.append(FrontierCell(family, model, status, n, best))
+
+    ts = (now or datetime.now(timezone.utc)).isoformat()
+    return FrontierMap(cells=tuple(cells), built_at=ts)
