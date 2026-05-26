@@ -487,19 +487,26 @@ _T1_BERLINCLOCK_COLUMNAR = SyntheticProfile(
 )
 
 
-# T1_ABSCISSA_ROUTE
+# T1_SERPENTINE_ROUTE
 #
-# Synthetic route transposition keyed by ABSCISSA. Available because
-# `route` is a supported dispatcher kind. Obligation pins the route layer
-# with a keyword (or, equivalently, the ``variant`` axis if route uses
-# variant strings). We use ``keyword`` as the canonical axis name to
-# match the existing K4Bench/HCC seed conventions.
-_T1_ABSCISSA_ROUTE = SyntheticProfile(
-    profile_id="T1_ABSCISSA_ROUTE",
+# Synthetic serpentine (boustrophedon) route transposition over a 10x10
+# grid. The dispatcher's route translator cites Sanborn's AAA-archive
+# description of Kryptos as "a serpentine copper screen ... with Blaise
+# De Vigenère's Tableaux" as the natural serpentine anchor, so this is the
+# thematically-consistent route coverage profile. A recovery target (PR3):
+# the closing_spec is dispatch-executable (variant + rows/cols) and
+# round-trips a synthetic CT to crib_score 24.
+#
+# (Replaces the former T1_ABSCISSA_ROUTE, whose keyword=ABSCISSA obligation
+# had no executable mapping in the dispatcher's keyword-less route model.)
+_T1_SERPENTINE_ROUTE = SyntheticProfile(
+    profile_id="T1_SERPENTINE_ROUTE",
     description=(
-        "Synthetic route transposition keyed with ABSCISSA. Passes "
-        "when at least one dispatched HypothesisSpec includes a route "
-        "layer whose keyword parameter materializes to ABSCISSA."
+        "Synthetic serpentine route transposition (boustrophedon read over "
+        "a 10x10 grid). Passes when at least one dispatched HypothesisSpec "
+        "includes a route layer whose variant parameter materializes to "
+        "serpentine; as a recovery target it must recover the synthetic "
+        "plaintext (crib_score >= SIGNAL)."
     ),
     status="available",
     blocked_reason="",
@@ -509,32 +516,35 @@ _T1_ABSCISSA_ROUTE = SyntheticProfile(
             expected_family="transposition_route",
             expected_layer_kind="route",
             expected_layer_variant=None,
-            expected_parameter_axis="keyword",
-            expected_parameter_value="ABSCISSA",
+            expected_parameter_axis="variant",
+            expected_parameter_value="serpentine",
             minimum_expected_dispatch=1,
         ),
     ),
     closing_spec={
-        "hypothesis_id": "T1_ABSCISSA_ROUTE__closing",
+        "hypothesis_id": "T1_SERPENTINE_ROUTE__closing",
         "pipeline": [
             {
                 "kind": "route",
                 "alphabet": "AZ",
                 "params": [
-                    {"name": "keyword", "values": ["ABSCISSA"]},
+                    {"name": "variant", "values": ["serpentine"]},
+                    # 10x10 = 100 >= 97 so the grid covers every CT position.
+                    {"name": "rows", "values": [10]},
+                    {"name": "cols", "values": [10]},
                 ],
             }
         ],
         "null_baseline": {"method": "random_text", "n_samples": 10000},
         "compute_budget_cpu_minutes": 30,
-        "notes": "PR2 closing spec for T1_ABSCISSA_ROUTE obligation.",
+        "notes": "PR4 closing spec for T1_SERPENTINE_ROUTE obligation.",
     },
+    recovery_target=True,
     notes=(
-        "ABSCISSA is one of the AAA-archive procedural terms. The "
-        "obligation pins it on the route layer; vigenere-keyword "
-        "ABSCISSA on a substitution layer would NOT satisfy this "
-        "profile (that conflation is exactly the T1 postmortem failure "
-        "mode and the registry deliberately refuses to launder it)."
+        "Serpentine route coverage. variant=serpentine pins the obligation; "
+        "rows/cols make the spec executable and round-trippable for PR3 "
+        "real-recovery dispatch. The Kryptos serpentine-screen anchor "
+        "motivates the variant choice."
     ),
 )
 
@@ -592,7 +602,7 @@ _T1_TAPE_K3PT = SyntheticProfile(
 _REGISTRY: dict[str, SyntheticProfile] = {
     _T1_SERPENTINE_QUAGMIRE.profile_id: _T1_SERPENTINE_QUAGMIRE,
     _T1_BERLINCLOCK_COLUMNAR.profile_id: _T1_BERLINCLOCK_COLUMNAR,
-    _T1_ABSCISSA_ROUTE.profile_id: _T1_ABSCISSA_ROUTE,
+    _T1_SERPENTINE_ROUTE.profile_id: _T1_SERPENTINE_ROUTE,
     _T1_TAPE_K3PT.profile_id: _T1_TAPE_K3PT,
 }
 

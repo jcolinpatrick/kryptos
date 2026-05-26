@@ -35,9 +35,9 @@ def test_registry_exposes_pr1_profile_ids() -> None:
     """All four PR-1 profile IDs must be registered, in sorted order."""
     ids = list_profile_ids()
     assert ids == [
-        "T1_ABSCISSA_ROUTE",
         "T1_BERLINCLOCK_COLUMNAR",
         "T1_SERPENTINE_QUAGMIRE",
+        "T1_SERPENTINE_ROUTE",
         "T1_TAPE_K3PT",
     ]
 
@@ -318,10 +318,30 @@ def test_available_without_closing_spec_raises() -> None:
         )
 
 
-def test_recovery_targets_are_quagmire_and_columnar() -> None:
+def test_recovery_targets_are_the_three_executable_profiles() -> None:
     from kryptosbot.synthetic_profiles import all_profiles
     targets = {p.profile_id for p in all_profiles() if p.recovery_target}
-    assert targets == {"T1_SERPENTINE_QUAGMIRE", "T1_BERLINCLOCK_COLUMNAR"}
+    assert targets == {
+        "T1_SERPENTINE_QUAGMIRE",
+        "T1_BERLINCLOCK_COLUMNAR",
+        "T1_SERPENTINE_ROUTE",
+    }
+
+
+def test_serpentine_route_obligation_shape() -> None:
+    from kryptosbot.synthetic_profiles import get_profile
+    p = get_profile("T1_SERPENTINE_ROUTE")
+    assert p.status == "available"
+    assert p.recovery_target is True
+    ob = p.obligations[0]
+    assert ob.expected_layer_kind == "route"
+    assert ob.expected_parameter_axis == "variant"
+    assert ob.expected_parameter_value == "serpentine"
+    layer = p.closing_spec["pipeline"][0]
+    names = {pr["name"]: pr for pr in layer["params"]}
+    assert names["variant"]["values"] == ["serpentine"]
+    assert names["rows"]["values"] == [10]
+    assert names["cols"]["values"] == [10]
 
 
 def test_recovery_target_implies_available_with_closing_spec() -> None:
