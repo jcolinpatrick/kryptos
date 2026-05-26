@@ -20,3 +20,22 @@ def test_direct_and_non_direct_partition_the_keys():
     assert NON_DIRECT_MODELS == ALIGNMENT_MODEL_KEYS - DIRECT_CARVING_MODELS
     assert DIRECT_CARVING_MODELS | NON_DIRECT_MODELS == ALIGNMENT_MODEL_KEYS
     assert DIRECT_CARVING_MODELS & NON_DIRECT_MODELS == set()
+
+
+def test_session_briefing_uses_canonical_taxonomy():
+    import importlib.util
+    import sys
+    from pathlib import Path
+    from kryptos.alignment_models import ALIGNMENT_MODELS
+    root = Path(__file__).resolve().parents[1]
+    spec = importlib.util.spec_from_file_location(
+        "session_briefing", root / "scripts" / "_infra" / "session_briefing.py")
+    mod = importlib.util.module_from_spec(spec)
+    # Register in sys.modules before exec so @dataclass with string annotations
+    # (from __future__ import annotations) can resolve the module namespace.
+    sys.modules.setdefault("session_briefing", mod)
+    try:
+        spec.loader.exec_module(mod)
+    finally:
+        sys.modules.pop("session_briefing", None)
+    assert mod.ALIGNMENT_MODELS is ALIGNMENT_MODELS

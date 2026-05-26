@@ -76,6 +76,8 @@ except Exception as exc:  # pragma: no cover - exercised only on broken install
     _KERNEL_OK = False
     _KERNEL_ERR = repr(exc)
 
+from kryptos.alignment_models import ALIGNMENT_MODELS, ALIGNMENT_MODEL_KEYS as _ALIGNMENT_MODEL_KEYS  # noqa: E402
+
 
 # ── Diagnostics ───────────────────────────────────────────────────────────────
 
@@ -594,23 +596,6 @@ _EVIDENCE_GROUPS: tuple[tuple[str, tuple[str, ...]], ...] = (
 #
 # Ordered narrowest (most assumptions) -> broadest (fewest assumptions). A proof
 # under a narrow model says nothing about a broader one below it.
-ALIGNMENT_MODELS: tuple[tuple[str, str], ...] = (
-    ("direct_ct_pt",
-     "Direct CT[i] -> PT[i] crib mapping (each carved char decrypts in place)."),
-    ("fixed_len_97",
-     "Fixed CT_LEN=97 / fixed public crib positions 21-33, 63-73 (no nulls)."),
-    ("ct73_null_extracted",
-     "Specific null-extracted CT73-style models (a fixed 24-position extraction)."),
-    ("arbitrary_null_mask",
-     "Arbitrary null-mask / variable-PT-length models (mask positions unknown)."),
-    ("non_direct_alignment",
-     "Non-direct crib-alignment models (outer layer reorders CT before decrypt)."),
-    ("joint_mask_mechanism",
-     "Joint mask x mechanism inference (mask and cipher solved together)."),
-)
-
-_ALIGNMENT_MODEL_KEYS: frozenset[str] = frozenset(k for k, _ in ALIGNMENT_MODELS)
-
 # Mandated acceptance statement: the briefing must always assert that current
 # exhaustion is scoped to the models that actually have a proving artifact.
 SCOPED_EXHAUSTION_STATEMENT = (
