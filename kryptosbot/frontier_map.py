@@ -71,8 +71,8 @@ def alignment_models_for_row(family: str, mechanism: str, tags: list[str]) -> fr
 
 
 def _family_universe() -> list[str]:
-    from kryptosbot.kb_family_map import valid_ledger_family_universe
-    return sorted(valid_ledger_family_universe())
+    from kryptosbot.registries import KNOWN_FAMILIES
+    return sorted(f["family_id"] for f in KNOWN_FAMILIES)
 
 
 def build_frontier_map(*, ledger_db_path, family_universe=None, now=None) -> FrontierMap:
@@ -127,11 +127,33 @@ def build_frontier_map(*, ledger_db_path, family_universe=None, now=None) -> Fro
 
 
 def open_cells(fm: FrontierMap) -> list[FrontierCell]:
-    """Open cells, non-direct-alignment columns first (the priority frontier)."""
-    opens = [c for c in fm.cells if c.status == "open"]
-    opens.sort(key=lambda c: (c.alignment_model in DIRECT_CARVING_MODELS,
-                              c.alignment_model, c.family))
-    return opens
+    """Open cells, round-robin across alignment models (non-direct first).
+
+    Round-robin so a capped render surfaces ALL unexplored alignment
+    directions rather than many cells of one alphabetically-first model.
+    """
+    from collections import defaultdict
+    by_model: dict[str, list[FrontierCell]] = defaultdict(list)
+    for c in fm.cells:
+        if c.status == "open":
+            by_model[c.alignment_model].append(c)
+    for cells in by_model.values():
+        cells.sort(key=lambda c: c.family)
+    non_direct = [k for k, _ in ALIGNMENT_MODELS if k in NON_DIRECT_MODELS]
+    direct = [k for k, _ in ALIGNMENT_MODELS if k in DIRECT_CARVING_MODELS]
+    model_order = non_direct + direct
+    idx = {m: 0 for m in model_order}
+    result: list[FrontierCell] = []
+    progress = True
+    while progress:
+        progress = False
+        for m in model_order:
+            lst = by_model.get(m, [])
+            if idx[m] < len(lst):
+                result.append(lst[idx[m]])
+                idx[m] += 1
+                progress = True
+    return result
 
 
 _MODEL_DESC = {k: d for k, d in ALIGNMENT_MODELS}

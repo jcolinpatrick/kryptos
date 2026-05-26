@@ -123,3 +123,25 @@ def test_session_briefing_render_helper_is_importable_and_safe(tmp_path):
     fm = build_frontier_map(ledger_db_path=db)
     out = render_open_frontier(fm, limit=8)
     assert isinstance(out, str)
+
+
+def test_open_cells_round_robin_across_non_direct_models(tmp_path):
+    # All cells open; the first 4 must span the 4 DISTINCT non-direct models
+    # (round-robin), not 4 cells of the same alphabetically-first model.
+    db = _make_ledger(tmp_path, [])
+    fm = build_frontier_map(
+        ledger_db_path=db,
+        family_universe=["vigenere", "beaufort", "columnar_single"])
+    first4 = [c.alignment_model for c in open_cells(fm)[:4]]
+    assert set(first4) == {
+        "ct73_null_extracted", "arbitrary_null_mask",
+        "non_direct_alignment", "joint_mask_mechanism",
+    }
+
+
+def test_family_universe_excludes_non_cipher_junk():
+    from kryptosbot.frontier_map import _family_universe
+    fams = _family_universe()
+    assert "vigenere" in fams and "beaufort" in fams
+    assert "admissibility" not in fams
+    assert "campaigns_final_checklist" not in fams
