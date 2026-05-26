@@ -48,9 +48,19 @@ This is an **instrument-integrity** evaluation. A zero-signal outcome is an expe
 PYTHONPATH=src python3 -u kryptosbot/run_controller.py \
     --cycles 15 --theories 5 \
     --db db/theory_ledger.sqlite \
-    --coverage-report results/coverage_reports/ \
-    --verify-transport
+    --verify-transport \
+    > results/real_k4_campaign_2026_05_26.log 2>&1
 ```
+
+> **Correction (pre-launch, 2026-05-26):** the first draft included
+> `--coverage-report results/coverage_reports/`. The arg parser rejected it
+> (exit 2, ledger untouched) — `--coverage-report` is **synthetic-profile-only**
+> (bound to a profile's obligations) and is invalid in real-K4 mode. The
+> real-run audit trail is instead: the captured stdout log
+> (`results/real_k4_campaign_2026_05_26.log`), the ledger entries written
+> to `db/theory_ledger.sqlite`, and the R3 §6.1.7 DSL-utilization metrics
+> recovered at closure. This is a launch-config fix, not a change to the
+> locked §4/§6 criteria.
 
 **Fixed parameters (no edits after launch):**
 
@@ -59,7 +69,7 @@ PYTHONPATH=src python3 -u kryptosbot/run_controller.py \
 | Cycle budget | `--cycles 15` | R3 §3.3 recommended first-R3-era config; affordable under Category-A zero-token dispatch. |
 | Theory budget | `--theories 5` | R3 §3.3. Reduce to 3 ONLY if the §6 fallback halt trips; reduction is a halt-and-restart, not a mid-run edit. |
 | Ledger | `db/theory_ledger.sqlite` (real, default) | Gives the controller its accumulated landscape so it can *avoid known-dead families* — that avoidance is part of the research question. Landscape-carryover confound accepted (§7). |
-| Coverage archiving | `results/coverage_reports/` | Every cycle's coverage artifact archived (no silent runs). |
+| Run telemetry | stdout → `results/real_k4_campaign_2026_05_26.log` + ledger + §6.1.7 metrics | No silent run: full stdout captured, ledger entries persisted, DSL-utilization metrics recovered at closure. (`--coverage-report` is synthetic-only — see §2 correction.) |
 | Transport preflight | `--verify-transport` | MANDATORY here. Campaign C attempt 1 silently hung 3h on an unverified subscription throttle (R3 §7). Run halts before touching the ledger if either probe fails. |
 | Background | none | Foreground only. No `&`, no nohup, no detached run. Operator watches it. |
 
