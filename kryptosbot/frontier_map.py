@@ -124,3 +124,45 @@ def build_frontier_map(*, ledger_db_path, family_universe=None, now=None) -> Fro
 
     ts = (now or datetime.now(timezone.utc)).isoformat()
     return FrontierMap(cells=tuple(cells), built_at=ts)
+
+
+def open_cells(fm: FrontierMap) -> list[FrontierCell]:
+    """Open cells, non-direct-alignment columns first (the priority frontier)."""
+    opens = [c for c in fm.cells if c.status == "open"]
+    opens.sort(key=lambda c: (c.alignment_model in DIRECT_CARVING_MODELS,
+                              c.alignment_model, c.family))
+    return opens
+
+
+_MODEL_DESC = {k: d for k, d in ALIGNMENT_MODELS}
+
+
+def render_open_frontier(fm: FrontierMap, *, limit: int = 12) -> str:
+    """Theorist prompt block listing top open cells. Empty string if none."""
+    opens = open_cells(fm)
+    if not opens:
+        return ""
+    lines = ["OPEN FRONTIER (unexplored family x alignment-model cells — "
+             "candidates for novel mechanisms; non-direct alignment first):"]
+    for c in opens[:limit]:
+        lines.append(f"- {c.family} x {c.alignment_model}: "
+                     f"{_MODEL_DESC[c.alignment_model]} UNEXPLORED.")
+    return "\n".join(lines)
+
+
+def frontier_cell_for_theory(theory: dict, fm: FrontierMap) -> FrontierCell | None:
+    """Resolve a proposed theory (dict with family/mechanism/tags) to its cell.
+
+    Picks the highest-information alignment the theory assumes (non-direct over
+    direct when the classifier returns a non-direct model), then the matching
+    cell in the map. Returns None if the family is not in the grid.
+    """
+    family = theory.get("family") or ""
+    models = alignment_models_for_row(
+        family, theory.get("mechanism") or "", theory.get("tags") or [])
+    # prefer a non-direct model if present (more specific signal)
+    preferred = sorted(models, key=lambda m: m in DIRECT_CARVING_MODELS)[0]
+    for c in fm.cells:
+        if c.family == family and c.alignment_model == preferred:
+            return c
+    return None

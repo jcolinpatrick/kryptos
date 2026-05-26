@@ -72,3 +72,45 @@ def test_shallow_vs_deep_threshold(tmp_path):
     fm = build_frontier_map(ledger_db_path=db)
     by = {(c.family, c.alignment_model): c for c in fm.cells}
     assert by[("beaufort", "direct_ct_pt")].status == "explored_shallow"
+
+
+from kryptosbot.frontier_map import (
+    open_cells, render_open_frontier, frontier_cell_for_theory,
+)
+
+
+def test_open_cells_prioritize_non_direct(tmp_path):
+    rows = [("vigenere", "periodic vigenere", [], 5.0, "eliminated")] * 60
+    db = _make_ledger(tmp_path, rows)
+    fm = build_frontier_map(ledger_db_path=db)
+    oc = open_cells(fm)
+    assert all(c.status == "open" for c in oc)
+    # non-direct alignment models sort ahead of any direct ones in the open list
+    first_models = [c.alignment_model for c in oc[:4]]
+    assert all(m not in ("direct_ct_pt", "fixed_len_97") for m in first_models)
+
+
+def test_render_is_deterministic_and_capped(tmp_path):
+    db = _make_ledger(tmp_path, [])
+    fm = build_frontier_map(ledger_db_path=db)
+    a = render_open_frontier(fm, limit=5)
+    b = render_open_frontier(fm, limit=5)
+    assert a == b
+    assert a.count("\n- ") <= 5
+    assert "OPEN FRONTIER" in a
+
+
+def test_render_empty_when_no_open_cells():
+    fm = FrontierMap(cells=(FrontierCell("x", "direct_ct_pt", "explored_deep", 99, 5),),
+                     built_at="t")
+    assert render_open_frontier(fm, limit=5) == ""
+
+
+def test_frontier_cell_for_theory_classifies(tmp_path):
+    db = _make_ledger(tmp_path, [])
+    fm = build_frontier_map(ledger_db_path=db, family_universe=["vigenere"])
+    theory = {"family": "vigenere", "mechanism": "periodic vigenere", "tags": []}
+    cell = frontier_cell_for_theory(theory, fm)
+    assert cell is not None
+    assert cell.family == "vigenere"
+    assert cell.alignment_model in ("direct_ct_pt", "fixed_len_97")
