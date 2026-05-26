@@ -400,6 +400,12 @@ _T1_SERPENTINE_QUAGMIRE = SyntheticProfile(
                     {"name": "period_keyword", "values": ["SERPENTINE"]},
                     {"name": "ct_alphabet_keyword", "values": ["KRYPTOS"]},
                     {"name": "pt_alphabet_keyword", "values": ["KRYPTOS"]},
+                    # indicator is required by the quagmire translator (no
+                    # default — guards against the f_w10_quagmire_iii_v1
+                    # misconfiguration). 'K' is the K1/K2 KRYPTOS-keyword
+                    # Quagmire III convention (CLAUDE.md). Needed for PR3
+                    # real-recovery dispatch; the obligation matcher ignores it.
+                    {"name": "indicator", "values": ["K"]},
                 ],
             }
         ],
