@@ -137,6 +137,9 @@ class TestScenarioA_MatchedNullHappyPath:
             (["variant_beaufort"], "variant_beaufort"),
             (["columnar"], "columnar_single"),
             (["columnar", "columnar"], "columnar_double"),
+            (["rail_fence"], "rail_fence"),
+            (["myszkowski"], "myszkowski"),
+            (["route"], "route"),
         ],
     )
     def test_matched_family_consulted_at_signal(
@@ -525,3 +528,46 @@ class TestGateParameterization:
 def _pid() -> int:
     import os
     return os.getpid()
+
+
+# ---------------------------------------------------------------------------
+# Transposition-family matched-null resolution (2026-05-26)
+#
+# rail_fence / myszkowski / route are dispatchable transposition kinds
+# (job_dispatcher._SUPPORTED_KINDS) that previously fell to the random_text
+# fallback in _matched_null_family_from_contract. The real-K4 instrument
+# campaign prereg §4.3 requires a candidate to clear its OWN family null
+# (ok_matched_family), not the random_text strawman, so these three need
+# matched-family resolution + calibrated nulls. This block pins the
+# cache-INDEPENDENT resolution (the calibration itself is verified in
+# test_r2_4_matched_nulls.py).
+# ---------------------------------------------------------------------------
+
+class TestTranspositionFamilyResolution:
+    @pytest.mark.parametrize(
+        "pipeline_kinds, expected_family",
+        [
+            (["rail_fence"], "rail_fence"),
+            (["myszkowski"], "myszkowski"),
+            (["route"], "route"),
+        ],
+    )
+    def test_single_layer_transposition_kind_resolves_to_family(
+        self, pipeline_kinds, expected_family,
+    ):
+        contract = _fab(pipeline_kinds=pipeline_kinds, crib_score=18)
+        assert _matched_null_family_from_contract(contract) == expected_family
+
+    @pytest.mark.parametrize(
+        "pipeline_kinds",
+        [
+            ["route", "route"],          # composed route → not a single-family null
+            ["vigenere", "route"],       # multi-layer → random_text fallback
+            ["rail_fence", "columnar"],  # mixed transposition stack
+        ],
+    )
+    def test_multilayer_transposition_falls_back_to_random_text(
+        self, pipeline_kinds,
+    ):
+        contract = _fab(pipeline_kinds=pipeline_kinds, crib_score=18)
+        assert _matched_null_family_from_contract(contract) == ""

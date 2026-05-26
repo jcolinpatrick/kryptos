@@ -47,6 +47,13 @@ class TestFamilyFieldPlumbing:
                     "columnar_single", "columnar_double"}
         assert expected.issubset(_VALID_FAMILIES)
 
+    def test_valid_families_includes_transposition_trio(self):
+        # 2026-05-26: rail_fence / myszkowski / route added so the
+        # real-K4 instrument campaign can score genuine transposition
+        # hits against their own family null, not the random_text strawman.
+        expected = {"rail_fence", "myszkowski", "route"}
+        assert expected.issubset(_VALID_FAMILIES)
+
     def test_cache_key_disambiguates_by_family(self):
         a = NullDistribution(
             scorer_name="crib_score",
@@ -104,6 +111,7 @@ class TestBuildSanity:
     @pytest.mark.parametrize("family", [
         "beaufort", "variant_beaufort",
         "columnar_single", "columnar_double",
+        "rail_fence", "myszkowski", "route",
     ])
     def test_crib_score_builds_for_each_family(self, family):
         dist = build_null_distribution(
@@ -152,6 +160,9 @@ class TestManifestContainsR2_4Entries:
         ("crib_score", "columnar_double"),
         ("ngram_score", "columnar_single"),
         ("ngram_score", "columnar_double"),
+        ("crib_score", "rail_fence"),
+        ("crib_score", "myszkowski"),
+        ("crib_score", "route"),
     ])
     def test_manifest_contains_r2_4_entry(self, manifest, scorer, family):
         key = f"{scorer}__matched_variant_family__AZ__n97__{family}"
@@ -187,6 +198,19 @@ class TestGetCachedHonorsFamily:
         if dist is None:
             pytest.skip("R2-4 calibration not run yet")
         assert dist.family == "columnar_double"
+        assert dist.n_samples >= 2_000
+
+    @pytest.mark.parametrize("family", ["rail_fence", "myszkowski", "route"])
+    def test_transposition_family_cache_hit(self, family):
+        dist = get_cached(
+            scorer_name="crib_score",
+            method="matched_variant_family",
+            n_chars=97, alphabet="AZ",
+            family=family,
+        )
+        if dist is None:
+            pytest.skip(f"{family} matched null not calibrated yet")
+        assert dist.family == family
         assert dist.n_samples >= 2_000
 
     def test_empty_family_still_hits_phase_6_cache(self):

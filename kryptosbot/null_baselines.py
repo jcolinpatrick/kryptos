@@ -86,6 +86,9 @@ _VALID_FAMILIES = frozenset({
     "variant_beaufort", # R2-4
     "columnar_single",  # R2-4
     "columnar_double",  # R2-4
+    "rail_fence",       # 2026-05-26: dispatchable transposition families
+    "myszkowski",       #   added so the real-K4 instrument campaign can
+    "route",            #   score genuine hits vs their own family null.
 })
 
 
@@ -392,9 +395,84 @@ def _sample_one_matched_family(
         inv2 = invert_perm(columnar_perm(w2, o2, n_chars))
         return apply_perm(step1, inv2)
 
+    if family in ("rail_fence", "myszkowski", "route"):
+        # Mirror the dispatcher's transposition path (transposition_full,
+        # direction="undo"): build a random member's perm from the same
+        # kernel primitive the translator uses, invert it, and apply to the
+        # real CT — exactly what the scorer sees when this family dispatches.
+        from kryptos.kernel.transforms.transposition import (
+            apply_perm, invert_perm,
+        )
+        ct = CT[:n_chars]
+        perm = _random_transposition_perm(family, n_chars, rng)
+        return apply_perm(ct, invert_perm(perm))
+
     raise ValueError(
         f"matched_variant_family: unknown family {family!r}. Valid: "
         f"{sorted(_VALID_FAMILIES)}"
+    )
+
+
+def _random_transposition_perm(
+    family: str,
+    n_chars: int,
+    rng: random.Random,
+) -> list[int]:
+    """Draw a random member of ``family`` and return its kernel permutation.
+
+    The parameter ranges mirror what the dispatcher's _translate_layer
+    accepts for each kind (job_dispatcher.py): rail_fence depth, myszkowski
+    keyword, route variant + grid. The resulting perm is length-preserving
+    (== n_chars) by construction for every draw, so the caller can invert
+    and apply it directly.
+    """
+    from kryptos.kernel.transforms.transposition import (
+        rail_fence_perm,
+        myszkowski_perm,
+        serpentine_perm,
+        spiral_perm,
+        diagonal_perm,
+        canonical_diagonal_perm,
+    )
+    if family == "rail_fence":
+        depth = rng.randint(2, min(24, n_chars - 1))
+        return rail_fence_perm(n_chars, depth)
+
+    if family == "myszkowski":
+        from kryptos.kernel.constants import ALPH
+        kw_len = rng.randint(4, 14)
+        keyword = "".join(rng.choice(ALPH) for _ in range(kw_len))
+        return myszkowski_perm(keyword, n_chars)
+
+    # family == "route": variant selects the read pattern over a grid.
+    variant = rng.choice(["serpentine", "spiral", "diagonal", "diagonal_canonical"])
+    if variant == "diagonal_canonical":
+        width = rng.randint(2, n_chars // 2)
+        return canonical_diagonal_perm(width, n_chars)
+    # Row-major variants: pick cols, derive rows = ceil so rows*cols >= n_chars.
+    cols = rng.randint(2, n_chars // 2)
+    rows = -(-n_chars // cols)  # ceil division
+    if variant == "serpentine":
+        return serpentine_perm(rows, cols, n_chars, vertical=rng.random() < 0.5)
+    if variant == "spiral":
+        return spiral_perm(
+            rows, cols, n_chars,
+            clockwise=rng.random() < 0.5,
+            start_corner=rng.choice(
+                ["top_left", "top_right", "bottom_right", "bottom_left"]
+            ),
+        )
+    # variant == "diagonal": start_edge is axis-constrained in the kernel.
+    axis = rng.choice(["main", "anti"])
+    start_edge = rng.choice(
+        ["top_then_left", "left_then_top"] if axis == "main"
+        else ["top_then_right", "right_then_top"]
+    )
+    return diagonal_perm(
+        rows, cols, n_chars,
+        axis=axis,
+        order=rng.choice(["forward", "reverse"]),
+        start_edge=start_edge,
     )
 
 

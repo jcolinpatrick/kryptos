@@ -65,6 +65,15 @@ _R2_4_JOBS: list[dict] = [
     {"scorer_name": "crib_score",  "family": "columnar_double"},
     {"scorer_name": "ngram_score", "family": "columnar_single"},
     {"scorer_name": "ngram_score", "family": "columnar_double"},
+    # 2026-05-26 — dispatchable transposition families (rail_fence,
+    # myszkowski, route) added so the real-K4 instrument campaign scores
+    # genuine transposition hits against their own matched-family null
+    # (ok_matched_family) instead of the random_text strawman. crib_score
+    # only, matching the additive families (beaufort/var_beaufort/vigenere);
+    # ngram nulls remain columnar-only.
+    {"scorer_name": "crib_score",  "family": "rail_fence"},
+    {"scorer_name": "crib_score",  "family": "myszkowski"},
+    {"scorer_name": "crib_score",  "family": "route"},
 ]
 
 # §5.4 — 50_000 samples (vs Phase 6's 100_000) to keep total calibration

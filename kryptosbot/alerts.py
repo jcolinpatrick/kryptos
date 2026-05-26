@@ -199,6 +199,10 @@ def _matched_null_family_from_contract(contract: WorkerContract) -> str:
       - Two columnar layers in sequence   → "columnar_double"
       - Single-layer {vigenere, beaufort,
         variant_beaufort, atbash}          → the kind itself
+      - Single-layer {rail_fence,
+        myszkowski, route}                 → the kind itself (2026-05-26;
+        calibrated matched nulls so genuine transposition hits score
+        against their own family, not the random_text strawman)
       - Anything else (multi-layer,
         grille, polybius, procedural)      → "" (random_text fallback)
     """
@@ -209,7 +213,10 @@ def _matched_null_family_from_contract(contract: WorkerContract) -> str:
         k = kinds[0]
         if k == "columnar":
             return "columnar_single"
-        if k in ("beaufort", "variant_beaufort", "vigenere"):
+        if k in (
+            "beaufort", "variant_beaufort", "vigenere",
+            "rail_fence", "myszkowski", "route",
+        ):
             return k
         return ""
     if len(kinds) == 2 and kinds[0] == "columnar" and kinds[1] == "columnar":
