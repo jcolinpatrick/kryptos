@@ -11,6 +11,40 @@ from kryptosbot.coverage_scheduler import (
 from kryptosbot.synthetic_profiles import all_profiles, get_profile
 
 
+def _make_non_recovery_available_profile():
+    """A minimal available, NON-recovery-target profile for exercising the
+    scheduler's emitted_and_admissible branch (no registry profile is
+    non-recovery after PR4)."""
+    from kryptosbot.synthetic_profiles import SyntheticProfile, ParameterObligation
+    return SyntheticProfile(
+        profile_id="X_NONRECOVERY_COLUMNAR",
+        description="inline non-recovery fixture",
+        status="available",
+        obligations=(
+            ParameterObligation(
+                expected_family="transposition_columnar",
+                expected_layer_kind="columnar",
+                expected_parameter_axis="keyword",
+                expected_parameter_value="BERLINCLOCK",
+            ),
+        ),
+        closing_spec={
+            "hypothesis_id": "X_NONRECOVERY_COLUMNAR__closing",
+            "pipeline": [{
+                "kind": "columnar", "alphabet": "AZ",
+                "params": [
+                    {"name": "keyword", "values": ["BERLINCLOCK"]},
+                    {"name": "width", "values": [11]},
+                    {"name": "col_order",
+                     "values": [[0, 3, 10, 6, 4, 8, 1, 7, 9, 2, 5]]},
+                ],
+            }],
+            "compute_budget_cpu_minutes": 30,
+        },
+        recovery_target=False,
+    )
+
+
 def test_every_available_closing_spec_satisfies_its_obligation() -> None:
     for p in all_profiles():
         if p.status == "available":
@@ -63,7 +97,11 @@ def test_recovery_target_reaches_satisfied_via_scoring() -> None:
     from kryptosbot.coverage_audit import (
         CoverageAuditCollector, REJECTION_CAUSE_SATISFIED,
     )
-    for pid in ("T1_SERPENTINE_QUAGMIRE", "T1_BERLINCLOCK_COLUMNAR"):
+    for pid in (
+        "T1_SERPENTINE_QUAGMIRE",
+        "T1_BERLINCLOCK_COLUMNAR",
+        "T1_SERPENTINE_ROUTE",
+    ):
         profile = get_profile(pid)
         collector = CoverageAuditCollector(profile=profile)
         report = run_coverage_schedule(
@@ -75,11 +113,11 @@ def test_recovery_target_reaches_satisfied_via_scoring() -> None:
         assert report.best_score == 24, (pid, report.best_score)
 
 
-def test_route_stays_emitted_and_admissible() -> None:
+def test_non_recovery_profile_reaches_emitted_and_admissible() -> None:
     from kryptosbot.coverage_audit import (
         CoverageAuditCollector, REJECTION_CAUSE_EMITTED_AND_ADMISSIBLE,
     )
-    profile = get_profile("T1_ABSCISSA_ROUTE")
+    profile = _make_non_recovery_available_profile()
     assert profile.recovery_target is False
     collector = CoverageAuditCollector(profile=profile)
     report = run_coverage_schedule(
@@ -162,20 +200,21 @@ def test_blocked_profile_reason_persists_to_artifact(tmp_path) -> None:
 
 
 def test_run_coverage_schedule_never_executes_kernel(monkeypatch) -> None:
-    # PR3: only recovery_target profiles dispatch the kernel. A
-    # non-recovery-target (route) keeps the PR2 admissibility-only path
-    # and must NEVER call execute().
+    # Only recovery_target profiles dispatch the kernel. A non-recovery
+    # available profile keeps the PR2 admissibility-only path and must
+    # NEVER call execute(). (No registry profile is non-recovery after PR4,
+    # so use an inline fixture.)
     import kryptosbot.job_dispatcher as jd
     called = {"execute": False}
 
     def _boom(*a, **k):
         called["execute"] = True
-        raise AssertionError("execute() must NOT be called by the scheduler")
+        raise AssertionError("execute() must NOT be called for a non-recovery profile")
 
     monkeypatch.setattr(jd, "execute", _boom)
-    profile = get_profile("T1_ABSCISSA_ROUTE")
-    assert profile.recovery_target is False
     from kryptosbot.coverage_audit import CoverageAuditCollector
+    profile = _make_non_recovery_available_profile()
+    assert profile.recovery_target is False
     collector = CoverageAuditCollector(profile=profile)
     run_coverage_schedule(
         profile, collector, project_root=Path("/home/cpatrick/kryptos"),

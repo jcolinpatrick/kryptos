@@ -12,7 +12,11 @@ def test_canonical_plaintext_is_97_upper_alpha() -> None:
 
 
 def test_generated_ct_is_97_chars_and_differs_from_pt() -> None:
-    for pid in ("T1_SERPENTINE_QUAGMIRE", "T1_BERLINCLOCK_COLUMNAR"):
+    for pid in (
+        "T1_SERPENTINE_QUAGMIRE",
+        "T1_BERLINCLOCK_COLUMNAR",
+        "T1_SERPENTINE_ROUTE",
+    ):
         spec = get_profile(pid).closing_spec
         ct, cribs = generate_synthetic_challenge(spec)
         assert len(ct) == 97
@@ -33,7 +37,11 @@ def test_round_trip_recovers_plaintext_via_dispatch() -> None:
     # The generated CT, dispatched through the closing_spec (decrypt
     # direction), must recover CANONICAL_PLAINTEXT exactly -> crib_score 24.
     from kryptosbot import job_dispatcher
-    for pid in ("T1_SERPENTINE_QUAGMIRE", "T1_BERLINCLOCK_COLUMNAR"):
+    for pid in (
+        "T1_SERPENTINE_QUAGMIRE",
+        "T1_BERLINCLOCK_COLUMNAR",
+        "T1_SERPENTINE_ROUTE",
+    ):
         spec = get_profile(pid).closing_spec
         ct, cribs = generate_synthetic_challenge(spec)
         result = job_dispatcher.execute_from_json(
