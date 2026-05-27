@@ -28,6 +28,11 @@ from typing import Mapping, Tuple, Union
 KRYPTOS_SET = frozenset("KRYPTOS")
 MOD = 26
 
+# GAP-03 calibrated p<=1e-6 boundary for the candidate K-set mean distance under
+# the crib-pinned null (null_baselines/e0b_sideeffect_calibration.json, 2026-05-27).
+# Recompute via scripts/statistical/gap03_e0b_sideeffect.py --calibrate.
+CALIBRATED_SIGNAL_MAX_DISTANCE = 2.31
+
 
 def minor_distance(a: str, b: str) -> int:
     """Circular (minor) distance in [0, 13] between two A-Z letters."""

@@ -28,6 +28,7 @@ from kryptos.kernel.masking.mask import (
     NullMask, extract_ct, remap_crib_dict, validate_mask,
 )
 from kryptos.kernel.scoring.aggregate import score_candidate
+from kryptos.kernel.scoring.e0b import e0b_statistic
 from kryptos.kernel.transforms.vigenere import (
     CipherVariant, KEY_RECOVERY, decrypt_text,
 )
@@ -49,6 +50,8 @@ class MaskedCandidate:
     crib_score: int
     bean_passed: bool
     ngram_score: Optional[float]
+    e0b_mean_distance: Optional[float] = None  # GAP-03 K-set side-effect; None if no K-set positions
+    e0b_count: int = 0
 
 
 def calibrated_ngram_floor(
@@ -166,22 +169,34 @@ def select_solves(
     candidates: Sequence[MaskedCandidate],
     *,
     ngram_floor: float,
+    e0b_max: Optional[float] = None,
 ) -> list[MaskedCandidate]:
-    """Apply the solve gate: Bean PASS and n-gram quality at or above a floor.
+    """Apply the solve gate: Bean PASS and n-gram quality at or above a floor,
+    plus an OPTIONAL E0b K-set side-effect co-requirement.
 
     In the masked + crib-forcing regime Bean is auto-satisfied for any
     crib-forced key (the constraints are derived from the same cribs), so the
     n-gram floor is the operative discriminator.  The floor itself must come
     from a mask-universe-aware null calibration, not from the candidate set;
     this function only applies a supplied floor.
+
+    When ``e0b_max`` is given (the GAP-03 calibrated p<=1e-6 boundary; see
+    ``kryptos.kernel.scoring.e0b.CALIBRATED_SIGNAL_MAX_DISTANCE``), a candidate
+    must ALSO have a defined K-set mean distance at or below it.  This is a
+    real-K4 predicate; leave it None (default) for synthetic challenges where
+    the KRYPTOS-set clustering has no meaning.
     """
-    return [
-        c
-        for c in candidates
-        if c.bean_passed
-        and c.ngram_score is not None
-        and c.ngram_score >= ngram_floor
-    ]
+    out = []
+    for c in candidates:
+        if not (c.bean_passed and c.ngram_score is not None
+                and c.ngram_score >= ngram_floor):
+            continue
+        if e0b_max is not None and (
+            c.e0b_mean_distance is None or c.e0b_mean_distance > e0b_max
+        ):
+            continue
+        out.append(c)
+    return out
 
 
 def solve_periodic(
@@ -285,6 +300,7 @@ def solve_periodic(
                     pt, bean_result=bean, ngram_scorer=ngram_scorer,
                     crib_dict=cribs,
                 )
+                e0b = e0b_statistic(pt, ct_prime)
                 out.append(
                     MaskedCandidate(
                         mask=mask,
@@ -295,6 +311,8 @@ def solve_periodic(
                         crib_score=breakdown.crib_score,
                         bean_passed=bean.passed,
                         ngram_score=breakdown.ngram_score,
+                        e0b_mean_distance=(e0b.mean_dist if e0b.count > 0 else None),
+                        e0b_count=e0b.count,
                     )
                 )
     return out

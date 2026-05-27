@@ -276,3 +276,43 @@ def test_empirical_floor_monotone_and_bounded():
     assert all(b >= a for a, b in zip(floors, floors[1:])), "floor decreased"
     assert floors[-1] > floors[0], "floor did not rise with universe size"
     assert all(f <= max(null) for f in floors), "floor exceeded observed null max"
+
+
+def test_select_solves_e0b_gate_filters_by_kset_distance():
+    """The optional E0b gate excludes candidates whose K-set distance exceeds
+    the calibrated threshold; None (no K-set positions) never clears it."""
+    from kryptos.kernel.masking.solve import select_solves as _ss
+
+    def mk(e0b):
+        return MaskedCandidate(
+            mask=frozenset(), variant=CipherVariant.VIGENERE, period=4,
+            key=(0,), plaintext="X", crib_score=24, bean_passed=True,
+            ngram_score=0.0, e0b_mean_distance=e0b, e0b_count=(0 if e0b is None else 10),
+        )
+
+    cands = [mk(2.0), mk(3.0), mk(None)]
+    # E0b gate off (default): bean + ngram floor only -> all three pass.
+    assert len(_ss(cands, ngram_floor=-1.0)) == 3
+    # E0b gate on at 2.5: only the 2.0 candidate clears; 3.0 and None excluded.
+    out = _ss(cands, ngram_floor=-1.0, e0b_max=2.5)
+    assert [c.e0b_mean_distance for c in out] == [2.0]
+
+
+def test_solve_periodic_populates_e0b_fields():
+    pt_prime = "DEFENDTHEEASTWALLOFTHECASTLE"
+    true_key = [3, 17, 8, 22, 5, 11]
+    true_variant = CipherVariant.VIGENERE
+    true_mask_positions = {7, 16, 25}
+    crib_pt_indices = [0, 1, 2, 6, 7, 8, 12, 13, 14]
+    carved, true_mask, crib_dict, _ = _build_masked_challenge(
+        pt_prime, true_key, true_variant, true_mask_positions, crib_pt_indices
+    )
+    scorer = get_default_scorer()
+    candidates = solve_periodic(
+        carved, [true_mask], periods=[6], crib_dict=crib_dict,
+        variants=[CipherVariant.VIGENERE], ngram_scorer=scorer,
+    )
+    assert candidates
+    for c in candidates:
+        assert c.e0b_mean_distance is not None
+        assert c.e0b_count >= 0
