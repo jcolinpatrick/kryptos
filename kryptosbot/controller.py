@@ -2297,6 +2297,12 @@ class ResearchController:
             status=self.state.last_escape_status,
             suggestions=self.state.last_escape_suggestions,
         )
+        try:
+            from kryptosbot.frontier_map import build_frontier_map, render_open_frontier
+            _fm = build_frontier_map(ledger_db_path=self.config.ledger_db_path)
+            landscape["frontier_open"] = render_open_frontier(_fm, limit=12)
+        except Exception:
+            landscape["frontier_open"] = ""  # advisory; never break the landscape
         return landscape
 
     def _safe_get_open_pursuit_leads(
@@ -3530,6 +3536,7 @@ class ResearchController:
         family_yield_block = landscape.get("family_yield") or ""
         escape_pressure_block = landscape.get("escape_pressure") or ""
         escape_candidates_block = landscape.get("escape_candidates") or ""
+        frontier_block = landscape.get("frontier_open") or ""
 
         # Prior-cycle synthesis (2026-05-17). Closes Tier-C #8 from the
         # 2026-05-16 controller-maturity audit: results-analyst
@@ -3947,7 +3954,7 @@ supported kinds, DO NOT fabricate one. Set "dsl_spec": null and accept
 rejection — the framework will later extend the DSL rather than you
 launder an untranslatable theory through a fake spec.
 
-{"" if not previous_synthesis_block.strip() else previous_synthesis_block + chr(10) + chr(10)}{"" if not family_yield_block.strip() else family_yield_block + chr(10) + chr(10)}{"" if not escape_pressure_block.strip() else escape_pressure_block + chr(10) + chr(10)}{"" if not escape_candidates_block.strip() else escape_candidates_block + chr(10) + chr(10)}Output ONLY the JSON array. No commentary."""
+{"" if not previous_synthesis_block.strip() else previous_synthesis_block + chr(10) + chr(10)}{"" if not family_yield_block.strip() else family_yield_block + chr(10) + chr(10)}{"" if not frontier_block.strip() else frontier_block + chr(10) + chr(10)}{"" if not escape_pressure_block.strip() else escape_pressure_block + chr(10) + chr(10)}{"" if not escape_candidates_block.strip() else escape_candidates_block + chr(10) + chr(10)}Output ONLY the JSON array. No commentary."""
 
     def _programmatic_fallback(
         self, landscape: dict[str, Any]
