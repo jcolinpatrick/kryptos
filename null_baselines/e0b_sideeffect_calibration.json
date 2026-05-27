@@ -1,0 +1,32 @@
+{
+  "statistic": "e0b_extended_position_mean_kset_distance",
+  "description": "mean minor-distance(PT,CT) at positions where PT in {K,R,Y,P,T,O,S}",
+  "null_model": "crib-pinned random plaintext (cribs held, off-crib uniform A-Z)",
+  "date": "2026-05-27T19:22:56.047484+00:00",
+  "kernel_commit": "e5b5facb90a041cc4eea4bf632b7c913ad5798c5",
+  "bean_validation": {
+    "null_model": "CT permutation (preserves carved letter multiset)",
+    "count": 10,
+    "obs_sum": 21,
+    "obs_mean": 2.1,
+    "p_value": 0.000145,
+    "n_mc": 200000,
+    "target_p": 0.000181,
+    "reproduces_bean": true
+  },
+  "candidate_null": {
+    "n_draws": 200000,
+    "seed": 42,
+    "mean": 5.0233,
+    "std": 0.571,
+    "min_observed": 2.4286,
+    "q01": 3.65,
+    "q05": 4.0667,
+    "crib_anchor_mean": 2.1
+  },
+  "signal_gate": {
+    "p": 1e-06,
+    "parametric_threshold_mean_dist": 2.3091,
+    "note": "a candidate clears the SIGNAL gate iff its mean K-set distance <= this threshold under the crib-pinned null; empirical floor cannot extrapolate below min_observed without more draws."
+  }
+}
