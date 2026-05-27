@@ -15,6 +15,8 @@ non-direct-alignment mechanisms are out of scope (separate spec).
 from __future__ import annotations
 
 import itertools
+import math
+import random
 from dataclasses import dataclass
 from statistics import NormalDist
 from typing import Iterable, Mapping, Optional, Sequence
@@ -74,6 +76,90 @@ def calibrated_ngram_floor(
     n = max(1, int(mask_universe_size) * int(candidates_per_mask))
     p_tail = 1.0 - (1.0 - alpha) ** (1.0 / n)
     return NormalDist(null_mean, null_std).inv_cdf(1.0 - p_tail)
+
+
+def _forced_residues(ct_idx, cribs_items, variant, period, idx):
+    """Force key residues mod period from cribs; return dict or None if a residue
+    class has conflicting forced values (infeasible)."""
+    recover = KEY_RECOVERY[variant]
+    forced: dict[int, int] = {}
+    for pos, letter in cribs_items:
+        r = pos % period
+        kval = recover(ct_idx[pos], idx[ord(letter) - 65])
+        if forced.get(r, kval) != kval:
+            return None
+        forced[r] = kval
+    return forced
+
+
+def estimate_ngram_null(
+    ct_prime: str,
+    cribs: Mapping[int, str],
+    variant: CipherVariant,
+    period: int,
+    ngram_scorer,
+    *,
+    n_samples: int,
+    seed: int = 0,
+    alphabet: Alphabet = AZ,
+) -> list[float]:
+    """Empirical n-gram null for coincidental crib-consistent decryptions.
+
+    Holds the crib-forced residues FIXED (so every sample satisfies the cribs)
+    and randomizes the FREE residues, returning the n-gram score of each random
+    fill.  This is the honest null for "what language quality does a decryption
+    that merely satisfies the cribs achieve by chance", against which the true
+    solve must stand out.  Raises if the cribs are residue-inconsistent at this
+    period (no candidate) or if there are no free residues (degenerate null).
+    """
+    if ngram_scorer is None:
+        raise ValueError("ngram_scorer is required to estimate an n-gram null")
+    idx = alphabet.index_table
+    ct_idx = [idx[ord(ch) - 65] for ch in ct_prime]
+    forced = _forced_residues(ct_idx, list(cribs.items()), variant, period, idx)
+    if forced is None:
+        raise ValueError("cribs are residue-inconsistent at this period")
+    free = [r for r in range(period) if r not in forced]
+    if not free:
+        raise ValueError("no free residues; the null would be degenerate")
+
+    rng = random.Random(seed)
+    samples: list[float] = []
+    for _ in range(n_samples):
+        trial = dict(forced)
+        for r in free:
+            trial[r] = rng.randrange(MOD)
+        key = [trial[r] for r in range(period)]
+        pt = decrypt_text(ct_prime, key, variant, alphabet=alphabet)
+        samples.append(ngram_scorer.score(pt))
+    return samples
+
+
+def calibrated_ngram_floor_empirical(
+    null_samples: Sequence[float],
+    mask_universe_size: int,
+    *,
+    alpha: float = 0.01,
+    candidates_per_mask: int = 1,
+) -> float:
+    """Non-parametric mask-universe-aware floor: the order statistic of the
+    empirical null at survival probability p_N = 1 - (1 - alpha)**(1/N).
+
+    Monotone non-decreasing in N and bounded above by the observed null maximum
+    (an empirical tail cannot extrapolate beyond what was sampled).  Use this as
+    the honest cross-check to the parametric ``calibrated_ngram_floor``; the
+    parametric form is what can extrapolate into the tail to DEMOTE a solve that
+    sits above the sampled null.
+    """
+    if not null_samples:
+        raise ValueError("null_samples is empty")
+    n = max(1, int(mask_universe_size) * int(candidates_per_mask))
+    p_tail = 1.0 - (1.0 - alpha) ** (1.0 / n)
+    q = 1.0 - p_tail
+    s = sorted(null_samples)
+    k = int(math.ceil(q * len(s))) - 1
+    k = min(len(s) - 1, max(0, k))
+    return s[k]
 
 
 def select_solves(

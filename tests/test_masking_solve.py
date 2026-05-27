@@ -234,3 +234,45 @@ def test_solver_recovers_free_residues_via_ngram_search():
     ]
     assert len(hit) == 1, "free-residue search did not recover the true plaintext"
     assert tuple(hit[0].key) == tuple(true_key)
+
+
+def test_empirical_null_places_true_solve_as_outlier():
+    """The empirically estimated null (random free-residue fills under fixed
+    forced residues) must place the true English solve far in its right tail."""
+    import statistics
+    from kryptos.kernel.masking.mask import extract_ct, remap_crib_dict
+    from kryptos.kernel.masking.solve import estimate_ngram_null
+
+    pt_prime = "DEFENDTHEEASTWALLOFTHECASTLE"
+    true_key = [3, 17, 8, 22, 5, 11]
+    true_variant = CipherVariant.VIGENERE
+    true_mask_positions = {7, 16, 25}
+    crib_pt_indices = [0, 1, 2, 6, 7, 8, 12, 13, 14]  # residues {0,1,2} mod 6 -> {3,4,5} free
+    carved, true_mask, crib_dict, _ = _build_masked_challenge(
+        pt_prime, true_key, true_variant, true_mask_positions, crib_pt_indices
+    )
+    scorer = get_default_scorer()
+    ct_prime = extract_ct(carved, true_mask)
+    cribs = remap_crib_dict(crib_dict, true_mask)
+
+    null = estimate_ngram_null(
+        ct_prime, cribs, true_variant, 6, scorer, n_samples=5000, seed=1,
+    )
+    assert len(null) == 5000
+    mean = statistics.fmean(null)
+    sd = statistics.pstdev(null)
+    assert sd > 0
+    assert scorer.score(pt_prime) > mean + 5 * sd
+
+
+def test_empirical_floor_monotone_and_bounded():
+    """The non-parametric order-statistic floor rises with universe size and
+    never exceeds the observed null maximum (honest empirical tail)."""
+    from kryptos.kernel.masking.solve import calibrated_ngram_floor_empirical
+
+    null = [float(x) for x in range(1000)]
+    sizes = [1, 5, 25, 100, 1000, 10000]
+    floors = [calibrated_ngram_floor_empirical(null, n, alpha=0.01) for n in sizes]
+    assert all(b >= a for a, b in zip(floors, floors[1:])), "floor decreased"
+    assert floors[-1] > floors[0], "floor did not rise with universe size"
+    assert all(f <= max(null) for f in floors), "floor exceeded observed null max"
