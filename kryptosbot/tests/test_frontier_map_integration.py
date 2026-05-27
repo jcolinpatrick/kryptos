@@ -24,9 +24,27 @@ def test_prompt_block_present_when_open_cells_exist(tmp_path):
 
 
 def test_frontier_block_threads_into_theorist_prompt(tmp_path):
-    # A landscape carrying a frontier_open string must surface in the built
-    # theorist prompt. Verify the prompt builder reads landscape['frontier_open'].
-    import kryptosbot.controller as ctrl
-    import inspect
-    src = inspect.getsource(ctrl.ResearchController._build_theorist_prompt)
-    assert "frontier_open" in src, "prompt builder must read landscape['frontier_open']"
+    # Behavioral: build a real controller, pass a landscape carrying a
+    # sentinel frontier_open value, and assert the built prompt contains
+    # the sentinel. This replaces the inspect.getsource() approach.
+    from kryptosbot.controller import ControllerConfig, ResearchController
+
+    config = ControllerConfig(
+        project_root=tmp_path,
+        ledger_db_path=tmp_path / "ledger.sqlite",
+        alert_threshold="signal",
+    )
+    ctrl = ResearchController(config)
+
+    # Sparse landscape: _build_theorist_prompt uses .get() for all keys;
+    # supply only frontier_open plus empty defaults for the two list keys
+    # that _render_pursuit_leads_for_prompt receives as positional args.
+    landscape = {
+        "frontier_open": "OPEN FRONTIER __MARKER_TOKEN__",
+        "pursuit_leads": [],
+        "soft_pursuit_leads": [],
+    }
+    prompt = ctrl._build_theorist_prompt(landscape)
+    assert "__MARKER_TOKEN__" in prompt, (
+        "frontier_open block must appear verbatim in the built theorist prompt"
+    )

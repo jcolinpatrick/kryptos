@@ -147,6 +147,27 @@ def test_family_universe_excludes_non_cipher_junk():
     assert "campaigns_final_checklist" not in fams
 
 
+def test_signal_bearing_cell_gets_has_signal_status(tmp_path):
+    rows = [("vigenere", "periodic vigenere", [], 20.0, "completed")]
+    db = _make_ledger(tmp_path, rows)
+    fm = build_frontier_map(ledger_db_path=db, family_universe=["vigenere"])
+    by = {(c.family, c.alignment_model): c for c in fm.cells}
+    assert by[("vigenere", "direct_ct_pt")].status == "has_signal"
+
+
+def test_frontier_cell_for_theory_is_deterministic_on_multi_model(tmp_path):
+    db = _make_ledger(tmp_path, [])
+    fm = build_frontier_map(ledger_db_path=db, family_universe=["key_tape"])
+    # a mechanism hitting BOTH ct73 and null_mask hints -> two non-direct models;
+    # the chosen cell must be stable across calls and pick canonical-first (ct73).
+    theory = {"family": "key_tape",
+              "mechanism": "ct73 null-extracted with null_mask insertion", "tags": []}
+    c1 = frontier_cell_for_theory(theory, fm)
+    c2 = frontier_cell_for_theory(theory, fm)
+    assert c1 == c2
+    assert c1.alignment_model == "ct73_null_extracted"  # canonical order before arbitrary_null_mask
+
+
 def test_render_summarizes_only_non_direct_models(tmp_path):
     # All cells open. Render must advertise the four non-direct alignment
     # models as a per-model summary and must NOT advertise direct-carving

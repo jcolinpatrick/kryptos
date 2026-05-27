@@ -37,7 +37,7 @@ _JOINT_HINTS = ("joint_mask", "joint mask", "mask x mechanism", "joint inference
 class FrontierCell:
     family: str
     alignment_model: str
-    status: str  # open | explored_shallow | explored_deep | eliminated(reserved)
+    status: str  # open | explored_shallow | explored_deep | has_signal | eliminated(reserved)
     n_tested: int
     best_crib: int
 
@@ -115,7 +115,7 @@ def build_frontier_map(*, ledger_db_path, family_universe=None, now=None) -> Fro
                 continue
             n, best = entry["n"], entry["best"]
             if best >= _SIGNAL:
-                status = "explored_shallow"
+                status = "has_signal"
             elif n >= _DEEP_THRESHOLD:
                 status = "explored_deep"
             else:
@@ -157,6 +157,7 @@ def open_cells(fm: FrontierMap) -> list[FrontierCell]:
 
 
 _MODEL_DESC = {k: d for k, d in ALIGNMENT_MODELS}
+_MODEL_RANK = {k: i for i, (k, _) in enumerate(ALIGNMENT_MODELS)}
 
 
 def render_open_frontier(fm: FrontierMap, *, limit: int = 12) -> str:
@@ -203,8 +204,9 @@ def frontier_cell_for_theory(theory: dict, fm: FrontierMap) -> FrontierCell | No
     family = theory.get("family") or ""
     models = alignment_models_for_row(
         family, theory.get("mechanism") or "", theory.get("tags") or [])
-    # prefer a non-direct model if present (more specific signal)
-    preferred = sorted(models, key=lambda m: m in DIRECT_CARVING_MODELS)[0]
+    # prefer a non-direct model if present (more specific signal); break ties
+    # by canonical ALIGNMENT_MODELS order for determinism across frozenset iters.
+    preferred = sorted(models, key=lambda m: (m in DIRECT_CARVING_MODELS, _MODEL_RANK[m]))[0]
     for c in fm.cells:
         if c.family == family and c.alignment_model == preferred:
             return c

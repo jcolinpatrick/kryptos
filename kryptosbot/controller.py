@@ -2301,7 +2301,8 @@ class ResearchController:
             from kryptosbot.frontier_map import build_frontier_map, render_open_frontier
             _fm = build_frontier_map(ledger_db_path=self.config.ledger_db_path)
             landscape["frontier_open"] = render_open_frontier(_fm, limit=12)
-        except Exception:
+        except Exception as exc:
+            logger.warning("frontier map unavailable: %s", exc)
             landscape["frontier_open"] = ""  # advisory; never break the landscape
         return landscape
 
