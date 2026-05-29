@@ -137,6 +137,13 @@ General pipeline (forensic-photo-analysis / kryptos-corpus-forensics workflows):
 
 Per-observable capture rules are in §6 (populated from the primary-source inventory).
 
+> **Full O1 field+lab protocol** — capture tiers (frontal-band / RTI /
+> photogrammetry), blinded transcription→registration, the I1–I4 gate, a
+> pre-registration template, and the push-button **matched-null** closure call:
+> **`docs/REAL_K4_O1_ACQUISITION_PROTOCOL_2026_05_29.md`**. (O1 is an ORDINAL
+> observable — which glyph begins each carved row — so the doubly-curved copper
+> need not be metrically flattened; only legibility + row-membership are required.)
+
 ---
 
 ## 5. Priority order and minimum-viable acquisition
