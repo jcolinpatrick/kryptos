@@ -329,7 +329,7 @@ def main():
     parser.add_argument("--id", help="Run a single script by ID")
 
     # Run options
-    parser.add_argument("--timeout", type=int, default=300,
+    parser.add_argument("--timeout", type=int, default=3000,
                         help="Timeout per script in seconds (default: 300)")
     parser.add_argument("--top-n", type=int, default=10,
                         help="Show top N results (default: 10)")
