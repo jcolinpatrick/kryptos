@@ -37,6 +37,7 @@ esac
 PUBLIC_PATHSPECS=(
   '.'
   ':!kryptosbot/'
+  ':!.claude/'
   ':!scripts/_infra/calibrate_null_baselines.py'
   ':!scripts/_infra/calibrate_null_baselines_r2_4.py'
   ':!tests/test_polybius_scorer.py'
@@ -46,7 +47,7 @@ PUBLIC_PATHSPECS=(
   ':!docs/superpowers/'
 )
 
-FORBIDDEN_REGEX='^(kryptosbot/|scripts/_infra/calibrate_null_baselines|tests/test_polybius_scorer\.py$|tests/test_kryptosbot_oracle_hardening\.py$|tests/test_historical_eliminations\.py$|docs/maturation/|docs/superpowers/)'
+FORBIDDEN_REGEX='^(kryptosbot/|\.claude/|scripts/_infra/calibrate_null_baselines|tests/test_polybius_scorer\.py$|tests/test_kryptosbot_oracle_hardening\.py$|tests/test_historical_eliminations\.py$|docs/maturation/|docs/superpowers/)'
 
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 cd "$REPO_ROOT"
