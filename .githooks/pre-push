@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Pre-push hook: blocks pushes to public remotes (GitHub) that include
-# proprietary paths (kryptosbot/ and its cross-import dependents).
+# private paths (kryptosbot/ and its cross-import dependents; .claude/
+# local Claude Code config; docs/maturation/).
 #
 # To install: git config core.hooksPath .githooks
 # To verify:  git config core.hooksPath  (should print '.githooks')
@@ -36,7 +37,7 @@ if [ "${PUBLISH_KRYPTOSBOT:-0}" = "1" ]; then
 fi
 
 # Forbidden path prefixes (anchored regex — '^' added below)
-FORBIDDEN_REGEX='^(kryptosbot/|scripts/_infra/calibrate_null_baselines|tests/test_polybius_scorer\.py$|tests/test_kryptosbot_oracle_hardening\.py$|tests/test_historical_eliminations\.py$|docs/maturation/)'
+FORBIDDEN_REGEX='^(kryptosbot/|\.claude/|scripts/_infra/calibrate_null_baselines|tests/test_polybius_scorer\.py$|tests/test_kryptosbot_oracle_hardening\.py$|tests/test_historical_eliminations\.py$|docs/maturation/)'
 
 violations=0
 zero_sha=0000000000000000000000000000000000000000
