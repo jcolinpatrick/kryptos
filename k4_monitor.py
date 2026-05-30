@@ -1794,7 +1794,7 @@ def make_demo_state(
     now = datetime.now()
     demo_events = [
         ("DISPATCH", f"CYCLE {tail.cycle_current}/{tail.cycle_total}  beginning"),
-        ("PHASE", "▸ GENERATE  theorist [persona] cryptanalyst (claude-opus-4-7)"),
+        ("PHASE", "▸ GENERATE  theorist [persona] cryptanalyst (claude-opus-4-8)"),
         ("CRITIC", "▸ CRITIC  9/10 theories approved   1 UNDERCONSTRAINED"),
         ("REDTEAM", "⚠ Red-team CONCERNED about CT perturbation v4 — variant list overlap with v1-v3 dispatches"),
         ("WORKER", "Worker 48a4b2c1 completed (best_score=4, 642 configs in 18s)"),

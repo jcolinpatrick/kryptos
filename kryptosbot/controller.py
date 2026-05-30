@@ -2589,7 +2589,7 @@ class ResearchController:
                 "Output ONLY a JSON array of hypothesis objects. No prose."
             )
             # Pre-Pantheon default: Opus on the theorist for creative reasoning
-            model, fallback_model = "claude-opus-4-7", "claude-sonnet-4-6"
+            model, fallback_model = "claude-opus-4-8", "claude-sonnet-4-6"
             persona_name = "generic"
 
         # Attribution line — Colin's Day 2 spec requirement. Makes
@@ -4529,8 +4529,13 @@ launder an untranslatable theory through a fake spec.
                     "and report results in strict JSON format. "
                     "Use the available tools to test the hypothesis."
                 )
-                worker_model = "claude-sonnet-4-6"
-                worker_fallback = "claude-haiku-4-5"
+                # Generic no-persona worker fallback. Kept in lockstep with the
+                # persona path's resolve_model_for_phase(worker) routing, which
+                # was upgraded to Opus on 2026-05-29 (Opus primary, Sonnet
+                # fallback). Do not let the roster-missing safety net silently
+                # run a weaker model than the normal worker path.
+                worker_model = "claude-opus-4-8"
+                worker_fallback = "claude-sonnet-4-6"
                 worker_persona_name = "generic"
                 worker_setting_sources = None
                 worker_disallowed_tools = None

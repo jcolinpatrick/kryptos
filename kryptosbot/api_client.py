@@ -37,6 +37,14 @@ PRICING = {
     "claude-haiku-4-5":   {"input": 0.80, "output": 4.0, "cache_read": 0.08, "cache_write": 1.0},
     "claude-opus-4-6":    {"input": 15.0, "output": 75.0, "cache_read": 1.50, "cache_write": 18.75},
     "claude-opus-4-7":    {"input": 15.0, "output": 75.0, "cache_read": 1.50, "cache_write": 18.75},
+    # opus-4-8 is the current controller routing default. REQUIRED: PRICING.get
+    # below falls back to SONNET on a miss (no "unknown" key here, unlike
+    # token_accountant), so an absent opus-4-8 key would under-charge Opus work
+    # at Sonnet rates. NOTE: this dict is not suffix-normalized, so the
+    # "claude-opus-4-8[1m]" 1M-context variant would still miss here; the
+    # controller routes the bare id by default, but add a [1m] key if that
+    # variant ever reaches this (secondary/batch) cost path.
+    "claude-opus-4-8":    {"input": 15.0, "output": 75.0, "cache_read": 1.50, "cache_write": 18.75},
 }
 
 # Batch API = 50% off all prices

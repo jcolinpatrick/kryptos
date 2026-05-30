@@ -34,7 +34,9 @@ logger = logging.getLogger("kryptosbot.token_accountant")
 # ``pricing`` kwarg on TokenAccountant or via the
 # ``KRYPTOSBOT_PRICING_JSON`` environment variable.
 _DEFAULT_PRICING: Dict[str, Dict[str, float]] = {
-    # Claude 4.7 series
+    # Claude 4.x series (opus-4-8 is the current routing default; opus-4-7/4-6
+    # retained so any historical / in-flight charge still prices correctly).
+    "claude-opus-4-8":   {"input": 15.00, "output": 75.00},
     "claude-opus-4-7":   {"input": 15.00, "output": 75.00},
     "claude-sonnet-4-6": {"input":  3.00, "output": 15.00},
     "claude-haiku-4-5":  {"input":  1.00, "output":  5.00},
@@ -50,7 +52,7 @@ def _normalize_model_name(model: str) -> str:
     or date stamps. The pricing is per family, not per variant.
     """
     m = (model or "").strip().lower()
-    for prefix in ("claude-opus-4-7", "claude-sonnet-4-6", "claude-haiku-4-5"):
+    for prefix in ("claude-opus-4-8", "claude-opus-4-7", "claude-sonnet-4-6", "claude-haiku-4-5"):
         if m.startswith(prefix):
             return prefix
     return "unknown"
@@ -73,7 +75,7 @@ class TokenAccountant:
 
         acc = TokenAccountant(max_usd=5.00)
         ...
-        acc.charge("claude-opus-4-7", resp.usage.input_tokens,
+        acc.charge("claude-opus-4-8", resp.usage.input_tokens,
                    resp.usage.output_tokens)
         if acc.exceeded():
             raise RuntimeError(

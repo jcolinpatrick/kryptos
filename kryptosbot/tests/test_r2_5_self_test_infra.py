@@ -156,6 +156,10 @@ class TestTokenAccountant:
         """Claude model IDs sometimes carry suffixes like '[1m]'. The
         pricing is per family — the normalizer must map variants back."""
         assert _normalize_model_name("claude-opus-4-7[1m]") == "claude-opus-4-7"
+        # Opus 4.8 migration (2026-05-29): the bare id and the 1M-context
+        # variant must both fold to the opus-4-8 pricing family.
+        assert _normalize_model_name("claude-opus-4-8") == "claude-opus-4-8"
+        assert _normalize_model_name("claude-opus-4-8[1m]") == "claude-opus-4-8"
         assert _normalize_model_name("claude-sonnet-4-6-20260101") == (
             "claude-sonnet-4-6"
         )

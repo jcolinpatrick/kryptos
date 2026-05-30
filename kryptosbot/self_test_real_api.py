@@ -229,7 +229,7 @@ class RealApiResult:
 
 def run_real_api_panel(
     panel_id: str,
-    model: str = "claude-opus-4-7",
+    model: str = "claude-opus-4-8",
     max_usd: float = 5.00,
     api_key: Optional[str] = None,
 ) -> RealApiResult:
@@ -378,7 +378,7 @@ def _load_api_key() -> Optional[str]:
 def main(argv: Optional[list[str]] = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--panel", choices=("k1", "k2", "k3"), default="k1")
-    ap.add_argument("--model", default="claude-opus-4-7")
+    ap.add_argument("--model", default="claude-opus-4-8")
     ap.add_argument("--max-usd", type=float, default=5.00)
     ap.add_argument("--report-path", type=str, default=None)
     args = ap.parse_args(argv)

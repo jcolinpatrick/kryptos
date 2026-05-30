@@ -1123,7 +1123,13 @@ def load_roster(agents_dir: Path = DEFAULT_AGENTS_DIR) -> dict[str, AgentSpec]:
 
 
 # Model names as the Claude Agent SDK expects them.
-_SDK_OPUS = "claude-opus-4-7"
+# _SDK_OPUS bumped claude-opus-4-7 -> claude-opus-4-8 (2026-05-29) when Opus
+# 4.8 became available. This single constant routes every frontmatter-Opus
+# phase (theorist / red_team / stat_audit) via resolve_model_for_phase, so the
+# bump propagates to all opus-tagged persona agents automatically (their
+# frontmatter uses the abstract token "opus", not a concrete id). Sonnet 4.6
+# and Haiku 4.5 are already the newest in their tiers, so they are unchanged.
+_SDK_OPUS = "claude-opus-4-8"
 _SDK_SONNET = "claude-sonnet-4-6"
 _SDK_HAIKU = "claude-haiku-4-5"
 
@@ -1139,23 +1145,35 @@ def resolve_model_for_phase(
     Policy:
       - Theorist phase: respect frontmatter. Opus where declared,
         Sonnet where frontmatter says sonnet, Sonnet as safe default.
-      - Worker phase: always Sonnet regardless of frontmatter. Workers
-        do mechanical execution; creative reasoning happened upstream
-        at the theorist phase. Matches existing controller behavior.
+      - Worker phase: Opus regardless of frontmatter (2026-05-29 upgrade,
+        was Sonnet). The worker translates an approved theory into a
+        kernel-executable DSL HypothesisSpec under a strict fenced-JSON
+        contract; a mis-translated spec wastes a whole bounded campaign or
+        causes a false elimination. Fallback is Sonnet (capable), not Haiku.
       - Red-team phase: respect frontmatter. Opus for adversarial
         reasoning. This is where signal-vs-noise judgment happens.
       - Stat-audit phase: respect frontmatter. Opus for methodology
         review. Statistical rigor is the bottleneck.
       - Synthesis phase: Sonnet. Mechanical summarization.
+      - Pursuit phase: Sonnet. Short, passive structured-verdict ranking.
 
     Returns (model, fallback_model) as strings the SDK accepts.
     """
     phase = phase.lower()
     declared = (spec.model or "").lower()
 
-    # Worker phase always downgrades to Sonnet regardless of agent frontmatter.
+    # Worker phase: Opus (2026-05-29 upgrade, previously Sonnet/Haiku).
+    # Workers write error-prone cipher/DSL constructions and must satisfy a
+    # strict fenced-JSON output contract; there is a documented 21-min/166-turn
+    # worker that never emitted a fence. On a MAX plan (no token constraint)
+    # with Opus fast mode bounding latency, the code-correctness leverage
+    # outweighs the throughput cost. The fallback is Sonnet, not Haiku: a task
+    # we deliberately route to Opus for correctness should not silently degrade
+    # to the weakest tier, and this matches the Opus->Sonnet fallback used by
+    # every other Opus phase. Synthesis and pursuit stay Sonnet below (short,
+    # bounded structured-verdict calls where Opus headroom is mostly wasted).
     if phase == "worker":
-        return _SDK_SONNET, _SDK_HAIKU
+        return _SDK_OPUS, _SDK_SONNET
 
     # Synthesis phase always uses Sonnet — it's a summarization role.
     if phase == "synthesis":
