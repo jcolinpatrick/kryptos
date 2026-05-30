@@ -3902,6 +3902,14 @@ templates dispatch.
 Valid enum/value domains for dsl_spec fields:
   pipeline[].alphabet: AZ | KA | keyword_mixed
   crib_alignment: direct_positional | post_transposition | free
+    NOTE: only direct_positional is dispatcher-scored. The worker always
+    scores cribs anchored at the canonical positions, so a decrypt pipeline
+    (even multi-layer with a transposition) that recovers reading-order
+    plaintext is direct_positional. post_transposition / free are recorded
+    but NOT honored by the scorer; a hypothesis whose cribs genuinely land
+    off-canonical (a reordered-message / crib-forcing model) is not
+    dispatchable -- set "dsl_spec": null (Category-B) and route it to a
+    standalone harness instead of labelling a spec post_transposition/free.
   scoring: crib_only | crib_plus_bean | ngram_vs_null | composite
   null_baseline.method: random_text | shuffled_ct |
                         matched_variant_family | monte_carlo_cached
@@ -3928,7 +3936,10 @@ Example A — single-layer Vigenere on KA alphabet:
     "assumption_bundle": ["single_layer"]
   }}
 
-Example B — two-layer columnar-then-Vigenere:
+Example B — two-layer columnar-then-Vigenere (the decrypt pipeline fully
+inverts the transposition, so the recovered plaintext is in reading order
+with cribs back at the canonical positions -> use direct_positional, NOT
+post_transposition):
   "dsl_spec": {{
     "hypothesis_id": "<slug>",
     "pipeline": [
@@ -3940,7 +3951,7 @@ Example B — two-layer columnar-then-Vigenere:
         "params": [{{"name": "keyword",
                      "values": ["KRYPTOS"]}}]}}
     ],
-    "crib_alignment": "post_transposition",
+    "crib_alignment": "direct_positional",
     "scoring": "crib_plus_bean",
     "compute_budget_cpu_minutes": 2,
     "assumption_bundle": ["multilayer", "columnar_first"]
