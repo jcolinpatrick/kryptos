@@ -124,3 +124,6 @@ reference/parse_stats.txt
 # spec doc. Not load-bearing artifacts.
 # (Anchored to repo root — does NOT match scripts/_infra/synth_signal/.)
 /synth_signal/
+
+# superpowers/git worktrees (local isolation, never tracked)
+.worktrees/
