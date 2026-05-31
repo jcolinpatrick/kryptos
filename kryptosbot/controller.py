@@ -45,12 +45,16 @@ from .pantheon import (
     DEFAULT_AGENTS_DIR,
     load_roster,
     resolve_model_for_phase,
+    thinking_config_for_model,
 )
 from .pantheon_siblings import (
     RedTeamVerdict,
     StatAuditVerdict,
     CycleSynthesis,
     PursuitVerdict,
+    REDTEAM_OUTPUT_FORMAT,
+    STAT_AUDIT_OUTPUT_FORMAT,
+    PURSUIT_OUTPUT_FORMAT,
     run_red_team_precheck,
     run_stat_audit,
     run_results_synthesis,
@@ -58,6 +62,7 @@ from .pantheon_siblings import (
 )
 from .registries import bootstrap_all
 from .research_tools import set_ledger, set_canonical_facts
+from .mcp_palette import build_readonly_mcp_mount, theorist_tool_guidance
 from .routing import (
     describe_routing_table,
     select_redteam,
@@ -67,7 +72,7 @@ from .routing import (
     select_worker,
     select_pursuit_evaluator,
 )
-from .sdk_wrapper import safe_query, classify_error, extract_sdk_text_content
+from .sdk_wrapper import safe_query, classify_error, extract_sdk_text_content, is_tool_use_block
 from .theory_ledger import TheoryLedger
 from .claims_registry import CANONICAL_CLAIMS, CANONICAL_CLAIMS_BY_ID
 from .claim_rendering import render_claim_inline
@@ -297,6 +302,27 @@ class ControllerConfig:
         default_factory=lambda: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
     )
     permission_mode: str = "bypassPermissions"
+
+    # Structured output (ClaudeAgentOptions.output_format -> CLI --json-schema).
+    # Opt-in and default OFF: the SDK->CLI path is verified to enforce the schema
+    # on the model's final turn, but flipping it changes live agent behavior, so
+    # enable + validate on a bench cycle before a live campaign.
+    #   sibling_output_format: force JSON-object verdicts from red-team /
+    #     stat-audit / pursuit (flat schemas; normalizers stay fail-open).
+    # NOTE: theorist structured output is intentionally NOT wired yet. The
+    # theorist emits a top-level JSON ARRAY of proposals embedding nested DSL
+    # HypothesisSpecs, and it is the halt-critical path; a top-level-array
+    # --json-schema is unverified end-to-end. Deferred to its own change with a
+    # contract-matched schema validated on a bench cycle.
+    sibling_output_format: bool = False
+
+    # In-process MCP tool palette (read-only). When True, LLM sessions
+    # (theorist, Category-B legacy worker) get structured kernel / exhaustion /
+    # ledger query tools instead of shelling out via Bash. Default OFF: mounting
+    # changes the agent tool palette, so enable + validate on a bench cycle
+    # first. The deterministic Category-A worker never receives MCP tools.
+    # See kryptosbot/mcp_palette.py for the read-only/excluded classification.
+    enable_mcp_tools: bool = False
 
     # Theorist model (for hypothesis generation)
     # Bumped from 15 to 40 on 2026-04-12 after the Day 2 Pantheon
@@ -1639,11 +1665,32 @@ class ResearchController:
                 logger.info("Landscape: %s", json.dumps(landscape, indent=2)[:500])
                 cb.emit("on_landscape", landscape)
 
+                # Lever A: clear the per-cycle kernel-verified sweep-findings
+                # registry before the theorist runs. The theorist may call the
+                # sweep_clue_bounded tool; the KERNEL verdict it records — not
+                # the theorist's prose claim — is the trusted result.
+                from kryptosbot.dsl_tools import reset_sweep_findings
+                reset_sweep_findings()
+
                 # Step 2: Generate candidate theories
                 candidates = await self._generate_theories(
                     landscape, on_progress=cb.on_theorist_event,
                 )
                 logger.info("Generated %d candidate theories", len(candidates))
+
+                # Lever A: trust the sweep tool's kernel-verified findings over
+                # any LLM prose "solve" claim. If a sweep found a kernel-verified
+                # solve, that IS the run's authoritative result — halt.
+                self._surface_verified_sweep_findings()
+                _vsolve = getattr(self, "_last_verified_sweep_finding", None)
+                if _vsolve and _vsolve.get("solved"):
+                    logger.warning(
+                        "RUN HALTED — kernel-verified solve found via sweep tool "
+                        "(%d/%d). This is the authoritative result; the LLM's "
+                        "prose theories are not consulted.",
+                        int(_vsolve.get("best_score", 0)), int(_vsolve.get("n_cribs", 0)),
+                    )
+                    break
 
                 # PR 1 (2026-05-17): emit one record_emitted_spec event
                 # per generated theory so the coverage collector sees the
@@ -2471,6 +2518,39 @@ class ResearchController:
             out.append(cand)
         return out
 
+    def _surface_verified_sweep_findings(self) -> None:
+        """Lever A: surface the sweep tool's KERNEL-VERIFIED finding as ground
+        truth, independent of the theorist's prose.
+
+        The theorist's job is hypothesis generation only; it must never be
+        trusted to *claim* a solve (it has hallucinated "confirmed solve" on a
+        1/24 spec). The sweep tool records kernel-verified findings via
+        execute(); this reads the best one and surfaces it authoritatively.
+        """
+        try:
+            from kryptosbot.dsl_tools import get_sweep_findings
+            from kryptosbot.solver import best_verified_finding
+            best = best_verified_finding(get_sweep_findings())
+        except Exception:
+            return
+        self._last_verified_sweep_finding = best
+        if not best:
+            return
+        if best.get("solved"):
+            logger.warning(
+                "VERIFIED SWEEP SOLVE (kernel-verified %d/%d): families=%s "
+                "keywords=%s config=%s plaintext=%s",
+                int(best.get("best_score", 0)), int(best.get("n_cribs", 0)),
+                best.get("families"), best.get("keywords"),
+                best.get("config_id"), best.get("plaintext"),
+            )
+        elif int(best.get("best_score", 0) or 0) > 0:
+            logger.info(
+                "sweep findings this cycle: best kernel-verified %d/%d (families=%s)",
+                int(best.get("best_score", 0)), int(best.get("n_cribs", 0)),
+                best.get("families"),
+            )
+
     async def _generate_theories(
         self, landscape: dict[str, Any],
         on_progress: Any = None,
@@ -2614,8 +2694,17 @@ class ResearchController:
         def _capture_stderr(line: str) -> None:
             stderr_lines.append(line)
 
+        theorist_allowed = list(self.config.allowed_tools)
+        theorist_mcp_servers = None
+        if self.config.enable_mcp_tools:
+            theorist_mcp_servers, _theorist_mcp_names = build_readonly_mcp_mount()
+            theorist_allowed += _theorist_mcp_names
+            # Mounting the palette is necessary but not sufficient — nudge the
+            # theorist to actually call the read-only query tools.
+            system_prompt = system_prompt + "\n\n" + theorist_tool_guidance()
+
         options = ClaudeAgentOptions(
-            allowed_tools=self.config.allowed_tools,
+            allowed_tools=theorist_allowed,
             # Explicitly block inline subagent delegation from the theorist.
             # The Pantheon architecture uses sibling calls from the Python
             # controller, not nested subagent calls from within a session.
@@ -2631,6 +2720,12 @@ class ResearchController:
             setting_sources=["project"],
             model=model,
             fallback_model=fallback_model,
+            # Disable extended thinking on opus-4-8 to avoid the long-session
+            # thinking-block 400 crash (no-op for other models). See
+            # project_controller_error_taxonomy_2026_05_31.
+            thinking=thinking_config_for_model(model),
+            # Read-only MCP palette (None when disabled = SDK default).
+            mcp_servers=theorist_mcp_servers,
             stderr=_capture_stderr,
         )
 
@@ -2656,7 +2751,7 @@ class ResearchController:
                         # Check for tool use in structured content
                         if hasattr(message, "content") and isinstance(message.content, list):
                             for block in message.content:
-                                if hasattr(block, "type") and block.type == "tool_use":
+                                if is_tool_use_block(block):
                                     tool_name = getattr(block, "name", "?")
                                     on_progress("tool_use", tool_name)
                                     break
@@ -2907,6 +3002,11 @@ class ResearchController:
                 allowed_tools=self.config.allowed_tools,
                 permission_mode=self.config.permission_mode,
                 bench_mode=self.config.problem.is_bench,
+                output_format=(
+                    REDTEAM_OUTPUT_FORMAT
+                    if self.config.sibling_output_format
+                    else None
+                ),
             )
 
             # Day 5: capture the verdict in the per-cycle dict so the
@@ -3961,6 +4061,35 @@ Example C — honest null (non-cipher theory, no spec required):
   Theory's family is e.g. "geometry" or "k2_coords".
   "dsl_spec": null
 
+Example D — clue-bounded BOUNDED SWEEP (use when the clues name keyword(s),
+families, and/or a number). When the clues bound a SMALL space, author ONE
+bounded sweep over the uncertain axes and let the dispatcher enumerate the
+product — do NOT collapse to a single guess. Which keyword keys which layer,
+the cipher variant, the alphabet, and an unfixed width are each an uncertain
+axis, not a guess. Treat a literal clue number (e.g. a stated count) as ONE
+value in a swept range, not the only value. For a keyed columnar layer use the
+"keyword" param: it derives width AND the column read-order from the keyword,
+so you never hand-author "col_order" (a hand-built permutation is the usual
+cause of an untranslatable spec):
+  "dsl_spec": {{
+    "hypothesis_id": "<slug>",
+    "pipeline": [
+      {{"kind": "vigenere", "alphabet": "AZ",
+        "params": [{{"name": "keyword", "values": ["ALPHA", "BETA"]}}]}},
+      {{"kind": "columnar", "alphabet": "AZ",
+        "params": [{{"name": "keyword", "values": ["ALPHA", "BETA"]}}]}}
+    ],
+    "crib_alignment": "direct_positional",
+    "scoring": "crib_plus_bean",
+    "compute_budget_cpu_minutes": 5,
+    "assumption_bundle": ["multilayer", "clue_bounded_sweep"]
+  }}
+  Then author a SECOND spec with the layer order reversed (columnar first,
+  then vigenere) — layer order is itself an uncertain axis. If a width is not
+  set by a keyword, sweep it with a range, e.g.
+  {{"name": "width", "start": 2, "stop": 13}}. Keep the expected cardinality
+  within compute_budget_cpu_minutes (a few hundred configs is fine).
+
 If you cannot express your cipher-family theory as a valid spec over the
 supported kinds, DO NOT fabricate one. Set "dsl_spec": null and accept
 rejection — the framework will later extend the DSL rather than you
@@ -4574,10 +4703,24 @@ launder an untranslatable theory through a fake spec.
                 model=worker_model,
                 fallback_model=worker_fallback,
             )
+            # Disable extended thinking on opus-4-8 (no-op otherwise) — the
+            # worker is the longest-running opus session and the most exposed
+            # to the thinking-block 400 crash. See
+            # project_controller_error_taxonomy_2026_05_31.
+            options_kwargs["thinking"] = thinking_config_for_model(worker_model)
             if worker_setting_sources is not None:
                 options_kwargs["setting_sources"] = worker_setting_sources
             if worker_disallowed_tools is not None:
                 options_kwargs["disallowed_tools"] = worker_disallowed_tools
+            # Read-only MCP palette for the Category-B legacy (LLM) worker. The
+            # deterministic Category-A worker (_run_worker) makes no SDK call and
+            # is unaffected.
+            if self.config.enable_mcp_tools:
+                _worker_mcp_servers, _worker_mcp_names = build_readonly_mcp_mount()
+                options_kwargs["mcp_servers"] = _worker_mcp_servers
+                options_kwargs["allowed_tools"] = (
+                    list(options_kwargs.get("allowed_tools", [])) + _worker_mcp_names
+                )
             options = ClaudeAgentOptions(**options_kwargs)
 
             raw_chunks: list[str] = []
@@ -4638,7 +4781,7 @@ launder an untranslatable theory through a fake spec.
                         if on_message:
                             if hasattr(message, "content") and isinstance(message.content, list):
                                 for block in message.content:
-                                    if hasattr(block, "type") and block.type == "tool_use":
+                                    if is_tool_use_block(block):
                                         tool_name = getattr(block, "name", "?")
                                         on_message(theory.hypothesis_id, "tool_use", tool_name)
                             else:
@@ -5548,6 +5691,11 @@ field empty. The controller will record the verification gap and your status
                 project_root=self.config.project_root.resolve(),
                 allowed_tools=self.config.allowed_tools,
                 permission_mode=self.config.permission_mode,
+                output_format=(
+                    STAT_AUDIT_OUTPUT_FORMAT
+                    if self.config.sibling_output_format
+                    else None
+                ),
             )
 
             self._cycle_stat_audit_verdicts[contract.hypothesis_id] = verdict
@@ -5721,6 +5869,11 @@ field empty. The controller will record the verification gap and your status
                 project_root=self.config.project_root.resolve(),
                 allowed_tools=self.config.allowed_tools,
                 permission_mode=self.config.permission_mode,
+                output_format=(
+                    PURSUIT_OUTPUT_FORMAT
+                    if self.config.sibling_output_format
+                    else None
+                ),
             )
 
             self._cycle_pursuit_verdicts[contract.hypothesis_id] = verdict

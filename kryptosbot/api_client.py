@@ -378,8 +378,15 @@ class KryptosAPIClient:
             # Adaptive/extended thinking causes Opus to spend 5+ minutes on
             # complex crypto prompts, exceeding API timeouts. Opus without
             # thinking already produces excellent hypotheses in ~40s.
-            # Only enable thinking for non-4.6 models where it's more bounded.
-            if "opus-4-6" not in self.model and "sonnet-4-6" not in self.model:
+            # opus-4-8 additionally hits the GOTCHA2 long-session 400 crash once
+            # thinking blocks stop round-tripping, so it is excluded here for the
+            # same reason pantheon.thinking_config_for_model disables it on the
+            # SDK path. Only enable thinking for bounded non-4.6 / non-4.8 models.
+            if (
+                "opus-4-6" not in self.model
+                and "opus-4-8" not in self.model
+                and "sonnet-4-6" not in self.model
+            ):
                 kwargs["thinking"] = {"type": "enabled", "budget_tokens": thinking_budget}
                 kwargs["max_tokens"] = max(max_tokens, thinking_budget + 4096)
 

@@ -105,6 +105,17 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--timeout", type=int, default=30, help="Worker timeout in minutes (default: 30)")
     parser.add_argument("--dry-run", action="store_true", help="Generate + critic only")
     parser.add_argument("--skip-critic", action="store_true", help="Skip critic stage")
+    parser.add_argument(
+        "--sibling-output-format", action="store_true",
+        help="Force JSON-schema (--json-schema) structured verdicts from the "
+             "red-team / stat-audit / pursuit siblings (default off)",
+    )
+    parser.add_argument(
+        "--enable-mcp-tools", action="store_true",
+        help="Mount the read-only in-process MCP tool palette (kernel / "
+             "exhaustion / ledger queries) on the theorist and legacy worker "
+             "(default off; deterministic Category-A worker unaffected)",
+    )
     parser.add_argument("--status", action="store_true", help="Print status and exit")
     parser.add_argument("--summary", action="store_true", help="Print summary and exit")
     parser.add_argument(
@@ -365,6 +376,35 @@ def parse_args() -> argparse.Namespace:
             "When --bench-challenge is set, write the attempt artifact "
             "JSON to this path on completion. Defaults to "
             "bench/k4bench/attempts/<bench_id>.json."
+        ),
+    )
+    parser.add_argument(
+        "--solve",
+        action="store_true",
+        help=(
+            "Autonomous deterministic SOLVER mode (no LLM, no human). Runs the "
+            "clue-bounded bounded-sweep solver against the challenge (with "
+            "--bench-challenge) or the real K4 kernel, prints a solve report, "
+            "and exits without the LLM cycle loop."
+        ),
+    )
+    parser.add_argument(
+        "--solve-keywords",
+        type=str,
+        default=None,
+        help=(
+            "Real-K4 assault: comma-separated keyword candidates to sweep "
+            "(overrides the built-in K4 seed). Widen the bounded search with "
+            "your strongest candidates, e.g. --solve-keywords KRYPTOS,BERLIN,CLOCK."
+        ),
+    )
+    parser.add_argument(
+        "--solve-rounds",
+        type=int,
+        default=2,
+        help=(
+            "Solver escalation rounds (round 0 = 2-layer, round 1+ = 3-layer). "
+            "Higher = broader, slower. Default 2."
         ),
     )
     # ------------------------------------------------------------------
@@ -1062,6 +1102,37 @@ async def do_run(config: ControllerConfig) -> None:
     display.print_completion(controller.state.to_dict())
 
 
+def _run_solve_mode(bench_challenge, *, solve_keywords=None, solve_rounds: int = 2) -> None:
+    """Autonomous deterministic solver: clue-bounded bounded sweep, no LLM."""
+    from kryptosbot import solver
+
+    if bench_challenge is not None:
+        label = f"K4Bench {bench_challenge.bench_id} — {bench_challenge.title}"
+        result = solver.solve_challenge(bench_challenge, max_rounds=solve_rounds)
+    else:
+        label = "REAL K4 (carved ciphertext, disclosed cribs)"
+        keywords = None
+        if solve_keywords:
+            keywords = [k.strip() for k in solve_keywords.split(",") if k.strip()]
+        result = solver.solve_real_k4(keywords=keywords, max_rounds=solve_rounds)
+
+    bar = "=" * 64
+    print(f"\n{bar}\nAUTONOMOUS SOLVER — {label}\n{bar}")
+    print(f"  solved            : {result.solved}")
+    print(f"  best crib_score   : {result.best_score}/{result.n_cribs}")
+    print(f"  best spec         : {result.best_spec_id}")
+    print(
+        f"  search            : {result.specs_tried} specs, "
+        f"{result.configs_tried} configs, {result.rounds} round(s)"
+    )
+    cand = result.best_config or {}
+    if cand.get("candidate_pt"):
+        print(f"  plaintext         : {cand['candidate_pt']}")
+    if cand.get("config_id"):
+        print(f"  winning config_id : {cand['config_id']}")
+    print(bar + "\n")
+
+
 async def main() -> None:
     args = parse_args()
     _configure_logging(args.quiet)
@@ -1312,6 +1383,17 @@ async def main() -> None:
     # anchors, and remember the challenge for the attempt artifact emit
     # at completion time.
     bench_challenge = _BENCH_CHALLENGE
+
+    # Autonomous deterministic solver mode (no LLM, no human). Short-circuits
+    # the entire LLM cycle loop: the solver IS the brain here.
+    if getattr(args, "solve", False):
+        _run_solve_mode(
+            bench_challenge,
+            solve_keywords=getattr(args, "solve_keywords", None),
+            solve_rounds=getattr(args, "solve_rounds", 2),
+        )
+        return
+
     db_default_real = Path("db/theory_ledger.sqlite")
     if bench_challenge is not None:
         from kryptosbot.bench_loader import (
@@ -1421,6 +1503,8 @@ async def main() -> None:
         worker_timeout_minutes=args.timeout,
         dry_run=args.dry_run,
         skip_critic=args.skip_critic,
+        sibling_output_format=args.sibling_output_format,
+        enable_mcp_tools=args.enable_mcp_tools,
         alert_threshold=args.alert_on,
         include_oranchak_corpora=include_oranchak_corpora,
         include_serpentine_anchor=include_serpentine_anchor,

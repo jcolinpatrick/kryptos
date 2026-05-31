@@ -370,21 +370,19 @@ class TestEnvelopeInvariants:
 # ─── Server wiring ───────────────────────────────────────────────────────────
 
 class TestServerWiring:
-    def test_create_dsl_mcp_server_registers_all_eight(self):
+    def test_create_dsl_mcp_server_registers_all_tools(self):
         server = create_dsl_mcp_server()
         # Server is a TypedDict-ish config. Extract the tool list.
-        # Fallback: just confirm ALL_TOOLS has 8 entries and that the
-        # module exposes each handler.
         from kryptosbot.dsl_tools import ALL_TOOLS
-        assert len(ALL_TOOLS) == 8
         names = {t.name for t in ALL_TOOLS}
         expected = {
-            "submit_hypothesis_spec", "poll_job", "query_exhaustion",
-            "compute_null_baseline", "score_candidate_canonical",
-            "get_procedural_recipe", "enumerate_admissible_transforms",
-            "request_compute_budget_estimate",
+            "submit_hypothesis_spec", "sweep_clue_bounded", "poll_job",
+            "query_exhaustion", "compute_null_baseline",
+            "score_candidate_canonical", "get_procedural_recipe",
+            "enumerate_admissible_transforms", "request_compute_budget_estimate",
         }
         assert names == expected
+        assert len(ALL_TOOLS) == len(expected)
 
 
 # Deprecation-coverage tests for the three noise tools in

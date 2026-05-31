@@ -2,7 +2,7 @@
   "attempts": [],
   "challenge": {
     "bench_id": "K4B-COSTCTL-001",
-    "challenge_path": "/tmp/pytest-of-cpatrick/pytest-2008/test_subprocess_completes_dry_0/challenge.json",
+    "challenge_path": "/tmp/claude-1000/pytest-of-cpatrick/pytest-54/popen-gw6/test_subprocess_completes_dry_0/challenge.json",
     "ciphertext_length": 97,
     "ciphertext_sha256": "74de3e656466e4faf307d1c0aaccc30af6815c272e458225f82a6a0662026730",
     "crib_positions": [
@@ -36,7 +36,7 @@
     "suite_id": "K4BENCH-COSTCTL-TEST",
     "title": "Cost-control flag end-to-end test"
   },
-  "generated_at": "2026-05-16T15:04:07.664577+00:00",
+  "generated_at": "2026-05-31T23:25:01.582024+00:00",
   "ledger_summary": {
     "theories_by_status": {
       "approved": 6579

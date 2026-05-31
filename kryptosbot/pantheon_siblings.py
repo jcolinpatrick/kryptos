@@ -50,8 +50,8 @@ from typing import Optional
 from claude_agent_sdk import ClaudeAgentOptions
 
 from .models import TheoryRecord, WorkerContract
-from .pantheon import AgentSpec, resolve_model_for_phase
-from .sdk_wrapper import safe_query, extract_sdk_text_content
+from .pantheon import AgentSpec, resolve_model_for_phase, thinking_config_for_model
+from .sdk_wrapper import safe_query, extract_sdk_text_content, is_tool_use_block
 
 logger = logging.getLogger("kryptosbot.pantheon_siblings")
 
@@ -365,6 +365,62 @@ def _normalize_verdict_dict(parsed: dict) -> RedTeamVerdict:
     )
 
 
+# ---------------------------------------------------------------------------
+# Structured-output schemas (ClaudeAgentOptions.output_format -> CLI --json-schema)
+#
+# Permissive by design: the _normalize_* parsers above read every field with
+# .get() and safe defaults, so these schemas only steer the model toward a JSON
+# object carrying the expected keys (required: just "verdict"). No value enums
+# and no additionalProperties:false — either could reject otherwise-valid output
+# the normalizers already tolerate. Passing one of these as output_format makes
+# the CLI enforce a JSON object on the model's final turn, removing the
+# regex-extraction failure mode while the regex extractor stays as a backstop.
+# ---------------------------------------------------------------------------
+
+REDTEAM_OUTPUT_FORMAT: dict = {
+    "type": "json_schema",
+    "schema": {
+        "type": "object",
+        "properties": {
+            "verdict": {"type": "string", "description": "approve | reject | concerned (synonyms accepted)"},
+            "confidence": {"type": "number"},
+            "reasons": {"type": "array", "items": {"type": "string"}},
+            "next_test": {"type": "string"},
+            "search_space_risk": {"type": "string"},
+        },
+        "required": ["verdict"],
+    },
+}
+
+STAT_AUDIT_OUTPUT_FORMAT: dict = {
+    "type": "json_schema",
+    "schema": {
+        "type": "object",
+        "properties": {
+            "verdict": {"type": "string", "description": "confirmed | concerned | rejected (synonyms accepted)"},
+            "confidence": {"type": "number"},
+            "methodology_concerns": {"type": "array", "items": {"type": "string"}},
+            "recommended_action": {"type": "string"},
+        },
+        "required": ["verdict"],
+    },
+}
+
+PURSUIT_OUTPUT_FORMAT: dict = {
+    "type": "json_schema",
+    "schema": {
+        "type": "object",
+        "properties": {
+            "verdict": {"type": "string", "description": "pursue | skip (synonyms accepted)"},
+            "confidence": {"type": "number"},
+            "rationale": {"type": "string"},
+            "suggested_variants": {"type": "array", "items": {"type": "string"}},
+        },
+        "required": ["verdict"],
+    },
+}
+
+
 async def run_red_team_precheck(
     theory: TheoryRecord,
     *,
@@ -374,6 +430,7 @@ async def run_red_team_precheck(
     permission_mode: str = "bypassPermissions",
     max_turns: int = 20,
     bench_mode: bool = False,
+    output_format: dict | None = None,
 ) -> RedTeamVerdict:
     """
     Make a sibling call to red-team-disprover for proposal-time pre-check.
@@ -416,6 +473,13 @@ async def run_red_team_precheck(
         setting_sources=["project"],
         model=model,
         fallback_model=fallback_model,
+        # opus-4-8: disable extended thinking to avoid the long-session
+        # thinking-block 400 crash (no-op for Sonnet/Haiku). See
+        # project_controller_error_taxonomy_2026_05_31.
+        thinking=thinking_config_for_model(model),
+        # Structured output (None = unconstrained; controller passes
+        # REDTEAM_OUTPUT_FORMAT when sibling_output_format is enabled).
+        output_format=output_format,
     )
 
     start = time.monotonic()
@@ -436,7 +500,7 @@ async def run_red_team_precheck(
                     if text:
                         content_chunks.append(text)
                     for block in content:
-                        if hasattr(block, "type") and block.type == "tool_use":
+                        if is_tool_use_block(block):
                             tool_count += 1
                 else:
                     text = extract_sdk_text_content(content)
@@ -679,6 +743,7 @@ async def run_stat_audit(
     allowed_tools: list[str],
     permission_mode: str = "bypassPermissions",
     max_turns: int = 20,
+    output_format: dict | None = None,
 ) -> StatAuditVerdict:
     """
     Make a sibling call to statistical-auditor for post-execution signal
@@ -704,6 +769,13 @@ async def run_stat_audit(
         setting_sources=["project"],
         model=model,
         fallback_model=fallback_model,
+        # opus-4-8: disable extended thinking to avoid the long-session
+        # thinking-block 400 crash (no-op for Sonnet/Haiku). See
+        # project_controller_error_taxonomy_2026_05_31.
+        thinking=thinking_config_for_model(model),
+        # Structured output (controller passes STAT_AUDIT_OUTPUT_FORMAT when
+        # sibling_output_format is enabled).
+        output_format=output_format,
     )
 
     start = time.monotonic()
@@ -724,7 +796,7 @@ async def run_stat_audit(
                     if text:
                         content_chunks.append(text)
                     for block in content:
-                        if hasattr(block, "type") and block.type == "tool_use":
+                        if is_tool_use_block(block):
                             tool_count += 1
                 else:
                     text = extract_sdk_text_content(content)
@@ -957,6 +1029,7 @@ async def run_pursuit_evaluator(
     allowed_tools: list[str],
     permission_mode: str = "bypassPermissions",
     max_turns: int = 12,
+    output_format: dict | None = None,
 ) -> PursuitVerdict:
     """
     Make a sibling call to the pursuit evaluator (default role:
@@ -983,6 +1056,13 @@ async def run_pursuit_evaluator(
         setting_sources=["project"],
         model=model,
         fallback_model=fallback_model,
+        # opus-4-8: disable extended thinking to avoid the long-session
+        # thinking-block 400 crash (no-op for Sonnet/Haiku). See
+        # project_controller_error_taxonomy_2026_05_31.
+        thinking=thinking_config_for_model(model),
+        # Structured output (controller passes PURSUIT_OUTPUT_FORMAT when
+        # sibling_output_format is enabled).
+        output_format=output_format,
     )
 
     start = time.monotonic()
@@ -1003,7 +1083,7 @@ async def run_pursuit_evaluator(
                     if text:
                         content_chunks.append(text)
                     for block in content:
-                        if hasattr(block, "type") and block.type == "tool_use":
+                        if is_tool_use_block(block):
                             tool_count += 1
                 else:
                     text = extract_sdk_text_content(content)
@@ -1445,6 +1525,10 @@ async def run_results_synthesis(
         setting_sources=["project"],
         model=model,
         fallback_model=fallback_model,
+        # opus-4-8: disable extended thinking to avoid the long-session
+        # thinking-block 400 crash (no-op for Sonnet/Haiku). See
+        # project_controller_error_taxonomy_2026_05_31.
+        thinking=thinking_config_for_model(model),
     )
 
     start = time.monotonic()
@@ -1465,7 +1549,7 @@ async def run_results_synthesis(
                     if text:
                         content_chunks.append(text)
                     for block in content:
-                        if hasattr(block, "type") and block.type == "tool_use":
+                        if is_tool_use_block(block):
                             tool_count += 1
                 else:
                     text = extract_sdk_text_content(content)

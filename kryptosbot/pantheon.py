@@ -1134,6 +1134,29 @@ _SDK_SONNET = "claude-sonnet-4-6"
 _SDK_HAIKU = "claude-haiku-4-5"
 
 
+def thinking_config_for_model(model: str | None) -> dict | None:
+    """Return the ``ClaudeAgentOptions.thinking`` value for a given model.
+
+    Opus 4.8 ships with interleaved/extended thinking effectively on by
+    default. Long multi-turn Agent-SDK sessions then die with
+    ``API Error 400 ... 'thinking'/'redacted_thinking' blocks in the latest
+    assistant message ...`` once thinking blocks stop round-tripping in the
+    API-required order (GOTCHA2; the dominant wall-clock error sink measured
+    2026-05-31). Disabling extended thinking removes the accumulation
+    mechanism; ``api_client.py`` documents that Opus without thinking still
+    produces excellent hypotheses in ~40s.
+
+    Returns ``{"type": "disabled"}`` for opus-4-8 (incl. the ``[1m]``
+    context variant), else ``None`` — and ``None`` is exactly the SDK
+    default, so this is a guaranteed no-op for Sonnet / Haiku / any other
+    model. Gated narrowly on opus-4-8 (the current routing default); revisit
+    if another opus generation is routed onto the SDK path.
+    """
+    if model and "opus-4-8" in model:
+        return {"type": "disabled"}
+    return None
+
+
 def resolve_model_for_phase(
     spec: AgentSpec,
     phase: str,

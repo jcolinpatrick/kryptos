@@ -725,6 +725,42 @@ def repair_spec_shape(
     return out, report
 
 
+# ─── key_tape normalization ──────────────────────────────────────────────────
+
+def coerce_key_tape(tape: Any) -> Any:
+    """Normalize a key_tape ``tape`` param to a tuple of integer offsets.
+
+    The theorist commonly emits a tape as letters (a Vigenere-style key,
+    e.g. ``"KRYPTOS"`` or ``["K", "R", ...]``) rather than the kernel's
+    required integer offsets. This best-effort normalizer maps each A-Z
+    letter (case-insensitive) to its STANDARD-alphabet shift A=0..Z=25 —
+    the conventional key-letter interpretation, matching
+    ``apply_key_tape`` which uses the tape value directly as the additive
+    offset in index space (independent of the layer's AZ/KA alphabet,
+    which governs only the *text* mapping, not the key).
+
+    Coercion is intentionally best-effort: anything that is not a single
+    A-Z letter (out-of-range ints, digits, symbols, nested values) is left
+    verbatim so ``validate_layer_for_kind`` still reports a precise error.
+    Digits are NOT treated as offsets — ``"1"`` is ambiguous against the
+    letter mapping (A=0), so digit strings are preserved for the validator
+    rather than silently reinterpreted.
+
+    ``None`` and inputs that are not ``str``/``list``/``tuple`` are
+    returned unchanged.
+    """
+    def _coerce_one(v: Any) -> Any:
+        if isinstance(v, str) and len(v) == 1 and v.isalpha() and v.isascii():
+            return ord(v.upper()) - 65
+        return v
+
+    if isinstance(tape, str):
+        return tuple(_coerce_one(ch) for ch in tape)
+    if isinstance(tape, (list, tuple)):
+        return tuple(_coerce_one(v) for v in tape)
+    return tape
+
+
 # ─── Per-kind layer validation ───────────────────────────────────────────────
 
 def validate_layer_for_kind(kind: str, params: dict[str, Any]) -> list[str]:
@@ -865,6 +901,8 @@ __all__ = [
     "validate_hypothesis_spec",
     # Per-kind layer parameter validator
     "validate_layer_for_kind",
+    # key_tape tape normalization (letter -> integer offset)
+    "coerce_key_tape",
     # Pre-validation repair (K4Bench wiring)
     "repair_spec_shape",
 ]

@@ -123,6 +123,29 @@ def _text_response(envelope: dict[str, Any]) -> dict[str, Any]:
 _JOBS_LOCK = threading.Lock()
 _JOBS: dict[str, dict[str, Any]] = {}
 
+# Kernel-verified sweep findings recorded by ``sweep_clue_bounded`` during a
+# theorist session. The controller reads these as TRUSTED ground truth (the
+# LLM's prose "solve" claims are not trusted — see Lever A). Reset per cycle.
+_SWEEP_FINDINGS_LOCK = threading.Lock()
+_SWEEP_FINDINGS: list[dict[str, Any]] = []
+
+
+def _record_sweep_finding(finding: dict[str, Any]) -> None:
+    with _SWEEP_FINDINGS_LOCK:
+        _SWEEP_FINDINGS.append(finding)
+
+
+def get_sweep_findings() -> list[dict[str, Any]]:
+    """All kernel-verified sweep findings recorded since the last reset."""
+    with _SWEEP_FINDINGS_LOCK:
+        return [dict(f) for f in _SWEEP_FINDINGS]
+
+
+def reset_sweep_findings() -> None:
+    """Clear the sweep-findings registry (call at cycle start)."""
+    with _SWEEP_FINDINGS_LOCK:
+        _SWEEP_FINDINGS.clear()
+
 
 def _register_job(job_id: str, spec: HypothesisSpec) -> None:
     with _JOBS_LOCK:
@@ -757,10 +780,71 @@ async def request_compute_budget_estimate_tool(
     ))
 
 
+@tool(
+    "sweep_clue_bounded",
+    "Test a focused clue hypothesis by SWEEPING its bounded parameter space "
+    "(transposition width, layer order, alphabet, and keyword->layer "
+    "assignment) against the active K4 ciphertext and cribs, returning the BEST "
+    "crib_score and recovered plaintext. Use this INSTEAD of hand-authoring a "
+    "multi-config sweep spec — give the cipher families to compose and the "
+    "candidate keywords and it enumerates the rest deterministically. families: "
+    "list with >=1 transposition (columnar | rail_fence | reverse_blocks | "
+    "route_boustrophedon | route_diagonal | skip_route) plus a substitution "
+    "(vigenere | beaufort | variant_beaufort | atbash | caesar). Set "
+    "include_3layer=true to also sweep two-transposition + substitution "
+    "compositions. Kernel-verified, no ledger writes.",
+    {"families": list, "keywords": list, "include_3layer": bool},
+)
+async def sweep_clue_bounded_tool(args: dict[str, Any]) -> dict[str, Any]:
+    families = args.get("families") or []
+    keywords = args.get("keywords") or []
+    if not isinstance(families, list) or not isinstance(keywords, list):
+        return _text_response(_envelope(
+            "error", {"reason": "'families' and 'keywords' must be lists"},
+        ))
+    include_3layer = bool(args.get("include_3layer", False))
+    try:
+        import asyncio
+        from kryptos.kernel import constants as C
+        from kryptosbot.solver import run_clue_sweep
+
+        res = await asyncio.to_thread(
+            run_clue_sweep,
+            C.CT, dict(C.CRIB_DICT),
+            families=[str(f) for f in families],
+            keywords=[str(k) for k in keywords],
+            max_rounds=2 if include_3layer else 1,
+        )
+    except Exception as exc:  # pragma: no cover - defensive
+        return _text_response(_envelope(
+            "error", {"reason": f"sweep raised: {type(exc).__name__}: {exc}"},
+        ))
+    # Record the KERNEL-VERIFIED finding so the controller trusts this, not the
+    # LLM's prose claim (Lever A).
+    _record_sweep_finding({
+        "solved": bool(res["solved"]),
+        "best_score": int(res["best_score"]),
+        "n_cribs": int(res["n_cribs"]),
+        "plaintext": res["plaintext"],
+        "config_id": res["best_config_id"],
+        "families": [str(f) for f in families],
+        "keywords": [str(k) for k in keywords],
+    })
+    return _text_response(_envelope("ok", {
+        "best_crib_score": res["best_score"],
+        "n_cribs": res["n_cribs"],
+        "solved": res["solved"],
+        "plaintext": res["plaintext"],
+        "best_config_id": res["best_config_id"],
+        "configs_tested": res["configs"],
+    }))
+
+
 # ─── MCP server wiring ───────────────────────────────────────────────────────
 
 ALL_TOOLS = [
     submit_hypothesis_spec_tool,
+    sweep_clue_bounded_tool,
     poll_job_tool,
     query_exhaustion_tool,
     compute_null_baseline_tool,
@@ -784,6 +868,7 @@ __all__ = [
     "ALL_TOOLS",
     "create_dsl_mcp_server",
     "submit_hypothesis_spec_tool",
+    "sweep_clue_bounded_tool",
     "poll_job_tool",
     "query_exhaustion_tool",
     "compute_null_baseline_tool",
@@ -791,6 +876,8 @@ __all__ = [
     "get_procedural_recipe_tool",
     "enumerate_admissible_transforms_tool",
     "request_compute_budget_estimate_tool",
+    "get_sweep_findings",
+    "reset_sweep_findings",
     # Test hooks:
     "_reset_jobs_for_testing",
     "_reset_procedural_cache_for_testing",

@@ -595,6 +595,27 @@ def _keyword_to_key_ints(
     return [idx_table[ord(c) - 65] for c in keyword]
 
 
+def _col_order_from_keyword(keyword: str) -> list[int]:
+    """Standard keyed-columnar column order derived from a keyword.
+
+    Ranks each column by its keyword letter alphabetically, ties broken
+    left-to-right, and returns ``col_order[col] = read_rank``. E.g.
+    ``CEDAR -> [1, 3, 2, 0, 4]``. This is the classical keyword column
+    ordering and matches the convention ``columnar_perm`` expects
+    (``col_order[col_idx]`` is the rank at which that column is read).
+
+    Lets the ``columnar`` layer take a ``keyword`` the way ``vigenere`` does,
+    so theorists never hand-author an explicit permutation (the brittle step
+    behind ``dsl_untranslatable`` rejections).
+    """
+    kw = keyword.strip().upper()
+    order = sorted(range(len(kw)), key=lambda i: (kw[i], i))
+    rank = [0] * len(kw)
+    for r, i in enumerate(order):
+        rank[i] = r
+    return rank
+
+
 def _translation_text_length(text_length: Optional[int]) -> int:
     """Return the active text length for permutation-producing translators."""
     if text_length is None:
@@ -689,23 +710,44 @@ def _translate_layer(
         }
 
     if kind == "columnar":
-        width = binding.get("width")
-        if width is None or not isinstance(width, int) or width < 2:
-            raise DispatcherError(
-                f"columnar layer requires int 'width' >= 2; got {width!r}"
-            )
-        # Phase 4 supports a single pre-enumerated permutation via 'col_order';
-        # callers that want to sweep permutations enumerate those as values
-        # in the ParamRange.
-        col_order = binding.get("col_order")
-        if col_order is None or not isinstance(col_order, (list, tuple)):
-            raise DispatcherError(
-                f"columnar layer requires 'col_order' (list[int]); got {col_order!r}"
-            )
-        if sorted(col_order) != list(range(width)):
-            raise DispatcherError(
-                f"columnar col_order {col_order} is not a permutation of [0, {width})"
-            )
+        keyword = binding.get("keyword")
+        if keyword is not None:
+            # Keyword-derived columnar (classical keyed columnar): width =
+            # len(keyword), col_order from the keyword's letter ranks. Mirrors
+            # vigenere's keyword->key derivation and removes the error-prone
+            # explicit-permutation authoring step. When 'keyword' is present it
+            # takes precedence over any width/col_order binding.
+            if not isinstance(keyword, str) or not keyword.strip().isalpha():
+                raise DispatcherError(
+                    f"columnar 'keyword' must be an A-Z string; got {keyword!r}"
+                )
+            kw = keyword.strip().upper()
+            if len(kw) < 2:
+                raise DispatcherError(
+                    f"columnar 'keyword' must have length >= 2; got {keyword!r}"
+                )
+            width = len(kw)
+            col_order = _col_order_from_keyword(kw)
+        else:
+            width = binding.get("width")
+            if width is None or not isinstance(width, int) or width < 2:
+                raise DispatcherError(
+                    f"columnar layer requires int 'width' >= 2 (or a 'keyword'); "
+                    f"got {width!r}"
+                )
+            # Phase 4 supports a single pre-enumerated permutation via 'col_order';
+            # callers that want to sweep permutations enumerate those as values
+            # in the ParamRange (or use the 'keyword' convenience above).
+            col_order = binding.get("col_order")
+            if col_order is None or not isinstance(col_order, (list, tuple)):
+                raise DispatcherError(
+                    f"columnar layer requires 'col_order' (list[int]) or a "
+                    f"'keyword'; got {col_order!r}"
+                )
+            if sorted(col_order) != list(range(width)):
+                raise DispatcherError(
+                    f"columnar col_order {col_order} is not a permutation of [0, {width})"
+                )
         # Build the full-text columnar permutation via the kernel helper.
         from kryptos.kernel.transforms.transposition import columnar_perm
         perm = columnar_perm(width, list(col_order), CT_LEN)
@@ -1463,12 +1505,21 @@ def _translate_layer(
         # out before any kernel call. See
         # project_key_tape_alphabet_passthrough_fix_2026_05_07.md.
         from kryptosbot.hypothesis_dsl import (
+            coerce_key_tape,
             validate_layer_for_kind,
         )
         params = dict(binding)  # local copy; do not mutate binding
         # getattr defends against test fakes that omit the attribute
         # entirely; CipherLayer always has alphabet defaulted to "AZ".
         params.setdefault("alphabet", getattr(layer, "alphabet", "AZ"))
+        # 2026-05-31: the theorist commonly emits the tape as letters (a
+        # Vigenere-style key) rather than integer offsets. Normalize A-Z
+        # letters to standard shifts A=0..Z=25 before validation so these
+        # specs RUN instead of erroring at dispatch. Genuinely-bad entries
+        # (out-of-range ints, digits, symbols) are left verbatim and still
+        # rejected below. See project_controller_error_taxonomy_2026_05_31.
+        if "tape" in params:
+            params["tape"] = coerce_key_tape(params["tape"])
         errors = validate_layer_for_kind("key_tape", params)
         if errors:
             raise ValueError("; ".join(errors))
@@ -1749,6 +1800,50 @@ def _annotate_best_candidate_p_values(
         return None
 
 
+def _score_real_k4_candidate(
+    ct: str, candidate_pt: str, crib_alignment: str,
+) -> dict[str, Any]:
+    """Score a real-K4 candidate plaintext under the spec's crib alignment.
+
+    direct_positional (default) and post_transposition: anchored
+    ``score_candidate`` + Bean — the disclosed cribs sit at the canonical
+    positions (21-33 / 63-73). post_transposition is anchored because a decrypt
+    pipeline that inverts its transposition lands the cribs back at the
+    canonical positions (see the DSL-contract Example B); it is NOT free.
+
+    free: ``score_candidate_free`` — the disclosed cribs are matched ANYWHERE
+    (the non-direct-alignment / null-shifted frontier class). Bean is N/A (it
+    depends on fixed positions). NOTE: free matching has a much higher chance
+    rate than anchored, so a free crib_score is only meaningful against a
+    free-matched null; ``canonical_positions`` flags whether the cribs actually
+    landed at the disclosed spots (a real solve) versus elsewhere (a weaker
+    found-elsewhere hit). free uses the kernel's hardcoded real-K4 cribs, so it
+    is a REAL-K4 path (not for bench challenges, whose cribs differ).
+    """
+    from kryptos.kernel.scoring.aggregate import score_candidate, score_candidate_free
+
+    if crib_alignment == "free":
+        fb = score_candidate_free(candidate_pt)
+        return {
+            "crib_score": int(fb.crib_score),
+            "classification": getattr(fb, "crib_classification", "free_alignment"),
+            "bean_passed": False,
+            "bean_variant": None,
+            "scoring_mode": "free",
+            "canonical_positions": bool(getattr(fb, "canonical_positions", False)),
+        }
+    breakdown = score_candidate(candidate_pt)
+    bean_passed, bean_variant = _candidate_bean_status(ct, candidate_pt)
+    return {
+        "crib_score": int(breakdown.crib_score),
+        "classification": getattr(breakdown, "crib_classification", "unknown"),
+        "bean_passed": bean_passed,
+        "bean_variant": bean_variant,
+        "scoring_mode": "direct_positional",
+        "canonical_positions": True,
+    }
+
+
 # ─── Worker function (top-level for multiprocessing picklability) ────────────
 
 def _evaluate_one(work_item: dict[str, Any]) -> dict[str, Any]:
@@ -1794,6 +1889,8 @@ def _evaluate_one(work_item: dict[str, Any]) -> dict[str, Any]:
                 "config_id": config_id,
                 "error": f"pipeline output length {len(candidate_pt)} != CT length {len(ct)}",
             }
+        scoring_mode = "direct_positional"
+        canonical_positions = True
         if challenge_crib_dict is not None:
             crib_score = _score_known_cribs(candidate_pt, challenge_crib_dict)
             bean_passed = False
@@ -1804,10 +1901,15 @@ def _evaluate_one(work_item: dict[str, Any]) -> dict[str, Any]:
                 else "challenge_crib_mismatch"
             )
         else:
-            breakdown = score_candidate(candidate_pt)
-            crib_score = int(breakdown.crib_score)
-            bean_passed, bean_variant = _candidate_bean_status(ct, candidate_pt)
-            classification = getattr(breakdown, "crib_classification", "unknown")
+            # Lever B1: honour the spec's crib_alignment (free vs anchored).
+            crib_alignment = work_item.get("crib_alignment", "direct_positional")
+            scored = _score_real_k4_candidate(ct, candidate_pt, crib_alignment)
+            crib_score = scored["crib_score"]
+            bean_passed = scored["bean_passed"]
+            bean_variant = scored["bean_variant"]
+            classification = scored["classification"]
+            scoring_mode = scored["scoring_mode"]
+            canonical_positions = scored["canonical_positions"]
         from kryptos.kernel.scoring.ngram import get_default_scorer
         ngram_score = float(get_default_scorer().score_per_char(candidate_pt))
         return {
@@ -1818,6 +1920,8 @@ def _evaluate_one(work_item: dict[str, Any]) -> dict[str, Any]:
             "bean_variant": bean_variant,
             "ngram_score": ngram_score,
             "classification": classification,
+            "scoring_mode": scoring_mode,
+            "canonical_positions": bool(canonical_positions),
         }
     except Exception as exc:  # pragma: no cover - defensive
         return {"config_id": config_id, "error": f"{type(exc).__name__}: {exc}"}
@@ -2061,6 +2165,7 @@ def execute(
             "pipeline_dict": pipeline_dict,
             "challenge_ciphertext": challenge_ciphertext,
             "challenge_crib_dict": challenge_crib_dict,
+            "crib_alignment": spec.crib_alignment,
         })
         config_ids.append(cfg_id)
         bindings_by_config_id[cfg_id] = bindings

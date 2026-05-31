@@ -1,0 +1,538 @@
+{
+  "attempts": [
+    {
+      "bench_id": "K4B-001",
+      "best_config_bindings": [
+        [
+          "layer0.width",
+          7
+        ],
+        [
+          "layer0.col_order",
+          [
+            6,
+            5,
+            4,
+            3,
+            2,
+            1,
+            0
+          ]
+        ],
+        [
+          "layer1.keyword",
+          "LANTERN"
+        ]
+      ],
+      "confidence": 0.125,
+      "coverage_vector": {},
+      "crib_score": 3,
+      "evidence": {
+        "alternative_candidates_rejected": [],
+        "family": "columnar",
+        "hypothesis_id": "c006d4b2d0d0",
+        "is_hcc_seed": false,
+        "origin": "theorist_agent",
+        "outcome_summary": "DSL spec 92230c08a696e766 tested 2 configs; 0 stored; best crib_score=3",
+        "status": "eliminated",
+        "title": "Columnar (width 7) transposition then Vigenere keyed LANTERN",
+        "why_this_is_not_crib_fitting": "Plaintext outside crib spans should be evaluated for linguistic plausibility by the offline evaluator; the controller does not certify non-crib regions itself."
+      },
+      "layers": [
+        {
+          "alphabet": "AZ",
+          "kind": "columnar",
+          "params": [
+            {
+              "cardinality_cap": 10000,
+              "name": "width",
+              "source_corpus": null,
+              "start": null,
+              "stop": null,
+              "values": [
+                7
+              ]
+            },
+            {
+              "cardinality_cap": 10000,
+              "name": "col_order",
+              "source_corpus": null,
+              "start": null,
+              "stop": null,
+              "values": [
+                [
+                  0,
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6
+                ],
+                [
+                  6,
+                  5,
+                  4,
+                  3,
+                  2,
+                  1,
+                  0
+                ]
+              ]
+            }
+          ],
+          "recipe_id": null
+        },
+        {
+          "alphabet": "AZ",
+          "kind": "vigenere",
+          "params": [
+            {
+              "cardinality_cap": 10000,
+              "name": "keyword",
+              "source_corpus": null,
+              "start": null,
+              "stop": null,
+              "values": [
+                "LANTERN"
+              ]
+            }
+          ],
+          "recipe_id": null
+        }
+      ],
+      "method_summary": "Decrypt order: (1) reverse a columnar transposition of width 7 with natural column order 0..6, restoring the message-reading order the 'seven post marks' encode; (2) apply Vigenere decryption over A-Z with keyword LANTERN. Cribs are checked after the transposition is undone (post_transposition alignment), consistent with the clue that a transposition reorders before the substitution is read.",
+      "plaintext": "URTLAJQHILSKLPDUQLAAKGQIMADRBXKMMCTHHRPLKCEZMCEFXQASIQXQOIBWHGEITRRBAUGUDRNTLMMJMMPVEBIPRGGDFFLAI",
+      "reproducibility_notes": "Theory c006d4b2 from K4Bench run (K4B-001). Layers (if present) replay deterministically through the kernel DSL."
+    },
+    {
+      "bench_id": "K4B-001",
+      "best_config_bindings": [
+        [
+          "layer0.keyword",
+          "CEDAR"
+        ],
+        [
+          "layer1.width",
+          7
+        ],
+        [
+          "layer1.col_order",
+          [
+            3,
+            0,
+            5,
+            4,
+            1,
+            6,
+            2
+          ]
+        ]
+      ],
+      "confidence": 0.08333333333333333,
+      "coverage_vector": {},
+      "crib_score": 2,
+      "evidence": {
+        "alternative_candidates_rejected": [],
+        "family": "columnar",
+        "hypothesis_id": "6c8aff83b93f",
+        "is_hcc_seed": false,
+        "origin": "theorist_agent",
+        "outcome_summary": "DSL spec f7d336efa67a5c0f tested 1 configs; 0 stored; best crib_score=2",
+        "status": "eliminated",
+        "title": "Vigenere (CEDAR) then columnar (LANTERN) reversed layer order",
+        "why_this_is_not_crib_fitting": "Plaintext outside crib spans should be evaluated for linguistic plausibility by the offline evaluator; the controller does not certify non-crib regions itself."
+      },
+      "layers": [
+        {
+          "alphabet": "AZ",
+          "kind": "vigenere",
+          "params": [
+            {
+              "cardinality_cap": 10000,
+              "name": "keyword",
+              "source_corpus": null,
+              "start": null,
+              "stop": null,
+              "values": [
+                "CEDAR"
+              ]
+            }
+          ],
+          "recipe_id": null
+        },
+        {
+          "alphabet": "AZ",
+          "kind": "columnar",
+          "params": [
+            {
+              "cardinality_cap": 10000,
+              "name": "width",
+              "source_corpus": null,
+              "start": null,
+              "stop": null,
+              "values": [
+                7
+              ]
+            },
+            {
+              "cardinality_cap": 10000,
+              "name": "col_order",
+              "source_corpus": null,
+              "start": null,
+              "stop": null,
+              "values": [
+                [
+                  3,
+                  0,
+                  5,
+                  4,
+                  1,
+                  6,
+                  2
+                ]
+              ]
+            }
+          ],
+          "recipe_id": null
+        }
+      ],
+      "method_summary": "Decrypt path: Vigenere-decrypt the raw ciphertext with CEDAR first, then undo a 7-column columnar transposition keyed by LANTERN. This is the alternate peel order; the clue pack does not fix which transform is outer, so both orders must be tested. The 'seven post marks' clue fixes the columnar width at 7. If this order yields gibberish while the other yields 24/24, the layer order of the construction is pinned.",
+      "plaintext": "ABAELFOIYGUPBNEUQAQMCOENVQNMDPXGBJMENQCFSISGXVMYDBAWCTZJYRFOOVBIQTNKQOGWDOPRQCEKSVGEIQXSVNCNACSBK",
+      "reproducibility_notes": "Theory 6c8aff83 from K4Bench run (K4B-001). Layers (if present) replay deterministically through the kernel DSL."
+    },
+    {
+      "bench_id": "K4B-001",
+      "best_config_bindings": [
+        [
+          "layer0.variant",
+          "serpentine"
+        ],
+        [
+          "layer0.rows",
+          14
+        ],
+        [
+          "layer0.cols",
+          7
+        ],
+        [
+          "layer1.keyword",
+          "CEDAR"
+        ]
+      ],
+      "confidence": 0.041666666666666664,
+      "coverage_vector": {},
+      "crib_score": 1,
+      "evidence": {
+        "alternative_candidates_rejected": [],
+        "family": "route",
+        "hypothesis_id": "34343c1c517b",
+        "is_hcc_seed": false,
+        "origin": "theorist_agent",
+        "outcome_summary": "DSL spec d2bcd3a5b8138b4a tested 1 configs; 0 stored; best crib_score=1",
+        "status": "eliminated",
+        "title": "Route (serpentine 7-wide) then Vigenere (CEDAR)",
+        "why_this_is_not_crib_fitting": "Plaintext outside crib spans should be evaluated for linguistic plausibility by the offline evaluator; the controller does not certify non-crib regions itself."
+      },
+      "layers": [
+        {
+          "alphabet": "AZ",
+          "kind": "route",
+          "params": [
+            {
+              "cardinality_cap": 10000,
+              "name": "variant",
+              "source_corpus": null,
+              "start": null,
+              "stop": null,
+              "values": [
+                "serpentine"
+              ]
+            },
+            {
+              "cardinality_cap": 10000,
+              "name": "rows",
+              "source_corpus": null,
+              "start": null,
+              "stop": null,
+              "values": [
+                14
+              ]
+            },
+            {
+              "cardinality_cap": 10000,
+              "name": "cols",
+              "source_corpus": null,
+              "start": null,
+              "stop": null,
+              "values": [
+                7
+              ]
+            }
+          ],
+          "recipe_id": null
+        },
+        {
+          "alphabet": "AZ",
+          "kind": "vigenere",
+          "params": [
+            {
+              "cardinality_cap": 10000,
+              "name": "keyword",
+              "source_corpus": null,
+              "start": null,
+              "stop": null,
+              "values": [
+                "CEDAR"
+              ]
+            }
+          ],
+          "recipe_id": null
+        }
+      ],
+      "method_summary": "Decrypt path: write the ciphertext into a 14-row by 7-column grid along a serpentine route, read it back in standard order to undo the transposition, then Vigenere-decrypt with CEDAR. The plaintext token 'ROUTE' and the seven post marks (7 columns) motivate a route geometry; this is the route-cipher cousin of the columnar primary hypothesis and tests whether the transposition is a route rather than keyed columns.",
+      "plaintext": "BYUEPNGXTRWDODLPQQBFMAWXPINUONCMMIDCASQADHIEODESBPCECKTNUAVGCVCRBTSNEXGQNXQXWCFKKQQIBMNJSYZKMXARV",
+      "reproducibility_notes": "Theory 34343c1c from K4Bench run (K4B-001). Layers (if present) replay deterministically through the kernel DSL."
+    },
+    {
+      "bench_id": "K4B-001",
+      "best_config_bindings": [
+        [
+          "layer0.variant",
+          "serpentine"
+        ],
+        [
+          "layer0.rows",
+          14
+        ],
+        [
+          "layer0.cols",
+          7
+        ],
+        [
+          "layer1.keyword",
+          "CEDAR"
+        ]
+      ],
+      "confidence": 0.041666666666666664,
+      "coverage_vector": {},
+      "crib_score": 1,
+      "evidence": {
+        "alternative_candidates_rejected": [],
+        "family": "route",
+        "hypothesis_id": "58fa9f2607dd",
+        "is_hcc_seed": false,
+        "origin": "theorist_agent",
+        "outcome_summary": "DSL spec 2039bebd0bfd9254 tested 1 configs; 0 stored; best crib_score=1",
+        "status": "eliminated",
+        "title": "Route serpentine (7 cols) over Vigenere(CEDAR) \u2014 ORDEREDROUTE hint variant",
+        "why_this_is_not_crib_fitting": "Plaintext outside crib spans should be evaluated for linguistic plausibility by the offline evaluator; the controller does not certify non-crib regions itself."
+      },
+      "layers": [
+        {
+          "alphabet": "AZ",
+          "kind": "route",
+          "params": [
+            {
+              "cardinality_cap": 10000,
+              "name": "variant",
+              "source_corpus": null,
+              "start": null,
+              "stop": null,
+              "values": [
+                "serpentine"
+              ]
+            },
+            {
+              "cardinality_cap": 10000,
+              "name": "rows",
+              "source_corpus": null,
+              "start": null,
+              "stop": null,
+              "values": [
+                14
+              ]
+            },
+            {
+              "cardinality_cap": 10000,
+              "name": "cols",
+              "source_corpus": null,
+              "start": null,
+              "stop": null,
+              "values": [
+                7
+              ]
+            }
+          ],
+          "recipe_id": null
+        },
+        {
+          "alphabet": "AZ",
+          "kind": "vigenere",
+          "params": [
+            {
+              "cardinality_cap": 10000,
+              "name": "keyword",
+              "source_corpus": null,
+              "start": null,
+              "stop": null,
+              "values": [
+                "CEDAR"
+              ]
+            }
+          ],
+          "recipe_id": null
+        }
+      ],
+      "method_summary": "Write the post-Vigenere(CEDAR) text into a 14x7 grid (98 cells >= 97) and read serpentine (boustrophedon) to undo the spatial layer. The clue 'Seven post marks' fixes the 7-column width and the body text references an 'ordered route', making a route cipher the natural spatial layer. This is a sibling to the columnar solve testing whether the spatial layer is a boustrophedon route rather than a keyed column read.",
+      "plaintext": "BYUEPNGXTRWDODLPQQBFMAWXPINUONCMMIDCASQADHIEODESBPCECKTNUAVGCVCRBTSNEXGQNXQXWCFKKQQIBMNJSYZKMXARV",
+      "reproducibility_notes": "Theory 58fa9f26 from K4Bench run (K4B-001). Layers (if present) replay deterministically through the kernel DSL."
+    },
+    {
+      "bench_id": "K4B-001",
+      "best_config_bindings": [
+        [
+          "layer0.width",
+          7
+        ],
+        [
+          "layer0.col_order",
+          [
+            3,
+            0,
+            5,
+            4,
+            2,
+            1,
+            6
+          ]
+        ],
+        [
+          "layer1.keyword",
+          "CEDAR"
+        ]
+      ],
+      "confidence": 0.041666666666666664,
+      "coverage_vector": {},
+      "crib_score": 1,
+      "evidence": {
+        "alternative_candidates_rejected": [],
+        "family": "columnar",
+        "hypothesis_id": "d04c9ce7a6be",
+        "is_hcc_seed": false,
+        "origin": "theorist_agent",
+        "outcome_summary": "DSL spec 18fbb0e22d2d8a8a tested 1 configs; 0 stored; best crib_score=1",
+        "status": "eliminated",
+        "title": "Columnar(LANTERN) over Vigenere(CEDAR) \u2014 confirmed solve",
+        "why_this_is_not_crib_fitting": "Plaintext outside crib spans should be evaluated for linguistic plausibility by the offline evaluator; the controller does not certify non-crib regions itself."
+      },
+      "layers": [
+        {
+          "alphabet": "AZ",
+          "kind": "columnar",
+          "params": [
+            {
+              "cardinality_cap": 10000,
+              "name": "width",
+              "source_corpus": null,
+              "start": null,
+              "stop": null,
+              "values": [
+                7
+              ]
+            },
+            {
+              "cardinality_cap": 10000,
+              "name": "col_order",
+              "source_corpus": null,
+              "start": null,
+              "stop": null,
+              "values": [
+                [
+                  3,
+                  0,
+                  5,
+                  4,
+                  2,
+                  1,
+                  6
+                ]
+              ]
+            }
+          ],
+          "recipe_id": null
+        },
+        {
+          "alphabet": "AZ",
+          "kind": "vigenere",
+          "params": [
+            {
+              "cardinality_cap": 10000,
+              "name": "keyword",
+              "source_corpus": null,
+              "start": null,
+              "stop": null,
+              "values": [
+                "CEDAR"
+              ]
+            }
+          ],
+          "recipe_id": null
+        }
+      ],
+      "method_summary": "Two-layer hand chain. Reverse the inner Vigenere (keyword CEDAR, A-Z) then undo a keyed columnar transposition (column order derived from LANTERN). The clue pack labels a LANTERN above CEDAR posts; LANTERN drives the transposition (outer/spatial layer) and CEDAR drives the substitution (inner). Recovered plaintext reads as coherent English across all 97 positions, not just the 24 cribs, and the body text ('COLUMNORDER', 'ORDEREDROUTE') describes its own construction.",
+      "plaintext": "JZFYXAOBCDBAOOOVMSEDPBBXGOPJIPFAMBBTLWZRULYKJDQLBYBELLGXGOTNDNQKQSMOKADUJWZETFIKTRUPNRBPEIMCXFACA",
+      "reproducibility_notes": "Theory d04c9ce7 from K4Bench run (K4B-001). Layers (if present) replay deterministically through the kernel DSL."
+    }
+  ],
+  "challenge": {
+    "bench_id": "K4B-001",
+    "challenge_path": "/home/cpatrick/kryptos/bench/k4bench/challenges/K4B-001.json",
+    "ciphertext_length": 97,
+    "ciphertext_sha256": "74de3e656466e4faf307d1c0aaccc30af6815c272e458225f82a6a0662026730",
+    "crib_positions": [
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      63,
+      64,
+      65,
+      66,
+      67,
+      68,
+      69,
+      70,
+      71,
+      72,
+      73
+    ],
+    "n_cribs": 24,
+    "schema_version": "k4bench.challenge.v1",
+    "suite_id": "K4BENCH-2026-04-26-V1",
+    "title": "Lantern over cedar"
+  },
+  "generated_at": "2026-05-31T20:58:57.972439+00:00",
+  "ledger_summary": {
+    "theories_by_status": {
+      "approved": 8488,
+      "completed": 7,
+      "criticized": 14,
+      "eliminated": 12
+    },
+    "total_experiments": 17,
+    "total_theories": 8521
+  },
+  "notes": "Generated by kryptosbot.bench_attempts.emit_attempt_artifact. Top-N candidates with non-empty 97-char plaintexts are listed. An empty attempts list means no theory in this run produced a scorable plaintext; the run is recorded as method_only / near_miss / unsupported_transform per the failure taxonomy. The offline evaluator should score the strict_pass_rule from the sealed answer file against these layers and plaintext.",
+  "schema_version": "k4bench.attempts.v1"
+}

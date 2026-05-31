@@ -25,7 +25,7 @@ import subprocess
 import warnings
 from typing import Any, AsyncIterator
 
-from claude_agent_sdk import ClaudeAgentOptions, query
+from claude_agent_sdk import ClaudeAgentOptions, ToolUseBlock, query
 
 logger = logging.getLogger("kryptosbot.sdk_wrapper")
 
@@ -50,6 +50,23 @@ def extract_sdk_text_content(content: Any) -> str:
                 parts.append(str(text))
         return "\n".join(parts) if parts else ""
     return str(content)
+
+
+def is_tool_use_block(block: Any) -> bool:
+    """Return True if an SDK content block represents a tool call.
+
+    claude-agent-sdk 0.1.61 delivers tool calls as ``ToolUseBlock`` dataclasses
+    whose fields are (id, name, input) with NO ``type`` attribute, so the legacy
+    ``hasattr(block, "type") and block.type == "tool_use"`` check is always
+    False and silently undercounts tool usage to zero. Detect by isinstance,
+    with a dict fallback for any raw-dict block shape and a final ``.type``
+    fallback for forward-compatibility if the SDK reintroduces the attribute.
+    """
+    if isinstance(block, ToolUseBlock):
+        return True
+    if isinstance(block, dict):
+        return block.get("type") == "tool_use"
+    return getattr(block, "type", None) == "tool_use"
 
 
 # ---------------------------------------------------------------------------

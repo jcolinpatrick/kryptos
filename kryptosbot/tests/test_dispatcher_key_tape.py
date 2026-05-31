@@ -48,3 +48,45 @@ class TestKeyTapeDispatcher:
         binding = {"tape": (), "variant": "vigenere", "alphabet": "AZ"}
         with pytest.raises(ValueError, match="tape"):
             _translate_layer(_Layer(), binding=binding, text_length=97)
+
+    def test_translator_coerces_letter_tape_string(self):
+        # The theorist commonly emits a tape as a letter key (Vigenere-style)
+        # rather than integer offsets. The translator should coerce it to
+        # standard A=0..Z=25 shifts and dispatch, not raise.
+        class _Layer:
+            kind = "key_tape"
+            params = []
+
+        binding = {
+            "tape": "KRYPTOS",
+            "variant": "vigenere",
+            "direction": "decrypt",
+            "null_positions": (),
+            "null_rule": "skip",
+            "alphabet": "AZ",
+        }
+        cfg = _translate_layer(_Layer(), binding=binding, text_length=97)
+        assert cfg["params"]["tape"] == (10, 17, 24, 15, 19, 14, 18)
+
+    def test_translator_coerces_letter_tape_list(self):
+        class _Layer:
+            kind = "key_tape"
+            params = []
+
+        binding = {
+            "tape": ["K", "R", "Y"],
+            "variant": "vigenere",
+            "alphabet": "AZ",
+        }
+        cfg = _translate_layer(_Layer(), binding=binding, text_length=97)
+        assert cfg["params"]["tape"] == (10, 17, 24)
+
+    def test_translator_still_rejects_genuinely_bad_tape(self):
+        # Coercion is best-effort; an out-of-range int is still a hard error.
+        class _Layer:
+            kind = "key_tape"
+            params = []
+
+        binding = {"tape": (0, 99, 5), "variant": "vigenere", "alphabet": "AZ"}
+        with pytest.raises(ValueError, match="range"):
+            _translate_layer(_Layer(), binding=binding, text_length=97)
