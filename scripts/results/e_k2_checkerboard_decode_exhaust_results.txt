@@ -1,0 +1,59 @@
+=========================================================
+ C++ TIER A ENGINE: TRUE EXHAUSTION (345+ Billion Configs)
+=========================================================
+  Fills generated    : 46
+  Mappings generated : 46
+  Firing up 45 threads...
+=========================================================
+  -> Pair (1,3) complete. Best score: 13
+  -> Pair (4,5) complete. Best score: 13
+  -> Pair (1,5) complete. Best score: 13
+  -> Pair (2,3) complete. Best score: 13
+  -> Pair (0,5) complete. Best score: 13
+  -> Pair (3,5) complete. Best score: 13
+  -> Pair (1,4) complete. Best score: 13
+  -> Pair (0,1) complete. Best score: 13
+  -> Pair (3,4) complete. Best score: 13
+  -> Pair (1,2) complete. Best score: 14
+  -> Pair (2,5) complete. Best score: 13
+  -> Pair (3,8) complete. Best score: 14
+  -> Pair (3,9) complete. Best score: 13
+  -> Pair (1,6) complete. Best score: 13
+  -> Pair (0,3) complete. Best score: 13
+  -> Pair (1,8) complete. Best score: 13
+  -> Pair (4,7) complete. Best score: 14
+  -> Pair (2,4) complete. Best score: 13
+  -> Pair (1,7) complete. Best score: 14
+  -> Pair (4,6) complete. Best score: 14
+  -> Pair (0,2) complete. Best score: 13
+  -> Pair (7,8) complete. Best score: 13
+  -> Pair (1,9) complete. Best score: 14
+  -> Pair (6,8) complete. Best score: 14
+  -> Pair (6,7) complete. Best score: 13
+  -> Pair (4,8) complete. Best score: 13
+  -> Pair (2,8) complete. Best score: 13
+  -> Pair (2,9) complete. Best score: 14
+  -> Pair (0,6) complete. Best score: 13
+  -> Pair (0,4) complete. Best score: 13
+  -> Pair (0,7) complete. Best score: 14
+  -> Pair (6,9) complete. Best score: 13
+  -> Pair (4,9) complete. Best score: 13
+  -> Pair (0,8) complete. Best score: 14
+  -> Pair (2,6) complete. Best score: 13
+  -> Pair (5,6) complete. Best score: 13
+  -> Pair (7,9) complete. Best score: 13
+  -> Pair (5,7) complete. Best score: 13
+  -> Pair (2,7) complete. Best score: 14
+  -> Pair (5,8) complete. Best score: 13
+  -> Pair (8,9) complete. Best score: 13
+  -> Pair (5,9) complete. Best score: 13
+  -> Pair (3,7) complete. Best score: 13
+  -> Pair (3,6) complete. Best score: 14
+  -> Pair (0,9) complete. Best score: 13
+=========================================================
+SUMMARY
+=========================================================
+Total Configurations: 345534336000
+Elapsed Time        : 8260.00 seconds
+Global Best Free    : 14 / 24
+Processing Speed    : 41.83 Million configs/sec
