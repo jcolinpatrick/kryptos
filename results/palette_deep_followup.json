@@ -1,9 +1,0 @@
-{
-  "findings": [
-    "FINDING 1: KA mod 5 congruence {0,3} has P = 0.000502 (1 in 1993)",
-    "FINDING 7: Beaufort BC keystream is 7/11 palette (P = 0.011662, 1 in 86)",
-    "FINDING: mod 49 perfectly separates null from non-null palette positions!"
-  ],
-  "elapsed": 0.05438995361328125,
-  "timestamp": "2026-05-23T08:33:29"
-}
