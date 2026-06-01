@@ -1,0 +1,28 @@
+{
+  "manifest_version": "1.0",
+  "campaign_id": "e_frac_32_simple_transpositions",
+  "campaign_name": "Simple transposition families (cyclic/reverse/affine/rail/swaps) empirical null",
+  "completed_at": "2026-04-11T00:00:00+00:00",
+  "git_commit": "",
+  "verdict": "bounded_null",
+  "verdict_summary": "E-FRAC-32: simple transposition families (cyclic shifts, reverse, affine, block reversal, rail fence, single swaps) enumerated 14,035 permutations. Maximum 13/24 \u2014 BELOW the random baseline of 14/24. No positive signal in any tested configuration within scope. Empirically saturated within the specific parameter ranges tested.",
+  "evidence_pointer": "docs/elimination_tiers.md (Tier 2 row, E-FRAC-32 simple transpositions)",
+  "family_updates": {
+    "rail_fence": {
+      "tier": 2,
+      "evidence": "E-FRAC-32: rail fence family exhaustively tested as part of 14,035 simple-transposition perms; max 13/24 (below random)."
+    }
+  },
+  "scope_caveats": [
+    "H1 conditional: assumes direct positional crib mapping on the carved 97-char CT under an additive cipher class. Mechanisms that break H1 (outer transposition before the analyzed step, position-dependent selectors, physical-overlay remaps, non-additive ciphers) are NOT eliminated by this result."
+  ],
+  "scope_does_not_cover": [
+    "Simple transpositions composed with a non-additive inner cipher.",
+    "Simple transpositions as inner layer under an outer transformation."
+  ],
+  "total_profiles_evaluated": 0,
+  "joint_anomaly_successes": 0,
+  "populations_tested": [],
+  "variants_tested": [],
+  "notes": "Historical backfill from E-FRAC-32. 14,035 perms, max 13/24 (below random baseline 14/24)."
+}

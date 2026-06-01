@@ -1,0 +1,139 @@
+{
+  "experiment": "E-S-08",
+  "hypothesis": "General transposition + periodic Vigenere (quadgram-guided SA)",
+  "model": "PT = vig_decrypt(sigma_inv(CT), periodic_key)",
+  "total_time_s": 2487.2,
+  "verdict": "NOISE",
+  "results_by_period": {
+    "period_7": {
+      "period": 7,
+      "best_crib_matches": 15,
+      "best_qscore_pc": -4.25,
+      "best_plaintext": "BYTHEARITWINESSPERAGMEASYWORTHESSDUCTIVERYGIALYPROPROXYPHYPERINGIRLYNCHOOKAYAMPLIALINTHERISMINGEX",
+      "best_key": [
+        2,
+        3,
+        3,
+        2,
+        1,
+        2,
+        2
+      ],
+      "elapsed_s": 526.4,
+      "n_restarts": 100,
+      "steps_per_restart": 200000,
+      "crib_dist": {
+        "min": 10,
+        "mean": 12.0,
+        "max": 15
+      },
+      "qscore_dist": {
+        "min": -5.05,
+        "mean": -4.329,
+        "max": -3.99
+      }
+    },
+    "period_5": {
+      "period": 5,
+      "best_crib_matches": 12,
+      "best_qscore_pc": -4.15,
+      "best_plaintext": "DXYLORIALISTOPHYAPPEDIALIZERTHEAUTHYROIDLYWINGDEPISCOUSLYPERISOVERLINGURITINGLYSTRATINGLYCOXYPOXK",
+      "best_key": [
+        2,
+        2,
+        3,
+        3,
+        2
+      ],
+      "elapsed_s": 498.2,
+      "n_restarts": 100,
+      "steps_per_restart": 200000,
+      "crib_dist": {
+        "min": 8,
+        "mean": 10.1,
+        "max": 12
+      },
+      "qscore_dist": {
+        "min": -5.1,
+        "mean": -4.432,
+        "max": -3.93
+      }
+    },
+    "period_3": {
+      "period": 3,
+      "best_crib_matches": 9,
+      "best_qscore_pc": -3.97,
+      "best_plaintext": "XXVISTRICALLYPERITYREPROPICATHIASTIVERWALLINGLYPYROLISTICHOUNDENTELYNOROCHALLARABLENESSWHICHOROXY",
+      "best_key": [
+        3,
+        2,
+        4
+      ],
+      "elapsed_s": 464.8,
+      "n_restarts": 100,
+      "steps_per_restart": 200000,
+      "crib_dist": {
+        "min": 7,
+        "mean": 7.8,
+        "max": 9
+      },
+      "qscore_dist": {
+        "min": -5.05,
+        "mean": -4.263,
+        "max": -3.97
+      }
+    },
+    "period_6": {
+      "period": 6,
+      "best_crib_matches": 14,
+      "best_qscore_pc": -4.47,
+      "best_plaintext": "ZZILYWHIPPREDUNPRIALIMBLEWOUTHEASTRAPPINGUNDSPREDUMPHICKSYZYXXYBERLITCHOLOGISTOGRAMISMITYPERIFYPX",
+      "best_key": [
+        2,
+        2,
+        2,
+        3,
+        2,
+        3
+      ],
+      "elapsed_s": 515.1,
+      "n_restarts": 100,
+      "steps_per_restart": 200000,
+      "crib_dist": {
+        "min": 8,
+        "mean": 11.1,
+        "max": 14
+      },
+      "qscore_dist": {
+        "min": -5.07,
+        "mean": -4.301,
+        "max": -3.89
+      }
+    },
+    "period_4": {
+      "period": 4,
+      "best_crib_matches": 11,
+      "best_qscore_pc": -4.17,
+      "best_plaintext": "YLLINESSCONDISOMEDISHEARTNERTICALUSTRAPHYSIOLOGRATIZINGERVINTHERYOLYACHICKLYWORMINDIATHYPORTYVOYW",
+      "best_key": [
+        3,
+        4,
+        2,
+        2
+      ],
+      "elapsed_s": 482.6,
+      "n_restarts": 100,
+      "steps_per_restart": 200000,
+      "crib_dist": {
+        "min": 7,
+        "mean": 9.1,
+        "max": 11
+      },
+      "qscore_dist": {
+        "min": -4.93,
+        "mean": -4.319,
+        "max": -3.89
+      }
+    }
+  }
+}

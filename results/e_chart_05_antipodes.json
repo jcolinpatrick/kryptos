@@ -1,0 +1,320 @@
+{
+  "experiment": "E-CHART-05",
+  "description": "Antipodes-corrected misspelling tableau modifications (4 pairs, O->U removed)",
+  "misspelling_pairs": [
+    "S->C",
+    "L->Q",
+    "E->A",
+    "I->E"
+  ],
+  "total_configs_phase1": 894,
+  "phase1_best": {
+    "crib_score": 4,
+    "config": {
+      "test": "row_swap",
+      "alphabet": "KA",
+      "variant": "var_beau",
+      "keyword": "CQAE",
+      "swap_mode": "rows",
+      "crib_score": 4,
+      "pt_preview": "EZEJRVCQNOSSHWJSUPNWPPYJYEOMADXIFWJNPUOUVELULLDHPX"
+    },
+    "pt": "EZEJRVCQNOSSHWJSUPNWPPYJYEOMADXIFWJNPUOUVELULLDHPXIOSBSZUXBTZPNBBQANDCDRCLBYJLDG"
+  },
+  "phase2_best": {
+    "crib_score": 7,
+    "config": {
+      "test": "row_swap",
+      "alphabet": "KA",
+      "variant": "var_beau",
+      "keyword": "CQAE",
+      "swap_mode": "rows",
+      "order": [
+        4,
+        0,
+        2,
+        3,
+        6,
+        5,
+        7,
+        1
+      ],
+      "width": 8,
+      "model": "A_transpose_then_sub"
+    },
+    "pt": "HTONEPMIFLOCHZIFEFHUSDRYWOFOANEZUFTCRQYIMXXUEGSHHFEUTUUGHYLKEUKNPLLINCMOMKJHQJBX"
+  },
+  "phase2_above_noise": [
+    {
+      "test": "row_swap",
+      "alphabet": "KA",
+      "variant": "var_beau",
+      "keyword": "CQAE",
+      "swap_mode": "rows",
+      "order": [
+        4,
+        0,
+        2,
+        3,
+        6,
+        5,
+        7,
+        1
+      ],
+      "model": "A",
+      "crib_score": 7,
+      "ic": 0.03823024054982818,
+      "pt_preview": "HTONEPMIFLOCHZIFEFHUSDRYWOFOANEZUFTCRQYIMXXUEGSHHF"
+    },
+    {
+      "test": "row_swap",
+      "alphabet": "KA",
+      "variant": "var_beau",
+      "keyword": "CQAE",
+      "swap_mode": "rows",
+      "order": [
+        4,
+        2,
+        6,
+        5,
+        0,
+        1,
+        7,
+        3
+      ],
+      "model": "A",
+      "crib_score": 7,
+      "ic": 0.036941580756013746,
+      "pt_preview": "PPNYEHAIGZLIHUOFDDJDSEOYVNYPAWHZSQKDRAFIWGWVEETHRU"
+    },
+    {
+      "test": "row_swap",
+      "alphabet": "KA",
+      "variant": "var_beau",
+      "keyword": "CQAE",
+      "swap_mode": "rows",
+      "order": [
+        4,
+        6,
+        2,
+        5,
+        0,
+        1,
+        7,
+        3
+      ],
+      "model": "A",
+      "crib_score": 7,
+      "ic": 0.036941580756013746,
+      "pt_preview": "PPAYEHNIGZOIHULFDDODSEJYVNHPAWYZSQFDRAKIWGTVEEWHRU"
+    }
+  ],
+  "phase1_top20": [
+    {
+      "test": "row_swap",
+      "alphabet": "KA",
+      "variant": "var_beau",
+      "keyword": "CQAE",
+      "swap_mode": "rows",
+      "crib_score": 4,
+      "pt_preview": "EZEJRVCQNOSSHWJSUPNWPPYJYEOMADXIFWJNPUOUVELULLDHPX"
+    },
+    {
+      "test": "row_swap",
+      "alphabet": "AZ",
+      "variant": "beau",
+      "keyword": "KRYPTOS",
+      "swap_mode": "rows",
+      "crib_score": 4,
+      "pt_preview": "AKMSBIFAPJFCNIAUKLENAVUTGXSXHWEVZAWJFVBZVYEBGVGQAL"
+    },
+    {
+      "test": "row_swap",
+      "alphabet": "AZ",
+      "variant": "beau",
+      "keyword": "YAR",
+      "swap_mode": "rows",
+      "crib_score": 4,
+      "pt_preview": "LBTTUXZOPJUUDCXNEODBFHQIXLZRRWEKBUOSYTZUJZUCNMZEYI"
+    },
+    {
+      "test": "col_swap",
+      "alphabet": "AZ",
+      "variant": "vig",
+      "keyword": "KRYPTOS",
+      "swap_mode": "cols",
+      "crib_score": 4,
+      "pt_preview": "AKMSBIFAPJFCNIAUKLENAVUTGXSXHWEVZAWJFVBZVYEBGVGQAL"
+    },
+    {
+      "test": "col_swap",
+      "alphabet": "AZ",
+      "variant": "vig",
+      "keyword": "YAR",
+      "swap_mode": "cols",
+      "crib_score": 4,
+      "pt_preview": "LBTTUXZOPJUUDCXNEODBFHQIXLZRRWEKBUOSYTZUJZUCNMZEYI"
+    },
+    {
+      "test": "both_swap",
+      "alphabet": "AZ",
+      "variant": "vig",
+      "keyword": "KRYPTOS",
+      "swap_mode": "both",
+      "crib_score": 4,
+      "pt_preview": "AKMSBIVAPJFCNLAUKLENUVUTGXSNHWEVZAMJFVBZVOEBGVGQUL"
+    },
+    {
+      "test": "both_swap",
+      "alphabet": "AZ",
+      "variant": "vig",
+      "keyword": "LISE",
+      "swap_mode": "both",
+      "crib_score": 4,
+      "pt_preview": "YBEJAOVGLHCDQCMDCFZTGFJJFLOHBNASSCMQGTOKTLLKOKXRGI"
+    },
+    {
+      "test": "both_swap",
+      "alphabet": "AZ",
+      "variant": "beau",
+      "keyword": "KRYPTOS",
+      "swap_mode": "both",
+      "crib_score": 4,
+      "pt_preview": "AKMSBIVAPJFCNLAUKLENUVUTGXSNHWEVZAMJFVBZVOEBGVGQUL"
+    },
+    {
+      "test": "both_swap",
+      "alphabet": "AZ",
+      "variant": "beau",
+      "keyword": "LISE",
+      "swap_mode": "both",
+      "crib_score": 4,
+      "pt_preview": "YBEJAOVGLHCDQCMDCFZTGFJJFLOHBNASSCMQGTOKTLLKOKXRGI"
+    },
+    {
+      "test": "misspelling_kw_rows",
+      "alphabet": "KA",
+      "variant": "var_beau",
+      "keyword": "CQAE",
+      "swap_mode": "rows",
+      "crib_score": 4,
+      "pt_preview": "EZEJRVCQNOSSHWJSUPNWPPYJYEOMADXIFWJNPUOUVELULLDHPX"
+    },
+    {
+      "test": "misspelling_kw_plain",
+      "alphabet": "KA",
+      "variant": "var_beau",
+      "keyword": "SLEI",
+      "crib_score": 4,
+      "pt_preview": "EZEJRVCQNOSSHWJSUPNWPPYJYEOMADXIFWJNPUOUVELULLDHPX"
+    },
+    {
+      "test": "misspelling_kw_both",
+      "alphabet": "AZ",
+      "variant": "vig",
+      "keyword": "LISE",
+      "swap_mode": "both",
+      "crib_score": 4,
+      "pt_preview": "YBEJAOVGLHCDQCMDCFZTGFJJFLOHBNASSCMQGTOKTLLKOKXRGI"
+    },
+    {
+      "test": "misspelling_kw_both",
+      "alphabet": "AZ",
+      "variant": "beau",
+      "keyword": "LISE",
+      "swap_mode": "both",
+      "crib_score": 4,
+      "pt_preview": "YBEJAOVGLHCDQCMDCFZTGFJJFLOHBNASSCMQGTOKTLLKOKXRGI"
+    },
+    {
+      "test": "k3_then_hill",
+      "alphabet": "AZ",
+      "variant": "beau+beau",
+      "keyword": "HILL",
+      "swap_mode": "rows",
+      "running_key": "K3_PT",
+      "crib_score": 4,
+      "pt_preview": "XSTUKSVFFIVVCTMSDYSKEQXFSTDMSNWXPFLWPRZDOFBYGLEJAC"
+    },
+    {
+      "test": "k3_then_hill",
+      "alphabet": "AZ",
+      "variant": "beau+vig",
+      "keyword": "HILL",
+      "swap_mode": "cols",
+      "running_key": "K3_PT",
+      "crib_score": 4,
+      "pt_preview": "XSTUKSVFFIVVCTMSDYSKEQXFSTDMSNWXPFLWPRZDOFBYGLEJAC"
+    },
+    {
+      "test": "english_kw_both",
+      "alphabet": "AZ",
+      "variant": "vig",
+      "keyword": "LISE",
+      "swap_mode": "both",
+      "crib_score": 4,
+      "pt_preview": "YBEJAOVGLHCDQCMDCFZTGFJJFLOHBNASSCMQGTOKTLLKOKXRGI"
+    },
+    {
+      "test": "english_kw_both",
+      "alphabet": "AZ",
+      "variant": "beau",
+      "keyword": "LISE",
+      "swap_mode": "both",
+      "crib_score": 4,
+      "pt_preview": "YBEJAOVGLHCDQCMDCFZTGFJJFLOHBNASSCMQGTOKTLLKOKXRGI"
+    },
+    {
+      "test": "row_swap",
+      "alphabet": "KA",
+      "variant": "vig",
+      "keyword": "KRYPTOS",
+      "swap_mode": "rows",
+      "crib_score": 3,
+      "pt_preview": "OAXXLKIOFFMGPWOJGCTPHFJZNJIQRMEWYRVTVYLYEESOCWUQHA"
+    },
+    {
+      "test": "row_swap",
+      "alphabet": "KA",
+      "variant": "vig",
+      "keyword": "PALIMPSEST",
+      "swap_mode": "rows",
+      "crib_score": 3,
+      "pt_preview": "YWSQPYIJTDMSHZGHSWZTQRWQTLEHMIDIFZGRHIEYGCFZNWJDHP"
+    },
+    {
+      "test": "row_swap",
+      "alphabet": "KA",
+      "variant": "vig",
+      "keyword": "YAR",
+      "swap_mode": "rows",
+      "crib_score": 3,
+      "pt_preview": "PWZZDTVQFFDJSUTITESWVDSKQCNRJMEIOTQPUNNTONTUDXHXUV"
+    }
+  ],
+  "overall_best": 7,
+  "verdict": "MARGINAL \u2014 7/24 cribs, above noise but not significant",
+  "total_elapsed_seconds": 6.513098478317261,
+  "keywords_tested": [
+    "KRYPTOS",
+    "PALIMPSEST",
+    "ABSCISSA",
+    "LAYERTWO",
+    "YAR",
+    "STOPWATCH",
+    "GOLD",
+    "CQAE",
+    "EAQC",
+    "ACQE",
+    "AQCE",
+    "SLEI",
+    "IELS",
+    "SILE",
+    "LEIS",
+    "ISLE",
+    "LIES",
+    "LISE",
+    "HILL"
+  ],
+  "repro": "PYTHONPATH=src python3 -u scripts/e_chart_05_antipodes_misspelling.py"
+}

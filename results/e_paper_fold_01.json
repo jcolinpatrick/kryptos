@@ -1,0 +1,174 @@
+{
+  "experiment": "E-PAPER-FOLD-01",
+  "hypothesis": "K4 keystream derived from physical paper fold/overlay operations",
+  "timestamp": "2026-05-23 01:54:51",
+  "elapsed_seconds": 0.09570598602294922,
+  "total_configs": "see per-grid counts above",
+  "score_threshold": 6,
+  "total_results": 16,
+  "best_score": 8,
+  "results": [
+    {
+      "grid": "B",
+      "label": "14x31_k3k4",
+      "fill": "lr_tb",
+      "fold": "h15",
+      "model": "add",
+      "variant": "varbeau",
+      "score": 8,
+      "n_pairs": 24,
+      "abscissa_fold": false
+    },
+    {
+      "grid": "B",
+      "label": "14x31_k3k4",
+      "fill": "bt_lr",
+      "fold": "h16",
+      "model": "add",
+      "variant": "varbeau",
+      "score": 8,
+      "n_pairs": 24,
+      "abscissa_fold": false
+    },
+    {
+      "grid": "extra",
+      "label": "25x4",
+      "fill": "boustrophedon",
+      "fold": "v13",
+      "model": "add",
+      "variant": "varbeau",
+      "score": 7,
+      "n_pairs": 24
+    },
+    {
+      "grid": "C",
+      "label": "tableau_AZ",
+      "fill": "boustrophedon",
+      "fold": "offset(7,12)",
+      "model": "direct",
+      "variant": "varbeau",
+      "score": 6,
+      "n_pairs": 24
+    },
+    {
+      "grid": "C",
+      "label": "tableau_AZ",
+      "fill": "boustrophedon",
+      "fold": "offset(8,11)",
+      "model": "direct",
+      "variant": "varbeau",
+      "score": 6,
+      "n_pairs": 24
+    },
+    {
+      "grid": "C",
+      "label": "tableau_AZ",
+      "fill": "boustrophedon",
+      "fold": "offset(9,10)",
+      "model": "direct",
+      "variant": "varbeau",
+      "score": 6,
+      "n_pairs": 24
+    },
+    {
+      "grid": "C",
+      "label": "tableau_AZ",
+      "fill": "boustrophedon",
+      "fold": "offset(10,9)",
+      "model": "direct",
+      "variant": "varbeau",
+      "score": 6,
+      "n_pairs": 24
+    },
+    {
+      "grid": "C",
+      "label": "tableau_AZ",
+      "fill": "boustrophedon",
+      "fold": "offset(11,8)",
+      "model": "direct",
+      "variant": "varbeau",
+      "score": 6,
+      "n_pairs": 24
+    },
+    {
+      "grid": "C",
+      "label": "tableau_AZ",
+      "fill": "boustrophedon",
+      "fold": "offset(12,7)",
+      "model": "direct",
+      "variant": "varbeau",
+      "score": 6,
+      "n_pairs": 24
+    },
+    {
+      "grid": "C",
+      "label": "tableau_AZ",
+      "fill": "boustrophedon",
+      "fold": "offset(13,6)",
+      "model": "direct",
+      "variant": "varbeau",
+      "score": 6,
+      "n_pairs": 24
+    },
+    {
+      "grid": "C",
+      "label": "tableau_AZ",
+      "fill": "boustrophedon",
+      "fold": "offset(14,5)",
+      "model": "direct",
+      "variant": "varbeau",
+      "score": 6,
+      "n_pairs": 24
+    },
+    {
+      "grid": "C",
+      "label": "tableau_AZ",
+      "fill": "boustrophedon",
+      "fold": "offset(15,4)",
+      "model": "direct",
+      "variant": "varbeau",
+      "score": 6,
+      "n_pairs": 24
+    },
+    {
+      "grid": "C",
+      "label": "tableau_AZ",
+      "fill": "boustrophedon",
+      "fold": "offset(16,3)",
+      "model": "direct",
+      "variant": "varbeau",
+      "score": 6,
+      "n_pairs": 24
+    },
+    {
+      "grid": "C",
+      "label": "tableau_AZ",
+      "fill": "boustrophedon",
+      "fold": "offset(17,2)",
+      "model": "direct",
+      "variant": "varbeau",
+      "score": 6,
+      "n_pairs": 24
+    },
+    {
+      "grid": "C",
+      "label": "tableau_AZ",
+      "fill": "boustrophedon",
+      "fold": "offset(18,1)",
+      "model": "direct",
+      "variant": "varbeau",
+      "score": 6,
+      "n_pairs": 24
+    },
+    {
+      "grid": "C",
+      "label": "tableau_AZ",
+      "fill": "boustrophedon",
+      "fold": "offset(19,0)",
+      "model": "direct",
+      "variant": "varbeau",
+      "score": 6,
+      "n_pairs": 24
+    }
+  ]
+}

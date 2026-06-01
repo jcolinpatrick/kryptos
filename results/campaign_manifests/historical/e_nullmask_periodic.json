@@ -1,0 +1,29 @@
+{
+  "manifest_version": "1.0",
+  "campaign_id": "e_nullmask_periodic",
+  "campaign_name": "Null mask + periodic substitution (periods 1-23) algebraic elimination",
+  "completed_at": "2026-04-11T00:00:00+00:00",
+  "git_commit": "",
+  "verdict": "strong_elimination",
+  "verdict_summary": "For any choice of 24 null positions combined with periodic substitution at periods p in [1, 23], a closed-form algebraic proof over crib-segment null counts (n1, n2, n3) shows no configuration admits the crib constraints. 550,000 random mask samples confirm the algebraic result. Only periods p in {24, 25, 26} survive the analysis, where the constraint system is underdetermined rather than satisfiable.",
+  "evidence_pointer": "docs/elimination_tiers.md (Tier 1 row, null mask + periodic sub)",
+  "family_updates": {
+    "periodic_substitution": {
+      "tier": 1,
+      "evidence": "E-NULLMASK-PERIODIC: null mask (any 24 positions) + periodic substitution at p in [1,23] algebraically eliminated; p in {24,25,26} underdetermined, not satisfied."
+    }
+  },
+  "scope_caveats": [
+    "H1 conditional: assumes direct positional crib mapping on the carved 97-char CT under an additive cipher class. Mechanisms that break H1 (outer transposition before the analyzed step, position-dependent selectors, physical-overlay remaps, non-additive ciphers) are NOT eliminated by this result.",
+    "Period 24-26 cases are underdetermined, not proved satisfiable."
+  ],
+  "scope_does_not_cover": [
+    "Null masks combined with non-periodic ciphers.",
+    "Nulls identified by a non-statistical mechanism combined with larger-period ciphers."
+  ],
+  "total_profiles_evaluated": 0,
+  "joint_anomaly_successes": 0,
+  "populations_tested": [],
+  "variants_tested": [],
+  "notes": "Historical backfill from E-NULLMASK-PERIODIC."
+}

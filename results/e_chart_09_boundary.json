@@ -1,0 +1,749 @@
+{
+  "experiment": "E-CHART-09",
+  "description": "Exhaustive boundary sweep: 2-letter insertions near BERLINCLOCK with w9 transposition",
+  "phases": {
+    "phase1": {
+      "description": "CC insertion at each position 50-75, all 362880 w9 orderings",
+      "total_checks": 9434880,
+      "time_seconds": 14.462278604507446,
+      "position_results": {
+        "50": {
+          "best_score": 7,
+          "best_order": [
+            0,
+            5,
+            3,
+            6,
+            4,
+            7,
+            1,
+            8,
+            2
+          ],
+          "best_pt_preview": "OYKLELSLGBPURKBOUDKVHVZSTDKRTUQZOWIZUTAQWLTAXOMUPAIQWTXZERFSIJOFKNBJNCGPCGTBQFDH",
+          "mean_score": 1.1666666666666667
+        },
+        "51": {
+          "best_score": 5,
+          "best_order": [
+            0,
+            5,
+            2,
+            3,
+            4,
+            6,
+            1,
+            7,
+            8
+          ],
+          "best_pt_preview": "OYLSELLGKBPROKBUDUKVVTZSDKHRTQWZOIZUUTQTWLAXAOMPQAIWTUXZRSTFIJEOFNJBNCKGPGQBFDCH",
+          "mean_score": 1.1805555555555556
+        },
+        "52": {
+          "best_score": 5,
+          "best_order": [
+            8,
+            0,
+            2,
+            3,
+            4,
+            5,
+            1,
+            6,
+            7
+          ],
+          "best_pt_preview": "LYLSELGKOBPROKUDUBSVVTZDKHKOTQWZIZURLTQTWAXAUIMPQAWTUOFZRSTIJEXBFNJJNCKOBPGQFDCG",
+          "mean_score": 1.2361111111111112
+        },
+        "53": {
+          "best_score": 5,
+          "best_order": [
+            8,
+            0,
+            2,
+            3,
+            1,
+            5,
+            4,
+            6,
+            7
+          ],
+          "best_pt_preview": "LELSYLGKOBKROPUDUBSZVTVDKHKOZQWTIZURLWQTTAXAUIAPQMWTUOFTRSZIJEXBJNJFNCKOBKGQPFDC",
+          "mean_score": 1.3333333333333333
+        },
+        "54": {
+          "best_score": 5,
+          "best_order": [
+            1,
+            0,
+            3,
+            4,
+            2,
+            6,
+            5,
+            7,
+            8
+          ],
+          "best_pt_preview": "LOELSYGKBBKROPUDUSKZVTVDKHORZQWTIZULUWQTTAXAIOAPQMWTUFXTRSZIJEBOJNJFNCKBGKGQPFDC",
+          "mean_score": 1.3333333333333333
+        },
+        "55": {
+          "best_score": 5,
+          "best_order": [
+            0,
+            1,
+            4,
+            5,
+            3,
+            7,
+            6,
+            8,
+            2
+          ],
+          "best_pt_preview": "OLKELSYGBBUKROPDKSHZVTVDKROUZQWTIZULAWQTTAXOIUAPQMWTXFETRSZIJOBKJNJFNCGBCKGQPFDH",
+          "mean_score": 1.3333333333333333
+        },
+        "56": {
+          "best_score": 5,
+          "best_order": [
+            0,
+            1,
+            4,
+            5,
+            3,
+            7,
+            6,
+            8,
+            2
+          ],
+          "best_pt_preview": "OLKELSYDGBBUKROPDKSHZVTVKROUZQWTIZULAWQTTAXOIUAPQMWTXFETRSZIJOBKJNJFNCGBCKGQPFDH",
+          "mean_score": 1.3611111111111112
+        },
+        "57": {
+          "best_score": 7,
+          "best_order": [
+            1,
+            0,
+            4,
+            6,
+            3,
+            7,
+            2,
+            8,
+            5
+          ],
+          "best_pt_preview": "LOYELKSDGBBPKRUOIDSKVZVHTKORTZQUWZLUTWQATAXIOMAPUQWTFXZTRESIJBOFJNKJNCBGPKGCQFDW",
+          "mean_score": 1.4166666666666667
+        },
+        "58": {
+          "best_score": 9,
+          "best_order": [
+            0,
+            5,
+            7,
+            6,
+            3,
+            4,
+            1,
+            8,
+            2
+          ],
+          "best_pt_preview": "OYKEDLSLGBPUKIBORDKVHZASTVKRTUZOWQZUTAWLTQXOMUAWIQPTXZETIFSRJOFKJNBJNCGPCKFBQGDH",
+          "mean_score": 1.375
+        },
+        "59": {
+          "best_score": 9,
+          "best_order": [
+            0,
+            5,
+            7,
+            6,
+            3,
+            4,
+            1,
+            8,
+            2
+          ],
+          "best_pt_preview": "OYKEDLSLGBPUKIBORDKVHZASTVKRTUZWOWQZUTAWLTQXOMUAIQPTXZETIFSRJOFKJNBJNCGPCKFBQGDH",
+          "mean_score": 1.3333333333333333
+        },
+        "60": {
+          "best_score": 9,
+          "best_order": [
+            0,
+            5,
+            7,
+            6,
+            3,
+            4,
+            1,
+            8,
+            2
+          ],
+          "best_pt_preview": "OYKEDLSLGBPUKIBORDKVHZASTVKRTUZWOWQZUTAWILTQXOMUAIQPTXZETFSRJOFKJNBJNCGPCKFBQGDH",
+          "mean_score": 1.3333333333333333
+        },
+        "61": {
+          "best_score": 9,
+          "best_order": [
+            0,
+            5,
+            7,
+            6,
+            3,
+            4,
+            1,
+            8,
+            2
+          ],
+          "best_pt_preview": "OYKEDLSLGBPUKIBORDKVHZASTVKRTUZWOWQZUTAWILTQXOMUANIQPTXZETFSRJOFKJBJNCGPCKFBQGDH",
+          "mean_score": 1.2638888888888888
+        },
+        "62": {
+          "best_score": 7,
+          "best_order": [
+            0,
+            5,
+            3,
+            6,
+            2,
+            4,
+            1,
+            7,
+            8
+          ],
+          "best_pt_preview": "OYELDLSGKBPKRIBODUKVZVASTKHRTZQWOWZUUTWQILTXAOMAPNIQTUXZTRFFSJEOFJNBJCKGPKGBQDCH",
+          "mean_score": 1.2916666666666667
+        },
+        "63": {
+          "best_score": 6,
+          "best_order": [
+            8,
+            0,
+            5,
+            2,
+            1,
+            4,
+            3,
+            6,
+            7
+          ],
+          "best_pt_preview": "LESYDLGKOBKOPIRDUBSZTVAVKHKOZWTWQZURLWTTIQXAUIAQMNPTUOFTSZFRJEXBJJFBNCKOBKQPGDCG",
+          "mean_score": 1.4722222222222223
+        },
+        "64": {
+          "best_score": 6,
+          "best_order": [
+            8,
+            0,
+            5,
+            2,
+            1,
+            4,
+            3,
+            6,
+            7
+          ],
+          "best_pt_preview": "LESYDLGKOBKOPIRDUBSZTVAVKHKOZWTWQZURLWTTIQXAUIAQMNPTUOFTSZFRJEXBJJFBNCKOBKQPNGDC",
+          "mean_score": 1.4444444444444444
+        },
+        "65": {
+          "best_score": 6,
+          "best_order": [
+            1,
+            0,
+            6,
+            3,
+            2,
+            5,
+            4,
+            7,
+            8
+          ],
+          "best_pt_preview": "LOESDLGKBBKOPIRDUSKZTVAVKHORZWTWQZULUWTTIQXAIOAQMNPTUFXTSZFRJEBOJJFBNCKBGKQPNGDC",
+          "mean_score": 1.4444444444444444
+        },
+        "66": {
+          "best_score": 6,
+          "best_order": [
+            0,
+            1,
+            7,
+            4,
+            3,
+            6,
+            5,
+            8,
+            2
+          ],
+          "best_pt_preview": "OLKESDLGBBUKOIRDKSHZTVAVKROUZWTWQZULAWTTIQXOIUAQMNPTXFETSZFRJOBKJJFBNCGBCKQPNGDH",
+          "mean_score": 1.4444444444444444
+        },
+        "67": {
+          "best_score": 6,
+          "best_order": [
+            0,
+            1,
+            4,
+            7,
+            3,
+            5,
+            8,
+            6,
+            2
+          ],
+          "best_pt_preview": "OLKELDGSVBBUKRIDOKSHZVAKTROUZQWZWTULAWQIXTTOIUAPNTQMXFETRFJSZOBKJNBCJFGBCKGNDQPH",
+          "mean_score": 1.4861111111111112
+        },
+        "68": {
+          "best_score": 7,
+          "best_order": [
+            1,
+            0,
+            5,
+            6,
+            3,
+            4,
+            7,
+            8,
+            2
+          ],
+          "best_pt_preview": "LOKEDLSVGBBUKIROTDSKHZAVTKORUZWQWZLUAWIQTTXIOUANPQMTFXETFRSZJBOKJBNJFCBGCKNGQPDW",
+          "mean_score": 1.2916666666666667
+        },
+        "69": {
+          "best_score": 8,
+          "best_order": [
+            0,
+            5,
+            7,
+            1,
+            3,
+            4,
+            6,
+            8,
+            2
+          ],
+          "best_pt_preview": "OSKEDLVLGBOUKIBTRDKTHZASTVKRWUZWOQZUTAWILQXOQUANIMPTXSETFFZRJOJKJBBFNCGQCKNBPGDH",
+          "mean_score": 1.2361111111111112
+        },
+        "70": {
+          "best_score": 8,
+          "best_order": [
+            0,
+            5,
+            7,
+            1,
+            3,
+            4,
+            6,
+            8,
+            2
+          ],
+          "best_pt_preview": "OSKEDLVLGBOUKIBTRDKTHZASTVKRWUZWOMQZUTAWILQXOQUANIPTXSETFFZRJOJKJBBFNCGQCKNBPGDH",
+          "mean_score": 1.2222222222222223
+        },
+        "71": {
+          "best_score": 8,
+          "best_order": [
+            0,
+            5,
+            7,
+            1,
+            3,
+            4,
+            6,
+            8,
+            2
+          ],
+          "best_pt_preview": "OSKEDLVLGBOUKIBTRDKTHZASTVKRWUZWOMQZUTAWILZQXOQUANIPTXSETFFRJOJKJBBFNCGQCKNBPGDH",
+          "mean_score": 1.2222222222222223
+        },
+        "72": {
+          "best_score": 8,
+          "best_order": [
+            0,
+            1,
+            7,
+            5,
+            3,
+            4,
+            6,
+            8,
+            2
+          ],
+          "best_pt_preview": "OLKEDSVLGBBUKIOTRDKSHZATTVKROUZWWMQZULAWITZQXOIUANQFPTXFETFSRJOBKJBJNCGBCKNQPGDH",
+          "mean_score": 1.2777777777777777
+        },
+        "73": {
+          "best_score": 7,
+          "best_order": [
+            0,
+            3,
+            5,
+            8,
+            2,
+            4,
+            6,
+            7,
+            1
+          ],
+          "best_pt_preview": "OKELDLVGSBUKBIRTDOKHZSAVTKTRUZOWQMZWUAWLIQZXTOUAINPFTQXETFFRPJSOKJBBNCJGCKBNGDQH",
+          "mean_score": 1.3055555555555556
+        },
+        "74": {
+          "best_score": 6,
+          "best_order": [
+            8,
+            0,
+            5,
+            2,
+            1,
+            4,
+            3,
+            6,
+            7
+          ],
+          "best_pt_preview": "LESVDLGKOBKOTIRDUBSZTTAVKHKOZWMWQZURLWTZIQXAUIAQFNPTUOFTSPFRJEXBJJKBNCKOBKQNGDCG",
+          "mean_score": 1.3611111111111112
+        },
+        "75": {
+          "best_score": 6,
+          "best_order": [
+            8,
+            0,
+            5,
+            2,
+            1,
+            4,
+            3,
+            6,
+            7
+          ],
+          "best_pt_preview": "LESVDLGKOBKOTIRDUBSZTTAVKHKOZWMWQZURLWTZIQXAUIAQFNPTUOFTSPFRJEXBJJKBNCKOBKQWNGDC",
+          "mean_score": 1.3333333333333333
+        }
+      },
+      "top3_positions": [
+        58,
+        59,
+        60
+      ]
+    },
+    "phase2": {
+      "description": "Top 3 positions x 676 pairs x top 1000 orderings",
+      "total_checks": 2028000,
+      "time_seconds": 2.4723594188690186,
+      "position_results": {
+        "58": {
+          "best_score": 9,
+          "best_pair": "AA",
+          "best_order": [
+            0,
+            5,
+            7,
+            6,
+            3,
+            4,
+            1,
+            8,
+            2
+          ],
+          "best_pt_preview": "OYKEDLSLGBPUKIBORDKVHZASTVKRTUZOWQZUTAWLTQXOMUAWIQPTXZETIFSRJOFKJNBJNCGPCKFBQGDH",
+          "top10_pairs": [
+            [
+              "AA",
+              9
+            ],
+            [
+              "AB",
+              9
+            ],
+            [
+              "AC",
+              9
+            ],
+            [
+              "AD",
+              9
+            ],
+            [
+              "AE",
+              9
+            ],
+            [
+              "AF",
+              9
+            ],
+            [
+              "AG",
+              9
+            ],
+            [
+              "AH",
+              9
+            ],
+            [
+              "AI",
+              9
+            ],
+            [
+              "AJ",
+              9
+            ]
+          ]
+        },
+        "59": {
+          "best_score": 9,
+          "best_pair": "AA",
+          "best_order": [
+            0,
+            5,
+            7,
+            6,
+            3,
+            4,
+            1,
+            8,
+            2
+          ],
+          "best_pt_preview": "OYKEDLSLGBPUKIBORDKVHZASTVKRTUZWOWQZUTAWLTQXOMUAIQPTXZETIFSRJOFKJNBJNCGPCKFBQGDH",
+          "top10_pairs": [
+            [
+              "AA",
+              9
+            ],
+            [
+              "AB",
+              9
+            ],
+            [
+              "AC",
+              9
+            ],
+            [
+              "AD",
+              9
+            ],
+            [
+              "AE",
+              9
+            ],
+            [
+              "AF",
+              9
+            ],
+            [
+              "AG",
+              9
+            ],
+            [
+              "AH",
+              9
+            ],
+            [
+              "AI",
+              9
+            ],
+            [
+              "AJ",
+              9
+            ]
+          ]
+        },
+        "60": {
+          "best_score": 9,
+          "best_pair": "AA",
+          "best_order": [
+            0,
+            5,
+            7,
+            6,
+            3,
+            4,
+            1,
+            8,
+            2
+          ],
+          "best_pt_preview": "OYKEDLSLGBPUKIBORDKVHZASTVKRTUZWOWQZUTAWILTQXOMUAIQPTXZETFSRJOFKJNBJNCGPCKFBQGDH",
+          "top10_pairs": [
+            [
+              "AA",
+              9
+            ],
+            [
+              "AB",
+              9
+            ],
+            [
+              "AC",
+              9
+            ],
+            [
+              "AD",
+              9
+            ],
+            [
+              "AE",
+              9
+            ],
+            [
+              "AF",
+              9
+            ],
+            [
+              "AG",
+              9
+            ],
+            [
+              "AH",
+              9
+            ],
+            [
+              "AI",
+              9
+            ],
+            [
+              "AJ",
+              9
+            ]
+          ]
+        }
+      }
+    },
+    "phase3": {
+      "description": "Non-consecutive insertion in range 55-70, 6 letter pairs x top 1000 orderings",
+      "total_checks": 720000,
+      "time_seconds": 1.8877036571502686,
+      "pair_results": {
+        "CC": {
+          "best_score": 9,
+          "best_config": {
+            "pos_i": 58,
+            "pos_j": 59,
+            "order": [
+              0,
+              5,
+              7,
+              6,
+              3,
+              4,
+              1,
+              8,
+              2
+            ],
+            "pt_preview": "OYKEDLSLGBPUKIBORDKVHZASTVKRTUZOWQZUTAWWLTQXOMUAIQPTXZETIFSRJOFKJNBJNCGPCKFBQGDH"
+          }
+        },
+        "YR": {
+          "best_score": 9,
+          "best_config": {
+            "pos_i": 58,
+            "pos_j": 59,
+            "order": [
+              0,
+              5,
+              7,
+              6,
+              3,
+              4,
+              1,
+              8,
+              2
+            ],
+            "pt_preview": "OYKEDLSLGBPUKIBORDKVHZASTVKRTUZOWQZUTAWWLTQXOMUAIQPTXZETIFSRJOFKJNBJNCGPCKFBQGDH"
+          }
+        },
+        "YA": {
+          "best_score": 9,
+          "best_config": {
+            "pos_i": 58,
+            "pos_j": 59,
+            "order": [
+              0,
+              5,
+              7,
+              6,
+              3,
+              4,
+              1,
+              8,
+              2
+            ],
+            "pt_preview": "OYKEDLSLGBPUKIBORDKVHZASTVKRTUZOWQZUTAWWLTQXOMUAIQPTXZETIFSRJOFKJNBJNCGPCKFBQGDH"
+          }
+        },
+        "AR": {
+          "best_score": 9,
+          "best_config": {
+            "pos_i": 58,
+            "pos_j": 59,
+            "order": [
+              0,
+              5,
+              7,
+              6,
+              3,
+              4,
+              1,
+              8,
+              2
+            ],
+            "pt_preview": "OYKEDLSLGBPUKIBORDKVHZASTVKRTUZOWQZUTAWWLTQXOMUAIQPTXZETIFSRJOFKJNBJNCGPCKFBQGDH"
+          }
+        },
+        "LL": {
+          "best_score": 9,
+          "best_config": {
+            "pos_i": 58,
+            "pos_j": 59,
+            "order": [
+              0,
+              5,
+              7,
+              6,
+              3,
+              4,
+              1,
+              8,
+              2
+            ],
+            "pt_preview": "OYKEDLSLGBPUKIBORDKVHZASTVKRTUZOWQZUTAWWLTQXOMUAIQPTXZETIFSRJOFKJNBJNCGPCKFBQGDH"
+          }
+        },
+        "EE": {
+          "best_score": 9,
+          "best_config": {
+            "pos_i": 58,
+            "pos_j": 59,
+            "order": [
+              0,
+              5,
+              7,
+              6,
+              3,
+              4,
+              1,
+              8,
+              2
+            ],
+            "pt_preview": "OYKEDLSLGBPUKIBORDKVHZASTVKRTUZOWQZUTAWWLTQXOMUAIQPTXZETIFSRJOFKJNBJNCGPCKFBQGDH"
+          }
+        }
+      },
+      "global_best": 9
+    }
+  },
+  "summary": {
+    "total_checks": 12182880,
+    "total_time_seconds": 20.471900939941406,
+    "global_best": 9,
+    "classification": "NOISE (marginal)",
+    "region_analysis": {
+      "avg_best_61_63": 7.333333333333333,
+      "avg_best_other": 6.6521739130434785,
+      "avg_mean_61_63": 1.3425925925925926,
+      "avg_mean_other": 1.32487922705314
+    }
+  }
+}

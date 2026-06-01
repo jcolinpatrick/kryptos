@@ -1,0 +1,69 @@
+{
+  "experiment": "E-S-40",
+  "lag7_matches": [
+    [
+      0,
+      7,
+      "O"
+    ],
+    [
+      7,
+      14,
+      "O"
+    ],
+    [
+      12,
+      19,
+      "B"
+    ],
+    [
+      15,
+      22,
+      "L"
+    ],
+    [
+      32,
+      39,
+      "S"
+    ],
+    [
+      45,
+      52,
+      "K"
+    ],
+    [
+      65,
+      72,
+      "P"
+    ],
+    [
+      76,
+      83,
+      "D"
+    ],
+    [
+      86,
+      93,
+      "K"
+    ]
+  ],
+  "random_matching_rate": 0.3608,
+  "sa_results": [
+    {
+      "variant": "vigenere",
+      "best_qg": -56.64,
+      "ene_key": "NTERATICATION",
+      "bc_key": "RATIONTHERE",
+      "key_21_73": "NTERATICATIONAAAAAAAAAAAAAAAAAAAAAAAAAAAAARATIONTHERE"
+    },
+    {
+      "variant": "beaufort",
+      "best_qg": -58.42,
+      "ene_key": "ATIONALINESSU",
+      "bc_key": "RIESTRATEDU",
+      "key_21_73": "ATIONALINESSUAAAAAAAAAAAAAAAAAAAAAAAAAAAAARIESTRATEDU"
+    }
+  ],
+  "verdict": "UNDERDETERMINED",
+  "elapsed_seconds": 37.0
+}

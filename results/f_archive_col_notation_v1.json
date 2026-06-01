@@ -1,0 +1,345 @@
+{
+  "archive_widths": [
+    4,
+    8,
+    10,
+    26
+  ],
+  "description": "Archive-derived col notation 4,8,10,26 operationalized under the cipher-procedure admissibility policy; first bin-D3 deliverable exercising the procedure gate.",
+  "elapsed_seconds": 36.4,
+  "ended_at": "2026-05-23T13:06:43+00:00",
+  "escalated_candidates": [],
+  "experiment": "f_archive_col_notation_v1",
+  "near_miss_candidates": [],
+  "phases": {
+    "phase1_bean_closure_w4_w8_w9": {
+      "4": {
+        "bean_passing": 0,
+        "orderings": 24,
+        "pairs_checked": 72,
+        "verdict": "BEAN_IMPOSSIBLE"
+      },
+      "8": {
+        "bean_passing": 0,
+        "orderings": 40320,
+        "pairs_checked": 120960,
+        "verdict": "BEAN_IMPOSSIBLE"
+      },
+      "9": {
+        "bean_passing": 0,
+        "orderings": 362880,
+        "pairs_checked": 1088640,
+        "verdict": "BEAN_IMPOSSIBLE"
+      }
+    },
+    "phase2_w10_survivors": {
+      "bean_passing": 4,
+      "elapsed_seconds": 31.6,
+      "orderings_tested": 3628800,
+      "pairs_checked": 10886400,
+      "survivors": [
+        {
+          "col_order": [
+            7,
+            9,
+            1,
+            4,
+            6,
+            8,
+            3,
+            5,
+            2,
+            0
+          ],
+          "variant": "vigenere"
+        },
+        {
+          "col_order": [
+            7,
+            9,
+            1,
+            4,
+            6,
+            8,
+            3,
+            5,
+            2,
+            0
+          ],
+          "variant": "var_beaufort"
+        },
+        {
+          "col_order": [
+            8,
+            7,
+            9,
+            6,
+            1,
+            5,
+            2,
+            0,
+            3,
+            4
+          ],
+          "variant": "vigenere"
+        },
+        {
+          "col_order": [
+            8,
+            7,
+            9,
+            6,
+            1,
+            5,
+            2,
+            0,
+            3,
+            4
+          ],
+          "variant": "var_beaufort"
+        }
+      ]
+    },
+    "phase3_abscissa": {
+      "all_candidates": [
+        {
+          "bean_ok": false,
+          "col_order": [
+            7,
+            9,
+            1,
+            4,
+            6,
+            8,
+            3,
+            5,
+            2,
+            0
+          ],
+          "crib_score": 1,
+          "escalated": false,
+          "fragment_ok": false,
+          "layer_stack": "columnar_w10 -> vigenere(ABSCISSA)",
+          "phase": "phase3_abscissa",
+          "plaintext_preview": "UASYJBYOWGPZREVTSAISMEFIGLRILTIFTMSXIZRB...",
+          "quadgram_per_char": -6.302957478723402,
+          "variant": "vigenere",
+          "width": 10,
+          "word_hits": 0
+        },
+        {
+          "bean_ok": false,
+          "col_order": [
+            7,
+            9,
+            1,
+            4,
+            6,
+            8,
+            3,
+            5,
+            2,
+            0
+          ],
+          "crib_score": 1,
+          "escalated": false,
+          "fragment_ok": false,
+          "layer_stack": "columnar_w10 -> var_beaufort(ABSCISSA)",
+          "phase": "phase3_abscissa",
+          "plaintext_preview": "UCCCZLIOWIZDHOFTSCSWCOPIGNBMBDSFTOCBYJBB...",
+          "quadgram_per_char": -6.38972013829787,
+          "variant": "var_beaufort",
+          "width": 10,
+          "word_hits": 0
+        },
+        {
+          "bean_ok": false,
+          "col_order": [
+            8,
+            7,
+            9,
+            6,
+            1,
+            5,
+            2,
+            0,
+            3,
+            4
+          ],
+          "crib_score": 0,
+          "escalated": false,
+          "fragment_ok": false,
+          "layer_stack": "columnar_w10 -> vigenere(ABSCISSA)",
+          "phase": "phase3_abscissa",
+          "plaintext_preview": "TSIIMHXHOABOOHPWRTJZEAQXUZVJCEHJNSIRYJZF...",
+          "quadgram_per_char": -6.517038021276593,
+          "variant": "vigenere",
+          "width": 10,
+          "word_hits": 0
+        },
+        {
+          "bean_ok": false,
+          "col_order": [
+            8,
+            7,
+            9,
+            6,
+            1,
+            5,
+            2,
+            0,
+            3,
+            4
+          ],
+          "crib_score": 1,
+          "escalated": false,
+          "fragment_ok": false,
+          "layer_stack": "columnar_w10 -> var_beaufort(ABSCISSA)",
+          "phase": "phase3_abscissa",
+          "plaintext_preview": "TUSMCRHHOCLSERZWRVTDUKAXUBFNSORJNUSVOTJF...",
+          "quadgram_per_char": -6.470132851063829,
+          "variant": "var_beaufort",
+          "width": 10,
+          "word_hits": 0
+        }
+      ],
+      "candidates_scored": 4,
+      "escalated": [],
+      "max_crib": 1,
+      "max_quadgram": -6.302957478723402
+    },
+    "phase4_atbash": {
+      "all_candidates": [
+        {
+          "bean_ok": false,
+          "col_order": [
+            7,
+            9,
+            1,
+            4,
+            6,
+            8,
+            3,
+            5,
+            2,
+            0
+          ],
+          "crib_score": 2,
+          "escalated": false,
+          "fragment_ok": false,
+          "layer_stack": "columnar_w10 -> atbash",
+          "phase": "phase4_atbash",
+          "plaintext_preview": "FYPZIGJLDSSYADMGHYZFFDCRTNQPGOZUGMPAJIQY...",
+          "quadgram_per_char": -6.484583031914891,
+          "variant": "vigenere",
+          "width": 10,
+          "word_hits": 0
+        },
+        {
+          "bean_ok": false,
+          "col_order": [
+            7,
+            9,
+            1,
+            4,
+            6,
+            8,
+            3,
+            5,
+            2,
+            0
+          ],
+          "crib_score": 2,
+          "escalated": false,
+          "fragment_ok": false,
+          "layer_stack": "columnar_w10 -> atbash",
+          "phase": "phase4_atbash",
+          "plaintext_preview": "FYPZIGJLDSSYADMGHYZFFDCRTNQPGOZUGMPAJIQY...",
+          "quadgram_per_char": -6.484583031914891,
+          "variant": "var_beaufort",
+          "width": 10,
+          "word_hits": 0
+        },
+        {
+          "bean_ok": false,
+          "col_order": [
+            8,
+            7,
+            9,
+            6,
+            1,
+            5,
+            2,
+            0,
+            3,
+            4
+          ],
+          "crib_score": 0,
+          "escalated": false,
+          "fragment_ok": false,
+          "layer_stack": "columnar_w10 -> atbash",
+          "phase": "phase4_atbash",
+          "plaintext_preview": "GGZPFAKSLYGJDASDIFYYNHRCFZMOPDAQMGZGTYIU...",
+          "quadgram_per_char": -6.404410851063828,
+          "variant": "vigenere",
+          "width": 10,
+          "word_hits": 0
+        },
+        {
+          "bean_ok": false,
+          "col_order": [
+            8,
+            7,
+            9,
+            6,
+            1,
+            5,
+            2,
+            0,
+            3,
+            4
+          ],
+          "crib_score": 0,
+          "escalated": false,
+          "fragment_ok": false,
+          "layer_stack": "columnar_w10 -> atbash",
+          "phase": "phase4_atbash",
+          "plaintext_preview": "GGZPFAKSLYGJDASDIFYYNHRCFZMOPDAQMGZGTYIU...",
+          "quadgram_per_char": -6.404410851063828,
+          "variant": "var_beaufort",
+          "width": 10,
+          "word_hits": 0
+        }
+      ],
+      "candidates_scored": 4,
+      "escalated": [],
+      "max_crib": 2,
+      "max_quadgram": -6.404410851063828
+    },
+    "phase5_w26_sample": {
+      "bean_passing": 0,
+      "caveat": "Sampled 100000 of 26! \u2248 4.03e26 orderings; negative result is not a Tier-1 elimination.",
+      "elapsed_seconds": 1.2,
+      "first_passes": [],
+      "n_samples": 100000,
+      "pairs_checked": 300000,
+      "verdict": "EMPIRICAL_ZERO"
+    }
+  },
+  "preregistered_thresholds_doc": "docs/preregistered_thresholds_2026_04_08.md",
+  "procedure_licenses": {
+    "abscissa_as_keyword": "src/kryptos/kernel/transforms/vigenere.py",
+    "atbash_substitution_layer": "src/kryptos/kernel/transforms/atbash.py",
+    "col_notation_4_8_10_26": "src/kryptos/kernel/transforms/transposition.py"
+  },
+  "started_at": "2026-05-23T13:06:07+00:00",
+  "thresholds": {
+    "crib_min": 20,
+    "fragment_min_len": 10,
+    "fragment_min_quadgram": -4.0,
+    "fragment_min_words": 2,
+    "quadgram_min": -4.5,
+    "word_hits_min": 3
+  },
+  "verdict": "EMPTY"
+}

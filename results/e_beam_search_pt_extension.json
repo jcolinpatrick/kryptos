@@ -1,0 +1,20 @@
+{
+  "experiment": "e_beam_search_pt_extension",
+  "timestamp": "2026-05-23T05:46:54.839819",
+  "description": "Beam search plaintext extension from ENE rightward and BCL leftward",
+  "beam_width": 500,
+  "restricted_values": [
+    1,
+    2,
+    3,
+    4,
+    6,
+    9,
+    10,
+    11,
+    14,
+    17,
+    19,
+    20
+  ]
+}

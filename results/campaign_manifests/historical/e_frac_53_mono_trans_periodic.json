@@ -1,0 +1,28 @@
+{
+  "manifest_version": "1.0",
+  "campaign_id": "e_frac_53_mono_trans_periodic",
+  "campaign_name": "Mono+Trans+Periodic at columnar w6/8/9 empirical null",
+  "completed_at": "2026-04-11T00:00:00+00:00",
+  "git_commit": "",
+  "verdict": "bounded_null",
+  "verdict_summary": "E-FRAC-53: monoalphabetic + columnar transposition (w6/8/9) + periodic substitution at periods 3-12. Zero candidates at periods 3-7 (bipartite consistency stringent enough to saturate the search). Only 34 candidates at period 12, all gibberish, best Q=-6.33. No positive signal in the tested configurations within scope. Empirically saturated within the parameterized space.",
+  "evidence_pointer": "docs/elimination_tiers.md (Tier 2 row, E-FRAC-53 Mono+Trans+Periodic)",
+  "family_updates": {
+    "multi_layer": {
+      "tier": 3,
+      "evidence": "E-FRAC-53: Mono+Trans+Periodic at columnar w6/8/9, periods 3-12: empirically saturated. 0 candidates p3-7; 34 gibberish candidates p12 (best Q=-6.33)."
+    }
+  },
+  "scope_caveats": [
+    "H1 conditional: assumes direct positional crib mapping on the carved 97-char CT under an additive cipher class. Mechanisms that break H1 (outer transposition before the analyzed step, position-dependent selectors, physical-overlay remaps, non-additive ciphers) are NOT eliminated by this result."
+  ],
+  "scope_does_not_cover": [
+    "Monoalphabetic + non-columnar transposition + periodic sub.",
+    "Periods outside 3-12."
+  ],
+  "total_profiles_evaluated": 0,
+  "joint_anomaly_successes": 0,
+  "populations_tested": [],
+  "variants_tested": [],
+  "notes": "Historical backfill from E-FRAC-53."
+}

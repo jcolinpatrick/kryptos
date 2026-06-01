@@ -1,0 +1,25 @@
+{
+  "experiment": "E-WTZ-00",
+  "hypothesis": "Weltzeituhr city names / UTC offsets as running key source",
+  "n_cities": 111,
+  "n_time_zones": 24,
+  "tests_run": [
+    "CityText_CW",
+    "CityText_CCW",
+    "UTC_Offset_CW",
+    "UTC_Offset_CCW",
+    "CityInit_CW",
+    "CityInit_CCW",
+    "CityLen_CW",
+    "CityLen_CCW",
+    "TZ+0_ring",
+    "TZ+1_ring",
+    "TZ+2_ring",
+    "TZ+3_ring"
+  ],
+  "total_hits_ge6": 0,
+  "best_score": 0,
+  "top_results": [],
+  "verdict": "NOISE",
+  "framework_gap_closed": "E-CFM-09 tested 73.7M chars of general text corpora. E-WTZ-00 specifically tests the Weltzeituhr city-name sequence and UTC-offset encoding as a running key source \u2014 previously untested."
+}

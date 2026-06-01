@@ -1,0 +1,22 @@
+{
+  "manifest_version": "1.0",
+  "campaign_id": "e_frac_13_19_ic_not_significant",
+  "campaign_name": "K4 IC anomaly statistically insignificant (Bonferroni-corrected)",
+  "completed_at": "2026-04-11T00:00:00+00:00",
+  "git_commit": "",
+  "verdict": "strong_elimination",
+  "verdict_summary": "E-FRAC-13/19: K4's overall IC approx 0.0361 is BELOW the random expectation 0.0385. Bonferroni-corrected p=1.0. The pre-ENE high-IC sub-segment is also Bonferroni p=1.0. This eliminates the claim that IC is a useful discriminator for K4, NOT any cipher family. The result is a property of the carved CT statistic, not a cipher claim.",
+  "evidence_pointer": "docs/elimination_tiers.md (Tier 1 row, E-FRAC-13/19 IC not significant)",
+  "family_updates": {},
+  "scope_caveats": [
+    "Statistical/universal result. No H1 caveat needed \u2014 property of the carved CT length and alphabet distribution, not a cipher-class claim."
+  ],
+  "scope_does_not_cover": [
+    "Any cipher family (this is a scoring/discriminator claim, not a cipher-family claim)."
+  ],
+  "total_profiles_evaluated": 0,
+  "joint_anomaly_successes": 0,
+  "populations_tested": [],
+  "variants_tested": [],
+  "notes": "Negative result \u2014 eliminates the IC anomaly as a discriminator, NOT as an elimination of any cipher family."
+}

@@ -1,0 +1,29 @@
+{
+  "manifest_version": "1.0",
+  "campaign_id": "composition_framework_v1_v2_v3",
+  "campaign_name": "Composition framework v1+v2+v3 (additive x trans, trans x periodic, stateful) empirical null",
+  "completed_at": "2026-04-11T00:00:00+00:00",
+  "git_commit": "",
+  "verdict": "bounded_null",
+  "verdict_summary": "Composition framework v1+v2+v3 (additive x transposition, transposition x periodic, stateful v3) across 52 family+peel campaigns enumerated 105,692 composition branches. Zero Bean passes. Score distribution matches binomial(24, 1/26). Empirically saturated within the specific parameterized two-layer search space the framework expresses.",
+  "evidence_pointer": "docs/elimination_tiers.md (Tier 2 row, composition framework)",
+  "family_updates": {
+    "multi_layer": {
+      "tier": 3,
+      "evidence": "Composition framework v1+v2+v3: 105,692 branches across 52 campaigns, 0 Bean passes, score distribution matches random. Empirically saturated within parameterized two-layer search space."
+    }
+  },
+  "scope_caveats": [
+    "H1 conditional: assumes direct positional crib mapping on the carved 97-char CT under an additive cipher class. Mechanisms that break H1 (outer transposition before the analyzed step, position-dependent selectors, physical-overlay remaps, non-additive ciphers) are NOT eliminated by this result."
+  ],
+  "scope_does_not_cover": [
+    "Compositions outside the v1/v2/v3 framework's expressive scope.",
+    "Deeper (3+) layer compositions.",
+    "Non-additive keystream inner/outer layers."
+  ],
+  "total_profiles_evaluated": 0,
+  "joint_anomaly_successes": 0,
+  "populations_tested": [],
+  "variants_tested": [],
+  "notes": "Historical backfill from COMPOSITION-v1-v2-v3. 105,692 branches across 52 family+peel campaigns, 0 Bean passes."
+}

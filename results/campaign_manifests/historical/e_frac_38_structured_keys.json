@@ -1,0 +1,40 @@
+{
+  "manifest_version": "1.0",
+  "campaign_id": "e_frac_38_structured_keys",
+  "campaign_name": "Structured-key Bean elimination (progressive, quadratic, Fibonacci)",
+  "completed_at": "2026-04-11T00:00:00+00:00",
+  "git_commit": "",
+  "verdict": "strong_elimination",
+  "verdict_summary": "E-FRAC-38: structured additive keystreams \u2014 progressive keys k[i]=k[0]+i*delta, quadratic k[i]=a*i^2+b*i+c, and Fibonacci-recurrence keys \u2014 are Bean-eliminated at the 24 crib positions under the additive-key model. The only progressive survivors are delta=0 (monoalphabetic, trivially eliminated) and delta=13 (period-2, eliminated by E-FRAC-35).",
+  "evidence_pointer": "docs/elimination_tiers.md (Tier 1 row, E-FRAC-38)",
+  "family_updates": {
+    "progressive_key": {
+      "tier": 1,
+      "name": "Progressive Key (Additive)",
+      "evidence": "E-FRAC-38: k[i]=k[0]+i*delta Bean-eliminated at 24 crib positions except delta in {0,13}, both otherwise eliminated."
+    },
+    "quadratic_key": {
+      "tier": 1,
+      "name": "Quadratic Additive Key",
+      "evidence": "E-FRAC-38: k[i]=a*i^2+b*i+c Bean-eliminated at 24 crib positions under additive keying."
+    },
+    "fibonacci_key": {
+      "tier": 1,
+      "name": "Fibonacci-Recurrence Key",
+      "evidence": "E-FRAC-38: k[i]=k[i-1]+k[i-2] (and linear recurrences) Bean-eliminated at 24 crib positions under additive keying."
+    }
+  },
+  "scope_caveats": [
+    "H1 conditional: assumes direct positional crib mapping on the carved 97-char CT under an additive cipher class. Mechanisms that break H1 (outer transposition before the analyzed step, position-dependent selectors, physical-overlay remaps, non-additive ciphers) are NOT eliminated by this result.",
+    "Under the additive-key model. delta=0 (mono trivial) and delta=13 (period-2, Bean-eliminated by E-FRAC-35) are the only progressive survivors and are independently eliminated."
+  ],
+  "scope_does_not_cover": [
+    "Non-additive structured keystreams.",
+    "Structured keys as inner layer under an outer transposition."
+  ],
+  "total_profiles_evaluated": 0,
+  "joint_anomaly_successes": 0,
+  "populations_tested": [],
+  "variants_tested": [],
+  "notes": "Historical backfill from E-FRAC-38."
+}

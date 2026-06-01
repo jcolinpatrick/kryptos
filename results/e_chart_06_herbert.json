@@ -1,0 +1,8 @@
+{
+  "experiment": "E-CHART-06",
+  "description": "HERBERT and Carter-related primers",
+  "total_configs": 968346,
+  "best_score": 7,
+  "classification": "NOISE",
+  "above_noise": []
+}

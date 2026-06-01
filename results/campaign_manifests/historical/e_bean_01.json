@@ -1,0 +1,29 @@
+{
+  "manifest_version": "1.0",
+  "campaign_id": "e_bean_01",
+  "campaign_name": "Columnar widths {4,6,8,9} + additive variants full Bean elimination",
+  "completed_at": "2026-04-11T00:00:00+00:00",
+  "git_commit": "",
+  "verdict": "strong_elimination",
+  "verdict_summary": "E-BEAN-01: for columnar transposition at widths {4, 6, 8, 9} composed with additive variants (Vigenere, Beaufort, Variant Beaufort), the full 242-inequality Bean constraint set admits ZERO Bean-consistent keystreams across 1,211,832 (ordering, variant) pairs. Running-key-source-independent within the analyzed additive-keystream class.",
+  "evidence_pointer": "docs/elimination_tiers.md (Tier 1 row, Bean columnar widths (4, 6, 8, 9))",
+  "family_updates": {
+    "columnar_single": {
+      "tier": 2,
+      "evidence": "E-BEAN-01: columnar widths {4,6,8,9} x 3 additive variants exhaustively Bean-eliminated (1,211,832 pairs, 0 passes)."
+    }
+  },
+  "scope_caveats": [
+    "H1 conditional: assumes direct positional crib mapping on the carved 97-char CT under an additive cipher class. Mechanisms that break H1 (outer transposition before the analyzed step, position-dependent selectors, physical-overlay remaps, non-additive ciphers) are NOT eliminated by this result."
+  ],
+  "scope_does_not_cover": [
+    "Composed ciphers with an outer layer preceding columnar.",
+    "Non-additive keystreams at these widths.",
+    "Widths outside {4, 6, 8, 9}."
+  ],
+  "total_profiles_evaluated": 0,
+  "joint_anomaly_successes": 0,
+  "populations_tested": [],
+  "variants_tested": [],
+  "notes": "Historical backfill from E-BEAN-01. 1,211,832 (ordering, variant) pairs; 0 Bean passes."
+}

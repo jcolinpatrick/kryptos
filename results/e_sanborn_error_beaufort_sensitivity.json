@@ -1,0 +1,99 @@
+{
+  "experiment": "sanborn_error_beaufort_sensitivity",
+  "timestamp": "2026-05-23T12:44:51Z",
+  "elapsed_s": 0.3,
+  "baseline_score": 5,
+  "baseline_method": "beaufort_p1_key=K",
+  "n_mutations": 2425,
+  "n_decryptions": 65475,
+  "score_distribution": {
+    "4": 120,
+    "5": 2286,
+    "6": 19
+  },
+  "max_score": 6,
+  "mean_score": 4.96,
+  "top_10": [
+    {
+      "pos": 21,
+      "orig": "F",
+      "alt": "G",
+      "score": 6,
+      "method": "beaufort_p1_key=K",
+      "pt_preview": "WJATQWNWEDQZJSWZCFJJOEZTPUUVTX"
+    },
+    {
+      "pos": 22,
+      "orig": "L",
+      "alt": "K",
+      "score": 6,
+      "method": "beaufort_p1_key=K",
+      "pt_preview": "WJATQWNWEDQZJSWZCFJJOFATPUUVTX"
+    },
+    {
+      "pos": 23,
+      "orig": "R",
+      "alt": "S",
+      "score": 6,
+      "method": "beaufort_p1_key=K",
+      "pt_preview": "WJATQWNWEDQZJSWZCFJJOFZSPUUVTX"
+    },
+    {
+      "pos": 24,
+      "orig": "V",
+      "alt": "R",
+      "score": 6,
+      "method": "beaufort_p1_key=K",
+      "pt_preview": "WJATQWNWEDQZJSWZCFJJOFZTTUUVTX"
+    },
+    {
+      "pos": 25,
+      "orig": "Q",
+      "alt": "X",
+      "score": 6,
+      "method": "beaufort_p1_key=K",
+      "pt_preview": "WJATQWNWEDQZJSWZCFJJOFZTPNUVTX"
+    },
+    {
+      "pos": 26,
+      "orig": "Q",
+      "alt": "W",
+      "score": 6,
+      "method": "beaufort_p1_key=K",
+      "pt_preview": "WJATQWNWEDQZJSWZCFJJOFZTPUOVTX"
+    },
+    {
+      "pos": 27,
+      "orig": "P",
+      "alt": "T",
+      "score": 6,
+      "method": "beaufort_p1_key=K",
+      "pt_preview": "WJATQWNWEDQZJSWZCFJJOFZTPUURTX"
+    },
+    {
+      "pos": 29,
+      "orig": "N",
+      "alt": "D",
+      "score": 6,
+      "method": "beaufort_p1_key=K",
+      "pt_preview": "WJATQWNWEDQZJSWZCFJJOFZTPUUVTH"
+    },
+    {
+      "pos": 33,
+      "orig": "S",
+      "alt": "R",
+      "score": 6,
+      "method": "beaufort_p1_key=K",
+      "pt_preview": "WJATQWNWEDQZJSWZCFJJOFZTPUUVTX"
+    },
+    {
+      "pos": 63,
+      "orig": "N",
+      "alt": "J",
+      "score": 6,
+      "method": "beaufort_p1_key=K",
+      "pt_preview": "WJATQWNWEDQZJSWZCFJJOFZTPUUVTX"
+    }
+  ],
+  "verdict": "NO_SIGNAL"
+}

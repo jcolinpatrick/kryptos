@@ -1,0 +1,28 @@
+{
+  "manifest_version": "1.0",
+  "campaign_id": "e_nullmask_beaufort_admissibility",
+  "campaign_name": "Null mask + periodic Beaufort sliding-window formal UNSAT",
+  "completed_at": "2026-04-11T00:00:00+00:00",
+  "git_commit": "",
+  "verdict": "strong_elimination",
+  "verdict_summary": "Formal UNSAT result: null mask combined with periodic Beaufort at periods p in [1, 8] over sliding crib windows yields no satisfying assignment across 44,400 constructed CSPs.",
+  "evidence_pointer": "docs/elimination_tiers.md (Tier 1 row, null mask + periodic Beaufort)",
+  "family_updates": {
+    "beaufort": {
+      "tier": 2,
+      "evidence": "E-NULLMASK-BEAU: null mask + periodic Beaufort p in [1,8] formally UNSAT over 44,400 CSPs."
+    }
+  },
+  "scope_caveats": [
+    "H1 conditional: assumes direct positional crib mapping on the carved 97-char CT under an additive cipher class. Mechanisms that break H1 (outer transposition before the analyzed step, position-dependent selectors, physical-overlay remaps, non-additive ciphers) are NOT eliminated by this result."
+  ],
+  "scope_does_not_cover": [
+    "Periods above 8.",
+    "Beaufort variants with non-standard keying."
+  ],
+  "total_profiles_evaluated": 0,
+  "joint_anomaly_successes": 0,
+  "populations_tested": [],
+  "variants_tested": [],
+  "notes": "Historical backfill from E-NULLMASK-BEAU. 44,400 CSPs, all UNSAT."
+}

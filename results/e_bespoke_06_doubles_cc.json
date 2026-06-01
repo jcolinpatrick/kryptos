@@ -1,0 +1,87 @@
+{
+  "experiment": "E-BESPOKE-06",
+  "description": "Doubled-letter digraph analysis and CC insertion hypothesis",
+  "theory": "K4 has 6 doubled digraphs: BB QQ SS SS ZZ TT (5 distinct letters). CC is absent. Checkpoint Charlie = NATO C. Missing CC might be deliberate \u2014 insert to reveal structure. Doubles might be nulls, markers, or encode a key.",
+  "total_configs": 42101,
+  "elapsed_seconds": 1.9,
+  "global_best": 5,
+  "classification": "NOISE",
+  "structural_findings": {
+    "doubles": [
+      [
+        18,
+        "B"
+      ],
+      [
+        25,
+        "Q"
+      ],
+      [
+        32,
+        "S"
+      ],
+      [
+        42,
+        "S"
+      ],
+      [
+        46,
+        "Z"
+      ],
+      [
+        67,
+        "T"
+      ]
+    ],
+    "spacings": [
+      7,
+      7,
+      10,
+      4,
+      21
+    ],
+    "letters": "BQSSZT",
+    "letter_values": [
+      1,
+      16,
+      18,
+      18,
+      25,
+      19
+    ],
+    "c_positions_in_ct": [
+      82,
+      94
+    ],
+    "statistical_significance": {
+      "p_value": 0.165112,
+      "z_score": 1.22,
+      "significant": false,
+      "expected_doubles": 3.692,
+      "observed_doubles": 6
+    }
+  },
+  "phase_results": {
+    "phase2_insert_c_cc": {
+      "configs": 1666,
+      "best": 4
+    },
+    "phase3_remove_nulls": {
+      "configs": 63,
+      "best": 3
+    },
+    "phase4_markers": {
+      "configs": 4,
+      "best": 0
+    },
+    "phase5_cc_w7_exhaustive": {
+      "configs": 40320,
+      "best": 5
+    },
+    "phase6_doubles_as_key": {
+      "configs": 48,
+      "best": 3
+    }
+  },
+  "notable_results": []
+}

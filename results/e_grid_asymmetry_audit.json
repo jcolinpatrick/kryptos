@@ -1,0 +1,36 @@
+{
+  "analysis_1_significant_widths_p001": [
+    14
+  ],
+  "analysis_1_significant_widths_p0001": [
+    14
+  ],
+  "width14_hypergeometric_pvalue": 7.440939008013833e-05,
+  "analysis_2_palette_mean_position": 43.457142857142856,
+  "analysis_2_point_biserial_r": -0.12190154951398859,
+  "analysis_2_pval_early": 0.117535,
+  "analysis_2_conditional_pval": 7.5e-05,
+  "analysis_3_chi2_rank_width14": 24,
+  "analysis_3_top5": [
+    [
+      39,
+      50.74992319508447
+    ],
+    [
+      44,
+      50.02726574500768
+    ],
+    [
+      40,
+      47.85929339477725
+    ],
+    [
+      47,
+      44.968663594470044
+    ],
+    [
+      43,
+      44.96866359447004
+    ]
+  ]
+}

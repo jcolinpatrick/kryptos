@@ -1,0 +1,29 @@
+{
+  "manifest_version": "1.0",
+  "campaign_id": "e_frac_47_myszkowski",
+  "campaign_name": "Myszkowski transposition w5-13 empirical null",
+  "completed_at": "2026-04-11T00:00:00+00:00",
+  "git_commit": "",
+  "verdict": "strong_elimination",
+  "verdict_summary": "E-FRAC-47: Myszkowski transposition at widths 5-13 with periodic substitution enumerated 226,390 unique permutations; maximum crib score 15/24. No positive signal within the parameterized search space.",
+  "evidence_pointer": "docs/elimination_tiers.md (Tier 2 row, E-FRAC-47 Myszkowski)",
+  "family_updates": {
+    "myszkowski": {
+      "tier": 2,
+      "name": "Myszkowski Transposition",
+      "evidence": "E-FRAC-47: widths 5-13 + periodic sub, 226,390 unique perms, max 15/24. No positive signal within tested parameter ranges."
+    }
+  },
+  "scope_caveats": [
+    "H1 conditional: assumes direct positional crib mapping on the carved 97-char CT under an additive cipher class. Mechanisms that break H1 (outer transposition before the analyzed step, position-dependent selectors, physical-overlay remaps, non-additive ciphers) are NOT eliminated by this result."
+  ],
+  "scope_does_not_cover": [
+    "Myszkowski at widths >13.",
+    "Myszkowski composed with non-additive inner cipher."
+  ],
+  "total_profiles_evaluated": 0,
+  "joint_anomaly_successes": 0,
+  "populations_tested": [],
+  "variants_tested": [],
+  "notes": "Historical backfill from E-FRAC-47. 226,390 unique perms, max 15/24."
+}

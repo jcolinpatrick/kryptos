@@ -1,0 +1,64 @@
+{
+  "experiment": "e_row_gradient_analysis",
+  "timestamp": "2026-05-23T06:58:38.560386",
+  "description": "Row gradient validation for keystream present/absent values on KA Polybius grid",
+  "observed": {
+    "present_12": [
+      "B",
+      "C",
+      "D",
+      "E",
+      "G",
+      "J",
+      "K",
+      "L",
+      "O",
+      "R",
+      "T",
+      "U"
+    ],
+    "absent_14": [
+      "A",
+      "F",
+      "H",
+      "I",
+      "M",
+      "N",
+      "P",
+      "Q",
+      "S",
+      "V",
+      "W",
+      "X",
+      "Y",
+      "Z"
+    ],
+    "row_counts": [
+      3,
+      3,
+      3,
+      2,
+      1,
+      0
+    ],
+    "row_rates": [
+      0.6,
+      0.6,
+      0.6,
+      0.4,
+      0.2,
+      0.0
+    ],
+    "gradient_metric": 19,
+    "palette_boundary_clean": true
+  },
+  "monte_carlo": {
+    "trials": 1000000,
+    "p_gradient": 0.065301,
+    "p_monotonic": 0.028245,
+    "p_top_heavy": 0.104134,
+    "p_palette_boundary": 0.007885,
+    "p_gradient_given_ap": 0.14630875641085964,
+    "p_palette_given_ap": 0.09236343104502893
+  }
+}

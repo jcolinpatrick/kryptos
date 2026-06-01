@@ -1,0 +1,3737 @@
+{
+  "Vigenere": {
+    "ks_ene": "BLZCDCYYGCKAZ",
+    "ks_bc": "MUYKLGKORNA",
+    "bean": {
+      "eq_pass": [
+        [
+          27,
+          65
+        ]
+      ],
+      "eq_fail": [],
+      "ineq_pass": [
+        [
+          21,
+          22
+        ],
+        [
+          21,
+          24
+        ],
+        [
+          21,
+          25
+        ],
+        [
+          21,
+          26
+        ],
+        [
+          21,
+          27
+        ],
+        [
+          21,
+          28
+        ],
+        [
+          21,
+          29
+        ],
+        [
+          21,
+          30
+        ],
+        [
+          21,
+          31
+        ],
+        [
+          21,
+          32
+        ],
+        [
+          21,
+          33
+        ],
+        [
+          21,
+          63
+        ],
+        [
+          21,
+          64
+        ],
+        [
+          21,
+          65
+        ],
+        [
+          21,
+          66
+        ],
+        [
+          21,
+          67
+        ],
+        [
+          21,
+          68
+        ],
+        [
+          21,
+          69
+        ],
+        [
+          21,
+          70
+        ],
+        [
+          21,
+          71
+        ],
+        [
+          21,
+          72
+        ],
+        [
+          21,
+          73
+        ],
+        [
+          22,
+          23
+        ],
+        [
+          22,
+          24
+        ],
+        [
+          22,
+          25
+        ],
+        [
+          22,
+          26
+        ],
+        [
+          22,
+          27
+        ],
+        [
+          22,
+          28
+        ],
+        [
+          22,
+          29
+        ],
+        [
+          22,
+          30
+        ],
+        [
+          22,
+          31
+        ],
+        [
+          22,
+          32
+        ],
+        [
+          22,
+          63
+        ],
+        [
+          22,
+          64
+        ],
+        [
+          22,
+          65
+        ],
+        [
+          22,
+          66
+        ],
+        [
+          22,
+          68
+        ],
+        [
+          22,
+          69
+        ],
+        [
+          22,
+          70
+        ],
+        [
+          22,
+          71
+        ],
+        [
+          22,
+          72
+        ],
+        [
+          22,
+          73
+        ],
+        [
+          23,
+          24
+        ],
+        [
+          23,
+          25
+        ],
+        [
+          23,
+          26
+        ],
+        [
+          23,
+          27
+        ],
+        [
+          23,
+          28
+        ],
+        [
+          23,
+          29
+        ],
+        [
+          23,
+          30
+        ],
+        [
+          23,
+          31
+        ],
+        [
+          23,
+          32
+        ],
+        [
+          23,
+          63
+        ],
+        [
+          23,
+          64
+        ],
+        [
+          23,
+          65
+        ],
+        [
+          23,
+          66
+        ],
+        [
+          23,
+          67
+        ],
+        [
+          23,
+          68
+        ],
+        [
+          23,
+          69
+        ],
+        [
+          23,
+          70
+        ],
+        [
+          23,
+          71
+        ],
+        [
+          23,
+          72
+        ],
+        [
+          23,
+          73
+        ],
+        [
+          24,
+          25
+        ],
+        [
+          24,
+          27
+        ],
+        [
+          24,
+          28
+        ],
+        [
+          24,
+          29
+        ],
+        [
+          24,
+          31
+        ],
+        [
+          24,
+          32
+        ],
+        [
+          24,
+          33
+        ],
+        [
+          24,
+          64
+        ],
+        [
+          24,
+          65
+        ],
+        [
+          24,
+          66
+        ],
+        [
+          24,
+          67
+        ],
+        [
+          24,
+          68
+        ],
+        [
+          24,
+          70
+        ],
+        [
+          24,
+          71
+        ],
+        [
+          24,
+          72
+        ],
+        [
+          24,
+          73
+        ],
+        [
+          25,
+          26
+        ],
+        [
+          25,
+          27
+        ],
+        [
+          25,
+          28
+        ],
+        [
+          25,
+          29
+        ],
+        [
+          25,
+          30
+        ],
+        [
+          25,
+          31
+        ],
+        [
+          25,
+          32
+        ],
+        [
+          25,
+          33
+        ],
+        [
+          25,
+          63
+        ],
+        [
+          25,
+          64
+        ],
+        [
+          25,
+          65
+        ],
+        [
+          25,
+          66
+        ],
+        [
+          25,
+          67
+        ],
+        [
+          25,
+          68
+        ],
+        [
+          25,
+          69
+        ],
+        [
+          25,
+          70
+        ],
+        [
+          25,
+          71
+        ],
+        [
+          25,
+          72
+        ],
+        [
+          25,
+          73
+        ],
+        [
+          26,
+          27
+        ],
+        [
+          26,
+          28
+        ],
+        [
+          26,
+          29
+        ],
+        [
+          26,
+          31
+        ],
+        [
+          26,
+          32
+        ],
+        [
+          26,
+          33
+        ],
+        [
+          26,
+          63
+        ],
+        [
+          26,
+          64
+        ],
+        [
+          26,
+          65
+        ],
+        [
+          26,
+          66
+        ],
+        [
+          26,
+          67
+        ],
+        [
+          26,
+          68
+        ],
+        [
+          26,
+          69
+        ],
+        [
+          26,
+          70
+        ],
+        [
+          26,
+          71
+        ],
+        [
+          26,
+          72
+        ],
+        [
+          26,
+          73
+        ],
+        [
+          27,
+          29
+        ],
+        [
+          27,
+          30
+        ],
+        [
+          27,
+          31
+        ],
+        [
+          27,
+          32
+        ],
+        [
+          27,
+          33
+        ],
+        [
+          27,
+          63
+        ],
+        [
+          27,
+          64
+        ],
+        [
+          27,
+          67
+        ],
+        [
+          27,
+          69
+        ],
+        [
+          27,
+          70
+        ],
+        [
+          27,
+          71
+        ],
+        [
+          27,
+          72
+        ],
+        [
+          27,
+          73
+        ],
+        [
+          28,
+          29
+        ],
+        [
+          28,
+          33
+        ],
+        [
+          28,
+          63
+        ],
+        [
+          28,
+          64
+        ],
+        [
+          28,
+          66
+        ],
+        [
+          28,
+          67
+        ],
+        [
+          28,
+          68
+        ],
+        [
+          28,
+          69
+        ],
+        [
+          28,
+          71
+        ],
+        [
+          28,
+          72
+        ],
+        [
+          28,
+          73
+        ],
+        [
+          29,
+          30
+        ],
+        [
+          29,
+          31
+        ],
+        [
+          29,
+          32
+        ],
+        [
+          29,
+          33
+        ],
+        [
+          29,
+          63
+        ],
+        [
+          29,
+          64
+        ],
+        [
+          29,
+          65
+        ],
+        [
+          29,
+          66
+        ],
+        [
+          29,
+          67
+        ],
+        [
+          29,
+          69
+        ],
+        [
+          29,
+          70
+        ],
+        [
+          29,
+          71
+        ],
+        [
+          29,
+          72
+        ],
+        [
+          30,
+          33
+        ],
+        [
+          30,
+          63
+        ],
+        [
+          30,
+          64
+        ],
+        [
+          30,
+          65
+        ],
+        [
+          30,
+          66
+        ],
+        [
+          30,
+          67
+        ],
+        [
+          30,
+          68
+        ],
+        [
+          30,
+          69
+        ],
+        [
+          30,
+          71
+        ],
+        [
+          30,
+          72
+        ],
+        [
+          30,
+          73
+        ],
+        [
+          31,
+          33
+        ],
+        [
+          31,
+          63
+        ],
+        [
+          31,
+          64
+        ],
+        [
+          31,
+          65
+        ],
+        [
+          31,
+          67
+        ],
+        [
+          31,
+          68
+        ],
+        [
+          31,
+          71
+        ],
+        [
+          31,
+          72
+        ],
+        [
+          31,
+          73
+        ],
+        [
+          32,
+          33
+        ],
+        [
+          32,
+          63
+        ],
+        [
+          32,
+          64
+        ],
+        [
+          32,
+          65
+        ],
+        [
+          32,
+          66
+        ],
+        [
+          32,
+          67
+        ],
+        [
+          32,
+          68
+        ],
+        [
+          32,
+          69
+        ],
+        [
+          32,
+          71
+        ],
+        [
+          32,
+          72
+        ],
+        [
+          33,
+          63
+        ],
+        [
+          33,
+          64
+        ],
+        [
+          33,
+          65
+        ],
+        [
+          33,
+          66
+        ],
+        [
+          33,
+          67
+        ],
+        [
+          33,
+          68
+        ],
+        [
+          33,
+          69
+        ],
+        [
+          33,
+          70
+        ],
+        [
+          33,
+          71
+        ],
+        [
+          33,
+          72
+        ],
+        [
+          33,
+          73
+        ],
+        [
+          63,
+          64
+        ],
+        [
+          63,
+          65
+        ],
+        [
+          63,
+          66
+        ],
+        [
+          63,
+          67
+        ],
+        [
+          63,
+          68
+        ],
+        [
+          63,
+          70
+        ],
+        [
+          63,
+          71
+        ],
+        [
+          63,
+          72
+        ],
+        [
+          63,
+          73
+        ],
+        [
+          64,
+          65
+        ],
+        [
+          64,
+          66
+        ],
+        [
+          64,
+          67
+        ],
+        [
+          64,
+          68
+        ],
+        [
+          64,
+          69
+        ],
+        [
+          64,
+          70
+        ],
+        [
+          64,
+          71
+        ],
+        [
+          64,
+          72
+        ],
+        [
+          64,
+          73
+        ],
+        [
+          65,
+          67
+        ],
+        [
+          65,
+          69
+        ],
+        [
+          65,
+          70
+        ],
+        [
+          65,
+          71
+        ],
+        [
+          65,
+          72
+        ],
+        [
+          65,
+          73
+        ],
+        [
+          66,
+          67
+        ],
+        [
+          66,
+          70
+        ],
+        [
+          66,
+          71
+        ],
+        [
+          66,
+          72
+        ],
+        [
+          66,
+          73
+        ],
+        [
+          67,
+          68
+        ],
+        [
+          67,
+          69
+        ],
+        [
+          67,
+          70
+        ],
+        [
+          67,
+          71
+        ],
+        [
+          67,
+          72
+        ],
+        [
+          67,
+          73
+        ],
+        [
+          68,
+          69
+        ],
+        [
+          68,
+          70
+        ],
+        [
+          68,
+          71
+        ],
+        [
+          68,
+          72
+        ],
+        [
+          68,
+          73
+        ],
+        [
+          69,
+          70
+        ],
+        [
+          69,
+          71
+        ],
+        [
+          69,
+          72
+        ],
+        [
+          69,
+          73
+        ],
+        [
+          70,
+          71
+        ],
+        [
+          70,
+          72
+        ],
+        [
+          70,
+          73
+        ],
+        [
+          71,
+          72
+        ],
+        [
+          71,
+          73
+        ],
+        [
+          72,
+          73
+        ]
+      ],
+      "ineq_fail": [],
+      "verdict": "PASS"
+    },
+    "consistent_periods": [],
+    "diffs_ene": [
+      10,
+      14,
+      3,
+      1,
+      25,
+      22,
+      0,
+      8,
+      22,
+      8,
+      16,
+      25
+    ],
+    "diffs_bc": [
+      8,
+      4,
+      12,
+      1,
+      21,
+      4,
+      4,
+      3,
+      22,
+      13
+    ],
+    "gronsfeld_compat": false,
+    "beam_after_key_top5": [
+      {
+        "score": -3.0798,
+        "pt": "DYPXZELVPDPYWHHBSGRKJSD",
+        "key": "TIONATIONATIONATIONATIO"
+      },
+      {
+        "score": -3.0863,
+        "pt": "DYPXZELVPDPYWHHBSGRKRPT",
+        "key": "TIONATIONATIONATIONALLY"
+      },
+      {
+        "score": -3.0914,
+        "pt": "DYPXZELVPDPYWHHBSGRKRSZ",
+        "key": "TIONATIONATIONATIONALIS"
+      },
+      {
+        "score": -3.0997,
+        "pt": "DYPXZELVPDPYWHHBSGRKRSS",
+        "key": "TIONATIONATIONATIONALIZ"
+      },
+      {
+        "score": -3.101,
+        "pt": "DYPXZELVPDPYWHHBSGRCPUZ",
+        "key": "TIONATIONATIONATIONINGS"
+      }
+    ],
+    "beam_after_pt_top5": [
+      {
+        "score": -3.0979,
+        "pt": "ACTIONATIONATIONATIONAL",
+        "key": "WEKCLKTQUPVGRMTHABWWPAG"
+      },
+      {
+        "score": -3.1256,
+        "pt": "ACTIONATIONATIONATIONST",
+        "key": "WEKCLKTQUPVGRMTHABWWPIY"
+      },
+      {
+        "score": -3.1277,
+        "pt": "ACTIONATIONATIONATIONSI",
+        "key": "WEKCLKTQUPVGRMTHABWWPIJ"
+      },
+      {
+        "score": -3.1282,
+        "pt": "ACTIONATIONATIONATIONIS",
+        "key": "WEKCLKTQUPVGRMTHABWWPSZ"
+      },
+      {
+        "score": -3.1289,
+        "pt": "ACTIONATIONATIONATIONIN",
+        "key": "WEKCLKTQUPVGRMTHABWWPSE"
+      }
+    ],
+    "beam_before_pt_top5": [
+      {
+        "score": -3.0673,
+        "pt": "ACTIONATIONATIONATION",
+        "key": "OZRJGBXVYTHLIKAYIMTNJ"
+      },
+      {
+        "score": -3.127,
+        "pt": "ACTIONATIONATIONATING",
+        "key": "OZRJGBXVYTHLIKAYIMTOQ"
+      },
+      {
+        "score": -3.1294,
+        "pt": "ACTIONATIONATIONALING",
+        "key": "OZRJGBXVYTHLIKAYIUTOQ"
+      },
+      {
+        "score": -3.1312,
+        "pt": "ACTIONATIONATIONICALL",
+        "key": "OZRJGBXVYTHLIKAYADBQL"
+      },
+      {
+        "score": -3.1373,
+        "pt": "ACTIONATIONATIONATIVE",
+        "key": "OZRJGBXVYTHLIKAYIMTGS"
+      }
+    ],
+    "beam_between_pt_top5": [
+      {
+        "score": -3.1227,
+        "pt": "ACTIONATIONATIONATIONATIONALI",
+        "key": "ORDLCFJXKERKGRINTQCXHDPSIVNUT"
+      },
+      {
+        "score": -3.1258,
+        "pt": "ACTIONATIONICATIONATIONATIONA",
+        "key": "ORDLCFJXKERCXZDSFWKSMPVADAZSB"
+      },
+      {
+        "score": -3.1287,
+        "pt": "ACTIONATIONICATIONATIONATIONS",
+        "key": "ORDLCFJXKERCXZDSFWKSMPVADAZSJ"
+      },
+      {
+        "score": -3.1336,
+        "pt": "ACTIONATIONATIONATIONATIONESS",
+        "key": "ORDLCFJXKERKGRINTQCXHDPSIVJNJ"
+      },
+      {
+        "score": -3.1383,
+        "pt": "ACTIONATIONATIONATIONATIONALL",
+        "key": "ORDLCFJXKERKGRINTQCXHDPSIVNUQ"
+      }
+    ],
+    "phrase_top10": [
+      {
+        "placement_pos": 74,
+        "phrase": "INVISIBLY",
+        "key_fragment": "OTICHPSYE",
+        "key_score": -5.259
+      },
+      {
+        "placement_pos": 74,
+        "phrase": "ATFIVE",
+        "key_fragment": "WNYCET",
+        "key_score": -5.6713
+      },
+      {
+        "placement_pos": 74,
+        "phrase": "DISCOVERED",
+        "key_fragment": "TYLILCPSYA",
+        "key_score": -5.7436
+      },
+      {
+        "placement_pos": 74,
+        "phrase": "ALMOST",
+        "key_fragment": "WVRWHE",
+        "key_score": -5.9925
+      },
+      {
+        "placement_pos": 74,
+        "phrase": "NORTHEAST",
+        "key_fragment": "JSMRSTTRJ",
+        "key_score": -6.0248
+      },
+      {
+        "placement_pos": 74,
+        "phrase": "UNDERGROUND",
+        "key_fragment": "CTAGIRCVIQF",
+        "key_score": -6.0549
+      },
+      {
+        "placement_pos": 74,
+        "phrase": "ISATFOUR",
+        "key_fragment": "OODRUJZS",
+        "key_score": -6.1459
+      },
+      {
+        "placement_pos": 74,
+        "phrase": "ABSCISSA",
+        "key_fragment": "WFLIRFBJ",
+        "key_score": -6.2107
+      },
+      {
+        "placement_pos": 74,
+        "phrase": "BETWEEN",
+        "key_fragment": "VCKOVTG",
+        "key_score": -6.3069
+      },
+      {
+        "placement_pos": 74,
+        "phrase": "WALL",
+        "key_fragment": "AGSZ",
+        "key_score": -6.3311
+      }
+    ],
+    "after_bc_sweep_top10": [
+      {
+        "placement_pos": 11,
+        "phrase": "ATFOUR",
+        "key_fragment": "LINARR",
+        "key_score": -4.1783
+      },
+      {
+        "placement_pos": 43,
+        "phrase": "BERLIN",
+        "key_fragment": "RATORJ",
+        "key_score": -4.2076
+      },
+      {
+        "placement_pos": 58,
+        "phrase": "FELL",
+        "key_fragment": "RECU",
+        "key_score": -4.3817
+      },
+      {
+        "placement_pos": 34,
+        "phrase": "WALL",
+        "key_fragment": "STLI",
+        "key_score": -4.3966
+      },
+      {
+        "placement_pos": 11,
+        "phrase": "SHOWS",
+        "key_fragment": "TUEST",
+        "key_score": -4.5185
+      },
+      {
+        "placement_pos": 9,
+        "phrase": "BURIED",
+        "key_fragment": "GAUTOL",
+        "key_score": -4.5581
+      },
+      {
+        "placement_pos": 9,
+        "phrase": "ISATFOUR",
+        "key_fragment": "ZCLINARR",
+        "key_score": -4.6443
+      },
+      {
+        "placement_pos": 55,
+        "phrase": "SHADOW",
+        "key_fragment": "LBATUR",
+        "key_score": -4.7554
+      },
+      {
+        "placement_pos": 0,
+        "phrase": "MIDNIGHT",
+        "key_fragment": "CTHEMIQV",
+        "key_score": -4.7659
+      },
+      {
+        "placement_pos": 87,
+        "phrase": "REMINDS",
+        "key_fragment": "DDISHBS",
+        "key_score": -4.793
+      }
+    ]
+  },
+  "Beaufort": {
+    "ks_ene": "JLJODEGKUKKKL",
+    "ks_bc": "OCGGBGOKTRU",
+    "bean": {
+      "eq_pass": [
+        [
+          27,
+          65
+        ]
+      ],
+      "eq_fail": [],
+      "ineq_pass": [
+        [
+          21,
+          22
+        ],
+        [
+          21,
+          24
+        ],
+        [
+          21,
+          25
+        ],
+        [
+          21,
+          26
+        ],
+        [
+          21,
+          27
+        ],
+        [
+          21,
+          28
+        ],
+        [
+          21,
+          29
+        ],
+        [
+          21,
+          30
+        ],
+        [
+          21,
+          31
+        ],
+        [
+          21,
+          32
+        ],
+        [
+          21,
+          33
+        ],
+        [
+          21,
+          63
+        ],
+        [
+          21,
+          64
+        ],
+        [
+          21,
+          65
+        ],
+        [
+          21,
+          66
+        ],
+        [
+          21,
+          67
+        ],
+        [
+          21,
+          68
+        ],
+        [
+          21,
+          69
+        ],
+        [
+          21,
+          70
+        ],
+        [
+          21,
+          71
+        ],
+        [
+          21,
+          72
+        ],
+        [
+          21,
+          73
+        ],
+        [
+          22,
+          23
+        ],
+        [
+          22,
+          24
+        ],
+        [
+          22,
+          25
+        ],
+        [
+          22,
+          26
+        ],
+        [
+          22,
+          27
+        ],
+        [
+          22,
+          28
+        ],
+        [
+          22,
+          29
+        ],
+        [
+          22,
+          30
+        ],
+        [
+          22,
+          31
+        ],
+        [
+          22,
+          32
+        ],
+        [
+          22,
+          63
+        ],
+        [
+          22,
+          64
+        ],
+        [
+          22,
+          65
+        ],
+        [
+          22,
+          66
+        ],
+        [
+          22,
+          68
+        ],
+        [
+          22,
+          69
+        ],
+        [
+          22,
+          70
+        ],
+        [
+          22,
+          71
+        ],
+        [
+          22,
+          72
+        ],
+        [
+          22,
+          73
+        ],
+        [
+          23,
+          24
+        ],
+        [
+          23,
+          25
+        ],
+        [
+          23,
+          26
+        ],
+        [
+          23,
+          27
+        ],
+        [
+          23,
+          28
+        ],
+        [
+          23,
+          29
+        ],
+        [
+          23,
+          30
+        ],
+        [
+          23,
+          31
+        ],
+        [
+          23,
+          32
+        ],
+        [
+          23,
+          63
+        ],
+        [
+          23,
+          64
+        ],
+        [
+          23,
+          65
+        ],
+        [
+          23,
+          66
+        ],
+        [
+          23,
+          67
+        ],
+        [
+          23,
+          68
+        ],
+        [
+          23,
+          69
+        ],
+        [
+          23,
+          70
+        ],
+        [
+          23,
+          71
+        ],
+        [
+          23,
+          72
+        ],
+        [
+          23,
+          73
+        ],
+        [
+          24,
+          25
+        ],
+        [
+          24,
+          27
+        ],
+        [
+          24,
+          28
+        ],
+        [
+          24,
+          29
+        ],
+        [
+          24,
+          31
+        ],
+        [
+          24,
+          32
+        ],
+        [
+          24,
+          33
+        ],
+        [
+          24,
+          64
+        ],
+        [
+          24,
+          65
+        ],
+        [
+          24,
+          66
+        ],
+        [
+          24,
+          67
+        ],
+        [
+          24,
+          68
+        ],
+        [
+          24,
+          70
+        ],
+        [
+          24,
+          71
+        ],
+        [
+          24,
+          72
+        ],
+        [
+          24,
+          73
+        ],
+        [
+          25,
+          26
+        ],
+        [
+          25,
+          27
+        ],
+        [
+          25,
+          28
+        ],
+        [
+          25,
+          29
+        ],
+        [
+          25,
+          30
+        ],
+        [
+          25,
+          31
+        ],
+        [
+          25,
+          32
+        ],
+        [
+          25,
+          33
+        ],
+        [
+          25,
+          63
+        ],
+        [
+          25,
+          64
+        ],
+        [
+          25,
+          65
+        ],
+        [
+          25,
+          66
+        ],
+        [
+          25,
+          67
+        ],
+        [
+          25,
+          68
+        ],
+        [
+          25,
+          69
+        ],
+        [
+          25,
+          70
+        ],
+        [
+          25,
+          71
+        ],
+        [
+          25,
+          72
+        ],
+        [
+          25,
+          73
+        ],
+        [
+          26,
+          27
+        ],
+        [
+          26,
+          28
+        ],
+        [
+          26,
+          29
+        ],
+        [
+          26,
+          31
+        ],
+        [
+          26,
+          32
+        ],
+        [
+          26,
+          33
+        ],
+        [
+          26,
+          63
+        ],
+        [
+          26,
+          64
+        ],
+        [
+          26,
+          65
+        ],
+        [
+          26,
+          66
+        ],
+        [
+          26,
+          67
+        ],
+        [
+          26,
+          68
+        ],
+        [
+          26,
+          69
+        ],
+        [
+          26,
+          70
+        ],
+        [
+          26,
+          71
+        ],
+        [
+          26,
+          72
+        ],
+        [
+          26,
+          73
+        ],
+        [
+          27,
+          29
+        ],
+        [
+          27,
+          30
+        ],
+        [
+          27,
+          31
+        ],
+        [
+          27,
+          32
+        ],
+        [
+          27,
+          33
+        ],
+        [
+          27,
+          63
+        ],
+        [
+          27,
+          64
+        ],
+        [
+          27,
+          67
+        ],
+        [
+          27,
+          69
+        ],
+        [
+          27,
+          70
+        ],
+        [
+          27,
+          71
+        ],
+        [
+          27,
+          72
+        ],
+        [
+          27,
+          73
+        ],
+        [
+          28,
+          29
+        ],
+        [
+          28,
+          33
+        ],
+        [
+          28,
+          63
+        ],
+        [
+          28,
+          64
+        ],
+        [
+          28,
+          66
+        ],
+        [
+          28,
+          67
+        ],
+        [
+          28,
+          68
+        ],
+        [
+          28,
+          69
+        ],
+        [
+          28,
+          71
+        ],
+        [
+          28,
+          72
+        ],
+        [
+          28,
+          73
+        ],
+        [
+          29,
+          30
+        ],
+        [
+          29,
+          31
+        ],
+        [
+          29,
+          32
+        ],
+        [
+          29,
+          33
+        ],
+        [
+          29,
+          63
+        ],
+        [
+          29,
+          64
+        ],
+        [
+          29,
+          65
+        ],
+        [
+          29,
+          66
+        ],
+        [
+          29,
+          67
+        ],
+        [
+          29,
+          69
+        ],
+        [
+          29,
+          70
+        ],
+        [
+          29,
+          71
+        ],
+        [
+          29,
+          72
+        ],
+        [
+          30,
+          33
+        ],
+        [
+          30,
+          63
+        ],
+        [
+          30,
+          64
+        ],
+        [
+          30,
+          65
+        ],
+        [
+          30,
+          66
+        ],
+        [
+          30,
+          67
+        ],
+        [
+          30,
+          68
+        ],
+        [
+          30,
+          69
+        ],
+        [
+          30,
+          71
+        ],
+        [
+          30,
+          72
+        ],
+        [
+          30,
+          73
+        ],
+        [
+          31,
+          33
+        ],
+        [
+          31,
+          63
+        ],
+        [
+          31,
+          64
+        ],
+        [
+          31,
+          65
+        ],
+        [
+          31,
+          67
+        ],
+        [
+          31,
+          68
+        ],
+        [
+          31,
+          71
+        ],
+        [
+          31,
+          72
+        ],
+        [
+          31,
+          73
+        ],
+        [
+          32,
+          33
+        ],
+        [
+          32,
+          63
+        ],
+        [
+          32,
+          64
+        ],
+        [
+          32,
+          65
+        ],
+        [
+          32,
+          66
+        ],
+        [
+          32,
+          67
+        ],
+        [
+          32,
+          68
+        ],
+        [
+          32,
+          69
+        ],
+        [
+          32,
+          71
+        ],
+        [
+          32,
+          72
+        ],
+        [
+          33,
+          63
+        ],
+        [
+          33,
+          64
+        ],
+        [
+          33,
+          65
+        ],
+        [
+          33,
+          66
+        ],
+        [
+          33,
+          67
+        ],
+        [
+          33,
+          68
+        ],
+        [
+          33,
+          69
+        ],
+        [
+          33,
+          70
+        ],
+        [
+          33,
+          71
+        ],
+        [
+          33,
+          72
+        ],
+        [
+          33,
+          73
+        ],
+        [
+          63,
+          64
+        ],
+        [
+          63,
+          65
+        ],
+        [
+          63,
+          66
+        ],
+        [
+          63,
+          67
+        ],
+        [
+          63,
+          68
+        ],
+        [
+          63,
+          70
+        ],
+        [
+          63,
+          71
+        ],
+        [
+          63,
+          72
+        ],
+        [
+          63,
+          73
+        ],
+        [
+          64,
+          65
+        ],
+        [
+          64,
+          66
+        ],
+        [
+          64,
+          67
+        ],
+        [
+          64,
+          68
+        ],
+        [
+          64,
+          69
+        ],
+        [
+          64,
+          70
+        ],
+        [
+          64,
+          71
+        ],
+        [
+          64,
+          72
+        ],
+        [
+          64,
+          73
+        ],
+        [
+          65,
+          67
+        ],
+        [
+          65,
+          69
+        ],
+        [
+          65,
+          70
+        ],
+        [
+          65,
+          71
+        ],
+        [
+          65,
+          72
+        ],
+        [
+          65,
+          73
+        ],
+        [
+          66,
+          67
+        ],
+        [
+          66,
+          70
+        ],
+        [
+          66,
+          71
+        ],
+        [
+          66,
+          72
+        ],
+        [
+          66,
+          73
+        ],
+        [
+          67,
+          68
+        ],
+        [
+          67,
+          69
+        ],
+        [
+          67,
+          70
+        ],
+        [
+          67,
+          71
+        ],
+        [
+          67,
+          72
+        ],
+        [
+          67,
+          73
+        ],
+        [
+          68,
+          69
+        ],
+        [
+          68,
+          70
+        ],
+        [
+          68,
+          71
+        ],
+        [
+          68,
+          72
+        ],
+        [
+          68,
+          73
+        ],
+        [
+          69,
+          70
+        ],
+        [
+          69,
+          71
+        ],
+        [
+          69,
+          72
+        ],
+        [
+          69,
+          73
+        ],
+        [
+          70,
+          71
+        ],
+        [
+          70,
+          72
+        ],
+        [
+          70,
+          73
+        ],
+        [
+          71,
+          72
+        ],
+        [
+          71,
+          73
+        ],
+        [
+          72,
+          73
+        ]
+      ],
+      "ineq_fail": [],
+      "verdict": "PASS"
+    },
+    "consistent_periods": [],
+    "diffs_ene": [
+      2,
+      24,
+      5,
+      15,
+      1,
+      2,
+      4,
+      10,
+      16,
+      0,
+      0,
+      1
+    ],
+    "diffs_bc": [
+      14,
+      4,
+      0,
+      21,
+      5,
+      8,
+      22,
+      9,
+      24,
+      3
+    ],
+    "gronsfeld_compat": false,
+    "beam_after_key_top5": [
+      {
+        "score": -3.0525,
+        "pt": "WNXJJRURRFGHQZBUNGPYMNJ",
+        "key": "STATIONATIONATIONATIONA"
+      },
+      {
+        "score": -3.0553,
+        "pt": "WNXJJRURRFGHQZBUNGPYMNB",
+        "key": "STATIONATIONATIONATIONS"
+      },
+      {
+        "score": -3.0676,
+        "pt": "WNXJJRURRFGHQZBUNGPYMNR",
+        "key": "STATIONATIONATIONATIONI"
+      },
+      {
+        "score": -3.0803,
+        "pt": "WNXJJRURRFGHQZBUNGPYMNX",
+        "key": "STATIONATIONATIONATIONO"
+      },
+      {
+        "score": -3.0821,
+        "pt": "WNXJJRURRFGHQZBUNGPYMNY",
+        "key": "STATIONATIONATIONATIONP"
+      }
+    ],
+    "beam_after_pt_top5": [
+      {
+        "score": -3.0979,
+        "pt": "ACTIONATIONATIONATIONAL",
+        "key": "WIWSNKTCKRVGDCVHANMYPAC"
+      },
+      {
+        "score": -3.1256,
+        "pt": "ACTIONATIONATIONATIONST",
+        "key": "WIWSNKTCKRVGDCVHANMYPSK"
+      },
+      {
+        "score": -3.1277,
+        "pt": "ACTIONATIONATIONATIONSI",
+        "key": "WIWSNKTCKRVGDCVHANMYPSZ"
+      },
+      {
+        "score": -3.1282,
+        "pt": "ACTIONATIONATIONATIONIS",
+        "key": "WIWSNKTCKRVGDCVHANMYPIJ"
+      },
+      {
+        "score": -3.1289,
+        "pt": "ACTIONATIONATIONATIONIN",
+        "key": "WIWSNKTCKRVGDCVHANMYPIE"
+      }
+    ],
+    "beam_before_pt_top5": [
+      {
+        "score": -3.0673,
+        "pt": "ACTIONATIONATIONATION",
+        "key": "ODDZIBXHOVHLUACYIYJPJ"
+      },
+      {
+        "score": -3.127,
+        "pt": "ACTIONATIONATIONATING",
+        "key": "ODDZIBXHOVHLUACYIYJOC"
+      },
+      {
+        "score": -3.1294,
+        "pt": "ACTIONATIONATIONALING",
+        "key": "ODDZIBXHOVHLUACYIQJOC"
+      },
+      {
+        "score": -3.1312,
+        "pt": "ACTIONATIONATIONICALL",
+        "key": "ODDZIBXHOVHLUACYQHBMH"
+      },
+      {
+        "score": -3.1373,
+        "pt": "ACTIONATIONATIONATIVE",
+        "key": "ODDZIBXHOVHLUACYIYJWA"
+      }
+    ],
+    "beam_between_pt_top5": [
+      {
+        "score": -3.1227,
+        "pt": "ACTIONATIONATIONATIONATIONALI",
+        "key": "OVPBEFJJAGRKSHKNTCSZHDBIKVNQJ"
+      },
+      {
+        "score": -3.1258,
+        "pt": "ACTIONATIONICATIONATIONATIONA",
+        "key": "OVPBEFJJAGRSBZPIHWKECRVAPQBSB"
+      },
+      {
+        "score": -3.1287,
+        "pt": "ACTIONATIONICATIONATIONATIONS",
+        "key": "OVPBEFJJAGRSBZPIHWKECRVAPQBST"
+      },
+      {
+        "score": -3.1336,
+        "pt": "ACTIONATIONATIONATIONATIONESS",
+        "key": "OVPBEFJJAGRKSHKNTCSZHDBIKVRXT"
+      },
+      {
+        "score": -3.1383,
+        "pt": "ACTIONATIONATIONATIONATIONALL",
+        "key": "OVPBEFJJAGRKSHKNTCSZHDBIKVNQM"
+      }
+    ],
+    "phrase_top10": [
+      {
+        "placement_pos": 74,
+        "phrase": "WALL",
+        "key_fragment": "SGOV",
+        "key_score": -5.0524
+      },
+      {
+        "placement_pos": 74,
+        "phrase": "REMINDS",
+        "key_fragment": "NKPSMAL",
+        "key_score": -5.6514
+      },
+      {
+        "placement_pos": 74,
+        "phrase": "REMINDER",
+        "key_fragment": "NKPSMAXA",
+        "key_score": -5.9429
+      },
+      {
+        "placement_pos": 74,
+        "phrase": "ISATFOUR",
+        "key_fragment": "EYDDELNA",
+        "key_score": -6.0121
+      },
+      {
+        "placement_pos": 74,
+        "phrase": "VIRTUAL",
+        "key_fragment": "ROUDTXE",
+        "key_score": -6.0129
+      },
+      {
+        "placement_pos": 74,
+        "phrase": "BURIED",
+        "key_fragment": "XAUSDA",
+        "key_score": -6.0877
+      },
+      {
+        "placement_pos": 74,
+        "phrase": "ATFIVE",
+        "key_fragment": "WZISUB",
+        "key_score": -6.1721
+      },
+      {
+        "placement_pos": 74,
+        "phrase": "ALMOST",
+        "key_fragment": "WRPYRQ",
+        "key_score": -6.222
+      },
+      {
+        "placement_pos": 74,
+        "phrase": "FREEDOM",
+        "key_fragment": "BXHOCLF",
+        "key_score": -6.2966
+      },
+      {
+        "placement_pos": 74,
+        "phrase": "SHADOW",
+        "key_fragment": "ONDNNT",
+        "key_score": -6.2988
+      }
+    ],
+    "after_bc_sweep_top10": [
+      {
+        "placement_pos": 6,
+        "phrase": "WALL",
+        "key_fragment": "TORS",
+        "key_score": -3.6646
+      },
+      {
+        "placement_pos": 47,
+        "phrase": "FELL",
+        "key_fragment": "EALE",
+        "key_score": -4.0723
+      },
+      {
+        "placement_pos": 6,
+        "phrase": "REMINDS",
+        "key_fragment": "OSSPHOT",
+        "key_score": -4.4849
+      },
+      {
+        "placement_pos": 35,
+        "phrase": "MESSAGE",
+        "key_fragment": "FALISPU",
+        "key_score": -4.5906
+      },
+      {
+        "placement_pos": 55,
+        "phrase": "FREEDOM",
+        "key_fragment": "IZEALBR",
+        "key_score": -4.7296
+      },
+      {
+        "placement_pos": 3,
+        "phrase": "THEWALL",
+        "key_fragment": "KBSTORS",
+        "key_score": -4.7599
+      },
+      {
+        "placement_pos": 75,
+        "phrase": "NOON",
+        "key_fragment": "TRYM",
+        "key_score": -4.7809
+      },
+      {
+        "placement_pos": 88,
+        "phrase": "BURIED",
+        "key_fragment": "IORCIN",
+        "key_score": -4.8652
+      },
+      {
+        "placement_pos": 7,
+        "phrase": "ALMOST",
+        "key_fragment": "ORTIDU",
+        "key_score": -4.877
+      },
+      {
+        "placement_pos": 46,
+        "phrase": "DISCOVERED",
+        "key_fragment": "CHOCHEOCYG",
+        "key_score": -4.9985
+      }
+    ]
+  },
+  "VarBeaufort": {
+    "ks_ene": "ZPBYXYCCUYQAB",
+    "ks_bc": "OGCQPUQMJNA",
+    "bean": {
+      "eq_pass": [
+        [
+          27,
+          65
+        ]
+      ],
+      "eq_fail": [],
+      "ineq_pass": [
+        [
+          21,
+          22
+        ],
+        [
+          21,
+          24
+        ],
+        [
+          21,
+          25
+        ],
+        [
+          21,
+          26
+        ],
+        [
+          21,
+          27
+        ],
+        [
+          21,
+          28
+        ],
+        [
+          21,
+          29
+        ],
+        [
+          21,
+          30
+        ],
+        [
+          21,
+          31
+        ],
+        [
+          21,
+          32
+        ],
+        [
+          21,
+          33
+        ],
+        [
+          21,
+          63
+        ],
+        [
+          21,
+          64
+        ],
+        [
+          21,
+          65
+        ],
+        [
+          21,
+          66
+        ],
+        [
+          21,
+          67
+        ],
+        [
+          21,
+          68
+        ],
+        [
+          21,
+          69
+        ],
+        [
+          21,
+          70
+        ],
+        [
+          21,
+          71
+        ],
+        [
+          21,
+          72
+        ],
+        [
+          21,
+          73
+        ],
+        [
+          22,
+          23
+        ],
+        [
+          22,
+          24
+        ],
+        [
+          22,
+          25
+        ],
+        [
+          22,
+          26
+        ],
+        [
+          22,
+          27
+        ],
+        [
+          22,
+          28
+        ],
+        [
+          22,
+          29
+        ],
+        [
+          22,
+          30
+        ],
+        [
+          22,
+          31
+        ],
+        [
+          22,
+          32
+        ],
+        [
+          22,
+          63
+        ],
+        [
+          22,
+          64
+        ],
+        [
+          22,
+          65
+        ],
+        [
+          22,
+          66
+        ],
+        [
+          22,
+          68
+        ],
+        [
+          22,
+          69
+        ],
+        [
+          22,
+          70
+        ],
+        [
+          22,
+          71
+        ],
+        [
+          22,
+          72
+        ],
+        [
+          22,
+          73
+        ],
+        [
+          23,
+          24
+        ],
+        [
+          23,
+          25
+        ],
+        [
+          23,
+          26
+        ],
+        [
+          23,
+          27
+        ],
+        [
+          23,
+          28
+        ],
+        [
+          23,
+          29
+        ],
+        [
+          23,
+          30
+        ],
+        [
+          23,
+          31
+        ],
+        [
+          23,
+          32
+        ],
+        [
+          23,
+          63
+        ],
+        [
+          23,
+          64
+        ],
+        [
+          23,
+          65
+        ],
+        [
+          23,
+          66
+        ],
+        [
+          23,
+          67
+        ],
+        [
+          23,
+          68
+        ],
+        [
+          23,
+          69
+        ],
+        [
+          23,
+          70
+        ],
+        [
+          23,
+          71
+        ],
+        [
+          23,
+          72
+        ],
+        [
+          23,
+          73
+        ],
+        [
+          24,
+          25
+        ],
+        [
+          24,
+          27
+        ],
+        [
+          24,
+          28
+        ],
+        [
+          24,
+          29
+        ],
+        [
+          24,
+          31
+        ],
+        [
+          24,
+          32
+        ],
+        [
+          24,
+          33
+        ],
+        [
+          24,
+          64
+        ],
+        [
+          24,
+          65
+        ],
+        [
+          24,
+          66
+        ],
+        [
+          24,
+          67
+        ],
+        [
+          24,
+          68
+        ],
+        [
+          24,
+          70
+        ],
+        [
+          24,
+          71
+        ],
+        [
+          24,
+          72
+        ],
+        [
+          24,
+          73
+        ],
+        [
+          25,
+          26
+        ],
+        [
+          25,
+          27
+        ],
+        [
+          25,
+          28
+        ],
+        [
+          25,
+          29
+        ],
+        [
+          25,
+          30
+        ],
+        [
+          25,
+          31
+        ],
+        [
+          25,
+          32
+        ],
+        [
+          25,
+          33
+        ],
+        [
+          25,
+          63
+        ],
+        [
+          25,
+          64
+        ],
+        [
+          25,
+          65
+        ],
+        [
+          25,
+          66
+        ],
+        [
+          25,
+          67
+        ],
+        [
+          25,
+          68
+        ],
+        [
+          25,
+          69
+        ],
+        [
+          25,
+          70
+        ],
+        [
+          25,
+          71
+        ],
+        [
+          25,
+          72
+        ],
+        [
+          25,
+          73
+        ],
+        [
+          26,
+          27
+        ],
+        [
+          26,
+          28
+        ],
+        [
+          26,
+          29
+        ],
+        [
+          26,
+          31
+        ],
+        [
+          26,
+          32
+        ],
+        [
+          26,
+          33
+        ],
+        [
+          26,
+          63
+        ],
+        [
+          26,
+          64
+        ],
+        [
+          26,
+          65
+        ],
+        [
+          26,
+          66
+        ],
+        [
+          26,
+          67
+        ],
+        [
+          26,
+          68
+        ],
+        [
+          26,
+          69
+        ],
+        [
+          26,
+          70
+        ],
+        [
+          26,
+          71
+        ],
+        [
+          26,
+          72
+        ],
+        [
+          26,
+          73
+        ],
+        [
+          27,
+          29
+        ],
+        [
+          27,
+          30
+        ],
+        [
+          27,
+          31
+        ],
+        [
+          27,
+          32
+        ],
+        [
+          27,
+          33
+        ],
+        [
+          27,
+          63
+        ],
+        [
+          27,
+          64
+        ],
+        [
+          27,
+          67
+        ],
+        [
+          27,
+          69
+        ],
+        [
+          27,
+          70
+        ],
+        [
+          27,
+          71
+        ],
+        [
+          27,
+          72
+        ],
+        [
+          27,
+          73
+        ],
+        [
+          28,
+          29
+        ],
+        [
+          28,
+          33
+        ],
+        [
+          28,
+          63
+        ],
+        [
+          28,
+          64
+        ],
+        [
+          28,
+          66
+        ],
+        [
+          28,
+          67
+        ],
+        [
+          28,
+          68
+        ],
+        [
+          28,
+          69
+        ],
+        [
+          28,
+          71
+        ],
+        [
+          28,
+          72
+        ],
+        [
+          28,
+          73
+        ],
+        [
+          29,
+          30
+        ],
+        [
+          29,
+          31
+        ],
+        [
+          29,
+          32
+        ],
+        [
+          29,
+          33
+        ],
+        [
+          29,
+          63
+        ],
+        [
+          29,
+          64
+        ],
+        [
+          29,
+          65
+        ],
+        [
+          29,
+          66
+        ],
+        [
+          29,
+          67
+        ],
+        [
+          29,
+          69
+        ],
+        [
+          29,
+          70
+        ],
+        [
+          29,
+          71
+        ],
+        [
+          29,
+          72
+        ],
+        [
+          30,
+          33
+        ],
+        [
+          30,
+          63
+        ],
+        [
+          30,
+          64
+        ],
+        [
+          30,
+          65
+        ],
+        [
+          30,
+          66
+        ],
+        [
+          30,
+          67
+        ],
+        [
+          30,
+          68
+        ],
+        [
+          30,
+          69
+        ],
+        [
+          30,
+          71
+        ],
+        [
+          30,
+          72
+        ],
+        [
+          30,
+          73
+        ],
+        [
+          31,
+          33
+        ],
+        [
+          31,
+          63
+        ],
+        [
+          31,
+          64
+        ],
+        [
+          31,
+          65
+        ],
+        [
+          31,
+          67
+        ],
+        [
+          31,
+          68
+        ],
+        [
+          31,
+          71
+        ],
+        [
+          31,
+          72
+        ],
+        [
+          31,
+          73
+        ],
+        [
+          32,
+          33
+        ],
+        [
+          32,
+          63
+        ],
+        [
+          32,
+          64
+        ],
+        [
+          32,
+          65
+        ],
+        [
+          32,
+          66
+        ],
+        [
+          32,
+          67
+        ],
+        [
+          32,
+          68
+        ],
+        [
+          32,
+          69
+        ],
+        [
+          32,
+          71
+        ],
+        [
+          32,
+          72
+        ],
+        [
+          33,
+          63
+        ],
+        [
+          33,
+          64
+        ],
+        [
+          33,
+          65
+        ],
+        [
+          33,
+          66
+        ],
+        [
+          33,
+          67
+        ],
+        [
+          33,
+          68
+        ],
+        [
+          33,
+          69
+        ],
+        [
+          33,
+          70
+        ],
+        [
+          33,
+          71
+        ],
+        [
+          33,
+          72
+        ],
+        [
+          33,
+          73
+        ],
+        [
+          63,
+          64
+        ],
+        [
+          63,
+          65
+        ],
+        [
+          63,
+          66
+        ],
+        [
+          63,
+          67
+        ],
+        [
+          63,
+          68
+        ],
+        [
+          63,
+          70
+        ],
+        [
+          63,
+          71
+        ],
+        [
+          63,
+          72
+        ],
+        [
+          63,
+          73
+        ],
+        [
+          64,
+          65
+        ],
+        [
+          64,
+          66
+        ],
+        [
+          64,
+          67
+        ],
+        [
+          64,
+          68
+        ],
+        [
+          64,
+          69
+        ],
+        [
+          64,
+          70
+        ],
+        [
+          64,
+          71
+        ],
+        [
+          64,
+          72
+        ],
+        [
+          64,
+          73
+        ],
+        [
+          65,
+          67
+        ],
+        [
+          65,
+          69
+        ],
+        [
+          65,
+          70
+        ],
+        [
+          65,
+          71
+        ],
+        [
+          65,
+          72
+        ],
+        [
+          65,
+          73
+        ],
+        [
+          66,
+          67
+        ],
+        [
+          66,
+          70
+        ],
+        [
+          66,
+          71
+        ],
+        [
+          66,
+          72
+        ],
+        [
+          66,
+          73
+        ],
+        [
+          67,
+          68
+        ],
+        [
+          67,
+          69
+        ],
+        [
+          67,
+          70
+        ],
+        [
+          67,
+          71
+        ],
+        [
+          67,
+          72
+        ],
+        [
+          67,
+          73
+        ],
+        [
+          68,
+          69
+        ],
+        [
+          68,
+          70
+        ],
+        [
+          68,
+          71
+        ],
+        [
+          68,
+          72
+        ],
+        [
+          68,
+          73
+        ],
+        [
+          69,
+          70
+        ],
+        [
+          69,
+          71
+        ],
+        [
+          69,
+          72
+        ],
+        [
+          69,
+          73
+        ],
+        [
+          70,
+          71
+        ],
+        [
+          70,
+          72
+        ],
+        [
+          70,
+          73
+        ],
+        [
+          71,
+          72
+        ],
+        [
+          71,
+          73
+        ],
+        [
+          72,
+          73
+        ]
+      ],
+      "ineq_fail": [],
+      "verdict": "PASS"
+    },
+    "consistent_periods": [],
+    "diffs_ene": [
+      16,
+      12,
+      23,
+      25,
+      1,
+      4,
+      0,
+      18,
+      4,
+      18,
+      10,
+      1
+    ],
+    "diffs_bc": [
+      18,
+      22,
+      14,
+      25,
+      5,
+      22,
+      22,
+      23,
+      4,
+      13
+    ],
+    "gronsfeld_compat": false,
+    "beam_after_key_top5": [
+      {
+        "score": -3.0798,
+        "pt": "PORXZQBXPDBOYHHNIIRKVIF",
+        "key": "TIONATIONATIONATIONATIO"
+      },
+      {
+        "score": -3.0863,
+        "pt": "PORXZQBXPDBOYHHNIIRKNLP",
+        "key": "TIONATIONATIONATIONALLY"
+      },
+      {
+        "score": -3.0914,
+        "pt": "PORXZQBXPDBOYHHNIIRKNIJ",
+        "key": "TIONATIONATIONATIONALIS"
+      },
+      {
+        "score": -3.0997,
+        "pt": "PORXZQBXPDBOYHHNIIRKNIQ",
+        "key": "TIONATIONATIONATIONALIZ"
+      },
+      {
+        "score": -3.101,
+        "pt": "PORXZQBXPDBOYHHNIIRSPGJ",
+        "key": "TIONATIONATIONATIONINGS"
+      }
+    ],
+    "beam_after_pt_top5": [
+      {
+        "score": -3.0979,
+        "pt": "ACTIONATIONATIONATIONAL",
+        "key": "EWQYPQHKGLFUJOHTAZEELAU"
+      },
+      {
+        "score": -3.1256,
+        "pt": "ACTIONATIONATIONATIONST",
+        "key": "EWQYPQHKGLFUJOHTAZEELSC"
+      },
+      {
+        "score": -3.1277,
+        "pt": "ACTIONATIONATIONATIONSI",
+        "key": "EWQYPQHKGLFUJOHTAZEELSR"
+      },
+      {
+        "score": -3.1282,
+        "pt": "ACTIONATIONATIONATIONIS",
+        "key": "EWQYPQHKGLFUJOHTAZEELIB"
+      },
+      {
+        "score": -3.1289,
+        "pt": "ACTIONATIONATIONATIONIN",
+        "key": "EWQYPQHKGLFUJOHTAZEELIW"
+      }
+    ],
+    "beam_before_pt_top5": [
+      {
+        "score": -3.0673,
+        "pt": "ACTIONATIONATIONATION",
+        "key": "MBJRUZDFCHTPSQACSOHNR"
+      },
+      {
+        "score": -3.127,
+        "pt": "ACTIONATIONATIONATING",
+        "key": "MBJRUZDFCHTPSQACSOHMK"
+      },
+      {
+        "score": -3.1294,
+        "pt": "ACTIONATIONATIONALING",
+        "key": "MBJRUZDFCHTPSQACSGHMK"
+      },
+      {
+        "score": -3.1312,
+        "pt": "ACTIONATIONATIONICALL",
+        "key": "MBJRUZDFCHTPSQACAXZKP"
+      },
+      {
+        "score": -3.1373,
+        "pt": "ACTIONATIONATIONATIVE",
+        "key": "MBJRUZDFCHTPSQACSOHUI"
+      }
+    ],
+    "beam_between_pt_top5": [
+      {
+        "score": -3.1227,
+        "pt": "ACTIONATIONATIONATIONATIONALI",
+        "key": "MJXPYVRDQWJQUJSNHKYDTXLISFNGH"
+      },
+      {
+        "score": -3.1258,
+        "pt": "ACTIONATIONICATIONATIONATIONA",
+        "key": "MJXPYVRDQWJYDBXIVEQIOLFAXABIZ"
+      },
+      {
+        "score": -3.1287,
+        "pt": "ACTIONATIONICATIONATIONATIONS",
+        "key": "MJXPYVRDQWJYDBXIVEQIOLFAXABIR"
+      },
+      {
+        "score": -3.1336,
+        "pt": "ACTIONATIONATIONATIONATIONESS",
+        "key": "MJXPYVRDQWJQUJSNHKYDTXLISFRNR"
+      },
+      {
+        "score": -3.1383,
+        "pt": "ACTIONATIONATIONATIONATIONALL",
+        "key": "MJXPYVRDQWJQUJSNHKYDTXLISFNGK"
+      }
+    ],
+    "phrase_top10": [
+      {
+        "placement_pos": 74,
+        "phrase": "ATFOUR",
+        "key_fragment": "ENCEVU",
+        "key_score": -4.9242
+      },
+      {
+        "placement_pos": 74,
+        "phrase": "ATFIVE",
+        "key_fragment": "ENCYWH",
+        "key_score": -4.9854
+      },
+      {
+        "placement_pos": 74,
+        "phrase": "DISCOVERED",
+        "key_fragment": "HCPSPYLICA",
+        "key_score": -5.5467
+      },
+      {
+        "placement_pos": 74,
+        "phrase": "ATNOON",
+        "key_fragment": "ENKEPQ",
+        "key_score": -5.9391
+      },
+      {
+        "placement_pos": 74,
+        "phrase": "BERLIN",
+        "key_fragment": "FYOBJQ",
+        "key_score": -6.0052
+      },
+      {
+        "placement_pos": 74,
+        "phrase": "ISDOWN",
+        "key_fragment": "MMAEXQ",
+        "key_score": -6.0131
+      },
+      {
+        "placement_pos": 74,
+        "phrase": "REMINDER",
+        "key_fragment": "VYJYOGLI",
+        "key_score": -6.1167
+      },
+      {
+        "placement_pos": 74,
+        "phrase": "THEWALL",
+        "key_fragment": "XBBMBOS",
+        "key_score": -6.1498
+      },
+      {
+        "placement_pos": 74,
+        "phrase": "NOON",
+        "key_fragment": "RILD",
+        "key_score": -6.155
+      },
+      {
+        "placement_pos": 74,
+        "phrase": "INVISIBLY",
+        "key_fragment": "MHSYTLICW",
+        "key_score": -6.2026
+      }
+    ],
+    "after_bc_sweep_top10": [
+      {
+        "placement_pos": 48,
+        "phrase": "NOON",
+        "key_fragment": "ROVE",
+        "key_score": -3.9601
+      },
+      {
+        "placement_pos": 15,
+        "phrase": "ATFOUR",
+        "key_fragment": "PLANTV",
+        "key_score": -4.211
+      },
+      {
+        "placement_pos": 76,
+        "phrase": "ISDOWN",
+        "key_fragment": "FIERDE",
+        "key_score": -4.2832
+      },
+      {
+        "placement_pos": 47,
+        "phrase": "REMINDS",
+        "key_fragment": "SIMPETH",
+        "key_score": -4.3419
+      },
+      {
+        "placement_pos": 13,
+        "phrase": "WALL",
+        "key_fragment": "EMAD",
+        "key_score": -4.3769
+      },
+      {
+        "placement_pos": 4,
+        "phrase": "SHOWS",
+        "key_fragment": "YTRIM",
+        "key_score": -4.4281
+      },
+      {
+        "placement_pos": 42,
+        "phrase": "ALMOST",
+        "key_fragment": "ITIETU",
+        "key_score": -4.5921
+      },
+      {
+        "placement_pos": 13,
+        "phrase": "ISATFOUR",
+        "key_fragment": "QEPLANTV",
+        "key_score": -4.6516
+      },
+      {
+        "placement_pos": 37,
+        "phrase": "MIDNIGHT",
+        "key_fragment": "TSLESOPP",
+        "key_score": -4.6673
+      },
+      {
+        "placement_pos": 47,
+        "phrase": "REMINDER",
+        "key_fragment": "SIMPETTX",
+        "key_score": -4.7614
+      }
+    ]
+  }
+}

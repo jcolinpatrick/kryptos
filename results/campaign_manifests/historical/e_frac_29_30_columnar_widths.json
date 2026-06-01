@@ -1,0 +1,28 @@
+{
+  "manifest_version": "1.0",
+  "campaign_id": "e_frac_29_30_columnar_widths",
+  "campaign_name": "Columnar widths 6/8/9 exhaustive, 10-15 sampled empirical null",
+  "completed_at": "2026-04-11T00:00:00+00:00",
+  "git_commit": "",
+  "verdict": "bounded_null",
+  "verdict_summary": "E-FRAC-29/30: columnar widths 6, 8, 9 exhaustively enumerated plus widths 10-15 sampled. All runs report max crib score <=14/24, underperforming the random expectation of ~14/24. No positive signal in any tested configuration within scope. Empirically saturated within the specific parameter ranges tested.",
+  "evidence_pointer": "docs/elimination_tiers.md (Tier 2 row, E-FRAC-29/30 columnar widths)",
+  "family_updates": {
+    "columnar_single": {
+      "tier": 2,
+      "evidence": "E-FRAC-29/30: widths 6/8/9 exhaustive + 10-15 sampled, max <=14/24, no positive signal in tested configurations."
+    }
+  },
+  "scope_caveats": [
+    "H1 conditional: assumes direct positional crib mapping on the carved 97-char CT under an additive cipher class. Mechanisms that break H1 (outer transposition before the analyzed step, position-dependent selectors, physical-overlay remaps, non-additive ciphers) are NOT eliminated by this result."
+  ],
+  "scope_does_not_cover": [
+    "Columnar at widths >15.",
+    "Columnar as inner layer under an outer transformation."
+  ],
+  "total_profiles_evaluated": 0,
+  "joint_anomaly_successes": 0,
+  "populations_tested": [],
+  "variants_tested": [],
+  "notes": "Historical backfill from E-FRAC-29/30."
+}

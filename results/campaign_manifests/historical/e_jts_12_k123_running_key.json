@@ -1,0 +1,28 @@
+{
+  "manifest_version": "1.0",
+  "campaign_id": "e_jts_12_k123_running_key",
+  "campaign_name": "K1/K2/K3 plaintext as running key for K4 empirical null",
+  "completed_at": "2026-04-11T00:00:00+00:00",
+  "git_commit": "",
+  "verdict": "bounded_null",
+  "verdict_summary": "E-JTS-12: K1/K2/K3 plaintext as running key for K4 enumerated across 694,000 transpositions. Zero 24/24 matches. No positive signal in the tested transposition space within scope.",
+  "evidence_pointer": "docs/elimination_tiers.md (Tier 2 row, E-JTS-12 K1/K2/K3 running-key)",
+  "family_updates": {
+    "running_key": {
+      "tier": 3,
+      "evidence": "E-JTS-12: K1/K2/K3 PT running-key x 694K transpositions, 0 24/24 matches."
+    }
+  },
+  "scope_caveats": [
+    "H1 conditional: assumes direct positional crib mapping on the carved 97-char CT under an additive cipher class. Mechanisms that break H1 (outer transposition before the analyzed step, position-dependent selectors, physical-overlay remaps, non-additive ciphers) are NOT eliminated by this result."
+  ],
+  "scope_does_not_cover": [
+    "K1/K2/K3 PT used with a non-columnar transposition outside the tested set.",
+    "K1/K2/K3 PT combined with a monoalphabetic preprocessing (E-FRAC-54 underdetermined)."
+  ],
+  "total_profiles_evaluated": 0,
+  "joint_anomaly_successes": 0,
+  "populations_tested": [],
+  "variants_tested": [],
+  "notes": "Historical backfill from E-JTS-12. 694,000 transpositions, 0 24/24 matches."
+}

@@ -1,0 +1,1108 @@
+{
+  "experiment": "e_stego_oracle_01",
+  "timestamp": "2026-05-22T14:45:31",
+  "total_masks": 11440,
+  "elapsed_seconds": 10.1,
+  "top_50": [
+    {
+      "varying_7": [
+        38,
+        40,
+        41,
+        44,
+        56,
+        88,
+        94
+      ],
+      "best_score": 0,
+      "best_period": 1,
+      "ct73_ic": 0.03957,
+      "details": {
+        "period": 1,
+        "matches": 5,
+        "conflicts": 19,
+        "bean_eq": true,
+        "bean_ineq_violations": 242,
+        "bean_ineq_total": 242
+      }
+    },
+    {
+      "varying_7": [
+        38,
+        40,
+        44,
+        55,
+        56,
+        88,
+        94
+      ],
+      "best_score": 0,
+      "best_period": 1,
+      "ct73_ic": 0.03957,
+      "details": {
+        "period": 1,
+        "matches": 5,
+        "conflicts": 19,
+        "bean_eq": true,
+        "bean_ineq_violations": 242,
+        "bean_ineq_total": 242
+      }
+    },
+    {
+      "varying_7": [
+        38,
+        41,
+        44,
+        55,
+        56,
+        88,
+        94
+      ],
+      "best_score": 0,
+      "best_period": 1,
+      "ct73_ic": 0.03957,
+      "details": {
+        "period": 1,
+        "matches": 5,
+        "conflicts": 19,
+        "bean_eq": true,
+        "bean_ineq_violations": 242,
+        "bean_ineq_total": 242
+      }
+    },
+    {
+      "varying_7": [
+        40,
+        41,
+        44,
+        55,
+        56,
+        88,
+        94
+      ],
+      "best_score": 0,
+      "best_period": 1,
+      "ct73_ic": 0.03957,
+      "details": {
+        "period": 1,
+        "matches": 5,
+        "conflicts": 19,
+        "bean_eq": true,
+        "bean_ineq_violations": 242,
+        "bean_ineq_total": 242
+      }
+    },
+    {
+      "varying_7": [
+        40,
+        44,
+        55,
+        56,
+        88,
+        94,
+        95
+      ],
+      "best_score": 0,
+      "best_period": 1,
+      "ct73_ic": 0.03957,
+      "details": {
+        "period": 1,
+        "matches": 5,
+        "conflicts": 19,
+        "bean_eq": true,
+        "bean_ineq_violations": 242,
+        "bean_ineq_total": 242
+      }
+    },
+    {
+      "varying_7": [
+        40,
+        44,
+        55,
+        56,
+        88,
+        94,
+        96
+      ],
+      "best_score": 0,
+      "best_period": 1,
+      "ct73_ic": 0.03957,
+      "details": {
+        "period": 1,
+        "matches": 5,
+        "conflicts": 19,
+        "bean_eq": true,
+        "bean_ineq_violations": 242,
+        "bean_ineq_total": 242
+      }
+    },
+    {
+      "varying_7": [
+        38,
+        40,
+        41,
+        44,
+        55,
+        56,
+        88
+      ],
+      "best_score": 0,
+      "best_period": 1,
+      "ct73_ic": 0.03919,
+      "details": {
+        "period": 1,
+        "matches": 5,
+        "conflicts": 19,
+        "bean_eq": true,
+        "bean_ineq_violations": 242,
+        "bean_ineq_total": 242
+      }
+    },
+    {
+      "varying_7": [
+        38,
+        40,
+        41,
+        44,
+        55,
+        56,
+        94
+      ],
+      "best_score": 0,
+      "best_period": 1,
+      "ct73_ic": 0.03919,
+      "details": {
+        "period": 1,
+        "matches": 5,
+        "conflicts": 19,
+        "bean_eq": true,
+        "bean_ineq_violations": 242,
+        "bean_ineq_total": 242
+      }
+    },
+    {
+      "varying_7": [
+        38,
+        40,
+        41,
+        44,
+        55,
+        88,
+        94
+      ],
+      "best_score": 0,
+      "best_period": 1,
+      "ct73_ic": 0.03919,
+      "details": {
+        "period": 1,
+        "matches": 5,
+        "conflicts": 19,
+        "bean_eq": true,
+        "bean_ineq_violations": 242,
+        "bean_ineq_total": 242
+      }
+    },
+    {
+      "varying_7": [
+        38,
+        40,
+        41,
+        55,
+        56,
+        88,
+        94
+      ],
+      "best_score": 0,
+      "best_period": 1,
+      "ct73_ic": 0.03919,
+      "details": {
+        "period": 1,
+        "matches": 5,
+        "conflicts": 19,
+        "bean_eq": true,
+        "bean_ineq_violations": 242,
+        "bean_ineq_total": 242
+      }
+    },
+    {
+      "varying_7": [
+        38,
+        40,
+        44,
+        56,
+        88,
+        94,
+        95
+      ],
+      "best_score": 0,
+      "best_period": 1,
+      "ct73_ic": 0.03919,
+      "details": {
+        "period": 1,
+        "matches": 5,
+        "conflicts": 19,
+        "bean_eq": true,
+        "bean_ineq_violations": 242,
+        "bean_ineq_total": 242
+      }
+    },
+    {
+      "varying_7": [
+        38,
+        40,
+        44,
+        56,
+        88,
+        94,
+        96
+      ],
+      "best_score": 0,
+      "best_period": 1,
+      "ct73_ic": 0.03919,
+      "details": {
+        "period": 1,
+        "matches": 5,
+        "conflicts": 19,
+        "bean_eq": true,
+        "bean_ineq_violations": 242,
+        "bean_ineq_total": 242
+      }
+    },
+    {
+      "varying_7": [
+        38,
+        41,
+        44,
+        56,
+        88,
+        94,
+        95
+      ],
+      "best_score": 0,
+      "best_period": 1,
+      "ct73_ic": 0.03919,
+      "details": {
+        "period": 1,
+        "matches": 5,
+        "conflicts": 19,
+        "bean_eq": true,
+        "bean_ineq_violations": 242,
+        "bean_ineq_total": 242
+      }
+    },
+    {
+      "varying_7": [
+        38,
+        41,
+        44,
+        56,
+        88,
+        94,
+        96
+      ],
+      "best_score": 0,
+      "best_period": 1,
+      "ct73_ic": 0.03919,
+      "details": {
+        "period": 1,
+        "matches": 5,
+        "conflicts": 19,
+        "bean_eq": true,
+        "bean_ineq_violations": 242,
+        "bean_ineq_total": 242
+      }
+    },
+    {
+      "varying_7": [
+        38,
+        44,
+        55,
+        56,
+        88,
+        94,
+        95
+      ],
+      "best_score": 0,
+      "best_period": 1,
+      "ct73_ic": 0.03919,
+      "details": {
+        "period": 1,
+        "matches": 5,
+        "conflicts": 19,
+        "bean_eq": true,
+        "bean_ineq_violations": 242,
+        "bean_ineq_total": 242
+      }
+    },
+    {
+      "varying_7": [
+        38,
+        44,
+        55,
+        56,
+        88,
+        94,
+        96
+      ],
+      "best_score": 0,
+      "best_period": 1,
+      "ct73_ic": 0.03919,
+      "details": {
+        "period": 1,
+        "matches": 5,
+        "conflicts": 19,
+        "bean_eq": true,
+        "bean_ineq_violations": 242,
+        "bean_ineq_total": 242
+      }
+    },
+    {
+      "varying_7": [
+        40,
+        41,
+        44,
+        56,
+        88,
+        94,
+        95
+      ],
+      "best_score": 0,
+      "best_period": 1,
+      "ct73_ic": 0.03919,
+      "details": {
+        "period": 1,
+        "matches": 5,
+        "conflicts": 19,
+        "bean_eq": true,
+        "bean_ineq_violations": 242,
+        "bean_ineq_total": 242
+      }
+    },
+    {
+      "varying_7": [
+        40,
+        41,
+        44,
+        56,
+        88,
+        94,
+        96
+      ],
+      "best_score": 0,
+      "best_period": 1,
+      "ct73_ic": 0.03919,
+      "details": {
+        "period": 1,
+        "matches": 5,
+        "conflicts": 19,
+        "bean_eq": true,
+        "bean_ineq_violations": 242,
+        "bean_ineq_total": 242
+      }
+    },
+    {
+      "varying_7": [
+        40,
+        44,
+        56,
+        88,
+        94,
+        95,
+        96
+      ],
+      "best_score": 0,
+      "best_period": 1,
+      "ct73_ic": 0.03919,
+      "details": {
+        "period": 1,
+        "matches": 5,
+        "conflicts": 19,
+        "bean_eq": true,
+        "bean_ineq_violations": 242,
+        "bean_ineq_total": 242
+      }
+    },
+    {
+      "varying_7": [
+        41,
+        44,
+        55,
+        56,
+        88,
+        94,
+        95
+      ],
+      "best_score": 0,
+      "best_period": 1,
+      "ct73_ic": 0.03919,
+      "details": {
+        "period": 1,
+        "matches": 5,
+        "conflicts": 19,
+        "bean_eq": true,
+        "bean_ineq_violations": 242,
+        "bean_ineq_total": 242
+      }
+    },
+    {
+      "varying_7": [
+        41,
+        44,
+        55,
+        56,
+        88,
+        94,
+        96
+      ],
+      "best_score": 0,
+      "best_period": 1,
+      "ct73_ic": 0.03919,
+      "details": {
+        "period": 1,
+        "matches": 5,
+        "conflicts": 19,
+        "bean_eq": true,
+        "bean_ineq_violations": 242,
+        "bean_ineq_total": 242
+      }
+    },
+    {
+      "varying_7": [
+        44,
+        55,
+        56,
+        88,
+        94,
+        95,
+        96
+      ],
+      "best_score": 0,
+      "best_period": 1,
+      "ct73_ic": 0.03919,
+      "details": {
+        "period": 1,
+        "matches": 5,
+        "conflicts": 19,
+        "bean_eq": true,
+        "bean_ineq_violations": 242,
+        "bean_ineq_total": 242
+      }
+    },
+    {
+      "varying_7": [
+        38,
+        40,
+        41,
+        44,
+        56,
+        88,
+        95
+      ],
+      "best_score": 0,
+      "best_period": 1,
+      "ct73_ic": 0.03881,
+      "details": {
+        "period": 1,
+        "matches": 5,
+        "conflicts": 19,
+        "bean_eq": true,
+        "bean_ineq_violations": 242,
+        "bean_ineq_total": 242
+      }
+    },
+    {
+      "varying_7": [
+        38,
+        40,
+        41,
+        44,
+        56,
+        88,
+        96
+      ],
+      "best_score": 0,
+      "best_period": 1,
+      "ct73_ic": 0.03881,
+      "details": {
+        "period": 1,
+        "matches": 5,
+        "conflicts": 19,
+        "bean_eq": true,
+        "bean_ineq_violations": 242,
+        "bean_ineq_total": 242
+      }
+    },
+    {
+      "varying_7": [
+        38,
+        40,
+        41,
+        44,
+        56,
+        94,
+        95
+      ],
+      "best_score": 0,
+      "best_period": 1,
+      "ct73_ic": 0.03881,
+      "details": {
+        "period": 1,
+        "matches": 5,
+        "conflicts": 19,
+        "bean_eq": true,
+        "bean_ineq_violations": 242,
+        "bean_ineq_total": 242
+      }
+    },
+    {
+      "varying_7": [
+        38,
+        40,
+        41,
+        44,
+        56,
+        94,
+        96
+      ],
+      "best_score": 0,
+      "best_period": 1,
+      "ct73_ic": 0.03881,
+      "details": {
+        "period": 1,
+        "matches": 5,
+        "conflicts": 19,
+        "bean_eq": true,
+        "bean_ineq_violations": 242,
+        "bean_ineq_total": 242
+      }
+    },
+    {
+      "varying_7": [
+        38,
+        40,
+        41,
+        44,
+        88,
+        94,
+        95
+      ],
+      "best_score": 0,
+      "best_period": 1,
+      "ct73_ic": 0.03881,
+      "details": {
+        "period": 1,
+        "matches": 5,
+        "conflicts": 19,
+        "bean_eq": true,
+        "bean_ineq_violations": 242,
+        "bean_ineq_total": 242
+      }
+    },
+    {
+      "varying_7": [
+        38,
+        40,
+        41,
+        44,
+        88,
+        94,
+        96
+      ],
+      "best_score": 0,
+      "best_period": 1,
+      "ct73_ic": 0.03881,
+      "details": {
+        "period": 1,
+        "matches": 5,
+        "conflicts": 19,
+        "bean_eq": true,
+        "bean_ineq_violations": 242,
+        "bean_ineq_total": 242
+      }
+    },
+    {
+      "varying_7": [
+        38,
+        40,
+        41,
+        56,
+        88,
+        94,
+        95
+      ],
+      "best_score": 0,
+      "best_period": 1,
+      "ct73_ic": 0.03881,
+      "details": {
+        "period": 1,
+        "matches": 5,
+        "conflicts": 19,
+        "bean_eq": true,
+        "bean_ineq_violations": 242,
+        "bean_ineq_total": 242
+      }
+    },
+    {
+      "varying_7": [
+        38,
+        40,
+        41,
+        56,
+        88,
+        94,
+        96
+      ],
+      "best_score": 0,
+      "best_period": 1,
+      "ct73_ic": 0.03881,
+      "details": {
+        "period": 1,
+        "matches": 5,
+        "conflicts": 19,
+        "bean_eq": true,
+        "bean_ineq_violations": 242,
+        "bean_ineq_total": 242
+      }
+    },
+    {
+      "varying_7": [
+        38,
+        40,
+        44,
+        55,
+        56,
+        88,
+        95
+      ],
+      "best_score": 0,
+      "best_period": 1,
+      "ct73_ic": 0.03881,
+      "details": {
+        "period": 1,
+        "matches": 5,
+        "conflicts": 19,
+        "bean_eq": true,
+        "bean_ineq_violations": 242,
+        "bean_ineq_total": 242
+      }
+    },
+    {
+      "varying_7": [
+        38,
+        40,
+        44,
+        55,
+        56,
+        88,
+        96
+      ],
+      "best_score": 0,
+      "best_period": 1,
+      "ct73_ic": 0.03881,
+      "details": {
+        "period": 1,
+        "matches": 5,
+        "conflicts": 19,
+        "bean_eq": true,
+        "bean_ineq_violations": 242,
+        "bean_ineq_total": 242
+      }
+    },
+    {
+      "varying_7": [
+        38,
+        40,
+        44,
+        55,
+        56,
+        94,
+        95
+      ],
+      "best_score": 0,
+      "best_period": 1,
+      "ct73_ic": 0.03881,
+      "details": {
+        "period": 1,
+        "matches": 5,
+        "conflicts": 19,
+        "bean_eq": true,
+        "bean_ineq_violations": 242,
+        "bean_ineq_total": 242
+      }
+    },
+    {
+      "varying_7": [
+        38,
+        40,
+        44,
+        55,
+        56,
+        94,
+        96
+      ],
+      "best_score": 0,
+      "best_period": 1,
+      "ct73_ic": 0.03881,
+      "details": {
+        "period": 1,
+        "matches": 5,
+        "conflicts": 19,
+        "bean_eq": true,
+        "bean_ineq_violations": 242,
+        "bean_ineq_total": 242
+      }
+    },
+    {
+      "varying_7": [
+        38,
+        40,
+        44,
+        55,
+        88,
+        94,
+        95
+      ],
+      "best_score": 0,
+      "best_period": 1,
+      "ct73_ic": 0.03881,
+      "details": {
+        "period": 1,
+        "matches": 5,
+        "conflicts": 19,
+        "bean_eq": true,
+        "bean_ineq_violations": 242,
+        "bean_ineq_total": 242
+      }
+    },
+    {
+      "varying_7": [
+        38,
+        40,
+        44,
+        55,
+        88,
+        94,
+        96
+      ],
+      "best_score": 0,
+      "best_period": 1,
+      "ct73_ic": 0.03881,
+      "details": {
+        "period": 1,
+        "matches": 5,
+        "conflicts": 19,
+        "bean_eq": true,
+        "bean_ineq_violations": 242,
+        "bean_ineq_total": 242
+      }
+    },
+    {
+      "varying_7": [
+        38,
+        40,
+        55,
+        56,
+        88,
+        94,
+        95
+      ],
+      "best_score": 0,
+      "best_period": 1,
+      "ct73_ic": 0.03881,
+      "details": {
+        "period": 1,
+        "matches": 5,
+        "conflicts": 19,
+        "bean_eq": true,
+        "bean_ineq_violations": 242,
+        "bean_ineq_total": 242
+      }
+    },
+    {
+      "varying_7": [
+        38,
+        40,
+        55,
+        56,
+        88,
+        94,
+        96
+      ],
+      "best_score": 0,
+      "best_period": 1,
+      "ct73_ic": 0.03881,
+      "details": {
+        "period": 1,
+        "matches": 5,
+        "conflicts": 19,
+        "bean_eq": true,
+        "bean_ineq_violations": 242,
+        "bean_ineq_total": 242
+      }
+    },
+    {
+      "varying_7": [
+        38,
+        41,
+        44,
+        55,
+        56,
+        88,
+        95
+      ],
+      "best_score": 0,
+      "best_period": 1,
+      "ct73_ic": 0.03881,
+      "details": {
+        "period": 1,
+        "matches": 5,
+        "conflicts": 19,
+        "bean_eq": true,
+        "bean_ineq_violations": 242,
+        "bean_ineq_total": 242
+      }
+    },
+    {
+      "varying_7": [
+        38,
+        41,
+        44,
+        55,
+        56,
+        88,
+        96
+      ],
+      "best_score": 0,
+      "best_period": 1,
+      "ct73_ic": 0.03881,
+      "details": {
+        "period": 1,
+        "matches": 5,
+        "conflicts": 19,
+        "bean_eq": true,
+        "bean_ineq_violations": 242,
+        "bean_ineq_total": 242
+      }
+    },
+    {
+      "varying_7": [
+        38,
+        41,
+        44,
+        55,
+        56,
+        94,
+        95
+      ],
+      "best_score": 0,
+      "best_period": 1,
+      "ct73_ic": 0.03881,
+      "details": {
+        "period": 1,
+        "matches": 5,
+        "conflicts": 19,
+        "bean_eq": true,
+        "bean_ineq_violations": 242,
+        "bean_ineq_total": 242
+      }
+    },
+    {
+      "varying_7": [
+        38,
+        41,
+        44,
+        55,
+        56,
+        94,
+        96
+      ],
+      "best_score": 0,
+      "best_period": 1,
+      "ct73_ic": 0.03881,
+      "details": {
+        "period": 1,
+        "matches": 5,
+        "conflicts": 19,
+        "bean_eq": true,
+        "bean_ineq_violations": 242,
+        "bean_ineq_total": 242
+      }
+    },
+    {
+      "varying_7": [
+        38,
+        41,
+        44,
+        55,
+        88,
+        94,
+        95
+      ],
+      "best_score": 0,
+      "best_period": 1,
+      "ct73_ic": 0.03881,
+      "details": {
+        "period": 1,
+        "matches": 5,
+        "conflicts": 19,
+        "bean_eq": true,
+        "bean_ineq_violations": 242,
+        "bean_ineq_total": 242
+      }
+    },
+    {
+      "varying_7": [
+        38,
+        41,
+        44,
+        55,
+        88,
+        94,
+        96
+      ],
+      "best_score": 0,
+      "best_period": 1,
+      "ct73_ic": 0.03881,
+      "details": {
+        "period": 1,
+        "matches": 5,
+        "conflicts": 19,
+        "bean_eq": true,
+        "bean_ineq_violations": 242,
+        "bean_ineq_total": 242
+      }
+    },
+    {
+      "varying_7": [
+        38,
+        41,
+        55,
+        56,
+        88,
+        94,
+        95
+      ],
+      "best_score": 0,
+      "best_period": 1,
+      "ct73_ic": 0.03881,
+      "details": {
+        "period": 1,
+        "matches": 5,
+        "conflicts": 19,
+        "bean_eq": true,
+        "bean_ineq_violations": 242,
+        "bean_ineq_total": 242
+      }
+    },
+    {
+      "varying_7": [
+        38,
+        41,
+        55,
+        56,
+        88,
+        94,
+        96
+      ],
+      "best_score": 0,
+      "best_period": 1,
+      "ct73_ic": 0.03881,
+      "details": {
+        "period": 1,
+        "matches": 5,
+        "conflicts": 19,
+        "bean_eq": true,
+        "bean_ineq_violations": 242,
+        "bean_ineq_total": 242
+      }
+    },
+    {
+      "varying_7": [
+        38,
+        44,
+        56,
+        88,
+        94,
+        95,
+        96
+      ],
+      "best_score": 0,
+      "best_period": 1,
+      "ct73_ic": 0.03881,
+      "details": {
+        "period": 1,
+        "matches": 5,
+        "conflicts": 19,
+        "bean_eq": true,
+        "bean_ineq_violations": 242,
+        "bean_ineq_total": 242
+      }
+    },
+    {
+      "varying_7": [
+        39,
+        40,
+        44,
+        55,
+        56,
+        88,
+        94
+      ],
+      "best_score": 0,
+      "best_period": 1,
+      "ct73_ic": 0.03881,
+      "details": {
+        "period": 1,
+        "matches": 5,
+        "conflicts": 19,
+        "bean_eq": true,
+        "bean_ineq_violations": 242,
+        "bean_ineq_total": 242
+      }
+    },
+    {
+      "varying_7": [
+        40,
+        41,
+        44,
+        55,
+        56,
+        88,
+        95
+      ],
+      "best_score": 0,
+      "best_period": 1,
+      "ct73_ic": 0.03881,
+      "details": {
+        "period": 1,
+        "matches": 5,
+        "conflicts": 19,
+        "bean_eq": true,
+        "bean_ineq_violations": 242,
+        "bean_ineq_total": 242
+      }
+    },
+    {
+      "varying_7": [
+        40,
+        41,
+        44,
+        55,
+        56,
+        88,
+        96
+      ],
+      "best_score": 0,
+      "best_period": 1,
+      "ct73_ic": 0.03881,
+      "details": {
+        "period": 1,
+        "matches": 5,
+        "conflicts": 19,
+        "bean_eq": true,
+        "bean_ineq_violations": 242,
+        "bean_ineq_total": 242
+      }
+    }
+  ]
+}

@@ -1,0 +1,113 @@
+{
+  "chaocipher": {
+    "configs": 8836,
+    "best_score": 5,
+    "best": [
+      [
+        5,
+        "L=AZ_r1 R=MAGNETIC",
+        "KAHSXSAVENGWLIODFVKXVPKMALHKXCAAKVHLDMPMDAFDWYMXNJZTNDOGNLGD"
+      ],
+      [
+        5,
+        "L=AZ_r8 R=MAGNETIC_r7",
+        "KAHSXSAVENGWLIODFVKXVPKMALHKXCAAKVHLDMPMDAFDWYMXNJZTNDOGNLGD"
+      ],
+      [
+        5,
+        "L=AZ_r14 R=MAGNETIC_r13",
+        "KAHSXSAVENGWLIODFVKXVPKMALHKXCAAKVHLDMPMDAFDWYMXNJZTNDOGNLGD"
+      ],
+      [
+        5,
+        "L=SEVEN R=SHADOW",
+        "NBMFZFDXPFWFYZTXWLIVHPESXJSRTHNYWPVNSJQOLTYTIMGITQJPBPHYJSNL"
+      ],
+      [
+        5,
+        "L=SEVEN_r7 R=SHADOW_r7",
+        "NBMFZFDXPFWFYZTXWLIVHPESXJSRTHNYWPVNSJQOLTYTIMGITQJPBPHYJSNL"
+      ],
+      [
+        5,
+        "L=SEVEN_r13 R=SHADOW_r13",
+        "NBMFZFDXPFWFYZTXWLIVHPESXJSRTHNYWPVNSJQOLTYTIMGITQJPBPHYJSNL"
+      ],
+      [
+        5,
+        "L=COLOPHON_r7 R=BURIED_r13",
+        "CMHBELYMZSJQZHKYWEEVQGEKTYKGVIEGKRUKBXQNHHSCABOGRNGGRIQUORLS"
+      ]
+    ]
+  },
+  "counter_slide": {
+    "configs": 430612,
+    "best_score": 6,
+    "best": [
+      [
+        6,
+        "DEFECTORxDEFECTOR fn=ct_ka oa=0 ob=21",
+        "DSBEKBNFWXOGVNNMTPZGASAPTGVRMXTBLFFPEMVBMMFNJFLNMRMMHIGZNBGT"
+      ],
+      [
+        6,
+        "DEFECTORxDEFECTOR fn=ct_ka oa=1 ob=22",
+        "DSBEKBNFWXOGVNNMTPZGASAPTGVRMXTBLFFPEMVBMMFNJFLNMRMMHIGZNBGT"
+      ],
+      [
+        6,
+        "DEFECTORxDEFECTOR fn=ct_ka oa=2 ob=23",
+        "DSBEKBNFWXOGVNNMTPZGASAPTGVRMXTBLFFPEMVBMMFNJFLNMRMMHIGZNBGT"
+      ],
+      [
+        6,
+        "DEFECTORxDEFECTOR fn=ct_ka oa=3 ob=24",
+        "DSBEKBNFWXOGVNNMTPZGASAPTGVRMXTBLFFPEMVBMMFNJFLNMRMMHIGZNBGT"
+      ],
+      [
+        6,
+        "DEFECTORxDEFECTOR fn=ct_ka oa=4 ob=25",
+        "DSBEKBNFWXOGVNNMTPZGASAPTGVRMXTBLFFPEMVBMMFNJFLNMRMMHIGZNBGT"
+      ],
+      [
+        6,
+        "DEFECTORxDEFECTOR fn=ct_ka oa=5 ob=0",
+        "DSBEKBNFWXOGVNNMTPZGASAPTGVRMXTBLFFPEMVBMMFNJFLNMRMMHIGZNBGT"
+      ],
+      [
+        6,
+        "DEFECTORxDEFECTOR fn=ct_ka oa=6 ob=1",
+        "DSBEKBNFWXOGVNNMTPZGASAPTGVRMXTBLFFPEMVBMMFNJFLNMRMMHIGZNBGT"
+      ],
+      [
+        6,
+        "DEFECTORxDEFECTOR fn=ct_ka oa=7 ob=2",
+        "DSBEKBNFWXOGVNNMTPZGASAPTGVRMXTBLFFPEMVBMMFNJFLNMRMMHIGZNBGT"
+      ],
+      [
+        6,
+        "DEFECTORxDEFECTOR fn=ct_ka oa=8 ob=3",
+        "DSBEKBNFWXOGVNNMTPZGASAPTGVRMXTBLFFPEMVBMMFNJFLNMRMMHIGZNBGT"
+      ],
+      [
+        6,
+        "DEFECTORxDEFECTOR fn=ct_ka oa=9 ob=4",
+        "DSBEKBNFWXOGVNNMTPZGASAPTGVRMXTBLFFPEMVBMMFNJFLNMRMMHIGZNBGT"
+      ]
+    ]
+  },
+  "boustrophedon": {
+    "configs": 1680,
+    "best_score": 6,
+    "best": [
+      [
+        6,
+        "key=CLOCK_AZ w=17 mode=vig_beau var=standard",
+        "MQWPKMMAEXSANQEJXXKNGFRUTMUNUBWAKTMIIRGQYCQICZLXMYITBDIHULSU"
+      ]
+    ]
+  },
+  "overall_best": 6,
+  "total_configs": 441128,
+  "conclusion": "NOISE"
+}

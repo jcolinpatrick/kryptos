@@ -1,0 +1,9 @@
+{
+  "total_paths": 10777,
+  "total_tests": 976765,
+  "threshold": 12,
+  "workers": 18,
+  "elapsed_seconds": 11.3,
+  "hit_count": 0,
+  "hits": []
+}

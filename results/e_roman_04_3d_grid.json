@@ -1,0 +1,119 @@
+{
+  "experiment": "E-ROMAN-04",
+  "description": "3D Grid Transposition (Carter beadwork hypothesis)",
+  "total_configs": 1279608,
+  "parts": {
+    "part1_sequential": 22176,
+    "part2_keyword_fill": 1026432,
+    "part3_collar_model": 231000
+  },
+  "elapsed_seconds": 10.0,
+  "best_score": 8,
+  "best_config": "P2:dims=(7, 5, 3),kw=(PALIMPSEST,ABSCISSA,KRYPTOS),ax=(0, 1, 2),dir=(True, False, False),sub=beau_CARTER",
+  "best_plaintext": "CGNJCRFDUCHUFDUNBHDDYZXXTYOLYHSBSXEYCEJKUGIXJIWMBZVENEXPAYOBWQZBQYKINXLBKRBFDHLGDSMDFMLMKGPVQGGCN",
+  "classification": "STORE",
+  "stored_results_count": 62,
+  "above_noise_count": 62,
+  "top_results": [
+    {
+      "score": 8,
+      "config": "P2:dims=(7, 5, 3),kw=(PALIMPSEST,ABSCISSA,KRYPTOS),ax=(0, 1, 2),dir=(True, False, False),sub=beau_CARTER",
+      "pt_snippet": "CGNJCRFDUCHUFDUNBHDDYZXXTYOLYHSBSXEYCEJK"
+    },
+    {
+      "score": 8,
+      "config": "P2:dims=(7, 5, 3),kw=(PALIMPSEST,ABSCISSA,ABSCISSA),ax=(0, 1, 2),dir=(True, False, False),sub=beau_CARTER",
+      "pt_snippet": "CGNJCRFDUCHUFDUNBHDDYZXXTYOLYHSBSXEYCEJK"
+    },
+    {
+      "score": 7,
+      "config": "P1:dims=(3, 5, 7),pad=X,ax=(2, 1, 0),dir=(True, True, False),sub=beau_KRYPTOS",
+      "pt_snippet": "NEHVLJKKDOXFPZWUACPOHEYNQBINOQBANEWTHPHW"
+    },
+    {
+      "score": 7,
+      "config": "P1:dims=(3, 5, 7),pad=A,ax=(2, 1, 0),dir=(True, True, False),sub=beau_KRYPTOS",
+      "pt_snippet": "KEHVLJKKDOXFPZWRACPOHEYNQBINOQYANEWTHPHW"
+    },
+    {
+      "score": 7,
+      "config": "P2:dims=(5, 5, 4),kw=(KRYPTOS,KRYPTOS,LABORATORY),ax=(2, 1, 0),dir=(True, False, True),sub=vig_CARTER",
+      "pt_snippet": "LRMZNOIUSSTBVIKALDXOPAWMJFOQMKKNDHDTRXJM"
+    },
+    {
+      "score": 7,
+      "config": "P2:dims=(5, 5, 4),kw=(KRYPTOS,HERBERT,LABORATORY),ax=(2, 1, 0),dir=(True, True, True),sub=vig_CARTER",
+      "pt_snippet": "DKDQHWPDBYTBVIKALDXOPAWMJMWBWQDFSXXTRXJM"
+    },
+    {
+      "score": 7,
+      "config": "P2:dims=(5, 5, 4),kw=(PALIMPSEST,LABORATORY,ABSCISSA),ax=(1, 2, 0),dir=(True, False, False),sub=vig_ABSCISSA",
+      "pt_snippet": "TQEEZUVAHTNIBTCZGSCYFEROTENOTRVRSQLZDASC"
+    },
+    {
+      "score": 7,
+      "config": "P2:dims=(5, 5, 4),kw=(ABSCISSA,KRYPTOS,KRYPTOS),ax=(2, 1, 0),dir=(True, False, False),sub=beau_CARTER",
+      "pt_snippet": "PRYXQYGTANBJLEJVAJHGCJAZBZZRTHDHRNKSGDBS"
+    },
+    {
+      "score": 7,
+      "config": "P2:dims=(5, 5, 4),kw=(ABSCISSA,ABSCISSA,KRYPTOS),ax=(2, 1, 0),dir=(True, False, False),sub=beau_CARTER",
+      "pt_snippet": "PRYXQTYSWZBJLEJAIKLUCJAZBZZRTHHBHDHSGDBS"
+    },
+    {
+      "score": 7,
+      "config": "P2:dims=(7, 7, 2),kw=(PALIMPSEST,PALIMPSEST,KRYPTOS),ax=(1, 0, 2),dir=(False, False, False),sub=vig_ABSCISSA",
+      "pt_snippet": "YOOFOBTRTIHVWSQAOAZLGTASZEQEFNCOSRJZRHEG"
+    },
+    {
+      "score": 7,
+      "config": "P2:dims=(7, 7, 2),kw=(PALIMPSEST,PALIMPSEST,PALIMPSEST),ax=(1, 0, 2),dir=(False, False, True),sub=vig_ABSCISSA",
+      "pt_snippet": "YOOFOBTRTIHVWSQAOAZLGTASZEQEFNCOSRJZRHEG"
+    },
+    {
+      "score": 7,
+      "config": "P2:dims=(7, 7, 2),kw=(PALIMPSEST,PALIMPSEST,ABSCISSA),ax=(1, 0, 2),dir=(False, False, False),sub=vig_ABSCISSA",
+      "pt_snippet": "YOOFOBTRTIHVWSQAOAZLGTASZEQEFNCOSRJZRHEG"
+    },
+    {
+      "score": 7,
+      "config": "P2:dims=(7, 7, 2),kw=(PALIMPSEST,PALIMPSEST,CARTER),ax=(1, 0, 2),dir=(False, False, True),sub=vig_ABSCISSA",
+      "pt_snippet": "YOOFOBTRTIHVWSQAOAZLGTASZEQEFNCOSRJZRHEG"
+    },
+    {
+      "score": 7,
+      "config": "P2:dims=(7, 7, 2),kw=(PALIMPSEST,PALIMPSEST,HERBERT),ax=(1, 0, 2),dir=(False, False, True),sub=vig_ABSCISSA",
+      "pt_snippet": "YOOFOBTRTIHVWSQAOAZLGTASZEQEFNCOSRJZRHEG"
+    },
+    {
+      "score": 7,
+      "config": "P2:dims=(7, 7, 2),kw=(PALIMPSEST,PALIMPSEST,LABORATORY),ax=(1, 0, 2),dir=(False, False, True),sub=vig_ABSCISSA",
+      "pt_snippet": "YOOFOBTRTIHVWSQAOAZLGTASZEQEFNCOSRJZRHEG"
+    },
+    {
+      "score": 7,
+      "config": "P2:dims=(7, 5, 3),kw=(PALIMPSEST,KRYPTOS,KRYPTOS),ax=(0, 1, 2),dir=(True, True, False),sub=beau_CARTER",
+      "pt_snippet": "FDUJCRFDUCHUCGNLYHDDYZXXTYONBHIXJXEYCEJK"
+    },
+    {
+      "score": 7,
+      "config": "P2:dims=(7, 5, 3),kw=(PALIMPSEST,KRYPTOS,ABSCISSA),ax=(0, 1, 2),dir=(True, True, False),sub=beau_CARTER",
+      "pt_snippet": "FDUJCRFDUCHUCGNLYHDDYZXXTYONBHIXJXEYCEJK"
+    },
+    {
+      "score": 7,
+      "config": "P2:dims=(7, 5, 3),kw=(LABORATORY,ABSCISSA,PALIMPSEST),ax=(2, 1, 0),dir=(True, False, True),sub=vig_CARTER",
+      "pt_snippet": "SIMMGKXCKEUXSAGYDTQSFEHLRTXRTZEZSBZJJGWN"
+    },
+    {
+      "score": 7,
+      "config": "P2:dims=(7, 5, 3),kw=(LABORATORY,ABSCISSA,CARTER),ax=(2, 1, 0),dir=(True, False, False),sub=vig_CARTER",
+      "pt_snippet": "SIMMGKXCKEUXSAGYDTQSFEHLRTXRTZEZSBZJJGWN"
+    },
+    {
+      "score": 7,
+      "config": "P2:dims=(7, 5, 3),kw=(LABORATORY,ABSCISSA,HERBERT),ax=(2, 1, 0),dir=(True, False, False),sub=vig_CARTER",
+      "pt_snippet": "SIMMGKXCKEUXSAGYDTQSFEHLRTXRTZEZSBZJJGWN"
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "campaign": "f_sub_columnar_pilot",
+  "timestamp": "2026-05-26T08:40:23",
+  "widths": [
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13
+  ],
+  "total_orderings": 6749977080,
+  "checked": 6749977080,
+  "derivable": 0,
+  "eq_pass": 0,
+  "full_pass": 0,
+  "elapsed_seconds": 2037.662883758545,
+  "workers": 16,
+  "result": "STRUCTURAL_FILTER"
+}

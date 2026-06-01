@@ -1,0 +1,12 @@
+{
+  "p7_vig": {
+    "status": "FAILED",
+    "n_generated": 0,
+    "n_failed": 100
+  },
+  "p7_beau": {
+    "status": "FAILED",
+    "n_generated": 0,
+    "n_failed": 100
+  }
+}

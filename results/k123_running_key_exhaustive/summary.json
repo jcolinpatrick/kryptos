@@ -1,0 +1,14 @@
+{
+  "experiment": "K1-K3 Running Key Exhaustive Transformation Search",
+  "date": "2026-05-23 13:35:17",
+  "total_configs": 247200,
+  "elapsed_seconds": 3.43,
+  "best_score": 0,
+  "best_detail": null,
+  "signal_count": 0,
+  "interesting_count": 0,
+  "signals": [],
+  "interesting": [],
+  "top_20": [],
+  "classification": "NOISE"
+}

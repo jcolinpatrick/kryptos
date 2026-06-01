@@ -1,0 +1,22 @@
+{
+  "campaign": "f_columnar_sub_exhaustive",
+  "timestamp": "2026-05-26T08:06:25",
+  "widths": [
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13
+  ],
+  "total_orderings": 6749977080,
+  "total_eq_pass": 182267844,
+  "total_full_pass": 0,
+  "elapsed_seconds": 1087.5832967758179,
+  "workers": 16,
+  "result": "ELIMINATED",
+  "scope": "Columnar transposition (widths 5-13, ALL column orderings) composed with Vigenere/Beaufort/Variant Beaufort. Zero configurations pass full Bean constraints (equality + 242 inequalities + 101 linear)."
+}

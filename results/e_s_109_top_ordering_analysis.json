@@ -1,0 +1,252 @@
+{
+  "experiment": "E-S-109",
+  "description": "Deep analysis of top statistically-ranked orderings",
+  "results": {
+    "order_[6, 1, 2, 0, 4, 5, 3]": {
+      "z_score": 5.537,
+      "vig_key": ""
+    },
+    "order_[4, 6, 0, 5, 2, 3, 1]": {
+      "z_score": 5.216,
+      "vig_key": ""
+    },
+    "order_[3, 5, 6, 4, 1, 2, 0]": {
+      "z_score": 5.136,
+      "vig_key": ""
+    },
+    "order_[6, 3, 1, 0, 5, 2, 4]": {
+      "z_score": 4.976,
+      "vig_key": ""
+    },
+    "order_[1, 6, 5, 0, 3, 2, 4]": {
+      "z_score": 4.816,
+      "vig_key": ""
+    },
+    "order_[5, 3, 0, 4, 1, 2, 6]": {
+      "z_score": 3.97,
+      "vig_key": ""
+    },
+    "order_[0, 5, 3, 1, 6, 4, 2]": {
+      "z_score": 0.0,
+      "vig_key": ""
+    },
+    "order_[0, 1, 3, 4, 2, 5, 6]": {
+      "z_score": 0.0,
+      "vig_key": ""
+    },
+    "sa_results": {
+      "[6, 1, 2, 0, 4, 5, 3]_vig": {
+        "qg_per_char": -6.2545,
+        "crib_matches": 24,
+        "pt_prefix": "FPSEPASSCONPEDRMYTNZSEASTNORTHEASTVOICJA",
+        "pt_crib1": "NZSEASTNORTHEASTVOI",
+        "pt_crib2": "DOKBERLINCLOCKTOU"
+      },
+      "[6, 1, 2, 0, 4, 5, 3]_beau": {
+        "qg_per_char": -6.5339,
+        "crib_matches": 24,
+        "pt_prefix": "VTIKAZIGHLETRLWILTJILEASTNORTHEASTHEMTXD",
+        "pt_crib1": "JILEASTNORTHEASTHEM",
+        "pt_crib2": "LBABERLINCLOCKETO"
+      },
+      "[4, 6, 0, 5, 2, 3, 1]_vig": {
+        "qg_per_char": -6.3018,
+        "crib_matches": 24,
+        "pt_prefix": "WBMCKYJETEUILAZIYRISPEASTNORTHEASTSPYOJN",
+        "pt_crib1": "ISPEASTNORTHEASTSPY",
+        "pt_crib2": "YTBBERLINCLOCKLIO"
+      },
+      "[4, 6, 0, 5, 2, 3, 1]_beau": {
+        "qg_per_char": -6.3219,
+        "crib_matches": 24,
+        "pt_prefix": "EDIRWODYGEPBAESEMFSUTEASTNORTHEASTOIMPRU",
+        "pt_crib1": "SUTEASTNORTHEASTOIM",
+        "pt_crib2": "JDOBERLINCLOCKACP"
+      },
+      "[3, 5, 6, 4, 1, 2, 0]_vig": {
+        "qg_per_char": -6.3989,
+        "crib_matches": 24,
+        "pt_prefix": "FRDSFROGHOUUVNGIZLLQYEASTNORTHEASTIVEKIA",
+        "pt_crib1": "LQYEASTNORTHEASTIVE",
+        "pt_crib2": "PIOBERLINCLOCKAMY"
+      },
+      "[3, 5, 6, 4, 1, 2, 0]_beau": {
+        "qg_per_char": -6.3788,
+        "crib_matches": 24,
+        "pt_prefix": "EGHSPXXXHZENYODOPSADVEASTNORTHEASTATXUCE",
+        "pt_crib1": "ADVEASTNORTHEASTATX",
+        "pt_crib2": "YHEBERLINCLOCKOIL"
+      },
+      "[6, 3, 1, 0, 5, 2, 4]_vig": {
+        "qg_per_char": -6.4402,
+        "crib_matches": 24,
+        "pt_prefix": "SPDHSXJYANIPFUXBKNEBOEASTNORTHEASTSBEAGN",
+        "pt_crib1": "EBOEASTNORTHEASTSBE",
+        "pt_crib2": "HVEBERLINCLOCKJUS"
+      },
+      "[6, 3, 1, 0, 5, 2, 4]_beau": {
+        "qg_per_char": -6.3779,
+        "crib_matches": 24,
+        "pt_prefix": "HZWRHBTHMAUSTRXTSMONREASTNORTHEASTAUGCHO",
+        "pt_crib1": "ONREASTNORTHEASTAUG",
+        "pt_crib2": "GPVBERLINCLOCKTEW"
+      },
+      "[1, 6, 5, 0, 3, 2, 4]_vig": {
+        "qg_per_char": -6.3051,
+        "crib_matches": 24,
+        "pt_prefix": "MAYVIVELAFIDBOWHDACDOEASTNORTHEASTABUTHA",
+        "pt_crib1": "CDOEASTNORTHEASTABU",
+        "pt_crib2": "MPOBERLINCLOCKAWL"
+      },
+      "[1, 6, 5, 0, 3, 2, 4]_beau": {
+        "qg_per_char": -6.5183,
+        "crib_matches": 24,
+        "pt_prefix": "YLLARAKDXNILYSDVHIATHEASTNORTHEASTIONOXP",
+        "pt_crib1": "ATHEASTNORTHEASTION",
+        "pt_crib2": "IREBERLINCLOCKCHA"
+      }
+    },
+    "width14_diff_ic": {
+      "top_ic": 0.060088,
+      "mean_ic": 0.038804,
+      "top5": [
+        {
+          "ic": 0.060088,
+          "order": [
+            3,
+            13,
+            7,
+            6,
+            9,
+            8,
+            4,
+            11,
+            12,
+            5,
+            0,
+            2,
+            1,
+            10
+          ]
+        },
+        {
+          "ic": 0.057675,
+          "order": [
+            8,
+            0,
+            10,
+            4,
+            3,
+            2,
+            5,
+            11,
+            7,
+            12,
+            6,
+            1,
+            9,
+            13
+          ]
+        },
+        {
+          "ic": 0.057675,
+          "order": [
+            3,
+            9,
+            13,
+            6,
+            5,
+            12,
+            10,
+            7,
+            8,
+            1,
+            0,
+            11,
+            4,
+            2
+          ]
+        },
+        {
+          "ic": 0.056579,
+          "order": [
+            11,
+            4,
+            10,
+            7,
+            8,
+            1,
+            0,
+            5,
+            3,
+            2,
+            6,
+            9,
+            13,
+            12
+          ]
+        },
+        {
+          "ic": 0.056579,
+          "order": [
+            1,
+            9,
+            12,
+            4,
+            7,
+            13,
+            5,
+            3,
+            8,
+            6,
+            10,
+            0,
+            11,
+            2
+          ]
+        }
+      ]
+    },
+    "P4_keyword_match": {
+      "best": 0,
+      "config": ""
+    },
+    "width5_diff_ic": {
+      "max": 0.049123,
+      "mean": 0.040095,
+      "std": 0.003393,
+      "max_z": 2.66
+    },
+    "width6_diff_ic": {
+      "max": 0.049781,
+      "mean": 0.038752,
+      "std": 0.00283,
+      "max_z": 3.9
+    },
+    "width7_diff_ic": {
+      "max": 0.053509,
+      "mean": 0.038349,
+      "std": 0.002738,
+      "max_z": 5.54
+    },
+    "width8_diff_ic": {
+      "max": 0.058772,
+      "mean": 0.038549,
+      "std": 0.00282,
+      "max_z": 7.17
+    },
+    "width9_diff_ic": {
+      "max": 0.05614,
+      "mean": 0.038698,
+      "std": 0.002864,
+      "max_z": 6.09
+    },
+    "width10_diff_ic": {
+      "max": 0.064912,
+      "mean": 0.038695,
+      "std": 0.003028,
+      "max_z": 8.66
+    },
+    "elapsed_seconds": 213.91755652427673
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "experiment": "E-ROMAN-01",
+  "description": "Comprehensive Roman Numeral Hypothesis",
+  "total_configs": 66648,
+  "best_score": 6,
+  "best_config": "p5-w6/GOLDGLINT/beau/p6/k18",
+  "classification": "NOISE",
+  "above_noise": [
+    {
+      "config": "p5-w6/GOLDGLINT/beau/p6/k18",
+      "score": 6,
+      "pt_snippet": "KKUHEINRBUICRQLLDERLKEAEWNJBDLNJAHGYHZRYESBMMHNIXZUPGNCTYOEB"
+    },
+    {
+      "config": "p5-w6/GOLDGLINT/beau/p6/k18",
+      "score": 6,
+      "pt_snippet": "NNXKHLWTDWKEZYMMEFYSREAECTPHCKSOFMLWLDVCIWEPPKQLGBWRIPKBZPFC"
+    }
+  ],
+  "roman_positions_in_ct": [
+    6,
+    11,
+    15,
+    16,
+    22,
+    24,
+    53,
+    55,
+    56,
+    59,
+    66,
+    69,
+    76,
+    79,
+    82,
+    83,
+    84,
+    94
+  ],
+  "roman_letters_in_ct": "XLLILVLDIIVMDXCDIC"
+}

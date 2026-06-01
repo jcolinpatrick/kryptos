@@ -1,0 +1,33 @@
+{
+  "experiment": "E-S-29",
+  "w_positions": [
+    20,
+    36,
+    48,
+    58,
+    74
+  ],
+  "n_segments": 6,
+  "segment_lengths": [
+    20,
+    15,
+    11,
+    9,
+    15,
+    22
+  ],
+  "group_a_len": 46,
+  "group_b_len": 46,
+  "group_a_ic": 0.03864734299516908,
+  "group_b_ic": 0.03864734299516908,
+  "full_ct_ic": 0.03608247422680412,
+  "chi2_a_vs_b": 24.633333333333333,
+  "freq_correlation_ab": -0.07586206896551725,
+  "w_distances": [
+    16,
+    12,
+    10,
+    16
+  ],
+  "verdict": "TBD"
+}

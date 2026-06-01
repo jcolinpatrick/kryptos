@@ -1,0 +1,792 @@
+{
+  "experiment": "E-STEHLE-WIDTH21-INTERACTION",
+  "description": "Phase 3: Stehle delta4=5 and width-21 bigram interaction analysis",
+  "timestamp": "2026-05-23T11:10:20.295539+00:00",
+  "null_positions": [
+    0,
+    1,
+    2,
+    5,
+    8,
+    12,
+    14,
+    20,
+    36,
+    52,
+    58,
+    59,
+    74,
+    75,
+    78,
+    84,
+    85
+  ],
+  "palette": [
+    "B",
+    "G",
+    "I",
+    "K",
+    "O",
+    "W",
+    "Z"
+  ],
+  "T3.1": {
+    "repeated_bigrams_count": 11,
+    "bigrams": {
+      "AZ": {
+        "positions": [
+          49,
+          57
+        ],
+        "count": 2,
+        "any_null": true
+      },
+      "BS": {
+        "positions": [
+          12,
+          18
+        ],
+        "count": 2,
+        "any_null": true
+      },
+      "IT": {
+        "positions": [
+          16,
+          59
+        ],
+        "count": 2,
+        "any_null": true
+      },
+      "KK": {
+        "positions": [
+          31,
+          52
+        ],
+        "count": 2,
+        "any_null": true
+      },
+      "LS": {
+        "positions": [
+          11,
+          22
+        ],
+        "count": 2,
+        "any_null": false
+      },
+      "LW": {
+        "positions": [
+          15,
+          53
+        ],
+        "count": 2,
+        "any_null": true
+      },
+      "PK": {
+        "positions": [
+          65,
+          72
+        ],
+        "count": 2,
+        "any_null": false
+      },
+      "QZ": {
+        "positions": [
+          25,
+          26
+        ],
+        "count": 2,
+        "any_null": false
+      },
+      "SN": {
+        "positions": [
+          39,
+          42
+        ],
+        "count": 2,
+        "any_null": false
+      },
+      "WA": {
+        "positions": [
+          36,
+          74
+        ],
+        "count": 2,
+        "any_null": true
+      },
+      "ZT": {
+        "positions": [
+          46,
+          47
+        ],
+        "count": 2,
+        "any_null": false
+      }
+    },
+    "null_involved_bigrams": [
+      {
+        "bigram": "AZ",
+        "details": [
+          {
+            "position": 57,
+            "top_pos": 57,
+            "bot_pos": 78,
+            "top_char": "A",
+            "bot_char": "Z",
+            "top_is_null": false,
+            "bot_is_null": true
+          }
+        ]
+      },
+      {
+        "bigram": "BS",
+        "details": [
+          {
+            "position": 12,
+            "top_pos": 12,
+            "bot_pos": 33,
+            "top_char": "B",
+            "bot_char": "S",
+            "top_is_null": true,
+            "bot_is_null": false
+          }
+        ]
+      },
+      {
+        "bigram": "IT",
+        "details": [
+          {
+            "position": 59,
+            "top_pos": 59,
+            "bot_pos": 80,
+            "top_char": "I",
+            "bot_char": "T",
+            "top_is_null": true,
+            "bot_is_null": false
+          }
+        ]
+      },
+      {
+        "bigram": "KK",
+        "details": [
+          {
+            "position": 31,
+            "top_pos": 31,
+            "bot_pos": 52,
+            "top_char": "K",
+            "bot_char": "K",
+            "top_is_null": false,
+            "bot_is_null": true
+          },
+          {
+            "position": 52,
+            "top_pos": 52,
+            "bot_pos": 73,
+            "top_char": "K",
+            "bot_char": "K",
+            "top_is_null": true,
+            "bot_is_null": false
+          }
+        ]
+      },
+      {
+        "bigram": "LW",
+        "details": [
+          {
+            "position": 15,
+            "top_pos": 15,
+            "bot_pos": 36,
+            "top_char": "L",
+            "bot_char": "W",
+            "top_is_null": false,
+            "bot_is_null": true
+          },
+          {
+            "position": 53,
+            "top_pos": 53,
+            "bot_pos": 74,
+            "top_char": "L",
+            "bot_char": "W",
+            "top_is_null": false,
+            "bot_is_null": true
+          }
+        ]
+      },
+      {
+        "bigram": "WA",
+        "details": [
+          {
+            "position": 36,
+            "top_pos": 36,
+            "bot_pos": 57,
+            "top_char": "W",
+            "bot_char": "A",
+            "top_is_null": true,
+            "bot_is_null": false
+          },
+          {
+            "position": 74,
+            "top_pos": 74,
+            "bot_pos": 95,
+            "top_char": "W",
+            "bot_char": "A",
+            "top_is_null": true,
+            "bot_is_null": false
+          }
+        ]
+      }
+    ],
+    "forcing_analysis": [
+      {
+        "bigram": "AZ",
+        "p1": 49,
+        "p2": 57,
+        "null_positions_involved": [
+          78
+        ],
+        "constraints": {
+          "top": "CT[49]='A', CT[57]='A' (both fixed)",
+          "bot": "CT[78] must be 'Z' (= CT[70])"
+        },
+        "top_valid_palette": [
+          "FIXED"
+        ],
+        "bot_valid_palette": [
+          "Z"
+        ],
+        "feasible": true
+      },
+      {
+        "bigram": "BS",
+        "p1": 12,
+        "p2": 18,
+        "null_positions_involved": [
+          12
+        ],
+        "constraints": {
+          "top": "CT[12] must be 'B' (= CT[18])",
+          "bot": "CT[33]='S', CT[39]='S' (both fixed)"
+        },
+        "top_valid_palette": [
+          "B"
+        ],
+        "bot_valid_palette": [
+          "FIXED"
+        ],
+        "feasible": true
+      },
+      {
+        "bigram": "IT",
+        "p1": 16,
+        "p2": 59,
+        "null_positions_involved": [
+          59
+        ],
+        "constraints": {
+          "top": "CT[59] must be 'I' (= CT[16])",
+          "bot": "CT[37]='T', CT[80]='T' (both fixed)"
+        },
+        "top_valid_palette": [
+          "I"
+        ],
+        "bot_valid_palette": [
+          "FIXED"
+        ],
+        "feasible": true
+      },
+      {
+        "bigram": "KK",
+        "p1": 31,
+        "p2": 52,
+        "null_positions_involved": [
+          52
+        ],
+        "constraints": {
+          "top": "CT[52] must be 'K' (= CT[31])",
+          "bot": "CT[52] must be 'K' (= CT[73])"
+        },
+        "top_valid_palette": [
+          "K"
+        ],
+        "bot_valid_palette": [
+          "K"
+        ],
+        "feasible": true
+      },
+      {
+        "bigram": "LW",
+        "p1": 15,
+        "p2": 53,
+        "null_positions_involved": [
+          36,
+          74
+        ],
+        "constraints": {
+          "top": "CT[15]='L', CT[53]='L' (both fixed)",
+          "bot": "CT[36]=CT[74] (both null, must be equal, any palette letter)"
+        },
+        "top_valid_palette": [
+          "FIXED"
+        ],
+        "bot_valid_palette": [
+          "B",
+          "G",
+          "I",
+          "K",
+          "O",
+          "W",
+          "Z"
+        ],
+        "feasible": true
+      },
+      {
+        "bigram": "WA",
+        "p1": 36,
+        "p2": 74,
+        "null_positions_involved": [
+          36,
+          74
+        ],
+        "constraints": {
+          "top": "CT[36]=CT[74] (both null, must be equal, any palette letter)",
+          "bot": "CT[57]='A', CT[95]='A' (both fixed)"
+        },
+        "top_valid_palette": [
+          "B",
+          "G",
+          "I",
+          "K",
+          "O",
+          "W",
+          "Z"
+        ],
+        "bot_valid_palette": [
+          "FIXED"
+        ],
+        "feasible": true
+      }
+    ]
+  },
+  "T3.2": {
+    "stehle_window": [
+      {
+        "i": 55,
+        "i+4": 59,
+        "CT[i]": "D",
+        "CT[i+4]": "I",
+        "delta": 5,
+        "i_is_null": false,
+        "i+4_is_null": true
+      },
+      {
+        "i": 56,
+        "i+4": 60,
+        "CT[i]": "I",
+        "CT[i+4]": "N",
+        "delta": 5,
+        "i_is_null": false,
+        "i+4_is_null": false
+      },
+      {
+        "i": 57,
+        "i+4": 61,
+        "CT[i]": "A",
+        "CT[i+4]": "F",
+        "delta": 5,
+        "i_is_null": false,
+        "i+4_is_null": false
+      },
+      {
+        "i": 58,
+        "i+4": 62,
+        "CT[i]": "W",
+        "CT[i+4]": "B",
+        "delta": 5,
+        "i_is_null": true,
+        "i+4_is_null": false
+      },
+      {
+        "i": 59,
+        "i+4": 63,
+        "CT[i]": "I",
+        "CT[i+4]": "N",
+        "delta": 5,
+        "i_is_null": true,
+        "i+4_is_null": false
+      }
+    ],
+    "delta4_constraints": {
+      "58": {
+        "constraints": [
+          {
+            "type": "CT[62] - CT[58] = 5 mod 26",
+            "required_value": 22,
+            "required_char": "W",
+            "in_palette": true
+          },
+          {
+            "type": "CT[58] - CT[54] = 5 mod 26",
+            "required_value": 25,
+            "required_char": "Z",
+            "in_palette": true
+          }
+        ],
+        "consistent": false,
+        "actual_char": "W",
+        "actual_value": 22
+      },
+      "59": {
+        "constraints": [
+          {
+            "type": "CT[63] - CT[59] = 5 mod 26",
+            "required_value": 8,
+            "required_char": "I",
+            "in_palette": true
+          },
+          {
+            "type": "CT[59] - CT[55] = 5 mod 26",
+            "required_value": 8,
+            "required_char": "I",
+            "in_palette": true
+          }
+        ],
+        "consistent": true,
+        "actual_char": "I",
+        "actual_value": 8
+      }
+    },
+    "width21_constraints": {
+      "58": {
+        "current_repetitions_count": 0,
+        "forcing_options": [
+          {
+            "role": "bottom",
+            "palette_char": "I",
+            "bigram": "TI",
+            "matching_count": 1
+          }
+        ]
+      },
+      "59": {
+        "current_repetitions_count": 1,
+        "forcing_options": [
+          {
+            "role": "top",
+            "palette_char": "I",
+            "bigram": "IT",
+            "matching_count": 1
+          },
+          {
+            "role": "top",
+            "palette_char": "O",
+            "bigram": "OT",
+            "matching_count": 1
+          },
+          {
+            "role": "top",
+            "palette_char": "Z",
+            "bigram": "ZT",
+            "matching_count": 2
+          },
+          {
+            "role": "bottom",
+            "palette_char": "B",
+            "bigram": "QB",
+            "matching_count": 1
+          },
+          {
+            "role": "bottom",
+            "palette_char": "Z",
+            "bigram": "QZ",
+            "matching_count": 2
+          }
+        ]
+      }
+    },
+    "joint": {
+      "58": {
+        "has_delta4_constraint": true,
+        "has_width21_constraint": true,
+        "delta4_required_chars": [
+          "W",
+          "Z"
+        ],
+        "width21_forcing_chars": [
+          "I"
+        ],
+        "overlap": [],
+        "actual_char": "W",
+        "actual_satisfies_delta4": true,
+        "actual_satisfies_width21_forcing": false
+      },
+      "59": {
+        "has_delta4_constraint": true,
+        "has_width21_constraint": true,
+        "delta4_required_chars": [
+          "I"
+        ],
+        "width21_forcing_chars": [
+          "B",
+          "I",
+          "O",
+          "Z"
+        ],
+        "overlap": [
+          "I"
+        ],
+        "actual_char": "I",
+        "actual_satisfies_delta4": true,
+        "actual_satisfies_width21_forcing": true
+      }
+    },
+    "all_null_joint": {
+      "0": {
+        "d4_required": [
+          "P"
+        ],
+        "w21_forcing": [],
+        "overlap": [],
+        "actual": "O",
+        "has_both": false
+      },
+      "1": {
+        "d4_required": [],
+        "w21_forcing": [],
+        "overlap": [],
+        "actual": "B",
+        "has_both": false
+      },
+      "2": {
+        "d4_required": [
+          "S"
+        ],
+        "w21_forcing": [
+          "G",
+          "O"
+        ],
+        "overlap": [],
+        "actual": "K",
+        "has_both": true
+      },
+      "5": {
+        "d4_required": [
+          "C"
+        ],
+        "w21_forcing": [
+          "W"
+        ],
+        "overlap": [],
+        "actual": "O",
+        "has_both": true
+      },
+      "8": {
+        "d4_required": [
+          "Z"
+        ],
+        "w21_forcing": [],
+        "overlap": [],
+        "actual": "G",
+        "has_both": false
+      },
+      "12": {
+        "d4_required": [
+          "D"
+        ],
+        "w21_forcing": [
+          "B"
+        ],
+        "overlap": [],
+        "actual": "B",
+        "has_both": true
+      },
+      "14": {
+        "d4_required": [
+          "W",
+          "Z"
+        ],
+        "w21_forcing": [
+          "I",
+          "Z"
+        ],
+        "overlap": [
+          "Z"
+        ],
+        "actual": "O",
+        "has_both": true
+      },
+      "20": {
+        "d4_required": [
+          "N",
+          "Q"
+        ],
+        "w21_forcing": [
+          "O"
+        ],
+        "overlap": [],
+        "actual": "W",
+        "has_both": true
+      },
+      "36": {
+        "d4_required": [
+          "E",
+          "X"
+        ],
+        "w21_forcing": [
+          "W"
+        ],
+        "overlap": [],
+        "actual": "W",
+        "has_both": true
+      },
+      "52": {
+        "d4_required": [
+          "B",
+          "D"
+        ],
+        "w21_forcing": [
+          "I",
+          "K"
+        ],
+        "overlap": [],
+        "actual": "K",
+        "has_both": true
+      },
+      "58": {
+        "d4_required": [
+          "W",
+          "Z"
+        ],
+        "w21_forcing": [
+          "I"
+        ],
+        "overlap": [],
+        "actual": "W",
+        "has_both": true
+      },
+      "59": {
+        "d4_required": [
+          "I"
+        ],
+        "w21_forcing": [
+          "B",
+          "I",
+          "O",
+          "Z"
+        ],
+        "overlap": [
+          "I"
+        ],
+        "actual": "I",
+        "has_both": true
+      },
+      "74": {
+        "d4_required": [
+          "E"
+        ],
+        "w21_forcing": [
+          "W"
+        ],
+        "overlap": [],
+        "actual": "W",
+        "has_both": true
+      },
+      "75": {
+        "d4_required": [
+          "K",
+          "S"
+        ],
+        "w21_forcing": [
+          "K",
+          "O"
+        ],
+        "overlap": [
+          "K"
+        ],
+        "actual": "G",
+        "has_both": true
+      },
+      "78": {
+        "d4_required": [
+          "X"
+        ],
+        "w21_forcing": [
+          "Z"
+        ],
+        "overlap": [],
+        "actual": "Z",
+        "has_both": true
+      },
+      "84": {
+        "d4_required": [
+          "C",
+          "Y"
+        ],
+        "w21_forcing": [],
+        "overlap": [],
+        "actual": "I",
+        "has_both": false
+      },
+      "85": {
+        "d4_required": [
+          "O",
+          "P"
+        ],
+        "w21_forcing": [],
+        "overlap": [],
+        "actual": "G",
+        "has_both": false
+      }
+    },
+    "dual_constrained_positions": [
+      2,
+      5,
+      12,
+      14,
+      20,
+      36,
+      52,
+      58,
+      59,
+      74,
+      75,
+      78
+    ]
+  },
+  "T3.3": {
+    "n_mc": 100000,
+    "seed": 20260325,
+    "elapsed_s": 21.3,
+    "actual_cdw_length": 4,
+    "actual_cdw_lag": 1,
+    "actual_cdw_delta": 23,
+    "actual_cdw_start": 14,
+    "actual_w21_repeated": 11,
+    "mc_cdw_mean": 4.0,
+    "mc_w21_mean": 7.18,
+    "mc_cdw_distribution": {
+      "4": 100000
+    },
+    "mc_w21_distribution": {
+      "5": 9077,
+      "6": 24414,
+      "7": 29447,
+      "8": 20876,
+      "9": 10576,
+      "10": 4104,
+      "11": 1213,
+      "12": 257,
+      "13": 30,
+      "14": 5,
+      "15": 1
+    },
+    "p_cdw_ge_actual": 1.0,
+    "p_w21_ge_actual": 0.01506,
+    "p_joint": 0.01506,
+    "p_independent_expected": 0.01506,
+    "independence_ratio": 1.0,
+    "joint_verdict": "CONSISTENT WITH INDEPENDENCE",
+    "cdw_rank_pct": 0.0,
+    "w21_rank_pct": 0.29,
+    "optimality_verdict": "NOT NEAR-OPTIMAL"
+  },
+  "overall_verdict": "WEAK INTERACTION - dual constraints exist and actual values satisfy them"
+}

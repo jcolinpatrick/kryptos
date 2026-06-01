@@ -1,0 +1,11 @@
+{
+  "experiment": "E-S-47b",
+  "model": "Model B: period-7 key in CT space + transposition",
+  "keys_checked": 101,
+  "valid_keys_found": 101,
+  "estimated_total": 8031810176.0,
+  "structured_best": 6,
+  "structured_configs": 3640,
+  "verdict": "UNDERDETERMINED \u2014 too many valid keys",
+  "elapsed_seconds": 0.0
+}

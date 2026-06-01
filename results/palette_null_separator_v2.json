@@ -1,0 +1,24 @@
+{
+  "timestamp": "2026-05-23T12:34:41.161445+00:00",
+  "col8_01_all_null": true,
+  "col8_01_positions": [
+    5,
+    12,
+    20,
+    36,
+    52,
+    59,
+    74,
+    75
+  ],
+  "col7_col1_all_null": true,
+  "col7_col1_positions": [
+    1,
+    8,
+    36,
+    78,
+    85
+  ],
+  "hypergeometric_p_col8": 0.0010328936914031463,
+  "hypergeometric_p_col7_1": 0.01906158357771261
+}

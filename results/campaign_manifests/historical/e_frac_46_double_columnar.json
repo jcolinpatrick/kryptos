@@ -1,0 +1,28 @@
+{
+  "manifest_version": "1.0",
+  "campaign_id": "e_frac_46_double_columnar",
+  "campaign_name": "Double columnar Bean-compatible width pairs empirical null",
+  "completed_at": "2026-04-11T00:00:00+00:00",
+  "git_commit": "",
+  "verdict": "strong_elimination",
+  "verdict_summary": "E-FRAC-46: double columnar across 9 Bean-compatible width pairs (w6xw6 through w9xw9) enumerated 2,958,400 compositions. Maximum crib score 15/24 \u2014 matches random expectation. Empirically saturated within the specific width-pair ranges tested under the additive-keystream class.",
+  "evidence_pointer": "docs/elimination_tiers.md (Tier 2 row, E-FRAC-46 double columnar)",
+  "family_updates": {
+    "double_columnar": {
+      "tier": 2,
+      "evidence": "E-FRAC-46: 9 width pairs in {6,7,8,9}^2, 2,958,400 compositions, max 15/24, matches random. Empirically saturated within tested ranges."
+    }
+  },
+  "scope_caveats": [
+    "H1 conditional: assumes direct positional crib mapping on the carved 97-char CT under an additive cipher class. Mechanisms that break H1 (outer transposition before the analyzed step, position-dependent selectors, physical-overlay remaps, non-additive ciphers) are NOT eliminated by this result."
+  ],
+  "scope_does_not_cover": [
+    "Double columnar with widths outside {6,7,8,9}.",
+    "Double columnar composed with a non-additive inner cipher."
+  ],
+  "total_profiles_evaluated": 0,
+  "joint_anomaly_successes": 0,
+  "populations_tested": [],
+  "variants_tested": [],
+  "notes": "Historical backfill from E-FRAC-46. 9 width pairs, 2,958,400 compositions, max 15/24."
+}

@@ -1,0 +1,623 @@
+{
+  "experiment": "e_mixed_variant_bean",
+  "description": "Mixed-variant cipher Bean constraint enumeration",
+  "timestamp": "2026-05-23T01:54:51",
+  "parameters": {
+    "n_positions": 24,
+    "n_bean_eq": 1,
+    "n_bean_ineq": 242,
+    "n_constraining_ineq": 39,
+    "theoretical_space": 282429536481,
+    "n_constrained_positions": 21,
+    "n_free_positions": 3,
+    "free_positions": [
+      22,
+      25,
+      31
+    ],
+    "constrained_positions": [
+      21,
+      23,
+      24,
+      26,
+      27,
+      28,
+      29,
+      30,
+      32,
+      33,
+      63,
+      64,
+      65,
+      66,
+      67,
+      68,
+      69,
+      70,
+      71,
+      72,
+      73
+    ]
+  },
+  "phase1_counting": {
+    "constrained_solutions": 5428800,
+    "free_multiplier": 27,
+    "total_solutions": 146577600,
+    "survival_rate_pct": 0.05189882114538002,
+    "reduction_factor": 1926.8260394562335,
+    "bits_of_freedom": 27.12708940664917,
+    "elapsed_seconds": 3.8091046810150146,
+    "nodes_explored": 11524203,
+    "stored_solutions": 100000
+  },
+  "phase2_analysis": {
+    "samples_analyzed": 100000,
+    "pure_counts": {
+      "vig": 0,
+      "beau": 0,
+      "vbeau": 0
+    },
+    "mixed_count": 100000,
+    "ic_stats": {
+      "min": 0.021739130434782608,
+      "max": 0.04710144927536232,
+      "mean": 0.036508623188405795
+    },
+    "distinct_stats": {
+      "14": 9889,
+      "15": 33252,
+      "16": 37908,
+      "17": 16885,
+      "18": 2066
+    },
+    "ap_stats": {
+      "3": 2393,
+      "4": 14840,
+      "5": 32840,
+      "6": 33740,
+      "7": 16187
+    }
+  },
+  "phase3_patterns": {
+    "pos_mod_N_uniform": 0,
+    "ct_letter_uniform": 3,
+    "pt_letter_uniform": 18,
+    "grid_row_uniform": 0,
+    "grid_col_uniform": 0
+  },
+  "sample_solutions": {
+    "lowest_ic": [
+      {
+        "vp": "VXBBVBVXVVXVVXVVVVVVXVXX",
+        "ks": "BPJODEYCGCQAZOUYKLGKMRNA",
+        "ic": 0.021739130434782608,
+        "ap": 6,
+        "dist": 18
+      },
+      {
+        "vp": "VXBBBBVXVVXVVXVVVVBVXVVV",
+        "ks": "BPJODEYCGCQAZOUYKLGKMRNA",
+        "ic": 0.021739130434782608,
+        "ap": 6,
+        "dist": 18
+      },
+      {
+        "vp": "VXBBVBVXVVXVVXVVVVVVXBBV",
+        "ks": "BPJODEYCGCQAZOUYKLGKMTRA",
+        "ic": 0.021739130434782608,
+        "ap": 6,
+        "dist": 18
+      },
+      {
+        "vp": "VXBBVBVXVVXVVXVVVVVVXBBX",
+        "ks": "BPJODEYCGCQAZOUYKLGKMTRA",
+        "ic": 0.021739130434782608,
+        "ap": 6,
+        "dist": 18
+      },
+      {
+        "vp": "VXBBXBVXVVXVVXVVVVBVXBBX",
+        "ks": "BPJOXEYCGCQAZOUYKLGKMTRA",
+        "ic": 0.021739130434782608,
+        "ap": 6,
+        "dist": 18
+      },
+      {
+        "vp": "VXBBBBVXVVXXVBVVVVVVXBBV",
+        "ks": "BPJODEYCGCQAZOUYKLGKMTRA",
+        "ic": 0.021739130434782608,
+        "ap": 6,
+        "dist": 18
+      },
+      {
+        "vp": "VBBBXBVXVVXVVBVVVXVVXVXX",
+        "ks": "BLJOXEYCGCQAZOUYKPGKMRNA",
+        "ic": 0.021739130434782608,
+        "ap": 6,
+        "dist": 18
+      },
+      {
+        "vp": "VVBBBBVXVVXVVXVVVXVVXVVX",
+        "ks": "BLJODEYCGCQAZOUYKPGKMRNA",
+        "ic": 0.021739130434782608,
+        "ap": 6,
+        "dist": 18
+      },
+      {
+        "vp": "VVBBXBVXVVXVVXVVVXBVXVXV",
+        "ks": "BLJOXEYCGCQAZOUYKPGKMRNA",
+        "ic": 0.021739130434782608,
+        "ap": 6,
+        "dist": 18
+      },
+      {
+        "vp": "VBBBBBVXVVXXVBVVVXVVXVXV",
+        "ks": "BLJODEYCGCQAZOUYKPGKMRNA",
+        "ic": 0.021739130434782608,
+        "ap": 6,
+        "dist": 18
+      },
+      {
+        "vp": "VBBBXBVXVVXXVXVVVXVVXVVX",
+        "ks": "BLJOXEYCGCQAZOUYKPGKMRNA",
+        "ic": 0.021739130434782608,
+        "ap": 6,
+        "dist": 18
+      },
+      {
+        "vp": "VVBBBBVXVVXXVBVVVXBVXVVV",
+        "ks": "BLJODEYCGCQAZOUYKPGKMRNA",
+        "ic": 0.021739130434782608,
+        "ap": 6,
+        "dist": 18
+      },
+      {
+        "vp": "VBBBBBVXVVXXVXVVVXBVXVXX",
+        "ks": "BLJODEYCGCQAZOUYKPGKMRNA",
+        "ic": 0.021739130434782608,
+        "ap": 6,
+        "dist": 18
+      },
+      {
+        "vp": "VBBBXBVXVVXVVBVVVXVVXBVV",
+        "ks": "BLJOXEYCGCQAZOUYKPGKMTNA",
+        "ic": 0.021739130434782608,
+        "ap": 6,
+        "dist": 18
+      },
+      {
+        "vp": "VBBBBBVXVVXVVXVVVXVVXBVV",
+        "ks": "BLJODEYCGCQAZOUYKPGKMTNA",
+        "ic": 0.021739130434782608,
+        "ap": 6,
+        "dist": 18
+      },
+      {
+        "vp": "VVBBXBVXVVXVVXVVVXVVXBXX",
+        "ks": "BLJOXEYCGCQAZOUYKPGKMTNA",
+        "ic": 0.021739130434782608,
+        "ap": 6,
+        "dist": 18
+      },
+      {
+        "vp": "VVBBXBVXVVXXVXVVVXVVXBBV",
+        "ks": "BLJOXEYCGCQAZOUYKPGKMTRA",
+        "ic": 0.021739130434782608,
+        "ap": 6,
+        "dist": 18
+      },
+      {
+        "vp": "VVBBBBVXVVXXVBVVVXBVXBXX",
+        "ks": "BLJODEYCGCQAZOUYKPGKMTNA",
+        "ic": 0.021739130434782608,
+        "ap": 6,
+        "dist": 18
+      },
+      {
+        "vp": "VBBBBBVXVVXXVXVVVXBVXBXX",
+        "ks": "BLJODEYCGCQAZOUYKPGKMTNA",
+        "ic": 0.021739130434782608,
+        "ap": 6,
+        "dist": 18
+      },
+      {
+        "vp": "BXVBBBVXVVXVXBVVVVVVXVVV",
+        "ks": "JPZODEYCGCQABOUYKLGKMRNA",
+        "ic": 0.021739130434782608,
+        "ap": 6,
+        "dist": 18
+      },
+      {
+        "vp": "BXVBVBVXVVXVXXVVVVVVXVXV",
+        "ks": "JPZODEYCGCQABOUYKLGKMRNA",
+        "ic": 0.021739130434782608,
+        "ap": 6,
+        "dist": 18
+      },
+      {
+        "vp": "BXVBXBVXVVXVXBVVVVVVXVXX",
+        "ks": "JPZOXEYCGCQABOUYKLGKMRNA",
+        "ic": 0.021739130434782608,
+        "ap": 6,
+        "dist": 18
+      },
+      {
+        "vp": "BXVBVBVXVVXVXXVVVVBVXVXX",
+        "ks": "JPZODEYCGCQABOUYKLGKMRNA",
+        "ic": 0.021739130434782608,
+        "ap": 6,
+        "dist": 18
+      },
+      {
+        "vp": "BXVBVBVXVVXXXBVVVVVVXVVV",
+        "ks": "JPZODEYCGCQABOUYKLGKMRNA",
+        "ic": 0.021739130434782608,
+        "ap": 6,
+        "dist": 18
+      },
+      {
+        "vp": "BXVBVBVXVVXXXBVVVVVVXVXV",
+        "ks": "JPZODEYCGCQABOUYKLGKMRNA",
+        "ic": 0.021739130434782608,
+        "ap": 6,
+        "dist": 18
+      }
+    ],
+    "highest_ap": [
+      {
+        "vp": "VXBBBBVXVVBVVBVVVVVVXVVV",
+        "ks": "BPJODEYCGCKAZOUYKLGKMRNA",
+        "ic": 0.028985507246376812,
+        "ap": 7,
+        "dist": 17
+      },
+      {
+        "vp": "VXBBBBVXVVVVVBVVVVVVXVXV",
+        "ks": "BPJODEYCGCKAZOUYKLGKMRNA",
+        "ic": 0.028985507246376812,
+        "ap": 7,
+        "dist": 17
+      },
+      {
+        "vp": "VXBBVBVXVVVVVXVVVVVVXVVV",
+        "ks": "BPJODEYCGCKAZOUYKLGKMRNA",
+        "ic": 0.028985507246376812,
+        "ap": 7,
+        "dist": 17
+      },
+      {
+        "vp": "VXBBBBVXVVBVVXVVVVVVXVVX",
+        "ks": "BPJODEYCGCKAZOUYKLGKMRNA",
+        "ic": 0.028985507246376812,
+        "ap": 7,
+        "dist": 17
+      },
+      {
+        "vp": "VXBBVBVXVVBXVBVVVVBVXVVV",
+        "ks": "BPJODEYCGCKAZOUYKLGKMRNA",
+        "ic": 0.028985507246376812,
+        "ap": 7,
+        "dist": 17
+      },
+      {
+        "vp": "VXBBVBVXVVVXVBVVVVBVXVXX",
+        "ks": "BPJODEYCGCKAZOUYKLGKMRNA",
+        "ic": 0.028985507246376812,
+        "ap": 7,
+        "dist": 17
+      },
+      {
+        "vp": "VXBBBBVXVVVXVXVVVVBVXVVX",
+        "ks": "BPJODEYCGCKAZOUYKLGKMRNA",
+        "ic": 0.028985507246376812,
+        "ap": 7,
+        "dist": 17
+      },
+      {
+        "vp": "VXBBVBVXVVBVVBVVVVVVXBVV",
+        "ks": "BPJODEYCGCKAZOUYKLGKMTNA",
+        "ic": 0.028985507246376812,
+        "ap": 7,
+        "dist": 17
+      },
+      {
+        "vp": "VXBBBBVXVVBVVBVVVVVVXBBV",
+        "ks": "BPJODEYCGCKAZOUYKLGKMTRA",
+        "ic": 0.028985507246376812,
+        "ap": 7,
+        "dist": 17
+      },
+      {
+        "vp": "VXBBVBVXVVBVVXVVVVVVXBXX",
+        "ks": "BPJODEYCGCKAZOUYKLGKMTNA",
+        "ic": 0.028985507246376812,
+        "ap": 7,
+        "dist": 17
+      },
+      {
+        "vp": "VXBBVBVXVVBVVBVVVVBVXBVV",
+        "ks": "BPJODEYCGCKAZOUYKLGKMTNA",
+        "ic": 0.028985507246376812,
+        "ap": 7,
+        "dist": 17
+      },
+      {
+        "vp": "VXBBVBVXVVVVVXVVVVBVXBXX",
+        "ks": "BPJODEYCGCKAZOUYKLGKMTNA",
+        "ic": 0.028985507246376812,
+        "ap": 7,
+        "dist": 17
+      },
+      {
+        "vp": "VXBBVBVXVVBXVBVVVVVVXBBX",
+        "ks": "BPJODEYCGCKAZOUYKLGKMTRA",
+        "ic": 0.028985507246376812,
+        "ap": 7,
+        "dist": 17
+      },
+      {
+        "vp": "VXBBXBVXVVVXVXVVVVVVXBBX",
+        "ks": "BPJOXEYCGCKAZOUYKLGKMTRA",
+        "ic": 0.028985507246376812,
+        "ap": 7,
+        "dist": 17
+      },
+      {
+        "vp": "VXBBXBVXVVVXVXVVVVVVXBXX",
+        "ks": "BPJOXEYCGCKAZOUYKLGKMTNA",
+        "ic": 0.028985507246376812,
+        "ap": 7,
+        "dist": 17
+      },
+      {
+        "vp": "VXBBVBVXVVBXVBVVVVBVXBVV",
+        "ks": "BPJODEYCGCKAZOUYKLGKMTNA",
+        "ic": 0.028985507246376812,
+        "ap": 7,
+        "dist": 17
+      },
+      {
+        "vp": "VXBBVBVXVVBXVBVVVVBVXBVX",
+        "ks": "BPJODEYCGCKAZOUYKLGKMTNA",
+        "ic": 0.028985507246376812,
+        "ap": 7,
+        "dist": 17
+      },
+      {
+        "vp": "VXBBXBVXVVBXVXVVVVBVXBBX",
+        "ks": "BPJOXEYCGCKAZOUYKLGKMTRA",
+        "ic": 0.028985507246376812,
+        "ap": 7,
+        "dist": 17
+      },
+      {
+        "vp": "VBBBVBVXVVVVVXVVVXVVXVVV",
+        "ks": "BLJODEYCGCKAZOUYKPGKMRNA",
+        "ic": 0.028985507246376812,
+        "ap": 7,
+        "dist": 17
+      },
+      {
+        "vp": "VBBBVBVXVVBVVXVVVXVVXVXX",
+        "ks": "BLJODEYCGCKAZOUYKPGKMRNA",
+        "ic": 0.028985507246376812,
+        "ap": 7,
+        "dist": 17
+      },
+      {
+        "vp": "VBBBBBVXVVVVVBVVVXBVXVXV",
+        "ks": "BLJODEYCGCKAZOUYKPGKMRNA",
+        "ic": 0.028985507246376812,
+        "ap": 7,
+        "dist": 17
+      },
+      {
+        "vp": "VVBBVBVXVVVVVXVVVXBVXVVV",
+        "ks": "BLJODEYCGCKAZOUYKPGKMRNA",
+        "ic": 0.028985507246376812,
+        "ap": 7,
+        "dist": 17
+      },
+      {
+        "vp": "VBBBVBVXVVBVVXVVVXBVXVXX",
+        "ks": "BLJODEYCGCKAZOUYKPGKMRNA",
+        "ic": 0.028985507246376812,
+        "ap": 7,
+        "dist": 17
+      },
+      {
+        "vp": "VBBBBBVXVVVXVXVVVXVVXVVV",
+        "ks": "BLJODEYCGCKAZOUYKPGKMRNA",
+        "ic": 0.028985507246376812,
+        "ap": 7,
+        "dist": 17
+      },
+      {
+        "vp": "VBBBVBVXVVBXVXVVVXVVXVXV",
+        "ks": "BLJODEYCGCKAZOUYKPGKMRNA",
+        "ic": 0.028985507246376812,
+        "ap": 7,
+        "dist": 17
+      }
+    ],
+    "fewest_distinct": [
+      {
+        "vp": "VVVVXVVVVVBVVVVVVVVVVVVV",
+        "ks": "BLZCXCYYGCKAZMUYKLGKORNA",
+        "ic": 0.04710144927536232,
+        "ap": 6,
+        "dist": 14
+      },
+      {
+        "vp": "VVVVBVVVVVBVVVVVVVVVVVXV",
+        "ks": "BLZCDCYYGCKAZMUYKLGKORNA",
+        "ic": 0.04710144927536232,
+        "ap": 6,
+        "dist": 14
+      },
+      {
+        "vp": "VBVVVVVVVVBVVVVVVVVVVVVX",
+        "ks": "BLZCDCYYGCKAZMUYKLGKORNA",
+        "ic": 0.04710144927536232,
+        "ap": 6,
+        "dist": 14
+      },
+      {
+        "vp": "VBVVBVVVVVVXVVVVVVBVVVVV",
+        "ks": "BLZCDCYYGCKAZMUYKLGKORNA",
+        "ic": 0.04710144927536232,
+        "ap": 6,
+        "dist": 14
+      },
+      {
+        "vp": "VBVVVVVVVVVXVVVVVVBVVVXV",
+        "ks": "BLZCDCYYGCKAZMUYKLGKORNA",
+        "ic": 0.04710144927536232,
+        "ap": 6,
+        "dist": 14
+      },
+      {
+        "vp": "VBVVBVVVVVVXVVVVVVBVVVVX",
+        "ks": "BLZCDCYYGCKAZMUYKLGKORNA",
+        "ic": 0.04710144927536232,
+        "ap": 6,
+        "dist": 14
+      },
+      {
+        "vp": "VBVVVVVVVVVXVVVVVVBVVVXX",
+        "ks": "BLZCDCYYGCKAZMUYKLGKORNA",
+        "ic": 0.04710144927536232,
+        "ap": 6,
+        "dist": 14
+      },
+      {
+        "vp": "VBXVXVVVVVVVVVVVVVVVVVXX",
+        "ks": "BLBCXCYYGCKAZMUYKLGKORNA",
+        "ic": 0.04710144927536232,
+        "ap": 6,
+        "dist": 14
+      },
+      {
+        "vp": "VBXVVVVVVVVVVVVVVVBVVVVV",
+        "ks": "BLBCDCYYGCKAZMUYKLGKORNA",
+        "ic": 0.04710144927536232,
+        "ap": 6,
+        "dist": 14
+      },
+      {
+        "vp": "VBXVBVVVVVVVVVVVVVBVVVXV",
+        "ks": "BLBCDCYYGCKAZMUYKLGKORNA",
+        "ic": 0.04710144927536232,
+        "ap": 6,
+        "dist": 14
+      },
+      {
+        "vp": "VVXVXVVVVVBVVVVVVVBVVVXX",
+        "ks": "BLBCXCYYGCKAZMUYKLGKORNA",
+        "ic": 0.04710144927536232,
+        "ap": 6,
+        "dist": 14
+      },
+      {
+        "vp": "VBXVVVVVVVBXVVVVVVVVVVXV",
+        "ks": "BLBCDCYYGCKAZMUYKLGKORNA",
+        "ic": 0.04710144927536232,
+        "ap": 6,
+        "dist": 14
+      },
+      {
+        "vp": "VBXVXVVVVVBXVVVVVVVVVVVX",
+        "ks": "BLBCXCYYGCKAZMUYKLGKORNA",
+        "ic": 0.04710144927536232,
+        "ap": 6,
+        "dist": 14
+      },
+      {
+        "vp": "VVXVBVVVVVVXVVVVVVVVVVXX",
+        "ks": "BLBCDCYYGCKAZMUYKLGKORNA",
+        "ic": 0.04710144927536232,
+        "ap": 6,
+        "dist": 14
+      },
+      {
+        "vp": "VBXVVVVVVVBXVVVVVVBVVVXV",
+        "ks": "BLBCDCYYGCKAZMUYKLGKORNA",
+        "ic": 0.04710144927536232,
+        "ap": 6,
+        "dist": 14
+      },
+      {
+        "vp": "VVXVVVVVVVVXVVVVVVBVVVVX",
+        "ks": "BLBCDCYYGCKAZMUYKLGKORNA",
+        "ic": 0.04710144927536232,
+        "ap": 6,
+        "dist": 14
+      },
+      {
+        "vp": "VVXVXVVVVVVXVVVVVVBVVVXX",
+        "ks": "BLBCXCYYGCKAZMUYKLGKORNA",
+        "ic": 0.04710144927536232,
+        "ap": 6,
+        "dist": 14
+      },
+      {
+        "vp": "VBVVBVVVVVVVVVVVVVVVVBBV",
+        "ks": "BLZCDCYYGCKAZMUYKLGKOTRA",
+        "ic": 0.04710144927536232,
+        "ap": 6,
+        "dist": 14
+      },
+      {
+        "vp": "VVVVVVVVVVVVVVVVVVVVVBXV",
+        "ks": "BLZCDCYYGCKAZMUYKLGKOTNA",
+        "ic": 0.04710144927536232,
+        "ap": 6,
+        "dist": 14
+      },
+      {
+        "vp": "VBVVXVVVVVBVVVVVVVVVVBVX",
+        "ks": "BLZCXCYYGCKAZMUYKLGKOTNA",
+        "ic": 0.04710144927536232,
+        "ap": 6,
+        "dist": 14
+      },
+      {
+        "vp": "VBVVBVVVVVVVVVVVVVBVVBBV",
+        "ks": "BLZCDCYYGCKAZMUYKLGKOTRA",
+        "ic": 0.04710144927536232,
+        "ap": 6,
+        "dist": 14
+      },
+      {
+        "vp": "VBVVXVVVVVVVVVVVVVBVVBXV",
+        "ks": "BLZCXCYYGCKAZMUYKLGKOTNA",
+        "ic": 0.04710144927536232,
+        "ap": 6,
+        "dist": 14
+      },
+      {
+        "vp": "VBVVVVVVVVBVVVVVVVBVVBXX",
+        "ks": "BLZCDCYYGCKAZMUYKLGKOTNA",
+        "ic": 0.04710144927536232,
+        "ap": 6,
+        "dist": 14
+      },
+      {
+        "vp": "VVVVXVVVVVBXVVVVVVVVVBBV",
+        "ks": "BLZCXCYYGCKAZMUYKLGKOTRA",
+        "ic": 0.04710144927536232,
+        "ap": 6,
+        "dist": 14
+      },
+      {
+        "vp": "VBVVXVVVVVBXVVVVVVVVVBXV",
+        "ks": "BLZCXCYYGCKAZMUYKLGKOTNA",
+        "ic": 0.04710144927536232,
+        "ap": 6,
+        "dist": 14
+      }
+    ]
+  },
+  "classification": "FEASIBLE_BUT_WEAK",
+  "conclusion": "Bean constraints are WEAK for mixed variants: 146,577,600 valid assignments survive (only 1926x reduction). The search space remains enormous. Mixed variants are technically FEASIBLE but the Bean constraints provide almost no discrimination."
+}

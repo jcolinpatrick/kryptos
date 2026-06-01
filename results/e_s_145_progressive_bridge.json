@@ -1,0 +1,9 @@
+{
+  "experiment_id": "e_s_145",
+  "description": "Progressive bridge experiments - K3\u2192K4 gap analysis",
+  "total_configs": 31436,
+  "best_score": 5,
+  "best_tag": "H1_carter_extended_off71_beau",
+  "results_above_noise": [],
+  "repro_command": "PYTHONPATH=src python3 -u scripts/e_s_145_progressive_bridge.py"
+}

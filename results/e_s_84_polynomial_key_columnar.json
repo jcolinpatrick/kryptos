@@ -1,0 +1,57 @@
+{
+  "experiment": "E-S-84",
+  "description": "Polynomial/recurrence key + width-7 columnar",
+  "polynomial_best": {
+    "degree": 1,
+    "matches": 8,
+    "total": 24,
+    "variant": "beau",
+    "order": [
+      2,
+      1,
+      4,
+      6,
+      5,
+      0,
+      3
+    ],
+    "coeffs": [
+      13,
+      2
+    ]
+  },
+  "fibonacci_best": {
+    "matches": 4,
+    "checkable": 9,
+    "lag_a": 13,
+    "lag_b": 14,
+    "variant": "vig",
+    "order": [
+      0,
+      6,
+      4,
+      3,
+      1,
+      2,
+      5
+    ]
+  },
+  "lcg_best": {
+    "matches": 6,
+    "checkable": 10,
+    "a": 13,
+    "b": 9,
+    "variant": "vig",
+    "order": [
+      0,
+      4,
+      5,
+      1,
+      2,
+      3,
+      6
+    ]
+  },
+  "elapsed_seconds": 19.926891803741455,
+  "verdict": "INTERESTING \u2014 8 matches, check for underdetermination"
+}

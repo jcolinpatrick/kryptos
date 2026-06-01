@@ -1,0 +1,30 @@
+{
+  "manifest_version": "1.0",
+  "campaign_id": "hill_2x2_3x3",
+  "campaign_name": "Hill cipher 2x2 and 3x3 algebraic elimination",
+  "completed_at": "2026-04-11T00:00:00+00:00",
+  "git_commit": "",
+  "verdict": "strong_elimination",
+  "verdict_summary": "Hill cipher at block sizes 2x2 and 3x3 is algebraically eliminated on K4 under direct positional crib mapping. The crib constraints over-determine the linear system; no invertible key matrix in Z_26 satisfies them simultaneously.",
+  "evidence_pointer": "docs/elimination_tiers.md (Tier 1 row, Hill 2x2 / 3x3)",
+  "family_updates": {
+    "hill": {
+      "tier": 1,
+      "name": "Hill Cipher (2x2, 3x3)",
+      "evidence": "Hill 2x2 and 3x3 algebraically eliminated under direct positional crib mapping; over-determined linear system has no valid invertible key matrix in Z_26."
+    }
+  },
+  "scope_caveats": [
+    "H1 conditional: assumes direct positional crib mapping on the carved 97-char CT under an additive cipher class. Mechanisms that break H1 (outer transposition before the analyzed step, position-dependent selectors, physical-overlay remaps, non-additive ciphers) are NOT eliminated by this result.",
+    "Algebraically eliminated under direct positional crib mapping. Hill 4x4+ untested. Hill as inner layer of multi-layer composition untested."
+  ],
+  "scope_does_not_cover": [
+    "Hill 4x4 and larger blocks.",
+    "Hill as inner layer under an outer transposition or substitution."
+  ],
+  "total_profiles_evaluated": 0,
+  "joint_anomaly_successes": 0,
+  "populations_tested": [],
+  "variants_tested": [],
+  "notes": "Historical backfill from HILL-2x2-3x3."
+}

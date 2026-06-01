@@ -1,0 +1,69 @@
+K4 Period-Key Multiset Validation (Model 2)
+=======================================================================
+K4_CARVED = OBKRUOXOGHULBSOLIFBBWFLRVQQPRNGKSSOTWTQSJQSSEKZZWATJKLUDIAWINFBNYPVTTMZFPKWGDKZXTJCDIGKUHUAUEKCAR
+Cribs: ENE@21 BC@63
+
+period= 1 vig AZ: total=         4 joint=       4  VIABLE: 4 joint keys found  e.g. ['P', 'Q', 'S']
+period= 1 vig KA: total=         4 joint=       4  VIABLE: 4 joint keys found  e.g. ['P', 'Q', 'S']
+period= 1 beau AZ: total=         7 joint=       7  VIABLE: 7 joint keys found  e.g. ['H', 'K', 'N']
+period= 1 beau KA: total=         7 joint=       7  VIABLE: 7 joint keys found  e.g. ['H', 'K', 'N']
+period= 2 vig AZ: total=       480 joint=     267  VIABLE: 267 joint keys found  e.g. ['AB', 'AF', 'AG']
+period= 2 vig KA: total=       480 joint=     267  VIABLE: 267 joint keys found  e.g. ['AB', 'AF', 'AG']
+period= 2 beau AZ: total=       480 joint=     269  VIABLE: 269 joint keys found  e.g. ['AB', 'AK', 'AS']
+period= 2 beau KA: total=       480 joint=     269  VIABLE: 269 joint keys found  e.g. ['AB', 'AK', 'AS']
+period= 3 vig AZ: total=    10,560 joint=    4712  VIABLE: 4712 joint keys found  e.g. ['ABA', 'ABB', 'ABC']
+period= 3 vig KA: total=    10,560 joint=    4712  VIABLE: 4712 joint keys found  e.g. ['ABA', 'ABB', 'ABC']
+period= 3 beau AZ: total=    10,560 joint=    4652  VIABLE: 4652 joint keys found  e.g. ['BAB', 'BAC', 'BAD']
+period= 3 beau KA: total=    10,560 joint=    4652  VIABLE: 4652 joint keys found  e.g. ['BAB', 'BAC', 'BAD']
+period= 4 vig AZ: total=   389,376 joint=  176190  VIABLE: 176190 joint keys found  e.g. ['AADA', 'AADF', 'AADI']
+period= 4 vig KA: total=   389,376 joint=  176190  VIABLE: 176190 joint keys found  e.g. ['AADA', 'AADF', 'AADI']
+period= 4 beau AZ: total=   389,376 joint=  176434  VIABLE: 176434 joint keys found  e.g. ['ABAB', 'ABAC', 'ABAF']
+period= 4 beau KA: total=   389,376 joint=  176434  VIABLE: 176434 joint keys found  e.g. ['ABAB', 'ABAC', 'ABAF']
+period= 5 vig AZ: total=10,123,776 joint=    None  UNCHECKED (10,123,776 combos, too many to enumerate)
+period= 5 vig KA: total=10,123,776 joint=    None  UNCHECKED (10,123,776 combos, too many to enumerate)
+period= 5 beau AZ: total=10,123,776 joint=    None  UNCHECKED (10,123,776 combos, too many to enumerate)
+period= 5 beau KA: total=10,123,776 joint=    None  UNCHECKED (10,123,776 combos, too many to enumerate)
+period= 6 vig AZ: total=308,915,776 joint=    None  UNCHECKED (308,915,776 combos, too many to enumerate)
+period= 6 vig KA: total=308,915,776 joint=    None  UNCHECKED (308,915,776 combos, too many to enumerate)
+period= 6 beau AZ: total=308,915,776 joint=    None  UNCHECKED (308,915,776 combos, too many to enumerate)
+period= 6 beau KA: total=308,915,776 joint=    None  UNCHECKED (308,915,776 combos, too many to enumerate)
+period= 7 vig AZ: total=8,031,810,176 joint=    None  UNCHECKED (8,031,810,176 combos, too many to enumerate)
+period= 7 vig KA: total=8,031,810,176 joint=    None  UNCHECKED (8,031,810,176 combos, too many to enumerate)
+period= 7 beau AZ: total=8,031,810,176 joint=    None  UNCHECKED (8,031,810,176 combos, too many to enumerate)
+period= 7 beau KA: total=8,031,810,176 joint=    None  UNCHECKED (8,031,810,176 combos, too many to enumerate)
+period= 8 vig AZ: total=208,827,064,576 joint=    None  UNCHECKED (208,827,064,576 combos, too many to enumerate)
+period= 8 vig KA: total=208,827,064,576 joint=    None  UNCHECKED (208,827,064,576 combos, too many to enumerate)
+period= 8 beau AZ: total=208,827,064,576 joint=    None  UNCHECKED (208,827,064,576 combos, too many to enumerate)
+period= 8 beau KA: total=208,827,064,576 joint=    None  UNCHECKED (208,827,064,576 combos, too many to enumerate)
+period= 9 vig AZ: total=3,638,728,065,024 joint=    None  UNCHECKED (3,638,728,065,024 combos, too many to enumerate)
+period= 9 vig KA: total=3,638,728,065,024 joint=    None  UNCHECKED (3,638,728,065,024 combos, too many to enumerate)
+period= 9 beau AZ: total=3,638,728,065,024 joint=    None  UNCHECKED (3,638,728,065,024 combos, too many to enumerate)
+period= 9 beau KA: total=3,638,728,065,024 joint=    None  UNCHECKED (3,638,728,065,024 combos, too many to enumerate)
+period=10 vig AZ: total=141,167,095,653,376 joint=    None  UNCHECKED (141,167,095,653,376 combos, too many to enumerate)
+period=10 vig KA: total=141,167,095,653,376 joint=    None  UNCHECKED (141,167,095,653,376 combos, too many to enumerate)
+period=10 beau AZ: total=141,167,095,653,376 joint=    None  UNCHECKED (141,167,095,653,376 combos, too many to enumerate)
+period=10 beau KA: total=141,167,095,653,376 joint=    None  UNCHECKED (141,167,095,653,376 combos, too many to enumerate)
+period=11 vig AZ: total=3,670,344,486,987,776 joint=    None  UNCHECKED (3,670,344,486,987,776 combos, too many to enumerate)
+period=11 vig KA: total=3,670,344,486,987,776 joint=    None  UNCHECKED (3,670,344,486,987,776 combos, too many to enumerate)
+period=11 beau AZ: total=3,670,344,486,987,776 joint=    None  UNCHECKED (3,670,344,486,987,776 combos, too many to enumerate)
+period=11 beau KA: total=3,670,344,486,987,776 joint=    None  UNCHECKED (3,670,344,486,987,776 combos, too many to enumerate)
+period=12 vig AZ: total=95,428,956,661,682,176 joint=    None  UNCHECKED (95,428,956,661,682,176 combos, too many to enumerate)
+period=12 vig KA: total=95,428,956,661,682,176 joint=    None  UNCHECKED (95,428,956,661,682,176 combos, too many to enumerate)
+period=12 beau AZ: total=95,428,956,661,682,176 joint=    None  UNCHECKED (95,428,956,661,682,176 combos, too many to enumerate)
+period=12 beau KA: total=95,428,956,661,682,176 joint=    None  UNCHECKED (95,428,956,661,682,176 combos, too many to enumerate)
+period=13 vig AZ: total=2,481,152,873,203,736,576 joint=    None  UNCHECKED (2,481,152,873,203,736,576 combos, too many to enumerate)
+period=13 vig KA: total=2,481,152,873,203,736,576 joint=    None  UNCHECKED (2,481,152,873,203,736,576 combos, too many to enumerate)
+period=13 beau AZ: total=2,481,152,873,203,736,576 joint=    None  UNCHECKED (2,481,152,873,203,736,576 combos, too many to enumerate)
+period=13 beau KA: total=2,481,152,873,203,736,576 joint=    None  UNCHECKED (2,481,152,873,203,736,576 combos, too many to enumerate)
+period=14 vig AZ: total=64,509,974,703,297,150,976 joint=    None  UNCHECKED (64,509,974,703,297,150,976 combos, too many to enumerate)
+period=14 vig KA: total=64,509,974,703,297,150,976 joint=    None  UNCHECKED (64,509,974,703,297,150,976 combos, too many to enumerate)
+period=14 beau AZ: total=64,509,974,703,297,150,976 joint=    None  UNCHECKED (64,509,974,703,297,150,976 combos, too many to enumerate)
+period=14 beau KA: total=64,509,974,703,297,150,976 joint=    None  UNCHECKED (64,509,974,703,297,150,976 combos, too many to enumerate)
+period=15 vig AZ: total=1,548,239,392,879,131,623,424 joint=    None  UNCHECKED (1,548,239,392,879,131,623,424 combos, too many to enumerate)
+period=15 vig KA: total=1,548,239,392,879,131,623,424 joint=    None  UNCHECKED (1,548,239,392,879,131,623,424 combos, too many to enumerate)
+period=15 beau AZ: total=1,548,239,392,879,131,623,424 joint=    None  UNCHECKED (1,548,239,392,879,131,623,424 combos, too many to enumerate)
+period=15 beau KA: total=1,548,239,392,879,131,623,424 joint=    None  UNCHECKED (1,548,239,392,879,131,623,424 combos, too many to enumerate)
+period=16 vig AZ: total=43,608,742,899,428,874,059,776 joint=    None  UNCHECKED (43,608,742,899,428,874,059,776 combos, too many to enumerate)
+period=16 vig KA: total=43,608,742,899,428,874,059,776 joint=    None  UNCHECKED (43,608,742,899,428,874,059,776 combos, too many to enumerate)
+period=16 beau AZ: total=43,608,742,899,428,874,059,776 joint=    None  UNCHECKED (43,608,742,899,428,874,059,776 combos, too many to enumerate)
+period=16 beau KA: total=43,608,742,899,428,874,059,776 joint=    None  UNCHECKED (43,608,742,899,428,874,059,776 combos, too many to enumerate)

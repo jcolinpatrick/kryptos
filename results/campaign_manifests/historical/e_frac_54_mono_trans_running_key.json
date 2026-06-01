@@ -1,0 +1,23 @@
+{
+  "manifest_version": "1.0",
+  "campaign_id": "e_frac_54_mono_trans_running_key",
+  "campaign_name": "Mono + Trans + Running-key UNDERDETERMINED (E-FRAC-54)",
+  "completed_at": "2026-04-11T00:00:00+00:00",
+  "git_commit": "",
+  "verdict": "open",
+  "verdict_summary": "E-FRAC-54: Monoalphabetic preprocessing + transposition + running-key decryption is UNDERDETERMINED, NOT eliminated. The 13 monoalphabetic degrees of freedom saturate quadgram discrimination at n=97, so the fragment-analysis scoring path cannot distinguish real English running keys from gibberish when a monoalphabetic preprocessing layer is present. Requires a scoring path that beats FM-1 at n=97 to test. This is the project's only legitimate algebraic-class open frontier; it remains OPEN.",
+  "evidence_pointer": "docs/elimination_tiers.md (OPEN frontier, E-FRAC-54 Mono+Trans+Running-key)",
+  "family_updates": {},
+  "scope_caveats": [
+    "Detection-limited, not search-limited. The genuine algebraic open frontier.",
+    "The 13 monoalphabetic DOF saturate fragment discrimination at n=97."
+  ],
+  "scope_does_not_cover": [
+    "Nothing is eliminated by this entry \u2014 it is an OPEN marker."
+  ],
+  "total_profiles_evaluated": 0,
+  "joint_anomaly_successes": 0,
+  "populations_tested": [],
+  "variants_tested": [],
+  "notes": "E-FRAC-54 must remain OPEN. The 13-DOF saturation is detection-limited, not search-limited."
+}

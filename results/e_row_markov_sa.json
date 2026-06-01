@@ -1,0 +1,264 @@
+{
+  "experiment": "e_row_markov_sa",
+  "timestamp": "2026-05-23T07:10:05.214841",
+  "description": "Row-Markov regularized keystream SA: 4 conditions testing whether Polybius row structure helps decode K4",
+  "design": {
+    "conditions": {
+      "A_no_prior": 0.0,
+      "B_mild": 0.05,
+      "C_moderate": 0.15,
+      "D_strong": 0.3
+    },
+    "restarts_per_condition": 150,
+    "steps_per_restart": 750000,
+    "workers": 18,
+    "known_positions": 24,
+    "unknown_positions": 49,
+    "bean_eq_73": 1,
+    "bean_ineq_73": 242,
+    "alphabet": "full 26 (no restriction)",
+    "key_difference_from_prior": "Prior test restricted to 12 letters; this allows all 26 with row Markov prior"
+  },
+  "empirical_markov": {
+    "same_row_rate_observed": "10/23 = 0.435",
+    "same_row_rate_expected": "~0.19",
+    "transition_counts": [
+      [
+        4,
+        0,
+        0,
+        1,
+        2,
+        0
+      ],
+      [
+        1,
+        1,
+        3,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        2,
+        3,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        2,
+        0,
+        2,
+        0,
+        0
+      ],
+      [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    ]
+  },
+  "summary": {
+    "A_no_prior": {
+      "lambda": 0.0,
+      "n_restarts": 150,
+      "qg_best": -3.5982362428571433,
+      "qg_mean": -3.68140309752381,
+      "qg_std": 0.02929355453605499,
+      "qg_median": -3.6784662714285714,
+      "english_hits": 150,
+      "row_pairs_mean": 18.486666666666668,
+      "ap_mean": 16.073333333333334,
+      "distinct_mean": 24.006666666666668,
+      "bean_violations_total": 0
+    },
+    "B_mild": {
+      "lambda": 0.05,
+      "n_restarts": 150,
+      "qg_best": -3.938185171428571,
+      "qg_mean": -4.121664488285714,
+      "qg_std": 0.06613274067851656,
+      "qg_median": -4.116684471428572,
+      "english_hits": 3,
+      "row_pairs_mean": 42.653333333333336,
+      "ap_mean": 19.713333333333335,
+      "distinct_mean": 20.96,
+      "bean_violations_total": 0
+    },
+    "C_moderate": {
+      "lambda": 0.15,
+      "n_restarts": 150,
+      "qg_best": -4.3068878857142865,
+      "qg_mean": -5.246647978285715,
+      "qg_std": 0.45465467516608804,
+      "qg_median": -5.221854257142858,
+      "english_hits": 0,
+      "row_pairs_mean": 50.193333333333335,
+      "ap_mean": 19.273333333333333,
+      "distinct_mean": 18.58,
+      "bean_violations_total": 0
+    },
+    "D_strong": {
+      "lambda": 0.3,
+      "n_restarts": 150,
+      "qg_best": -5.989136071428571,
+      "qg_mean": -7.567053279904762,
+      "qg_std": 0.2787251719076775,
+      "qg_median": -7.648510342857143,
+      "english_hits": 0,
+      "row_pairs_mean": 55.913333333333334,
+      "ap_mean": 12.246666666666666,
+      "distinct_mean": 13.2,
+      "bean_violations_total": 0
+    }
+  },
+  "top_10": [
+    {
+      "rank": 1,
+      "condition": "A_no_prior",
+      "lambda": 0.0,
+      "qg_per_char": -3.5982362428571433,
+      "markov_excess": 0.0,
+      "plaintext": "SINTHERESTHEREASTNORTHEASTRATIONATIONESSTERINTERBERLINCLOCKERATIONATIONSI",
+      "keystream": "JCKHOYCWDBMFSJLJODEGKUKKKLFTMAXDSLSNMASLCPLQNGJSOCGGBGOKTRUHBXMRQQKACOHWZ",
+      "row_pairs": 16,
+      "ap_count": 17,
+      "distinct": 24,
+      "bean_violations": 0
+    },
+    {
+      "rank": 2,
+      "condition": "A_no_prior",
+      "lambda": 0.0,
+      "qg_per_char": -3.616601228571428,
+      "markov_excess": 0.0,
+      "plaintext": "MENTATIONTHEREASTNORTHEASTICALISTATIONATIONISTRIBERLINCLOCKERESTICATINGPR",
+      "keystream": "DYKHHNTGYBMFSJLJODEGKUKKKLWVTDRILSDHNJAMRZHQSGWJOCGGBGOKTRUHBBLCKFKACNATI",
+      "row_pairs": 18,
+      "ap_count": 17,
+      "distinct": 24,
+      "bean_violations": 0
+    },
+    {
+      "rank": 3,
+      "condition": "A_no_prior",
+      "lambda": 0.0,
+      "qg_per_char": -3.6185948857142853,
+      "markov_excess": 0.0,
+      "plaintext": "RATIONANTINGREASTNORTHEASTRICALATIONATICATIONTERBERLINCLOCKERATIONINGNESS",
+      "keystream": "IUQWVHLFEQSHSJLJODEGKUKKKLFBVSUQLAYMZPIVJECWNGJSOCGGBGOKTRUHBXMRQQSUANYWJ",
+      "row_pairs": 17,
+      "ap_count": 13,
+      "distinct": 26,
+      "bean_violations": 0
+    },
+    {
+      "rank": 4,
+      "condition": "A_no_prior",
+      "lambda": 0.0,
+      "qg_per_char": -3.6271148142857137,
+      "markov_excess": 0.0,
+      "plaintext": "ATERINESSINGREASTNORTHEASTERATIONALISTINESSINTERBERLINCLOCKERINESSATIONAL",
+      "keystream": "RNBFPHPKDQSHSJLJODEGKUKKKLSKTLREFSVHRPIGNDMQNGJSOCGGBGOKTRUHBFGNUVKACOHEC",
+      "row_pairs": 20,
+      "ap_count": 19,
+      "distinct": 22,
+      "bean_violations": 0
+    },
+    {
+      "rank": 5,
+      "condition": "A_no_prior",
+      "lambda": 0.0,
+      "qg_per_char": -3.6291615142857148,
+      "markov_excess": 0.0,
+      "plaintext": "CTIONATIONISTEASTNORTHEASTICATIONALINTERESTERINGBERLINCLOCKERMATIONTERING",
+      "keystream": "TNFCUUEAZVNTUJLJODEGKUKKKLWVTLREFSVHMPEKNDNMRVSHOCGGBGOKTRUHBJTCKRXAYRCRX",
+      "row_pairs": 16,
+      "ap_count": 14,
+      "distinct": 24,
+      "bean_violations": 0
+    },
+    {
+      "rank": 6,
+      "condition": "A_no_prior",
+      "lambda": 0.0,
+      "qg_per_char": -3.630209114285714,
+      "markov_excess": 0.0,
+      "plaintext": "CATIONANTINGREASTNORTHEASTHERATIONALINESSANTHEREBERLINCLOCKINGRATIONALISM",
+      "keystream": "TUQWVHLFEQSHSJLJODEGKUKKKLVXKSCYGFKKHJELBLHBHRWFOCGGBGOKTRULXDKJVLYUULCWD",
+      "row_pairs": 19,
+      "ap_count": 17,
+      "distinct": 20,
+      "bean_violations": 0
+    },
+    {
+      "rank": 7,
+      "condition": "A_no_prior",
+      "lambda": 0.0,
+      "qg_per_char": -3.631464228571428,
+      "markov_excess": 0.0,
+      "plaintext": "LIANTERATINGREASTNORTHEASTERATIONATERATIONALITERBERLINCLOCKERESTICATIONAN",
+      "keystream": "CCXBAYCSEQSHSJLJODEGKUKKKLSKTLREFSDDQWTBXYUTIGJSOCGGBGOKTRUHBBLCKFKACOHEE",
+      "row_pairs": 23,
+      "ap_count": 17,
+      "distinct": 21,
+      "bean_violations": 0
+    },
+    {
+      "rank": 8,
+      "condition": "A_no_prior",
+      "lambda": 0.0,
+      "qg_per_char": -3.6329073714285696,
+      "markov_excess": 0.0,
+      "plaintext": "ANTINTERINESSEASTNORTHEASTEREATIONATIONISTINGRAMBERLINCLOCKERATIONICALLYS",
+      "keystream": "RHQWUNPJTVJTTJLJODEGKUKKKLSKXSCYGFKSHKNBBECVGEFNOCGGBGOKTRUHBXMRQQSJULFCJ",
+      "row_pairs": 19,
+      "ap_count": 17,
+      "distinct": 23,
+      "bean_violations": 0
+    },
+    {
+      "rank": 9,
+      "condition": "A_no_prior",
+      "lambda": 0.0,
+      "qg_per_char": -3.636109285714285,
+      "markov_excess": 0.0,
+      "plaintext": "ESTRATIONSTEREASTNORTHEASTRATIONATIONINTERATEDUNBERLINCLOCKERATEDUNCONTIN",
+      "keystream": "VMQFHNTGYAYFSJLJODEGKUKKKLFTMAXDSLSNMENMNCUBEQZOOCGGBGOKTRUHBXMNFXXJINNME",
+      "row_pairs": 21,
+      "ap_count": 14,
+      "distinct": 24,
+      "bean_violations": 0
+    },
+    {
+      "rank": 10,
+      "condition": "A_no_prior",
+      "lambda": 0.0,
+      "qg_per_char": -3.637704557142856,
+      "markov_excess": 0.0,
+      "plaintext": "INTERATIONESSEASTNORTHEASTIONSTRATIONATIONCONTERBERLINCLOCKERINGSTRICALLY",
+      "keystream": "ZHQSYUEAZVJTTJLJODEGKUKKKLWHGKCHSLSNMWTBXYWWNGJSOCGGBGOKTRUHBFGPUWBPWAFPP",
+      "row_pairs": 18,
+      "ap_count": 16,
+      "distinct": 25,
+      "bean_violations": 0
+    }
+  ],
+  "elapsed_seconds": 686.557781,
+  "verdict": ""
+}

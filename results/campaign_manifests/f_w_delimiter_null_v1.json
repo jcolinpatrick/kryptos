@@ -1,0 +1,43 @@
+{
+  "manifest_version": "1.0",
+  "campaign_id": "f_w_delimiter_null_v1",
+  "campaign_name": "W-delimiter null elimination framework",
+  "completed_at": "2026-05-23T00:54:00.340834+00:00",
+  "git_commit": "0e677dd",
+  "verdict": "narrow_residual",
+  "verdict_summary": "A narrow residual tail survives the multi-channel joint-tail criterion but does not clear multiplicity-corrected curated-population bar. The W-delimiter hypothesis is not eliminated within these narrow surviving cells; each listed candidate requires an independent follow-up test before any further claim. Scope caveats apply.",
+  "evidence_pointer": "C:\\Users\\Derek\\Desktop\\Kryptos\\kryptos\\results\\f_w_delimiter_null_v1.json",
+  "family_updates": {
+    "w_delimiter": {
+      "tier": 3,
+      "evidence": "f_w_delimiter_null_v1 (narrow_residual): 633 joint-tail candidates across populations of 151,059 records. AT+NEAR specifically tagged not-signal across all variants. Cheap self-encrypting criterion fully explained by combinatorics."
+    }
+  },
+  "scope_caveats": [
+    "This null does NOT cover segments 0, 2, 3, 5 (unconstrained under the cribs).",
+    "This null only tests additive cipher variants (Vigenere, Beaufort, Variant Beaufort).",
+    "This null assumes direct positional alignment CT[i] -> PT[i].",
+    "This null does not rule out physical-overlay or procedural mechanisms outside the feature set.",
+    "The W-delimiter hypothesis itself (H2) is treated as a working assumption, not as proven."
+  ],
+  "scope_does_not_cover": [
+    "Unconstrained K4 segments 0, 2, 3, 5",
+    "Non-additive cipher classes",
+    "Physical-overlay or procedural mechanisms",
+    "Slot fills that break the W-delimiter assumption itself"
+  ],
+  "total_profiles_evaluated": 151059,
+  "joint_anomaly_successes": 633,
+  "populations_tested": [
+    "random",
+    "dictionary",
+    "grammatical",
+    "curated"
+  ],
+  "variants_tested": [
+    "vig",
+    "beau",
+    "vbeau"
+  ],
+  "notes": "Multiplicity correction: Total candidates evaluated across all populations: 453177. Any single-channel tail at percentile p needs p < 1/453177 (log10 = 5.66) to be genuinely rare. The joint-tail criterion requires multi-channel tail events in the grammatical population, which is a stricter bar than single-channel multiplicity."
+}

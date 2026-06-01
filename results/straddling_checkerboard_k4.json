@@ -1,0 +1,852 @@
+{
+  "experiment": "e_straddling_checkerboard_k4",
+  "description": "Straddling checkerboard digit-level attack on K4",
+  "model": "CT(97 letters) -> digit mapping -> 97 digits -> checkerboard decode -> PT(~73)",
+  "timestamp": "2026-05-23T07:10:54",
+  "total_configs": 86066,
+  "elapsed_seconds": 12.633707523345947,
+  "phases": {
+    "phase2_direct_decode": {
+      "configs": 23805,
+      "best_fixed": 7,
+      "best_free": 9,
+      "hits": 3496
+    },
+    "phase3_same_alpha": {
+      "configs": 1035,
+      "best_fixed": 6,
+      "best_free": 8
+    },
+    "phase4_crib_digit_match": {
+      "configs": 23805,
+      "best_score": 0,
+      "hits": 0
+    },
+    "phase6_two_layer": {
+      "configs": 12420,
+      "best_fixed": 6,
+      "best_free": 10,
+      "hits": 1738
+    },
+    "phase7_exact_reverse_crib": {
+      "configs": 23805,
+      "exact_hits": 0,
+      "best": 0
+    },
+    "phase8_palette_escape": {
+      "configs": 23
+    },
+    "phase9_morse_derived": {
+      "configs": 138,
+      "best": 7
+    },
+    "phase10_crib_constrained": {
+      "hits": 0,
+      "details": []
+    },
+    "phase11_length_dist": {
+      "len_73_count": 0,
+      "len_73_configs": [],
+      "top_lengths": [
+        [
+          81,
+          21
+        ],
+        [
+          82,
+          21
+        ],
+        [
+          84,
+          20
+        ],
+        [
+          83,
+          14
+        ],
+        [
+          80,
+          14
+        ],
+        [
+          86,
+          13
+        ],
+        [
+          79,
+          11
+        ],
+        [
+          85,
+          8
+        ],
+        [
+          78,
+          8
+        ],
+        [
+          87,
+          6
+        ]
+      ]
+    }
+  },
+  "expansion_ratio_analysis": {
+    "target_ratio": 1.3287671232876712,
+    "viable_layouts": 0,
+    "samples": []
+  },
+  "all_hits": [
+    {
+      "phase": 2,
+      "outer_alpha": "KRYPTOS",
+      "inner_alpha": "KRYPTOS",
+      "escape_pair": [
+        0,
+        5
+      ],
+      "pt_length": 74,
+      "fixed_score": 3,
+      "free_score": 5,
+      "free_ene_pos": 2,
+      "free_bc_pos": 59,
+      "decoded": "XCKUQPKOSTWNSSYROKRBYKAYHTUYPHTHTKGQOPTIKGOYZRSARYRPPSNYEYBUPTAGYCPKOKKLOK"
+    },
+    {
+      "phase": 2,
+      "outer_alpha": "KRYPTOS",
+      "inner_alpha": "KRYPTOS",
+      "escape_pair": [
+        0,
+        7
+      ],
+      "pt_length": 77,
+      "fixed_score": 1,
+      "free_score": 5,
+      "free_ene_pos": 14,
+      "free_bc_pos": 33,
+      "decoded": "TSCKTPTYPKXOTVRSSYRMRBYKAYHOTPYPHOHOKGTYUOIKGQTARSARYRPPSTRYEYBTPPOAGYCPKMKLM"
+    },
+    {
+      "phase": 2,
+      "outer_alpha": "KRYPTOS",
+      "inner_alpha": "KRYPTOS",
+      "escape_pair": [
+        2,
+        7
+      ],
+      "pt_length": 83,
+      "fixed_score": 0,
+      "free_score": 5,
+      "free_ene_pos": 60,
+      "free_bc_pos": 20,
+      "decoded": "TSKRRTPTYPRXOTVJSYIRBKYRAYKOOTPYPKOOKOORKTTYUOKNKTQTAJAEFPSTEKYYKKTPPOAKTYKRPRNR"
+    },
+    {
+      "phase": 2,
+      "outer_alpha": "KRYPTOS",
+      "inner_alpha": "KRYPTOS",
+      "escape_pair": [
+        2,
+        8
+      ],
+      "pt_length": 86,
+      "fixed_score": 2,
+      "free_score": 5,
+      "free_ene_pos": 32,
+      "free_bc_pos": 19,
+      "decoded": "TMRRTPTYPRSWTSTJQIRBKYRAYKOOTPYPKOOKOORKTTYSPOKSRKTSYTAJAEFPVEKYYKKTPPOAKTYKRPRS"
+    },
+    {
+      "phase": 2,
+      "outer_alpha": "KRYPTOS",
+      "inner_alpha": "KRYPTOS",
+      "escape_pair": [
+        4,
+        9
+      ],
+      "pt_length": 84,
+      "fixed_score": 1,
+      "free_score": 5,
+      "free_ene_pos": 0,
+      "free_bc_pos": 2,
+      "decoded": "TAKRRTGPCSAOTSTYAAPYSRYKKPRUKOOTEBOOKOORKTTPSHKSRKTSPTQAQPYFATYPKPPKKTFOMTPKRCSR"
+    },
+    {
+      "phase": 2,
+      "outer_alpha": "KRYPTOS",
+      "inner_alpha": "KRYPTOS",
+      "escape_pair": [
+        5,
+        7
+      ],
+      "pt_length": 79,
+      "fixed_score": 2,
+      "free_score": 4,
+      "free_ene_pos": 1,
+      "free_bc_pos": 1,
+      "decoded": "JKRRFETRXOIDSSPYNYKKPRAPKOOFPTKOOKOORKGPVOKNKIPLYSAYPYTTSDPKPPKKFTOAKEKRTRNRKAN"
+    },
+    {
+      "phase": 2,
+      "outer_alpha": "KRYPTOS",
+      "inner_alpha": "KRYPTOS",
+      "escape_pair": [
+        5,
+        9
+      ],
+      "pt_length": 81,
+      "fixed_score": 1,
+      "free_score": 5,
+      "free_ene_pos": 30,
+      "free_bc_pos": 21,
+      "decoded": "JKRRFETRSAOIDAAPYSRYKKPRUKOOFPTKOOKOORKGPSTOKSRKIPLYAQPYTTADPKPPKKFTOMEKRTRSRRKX"
+    },
+    {
+      "phase": 2,
+      "outer_alpha": "KRYPTOS",
+      "inner_alpha": "KRYPTOS",
+      "escape_pair": [
+        6,
+        7
+      ],
+      "pt_length": 83,
+      "fixed_score": 1,
+      "free_score": 4,
+      "free_ene_pos": 2,
+      "free_bc_pos": 35,
+      "decoded": "OSKRROTOPTRXGWYSSPYNYKKPRAPKHOTPTKHKHRKOOPVBNKOUOAYSAYPYTTSOYPKPPKKOTTLKOPKRTRNR"
+    },
+    {
+      "phase": 2,
+      "outer_alpha": "KRYPTOS",
+      "inner_alpha": "KRYPTOS",
+      "escape_pair": [
+        6,
+        9
+      ],
+      "pt_length": 87,
+      "fixed_score": 1,
+      "free_score": 5,
+      "free_ene_pos": 0,
+      "free_bc_pos": 25,
+      "decoded": "OAKRROTOPTRSAGSOYAAPYSRYKKPRUKHOTPTKHKHRKOOPSTBSRKOSPOQAQPYTTAOYPKPPKKOTTLKOPKRT"
+    },
+    {
+      "phase": 2,
+      "outer_alpha": "KRYPTOS",
+      "inner_alpha": "KRYPTOS",
+      "escape_pair": [
+        8,
+        9
+      ],
+      "pt_length": 88,
+      "fixed_score": 2,
+      "free_score": 5,
+      "free_ene_pos": 3,
+      "free_bc_pos": 1,
+      "decoded": "OBRROTOPTRAHOAOYJPYARYKKPRUKSSOTPTKSSKSSRKOOPATSKARKOAPOQLYPYTTGYPKPPKKOTTSMOPKR"
+    },
+    {
+      "phase": 2,
+      "outer_alpha": "KRYPTOS",
+      "inner_alpha": "PALIMPSEST",
+      "escape_pair": [
+        0,
+        5
+      ],
+      "pt_length": 74,
+      "fixed_score": 1,
+      "free_score": 7,
+      "free_ene_pos": 5,
+      "free_bc_pos": 52,
+      "decoded": "YCPVUIPSEMXREELASPABLPTLJMVLIJMJMPHUSIMKPHSLZAETALAIIERLFLBVIMTHLCIPSPPOSP"
+    },
+    {
+      "phase": 2,
+      "outer_alpha": "KRYPTOS",
+      "inner_alpha": "PALIMPSEST",
+      "escape_pair": [
+        0,
+        7
+      ],
+      "pt_length": 77,
+      "fixed_score": 1,
+      "free_score": 5,
+      "free_ene_pos": 47,
+      "free_bc_pos": 0,
+      "decoded": "MECPMIMLIPYSMWAEELAQABLPTLJSMILIJSJSPHMLVSKPHUMTAETALAIIEMALFLBMIISTHLCIPQPOQ"
+    },
+    {
+      "phase": 2,
+      "outer_alpha": "KRYPTOS",
+      "inner_alpha": "PALIMPSEST",
+      "escape_pair": [
+        2,
+        7
+      ],
+      "pt_length": 83,
+      "fixed_score": 2,
+      "free_score": 5,
+      "free_ene_pos": 49,
+      "free_bc_pos": 5,
+      "decoded": "MEPAAMIMLIAYSMWNELKABPLATLPSSMILIPSSPSSAPMMLVSPRPMUMTNTFGIEMFPLLPPMIISTPMLPAIARA"
+    },
+    {
+      "phase": 2,
+      "outer_alpha": "KRYPTOS",
+      "inner_alpha": "PALIMPSEST",
+      "escape_pair": [
+        2,
+        8
+      ],
+      "pt_length": 86,
+      "fixed_score": 1,
+      "free_score": 5,
+      "free_ene_pos": 34,
+      "free_bc_pos": 4,
+      "decoded": "MQAAMIMLIAEXMEMNUKABPLATLPSSMILIPSSPSSAPMMLEISPEAPMELMTNTFGIWFPLLPPMIISTPMLPAIAE"
+    },
+    {
+      "phase": 2,
+      "outer_alpha": "KRYPTOS",
+      "inner_alpha": "PALIMPSEST",
+      "escape_pair": [
+        4,
+        9
+      ],
+      "pt_length": 84,
+      "fixed_score": 0,
+      "free_score": 6,
+      "free_ene_pos": 9,
+      "free_bc_pos": 12,
+      "decoded": "MTPAAMHICETSMEMLTTILEALPPIAVPSSMFBSSPSSAPMMIEJPEAPMEIMUTUILGTMLIPIIPPMGSQMIPACEA"
+    },
+    {
+      "phase": 2,
+      "outer_alpha": "KRYPTOS",
+      "inner_alpha": "PALIMPSEST",
+      "escape_pair": [
+        5,
+        7
+      ],
+      "pt_length": 79,
+      "fixed_score": 1,
+      "free_score": 6,
+      "free_ene_pos": 30,
+      "free_bc_pos": 48,
+      "decoded": "NPAAGFMAYSKDEEILRLPPIATIPSSGIMPSSPSSAPHIWSPRPKIOLETLILMMEDIPIIPPGMSTPFPAMARAPTR"
+    },
+    {
+      "phase": 2,
+      "outer_alpha": "KRYPTOS",
+      "inner_alpha": "PALIMPSEST",
+      "escape_pair": [
+        5,
+        9
+      ],
+      "pt_length": 81,
+      "fixed_score": 1,
+      "free_score": 6,
+      "free_ene_pos": 8,
+      "free_bc_pos": 16,
+      "decoded": "NPAAGFMAETSKDTTILEALPPIAVPSSGIMPSSPSSAPHIEMSPEAPKIOLTUILMMTDIPIIPPGMSQFPAMAEAAPY"
+    },
+    {
+      "phase": 2,
+      "outer_alpha": "KRYPTOS",
+      "inner_alpha": "PALIMPSEST",
+      "escape_pair": [
+        6,
+        7
+      ],
+      "pt_length": 83,
+      "fixed_score": 0,
+      "free_score": 6,
+      "free_ene_pos": 37,
+      "free_bc_pos": 50,
+      "decoded": "SEPAASMSIMAYHXLEEILRLPPIATIPJSMIMPJPJAPSSIWBRPSVSTLETLILMMESLIPIIPPSMMOPSIPAMARA"
+    },
+    {
+      "phase": 2,
+      "outer_alpha": "KRYPTOS",
+      "inner_alpha": "PALIMPSEST",
+      "escape_pair": [
+        6,
+        9
+      ],
+      "pt_length": 87,
+      "fixed_score": 3,
+      "free_score": 8,
+      "free_ene_pos": 5,
+      "free_bc_pos": 13,
+      "decoded": "STPAASMSIMAETHESLTTILEALPPIAVPJSMIMPJPJAPSSIEMBEAPSEISUTUILMMTSLIPIIPPSMMOPSIPAM"
+    },
+    {
+      "phase": 2,
+      "outer_alpha": "KRYPTOS",
+      "inner_alpha": "PALIMPSEST",
+      "escape_pair": [
+        8,
+        9
+      ],
+      "pt_length": 88,
+      "fixed_score": 1,
+      "free_score": 5,
+      "free_ene_pos": 1,
+      "free_bc_pos": 11,
+      "decoded": "SBAASMSIMATJSTSLNILTALPPIAVPEESMIMPEEPEEAPSSITMEPTAPSTISUOLILMMHLIPIIPPSMMEQSIPA"
+    },
+    {
+      "phase": 2,
+      "outer_alpha": "KRYPTOS",
+      "inner_alpha": "ABSCISSA",
+      "escape_pair": [
+        0,
+        5
+      ],
+      "pt_length": 74,
+      "fixed_score": 1,
+      "free_score": 6,
+      "free_ene_pos": 12,
+      "free_bc_pos": 45,
+      "decoded": "YHAVUCADEIXTEESBDABGSAFSNIVSCNINIAMUDCIOAMDSZBEFBSBCCETSKSGVCIFMSHCADAAQDA"
+    },
+    {
+      "phase": 2,
+      "outer_alpha": "KRYPTOS",
+      "inner_alpha": "ABSCISSA",
+      "escape_pair": [
+        0,
+        7
+      ],
+      "pt_length": 77,
+      "fixed_score": 0,
+      "free_score": 6,
+      "free_ene_pos": 28,
+      "free_bc_pos": 48,
+      "decoded": "IEHAICISCAYDIWBEESBRBGSAFSNDICSCNDNDAMISVDOAMUIFBEFBSBCCEIBSKSGICCDFMSHCARAQR"
+    },
+    {
+      "phase": 2,
+      "outer_alpha": "KRYPTOS",
+      "inner_alpha": "ABSCISSA",
+      "escape_pair": [
+        2,
+        7
+      ],
+      "pt_length": 83,
+      "fixed_score": 0,
+      "free_score": 6,
+      "free_ene_pos": 20,
+      "free_bc_pos": 0,
+      "decoded": "IEABBICISCBYDIWPESOBGASBFSADDICSCADDADDBAIISVDATAIUIFPFKLCEIKASSAAICCDFAISABCBTB"
+    },
+    {
+      "phase": 2,
+      "outer_alpha": "KRYPTOS",
+      "inner_alpha": "ABSCISSA",
+      "escape_pair": [
+        2,
+        8
+      ],
+      "pt_length": 86,
+      "fixed_score": 2,
+      "free_score": 6,
+      "free_ene_pos": 10,
+      "free_bc_pos": 2,
+      "decoded": "IRBBICISCBEXIEIPUOBGASBFSADDICSCADDADDBAIISECDAEBAIESIFPFKLCWKASSAAICCDFAISABCBE"
+    },
+    {
+      "phase": 2,
+      "outer_alpha": "KRYPTOS",
+      "inner_alpha": "ABSCISSA",
+      "escape_pair": [
+        4,
+        9
+      ],
+      "pt_length": 84,
+      "fixed_score": 1,
+      "free_score": 6,
+      "free_ene_pos": 13,
+      "free_bc_pos": 46,
+      "decoded": "IFABBIMCHEFDIEISFFCSEBSAACBVADDIKGDDADDBAIICENAEBAIECIUFUCSLFISCACCAAILDRICABHEB"
+    },
+    {
+      "phase": 2,
+      "outer_alpha": "KRYPTOS",
+      "inner_alpha": "ABSCISSA",
+      "escape_pair": [
+        5,
+        7
+      ],
+      "pt_length": 79,
+      "fixed_score": 0,
+      "free_score": 7,
+      "free_ene_pos": 40,
+      "free_bc_pos": 2,
+      "decoded": "PABBLKIBYDOJEECSTSAACBFCADDLCIADDADDBAMCWDATAOCQSEFSCSIIEJCACCAALIDFAKABIBTBAFT"
+    },
+    {
+      "phase": 2,
+      "outer_alpha": "KRYPTOS",
+      "inner_alpha": "ABSCISSA",
+      "escape_pair": [
+        5,
+        9
+      ],
+      "pt_length": 81,
+      "fixed_score": 3,
+      "free_score": 6,
+      "free_ene_pos": 8,
+      "free_bc_pos": 40,
+      "decoded": "PABBLKIBEFDOJFFCSEBSAACBVADDLCIADDADDBAMCEIDAEBAOCQSFUCSIIFJCACCAALIDRKABIBEBBAY"
+    },
+    {
+      "phase": 2,
+      "outer_alpha": "KRYPTOS",
+      "inner_alpha": "ABSCISSA",
+      "escape_pair": [
+        6,
+        7
+      ],
+      "pt_length": 83,
+      "fixed_score": 1,
+      "free_score": 5,
+      "free_ene_pos": 7,
+      "free_bc_pos": 2,
+      "decoded": "DEABBDIDCIBYMXSEECSTSAACBFCANDICIANANBADDCWGTADVDFSEFSCSIIEDSCACCAADIIQADCABIBTB"
+    },
+    {
+      "phase": 2,
+      "outer_alpha": "KRYPTOS",
+      "inner_alpha": "ABSCISSA",
+      "escape_pair": [
+        6,
+        9
+      ],
+      "pt_length": 87,
+      "fixed_score": 2,
+      "free_score": 6,
+      "free_ene_pos": 14,
+      "free_bc_pos": 10,
+      "decoded": "DFABBDIDCIBEFMEDSFFCSEBSAACBVANDICIANANBADDCEIGEBADECDUFUCSIIFDSCACCAADIIQADCABI"
+    },
+    {
+      "phase": 2,
+      "outer_alpha": "KRYPTOS",
+      "inner_alpha": "ABSCISSA",
+      "escape_pair": [
+        8,
+        9
+      ],
+      "pt_length": 88,
+      "fixed_score": 1,
+      "free_score": 5,
+      "free_ene_pos": 38,
+      "free_bc_pos": 1,
+      "decoded": "DGBBDIDCIBFNDFDSPCSFBSAACBVAEEDICIAEEAEEBADDCFIEAFBADFCDUQSCSIIMSCACCAADIIERDCAB"
+    },
+    {
+      "phase": 2,
+      "outer_alpha": "KRYPTOS",
+      "inner_alpha": "DEFECTOR",
+      "escape_pair": [
+        0,
+        5
+      ],
+      "pt_length": 74,
+      "fixed_score": 1,
+      "free_score": 6,
+      "free_ene_pos": 2,
+      "free_bc_pos": 28,
+      "decoded": "YGDVUCDORTXSRRFEODEBFDAFLTVFCLTLTDKUOCTMDKOFZERAEFECCRSFIFBVCTAKFGCDODDPOD"
+    },
+    {
+      "phase": 2,
+      "outer_alpha": "KRYPTOS",
+      "inner_alpha": "DEFECTOR",
+      "escape_pair": [
+        0,
+        7
+      ],
+      "pt_length": 77,
+      "fixed_score": 1,
+      "free_score": 6,
+      "free_ene_pos": 9,
+      "free_bc_pos": 19,
+      "decoded": "TRGDTCTFCDYOTWERRFEQEBFDAFLOTCFCLOLODKTFVOMDKUTAERAEFECCRTEFIFBTCCOAKFGCDQDPQ"
+    },
+    {
+      "phase": 2,
+      "outer_alpha": "KRYPTOS",
+      "inner_alpha": "DEFECTOR",
+      "escape_pair": [
+        2,
+        7
+      ],
+      "pt_length": 83,
+      "fixed_score": 0,
+      "free_score": 6,
+      "free_ene_pos": 10,
+      "free_bc_pos": 0,
+      "decoded": "TRDEETCTFCEYOTWNRFMEBDFEAFDOOTCFCDOODOOEDTTFVODSDTUTANAIJCRTIDFFDDTCCOADTFDECESE"
+    },
+    {
+      "phase": 2,
+      "outer_alpha": "KRYPTOS",
+      "inner_alpha": "DEFECTOR",
+      "escape_pair": [
+        2,
+        8
+      ],
+      "pt_length": 86,
+      "fixed_score": 3,
+      "free_score": 5,
+      "free_ene_pos": 9,
+      "free_bc_pos": 2,
+      "decoded": "TQEETCTFCERXTRTNUMEBDFEAFDOOTCFCDOODOOEDTTFRCODREDTRFTANAIJCWIDFFDDTCCOADTFDECER"
+    },
+    {
+      "phase": 2,
+      "outer_alpha": "KRYPTOS",
+      "inner_alpha": "DEFECTOR",
+      "escape_pair": [
+        4,
+        9
+      ],
+      "pt_length": 84,
+      "fixed_score": 2,
+      "free_score": 5,
+      "free_ene_pos": 0,
+      "free_bc_pos": 3,
+      "decoded": "TADEETKCGRAOTRTFAACFREFDDCEVDOOTIBOODOOEDTTCRLDREDTRCTUAUCFJATFCDCCDDTJOQTCDEGRE"
+    },
+    {
+      "phase": 2,
+      "outer_alpha": "KRYPTOS",
+      "inner_alpha": "DEFECTOR",
+      "escape_pair": [
+        5,
+        7
+      ],
+      "pt_length": 79,
+      "fixed_score": 3,
+      "free_score": 6,
+      "free_ene_pos": 3,
+      "free_bc_pos": 1,
+      "decoded": "NDEEJITEYOMHRRCFSFDDCEACDOOJCTDOODOOEDKCWODSDMCPFRAFCFTTRHCDCCDDJTOADIDETESEDAS"
+    },
+    {
+      "phase": 2,
+      "outer_alpha": "KRYPTOS",
+      "inner_alpha": "DEFECTOR",
+      "escape_pair": [
+        5,
+        9
+      ],
+      "pt_length": 81,
+      "fixed_score": 1,
+      "free_score": 6,
+      "free_ene_pos": 3,
+      "free_bc_pos": 6,
+      "decoded": "NDEEJITERAOMHAACFREFDDCEVDOOJCTDOODOOEDKCRTODREDMCPFAUCFTTAHCDCCDDJTOQIDETEREEDY"
+    },
+    {
+      "phase": 2,
+      "outer_alpha": "KRYPTOS",
+      "inner_alpha": "DEFECTOR",
+      "escape_pair": [
+        6,
+        7
+      ],
+      "pt_length": 83,
+      "fixed_score": 0,
+      "free_score": 6,
+      "free_ene_pos": 24,
+      "free_bc_pos": 2,
+      "decoded": "ORDEEOTOCTEYKXFRRCFSFDDCEACDLOTCTDLDLEDOOCWBSDOVOAFRAFCFTTROFCDCCDDOTTPDOCDETESE"
+    },
+    {
+      "phase": 2,
+      "outer_alpha": "KRYPTOS",
+      "inner_alpha": "DEFECTOR",
+      "escape_pair": [
+        6,
+        9
+      ],
+      "pt_length": 87,
+      "fixed_score": 0,
+      "free_score": 5,
+      "free_ene_pos": 2,
+      "free_bc_pos": 2,
+      "decoded": "OADEEOTOCTERAKROFAACFREFDDCEVDLOTCTDLDLEDOOCRTBREDORCOUAUCFTTAOFCDCCDDOTTPDOCDET"
+    },
+    {
+      "phase": 2,
+      "outer_alpha": "KRYPTOS",
+      "inner_alpha": "DEFECTOR",
+      "escape_pair": [
+        8,
+        9
+      ],
+      "pt_length": 88,
+      "fixed_score": 2,
+      "free_score": 7,
+      "free_ene_pos": 9,
+      "free_bc_pos": 1,
+      "decoded": "OBEEOTOCTEALOAOFNCFAEFDDCEVDRROTCTDRRDRREDOOCATRDAEDOACOUPFCFTTKFCDCCDDOTTRQOCDE"
+    },
+    {
+      "phase": 2,
+      "outer_alpha": "KRYPTOS",
+      "inner_alpha": "KOMPASS",
+      "escape_pair": [
+        0,
+        5
+      ],
+      "pt_length": 74,
+      "fixed_score": 1,
+      "free_score": 4,
+      "free_ene_pos": 5,
+      "free_bc_pos": 7,
+      "decoded": "YEKVUPKSBAXTBBMOSKODMKCMJAVMPJAJAKIUSPALKISMZOBCOMOPPBTMGMDVPACIMEPKSKKQSK"
+    },
+    {
+      "phase": 2,
+      "outer_alpha": "KRYPTOS",
+      "inner_alpha": "KOMPASS",
+      "escape_pair": [
+        0,
+        7
+      ],
+      "pt_length": 77,
+      "fixed_score": 0,
+      "free_score": 4,
+      "free_ene_pos": 2,
+      "free_bc_pos": 1,
+      "decoded": "ABEKAPAMPKYSAWOBBMORODMKCMJSAPMPJSJSKIAMVSLKIUACOBCOMOPPBAOMGMDAPPSCIMEPKRKQR"
+    },
+    {
+      "phase": 2,
+      "outer_alpha": "KRYPTOS",
+      "inner_alpha": "KOMPASS",
+      "escape_pair": [
+        2,
+        7
+      ],
+      "pt_length": 83,
+      "fixed_score": 0,
+      "free_score": 5,
+      "free_ene_pos": 26,
+      "free_bc_pos": 11,
+      "decoded": "ABKOOAPAMPOYSAWNBMLODKMOCMKSSAPMPKSSKSSOKAAMVSKTKAUACNCGHPBAGKMMKKAPPSCKAMKOPOTO"
+    },
+    {
+      "phase": 2,
+      "outer_alpha": "KRYPTOS",
+      "inner_alpha": "KOMPASS",
+      "escape_pair": [
+        2,
+        8
+      ],
+      "pt_length": 86,
+      "fixed_score": 0,
+      "free_score": 8,
+      "free_ene_pos": 43,
+      "free_bc_pos": 10,
+      "decoded": "AROOAPAMPOBXABANULODKMOCMKSSAPMPKSSKSSOKAAMBPSKBOKABMACNCGHPWGKMMKKAPPSCKAMKOPOB"
+    },
+    {
+      "phase": 2,
+      "outer_alpha": "KRYPTOS",
+      "inner_alpha": "KOMPASS",
+      "escape_pair": [
+        4,
+        9
+      ],
+      "pt_length": 84,
+      "fixed_score": 2,
+      "free_score": 5,
+      "free_ene_pos": 4,
+      "free_bc_pos": 13,
+      "decoded": "ACKOOAIPEBCSABAMCCPMBOMKKPOVKSSAGDSSKSSOKAAPBJKBOKABPAUCUPMHCAMPKPPKKAHSRAPKOEBO"
+    },
+    {
+      "phase": 2,
+      "outer_alpha": "KRYPTOS",
+      "inner_alpha": "KOMPASS",
+      "escape_pair": [
+        5,
+        7
+      ],
+      "pt_length": 79,
+      "fixed_score": 2,
+      "free_score": 5,
+      "free_ene_pos": 19,
+      "free_bc_pos": 13,
+      "decoded": "NKOOHGAOYSLFBBPMTMKKPOCPKSSHPAKSSKSSOKIPWSKTKLPQMBCMPMAABFPKPPKKHASCKGKOAOTOKCT"
+    },
+    {
+      "phase": 2,
+      "outer_alpha": "KRYPTOS",
+      "inner_alpha": "KOMPASS",
+      "escape_pair": [
+        5,
+        9
+      ],
+      "pt_length": 81,
+      "fixed_score": 1,
+      "free_score": 6,
+      "free_ene_pos": 32,
+      "free_bc_pos": 8,
+      "decoded": "NKOOHGAOBCSLFCCPMBOMKKPOVKSSHPAKSSKSSOKIPBASKBOKLPQMCUPMAACFPKPPKKHASRGKOAOBOOKY"
+    },
+    {
+      "phase": 2,
+      "outer_alpha": "KRYPTOS",
+      "inner_alpha": "KOMPASS",
+      "escape_pair": [
+        6,
+        7
+      ],
+      "pt_length": 83,
+      "fixed_score": 0,
+      "free_score": 6,
+      "free_ene_pos": 5,
+      "free_bc_pos": 16,
+      "decoded": "SBKOOSASPAOYIXMBBPMTMKKPOCPKJSAPAKJKJOKSSPWDTKSVSCMBCMPMAABSMPKPPKKSAAQKSPKOAOTO"
+    },
+    {
+      "phase": 2,
+      "outer_alpha": "KRYPTOS",
+      "inner_alpha": "KOMPASS",
+      "escape_pair": [
+        6,
+        9
+      ],
+      "pt_length": 87,
+      "fixed_score": 0,
+      "free_score": 6,
+      "free_ene_pos": 5,
+      "free_bc_pos": 14,
+      "decoded": "SCKOOSASPAOBCIBSMCCPMBOMKKPOVKJSAPAKJKJOKSSPBADBOKSBPSUCUPMAACSMPKPPKKSAAQKSPKOA"
+    },
+    {
+      "phase": 2,
+      "outer_alpha": "KRYPTOS",
+      "inner_alpha": "KOMPASS",
+      "escape_pair": [
+        8,
+        9
+      ],
+      "pt_length": 88,
+      "fixed_score": 1,
+      "free_score": 6,
+      "free_ene_pos": 4,
+      "free_bc_pos": 73,
+      "decoded": "SDOOSASPAOCJSCSMNPMCOMKKPOVKBBSAPAKBBKBBOKSSPCABKCOKSCPSUQMPMAAIMPKPPKKSAABRSPKO"
+    }
+  ],
+  "verdict": "INTERESTING"
+}

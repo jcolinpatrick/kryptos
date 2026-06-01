@@ -1,0 +1,445 @@
+{
+  "experiment": "e_k2_checkerboard_decode",
+  "description": "K2 coordinates as straddling checkerboard configuration",
+  "timestamp": "2026-05-29T10:01:36",
+  "total_configs": 9223974,
+  "elapsed_seconds": 328.77050399780273,
+  "global_best_fixed": 7,
+  "global_best_free": 11,
+  "total_len73_decodes": 0,
+  "verdict": "INTERESTING",
+  "phase_summary": {
+    "phase2_systematic": {
+      "configs": 9217296,
+      "best_fixed": 7,
+      "best_free": 11,
+      "len73": 0,
+      "hits": 397500
+    },
+    "phase3_all_pairs": {
+      "configs": 2430,
+      "best_fixed": 6,
+      "best_free": 10,
+      "len73": 0
+    },
+    "phase4_additive": {
+      "configs": 4080,
+      "best_fixed": 6,
+      "best_free": 9,
+      "len73": 0,
+      "hits": 101
+    },
+    "phase7_asintoer": {
+      "configs": 168,
+      "best_fixed": 3,
+      "best_free": 8
+    }
+  },
+  "top_hits": [
+    {
+      "phase": 2,
+      "row_labels": [
+        5,
+        7
+      ],
+      "header": "k2perm_358647",
+      "fill": "kw_EASTNORTHEAST_AZ",
+      "digit_map": "kw_KOMPASS_KA_mod10",
+      "pt_len": 85,
+      "fixed": 2,
+      "ene_score": 1,
+      "bc_score": 1,
+      "free": 11,
+      "free_ene_pos": 71,
+      "free_bc_pos": 32,
+      "decoded": "OHNSOOTOTKAHKASEHHEEASRNNESHTNCOAEANINCRNCETAWAOOSTESHEHHPRAARBENETONGAWOSTNOKTO"
+    },
+    {
+      "phase": 2,
+      "row_labels": [
+        5,
+        7
+      ],
+      "header": "k2perm_354867",
+      "fill": "kw_EASTNORTHEAST_AZ",
+      "digit_map": "kw_KOMPASS_KA_mod10",
+      "pt_len": 85,
+      "fixed": 2,
+      "ene_score": 1,
+      "bc_score": 1,
+      "free": 11,
+      "free_ene_pos": 33,
+      "free_bc_pos": 32,
+      "decoded": "OHNTOOAOAKSHKSTEHHEESTRNNETHANCOSESNINCRNCEASWSOOTAETHEHHPRSSRBENEAONDSWOTANOKAO"
+    },
+    {
+      "phase": 2,
+      "row_labels": [
+        7,
+        8
+      ],
+      "header": "k2perm_756384",
+      "fill": "kw_SCHEIDT_AZ",
+      "digit_map": "kw_PALIMPSEST_KA_mod10",
+      "pt_len": 81,
+      "fixed": 1,
+      "ene_score": 0,
+      "bc_score": 1,
+      "free": 11,
+      "free_ene_pos": 50,
+      "free_bc_pos": 58,
+      "decoded": "DTZDDEDCNTTSDTHSTTHSTATIIIAACQSDJMSWSSCQSHDKYDEHDHHASTAIITBESSIUCEQEKHEHCXNDDCUD"
+    },
+    {
+      "phase": 2,
+      "row_labels": [
+        8,
+        7
+      ],
+      "header": "k2perm_387456",
+      "fill": "kw_NORTH_AZ",
+      "digit_map": "kw_EASTNORTHEAST_AZ_mod10",
+      "pt_len": 87,
+      "fixed": 0,
+      "ene_score": 0,
+      "bc_score": 0,
+      "free": 11,
+      "free_ene_pos": 41,
+      "free_bc_pos": 27,
+      "decoded": "RITHRNRBWTMRTNAEBATTACCJOBRBBRNBNCBOCBBHRRRBANORTHHNABNOAGOLNNUAIBBHRRNNOCHNBRHW"
+    },
+    {
+      "phase": 2,
+      "row_labels": [
+        8,
+        7
+      ],
+      "header": "k2perm_386547",
+      "fill": "kw_EASTNORTHEAST_AZ",
+      "digit_map": "kw_NORTH_KA_mod10",
+      "pt_len": 84,
+      "fixed": 1,
+      "ene_score": 1,
+      "bc_score": 0,
+      "free": 11,
+      "free_ene_pos": 48,
+      "free_bc_pos": 29,
+      "decoded": "ONSROOTOSTOJKDTNNETLRNNYNSSCOEEENINCESSSEHEUKRAHEANTNNAYEEHSTUESRSSTEXRASSOTOHOE"
+    },
+    {
+      "phase": 2,
+      "row_labels": [
+        8,
+        7
+      ],
+      "header": "k2perm_384576",
+      "fill": "kw_NORTH_AZ",
+      "digit_map": "kw_EASTNORTHEAST_AZ_mod10",
+      "pt_len": 87,
+      "fixed": 0,
+      "ene_score": 0,
+      "bc_score": 0,
+      "free": 11,
+      "free_ene_pos": 41,
+      "free_bc_pos": 27,
+      "decoded": "RGTHRNRBWTMRTNAEBATTACCJOBRBBRNBNCBOCBBHRRRBANORTHHNABNOAFOLNNUAGBBHRRNNOCHNBRHW"
+    },
+    {
+      "phase": 2,
+      "row_labels": [
+        8,
+        7
+      ],
+      "header": "k2perm_384567",
+      "fill": "kw_NORTH_AZ",
+      "digit_map": "kw_EASTNORTHEAST_AZ_mod10",
+      "pt_len": 87,
+      "fixed": 0,
+      "ene_score": 0,
+      "bc_score": 0,
+      "free": 11,
+      "free_ene_pos": 41,
+      "free_bc_pos": 27,
+      "decoded": "RGTHRNRBWTMRTNAEBATTACCIOBRBBRNBNCBOCBBHRRRBANORTHHNABNOAFOLNNUAGBBHRRNNOCHNBRHW"
+    },
+    {
+      "phase": 2,
+      "row_labels": [
+        8,
+        7
+      ],
+      "header": "k2perm_384756",
+      "fill": "kw_NORTH_AZ",
+      "digit_map": "kw_EASTNORTHEAST_AZ_mod10",
+      "pt_len": 87,
+      "fixed": 0,
+      "ene_score": 0,
+      "bc_score": 0,
+      "free": 11,
+      "free_ene_pos": 41,
+      "free_bc_pos": 27,
+      "decoded": "RITHRNRBWTMRTNAEBATTACCJOBRBBRNBNCBOCBBHRRRBANORTHHNABNOAFOLNNUAIBBHRRNNOCHNBRHW"
+    },
+    {
+      "phase": 2,
+      "row_labels": [
+        8,
+        7
+      ],
+      "header": "k2perm_378456",
+      "fill": "kw_NORTH_AZ",
+      "digit_map": "kw_EASTNORTHEAST_AZ_mod10",
+      "pt_len": 87,
+      "fixed": 0,
+      "ene_score": 0,
+      "bc_score": 0,
+      "free": 11,
+      "free_ene_pos": 41,
+      "free_bc_pos": 27,
+      "decoded": "RITHRNRBWTMRTNAFBATTACCJOBRBBRNBNCBOCBBHRRRBANORTHHNABNOAGOLNNUAIBBHRRNNOCHNBRHW"
+    },
+    {
+      "phase": 2,
+      "row_labels": [
+        8,
+        7
+      ],
+      "header": "k2perm_374856",
+      "fill": "kw_NORTH_AZ",
+      "digit_map": "kw_EASTNORTHEAST_AZ_mod10",
+      "pt_len": 87,
+      "fixed": 0,
+      "ene_score": 0,
+      "bc_score": 0,
+      "free": 11,
+      "free_ene_pos": 41,
+      "free_bc_pos": 27,
+      "decoded": "RITHRNRBWTMRTNAGBATTACCJOBRBBRNBNCBOCBBHRRRBANORTHHNABNOAFOLNNUAIBBHRRNNOCHNBRHW"
+    },
+    {
+      "phase": 2,
+      "row_labels": [
+        8,
+        7
+      ],
+      "header": "k2perm_374586",
+      "fill": "kw_NORTH_AZ",
+      "digit_map": "kw_EASTNORTHEAST_AZ_mod10",
+      "pt_len": 87,
+      "fixed": 0,
+      "ene_score": 0,
+      "bc_score": 0,
+      "free": 11,
+      "free_ene_pos": 41,
+      "free_bc_pos": 27,
+      "decoded": "RGTHRNRBWTMRTNAIBATTACCJOBRBBRNBNCBOCBBHRRRBANORTHHNABNOAFOLNNUAGBBHRRNNOCHNBRHW"
+    },
+    {
+      "phase": 2,
+      "row_labels": [
+        8,
+        7
+      ],
+      "header": "k2perm_374568",
+      "fill": "kw_NORTH_AZ",
+      "digit_map": "kw_EASTNORTHEAST_AZ_mod10",
+      "pt_len": 87,
+      "fixed": 0,
+      "ene_score": 0,
+      "bc_score": 0,
+      "free": 11,
+      "free_ene_pos": 41,
+      "free_bc_pos": 27,
+      "decoded": "RGTHRNRBWTMRTNAJBATTACCIOBRBBRNBNCBOCBBHRRRBANORTHHNABNOAFOLNNUAGBBHRRNNOCHNBRHW"
+    },
+    {
+      "phase": 2,
+      "row_labels": [
+        8,
+        7
+      ],
+      "header": "k2perm_348576",
+      "fill": "kw_NORTH_AZ",
+      "digit_map": "kw_EASTNORTHEAST_AZ_mod10",
+      "pt_len": 87,
+      "fixed": 0,
+      "ene_score": 0,
+      "bc_score": 0,
+      "free": 11,
+      "free_ene_pos": 41,
+      "free_bc_pos": 27,
+      "decoded": "RGTHRNRBWTMRTNAFBATTACCJOBRBBRNBNCBOCBBHRRRBANORTHHNABNOAEOLNNUAGBBHRRNNOCHNBRHW"
+    },
+    {
+      "phase": 2,
+      "row_labels": [
+        8,
+        7
+      ],
+      "header": "k2perm_348567",
+      "fill": "kw_NORTH_AZ",
+      "digit_map": "kw_EASTNORTHEAST_AZ_mod10",
+      "pt_len": 87,
+      "fixed": 0,
+      "ene_score": 0,
+      "bc_score": 0,
+      "free": 11,
+      "free_ene_pos": 41,
+      "free_bc_pos": 27,
+      "decoded": "RGTHRNRBWTMRTNAFBATTACCIOBRBBRNBNCBOCBBHRRRBANORTHHNABNOAEOLNNUAGBBHRRNNOCHNBRHW"
+    },
+    {
+      "phase": 2,
+      "row_labels": [
+        8,
+        7
+      ],
+      "header": "k2perm_348756",
+      "fill": "kw_NORTH_AZ",
+      "digit_map": "kw_EASTNORTHEAST_AZ_mod10",
+      "pt_len": 87,
+      "fixed": 0,
+      "ene_score": 0,
+      "bc_score": 0,
+      "free": 11,
+      "free_ene_pos": 41,
+      "free_bc_pos": 27,
+      "decoded": "RITHRNRBWTMRTNAFBATTACCJOBRBBRNBNCBOCBBHRRRBANORTHHNABNOAEOLNNUAIBBHRRNNOCHNBRHW"
+    },
+    {
+      "phase": 2,
+      "row_labels": [
+        8,
+        7
+      ],
+      "header": "k2perm_345876",
+      "fill": "kw_NORTH_AZ",
+      "digit_map": "kw_EASTNORTHEAST_AZ_mod10",
+      "pt_len": 87,
+      "fixed": 0,
+      "ene_score": 0,
+      "bc_score": 0,
+      "free": 11,
+      "free_ene_pos": 41,
+      "free_bc_pos": 27,
+      "decoded": "RFTHRNRBWTMRTNAGBATTACCJOBRBBRNBNCBOCBBHRRRBANORTHHNABNOAEOLNNUAFBBHRRNNOCHNBRHW"
+    },
+    {
+      "phase": 2,
+      "row_labels": [
+        8,
+        7
+      ],
+      "header": "k2perm_345867",
+      "fill": "kw_NORTH_AZ",
+      "digit_map": "kw_EASTNORTHEAST_AZ_mod10",
+      "pt_len": 87,
+      "fixed": 0,
+      "ene_score": 0,
+      "bc_score": 0,
+      "free": 11,
+      "free_ene_pos": 41,
+      "free_bc_pos": 27,
+      "decoded": "RFTHRNRBWTMRTNAGBATTACCIOBRBBRNBNCBOCBBHRRRBANORTHHNABNOAEOLNNUAFBBHRRNNOCHNBRHW"
+    },
+    {
+      "phase": 2,
+      "row_labels": [
+        8,
+        7
+      ],
+      "header": "k2perm_345786",
+      "fill": "kw_NORTH_AZ",
+      "digit_map": "kw_EASTNORTHEAST_AZ_mod10",
+      "pt_len": 87,
+      "fixed": 0,
+      "ene_score": 0,
+      "bc_score": 0,
+      "free": 11,
+      "free_ene_pos": 41,
+      "free_bc_pos": 27,
+      "decoded": "RFTHRNRBWTMRTNAIBATTACCJOBRBBRNBNCBOCBBHRRRBANORTHHNABNOAEOLNNUAFBBHRRNNOCHNBRHW"
+    },
+    {
+      "phase": 2,
+      "row_labels": [
+        8,
+        7
+      ],
+      "header": "k2perm_345768",
+      "fill": "kw_NORTH_AZ",
+      "digit_map": "kw_EASTNORTHEAST_AZ_mod10",
+      "pt_len": 87,
+      "fixed": 0,
+      "ene_score": 0,
+      "bc_score": 0,
+      "free": 11,
+      "free_ene_pos": 41,
+      "free_bc_pos": 27,
+      "decoded": "RFTHRNRBWTMRTNAJBATTACCIOBRBBRNBNCBOCBBHRRRBANORTHHNABNOAEOLNNUAFBBHRRNNOCHNBRHW"
+    },
+    {
+      "phase": 2,
+      "row_labels": [
+        8,
+        7
+      ],
+      "header": "k2perm_345687",
+      "fill": "kw_NORTH_AZ",
+      "digit_map": "kw_EASTNORTHEAST_AZ_mod10",
+      "pt_len": 87,
+      "fixed": 0,
+      "ene_score": 0,
+      "bc_score": 0,
+      "free": 11,
+      "free_ene_pos": 41,
+      "free_bc_pos": 27,
+      "decoded": "RFTHRNRBWTMRTNAIBATTACCGOBRBBRNBNCBOCBBHRRRBANORTHHNABNOAEOLNNUAFBBHRRNNOCHNBRHW"
+    }
+  ],
+  "k2_construction": {
+    "k2_digits": [
+      3,
+      8,
+      5,
+      7,
+      6,
+      5,
+      7,
+      7,
+      8,
+      4,
+      4
+    ],
+    "k2_unique": [
+      3,
+      8,
+      5,
+      7,
+      6,
+      4
+    ],
+    "remaining": [
+      0,
+      1,
+      2,
+      9
+    ],
+    "primary_header": [
+      3,
+      8,
+      5,
+      7,
+      6,
+      4,
+      0,
+      1,
+      2,
+      9
+    ],
+    "primary_row_labels": [
+      3,
+      8
+    ]
+  }
+}
