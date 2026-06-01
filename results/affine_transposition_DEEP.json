@@ -1,0 +1,32 @@
+{
+  "timestamp": "2026-05-31 23:50:00",
+  "elapsed_seconds": 1345.8607487678528,
+  "matrices_tested": 9312,
+  "total_results": 632470,
+  "best_score": 11,
+  "best_result": {
+    "lead": "Affine_T_15x+3",
+    "score": 11,
+    "plaintext": "YZGUMFEXVUFAEZBSZZPBAETATNOPGHEZHWQZSAGPFCYALPOYTW",
+    "method": "pt_autokey_kw_HYO_alph_AZ",
+    "variant": "vbeau",
+    "extra": ""
+  },
+  "all_results": [
+    {
+      "lead": "Affine_T_15x+3",
+      "score": 11,
+      "plaintext": "YZGUMFEXVUFAEZBSZZPBAETATNOPGHEZHWQZSAGPFCYALPOYTW",
+      "method": "pt_autokey_kw_HYO_alph_AZ",
+      "variant": "vbeau",
+      "extra": ""
+    },
+    {
+      "lead": "Affine_T_15x+3",
+      "score": 11,
+      "plaintext": "YZGUMFEXVUFAEZBSZZPBAETATNOPGHEZHWQZSAGPFCYALPOYTW",
+      "method": "pt_autokey_kw_AXH_alph_KA",
+      "variant": "vbeau",
+      "extra": ""
+    },
+    
