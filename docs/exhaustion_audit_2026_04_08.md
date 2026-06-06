@@ -247,6 +247,45 @@ The honest remaining running-key subclass after all this:
 
 **Total bin D:** 8 weakly testable families. None deserve compute as their primary deliverable. Most deserve *engineering* work to build admissibility or detection machinery that would upgrade them to bin C.
 
+> **[UPDATE 2026-06-06 — D1 detection engineering attempted and characterized]** The
+> prescribed "detector that exploits positional information Mono can't swallow" was
+> built: a mono- AND source-invariant **forced-difference detector** (same-letter crib
+> pairs impose running-key differences fixed by CT+transposition, independent of σ),
+> scored by lag-conditioned LLR against English letter-difference statistics with a
+> matched CT-shuffle null over columnar w6/8/9 + the 52-route universe. Modules:
+> `src/kryptos/detectors/mono_invariant_runkey/`; result:
+> `results/mono_trans_runkey_detector_2026_06_06.json` (verdict
+> **DETECTOR_UNDERPOWERED**). The machinery is round-trip verified correct, but the
+> synthetic go/no-go gate gives **Model-1 detection rate 0.00** (it cannot recover even
+> a planted Mono+Trans+Running-key solution): ~11–16 forced-difference constraints,
+> mostly at large (uniform-regime) lags, are drowned by the ~404K-transposition
+> look-elsewhere burden. Real-K4 max-LLR (3.38) sits mid shuffle-null band (descriptive
+> p≈0.22, NON-CONCLUSIVE). **This does NOT eliminate D1** — it sharpens E-FRAC-54 from
+> "fragment scoring saturates" to "the strongest mono-invariant positional statistic
+> has zero recovery power at K4's parameters." D1 stays bin-D, now characterized as
+> undetectable by positional means. A separate, distinct prior detector
+> (`src/kryptos/detectors/efrac54_joint.py`, two-sided PT+K English scoring) was NOT
+> evaluated by this build and remains a separate question.
+>
+> **[UPDATE 2026-06-06b — two-sided detector also saturates; D1 closure now airtight]**
+> The two-sided joint detector was then validated through the same go/no-go gate,
+> including a STRONG cold-start joint search built for the purpose
+> (`src/kryptos/detectors/efrac54_joint_search.py`: SA over σ + the 73 free plaintext
+> letters with an incremental two-sided scorer validated `== score_joint`; it recovers
+> planted solutions to within 1 nat of the oracle, `real_reached_oracle_rate=1.00`, so
+> it is NOT search-limited). Result
+> (`results/efrac54_joint_coldstart_gonogo_2026_06_06.json`): **detection rate 0.00**.
+> The strong search reaches equal/higher joint `t` on SHUFFLED CT as on the real planted
+> CT — with **73 free plaintext letters + 26 σ DOF**, both the plaintext and the implied
+> keystream can be made English on ANY ciphertext, including noise. The two-sided
+> statistic SATURATES at full search strength; an earlier favorable test (true plaintext
+> fixed) gave a misleading 0.75 only because fixing the plaintext removed 73 DOF.
+> **CONCLUSION: D1 is GENUINELY UNDERDETERMINED. No detector — fragment (E-FRAC-54),
+> mono-invariant forced-difference (rate 0.00), or two-sided joint (detection 0.00 under
+> a provably strong search) — can discriminate it, because the free plaintext supplies
+> enough DOF to fit any English criterion on any CT.** D1 stays bin-D as a matter of
+> mathematical underdetermination, not missing engineering.
+
 ### Bin E — Untestable Under Current Clues
 
 | ID | Family / subfamily | Why untestable | What clue would reopen it |
