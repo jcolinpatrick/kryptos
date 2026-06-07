@@ -1802,14 +1802,26 @@ def _annotate_best_candidate_p_values(
 
 def _score_real_k4_candidate(
     ct: str, candidate_pt: str, crib_alignment: str,
+    *, bean_frame_ct: Optional[str] = None,
 ) -> dict[str, Any]:
     """Score a real-K4 candidate plaintext under the spec's crib alignment.
 
     direct_positional (default) and post_transposition: anchored
-    ``score_candidate`` + Bean — the disclosed cribs sit at the canonical
-    positions (21-33 / 63-73). post_transposition is anchored because a decrypt
-    pipeline that inverts its transposition lands the cribs back at the
-    canonical positions (see the DSL-contract Example B); it is NOT free.
+    ``score_candidate`` — the disclosed cribs sit at the canonical positions
+    (21-33 / 63-73). post_transposition is anchored because a decrypt pipeline
+    that inverts its transposition lands the cribs back at the canonical
+    positions (see the DSL-contract Example B); it is NOT free.
+
+    Bean keystream frame (Task A, 2026-06-07): ``_candidate_bean_status``
+    derives the keystream as ``derive(ct[i], pt[i])``, so the CT frame is
+    load-bearing. Under ``direct_positional`` the keystream frame IS the carved
+    CT. Under ``post_transposition`` an outer reordering moved the carved chars,
+    so the inner additive layer operated on the route-undone intermediate, NOT
+    the carved CT — Bean must be re-derived against that intermediate
+    (``bean_frame_ct``). Reading Bean off the carved CT under a reordering is the
+    AUDIT-1 / alignment-model error (a direct-positional Bean elimination applied
+    where it does not bind). When ``bean_frame_ct`` is absent the frame is
+    unknown, so Bean is reported N/A rather than guessed off the carved CT.
 
     free: ``score_candidate_free`` — the disclosed cribs are matched ANYWHERE
     (the non-direct-alignment / null-shifted frontier class). Bean is N/A (it
@@ -1833,15 +1845,78 @@ def _score_real_k4_candidate(
             "canonical_positions": bool(getattr(fb, "canonical_positions", False)),
         }
     breakdown = score_candidate(candidate_pt)
-    bean_passed, bean_variant = _candidate_bean_status(ct, candidate_pt)
+    if crib_alignment == "post_transposition":
+        if bean_frame_ct is None:
+            # Frame unknown: Bean does not bind on the carved CT under a
+            # reordering. Report N/A — never a (misleading) carved-CT verdict.
+            bean_passed, bean_variant = False, None
+            scoring_mode = "post_transposition_bean_unavailable"
+        else:
+            bean_passed, bean_variant = _candidate_bean_status(
+                bean_frame_ct, candidate_pt,
+            )
+            scoring_mode = "post_transposition"
+    else:
+        bean_passed, bean_variant = _candidate_bean_status(ct, candidate_pt)
+        scoring_mode = "direct_positional"
     return {
         "crib_score": int(breakdown.crib_score),
         "classification": getattr(breakdown, "crib_classification", "unknown"),
         "bean_passed": bean_passed,
         "bean_variant": bean_variant,
-        "scoring_mode": "direct_positional",
+        "scoring_mode": scoring_mode,
         "canonical_positions": True,
     }
+
+
+# Transform kinds that REORDER positions without changing letter identities.
+# A leading run of these on the decrypt path produces the PT-frame intermediate
+# that an inner additive layer operates on — the correct keystream frame for
+# re-deriving Bean under post_transposition (non-direct) alignment.
+_REORDERING_STEP_TYPES = frozenset(
+    {"transposition_full", "transposition_block", "grille", "identity"}
+)
+
+
+def _keystream_frame_ct(
+    ct: str, steps: list[dict[str, Any]],
+) -> Optional[str]:
+    """PT-frame ciphertext for Bean re-derivation under post_transposition.
+
+    Applies the leading run of reordering transforms (transposition / grille)
+    of the decrypt pipeline to the carved CT and returns the result — the
+    intermediate text that the inner additive layer decrypts, i.e. the frame in
+    which the additive keystream (and therefore Bean) is defined. Returns
+    ``None`` when the frame is undefined (no leading reorder, or no trailing
+    additive step), so the scorer reports Bean N/A rather than guessing a frame
+    and risking a false PASS.
+    """
+    from kryptos.kernel.transforms.compose import (
+        PipelineConfig, TransformConfig, TransformType, build_pipeline,
+    )
+
+    prefix: list[dict[str, Any]] = []
+    for step in steps:
+        if step["type"] in _REORDERING_STEP_TYPES:
+            prefix.append(step)
+        else:
+            break
+    # Require at least one leading reorder AND at least one trailing additive
+    # step; otherwise the keystream frame is not well-defined here.
+    if not prefix or len(prefix) == len(steps):
+        return None
+    frame_steps = tuple(
+        TransformConfig(
+            transform_type=TransformType(step["type"]),
+            params=dict(step.get("params", {})),
+            description=step.get("description", ""),
+        )
+        for step in prefix
+    )
+    frame_fn = build_pipeline(
+        PipelineConfig(name="bean_frame", steps=frame_steps, direction="decrypt")
+    )
+    return frame_fn(ct)
 
 
 # ─── Worker function (top-level for multiprocessing picklability) ────────────
@@ -1903,7 +1978,16 @@ def _evaluate_one(work_item: dict[str, Any]) -> dict[str, Any]:
         else:
             # Lever B1: honour the spec's crib_alignment (free vs anchored).
             crib_alignment = work_item.get("crib_alignment", "direct_positional")
-            scored = _score_real_k4_candidate(ct, candidate_pt, crib_alignment)
+            # Task A: under post_transposition, Bean is re-derived against the
+            # route-undone PT-frame intermediate, not the carved CT.
+            bean_frame_ct = (
+                _keystream_frame_ct(ct, pipeline_dict["steps"])
+                if crib_alignment == "post_transposition"
+                else None
+            )
+            scored = _score_real_k4_candidate(
+                ct, candidate_pt, crib_alignment, bean_frame_ct=bean_frame_ct,
+            )
             crib_score = scored["crib_score"]
             bean_passed = scored["bean_passed"]
             bean_variant = scored["bean_variant"]

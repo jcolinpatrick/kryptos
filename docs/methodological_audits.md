@@ -170,6 +170,77 @@ Future recalibration of any matched-family null should target `n_samples ≥ 10 
 
 ---
 
+## AUDIT-5 — `post_transposition` Bean computed in the wrong keystream frame
+
+**Status:** CLOSED 2026-06-07 (bug fixed + contamination audited; no historical
+real-K4 closure verdict was affected — see resolution).
+**Raised:** 2026-06-07 (`/goal` non-direct running-key frontier session).
+
+**Affected claims / surfaces:**
+
+- `kryptosbot/job_dispatcher.py::_score_real_k4_candidate` (the `post_transposition`
+  branch) and `_evaluate_one` worker scoring.
+- Any pre-fix statement that "`crib_alignment="free"/"post_transposition"` is not
+  honored by the real-K4 scorer" (e.g. `results/final_k4_goal/FINAL_REPORT.md` §6.1,
+  the `alignment-model` skill's toolchain-gap note). **This wording is now STALE.**
+- Any pre-fix `bean_passed` recorded for a NON-DIRECT (reordering-bearing)
+  real-K4 candidate.
+
+**The worry (plain terms):**
+
+`_candidate_bean_status(ct, pt)` derives the keystream as `derive(ct[i], pt[i])`,
+so the CT frame is load-bearing. Under `post_transposition` an outer route reorders
+the carved CT before the inner additive decrypt; the additive (and therefore Bean)
+is defined against the **route-undone** intermediate `route_undo(CT)`, not the
+carved CT. The dispatcher derived Bean off the **carved** CT — a direct-positional
+Bean evaluation silently applied under a non-direct alignment (the same class of
+error AUDIT-1 guards against). Crib-scoring itself was already correct
+(`route → transposition_full(undo)` lands cribs at canonical positions); only the
+Bean verdict was mis-framed.
+
+**What closed this audit (2026-06-07):**
+
+1. **Fix.** New `_keystream_frame_ct(ct, steps)` returns the PT-frame intermediate
+   (leading run of reordering transforms applied to the carved CT), or `None` when
+   undefined (no leading reorder, or no trailing additive) → Bean reported N/A
+   (`scoring_mode="post_transposition_bean_unavailable"`), never a guessed carved-CT
+   PASS. `_score_real_k4_candidate(..., bean_frame_ct=...)` re-derives Bean against
+   that frame for `post_transposition`; `direct_positional` unchanged (carved CT IS
+   the correct frame); `free` Bean stays N/A. 13 known-answer tests in
+   `kryptosbot/tests/test_post_transposition_bean_frame.py`, incl. the crux
+   invariant (ONE candidate PT → opposite Bean verdicts purely by frame).
+2. **Contamination audit (`results/bean_frame_fix_audit/`).** Recursive scan of all
+   result artifacts: **real-K4 non-direct records = 4,358, max crib_score = 6,
+   `bean_passed=True` count = 0, crib≥18 count = 0.** Bean is only load-bearing at
+   the crib≥18 (SIGNAL/BREAKTHROUGH) gate; no real-K4 non-direct candidate ever
+   reached it, so the mis-framed Bean (always False for these crib-noise candidates)
+   **never flipped a closure verdict.** The only crib≥18 non-direct records are 4
+   K4Bench synthetic challenges (Bean N/A by construction). Standalone non-direct
+   closures did not gate on the dispatcher Bean: Carter Vol.1 2026-06-05 gates on
+   `score_candidate(...).crib_score` only; the C6 sweep declared
+   `bean_inapplicable_by_construction`. The C6 specs (384 configs) were re-dispatched
+   under the corrected frame (`results/bean_frame_fix_audit/c6_replay.json`):
+   verdict unchanged (crib 4/5, Bean False correctly-framed, no kill change).
+
+**Precise current state (replaces the stale "not honored" wording):**
+
+> Crib alignment **is** honored where implemented: `free` →
+> `score_candidate_free`; `post_transposition` crib-scoring is anchored after the
+> route is physically undone. The `post_transposition` **Bean-frame bug is fixed**
+> (Bean re-derived against `route_undo(CT)`). **Pre-2026-06-07 `bean_passed` values
+> for non-direct additive candidates were computed in the carved-CT frame and must
+> not be trusted** unless produced after the fix or independently recomputed with
+> `bean_frame_ct`; in practice none were load-bearing (all real-K4 non-direct
+> candidates are crib-noise ≤6). The repo is safe for future non-direct additive
+> campaigns: a future candidate reaching crib≥18 will now receive a correctly-framed
+> Bean verdict.
+
+**Forward reference:** any new non-direct (reordering-bearing) additive campaign
+must rely on the dispatcher's `post_transposition` path (or recompute Bean with
+`bean_frame_ct`); never read Bean off the carved CT for a reordered candidate.
+
+---
+
 ## Rules for this file
 
 - An audit closes only when **every affected claim** listed under it has
