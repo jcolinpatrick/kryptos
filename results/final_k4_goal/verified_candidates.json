@@ -1,0 +1,83 @@
+[
+  {
+    "candidate": "test_6f4ade3ecf9f_boustrophedon",
+    "self_status": "self=success",
+    "crib_score": 24,
+    "bean_passed": false,
+    "ngram_score": null,
+    "classification": "breakthrough",
+    "notes": "n_pt=1 "
+  },
+  {
+    "candidate": "e_ct_mutation_nullmask_beaufort",
+    "self_status": "NO_97CHAR_PT",
+    "crib_score": null,
+    "bean_passed": null,
+    "ngram_score": null,
+    "classification": "None",
+    "notes": "INVESTIGATE"
+  },
+  {
+    "candidate": "e_carter_transposition_optimized_01",
+    "self_status": "self=INTERESTING -- above expected random max",
+    "crib_score": 11,
+    "bean_passed": false,
+    "ngram_score": null,
+    "classification": "interesting",
+    "notes": "n_pt=30 "
+  },
+  {
+    "candidate": "e_team_targeted_homo_trans",
+    "self_status": "NO_97CHAR_PT",
+    "crib_score": null,
+    "bean_passed": null,
+    "ngram_score": null,
+    "classification": "None",
+    "notes": "NEAR_MISS"
+  },
+  {
+    "candidate": "e_team_homophonic_trans",
+    "self_status": "NO_97CHAR_PT",
+    "crib_score": null,
+    "bean_passed": null,
+    "ngram_score": null,
+    "classification": "None",
+    "notes": "LIKELY_OPEN"
+  },
+  {
+    "candidate": "fresh_mcmc_attack",
+    "self_status": "self=INVESTIGATE",
+    "crib_score": 2,
+    "bean_passed": false,
+    "ngram_score": null,
+    "classification": "noise",
+    "notes": "n_pt=1 "
+  },
+  {
+    "candidate": "e_s_13_keyword_transposition",
+    "self_status": "NO_97CHAR_PT",
+    "crib_score": null,
+    "bean_passed": null,
+    "ngram_score": null,
+    "classification": "None",
+    "notes": "INVESTIGATE"
+  },
+  {
+    "candidate": "e_s_15_creative_keys",
+    "self_status": "NO_97CHAR_PT",
+    "crib_score": null,
+    "bean_passed": null,
+    "ngram_score": null,
+    "classification": "None",
+    "notes": "INVESTIGATE"
+  },
+  {
+    "candidate": "e_s_35_null_cipher",
+    "self_status": "NO_97CHAR_PT",
+    "crib_score": null,
+    "bean_passed": null,
+    "ngram_score": null,
+    "classification": "None",
+    "notes": "INVESTIGATE"
+  }
+]

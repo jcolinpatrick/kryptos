@@ -1,0 +1,747 @@
+{
+  "assumption_bundle": [],
+  "max_cost_minutes": 240,
+  "results": [
+    {
+      "hypothesis_id": "PROC-P-A5-4",
+      "spec_hash": "8b8d93983417739f",
+      "universe_hash": "",
+      "total_tested": 0,
+      "total_stored": 0,
+      "best_candidate": null,
+      "best_score": 0.0,
+      "best_p_value_vs_null": null,
+      "information_gain_bits_realized": 0.0,
+      "wall_time_sec": 0.0030685123056173325,
+      "cpu_time_sec": 0.003067976,
+      "artifact_path": "",
+      "checkpoint_path": "",
+      "assumption_bundle": [
+        "H1_direct_positional",
+        "yar_as_primer"
+      ],
+      "eliminated_claim": null,
+      "admissibility_verdict": "rejected",
+      "admissibility_reasons": [
+        "exhaustion overlap: 1 prior entry already cover this spec's assumption bundle + family (first 3: ['f_null_beaufort_exhaustive_v1']). If this spec genuinely adds information beyond the overlap, re-submit with override_exhaustion=True and an override_justification."
+      ],
+      "override_justification": "",
+      "override_exhaustion_overlap": [],
+      "dispatched_dsl_spec": {},
+      "best_config_bindings": []
+    },
+    {
+      "hypothesis_id": "PROC-P-A5-4b",
+      "spec_hash": "0eba9632a23a3729",
+      "universe_hash": "23546b52d33bf2ab",
+      "total_tested": 5,
+      "total_stored": 0,
+      "best_candidate": {
+        "config_id": "0eba9632a23a3729_layer0.keyword=YAR",
+        "candidate_pt": "QBTTUXZOPJUUDSXNIODBFHLAXQZRRWIKBUOCYTZUJZUSNMZIYACLKUWDRCWRPFKPYYXTCOZORKFIDTBXCLCMKGTWHDCUNMCJT",
+        "crib_score": 3,
+        "bean_passed": false,
+        "bean_variant": null,
+        "ngram_score": -6.488933553191487,
+        "classification": "noise",
+        "scoring_mode": "direct_positional",
+        "canonical_positions": true,
+        "p_value_status": "stale_cache",
+        "matched_null_family": "vigenere"
+      },
+      "best_score": 3.0,
+      "best_p_value_vs_null": null,
+      "information_gain_bits_realized": 0.0,
+      "wall_time_sec": 0.08865700801834464,
+      "cpu_time_sec": 0.088652412,
+      "artifact_path": "/home/cpatrick/kryptos/results/dsl_jobs/PROC-P-A5-4b_0eba9632a23a3729/result.json",
+      "checkpoint_path": "",
+      "assumption_bundle": [
+        "H1_direct_positional",
+        "yar_as_primer"
+      ],
+      "eliminated_claim": "Spec PROC-P-A5-4b (0eba9632a23a3729) tested 5 configurations; none exceeded STORE_THRESHOLD=10. Assumption bundle: ['H1_direct_positional', 'yar_as_primer']",
+      "admissibility_verdict": "ok",
+      "admissibility_reasons": [],
+      "override_justification": "",
+      "override_exhaustion_overlap": [],
+      "dispatched_dsl_spec": {
+        "hypothesis_id": "PROC-P-A5-4b",
+        "pipeline": [
+          {
+            "kind": "vigenere",
+            "alphabet": "AZ",
+            "params": [
+              {
+                "name": "keyword",
+                "values": [
+                  "DYARO",
+                  "DYAR",
+                  "YARO",
+                  "DYA",
+                  "YAR"
+                ],
+                "start": null,
+                "stop": null,
+                "source_corpus": null,
+                "cardinality_cap": 10000
+              }
+            ],
+            "recipe_id": null
+          }
+        ],
+        "crib_alignment": "direct_positional",
+        "scoring": "composite",
+        "null_baseline": null,
+        "information_gain_bits_estimate": 1.5,
+        "success_criteria": {},
+        "kill_criteria": {},
+        "compute_budget_cpu_minutes": 1,
+        "checkpoint_every_sec": 60,
+        "assumption_bundle": [
+          "H1_direct_positional",
+          "yar_as_primer"
+        ],
+        "notes": "Procedural recipe P-A5-4b: DYARO as Vigenere primer",
+        "override_exhaustion": false,
+        "override_justification": ""
+      },
+      "best_config_bindings": [
+        [
+          "layer0.keyword",
+          "YAR"
+        ]
+      ]
+    },
+    {
+      "hypothesis_id": "PROC-P-E0e-1a",
+      "spec_hash": "9801c623e446372f",
+      "universe_hash": "",
+      "total_tested": 0,
+      "total_stored": 0,
+      "best_candidate": null,
+      "best_score": 0.0,
+      "best_p_value_vs_null": null,
+      "information_gain_bits_realized": 0.0,
+      "wall_time_sec": 0.002414856106042862,
+      "cpu_time_sec": 0.0024137060000000155,
+      "artifact_path": "",
+      "checkpoint_path": "",
+      "assumption_bundle": [
+        "width_21_grid",
+        "single_layer_transposition"
+      ],
+      "eliminated_claim": null,
+      "admissibility_verdict": "rejected",
+      "admissibility_reasons": [
+        "exhaustion overlap: 10 prior entries already cover this spec's assumption bundle + family (first 3: ['agent_k4_columnar7_nonen_scan', 'e_columnar_gap_closure', 'e_egypt_01_columnar_sweep']). If this spec genuinely adds information beyond the overlap, re-submit with override_exhaustion=True and an override_justification."
+      ],
+      "override_justification": "",
+      "override_exhaustion_overlap": [],
+      "dispatched_dsl_spec": {},
+      "best_config_bindings": []
+    },
+    {
+      "hypothesis_id": "PROC-P-E0e-1b",
+      "spec_hash": "2be345b98e9b8fb2",
+      "universe_hash": "",
+      "total_tested": 0,
+      "total_stored": 0,
+      "best_candidate": null,
+      "best_score": 0.0,
+      "best_p_value_vs_null": null,
+      "information_gain_bits_realized": 0.0,
+      "wall_time_sec": 0.0022759628482162952,
+      "cpu_time_sec": 0.002276553999999986,
+      "artifact_path": "",
+      "checkpoint_path": "",
+      "assumption_bundle": [
+        "width_21_grid",
+        "yar_as_ordering"
+      ],
+      "eliminated_claim": null,
+      "admissibility_verdict": "rejected",
+      "admissibility_reasons": [
+        "exhaustion overlap: 10 prior entries already cover this spec's assumption bundle + family (first 3: ['agent_k4_columnar7_nonen_scan', 'e_columnar_gap_closure', 'e_egypt_01_columnar_sweep']). If this spec genuinely adds information beyond the overlap, re-submit with override_exhaustion=True and an override_justification."
+      ],
+      "override_justification": "",
+      "override_exhaustion_overlap": [],
+      "dispatched_dsl_spec": {},
+      "best_config_bindings": []
+    },
+    {
+      "hypothesis_id": "PROC-P-F1-1",
+      "spec_hash": "f06bfdb8e81eece2",
+      "universe_hash": "77990b1f1cd50832",
+      "total_tested": 5,
+      "total_stored": 0,
+      "best_candidate": {
+        "config_id": "f06bfdb8e81eece2_layer0.keyword=KFG",
+        "candidate_pt": "EWEHPINJAXPFRNIBDZRWQVGLLLKFMHWFMIJNMOKIEKINYAUTMVNZFFKYCQRCDAVDTJLONCUZFFQWYEPSNZXXYBEKCOQPYAXUH",
+        "crib_score": 4,
+        "bean_passed": false,
+        "bean_variant": null,
+        "ngram_score": -6.374628468085106,
+        "classification": "noise",
+        "scoring_mode": "direct_positional",
+        "canonical_positions": true,
+        "p_value_status": "stale_cache",
+        "matched_null_family": "vigenere"
+      },
+      "best_score": 4.0,
+      "best_p_value_vs_null": null,
+      "information_gain_bits_realized": 0.0,
+      "wall_time_sec": 0.0034361309371888638,
+      "cpu_time_sec": 0.0034366129999999773,
+      "artifact_path": "/home/cpatrick/kryptos/results/dsl_jobs/PROC-P-F1-1_f06bfdb8e81eece2/result.json",
+      "checkpoint_path": "",
+      "assumption_bundle": [
+        "H1_direct_positional",
+        "misspelling_key_derivation"
+      ],
+      "eliminated_claim": "Spec PROC-P-F1-1 (f06bfdb8e81eece2) tested 5 configurations; none exceeded STORE_THRESHOLD=10. Assumption bundle: ['H1_direct_positional', 'misspelling_key_derivation']",
+      "admissibility_verdict": "ok",
+      "admissibility_reasons": [],
+      "override_justification": "",
+      "override_exhaustion_overlap": [],
+      "dispatched_dsl_spec": {
+        "hypothesis_id": "PROC-P-F1-1",
+        "pipeline": [
+          {
+            "kind": "vigenere",
+            "alphabet": "AZ",
+            "params": [
+              {
+                "name": "keyword",
+                "values": [
+                  "KFGWW",
+                  "GFKWW",
+                  "WWGFK",
+                  "KFGW",
+                  "KFG"
+                ],
+                "start": null,
+                "stop": null,
+                "source_corpus": null,
+                "cardinality_cap": 10000
+              }
+            ],
+            "recipe_id": null
+          }
+        ],
+        "crib_alignment": "direct_positional",
+        "scoring": "composite",
+        "null_baseline": null,
+        "information_gain_bits_estimate": 1.5,
+        "success_criteria": {},
+        "kill_criteria": {},
+        "compute_budget_cpu_minutes": 1,
+        "checkpoint_every_sec": 60,
+        "assumption_bundle": [
+          "H1_direct_positional",
+          "misspelling_key_derivation"
+        ],
+        "notes": "Procedural recipe P-F1-1: Misspelling-derived Vigenere key (Vig arithmetic)",
+        "override_exhaustion": false,
+        "override_justification": ""
+      },
+      "best_config_bindings": [
+        [
+          "layer0.keyword",
+          "KFG"
+        ]
+      ]
+    },
+    {
+      "hypothesis_id": "PROC-P-F1-2",
+      "spec_hash": "ae1b0857e8f03421",
+      "universe_hash": "",
+      "total_tested": 0,
+      "total_stored": 0,
+      "best_candidate": null,
+      "best_score": 0.0,
+      "best_p_value_vs_null": null,
+      "information_gain_bits_realized": 0.0,
+      "wall_time_sec": 0.0021672346629202366,
+      "cpu_time_sec": 0.0021672429999999854,
+      "artifact_path": "",
+      "checkpoint_path": "",
+      "assumption_bundle": [
+        "H1_direct_positional",
+        "misspelling_key_derivation"
+      ],
+      "eliminated_claim": null,
+      "admissibility_verdict": "rejected",
+      "admissibility_reasons": [
+        "exhaustion overlap: 1 prior entry already cover this spec's assumption bundle + family (first 3: ['f_null_beaufort_exhaustive_v1']). If this spec genuinely adds information beyond the overlap, re-submit with override_exhaustion=True and an override_justification."
+      ],
+      "override_justification": "",
+      "override_exhaustion_overlap": [],
+      "dispatched_dsl_spec": {},
+      "best_config_bindings": []
+    },
+    {
+      "hypothesis_id": "PROC-P-F1-4",
+      "spec_hash": "eeb02dce892e2887",
+      "universe_hash": "fbe40f7adb7fabfb",
+      "total_tested": 4,
+      "total_stored": 0,
+      "best_candidate": {
+        "config_id": "eeb02dce892e2887_layer0.keyword=SIEOL",
+        "candidate_pt": "WTGDJWPKSWCDXEDTABNQEXHDKYILDCOCOEDBOPCHRIOETSRVIPBBGXJLAWIXVXXZNXNPFBHXLWLOVGLMBBYPXOCQTJIMAWRIJ",
+        "crib_score": 0,
+        "bean_passed": false,
+        "bean_variant": null,
+        "ngram_score": -6.290270085106382,
+        "classification": "noise",
+        "scoring_mode": "direct_positional",
+        "canonical_positions": true,
+        "p_value_status": "stale_cache",
+        "matched_null_family": "vigenere"
+      },
+      "best_score": 0.0,
+      "best_p_value_vs_null": null,
+      "information_gain_bits_realized": 0.0,
+      "wall_time_sec": 0.0031899409368634224,
+      "cpu_time_sec": 0.0031903090000000023,
+      "artifact_path": "/home/cpatrick/kryptos/results/dsl_jobs/PROC-P-F1-4_eeb02dce892e2887/result.json",
+      "checkpoint_path": "",
+      "assumption_bundle": [
+        "H1_direct_positional",
+        "misspelling_inverse_derivation"
+      ],
+      "eliminated_claim": "Spec PROC-P-F1-4 (eeb02dce892e2887) tested 4 configurations; none exceeded STORE_THRESHOLD=10. Assumption bundle: ['H1_direct_positional', 'misspelling_inverse_derivation']",
+      "admissibility_verdict": "ok",
+      "admissibility_reasons": [],
+      "override_justification": "",
+      "override_exhaustion_overlap": [],
+      "dispatched_dsl_spec": {
+        "hypothesis_id": "PROC-P-F1-4",
+        "pipeline": [
+          {
+            "kind": "vigenere",
+            "alphabet": "AZ",
+            "params": [
+              {
+                "name": "keyword",
+                "values": [
+                  "SLOEI",
+                  "ILEOS",
+                  "SIEOL",
+                  "LSOEI"
+                ],
+                "start": null,
+                "stop": null,
+                "source_corpus": null,
+                "cardinality_cap": 10000
+              }
+            ],
+            "recipe_id": null
+          }
+        ],
+        "crib_alignment": "direct_positional",
+        "scoring": "composite",
+        "null_baseline": null,
+        "information_gain_bits_estimate": 1.2,
+        "success_criteria": {},
+        "kill_criteria": {},
+        "compute_budget_cpu_minutes": 1,
+        "checkpoint_every_sec": 60,
+        "assumption_bundle": [
+          "H1_direct_positional",
+          "misspelling_inverse_derivation"
+        ],
+        "notes": "Procedural recipe P-F1-4: Original-letters as Vigenere primer",
+        "override_exhaustion": false,
+        "override_justification": ""
+      },
+      "best_config_bindings": [
+        [
+          "layer0.keyword",
+          "SIEOL"
+        ]
+      ]
+    },
+    {
+      "hypothesis_id": "PROC-P-SANBORN-VOCAB",
+      "spec_hash": "226a9c26d7dadba9",
+      "universe_hash": "b6a5143e79774bac",
+      "total_tested": 8,
+      "total_stored": 0,
+      "best_candidate": {
+        "config_id": "226a9c26d7dadba9_layer0.keyword=ILLUMINATION",
+        "candidate_pt": "GQZXIGKONZGYTHDRWXOBDXXENFFVFFTKZKAGOIFYXIFSLCLMOPIPYDHDPSIVFUQTMHITAELSHZLMRCMXABOQAVZAVMNULCONJ",
+        "crib_score": 1,
+        "bean_passed": false,
+        "bean_variant": null,
+        "ngram_score": -6.367856010638294,
+        "classification": "noise",
+        "scoring_mode": "direct_positional",
+        "canonical_positions": true,
+        "p_value_status": "stale_cache",
+        "matched_null_family": "vigenere"
+      },
+      "best_score": 1.0,
+      "best_p_value_vs_null": null,
+      "information_gain_bits_realized": 0.0,
+      "wall_time_sec": 0.004045350942760706,
+      "cpu_time_sec": 0.004044926999999976,
+      "artifact_path": "/home/cpatrick/kryptos/results/dsl_jobs/PROC-P-SANBORN-VOCAB_226a9c26d7dadba9/result.json",
+      "checkpoint_path": "",
+      "assumption_bundle": [
+        "H1_direct_positional",
+        "thematic_keyword"
+      ],
+      "eliminated_claim": "Spec PROC-P-SANBORN-VOCAB (226a9c26d7dadba9) tested 8 configurations; none exceeded STORE_THRESHOLD=10. Assumption bundle: ['H1_direct_positional', 'thematic_keyword']",
+      "admissibility_verdict": "ok",
+      "admissibility_reasons": [],
+      "override_justification": "",
+      "override_exhaustion_overlap": [],
+      "dispatched_dsl_spec": {
+        "hypothesis_id": "PROC-P-SANBORN-VOCAB",
+        "pipeline": [
+          {
+            "kind": "vigenere",
+            "alphabet": "AZ",
+            "params": [
+              {
+                "name": "keyword",
+                "values": [
+                  "IMAGERY",
+                  "LEGEND",
+                  "LEGIBLE",
+                  "ILLUMINATION",
+                  "PALIMPSEST",
+                  "ABSCISSA",
+                  "ORDINATE",
+                  "TABLEAU"
+                ],
+                "start": null,
+                "stop": null,
+                "source_corpus": null,
+                "cardinality_cap": 10000
+              }
+            ],
+            "recipe_id": null
+          }
+        ],
+        "crib_alignment": "direct_positional",
+        "scoring": "composite",
+        "null_baseline": null,
+        "information_gain_bits_estimate": 0.3,
+        "success_criteria": {},
+        "kill_criteria": {},
+        "compute_budget_cpu_minutes": 1,
+        "checkpoint_every_sec": 60,
+        "assumption_bundle": [
+          "H1_direct_positional",
+          "thematic_keyword"
+        ],
+        "notes": "Procedural recipe P-SANBORN-VOCAB: Sanborn-quote-derived keywords",
+        "override_exhaustion": false,
+        "override_justification": ""
+      },
+      "best_config_bindings": [
+        [
+          "layer0.keyword",
+          "ILLUMINATION"
+        ]
+      ]
+    },
+    {
+      "hypothesis_id": "PROC-P-BC-KW",
+      "spec_hash": "b5d904c969c06d01",
+      "universe_hash": "817fbffd8c36853c",
+      "total_tested": 5,
+      "total_stored": 0,
+      "best_candidate": {
+        "config_id": "b5d904c969c06d01_layer0.keyword=CLOCK",
+        "candidate_pt": "MQWPKMMAEXSANQEJXRZRUUXPLOFBPDEZEQERLFOIHFEQUIOLUQRYWJKBXMUYLUNLONKFRCXUBIMESWXNRYOBYEZGFKYJQISYG",
+        "crib_score": 2,
+        "bean_passed": false,
+        "bean_variant": null,
+        "ngram_score": -6.313544489361701,
+        "classification": "noise",
+        "scoring_mode": "direct_positional",
+        "canonical_positions": true,
+        "p_value_status": "stale_cache",
+        "matched_null_family": "vigenere"
+      },
+      "best_score": 2.0,
+      "best_p_value_vs_null": null,
+      "information_gain_bits_realized": 0.0,
+      "wall_time_sec": 0.0034166048280894756,
+      "cpu_time_sec": 0.0034160000000000024,
+      "artifact_path": "/home/cpatrick/kryptos/results/dsl_jobs/PROC-P-BC-KW_b5d904c969c06d01/result.json",
+      "checkpoint_path": "",
+      "assumption_bundle": [
+        "H1_direct_positional",
+        "crib_as_keyword"
+      ],
+      "eliminated_claim": "Spec PROC-P-BC-KW (b5d904c969c06d01) tested 5 configurations; none exceeded STORE_THRESHOLD=10. Assumption bundle: ['H1_direct_positional', 'crib_as_keyword']",
+      "admissibility_verdict": "ok",
+      "admissibility_reasons": [],
+      "override_justification": "",
+      "override_exhaustion_overlap": [],
+      "dispatched_dsl_spec": {
+        "hypothesis_id": "PROC-P-BC-KW",
+        "pipeline": [
+          {
+            "kind": "vigenere",
+            "alphabet": "AZ",
+            "params": [
+              {
+                "name": "keyword",
+                "values": [
+                  "BERLIN",
+                  "CLOCK",
+                  "UHR",
+                  "BERLINCLOCK",
+                  "CLOCKBERLIN"
+                ],
+                "start": null,
+                "stop": null,
+                "source_corpus": null,
+                "cardinality_cap": 10000
+              }
+            ],
+            "recipe_id": null
+          }
+        ],
+        "crib_alignment": "direct_positional",
+        "scoring": "composite",
+        "null_baseline": null,
+        "information_gain_bits_estimate": 0.3,
+        "success_criteria": {},
+        "kill_criteria": {},
+        "compute_budget_cpu_minutes": 1,
+        "checkpoint_every_sec": 60,
+        "assumption_bundle": [
+          "H1_direct_positional",
+          "crib_as_keyword"
+        ],
+        "notes": "Procedural recipe P-BC-KW: BERLIN / CLOCK / Uhr as Vigenere keyword",
+        "override_exhaustion": false,
+        "override_justification": ""
+      },
+      "best_config_bindings": [
+        [
+          "layer0.keyword",
+          "CLOCK"
+        ]
+      ]
+    },
+    {
+      "hypothesis_id": "PROC-P-BASELINE-1",
+      "spec_hash": "0ebfb7ae4b9dbd8e",
+      "universe_hash": "a08353ce92a856c4",
+      "total_tested": 1,
+      "total_stored": 0,
+      "best_candidate": {
+        "config_id": "0ebfb7ae4b9dbd8e_identity",
+        "candidate_pt": "OBKRUOXOGHULBSOLIFBBWFLRVQQPRNGKSSOTWTQSJQSSEKZZWATJKLUDIAWINFBNYPVTTMZFPKWGDKZXTJCDIGKUHUAUEKCAR",
+        "crib_score": 2,
+        "bean_passed": false,
+        "bean_variant": null,
+        "ngram_score": -6.3794843191489345,
+        "classification": "noise",
+        "scoring_mode": "direct_positional",
+        "canonical_positions": true,
+        "p_value_status": "stale_cache",
+        "matched_null_family": ""
+      },
+      "best_score": 2.0,
+      "best_p_value_vs_null": null,
+      "information_gain_bits_realized": 0.0,
+      "wall_time_sec": 0.0025391937233507633,
+      "cpu_time_sec": 0.0025389949999999883,
+      "artifact_path": "/home/cpatrick/kryptos/results/dsl_jobs/PROC-P-BASELINE-1_0ebfb7ae4b9dbd8e/result.json",
+      "checkpoint_path": "",
+      "assumption_bundle": [
+        "H1_direct_positional",
+        "baseline_control"
+      ],
+      "eliminated_claim": "Spec PROC-P-BASELINE-1 (0ebfb7ae4b9dbd8e) tested 1 configurations; none exceeded STORE_THRESHOLD=10. Assumption bundle: ['H1_direct_positional', 'baseline_control']",
+      "admissibility_verdict": "ok",
+      "admissibility_reasons": [],
+      "override_justification": "",
+      "override_exhaustion_overlap": [],
+      "dispatched_dsl_spec": {
+        "hypothesis_id": "PROC-P-BASELINE-1",
+        "pipeline": [
+          {
+            "kind": "identity",
+            "alphabet": "AZ",
+            "params": [],
+            "recipe_id": null
+          }
+        ],
+        "crib_alignment": "direct_positional",
+        "scoring": "composite",
+        "null_baseline": null,
+        "information_gain_bits_estimate": 0.0,
+        "success_criteria": {},
+        "kill_criteria": {},
+        "compute_budget_cpu_minutes": 1,
+        "checkpoint_every_sec": 60,
+        "assumption_bundle": [
+          "H1_direct_positional",
+          "baseline_control"
+        ],
+        "notes": "Procedural recipe P-BASELINE-1: Identity baseline \u2014 test the raw CT",
+        "override_exhaustion": false,
+        "override_justification": ""
+      },
+      "best_config_bindings": []
+    },
+    {
+      "hypothesis_id": "PROC-P-BASELINE-2",
+      "spec_hash": "6867368535721874",
+      "universe_hash": "6e802e89af294df6",
+      "total_tested": 1,
+      "total_stored": 0,
+      "best_candidate": {
+        "config_id": "6867368535721874_identity",
+        "candidate_pt": "LYPIFLCLTSFOYHLORUYYDUOIEJJKIMTPHHLGDGJHQJHHVPAADZGQPOFWRZDRMUYMBKEGGNAUKPDTWPACGQXWRTPFSFZFVPXZI",
+        "crib_score": 0,
+        "bean_passed": false,
+        "bean_variant": null,
+        "ngram_score": -6.4579259148936154,
+        "classification": "noise",
+        "scoring_mode": "direct_positional",
+        "canonical_positions": true,
+        "p_value_status": "stale_cache",
+        "matched_null_family": ""
+      },
+      "best_score": 0.0,
+      "best_p_value_vs_null": null,
+      "information_gain_bits_realized": 0.0,
+      "wall_time_sec": 0.002543712966144085,
+      "cpu_time_sec": 0.0025433889999999515,
+      "artifact_path": "/home/cpatrick/kryptos/results/dsl_jobs/PROC-P-BASELINE-2_6867368535721874/result.json",
+      "checkpoint_path": "",
+      "assumption_bundle": [
+        "H1_direct_positional"
+      ],
+      "eliminated_claim": "Spec PROC-P-BASELINE-2 (6867368535721874) tested 1 configurations; none exceeded STORE_THRESHOLD=10. Assumption bundle: ['H1_direct_positional']",
+      "admissibility_verdict": "ok",
+      "admissibility_reasons": [],
+      "override_justification": "",
+      "override_exhaustion_overlap": [],
+      "dispatched_dsl_spec": {
+        "hypothesis_id": "PROC-P-BASELINE-2",
+        "pipeline": [
+          {
+            "kind": "atbash",
+            "alphabet": "AZ",
+            "params": [],
+            "recipe_id": null
+          }
+        ],
+        "crib_alignment": "direct_positional",
+        "scoring": "composite",
+        "null_baseline": null,
+        "information_gain_bits_estimate": 0.0,
+        "success_criteria": {},
+        "kill_criteria": {},
+        "compute_budget_cpu_minutes": 1,
+        "checkpoint_every_sec": 60,
+        "assumption_bundle": [
+          "H1_direct_positional"
+        ],
+        "notes": "Procedural recipe P-BASELINE-2: Atbash baseline \u2014 trivial reciprocal substitution",
+        "override_exhaustion": false,
+        "override_justification": ""
+      },
+      "best_config_bindings": []
+    },
+    {
+      "hypothesis_id": "PROC-P-KRYPTOS-KW",
+      "spec_hash": "3b145a125535750b",
+      "universe_hash": "0dac4476e7935141",
+      "total_tested": 10,
+      "total_stored": 0,
+      "best_candidate": {
+        "config_id": "3b145a125535750b_layer0.keyword=LANGLEY",
+        "candidate_pt": "DBXLJKZDGUOAXUDLVZQXYULEPFMRGNTEHOQIWGKHFSHSREOVYPTWEAQFXAJCCBDCYCPIPOOFCELCFZZKNYYFXGXOWQCJEXWPN",
+        "crib_score": 3,
+        "bean_passed": false,
+        "bean_variant": null,
+        "ngram_score": -6.41777764893617,
+        "classification": "noise",
+        "scoring_mode": "direct_positional",
+        "canonical_positions": true,
+        "p_value_status": "stale_cache",
+        "matched_null_family": "vigenere"
+      },
+      "best_score": 3.0,
+      "best_p_value_vs_null": null,
+      "information_gain_bits_realized": 0.0,
+      "wall_time_sec": 0.004485749639570713,
+      "cpu_time_sec": 0.004485268000000042,
+      "artifact_path": "/home/cpatrick/kryptos/results/dsl_jobs/PROC-P-KRYPTOS-KW_3b145a125535750b/result.json",
+      "checkpoint_path": "",
+      "assumption_bundle": [
+        "H1_direct_positional",
+        "thematic_keyword"
+      ],
+      "eliminated_claim": "Spec PROC-P-KRYPTOS-KW (3b145a125535750b) tested 10 configurations; none exceeded STORE_THRESHOLD=10. Assumption bundle: ['H1_direct_positional', 'thematic_keyword']",
+      "admissibility_verdict": "ok",
+      "admissibility_reasons": [],
+      "override_justification": "",
+      "override_exhaustion_overlap": [],
+      "dispatched_dsl_spec": {
+        "hypothesis_id": "PROC-P-KRYPTOS-KW",
+        "pipeline": [
+          {
+            "kind": "vigenere",
+            "alphabet": "AZ",
+            "params": [
+              {
+                "name": "keyword",
+                "values": [
+                  "KRYPTOS",
+                  "LANGLEY",
+                  "BERLIN",
+                  "CLOCK",
+                  "COMPASS",
+                  "BEARING",
+                  "MAGNETIC",
+                  "INVISIBLE",
+                  "SUBTLE",
+                  "SHADING"
+                ],
+                "start": null,
+                "stop": null,
+                "source_corpus": null,
+                "cardinality_cap": 10000
+              }
+            ],
+            "recipe_id": null
+          }
+        ],
+        "crib_alignment": "direct_positional",
+        "scoring": "composite",
+        "null_baseline": null,
+        "information_gain_bits_estimate": 0.3,
+        "success_criteria": {},
+        "kill_criteria": {},
+        "compute_budget_cpu_minutes": 1,
+        "checkpoint_every_sec": 60,
+        "assumption_bundle": [
+          "H1_direct_positional",
+          "thematic_keyword"
+        ],
+        "notes": "Procedural recipe P-KRYPTOS-KW: KRYPTOS-themed vocabulary as Vigenere keyword",
+        "override_exhaustion": false,
+        "override_justification": ""
+      },
+      "best_config_bindings": [
+        [
+          "layer0.keyword",
+          "LANGLEY"
+        ]
+      ]
+    }
+  ]
+}

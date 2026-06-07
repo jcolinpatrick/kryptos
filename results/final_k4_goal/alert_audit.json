@@ -1,0 +1,189 @@
+[
+  {
+    "alert": "20260413T195351_e2784dc990b5_breakthrough.json",
+    "kind": "real-K4",
+    "crib": null,
+    "bean": null,
+    "is_bt": null,
+    "ngram_pc": -5.84,
+    "vowel": 0.196,
+    "verdict": "FORCED-CRIB (gibberish body)",
+    "pt": "OUFSZHVWZLMTCEASTNORTHEASTWRRESXOLWFBKEYRABDMYYGPJEBERLINCLOCKAZOQFBBWQNQKQHAIKD"
+  },
+  {
+    "alert": "20260413T223205_8d1b54010ffe_breakthrough.json",
+    "kind": "real-K4",
+    "crib": 24,
+    "bean": false,
+    "is_bt": false,
+    "ngram_pc": -6.162,
+    "vowel": 0.0,
+    "verdict": "FORCED-CRIB (gibberish body)",
+    "pt": "XXXXXXXXXXXXXXXXXXXXXEASTNORTHEASTXXXXXXXXXXXXXXXXXXXXXXXXXXXXXBERLINCLOCKXXXXXXXXXXXXXXXXXXXXXXX"
+  },
+  {
+    "alert": "20260427T132519_hcc-k4b-001-_breakthrough.json",
+    "kind": "K4Bench",
+    "crib": 2,
+    "bean": false,
+    "is_bt": false,
+    "ngram_pc": -4.829,
+    "vowel": 0.32,
+    "verdict": "calibration-artifact (synthetic CT)",
+    "pt": "FIRSTBENCHMARKTRIALXXSECONDSYSTEMXHIDESORDEREDROUTEBEFOREKEYXXXCOLUMNORDERTHENREADTHEFINALENDXXXX"
+  },
+  {
+    "alert": "20260427T180518_hcc-k4b-002-_breakthrough.json",
+    "kind": "K4Bench",
+    "crib": 0,
+    "bean": false,
+    "is_bt": false,
+    "ngram_pc": -4.848,
+    "vowel": 0.278,
+    "verdict": "calibration-artifact (synthetic CT)",
+    "pt": "BRONZEPANELLESSONXXXXMIRROREDALPHASOMETIMESTHESTRIPTURNSBACKXXXALPHASTRIPXCHECKBOTHTABLEENDSXXXXX"
+  },
+  {
+    "alert": "20260427T185840_hcc-k4b-002-_breakthrough.json",
+    "kind": "K4Bench",
+    "crib": 0,
+    "bean": false,
+    "is_bt": false,
+    "ngram_pc": -4.848,
+    "vowel": 0.278,
+    "verdict": "calibration-artifact (synthetic CT)",
+    "pt": "BRONZEPANELLESSONXXXXMIRROREDALPHASOMETIMESTHESTRIPTURNSBACKXXXALPHASTRIPXCHECKBOTHTABLEENDSXXXXX"
+  },
+  {
+    "alert": "20260427T221329_hcc-k4b-002-_breakthrough.json",
+    "kind": "K4Bench",
+    "crib": 0,
+    "bean": false,
+    "is_bt": false,
+    "ngram_pc": -4.848,
+    "vowel": 0.278,
+    "verdict": "calibration-artifact (synthetic CT)",
+    "pt": "BRONZEPANELLESSONXXXXMIRROREDALPHASOMETIMESTHESTRIPTURNSBACKXXXALPHASTRIPXCHECKBOTHTABLEENDSXXXXX"
+  },
+  {
+    "alert": "20260428T112233_hcc-k4b-004-_breakthrough.json",
+    "kind": "K4Bench",
+    "crib": 1,
+    "bean": false,
+    "is_bt": false,
+    "ngram_pc": -4.991,
+    "vowel": 0.299,
+    "verdict": "calibration-artifact (synthetic CT)",
+    "pt": "SMALLCLOCKDESKNOTEXXXCLOCKWISEKEYXBACKWARDSTEPSCHOOSECOLUMNSXXXROUTEBEFOREREADFIRSTATTHEDAWNXXXXX"
+  },
+  {
+    "alert": "20260428T135923_hcc-k4b-003-_breakthrough.json",
+    "kind": "K4Bench",
+    "crib": 4,
+    "bean": false,
+    "is_bt": false,
+    "ngram_pc": -4.99,
+    "vowel": 0.289,
+    "verdict": "calibration-artifact (synthetic CT)",
+    "pt": "CAREFULWORKERRULEXXXXCRIBSCORETESTWHOLETEXTANDMETHODMUSTFITXXXXFULLMETHODXREPORTONLYCLEANHITSXXXX"
+  },
+  {
+    "alert": "20260428T135924_hcc-k4b-003-_breakthrough.json",
+    "kind": "K4Bench",
+    "crib": 4,
+    "bean": false,
+    "is_bt": false,
+    "ngram_pc": -4.99,
+    "vowel": 0.289,
+    "verdict": "calibration-artifact (synthetic CT)",
+    "pt": "CAREFULWORKERRULEXXXXCRIBSCORETESTWHOLETEXTANDMETHODMUSTFITXXXXFULLMETHODXREPORTONLYCLEANHITSXXXX"
+  },
+  {
+    "alert": "20260428T145039_hcc-k4b-005-_breakthrough.json",
+    "kind": "K4Bench",
+    "crib": 1,
+    "bean": false,
+    "is_bt": false,
+    "ngram_pc": -4.984,
+    "vowel": 0.289,
+    "verdict": "calibration-artifact (synthetic CT)",
+    "pt": "ARCHIVECARDWARNINGXXXARCHIVETUNNELPASSTHROUGHDARKTABLEFIRSTXXXXKRYPTOSKEYXFINALKEYAFTERROUTEXXXXX"
+  },
+  {
+    "alert": "20260428T145040_hcc-k4b-005-_breakthrough.json",
+    "kind": "K4Bench",
+    "crib": 1,
+    "bean": false,
+    "is_bt": false,
+    "ngram_pc": -4.984,
+    "vowel": 0.289,
+    "verdict": "calibration-artifact (synthetic CT)",
+    "pt": "ARCHIVECARDWARNINGXXXARCHIVETUNNELPASSTHROUGHDARKTABLEFIRSTXXXXKRYPTOSKEYXFINALKEYAFTERROUTEXXXXX"
+  },
+  {
+    "alert": "20260428T212544_hcc-k4b-007-_breakthrough.json",
+    "kind": "K4Bench",
+    "crib": 1,
+    "bean": false,
+    "is_bt": false,
+    "ngram_pc": -5.211,
+    "vowel": 0.289,
+    "verdict": "calibration-artifact (synthetic CT)",
+    "pt": "LEFTEDGERIVETCOUNTXXXRAGGEDCOLUMNXWALKGRIDDOWNUPDOWNAGAINXXXXXXALPHABETKEYLASTWORDSCONFIRMITXXXXX"
+  },
+  {
+    "alert": "20260428T224144_hcc-k4b-008-_breakthrough.json",
+    "kind": "K4Bench",
+    "crib": 1,
+    "bean": false,
+    "is_bt": false,
+    "ngram_pc": -4.974,
+    "vowel": 0.289,
+    "verdict": "calibration-artifact (synthetic CT)",
+    "pt": "SHADOWNOTEONWALLXXXXXREVERSESTRIPXRANDOMLOOKSLIKEORDEREDTEXTXXXKRYPTOSFOLDEVERYLETTERSTILLSETXXXX"
+  },
+  {
+    "alert": "20260428T224144_hcc-k4b-008-_signal.json",
+    "kind": "K4Bench",
+    "crib": 1,
+    "bean": false,
+    "is_bt": false,
+    "ngram_pc": -5.572,
+    "vowel": 0.289,
+    "verdict": "calibration-artifact (synthetic CT)",
+    "pt": "SHADOETONWONWALXXXXLXREVETSESRRIPXRMODNALOOKSOEKILRDERETXETDXXXKRSOTPYFOLDELYREVETTERLLITSSETXXXX"
+  },
+  {
+    "alert": "20260428T224145_hcc-k4b-008-_breakthrough.json",
+    "kind": "K4Bench",
+    "crib": 1,
+    "bean": false,
+    "is_bt": false,
+    "ngram_pc": -4.974,
+    "vowel": 0.289,
+    "verdict": "calibration-artifact (synthetic CT)",
+    "pt": "SHADOWNOTEONWALLXXXXXREVERSESTRIPXRANDOMLOOKSLIKEORDEREDTEXTXXXKRYPTOSFOLDEVERYLETTERSTILLSETXXXX"
+  },
+  {
+    "alert": "20260429T162453_hcc-k4b-010-_breakthrough.json",
+    "kind": "K4Bench",
+    "crib": 1,
+    "bean": false,
+    "is_bt": false,
+    "ngram_pc": -5.007,
+    "vowel": 0.289,
+    "verdict": "calibration-artifact (synthetic CT)",
+    "pt": "NEEDLEPOINTSNORTHXXXXBLOCKREVERSALSMALLGROUPSTURNBEFOREKEYXXXXXSUBTRACTKEYALPHABETDISTANCENOWXXXX"
+  },
+  {
+    "alert": "20260429T220945_hcc-k4b-011-_breakthrough.json",
+    "kind": "K4Bench",
+    "crib": 2,
+    "bean": false,
+    "is_bt": false,
+    "ngram_pc": -5.036,
+    "vowel": 0.299,
+    "verdict": "calibration-artifact (synthetic CT)",
+    "pt": "OBSERVEGARDENPATHXXXXGARDENCOLUMNXCROSSTHERAILAFTERTABLEXXXXXXXTHREERAILXXMOVELETTERSTOHOMESXXXXX"
+  }
+]

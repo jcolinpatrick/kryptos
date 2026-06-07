@@ -1,0 +1,502 @@
+[
+  {
+    "crib": 24,
+    "bean": false,
+    "ngram_pc": -6.06742944680851,
+    "words": 23,
+    "longest": 5,
+    "is_bt": false,
+    "src": "results/e_autokey_k4.json",
+    "pt": "AAAAAAAAAAAAAAAAAAAAAEASTNORTHEASTAAAAAAAAAAAAAAAAAAAAAAAAAAAAABERLINCLOCKAAAAAAAAAAAAAAAAAAAAAAA"
+  },
+  {
+    "crib": 24,
+    "bean": false,
+    "ngram_pc": -3.7503253297872345,
+    "words": 22,
+    "longest": 6,
+    "is_bt": false,
+    "src": "results/e_polybius_coord_exploit.json",
+    "pt": "CRATINATERATIVERATORSEASTNORTHEASTRETERATERINGRESTRACTIONERATERBERLINCLOCKERATESTATINGHERIANETERS"
+  },
+  {
+    "crib": 24,
+    "bean": false,
+    "ngram_pc": -6.162224510638295,
+    "words": 22,
+    "longest": 6,
+    "is_bt": false,
+    "src": "results/breakthroughs/alert_20260413T223205_8d1b54010ffe_breakthrough.json",
+    "pt": "XXXXXXXXXXXXXXXXXXXXXEASTNORTHEASTXXXXXXXXXXXXXXXXXXXXXXXXXXXXXBERLINCLOCKXXXXXXXXXXXXXXXXXXXXXXX"
+  },
+  {
+    "crib": 24,
+    "bean": false,
+    "ngram_pc": -3.666624712765957,
+    "words": 21,
+    "longest": 6,
+    "is_bt": false,
+    "src": "results/e_model_b_running_key_sa.json",
+    "pt": "TERATIVENTINTERATERINEASTNORTHEASTRANTIANTHERENTICATIONIALISTOMBERLINCLOCKHAMENTINESINGUNDEREDUNS"
+  },
+  {
+    "crib": 24,
+    "bean": false,
+    "ngram_pc": -3.6912728617021284,
+    "words": 21,
+    "longest": 7,
+    "is_bt": false,
+    "src": "results/f_ap_constrained_sa_v1.json",
+    "pt": "ULATIONSTINESSESTINGREASTNORTHEASTREARTICATICALENESSSEMICALEREMBERLINCLOCKETHERENTERSTANTISTATION"
+  },
+  {
+    "crib": 24,
+    "bean": false,
+    "ngram_pc": -3.6951240319148924,
+    "words": 21,
+    "longest": 6,
+    "is_bt": false,
+    "src": "results/f_ap_constrained_sa_v1.json",
+    "pt": "AKINESTHERMATINATINGREASTNORTHEASTEROVERATIONALITINTRATICATEDUNBERLINCLOCKETHERERINESSANDSTANTING"
+  },
+  {
+    "crib": 24,
+    "bean": false,
+    "ngram_pc": -3.7164099893617033,
+    "words": 21,
+    "longest": 6,
+    "is_bt": false,
+    "src": "results/e_polybius_coord_exploit.json",
+    "pt": "MENTHERINATESTHEANTEREASTNORTHEASTATESTERESSENTALISTALISTENTINEBERLINCLOCKSTANTICATIONDEATESTICAL"
+  },
+  {
+    "crib": 24,
+    "bean": false,
+    "ngram_pc": -3.7718002553191483,
+    "words": 21,
+    "longest": 7,
+    "is_bt": false,
+    "src": "results/e_polybius_coord_exploit.json",
+    "pt": "CTIONDEREMERAMETERSEREASTNORTHEASTERESPEROUNDERESTERINEANDTHEREBERLINCLOCKERITENETHEREDINTERATERE"
+  },
+  {
+    "crib": 24,
+    "bean": false,
+    "ngram_pc": -3.6504918085106377,
+    "words": 20,
+    "longest": 7,
+    "is_bt": false,
+    "src": "results/f_ap_constrained_sa_v1.json",
+    "pt": "ANDTHERSINTHERESTINGREASTNORTHEASTERINESSIONINTERINTERATIONATERBERLINCLOCKINGERIESTALISTORINCENTI"
+  },
+  {
+    "crib": 24,
+    "bean": false,
+    "ngram_pc": -3.670659819148936,
+    "words": 20,
+    "longest": 8,
+    "is_bt": false,
+    "src": "results/f_ap_constrained_sa_v1.json",
+    "pt": "STERNERATERESTINTERESEASTNORTHEASTRATIONATIONANTIONINTERINGUNAMBERLINCLOCKABLETHATINGINTHROMATION"
+  },
+  {
+    "crib": 24,
+    "bean": false,
+    "ngram_pc": -3.6737112659574462,
+    "words": 20,
+    "longest": 6,
+    "is_bt": false,
+    "src": "results/f_ap_constrained_sa_v1.json",
+    "pt": "ORESTANTIONINESTRINGREASTNORTHEASTENONESSNONTERATIONALLATIONTHEBERLINCLOCKHAMENTERINGATIONATEANDI"
+  },
+  {
+    "crib": 24,
+    "bean": false,
+    "ngram_pc": -3.6994600744680843,
+    "words": 20,
+    "longest": 6,
+    "is_bt": false,
+    "src": "results/f_ap_constrained_sa_v1.json",
+    "pt": "INATIVENESSSUNATIONPREASTNORTHEASTINTHENESSTRACTIONOTHETERENTHEBERLINCLOCKLATEPREDUNDERATIONSTERB"
+  },
+  {
+    "crib": 24,
+    "bean": false,
+    "ngram_pc": -3.702243202127659,
+    "words": 20,
+    "longest": 7,
+    "is_bt": false,
+    "src": "results/f_ap_constrained_sa_v1.json",
+    "pt": "SNESSIONANTINGATIONTHEASTNORTHEASTATERALITIONTELLINTERITIONEDUNBERLINCLOCKENATERINETERATERIALLYNO"
+  },
+  {
+    "crib": 24,
+    "bean": false,
+    "ngram_pc": -3.7460879787234047,
+    "words": 20,
+    "longest": 7,
+    "is_bt": false,
+    "src": "results/e_polybius_coord_exploit.json",
+    "pt": "NISTATIONISHEREANTHEREASTNORTHEASTRACESSTILLENESSMISSIONSTREMANBERLINCLOCKERICATICATICATESTICATEP"
+  },
+  {
+    "crib": 24,
+    "bean": false,
+    "ngram_pc": -3.7648759999999997,
+    "words": 20,
+    "longest": 7,
+    "is_bt": false,
+    "src": "results/e_polybius_coord_exploit.json",
+    "pt": "ERATERATERATESCOVEREREASTNORTHEASTRATICHERATTHETEREDUNTINGRATERBERLINCLOCKIESTRATENESSECTORESTONE"
+  },
+  {
+    "crib": 24,
+    "bean": false,
+    "ngram_pc": -3.7735469468085117,
+    "words": 20,
+    "longest": 7,
+    "is_bt": false,
+    "src": "results/e_polybius_coord_exploit.json",
+    "pt": "LSTICATETRAPHERMENTEREASTNORTHEASTRANTINGDISTHERABLESTEREDINTERBERLINCLOCKENITICARTICATHERATITERN"
+  },
+  {
+    "crib": 24,
+    "bean": false,
+    "ngram_pc": -4.016380276595745,
+    "words": 20,
+    "longest": 6,
+    "is_bt": false,
+    "src": "results/e_model_b_running_key_sa.json",
+    "pt": "EDINTELENTRADINGSISTREASTNORTHEASTATEASWESABLESSISHESTRISTIERISBERLINCLOCKINEUMOLICALLYINTEREDESC"
+  },
+  {
+    "crib": 24,
+    "bean": false,
+    "ngram_pc": -4.224030797872338,
+    "words": 20,
+    "longest": 6,
+    "is_bt": false,
+    "src": "results/e_model_b_running_key_sa.json",
+    "pt": "ATINTELENTRALIZESINSSEASTNORTHEASTATESSIESABESBUMCHESTRISTIMANSBERLINCLOCKRIOUSHUTSISNESINATEDESC"
+  },
+  {
+    "crib": 24,
+    "bean": false,
+    "ngram_pc": -4.307059680851064,
+    "words": 20,
+    "longest": 6,
+    "is_bt": false,
+    "src": "results/e_model_b_running_key_sa.json",
+    "pt": "DDINTERDIGGANOURSISTREASTNORTHEASTATESSMISMAPSININARDIOIDARANIMBERLINCLOCKENFINGLEREWHETMOOTEDREA"
+  },
+  {
+    "crib": 24,
+    "bean": false,
+    "ngram_pc": -4.55795844680851,
+    "words": 20,
+    "longest": 7,
+    "is_bt": false,
+    "src": "results/f_berlin_cable_templates_v1.json",
+    "pt": "STATIONTOLANGLEYWALLWEASTNORTHEASTINWTHROUGHWALLWIMMEDIATEWATTHBERLINCLOCKWALEXANDERPLATZPROTESTS"
+  },
+  {
+    "crib": 24,
+    "bean": false,
+    "ngram_pc": -4.571910042553191,
+    "words": 20,
+    "longest": 7,
+    "is_bt": false,
+    "src": "results/f_berlin_cable_templates_v1.json",
+    "pt": "STATIONTOLANGLEYWALLWEASTNORTHEASTATWTHROUGHWALLWIMMEDIATEWATTHBERLINCLOCKWALEXANDERPLATZPROTESTS"
+  },
+  {
+    "crib": 24,
+    "bean": false,
+    "ngram_pc": -3.6074133191489355,
+    "words": 19,
+    "longest": 7,
+    "is_bt": false,
+    "src": "results/e_model_b_running_key_sa.json",
+    "pt": "SPERATIVEREMENTINTHEREASTNORTHEASTATIONATERINESSINTERTHERETHEREBERLINCLOCKINGINATIONATESTALISTICA"
+  },
+  {
+    "crib": 24,
+    "bean": false,
+    "ngram_pc": -3.6640882872340415,
+    "words": 19,
+    "longest": 9,
+    "is_bt": false,
+    "src": "results/e_model_b_running_key_sa.json",
+    "pt": "LENESTERINTERINGRESTREASTNORTHEASTINTHERMENTHERATEREMATEREMENTABERLINCLOCKINESSTERIESTERABLENESSU"
+  },
+  {
+    "crib": 24,
+    "bean": false,
+    "ngram_pc": -3.6745796063829785,
+    "words": 19,
+    "longest": 9,
+    "is_bt": false,
+    "src": "results/e_model_b_running_key_sa.json",
+    "pt": "ICULATINESSATICALNESSEASTNORTHEASTRATESTIONINESTICENTRANTHEREAMBERLINCLOCKINGRELECTIONALINERATING"
+  },
+  {
+    "crib": 24,
+    "bean": false,
+    "ngram_pc": -3.678606617021278,
+    "words": 19,
+    "longest": 8,
+    "is_bt": false,
+    "src": "results/f_ap_constrained_sa_v1.json",
+    "pt": "ERATIONSATIONSANDENESEASTNORTHEASTATINESSNESSERATINTERMATIONCOMBERLINCLOCKSTHERENTIONTINTHERALIZE"
+  },
+  {
+    "crib": 24,
+    "bean": false,
+    "ngram_pc": -3.6858827872340414,
+    "words": 19,
+    "longest": 7,
+    "is_bt": false,
+    "src": "results/e_model_b_running_key_sa.json",
+    "pt": "ATINTERSTRIESSCOMPLATEASTNORTHEASTATIONATIONCONTISTICALITHEREAMBERLINCLOCKERSTRALISTRICALINTERING"
+  },
+  {
+    "crib": 24,
+    "bean": false,
+    "ngram_pc": -3.6864483297872335,
+    "words": 19,
+    "longest": 7,
+    "is_bt": false,
+    "src": "results/e_model_b_running_key_sa.json",
+    "pt": "ERINTERALINTEDINTHEPREASTNORTHEASTERESTRIANTINTENTABLENESSIONSUBERLINCLOCKINTEROUSCALLYUNINTHEREN"
+  },
+  {
+    "crib": 24,
+    "bean": false,
+    "ngram_pc": -3.690154723404253,
+    "words": 19,
+    "longest": 7,
+    "is_bt": false,
+    "src": "results/e_model_b_running_key_sa.json",
+    "pt": "EMENTOTHERATINTERATIVEASTNORTHEASTERINTHETICATITICATINGRESENTOMBERLINCLOCKMANTINGTHETHATERINESSES"
+  },
+  {
+    "crib": 24,
+    "bean": false,
+    "ngram_pc": -3.6902887872340417,
+    "words": 19,
+    "longest": 7,
+    "is_bt": false,
+    "src": "results/e_model_b_running_key_sa.json",
+    "pt": "EMENTHERESTINGRAMENTREASTNORTHEASTINTHENTATINGENESTRATINTHERINGBERLINCLOCKERELATERIALITYNONINTHER"
+  },
+  {
+    "crib": 24,
+    "bean": false,
+    "ngram_pc": -3.6946268297872344,
+    "words": 19,
+    "longest": 7,
+    "is_bt": false,
+    "src": "results/f_ap_constrained_sa_v1.json",
+    "pt": "EASTHERACTIONINTHETEREASTNORTHEASTERINISCORATABLENTIALINGINGTHEBERLINCLOCKINTERMATIONSATIONICALLE"
+  },
+  {
+    "crib": 24,
+    "bean": false,
+    "ngram_pc": -3.6992858404255338,
+    "words": 19,
+    "longest": 8,
+    "is_bt": false,
+    "src": "results/f_ap_constrained_sa_v1.json",
+    "pt": "USCULANTATIONATICATEREASTNORTHEASTHINGUNDATIONATIONITIALISTIONABERLINCLOCKINGINANTINTERIONALATION"
+  },
+  {
+    "crib": 24,
+    "bean": false,
+    "ngram_pc": -3.7528191382978715,
+    "words": 19,
+    "longest": 9,
+    "is_bt": false,
+    "src": "results/e_polybius_coord_exploit.json",
+    "pt": "PIRICATESTINATERSTRITEASTNORTHEASTERINGTHERETHISTILITICALLYSTRIBERLINCLOCKERSCOMPRESTICATICENTERS"
+  },
+  {
+    "crib": 24,
+    "bean": false,
+    "ngram_pc": -4.172170223404256,
+    "words": 19,
+    "longest": 6,
+    "is_bt": false,
+    "src": "results/e_model_b_running_key_sa.json",
+    "pt": "THINTERDINTINCESANONREASTNORTHEASTATESSIESAMOSPOSSARDIGIANIERISBERLINCLOCKINEUSPHEABLICALIARIESSU"
+  },
+  {
+    "crib": 24,
+    "bean": false,
+    "ngram_pc": -4.1855814255319155,
+    "words": 19,
+    "longest": 6,
+    "is_bt": false,
+    "src": "results/e_model_b_running_key_sa.json",
+    "pt": "AMINITHENTRANCERSONOMEASTNORTHEASTATESSMEDITHEDIMASCOPTASTIERISBERLINCLOCKILLITHHEREWIDOTHEREDREA"
+  },
+  {
+    "crib": 24,
+    "bean": false,
+    "ngram_pc": -4.274904680851064,
+    "words": 19,
+    "longest": 6,
+    "is_bt": false,
+    "src": "results/e_model_b_running_key_sa.json",
+    "pt": "ESHRIMOUNBUCHIERSISTREASTNORTHEASTATESSARDITESPOSTORDINOSTIERISBERLINCLOCKINEUSELICALBUREONOPERIL"
+  },
+  {
+    "crib": 24,
+    "bean": false,
+    "ngram_pc": -4.307929627659574,
+    "words": 19,
+    "longest": 6,
+    "is_bt": false,
+    "src": "results/e_model_b_running_key_sa.json",
+    "pt": "PHICITHENBUCHAFTSINSSEASTNORTHEASTATESSIERMINUNPRESCUSOPHORANIMBERLINCLOCKENBITSHEREWHETHARTEDREA"
+  },
+  {
+    "crib": 24,
+    "bean": false,
+    "ngram_pc": -4.5427558404255315,
+    "words": 19,
+    "longest": 7,
+    "is_bt": false,
+    "src": "results/f_berlin_cable_templates_v1.json",
+    "pt": "STATIONTOLANGLEYWALLWEASTNORTHEASTINWPASTTHEWALLWIMMEDIATEWATTHBERLINCLOCKWALEXANDERPLATZPROTESTS"
+  },
+  {
+    "crib": 24,
+    "bean": false,
+    "ngram_pc": -4.553974914893618,
+    "words": 19,
+    "longest": 7,
+    "is_bt": false,
+    "src": "results/f_berlin_cable_templates_v1.json",
+    "pt": "STATIONTOLANGLEYWALLWEASTNORTHEASTINWCROSSEDWALLWIMMEDIATEWATTHBERLINCLOCKWALEXANDERPLATZPROTESTS"
+  },
+  {
+    "crib": 24,
+    "bean": false,
+    "ngram_pc": -4.556707436170213,
+    "words": 19,
+    "longest": 7,
+    "is_bt": false,
+    "src": "results/f_berlin_cable_templates_v1.json",
+    "pt": "STATIONTOLANGLEYWALLWEASTNORTHEASTATWPASTTHEWALLWIMMEDIATEWATTHBERLINCLOCKWALEXANDERPLATZPROTESTS"
+  },
+  {
+    "crib": 24,
+    "bean": false,
+    "ngram_pc": -4.559751585106383,
+    "words": 19,
+    "longest": 7,
+    "is_bt": false,
+    "src": "results/f_berlin_cable_templates_v1.json",
+    "pt": "STATIONTOLANGLEYWALLWEASTNORTHEASTONWCROSSEDWALLWIMMEDIATEWATTHBERLINCLOCKWALEXANDERPLATZPROTESTS"
+  },
+  {
+    "crib": 24,
+    "bean": false,
+    "ngram_pc": -4.567926510638299,
+    "words": 19,
+    "longest": 7,
+    "is_bt": false,
+    "src": "results/f_berlin_cable_templates_v1.json",
+    "pt": "STATIONTOLANGLEYWALLWEASTNORTHEASTATWCROSSEDWALLWIMMEDIATEWATTHBERLINCLOCKWALEXANDERPLATZPROTESTS"
+  },
+  {
+    "crib": 24,
+    "bean": false,
+    "ngram_pc": -4.593900223404256,
+    "words": 19,
+    "longest": 7,
+    "is_bt": false,
+    "src": "results/f_berlin_cable_templates_v1.json",
+    "pt": "STATIONTOLANGLEYWALLWEASTNORTHEASTATWTHROUGHWALLWIMMEDIATEWATTHBERLINCLOCKWALEXANDERPLATZDEMOCRAC"
+  },
+  {
+    "crib": 24,
+    "bean": false,
+    "ngram_pc": -5.0397307659574455,
+    "words": 19,
+    "longest": 5,
+    "is_bt": false,
+    "src": "results/e_team_mono_trans_sa.json",
+    "pt": "TTATTATAWTTETTATTPTTTEASTNORTHEASTITENATTNTTETATTATETTTTTYETTTOBERLINCLOCKTTLTITOCNTSETTISTAFTEAT"
+  },
+  {
+    "crib": 24,
+    "bean": false,
+    "ngram_pc": -3.657256329787233,
+    "words": 18,
+    "longest": 8,
+    "is_bt": false,
+    "src": "results/e_model_b_running_key_sa.json",
+    "pt": "OFTHERINGRETRATIVENTREASTNORTHEASTERETHEANTINTERESOFTHERATINTERBERLINCLOCKERSENTIALINTERINTERINGS"
+  },
+  {
+    "crib": 24,
+    "bean": false,
+    "ngram_pc": -3.695671265957448,
+    "words": 18,
+    "longest": 7,
+    "is_bt": false,
+    "src": "results/e_model_b_running_key_sa.json",
+    "pt": "LINESSOVERETHERESTOTHEASTNORTHEASTRATIVERINTHESTICALLINESSINTERBERLINCLOCKETHESTICANTINCOUNTROPOD"
+  },
+  {
+    "crib": 24,
+    "bean": false,
+    "ngram_pc": -3.7494978297872352,
+    "words": 18,
+    "longest": 13,
+    "is_bt": false,
+    "src": "results/e_polybius_coord_exploit.json",
+    "pt": "LEINTEROUSELESCONTHEREASTNORTHEASTRINESSINTESCHETHETERICATEDCOMBERLINCLOCKISTICATICATIONOPHORESTI"
+  },
+  {
+    "crib": 24,
+    "bean": false,
+    "ngram_pc": -3.7533359042553194,
+    "words": 18,
+    "longest": 7,
+    "is_bt": false,
+    "src": "results/e_polybius_coord_exploit.json",
+    "pt": "ATRICATESTRATEDITIONCEASTNORTHEASTRANSENTELESSITINGTHETHESENTERBERLINCLOCKERINTERATERCHARATIOUSTE"
+  },
+  {
+    "crib": 24,
+    "bean": false,
+    "ngram_pc": -3.766078744680852,
+    "words": 18,
+    "longest": 7,
+    "is_bt": false,
+    "src": "results/e_polybius_coord_exploit.json",
+    "pt": "OVERISMATESTHECONTANCEASTNORTHEASTHERATINTATICATINESSINTENTETHEBERLINCLOCKERTERINTERMANTIONTHOUSO"
+  },
+  {
+    "crib": 24,
+    "bean": false,
+    "ngram_pc": -4.194961127659573,
+    "words": 18,
+    "longest": 7,
+    "is_bt": false,
+    "src": "results/e_model_b_running_key_sa.json",
+    "pt": "AQUAKEWALLOCHAMESISTREASTNORTHEASTEPRARMISITEDUSETHESTRISTILETOBERLINCLOCKINEESWORRESNESTRATESPEC"
+  },
+  {
+    "crib": 24,
+    "bean": false,
+    "ngram_pc": -4.222588255319148,
+    "words": 18,
+    "longest": 7,
+    "is_bt": false,
+    "src": "results/e_model_b_running_key_sa.json",
+    "pt": "EDINTELENTSTRISTEDREMEASTNORTHEASTATEUNMEDIAPESTINARSPRIANIERISBERLINCLOCKINEUSPHEABLYHOMOOTEDREA"
+  }
+]
