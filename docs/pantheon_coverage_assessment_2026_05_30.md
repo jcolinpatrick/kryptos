@@ -4,6 +4,24 @@ Date: 2026-05-30
 Status: ASSESSMENT (no implementation). Classification: [POLICY] + [HYPOTHESIS].
 Author: Colin Patrick (human lead) + Claude (computational partner).
 
+> **STATUS UPDATE (2026-06-10 audit — three-lane verification against code at
+> HEAD; full findings in the session record):** the roster/wiring facts (§2,
+> §5.3, §5.4) re-verify EXACTLY (rotation still round-robin, frontier_map still
+> advisory, script-auditor still wired nowhere, codebook/nomenclator still a
+> total gap, scorer still English-only). However, the TOOLING half of the
+> B-axis (alignment) gap has since CLOSED via a different route than §8.4's
+> spec: Lever B1 wired `score_candidate_free` (2026-05-31, commit 5a878be);
+> AUDIT-5 closed with route-undone-frame Bean re-derivation (2026-06-07,
+> c0b1004); diagonal Quagmire tableau sweeps landed (`tableau_keyword`,
+> cf9dee1). The `RealignmentSpec` vehicle in the §8.4 spec was never built and
+> that spec's DRAFT status is itself stale. The GENERATIVE-PERSONA half of the
+> gap remains OPEN: THEORIST_ROTATION is unchanged, no charter addendum landed,
+> §8.2's zero-compute "theater test" was never run, and no theorist has emitted
+> a genuine non-direct-alignment proposal (the post-Lever-B1 non-direct
+> closures were operator/campaign dispatches). Capability-claim passages below
+> that this supersedes carry inline [2026-06-10] notes; quoted agent text is
+> left verbatim as historical record.
+
 > Goal this answers: "determine if we have an appropriate pantheon of agents to
 > solve K4 — each acts as a persona within the controller — and, since the cipher
 > is truly bespoke, whether we are missing a perspective."
@@ -104,7 +122,13 @@ agents who did NOT see each other or my conclusion:
   `job_dispatcher.py:1807`); "bespoke" is triple-covered; a "designer-intent
   synthesist" is an unfalsifiability engine importing the dominant false-positive
   mode. The ONE surviving gap is an assumption/tooling role, not an idea fountain.
-- **design-archaeologist (orthogonal frame):** the missing frame is
+  *[2026-06-10: the anchored-at-:1807 claim was true at writing but is now
+  resolved (Lever B1 + AUDIT-5); also note the same-day closure-integrity audit
+  found anchored scoring was already CORRECT for dispatcher decrypt pipelines —
+  the "bug" framing was stronger than the corrected record. Quote kept verbatim.]*
+- **design-archaeologist (orthogonal frame — an ad-hoc prompted frame for that
+  session, NOT a roster agent; no such agent exists in `.claude/agents/`):**
+  the missing frame is
   CONSTRUCTIVE-RECONSTRUCTION — sit in the inventor's 1989 chair and forward-model
   how they would BUILD a custom system from their materials/skills/error-tolerance,
   predicting the construction ARTIFACTS it leaves. Shared blind spot of all six:
@@ -193,6 +217,9 @@ corroborated by direct code reads.
   if the DSL/kernel cannot express it (`crib_alignment='free'` unimplemented;
   diagonal `ct==pt` Quagmire tableaus unsweepable). No generator owns "is this even
   expressible / scoreable." Silently prunes the space upstream of any idea.
+  *[2026-06-10: both named examples have since been fixed — free scoring 2026-05-31,
+  tableau_keyword 2026-06-09 — which proves the axis is real and actionable; the
+  "no generator owns dispatchability" point itself still stands.]*
 - **Message-boundary / length** (MEDIUM): "is PT 97, or are there nulls / a shorter
   true message" is structural, distinct from genre (J); owned by neither B nor C as
   a prior. MEMORY already flags "PT length is open question."
@@ -219,7 +246,9 @@ corroborated by direct code reads.
 - **B (alignment) is owned only by a PASSIVE SKILL**: the `alignment-model` skill
   exists but "skills are pulled, personas push" — no generator's standing prior
   fires it, and the scorer collapses `free` to anchored anyway. Owner-less in
-  practice.
+  practice. *[2026-06-10: the scorer clause is resolved (free and
+  post_transposition are honored end-to-end); the no-generative-owner clause
+  remains true — no theorist has emitted a genuine non-direct proposal since.]*
 
 ### 5.3 Judge-layer gaps (chancellor, HIGH on findings)
 
@@ -271,6 +300,10 @@ upstream and JOINT: no generator AND no DSL kind AND no non-English scorer — a
 perfect free-alignment scorer would do nothing for them. So the precise statement:
 *alignment/composition are toolchain-bottlenecked; codebook and non-English-genre
 are bottlenecked in the roster AND the kernel scorer simultaneously.*
+*[2026-06-10: the B/F toolchain unblock has since happened (Lever B1, AUDIT-5,
+tableau_keyword, route_null matched-null harness) — and the prediction held:
+with tooling closed, the remaining deficit is exactly the generative-prior half.
+The codebook and non-English-genre joint gaps are unchanged.]*
 
 ---
 
@@ -315,15 +348,21 @@ are bottlenecked in the roster AND the kernel scorer simultaneously.*
   non-direct alignment + matched null) AND a generative prior that uses it —
   whether that prior lives in a new persona, a charter addendum to the six, or a
   rotation change is the open implementation question (deferred, per the human
-  lead).
+  lead). *[2026-06-10: the TOOLING half is now closed ("unscoreable today" no
+  longer holds); the ROSTER half — a generative prior that actually uses the
+  capability — is still open and is now the whole remaining gap on this axis.]*
 
 ---
 
 ## 8. What to decide next (implementation — DEFERRED to discussion)
 
 Do NOT treat any of these as chosen. They are the menu the assessment produces:
-1. Finish §5 (the deepening pass) in a clean session to confirm the axis list is
-   complete and to resolve the judge/rotation/manager questions.
+1. Independently re-audit §5's returned findings in a clean session to confirm
+   the axis list is complete and to resolve the judge/rotation/manager questions.
+   *(Original wording "Finish §5" was stale — the deepening pass returned; what
+   it never got was independent re-audit. The 2026-06-10 audit re-verified its
+   code-level claims — script-auditor wiring, frontier_map advisory, codebook
+   gap — but the quoted agent reasoning remains un-re-audited.)*
 2. Decide the VEHICLE for the frame-faithfulness axis: new persona vs. charter the
    existing six vs. rotation change — gated behind a zero-compute "theater test"
    (replay a candidate prompt over past cycle inputs; does it produce dispatchable,
@@ -343,7 +382,10 @@ Do NOT treat any of these as chosen. They are the menu the assessment produces:
 - §3 triangulation: full agent results returned and are quoted faithfully.
 - §4 matrix: my decomposition; axes B/G/J flagged UNOWNED are my analysis, partly
   corroborated by §3 (B/G) and grounded for J in the kernel's English-only scoring.
-- §5: dispatched but UNRETURNED due to session tool-output failure — explicitly
-  not claimed as done.
+- §5: deepening pass returned and is quoted in full; its findings have not been
+  independently re-audited (matching the header caveat). *(A prior version of
+  this line said "dispatched but UNRETURNED" — written before §5 landed and
+  never updated; corrected 2026-06-10 since it contradicted the doc's own §5
+  body and header caveat.)*
 - No K4 compute was run. No verification gates were run this session. K4 NOT
   solved. This is an org-design assessment, not a research result.
