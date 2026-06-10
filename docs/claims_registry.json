@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_on": "2026-04-09",
+  "generated_on": "2026-06-09",
   "purpose": "Canonical structured registry of major project claims. Seed set only — not every observation. Authoritative over informal prose in reports/ and historical snapshots. If a claim in this file conflicts with prose elsewhere in the repo, this file wins until a newer audit supersedes it.",
   "classes": ["public_fact", "derived_fact", "internal_result", "hypothesis", "policy", "retired_claim", "historical_snapshot"],
   "statuses": ["live", "provisional", "superseded", "retired", "disputed"],
@@ -78,7 +78,7 @@
       "repro_reference": "MEMORY.md 'Bin C' section",
       "owner_doc": "MEMORY.md",
       "red_team_status": "explicit demotion by Team of Rivals 2026-04-08",
-      "notes": "Any proposal to re-elevate running-key must clear the red-team-before-swings rule and supersede this entry explicitly."
+      "notes": "Any proposal to re-elevate running-key must clear the red-team-before-swings rule and supersede this entry explicitly. Reconciliation (recorded 2026-06-09): bounded-universe key_tape campaigns proceeded 2026-05/06 under the 2026-05-01 real-K4 unpause directive as closure work (C-KEYTAPE-M2M5-01 in this registry; Carter Vol.1 offset-swept tape closure 2026-06-05; carter_gutenberg closure 2026-06-07); this does not re-elevate running-key as a leading hypothesis and no supersession was filed."
     },
     {
       "claim_id": "C-PALETTE-01",
@@ -119,11 +119,11 @@
       "depends_on": [],
       "supersedes": ["E-FRAC-54 search_fn engineering proposal"],
       "superseded_by": [],
-      "artifact": "efrac54_search_fn_killed_2026_04_09.md; src/kryptos/detectors/efrac54_joint.py",
+      "artifact": "src/kryptos/detectors/efrac54_joint.py; tests/test_efrac54_detector.py (FM-1 certification); results/efrac54_joint_gonogo_2026_06_06.json; results/efrac54_joint_coldstart_gonogo_2026_06_06.json; docs/campaigns/mono_trans_runkey_detector_2026_06_06.md",
       "repro_reference": "tests/test_efrac54_detector.py (FM-1 certification)",
       "owner_doc": "MEMORY.md Bin D",
       "red_team_status": "red-teamed, killed 2026-04-09",
-      "notes": "Re-classified from engineering-blocked to structurally-blocked-on-scorer. The correct next move is scoring research, not search engineering."
+      "notes": "Re-classified from engineering-blocked to structurally-blocked-on-scorer. The correct next move is scoring research, not search engineering. Artifact pointer repointed 2026-06-09: the previously cited efrac54_search_fn_killed_2026_04_09.md is an agent-memory file outside the repo and does not exist here; replaced with in-repo evidence (detector source, FM-1 certification test, and the 2026-06-06 joint-search go/no-go artifacts plus the mono-invariant detector pre-registration, which independently re-confirmed scorer saturation at K4 parameters). Claim text unchanged."
     },
     {
       "claim_id": "C-SANBORN-01",
@@ -330,6 +330,21 @@
       "owner_doc": "docs/claims_registry.json",
       "red_team_status": "self-evident from artifact inspection",
       "notes": "Steelman: a Berlin Clock routing hypothesis is testable in principle (some permutation of the 24 keystream values might reveal periodicity, keyword match, or readable text). A correct test would (a) use >=3-letter fragments, (b) use a CT/crib-independent dictionary, (c) preregister a matched-shuffle null, (d) apply Bonferroni or similar across walks x fragments. The current script does none of these."
+    },
+    {
+      "claim_id": "C-BEANFRAME-01",
+      "statement": "Under crib_alignment=\"post_transposition\", the dispatcher Bean verdict is re-derived against the route-undone PT-frame intermediate (route_undo(CT)) via _keystream_frame_ct / bean_frame_ct, or reported N/A (scoring_mode=\"post_transposition_bean_unavailable\") when the frame is undefined (no leading reorder, or no trailing additive); never a guessed carved-CT PASS. Fixed 2026-06-07; AUDIT-5 CLOSED. Pre-2026-06-07 bean_passed values for non-direct (reordering-bearing) additive real-K4 candidates were computed in the carved-CT frame and are untrusted unless produced after the fix or independently recomputed with bean_frame_ct. The contamination audit showed none were load-bearing: 4,358 real-K4 non-direct records, max crib_score 6, zero bean_passed=True, zero crib_score>=18 (Bean is only load-bearing at the crib>=18 SIGNAL/BREAKTHROUGH gate, which no real-K4 non-direct candidate ever reached); the C6 specs (384 configs) were replayed under the fixed frame with verdict unchanged.",
+      "class": "internal_result",
+      "status": "live",
+      "scope": "kryptosbot dispatcher real-K4 scoring (_score_real_k4_candidate / _evaluate_one) under crib_alignment=post_transposition, plus the trust status of all pre-2026-06-07 bean_passed values for non-direct additive candidates. Does NOT change direct_positional (carved CT IS the correct frame there) or free (Bean stays N/A). Crib-scoring was never affected: free routes to score_candidate_free; post_transposition crib-scoring is anchored after the route is physically undone.",
+      "depends_on": ["C-BEAN-01"],
+      "supersedes": [],
+      "superseded_by": [],
+      "artifact": "results/bean_frame_fix_audit/ (FINAL.md, PATCHSET_MANIFEST.md, c6_replay.json); kryptosbot/tests/test_post_transposition_bean_frame.py",
+      "repro_reference": "PYTHONPATH=src pytest kryptosbot/tests/test_post_transposition_bean_frame.py -q",
+      "owner_doc": "docs/methodological_audits.md (AUDIT-5)",
+      "red_team_status": "AUDIT-5 closed 2026-06-07 after fix + contamination audit; 13 known-answer tests including the crux invariant (one candidate PT receives opposite Bean verdicts purely by frame)",
+      "notes": "Forward rule: any new non-direct (reordering-bearing) additive campaign must rely on the dispatcher's post_transposition path or recompute Bean with bean_frame_ct; never read Bean off the carved CT for a reordered candidate. The pre-fix statement that crib_alignment=\"free\"/\"post_transposition\" is not honored by the real-K4 scorer (e.g. results/final_k4_goal/FINAL_REPORT.md section 6.1) is STALE; see the AUDIT-5 resolution in docs/methodological_audits.md for the precise current state. Standalone non-direct closures did not gate on the dispatcher Bean (Carter Vol.1 2026-06-05 gates on score_candidate(...).crib_score only; the C6 sweep declared bean_inapplicable_by_construction), so no historical real-K4 closure verdict was affected. The mis-framed Bean never flipped a closure verdict; the repo is safe for future non-direct additive campaigns because a future candidate reaching crib>=18 will now receive a correctly-framed Bean verdict."
     }
   ]
 }

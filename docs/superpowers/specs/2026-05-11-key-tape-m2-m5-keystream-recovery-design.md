@@ -7,6 +7,15 @@ runner_codename: Swing K-1
 campaign_id_planned: C-KEYTAPE-M2M5-01
 ---
 
+> **LIVE-EVIDENCE BANNER (added 2026-06-09):** This file post-dates the
+> 2026-04-09 `docs/superpowers/` namespace demotion (see
+> `docs/superpowers/README.md`) and is NOT palette-dependent. It is cited as
+> live evidence by `docs/claims_registry.json` claim `C-KEYTAPE-M2M5-01`
+> (repro_reference). Per the AUDIT-2 closure residue rule in
+> `docs/methodological_audits.md`, a file under this namespace promoted back
+> toward live status carries its own banner. The directory-level HISTORICAL
+> banner does not apply to this file.
+
 # Swing K-1 -- Key-Tape M2..M5 Keystream Recovery
 
 ## 1. Purpose
