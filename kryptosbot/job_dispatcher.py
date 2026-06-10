@@ -1433,6 +1433,42 @@ def _translate_layer(
                 "valid: 'quagmire_iii' (same keyword on PT and CT), "
                 "'quagmire_iv' (different keywords on PT and CT)"
             )
+        # 2026-06-09 (tableau-sweep fix): `tableau_keyword` is the
+        # DSL-sweepable form of the Quagmire III diagonal constraint
+        # ct_alphabet_keyword == pt_alphabet_keyword. ParamRange axes are
+        # independent Cartesian, so sweeping N values on BOTH alphabet
+        # keyword axes enumerates N^2-N off-diagonal bindings; the
+        # quagmire_iii check below correctly rejects those, and one
+        # rejected binding aborts the whole spec ("one tableau per
+        # spec"). A single tableau_keyword axis expands here to the
+        # identical pair, keeping axis_product == total_tested exact.
+        # Off-diagonal abort semantics for explicit ct/pt lists are
+        # intentionally UNCHANGED (skipping bindings would silently
+        # shrink the declared universe). See
+        # results/workflows/k4_dynamic_solve/20260528T222343Z/
+        # final_report.md ("DSL diagonal limit").
+        tableau_keyword = binding.get("tableau_keyword")
+        if tableau_keyword is not None:
+            if not (isinstance(tableau_keyword, str) and len(tableau_keyword) >= 1):
+                raise DispatcherError(
+                    f"quagmire layer 'tableau_keyword' must be a non-empty "
+                    f"str; got {tableau_keyword!r}"
+                )
+            if ct_kw is not None or pt_kw is not None:
+                raise DispatcherError(
+                    "quagmire layer 'tableau_keyword' is mutually exclusive "
+                    "with 'ct_alphabet_keyword'/'pt_alphabet_keyword'; got "
+                    f"tableau_keyword={tableau_keyword!r} alongside "
+                    f"ct={ct_kw!r}, pt={pt_kw!r}"
+                )
+            if variant == "quagmire_iv":
+                raise DispatcherError(
+                    "quagmire layer 'tableau_keyword' implies "
+                    "ct_alphabet_keyword == pt_alphabet_keyword and is only "
+                    "valid for variant='quagmire_iii'; quagmire_iv requires "
+                    "distinct keywords (use explicit ct/pt params)"
+                )
+            ct_kw = pt_kw = tableau_keyword
         # Quagmire III requires both keywords identical and non-empty;
         # Quagmire IV requires both non-empty but distinct.
         if not (isinstance(ct_kw, str) and len(ct_kw) >= 1):

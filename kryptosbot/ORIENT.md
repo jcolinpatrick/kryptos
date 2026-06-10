@@ -120,13 +120,17 @@ columnar all overlap something). Workarounds:
 
 ### 5.4 Dispatcher rejects a `key_tape` layer with "no translator"
 
-`key_tape` is the only DSL-valid cipher kind without a dispatcher
-translation path (see `kryptosbot/hypothesis_dsl.py::_VALID_CIPHER_KINDS`
-vs `kryptosbot/job_dispatcher.py::_SUPPORTED_KINDS`). It validates as a
-spec but admissibility rejects with a "no dispatcher translation"
-pointer — the deferred-kind contract. Fix: route the hypothesis through
-a supported family, or extend `_translate_layer` with a key-tape case
-(needs new kernel infrastructure for finite-tape + null insertion).
+Historical note: until 2026-05-03, `key_tape` was the only DSL-valid
+cipher kind without a dispatcher translation path — it validated as a
+spec but admissibility rejected with a "no dispatcher translation"
+pointer (the deferred-kind contract). The translator landed 2026-05-03
+(Task 9): `key_tape` is in
+`kryptosbot/job_dispatcher.py::_SUPPORTED_KINDS` with a full
+`_translate_layer` branch, and `hypothesis_dsl.py::_VALID_CIPHER_KINDS`
+equals `_SUPPORTED_KINDS`. Letter-tape coercion (tape entries given as
+letters instead of integers) landed 2026-05-31. If you still see the
+"no dispatcher translation" rejection for `key_tape`, the checkout
+predates 2026-05-03 — pull main.
 
 Historical note: Phase 4 only supported the AZ alphabet for Vigenère-
 family layers, so KA / Quagmire III hypotheses crashed with

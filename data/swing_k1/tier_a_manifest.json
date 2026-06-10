@@ -103,7 +103,8 @@
       "id": "reference_sanborn_body_of_work",
       "kind": "file",
       "path": "reference/sanborn_body_of_work.md",
-      "sha256": "5e61d6b5d206f8434b61713ad3da4de04c85640d23e338a796af3e261c07ffd6"
+      "sha256": "a33b59d05d7e9ce74df11d06f862e283fa4d97b4ef9fb09564cee92390b629cb",
+      "repinned": "2026-06-09: re-pinned after commit 9bbd4b8 (2026-06-06) corrected this file (AAA provenance phantom fixes: OVERLORD misread, Code Room=tableau) without a manifest rebuild; the fail-closed loader correctly broke 9 swing_k1 tests. Old sha256: 5e61d6b5d206f8434b61713ad3da4de04c85640d23e338a796af3e261c07ffd6. The closed swing-K1 M2-M5 campaign (null verdict, 2026-05-12) recorded its run-time hashes in its own artifacts; this re-pin does not alter that record."
     },
     {
       "id": "reference_sanborn_correspondence",

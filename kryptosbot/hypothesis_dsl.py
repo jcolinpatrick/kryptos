@@ -285,6 +285,20 @@ class CipherLayer:
                 f"CipherLayer.recipe_id={self.recipe_id!r} only valid when "
                 f"kind=='procedural'; got kind={self.kind!r}"
             )
+        if self.kind == "quagmire":
+            # tableau_keyword is the sweepable diagonal (ct==pt) form for
+            # Quagmire III; mixing it with explicit alphabet-keyword axes
+            # is ambiguous and the dispatcher would reject every binding.
+            names = {p.name for p in self.params if isinstance(p, ParamRange)}
+            if "tableau_keyword" in names and (
+                "ct_alphabet_keyword" in names or "pt_alphabet_keyword" in names
+            ):
+                errors.append(
+                    "CipherLayer kind='quagmire': 'tableau_keyword' is "
+                    "mutually exclusive with 'ct_alphabet_keyword'/"
+                    "'pt_alphabet_keyword' (it expands to the identical "
+                    "ct==pt pair for quagmire_iii sweeps)"
+                )
         seen_names = set()
         for p in self.params:
             if not isinstance(p, ParamRange):
