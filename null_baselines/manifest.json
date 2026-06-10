@@ -3,7 +3,8 @@
     "crib_score__matched_variant_family__AZ__n97": {
       "alphabet": "AZ",
       "family": "",
-      "kernel_commit": "f213b4da16345dd49d8bc9a3980cf06b753dc70d",
+      "free_tail_params": null,
+      "kernel_commit": "ceb8e02ff0e012275c8c034e67b7283618d179fe",
       "max": 7.0,
       "mean": 0.92097,
       "method": "matched_variant_family",
@@ -25,6 +26,7 @@
         "p999": 5.0
       },
       "scorer_name": "crib_score",
+      "scoring_mode": "anchored",
       "seed": 42,
       "stdev": 0.9408635709283254
     },
@@ -32,13 +34,13 @@
       "alphabet": "AZ",
       "family": "beaufort",
       "free_tail_params": null,
-      "kernel_commit": "f213b4da16345dd49d8bc9a3980cf06b753dc70d",
-      "max": 5.0,
-      "mean": 0.931,
+      "kernel_commit": "ceb8e02ff0e012275c8c034e67b7283618d179fe",
+      "max": 7.0,
+      "mean": 0.91796,
       "method": "matched_variant_family",
       "min": 0.0,
       "n_chars": 97,
-      "n_samples": 2000,
+      "n_samples": 50000,
       "p_value_tail_method": "empirical",
       "parametric_model": null,
       "percentiles": {
@@ -51,12 +53,12 @@
         "p90": 2.0,
         "p95": 3.0,
         "p99": 4.0,
-        "p999": 4.0
+        "p999": 5.0
       },
       "scorer_name": "crib_score",
       "scoring_mode": "anchored",
       "seed": 42,
-      "stdev": 0.958247880248112
+      "stdev": 0.9566971508267389
     },
     "crib_score__matched_variant_family__AZ__n97__beaufort__free": {
       "alphabet": "AZ",
@@ -68,13 +70,13 @@
         "p_both_present": 8.120407563349707e-31,
         "p_ene_present": 3.4258267968085956e-17
       },
-      "kernel_commit": "f213b4da16345dd49d8bc9a3980cf06b753dc70d",
+      "kernel_commit": "ceb8e02ff0e012275c8c034e67b7283618d179fe",
       "max": 0.0,
       "mean": 0.0,
       "method": "matched_variant_family",
       "min": 0.0,
       "n_chars": 97,
-      "n_samples": 2000,
+      "n_samples": 50000,
       "p_value_tail_method": "exact",
       "parametric_model": "free_crib_substring",
       "percentiles": {
@@ -98,13 +100,13 @@
       "alphabet": "AZ",
       "family": "columnar_double",
       "free_tail_params": null,
-      "kernel_commit": "f213b4da16345dd49d8bc9a3980cf06b753dc70d",
-      "max": 5.0,
-      "mean": 0.994,
+      "kernel_commit": "ceb8e02ff0e012275c8c034e67b7283618d179fe",
+      "max": 7.0,
+      "mean": 1.02012,
       "method": "matched_variant_family",
       "min": 0.0,
       "n_chars": 97,
-      "n_samples": 2000,
+      "n_samples": 50000,
       "p_value_tail_method": "empirical",
       "parametric_model": null,
       "percentiles": {
@@ -122,7 +124,7 @@
       "scorer_name": "crib_score",
       "scoring_mode": "anchored",
       "seed": 42,
-      "stdev": 0.990436267510434
+      "stdev": 0.9889566146196708
     },
     "crib_score__matched_variant_family__AZ__n97__columnar_double__free": {
       "alphabet": "AZ",
@@ -134,13 +136,13 @@
         "p_both_present": 0.0,
         "p_ene_present": 3.0363756642711886e-17
       },
-      "kernel_commit": "f213b4da16345dd49d8bc9a3980cf06b753dc70d",
+      "kernel_commit": "ceb8e02ff0e012275c8c034e67b7283618d179fe",
       "max": 0.0,
       "mean": 0.0,
       "method": "matched_variant_family",
       "min": 0.0,
       "n_chars": 97,
-      "n_samples": 2000,
+      "n_samples": 50000,
       "p_value_tail_method": "exact",
       "parametric_model": "free_crib_substring",
       "percentiles": {
@@ -164,13 +166,13 @@
       "alphabet": "AZ",
       "family": "columnar_single",
       "free_tail_params": null,
-      "kernel_commit": "f213b4da16345dd49d8bc9a3980cf06b753dc70d",
-      "max": 6.0,
-      "mean": 1.037,
+      "kernel_commit": "ceb8e02ff0e012275c8c034e67b7283618d179fe",
+      "max": 7.0,
+      "mean": 1.02442,
       "method": "matched_variant_family",
       "min": 0.0,
       "n_chars": 97,
-      "n_samples": 2000,
+      "n_samples": 50000,
       "p_value_tail_method": "empirical",
       "parametric_model": null,
       "percentiles": {
@@ -183,12 +185,12 @@
         "p90": 2.0,
         "p95": 3.0,
         "p99": 4.0,
-        "p999": 6.0
+        "p999": 5.0
       },
       "scorer_name": "crib_score",
       "scoring_mode": "anchored",
       "seed": 42,
-      "stdev": 1.003310021877585
+      "stdev": 0.9767208729212251
     },
     "crib_score__matched_variant_family__AZ__n97__columnar_single__free": {
       "alphabet": "AZ",
@@ -200,13 +202,13 @@
         "p_both_present": 0.0,
         "p_ene_present": 3.0363756642711886e-17
       },
-      "kernel_commit": "f213b4da16345dd49d8bc9a3980cf06b753dc70d",
+      "kernel_commit": "ceb8e02ff0e012275c8c034e67b7283618d179fe",
       "max": 0.0,
       "mean": 0.0,
       "method": "matched_variant_family",
       "min": 0.0,
       "n_chars": 97,
-      "n_samples": 2000,
+      "n_samples": 50000,
       "p_value_tail_method": "exact",
       "parametric_model": "free_crib_substring",
       "percentiles": {
@@ -230,13 +232,13 @@
       "alphabet": "AZ",
       "family": "myszkowski",
       "free_tail_params": null,
-      "kernel_commit": "f213b4da16345dd49d8bc9a3980cf06b753dc70d",
-      "max": 5.0,
-      "mean": 1.0405,
+      "kernel_commit": "ceb8e02ff0e012275c8c034e67b7283618d179fe",
+      "max": 6.0,
+      "mean": 1.02096,
       "method": "matched_variant_family",
       "min": 0.0,
       "n_chars": 97,
-      "n_samples": 2000,
+      "n_samples": 50000,
       "p_value_tail_method": "empirical",
       "parametric_model": null,
       "percentiles": {
@@ -254,7 +256,7 @@
       "scorer_name": "crib_score",
       "scoring_mode": "anchored",
       "seed": 42,
-      "stdev": 0.9832902674185279
+      "stdev": 0.9841751258795358
     },
     "crib_score__matched_variant_family__AZ__n97__myszkowski__free": {
       "alphabet": "AZ",
@@ -266,13 +268,13 @@
         "p_both_present": 0.0,
         "p_ene_present": 3.0363756642711886e-17
       },
-      "kernel_commit": "f213b4da16345dd49d8bc9a3980cf06b753dc70d",
+      "kernel_commit": "ceb8e02ff0e012275c8c034e67b7283618d179fe",
       "max": 0.0,
       "mean": 0.0,
       "method": "matched_variant_family",
       "min": 0.0,
       "n_chars": 97,
-      "n_samples": 2000,
+      "n_samples": 50000,
       "p_value_tail_method": "exact",
       "parametric_model": "free_crib_substring",
       "percentiles": {
@@ -296,13 +298,13 @@
       "alphabet": "AZ",
       "family": "rail_fence",
       "free_tail_params": null,
-      "kernel_commit": "f213b4da16345dd49d8bc9a3980cf06b753dc70d",
+      "kernel_commit": "ceb8e02ff0e012275c8c034e67b7283618d179fe",
       "max": 3.0,
-      "mean": 0.843,
+      "mean": 0.82164,
       "method": "matched_variant_family",
       "min": 0.0,
       "n_chars": 97,
-      "n_samples": 2000,
+      "n_samples": 50000,
       "p_value_tail_method": "empirical",
       "parametric_model": null,
       "percentiles": {
@@ -320,7 +322,7 @@
       "scorer_name": "crib_score",
       "scoring_mode": "anchored",
       "seed": 42,
-      "stdev": 0.8150772969479644
+      "stdev": 0.8160561931631914
     },
     "crib_score__matched_variant_family__AZ__n97__rail_fence__free": {
       "alphabet": "AZ",
@@ -332,13 +334,13 @@
         "p_both_present": 0.0,
         "p_ene_present": 3.0363756642711886e-17
       },
-      "kernel_commit": "f213b4da16345dd49d8bc9a3980cf06b753dc70d",
+      "kernel_commit": "ceb8e02ff0e012275c8c034e67b7283618d179fe",
       "max": 0.0,
       "mean": 0.0,
       "method": "matched_variant_family",
       "min": 0.0,
       "n_chars": 97,
-      "n_samples": 2000,
+      "n_samples": 50000,
       "p_value_tail_method": "exact",
       "parametric_model": "free_crib_substring",
       "percentiles": {
@@ -362,13 +364,13 @@
       "alphabet": "AZ",
       "family": "route",
       "free_tail_params": null,
-      "kernel_commit": "f213b4da16345dd49d8bc9a3980cf06b753dc70d",
-      "max": 4.0,
-      "mean": 1.013,
+      "kernel_commit": "ceb8e02ff0e012275c8c034e67b7283618d179fe",
+      "max": 5.0,
+      "mean": 1.03252,
       "method": "matched_variant_family",
       "min": 0.0,
       "n_chars": 97,
-      "n_samples": 2000,
+      "n_samples": 50000,
       "p_value_tail_method": "empirical",
       "parametric_model": null,
       "percentiles": {
@@ -386,7 +388,7 @@
       "scorer_name": "crib_score",
       "scoring_mode": "anchored",
       "seed": 42,
-      "stdev": 0.9379930703368762
+      "stdev": 0.9809293805366419
     },
     "crib_score__matched_variant_family__AZ__n97__route__free": {
       "alphabet": "AZ",
@@ -398,13 +400,13 @@
         "p_both_present": 0.0,
         "p_ene_present": 3.0363756642711886e-17
       },
-      "kernel_commit": "f213b4da16345dd49d8bc9a3980cf06b753dc70d",
+      "kernel_commit": "ceb8e02ff0e012275c8c034e67b7283618d179fe",
       "max": 0.0,
       "mean": 0.0,
       "method": "matched_variant_family",
       "min": 0.0,
       "n_chars": 97,
-      "n_samples": 2000,
+      "n_samples": 50000,
       "p_value_tail_method": "exact",
       "parametric_model": "free_crib_substring",
       "percentiles": {
@@ -428,13 +430,13 @@
       "alphabet": "AZ",
       "family": "variant_beaufort",
       "free_tail_params": null,
-      "kernel_commit": "f213b4da16345dd49d8bc9a3980cf06b753dc70d",
+      "kernel_commit": "ceb8e02ff0e012275c8c034e67b7283618d179fe",
       "max": 6.0,
-      "mean": 0.9075,
+      "mean": 0.91472,
       "method": "matched_variant_family",
       "min": 0.0,
       "n_chars": 97,
-      "n_samples": 2000,
+      "n_samples": 50000,
       "p_value_tail_method": "empirical",
       "parametric_model": null,
       "percentiles": {
@@ -446,13 +448,13 @@
         "p75": 1.0,
         "p90": 2.0,
         "p95": 3.0,
-        "p99": 3.0,
+        "p99": 4.0,
         "p999": 5.0
       },
       "scorer_name": "crib_score",
       "scoring_mode": "anchored",
       "seed": 42,
-      "stdev": 0.9262525303609163
+      "stdev": 0.9419805314336385
     },
     "crib_score__matched_variant_family__AZ__n97__variant_beaufort__free": {
       "alphabet": "AZ",
@@ -464,13 +466,13 @@
         "p_both_present": 8.120407563349707e-31,
         "p_ene_present": 3.4258267968085956e-17
       },
-      "kernel_commit": "f213b4da16345dd49d8bc9a3980cf06b753dc70d",
+      "kernel_commit": "ceb8e02ff0e012275c8c034e67b7283618d179fe",
       "max": 0.0,
       "mean": 0.0,
       "method": "matched_variant_family",
       "min": 0.0,
       "n_chars": 97,
-      "n_samples": 2000,
+      "n_samples": 50000,
       "p_value_tail_method": "exact",
       "parametric_model": "free_crib_substring",
       "percentiles": {
@@ -494,13 +496,13 @@
       "alphabet": "AZ",
       "family": "vigenere",
       "free_tail_params": null,
-      "kernel_commit": "f213b4da16345dd49d8bc9a3980cf06b753dc70d",
-      "max": 5.0,
-      "mean": 0.925,
+      "kernel_commit": "ceb8e02ff0e012275c8c034e67b7283618d179fe",
+      "max": 6.0,
+      "mean": 0.91736,
       "method": "matched_variant_family",
       "min": 0.0,
       "n_chars": 97,
-      "n_samples": 2000,
+      "n_samples": 50000,
       "p_value_tail_method": "empirical",
       "parametric_model": null,
       "percentiles": {
@@ -518,7 +520,7 @@
       "scorer_name": "crib_score",
       "scoring_mode": "anchored",
       "seed": 42,
-      "stdev": 0.9340101712508275
+      "stdev": 0.9354414093891718
     },
     "crib_score__matched_variant_family__AZ__n97__vigenere__free": {
       "alphabet": "AZ",
@@ -530,13 +532,13 @@
         "p_both_present": 8.120407563349707e-31,
         "p_ene_present": 3.4258267968085956e-17
       },
-      "kernel_commit": "f213b4da16345dd49d8bc9a3980cf06b753dc70d",
+      "kernel_commit": "ceb8e02ff0e012275c8c034e67b7283618d179fe",
       "max": 0.0,
       "mean": 0.0,
       "method": "matched_variant_family",
       "min": 0.0,
       "n_chars": 97,
-      "n_samples": 2000,
+      "n_samples": 50000,
       "p_value_tail_method": "exact",
       "parametric_model": "free_crib_substring",
       "percentiles": {
@@ -560,7 +562,7 @@
       "alphabet": "AZ",
       "family": "",
       "free_tail_params": null,
-      "kernel_commit": "f213b4da16345dd49d8bc9a3980cf06b753dc70d",
+      "kernel_commit": "ceb8e02ff0e012275c8c034e67b7283618d179fe",
       "max": 7.0,
       "mean": 0.92372,
       "method": "random_text",
@@ -596,13 +598,13 @@
         "p_both_present": 8.120407563349707e-31,
         "p_ene_present": 3.4258267968085956e-17
       },
-      "kernel_commit": "f213b4da16345dd49d8bc9a3980cf06b753dc70d",
+      "kernel_commit": "ceb8e02ff0e012275c8c034e67b7283618d179fe",
       "max": 0.0,
       "mean": 0.0,
       "method": "random_text",
       "min": 0.0,
       "n_chars": 97,
-      "n_samples": 2000,
+      "n_samples": 50000,
       "p_value_tail_method": "exact",
       "parametric_model": "free_crib_substring",
       "percentiles": {
@@ -625,7 +627,8 @@
     "crib_score__random_text__KA__n97": {
       "alphabet": "KA",
       "family": "",
-      "kernel_commit": "f213b4da16345dd49d8bc9a3980cf06b753dc70d",
+      "free_tail_params": null,
+      "kernel_commit": "ceb8e02ff0e012275c8c034e67b7283618d179fe",
       "max": 7.0,
       "mean": 0.9265,
       "method": "random_text",
@@ -647,13 +650,15 @@
         "p999": 5.0
       },
       "scorer_name": "crib_score",
+      "scoring_mode": "anchored",
       "seed": 42,
       "stdev": 0.9434499191796034
     },
     "crib_score__shuffled_ct__AZ__n97": {
       "alphabet": "AZ",
       "family": "",
-      "kernel_commit": "f213b4da16345dd49d8bc9a3980cf06b753dc70d",
+      "free_tail_params": null,
+      "kernel_commit": "ceb8e02ff0e012275c8c034e67b7283618d179fe",
       "max": 8.0,
       "mean": 1.01627,
       "method": "shuffled_ct",
@@ -675,6 +680,7 @@
         "p999": 5.0
       },
       "scorer_name": "crib_score",
+      "scoring_mode": "anchored",
       "seed": 42,
       "stdev": 0.9837201264079128
     },
@@ -688,13 +694,13 @@
         "p_both_present": 0.0,
         "p_ene_present": 3.0363756642711886e-17
       },
-      "kernel_commit": "f213b4da16345dd49d8bc9a3980cf06b753dc70d",
+      "kernel_commit": "ceb8e02ff0e012275c8c034e67b7283618d179fe",
       "max": 0.0,
       "mean": 0.0,
       "method": "shuffled_ct",
       "min": 0.0,
       "n_chars": 97,
-      "n_samples": 2000,
+      "n_samples": 50000,
       "p_value_tail_method": "exact",
       "parametric_model": "free_crib_substring",
       "percentiles": {
@@ -717,7 +723,8 @@
     "ngram_score__matched_variant_family__AZ__n97__columnar_double": {
       "alphabet": "AZ",
       "family": "columnar_double",
-      "kernel_commit": "f213b4da16345dd49d8bc9a3980cf06b753dc70d",
+      "free_tail_params": null,
+      "kernel_commit": "ceb8e02ff0e012275c8c034e67b7283618d179fe",
       "max": -6.057269372340423,
       "mean": -6.406195107324678,
       "method": "matched_variant_family",
@@ -739,13 +746,15 @@
         "p999": -6.1808027446808484
       },
       "scorer_name": "ngram_score",
+      "scoring_mode": "anchored",
       "seed": 42,
       "stdev": 0.06508283365628825
     },
     "ngram_score__matched_variant_family__AZ__n97__columnar_single": {
       "alphabet": "AZ",
       "family": "columnar_single",
-      "kernel_commit": "f213b4da16345dd49d8bc9a3980cf06b753dc70d",
+      "free_tail_params": null,
+      "kernel_commit": "ceb8e02ff0e012275c8c034e67b7283618d179fe",
       "max": -6.062984744680849,
       "mean": -6.401475545078296,
       "method": "matched_variant_family",
@@ -767,13 +776,15 @@
         "p999": -6.185944436170209
       },
       "scorer_name": "ngram_score",
+      "scoring_mode": "anchored",
       "seed": 42,
       "stdev": 0.06362553591929446
     },
     "ngram_score__random_text__AZ__n97": {
       "alphabet": "AZ",
       "family": "",
-      "kernel_commit": "f213b4da16345dd49d8bc9a3980cf06b753dc70d",
+      "free_tail_params": null,
+      "kernel_commit": "ceb8e02ff0e012275c8c034e67b7283618d179fe",
       "max": -5.912654265957446,
       "mean": -6.426188431148296,
       "method": "random_text",
@@ -795,13 +806,15 @@
         "p999": -6.107261999999999
       },
       "scorer_name": "ngram_score",
+      "scoring_mode": "anchored",
       "seed": 42,
       "stdev": 0.08241475464915948
     },
     "ngram_score__random_text__KA__n97": {
       "alphabet": "KA",
       "family": "",
-      "kernel_commit": "f213b4da16345dd49d8bc9a3980cf06b753dc70d",
+      "free_tail_params": null,
+      "kernel_commit": "ceb8e02ff0e012275c8c034e67b7283618d179fe",
       "max": -5.968102925531913,
       "mean": -6.4264197995217005,
       "method": "random_text",
@@ -823,13 +836,15 @@
         "p999": -6.108550031914894
       },
       "scorer_name": "ngram_score",
+      "scoring_mode": "anchored",
       "seed": 42,
       "stdev": 0.08241218236500647
     },
     "ngram_score__shuffled_ct__AZ__n97": {
       "alphabet": "AZ",
       "family": "",
-      "kernel_commit": "f213b4da16345dd49d8bc9a3980cf06b753dc70d",
+      "free_tail_params": null,
+      "kernel_commit": "ceb8e02ff0e012275c8c034e67b7283618d179fe",
       "max": -6.076616914893617,
       "mean": -6.407284957190849,
       "method": "shuffled_ct",
@@ -851,10 +866,11 @@
         "p999": -6.182964606382976
       },
       "scorer_name": "ngram_score",
+      "scoring_mode": "anchored",
       "seed": 42,
       "stdev": 0.06479467769433293
     }
   },
-  "kernel_commit_at_latest_write": "f213b4da16345dd49d8bc9a3980cf06b753dc70d",
-  "updated_at": "2026-06-10T20:20:15Z"
+  "kernel_commit_at_latest_write": "ceb8e02ff0e012275c8c034e67b7283618d179fe",
+  "updated_at": "2026-06-10T20:24:11Z"
 }

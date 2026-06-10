@@ -663,6 +663,7 @@ def _build_pipeline_config(
     bindings: tuple[tuple[str, Any], ...],
     *,
     text_length: Optional[int] = None,
+    spec_hash: Optional[str] = None,
 ) -> dict[str, Any]:
     """Translate one parameter binding across the pipeline into a
     serializable PipelineConfig dict.
@@ -671,6 +672,12 @@ def _build_pipeline_config(
     of form ``"layerN.paramname"``. The function collates bindings back
     to per-layer param dicts and emits a dict that the worker function
     can feed into the kernel's ``build_pipeline``.
+
+    ``spec_hash`` is an optional precomputed ``spec.spec_hash``. The
+    property re-serializes the WHOLE spec (asdict + json + sha256) on
+    every access, so per-config access turns enumeration quadratic in
+    spec size — a 10k-keyword shard spent 120s of 124s recomputing it
+    (2026-06-10 profile). Hot loops must pass the hoisted value.
     """
     # Lazy import so admissibility checks don't trigger kernel import at
     # module load time.
@@ -689,7 +696,7 @@ def _build_pipeline_config(
         steps.append(step)
 
     return {
-        "name": f"{spec.hypothesis_id}_spec_{spec.spec_hash}",
+        "name": f"{spec.hypothesis_id}_spec_{spec_hash or spec.spec_hash}",
         "direction": "decrypt",
         "steps": steps,
     }
@@ -2309,17 +2316,24 @@ def execute(
     config_ids: list[str] = []
     challenge_length = len(challenge_ciphertext) if challenge_ciphertext is not None else None
     run_context_hash = _challenge_context_hash(challenge_ciphertext, challenge_crib_dict)
+    # Hoist spec_hash out of the per-config loop: the property
+    # re-serializes the whole spec on every access, which made large
+    # ParamRange shards quadratic (120s of a 124s 10k-keyword shard was
+    # spec_hash recomputation; 2026-06-10 profile). The value is
+    # identical for every config by construction.
+    spec_hash_value = spec.spec_hash
     # K4Bench attempt-replay: index from config_id -> bindings so we can
     # recover the parameter binding that produced the best candidate
     # without re-parsing the human-readable config_id string.
     bindings_by_config_id: dict[str, tuple[tuple[str, Any], ...]] = {}
     for bindings in _enumerate_bindings(spec):
-        cfg_id = _config_id(spec.spec_hash, bindings)
+        cfg_id = _config_id(spec_hash_value, bindings)
         try:
             pipeline_dict = _build_pipeline_config(
                 spec,
                 bindings,
                 text_length=challenge_length,
+                spec_hash=spec_hash_value,
             )
         except DispatcherError as exc:
             # A translation error makes the whole spec un-executable.
