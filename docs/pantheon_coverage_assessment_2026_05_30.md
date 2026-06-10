@@ -367,6 +367,15 @@ Do NOT treat any of these as chosen. They are the menu the assessment produces:
    existing six vs. rotation change — gated behind a zero-compute "theater test"
    (replay a candidate prompt over past cycle inputs; does it produce dispatchable,
    non-direct-alignment, non-exhausted proposals the six don't?).
+   *[2026-06-10: theater test RUN — verdict NOT-THEATER. 16/18 candidate
+   proposals passed the real `validate_hypothesis_spec` + `check_admissibility`
+   gates, 14 cell-novel vs the 50-cycle baseline's 399/399 direct_positional.
+   Frozen protocol + artifacts: `results/pantheon_theater_test_2026_06_10/`.
+   VEHICLE DECIDED same day (human lead): charter the existing six. Landed as
+   a shared `## Frame-Faithfulness Charter` section + persona lens line in all
+   six THEORIST_ROTATION agent files, documented in PANTHEON.md, pinned by
+   `test_theorist_rotation_agents_carry_frame_faithfulness_charter`. Axis B/G
+   now has generative owners: all six, by charter.]*
 3. Decide whether axis J (plaintext-genre) warrants its own generative prior and/or
    a non-English-aware scoring path + a semantic-plausibility judge.
 4. Only then: the scorer/dispatcher capability work (a separate, deliberate

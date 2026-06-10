@@ -1071,3 +1071,26 @@ def test_controller_used_agents_do_not_instruct_task_or_agent_delegation():
         f"Add a 'Controller Context (mandatory)' section to the agent "
         f"body explaining the controller blocks Task/Agent at runtime."
     )
+
+
+def test_theorist_rotation_agents_carry_frame_faithfulness_charter():
+    """The 2026-06-10 vehicle decision (charter the existing six) is a
+    standing prompt-layer contract: every generative persona in
+    THEORIST_ROTATION must carry the Frame-Faithfulness Charter section
+    (P1 alignment + P2 construction-fidelity doubt) plus a persona lens.
+    Gated by the 2026-06-10 theater test (NOT-THEATER, 16/18 gate-passers
+    vs a 399/399 direct-positional baseline; artifacts under
+    results/pantheon_theater_test_2026_06_10/). Dropping the charter
+    silently reverts the pantheon to the all-direct prior."""
+    for name in THEORIST_ROTATION:
+        body = (AGENTS_DIR / f"{name}.md").read_text(encoding="utf-8")
+        assert "## Frame-Faithfulness Charter" in body, (
+            f"{name}.md lost the Frame-Faithfulness Charter section "
+            "(adopted 2026-06-10)"
+        )
+        assert "P1 (alignment)" in body and "P2 (construction fidelity)" in body, (
+            f"{name}.md charter section is incomplete"
+        )
+        assert "Your lens on this charter" in body, (
+            f"{name}.md charter is missing its persona-specific lens line"
+        )

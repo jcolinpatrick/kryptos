@@ -105,6 +105,21 @@ _THEORIST_MODE_PREFACE = """\
 _THEORIST_MODE_REMINDER = """\
 # ===== END OF AGENT PERSONA =====
 #
+# STANDING FRAME-FAITHFULNESS PRIOR (charter, adopted 2026-06-10 — see
+# your persona's Frame-Faithfulness Charter section): direct positional
+# CT[i]->PT[i] on a fixed-97 no-null string (P1) and clean construction
+# (P2) are ASSUMPTIONS, not facts; eliminations conditioned on them are
+# conditional. The dispatcher honors crib_alignment "post_transposition"
+# (anchored after route undo, Bean re-derived in the route-undone frame)
+# and "free" (compare only against free-matched nulls) end-to-end, and
+# explicit byte reorderings ride as grille hole_mask permutations.
+# Declare crib_alignment EXPLICITLY in every dsl_spec: a pipeline with a
+# transposition outer labelled direct_positional puts the Bean check in
+# the wrong keystream frame. Consider at least one frame-questioning
+# hypothesis per cycle when your evidence base supports it under a
+# matched null — this is a prior, not a quota, and the kernel verdict
+# overrules as always.
+#
 # Final reminder: your output for this call is ONE JSON array of
 # hypothesis objects. Nothing before it, nothing after it, no markdown
 # fences, no narrative sections from your Output Contract. The user
