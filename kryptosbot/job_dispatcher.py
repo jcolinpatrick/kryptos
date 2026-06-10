@@ -1844,10 +1844,18 @@ def _annotate_best_candidate_p_values(
         from .null_baselines import family_wise_p_value, p_value_for_alert
 
         family = _matched_null_family_from_kinds([layer.kind for layer in spec.pipeline])
+        # G-1: free-scored candidates must consult free-built nulls only.
+        # ``best["scoring_mode"]`` comes from _score_real_k4_candidate —
+        # deterministic dispatcher plumbing, never worker text.
+        scoring_mode = (
+            "free" if str(best.get("scoring_mode") or "") == "free"
+            else "anchored"
+        )
         p, status = p_value_for_alert(
             str(best.get("candidate_pt", "")),
             int(best.get("crib_score", 0) or 0),
             family=family,
+            scoring_mode=scoring_mode,
         )
         best["p_value_status"] = status
         best["matched_null_family"] = family

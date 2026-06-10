@@ -91,6 +91,25 @@ _VALID_FAMILIES = frozenset({
     "route",            #   score genuine hits vs their own family null.
 })
 
+# G-1 (2026-06-10): scoring-mode dimension. "anchored" is the historical
+# default (score_cribs at the canonical positions); "free" matches the
+# dispatcher's crib_alignment="free" path (score_candidate_free — cribs
+# matched ANYWHERE, support {0, 11, 13, 24}). A free crib_score compared
+# against an anchored null misstates the chance rate in both directions,
+# so free results must consult free-built nulls only.
+_VALID_SCORING_MODES = frozenset({"anchored", "free"})
+
+# Families whose matched_variant_family sample is a PERMUTATION of the
+# real CT (letter multiset preserved). Under these sources the free-crib
+# tail uses the exact uniform-permutation window probability, and free
+# 24 is EXACTLY impossible: [DERIVED FACT] CT has 2 E's while the two
+# cribs jointly need 3 (computed, not hardcoded — see
+# _free_crib_tail_params).
+_PERMUTATION_FAMILIES = frozenset({
+    "columnar_single", "columnar_double", "rail_fence", "myszkowski",
+    "route",
+})
+
 
 def _compute_kernel_commit() -> str:
     """Return the git HEAD sha at module load time, or 'unknown'."""
@@ -156,6 +175,15 @@ class NullDistribution:
     # R2-4 entries carry explicit family names like "beaufort" or
     # "columnar_single". Other methods ignore this field.
     family: str = ""
+    # G-1 (2026-06-10): which crib-scoring geometry this null was built
+    # under. "anchored" = score_cribs at canonical positions (historical
+    # default, legacy caches deserialize to this); "free" =
+    # score_free/score_candidate_free (cribs matched anywhere).
+    scoring_mode: str = "anchored"
+    # G-1: analytic tail parameters for the free_crib_substring model
+    # (p_ene_present / p_bc_present / p_both_present / letter_model).
+    # None for anchored distributions.
+    free_tail_params: Optional[dict] = None
 
     @property
     def cache_key(self) -> str:
@@ -164,10 +192,15 @@ class NullDistribution:
         R2-4: matched_variant_family entries include the ``family`` tag
         so ``beaufort`` and ``variant_beaufort`` get distinct cache slots
         rather than overwriting each other.
+
+        G-1: free-mode entries carry a ``__free`` suffix so they never
+        collide with (or silently substitute for) anchored entries.
         """
         base = f"{self.scorer_name}__{self.method}__{self.alphabet}__n{self.n_chars}"
         if self.method == "matched_variant_family" and self.family:
             base += f"__{self.family}"
+        if self.scoring_mode == "free":
+            base += "__free"
         return base
 
     # ── Computational interface ──────────────────────────────────────────────
@@ -183,7 +216,19 @@ class NullDistribution:
         """
         # Prefer the exact/parametric tail when available — it extrapolates
         # correctly into the tail where empirical resolution runs out.
-        if self.scorer_name == "crib_score" and self.method == "random_text":
+        # G-1: free-mode distributions use the substring-presence tail;
+        # the anchored Binomial branch must never catch them (different
+        # event geometry entirely).
+        if (
+            self.parametric_model == "free_crib_substring"
+            and self.free_tail_params
+        ):
+            return self._free_crib_tail(observed_score)
+        if (
+            self.scorer_name == "crib_score"
+            and self.method == "random_text"
+            and self.scoring_mode != "free"
+        ):
             return _binomial_right_tail(
                 observed=int(math.floor(observed_score)),
                 n=24, p=1.0 / 26.0,
@@ -192,6 +237,35 @@ class NullDistribution:
             return _normal_right_tail(observed_score, self.mean, self.stdev)
         # Empirical fallback.
         return self._empirical_p_value(observed_score)
+
+    def _free_crib_tail(self, observed_score: float) -> float:
+        """Right tail over the free crib-score support {0, 11, 13, 24}.
+
+        X >= s maps exactly onto crib-presence events:
+          s <= 0         → 1.0
+          0  < s <= 11   → P(any crib present)  = p_ene + p_bc − p_both
+          11 < s <= 13   → P(ENE present)       = p_ene
+          13 < s <= 24   → P(both present)      = p_both
+          s > 24         → 0.0 (above the support maximum)
+
+        ``p_both == 0.0`` is exact for permutation-of-CT sources (letter
+        multiset infeasibility, computed at build time); elsewhere it is
+        an independence approximation blended with the empirical rate
+        (never smaller than observed — see _free_crib_tail_params).
+        """
+        params = self.free_tail_params or {}
+        p_ene = float(params.get("p_ene_present", 0.0))
+        p_bc = float(params.get("p_bc_present", 0.0))
+        p_both = float(params.get("p_both_present", 0.0))
+        if observed_score <= 0:
+            return 1.0
+        if observed_score <= 11:
+            return max(0.0, min(1.0, p_ene + p_bc - p_both))
+        if observed_score <= 13:
+            return max(0.0, min(1.0, p_ene))
+        if observed_score <= 24:
+            return max(0.0, min(1.0, p_both))
+        return 0.0
 
     def _empirical_p_value(self, observed_score: float) -> float:
         if not self.sorted_scores:
@@ -235,6 +309,8 @@ class NullDistribution:
             "percentiles": percentiles,
             "parametric_model": self.parametric_model,
             "p_value_tail_method": self.p_value_tail_method,
+            "scoring_mode": self.scoring_mode,
+            "free_tail_params": self.free_tail_params,
         }
 
     def to_full_dict(self) -> dict[str, Any]:
@@ -260,6 +336,10 @@ class NullDistribution:
             parametric_model=d.get("parametric_model"),
             p_value_tail_method=str(d.get("p_value_tail_method", "empirical")),
             family=str(d.get("family", "") or ""),
+            # G-1: legacy (pre-scoring_mode) caches are anchored by
+            # construction — they were built with the anchored scorer.
+            scoring_mode=str(d.get("scoring_mode", "anchored") or "anchored"),
+            free_tail_params=d.get("free_tail_params"),
         )
 
 
@@ -275,8 +355,19 @@ def _alphabet_chars(alphabet: str) -> str:
     raise ValueError(f"unknown alphabet {alphabet!r}")
 
 
-def _build_scorer_fn(scorer_name: str) -> Callable[[str], float]:
-    """Return a callable that takes a plaintext and returns a float score."""
+def _build_scorer_fn(
+    scorer_name: str,
+    scoring_mode: str = "anchored",
+) -> Callable[[str], float]:
+    """Return a callable that takes a plaintext and returns a float score.
+
+    G-1: ``scoring_mode="free"`` is only meaningful for ``crib_score``
+    (the free geometry changes the crib EVENT, not the language stats);
+    callers must validate before reaching here.
+    """
+    if scorer_name == "crib_score" and scoring_mode == "free":
+        from kryptos.kernel.scoring.free_crib import score_free
+        return lambda text: float(score_free(text).score)
     if scorer_name == "crib_score":
         from kryptos.kernel.scoring.crib_score import score_cribs
         return lambda text: float(score_cribs(text))
@@ -478,6 +569,129 @@ def _random_transposition_perm(
 
 # ─── Parametric tail helpers ─────────────────────────────────────────────────
 
+def _permutation_window_match_prob(
+    ct_counts: dict[str, int], pattern: str, n: int,
+) -> float:
+    """P(a fixed length-L window of a uniform random permutation of the
+    CT multiset spells ``pattern``).
+
+    Exact for a uniform permutation: falling-factorial product over the
+    pattern's letter needs divided by FallingFactorial(n, L). Returns 0.0
+    when the multiset cannot supply the pattern. For the STRUCTURED
+    family draws (rail fence / route / columnar members, not uniform
+    permutations) this is an approximation — adequate because the tail
+    is consulted at the 1e-6 alert gate with many orders of magnitude of
+    headroom, and the empirical blend (see caller) dominates wherever
+    the structured family deviates measurably.
+    """
+    from collections import Counter
+    need = Counter(pattern)
+    num = 1
+    for ch, k in need.items():
+        have = int(ct_counts.get(ch, 0))
+        if have < k:
+            return 0.0
+        for i in range(k):
+            num *= (have - i)
+    den = 1
+    for i in range(len(pattern)):
+        den *= (n - i)
+    return num / den
+
+
+def _presence_prob(p_match: float, n_windows: int) -> float:
+    """P(at least one of ``n_windows`` window positions matches).
+
+    Independence approximation across windows; computed via
+    -expm1(k·log1p(-p)) so sub-1e-16 per-window probabilities don't
+    underflow to zero.
+    """
+    if p_match <= 0.0:
+        return 0.0
+    if p_match >= 1.0:
+        return 1.0
+    return -math.expm1(n_windows * math.log1p(-p_match))
+
+
+def _free_crib_tail_params(
+    method: str,
+    family: str,
+    n_chars: int,
+    sorted_scores: list[float],
+) -> dict[str, Any]:
+    """Fit the free_crib_substring tail parameters at build time.
+
+    Letter models:
+      * "uniform" — random_text and additive matched families (a random
+        additive key on the fixed CT yields ~uniform output letters).
+      * "ct_permutation" — shuffled_ct and transposition matched
+        families: the sample is a permutation of the carved CT, so the
+        per-window probability is the exact uniform-permutation value
+        and joint (both-cribs) feasibility is a multiset fact. With the
+        real K4 CT the joint need (3 E's vs 2 available) is infeasible,
+        making P(free 24) exactly 0 — computed from constants, never
+        hardcoded.
+
+    Both per-crib presence estimates are BLENDED with the empirical
+    presence rates (max of analytic and observed): under additive
+    matched families a periodic key can place a crib with probability
+    far above the iid-uniform analytic value, and the Monte Carlo run
+    is the instrument that sees it. The estimates never report less
+    chance than what the sampler actually observed.
+    """
+    from collections import Counter
+    from kryptos.kernel.constants import CT
+    from kryptos.kernel.scoring.free_crib import CRIB_BC, CRIB_ENE
+
+    permutation_source = method == "shuffled_ct" or (
+        method == "matched_variant_family" and family in _PERMUTATION_FAMILIES
+    )
+    if permutation_source:
+        # shuffled_ct and the transposition samplers permute the FULL CT
+        # (see _sample_one), so the window count uses len(CT).
+        n = len(CT)
+        counts = dict(Counter(CT))
+        p_ene_match = _permutation_window_match_prob(counts, CRIB_ENE, n)
+        p_bc_match = _permutation_window_match_prob(counts, CRIB_BC, n)
+        joint_need = Counter(CRIB_ENE) + Counter(CRIB_BC)
+        joint_feasible = all(
+            counts.get(ch, 0) >= k for ch, k in joint_need.items()
+        )
+        letter_model = "ct_permutation"
+    else:
+        n = n_chars
+        p_ene_match = 26.0 ** -len(CRIB_ENE)
+        p_bc_match = 26.0 ** -len(CRIB_BC)
+        joint_feasible = True
+        letter_model = "uniform"
+
+    p_ene = _presence_prob(p_ene_match, max(0, n - len(CRIB_ENE) + 1))
+    p_bc = _presence_prob(p_bc_match, max(0, n - len(CRIB_BC) + 1))
+
+    n_samples = len(sorted_scores)
+    if n_samples:
+        emp_ene = sum(1 for s in sorted_scores if s in (13.0, 24.0)) / n_samples
+        emp_bc = sum(1 for s in sorted_scores if s in (11.0, 24.0)) / n_samples
+        p_ene = max(p_ene, emp_ene)
+        p_bc = max(p_bc, emp_bc)
+
+    if joint_feasible:
+        p_both = p_ene * p_bc
+        if n_samples:
+            emp_both = sum(1 for s in sorted_scores if s == 24.0) / n_samples
+            p_both = max(p_both, emp_both)
+    else:
+        p_both = 0.0
+
+    return {
+        "letter_model": letter_model,
+        "p_ene_present": p_ene,
+        "p_bc_present": p_bc,
+        "p_both_present": p_both,
+        "joint_multiset_feasible": joint_feasible,
+    }
+
+
 def _binomial_right_tail(observed: int, n: int, p: float) -> float:
     """Exact P(X >= observed) for X ~ Binomial(n, p)."""
     if observed <= 0:
@@ -511,17 +725,25 @@ def build_null_distribution(
     n_samples: int = _DEFAULT_SAMPLES,
     seed: int = _DEFAULT_SEED,
     family: str = "",
+    scoring_mode: str = "anchored",
 ) -> NullDistribution:
     """Monte Carlo the null distribution for the given combo.
 
     Deterministic given (method, n_chars, alphabet, n_samples, seed,
-    family) + the kernel commit.
+    family, scoring_mode) + the kernel commit.
 
     R2-4 (2026-04-21): ``family`` is required for
     ``method='matched_variant_family'`` when the family is not the
     legacy Vigenère default. Must be one of ``_VALID_FAMILIES``.
 
-    Raises ValueError on unknown scorer / method / alphabet / family.
+    G-1 (2026-06-10): ``scoring_mode="free"`` builds the null for the
+    dispatcher's crib_alignment="free" path: samples are scored with the
+    kernel's position-free crib scorer and the tail is the analytic
+    free_crib_substring model (empirically blended). Free mode is only
+    valid with ``scorer_name="crib_score"``.
+
+    Raises ValueError on unknown scorer / method / alphabet / family /
+    scoring_mode.
     """
     if scorer_name not in _VALID_SCORERS:
         raise ValueError(
@@ -539,12 +761,22 @@ def build_null_distribution(
         raise ValueError(
             f"family {family!r} not in {sorted(_VALID_FAMILIES)}"
         )
+    if scoring_mode not in _VALID_SCORING_MODES:
+        raise ValueError(
+            f"scoring_mode {scoring_mode!r} not in {sorted(_VALID_SCORING_MODES)}"
+        )
+    if scoring_mode == "free" and scorer_name != "crib_score":
+        raise ValueError(
+            "scoring_mode='free' is only defined for scorer_name="
+            "'crib_score' (free alignment changes the crib event "
+            f"geometry, not {scorer_name!r})"
+        )
     if n_samples <= 0:
         raise ValueError("n_samples must be positive")
 
     rng = random.Random(seed)
     alpha = _alphabet_chars(alphabet)
-    scorer = _build_scorer_fn(scorer_name)
+    scorer = _build_scorer_fn(scorer_name, scoring_mode=scoring_mode)
 
     scores: list[float] = []
     for _ in range(n_samples):
@@ -560,7 +792,17 @@ def build_null_distribution(
     # Fit a parametric family where it's applicable.
     parametric_model: Optional[str] = None
     p_value_tail_method = "empirical"
-    if scorer_name == "crib_score" and method == "random_text":
+    free_tail_params: Optional[dict] = None
+    if scoring_mode == "free":
+        # G-1: analytic substring-presence tail. An empirical-only free
+        # null is degenerate at 0 and its 1/N floor would SUPPRESS a
+        # genuine free 24/24 at the 1e-6 alert gate.
+        parametric_model = "free_crib_substring"
+        p_value_tail_method = "exact"
+        free_tail_params = _free_crib_tail_params(
+            method, family, n_chars, scores,
+        )
+    elif scorer_name == "crib_score" and method == "random_text":
         parametric_model = "binomial"
         p_value_tail_method = "exact"
     elif scorer_name == "ngram_score" and method != "matched_variant_family":
@@ -586,6 +828,8 @@ def build_null_distribution(
         parametric_model=parametric_model,
         p_value_tail_method=p_value_tail_method,
         family=family,
+        scoring_mode=scoring_mode,
+        free_tail_params=free_tail_params,
     )
 
 
@@ -594,6 +838,7 @@ def build_null_distribution(
 def _full_cache_path(
     scorer_name: str, method: str, alphabet: str, n_chars: int,
     family: str = "",
+    scoring_mode: str = "anchored",
 ) -> Path:
     """Return the on-disk path for the full null-distribution JSON.
 
@@ -601,11 +846,16 @@ def _full_cache_path(
     caches by cipher family (columnar_single vs columnar_double vs
     beaufort vs ...). Empty family preserves the Phase-6 legacy filename
     for backward compatibility.
+
+    G-1: free-mode entries get a ``__free`` filename suffix so anchored
+    and free caches can never substitute for each other.
     """
     _FULL_CACHE_DIR.mkdir(parents=True, exist_ok=True)
     fname = f"{scorer_name}__{method}__{alphabet}__n{n_chars}"
     if method == "matched_variant_family" and family:
         fname += f"__{family}"
+    if scoring_mode == "free":
+        fname += "__free"
     fname += "__v1.json"
     return _FULL_CACHE_DIR / fname
 
@@ -620,6 +870,7 @@ def save_to_cache(dist: NullDistribution) -> Path:
     full_path = _full_cache_path(
         dist.scorer_name, dist.method, dist.alphabet, dist.n_chars,
         family=dist.family,
+        scoring_mode=dist.scoring_mode,
     )
     full_path.parent.mkdir(parents=True, exist_ok=True)
     full_path.write_text(json.dumps(dist.to_full_dict()))
@@ -648,6 +899,7 @@ def get_cached(
     n_chars: int = 97,
     alphabet: str = "AZ",
     family: str = "",
+    scoring_mode: str = "anchored",
 ) -> Optional[NullDistribution]:
     """Load a cached null distribution from disk, or return None on miss.
 
@@ -656,9 +908,14 @@ def get_cached(
 
     R2-4: ``family`` identifies the matched_variant_family sub-cache.
     Empty family falls back to the Phase 6 legacy cache slot.
+
+    G-1: ``scoring_mode="free"`` loads the free-built null only — an
+    anchored cache is never a substitute for a free one (and vice
+    versa).
     """
     full_path = _full_cache_path(
         scorer_name, method, alphabet, n_chars, family=family,
+        scoring_mode=scoring_mode,
     )
     if not full_path.exists():
         return None
@@ -678,13 +935,18 @@ def get_or_build(
     n_samples: int = _DEFAULT_SAMPLES,
     seed: int = _DEFAULT_SEED,
     family: str = "",
+    scoring_mode: str = "anchored",
 ) -> NullDistribution:
     """Cache-first lookup; builds + caches on miss. Rebuilds on staleness."""
-    cached = get_cached(scorer_name, method, n_chars, alphabet, family=family)
+    cached = get_cached(
+        scorer_name, method, n_chars, alphabet, family=family,
+        scoring_mode=scoring_mode,
+    )
     if cached is not None and not calibration_stale(cached):
         return cached
     dist = build_null_distribution(
         scorer_name, method, n_chars, alphabet, n_samples, seed, family=family,
+        scoring_mode=scoring_mode,
     )
     save_to_cache(dist)
     return dist
@@ -820,6 +1082,7 @@ def p_value_for_alert(
     plaintext: str,
     crib_score_value: int,
     family: str = "",
+    scoring_mode: str = "anchored",
 ) -> tuple[Optional[float], str]:
     """Best-effort p-value for the alert path (Phase 6 §8.4).
 
@@ -832,6 +1095,16 @@ def p_value_for_alert(
                                   p-value was computed from the random_text
                                   fallback and the alert is flagged
                                   uncalibrated-for-family
+        "ok_free_matched"       — G-1: free-mode matched-family null hit
+        "ok_free"               — G-1: free-mode random_text null hit
+        "free_matched_null_miss" — G-1: free matched-family cache missing;
+                                  p computed from the free random_text null
+        "free_null_miss"        — G-1: free mode requested but NO free
+                                  null cache exists; p-value is None.
+                                  Anchored caches are NEVER consulted in
+                                  free mode — that substitution is the
+                                  exact miscalibration G-1 exists to
+                                  prevent.
         "stale_cache"           — a requested null cache exists but was
                                   built against a different kernel commit;
                                   p-value is None
@@ -847,10 +1120,11 @@ def p_value_for_alert(
     behaviour (random_text null only).
 
     Callers should fall back to legacy crib_score-only alert gating when
-    status in {"cache_miss", "stale_cache", "error"} and emit a WARNING
-    that the alert is uncalibrated. The helper deliberately refuses to
-    consume stale p-values; a stale cache can describe old scoring
-    semantics and must not be treated as calibrated evidence.
+    status in {"cache_miss", "stale_cache", "free_null_miss", "error"}
+    and emit a WARNING that the alert is uncalibrated. The helper
+    deliberately refuses to consume stale p-values; a stale cache can
+    describe old scoring semantics and must not be treated as calibrated
+    evidence.
     """
     try:
         def _stale(dist: NullDistribution, label: str) -> bool:
@@ -863,6 +1137,40 @@ def p_value_for_alert(
                 label, dist.cache_key, dist.kernel_commit, _KERNEL_COMMIT,
             )
             return True
+
+        # G-1: free scoring mode consults ONLY free-built nulls.
+        if scoring_mode == "free":
+            if family:
+                matched = get_cached(
+                    "crib_score", "matched_variant_family", 97, "AZ",
+                    family=family, scoring_mode="free",
+                )
+                if matched is not None:
+                    if _stale(matched, "free_matched_family"):
+                        return (None, "stale_cache")
+                    p = matched.p_value(float(crib_score_value))
+                    return (p, "ok_free_matched")
+                logger.warning(
+                    "Free matched-family null cache miss for family=%r; "
+                    "falling back to the free random_text null",
+                    family,
+                )
+            dist = get_cached(
+                "crib_score", "random_text", 97, "AZ", scoring_mode="free",
+            )
+            if dist is None:
+                logger.warning(
+                    "No free-mode null cache available (family=%r); the "
+                    "alert is UNCALIBRATED for free alignment. Run "
+                    "scripts/_infra/calibrate_null_baselines_r2_4.py to "
+                    "build the free-mode entries.",
+                    family,
+                )
+                return (None, "free_null_miss")
+            if _stale(dist, "free_random_text"):
+                return (None, "stale_cache")
+            p = dist.p_value(float(crib_score_value))
+            return (p, "free_matched_null_miss" if family else "ok_free")
 
         # R3-2: try matched-family first when caller gave a family hint.
         if family:
@@ -917,5 +1225,6 @@ __all__ = [
     "_VALID_SCORERS",
     "_VALID_METHODS",
     "_VALID_ALPHABETS",
+    "_VALID_SCORING_MODES",
     "_EMPIRICAL_FLOOR_EVENT_COUNT",
 ]

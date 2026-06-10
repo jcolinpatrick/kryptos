@@ -273,8 +273,9 @@ class TestAlertIntegration:
 
         # Force p_value_for_alert to return (0.5, "ok") — well above gate.
         # R3-2: p_value_for_alert gained an optional `family` kwarg; the
-        # fake must accept it without using it.
-        def fake_pvfa(plaintext, crib_score_value, family=""):
+        # fake must accept it without using it. G-1 likewise added
+        # `scoring_mode`.
+        def fake_pvfa(plaintext, crib_score_value, family="", scoring_mode="anchored"):
             return (0.5, "ok")
 
         # Replace the imported symbol in the alerts module's namespace at

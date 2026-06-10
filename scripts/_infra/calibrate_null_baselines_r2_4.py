@@ -74,6 +74,25 @@ _R2_4_JOBS: list[dict] = [
     {"scorer_name": "crib_score",  "family": "rail_fence"},
     {"scorer_name": "crib_score",  "family": "myszkowski"},
     {"scorer_name": "crib_score",  "family": "route"},
+    # G-1 (2026-06-10) — free-scoring-mode nulls. The dispatcher's
+    # crib_alignment="free" path scores cribs with score_candidate_free
+    # (support {0, 11, 13, 24}); those scores must gate against
+    # free-built nulls, never anchored ones. The free random_text and
+    # shuffled_ct entries back the family-less alert path; the
+    # per-family entries back ok_free_matched. Tails are parametric
+    # (free_crib_substring), so the 1/N empirical floor does not apply.
+    {"scorer_name": "crib_score", "family": "",
+     "method": "random_text", "scoring_mode": "free"},
+    {"scorer_name": "crib_score", "family": "",
+     "method": "shuffled_ct", "scoring_mode": "free"},
+    {"scorer_name": "crib_score", "family": "vigenere", "scoring_mode": "free"},
+    {"scorer_name": "crib_score", "family": "beaufort", "scoring_mode": "free"},
+    {"scorer_name": "crib_score", "family": "variant_beaufort", "scoring_mode": "free"},
+    {"scorer_name": "crib_score", "family": "columnar_single", "scoring_mode": "free"},
+    {"scorer_name": "crib_score", "family": "columnar_double", "scoring_mode": "free"},
+    {"scorer_name": "crib_score", "family": "rail_fence", "scoring_mode": "free"},
+    {"scorer_name": "crib_score", "family": "myszkowski", "scoring_mode": "free"},
+    {"scorer_name": "crib_score", "family": "route", "scoring_mode": "free"},
 ]
 
 # §5.4 — 50_000 samples (vs Phase 6's 100_000) to keep total calibration
@@ -111,19 +130,24 @@ def main(argv: list[str] | None = None) -> int:
     for i, job in enumerate(jobs, 1):
         scorer = job["scorer_name"]
         family = job["family"]
-        tag = f"{scorer} × matched_variant_family × {family}"
+        method = job.get("method", "matched_variant_family")
+        scoring_mode = job.get("scoring_mode", "anchored")
+        tag = f"{scorer} × {method} × {family or '(none)'}"
+        if scoring_mode != "anchored":
+            tag += f" × {scoring_mode}"
         print(f"[{i}/{len(jobs)}] {tag} ({n_samples} samples) ...",
               flush=True)
         t1 = time.monotonic()
         try:
             dist = build_null_distribution(
                 scorer_name=scorer,
-                method="matched_variant_family",
+                method=method,
                 n_chars=97,
                 alphabet="AZ",
                 n_samples=n_samples,
                 seed=args.seed,
                 family=family,
+                scoring_mode=scoring_mode,
             )
             path = save_to_cache(dist)
         except Exception as exc:
@@ -132,6 +156,15 @@ def main(argv: list[str] | None = None) -> int:
             continue
         dt = time.monotonic() - t1
         max_val = dist.sorted_scores[-1] if dist.sorted_scores else None
+        if dist.parametric_model == "free_crib_substring":
+            params = dist.free_tail_params or {}
+            print(f"    mean={dist.mean:.4f}  max={max_val}  "
+                  f"model={params.get('letter_model')}  "
+                  f"p(13)={dist.p_value(13.0):.3g}  "
+                  f"p(11)={dist.p_value(11.0):.3g}  "
+                  f"p(24)={dist.p_value(24.0):.3g}  ({dt:.1f}s)  -> "
+                  f"{path.relative_to(_ROOT)}", flush=True)
+            continue
         # Tail floor: 1/N when the observation exceeds the empirical range.
         tail_floor = 1.0 / max(1, dist.n_samples)
         print(f"    mean={dist.mean:.4f}  stdev={dist.stdev:.4f}  "

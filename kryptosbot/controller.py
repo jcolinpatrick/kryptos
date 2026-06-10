@@ -1062,7 +1062,12 @@ class ResearchController:
             level = getattr(ev, "level", "")
             p_status = getattr(ev, "p_value_status", "")
             if level == "breakthrough" and p_status in (
-                "matched_null_miss", "cache_miss"
+                "matched_null_miss", "cache_miss",
+                # G-1: free-alignment analogues — a BREAKTHROUGH whose
+                # p-value lacked a free-built null (or used the free
+                # random_text fallback instead of the matched family)
+                # is equally uncalibrated.
+                "free_null_miss", "free_matched_null_miss",
             ):
                 reason = (
                     f"BREAKTHROUGH alert fired with p_value_status={p_status!r} "

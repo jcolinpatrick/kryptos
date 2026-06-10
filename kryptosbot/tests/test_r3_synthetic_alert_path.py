@@ -160,9 +160,13 @@ class TestScenarioA_MatchedNullHappyPath:
         calls: list[str] = []
         real_pvfa = nb_mod.p_value_for_alert
 
-        def spy(plaintext, crib_score_value, family=""):
+        def spy(plaintext, crib_score_value, family="", scoring_mode="anchored"):
+            # G-1: p_value_for_alert gained an optional scoring_mode kwarg.
             calls.append(family)
-            return real_pvfa(plaintext, crib_score_value, family=family)
+            return real_pvfa(
+                plaintext, crib_score_value, family=family,
+                scoring_mode=scoring_mode,
+            )
 
         monkeypatch.setattr(nb_mod, "p_value_for_alert", spy)
 

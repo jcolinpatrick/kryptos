@@ -224,7 +224,10 @@ def _matched_null_family_from_contract(contract: WorkerContract) -> str:
     return ""
 
 
-def _effective_gate_for_family(family: str) -> float:
+def _effective_gate_for_family(
+    family: str,
+    scoring_mode: str = "anchored",
+) -> float:
     """Return the effective p-value gate for ``family`` given the currently
     cached null.
 
@@ -233,6 +236,10 @@ def _effective_gate_for_family(family: str) -> float:
     the ``null_baselines.effective_gate`` invariant so the caller never
     enforces a gate below the empirical support's 10-event floor.
 
+    G-1: ``scoring_mode="free"`` consults the free-built null slot (the
+    free tails are parametric, so effective_gate returns the configured
+    gate — but the lookup must still target the right cache).
+
     Missing cache → return the configured gate unchanged; the cache_miss
     branch downstream still fails open with its own warning.
     """
@@ -240,12 +247,29 @@ def _effective_gate_for_family(family: str) -> float:
     if family:
         null = get_cached(
             "crib_score", "matched_variant_family", 97, "AZ", family=family,
+            scoring_mode=scoring_mode,
         )
     else:
-        null = get_cached("crib_score", "random_text", 97, "AZ")
+        null = get_cached(
+            "crib_score", "random_text", 97, "AZ", scoring_mode=scoring_mode,
+        )
     if null is None:
         return ALERT_P_VALUE_GATE
     return _eg(null, ALERT_P_VALUE_GATE)
+
+
+def _scoring_mode_from_contract(contract: WorkerContract) -> str:
+    """Read the boundary scoring frame recorded by the contract verifier.
+
+    ``boundary_scoring_mode`` is written by
+    ``contracts._verify_against_kernel`` from dispatcher-declared frame
+    info (suite-assurance B-1 fix) — it never comes from worker free
+    text. Only "free" selects the free null geometry; the
+    post_transposition modes score cribs ANCHORED (the pipeline already
+    undid the route), so their chance model is the anchored one.
+    """
+    mode = str((contract.raw_artifacts or {}).get("boundary_scoring_mode") or "")
+    return "free" if mode == "free" else "anchored"
 
 
 def _contract_universe_hash(contract: WorkerContract) -> str:
@@ -280,6 +304,7 @@ def _alert_calibration_metadata(
     *,
     family: str,
     p_value_status: str,
+    scoring_mode: str = "anchored",
 ) -> dict[str, Any]:
     """Return p-value metadata persisted with every alert artifact."""
     meta: dict[str, Any] = {
@@ -303,12 +328,24 @@ def _alert_calibration_metadata(
             contract.best_plaintext,
             int(contract.crib_score or 0),
             family=family,
+            scoring_mode=scoring_mode,
         )
         null = None
         if p_value_status in ("ok_matched_family", "matched_family_ungated"):
             null = get_cached(
                 "crib_score", "matched_variant_family", 97, "AZ",
                 family=family,
+            )
+        elif p_value_status in ("ok_free_matched",):
+            null = get_cached(
+                "crib_score", "matched_variant_family", 97, "AZ",
+                family=family, scoring_mode="free",
+            )
+        elif p_value_status in (
+            "ok_free", "free_matched_null_miss", "free_ungated",
+        ):
+            null = get_cached(
+                "crib_score", "random_text", 97, "AZ", scoring_mode="free",
             )
         elif p_value_status in (
             "ok_gated", "ok_ungated", "matched_null_miss", "ok",
@@ -346,6 +383,7 @@ def _p_value_gate_passes(
     crib_score_value: int,
     hypothesis_id: str = "",
     family: str = "",
+    scoring_mode: str = "anchored",
 ) -> tuple[bool, str]:
     """Phase 6 p-value gate.
 
@@ -376,7 +414,10 @@ def _p_value_gate_passes(
     """
     try:
         from .null_baselines import p_value_for_alert
-        p, status = p_value_for_alert(plaintext, crib_score_value, family=family)
+        p, status = p_value_for_alert(
+            plaintext, crib_score_value, family=family,
+            scoring_mode=scoring_mode,
+        )
     except Exception as exc:  # pragma: no cover - defensive
         logger.warning(
             "p_value gate failed for %s: %s; falling back to legacy gating",
@@ -392,6 +433,39 @@ def _p_value_gate_passes(
             hypothesis_id,
         )
         return (True, "cache_miss")
+    if status == "free_null_miss":
+        # G-1: free-alignment result with NO free-built null available.
+        # Fail open (legacy crib-only gating — the framework never goes
+        # silent on a high score) but surface the distinct status so the
+        # controller's BREAKTHROUGH-halt and postmortems can see that
+        # the alert was uncalibrated FOR FREE MODE specifically. The
+        # anchored caches are deliberately not consulted.
+        logger.warning(
+            "Alert is UNCALIBRATED for free alignment: no free-mode null "
+            "cache for hypothesis %s. Run "
+            "scripts/_infra/calibrate_null_baselines_r2_4.py to build the "
+            "free-mode entries.",
+            hypothesis_id,
+        )
+        return (True, "free_null_miss")
+    if status in ("ok_free_matched", "ok_free", "free_matched_null_miss"):
+        # G-1: free-mode p-value obtained from a free-built null. The
+        # free tails are parametric (free_crib_substring), so the
+        # effective gate is the configured one; the lookup still targets
+        # the free cache slot for correctness.
+        if p is None:
+            return (True, "free_null_miss")
+        gate_family = family if status == "ok_free_matched" else ""
+        gate = _effective_gate_for_family(gate_family, scoring_mode="free")
+        passes = p <= gate
+        if not passes:
+            logger.info(
+                "Alert SUPPRESSED by free-mode p-value gate: "
+                "p=%.3g > %.1e (family=%r, status=%s, hypothesis %s)",
+                p, gate, family, status, hypothesis_id,
+            )
+            return (False, "free_ungated")
+        return (True, status)
     if status == "stale_cache":
         logger.warning(
             "Alert is UNCALIBRATED: null baseline cache is stale for "
@@ -497,6 +571,8 @@ def classify_outcome(
     # Empty string for legacy contracts → p_value_for_alert falls back
     # to random_text (the Phase 6 behaviour).
     matched_family = _matched_null_family_from_contract(contract)
+    # G-1: free-alignment contracts gate against free-built nulls only.
+    scoring_mode = _scoring_mode_from_contract(contract)
 
     # Breakthrough: full crib score AND bean pass AND ngram floor AND
     # p-value gate. If any gate fails, fall through to the SIGNAL branch.
@@ -505,7 +581,7 @@ def classify_outcome(
         ngram_ok = ngram_pc is not None and ngram_pc >= BREAKTHROUGH_NGRAM_FLOOR
         p_value_ok, p_status = _p_value_gate_passes(
             contract.best_plaintext, crib, contract.hypothesis_id,
-            family=matched_family,
+            family=matched_family, scoring_mode=scoring_mode,
         )
         if ngram_ok and p_value_ok:
             return (AlertLevel.BREAKTHROUGH, p_status)
@@ -537,7 +613,7 @@ def classify_outcome(
         if crib >= thresholds["signal"]:
             p_value_ok, p_status = _p_value_gate_passes(
                 contract.best_plaintext, crib, contract.hypothesis_id,
-                family=matched_family,
+                family=matched_family, scoring_mode=scoring_mode,
             )
             if p_value_ok:
                 return (AlertLevel.SIGNAL, p_status)
@@ -763,11 +839,15 @@ def process_alerts(
             # for this alert so postmortems can see when the null cache
             # widened it (indicates recalibration is overdue).
             matched_family = _matched_null_family_from_contract(contract)
-            gate_used = _effective_gate_for_family(matched_family)
+            event_scoring_mode = _scoring_mode_from_contract(contract)
+            gate_used = _effective_gate_for_family(
+                matched_family, scoring_mode=event_scoring_mode,
+            )
             calibration = _alert_calibration_metadata(
                 contract,
                 family=matched_family,
                 p_value_status=p_value_status,
+                scoring_mode=event_scoring_mode,
             )
 
             event = AlertEvent(
