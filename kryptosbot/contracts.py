@@ -91,22 +91,36 @@ _CRIB_BERLIN_SLICE = slice(63, 74)  # BERLINCLOCK, 11 chars
 
 
 def _non_crib_ngram_per_char(pt: str) -> float:
-    """Score the PT with crib positions masked, divided by non-crib length.
+    """Score the PT with the canonical anchored crib spans masked.
 
     Returns a very negative sentinel value (-99.0) on degenerate inputs
     (wrong length, no ngram scorer available). The caller treats anything
     <= -6.2 as crib-paste evidence in conjunction with verified_crib == 24.
     """
+    return _non_crib_ngram_per_char_spans(
+        pt, ((_CRIB_EAST_SLICE.start, _CRIB_EAST_SLICE.stop),
+             (_CRIB_BERLIN_SLICE.start, _CRIB_BERLIN_SLICE.stop)),
+    )
+
+
+def _non_crib_ngram_per_char_spans(
+    pt: str, spans: tuple[tuple[int, int], ...],
+) -> float:
+    """Score the PT with the given half-open [start, stop) spans masked.
+
+    Generalization of the canonical-span masking so the crib-paste rule
+    (verified_crib == 24 AND non-crib ngram per char <= -6.2,
+    'crib_paste_artifact:v1') also applies under free alignment, where the
+    crib matches sit at non-canonical offsets. Same threshold, same rule —
+    only the masked spans differ (the spans where the cribs were FOUND).
+    """
     try:
         if not isinstance(pt, str) or len(pt) != 97:
             return -99.0
-        non_crib_chars: list[str] = []
-        for i, ch in enumerate(pt):
-            if (_CRIB_EAST_SLICE.start <= i < _CRIB_EAST_SLICE.stop):
-                continue
-            if (_CRIB_BERLIN_SLICE.start <= i < _CRIB_BERLIN_SLICE.stop):
-                continue
-            non_crib_chars.append(ch)
+        masked = set()
+        for start, stop in spans:
+            masked.update(range(start, stop))
+        non_crib_chars = [ch for i, ch in enumerate(pt) if i not in masked]
         if not non_crib_chars:
             return -99.0
         non_crib_text = "".join(non_crib_chars)
@@ -141,7 +155,12 @@ def _is_crib_paste_artifact(
     return float(non_crib_ngram_per_char) <= _CRIB_PASTE_NGRAM_FLOOR
 
 
-def _verify_against_kernel(contract: WorkerContract) -> None:
+def _verify_against_kernel(
+    contract: WorkerContract,
+    *,
+    scoring_mode: Optional[str] = None,
+    bean_frame_ct: Optional[str] = None,
+) -> None:
     """Recompute crib_score, bean_passed, and score from best_plaintext.
 
     Mutates the contract in place. If the worker self-reported values
@@ -155,8 +174,41 @@ def _verify_against_kernel(contract: WorkerContract) -> None:
     declared by ``_BEAN_VARIANTS``.
 
     Always overrules the worker — this is the project's epistemic posture.
+
+    Scoring frame (suite-assurance fix, 2026-06-10). The boundary verifier
+    must recompute in the SAME frame the dispatcher scored in, or it
+    silently re-imposes the H1 (direct positional, carved-CT) frame on
+    non-direct candidates:
+
+    * ``scoring_mode=None`` / ``"direct_positional"`` (and any unknown
+      value, conservatively): anchored ``score_cribs`` + Bean derived
+      against the carved CT — the historical behavior. This is what the
+      LLM-worker contract path uses (no spec context there).
+    * ``scoring_mode="free"``: cribs recomputed position-free via
+      ``score_candidate_free`` (kernel recompute — worker numbers are
+      still never trusted). Bean is N/A (depends on fixed positions).
+    * ``scoring_mode="post_transposition"``: cribs anchored (the pipeline
+      already undid the route), Bean re-derived against ``bean_frame_ct``
+      (the route-undone intermediate, AUDIT-5 frame). When the frame is
+      missing/malformed, Bean is N/A — never a guessed carved-CT verdict.
+    * ``scoring_mode="post_transposition_bean_unavailable"``: cribs
+      anchored, Bean N/A.
+
+    Trust boundary: ``scoring_mode`` / ``bean_frame_ct`` come from the
+    deterministic dispatcher (``job_result_to_worker_contract``), never
+    from worker free text. The LLM-worker path calls this function with
+    defaults and keeps the conservative anchored frame.
     """
     pt = (contract.best_plaintext or "").strip().upper()
+    free_mode = scoring_mode == "free"
+    post_trans_mode = scoring_mode in (
+        "post_transposition", "post_transposition_bean_unavailable",
+    )
+    if scoring_mode is not None:
+        # Auditability: record which frame the boundary verifier used.
+        if contract.raw_artifacts is None:
+            contract.raw_artifacts = {}
+        contract.raw_artifacts["boundary_scoring_mode"] = scoring_mode
 
     # Snapshot worker's claims before any mutation, so we can compare and
     # preserve them even when verification cannot run. Uses _safe_* helpers
@@ -231,24 +283,60 @@ def _verify_against_kernel(contract: WorkerContract) -> None:
         from kryptos.kernel.scoring.crib_score import score_cribs
         from kryptos.kernel.constraints.bean import verify_bean_simple
 
-        verified_crib = int(score_cribs(pt))
+        # Spans masked by the crib-paste detector. Canonical anchored spans
+        # by default; under free, the spans where the cribs were FOUND.
+        paste_spans: tuple[tuple[int, int], ...] = (
+            (_CRIB_EAST_SLICE.start, _CRIB_EAST_SLICE.stop),
+            (_CRIB_BERLIN_SLICE.start, _CRIB_BERLIN_SLICE.stop),
+        )
 
-        # Bean check: derive the keystream under each of the three classical
-        # variants (Vigenere, Beaufort, Variant Beaufort) and accept Bean
-        # PASS if any of them satisfies the constraints. The worker doesn't
-        # tell us which variant they used, so we charitably try all three.
-        # Order is fixed by _BEAN_VARIANTS — the first passing variant wins
-        # and its name is recorded on contract.bean_variant.
-        ct_nums = text_to_nums(CT)
-        pt_nums = text_to_nums(pt)
         verified_bean = False
         verified_variant: Optional[str] = None
-        for variant_name, derive in _BEAN_VARIANTS:
-            keystream = [derive(c, p) for c, p in zip(ct_nums, pt_nums)]
-            if verify_bean_simple(keystream):
-                verified_bean = True
-                verified_variant = variant_name
-                break
+
+        if free_mode:
+            # Position-free kernel recompute (Lever B1 frame). Bean is N/A
+            # under free alignment — it depends on fixed positions.
+            from kryptos.kernel.scoring.aggregate import score_candidate_free
+
+            fb = score_candidate_free(pt)
+            verified_crib = int(fb.crib_score)
+            found_spans: list[tuple[int, int]] = []
+            fcr = fb.free_crib
+            if fcr.ene_offsets:
+                found_spans.append((fcr.ene_offsets[0], fcr.ene_offsets[0] + 13))
+            if fcr.bc_offsets:
+                found_spans.append((fcr.bc_offsets[0], fcr.bc_offsets[0] + 11))
+            if found_spans:
+                paste_spans = tuple(found_spans)
+        else:
+            verified_crib = int(score_cribs(pt))
+
+            # Bean keystream frame: carved CT for the direct frame; the
+            # route-undone intermediate for post_transposition (AUDIT-5);
+            # N/A when a post_transposition frame is missing/malformed.
+            frame_ct: Optional[str] = CT
+            if post_trans_mode:
+                frame = (bean_frame_ct or "").strip().upper()
+                if (scoring_mode == "post_transposition"
+                        and len(frame) == len(CT)
+                        and frame.isalpha() and frame.isascii()):
+                    frame_ct = frame
+                else:
+                    frame_ct = None  # Bean N/A — never guess the carved frame
+
+            if frame_ct is not None:
+                # Derive the keystream under each of the three classical
+                # variants (Vigenere, Beaufort, Variant Beaufort) and accept
+                # Bean PASS if any satisfies the constraints. Order is fixed
+                # by _BEAN_VARIANTS — first passing variant wins.
+                ct_nums = text_to_nums(frame_ct)
+                pt_nums = text_to_nums(pt)
+                for variant_name, derive in _BEAN_VARIANTS:
+                    keystream = [derive(c, p) for c, p in zip(ct_nums, pt_nums)]
+                    if verify_bean_simple(keystream):
+                        verified_bean = True
+                        verified_variant = variant_name
+                        break
 
         # Mirror crib_score into the score field. The display surfaces it,
         # but no control flow depends on it being a kernel aggregate score.
@@ -276,7 +364,7 @@ def _verify_against_kernel(contract: WorkerContract) -> None:
     # CLOSED, not let a 24/24 paste through.
     if verified_crib == 24:
         try:
-            ngram_pc = _non_crib_ngram_per_char(pt)
+            ngram_pc = _non_crib_ngram_per_char_spans(pt, paste_spans)
             is_paste = _is_crib_paste_artifact(
                 pt,
                 verified_crib=verified_crib,

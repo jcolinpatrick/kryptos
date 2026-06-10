@@ -22,16 +22,6 @@
   {
     "crib": 24,
     "bean": false,
-    "ngram_pc": -6.162224510638295,
-    "words": 22,
-    "longest": 6,
-    "is_bt": false,
-    "src": "results/breakthroughs/alert_20260413T223205_8d1b54010ffe_breakthrough.json",
-    "pt": "XXXXXXXXXXXXXXXXXXXXXEASTNORTHEASTXXXXXXXXXXXXXXXXXXXXXXXXXXXXXBERLINCLOCKXXXXXXXXXXXXXXXXXXXXXXX"
-  },
-  {
-    "crib": 24,
-    "bean": false,
     "ngram_pc": -3.666624712765957,
     "words": 21,
     "longest": 6,
@@ -498,5 +488,15 @@
     "is_bt": false,
     "src": "results/e_model_b_running_key_sa.json",
     "pt": "EDINTELENTSTRISTEDREMEASTNORTHEASTATEUNMEDIAPESTINARSPRIANIERISBERLINCLOCKINEUSPHEABLYHOMOOTEDREA"
+  },
+  {
+    "crib": 24,
+    "bean": false,
+    "ngram_pc": -4.244184787234043,
+    "words": 18,
+    "longest": 7,
+    "is_bt": false,
+    "src": "results/e_model_b_running_key_sa.json",
+    "pt": "THEWOODENTAINAFTSISHREASTNORTHEASTUSMARIESITIESTICALIERBANKERISBERLINCLOCKWURSULVERESNESTRATEDREA"
   }
 ]

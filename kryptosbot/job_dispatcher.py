@@ -252,6 +252,16 @@ def check_admissibility(
     return (not reasons, reasons)
 
 
+# Markers identifying an exhaustion entry as recorded under a NON-direct
+# alignment model. The log schema has no alignment field; every unmarked
+# entry is treated as direct-positional scope (the project's documented
+# historical default), so it cannot cover a non-direct spec.
+_NON_DIRECT_ENTRY_MARKERS = (
+    "post_transposition", "posttrans", "non_direct", "nondirect",
+    "free_align", "free-align",
+)
+
+
 def _exhaustion_overlap(
     spec: HypothesisSpec,
     log: dict[str, Any],
@@ -263,10 +273,21 @@ def _exhaustion_overlap(
     overlap check would need structured family + assumption bundle
     matching, which is Phase 8+ territory. False positives here are
     advisory; the caller still chooses whether to proceed.
+
+    Alignment scoping (suite-assurance fix, 2026-06-10): an elimination
+    proven under direct-positional crib mapping does not bind under
+    ``post_transposition`` / ``free`` (AUDIT-1 scope rule). When the spec
+    declares a non-direct ``crib_alignment``, only entries explicitly
+    marked non-direct (id / family / description / audit_reason contains
+    one of ``_NON_DIRECT_ENTRY_MARKERS``) count as overlap. Direct specs
+    keep the historical behavior verbatim.
     """
     if not log:
         return []
     kinds = {layer.kind.lower() for layer in spec.pipeline}
+    spec_non_direct = getattr(spec, "crib_alignment", "direct_positional") in (
+        "post_transposition", "free",
+    )
     matches: list[str] = []
     for script_id, entry in log.items():
         if not isinstance(entry, dict):
@@ -274,6 +295,17 @@ def _exhaustion_overlap(
         family = str(entry.get("family", "")).lower()
         if any(kind in family for kind in kinds):
             if entry.get("status") in {"exhausted", "completed"}:
+                if spec_non_direct:
+                    entry_text = " ".join((
+                        str(script_id),
+                        family,
+                        str(entry.get("description", "")),
+                        str(entry.get("audit_reason", "")),
+                    )).lower()
+                    if not any(
+                        m in entry_text for m in _NON_DIRECT_ENTRY_MARKERS
+                    ):
+                        continue  # direct-scope entry; does not bind here
                 matches.append(script_id)
     return matches
 
@@ -2002,6 +2034,7 @@ def _evaluate_one(work_item: dict[str, Any]) -> dict[str, Any]:
             }
         scoring_mode = "direct_positional"
         canonical_positions = True
+        bean_frame_ct: Optional[str] = None
         if challenge_crib_dict is not None:
             # Challenge cribs are always scored anchored on the final PT. For
             # a post_transposition spec the decrypt pipeline has already
@@ -2051,6 +2084,10 @@ def _evaluate_one(work_item: dict[str, Any]) -> dict[str, Any]:
             "classification": classification,
             "scoring_mode": scoring_mode,
             "canonical_positions": bool(canonical_positions),
+            # Route-undone PT-frame intermediate (post_transposition only;
+            # None otherwise). Lets the contract-boundary verifier re-derive
+            # Bean in the correct frame instead of the carved CT.
+            "bean_frame_ct": bean_frame_ct,
         }
     except Exception as exc:  # pragma: no cover - defensive
         return {"config_id": config_id, "error": f"{type(exc).__name__}: {exc}"}
@@ -2561,7 +2598,19 @@ def job_result_to_worker_contract(
 
     # Kernel overrules even here. If best_pt is CT97-shaped, the verifier
     # re-scores it; if not, fields get zeroed with a verification_error.
-    _verify_against_kernel(contract)
+    # The verifier must recompute in the SAME frame the dispatcher scored
+    # in (suite-assurance fix, 2026-06-10): scoring_mode and the
+    # route-undone Bean frame come from the deterministic _evaluate_one
+    # result — never from worker free text — so passing them through
+    # preserves the kernel-overrule guarantee while preventing the
+    # boundary from silently re-imposing the direct-positional frame on
+    # free / post_transposition candidates.
+    best = result.best_candidate or {}
+    _verify_against_kernel(
+        contract,
+        scoring_mode=best.get("scoring_mode"),
+        bean_frame_ct=best.get("bean_frame_ct"),
+    )
     return contract
 
 
