@@ -1,0 +1,27 @@
+{
+  "_provenance": "Independent canonical K4 record; values cross-checked against kryptos.kernel.constants on 2026-05-19. All positions 0-indexed (prompt's 1-indexed -> -1). Cribs and self-encrypting positions are public facts derivable from Elonka Dunin's Kryptos reference and Bean 2021.",
+  "_source_for_ciphertext": "Sanborn-public transcription (carved sculpture); same string as docs/kryptos_ground_truth.md and kryptos.kernel.constants.CT.",
+  "ciphertext": "OBKRUOXOGHULBSOLIFBBWFLRVQQPRNGKSSOTWTQSJQSSEKZZWATJKLUDIAWINFBNYPVTTMZFPKWGDKZXTJCDIGKUHUAUEKCAR",
+  "length": 97,
+  "cribs": [
+    {"start": 21, "end": 33, "plaintext": "EASTNORTHEAST", "ct_slice": "FLRVQQPRNGKSS", "prompt_1indexed": "22-34"},
+    {"start": 63, "end": 73, "plaintext": "BERLINCLOCK",   "ct_slice": "NYPVTTMZFPK",   "prompt_1indexed": "64-74"}
+  ],
+  "self_encrypting_positions": [
+    {"position": 32, "letter": "S", "note": "CT[32]=PT[32]=S"},
+    {"position": 73, "letter": "K", "note": "CT[73]=PT[73]=K"}
+  ],
+  "bean": {
+    "_note": "Bean 2021 constraints. With AZ=ABCDEFGHIJKLMNOPQRSTUVWXYZ for additive keystream space, exactly 624 keystreams at the 24 crib positions satisfy all 1+242+101 constraints under any additive cipher variant.",
+    "equality": [[27, 65]],
+    "inequality_count": 242,
+    "linear_constraint_count": 101,
+    "valid_keystreams_at_24_cribs": 624
+  },
+  "alphabets": {
+    "AZ":  "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "KA":  "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+    "AZR": "ZYXWVUTSRQPONMLKJIHGFEDCBA",
+    "KAR": "ZXWVUQNMLJIHGFEDCBASOTPYRK"
+  }
+}

@@ -13,8 +13,9 @@ Coverage per prereg §13 reproducibility checklist:
                                    covers C(k,2)*625 variants.
     TestSyntheticRecovery        — §7.1 selective + §7.2 structural pass
                                    under both fixtures.
-    TestStubRefusesExecuteFull   — v0.2 stub returns exit code 3 on
-                                   --execute-full.
+    TestStubRefusesExecuteFull   — --execute-full with the v1
+                                   --ambiguous-positions flag is rejected
+                                   with exit code 2 (v2 manifest required).
     TestStubRejectsBadManifests  — missing path, schema invalid, missing
                                    provenance, k>20-without-override all
                                    rejected with exit 2.
@@ -287,15 +288,17 @@ class TestSyntheticRecovery:
 
 class TestStubRefusesExecuteFull:
 
-    def test_execute_full_returns_3(
+    def test_execute_full_with_v1_flag_rejected_returns_2(
         self, tmp_manifest_path: Path
     ) -> None:
         rc = stage_b.main([
             "--ambiguous-positions", str(tmp_manifest_path),
             "--execute-full",
         ])
-        assert rc == 3, (
-            "v0.2 stub must return exit code 3 on --execute-full"
+        assert rc == 2, (
+            "--execute-full with the v1 --ambiguous-positions flag must be "
+            "rejected with exit code 2; main-campaign launches require the v2 "
+            "--ambiguous-positions-manifest (prereg §3.2)"
         )
 
 
