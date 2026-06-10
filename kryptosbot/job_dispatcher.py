@@ -2003,6 +2003,15 @@ def _evaluate_one(work_item: dict[str, Any]) -> dict[str, Any]:
         scoring_mode = "direct_positional"
         canonical_positions = True
         if challenge_crib_dict is not None:
+            # Challenge cribs are always scored anchored on the final PT. For
+            # a post_transposition spec the decrypt pipeline has already
+            # undone the reordering, so the truthful label is
+            # "post_transposition" (anchored-after-undo), matching the
+            # real-K4 path. ("free" challenge specs are still scored anchored
+            # — challenge mode has no free matcher — so they keep the
+            # direct_positional label rather than a misleading "free".)
+            if work_item.get("crib_alignment") == "post_transposition":
+                scoring_mode = "post_transposition"
             crib_score = _score_known_cribs(candidate_pt, challenge_crib_dict)
             bean_passed = False
             bean_variant = None

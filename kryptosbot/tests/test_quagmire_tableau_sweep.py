@@ -220,3 +220,102 @@ def test_independent_ct_pt_lists_still_reject_whole_spec():
         spec, bench_mode=True, challenge_ciphertext=ct, challenge_crib_dict=cribs,
     )
     assert result.admissibility_verdict == "rejected"
+
+
+# ─── post_transposition coverage: route outer × tableau sweep ────────────────
+# Coverage-gap fill (2026-06-10 patch-safety audit): the campaign shape
+# "route outer × Quagmire III tableau_keyword inner under post_transposition"
+# previously had NO unit coverage — only the 2026-06-09 campaign artifacts
+# (qtab arm B1) exercised it. These two tests pin (a) planted-config recovery
+# through the real execute() path under post_transposition, and (b) the
+# byte-identity of an explicit-permutation grille encoding with the named
+# route_boustrophedon encoding — the convention the route-outer ×
+# Quagmire-III-inner campaign relies on when sweeping explicit route perms
+# as a grille hole_mask axis.
+
+from kryptos.kernel.transforms.transposition import invert_perm, serpentine_perm
+
+_ROUTE_WIDTH = 7
+_ROUTE_VERTICAL = False
+
+
+def _route_planted_challenge() -> tuple[str, dict[int, str], list[int]]:
+    inner_ct, cribs = _synthetic_challenge()
+    rows = (97 + _ROUTE_WIDTH - 1) // _ROUTE_WIDTH
+    perm = serpentine_perm(rows, _ROUTE_WIDTH, 97, vertical=_ROUTE_VERTICAL)
+    # Encrypt-direction route: CT[i] = X[perm[i]] ("do" gather); the
+    # dispatcher's decrypt pipeline applies direction="undo" and recovers X.
+    ct = "".join(inner_ct[perm[i]] for i in range(97))
+    return ct, cribs, list(perm)
+
+
+def _qiii_sweep_layer() -> CipherLayer:
+    return CipherLayer(kind="quagmire", alphabet="AZ", params=[
+        ParamRange(name="tableau_keyword", values=_TABLEAU_SWEEP),
+        ParamRange(name="period_keyword", values=[_TRUE_PERIOD_KW, "BEARING"]),
+        ParamRange(name="indicator", values=[_TRUE_INDICATOR]),
+    ])
+
+
+def test_route_outer_tableau_sweep_post_transposition_recovers_planted():
+    ct, cribs, _ = _route_planted_challenge()
+    spec = HypothesisSpec(
+        hypothesis_id="qiii-route-outer-posttrans",
+        pipeline=[
+            CipherLayer(kind="route_boustrophedon", alphabet="AZ", params=[
+                ParamRange(name="width", values=[_ROUTE_WIDTH]),
+                ParamRange(name="vertical", values=[_ROUTE_VERTICAL]),
+            ]),
+            _qiii_sweep_layer(),
+        ],
+        crib_alignment="post_transposition",
+        null_baseline=NullBaselineSpec(method="shuffled_ct", n_samples=200),
+        compute_budget_cpu_minutes=5,
+        assumption_bundle=["transposed", "az_a0", "no_null_mask",
+                           "non_direct_alignment"],
+    )
+    assert spec.validate() == []
+    assert spec.expected_cardinality() == 12
+    result = execute(
+        spec, bench_mode=True, challenge_ciphertext=ct, challenge_crib_dict=cribs,
+    )
+    assert result.admissibility_verdict != "rejected", result.admissibility_reasons
+    assert result.total_tested == 12
+    best = result.best_candidate
+    assert best is not None
+    assert int(best["crib_score"]) == 24, best
+    assert best["candidate_pt"] == _PT
+    assert str(best.get("scoring_mode", "")).startswith("post_transposition")
+
+
+def test_grille_perm_encoding_byte_identical_to_route_boustrophedon():
+    """undo(perm) == gather(invert(perm)): a grille layer carrying the
+    inverse serpentine perm as hole_mask must reproduce the named
+    route_boustrophedon layer exactly (same recovered PT, same crib score,
+    same cardinality accounting)."""
+    ct, cribs, perm = _route_planted_challenge()
+    spec = HypothesisSpec(
+        hypothesis_id="qiii-grille-perm-posttrans",
+        pipeline=[
+            CipherLayer(kind="grille", alphabet="AZ", params=[
+                ParamRange(name="hole_mask", values=[invert_perm(perm)]),
+            ]),
+            _qiii_sweep_layer(),
+        ],
+        crib_alignment="post_transposition",
+        null_baseline=NullBaselineSpec(method="shuffled_ct", n_samples=200),
+        compute_budget_cpu_minutes=5,
+        assumption_bundle=["transposed", "az_a0", "no_null_mask",
+                           "non_direct_alignment"],
+    )
+    assert spec.validate() == []
+    assert spec.expected_cardinality() == 12
+    result = execute(
+        spec, bench_mode=True, challenge_ciphertext=ct, challenge_crib_dict=cribs,
+    )
+    assert result.admissibility_verdict != "rejected", result.admissibility_reasons
+    assert result.total_tested == 12
+    best = result.best_candidate
+    assert best is not None
+    assert int(best["crib_score"]) == 24, best
+    assert best["candidate_pt"] == _PT

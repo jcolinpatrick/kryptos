@@ -281,7 +281,7 @@ Results are not trusted until they pass: (1) unit tests pass; (2) minimal refere
 **Live state (cite these, not the long catalogue):** `MEMORY.md` (auto-loaded), `docs/README_current_state.md` (canonical entry index), `docs/claims_registry.json` (live/disputed/retired claims), `docs/methodological_audits.md` (open audits). All other doc paths flow from these.
 
 **Operational doctrine pointers:**
-- `docs/elimination_tiers.md` — Tier 1/2/4 framework. **All Tier 1/2 eliminations assume direct positional CT[i]→PT[i].** Tier 1 "SOURCE-INDEPENDENT" wording on columnar is **disputed** — see `docs/methodological_audits.md` AUDIT-1 before citing.
+- `docs/elimination_tiers.md` — Tier 1/2/4 framework. **All Tier 1/2 eliminations assume direct positional CT[i]→PT[i].** Tier 1 "SOURCE-INDEPENDENT" wording on columnar was scope-corrected under AUDIT-1 (CLOSED 2026-04-09; see `docs/methodological_audits.md`): read as running-key-source-independent within the analyzed class, not universal.
 - `docs/REAL_K4_CURRENT_POSITION.md` — Authoritative real-K4 status; non-claim statement. Read before any progress claim.
 - `docs/REAL_K4_EVIDENCE_GAP_REGISTER.md` + `docs/REAL_K4_EVIDENCE_ACQUISITION_PLAN.md` — Ten gaps + priority order.
 - `docs/REAL_K4_PSEUDO_CLUE_PACK_ADMISSION.md` — Eleven-rule admission gate (incl. Sanborn public-comment doctrine, rule 11).
