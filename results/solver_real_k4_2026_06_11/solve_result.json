@@ -1,0 +1,39 @@
+{
+  "solved": false,
+  "best_score": 7,
+  "n_cribs": 24,
+  "best_config": {
+    "config_id": "b785238be0133389_layer0.variant=diagonal_canonical|layer0.width=10|layer1.keyword=KRYPTOS",
+    "candidate_pt": "WQHSZDNTVOFZAHCGLWULEEQTYNYTCTRXSTISVYAEARUZPPXTINVIXDVKRVFJEAABEFJKESRZOKHLQQXWLINTAORLTXYXMZHZE",
+    "crib_score": 7,
+    "bean_passed": false,
+    "bean_variant": null,
+    "ngram_score": -6.335820170212762,
+    "classification": "challenge_crib_mismatch",
+    "scoring_mode": "direct_positional",
+    "canonical_positions": true,
+    "bean_frame_ct": null
+  },
+  "best_spec_id": "solver-route_diagonal-beaufort-az-transfirst",
+  "specs_tried": 484,
+  "configs_tried": 250348,
+  "rounds": 2,
+  "history": [
+    {
+      "round": 0,
+      "specs": 96,
+      "configs": 13132,
+      "best": 7
+    },
+    {
+      "round": 1,
+      "specs": 388,
+      "configs": 237216,
+      "best": 7
+    }
+  ],
+  "wall_time_sec": 1.9644677639007568,
+  "git_head": "03d1139",
+  "prereg": "docs/campaigns/solver_clue_bounded_real_k4_2026_06_11.md",
+  "campaign_id": "f_solver_clue_bounded_real_k4_2026_06_11"
+}
