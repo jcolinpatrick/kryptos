@@ -81,3 +81,31 @@ Quagmire III tableau conventions.
   rules identical to Tier 1. Expected exact-word fragments ~0.09 under
   the null. Phase-0 simplification still applies (contiguous fragment);
   nonzero phases remain open.
+
+## Tiers 2b + 2c — gap regions and key-phase-robust statistics (frozen 2026-06-11 BEFORE run)
+
+- **Tier 2b (gap regions):** same 3 page-attested cribs, placements fully
+  contained in 34-62 (24+23+22 = 69) and 74-96 (18+17+16 = 51); all 24
+  convention cells from Tiers 1/2a (6 additive + 18 QIII). All four
+  statistics below.
+- **Tier 2c (phase-robust statistics):** an unknown key phase makes the
+  derived fragment a SUBSTRING of the keyword (no wraparound, period > L)
+  or a CYCLIC ROTATION segment (period = L). Two new statistics, applied
+  to ALL placements (pre-ENE re-scored with the NEW statistics only —
+  word/prefix results there are already reported and are not re-claimed):
+  (S3) fragment is a substring of any dictionary word; (S4) some cyclic
+  rotation of the fragment is itself a dictionary word.
+- **Aggregate-only rule for S3:** substring chance rates are high (order
+  1e-2 at L=6 against the 1M-word list); S3 is evaluated ONLY as observed
+  vs expected counts per region/length (binomial), never as per-hit
+  candidates.
+- **Candidate rule (S1 exact-word and S4 rotation-word only):** every hit
+  gets a bounded decrypt-confirm: the implied keyword (or its rotation)
+  as periodic key, all phases, the hit's convention cell, full-97
+  decrypt, canonical kernel anchored scoring vs disclosed cribs. A hit is
+  only escalated if decrypt-confirm reaches the standard investigate
+  threshold (crib_score >= 18); otherwise recorded as chance-consistent.
+- Nulls: 200,000 uniform L-grams per length per statistic, seed 20260611.
+  Known-answer gates from Tiers 1/2a re-run (fail-closed).
+- Multiplicity declared: 165 placements x 24 cells = 3,960 fragments x 4
+  statistics, reported per region with expected counts.

@@ -40,3 +40,33 @@ Repro: PYTHONPATH=src venv/bin/python3 -u results/cryptonym_crib_screen_2026_06_
   presence, and the crib-as-score-discriminator role in future bounded
   family sweeps.
 - Repro: PYTHONPATH=src venv/bin/python3 -u results/cryptonym_crib_screen_2026_06_11/run_screen_qiii.py
+
+## Tiers 2b + 2c addendum — gap regions + key-phase-robust statistics (2026-06-11)
+
+- **Verdict:** `MEASURED_NULL` (frozen rules; all counts at or below null
+  expectation; both decrypt-confirms chance-consistent)
+- [INTERNAL RESULT] 3,960 fragments (3 page-attested cryptonyms x 165
+  placements across pre-ENE 0-20 / gap 34-62 / tail 74-96 x 24 convention
+  cells: 6 additive + 18 QIII), 4 statistics each (exact word, prefix,
+  substring-of-word, cyclic-rotation word; the latter two are the
+  phase-robust pair). Gates re-passed pre-run (additive constants 4/4;
+  QIII inversion spot battery).
+- Per region (observed vs expected): pre-ENE words 0/0.12, prefix 0/0.36,
+  substring 2/1.09, rotation 0/0.55; gap 34-62 words 0/0.18, prefix
+  0/0.54, substring 1/1.63, rotation 1/0.82; tail 74-96 words 0/0.14,
+  prefix 1/0.41, substring 2/1.22, rotation 1/0.62. Nothing exceeds
+  expectation beyond ordinary fluctuation.
+- Both S4 rotation hits ran the frozen decrypt-confirm (candidate word as
+  periodic key, all phases, full-97 kernel anchored scoring): CHAWADI via
+  qiii:COMPASS:K best 2/24; GUICHE via qiii:MAGNETIC:R best 3/24 — far
+  below the 18 escalation threshold; recorded as chance-consistent.
+- **Cumulative across all tiers: 5,040 fragment cells, zero signals.** If
+  any of KUBARK / FLUTTER / OVERLORD appears as K4 plaintext at ANY fully
+  contained position in the three unknown regions, under ANY of the 24
+  convention cells and ANY key phase, the implied periodic keyword is not
+  a recognizable English word (per the 1M-word list).
+- Still open: Quagmire I/II/IV shapes, non-periodic key sources (tapes),
+  Tier-2b broader cryptonym lists, free-alignment presence,
+  crib-as-discriminator in future bounded sweeps. H1-conditional
+  throughout.
+- Repro: PYTHONPATH=src venv/bin/python3 -u results/cryptonym_crib_screen_2026_06_11/run_screen_phase_gap.py
