@@ -147,6 +147,51 @@ class TestVerifySubscriptionSdk:
 
 
 # ---------------------------------------------------------------------------
+# preflight_check model pinning (2026-06-10)
+# ---------------------------------------------------------------------------
+
+
+class TestPreflightCheckExplicitModel:
+    """preflight_check must pass the routed model id explicitly to query().
+
+    Discovered 2026-06-10 launching the first Fable 5 campaign: the probe
+    passed NO model, so the SDK's bundled CLI (2.1.112, older than the PATH
+    CLI) fell through to the user-settings default model ALIAS ("fable"),
+    which it could not resolve — exit 1, campaign HALT at the transport
+    gate. Meanwhile every real controller session passes an explicit
+    "claude-fable-5" id, which the same bundled CLI accepts fine. The probe
+    must therefore exercise the exact model id the campaign will run, both
+    for representativeness and to be independent of user-level settings.
+    """
+
+    def test_probe_query_pins_routing_default_model(self):
+        from types import SimpleNamespace
+
+        import kryptosbot.sdk_wrapper as sw
+        from kryptosbot.pantheon import _SDK_FABLE
+
+        captured: dict = {}
+
+        async def _fake_query(*, prompt, options, **kwargs):
+            captured["options"] = options
+            yield SimpleNamespace(result="OK")
+
+        with patch.object(sw, "query", _fake_query):
+            ok, msg = asyncio.run(sw.preflight_check())
+
+        assert ok is True
+        opts = captured["options"]
+        assert opts.model == _SDK_FABLE, (
+            "preflight_check must pin the routing-default model id; an "
+            "unset model inherits the user-settings alias, which the SDK's "
+            "bundled CLI may not resolve"
+        )
+        # Fable 5 rejects an explicit thinking={"type": "disabled"}; the
+        # probe must leave thinking at the SDK default (None / omitted).
+        assert getattr(opts, "thinking", None) is None
+
+
+# ---------------------------------------------------------------------------
 # verify_transport (combined verdict)
 # ---------------------------------------------------------------------------
 

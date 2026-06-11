@@ -284,6 +284,17 @@ async def preflight_check() -> tuple[bool, str]:
     if os.environ.get("ANTHROPIC_API_KEY"):
         preflight_env["ANTHROPIC_API_KEY"] = ""
 
+    # Pin the routed model id explicitly (2026-06-10). With no model the
+    # SDK's bundled CLI falls through to the user-settings default model
+    # ALIAS (e.g. "fable"), which an older bundled CLI cannot resolve —
+    # observed as an immediate exit-1 "issue with the selected model
+    # (fable)" that HALTed the first Fable 5 campaign at the transport
+    # gate, while explicit "claude-fable-5" ids worked fine. Pinning also
+    # makes the probe representative: it now proves the transport works
+    # for the exact model the campaign sessions run. Local import: keeps
+    # sdk_wrapper free of a module-level kryptosbot.pantheon dependency.
+    from kryptosbot.pantheon import _SDK_FABLE, thinking_config_for_model
+
     try:
         got_response = False
         async for msg in query(
@@ -292,6 +303,10 @@ async def preflight_check() -> tuple[bool, str]:
                 allowed_tools=[],
                 env=preflight_env,
                 max_turns=1,
+                model=_SDK_FABLE,
+                # None for Fable (param omitted — an explicit disabled
+                # dict 400s there); disabled-dict only for opus-4-8.
+                thinking=thinking_config_for_model(_SDK_FABLE),
                 stderr=_capture,
             ),
         ):
