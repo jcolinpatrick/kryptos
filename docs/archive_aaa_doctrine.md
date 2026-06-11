@@ -3,6 +3,17 @@
 Source: 532 photos from Jim Sanborn papers, Archives of American Art, Smithsonian Institution (2026-03-27).
 Classification per project truth taxonomy.
 
+**[CURATION CAVEAT — 2026-06-11, firsthand researcher observation (Colin):]**
+The public AAA deposit has been PURGED of cipher calculations; multiple
+folders are RESTRICTED from public view. Consequences, binding for all AAA
+interpretation: (1) absence of worked cipher arithmetic in the photographed
+corpus is evidence of curation, NOT evidence that no worked papers exist;
+(2) any corpus-level null on computational content must carry this caveat;
+(3) the restricted folders are a named acquisition target (see
+docs/REAL_K4_ACQUISITION_SPECS_2026_06_11.md SPEC-F); (4) the restriction
+is itself weak meta-evidence that calculation-bearing material exists and
+is treated as sensitive while K4 remains unsolved.
+
 ---
 
 ## [PUBLIC FACT] — Primary source confirmed

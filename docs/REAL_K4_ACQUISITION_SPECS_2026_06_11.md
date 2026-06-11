@@ -226,6 +226,43 @@ the set is frozen does any K4-related analysis get preregistered.
 
 ---
 
+## SPEC-F — AAA restricted folders: access-terms inquiry
+
+**Objective.** Firsthand researcher observation (Colin, 2026-06-11): the
+public AAA deposit has been purged of cipher calculations and multiple
+folders are restricted from public view. The restricted folders are the
+most plausible location of worked cipher material (the upgrade path for
+the bare "Beaufort cipher" menu entry and for SPEC-D's procedure
+description). The desk action is an access-terms inquiry, not a content
+request.
+
+**Data product.** A written answer from AAA reference services covering:
+(1) the restriction's terms and authority (donor-imposed by Sanborn?
+processing restriction? third-party rights?); (2) any scheduled opening
+date or review date; (3) whether researcher access can be granted by
+donor permission or supervised use; (4) a FOLDER-LEVEL inventory of the
+restricted series (titles/dates/extent — finding aids often disclose
+structure even where content is closed).
+
+**Why the inventory matters even if content stays closed:** folder titles
+and dates can locate WHICH design-period materials exist (e.g., a folder
+titled with cipher terminology dated 1988-1990), turning a diffuse
+"restricted folders exist" into specific, citable provenance targets and
+sharpening any later permission request.
+
+**Channels.** AAA reference services (standard researcher inquiry); the
+collection's finding aid (check current published version first — zero
+cost); if donor-imposed, a direct permission request to Sanborn is a
+separate, explicitly flagged decision for Colin (creator-statement
+doctrine applies to anything he says in response). Public/institutional
+channels only.
+
+**Discipline.** Any material that does become accessible enters analysis
+ONLY via its own preregistration (blind extraction protocol, SPEC-E
+style). The inquiry letter itself contains no hypotheses.
+
+---
+
 ## Status summary
 
 | spec | gap | external acquisition needed | shares capture with | desk-executable today |
@@ -234,4 +271,5 @@ the set is frozen does any K4-related analysis get preregistered.
 | B | GAP-09 | yes (photogrammetry or scan) | A/C | no (analysis discipline frozen) |
 | C | GAP-05 | covered by B's capture | A/B | no |
 | D | bespoke chart | yes (records/publications) | — | KB query + schema draft only |
-| E | circled letters | no (in-repo images) | — | yes (queued, blind protocol) |
+| E | circled letters | no (in-repo images) | — | yes (executed 2026-06-11, set frozen) |
+| F | AAA restricted folders | yes (records inquiry) | — | letter draftable today |
