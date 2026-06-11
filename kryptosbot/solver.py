@@ -160,15 +160,38 @@ def _null_baseline() -> NullBaselineSpec:
     return NullBaselineSpec(method="shuffled_ct", n_samples=64)
 
 
-def _spec(hyp_id: str, pipeline: list[CipherLayer]) -> HypothesisSpec:
+# Alignments the solver will author. post_transposition is deliberately
+# excluded: the solver's decrypt pipelines already physically undo the outer
+# layer, so anchored scoring of the final PT gives the identical crib_score as
+# direct_positional — re-running under that label adds no crib information.
+# "free" is the genuinely distinct surface (cribs matched anywhere; presence
+# point-values {0,11,13,24}, only comparable to free-matched nulls).
+_SOLVER_ALIGNMENTS = ("direct_positional", "free")
+
+
+def _bundle_for(crib_alignment: str) -> list[str]:
+    if crib_alignment == "free":
+        # Convention bundle matches f_free_alignment_classical_2026_06_10:
+        # non-direct, detection-level free matching on a length-97 stream.
+        return [
+            "az_a0", "transposed", "no_null_mask", "non_direct_alignment",
+            "crib_alignment_free_detection_level", "fixed_len_97_stream",
+        ]
+    return ["ct97_direct_positional", "az_a0", "no_null_mask"]
+
+
+def _spec(
+    hyp_id: str, pipeline: list[CipherLayer], *,
+    crib_alignment: str = "direct_positional",
+) -> HypothesisSpec:
     return HypothesisSpec(
         hypothesis_id=hyp_id,
         pipeline=pipeline,
-        crib_alignment="direct_positional",
+        crib_alignment=crib_alignment,
         scoring="crib_plus_bean",
         null_baseline=_null_baseline(),
         compute_budget_cpu_minutes=10,
-        assumption_bundle=["ct97_direct_positional", "az_a0", "no_null_mask"],
+        assumption_bundle=_bundle_for(crib_alignment),
     )
 
 
@@ -248,21 +271,28 @@ def _sub_variants(ing: Ingredients) -> list[tuple[str, str]]:
     return variants
 
 
-def _two_layer_specs(ing: Ingredients) -> list[HypothesisSpec]:
+def _two_layer_specs(
+    ing: Ingredients, *, crib_alignment: str = "direct_positional"
+) -> list[HypothesisSpec]:
     """Two-layer transposition+substitution sweeps, both decrypt orders."""
     specs: list[HypothesisSpec] = []
+    mark = "" if crib_alignment == "direct_positional" else f"-{crib_alignment}"
     trans_families = [f for f in ing.families if f in _TRANSPOSITION_FAMILIES]
     for tf in trans_families:
         for sf, alphabet in _sub_variants(ing):
             tag = f"{tf}-{sf}-{alphabet}".lower()
-            specs.append(_spec(f"solver-{tag}-subfirst",
-                               [_sub_layer(sf, ing, alphabet), _trans_layer(tf, ing)]))
-            specs.append(_spec(f"solver-{tag}-transfirst",
-                               [_trans_layer(tf, ing), _sub_layer(sf, ing, alphabet)]))
+            specs.append(_spec(f"solver-{tag}-subfirst{mark}",
+                               [_sub_layer(sf, ing, alphabet), _trans_layer(tf, ing)],
+                               crib_alignment=crib_alignment))
+            specs.append(_spec(f"solver-{tag}-transfirst{mark}",
+                               [_trans_layer(tf, ing), _sub_layer(sf, ing, alphabet)],
+                               crib_alignment=crib_alignment))
     return specs
 
 
-def _three_layer_specs(ing: Ingredients) -> list[HypothesisSpec]:
+def _three_layer_specs(
+    ing: Ingredients, *, crib_alignment: str = "direct_positional"
+) -> list[HypothesisSpec]:
     """Three-layer sweeps: two transpositions + one substitution.
 
     Covers the dominant gold structure (two transpositions composed with a
@@ -274,23 +304,27 @@ def _three_layer_specs(ing: Ingredients) -> list[HypothesisSpec]:
     import itertools
 
     specs: list[HypothesisSpec] = []
+    mark = "" if crib_alignment == "direct_positional" else f"-{crib_alignment}"
     trans_families = [f for f in ing.families if f in _TRANSPOSITION_FAMILIES]
     for t1, t2 in itertools.permutations(trans_families, 2):
         for sf, alphabet in _sub_variants(ing):
             tag = f"{t1}-{t2}-{sf}-{alphabet}".lower()
             specs.append(_spec(
-                f"solver3-{tag}-subouter",
+                f"solver3-{tag}-subouter{mark}",
                 [_sub_layer(sf, ing, alphabet), _trans_layer(t1, ing), _trans_layer(t2, ing)],
+                crib_alignment=crib_alignment,
             ))
             specs.append(_spec(
-                f"solver3-{tag}-submid",
+                f"solver3-{tag}-submid{mark}",
                 [_trans_layer(t1, ing), _sub_layer(sf, ing, alphabet), _trans_layer(t2, ing)],
+                crib_alignment=crib_alignment,
             ))
     return specs
 
 
 def build_sweep_specs(
-    ing: Ingredients, *, text_length: int = 97, round_idx: int = 0
+    ing: Ingredients, *, text_length: int = 97, round_idx: int = 0,
+    crib_alignment: str = "direct_positional",
 ) -> list[HypothesisSpec]:
     """Build bounded ParamRange sweep specs over the clue-bounded space.
 
@@ -298,10 +332,22 @@ def build_sweep_specs(
     round_idx >=1 -> three-layer (two transpositions + one substitution).
     Layer order, keyword->layer assignment, variant, alphabet, width/depth/
     block-size are all SWEPT rather than guessed.
+
+    crib_alignment must be in _SOLVER_ALIGNMENTS (see the note there for why
+    post_transposition is excluded).
     """
+    if crib_alignment not in _SOLVER_ALIGNMENTS:
+        raise ValueError(
+            f"crib_alignment {crib_alignment!r} not supported by the solver; "
+            f"expected one of {_SOLVER_ALIGNMENTS}"
+        )
     if not ing.keywords:
         return []
-    specs = _two_layer_specs(ing) if round_idx <= 0 else _three_layer_specs(ing)
+    specs = (
+        _two_layer_specs(ing, crib_alignment=crib_alignment)
+        if round_idx <= 0
+        else _three_layer_specs(ing, crib_alignment=crib_alignment)
+    )
     # Drop combos whose product exceeds the cap (e.g. caesar x skip_route x
     # trans). The bounded combos still cover the clue-bounded space; this keeps
     # every dispatched spec fast and within the dispatcher's budget gate.
@@ -319,11 +365,27 @@ def _dispatch_one_spec(spec: HypothesisSpec, ciphertext: str, crib_dict: dict[in
     only parallelism is ACROSS specs (one level, no nesting). ``store_threshold``
     is set high so the solver never writes candidates to the ledger/artifacts.
     Returns a lightweight, picklable tuple.
+
+    Routing: free-alignment specs dispatch through the REAL-K4 path (no
+    challenge args) because the challenge scoring branch has no free matcher —
+    it scores anchored regardless of the spec's crib_alignment. The real path
+    routes free to score_candidate_free (Lever B1). Guarded: free + a
+    non-kernel ciphertext would silently score anchored, so it fails loudly.
     """
-    result = execute(
-        spec, bench_mode=True, parallel=False, store_threshold=999,
-        challenge_ciphertext=ciphertext, challenge_crib_dict=crib_dict,
-    )
+    if spec.crib_alignment == "free":
+        from kryptos.kernel import constants as C
+
+        if ciphertext != C.CT:
+            raise ValueError(
+                "free-alignment dispatch is real-K4 only: the challenge "
+                "scoring path has no free matcher (scores anchored)"
+            )
+        result = execute(spec, parallel=False, store_threshold=999)
+    else:
+        result = execute(
+            spec, bench_mode=True, parallel=False, store_threshold=999,
+            challenge_ciphertext=ciphertext, challenge_crib_dict=crib_dict,
+        )
     cand = result.best_candidate
     score = int(cand.get("crib_score", 0)) if cand else 0
     return score, cand, spec.hypothesis_id, int(result.total_tested or 0)
@@ -407,7 +469,8 @@ def solve(
 
 
 def _solve_loop(
-    ciphertext: str, crib_dict: dict[int, str], ing: Ingredients, *, max_rounds: int
+    ciphertext: str, crib_dict: dict[int, str], ing: Ingredients, *,
+    max_rounds: int, crib_alignment: str = "direct_positional",
 ) -> SolveResult:
     n_cribs = len(crib_dict)
     history: list[dict] = []
@@ -423,7 +486,10 @@ def _solve_loop(
     try:
         for rnd in range(max_rounds):
             ing = _escalate(ing, rnd)
-            specs = build_sweep_specs(ing, text_length=len(ciphertext), round_idx=rnd)
+            specs = build_sweep_specs(
+                ing, text_length=len(ciphertext), round_idx=rnd,
+                crib_alignment=crib_alignment,
+            )
             total_specs += len(specs)
             score, config, spec_id, configs = _dispatch_best(specs, ciphertext, crib_dict)
             total_configs += configs
@@ -477,7 +543,10 @@ def _k4_ingredients(keywords=None, max_keywords: int = 12) -> Ingredients:
     )
 
 
-def solve_real_k4(*, keywords=None, max_rounds: int = 2, max_keywords: int = 12) -> SolveResult:
+def solve_real_k4(
+    *, keywords=None, max_rounds: int = 2, max_keywords: int = 12,
+    crib_alignment: str = "direct_positional",
+) -> SolveResult:
     """Run the bounded clue-sweep methodology against the REAL K4 kernel.
 
     The "chance at K4" entry: sweeps the bounded composition space over a
@@ -485,11 +554,24 @@ def solve_real_k4(*, keywords=None, max_rounds: int = 2, max_keywords: int = 12)
     cribs (kernel.constants.CRIB_DICT). Honest about scope — a bounded sweep,
     not a guarantee; K4's true space is far larger. Widen via ``keywords`` /
     ``max_keywords`` / ``max_rounds``.
+
+    crib_alignment="free" sweeps the SAME composition universe but matches the
+    disclosed cribs ANYWHERE in the candidate PT (score_candidate_free via the
+    real-K4 dispatcher path). Free crib scores are presence point-values
+    ({0,11,13,24}); never compare them to anchored scores or anchored nulls.
     """
     from kryptos.kernel import constants as C
 
+    if crib_alignment not in _SOLVER_ALIGNMENTS:
+        raise ValueError(
+            f"crib_alignment {crib_alignment!r} not supported by solve_real_k4; "
+            f"expected one of {_SOLVER_ALIGNMENTS}"
+        )
     ing = _k4_ingredients(keywords=keywords, max_keywords=max_keywords)
-    return _solve_loop(C.CT, dict(C.CRIB_DICT), ing, max_rounds=max_rounds)
+    return _solve_loop(
+        C.CT, dict(C.CRIB_DICT), ing, max_rounds=max_rounds,
+        crib_alignment=crib_alignment,
+    )
 
 
 def best_verified_finding(findings: list[dict]) -> Optional[dict]:

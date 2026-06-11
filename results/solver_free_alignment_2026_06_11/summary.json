@@ -1,0 +1,3931 @@
+{
+ "campaign_id": "f_solver_free_alignment_2026_06_11",
+ "prereg": "docs/campaigns/solver_free_alignment_2026_06_11.md",
+ "git_head": "f98ce14435d0f7c025e89bebcbf1e393c34ac4aa",
+ "started_utc": "2026-06-11T13:42:57Z",
+ "hit_threshold": 11,
+ "controls": [
+  {
+   "control": "C0",
+   "pass": true,
+   "returncode": 0,
+   "tail": [
+    "  solved: 3/3  total_wall=0.89s"
+   ]
+  },
+  {
+   "control": "C1",
+   "pass": true,
+   "crib_score": 24,
+   "canonical_positions": false
+  },
+  {
+   "control": "C2",
+   "pass": true,
+   "crib_score": 24,
+   "scoring_mode": "free",
+   "canonical_positions": false,
+   "error": null
+  }
+ ],
+ "keywords": [
+  "KRYPTOS",
+  "PALIMPSEST",
+  "ABSCISSA",
+  "BERLIN",
+  "CLOCK",
+  "LANGLEY",
+  "NORTHEAST",
+  "SHADOW",
+  "FORCES",
+  "LUCID",
+  "MEMORY",
+  "IQLUSION"
+ ],
+ "n_specs": 484,
+ "expected_total": 250348,
+ "universe_sha256": "468923810eab9775145281e8e9a3eb470f4211589bfe691e2bdd249c58c2300a",
+ "total_tested": 250348,
+ "wall_time_sec": 80.67182517051697,
+ "best": {
+  "score": 0.0
+ },
+ "hits_ge_threshold": [],
+ "admissibility_rejections": [],
+ "per_spec": [
+  {
+   "hypothesis_id": "solver-columnar-vigenere-az-subfirst-free",
+   "spec_hash": "aa432768369356c4",
+   "admissibility_verdict": "ok",
+   "tested": 144,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-columnar-vigenere-az-transfirst-free",
+   "spec_hash": "60214a82ad28eab9",
+   "admissibility_verdict": "ok",
+   "tested": 144,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-columnar-vigenere-ka-subfirst-free",
+   "spec_hash": "fe4887092fbff6e9",
+   "admissibility_verdict": "ok",
+   "tested": 144,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-columnar-vigenere-ka-transfirst-free",
+   "spec_hash": "3ba12cf7185e4e9a",
+   "admissibility_verdict": "ok",
+   "tested": 144,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-columnar-beaufort-az-subfirst-free",
+   "spec_hash": "54956a5cc0f3793f",
+   "admissibility_verdict": "ok",
+   "tested": 144,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-columnar-beaufort-az-transfirst-free",
+   "spec_hash": "d48fd693084160d5",
+   "admissibility_verdict": "ok",
+   "tested": 144,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-columnar-beaufort-ka-subfirst-free",
+   "spec_hash": "4911d69264bcbb17",
+   "admissibility_verdict": "ok",
+   "tested": 144,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-columnar-beaufort-ka-transfirst-free",
+   "spec_hash": "a3d3dcc1e4adbd8a",
+   "admissibility_verdict": "ok",
+   "tested": 144,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-columnar-variant_beaufort-az-subfirst-free",
+   "spec_hash": "8d8a69fb4fbe871b",
+   "admissibility_verdict": "ok",
+   "tested": 144,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-columnar-variant_beaufort-az-transfirst-free",
+   "spec_hash": "9c28acf2481ea6d1",
+   "admissibility_verdict": "ok",
+   "tested": 144,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-columnar-variant_beaufort-ka-subfirst-free",
+   "spec_hash": "b69ac0d3c4840519",
+   "admissibility_verdict": "ok",
+   "tested": 144,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-columnar-variant_beaufort-ka-transfirst-free",
+   "spec_hash": "050895e62984b489",
+   "admissibility_verdict": "ok",
+   "tested": 144,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-columnar-atbash-az-subfirst-free",
+   "spec_hash": "14ad3a3a04675dba",
+   "admissibility_verdict": "ok",
+   "tested": 12,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-columnar-atbash-az-transfirst-free",
+   "spec_hash": "caaf77be7fdb7f95",
+   "admissibility_verdict": "ok",
+   "tested": 12,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-columnar-caesar-az-subfirst-free",
+   "spec_hash": "9543fb073c957b5d",
+   "admissibility_verdict": "ok",
+   "tested": 300,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-columnar-caesar-az-transfirst-free",
+   "spec_hash": "25b7d00a0b7a2595",
+   "admissibility_verdict": "ok",
+   "tested": 300,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-rail_fence-vigenere-az-subfirst-free",
+   "spec_hash": "511e8aec9fe3665c",
+   "admissibility_verdict": "ok",
+   "tested": 48,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-rail_fence-vigenere-az-transfirst-free",
+   "spec_hash": "cac03b143e68550d",
+   "admissibility_verdict": "ok",
+   "tested": 48,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-rail_fence-vigenere-ka-subfirst-free",
+   "spec_hash": "f300df2acc1dc58c",
+   "admissibility_verdict": "ok",
+   "tested": 48,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-rail_fence-vigenere-ka-transfirst-free",
+   "spec_hash": "ced62d9887edd554",
+   "admissibility_verdict": "ok",
+   "tested": 48,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-rail_fence-beaufort-az-subfirst-free",
+   "spec_hash": "d780f8bbd8662053",
+   "admissibility_verdict": "ok",
+   "tested": 48,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-rail_fence-beaufort-az-transfirst-free",
+   "spec_hash": "39d1eae705c8182c",
+   "admissibility_verdict": "ok",
+   "tested": 48,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-rail_fence-beaufort-ka-subfirst-free",
+   "spec_hash": "bec3faa90a78657d",
+   "admissibility_verdict": "ok",
+   "tested": 48,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-rail_fence-beaufort-ka-transfirst-free",
+   "spec_hash": "e9921229181f8f54",
+   "admissibility_verdict": "ok",
+   "tested": 48,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-rail_fence-variant_beaufort-az-subfirst-free",
+   "spec_hash": "a6680675893f6988",
+   "admissibility_verdict": "ok",
+   "tested": 48,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-rail_fence-variant_beaufort-az-transfirst-free",
+   "spec_hash": "d7d1a3cd0e2ade50",
+   "admissibility_verdict": "ok",
+   "tested": 48,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-rail_fence-variant_beaufort-ka-subfirst-free",
+   "spec_hash": "6a16569f4a29df7c",
+   "admissibility_verdict": "ok",
+   "tested": 48,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-rail_fence-variant_beaufort-ka-transfirst-free",
+   "spec_hash": "fcca5c47794515b4",
+   "admissibility_verdict": "ok",
+   "tested": 48,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-rail_fence-atbash-az-subfirst-free",
+   "spec_hash": "0085d4434bd6a092",
+   "admissibility_verdict": "ok",
+   "tested": 4,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-rail_fence-atbash-az-transfirst-free",
+   "spec_hash": "b2208544647c3263",
+   "admissibility_verdict": "ok",
+   "tested": 4,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-rail_fence-caesar-az-subfirst-free",
+   "spec_hash": "b0b7b252d2b26f6e",
+   "admissibility_verdict": "ok",
+   "tested": 100,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-rail_fence-caesar-az-transfirst-free",
+   "spec_hash": "cd9297d2c7eb5622",
+   "admissibility_verdict": "ok",
+   "tested": 100,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-reverse_blocks-vigenere-az-subfirst-free",
+   "spec_hash": "1f0d83bed2b0854e",
+   "admissibility_verdict": "ok",
+   "tested": 48,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-reverse_blocks-vigenere-az-transfirst-free",
+   "spec_hash": "aad4673694aaadba",
+   "admissibility_verdict": "ok",
+   "tested": 48,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-reverse_blocks-vigenere-ka-subfirst-free",
+   "spec_hash": "4ff4626385057ca3",
+   "admissibility_verdict": "ok",
+   "tested": 48,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-reverse_blocks-vigenere-ka-transfirst-free",
+   "spec_hash": "187fccf0081cce8b",
+   "admissibility_verdict": "ok",
+   "tested": 48,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-reverse_blocks-beaufort-az-subfirst-free",
+   "spec_hash": "b08da67f954f9bcc",
+   "admissibility_verdict": "ok",
+   "tested": 48,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-reverse_blocks-beaufort-az-transfirst-free",
+   "spec_hash": "2cac1cd78383042a",
+   "admissibility_verdict": "ok",
+   "tested": 48,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-reverse_blocks-beaufort-ka-subfirst-free",
+   "spec_hash": "02c64d7a98d7a2e0",
+   "admissibility_verdict": "ok",
+   "tested": 48,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-reverse_blocks-beaufort-ka-transfirst-free",
+   "spec_hash": "86095417bf1bb9a4",
+   "admissibility_verdict": "ok",
+   "tested": 48,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-reverse_blocks-variant_beaufort-az-subfirst-free",
+   "spec_hash": "35c94df6081b2162",
+   "admissibility_verdict": "ok",
+   "tested": 48,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-reverse_blocks-variant_beaufort-az-transfirst-free",
+   "spec_hash": "cde4a6b926adcfb9",
+   "admissibility_verdict": "ok",
+   "tested": 48,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-reverse_blocks-variant_beaufort-ka-subfirst-free",
+   "spec_hash": "38c7af783e51f620",
+   "admissibility_verdict": "ok",
+   "tested": 48,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-reverse_blocks-variant_beaufort-ka-transfirst-free",
+   "spec_hash": "810174b3e1bcd503",
+   "admissibility_verdict": "ok",
+   "tested": 48,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-reverse_blocks-atbash-az-subfirst-free",
+   "spec_hash": "222999920dc3b906",
+   "admissibility_verdict": "ok",
+   "tested": 4,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-reverse_blocks-atbash-az-transfirst-free",
+   "spec_hash": "dee66c73c9df9e80",
+   "admissibility_verdict": "ok",
+   "tested": 4,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-reverse_blocks-caesar-az-subfirst-free",
+   "spec_hash": "88bd10d9fea474db",
+   "admissibility_verdict": "ok",
+   "tested": 100,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-reverse_blocks-caesar-az-transfirst-free",
+   "spec_hash": "6cd52331ed038cc4",
+   "admissibility_verdict": "ok",
+   "tested": 100,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-route_boustrophedon-vigenere-az-subfirst-free",
+   "spec_hash": "6866d8507884c53c",
+   "admissibility_verdict": "ok",
+   "tested": 72,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-route_boustrophedon-vigenere-az-transfirst-free",
+   "spec_hash": "3edb83dc90fcde89",
+   "admissibility_verdict": "ok",
+   "tested": 72,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-route_boustrophedon-vigenere-ka-subfirst-free",
+   "spec_hash": "d94b054dfc3d018c",
+   "admissibility_verdict": "ok",
+   "tested": 72,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-route_boustrophedon-vigenere-ka-transfirst-free",
+   "spec_hash": "aca74517156e717a",
+   "admissibility_verdict": "ok",
+   "tested": 72,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-route_boustrophedon-beaufort-az-subfirst-free",
+   "spec_hash": "eec56b8ead62e803",
+   "admissibility_verdict": "ok",
+   "tested": 72,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-route_boustrophedon-beaufort-az-transfirst-free",
+   "spec_hash": "8fa597bd961e466a",
+   "admissibility_verdict": "ok",
+   "tested": 72,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-route_boustrophedon-beaufort-ka-subfirst-free",
+   "spec_hash": "67cc4ac478602825",
+   "admissibility_verdict": "ok",
+   "tested": 72,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-route_boustrophedon-beaufort-ka-transfirst-free",
+   "spec_hash": "bcf083633e6bda58",
+   "admissibility_verdict": "ok",
+   "tested": 72,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-route_boustrophedon-variant_beaufort-az-subfirst-free",
+   "spec_hash": "909d3705e70c74ca",
+   "admissibility_verdict": "ok",
+   "tested": 72,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-route_boustrophedon-variant_beaufort-az-transfirst-free",
+   "spec_hash": "c3194dc34c7b2f3b",
+   "admissibility_verdict": "ok",
+   "tested": 72,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-route_boustrophedon-variant_beaufort-ka-subfirst-free",
+   "spec_hash": "6c6ed679a850d9bf",
+   "admissibility_verdict": "ok",
+   "tested": 72,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-route_boustrophedon-variant_beaufort-ka-transfirst-free",
+   "spec_hash": "a9f3c2c027289507",
+   "admissibility_verdict": "ok",
+   "tested": 72,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-route_boustrophedon-atbash-az-subfirst-free",
+   "spec_hash": "79ca0d0b3c3238e4",
+   "admissibility_verdict": "ok",
+   "tested": 6,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-route_boustrophedon-atbash-az-transfirst-free",
+   "spec_hash": "857b74bf27ca7e33",
+   "admissibility_verdict": "ok",
+   "tested": 6,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-route_boustrophedon-caesar-az-subfirst-free",
+   "spec_hash": "3f058c6f967830e8",
+   "admissibility_verdict": "ok",
+   "tested": 150,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-route_boustrophedon-caesar-az-transfirst-free",
+   "spec_hash": "8aa55aa375a1ed3a",
+   "admissibility_verdict": "ok",
+   "tested": 150,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-route_diagonal-vigenere-az-subfirst-free",
+   "spec_hash": "4e0e7afe40ed67f1",
+   "admissibility_verdict": "ok",
+   "tested": 72,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-route_diagonal-vigenere-az-transfirst-free",
+   "spec_hash": "b930e173980f1234",
+   "admissibility_verdict": "ok",
+   "tested": 72,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-route_diagonal-vigenere-ka-subfirst-free",
+   "spec_hash": "99a19909d44b9a89",
+   "admissibility_verdict": "ok",
+   "tested": 72,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-route_diagonal-vigenere-ka-transfirst-free",
+   "spec_hash": "e65de9c22d3defca",
+   "admissibility_verdict": "ok",
+   "tested": 72,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-route_diagonal-beaufort-az-subfirst-free",
+   "spec_hash": "449a8f6c14de18e8",
+   "admissibility_verdict": "ok",
+   "tested": 72,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-route_diagonal-beaufort-az-transfirst-free",
+   "spec_hash": "d463226e92f38724",
+   "admissibility_verdict": "ok",
+   "tested": 72,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-route_diagonal-beaufort-ka-subfirst-free",
+   "spec_hash": "74ef3a8dd3a606bd",
+   "admissibility_verdict": "ok",
+   "tested": 72,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-route_diagonal-beaufort-ka-transfirst-free",
+   "spec_hash": "d15e69abb9a95ee2",
+   "admissibility_verdict": "ok",
+   "tested": 72,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-route_diagonal-variant_beaufort-az-subfirst-free",
+   "spec_hash": "66e367134c239938",
+   "admissibility_verdict": "ok",
+   "tested": 72,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-route_diagonal-variant_beaufort-az-transfirst-free",
+   "spec_hash": "1137e8fd91dbd41d",
+   "admissibility_verdict": "ok",
+   "tested": 72,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-route_diagonal-variant_beaufort-ka-subfirst-free",
+   "spec_hash": "36c0fe5b2a57cc7c",
+   "admissibility_verdict": "ok",
+   "tested": 72,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-route_diagonal-variant_beaufort-ka-transfirst-free",
+   "spec_hash": "dbde413893454950",
+   "admissibility_verdict": "ok",
+   "tested": 72,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-route_diagonal-atbash-az-subfirst-free",
+   "spec_hash": "9e2cf0ddd8f901fb",
+   "admissibility_verdict": "ok",
+   "tested": 6,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-route_diagonal-atbash-az-transfirst-free",
+   "spec_hash": "3ab8359003009c7a",
+   "admissibility_verdict": "ok",
+   "tested": 6,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-route_diagonal-caesar-az-subfirst-free",
+   "spec_hash": "4c0aae0af072759b",
+   "admissibility_verdict": "ok",
+   "tested": 150,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-route_diagonal-caesar-az-transfirst-free",
+   "spec_hash": "7c630d251762b8a6",
+   "admissibility_verdict": "ok",
+   "tested": 150,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-skip_route-vigenere-az-subfirst-free",
+   "spec_hash": "0451265cde1715fe",
+   "admissibility_verdict": "ok",
+   "tested": 420,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-skip_route-vigenere-az-transfirst-free",
+   "spec_hash": "c79af2f55ad0c039",
+   "admissibility_verdict": "ok",
+   "tested": 420,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-skip_route-vigenere-ka-subfirst-free",
+   "spec_hash": "d729f353ccfba19e",
+   "admissibility_verdict": "ok",
+   "tested": 420,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-skip_route-vigenere-ka-transfirst-free",
+   "spec_hash": "d0031dde66e92f3d",
+   "admissibility_verdict": "ok",
+   "tested": 420,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-skip_route-beaufort-az-subfirst-free",
+   "spec_hash": "174f6dc300058b08",
+   "admissibility_verdict": "ok",
+   "tested": 420,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-skip_route-beaufort-az-transfirst-free",
+   "spec_hash": "4a260d59ceed2dd9",
+   "admissibility_verdict": "ok",
+   "tested": 420,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-skip_route-beaufort-ka-subfirst-free",
+   "spec_hash": "c196533a42ec14e9",
+   "admissibility_verdict": "ok",
+   "tested": 420,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-skip_route-beaufort-ka-transfirst-free",
+   "spec_hash": "a6ab500adbd62c52",
+   "admissibility_verdict": "ok",
+   "tested": 420,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-skip_route-variant_beaufort-az-subfirst-free",
+   "spec_hash": "395bd809b759f356",
+   "admissibility_verdict": "ok",
+   "tested": 420,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-skip_route-variant_beaufort-az-transfirst-free",
+   "spec_hash": "5c59877a1c69a49e",
+   "admissibility_verdict": "ok",
+   "tested": 420,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-skip_route-variant_beaufort-ka-subfirst-free",
+   "spec_hash": "31f187ff49678c8d",
+   "admissibility_verdict": "ok",
+   "tested": 420,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-skip_route-variant_beaufort-ka-transfirst-free",
+   "spec_hash": "adc31322fc1a803a",
+   "admissibility_verdict": "ok",
+   "tested": 420,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-skip_route-atbash-az-subfirst-free",
+   "spec_hash": "68a4dab2ab53ca11",
+   "admissibility_verdict": "ok",
+   "tested": 35,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-skip_route-atbash-az-transfirst-free",
+   "spec_hash": "d790642463ea1af2",
+   "admissibility_verdict": "ok",
+   "tested": 35,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-skip_route-caesar-az-subfirst-free",
+   "spec_hash": "91df16b209048517",
+   "admissibility_verdict": "ok",
+   "tested": 875,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver-skip_route-caesar-az-transfirst-free",
+   "spec_hash": "c10ba4f911bf5f33",
+   "admissibility_verdict": "ok",
+   "tested": 875,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-columnar-rail_fence-vigenere-az-subouter-free",
+   "spec_hash": "687c68b00978186c",
+   "admissibility_verdict": "ok",
+   "tested": 576,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-columnar-rail_fence-vigenere-az-submid-free",
+   "spec_hash": "f78325649992786e",
+   "admissibility_verdict": "ok",
+   "tested": 576,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-columnar-rail_fence-vigenere-ka-subouter-free",
+   "spec_hash": "b61c3af0ff5dd453",
+   "admissibility_verdict": "ok",
+   "tested": 576,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-columnar-rail_fence-vigenere-ka-submid-free",
+   "spec_hash": "0b5112cc3e71e2f0",
+   "admissibility_verdict": "ok",
+   "tested": 576,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-columnar-rail_fence-beaufort-az-subouter-free",
+   "spec_hash": "468d97f464d9a01d",
+   "admissibility_verdict": "ok",
+   "tested": 576,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-columnar-rail_fence-beaufort-az-submid-free",
+   "spec_hash": "2a9947695156f733",
+   "admissibility_verdict": "ok",
+   "tested": 576,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-columnar-rail_fence-beaufort-ka-subouter-free",
+   "spec_hash": "fe339d00459c6232",
+   "admissibility_verdict": "ok",
+   "tested": 576,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-columnar-rail_fence-beaufort-ka-submid-free",
+   "spec_hash": "301bffa3f5037a9a",
+   "admissibility_verdict": "ok",
+   "tested": 576,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-columnar-rail_fence-variant_beaufort-az-subouter-free",
+   "spec_hash": "dae2d0fae8249970",
+   "admissibility_verdict": "ok",
+   "tested": 576,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-columnar-rail_fence-variant_beaufort-az-submid-free",
+   "spec_hash": "61829e9512a5385c",
+   "admissibility_verdict": "ok",
+   "tested": 576,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-columnar-rail_fence-variant_beaufort-ka-subouter-free",
+   "spec_hash": "68754dbffbeb22e2",
+   "admissibility_verdict": "ok",
+   "tested": 576,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-columnar-rail_fence-variant_beaufort-ka-submid-free",
+   "spec_hash": "d4259482b5b2cd05",
+   "admissibility_verdict": "ok",
+   "tested": 576,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-columnar-rail_fence-atbash-az-subouter-free",
+   "spec_hash": "ccf07fa85a34a267",
+   "admissibility_verdict": "ok",
+   "tested": 48,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-columnar-rail_fence-atbash-az-submid-free",
+   "spec_hash": "174ad7a017986ff4",
+   "admissibility_verdict": "ok",
+   "tested": 48,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-columnar-rail_fence-caesar-az-subouter-free",
+   "spec_hash": "0803053a0e09262a",
+   "admissibility_verdict": "ok",
+   "tested": 1200,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-columnar-rail_fence-caesar-az-submid-free",
+   "spec_hash": "30979c5d1345f907",
+   "admissibility_verdict": "ok",
+   "tested": 1200,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-columnar-reverse_blocks-vigenere-az-subouter-free",
+   "spec_hash": "0605c9511c5d80da",
+   "admissibility_verdict": "ok",
+   "tested": 576,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-columnar-reverse_blocks-vigenere-az-submid-free",
+   "spec_hash": "10210e9571fecfcd",
+   "admissibility_verdict": "ok",
+   "tested": 576,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-columnar-reverse_blocks-vigenere-ka-subouter-free",
+   "spec_hash": "5a0d9ba1c1c9e443",
+   "admissibility_verdict": "ok",
+   "tested": 576,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-columnar-reverse_blocks-vigenere-ka-submid-free",
+   "spec_hash": "6f127ddc17db11a8",
+   "admissibility_verdict": "ok",
+   "tested": 576,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-columnar-reverse_blocks-beaufort-az-subouter-free",
+   "spec_hash": "f59c07c09915188e",
+   "admissibility_verdict": "ok",
+   "tested": 576,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-columnar-reverse_blocks-beaufort-az-submid-free",
+   "spec_hash": "49ae2adbabb6992b",
+   "admissibility_verdict": "ok",
+   "tested": 576,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-columnar-reverse_blocks-beaufort-ka-subouter-free",
+   "spec_hash": "650181cd5a921b84",
+   "admissibility_verdict": "ok",
+   "tested": 576,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-columnar-reverse_blocks-beaufort-ka-submid-free",
+   "spec_hash": "c0d88f8d9b6394f5",
+   "admissibility_verdict": "ok",
+   "tested": 576,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-columnar-reverse_blocks-variant_beaufort-az-subouter-free",
+   "spec_hash": "e0439cfd79ed10e9",
+   "admissibility_verdict": "ok",
+   "tested": 576,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-columnar-reverse_blocks-variant_beaufort-az-submid-free",
+   "spec_hash": "62b0a5fb1abb72db",
+   "admissibility_verdict": "ok",
+   "tested": 576,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-columnar-reverse_blocks-variant_beaufort-ka-subouter-free",
+   "spec_hash": "64098cefb0de8b93",
+   "admissibility_verdict": "ok",
+   "tested": 576,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-columnar-reverse_blocks-variant_beaufort-ka-submid-free",
+   "spec_hash": "de9a7cf085d6d82c",
+   "admissibility_verdict": "ok",
+   "tested": 576,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-columnar-reverse_blocks-atbash-az-subouter-free",
+   "spec_hash": "8a64780686526e96",
+   "admissibility_verdict": "ok",
+   "tested": 48,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-columnar-reverse_blocks-atbash-az-submid-free",
+   "spec_hash": "4e81792b801af2a0",
+   "admissibility_verdict": "ok",
+   "tested": 48,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-columnar-reverse_blocks-caesar-az-subouter-free",
+   "spec_hash": "4de994048e14beb1",
+   "admissibility_verdict": "ok",
+   "tested": 1200,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-columnar-reverse_blocks-caesar-az-submid-free",
+   "spec_hash": "eb2f7b83137ed044",
+   "admissibility_verdict": "ok",
+   "tested": 1200,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-columnar-route_boustrophedon-vigenere-az-subouter-free",
+   "spec_hash": "ea75bad33c4cae62",
+   "admissibility_verdict": "ok",
+   "tested": 864,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-columnar-route_boustrophedon-vigenere-az-submid-free",
+   "spec_hash": "f1efc300d2d5f080",
+   "admissibility_verdict": "ok",
+   "tested": 864,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-columnar-route_boustrophedon-vigenere-ka-subouter-free",
+   "spec_hash": "71af5973ef1f4648",
+   "admissibility_verdict": "ok",
+   "tested": 864,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-columnar-route_boustrophedon-vigenere-ka-submid-free",
+   "spec_hash": "fcddcae841263834",
+   "admissibility_verdict": "ok",
+   "tested": 864,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-columnar-route_boustrophedon-beaufort-az-subouter-free",
+   "spec_hash": "532b1d836a3ec067",
+   "admissibility_verdict": "ok",
+   "tested": 864,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-columnar-route_boustrophedon-beaufort-az-submid-free",
+   "spec_hash": "09d9a0c9f48debb0",
+   "admissibility_verdict": "ok",
+   "tested": 864,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-columnar-route_boustrophedon-beaufort-ka-subouter-free",
+   "spec_hash": "10c4554bf0940da9",
+   "admissibility_verdict": "ok",
+   "tested": 864,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-columnar-route_boustrophedon-beaufort-ka-submid-free",
+   "spec_hash": "03daffb25d4615c6",
+   "admissibility_verdict": "ok",
+   "tested": 864,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-columnar-route_boustrophedon-variant_beaufort-az-subouter-free",
+   "spec_hash": "539b669c19fc563a",
+   "admissibility_verdict": "ok",
+   "tested": 864,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-columnar-route_boustrophedon-variant_beaufort-az-submid-free",
+   "spec_hash": "58786eb4a04f7e98",
+   "admissibility_verdict": "ok",
+   "tested": 864,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-columnar-route_boustrophedon-variant_beaufort-ka-subouter-free",
+   "spec_hash": "05ee21ef9d8658f0",
+   "admissibility_verdict": "ok",
+   "tested": 864,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-columnar-route_boustrophedon-variant_beaufort-ka-submid-free",
+   "spec_hash": "e2abb70fc99311ab",
+   "admissibility_verdict": "ok",
+   "tested": 864,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-columnar-route_boustrophedon-atbash-az-subouter-free",
+   "spec_hash": "0af38367d0502075",
+   "admissibility_verdict": "ok",
+   "tested": 72,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-columnar-route_boustrophedon-atbash-az-submid-free",
+   "spec_hash": "ecf0dcf7f8dceeb6",
+   "admissibility_verdict": "ok",
+   "tested": 72,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-columnar-route_boustrophedon-caesar-az-subouter-free",
+   "spec_hash": "9b8e4dc2a79a5203",
+   "admissibility_verdict": "ok",
+   "tested": 1800,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-columnar-route_boustrophedon-caesar-az-submid-free",
+   "spec_hash": "6c7c719a244d73a9",
+   "admissibility_verdict": "ok",
+   "tested": 1800,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-columnar-route_diagonal-vigenere-az-subouter-free",
+   "spec_hash": "bd29740c9e596926",
+   "admissibility_verdict": "ok",
+   "tested": 864,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-columnar-route_diagonal-vigenere-az-submid-free",
+   "spec_hash": "21889bd5f3db840f",
+   "admissibility_verdict": "ok",
+   "tested": 864,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-columnar-route_diagonal-vigenere-ka-subouter-free",
+   "spec_hash": "5836eadb5f7087ad",
+   "admissibility_verdict": "ok",
+   "tested": 864,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-columnar-route_diagonal-vigenere-ka-submid-free",
+   "spec_hash": "abe5c9a14b101c0d",
+   "admissibility_verdict": "ok",
+   "tested": 864,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-columnar-route_diagonal-beaufort-az-subouter-free",
+   "spec_hash": "e435b1ada1a7faa2",
+   "admissibility_verdict": "ok",
+   "tested": 864,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-columnar-route_diagonal-beaufort-az-submid-free",
+   "spec_hash": "e7df7dda5437ddbf",
+   "admissibility_verdict": "ok",
+   "tested": 864,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-columnar-route_diagonal-beaufort-ka-subouter-free",
+   "spec_hash": "ed3c37e2457aa943",
+   "admissibility_verdict": "ok",
+   "tested": 864,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-columnar-route_diagonal-beaufort-ka-submid-free",
+   "spec_hash": "8d5f72a12f424440",
+   "admissibility_verdict": "ok",
+   "tested": 864,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-columnar-route_diagonal-variant_beaufort-az-subouter-free",
+   "spec_hash": "e5c99cb3e26f3eb0",
+   "admissibility_verdict": "ok",
+   "tested": 864,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-columnar-route_diagonal-variant_beaufort-az-submid-free",
+   "spec_hash": "e3f33469fd52d477",
+   "admissibility_verdict": "ok",
+   "tested": 864,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-columnar-route_diagonal-variant_beaufort-ka-subouter-free",
+   "spec_hash": "0bb4fb145f1a9f46",
+   "admissibility_verdict": "ok",
+   "tested": 864,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-columnar-route_diagonal-variant_beaufort-ka-submid-free",
+   "spec_hash": "0b63e923691a47a0",
+   "admissibility_verdict": "ok",
+   "tested": 864,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-columnar-route_diagonal-atbash-az-subouter-free",
+   "spec_hash": "f9c42894d4fceb66",
+   "admissibility_verdict": "ok",
+   "tested": 72,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-columnar-route_diagonal-atbash-az-submid-free",
+   "spec_hash": "9b83687365359d7a",
+   "admissibility_verdict": "ok",
+   "tested": 72,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-columnar-route_diagonal-caesar-az-subouter-free",
+   "spec_hash": "a3bc0f92e5e08d71",
+   "admissibility_verdict": "ok",
+   "tested": 1800,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-columnar-route_diagonal-caesar-az-submid-free",
+   "spec_hash": "775ce8e93b6498c4",
+   "admissibility_verdict": "ok",
+   "tested": 1800,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-columnar-skip_route-atbash-az-subouter-free",
+   "spec_hash": "ac346d5fe39af5a4",
+   "admissibility_verdict": "ok",
+   "tested": 420,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-columnar-skip_route-atbash-az-submid-free",
+   "spec_hash": "b7b96c23f84c24f7",
+   "admissibility_verdict": "ok",
+   "tested": 420,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-columnar-vigenere-az-subouter-free",
+   "spec_hash": "f296fa4f9a9adc5e",
+   "admissibility_verdict": "ok",
+   "tested": 576,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-columnar-vigenere-az-submid-free",
+   "spec_hash": "f6d75e986287fe7a",
+   "admissibility_verdict": "ok",
+   "tested": 576,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-columnar-vigenere-ka-subouter-free",
+   "spec_hash": "dec3628c600694d5",
+   "admissibility_verdict": "ok",
+   "tested": 576,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-columnar-vigenere-ka-submid-free",
+   "spec_hash": "b2786e308dd2d0ff",
+   "admissibility_verdict": "ok",
+   "tested": 576,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-columnar-beaufort-az-subouter-free",
+   "spec_hash": "b8d68df6bb948962",
+   "admissibility_verdict": "ok",
+   "tested": 576,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-columnar-beaufort-az-submid-free",
+   "spec_hash": "4fa32f9e77c26b92",
+   "admissibility_verdict": "ok",
+   "tested": 576,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-columnar-beaufort-ka-subouter-free",
+   "spec_hash": "748a6bedf269d206",
+   "admissibility_verdict": "ok",
+   "tested": 576,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-columnar-beaufort-ka-submid-free",
+   "spec_hash": "c23c3f823d9a1e94",
+   "admissibility_verdict": "ok",
+   "tested": 576,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-columnar-variant_beaufort-az-subouter-free",
+   "spec_hash": "484d851ed794b6d3",
+   "admissibility_verdict": "ok",
+   "tested": 576,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-columnar-variant_beaufort-az-submid-free",
+   "spec_hash": "cd1ad976b939889f",
+   "admissibility_verdict": "ok",
+   "tested": 576,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-columnar-variant_beaufort-ka-subouter-free",
+   "spec_hash": "efc9085d7526e761",
+   "admissibility_verdict": "ok",
+   "tested": 576,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-columnar-variant_beaufort-ka-submid-free",
+   "spec_hash": "009a368c52d29e1e",
+   "admissibility_verdict": "ok",
+   "tested": 576,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-columnar-atbash-az-subouter-free",
+   "spec_hash": "ae239b11917bd1a4",
+   "admissibility_verdict": "ok",
+   "tested": 48,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-columnar-atbash-az-submid-free",
+   "spec_hash": "76778da9ec9de3c1",
+   "admissibility_verdict": "ok",
+   "tested": 48,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-columnar-caesar-az-subouter-free",
+   "spec_hash": "454950a68e0ce706",
+   "admissibility_verdict": "ok",
+   "tested": 1200,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-columnar-caesar-az-submid-free",
+   "spec_hash": "102ad9616a1ae105",
+   "admissibility_verdict": "ok",
+   "tested": 1200,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-reverse_blocks-vigenere-az-subouter-free",
+   "spec_hash": "fae136d1a1682988",
+   "admissibility_verdict": "ok",
+   "tested": 192,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-reverse_blocks-vigenere-az-submid-free",
+   "spec_hash": "3e58689ff708ecbc",
+   "admissibility_verdict": "ok",
+   "tested": 192,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-reverse_blocks-vigenere-ka-subouter-free",
+   "spec_hash": "2b758d76f52d08a2",
+   "admissibility_verdict": "ok",
+   "tested": 192,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-reverse_blocks-vigenere-ka-submid-free",
+   "spec_hash": "c399990679b7be0d",
+   "admissibility_verdict": "ok",
+   "tested": 192,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-reverse_blocks-beaufort-az-subouter-free",
+   "spec_hash": "b15f42a512fab46c",
+   "admissibility_verdict": "ok",
+   "tested": 192,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-reverse_blocks-beaufort-az-submid-free",
+   "spec_hash": "6c959553d181d71e",
+   "admissibility_verdict": "ok",
+   "tested": 192,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-reverse_blocks-beaufort-ka-subouter-free",
+   "spec_hash": "115edaf774a97e6c",
+   "admissibility_verdict": "ok",
+   "tested": 192,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-reverse_blocks-beaufort-ka-submid-free",
+   "spec_hash": "470300108c1dfc8f",
+   "admissibility_verdict": "ok",
+   "tested": 192,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-reverse_blocks-variant_beaufort-az-subouter-free",
+   "spec_hash": "112f5ddd0a728aec",
+   "admissibility_verdict": "ok",
+   "tested": 192,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-reverse_blocks-variant_beaufort-az-submid-free",
+   "spec_hash": "157360f309bb493e",
+   "admissibility_verdict": "ok",
+   "tested": 192,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-reverse_blocks-variant_beaufort-ka-subouter-free",
+   "spec_hash": "ba35dcb6406dc543",
+   "admissibility_verdict": "ok",
+   "tested": 192,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-reverse_blocks-variant_beaufort-ka-submid-free",
+   "spec_hash": "82fee38bff423b70",
+   "admissibility_verdict": "ok",
+   "tested": 192,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-reverse_blocks-atbash-az-subouter-free",
+   "spec_hash": "1c72c79c4be00146",
+   "admissibility_verdict": "ok",
+   "tested": 16,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-reverse_blocks-atbash-az-submid-free",
+   "spec_hash": "b811f2186bdc9fce",
+   "admissibility_verdict": "ok",
+   "tested": 16,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-reverse_blocks-caesar-az-subouter-free",
+   "spec_hash": "6a27497f5fe55f1a",
+   "admissibility_verdict": "ok",
+   "tested": 400,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-reverse_blocks-caesar-az-submid-free",
+   "spec_hash": "43aa747683f94551",
+   "admissibility_verdict": "ok",
+   "tested": 400,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-route_boustrophedon-vigenere-az-subouter-free",
+   "spec_hash": "900db5f580093238",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-route_boustrophedon-vigenere-az-submid-free",
+   "spec_hash": "0f680a988858e806",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-route_boustrophedon-vigenere-ka-subouter-free",
+   "spec_hash": "bcd674db40688e11",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-route_boustrophedon-vigenere-ka-submid-free",
+   "spec_hash": "bc994069d26631ac",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-route_boustrophedon-beaufort-az-subouter-free",
+   "spec_hash": "1d73931e5b8f87f8",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-route_boustrophedon-beaufort-az-submid-free",
+   "spec_hash": "c465bc871fa97e2b",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-route_boustrophedon-beaufort-ka-subouter-free",
+   "spec_hash": "a66e01d00093239b",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-route_boustrophedon-beaufort-ka-submid-free",
+   "spec_hash": "42cafdf3364e91b6",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-route_boustrophedon-variant_beaufort-az-subouter-free",
+   "spec_hash": "4cec16f6efda0707",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-route_boustrophedon-variant_beaufort-az-submid-free",
+   "spec_hash": "16337ec6163106d0",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-route_boustrophedon-variant_beaufort-ka-subouter-free",
+   "spec_hash": "f06b31ba7c6a43c3",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-route_boustrophedon-variant_beaufort-ka-submid-free",
+   "spec_hash": "1bc74ba81a3cd159",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-route_boustrophedon-atbash-az-subouter-free",
+   "spec_hash": "659a47ab8f07a5e6",
+   "admissibility_verdict": "ok",
+   "tested": 24,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-route_boustrophedon-atbash-az-submid-free",
+   "spec_hash": "35c9f870a813db99",
+   "admissibility_verdict": "ok",
+   "tested": 24,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-route_boustrophedon-caesar-az-subouter-free",
+   "spec_hash": "43b1a9e286ade630",
+   "admissibility_verdict": "ok",
+   "tested": 600,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-route_boustrophedon-caesar-az-submid-free",
+   "spec_hash": "cb082e3f751c514a",
+   "admissibility_verdict": "ok",
+   "tested": 600,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-route_diagonal-vigenere-az-subouter-free",
+   "spec_hash": "fbe7a05d76ddf615",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-route_diagonal-vigenere-az-submid-free",
+   "spec_hash": "7a66f7487ec9cb04",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-route_diagonal-vigenere-ka-subouter-free",
+   "spec_hash": "6b8956ddd7deef8d",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-route_diagonal-vigenere-ka-submid-free",
+   "spec_hash": "38d521bce20333b4",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-route_diagonal-beaufort-az-subouter-free",
+   "spec_hash": "9828d5d9dcd8874e",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-route_diagonal-beaufort-az-submid-free",
+   "spec_hash": "76d96234253479c0",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-route_diagonal-beaufort-ka-subouter-free",
+   "spec_hash": "3c9a9c98f51cab6d",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-route_diagonal-beaufort-ka-submid-free",
+   "spec_hash": "2f9463825cf033f0",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-route_diagonal-variant_beaufort-az-subouter-free",
+   "spec_hash": "4bb38dc083af11a5",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-route_diagonal-variant_beaufort-az-submid-free",
+   "spec_hash": "620e714705f5a261",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-route_diagonal-variant_beaufort-ka-subouter-free",
+   "spec_hash": "3a6959b036a5678e",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-route_diagonal-variant_beaufort-ka-submid-free",
+   "spec_hash": "663f74742e4a8af9",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-route_diagonal-atbash-az-subouter-free",
+   "spec_hash": "c384d9863897b06b",
+   "admissibility_verdict": "ok",
+   "tested": 24,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-route_diagonal-atbash-az-submid-free",
+   "spec_hash": "4aee02e02ec3f06c",
+   "admissibility_verdict": "ok",
+   "tested": 24,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-route_diagonal-caesar-az-subouter-free",
+   "spec_hash": "8e0fd220d3fcabe6",
+   "admissibility_verdict": "ok",
+   "tested": 600,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-route_diagonal-caesar-az-submid-free",
+   "spec_hash": "b196469c2d35c329",
+   "admissibility_verdict": "ok",
+   "tested": 600,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-skip_route-vigenere-az-subouter-free",
+   "spec_hash": "61108fe38f099058",
+   "admissibility_verdict": "ok",
+   "tested": 1680,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-skip_route-vigenere-az-submid-free",
+   "spec_hash": "edebb664c8aa1647",
+   "admissibility_verdict": "ok",
+   "tested": 1680,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-skip_route-vigenere-ka-subouter-free",
+   "spec_hash": "9849b76879d00b03",
+   "admissibility_verdict": "ok",
+   "tested": 1680,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-skip_route-vigenere-ka-submid-free",
+   "spec_hash": "68e3894a519c3dd6",
+   "admissibility_verdict": "ok",
+   "tested": 1680,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-skip_route-beaufort-az-subouter-free",
+   "spec_hash": "5b9e7ebb4ee2a4ed",
+   "admissibility_verdict": "ok",
+   "tested": 1680,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-skip_route-beaufort-az-submid-free",
+   "spec_hash": "cfb48052f72bade0",
+   "admissibility_verdict": "ok",
+   "tested": 1680,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-skip_route-beaufort-ka-subouter-free",
+   "spec_hash": "e72bd37777dd440a",
+   "admissibility_verdict": "ok",
+   "tested": 1680,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-skip_route-beaufort-ka-submid-free",
+   "spec_hash": "40e4a64c256a7849",
+   "admissibility_verdict": "ok",
+   "tested": 1680,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-skip_route-variant_beaufort-az-subouter-free",
+   "spec_hash": "686580714373051b",
+   "admissibility_verdict": "ok",
+   "tested": 1680,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-skip_route-variant_beaufort-az-submid-free",
+   "spec_hash": "1fd872781ce850f2",
+   "admissibility_verdict": "ok",
+   "tested": 1680,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-skip_route-variant_beaufort-ka-subouter-free",
+   "spec_hash": "bb62145dd68aa1f3",
+   "admissibility_verdict": "ok",
+   "tested": 1680,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-skip_route-variant_beaufort-ka-submid-free",
+   "spec_hash": "6a5f1798be52068c",
+   "admissibility_verdict": "ok",
+   "tested": 1680,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-skip_route-atbash-az-subouter-free",
+   "spec_hash": "f59bd72824ab9294",
+   "admissibility_verdict": "ok",
+   "tested": 140,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-rail_fence-skip_route-atbash-az-submid-free",
+   "spec_hash": "678eaade7a84867a",
+   "admissibility_verdict": "ok",
+   "tested": 140,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-columnar-vigenere-az-subouter-free",
+   "spec_hash": "1a2eb4190cce7eda",
+   "admissibility_verdict": "ok",
+   "tested": 576,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-columnar-vigenere-az-submid-free",
+   "spec_hash": "456ab60dd6bc63cf",
+   "admissibility_verdict": "ok",
+   "tested": 576,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-columnar-vigenere-ka-subouter-free",
+   "spec_hash": "f7f4363ac815c6de",
+   "admissibility_verdict": "ok",
+   "tested": 576,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-columnar-vigenere-ka-submid-free",
+   "spec_hash": "d95eed22d0456631",
+   "admissibility_verdict": "ok",
+   "tested": 576,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-columnar-beaufort-az-subouter-free",
+   "spec_hash": "b59cbc616d3557fe",
+   "admissibility_verdict": "ok",
+   "tested": 576,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-columnar-beaufort-az-submid-free",
+   "spec_hash": "4b4adf2f2c3e8984",
+   "admissibility_verdict": "ok",
+   "tested": 576,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-columnar-beaufort-ka-subouter-free",
+   "spec_hash": "f2e0ebe9db730e3d",
+   "admissibility_verdict": "ok",
+   "tested": 576,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-columnar-beaufort-ka-submid-free",
+   "spec_hash": "d330d676a99d960d",
+   "admissibility_verdict": "ok",
+   "tested": 576,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-columnar-variant_beaufort-az-subouter-free",
+   "spec_hash": "da451729f56b8c0d",
+   "admissibility_verdict": "ok",
+   "tested": 576,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-columnar-variant_beaufort-az-submid-free",
+   "spec_hash": "693b932157c4e2ee",
+   "admissibility_verdict": "ok",
+   "tested": 576,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-columnar-variant_beaufort-ka-subouter-free",
+   "spec_hash": "e7a3d540b2d66a88",
+   "admissibility_verdict": "ok",
+   "tested": 576,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-columnar-variant_beaufort-ka-submid-free",
+   "spec_hash": "0de053c62616205b",
+   "admissibility_verdict": "ok",
+   "tested": 576,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-columnar-atbash-az-subouter-free",
+   "spec_hash": "ba268a87c8ce0a80",
+   "admissibility_verdict": "ok",
+   "tested": 48,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-columnar-atbash-az-submid-free",
+   "spec_hash": "f2d4ca5b649c25ff",
+   "admissibility_verdict": "ok",
+   "tested": 48,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-columnar-caesar-az-subouter-free",
+   "spec_hash": "f2c1fcb2987f1752",
+   "admissibility_verdict": "ok",
+   "tested": 1200,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-columnar-caesar-az-submid-free",
+   "spec_hash": "04e3260a30557630",
+   "admissibility_verdict": "ok",
+   "tested": 1200,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-rail_fence-vigenere-az-subouter-free",
+   "spec_hash": "7df0a3f2b4e1c79e",
+   "admissibility_verdict": "ok",
+   "tested": 192,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-rail_fence-vigenere-az-submid-free",
+   "spec_hash": "e85efd66b2d09067",
+   "admissibility_verdict": "ok",
+   "tested": 192,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-rail_fence-vigenere-ka-subouter-free",
+   "spec_hash": "84af44f9d32ffeff",
+   "admissibility_verdict": "ok",
+   "tested": 192,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-rail_fence-vigenere-ka-submid-free",
+   "spec_hash": "56cc1e85f2fa8c01",
+   "admissibility_verdict": "ok",
+   "tested": 192,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-rail_fence-beaufort-az-subouter-free",
+   "spec_hash": "c7528ff67019e425",
+   "admissibility_verdict": "ok",
+   "tested": 192,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-rail_fence-beaufort-az-submid-free",
+   "spec_hash": "692fee26bc692bbb",
+   "admissibility_verdict": "ok",
+   "tested": 192,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-rail_fence-beaufort-ka-subouter-free",
+   "spec_hash": "ca8dcd9b1184080b",
+   "admissibility_verdict": "ok",
+   "tested": 192,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-rail_fence-beaufort-ka-submid-free",
+   "spec_hash": "fa0e15909301d6ff",
+   "admissibility_verdict": "ok",
+   "tested": 192,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-rail_fence-variant_beaufort-az-subouter-free",
+   "spec_hash": "c10210b801f1bf47",
+   "admissibility_verdict": "ok",
+   "tested": 192,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-rail_fence-variant_beaufort-az-submid-free",
+   "spec_hash": "a72e6f7070aeb91d",
+   "admissibility_verdict": "ok",
+   "tested": 192,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-rail_fence-variant_beaufort-ka-subouter-free",
+   "spec_hash": "71260f8e2f744fa0",
+   "admissibility_verdict": "ok",
+   "tested": 192,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-rail_fence-variant_beaufort-ka-submid-free",
+   "spec_hash": "216721d75103ee19",
+   "admissibility_verdict": "ok",
+   "tested": 192,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-rail_fence-atbash-az-subouter-free",
+   "spec_hash": "7785b8245cfbf605",
+   "admissibility_verdict": "ok",
+   "tested": 16,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-rail_fence-atbash-az-submid-free",
+   "spec_hash": "0960aa7b6252a01c",
+   "admissibility_verdict": "ok",
+   "tested": 16,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-rail_fence-caesar-az-subouter-free",
+   "spec_hash": "4468ed58a49041b4",
+   "admissibility_verdict": "ok",
+   "tested": 400,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-rail_fence-caesar-az-submid-free",
+   "spec_hash": "baa6985378108c85",
+   "admissibility_verdict": "ok",
+   "tested": 400,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-route_boustrophedon-vigenere-az-subouter-free",
+   "spec_hash": "c8a71a5c5c1720c6",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-route_boustrophedon-vigenere-az-submid-free",
+   "spec_hash": "2e3dbda908103b13",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-route_boustrophedon-vigenere-ka-subouter-free",
+   "spec_hash": "c176eab785ecdab6",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-route_boustrophedon-vigenere-ka-submid-free",
+   "spec_hash": "01fa0b2af65c2549",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-route_boustrophedon-beaufort-az-subouter-free",
+   "spec_hash": "c6027a2fda387fa1",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-route_boustrophedon-beaufort-az-submid-free",
+   "spec_hash": "ee4a3dec70bbf7ff",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-route_boustrophedon-beaufort-ka-subouter-free",
+   "spec_hash": "6319406bee3f733e",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-route_boustrophedon-beaufort-ka-submid-free",
+   "spec_hash": "c27134fc23fff4bb",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-route_boustrophedon-variant_beaufort-az-subouter-free",
+   "spec_hash": "cd34f334864dd050",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-route_boustrophedon-variant_beaufort-az-submid-free",
+   "spec_hash": "af5da00a44e10f61",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-route_boustrophedon-variant_beaufort-ka-subouter-free",
+   "spec_hash": "dec57e8e70055ece",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-route_boustrophedon-variant_beaufort-ka-submid-free",
+   "spec_hash": "c2d4e476cd6e5a00",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-route_boustrophedon-atbash-az-subouter-free",
+   "spec_hash": "fcf393e4f8eadbd7",
+   "admissibility_verdict": "ok",
+   "tested": 24,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-route_boustrophedon-atbash-az-submid-free",
+   "spec_hash": "f999fba095a1fd33",
+   "admissibility_verdict": "ok",
+   "tested": 24,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-route_boustrophedon-caesar-az-subouter-free",
+   "spec_hash": "889187873045d3f0",
+   "admissibility_verdict": "ok",
+   "tested": 600,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-route_boustrophedon-caesar-az-submid-free",
+   "spec_hash": "3bc020ef4ae27dc8",
+   "admissibility_verdict": "ok",
+   "tested": 600,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-route_diagonal-vigenere-az-subouter-free",
+   "spec_hash": "4823dbc56ae4d381",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-route_diagonal-vigenere-az-submid-free",
+   "spec_hash": "95eb50ee6ccd7460",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-route_diagonal-vigenere-ka-subouter-free",
+   "spec_hash": "bd8e35e9e0ebae0b",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-route_diagonal-vigenere-ka-submid-free",
+   "spec_hash": "e8fd8f57824362e2",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-route_diagonal-beaufort-az-subouter-free",
+   "spec_hash": "8e98971bdece893c",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-route_diagonal-beaufort-az-submid-free",
+   "spec_hash": "2c1d5ddb66a50a67",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-route_diagonal-beaufort-ka-subouter-free",
+   "spec_hash": "ee15dd7b9acaa54b",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-route_diagonal-beaufort-ka-submid-free",
+   "spec_hash": "faabc0e20da74962",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-route_diagonal-variant_beaufort-az-subouter-free",
+   "spec_hash": "8937b8879511c9a1",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-route_diagonal-variant_beaufort-az-submid-free",
+   "spec_hash": "7de60bbe697c9925",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-route_diagonal-variant_beaufort-ka-subouter-free",
+   "spec_hash": "0ef221fd7774673f",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-route_diagonal-variant_beaufort-ka-submid-free",
+   "spec_hash": "954ba06fdadce009",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-route_diagonal-atbash-az-subouter-free",
+   "spec_hash": "55020a2069ba969e",
+   "admissibility_verdict": "ok",
+   "tested": 24,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-route_diagonal-atbash-az-submid-free",
+   "spec_hash": "9cfe0f0d6cd4c193",
+   "admissibility_verdict": "ok",
+   "tested": 24,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-route_diagonal-caesar-az-subouter-free",
+   "spec_hash": "2513ef1b8f9815cc",
+   "admissibility_verdict": "ok",
+   "tested": 600,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-route_diagonal-caesar-az-submid-free",
+   "spec_hash": "756e90e093461203",
+   "admissibility_verdict": "ok",
+   "tested": 600,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-skip_route-vigenere-az-subouter-free",
+   "spec_hash": "fd591b100d0cb6a6",
+   "admissibility_verdict": "ok",
+   "tested": 1680,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-skip_route-vigenere-az-submid-free",
+   "spec_hash": "8d087ae4985e6714",
+   "admissibility_verdict": "ok",
+   "tested": 1680,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-skip_route-vigenere-ka-subouter-free",
+   "spec_hash": "d473aa8d8dd8c9a8",
+   "admissibility_verdict": "ok",
+   "tested": 1680,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-skip_route-vigenere-ka-submid-free",
+   "spec_hash": "1c8258c51ae8fe3d",
+   "admissibility_verdict": "ok",
+   "tested": 1680,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-skip_route-beaufort-az-subouter-free",
+   "spec_hash": "3ed439f2745ac4da",
+   "admissibility_verdict": "ok",
+   "tested": 1680,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-skip_route-beaufort-az-submid-free",
+   "spec_hash": "937b62d9a7f2f575",
+   "admissibility_verdict": "ok",
+   "tested": 1680,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-skip_route-beaufort-ka-subouter-free",
+   "spec_hash": "e2b769dc3d4a5cd0",
+   "admissibility_verdict": "ok",
+   "tested": 1680,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-skip_route-beaufort-ka-submid-free",
+   "spec_hash": "6487c44ca6ec8154",
+   "admissibility_verdict": "ok",
+   "tested": 1680,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-skip_route-variant_beaufort-az-subouter-free",
+   "spec_hash": "fc0f6ed09151ed28",
+   "admissibility_verdict": "ok",
+   "tested": 1680,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-skip_route-variant_beaufort-az-submid-free",
+   "spec_hash": "19ced3b10b629a94",
+   "admissibility_verdict": "ok",
+   "tested": 1680,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-skip_route-variant_beaufort-ka-subouter-free",
+   "spec_hash": "be6270060bdee5fb",
+   "admissibility_verdict": "ok",
+   "tested": 1680,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-skip_route-variant_beaufort-ka-submid-free",
+   "spec_hash": "e5fc68e25105c8c7",
+   "admissibility_verdict": "ok",
+   "tested": 1680,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-skip_route-atbash-az-subouter-free",
+   "spec_hash": "d87e9733e3e340c4",
+   "admissibility_verdict": "ok",
+   "tested": 140,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-reverse_blocks-skip_route-atbash-az-submid-free",
+   "spec_hash": "33322cf3d636672f",
+   "admissibility_verdict": "ok",
+   "tested": 140,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_boustrophedon-columnar-vigenere-az-subouter-free",
+   "spec_hash": "a068e20b76743458",
+   "admissibility_verdict": "ok",
+   "tested": 864,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_boustrophedon-columnar-vigenere-az-submid-free",
+   "spec_hash": "f0c31387ea3aee2d",
+   "admissibility_verdict": "ok",
+   "tested": 864,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_boustrophedon-columnar-vigenere-ka-subouter-free",
+   "spec_hash": "1f6625eb68e8f559",
+   "admissibility_verdict": "ok",
+   "tested": 864,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_boustrophedon-columnar-vigenere-ka-submid-free",
+   "spec_hash": "e02cbcdf6530e198",
+   "admissibility_verdict": "ok",
+   "tested": 864,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_boustrophedon-columnar-beaufort-az-subouter-free",
+   "spec_hash": "940ca98930dc2ba3",
+   "admissibility_verdict": "ok",
+   "tested": 864,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_boustrophedon-columnar-beaufort-az-submid-free",
+   "spec_hash": "81854ea0cc0f2acb",
+   "admissibility_verdict": "ok",
+   "tested": 864,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_boustrophedon-columnar-beaufort-ka-subouter-free",
+   "spec_hash": "31d975fbbd4648b2",
+   "admissibility_verdict": "ok",
+   "tested": 864,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_boustrophedon-columnar-beaufort-ka-submid-free",
+   "spec_hash": "12af12559e93c812",
+   "admissibility_verdict": "ok",
+   "tested": 864,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_boustrophedon-columnar-variant_beaufort-az-subouter-free",
+   "spec_hash": "94126033da1d85f3",
+   "admissibility_verdict": "ok",
+   "tested": 864,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_boustrophedon-columnar-variant_beaufort-az-submid-free",
+   "spec_hash": "10105d59580b450a",
+   "admissibility_verdict": "ok",
+   "tested": 864,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_boustrophedon-columnar-variant_beaufort-ka-subouter-free",
+   "spec_hash": "c47323e93b59868f",
+   "admissibility_verdict": "ok",
+   "tested": 864,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_boustrophedon-columnar-variant_beaufort-ka-submid-free",
+   "spec_hash": "22a1008382fed0d2",
+   "admissibility_verdict": "ok",
+   "tested": 864,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_boustrophedon-columnar-atbash-az-subouter-free",
+   "spec_hash": "9e7b13b4d49c150b",
+   "admissibility_verdict": "ok",
+   "tested": 72,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_boustrophedon-columnar-atbash-az-submid-free",
+   "spec_hash": "9cd40ac92cf63c0c",
+   "admissibility_verdict": "ok",
+   "tested": 72,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_boustrophedon-columnar-caesar-az-subouter-free",
+   "spec_hash": "f408e5d09546f010",
+   "admissibility_verdict": "ok",
+   "tested": 1800,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_boustrophedon-columnar-caesar-az-submid-free",
+   "spec_hash": "62c3b2209f9d314a",
+   "admissibility_verdict": "ok",
+   "tested": 1800,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_boustrophedon-rail_fence-vigenere-az-subouter-free",
+   "spec_hash": "a8365650471c50ab",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_boustrophedon-rail_fence-vigenere-az-submid-free",
+   "spec_hash": "dcecccf7107fd24f",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_boustrophedon-rail_fence-vigenere-ka-subouter-free",
+   "spec_hash": "80e3cbf333eec591",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_boustrophedon-rail_fence-vigenere-ka-submid-free",
+   "spec_hash": "879909b4213ae215",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_boustrophedon-rail_fence-beaufort-az-subouter-free",
+   "spec_hash": "2362f767daa0ba62",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_boustrophedon-rail_fence-beaufort-az-submid-free",
+   "spec_hash": "09e619ce3ff7fac6",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_boustrophedon-rail_fence-beaufort-ka-subouter-free",
+   "spec_hash": "ba762f884d79f73b",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_boustrophedon-rail_fence-beaufort-ka-submid-free",
+   "spec_hash": "e4aa8b5c62d87b55",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_boustrophedon-rail_fence-variant_beaufort-az-subouter-free",
+   "spec_hash": "2d4eda11d279eba7",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_boustrophedon-rail_fence-variant_beaufort-az-submid-free",
+   "spec_hash": "d7f3573479abc955",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_boustrophedon-rail_fence-variant_beaufort-ka-subouter-free",
+   "spec_hash": "89696000636c801b",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_boustrophedon-rail_fence-variant_beaufort-ka-submid-free",
+   "spec_hash": "f98999ad8ec52b18",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_boustrophedon-rail_fence-atbash-az-subouter-free",
+   "spec_hash": "a2d3461233b48a2f",
+   "admissibility_verdict": "ok",
+   "tested": 24,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_boustrophedon-rail_fence-atbash-az-submid-free",
+   "spec_hash": "880d401ba6fc2680",
+   "admissibility_verdict": "ok",
+   "tested": 24,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_boustrophedon-rail_fence-caesar-az-subouter-free",
+   "spec_hash": "7fa99a31f5957fb9",
+   "admissibility_verdict": "ok",
+   "tested": 600,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_boustrophedon-rail_fence-caesar-az-submid-free",
+   "spec_hash": "d45e5f91e0a2c3ec",
+   "admissibility_verdict": "ok",
+   "tested": 600,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_boustrophedon-reverse_blocks-vigenere-az-subouter-free",
+   "spec_hash": "9497380ee7944d09",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_boustrophedon-reverse_blocks-vigenere-az-submid-free",
+   "spec_hash": "a84b18c5b1af03d0",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_boustrophedon-reverse_blocks-vigenere-ka-subouter-free",
+   "spec_hash": "9052f8f8ced11604",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_boustrophedon-reverse_blocks-vigenere-ka-submid-free",
+   "spec_hash": "3303da91f6a0f905",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_boustrophedon-reverse_blocks-beaufort-az-subouter-free",
+   "spec_hash": "ee65175d3629dc01",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_boustrophedon-reverse_blocks-beaufort-az-submid-free",
+   "spec_hash": "74a9af52a1cac18a",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_boustrophedon-reverse_blocks-beaufort-ka-subouter-free",
+   "spec_hash": "094910a995a6363f",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_boustrophedon-reverse_blocks-beaufort-ka-submid-free",
+   "spec_hash": "2c30163d2754bfe3",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_boustrophedon-reverse_blocks-variant_beaufort-az-subouter-free",
+   "spec_hash": "7918ab7dc7e17e58",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_boustrophedon-reverse_blocks-variant_beaufort-az-submid-free",
+   "spec_hash": "3ec9f274e531966d",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_boustrophedon-reverse_blocks-variant_beaufort-ka-subouter-free",
+   "spec_hash": "0eed3539a7c0a084",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_boustrophedon-reverse_blocks-variant_beaufort-ka-submid-free",
+   "spec_hash": "63477e44d0ae3b56",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_boustrophedon-reverse_blocks-atbash-az-subouter-free",
+   "spec_hash": "3f8d41c13e3d54cb",
+   "admissibility_verdict": "ok",
+   "tested": 24,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_boustrophedon-reverse_blocks-atbash-az-submid-free",
+   "spec_hash": "1f5aaee2e9e0754d",
+   "admissibility_verdict": "ok",
+   "tested": 24,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_boustrophedon-reverse_blocks-caesar-az-subouter-free",
+   "spec_hash": "3e3087ec905a1c5a",
+   "admissibility_verdict": "ok",
+   "tested": 600,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_boustrophedon-reverse_blocks-caesar-az-submid-free",
+   "spec_hash": "a9b28cdfbbed925a",
+   "admissibility_verdict": "ok",
+   "tested": 600,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_boustrophedon-route_diagonal-vigenere-az-subouter-free",
+   "spec_hash": "0ee055657093a8f8",
+   "admissibility_verdict": "ok",
+   "tested": 432,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_boustrophedon-route_diagonal-vigenere-az-submid-free",
+   "spec_hash": "f1bafd6b2a3017a7",
+   "admissibility_verdict": "ok",
+   "tested": 432,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_boustrophedon-route_diagonal-vigenere-ka-subouter-free",
+   "spec_hash": "1916cce830ad9c5e",
+   "admissibility_verdict": "ok",
+   "tested": 432,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_boustrophedon-route_diagonal-vigenere-ka-submid-free",
+   "spec_hash": "2f11fb3a15797997",
+   "admissibility_verdict": "ok",
+   "tested": 432,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_boustrophedon-route_diagonal-beaufort-az-subouter-free",
+   "spec_hash": "36be1262f47b16cd",
+   "admissibility_verdict": "ok",
+   "tested": 432,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_boustrophedon-route_diagonal-beaufort-az-submid-free",
+   "spec_hash": "5cd3d6dc1c3e8ba7",
+   "admissibility_verdict": "ok",
+   "tested": 432,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_boustrophedon-route_diagonal-beaufort-ka-subouter-free",
+   "spec_hash": "11a4700c2cd68796",
+   "admissibility_verdict": "ok",
+   "tested": 432,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_boustrophedon-route_diagonal-beaufort-ka-submid-free",
+   "spec_hash": "d61decc60cc038ad",
+   "admissibility_verdict": "ok",
+   "tested": 432,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_boustrophedon-route_diagonal-variant_beaufort-az-subouter-free",
+   "spec_hash": "f09166847a629f5a",
+   "admissibility_verdict": "ok",
+   "tested": 432,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_boustrophedon-route_diagonal-variant_beaufort-az-submid-free",
+   "spec_hash": "8f6ec301a6785b24",
+   "admissibility_verdict": "ok",
+   "tested": 432,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_boustrophedon-route_diagonal-variant_beaufort-ka-subouter-free",
+   "spec_hash": "7b8ffa6d25fc868e",
+   "admissibility_verdict": "ok",
+   "tested": 432,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_boustrophedon-route_diagonal-variant_beaufort-ka-submid-free",
+   "spec_hash": "6aa8b800170ad4fd",
+   "admissibility_verdict": "ok",
+   "tested": 432,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_boustrophedon-route_diagonal-atbash-az-subouter-free",
+   "spec_hash": "c3e924c60beecd86",
+   "admissibility_verdict": "ok",
+   "tested": 36,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_boustrophedon-route_diagonal-atbash-az-submid-free",
+   "spec_hash": "8d5ddf49ab9bd713",
+   "admissibility_verdict": "ok",
+   "tested": 36,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_boustrophedon-route_diagonal-caesar-az-subouter-free",
+   "spec_hash": "b70d195d0fe08db4",
+   "admissibility_verdict": "ok",
+   "tested": 900,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_boustrophedon-route_diagonal-caesar-az-submid-free",
+   "spec_hash": "5a8004880a3e37d3",
+   "admissibility_verdict": "ok",
+   "tested": 900,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_boustrophedon-skip_route-atbash-az-subouter-free",
+   "spec_hash": "9770e2c67e35181c",
+   "admissibility_verdict": "ok",
+   "tested": 210,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_boustrophedon-skip_route-atbash-az-submid-free",
+   "spec_hash": "80fd3f739135bd26",
+   "admissibility_verdict": "ok",
+   "tested": 210,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_diagonal-columnar-vigenere-az-subouter-free",
+   "spec_hash": "87a2f5b7620efde7",
+   "admissibility_verdict": "ok",
+   "tested": 864,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_diagonal-columnar-vigenere-az-submid-free",
+   "spec_hash": "4288676ea1e17326",
+   "admissibility_verdict": "ok",
+   "tested": 864,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_diagonal-columnar-vigenere-ka-subouter-free",
+   "spec_hash": "654550d39c84ef52",
+   "admissibility_verdict": "ok",
+   "tested": 864,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_diagonal-columnar-vigenere-ka-submid-free",
+   "spec_hash": "0a9d6487b7bd60ca",
+   "admissibility_verdict": "ok",
+   "tested": 864,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_diagonal-columnar-beaufort-az-subouter-free",
+   "spec_hash": "4bbf9e9c79bfa478",
+   "admissibility_verdict": "ok",
+   "tested": 864,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_diagonal-columnar-beaufort-az-submid-free",
+   "spec_hash": "4aa13586ca480cd0",
+   "admissibility_verdict": "ok",
+   "tested": 864,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_diagonal-columnar-beaufort-ka-subouter-free",
+   "spec_hash": "c5709482e601d47b",
+   "admissibility_verdict": "ok",
+   "tested": 864,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_diagonal-columnar-beaufort-ka-submid-free",
+   "spec_hash": "253696e0055c560d",
+   "admissibility_verdict": "ok",
+   "tested": 864,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_diagonal-columnar-variant_beaufort-az-subouter-free",
+   "spec_hash": "002e2cdb1955c98d",
+   "admissibility_verdict": "ok",
+   "tested": 864,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_diagonal-columnar-variant_beaufort-az-submid-free",
+   "spec_hash": "5c10a2cf192b074f",
+   "admissibility_verdict": "ok",
+   "tested": 864,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_diagonal-columnar-variant_beaufort-ka-subouter-free",
+   "spec_hash": "229c71068e1cc23c",
+   "admissibility_verdict": "ok",
+   "tested": 864,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_diagonal-columnar-variant_beaufort-ka-submid-free",
+   "spec_hash": "c872d187a64989a3",
+   "admissibility_verdict": "ok",
+   "tested": 864,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_diagonal-columnar-atbash-az-subouter-free",
+   "spec_hash": "d71f001c42fc1af2",
+   "admissibility_verdict": "ok",
+   "tested": 72,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_diagonal-columnar-atbash-az-submid-free",
+   "spec_hash": "e2d579745b2000a5",
+   "admissibility_verdict": "ok",
+   "tested": 72,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_diagonal-columnar-caesar-az-subouter-free",
+   "spec_hash": "7d7b671d10d57b66",
+   "admissibility_verdict": "ok",
+   "tested": 1800,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_diagonal-columnar-caesar-az-submid-free",
+   "spec_hash": "f9e8b9b6c9b7552f",
+   "admissibility_verdict": "ok",
+   "tested": 1800,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_diagonal-rail_fence-vigenere-az-subouter-free",
+   "spec_hash": "15ba10469d8877ff",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_diagonal-rail_fence-vigenere-az-submid-free",
+   "spec_hash": "510b6caf21a0b547",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_diagonal-rail_fence-vigenere-ka-subouter-free",
+   "spec_hash": "247192b4ce65f1ff",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_diagonal-rail_fence-vigenere-ka-submid-free",
+   "spec_hash": "e1ee96a52bc230a8",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_diagonal-rail_fence-beaufort-az-subouter-free",
+   "spec_hash": "631d5233612163c0",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_diagonal-rail_fence-beaufort-az-submid-free",
+   "spec_hash": "c2766a307983dfd2",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_diagonal-rail_fence-beaufort-ka-subouter-free",
+   "spec_hash": "03ae9c11d14928bc",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_diagonal-rail_fence-beaufort-ka-submid-free",
+   "spec_hash": "3d37e10d082e2dc9",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_diagonal-rail_fence-variant_beaufort-az-subouter-free",
+   "spec_hash": "8f54bccd2d46617e",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_diagonal-rail_fence-variant_beaufort-az-submid-free",
+   "spec_hash": "4b733ebc29645896",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_diagonal-rail_fence-variant_beaufort-ka-subouter-free",
+   "spec_hash": "ce1a421ae97b5da5",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_diagonal-rail_fence-variant_beaufort-ka-submid-free",
+   "spec_hash": "d0e37667701f31c3",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_diagonal-rail_fence-atbash-az-subouter-free",
+   "spec_hash": "3effa3c2f5fa0dc3",
+   "admissibility_verdict": "ok",
+   "tested": 24,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_diagonal-rail_fence-atbash-az-submid-free",
+   "spec_hash": "7b16d89a7311a4a0",
+   "admissibility_verdict": "ok",
+   "tested": 24,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_diagonal-rail_fence-caesar-az-subouter-free",
+   "spec_hash": "8b49d1402e26f14b",
+   "admissibility_verdict": "ok",
+   "tested": 600,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_diagonal-rail_fence-caesar-az-submid-free",
+   "spec_hash": "8296ec619591bc76",
+   "admissibility_verdict": "ok",
+   "tested": 600,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_diagonal-reverse_blocks-vigenere-az-subouter-free",
+   "spec_hash": "868e43fdfd2843f3",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_diagonal-reverse_blocks-vigenere-az-submid-free",
+   "spec_hash": "6a5d8424e57da649",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_diagonal-reverse_blocks-vigenere-ka-subouter-free",
+   "spec_hash": "c053b477e7059c35",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_diagonal-reverse_blocks-vigenere-ka-submid-free",
+   "spec_hash": "23abd8b89a1fca2d",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_diagonal-reverse_blocks-beaufort-az-subouter-free",
+   "spec_hash": "a6bd219b77244884",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_diagonal-reverse_blocks-beaufort-az-submid-free",
+   "spec_hash": "8487636dcb7d2009",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_diagonal-reverse_blocks-beaufort-ka-subouter-free",
+   "spec_hash": "60e1f8568f3df8c7",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_diagonal-reverse_blocks-beaufort-ka-submid-free",
+   "spec_hash": "f4df0bb8d5dfacf0",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_diagonal-reverse_blocks-variant_beaufort-az-subouter-free",
+   "spec_hash": "495410ea15907713",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_diagonal-reverse_blocks-variant_beaufort-az-submid-free",
+   "spec_hash": "4b3ed8a4e632c64a",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_diagonal-reverse_blocks-variant_beaufort-ka-subouter-free",
+   "spec_hash": "671e4ea3b0210c75",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_diagonal-reverse_blocks-variant_beaufort-ka-submid-free",
+   "spec_hash": "38bac02b2d140e77",
+   "admissibility_verdict": "ok",
+   "tested": 288,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_diagonal-reverse_blocks-atbash-az-subouter-free",
+   "spec_hash": "4f30e6aa5e8b369e",
+   "admissibility_verdict": "ok",
+   "tested": 24,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_diagonal-reverse_blocks-atbash-az-submid-free",
+   "spec_hash": "7102b0b900038c2a",
+   "admissibility_verdict": "ok",
+   "tested": 24,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_diagonal-reverse_blocks-caesar-az-subouter-free",
+   "spec_hash": "dfd7b1735f77035f",
+   "admissibility_verdict": "ok",
+   "tested": 600,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_diagonal-reverse_blocks-caesar-az-submid-free",
+   "spec_hash": "f8df62d850404c03",
+   "admissibility_verdict": "ok",
+   "tested": 600,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_diagonal-route_boustrophedon-vigenere-az-subouter-free",
+   "spec_hash": "1b5789aac907e369",
+   "admissibility_verdict": "ok",
+   "tested": 432,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_diagonal-route_boustrophedon-vigenere-az-submid-free",
+   "spec_hash": "558161a853205efa",
+   "admissibility_verdict": "ok",
+   "tested": 432,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_diagonal-route_boustrophedon-vigenere-ka-subouter-free",
+   "spec_hash": "fb8d1e1086d814e9",
+   "admissibility_verdict": "ok",
+   "tested": 432,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_diagonal-route_boustrophedon-vigenere-ka-submid-free",
+   "spec_hash": "b8d8effbdb20a4b8",
+   "admissibility_verdict": "ok",
+   "tested": 432,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_diagonal-route_boustrophedon-beaufort-az-subouter-free",
+   "spec_hash": "39c392451ccd7c6d",
+   "admissibility_verdict": "ok",
+   "tested": 432,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_diagonal-route_boustrophedon-beaufort-az-submid-free",
+   "spec_hash": "fa0d86b2111d2d21",
+   "admissibility_verdict": "ok",
+   "tested": 432,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_diagonal-route_boustrophedon-beaufort-ka-subouter-free",
+   "spec_hash": "62581482f01516fd",
+   "admissibility_verdict": "ok",
+   "tested": 432,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_diagonal-route_boustrophedon-beaufort-ka-submid-free",
+   "spec_hash": "983134006767d8ae",
+   "admissibility_verdict": "ok",
+   "tested": 432,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_diagonal-route_boustrophedon-variant_beaufort-az-subouter-free",
+   "spec_hash": "94fa120c6aadf0be",
+   "admissibility_verdict": "ok",
+   "tested": 432,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_diagonal-route_boustrophedon-variant_beaufort-az-submid-free",
+   "spec_hash": "35a63c9c3acc3ed0",
+   "admissibility_verdict": "ok",
+   "tested": 432,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_diagonal-route_boustrophedon-variant_beaufort-ka-subouter-free",
+   "spec_hash": "3696bde28ce8c13e",
+   "admissibility_verdict": "ok",
+   "tested": 432,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_diagonal-route_boustrophedon-variant_beaufort-ka-submid-free",
+   "spec_hash": "51428359b7205235",
+   "admissibility_verdict": "ok",
+   "tested": 432,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_diagonal-route_boustrophedon-atbash-az-subouter-free",
+   "spec_hash": "3c7404ab8bc79c0d",
+   "admissibility_verdict": "ok",
+   "tested": 36,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_diagonal-route_boustrophedon-atbash-az-submid-free",
+   "spec_hash": "f2d5903f2a5f3466",
+   "admissibility_verdict": "ok",
+   "tested": 36,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_diagonal-route_boustrophedon-caesar-az-subouter-free",
+   "spec_hash": "16798f554d122da3",
+   "admissibility_verdict": "ok",
+   "tested": 900,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_diagonal-route_boustrophedon-caesar-az-submid-free",
+   "spec_hash": "bdc6bdac4003e883",
+   "admissibility_verdict": "ok",
+   "tested": 900,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_diagonal-skip_route-atbash-az-subouter-free",
+   "spec_hash": "e3c6a27a5ba79cc8",
+   "admissibility_verdict": "ok",
+   "tested": 210,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-route_diagonal-skip_route-atbash-az-submid-free",
+   "spec_hash": "8f6db4631ff649f7",
+   "admissibility_verdict": "ok",
+   "tested": 210,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-skip_route-columnar-atbash-az-subouter-free",
+   "spec_hash": "2a987eca2d224dc9",
+   "admissibility_verdict": "ok",
+   "tested": 420,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-skip_route-columnar-atbash-az-submid-free",
+   "spec_hash": "55d7efce46aaf2b5",
+   "admissibility_verdict": "ok",
+   "tested": 420,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-skip_route-rail_fence-vigenere-az-subouter-free",
+   "spec_hash": "7cbda37c92a96f45",
+   "admissibility_verdict": "ok",
+   "tested": 1680,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-skip_route-rail_fence-vigenere-az-submid-free",
+   "spec_hash": "315cc2e60c84c0e7",
+   "admissibility_verdict": "ok",
+   "tested": 1680,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-skip_route-rail_fence-vigenere-ka-subouter-free",
+   "spec_hash": "2b6bff5ac6e3ede0",
+   "admissibility_verdict": "ok",
+   "tested": 1680,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-skip_route-rail_fence-vigenere-ka-submid-free",
+   "spec_hash": "299fc6071cb52120",
+   "admissibility_verdict": "ok",
+   "tested": 1680,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-skip_route-rail_fence-beaufort-az-subouter-free",
+   "spec_hash": "681c2c27a144e1cd",
+   "admissibility_verdict": "ok",
+   "tested": 1680,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-skip_route-rail_fence-beaufort-az-submid-free",
+   "spec_hash": "f3b8dcc4dde77540",
+   "admissibility_verdict": "ok",
+   "tested": 1680,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-skip_route-rail_fence-beaufort-ka-subouter-free",
+   "spec_hash": "e1eedcbcf360bff9",
+   "admissibility_verdict": "ok",
+   "tested": 1680,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-skip_route-rail_fence-beaufort-ka-submid-free",
+   "spec_hash": "f5ffe526b3d77918",
+   "admissibility_verdict": "ok",
+   "tested": 1680,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-skip_route-rail_fence-variant_beaufort-az-subouter-free",
+   "spec_hash": "dbac316b7a0c3e4c",
+   "admissibility_verdict": "ok",
+   "tested": 1680,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-skip_route-rail_fence-variant_beaufort-az-submid-free",
+   "spec_hash": "2d69cc501be8b230",
+   "admissibility_verdict": "ok",
+   "tested": 1680,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-skip_route-rail_fence-variant_beaufort-ka-subouter-free",
+   "spec_hash": "38ddc2804c61aea1",
+   "admissibility_verdict": "ok",
+   "tested": 1680,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-skip_route-rail_fence-variant_beaufort-ka-submid-free",
+   "spec_hash": "41adcc070a97742e",
+   "admissibility_verdict": "ok",
+   "tested": 1680,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-skip_route-rail_fence-atbash-az-subouter-free",
+   "spec_hash": "a013aff3609e569b",
+   "admissibility_verdict": "ok",
+   "tested": 140,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-skip_route-rail_fence-atbash-az-submid-free",
+   "spec_hash": "42768a4fe3e92bb2",
+   "admissibility_verdict": "ok",
+   "tested": 140,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-skip_route-reverse_blocks-vigenere-az-subouter-free",
+   "spec_hash": "e51e2685c4291ded",
+   "admissibility_verdict": "ok",
+   "tested": 1680,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-skip_route-reverse_blocks-vigenere-az-submid-free",
+   "spec_hash": "e12c6ff95b7b3bd3",
+   "admissibility_verdict": "ok",
+   "tested": 1680,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-skip_route-reverse_blocks-vigenere-ka-subouter-free",
+   "spec_hash": "8577595634f7d80b",
+   "admissibility_verdict": "ok",
+   "tested": 1680,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-skip_route-reverse_blocks-vigenere-ka-submid-free",
+   "spec_hash": "0daca5aa2cd3da8b",
+   "admissibility_verdict": "ok",
+   "tested": 1680,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-skip_route-reverse_blocks-beaufort-az-subouter-free",
+   "spec_hash": "120e446ac5ac44ad",
+   "admissibility_verdict": "ok",
+   "tested": 1680,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-skip_route-reverse_blocks-beaufort-az-submid-free",
+   "spec_hash": "3c513a905bf6ba66",
+   "admissibility_verdict": "ok",
+   "tested": 1680,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-skip_route-reverse_blocks-beaufort-ka-subouter-free",
+   "spec_hash": "2d55ced88fd29d77",
+   "admissibility_verdict": "ok",
+   "tested": 1680,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-skip_route-reverse_blocks-beaufort-ka-submid-free",
+   "spec_hash": "98c1e64b26958ad8",
+   "admissibility_verdict": "ok",
+   "tested": 1680,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-skip_route-reverse_blocks-variant_beaufort-az-subouter-free",
+   "spec_hash": "5b7e8046dd3b3bb6",
+   "admissibility_verdict": "ok",
+   "tested": 1680,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-skip_route-reverse_blocks-variant_beaufort-az-submid-free",
+   "spec_hash": "4b3af1e7a967ea26",
+   "admissibility_verdict": "ok",
+   "tested": 1680,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-skip_route-reverse_blocks-variant_beaufort-ka-subouter-free",
+   "spec_hash": "1a859beb357673c6",
+   "admissibility_verdict": "ok",
+   "tested": 1680,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-skip_route-reverse_blocks-variant_beaufort-ka-submid-free",
+   "spec_hash": "212a6b6f3f2268cc",
+   "admissibility_verdict": "ok",
+   "tested": 1680,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-skip_route-reverse_blocks-atbash-az-subouter-free",
+   "spec_hash": "94303f405f23be31",
+   "admissibility_verdict": "ok",
+   "tested": 140,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-skip_route-reverse_blocks-atbash-az-submid-free",
+   "spec_hash": "d49c71dc6d292ffd",
+   "admissibility_verdict": "ok",
+   "tested": 140,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-skip_route-route_boustrophedon-atbash-az-subouter-free",
+   "spec_hash": "db9727616d68474c",
+   "admissibility_verdict": "ok",
+   "tested": 210,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-skip_route-route_boustrophedon-atbash-az-submid-free",
+   "spec_hash": "b6c3472d9db0d0a1",
+   "admissibility_verdict": "ok",
+   "tested": 210,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-skip_route-route_diagonal-atbash-az-subouter-free",
+   "spec_hash": "14b7ae5e96f61c7b",
+   "admissibility_verdict": "ok",
+   "tested": 210,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  },
+  {
+   "hypothesis_id": "solver3-skip_route-route_diagonal-atbash-az-submid-free",
+   "spec_hash": "3429371bc66895c1",
+   "admissibility_verdict": "ok",
+   "tested": 210,
+   "best_crib": 0.0,
+   "scoring_mode": "free"
+  }
+ ],
+ "finished_utc": "2026-06-11T13:44:19Z",
+ "verdict": "CLEAN_NULL"
+}
