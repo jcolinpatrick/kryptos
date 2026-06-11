@@ -1,0 +1,22 @@
+{
+  "job_id": "ad-h2-adjacent-key",
+  "manifest_path": "jobs/pending/ad-h2-adjacent-key.json",
+  "configs_tested": 88,
+  "hits": 0,
+  "best_score": 3,
+  "best_config": {
+    "hypothesis": "H2",
+    "mode": "below",
+    "alphabet": "az",
+    "variant": "var_beaufort",
+    "pass": "pass2",
+    "crib_score": 3
+  },
+  "elapsed_seconds": 0.001249074935913086,
+  "completed_hypotheses": [
+    "H2"
+  ],
+  "pass1_range": "rows 9-12",
+  "pass2_range": "rows 35-38",
+  "shutdown_clean": true
+}

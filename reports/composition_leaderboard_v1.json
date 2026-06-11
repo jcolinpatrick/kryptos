@@ -1,0 +1,3130 @@
+[
+  {
+    "id": 1452,
+    "campaign_id": "01ce849ce149032d",
+    "branch_id": "56fd3e84f0e2a1bb",
+    "stack_hash": "56fd3e84f0e2a1bb",
+    "score": 5,
+    "bean_pass": 0,
+    "ic_value": 0.0350085910652921,
+    "plaintext": "UGLAYCLYINJTHSPWHXHPHPWTTFOTMPEUYTCQQDLBYDVMQLATBMKBRUXKXXQRZINJAGZJFCBBAXWFFFSCGAASFRCCWUURVZGWL",
+    "intermediate_text": "OXFRSTFPCEDKBJJNBOBGBGQKNWIKGGYLSKWHKUFSSUPDKCUKVDESLLRBROKITZHAUXTAZTVSUOQWZWMTARUJZIWTQLOIPQANF",
+    "score_breakdown_json": "{\"crib_score\": 5, \"crib_total\": 24, \"ene_score\": 4, \"bc_score\": 1, \"crib_classification\": \"noise\", \"ic_value\": 0.0350085910652921, \"ic_score_normalized\": 0.0, \"ngram_score\": null, \"ngram_per_char\": null, \"bean_passed\": false, \"bean_detail\": null, \"is_breakthrough\": false}",
+    "metadata_json": null,
+    "timestamp": "2026-04-06 11:05:08",
+    "stack": {
+      "layers": [
+        {
+          "family": "additive_mask",
+          "params": {
+            "keyword": "UR"
+          },
+          "label": "",
+          "hash": "835dde3b11096ed0"
+        },
+        {
+          "family": "transposition_rail_fence",
+          "params": {
+            "depth": 10
+          },
+          "label": "",
+          "hash": "764929c476df9d7d"
+        }
+      ],
+      "peel_order": "inner_first",
+      "description": "additive_mask/keyword=UR -> transposition_rail_fence/depth=10 (inner_first)",
+      "stack_hash": "56fd3e84f0e2a1bb",
+      "campaign_key": "additive_mask+transposition_rail_fence/inner_first"
+    },
+    "campaign_key": "additive_mask+transposition_rail_fence/inner_first",
+    "peel_order": "inner_first"
+  },
+  {
+    "id": 2368,
+    "campaign_id": "82d803401bab114b",
+    "branch_id": "b844bba6ab135018",
+    "stack_hash": "b844bba6ab135018",
+    "score": 5,
+    "bean_pass": 0,
+    "ic_value": 0.0350085910652921,
+    "plaintext": "UGLAYCLYINJTHSPWHXHPHPWTTFOTMPEUYTCQQDLBYDVMQLATBMKBRUXKXXQRZINJAGZJFCBBAXWFFFSCGAASFRCCWUURVZGWL",
+    "intermediate_text": "OXFRSTFPCEDKBJJNBOBGBGQKNWIKGGYLSKWHKUFSSUPDKCUKVDESLLRBROKITZHAUXTAZTVSUOQWZWMTARUJZIWTQLOIPQANF",
+    "score_breakdown_json": "{\"crib_score\": 5, \"crib_total\": 24, \"ene_score\": 4, \"bc_score\": 1, \"crib_classification\": \"noise\", \"ic_value\": 0.0350085910652921, \"ic_score_normalized\": 0.0, \"ngram_score\": null, \"ngram_per_char\": null, \"bean_passed\": false, \"bean_detail\": null, \"is_breakthrough\": false}",
+    "metadata_json": null,
+    "timestamp": "2026-04-06 11:05:09",
+    "stack": {
+      "layers": [
+        {
+          "family": "transposition_rail_fence",
+          "params": {
+            "depth": 10
+          },
+          "label": "",
+          "hash": "764929c476df9d7d"
+        },
+        {
+          "family": "additive_mask",
+          "params": {
+            "keyword": "UR"
+          },
+          "label": "",
+          "hash": "835dde3b11096ed0"
+        }
+      ],
+      "peel_order": "outer_first",
+      "description": "transposition_rail_fence/depth=10 -> additive_mask/keyword=UR (outer_first)",
+      "stack_hash": "b844bba6ab135018",
+      "campaign_key": "transposition_rail_fence+additive_mask/outer_first"
+    },
+    "campaign_key": "transposition_rail_fence+additive_mask/outer_first",
+    "peel_order": "outer_first"
+  },
+  {
+    "id": 3220,
+    "campaign_id": "89e0d3744fcb5195",
+    "branch_id": "8236fa9d986ebb5b",
+    "stack_hash": "8236fa9d986ebb5b",
+    "score": 5,
+    "bean_pass": 0,
+    "ic_value": 0.03608247422680412,
+    "plaintext": "RGKJAGAXTKFSDYHCWYOACCJCCAXMOMRKFTZYGRKXTMVPOGTOSCGSLFXMRYLOQDWPZBLHJCLMCINNUBDDKLISUTMBLIJVKVIEH",
+    "intermediate_text": "GTCJMGPGYZMDTKGDAXTTOXDJNIIHJFYCKKGLOLIKBIKKWCRROSLBCDMVASOAFXTFQHNLLERXHCOYVCRPLBUVAYCMZMSMWCUSJ",
+    "score_breakdown_json": "{\"crib_score\": 5, \"crib_total\": 24, \"ene_score\": 1, \"bc_score\": 4, \"crib_classification\": \"noise\", \"ic_value\": 0.03608247422680412, \"ic_score_normalized\": 0.0, \"ngram_score\": null, \"ngram_per_char\": null, \"bean_passed\": false, \"bean_detail\": null, \"is_breakthrough\": false}",
+    "metadata_json": null,
+    "timestamp": "2026-04-06 11:05:09",
+    "stack": {
+      "layers": [
+        {
+          "family": "additive_mask",
+          "params": {
+            "keyword": "I"
+          },
+          "label": "",
+          "hash": "3f216f6364142a80"
+        },
+        {
+          "family": "transposition_columnar",
+          "params": {
+            "keyword": "SCHEIDT",
+            "width": 7
+          },
+          "label": "",
+          "hash": "a9c0a64ca57aba2a"
+        }
+      ],
+      "peel_order": "outer_first",
+      "description": "additive_mask/keyword=I -> transposition_columnar/keyword=SCHEIDT/width=7 (outer_first)",
+      "stack_hash": "8236fa9d986ebb5b",
+      "campaign_key": "additive_mask+transposition_columnar/outer_first"
+    },
+    "campaign_key": "additive_mask+transposition_columnar/outer_first",
+    "peel_order": "outer_first"
+  },
+  {
+    "id": 3221,
+    "campaign_id": "89e0d3744fcb5195",
+    "branch_id": "4d0b5f79368d054c",
+    "stack_hash": "4d0b5f79368d054c",
+    "score": 5,
+    "bean_pass": 0,
+    "ic_value": 0.03608247422680412,
+    "plaintext": "RGKJAGAXTKFSDYHCWYOACCJCCAXMOMRKFTZYGRKXTMVPOGTOSCGSLFXMRYLOQDWPZBLHJCLMCINNUBDDKLISUTMBLIJVKVIEH",
+    "intermediate_text": "ZOSRIOIFBSNALGPKEGWIKKRKKIFUWUZSNBHGOZSFBUDXWOBWAKOATNFUZGTWYLEXHJTPRKTUKQVVCJLLSTQACBUJTQRDSDQMP",
+    "score_breakdown_json": "{\"crib_score\": 5, \"crib_total\": 24, \"ene_score\": 1, \"bc_score\": 4, \"crib_classification\": \"noise\", \"ic_value\": 0.03608247422680412, \"ic_score_normalized\": 0.0, \"ngram_score\": null, \"ngram_per_char\": null, \"bean_passed\": false, \"bean_detail\": null, \"is_breakthrough\": false}",
+    "metadata_json": null,
+    "timestamp": "2026-04-06 11:05:09",
+    "stack": {
+      "layers": [
+        {
+          "family": "additive_mask",
+          "params": {
+            "keyword": "I"
+          },
+          "label": "",
+          "hash": "3f216f6364142a80"
+        },
+        {
+          "family": "transposition_columnar",
+          "params": {
+            "keyword": "SCHEIDT",
+            "width": 7
+          },
+          "label": "",
+          "hash": "a9c0a64ca57aba2a"
+        }
+      ],
+      "peel_order": "inner_first",
+      "description": "additive_mask/keyword=I -> transposition_columnar/keyword=SCHEIDT/width=7 (inner_first)",
+      "stack_hash": "4d0b5f79368d054c",
+      "campaign_key": "additive_mask+transposition_columnar/inner_first"
+    },
+    "campaign_key": "additive_mask+transposition_columnar/inner_first",
+    "peel_order": "inner_first"
+  },
+  {
+    "id": 3522,
+    "campaign_id": "89e0d3744fcb5195",
+    "branch_id": "f0b1c833dcee9755",
+    "stack_hash": "f0b1c833dcee9755",
+    "score": 5,
+    "bean_pass": 0,
+    "ic_value": 0.03608247422680412,
+    "plaintext": "ICTILMCVUZFHMAEQJCAYELCEZEEOOHQVMTBIZAVMTORVXQIQUIHEZNUOASTFQNYBJRLNDEOPNPKEWFNDKMFUVNWKDOLMGXJKX",
+    "intermediate_text": "IVELOIRIABOFVMIFCZVVQZFLPKKJLHAEMMINQNKMDKMMYETTQUNDEFOXCUQCHZVHSJPNNGTZJEQAXETRNDWXCAEOBOUOYEWUL",
+    "score_breakdown_json": "{\"crib_score\": 5, \"crib_total\": 24, \"ene_score\": 2, \"bc_score\": 3, \"crib_classification\": \"noise\", \"ic_value\": 0.03608247422680412, \"ic_score_normalized\": 0.0, \"ngram_score\": null, \"ngram_per_char\": null, \"bean_passed\": false, \"bean_detail\": null, \"is_breakthrough\": false}",
+    "metadata_json": null,
+    "timestamp": "2026-04-06 11:05:09",
+    "stack": {
+      "layers": [
+        {
+          "family": "additive_mask",
+          "params": {
+            "keyword": "G"
+          },
+          "label": "",
+          "hash": "61a223cac8faff0f"
+        },
+        {
+          "family": "transposition_columnar",
+          "params": {
+            "keyword": "EQUINOX",
+            "width": 7
+          },
+          "label": "",
+          "hash": "66eebdebc928509f"
+        }
+      ],
+      "peel_order": "outer_first",
+      "description": "additive_mask/keyword=G -> transposition_columnar/keyword=EQUINOX/width=7 (outer_first)",
+      "stack_hash": "f0b1c833dcee9755",
+      "campaign_key": "additive_mask+transposition_columnar/outer_first"
+    },
+    "campaign_key": "additive_mask+transposition_columnar/outer_first",
+    "peel_order": "outer_first"
+  },
+  {
+    "id": 3523,
+    "campaign_id": "89e0d3744fcb5195",
+    "branch_id": "c32dbbcdb25dfb6b",
+    "stack_hash": "c32dbbcdb25dfb6b",
+    "score": 5,
+    "bean_pass": 0,
+    "ic_value": 0.03608247422680412,
+    "plaintext": "ICTILMCVUZFHMAEQJCAYELCEZEEOOHQVMTBIZAVMTORVXQIQUIHEZNUOASTFQNYBJRLNDEOPNPKEWFNDKMFUVNWKDOLMGXJKX",
+    "intermediate_text": "OIZORSIBAFLNSGKWPIGEKRIKFKKUUNWBSZHOFGBSZUXBDWOWAONKFTAUGYZLWTEHPXRTJKUVTVQKCLTJQSLABTCQJURSMDPQD",
+    "score_breakdown_json": "{\"crib_score\": 5, \"crib_total\": 24, \"ene_score\": 2, \"bc_score\": 3, \"crib_classification\": \"noise\", \"ic_value\": 0.03608247422680412, \"ic_score_normalized\": 0.0, \"ngram_score\": null, \"ngram_per_char\": null, \"bean_passed\": false, \"bean_detail\": null, \"is_breakthrough\": false}",
+    "metadata_json": null,
+    "timestamp": "2026-04-06 11:05:09",
+    "stack": {
+      "layers": [
+        {
+          "family": "additive_mask",
+          "params": {
+            "keyword": "G"
+          },
+          "label": "",
+          "hash": "61a223cac8faff0f"
+        },
+        {
+          "family": "transposition_columnar",
+          "params": {
+            "keyword": "EQUINOX",
+            "width": 7
+          },
+          "label": "",
+          "hash": "66eebdebc928509f"
+        }
+      ],
+      "peel_order": "inner_first",
+      "description": "additive_mask/keyword=G -> transposition_columnar/keyword=EQUINOX/width=7 (inner_first)",
+      "stack_hash": "c32dbbcdb25dfb6b",
+      "campaign_key": "additive_mask+transposition_columnar/inner_first"
+    },
+    "campaign_key": "additive_mask+transposition_columnar/inner_first",
+    "peel_order": "inner_first"
+  },
+  {
+    "id": 4050,
+    "campaign_id": "fff05db3c45e91c4",
+    "branch_id": "88b8c8685d3655cb",
+    "stack_hash": "88b8c8685d3655cb",
+    "score": 5,
+    "bean_pass": 0,
+    "ic_value": 0.03608247422680412,
+    "plaintext": "RGKJAGAXTKFSDYHCWYOACCJCCAXMOMRKFTZYGRKXTMVPOGTOSCGSLFXMRYLOQDWPZBLHJCLMCINNUBDDKLISUTMBLIJVKVIEH",
+    "intermediate_text": "ZOSRIOIFBSNALGPKEGWIKKRKKIFUWUZSNBHGOZSFBUDXWOBWAKOATNFUZGTWYLEXHJTPRKTUKQVVCJLLSTQACBUJTQRDSDQMP",
+    "score_breakdown_json": "{\"crib_score\": 5, \"crib_total\": 24, \"ene_score\": 1, \"bc_score\": 4, \"crib_classification\": \"noise\", \"ic_value\": 0.03608247422680412, \"ic_score_normalized\": 0.0, \"ngram_score\": null, \"ngram_per_char\": null, \"bean_passed\": false, \"bean_detail\": null, \"is_breakthrough\": false}",
+    "metadata_json": null,
+    "timestamp": "2026-04-06 11:05:10",
+    "stack": {
+      "layers": [
+        {
+          "family": "transposition_columnar",
+          "params": {
+            "keyword": "SCHEIDT",
+            "width": 7
+          },
+          "label": "",
+          "hash": "a9c0a64ca57aba2a"
+        },
+        {
+          "family": "additive_mask",
+          "params": {
+            "keyword": "I"
+          },
+          "label": "",
+          "hash": "3f216f6364142a80"
+        }
+      ],
+      "peel_order": "outer_first",
+      "description": "transposition_columnar/keyword=SCHEIDT/width=7 -> additive_mask/keyword=I (outer_first)",
+      "stack_hash": "88b8c8685d3655cb",
+      "campaign_key": "transposition_columnar+additive_mask/outer_first"
+    },
+    "campaign_key": "transposition_columnar+additive_mask/outer_first",
+    "peel_order": "outer_first"
+  },
+  {
+    "id": 4051,
+    "campaign_id": "fff05db3c45e91c4",
+    "branch_id": "139940f8e0bd0cb4",
+    "stack_hash": "139940f8e0bd0cb4",
+    "score": 5,
+    "bean_pass": 0,
+    "ic_value": 0.03608247422680412,
+    "plaintext": "RGKJAGAXTKFSDYHCWYOACCJCCAXMOMRKFTZYGRKXTMVPOGTOSCGSLFXMRYLOQDWPZBLHJCLMCINNUBDDKLISUTMBLIJVKVIEH",
+    "intermediate_text": "GTCJMGPGYZMDTKGDAXTTOXDJNIIHJFYCKKGLOLIKBIKKWCRROSLBCDMVASOAFXTFQHNLLERXHCOYVCRPLBUVAYCMZMSMWCUSJ",
+    "score_breakdown_json": "{\"crib_score\": 5, \"crib_total\": 24, \"ene_score\": 1, \"bc_score\": 4, \"crib_classification\": \"noise\", \"ic_value\": 0.03608247422680412, \"ic_score_normalized\": 0.0, \"ngram_score\": null, \"ngram_per_char\": null, \"bean_passed\": false, \"bean_detail\": null, \"is_breakthrough\": false}",
+    "metadata_json": null,
+    "timestamp": "2026-04-06 11:05:10",
+    "stack": {
+      "layers": [
+        {
+          "family": "transposition_columnar",
+          "params": {
+            "keyword": "SCHEIDT",
+            "width": 7
+          },
+          "label": "",
+          "hash": "a9c0a64ca57aba2a"
+        },
+        {
+          "family": "additive_mask",
+          "params": {
+            "keyword": "I"
+          },
+          "label": "",
+          "hash": "3f216f6364142a80"
+        }
+      ],
+      "peel_order": "inner_first",
+      "description": "transposition_columnar/keyword=SCHEIDT/width=7 -> additive_mask/keyword=I (inner_first)",
+      "stack_hash": "139940f8e0bd0cb4",
+      "campaign_key": "transposition_columnar+additive_mask/inner_first"
+    },
+    "campaign_key": "transposition_columnar+additive_mask/inner_first",
+    "peel_order": "inner_first"
+  },
+  {
+    "id": 4542,
+    "campaign_id": "fff05db3c45e91c4",
+    "branch_id": "ca8efd422953fd4f",
+    "stack_hash": "ca8efd422953fd4f",
+    "score": 5,
+    "bean_pass": 0,
+    "ic_value": 0.03608247422680412,
+    "plaintext": "ICTILMCVUZFHMAEQJCAYELCEZEEOOHQVMTBIZAVMTORVXQIQUIHEZNUOASTFQNYBJRLNDEOPNPKEWFNDKMFUVNWKDOLMGXJKX",
+    "intermediate_text": "OIZORSIBAFLNSGKWPIGEKRIKFKKUUNWBSZHOFGBSZUXBDWOWAONKFTAUGYZLWTEHPXRTJKUVTVQKCLTJQSLABTCQJURSMDPQD",
+    "score_breakdown_json": "{\"crib_score\": 5, \"crib_total\": 24, \"ene_score\": 2, \"bc_score\": 3, \"crib_classification\": \"noise\", \"ic_value\": 0.03608247422680412, \"ic_score_normalized\": 0.0, \"ngram_score\": null, \"ngram_per_char\": null, \"bean_passed\": false, \"bean_detail\": null, \"is_breakthrough\": false}",
+    "metadata_json": null,
+    "timestamp": "2026-04-06 11:05:10",
+    "stack": {
+      "layers": [
+        {
+          "family": "transposition_columnar",
+          "params": {
+            "keyword": "EQUINOX",
+            "width": 7
+          },
+          "label": "",
+          "hash": "66eebdebc928509f"
+        },
+        {
+          "family": "additive_mask",
+          "params": {
+            "keyword": "G"
+          },
+          "label": "",
+          "hash": "61a223cac8faff0f"
+        }
+      ],
+      "peel_order": "outer_first",
+      "description": "transposition_columnar/keyword=EQUINOX/width=7 -> additive_mask/keyword=G (outer_first)",
+      "stack_hash": "ca8efd422953fd4f",
+      "campaign_key": "transposition_columnar+additive_mask/outer_first"
+    },
+    "campaign_key": "transposition_columnar+additive_mask/outer_first",
+    "peel_order": "outer_first"
+  },
+  {
+    "id": 4543,
+    "campaign_id": "fff05db3c45e91c4",
+    "branch_id": "6d9d0a5444c3aac1",
+    "stack_hash": "6d9d0a5444c3aac1",
+    "score": 5,
+    "bean_pass": 0,
+    "ic_value": 0.03608247422680412,
+    "plaintext": "ICTILMCVUZFHMAEQJCAYELCEZEEOOHQVMTBIZAVMTORVXQIQUIHEZNUOASTFQNYBJRLNDEOPNPKEWFNDKMFUVNWKDOLMGXJKX",
+    "intermediate_text": "IVELOIRIABOFVMIFCZVVQZFLPKKJLHAEMMINQNKMDKMMYETTQUNDEFOXCUQCHZVHSJPNNGTZJEQAXETRNDWXCAEOBOUOYEWUL",
+    "score_breakdown_json": "{\"crib_score\": 5, \"crib_total\": 24, \"ene_score\": 2, \"bc_score\": 3, \"crib_classification\": \"noise\", \"ic_value\": 0.03608247422680412, \"ic_score_normalized\": 0.0, \"ngram_score\": null, \"ngram_per_char\": null, \"bean_passed\": false, \"bean_detail\": null, \"is_breakthrough\": false}",
+    "metadata_json": null,
+    "timestamp": "2026-04-06 11:05:10",
+    "stack": {
+      "layers": [
+        {
+          "family": "transposition_columnar",
+          "params": {
+            "keyword": "EQUINOX",
+            "width": 7
+          },
+          "label": "",
+          "hash": "66eebdebc928509f"
+        },
+        {
+          "family": "additive_mask",
+          "params": {
+            "keyword": "G"
+          },
+          "label": "",
+          "hash": "61a223cac8faff0f"
+        }
+      ],
+      "peel_order": "inner_first",
+      "description": "transposition_columnar/keyword=EQUINOX/width=7 -> additive_mask/keyword=G (inner_first)",
+      "stack_hash": "6d9d0a5444c3aac1",
+      "campaign_key": "transposition_columnar+additive_mask/inner_first"
+    },
+    "campaign_key": "transposition_columnar+additive_mask/inner_first",
+    "peel_order": "inner_first"
+  },
+  {
+    "id": 6029,
+    "campaign_id": "f5844c0e00deb5e4",
+    "branch_id": "f68bcdefd735d457",
+    "stack_hash": "f68bcdefd735d457",
+    "score": 5,
+    "bean_pass": 0,
+    "ic_value": 0.036941580756013746,
+    "plaintext": "XZCKOGYDOWDCZIWXFKSRFAQSCNKRDMWANFZOKCESGMZSQRHAENQSNPQTLTSESKTJSXUHPUIPCQLLXSNMKYMPBQOETGBQUZJAJ",
+    "intermediate_text": "FLROBKRUOXOGHULBSOLIFBBWKZZVQQPRNGKSSOTWTQSJQSSEMZFWATJKLUDIAWINFBNYPVTTKCAPKWGDKZXTJCDIGKUHUAUER",
+    "score_breakdown_json": "{\"crib_score\": 5, \"crib_total\": 24, \"ene_score\": 4, \"bc_score\": 1, \"crib_classification\": \"noise\", \"ic_value\": 0.036941580756013746, \"ic_score_normalized\": 0.0, \"ngram_score\": null, \"ngram_per_char\": null, \"bean_passed\": false, \"bean_detail\": null, \"is_breakthrough\": false}",
+    "metadata_json": null,
+    "timestamp": "2026-04-06 11:05:13",
+    "stack": {
+      "layers": [
+        {
+          "family": "additive_mask",
+          "params": {
+            "keyword": "IMPENETRABLE"
+          },
+          "label": "",
+          "hash": "96ecdcc76dc621c3"
+        },
+        {
+          "family": "block_transposition",
+          "params": {
+            "perm": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              0,
+              1,
+              2
+            ],
+            "cycle_boustro": false,
+            "route_name": "identity",
+            "rotation": 3
+          },
+          "label": "",
+          "hash": "d230023c459cf3c2"
+        }
+      ],
+      "peel_order": "inner_first",
+      "description": "additive_mask/keyword=IMPENETRABLE -> block_transposition/cycle_boustro=False/perm=[24 items]/rotation=3/route_name=identity (inner_first)",
+      "stack_hash": "f68bcdefd735d457",
+      "campaign_key": "additive_mask+block_transposition/inner_first"
+    },
+    "campaign_key": "additive_mask+block_transposition/inner_first",
+    "peel_order": "inner_first"
+  },
+  {
+    "id": 7043,
+    "campaign_id": "f5844c0e00deb5e4",
+    "branch_id": "04be73189e31cb1a",
+    "stack_hash": "04be73189e31cb1a",
+    "score": 5,
+    "bean_pass": 0,
+    "ic_value": 0.036941580756013746,
+    "plaintext": "XZCKOGYDOWDCZIWXFKSRFAQSCNKRDMWANFZOKCESGMZSQRHAENQSNPQTLTSESKTJSXUHPUIPCQLLXSNMKYMPBQOETGBQUZJAJ",
+    "intermediate_text": "FLROBKRUOXOGHULBSOLIFBBWKZZVQQPRNGKSSOTWTQSJQSSEMZFWATJKLUDIAWINFBNYPVTTKCAPKWGDKZXTJCDIGKUHUAUER",
+    "score_breakdown_json": "{\"crib_score\": 5, \"crib_total\": 24, \"ene_score\": 4, \"bc_score\": 1, \"crib_classification\": \"noise\", \"ic_value\": 0.036941580756013746, \"ic_score_normalized\": 0.0, \"ngram_score\": null, \"ngram_per_char\": null, \"bean_passed\": false, \"bean_detail\": null, \"is_breakthrough\": false}",
+    "metadata_json": null,
+    "timestamp": "2026-04-06 11:05:14",
+    "stack": {
+      "layers": [
+        {
+          "family": "additive_mask",
+          "params": {
+            "keyword": "IMPENETRABLE"
+          },
+          "label": "",
+          "hash": "96ecdcc76dc621c3"
+        },
+        {
+          "family": "block_transposition",
+          "params": {
+            "perm": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              0,
+              1,
+              2
+            ],
+            "cycle_boustro": false,
+            "route_name": "all_forward",
+            "rotation": 3
+          },
+          "label": "",
+          "hash": "4361c6d34acc3430"
+        }
+      ],
+      "peel_order": "inner_first",
+      "description": "additive_mask/keyword=IMPENETRABLE -> block_transposition/cycle_boustro=False/perm=[24 items]/rotation=3/route_name=all_forward (inner_first)",
+      "stack_hash": "04be73189e31cb1a",
+      "campaign_key": "additive_mask+block_transposition/inner_first"
+    },
+    "campaign_key": "additive_mask+block_transposition/inner_first",
+    "peel_order": "inner_first"
+  },
+  {
+    "id": 10312,
+    "campaign_id": "f5844c0e00deb5e4",
+    "branch_id": "e48e2d1a7a4646a0",
+    "stack_hash": "e48e2d1a7a4646a0",
+    "score": 5,
+    "bean_pass": 0,
+    "ic_value": 0.03608247422680412,
+    "plaintext": "CSMGXSLCPPTCMVIHPYPVCGJMSWRRQFLAATPUXURTKRTTOHLTUGANUKUBXCGOJXBJEVMLWQZOEQLXHFLDBKDEJHLVIVBVLAYUS",
+    "intermediate_text": "PCLSVPYPHIVMCTPMJGCCXGMSWRRQSOHLTTPUXURTKRTTFLAAXBUKLMVEJBXJOGCOZQWUUNAGQLXHELAYUKDEJHLVIVBVFLDBS",
+    "score_breakdown_json": "{\"crib_score\": 5, \"crib_total\": 24, \"ene_score\": 3, \"bc_score\": 2, \"crib_classification\": \"noise\", \"ic_value\": 0.03608247422680412, \"ic_score_normalized\": 0.0, \"ngram_score\": null, \"ngram_per_char\": null, \"bean_passed\": false, \"bean_detail\": null, \"is_breakthrough\": false}",
+    "metadata_json": null,
+    "timestamp": "2026-04-06 11:05:15",
+    "stack": {
+      "layers": [
+        {
+          "family": "additive_mask",
+          "params": {
+            "keyword": "Z"
+          },
+          "label": "",
+          "hash": "45ecd1d61ef9f7c1"
+        },
+        {
+          "family": "block_transposition",
+          "params": {
+            "perm": [
+              8,
+              7,
+              6,
+              5,
+              19,
+              18,
+              17,
+              16,
+              15,
+              14,
+              13,
+              12,
+              11,
+              10,
+              9,
+              23,
+              22,
+              21,
+              20,
+              0,
+              4,
+              3,
+              2,
+              1
+            ],
+            "cycle_boustro": true,
+            "route_name": "all_reversed",
+            "rotation": 5
+          },
+          "label": "",
+          "hash": "ed5656278587dddf"
+        }
+      ],
+      "peel_order": "outer_first",
+      "description": "additive_mask/keyword=Z -> block_transposition/cycle_boustro=True/perm=[24 items]/rotation=5/route_name=all_reversed (outer_first)",
+      "stack_hash": "e48e2d1a7a4646a0",
+      "campaign_key": "additive_mask+block_transposition/outer_first"
+    },
+    "campaign_key": "additive_mask+block_transposition/outer_first",
+    "peel_order": "outer_first"
+  },
+  {
+    "id": 10313,
+    "campaign_id": "f5844c0e00deb5e4",
+    "branch_id": "47d1b84ba9cf348c",
+    "stack_hash": "47d1b84ba9cf348c",
+    "score": 5,
+    "bean_pass": 0,
+    "ic_value": 0.03608247422680412,
+    "plaintext": "CSMGXSLCPPTCMVIHPYPVCGJMSWRRQFLAATPUXURTKRTTOHLTUGANUKUBXCGOJXBJEVMLWQZOEQLXHFLDBKDEJHLVIVBVLAYUS",
+    "intermediate_text": "BRLFWRKBOOSBLUHGOXOUBFILRVQQPEKZZSOTWTQSJQSSNGKSTFZMTJTAWBFNIWAIDULKVPYNDPKWGEKCAJCDIGKUHUAUKZXTR",
+    "score_breakdown_json": "{\"crib_score\": 5, \"crib_total\": 24, \"ene_score\": 3, \"bc_score\": 2, \"crib_classification\": \"noise\", \"ic_value\": 0.03608247422680412, \"ic_score_normalized\": 0.0, \"ngram_score\": null, \"ngram_per_char\": null, \"bean_passed\": false, \"bean_detail\": null, \"is_breakthrough\": false}",
+    "metadata_json": null,
+    "timestamp": "2026-04-06 11:05:15",
+    "stack": {
+      "layers": [
+        {
+          "family": "additive_mask",
+          "params": {
+            "keyword": "Z"
+          },
+          "label": "",
+          "hash": "45ecd1d61ef9f7c1"
+        },
+        {
+          "family": "block_transposition",
+          "params": {
+            "perm": [
+              8,
+              7,
+              6,
+              5,
+              19,
+              18,
+              17,
+              16,
+              15,
+              14,
+              13,
+              12,
+              11,
+              10,
+              9,
+              23,
+              22,
+              21,
+              20,
+              0,
+              4,
+              3,
+              2,
+              1
+            ],
+            "cycle_boustro": true,
+            "route_name": "all_reversed",
+            "rotation": 5
+          },
+          "label": "",
+          "hash": "ed5656278587dddf"
+        }
+      ],
+      "peel_order": "inner_first",
+      "description": "additive_mask/keyword=Z -> block_transposition/cycle_boustro=True/perm=[24 items]/rotation=5/route_name=all_reversed (inner_first)",
+      "stack_hash": "47d1b84ba9cf348c",
+      "campaign_key": "additive_mask+block_transposition/inner_first"
+    },
+    "campaign_key": "additive_mask+block_transposition/inner_first",
+    "peel_order": "inner_first"
+  },
+  {
+    "id": 11291,
+    "campaign_id": "f5844c0e00deb5e4",
+    "branch_id": "5594aa75e669f61c",
+    "stack_hash": "5594aa75e669f61c",
+    "score": 5,
+    "bean_pass": 0,
+    "ic_value": 0.03758591065292096,
+    "plaintext": "SEIKOEWABFOWOTRJBNRKBKUGTPJRQJERSRKFNQPPQUZYWSORFOYMBLTSVHDTLJJSAVFYNHWZGTHTKJETASXYKCGVKOABICCIR",
+    "intermediate_text": "SFILOFWBBGOXOURKBORLBLUHTQJSQKESSSKGNRPQQVZZWTOSFPYNBMTTVIDULKJTAWFZNIWAGUHUKKEUATXZKDGWKPACIDCJR",
+    "score_breakdown_json": "{\"crib_score\": 5, \"crib_total\": 24, \"ene_score\": 4, \"bc_score\": 1, \"crib_classification\": \"noise\", \"ic_value\": 0.03758591065292096, \"ic_score_normalized\": 0.0, \"ngram_score\": null, \"ngram_per_char\": null, \"bean_passed\": false, \"bean_detail\": null, \"is_breakthrough\": false}",
+    "metadata_json": null,
+    "timestamp": "2026-04-06 11:05:16",
+    "stack": {
+      "layers": [
+        {
+          "family": "additive_mask",
+          "params": {
+            "keyword": "AB"
+          },
+          "label": "",
+          "hash": "b88c1956a7f17ed0"
+        },
+        {
+          "family": "block_transposition",
+          "params": {
+            "perm": [
+              17,
+              16,
+              15,
+              14,
+              13,
+              12,
+              11,
+              10,
+              9,
+              23,
+              22,
+              21,
+              20,
+              0,
+              4,
+              3,
+              2,
+              1,
+              8,
+              7,
+              6,
+              5,
+              19,
+              18
+            ],
+            "cycle_boustro": false,
+            "route_name": "all_reversed",
+            "rotation": 11
+          },
+          "label": "",
+          "hash": "c6e5711cd3ac4ae5"
+        }
+      ],
+      "peel_order": "inner_first",
+      "description": "additive_mask/keyword=AB -> block_transposition/cycle_boustro=False/perm=[24 items]/rotation=11/route_name=all_reversed (inner_first)",
+      "stack_hash": "5594aa75e669f61c",
+      "campaign_key": "additive_mask+block_transposition/inner_first"
+    },
+    "campaign_key": "additive_mask+block_transposition/inner_first",
+    "peel_order": "inner_first"
+  },
+  {
+    "id": 11509,
+    "campaign_id": "f5844c0e00deb5e4",
+    "branch_id": "b099470640e7bc0c",
+    "stack_hash": "b099470640e7bc0c",
+    "score": 5,
+    "bean_pass": 0,
+    "ic_value": 0.03758591065292096,
+    "plaintext": "SEIKOEWABFOWOTRJBNRKBKUGTPJRQJERSRKFNQPPQUZYWSORFOYMBLTSVHDTLJJSAVFYNHWZGTHTKJETASXYKCGVKOABICCIR",
+    "intermediate_text": "SFILOFWBBGOXOURKBORLBLUHTQJSQKESSSKGNRPQQVZZWTOSFPYNBMTTVIDULKJTAWFZNIWAGUHUKKEUATXZKDGWKPACIDCJR",
+    "score_breakdown_json": "{\"crib_score\": 5, \"crib_total\": 24, \"ene_score\": 4, \"bc_score\": 1, \"crib_classification\": \"noise\", \"ic_value\": 0.03758591065292096, \"ic_score_normalized\": 0.0, \"ngram_score\": null, \"ngram_per_char\": null, \"bean_passed\": false, \"bean_detail\": null, \"is_breakthrough\": false}",
+    "metadata_json": null,
+    "timestamp": "2026-04-06 11:05:16",
+    "stack": {
+      "layers": [
+        {
+          "family": "additive_mask",
+          "params": {
+            "keyword": "AB"
+          },
+          "label": "",
+          "hash": "b88c1956a7f17ed0"
+        },
+        {
+          "family": "block_transposition",
+          "params": {
+            "perm": [
+              17,
+              16,
+              15,
+              14,
+              13,
+              12,
+              11,
+              10,
+              9,
+              23,
+              22,
+              21,
+              20,
+              0,
+              4,
+              3,
+              2,
+              1,
+              8,
+              7,
+              6,
+              5,
+              19,
+              18
+            ],
+            "cycle_boustro": false,
+            "route_name": "reverse_bands_reflected",
+            "rotation": 11
+          },
+          "label": "",
+          "hash": "9978e0f37e8ccd66"
+        }
+      ],
+      "peel_order": "inner_first",
+      "description": "additive_mask/keyword=AB -> block_transposition/cycle_boustro=False/perm=[24 items]/rotation=11/route_name=reverse_bands_reflected (inner_first)",
+      "stack_hash": "b099470640e7bc0c",
+      "campaign_key": "additive_mask+block_transposition/inner_first"
+    },
+    "campaign_key": "additive_mask+block_transposition/inner_first",
+    "peel_order": "inner_first"
+  },
+  {
+    "id": 11846,
+    "campaign_id": "f5844c0e00deb5e4",
+    "branch_id": "3b2a4fca387c9cc5",
+    "stack_hash": "3b2a4fca387c9cc5",
+    "score": 5,
+    "bean_pass": 0,
+    "ic_value": 0.03608247422680412,
+    "plaintext": "CMJGCMCTPPCLSVPYPHIVXGMSTTKRTUXURWRRQSOHLTTPFLAAUOZQWJOGCXBUKLMVEJBXUNAGVVIVBEJHLQLXHELAYUKDFLDBS",
+    "intermediate_text": "PCLSVPYPHIVMCTPMJGCCXGMSWRRQSOHLTTPUXURTKRTTFLAAXBUKLMVEJBXJOGCOZQWUUNAGQLXHELAYUKDEJHLVIVBVFLDBS",
+    "score_breakdown_json": "{\"crib_score\": 5, \"crib_total\": 24, \"ene_score\": 4, \"bc_score\": 1, \"crib_classification\": \"noise\", \"ic_value\": 0.03608247422680412, \"ic_score_normalized\": 0.0, \"ngram_score\": null, \"ngram_per_char\": null, \"bean_passed\": false, \"bean_detail\": null, \"is_breakthrough\": false}",
+    "metadata_json": null,
+    "timestamp": "2026-04-06 11:05:17",
+    "stack": {
+      "layers": [
+        {
+          "family": "additive_mask",
+          "params": {
+            "keyword": "Z"
+          },
+          "label": "",
+          "hash": "45ecd1d61ef9f7c1"
+        },
+        {
+          "family": "block_transposition",
+          "params": {
+            "perm": [
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              5,
+              6,
+              7,
+              8,
+              1,
+              2,
+              3,
+              4,
+              0,
+              20,
+              21,
+              22,
+              23
+            ],
+            "cycle_boustro": false,
+            "route_name": "all_reversed_reflected",
+            "rotation": 4
+          },
+          "label": "",
+          "hash": "bbd8194ae7ea725b"
+        }
+      ],
+      "peel_order": "outer_first",
+      "description": "additive_mask/keyword=Z -> block_transposition/cycle_boustro=False/perm=[24 items]/rotation=4/route_name=all_reversed_reflected (outer_first)",
+      "stack_hash": "3b2a4fca387c9cc5",
+      "campaign_key": "additive_mask+block_transposition/outer_first"
+    },
+    "campaign_key": "additive_mask+block_transposition/outer_first",
+    "peel_order": "outer_first"
+  },
+  {
+    "id": 11847,
+    "campaign_id": "f5844c0e00deb5e4",
+    "branch_id": "ffce9fbd66a2be90",
+    "stack_hash": "ffce9fbd66a2be90",
+    "score": 5,
+    "bean_pass": 0,
+    "ic_value": 0.03608247422680412,
+    "plaintext": "CMJGCMCTPPCLSVPYPHIVXGMSTTKRTUXURWRRQSOHLTTPFLAAUOZQWJOGCXBUKLMVEJBXUNAGVVIVBEJHLQLXHELAYUKDFLDBS",
+    "intermediate_text": "BLIFBLBSOOBKRUOXOGHUWFLRSSJQSTWTQVQQPRNGKSSOEKZZTNYPVINFBWATJKLUDIAWTMZFUUHUADIGKPKWGDKZXTJCEKCAR",
+    "score_breakdown_json": "{\"crib_score\": 5, \"crib_total\": 24, \"ene_score\": 4, \"bc_score\": 1, \"crib_classification\": \"noise\", \"ic_value\": 0.03608247422680412, \"ic_score_normalized\": 0.0, \"ngram_score\": null, \"ngram_per_char\": null, \"bean_passed\": false, \"bean_detail\": null, \"is_breakthrough\": false}",
+    "metadata_json": null,
+    "timestamp": "2026-04-06 11:05:17",
+    "stack": {
+      "layers": [
+        {
+          "family": "additive_mask",
+          "params": {
+            "keyword": "Z"
+          },
+          "label": "",
+          "hash": "45ecd1d61ef9f7c1"
+        },
+        {
+          "family": "block_transposition",
+          "params": {
+            "perm": [
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              5,
+              6,
+              7,
+              8,
+              1,
+              2,
+              3,
+              4,
+              0,
+              20,
+              21,
+              22,
+              23
+            ],
+            "cycle_boustro": false,
+            "route_name": "all_reversed_reflected",
+            "rotation": 4
+          },
+          "label": "",
+          "hash": "bbd8194ae7ea725b"
+        }
+      ],
+      "peel_order": "inner_first",
+      "description": "additive_mask/keyword=Z -> block_transposition/cycle_boustro=False/perm=[24 items]/rotation=4/route_name=all_reversed_reflected (inner_first)",
+      "stack_hash": "ffce9fbd66a2be90",
+      "campaign_key": "additive_mask+block_transposition/inner_first"
+    },
+    "campaign_key": "additive_mask+block_transposition/inner_first",
+    "peel_order": "inner_first"
+  },
+  {
+    "id": 11902,
+    "campaign_id": "f5844c0e00deb5e4",
+    "branch_id": "ab5b2756f8b9bb01",
+    "stack_hash": "ab5b2756f8b9bb01",
+    "score": 5,
+    "bean_pass": 0,
+    "ic_value": 0.03608247422680412,
+    "plaintext": "CMJGCMCTPPCLSVPYPHIVXGMSTTKRTUXURWRRQSOHLTTPFLAAUOZQWJOGCXBUKLMVEJBXUNAGVVIVBEJHLQLXHELAYUKDFLDBS",
+    "intermediate_text": "PCLSVPYPHIVMCTPMJGCCXGMSWRRQSOHLTTPUXURTKRTTFLAAXBUKLMVEJBXJOGCOZQWUUNAGQLXHELAYUKDEJHLVIVBVFLDBS",
+    "score_breakdown_json": "{\"crib_score\": 5, \"crib_total\": 24, \"ene_score\": 4, \"bc_score\": 1, \"crib_classification\": \"noise\", \"ic_value\": 0.03608247422680412, \"ic_score_normalized\": 0.0, \"ngram_score\": null, \"ngram_per_char\": null, \"bean_passed\": false, \"bean_detail\": null, \"is_breakthrough\": false}",
+    "metadata_json": null,
+    "timestamp": "2026-04-06 11:05:17",
+    "stack": {
+      "layers": [
+        {
+          "family": "additive_mask",
+          "params": {
+            "keyword": "Z"
+          },
+          "label": "",
+          "hash": "45ecd1d61ef9f7c1"
+        },
+        {
+          "family": "block_transposition",
+          "params": {
+            "perm": [
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              5,
+              6,
+              7,
+              8,
+              1,
+              2,
+              3,
+              4,
+              0,
+              20,
+              21,
+              22,
+              23
+            ],
+            "cycle_boustro": false,
+            "route_name": "reverse_bands",
+            "rotation": 4
+          },
+          "label": "",
+          "hash": "c1798d969e711e7b"
+        }
+      ],
+      "peel_order": "outer_first",
+      "description": "additive_mask/keyword=Z -> block_transposition/cycle_boustro=False/perm=[24 items]/rotation=4/route_name=reverse_bands (outer_first)",
+      "stack_hash": "ab5b2756f8b9bb01",
+      "campaign_key": "additive_mask+block_transposition/outer_first"
+    },
+    "campaign_key": "additive_mask+block_transposition/outer_first",
+    "peel_order": "outer_first"
+  },
+  {
+    "id": 11903,
+    "campaign_id": "f5844c0e00deb5e4",
+    "branch_id": "9d6918a6f313765b",
+    "stack_hash": "9d6918a6f313765b",
+    "score": 5,
+    "bean_pass": 0,
+    "ic_value": 0.03608247422680412,
+    "plaintext": "CMJGCMCTPPCLSVPYPHIVXGMSTTKRTUXURWRRQSOHLTTPFLAAUOZQWJOGCXBUKLMVEJBXUNAGVVIVBEJHLQLXHELAYUKDFLDBS",
+    "intermediate_text": "BLIFBLBSOOBKRUOXOGHUWFLRSSJQSTWTQVQQPRNGKSSOEKZZTNYPVINFBWATJKLUDIAWTMZFUUHUADIGKPKWGDKZXTJCEKCAR",
+    "score_breakdown_json": "{\"crib_score\": 5, \"crib_total\": 24, \"ene_score\": 4, \"bc_score\": 1, \"crib_classification\": \"noise\", \"ic_value\": 0.03608247422680412, \"ic_score_normalized\": 0.0, \"ngram_score\": null, \"ngram_per_char\": null, \"bean_passed\": false, \"bean_detail\": null, \"is_breakthrough\": false}",
+    "metadata_json": null,
+    "timestamp": "2026-04-06 11:05:17",
+    "stack": {
+      "layers": [
+        {
+          "family": "additive_mask",
+          "params": {
+            "keyword": "Z"
+          },
+          "label": "",
+          "hash": "45ecd1d61ef9f7c1"
+        },
+        {
+          "family": "block_transposition",
+          "params": {
+            "perm": [
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              5,
+              6,
+              7,
+              8,
+              1,
+              2,
+              3,
+              4,
+              0,
+              20,
+              21,
+              22,
+              23
+            ],
+            "cycle_boustro": false,
+            "route_name": "reverse_bands",
+            "rotation": 4
+          },
+          "label": "",
+          "hash": "c1798d969e711e7b"
+        }
+      ],
+      "peel_order": "inner_first",
+      "description": "additive_mask/keyword=Z -> block_transposition/cycle_boustro=False/perm=[24 items]/rotation=4/route_name=reverse_bands (inner_first)",
+      "stack_hash": "9d6918a6f313765b",
+      "campaign_key": "additive_mask+block_transposition/inner_first"
+    },
+    "campaign_key": "additive_mask+block_transposition/inner_first",
+    "peel_order": "inner_first"
+  },
+  {
+    "id": 19700,
+    "campaign_id": "f5844c0e00deb5e4",
+    "branch_id": "80cc21edc6f810ae",
+    "stack_hash": "80cc21edc6f810ae",
+    "score": 5,
+    "bean_pass": 0,
+    "ic_value": 0.03608247422680412,
+    "plaintext": "DJGTCJMGPGYZMDTKGDAXTTOXINRRCWKKIBKILOLGKKCYFJHIRXOSLBCDMVASOAFXTFQHNLLECHSUCWMSMZMCYAVUBLPRCVYOJ",
+    "intermediate_text": "GTCJMGPGYZMDTKGDAXTTOXDJNIIHJFYCKKGLOLIKBIKKWCRROSLBCDMVASOAFXTFQHNLLERXHCOYVCRPLBUVAYCMZMSMWCUSJ",
+    "score_breakdown_json": "{\"crib_score\": 5, \"crib_total\": 24, \"ene_score\": 2, \"bc_score\": 3, \"crib_classification\": \"noise\", \"ic_value\": 0.03608247422680412, \"ic_score_normalized\": 0.0, \"ngram_score\": null, \"ngram_per_char\": null, \"bean_passed\": false, \"bean_detail\": null, \"is_breakthrough\": false}",
+    "metadata_json": null,
+    "timestamp": "2026-04-06 11:05:24",
+    "stack": {
+      "layers": [
+        {
+          "family": "additive_mask",
+          "params": {
+            "keyword": "I"
+          },
+          "label": "",
+          "hash": "3f216f6364142a80"
+        },
+        {
+          "family": "block_transposition",
+          "params": {
+            "perm": [
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              0,
+              1
+            ],
+            "cycle_boustro": true,
+            "route_name": "identity",
+            "rotation": 2
+          },
+          "label": "",
+          "hash": "3019eb07e2bdd263"
+        }
+      ],
+      "peel_order": "outer_first",
+      "description": "additive_mask/keyword=I -> block_transposition/cycle_boustro=True/perm=[24 items]/rotation=2/route_name=identity (outer_first)",
+      "stack_hash": "80cc21edc6f810ae",
+      "campaign_key": "additive_mask+block_transposition/outer_first"
+    },
+    "campaign_key": "additive_mask+block_transposition/outer_first",
+    "peel_order": "outer_first"
+  },
+  {
+    "id": 19701,
+    "campaign_id": "f5844c0e00deb5e4",
+    "branch_id": "71050b10c06d7e84",
+    "stack_hash": "71050b10c06d7e84",
+    "score": 5,
+    "bean_pass": 0,
+    "ic_value": 0.03608247422680412,
+    "plaintext": "DJGTCJMGPGYZMDTKGDAXTTOXINRRCWKKIBKILOLGKKCYFJHIRXOSLBCDMVASOAFXTFQHNLLECHSUCWMSMZMCYAVUBLPRCVYOJ",
+    "intermediate_text": "LROBKRUOXOGHULBSOLIFBBWFQVZZKESSQJSQTWTOSSKGNRPQZFWATJKLUDIAWINFBNYPVTTMKPACKEUAUHUKGIDCJTXZKDGWR",
+    "score_breakdown_json": "{\"crib_score\": 5, \"crib_total\": 24, \"ene_score\": 2, \"bc_score\": 3, \"crib_classification\": \"noise\", \"ic_value\": 0.03608247422680412, \"ic_score_normalized\": 0.0, \"ngram_score\": null, \"ngram_per_char\": null, \"bean_passed\": false, \"bean_detail\": null, \"is_breakthrough\": false}",
+    "metadata_json": null,
+    "timestamp": "2026-04-06 11:05:24",
+    "stack": {
+      "layers": [
+        {
+          "family": "additive_mask",
+          "params": {
+            "keyword": "I"
+          },
+          "label": "",
+          "hash": "3f216f6364142a80"
+        },
+        {
+          "family": "block_transposition",
+          "params": {
+            "perm": [
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              0,
+              1
+            ],
+            "cycle_boustro": true,
+            "route_name": "identity",
+            "rotation": 2
+          },
+          "label": "",
+          "hash": "3019eb07e2bdd263"
+        }
+      ],
+      "peel_order": "inner_first",
+      "description": "additive_mask/keyword=I -> block_transposition/cycle_boustro=True/perm=[24 items]/rotation=2/route_name=identity (inner_first)",
+      "stack_hash": "71050b10c06d7e84",
+      "campaign_key": "additive_mask+block_transposition/inner_first"
+    },
+    "campaign_key": "additive_mask+block_transposition/inner_first",
+    "peel_order": "inner_first"
+  },
+  {
+    "id": 19804,
+    "campaign_id": "f5844c0e00deb5e4",
+    "branch_id": "3375736d5d7395fa",
+    "stack_hash": "3375736d5d7395fa",
+    "score": 5,
+    "bean_pass": 0,
+    "ic_value": 0.03608247422680412,
+    "plaintext": "GKTDMZYGPGMJCTGJDXOTTXADILOLGKKCYFJHIINRRCWKKIBKTXFAOSAVMDCBLSOXRELLNHQFCYAVUBLPRCVYOCHSUCWMSMZMJ",
+    "intermediate_text": "GTCJMGPGYZMDTKGDAXTTOXDJNIIHJFYCKKGLOLIKBIKKWCRROSLBCDMVASOAFXTFQHNLLERXHCOYVCRPLBUVAYCMZMSMWCUSJ",
+    "score_breakdown_json": "{\"crib_score\": 5, \"crib_total\": 24, \"ene_score\": 2, \"bc_score\": 3, \"crib_classification\": \"noise\", \"ic_value\": 0.03608247422680412, \"ic_score_normalized\": 0.0, \"ngram_score\": null, \"ngram_per_char\": null, \"bean_passed\": false, \"bean_detail\": null, \"is_breakthrough\": false}",
+    "metadata_json": null,
+    "timestamp": "2026-04-06 11:05:24",
+    "stack": {
+      "layers": [
+        {
+          "family": "additive_mask",
+          "params": {
+            "keyword": "I"
+          },
+          "label": "",
+          "hash": "3f216f6364142a80"
+        },
+        {
+          "family": "block_transposition",
+          "params": {
+            "perm": [
+              14,
+              13,
+              12,
+              11,
+              10,
+              9,
+              8,
+              7,
+              6,
+              5,
+              4,
+              3,
+              2,
+              1,
+              0,
+              23,
+              22,
+              21,
+              20,
+              19,
+              18,
+              17,
+              16,
+              15
+            ],
+            "cycle_boustro": false,
+            "route_name": "identity_reflected",
+            "rotation": 9
+          },
+          "label": "",
+          "hash": "ce80de12371a6d3b"
+        }
+      ],
+      "peel_order": "outer_first",
+      "description": "additive_mask/keyword=I -> block_transposition/cycle_boustro=False/perm=[24 items]/rotation=9/route_name=identity_reflected (outer_first)",
+      "stack_hash": "3375736d5d7395fa",
+      "campaign_key": "additive_mask+block_transposition/outer_first"
+    },
+    "campaign_key": "additive_mask+block_transposition/outer_first",
+    "peel_order": "outer_first"
+  },
+  {
+    "id": 19805,
+    "campaign_id": "f5844c0e00deb5e4",
+    "branch_id": "2986639516dc2b92",
+    "stack_hash": "2986639516dc2b92",
+    "score": 5,
+    "bean_pass": 0,
+    "ic_value": 0.03608247422680412,
+    "plaintext": "GKTDMZYGPGMJCTGJDXOTTXADILOLGKKCYFJHIINRRCWKKIBKTXFAOSAVMDCBLSOXRELLNHQFCYAVUBLPRCVYOCHSUCWMSMZMJ",
+    "intermediate_text": "OSBLUHGOXOURKBORLFWBBFILQTWTOSSKGNRPQQVZZKESSQJSBFNIWAIDULKJTAWFZMTTVPYNKGIDCJTXZKDGWKPACKEUAUHUR",
+    "score_breakdown_json": "{\"crib_score\": 5, \"crib_total\": 24, \"ene_score\": 2, \"bc_score\": 3, \"crib_classification\": \"noise\", \"ic_value\": 0.03608247422680412, \"ic_score_normalized\": 0.0, \"ngram_score\": null, \"ngram_per_char\": null, \"bean_passed\": false, \"bean_detail\": null, \"is_breakthrough\": false}",
+    "metadata_json": null,
+    "timestamp": "2026-04-06 11:05:24",
+    "stack": {
+      "layers": [
+        {
+          "family": "additive_mask",
+          "params": {
+            "keyword": "I"
+          },
+          "label": "",
+          "hash": "3f216f6364142a80"
+        },
+        {
+          "family": "block_transposition",
+          "params": {
+            "perm": [
+              14,
+              13,
+              12,
+              11,
+              10,
+              9,
+              8,
+              7,
+              6,
+              5,
+              4,
+              3,
+              2,
+              1,
+              0,
+              23,
+              22,
+              21,
+              20,
+              19,
+              18,
+              17,
+              16,
+              15
+            ],
+            "cycle_boustro": false,
+            "route_name": "identity_reflected",
+            "rotation": 9
+          },
+          "label": "",
+          "hash": "ce80de12371a6d3b"
+        }
+      ],
+      "peel_order": "inner_first",
+      "description": "additive_mask/keyword=I -> block_transposition/cycle_boustro=False/perm=[24 items]/rotation=9/route_name=identity_reflected (inner_first)",
+      "stack_hash": "2986639516dc2b92",
+      "campaign_key": "additive_mask+block_transposition/inner_first"
+    },
+    "campaign_key": "additive_mask+block_transposition/inner_first",
+    "peel_order": "inner_first"
+  },
+  {
+    "id": 20714,
+    "campaign_id": "f5844c0e00deb5e4",
+    "branch_id": "7e6d332ecc99992e",
+    "stack_hash": "7e6d332ecc99992e",
+    "score": 5,
+    "bean_pass": 0,
+    "ic_value": 0.03608247422680412,
+    "plaintext": "DJGTCJMGPGYZMDTKGDAXTTOXINRRCWKKIBKILOLGKKCYFJHIRXOSLBCDMVASOAFXTFQHNLLECHSUCWMSMZMCYAVUBLPRCVYOJ",
+    "intermediate_text": "GTCJMGPGYZMDTKGDAXTTOXDJNIIHJFYCKKGLOLIKBIKKWCRROSLBCDMVASOAFXTFQHNLLERXHCOYVCRPLBUVAYCMZMSMWCUSJ",
+    "score_breakdown_json": "{\"crib_score\": 5, \"crib_total\": 24, \"ene_score\": 2, \"bc_score\": 3, \"crib_classification\": \"noise\", \"ic_value\": 0.03608247422680412, \"ic_score_normalized\": 0.0, \"ngram_score\": null, \"ngram_per_char\": null, \"bean_passed\": false, \"bean_detail\": null, \"is_breakthrough\": false}",
+    "metadata_json": null,
+    "timestamp": "2026-04-06 11:05:25",
+    "stack": {
+      "layers": [
+        {
+          "family": "additive_mask",
+          "params": {
+            "keyword": "I"
+          },
+          "label": "",
+          "hash": "3f216f6364142a80"
+        },
+        {
+          "family": "block_transposition",
+          "params": {
+            "perm": [
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              0,
+              1
+            ],
+            "cycle_boustro": true,
+            "route_name": "all_forward",
+            "rotation": 2
+          },
+          "label": "",
+          "hash": "c0b401f9abaf0482"
+        }
+      ],
+      "peel_order": "outer_first",
+      "description": "additive_mask/keyword=I -> block_transposition/cycle_boustro=True/perm=[24 items]/rotation=2/route_name=all_forward (outer_first)",
+      "stack_hash": "7e6d332ecc99992e",
+      "campaign_key": "additive_mask+block_transposition/outer_first"
+    },
+    "campaign_key": "additive_mask+block_transposition/outer_first",
+    "peel_order": "outer_first"
+  },
+  {
+    "id": 20715,
+    "campaign_id": "f5844c0e00deb5e4",
+    "branch_id": "12ce370ba6be00c8",
+    "stack_hash": "12ce370ba6be00c8",
+    "score": 5,
+    "bean_pass": 0,
+    "ic_value": 0.03608247422680412,
+    "plaintext": "DJGTCJMGPGYZMDTKGDAXTTOXINRRCWKKIBKILOLGKKCYFJHIRXOSLBCDMVASOAFXTFQHNLLECHSUCWMSMZMCYAVUBLPRCVYOJ",
+    "intermediate_text": "LROBKRUOXOGHULBSOLIFBBWFQVZZKESSQJSQTWTOSSKGNRPQZFWATJKLUDIAWINFBNYPVTTMKPACKEUAUHUKGIDCJTXZKDGWR",
+    "score_breakdown_json": "{\"crib_score\": 5, \"crib_total\": 24, \"ene_score\": 2, \"bc_score\": 3, \"crib_classification\": \"noise\", \"ic_value\": 0.03608247422680412, \"ic_score_normalized\": 0.0, \"ngram_score\": null, \"ngram_per_char\": null, \"bean_passed\": false, \"bean_detail\": null, \"is_breakthrough\": false}",
+    "metadata_json": null,
+    "timestamp": "2026-04-06 11:05:25",
+    "stack": {
+      "layers": [
+        {
+          "family": "additive_mask",
+          "params": {
+            "keyword": "I"
+          },
+          "label": "",
+          "hash": "3f216f6364142a80"
+        },
+        {
+          "family": "block_transposition",
+          "params": {
+            "perm": [
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              0,
+              1
+            ],
+            "cycle_boustro": true,
+            "route_name": "all_forward",
+            "rotation": 2
+          },
+          "label": "",
+          "hash": "c0b401f9abaf0482"
+        }
+      ],
+      "peel_order": "inner_first",
+      "description": "additive_mask/keyword=I -> block_transposition/cycle_boustro=True/perm=[24 items]/rotation=2/route_name=all_forward (inner_first)",
+      "stack_hash": "12ce370ba6be00c8",
+      "campaign_key": "additive_mask+block_transposition/inner_first"
+    },
+    "campaign_key": "additive_mask+block_transposition/inner_first",
+    "peel_order": "inner_first"
+  },
+  {
+    "id": 22512,
+    "campaign_id": "f5844c0e00deb5e4",
+    "branch_id": "66f73b98752945db",
+    "stack_hash": "66f73b98752945db",
+    "score": 5,
+    "bean_pass": 0,
+    "ic_value": 0.03608247422680412,
+    "plaintext": "GKTDMZYGPGMJCTGJDXOTTXADILOLGKKCYFJHIINRRCWKKIBKTXFAOSAVMDCBLSOXRELLNHQFCYAVUBLPRCVYOCHSUCWMSMZMJ",
+    "intermediate_text": "GTCJMGPGYZMDTKGDAXTTOXDJNIIHJFYCKKGLOLIKBIKKWCRROSLBCDMVASOAFXTFQHNLLERXHCOYVCRPLBUVAYCMZMSMWCUSJ",
+    "score_breakdown_json": "{\"crib_score\": 5, \"crib_total\": 24, \"ene_score\": 2, \"bc_score\": 3, \"crib_classification\": \"noise\", \"ic_value\": 0.03608247422680412, \"ic_score_normalized\": 0.0, \"ngram_score\": null, \"ngram_per_char\": null, \"bean_passed\": false, \"bean_detail\": null, \"is_breakthrough\": false}",
+    "metadata_json": null,
+    "timestamp": "2026-04-06 11:05:28",
+    "stack": {
+      "layers": [
+        {
+          "family": "additive_mask",
+          "params": {
+            "keyword": "I"
+          },
+          "label": "",
+          "hash": "3f216f6364142a80"
+        },
+        {
+          "family": "block_transposition",
+          "params": {
+            "perm": [
+              14,
+              13,
+              12,
+              11,
+              10,
+              9,
+              8,
+              7,
+              6,
+              5,
+              4,
+              3,
+              2,
+              1,
+              0,
+              23,
+              22,
+              21,
+              20,
+              19,
+              18,
+              17,
+              16,
+              15
+            ],
+            "cycle_boustro": false,
+            "route_name": "all_forward_reflected",
+            "rotation": 9
+          },
+          "label": "",
+          "hash": "04d10807b7571d69"
+        }
+      ],
+      "peel_order": "outer_first",
+      "description": "additive_mask/keyword=I -> block_transposition/cycle_boustro=False/perm=[24 items]/rotation=9/route_name=all_forward_reflected (outer_first)",
+      "stack_hash": "66f73b98752945db",
+      "campaign_key": "additive_mask+block_transposition/outer_first"
+    },
+    "campaign_key": "additive_mask+block_transposition/outer_first",
+    "peel_order": "outer_first"
+  },
+  {
+    "id": 22513,
+    "campaign_id": "f5844c0e00deb5e4",
+    "branch_id": "59869c913c2a614c",
+    "stack_hash": "59869c913c2a614c",
+    "score": 5,
+    "bean_pass": 0,
+    "ic_value": 0.03608247422680412,
+    "plaintext": "GKTDMZYGPGMJCTGJDXOTTXADILOLGKKCYFJHIINRRCWKKIBKTXFAOSAVMDCBLSOXRELLNHQFCYAVUBLPRCVYOCHSUCWMSMZMJ",
+    "intermediate_text": "OSBLUHGOXOURKBORLFWBBFILQTWTOSSKGNRPQQVZZKESSQJSBFNIWAIDULKJTAWFZMTTVPYNKGIDCJTXZKDGWKPACKEUAUHUR",
+    "score_breakdown_json": "{\"crib_score\": 5, \"crib_total\": 24, \"ene_score\": 2, \"bc_score\": 3, \"crib_classification\": \"noise\", \"ic_value\": 0.03608247422680412, \"ic_score_normalized\": 0.0, \"ngram_score\": null, \"ngram_per_char\": null, \"bean_passed\": false, \"bean_detail\": null, \"is_breakthrough\": false}",
+    "metadata_json": null,
+    "timestamp": "2026-04-06 11:05:28",
+    "stack": {
+      "layers": [
+        {
+          "family": "additive_mask",
+          "params": {
+            "keyword": "I"
+          },
+          "label": "",
+          "hash": "3f216f6364142a80"
+        },
+        {
+          "family": "block_transposition",
+          "params": {
+            "perm": [
+              14,
+              13,
+              12,
+              11,
+              10,
+              9,
+              8,
+              7,
+              6,
+              5,
+              4,
+              3,
+              2,
+              1,
+              0,
+              23,
+              22,
+              21,
+              20,
+              19,
+              18,
+              17,
+              16,
+              15
+            ],
+            "cycle_boustro": false,
+            "route_name": "all_forward_reflected",
+            "rotation": 9
+          },
+          "label": "",
+          "hash": "04d10807b7571d69"
+        }
+      ],
+      "peel_order": "inner_first",
+      "description": "additive_mask/keyword=I -> block_transposition/cycle_boustro=False/perm=[24 items]/rotation=9/route_name=all_forward_reflected (inner_first)",
+      "stack_hash": "59869c913c2a614c",
+      "campaign_key": "additive_mask+block_transposition/inner_first"
+    },
+    "campaign_key": "additive_mask+block_transposition/inner_first",
+    "peel_order": "inner_first"
+  },
+  {
+    "id": 25398,
+    "campaign_id": "f5844c0e00deb5e4",
+    "branch_id": "655677ba88b65c62",
+    "stack_hash": "655677ba88b65c62",
+    "score": 5,
+    "bean_pass": 0,
+    "ic_value": 0.03479381443298969,
+    "plaintext": "MURZQGFIBALNEHBLZECKBRRSTCWNYHQZSZUJQSVTUFERQXPPURYNEWPCTXICGADILRPMAAJINCWQZFUHUWNWRJJDGSYTKDGBP",
+    "intermediate_text": "MBRRSALNEHBLZECKGFIBURZQTQXPPZUJQSVTUFERHQZSCWNYUAAJIXICGADILRPMWPCTRYNENKDGBWNWRJJDGSYTFUHUCWQZP",
+    "score_breakdown_json": "{\"crib_score\": 5, \"crib_total\": 24, \"ene_score\": 4, \"bc_score\": 1, \"crib_classification\": \"noise\", \"ic_value\": 0.03479381443298969, \"ic_score_normalized\": 0.0, \"ngram_score\": null, \"ngram_per_char\": null, \"bean_passed\": false, \"bean_detail\": null, \"is_breakthrough\": false}",
+    "metadata_json": null,
+    "timestamp": "2026-04-06 11:05:32",
+    "stack": {
+      "layers": [
+        {
+          "family": "additive_mask",
+          "params": {
+            "keyword": "CATACOMB"
+          },
+          "label": "",
+          "hash": "93894ae45118175d"
+        },
+        {
+          "family": "block_transposition",
+          "params": {
+            "perm": [
+              0,
+              20,
+              21,
+              22,
+              23,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              5,
+              6,
+              7,
+              8,
+              1,
+              2,
+              3,
+              4
+            ],
+            "cycle_boustro": false,
+            "route_name": "reverse_bands",
+            "rotation": 23
+          },
+          "label": "",
+          "hash": "39cd75a5680a9791"
+        }
+      ],
+      "peel_order": "outer_first",
+      "description": "additive_mask/keyword=CATACOMB -> block_transposition/cycle_boustro=False/perm=[24 items]/rotation=23/route_name=reverse_bands (outer_first)",
+      "stack_hash": "655677ba88b65c62",
+      "campaign_key": "additive_mask+block_transposition/outer_first"
+    },
+    "campaign_key": "additive_mask+block_transposition/outer_first",
+    "peel_order": "outer_first"
+  },
+  {
+    "id": 25604,
+    "campaign_id": "f5844c0e00deb5e4",
+    "branch_id": "47e20ee2ffe99580",
+    "stack_hash": "47e20ee2ffe99580",
+    "score": 5,
+    "bean_pass": 0,
+    "ic_value": 0.03608247422680412,
+    "plaintext": "ONERUUXRAILORVEOXKJREEZITNCCYHVVTJNVVRWZWTVMQUSTCWDZIMNOXSBQEIQLZDLGYWWPNNFDSHXDXCAWMFGLJNXKNGJZU",
+    "intermediate_text": "RENUXRARJKXOEVROLIEEZIOUYTTSUQJNVVRWZWTVMTVVHNCCZDWMNOXGLDZLQIEQBSYWWPCISNZJGNCAWMFGLJNXKXDXHNFDU",
+    "score_breakdown_json": "{\"crib_score\": 5, \"crib_total\": 24, \"ene_score\": 4, \"bc_score\": 1, \"crib_classification\": \"noise\", \"ic_value\": 0.03608247422680412, \"ic_score_normalized\": 0.0, \"ngram_score\": null, \"ngram_per_char\": null, \"bean_passed\": false, \"bean_detail\": null, \"is_breakthrough\": false}",
+    "metadata_json": null,
+    "timestamp": "2026-04-06 11:05:32",
+    "stack": {
+      "layers": [
+        {
+          "family": "additive_mask",
+          "params": {
+            "keyword": "X"
+          },
+          "label": "",
+          "hash": "3d81a164af5e2eaa"
+        },
+        {
+          "family": "block_transposition",
+          "params": {
+            "perm": [
+              3,
+              2,
+              1,
+              5,
+              6,
+              7,
+              8,
+              19,
+              18,
+              17,
+              16,
+              15,
+              14,
+              13,
+              12,
+              11,
+              10,
+              9,
+              20,
+              21,
+              22,
+              23,
+              0,
+              4
+            ],
+            "cycle_boustro": true,
+            "route_name": "band_boustro",
+            "rotation": 2
+          },
+          "label": "",
+          "hash": "928802d0e5d147b5"
+        }
+      ],
+      "peel_order": "outer_first",
+      "description": "additive_mask/keyword=X -> block_transposition/cycle_boustro=True/perm=[24 items]/rotation=2/route_name=band_boustro (outer_first)",
+      "stack_hash": "47e20ee2ffe99580",
+      "campaign_key": "additive_mask+block_transposition/outer_first"
+    },
+    "campaign_key": "additive_mask+block_transposition/outer_first",
+    "peel_order": "outer_first"
+  },
+  {
+    "id": 25605,
+    "campaign_id": "f5844c0e00deb5e4",
+    "branch_id": "9c0b89208edabbda",
+    "stack_hash": "9c0b89208edabbda",
+    "score": 5,
+    "bean_pass": 0,
+    "ic_value": 0.03608247422680412,
+    "plaintext": "ONERUUXRAILORVEOXKJREEZITNCCYHVVTJNVVRWZWTVMQUSTCWDZIMNOXSBQEIQLZDLGYWWPNNFDSHXDXCAWMFGLJNXKNGJZU",
+    "intermediate_text": "LKBORRUOXFILOSBLUHGOBBWFQKZZVESSQGKSSOTWTQSJNRPQZTAWFJKLUPYNBFNIWAIDVTTMKKCAPEUAUZXTJCDIGKUHKDGWR",
+    "score_breakdown_json": "{\"crib_score\": 5, \"crib_total\": 24, \"ene_score\": 4, \"bc_score\": 1, \"crib_classification\": \"noise\", \"ic_value\": 0.03608247422680412, \"ic_score_normalized\": 0.0, \"ngram_score\": null, \"ngram_per_char\": null, \"bean_passed\": false, \"bean_detail\": null, \"is_breakthrough\": false}",
+    "metadata_json": null,
+    "timestamp": "2026-04-06 11:05:32",
+    "stack": {
+      "layers": [
+        {
+          "family": "additive_mask",
+          "params": {
+            "keyword": "X"
+          },
+          "label": "",
+          "hash": "3d81a164af5e2eaa"
+        },
+        {
+          "family": "block_transposition",
+          "params": {
+            "perm": [
+              3,
+              2,
+              1,
+              5,
+              6,
+              7,
+              8,
+              19,
+              18,
+              17,
+              16,
+              15,
+              14,
+              13,
+              12,
+              11,
+              10,
+              9,
+              20,
+              21,
+              22,
+              23,
+              0,
+              4
+            ],
+            "cycle_boustro": true,
+            "route_name": "band_boustro",
+            "rotation": 2
+          },
+          "label": "",
+          "hash": "928802d0e5d147b5"
+        }
+      ],
+      "peel_order": "inner_first",
+      "description": "additive_mask/keyword=X -> block_transposition/cycle_boustro=True/perm=[24 items]/rotation=2/route_name=band_boustro (inner_first)",
+      "stack_hash": "9c0b89208edabbda",
+      "campaign_key": "additive_mask+block_transposition/inner_first"
+    },
+    "campaign_key": "additive_mask+block_transposition/inner_first",
+    "peel_order": "inner_first"
+  },
+  {
+    "id": 26091,
+    "campaign_id": "f5844c0e00deb5e4",
+    "branch_id": "4451c2914545d0d2",
+    "stack_hash": "4451c2914545d0d2",
+    "score": 5,
+    "bean_pass": 0,
+    "ic_value": 0.04209621993127148,
+    "plaintext": "IODRHTIFWFFBYXCZZSKLRZACRNAPNIPNKKNSPIDGBTFTLKMYFLTJQSQTKMCTSHSBMFWITSCRKKMGTCJONKNUXMBIVGRDZBNLC",
+    "intermediate_text": "XOURKBORLFWBBFILOSBLUHGOGNRPQQVZZKESSQJSQTWTOSSKULKJTAWFZMTTVPYNBFNIWAIDZKDGWKPACKEUAUHUKGIDCJTXR",
+    "score_breakdown_json": "{\"crib_score\": 5, \"crib_total\": 24, \"ene_score\": 2, \"bc_score\": 3, \"crib_classification\": \"noise\", \"ic_value\": 0.04209621993127148, \"ic_score_normalized\": 0.12871386299790039, \"ngram_score\": null, \"ngram_per_char\": null, \"bean_passed\": false, \"bean_detail\": null, \"is_breakthrough\": false}",
+    "metadata_json": null,
+    "timestamp": "2026-04-06 11:05:33",
+    "stack": {
+      "layers": [
+        {
+          "family": "additive_mask",
+          "params": {
+            "keyword": "PARADIGM"
+          },
+          "label": "",
+          "hash": "9047cf9736e36215"
+        },
+        {
+          "family": "block_transposition",
+          "params": {
+            "perm": [
+              6,
+              5,
+              4,
+              3,
+              2,
+              1,
+              0,
+              23,
+              22,
+              21,
+              20,
+              19,
+              18,
+              17,
+              16,
+              15,
+              14,
+              13,
+              12,
+              11,
+              10,
+              9,
+              8,
+              7
+            ],
+            "cycle_boustro": false,
+            "route_name": "identity_reflected",
+            "rotation": 17
+          },
+          "label": "",
+          "hash": "b7105dd0cd4d9c9c"
+        }
+      ],
+      "peel_order": "inner_first",
+      "description": "additive_mask/keyword=PARADIGM -> block_transposition/cycle_boustro=False/perm=[24 items]/rotation=17/route_name=identity_reflected (inner_first)",
+      "stack_hash": "4451c2914545d0d2",
+      "campaign_key": "additive_mask+block_transposition/inner_first"
+    },
+    "campaign_key": "additive_mask+block_transposition/inner_first",
+    "peel_order": "inner_first"
+  },
+  {
+    "id": 26168,
+    "campaign_id": "f5844c0e00deb5e4",
+    "branch_id": "efafcfad6fc64a3a",
+    "stack_hash": "efafcfad6fc64a3a",
+    "score": 5,
+    "bean_pass": 0,
+    "ic_value": 0.03479381443298969,
+    "plaintext": "LKCEZGFIBLASRRBMQZRUNEHBTREFUHQZSUZPPXQTYNWCJQSVIMPRLWPCTIXIJAAUENYRCGADDTYSGFUHUNWBGDKNZQWCWRJJP",
+    "intermediate_text": "MBRRSALNEHBLZECKGFIBURZQTQXPPZUJQSVTUFERHQZSCWNYUAAJIXICGADILRPMWPCTRYNENKDGBWNWRJJDGSYTFUHUCWQZP",
+    "score_breakdown_json": "{\"crib_score\": 5, \"crib_total\": 24, \"ene_score\": 4, \"bc_score\": 1, \"crib_classification\": \"noise\", \"ic_value\": 0.03479381443298969, \"ic_score_normalized\": 0.0, \"ngram_score\": null, \"ngram_per_char\": null, \"bean_passed\": false, \"bean_detail\": null, \"is_breakthrough\": false}",
+    "metadata_json": null,
+    "timestamp": "2026-04-06 11:05:33",
+    "stack": {
+      "layers": [
+        {
+          "family": "additive_mask",
+          "params": {
+            "keyword": "CATACOMB"
+          },
+          "label": "",
+          "hash": "93894ae45118175d"
+        },
+        {
+          "family": "block_transposition",
+          "params": {
+            "perm": [
+              15,
+              14,
+              13,
+              12,
+              11,
+              10,
+              9,
+              20,
+              21,
+              22,
+              23,
+              0,
+              4,
+              3,
+              2,
+              1,
+              5,
+              6,
+              7,
+              8,
+              19,
+              18,
+              17,
+              16
+            ],
+            "cycle_boustro": false,
+            "route_name": "band_boustro",
+            "rotation": 13
+          },
+          "label": "",
+          "hash": "63aebea1b50af4ee"
+        }
+      ],
+      "peel_order": "outer_first",
+      "description": "additive_mask/keyword=CATACOMB -> block_transposition/cycle_boustro=False/perm=[24 items]/rotation=13/route_name=band_boustro (outer_first)",
+      "stack_hash": "efafcfad6fc64a3a",
+      "campaign_key": "additive_mask+block_transposition/outer_first"
+    },
+    "campaign_key": "additive_mask+block_transposition/outer_first",
+    "peel_order": "outer_first"
+  },
+  {
+    "id": 26206,
+    "campaign_id": "f5844c0e00deb5e4",
+    "branch_id": "d2edac3667bc5cc1",
+    "stack_hash": "d2edac3667bc5cc1",
+    "score": 5,
+    "bean_pass": 0,
+    "ic_value": 0.03479381443298969,
+    "plaintext": "RLASRNEHBRUBIFGKCEZLZQMBWQZSCHREFXPPZUJQSVTUQTYNAIXIJCGADYRTCPWMPRLINEUAWUHUCFTYSDGBWNWRJJDGKNZQP",
+    "intermediate_text": "MBRRSALNEHBLZECKGFIBURZQTQXPPZUJQSVTUFERHQZSCWNYUAAJIXICGADILRPMWPCTRYNENKDGBWNWRJJDGSYTFUHUCWQZP",
+    "score_breakdown_json": "{\"crib_score\": 5, \"crib_total\": 24, \"ene_score\": 1, \"bc_score\": 4, \"crib_classification\": \"noise\", \"ic_value\": 0.03479381443298969, \"ic_score_normalized\": 0.0, \"ngram_score\": null, \"ngram_per_char\": null, \"bean_passed\": false, \"bean_detail\": null, \"is_breakthrough\": false}",
+    "metadata_json": null,
+    "timestamp": "2026-04-06 11:05:34",
+    "stack": {
+      "layers": [
+        {
+          "family": "additive_mask",
+          "params": {
+            "keyword": "CATACOMB"
+          },
+          "label": "",
+          "hash": "93894ae45118175d"
+        },
+        {
+          "family": "block_transposition",
+          "params": {
+            "perm": [
+              22,
+              23,
+              0,
+              4,
+              3,
+              2,
+              1,
+              5,
+              6,
+              7,
+              8,
+              19,
+              18,
+              17,
+              16,
+              15,
+              14,
+              13,
+              12,
+              11,
+              10,
+              9,
+              20,
+              21
+            ],
+            "cycle_boustro": true,
+            "route_name": "band_boustro",
+            "rotation": 22
+          },
+          "label": "",
+          "hash": "48582f3c95d0be81"
+        }
+      ],
+      "peel_order": "outer_first",
+      "description": "additive_mask/keyword=CATACOMB -> block_transposition/cycle_boustro=True/perm=[24 items]/rotation=22/route_name=band_boustro (outer_first)",
+      "stack_hash": "d2edac3667bc5cc1",
+      "campaign_key": "additive_mask+block_transposition/outer_first"
+    },
+    "campaign_key": "additive_mask+block_transposition/outer_first",
+    "peel_order": "outer_first"
+  },
+  {
+    "id": 26312,
+    "campaign_id": "f5844c0e00deb5e4",
+    "branch_id": "57cdf92551351a3b",
+    "stack_hash": "57cdf92551351a3b",
+    "score": 5,
+    "bean_pass": 0,
+    "ic_value": 0.03479381443298969,
+    "plaintext": "LZECKGFIBURZQMBRRSALNEHBTUFERHQZSCWNYTQXPPZUJQSVILRPMWPCTRYNEUAAJIXICGADDGSYTFUHUCWQZNKDGBWNWRJJP",
+    "intermediate_text": "MBRRSALNEHBLZECKGFIBURZQTQXPPZUJQSVTUFERHQZSCWNYUAAJIXICGADILRPMWPCTRYNENKDGBWNWRJJDGSYTFUHUCWQZP",
+    "score_breakdown_json": "{\"crib_score\": 5, \"crib_total\": 24, \"ene_score\": 4, \"bc_score\": 1, \"crib_classification\": \"noise\", \"ic_value\": 0.03479381443298969, \"ic_score_normalized\": 0.0, \"ngram_score\": null, \"ngram_per_char\": null, \"bean_passed\": false, \"bean_detail\": null, \"is_breakthrough\": false}",
+    "metadata_json": null,
+    "timestamp": "2026-04-06 11:05:34",
+    "stack": {
+      "layers": [
+        {
+          "family": "additive_mask",
+          "params": {
+            "keyword": "CATACOMB"
+          },
+          "label": "",
+          "hash": "93894ae45118175d"
+        },
+        {
+          "family": "block_transposition",
+          "params": {
+            "perm": [
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12
+            ],
+            "cycle_boustro": false,
+            "route_name": "all_forward",
+            "rotation": 13
+          },
+          "label": "",
+          "hash": "a31169eaa14eeeba"
+        }
+      ],
+      "peel_order": "outer_first",
+      "description": "additive_mask/keyword=CATACOMB -> block_transposition/cycle_boustro=False/perm=[24 items]/rotation=13/route_name=all_forward (outer_first)",
+      "stack_hash": "57cdf92551351a3b",
+      "campaign_key": "additive_mask+block_transposition/outer_first"
+    },
+    "campaign_key": "additive_mask+block_transposition/outer_first",
+    "peel_order": "outer_first"
+  },
+  {
+    "id": 26788,
+    "campaign_id": "f5844c0e00deb5e4",
+    "branch_id": "25f3834d8df5b8e4",
+    "stack_hash": "25f3834d8df5b8e4",
+    "score": 5,
+    "bean_pass": 0,
+    "ic_value": 0.03479381443298969,
+    "plaintext": "MURZQGFIBALNEHBLZECKBRRSTCWNYHQZSZUJQSVTUFERQXPPURYNEWPCTXICGADILRPMAAJINCWQZFUHUWNWRJJDGSYTKDGBP",
+    "intermediate_text": "MBRRSALNEHBLZECKGFIBURZQTQXPPZUJQSVTUFERHQZSCWNYUAAJIXICGADILRPMWPCTRYNENKDGBWNWRJJDGSYTFUHUCWQZP",
+    "score_breakdown_json": "{\"crib_score\": 5, \"crib_total\": 24, \"ene_score\": 4, \"bc_score\": 1, \"crib_classification\": \"noise\", \"ic_value\": 0.03479381443298969, \"ic_score_normalized\": 0.0, \"ngram_score\": null, \"ngram_per_char\": null, \"bean_passed\": false, \"bean_detail\": null, \"is_breakthrough\": false}",
+    "metadata_json": null,
+    "timestamp": "2026-04-06 11:05:35",
+    "stack": {
+      "layers": [
+        {
+          "family": "additive_mask",
+          "params": {
+            "keyword": "CATACOMB"
+          },
+          "label": "",
+          "hash": "93894ae45118175d"
+        },
+        {
+          "family": "block_transposition",
+          "params": {
+            "perm": [
+              0,
+              20,
+              21,
+              22,
+              23,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              5,
+              6,
+              7,
+              8,
+              1,
+              2,
+              3,
+              4
+            ],
+            "cycle_boustro": false,
+            "route_name": "all_reversed_reflected",
+            "rotation": 23
+          },
+          "label": "",
+          "hash": "5a8addd72ce2e45a"
+        }
+      ],
+      "peel_order": "outer_first",
+      "description": "additive_mask/keyword=CATACOMB -> block_transposition/cycle_boustro=False/perm=[24 items]/rotation=23/route_name=all_reversed_reflected (outer_first)",
+      "stack_hash": "25f3834d8df5b8e4",
+      "campaign_key": "additive_mask+block_transposition/outer_first"
+    },
+    "campaign_key": "additive_mask+block_transposition/outer_first",
+    "peel_order": "outer_first"
+  },
+  {
+    "id": 27234,
+    "campaign_id": "f5844c0e00deb5e4",
+    "branch_id": "e24e989f2b27cf90",
+    "stack_hash": "e24e989f2b27cf90",
+    "score": 5,
+    "bean_pass": 0,
+    "ic_value": 0.03479381443298969,
+    "plaintext": "LZECKGFIBURZQMBRRSALNEHBTUFERHQZSCWNYTQXPPZUJQSVILRPMWPCTRYNEUAAJIXICGADDGSYTFUHUCWQZNKDGBWNWRJJP",
+    "intermediate_text": "MBRRSALNEHBLZECKGFIBURZQTQXPPZUJQSVTUFERHQZSCWNYUAAJIXICGADILRPMWPCTRYNENKDGBWNWRJJDGSYTFUHUCWQZP",
+    "score_breakdown_json": "{\"crib_score\": 5, \"crib_total\": 24, \"ene_score\": 4, \"bc_score\": 1, \"crib_classification\": \"noise\", \"ic_value\": 0.03479381443298969, \"ic_score_normalized\": 0.0, \"ngram_score\": null, \"ngram_per_char\": null, \"bean_passed\": false, \"bean_detail\": null, \"is_breakthrough\": false}",
+    "metadata_json": null,
+    "timestamp": "2026-04-06 11:05:35",
+    "stack": {
+      "layers": [
+        {
+          "family": "additive_mask",
+          "params": {
+            "keyword": "CATACOMB"
+          },
+          "label": "",
+          "hash": "93894ae45118175d"
+        },
+        {
+          "family": "block_transposition",
+          "params": {
+            "perm": [
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12
+            ],
+            "cycle_boustro": false,
+            "route_name": "identity",
+            "rotation": 13
+          },
+          "label": "",
+          "hash": "44ec3e3d9465f14f"
+        }
+      ],
+      "peel_order": "outer_first",
+      "description": "additive_mask/keyword=CATACOMB -> block_transposition/cycle_boustro=False/perm=[24 items]/rotation=13/route_name=identity (outer_first)",
+      "stack_hash": "e24e989f2b27cf90",
+      "campaign_key": "additive_mask+block_transposition/outer_first"
+    },
+    "campaign_key": "additive_mask+block_transposition/outer_first",
+    "peel_order": "outer_first"
+  },
+  {
+    "id": 27831,
+    "campaign_id": "f5844c0e00deb5e4",
+    "branch_id": "91a58d2a42458c1d",
+    "stack_hash": "91a58d2a42458c1d",
+    "score": 5,
+    "bean_pass": 0,
+    "ic_value": 0.04209621993127148,
+    "plaintext": "IODRHTIFWFFBYXCZZSKLRZACRNAPNIPNKKNSPIDGBTFTLKMYFLTJQSQTKMCTSHSBMFWITSCRKKMGTCJONKNUXMBIVGRDZBNLC",
+    "intermediate_text": "XOURKBORLFWBBFILOSBLUHGOGNRPQQVZZKESSQJSQTWTOSSKULKJTAWFZMTTVPYNBFNIWAIDZKDGWKPACKEUAUHUKGIDCJTXR",
+    "score_breakdown_json": "{\"crib_score\": 5, \"crib_total\": 24, \"ene_score\": 2, \"bc_score\": 3, \"crib_classification\": \"noise\", \"ic_value\": 0.04209621993127148, \"ic_score_normalized\": 0.12871386299790039, \"ngram_score\": null, \"ngram_per_char\": null, \"bean_passed\": false, \"bean_detail\": null, \"is_breakthrough\": false}",
+    "metadata_json": null,
+    "timestamp": "2026-04-06 11:05:36",
+    "stack": {
+      "layers": [
+        {
+          "family": "additive_mask",
+          "params": {
+            "keyword": "PARADIGM"
+          },
+          "label": "",
+          "hash": "9047cf9736e36215"
+        },
+        {
+          "family": "block_transposition",
+          "params": {
+            "perm": [
+              6,
+              5,
+              4,
+              3,
+              2,
+              1,
+              0,
+              23,
+              22,
+              21,
+              20,
+              19,
+              18,
+              17,
+              16,
+              15,
+              14,
+              13,
+              12,
+              11,
+              10,
+              9,
+              8,
+              7
+            ],
+            "cycle_boustro": false,
+            "route_name": "all_forward_reflected",
+            "rotation": 17
+          },
+          "label": "",
+          "hash": "51597792d107e707"
+        }
+      ],
+      "peel_order": "inner_first",
+      "description": "additive_mask/keyword=PARADIGM -> block_transposition/cycle_boustro=False/perm=[24 items]/rotation=17/route_name=all_forward_reflected (inner_first)",
+      "stack_hash": "91a58d2a42458c1d",
+      "campaign_key": "additive_mask+block_transposition/inner_first"
+    },
+    "campaign_key": "additive_mask+block_transposition/inner_first",
+    "peel_order": "inner_first"
+  },
+  {
+    "id": 30170,
+    "campaign_id": "be44b8b17b14f92d",
+    "branch_id": "8aee37ad4a8fe842",
+    "stack_hash": "8aee37ad4a8fe842",
+    "score": 5,
+    "bean_pass": 0,
+    "ic_value": 0.03608247422680412,
+    "plaintext": "DJGTCJMGPGYZMDTKGDAXTTOXINRRCWKKIBKILOLGKKCYFJHIRXOSLBCDMVASOAFXTFQHNLLECHSUCWMSMZMCYAVUBLPRCVYOJ",
+    "intermediate_text": "LROBKRUOXOGHULBSOLIFBBWFQVZZKESSQJSQTWTOSSKGNRPQZFWATJKLUDIAWINFBNYPVTTMKPACKEUAUHUKGIDCJTXZKDGWR",
+    "score_breakdown_json": "{\"crib_score\": 5, \"crib_total\": 24, \"ene_score\": 2, \"bc_score\": 3, \"crib_classification\": \"noise\", \"ic_value\": 0.03608247422680412, \"ic_score_normalized\": 0.0, \"ngram_score\": null, \"ngram_per_char\": null, \"bean_passed\": false, \"bean_detail\": null, \"is_breakthrough\": false}",
+    "metadata_json": null,
+    "timestamp": "2026-04-06 11:05:43",
+    "stack": {
+      "layers": [
+        {
+          "family": "block_transposition",
+          "params": {
+            "perm": [
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              0,
+              1
+            ],
+            "cycle_boustro": true,
+            "route_name": "identity",
+            "rotation": 2
+          },
+          "label": "",
+          "hash": "3019eb07e2bdd263"
+        },
+        {
+          "family": "additive_mask",
+          "params": {
+            "keyword": "I"
+          },
+          "label": "",
+          "hash": "3f216f6364142a80"
+        }
+      ],
+      "peel_order": "outer_first",
+      "description": "block_transposition/cycle_boustro=True/perm=[24 items]/rotation=2/route_name=identity -> additive_mask/keyword=I (outer_first)",
+      "stack_hash": "8aee37ad4a8fe842",
+      "campaign_key": "block_transposition+additive_mask/outer_first"
+    },
+    "campaign_key": "block_transposition+additive_mask/outer_first",
+    "peel_order": "outer_first"
+  },
+  {
+    "id": 30171,
+    "campaign_id": "be44b8b17b14f92d",
+    "branch_id": "5d3281a5d3385224",
+    "stack_hash": "5d3281a5d3385224",
+    "score": 5,
+    "bean_pass": 0,
+    "ic_value": 0.03608247422680412,
+    "plaintext": "DJGTCJMGPGYZMDTKGDAXTTOXINRRCWKKIBKILOLGKKCYFJHIRXOSLBCDMVASOAFXTFQHNLLECHSUCWMSMZMCYAVUBLPRCVYOJ",
+    "intermediate_text": "GTCJMGPGYZMDTKGDAXTTOXDJNIIHJFYCKKGLOLIKBIKKWCRROSLBCDMVASOAFXTFQHNLLERXHCOYVCRPLBUVAYCMZMSMWCUSJ",
+    "score_breakdown_json": "{\"crib_score\": 5, \"crib_total\": 24, \"ene_score\": 2, \"bc_score\": 3, \"crib_classification\": \"noise\", \"ic_value\": 0.03608247422680412, \"ic_score_normalized\": 0.0, \"ngram_score\": null, \"ngram_per_char\": null, \"bean_passed\": false, \"bean_detail\": null, \"is_breakthrough\": false}",
+    "metadata_json": null,
+    "timestamp": "2026-04-06 11:05:43",
+    "stack": {
+      "layers": [
+        {
+          "family": "block_transposition",
+          "params": {
+            "perm": [
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              0,
+              1
+            ],
+            "cycle_boustro": true,
+            "route_name": "identity",
+            "rotation": 2
+          },
+          "label": "",
+          "hash": "3019eb07e2bdd263"
+        },
+        {
+          "family": "additive_mask",
+          "params": {
+            "keyword": "I"
+          },
+          "label": "",
+          "hash": "3f216f6364142a80"
+        }
+      ],
+      "peel_order": "inner_first",
+      "description": "block_transposition/cycle_boustro=True/perm=[24 items]/rotation=2/route_name=identity -> additive_mask/keyword=I (inner_first)",
+      "stack_hash": "5d3281a5d3385224",
+      "campaign_key": "block_transposition+additive_mask/inner_first"
+    },
+    "campaign_key": "block_transposition+additive_mask/inner_first",
+    "peel_order": "inner_first"
+  },
+  {
+    "id": 30200,
+    "campaign_id": "be44b8b17b14f92d",
+    "branch_id": "8114dbbccee28c07",
+    "stack_hash": "8114dbbccee28c07",
+    "score": 5,
+    "bean_pass": 0,
+    "ic_value": 0.036941580756013746,
+    "plaintext": "XZCKOGYDOWDCZIWXFKSRFAQSCNKRDMWANFZOKCESGMZSQRHAENQSNPQTLTSESKTJSXUHPUIPCQLLXSNMKYMPBQOETGBQUZJAJ",
+    "intermediate_text": "FLROBKRUOXOGHULBSOLIFBBWKZZVQQPRNGKSSOTWTQSJQSSEMZFWATJKLUDIAWINFBNYPVTTKCAPKWGDKZXTJCDIGKUHUAUER",
+    "score_breakdown_json": "{\"crib_score\": 5, \"crib_total\": 24, \"ene_score\": 4, \"bc_score\": 1, \"crib_classification\": \"noise\", \"ic_value\": 0.036941580756013746, \"ic_score_normalized\": 0.0, \"ngram_score\": null, \"ngram_per_char\": null, \"bean_passed\": false, \"bean_detail\": null, \"is_breakthrough\": false}",
+    "metadata_json": null,
+    "timestamp": "2026-04-06 11:05:43",
+    "stack": {
+      "layers": [
+        {
+          "family": "block_transposition",
+          "params": {
+            "perm": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              0,
+              1,
+              2
+            ],
+            "cycle_boustro": false,
+            "route_name": "identity",
+            "rotation": 3
+          },
+          "label": "",
+          "hash": "d230023c459cf3c2"
+        },
+        {
+          "family": "additive_mask",
+          "params": {
+            "keyword": "IMPENETRABLE"
+          },
+          "label": "",
+          "hash": "96ecdcc76dc621c3"
+        }
+      ],
+      "peel_order": "outer_first",
+      "description": "block_transposition/cycle_boustro=False/perm=[24 items]/rotation=3/route_name=identity -> additive_mask/keyword=IMPENETRABLE (outer_first)",
+      "stack_hash": "8114dbbccee28c07",
+      "campaign_key": "block_transposition+additive_mask/outer_first"
+    },
+    "campaign_key": "block_transposition+additive_mask/outer_first",
+    "peel_order": "outer_first"
+  },
+  {
+    "id": 32139,
+    "campaign_id": "be44b8b17b14f92d",
+    "branch_id": "4562b9e3e68e681c",
+    "stack_hash": "4562b9e3e68e681c",
+    "score": 5,
+    "bean_pass": 0,
+    "ic_value": 0.03479381443298969,
+    "plaintext": "LZECKGFIBURZQMBRRSALNEHBTUFERHQZSCWNYTQXPPZUJQSVILRPMWPCTRYNEUAAJIXICGADDGSYTFUHUCWQZNKDGBWNWRJJP",
+    "intermediate_text": "MBRRSALNEHBLZECKGFIBURZQTQXPPZUJQSVTUFERHQZSCWNYUAAJIXICGADILRPMWPCTRYNENKDGBWNWRJJDGSYTFUHUCWQZP",
+    "score_breakdown_json": "{\"crib_score\": 5, \"crib_total\": 24, \"ene_score\": 4, \"bc_score\": 1, \"crib_classification\": \"noise\", \"ic_value\": 0.03479381443298969, \"ic_score_normalized\": 0.0, \"ngram_score\": null, \"ngram_per_char\": null, \"bean_passed\": false, \"bean_detail\": null, \"is_breakthrough\": false}",
+    "metadata_json": null,
+    "timestamp": "2026-04-06 11:05:44",
+    "stack": {
+      "layers": [
+        {
+          "family": "block_transposition",
+          "params": {
+            "perm": [
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12
+            ],
+            "cycle_boustro": false,
+            "route_name": "identity",
+            "rotation": 13
+          },
+          "label": "",
+          "hash": "44ec3e3d9465f14f"
+        },
+        {
+          "family": "additive_mask",
+          "params": {
+            "keyword": "CATACOMB"
+          },
+          "label": "",
+          "hash": "93894ae45118175d"
+        }
+      ],
+      "peel_order": "inner_first",
+      "description": "block_transposition/cycle_boustro=False/perm=[24 items]/rotation=13/route_name=identity -> additive_mask/keyword=CATACOMB (inner_first)",
+      "stack_hash": "4562b9e3e68e681c",
+      "campaign_key": "block_transposition+additive_mask/inner_first"
+    },
+    "campaign_key": "block_transposition+additive_mask/inner_first",
+    "peel_order": "inner_first"
+  },
+  {
+    "id": 33420,
+    "campaign_id": "be44b8b17b14f92d",
+    "branch_id": "480934c65cd0ae73",
+    "stack_hash": "480934c65cd0ae73",
+    "score": 5,
+    "bean_pass": 0,
+    "ic_value": 0.04209621993127148,
+    "plaintext": "IODRHTIFWFFBYXCZZSKLRZACRNAPNIPNKKNSPIDGBTFTLKMYFLTJQSQTKMCTSHSBMFWITSCRKKMGTCJONKNUXMBIVGRDZBNLC",
+    "intermediate_text": "XOURKBORLFWBBFILOSBLUHGOGNRPQQVZZKESSQJSQTWTOSSKULKJTAWFZMTTVPYNBFNIWAIDZKDGWKPACKEUAUHUKGIDCJTXR",
+    "score_breakdown_json": "{\"crib_score\": 5, \"crib_total\": 24, \"ene_score\": 2, \"bc_score\": 3, \"crib_classification\": \"noise\", \"ic_value\": 0.04209621993127148, \"ic_score_normalized\": 0.12871386299790039, \"ngram_score\": null, \"ngram_per_char\": null, \"bean_passed\": false, \"bean_detail\": null, \"is_breakthrough\": false}",
+    "metadata_json": null,
+    "timestamp": "2026-04-06 11:05:44",
+    "stack": {
+      "layers": [
+        {
+          "family": "block_transposition",
+          "params": {
+            "perm": [
+              6,
+              5,
+              4,
+              3,
+              2,
+              1,
+              0,
+              23,
+              22,
+              21,
+              20,
+              19,
+              18,
+              17,
+              16,
+              15,
+              14,
+              13,
+              12,
+              11,
+              10,
+              9,
+              8,
+              7
+            ],
+            "cycle_boustro": false,
+            "route_name": "identity_reflected",
+            "rotation": 17
+          },
+          "label": "",
+          "hash": "b7105dd0cd4d9c9c"
+        },
+        {
+          "family": "additive_mask",
+          "params": {
+            "keyword": "PARADIGM"
+          },
+          "label": "",
+          "hash": "9047cf9736e36215"
+        }
+      ],
+      "peel_order": "outer_first",
+      "description": "block_transposition/cycle_boustro=False/perm=[24 items]/rotation=17/route_name=identity_reflected -> additive_mask/keyword=PARADIGM (outer_first)",
+      "stack_hash": "480934c65cd0ae73",
+      "campaign_key": "block_transposition+additive_mask/outer_first"
+    },
+    "campaign_key": "block_transposition+additive_mask/outer_first",
+    "peel_order": "outer_first"
+  },
+  {
+    "id": 34258,
+    "campaign_id": "be44b8b17b14f92d",
+    "branch_id": "590b1cacc690230c",
+    "stack_hash": "590b1cacc690230c",
+    "score": 5,
+    "bean_pass": 0,
+    "ic_value": 0.03608247422680412,
+    "plaintext": "ONERUUXRAILORVEOXKJREEZITNCCYHVVTJNVVRWZWTVMQUSTCWDZIMNOXSBQEIQLZDLGYWWPNNFDSHXDXCAWMFGLJNXKNGJZU",
+    "intermediate_text": "LKBORRUOXFILOSBLUHGOBBWFQKZZVESSQGKSSOTWTQSJNRPQZTAWFJKLUPYNBFNIWAIDVTTMKKCAPEUAUZXTJCDIGKUHKDGWR",
+    "score_breakdown_json": "{\"crib_score\": 5, \"crib_total\": 24, \"ene_score\": 4, \"bc_score\": 1, \"crib_classification\": \"noise\", \"ic_value\": 0.03608247422680412, \"ic_score_normalized\": 0.0, \"ngram_score\": null, \"ngram_per_char\": null, \"bean_passed\": false, \"bean_detail\": null, \"is_breakthrough\": false}",
+    "metadata_json": null,
+    "timestamp": "2026-04-06 11:05:45",
+    "stack": {
+      "layers": [
+        {
+          "family": "block_transposition",
+          "params": {
+            "perm": [
+              3,
+              2,
+              1,
+              5,
+              6,
+              7,
+              8,
+              19,
+              18,
+              17,
+              16,
+              15,
+              14,
+              13,
+              12,
+              11,
+              10,
+              9,
+              20,
+              21,
+              22,
+              23,
+              0,
+              4
+            ],
+            "cycle_boustro": true,
+            "route_name": "band_boustro",
+            "rotation": 2
+          },
+          "label": "",
+          "hash": "928802d0e5d147b5"
+        },
+        {
+          "family": "additive_mask",
+          "params": {
+            "keyword": "X"
+          },
+          "label": "",
+          "hash": "3d81a164af5e2eaa"
+        }
+      ],
+      "peel_order": "outer_first",
+      "description": "block_transposition/cycle_boustro=True/perm=[24 items]/rotation=2/route_name=band_boustro -> additive_mask/keyword=X (outer_first)",
+      "stack_hash": "590b1cacc690230c",
+      "campaign_key": "block_transposition+additive_mask/outer_first"
+    },
+    "campaign_key": "block_transposition+additive_mask/outer_first",
+    "peel_order": "outer_first"
+  },
+  {
+    "id": 34259,
+    "campaign_id": "be44b8b17b14f92d",
+    "branch_id": "34445c10daaf6f66",
+    "stack_hash": "34445c10daaf6f66",
+    "score": 5,
+    "bean_pass": 0,
+    "ic_value": 0.03608247422680412,
+    "plaintext": "ONERUUXRAILORVEOXKJREEZITNCCYHVVTJNVVRWZWTVMQUSTCWDZIMNOXSBQEIQLZDLGYWWPNNFDSHXDXCAWMFGLJNXKNGJZU",
+    "intermediate_text": "RENUXRARJKXOEVROLIEEZIOUYTTSUQJNVVRWZWTVMTVVHNCCZDWMNOXGLDZLQIEQBSYWWPCISNZJGNCAWMFGLJNXKXDXHNFDU",
+    "score_breakdown_json": "{\"crib_score\": 5, \"crib_total\": 24, \"ene_score\": 4, \"bc_score\": 1, \"crib_classification\": \"noise\", \"ic_value\": 0.03608247422680412, \"ic_score_normalized\": 0.0, \"ngram_score\": null, \"ngram_per_char\": null, \"bean_passed\": false, \"bean_detail\": null, \"is_breakthrough\": false}",
+    "metadata_json": null,
+    "timestamp": "2026-04-06 11:05:45",
+    "stack": {
+      "layers": [
+        {
+          "family": "block_transposition",
+          "params": {
+            "perm": [
+              3,
+              2,
+              1,
+              5,
+              6,
+              7,
+              8,
+              19,
+              18,
+              17,
+              16,
+              15,
+              14,
+              13,
+              12,
+              11,
+              10,
+              9,
+              20,
+              21,
+              22,
+              23,
+              0,
+              4
+            ],
+            "cycle_boustro": true,
+            "route_name": "band_boustro",
+            "rotation": 2
+          },
+          "label": "",
+          "hash": "928802d0e5d147b5"
+        },
+        {
+          "family": "additive_mask",
+          "params": {
+            "keyword": "X"
+          },
+          "label": "",
+          "hash": "3d81a164af5e2eaa"
+        }
+      ],
+      "peel_order": "inner_first",
+      "description": "block_transposition/cycle_boustro=True/perm=[24 items]/rotation=2/route_name=band_boustro -> additive_mask/keyword=X (inner_first)",
+      "stack_hash": "34445c10daaf6f66",
+      "campaign_key": "block_transposition+additive_mask/inner_first"
+    },
+    "campaign_key": "block_transposition+additive_mask/inner_first",
+    "peel_order": "inner_first"
+  },
+  {
+    "id": 35727,
+    "campaign_id": "be44b8b17b14f92d",
+    "branch_id": "005787dad8efff17",
+    "stack_hash": "005787dad8efff17",
+    "score": 5,
+    "bean_pass": 0,
+    "ic_value": 0.03479381443298969,
+    "plaintext": "LKCEZGFIBLASRRBMQZRUNEHBTREFUHQZSUZPPXQTYNWCJQSVIMPRLWPCTIXIJAAUENYRCGADDTYSGFUHUNWBGDKNZQWCWRJJP",
+    "intermediate_text": "MBRRSALNEHBLZECKGFIBURZQTQXPPZUJQSVTUFERHQZSCWNYUAAJIXICGADILRPMWPCTRYNENKDGBWNWRJJDGSYTFUHUCWQZP",
+    "score_breakdown_json": "{\"crib_score\": 5, \"crib_total\": 24, \"ene_score\": 4, \"bc_score\": 1, \"crib_classification\": \"noise\", \"ic_value\": 0.03479381443298969, \"ic_score_normalized\": 0.0, \"ngram_score\": null, \"ngram_per_char\": null, \"bean_passed\": false, \"bean_detail\": null, \"is_breakthrough\": false}",
+    "metadata_json": null,
+    "timestamp": "2026-04-06 11:05:46",
+    "stack": {
+      "layers": [
+        {
+          "family": "block_transposition",
+          "params": {
+            "perm": [
+              15,
+              14,
+              13,
+              12,
+              11,
+              10,
+              9,
+              20,
+              21,
+              22,
+              23,
+              0,
+              4,
+              3,
+              2,
+              1,
+              5,
+              6,
+              7,
+              8,
+              19,
+              18,
+              17,
+              16
+            ],
+            "cycle_boustro": false,
+            "route_name": "band_boustro",
+            "rotation": 13
+          },
+          "label": "",
+          "hash": "63aebea1b50af4ee"
+        },
+        {
+          "family": "additive_mask",
+          "params": {
+            "keyword": "CATACOMB"
+          },
+          "label": "",
+          "hash": "93894ae45118175d"
+        }
+      ],
+      "peel_order": "inner_first",
+      "description": "block_transposition/cycle_boustro=False/perm=[24 items]/rotation=13/route_name=band_boustro -> additive_mask/keyword=CATACOMB (inner_first)",
+      "stack_hash": "005787dad8efff17",
+      "campaign_key": "block_transposition+additive_mask/inner_first"
+    },
+    "campaign_key": "block_transposition+additive_mask/inner_first",
+    "peel_order": "inner_first"
+  },
+  {
+    "id": 37541,
+    "campaign_id": "be44b8b17b14f92d",
+    "branch_id": "bcfcdedd315e33ab",
+    "stack_hash": "bcfcdedd315e33ab",
+    "score": 5,
+    "bean_pass": 0,
+    "ic_value": 0.03479381443298969,
+    "plaintext": "RLASRNEHBRUBIFGKCEZLZQMBWQZSCHREFXPPZUJQSVTUQTYNAIXIJCGADYRTCPWMPRLINEUAWUHUCFTYSDGBWNWRJJDGKNZQP",
+    "intermediate_text": "MBRRSALNEHBLZECKGFIBURZQTQXPPZUJQSVTUFERHQZSCWNYUAAJIXICGADILRPMWPCTRYNENKDGBWNWRJJDGSYTFUHUCWQZP",
+    "score_breakdown_json": "{\"crib_score\": 5, \"crib_total\": 24, \"ene_score\": 1, \"bc_score\": 4, \"crib_classification\": \"noise\", \"ic_value\": 0.03479381443298969, \"ic_score_normalized\": 0.0, \"ngram_score\": null, \"ngram_per_char\": null, \"bean_passed\": false, \"bean_detail\": null, \"is_breakthrough\": false}",
+    "metadata_json": null,
+    "timestamp": "2026-04-06 11:05:47",
+    "stack": {
+      "layers": [
+        {
+          "family": "block_transposition",
+          "params": {
+            "perm": [
+              22,
+              23,
+              0,
+              4,
+              3,
+              2,
+              1,
+              5,
+              6,
+              7,
+              8,
+              19,
+              18,
+              17,
+              16,
+              15,
+              14,
+              13,
+              12,
+              11,
+              10,
+              9,
+              20,
+              21
+            ],
+            "cycle_boustro": true,
+            "route_name": "band_boustro",
+            "rotation": 22
+          },
+          "label": "",
+          "hash": "48582f3c95d0be81"
+        },
+        {
+          "family": "additive_mask",
+          "params": {
+            "keyword": "CATACOMB"
+          },
+          "label": "",
+          "hash": "93894ae45118175d"
+        }
+      ],
+      "peel_order": "inner_first",
+      "description": "block_transposition/cycle_boustro=True/perm=[24 items]/rotation=22/route_name=band_boustro -> additive_mask/keyword=CATACOMB (inner_first)",
+      "stack_hash": "bcfcdedd315e33ab",
+      "campaign_key": "block_transposition+additive_mask/inner_first"
+    },
+    "campaign_key": "block_transposition+additive_mask/inner_first",
+    "peel_order": "inner_first"
+  },
+  {
+    "id": 38408,
+    "campaign_id": "be44b8b17b14f92d",
+    "branch_id": "df0df17d80ba4935",
+    "stack_hash": "df0df17d80ba4935",
+    "score": 5,
+    "bean_pass": 0,
+    "ic_value": 0.03608247422680412,
+    "plaintext": "GKTDMZYGPGMJCTGJDXOTTXADILOLGKKCYFJHIINRRCWKKIBKTXFAOSAVMDCBLSOXRELLNHQFCYAVUBLPRCVYOCHSUCWMSMZMJ",
+    "intermediate_text": "OSBLUHGOXOURKBORLFWBBFILQTWTOSSKGNRPQQVZZKESSQJSBFNIWAIDULKJTAWFZMTTVPYNKGIDCJTXZKDGWKPACKEUAUHUR",
+    "score_breakdown_json": "{\"crib_score\": 5, \"crib_total\": 24, \"ene_score\": 2, \"bc_score\": 3, \"crib_classification\": \"noise\", \"ic_value\": 0.03608247422680412, \"ic_score_normalized\": 0.0, \"ngram_score\": null, \"ngram_per_char\": null, \"bean_passed\": false, \"bean_detail\": null, \"is_breakthrough\": false}",
+    "metadata_json": null,
+    "timestamp": "2026-04-06 11:05:48",
+    "stack": {
+      "layers": [
+        {
+          "family": "block_transposition",
+          "params": {
+            "perm": [
+              14,
+              13,
+              12,
+              11,
+              10,
+              9,
+              8,
+              7,
+              6,
+              5,
+              4,
+              3,
+              2,
+              1,
+              0,
+              23,
+              22,
+              21,
+              20,
+              19,
+              18,
+              17,
+              16,
+              15
+            ],
+            "cycle_boustro": false,
+            "route_name": "identity_reflected",
+            "rotation": 9
+          },
+          "label": "",
+          "hash": "ce80de12371a6d3b"
+        },
+        {
+          "family": "additive_mask",
+          "params": {
+            "keyword": "I"
+          },
+          "label": "",
+          "hash": "3f216f6364142a80"
+        }
+      ],
+      "peel_order": "outer_first",
+      "description": "block_transposition/cycle_boustro=False/perm=[24 items]/rotation=9/route_name=identity_reflected -> additive_mask/keyword=I (outer_first)",
+      "stack_hash": "df0df17d80ba4935",
+      "campaign_key": "block_transposition+additive_mask/outer_first"
+    },
+    "campaign_key": "block_transposition+additive_mask/outer_first",
+    "peel_order": "outer_first"
+  },
+  {
+    "id": 38409,
+    "campaign_id": "be44b8b17b14f92d",
+    "branch_id": "139ac4b70514c706",
+    "stack_hash": "139ac4b70514c706",
+    "score": 5,
+    "bean_pass": 0,
+    "ic_value": 0.03608247422680412,
+    "plaintext": "GKTDMZYGPGMJCTGJDXOTTXADILOLGKKCYFJHIINRRCWKKIBKTXFAOSAVMDCBLSOXRELLNHQFCYAVUBLPRCVYOCHSUCWMSMZMJ",
+    "intermediate_text": "GTCJMGPGYZMDTKGDAXTTOXDJNIIHJFYCKKGLOLIKBIKKWCRROSLBCDMVASOAFXTFQHNLLERXHCOYVCRPLBUVAYCMZMSMWCUSJ",
+    "score_breakdown_json": "{\"crib_score\": 5, \"crib_total\": 24, \"ene_score\": 2, \"bc_score\": 3, \"crib_classification\": \"noise\", \"ic_value\": 0.03608247422680412, \"ic_score_normalized\": 0.0, \"ngram_score\": null, \"ngram_per_char\": null, \"bean_passed\": false, \"bean_detail\": null, \"is_breakthrough\": false}",
+    "metadata_json": null,
+    "timestamp": "2026-04-06 11:05:48",
+    "stack": {
+      "layers": [
+        {
+          "family": "block_transposition",
+          "params": {
+            "perm": [
+              14,
+              13,
+              12,
+              11,
+              10,
+              9,
+              8,
+              7,
+              6,
+              5,
+              4,
+              3,
+              2,
+              1,
+              0,
+              23,
+              22,
+              21,
+              20,
+              19,
+              18,
+              17,
+              16,
+              15
+            ],
+            "cycle_boustro": false,
+            "route_name": "identity_reflected",
+            "rotation": 9
+          },
+          "label": "",
+          "hash": "ce80de12371a6d3b"
+        },
+        {
+          "family": "additive_mask",
+          "params": {
+            "keyword": "I"
+          },
+          "label": "",
+          "hash": "3f216f6364142a80"
+        }
+      ],
+      "peel_order": "inner_first",
+      "description": "block_transposition/cycle_boustro=False/perm=[24 items]/rotation=9/route_name=identity_reflected -> additive_mask/keyword=I (inner_first)",
+      "stack_hash": "139ac4b70514c706",
+      "campaign_key": "block_transposition+additive_mask/inner_first"
+    },
+    "campaign_key": "block_transposition+additive_mask/inner_first",
+    "peel_order": "inner_first"
+  },
+  {
+    "id": 40250,
+    "campaign_id": "be44b8b17b14f92d",
+    "branch_id": "3cb278f90240850f",
+    "stack_hash": "3cb278f90240850f",
+    "score": 5,
+    "bean_pass": 0,
+    "ic_value": 0.03608247422680412,
+    "plaintext": "DJGTCJMGPGYZMDTKGDAXTTOXINRRCWKKIBKILOLGKKCYFJHIRXOSLBCDMVASOAFXTFQHNLLECHSUCWMSMZMCYAVUBLPRCVYOJ",
+    "intermediate_text": "LROBKRUOXOGHULBSOLIFBBWFQVZZKESSQJSQTWTOSSKGNRPQZFWATJKLUDIAWINFBNYPVTTMKPACKEUAUHUKGIDCJTXZKDGWR",
+    "score_breakdown_json": "{\"crib_score\": 5, \"crib_total\": 24, \"ene_score\": 2, \"bc_score\": 3, \"crib_classification\": \"noise\", \"ic_value\": 0.03608247422680412, \"ic_score_normalized\": 0.0, \"ngram_score\": null, \"ngram_per_char\": null, \"bean_passed\": false, \"bean_detail\": null, \"is_breakthrough\": false}",
+    "metadata_json": null,
+    "timestamp": "2026-04-06 11:05:50",
+    "stack": {
+      "layers": [
+        {
+          "family": "block_transposition",
+          "params": {
+            "perm": [
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              0,
+              1
+            ],
+            "cycle_boustro": true,
+            "route_name": "all_forward",
+            "rotation": 2
+          },
+          "label": "",
+          "hash": "c0b401f9abaf0482"
+        },
+        {
+          "family": "additive_mask",
+          "params": {
+            "keyword": "I"
+          },
+          "label": "",
+          "hash": "3f216f6364142a80"
+        }
+      ],
+      "peel_order": "outer_first",
+      "description": "block_transposition/cycle_boustro=True/perm=[24 items]/rotation=2/route_name=all_forward -> additive_mask/keyword=I (outer_first)",
+      "stack_hash": "3cb278f90240850f",
+      "campaign_key": "block_transposition+additive_mask/outer_first"
+    },
+    "campaign_key": "block_transposition+additive_mask/outer_first",
+    "peel_order": "outer_first"
+  }
+]

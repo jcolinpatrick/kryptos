@@ -1,0 +1,64 @@
+{
+  "total_tested": 5245,
+  "total_pruned": 0,
+  "best_score": 5,
+  "elapsed_seconds": 3.097709894180298,
+  "all_results": {
+    "A_prog_identity": {
+      "tested": 15,
+      "pruned": 0,
+      "stored": 15,
+      "best_score": 2,
+      "elapsed_seconds": 0.06580233573913574
+    },
+    "B_polarity_id": {
+      "tested": 144,
+      "pruned": 0,
+      "stored": 144,
+      "best_score": 4,
+      "elapsed_seconds": 0.13788390159606934
+    },
+    "C_bandpol_id": {
+      "tested": 1920,
+      "pruned": 0,
+      "stored": 1920,
+      "best_score": 4,
+      "elapsed_seconds": 0.7847204208374023
+    },
+    "D_state_id": {
+      "tested": 192,
+      "pruned": 0,
+      "stored": 192,
+      "best_score": 4,
+      "elapsed_seconds": 0.1320939064025879
+    },
+    "E_bandoff_id": {
+      "tested": 2401,
+      "pruned": 0,
+      "stored": 2401,
+      "best_score": 4,
+      "elapsed_seconds": 0.9759750366210938
+    },
+    "F_compass_id": {
+      "tested": 45,
+      "pruned": 0,
+      "stored": 45,
+      "best_score": 3,
+      "elapsed_seconds": 0.07080435752868652
+    },
+    "G_prog_transp": {
+      "tested": 96,
+      "pruned": 0,
+      "stored": 96,
+      "best_score": 3,
+      "elapsed_seconds": 0.09276604652404785
+    },
+    "H_polar_rail": {
+      "tested": 256,
+      "pruned": 0,
+      "stored": 256,
+      "best_score": 5,
+      "elapsed_seconds": 0.1858663558959961
+    }
+  }
+}

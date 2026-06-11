@@ -1,0 +1,177 @@
+{
+  "total_tested": 45052,
+  "total_pruned": 0,
+  "best_score": 6,
+  "campaigns": {
+    "K4-v2-G-var_-80c": {
+      "tested": 28,
+      "pruned": 0,
+      "best": 4
+    },
+    "K4-v2-G-beau-80c": {
+      "tested": 28,
+      "pruned": 0,
+      "best": 3
+    },
+    "K4-v2-G-vige-80c": {
+      "tested": 28,
+      "pruned": 0,
+      "best": 4
+    },
+    "K4-v2-F-add-beau": {
+      "tested": 728,
+      "pruned": 0,
+      "best": 5
+    },
+    "K4-v2-F-add-vige": {
+      "tested": 728,
+      "pruned": 0,
+      "best": 5
+    },
+    "K4-v2-E-transp-beau": {
+      "tested": 224,
+      "pruned": 0,
+      "best": 5
+    },
+    "K4-v2-E-transp-vige": {
+      "tested": 224,
+      "pruned": 0,
+      "best": 4
+    },
+    "K4-v2-D-block_-beau": {
+      "tested": 20160,
+      "pruned": 0,
+      "best": 6
+    },
+    "K4-v2-D-block_-vige": {
+      "tested": 20160,
+      "pruned": 0,
+      "best": 6
+    },
+    "K4-v2-D-transp-beau": {
+      "tested": 448,
+      "pruned": 0,
+      "best": 5
+    },
+    "K4-v2-D-transp-vige": {
+      "tested": 448,
+      "pruned": 0,
+      "best": 5
+    }
+  },
+  "all_results": {
+    "D": {
+      "transposition_columnar/vigenere": {
+        "tested": 448,
+        "pruned": 0,
+        "stored": 448,
+        "best_score": 5,
+        "elapsed_seconds": 0.22439885139465332
+      },
+      "transposition_columnar/beaufort": {
+        "tested": 448,
+        "pruned": 0,
+        "stored": 448,
+        "best_score": 5,
+        "elapsed_seconds": 0.20182180404663086
+      },
+      "transposition_rail_fence/vigenere": {
+        "tested": 616,
+        "pruned": 0,
+        "stored": 616,
+        "best_score": 5,
+        "elapsed_seconds": 0.28037166595458984
+      },
+      "transposition_rail_fence/beaufort": {
+        "tested": 616,
+        "pruned": 0,
+        "stored": 616,
+        "best_score": 6,
+        "elapsed_seconds": 0.2789006233215332
+      },
+      "block_transposition/vigenere": {
+        "tested": 20160,
+        "pruned": 0,
+        "stored": 20160,
+        "best_score": 6,
+        "elapsed_seconds": 17.50906014442444
+      },
+      "block_transposition/beaufort": {
+        "tested": 20160,
+        "pruned": 0,
+        "stored": 20160,
+        "best_score": 6,
+        "elapsed_seconds": 17.669421672821045
+      }
+    },
+    "E": {
+      "transposition_columnar/vigenere/80c": {
+        "tested": 224,
+        "pruned": 0,
+        "stored": 224,
+        "best_score": 4,
+        "elapsed_seconds": 0.13829588890075684
+      },
+      "transposition_columnar/beaufort/80c": {
+        "tested": 224,
+        "pruned": 0,
+        "stored": 224,
+        "best_score": 5,
+        "elapsed_seconds": 0.13970637321472168
+      },
+      "transposition_rail_fence/vigenere/80c": {
+        "tested": 308,
+        "pruned": 0,
+        "stored": 308,
+        "best_score": 4,
+        "elapsed_seconds": 0.17734670639038086
+      },
+      "transposition_rail_fence/beaufort/80c": {
+        "tested": 308,
+        "pruned": 0,
+        "stored": 308,
+        "best_score": 4,
+        "elapsed_seconds": 0.16913270950317383
+      }
+    },
+    "F": {
+      "add/vigenere": {
+        "tested": 728,
+        "pruned": 0,
+        "stored": 728,
+        "best_score": 5,
+        "elapsed_seconds": 0.3066840171813965
+      },
+      "add/beaufort": {
+        "tested": 728,
+        "pruned": 0,
+        "stored": 728,
+        "best_score": 5,
+        "elapsed_seconds": 0.3032383918762207
+      }
+    },
+    "G": {
+      "vigenere/80c": {
+        "tested": 28,
+        "pruned": 0,
+        "stored": 28,
+        "best_score": 4,
+        "elapsed_seconds": 0.06826162338256836
+      },
+      "beaufort/80c": {
+        "tested": 28,
+        "pruned": 0,
+        "stored": 28,
+        "best_score": 3,
+        "elapsed_seconds": 0.0643305778503418
+      },
+      "var_beaufort/80c": {
+        "tested": 28,
+        "pruned": 0,
+        "stored": 28,
+        "best_score": 4,
+        "elapsed_seconds": 0.06123161315917969
+      }
+    }
+  }
+}
