@@ -1,19 +1,24 @@
 #!/usr/bin/env bash
 # Pre-push hook: blocks pushes to public remotes (GitHub) that include
-# private paths (kryptosbot/ and its cross-import dependents; .claude/
-# local Claude Code config; docs/maturation/).
+# private paths under the 2026-06-11 transparency doctrine.
+#
+# The repo is a public gift to the Kryptos community, INCLUDING the
+# kryptosbot/ multi-agent orchestrator. Exactly four classes stay private:
+#   1. .claude/ and any SKILL.md  — precise agent/skill construction
+#   2. .env files                 — secrets (API keys)
+#   3. reference/, archive/, analysis_runs/ — local-only source material,
+#      bulk personal archives, photo corpora (shared photos live on
+#      kryptosbot.com, not in git)
+#   4. copy/                      — retired snapshot that contained
+#      flattened agent definitions
 #
 # To install: git config core.hooksPath .githooks
 # To verify:  git config core.hooksPath  (should print '.githooks')
 #
 # To override for an intentional push to a PRIVATE remote (e.g. the
 # local upstream mirror), use:
-#   PUBLISH_KRYPTOSBOT=1 git push <remote> <ref>
-#
-# This hook is a structural protection. It exists because the
-# kryptosbot/ multi-agent orchestrator is proprietary IP (per
-# `feedback_kryptosbot_gitignored_by_design.md` — note: kryptosbot/
-# is tracked in git locally but MUST NOT reach public GitHub).
+#   ALLOW_PRIVATE_PATHS=1 git push <remote> <ref>
+# (PUBLISH_KRYPTOSBOT=1 is accepted as a legacy alias.)
 
 set -euo pipefail
 
@@ -31,13 +36,13 @@ if [ "$is_public" = "0" ]; then
   exit 0
 fi
 
-if [ "${PUBLISH_KRYPTOSBOT:-0}" = "1" ]; then
-  echo "WARNING: PUBLISH_KRYPTOSBOT=1 override active — permitting kryptosbot push." >&2
+if [ "${ALLOW_PRIVATE_PATHS:-0}" = "1" ] || [ "${PUBLISH_KRYPTOSBOT:-0}" = "1" ]; then
+  echo "WARNING: private-path override active — permitting push." >&2
   exit 0
 fi
 
-# Forbidden path prefixes (anchored regex — '^' added below)
-FORBIDDEN_REGEX='^(kryptosbot/|\.claude/|scripts/_infra/calibrate_null_baselines|tests/test_polybius_scorer\.py$|tests/test_kryptosbot_oracle_hardening\.py$|tests/test_historical_eliminations\.py$|docs/maturation/)'
+# Forbidden paths: directory prefixes, plus .env / SKILL.md at any depth.
+FORBIDDEN_REGEX='^(\.claude/|copy/|reference/|archive/|analysis_runs/)|(^|/)\.env$|(^|/)SKILL\.md$'
 
 violations=0
 zero_sha=0000000000000000000000000000000000000000
@@ -56,9 +61,7 @@ while read -r local_ref local_sha remote_ref remote_sha; do
 
   # Get path:status touched in this range. We block ADDITIONS and
   # MODIFICATIONS of forbidden paths but ALLOW DELETIONS — deleting a
-  # previously-leaked forbidden path is exactly what publish-cleanup does.
-  # `git log --name-status` prefixes each path with one of: A (added),
-  # M (modified), D (deleted), R (renamed), C (copied).
+  # previously-leaked forbidden path is exactly what cleanup does.
   changed_status=$(git log --name-status --pretty=format: "${range_args[@]}" 2>/dev/null \
                    | sort -u | grep -v '^$' || true)
 
@@ -66,16 +69,11 @@ while read -r local_ref local_sha remote_ref remote_sha; do
     continue
   fi
 
-  # Keep only non-deletion operations on forbidden paths.
-  # Lines look like:  "A\tkryptosbot/foo.py"  or  "M\tdocs/maturation/round3/phase_R3_01.md"
-  # Deletions look like: "D\tkryptosbot/foo.py" — these are PERMITTED.
-  # Renames look like "R100\told\tnew" — we treat the new path's prefix as relevant.
   matches=$(echo "$changed_status" | awk -F'\t' -v re="$FORBIDDEN_REGEX" '
     {
       op = $1
       sub(/[0-9]+$/, "", op)  # strip "100" off "R100" etc.
       if (op == "D") next     # deletion of forbidden path is allowed
-      # For renames the new path is in $3
       path = (op == "R" || op == "C") ? $3 : $2
       if (path ~ re) print op "\t" path
     }
@@ -84,7 +82,7 @@ while read -r local_ref local_sha remote_ref remote_sha; do
   if [ -n "$matches" ]; then
     echo "" >&2
     echo "PRE-PUSH BLOCK: refusing to push to $remote_name ($remote_url)" >&2
-    echo "Push includes proprietary paths:" >&2
+    echo "Push includes private paths:" >&2
     echo "$matches" | head -20 | sed 's/^/  - /' >&2
     extra=$(echo "$matches" | tail -n +21)
     if [ -n "$extra" ]; then
@@ -96,16 +94,15 @@ done
 
 if [ "$violations" -gt 0 ]; then
   echo "" >&2
-  echo "To publish only public-safe changes, use:" >&2
-  echo "  ops/publish/publish_to_github.sh" >&2
-  echo "" >&2
-  echo "To intentionally push proprietary content (private remote only):" >&2
-  echo "  PUBLISH_KRYPTOSBOT=1 git push $remote_name <ref>" >&2
+  echo "Private classes: .claude/ + SKILL.md (agent/skill construction)," >&2
+  echo ".env (secrets), reference|archive|analysis_runs (local-only), copy/." >&2
+  echo "Remove those paths from the outgoing commits, or for a private" >&2
+  echo "remote only: ALLOW_PRIVATE_PATHS=1 git push $remote_name <ref>" >&2
   echo "" >&2
   exit 1
 fi
 
-# Content-pattern scan: catches proprietary terminology in *public-path*
+# Content-pattern scan: catches sensitive terminology in *public-path*
 # files (the leak class that the path filter above misses). Only runs for
 # pushes to public remotes — private mirrors are exempt the same way the
 # path check above is.
@@ -120,17 +117,13 @@ if [ -x "$SCANNER" ]; then
     else
       range="$remote_sha..$local_sha"
     fi
-    if ! "$SCANNER" --commits "$range" 1>&2; then
+    if ! "$SCANNER" --commits $range; then
       content_violations=$((content_violations + 1))
     fi
-  done < <(cat <&0 2>/dev/null || true)
-
+  done
   if [ "$content_violations" -gt 0 ]; then
     echo "" >&2
-    echo "PRE-PUSH BLOCK: forbidden-content patterns above prevent push." >&2
-    echo "Either edit the affected file(s), or (if a pattern is over-broad)" >&2
-    echo "update ops/publish/forbidden_content.txt and document the change." >&2
-    echo "" >&2
+    echo "PRE-PUSH BLOCK: content scan flagged sensitive terms (see above)." >&2
     exit 1
   fi
 fi

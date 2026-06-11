@@ -1,3 +1,29 @@
+# ============================================================
+# Transparency doctrine (2026-06-11): this repo is a gift to the
+# Kryptos community. Everything authored here is tracked and pushed
+# to GitHub, with exactly four classes of exceptions:
+#
+#   1. .claude/        — Claude Code agent + skill definitions
+#                        (the precise construction of agents/skills
+#                        stays private; the kryptosbot code itself
+#                        is public)
+#   2. Secrets         — .env files and keys, never tracked
+#   3. Machine outputs — run results, caches, build output, venvs,
+#                        logs; regenerable, no community value
+#   4. reference/ + archive/ + analysis_runs/ — third-party source
+#                        material (some copyrighted), bulk personal
+#                        research archives, and photo corpora. The
+#                        only photos shared are the ones live on
+#                        kryptosbot.com.
+# ============================================================
+
+# --- 1. Private agent/skill construction ---------------------
+.claude/
+
+# --- 2. Secrets ----------------------------------------------
+.env
+
+# --- 3. Machine outputs --------------------------------------
 # Python
 __pycache__/
 *.py[cod]
@@ -21,109 +47,66 @@ venv/
 .vscode/
 *.swp
 
-# Logs
+# Logs / scratch
 *.log
 logs/
 agent_logs
 work
 tmp
 nohup.out
+scratch/
+.remember/
+.worktrees/
 
-# Data/artifacts that are usually large or per-run
+# Run outputs and caches (20+ GB; regenerable; summaries live in docs/)
 db
 results/
 artifacts
 checkpoints/
-# (blitz_results symlink removed — output now goes to results/blitz/)
+jobs/done/
+*.jsonl
+# bench suites are authored test fixtures, not run output
+!bench/**/*.jsonl
+kryptosbot_results.db
+kryptosbot/kbot_results/
+kryptosbot/split_results/
+kryptosbot/kryptosbot_results.db
+kryptosbot/english_quadgrams.txt
+kryptosbot.tar.gz
+data/experiment_ledger.*
+data/experiment_prose_backfill.json
+agent_analysis.json
+bootstrap_report.json
+framework_inventory.json
+manifest.json
+/synth_signal/
 
-# Third-party reference projects
-external/
+# Phase 6 null-baseline manifest is committed (small summary file);
+# the large per-distribution cache lives under results/ (ignored above).
+!null_baselines/manifest.json
 
-# Site build output
+# Site build output (regenerable via ops/site_builder/build.py;
+# also holds the GoAccess stats report, which is not repo content)
 site/
 site.stale-*/
 
-# Coverage.py artifacts
+# Coverage artifacts
 .coverage
 .coverage.*
 htmlcov/
 coverage.xml
 
-# Environment
-.env
-
-# Large reference binaries (kept on disk, not in git)
-reference/tomboftutankhame01cart.pdf
-reference/KRYPTOS_NSA_Analysis.docx
-reference/Pictures/antipodes/
-reference/TOE.docx
-
-# Derived text extracts (regenerable from source PDFs)
-reference/carter_text_cache.txt
-reference/carter_vol1_extract.txt
-
-# Personal / infrastructure (not needed for community)
-.claude/
-ops/RUNBOOK.md
-ops/scheduled/
-memory/
-agent_analysis.json
-scripts/vm_capability_report.sh
-bootstrap_report.json
-manifest.json
-# Phase 6 null-baseline manifest is committed (small summary file);
-# the large per-distribution cache lives under results/null_baselines/
-# which is already ignored via the broader results/ rule.
-!null_baselines/manifest.json
-framework_inventory.json
-exhaustion_log.json
-kryptos_organize.py
-k4_job_runner.sh
-kryptosbot.tar.gz
-data/experiment_ledger.*
-data/experiment_prose_backfill.json
-
-# Deployment configs (server-specific)
-deploy/
-
-# Personal results and session reports
-# (kbot_results/ moved to results/kbot/)
-kryptosbot/kbot_results/
-kryptosbot/split_results/
-kryptosbot/kryptosbot_results.db
-kryptosbot/english_quadgrams.txt
-kryptosbot/horologe_deep.py
-jobs/done/
+# --- 4. Reference material, archives, photo corpora ----------
+# Third-party sources (books, scans, NSA docs — some copyrighted),
+# AAA archive photo corpus, and bulk community-thread archives.
+# Photos shared with the community are the ones on kryptosbot.com.
+reference/
 archive/
-reports/
-
-# Large data files
-*.jsonl
-kryptosbot_results.db
-reference/*.pdf
-reference/Pictures/
-reference/*.xlsx
-reference/*.jpg
-reference/*.png
-reference/*.xml
-reference/*.mbox
+analysis_runs/
+external/
 wordlists/kaikki_english.txt
-# (forensic_output symlink removed — output now goes to results/forensic/)
+
+# --- Deliberately withheld -----------------------------------
+# Community cipher challenge answer (spoiler; hash on the site
+# verifies guesses without revealing it)
 docs/challenge_k4_solution.md
-
-# External clones / community material (moved into external/ and archive/)
-# claude-plugins-official/ now at external/claude-plugins-official/
-# Reddit/ now at archive/reddit/
-
-# Personal research notes: on-disk but not tracked
-reference/Notes/
-reference/parse_stats.txt
-
-# Synthetic-signal calibration bundles — deterministic outputs of
-# scripts/_infra/synth_signal/build_synthetic.py, reproducible from the
-# spec doc. Not load-bearing artifacts.
-# (Anchored to repo root — does NOT match scripts/_infra/synth_signal/.)
-/synth_signal/
-
-# superpowers/git worktrees (local isolation, never tracked)
-.worktrees/
