@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block title %}{{ e.title }} | kryptosbot.com{% endblock %}
-{% block og_title %}{{ e.title }} | kryptosbot.com{% endblock %}
-{% block canonical %}<link rel="canonical" href="https://kryptosbot.com/elimination/{{ e.slug }}/">{% endblock %}
+{% block page_path %}/elimination/{{ e.slug }}/{% endblock %}
+{% block meta_description %}{% if e.plain_summary or e.description %}{{ (e.plain_summary or e.description) | striptags | truncate(155) }}{% else %}{{ super() }}{% endif %}{% endblock %}
 
 {% block content %}
 <p class="breadcrumb">
@@ -104,7 +104,7 @@
         {% else %}no better than random guessing
         {% endif %}
       </small>
-      {% if e.expected_random is not none %}
+      {% if e.expected_random %}
         <small class="text-muted" style="margin-left:var(--sp-3)">(random guess would score: {{ e.expected_random }})</small>
       {% endif %}
     {% else %}

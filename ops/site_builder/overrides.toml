@@ -276,7 +276,7 @@ keywords_tested = ["WELTZEITUHR", "URANIA", "ALEXANDERPLATZ", "BERLIN", "CLOCK"]
 title = "DRYAD-style matrix code lookup"
 category = "bespoke"
 subcategory = "nato-comsec"
-scope_limitations = "Only tests computationally reconstructible DRYAD grids. Cannot test the actual Sanborn coding charts (sold at auction, content unknown)."
+scope_limitations = "Only tests computationally reconstructible DRYAD grids. Cannot test the original coding charts, whose content is not public."
 assumptions = "DRYAD grid derivable from public sculpture elements; Standard DRYAD row/column structure"
 confidence_tier = 3
 repro_command = "PYTHONPATH=src python3 -u scripts/_uncategorized/e_s_145_dryad_matrix.py"
@@ -287,7 +287,9 @@ category = "substitution"
 subcategory = "hill"
 scope_limitations = "Tested Hill 2x2 and 3x3 with YAR/RQ parameters. Hill cipher is structurally incompatible with K4 crib pattern."
 assumptions = "YAR superscript values (Y=24, A=0, R=17) form Hill cipher matrix"
-confidence_tier = 1
+# Tier 2, not 1: this entry is a bounded YAR-parameter sweep. The general
+# Hill 2x2/3x3 Tier-1 impossibility is a separate result (elimination_tiers.md).
+confidence_tier = 2
 repro_command = "PYTHONPATH=src python3 -u scripts/substitution/e_s_151_hill_w9_yart.py"
 
 [elimination.E-S-152-NATO-PROTOCOL]

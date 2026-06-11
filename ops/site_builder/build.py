@@ -260,6 +260,7 @@ def build():
             **global_ctx,
             "category": {
                 "name": display_name,
+                "slug": cat_name,
                 "description": CATEGORY_DESCRIPTIONS.get(cat_name, ""),
                 "plain_guide": CATEGORY_PLAIN_GUIDES.get(cat_name, ""),
             },
@@ -432,6 +433,11 @@ def build():
         shutil.copy2(ref_pdf, os.path.join(static_out, "Number-One-From-Moscow.pdf"))
         print("  Number-One-From-Moscow.pdf (from reference/)")
 
+    # 10c) Banned-phrase guard: fail the build if any rendered page contains
+    # off-limits topics (site content policy). Catches policy leaks arriving
+    # via script metadata / results JSON before they can ship.
+    _check_banned_phrases(OUTPUT_DIR)
+
     # 11) Summary
     print("\n" + "=" * 60)
     print(f"BUILD COMPLETE")
@@ -440,6 +446,47 @@ def build():
     print(f"  Output directory: {OUTPUT_DIR}")
     print(f"  Total configs disproven: {total_configs_disproven}")
     print("=" * 60)
+
+
+# Site content policy: these topics must never appear on any page. Phrases are
+# matched case-insensitively against rendered HTML. Keep the list short and
+# unambiguous to avoid false positives on legitimate archival content.
+BANNED_PHRASES = (
+    "auction",
+    "962,500",
+    "sealed until 2075",
+    "anonymous buyer",
+)
+
+
+def _check_banned_phrases(output_dir: str) -> None:
+    """Fail the build if any rendered .html contains a banned phrase.
+
+    Skips stats/ (GoAccess log report: contains attacker-controlled request
+    paths from access logs, not authored site content).
+    """
+    hits = []
+    for root, dirs, files in os.walk(output_dir):
+        dirs[:] = [d for d in dirs if d != "stats"]
+        for fname in files:
+            if not fname.endswith(".html"):
+                continue
+            path = os.path.join(root, fname)
+            try:
+                with open(path, encoding="utf-8", errors="replace") as f:
+                    content = f.read().lower()
+            except OSError:
+                continue
+            for phrase in BANNED_PHRASES:
+                if phrase in content:
+                    hits.append((os.path.relpath(path, output_dir), phrase))
+    if hits:
+        print("\nBUILD FAILED: banned phrase(s) found in rendered pages:")
+        for rel, phrase in hits:
+            print(f"  {rel}: contains {phrase!r}")
+        print("Fix the source (overrides.toml / results JSON / template) and rebuild.")
+        sys.exit(1)
+    print("  Banned-phrase guard: clean")
 
 
 def _build_standalone_viewer(

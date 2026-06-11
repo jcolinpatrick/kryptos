@@ -1,7 +1,8 @@
 /**
  * kryptosbot.com — VIC Cipher Workbench
  * Full VIC cipher implementation with optional classical layering.
- * All computation runs in the browser. No data is sent to any server.
+ * All computation runs in the browser. Nothing is sent anywhere unless the
+ * visitor explicitly checks the "share promising results" box on the page.
  */
 (function () {
   "use strict";
@@ -1288,8 +1289,10 @@
     var score = scorePlaintext(plaintext);
     updateScoreDisplay(score, isK4);
 
-    // Notify on genuine signal (18+) from K4 — silent fire-and-forget
-    if (isK4 && score.total >= 18) {
+    // Share promising K4 results (18+) ONLY if the visitor opted in via the
+    // page checkbox. Default off: nothing is ever sent without consent.
+    var vicShareOptIn = document.getElementById("wb-share-signal");
+    if (vicShareOptIn && vicShareOptIn.checked && isK4 && score.total >= 18) {
       var notifyKey = score.total + ":" + score.classification;
       if (!sessionNotified[notifyKey]) {
         sessionNotified[notifyKey] = true;

@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 {% block title %}VIC Cipher Workbench | kryptosbot.com{% endblock %}
+{% block page_path %}/vic-workbench/{% endblock %}
+{% block meta_description %}Interactive VIC cipher workbench: run the full Soviet hand cipher against Kryptos K4 in your browser.{% endblock %}
 
 {% block content %}
 <h1>VIC Cipher Workbench</h1>
@@ -8,7 +10,7 @@
   <h3>Elimination status: Fully tested</h3>
   <p>
     The VIC cipher and its variants have been comprehensively tested against K4.
-    Over 52 million configurations were scored across standard VIC, non-standard
+    Over 1.1 billion configurations were scored across standard VIC, non-standard
     key schedules, and straddling checkerboard variants. All produced noise-level
     results. This tool is retained for educational and historical reference.
     See the <a href="/browse/bespoke/">bespoke eliminations</a> for details.
@@ -17,8 +19,16 @@
 
 <p>
   Full implementation of the VIC cipher (a sophisticated Soviet hand cipher) with optional
-  layering of classical techniques. All computation runs locally in your browser
-  (no data is sent to any server).
+  layering of classical techniques. All computation runs locally in your browser.
+  Nothing leaves this page unless you opt in below to share promising results.
+</p>
+<p class="wb-share-opt">
+  <label>
+    <input type="checkbox" id="wb-share-signal">
+    Share promising results (18+ out of 24) with the site maintainer.
+    Sends only the method, the key inputs you entered, and the first 40 letters
+    of the result. Off by default; nothing is ever sent without this box checked.
+  </label>
 </p>
 
 <details id="vic-background" class="wb-mb2">

@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 {% block title %}{{ category.name }} | kryptosbot.com{% endblock %}
+{% block page_path %}/browse/{{ category.slug }}/{% endblock %}
+{% block meta_description %}{{ category.name }} approaches tested against Kryptos K4: what was tried, how thoroughly, and what was ruled out.{% endblock %}
 
 {% block content %}
 <p class="breadcrumb"><a href="/browse/">&larr; All categories</a></p>
@@ -41,7 +43,7 @@
             <span class="{% if e.best_score >= 24 %}score-breakthrough{% elif e.best_score >= 18 %}score-signal{% elif e.best_score >= 10 %}score-store{% else %}score-noise{% endif %}">
               {{ e.best_score }}/24
             </span>
-            {% if e.expected_random is not none %}
+            {% if e.expected_random %}
               <small class="text-muted">({{ e.expected_random }})</small>
             {% endif %}
           {% else %}

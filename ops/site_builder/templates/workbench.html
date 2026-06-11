@@ -1,12 +1,22 @@
 {% extends "base.html" %}
 {% block title %}Workbench | kryptosbot.com{% endblock %}
+{% block page_path %}/workbench/{% endblock %}
+{% block meta_description %}Interactive cipher workbench: build transposition and substitution pipelines and score them against Kryptos K4's known plaintext positions in your browser.{% endblock %}
 
 {% block content %}
 <h1>Workbench</h1>
 <p>
   Configure a transposition + substitution pipeline and score it against
-  K4&rsquo;s 24 known crib positions. All computation runs locally in your browser
-  (no data is sent to any server).
+  K4&rsquo;s 24 known crib positions. All computation runs locally in your browser.
+  Nothing leaves this page unless you opt in below to share promising results.
+</p>
+<p class="wb-share-opt">
+  <label>
+    <input type="checkbox" id="wb-share-signal">
+    Share promising results (18+ out of 24) with the site maintainer.
+    Sends only the method, the key you entered, and the first 40 letters of the
+    result. Off by default; nothing is ever sent without this box checked.
+  </label>
 </p>
 
 <details id="your-odds" class="wb-mb2">

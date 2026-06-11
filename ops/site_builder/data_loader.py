@@ -126,6 +126,25 @@ def _normalize_verdict(raw: str) -> str:
     return "NOISE"
 
 
+_RUNID_TIMESTAMP = re.compile(r"^(\d{4})(\d{2})(\d{2})(?:_\d+)?$")
+
+
+def _normalize_timestamp(val: Any) -> str:
+    """Normalize run-id style timestamps (YYYYMMDD_HHMMSS / YYYYMMDD_N /
+    YYYYMMDD) to ISO YYYY-MM-DD; pass everything else through unchanged.
+
+    Result records carry two timestamp formats. String-sorting the mixed
+    formats broke the Recent feed's reverse-chronological order, and the raw
+    run-id tokens leaked into the UI as displayed dates.
+    """
+    if not isinstance(val, str):
+        return val if val else ""
+    m = _RUNID_TIMESTAMP.match(val.strip())
+    if m:
+        return f"{m.group(1)}-{m.group(2)}-{m.group(3)}"
+    return val
+
+
 def _slugify(text: str) -> str:
     """Convert text to a URL-safe slug."""
     text = text.lower().strip()
@@ -417,7 +436,7 @@ def build_eliminations_from_hypotheses(
             research_questions=rqs,
             verdict=_normalize_verdict(hyp.get("elimination_reason", "eliminated")),
             assumptions=hyp.get("assumptions", "") or "",
-            date_tested=hyp.get("updated_at", hyp.get("created_at", "")),
+            date_tested=_normalize_timestamp(hyp.get("updated_at", hyp.get("created_at", ""))),
         )
 
         # Parse transform_stack for cipher_type
@@ -567,7 +586,7 @@ def build_eliminations_from_results(
             configs_tested=configs_tested,
             best_score=best_score,
             verdict=_normalize_verdict(verdict),
-            date_tested=res.get("timestamp", ""),
+            date_tested=_normalize_timestamp(res.get("timestamp", "")),
             experiment_script=script,
             repro_command=repro_cmd if isinstance(repro_cmd, str) else "",
             extra={
@@ -818,9 +837,10 @@ def _humanize_title(elim: SiteElimination) -> str:
         if " " in human_part and not human_part.isupper():
             return human_part[0].upper() + human_part[1:]
 
-    # Skip titles that already look human-readable
+    # Skip titles that already look human-readable (but cap paragraph-length
+    # ones: some internal log entries leak in as 200+ char titles)
     if " " in title and not title.isupper() and not title.startswith(("e_", "f_")):
-        return title
+        return _truncate_title(title)
 
     # Build a readable title from the description if available
     desc = elim.description or ""
@@ -853,7 +873,76 @@ def _humanize_title(elim: SiteElimination) -> str:
             result.append(w.upper())
         else:
             result.append(w.capitalize())
-    return " ".join(result) if result else title
+    fallback = " ".join(result) if result else title
+
+    # Guard: ID cleanup can degenerate (E-S-46 -> "S", E-POLY-01 -> "Poly",
+    # BLITZ-V7/RESULTS -> "Blitz V7"). A bare letter or family word means
+    # nothing to a visitor; recover a real title from context instead.
+    if not _is_degenerate_title(fallback):
+        return fallback
+
+    derived = _derive_title_from_context(elim)
+    if derived:
+        return f"{derived} ({elim.id})" if elim.id else derived
+    return f"Experiment {elim.id}" if elim.id else fallback
+
+
+_VERSION_TOKEN = re.compile(r"^v?\d+[a-z]?$", re.IGNORECASE)
+
+# Leading status vocabulary that key_finding strings often start with;
+# stripped before using the remainder as a title.
+_KEY_FINDING_STATUS = re.compile(
+    r"^(?:all[\s_]?noise|noise|all[\s_]?clean|clean|eliminated|tbd)\b"
+    r"[\s:]*(?:\([^)]*\))?[\s:—–\-]*",
+    re.IGNORECASE,
+)
+
+
+def _truncate_title(title: str) -> str:
+    """Cap paragraph-length titles at roughly one short line."""
+    if len(title) <= 110:
+        return title
+    first = re.split(r"(?<=[.!?])\s", title)[0]
+    if len(first) <= 110:
+        return first.rstrip(".")
+    return first[:107].rstrip() + "..."
+
+
+def _is_degenerate_title(title: str) -> bool:
+    """True when a cleaned-up fallback title says nothing useful on its own."""
+    words = [w for w in title.split() if not _VERSION_TOKEN.match(w)]
+    return len(title) < 8 or len(words) <= 1
+
+
+def _derive_title_from_context(elim: SiteElimination) -> str:
+    """Recover a readable title from the script filename or key_finding."""
+    # 1) Script filename suffix beyond the experiment ID tokens
+    #    (e_s_46_position_alphabets.py -> "Position alphabets")
+    script = elim.experiment_script or ""
+    if script:
+        stem = os.path.splitext(os.path.basename(script))[0]
+        id_tokens = {t.lower() for t in re.split(r"[-_]", elim.id or "") if t}
+        id_tokens.update({"e", "f", "results", "result"})
+        words = [
+            w for w in stem.split("_")
+            if w and w.lower() not in id_tokens and not _VERSION_TOKEN.match(w)
+        ]
+        phrase = " ".join(words).strip()
+        if phrase and not _is_degenerate_title(phrase):
+            return phrase[0].upper() + phrase[1:]
+
+    # 2) key_finding, minus its leading status vocabulary
+    key_finding = ""
+    if isinstance(elim.extra, dict):
+        key_finding = str(elim.extra.get("key_finding") or "")
+    if key_finding:
+        cleaned = _KEY_FINDING_STATUS.sub("", key_finding).strip()
+        cleaned = re.split(r"(?<=[.!?])\s", cleaned)[0].rstrip(".")
+        if cleaned and not _is_degenerate_title(cleaned):
+            cleaned = _truncate_title(cleaned)
+            return cleaned[0].upper() + cleaned[1:]
+
+    return ""
 
 
 # ---------------------------------------------------------------------------
@@ -1063,14 +1152,14 @@ def _generate_plain_summary(elim: SiteElimination) -> str:
         count_str = _format_count(elim.configs_tested)
 
         if elim.confidence_tier == 1:
-            parts.append("Mathematically proven impossible — no key or setting can make it work.")
+            parts.append("Mathematically proven impossible as a single layer applied directly to the carved text — no key or setting can make it work.")
         elif elim.confidence_tier == 2:
             parts.append(f"Every possible combination was tested ({count_str} configurations) — none produced a valid solution.")
         else:
             parts.append(f"{count_str} key/parameter combinations were tested.")
 
     elif elim.confidence_tier == 1:
-        parts.append("Mathematically proven impossible — no key or setting can make it work.")
+        parts.append("Mathematically proven impossible as a single layer applied directly to the carved text — no key or setting can make it work.")
 
     # 3. Score context (only if it adds useful info)
     if elim.best_score is not None and elim.best_score > 0:

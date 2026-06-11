@@ -453,9 +453,18 @@ nav strong a:visited {
   transition: transform var(--transition), opacity var(--transition);
 }
 
-@media (max-width: 768px) {
+/* Hamburger up to 1024px: at 769-1024px (iPad) the ten nav links no longer
+   fit on one nowrap row once the tablet font bump applies, so the full-width
+   tablet range collapses to the menu too. */
+@media (max-width: 1024px) {
   .nav-toggle-label {
     display: block;
+  }
+
+  nav {
+    height: auto;
+    min-height: 56px;
+    flex-wrap: wrap;
   }
 
   nav .nav-links {
@@ -2329,6 +2338,10 @@ main section + section {
   nav .nav-links li a { padding: var(--sp-3) var(--sp-4); }
   .two-paths { grid-template-columns: 1fr; }
   .conclusion-grid { grid-template-columns: 1fr; }
+  /* Wrap code blocks instead of horizontal scrolling (reproduce commands on
+     elimination pages). Aligned diagrams (.crib-diagram, #keystream-detail)
+     set white-space: pre with higher specificity and keep their scrollbars. */
+  pre { white-space: pre-wrap; overflow-wrap: break-word; }
 }
 
 @media (max-width: 768px) {
@@ -2336,6 +2349,8 @@ main section + section {
 
   h1 { font-size: var(--text-xl); }
   h2 { font-size: var(--text-lg); }
+
+  pre { white-space: pre-wrap; overflow-wrap: break-word; }
 
   nav {
     height: auto;

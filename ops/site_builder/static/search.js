@@ -16,7 +16,7 @@
   // Load search index
   function loadIndex() {
     setStatus("Loading search index...");
-    fetch("/static/search-index.json")
+    fetch("/search-index.json")
       .then(function (res) {
         if (!res.ok) throw new Error("Failed to load search index");
         return res.json();

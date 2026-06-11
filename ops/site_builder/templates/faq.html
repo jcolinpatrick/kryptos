@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block title %}FAQ | kryptosbot.com{% endblock %}
-{% block canonical %}<link rel="canonical" href="https://kryptosbot.com/faq/">{% endblock %}
+{% block page_path %}/faq/{% endblock %}
+{% block meta_description %}Common questions about Kryptos K4 and this research archive: what has been ruled out, what remains open, and how to contribute.{% endblock %}
 
 {% block content %}
 <h1>Frequently Asked Questions</h1>
@@ -16,7 +17,7 @@
 <details>
   <summary>What has already been tried?</summary>
   <p>
-    Over {{ total_experiments }} experiments covering {{ total_configs_disproven }}+
+    {{ total_experiments }} recorded experiments covering {{ total_configs_disproven }}
     configurations have been run, testing every major classical cipher family:
     Vigen&egrave;re, Beaufort, columnar transposition, Playfair, Bifid, running
     keys, and more. All single-layer classical ciphers have been eliminated

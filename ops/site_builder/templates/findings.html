@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block title %}What We've Learned | kryptosbot.com{% endblock %}
-{% block og_title %}What We've Learned | kryptosbot.com{% endblock %}
-{% block canonical %}<link rel="canonical" href="https://kryptosbot.com/findings/">{% endblock %}
+{% block page_path %}/findings/{% endblock %}
+{% block meta_description %}The main results of this archive's Kryptos K4 research in plain language: what is ruled out, what is uncertain, and what remains open.{% endblock %}
 
 {% block head_extra %}
 <link rel="stylesheet" href="/static/findings.css">
@@ -112,8 +112,10 @@
     to suggest the problem is closed.
   </p>
   <p>
-    These eliminations do not rule out the same families as one layer of a multi-layer
-    construction, nor do they apply if K4 uses a non-additive cipher mechanism.
+    With one exception, these eliminations do not rule out the same families as one
+    layer of a multi-layer construction. The exception is self-keying (autokey), which
+    is structurally impossible even when combined with any rearrangement layer. None of
+    these results apply if K4 uses a non-additive cipher mechanism.
     See the <a href="/browse/">elimination database</a> for the full inventory, and the
     <a href="/research-questions/">open questions</a> for what remains.
   </p>
@@ -318,8 +320,8 @@
       sources against columnar widths 6/8/9, and a non-columnar three-layer enumeration
       of 838,350 compositions. All returned zero candidates under pre-committed
       conjunctive thresholds. Full records are in the
-      <a href="https://github.com/jcolinpatrick/kryptos/blob/main/docs/exhaustion_audit_2026_04_08.md">internal
-      status audit</a> (which is deliberately adversarial about our own claims).
+      internal status audit (<code>docs/exhaustion_audit_2026_04_08.md</code> in the
+      research repository), which is deliberately adversarial about our own claims.
     </p>
   </div>
 </section>

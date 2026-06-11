@@ -1,6 +1,7 @@
 /**
  * kryptosbot.com — Workbench: client-side K4 cipher experimentation
- * All computation runs in the browser. No data is sent to any server.
+ * All computation runs in the browser. Nothing is sent anywhere unless the
+ * visitor explicitly checks the "share promising results" box on the page.
  */
 (function () {
   "use strict";
@@ -1755,8 +1756,10 @@
     keystreamDetail.textContent = deriveKeystream(workingCT, pt, alpha, subMethod.value, activeCribs);
     keystreamAnalysis.innerHTML = analyzeKeystream(workingCT, pt, alpha, subMethod.value, activeCribs, nullPos);
 
-    // Notify on genuine signal (18+) — silent fire-and-forget
-    if (cribResult.total >= 18 && !sessionNotified[cribResult.total + ":" + cls]) {
+    // Share promising results (18+) ONLY if the visitor opted in via the
+    // page checkbox. Default off: nothing is ever sent without consent.
+    var shareOptIn = document.getElementById("wb-share-signal");
+    if (shareOptIn && shareOptIn.checked && cribResult.total >= 18 && !sessionNotified[cribResult.total + ":" + cls]) {
       sessionNotified[cribResult.total + ":" + cls] = true;
       var methodSummary = (transMethod.value !== "none" ? transMethod.value + "+" : "") + subMethod.value;
       var body = cribResult.total + "/24 " + cls.toUpperCase()

@@ -1,8 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Sanborn Papers — Archive Research Collection | kryptosbot.com{% endblock %}
-{% block og_title %}Sanborn Papers — Archive Research Collection | kryptosbot.com{% endblock %}
-{% block og_url %}<meta property="og:url" content="https://kryptosbot.com/archive/">{% endblock %}
-{% block canonical %}<link rel="canonical" href="https://kryptosbot.com/archive/">{% endblock %}
+{% block page_path %}/archive/{% endblock %}
+{% block meta_description %}Annotated research photographs of Jim Sanborn's working papers from the Archives of American Art, with transcriptions and provenance notes.{% endblock %}
 
 {% block head_extra %}
 <link rel="stylesheet" href="/static/archive.css">
@@ -237,7 +236,7 @@
   <div class="archive-item archive-item-featured">
     <div class="archive-img-wrap">
       <a href="/static/archive/IMG_1569.jpg" target="_blank">
-        <img src="/static/archive/IMG_1569.jpg" alt="Handwritten list: Beaufort cipher, Compass cipher, Morse code, Alphabet code, Cryptonyms, Overload, Normandy" loading="lazy">
+        <img src="/static/archive/IMG_1569.jpg" alt="Handwritten list: Beaufort cipher, Compass cipher, Morse code, Alphabet code, Cryptonyms, Overlord, Normandy" loading="lazy">
       </a>
     </div>
     <div class="archive-caption">
@@ -251,9 +250,12 @@
       </blockquote>
       <p>
         Below: &ldquo;Cryptonyms&rdquo; with a note about how they work (see IMG_1570),
-        then &ldquo;Overload&rdquo; (underlined) followed by &ldquo;Normandy Invasion,
-        H Bo[mb]&hellip;&rdquo; The explicit listing of <strong>Beaufort cipher</strong>
-        confirms Ed Scheidt taught Sanborn this method (confirmed used in K1&ndash;K3).
+        then &ldquo;Overlord&rdquo; (underlined) followed by &ldquo;Normandy Invasion,
+        H Bo[mb]&hellip;&rdquo; &mdash; Overlord was the Allied codename for the Normandy
+        invasion. Seeing the <strong>Beaufort cipher</strong> named in Sanborn's own hand
+        shows he was at least aware of the method. Beaufort was not used in the solved
+        sections (K1 and K2 use a keyed-alphabet variant of the Vigen&egrave;re cipher;
+        K3 is a rearrangement), but Beaufort variants are standard candidates in K4 testing.
         &ldquo;Compass cipher&rdquo; may be Sanborn's own term for the compass rose element.
       </p>
     </div>
@@ -533,9 +535,10 @@
       <p>
         A sketch showing a &ldquo;Code Breaker&rdquo; template laid <strong>on top
         of</strong> the &ldquo;Code&rdquo; panel: a physical overlay/grille
-        decryption concept. Combined with &ldquo;Overlay&rdquo; in the cipher types
-        list (IMG_1569), this reinforces the Cardan grille / physical mask approach
-        to extracting the message from the ciphertext.
+        decryption concept. (An earlier caption read a word in IMG_1569 as
+        &ldquo;Overlay&rdquo; supporting this idea; on re-examination that word is
+        &ldquo;Overlord&rdquo;, the D-Day codename.) Whether this sketch reflects a
+        method actually used in Kryptos is unknown.
       </p>
     </div>
   </div>
@@ -569,7 +572,8 @@
 <section id="punctuation" class="archive-section">
   <h2>7. Punctuation &amp; Letterform Anomalies</h2>
   <p class="section-intro">
-    The Kryptos sculpture contains four question marks at section boundaries.
+    The cipher side of Kryptos contains exactly four question marks: three as
+    punctuation inside K2's message text, and one on the line between K3 and K4.
     A stencil template in the archive shows an anomaly worth examining.
   </p>
 
@@ -586,10 +590,9 @@
         A punctuation stencil template for Kryptos fabrication showing ! ? $
         characters. On the bottom row, the question mark has a <strong>pencil-drawn
         J overlaid on it</strong>. The J shape wraps around the ? curve with
-        the dot shared. Kryptos has four question marks at section boundaries (between
-        K1/K2, K2/K3, K3/K4, and after K4). If the question marks encode the letter J,
-        this would add hidden characters at section boundaries. The ? between K3 and K4
-        would be particularly significant.
+        the dot shared. The cipher side carries exactly four question marks: three as
+        punctuation inside K2's message, one between K3 and K4. If question marks encode
+        the letter J, the one between K3 and K4 would be particularly significant.
       </p>
     </div>
   </div>

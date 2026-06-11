@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Methodology | kryptosbot.com{% endblock %}
-{% block og_title %}Methodology | kryptosbot.com{% endblock %}
-{% block canonical %}<link rel="canonical" href="https://kryptosbot.com/methodology/">{% endblock %}
+{% block page_path %}/methodology/{% endblock %}
+{% block meta_description %}How this archive tests Kryptos K4 hypotheses: scoring, constraints, reproducibility, and the bar for calling something eliminated.{% endblock %}
 
 {% block content %}
 <h1>Methodology</h1>
@@ -201,9 +201,11 @@
 
 <h3>What Remains</h3>
 <p>
-  <strong>Null mask + periodic substitution</strong> is proven impossible for ANY choice of
-  24 null positions at ANY period (algebraic proof extended to CT73 via Bean inequalities
-  across all 11,440 candidate masks). If the 73-character model is correct, the cipher
+  <strong>Null mask + periodic substitution</strong> is proven impossible for ANY choice
+  of 24 filler positions at every repeat length from 1 to 23. The algebraic argument
+  depends only on how many filler letters fall in each of the three known-plaintext
+  segments, and every possible split fails. (Repeat lengths 24&ndash;26 are too long to be
+  decided either way on a 73-letter text.) If the 73-character model is correct, the cipher
   operating on the extracted characters must use a <strong>non-periodic key</strong>:
   a running key from an unknown source, a bespoke procedural method, or a one-time key.
 </p>
@@ -216,8 +218,8 @@
   infinite and cannot be literally exhausted; this classification describes the scope of
   what <em>we</em> have tested under our specific assumptions, not a claim about
   K4 as a mathematical object. Full audit and record are in the
-  <a href="https://github.com/jcolinpatrick/kryptos/blob/main/docs/exhaustion_audit_2026_04_08.md">internal
-  status audit</a>.
+  internal status audit (<code>docs/exhaustion_audit_2026_04_08.md</code> in the
+  research repository).
 </p>
 <p>
   If you have an idea we have not tested, the <a href="/submit/">Submit a Theory</a>

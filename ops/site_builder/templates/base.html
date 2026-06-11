@@ -3,18 +3,20 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="kryptosbot.com | Kryptos K4 Research Archive. Open-source research archive documenting tested Kryptos K4 hypotheses, eliminations, and open questions.">
+  <meta name="description" content="{% block meta_description %}kryptosbot.com | Kryptos K4 Research Archive. Open-source research archive documenting tested Kryptos K4 hypotheses, eliminations, and open questions.{% endblock %}">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="kryptosbot.com">
-  <meta property="og:title" content="{% block og_title %}kryptosbot.com | Kryptos K4 Research Archive{% endblock %}">
-  <meta property="og:description" content="An open-source research archive documenting {{ total_configs_disproven }} configurations evaluated across recorded Kryptos K4 experiments.">
+  <meta property="og:title" content="{% block og_title %}{{ self.title() }}{% endblock %}">
+  <meta property="og:description" content="{{ self.meta_description() }}">
   <meta property="og:image" content="https://kryptosbot.com/static/kryptosbot-og.jpg">
-  {% block og_url %}<meta property="og:url" content="https://kryptosbot.com/">{% endblock %}
-  <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="{% block twitter_title %}kryptosbot.com | Kryptos K4 Research Archive{% endblock %}">
-  <meta name="twitter:description" content="Open-source research archive. {{ total_configs_disproven }} configurations evaluated across recorded Kryptos K4 experiments.">
+  {# Pages set page_path (e.g. "/faq/") to get og:url + canonical; pages
+     that do not set it emit neither, rather than a wrong homepage URL. #}
+  {% block og_url %}{% if self.page_path()|trim %}<meta property="og:url" content="https://kryptosbot.com{% block page_path %}{% endblock %}">{% endif %}{% endblock %}
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{% block twitter_title %}{{ self.og_title() }}{% endblock %}">
+  <meta name="twitter:description" content="{{ self.meta_description() }}">
   <meta name="twitter:image" content="https://kryptosbot.com/static/kryptosbot-og.jpg">
-  {% block canonical %}{% endblock %}
+  {% block canonical %}{% if self.page_path()|trim %}<link rel="canonical" href="https://kryptosbot.com{{ self.page_path()|trim }}">{% endif %}{% endblock %}
   <title>{% block title %}kryptosbot.com{% endblock %}</title>
   <link rel="stylesheet" href="/static/fonts/fonts.css">
   <link rel="stylesheet" href="/static/style.css">
