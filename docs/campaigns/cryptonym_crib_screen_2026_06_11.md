@@ -60,3 +60,24 @@ Quagmire III tableau conventions.
 - Known-answer gate (inline, fail-closed): the same derivation code must
   reproduce the kernel's disclosed-crib keystream constants at ENE/BC for
   all three variants (AZ) before any Tier-1 fragment is computed.
+
+## Tier 2a — Quagmire III extension (frozen 2026-06-11 BEFORE run)
+
+- Same cribs and placements as Tier 1 (3 page-attested tokens, 45 pre-ENE
+  placements). New axis: QIII tableau conventions (the K1/K2 family).
+- Tableau keyword (pt = ct alphabet keyword, QIII): {KRYPTOS, PALIMPSEST,
+  ABSCISSA, LATITUDE, MAGNETIC, COMPASS} — KRYPTOS is the sculpture's own
+  K1/K2 convention (strongest prior); the other five are the precedented
+  set from the route x QIII campaign. Indicator: {K, A, R} (K1/K2 actual
+  is K). 45 x 6 x 3 = 810 fragments (declared multiplicity).
+- Derivation through the KERNEL: shift = quagmire_recover_key(ct, pt,
+  kw, kw, indicator); key letter = ct_alpha[(shift + ct_idx[indicator]) %
+  26]. Known-answer gate (fail-closed): exhaustive single-char inversion
+  self-test over all 26 pt x 26 key letters per convention cell must
+  recover the key letter exactly; kernel QIII correctness itself is
+  anchored by the standing K1/K2 regression tests.
+- Statistics, null (uniform L-gram; the pt-to-keyletter map is a bijection
+  for fixed ct, so uniform crib gives uniform fragment), and decision
+  rules identical to Tier 1. Expected exact-word fragments ~0.09 under
+  the null. Phase-0 simplification still applies (contiguous fragment);
+  nonzero phases remain open.

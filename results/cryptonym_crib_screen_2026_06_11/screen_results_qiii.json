@@ -1,0 +1,8230 @@
+{
+ "campaign_id": "cryptonym_crib_screen_qiii_2026_06_11",
+ "prereg": "docs/campaigns/cryptonym_crib_screen_2026_06_11.md#tier-2a",
+ "git_head": "55f7308",
+ "n_tests": 810,
+ "observed_exact_words": 0,
+ "expected_exact_words": 0.0904,
+ "observed_prefix_hits": 0,
+ "expected_prefix_hits": 0.2697,
+ "null_rates": {
+  "6": {
+   "p_word": 0.0003,
+   "p_prefix": 0.00089
+  },
+  "7": {
+   "p_word": 1.5e-05,
+   "p_prefix": 4.5e-05
+  },
+  "8": {
+   "p_word": 0.0,
+   "p_prefix": 5e-06
+  }
+ },
+ "word_hits": [],
+ "prefix_hits": [],
+ "top_quadgram": [
+  {
+   "crib": "KUBARK",
+   "pos": 9,
+   "tableau": "COMPASS",
+   "indicator": "R",
+   "fragment": "LROUSS",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -4.065
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 2,
+   "tableau": "PALIMPSEST",
+   "indicator": "A",
+   "fragment": "APHOSI",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -4.21
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 8,
+   "tableau": "PALIMPSEST",
+   "indicator": "R",
+   "fragment": "NGSUBC",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -4.284
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 6,
+   "tableau": "KRYPTOS",
+   "indicator": "R",
+   "fragment": "GINEMAB",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -4.435
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 7,
+   "tableau": "ABSCISSA",
+   "indicator": "R",
+   "fragment": "WEALLG",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -4.67
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 14,
+   "tableau": "ABSCISSA",
+   "indicator": "R",
+   "fragment": "ARSEAMW",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -4.695
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 9,
+   "tableau": "LATITUDE",
+   "indicator": "K",
+   "fragment": "HKERMO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -4.781
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 10,
+   "tableau": "COMPASS",
+   "indicator": "R",
+   "fragment": "HINSABIU",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -4.834
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 14,
+   "tableau": "LATITUDE",
+   "indicator": "A",
+   "fragment": "CALCETU",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -4.857
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 3,
+   "tableau": "PALIMPSEST",
+   "indicator": "A",
+   "fragment": "CRYOFTV",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -4.868
+  }
+ ],
+ "all_rows": [
+  {
+   "crib": "KUBARK",
+   "pos": 0,
+   "tableau": "KRYPTOS",
+   "indicator": "K",
+   "fragment": "OGMQQO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 1,
+   "tableau": "KRYPTOS",
+   "indicator": "K",
+   "fragment": "BONHTX",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.314
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 2,
+   "tableau": "KRYPTOS",
+   "indicator": "K",
+   "fragment": "KSGXWO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 3,
+   "tableau": "KRYPTOS",
+   "indicator": "K",
+   "fragment": "RKWLTG",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 4,
+   "tableau": "KRYPTOS",
+   "indicator": "K",
+   "fragment": "UDJXFH",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 5,
+   "tableau": "KRYPTOS",
+   "indicator": "K",
+   "fragment": "OPWSGU",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 6,
+   "tableau": "KRYPTOS",
+   "indicator": "K",
+   "fragment": "XDOAQL",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 7,
+   "tableau": "KRYPTOS",
+   "indicator": "K",
+   "fragment": "OMSHJB",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.145
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 8,
+   "tableau": "KRYPTOS",
+   "indicator": "K",
+   "fragment": "GNGDAS",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.884
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 9,
+   "tableau": "KRYPTOS",
+   "indicator": "K",
+   "fragment": "HKCROO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.55
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 10,
+   "tableau": "KRYPTOS",
+   "indicator": "K",
+   "fragment": "UVKZTL",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 11,
+   "tableau": "KRYPTOS",
+   "indicator": "K",
+   "fragment": "LGXXJI",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 12,
+   "tableau": "KRYPTOS",
+   "indicator": "K",
+   "fragment": "BEWDHF",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 13,
+   "tableau": "KRYPTOS",
+   "indicator": "K",
+   "fragment": "SDCBEB",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 14,
+   "tableau": "KRYPTOS",
+   "indicator": "K",
+   "fragment": "OVAOAB",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 15,
+   "tableau": "KRYPTOS",
+   "indicator": "K",
+   "fragment": "LQTRAW",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.942
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 0,
+   "tableau": "KRYPTOS",
+   "indicator": "K",
+   "fragment": "NLOWLQW",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.897
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 1,
+   "tableau": "KRYPTOS",
+   "indicator": "K",
+   "fragment": "VCSLRGT",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 2,
+   "tableau": "KRYPTOS",
+   "indicator": "K",
+   "fragment": "HDKRQQF",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 3,
+   "tableau": "KRYPTOS",
+   "indicator": "K",
+   "fragment": "ITDQRYG",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 4,
+   "tableau": "KRYPTOS",
+   "indicator": "K",
+   "fragment": "CHPRCPQ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.191
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 5,
+   "tableau": "KRYPTOS",
+   "indicator": "K",
+   "fragment": "NADCDDJ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.457
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 6,
+   "tableau": "KRYPTOS",
+   "indicator": "K",
+   "fragment": "FHMDLSA",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 7,
+   "tableau": "KRYPTOS",
+   "indicator": "K",
+   "fragment": "NVNLGWO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 8,
+   "tableau": "KRYPTOS",
+   "indicator": "K",
+   "fragment": "RWKGTUT",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.278
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 9,
+   "tableau": "KRYPTOS",
+   "indicator": "K",
+   "fragment": "YTVTYQJ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 10,
+   "tableau": "KRYPTOS",
+   "indicator": "K",
+   "fragment": "CKGYRSH",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.557
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 11,
+   "tableau": "KRYPTOS",
+   "indicator": "K",
+   "fragment": "OLERGTE",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.353
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 12,
+   "tableau": "KRYPTOS",
+   "indicator": "K",
+   "fragment": "VIDGERA",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -4.876
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 13,
+   "tableau": "KRYPTOS",
+   "indicator": "K",
+   "fragment": "QHVEBWA",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 14,
+   "tableau": "KRYPTOS",
+   "indicator": "K",
+   "fragment": "NKQBTWV",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 0,
+   "tableau": "KRYPTOS",
+   "indicator": "K",
+   "fragment": "KFIKTKWU",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 1,
+   "tableau": "KRYPTOS",
+   "indicator": "K",
+   "fragment": "PTJQHNTP",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 2,
+   "tableau": "KRYPTOS",
+   "indicator": "K",
+   "fragment": "UODTAKFT",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.177
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 3,
+   "tableau": "KRYPTOS",
+   "indicator": "K",
+   "fragment": "VZQWHBGE",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 4,
+   "tableau": "KRYPTOS",
+   "indicator": "K",
+   "fragment": "JCGTVCQA",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 5,
+   "tableau": "KRYPTOS",
+   "indicator": "K",
+   "fragment": "KYQFWJJX",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 6,
+   "tableau": "KRYPTOS",
+   "indicator": "K",
+   "fragment": "NCYGTFAV",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.391
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 7,
+   "tableau": "KRYPTOS",
+   "indicator": "K",
+   "fragment": "KLPQKPOU",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 8,
+   "tableau": "KRYPTOS",
+   "indicator": "K",
+   "fragment": "BMDJLRTA",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 9,
+   "tableau": "KRYPTOS",
+   "indicator": "K",
+   "fragment": "CZSAIKJO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 10,
+   "tableau": "KRYPTOS",
+   "indicator": "K",
+   "fragment": "JUWOHFHY",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 11,
+   "tableau": "KRYPTOS",
+   "indicator": "K",
+   "fragment": "FFUTKDEX",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 12,
+   "tableau": "KRYPTOS",
+   "indicator": "K",
+   "fragment": "PDQJXAAX",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 13,
+   "tableau": "KRYPTOS",
+   "indicator": "K",
+   "fragment": "RCSHUPAG",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.97
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 0,
+   "tableau": "KRYPTOS",
+   "indicator": "A",
+   "fragment": "FQZRRF",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 1,
+   "tableau": "KRYPTOS",
+   "indicator": "A",
+   "fragment": "IFKUEO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 2,
+   "tableau": "KRYPTOS",
+   "indicator": "A",
+   "fragment": "AGQOTF",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 3,
+   "tableau": "KRYPTOS",
+   "indicator": "A",
+   "fragment": "BATXEQ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 4,
+   "tableau": "KRYPTOS",
+   "indicator": "A",
+   "fragment": "YLWONU",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.431
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 5,
+   "tableau": "KRYPTOS",
+   "indicator": "A",
+   "fragment": "FDTGQY",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 6,
+   "tableau": "KRYPTOS",
+   "indicator": "A",
+   "fragment": "OLFHRX",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.473
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 7,
+   "tableau": "KRYPTOS",
+   "indicator": "A",
+   "fragment": "FZGUWI",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 8,
+   "tableau": "KRYPTOS",
+   "indicator": "A",
+   "fragment": "QKQLHG",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 9,
+   "tableau": "KRYPTOS",
+   "indicator": "A",
+   "fragment": "UAJBFF",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 10,
+   "tableau": "KRYPTOS",
+   "indicator": "A",
+   "fragment": "YPASEX",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.086
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 11,
+   "tableau": "KRYPTOS",
+   "indicator": "A",
+   "fragment": "XQOOWV",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 12,
+   "tableau": "KRYPTOS",
+   "indicator": "A",
+   "fragment": "IMTLUN",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.299
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 13,
+   "tableau": "KRYPTOS",
+   "indicator": "A",
+   "fragment": "GLJIMI",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.532
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 14,
+   "tableau": "KRYPTOS",
+   "indicator": "A",
+   "fragment": "FPHFHI",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 15,
+   "tableau": "KRYPTOS",
+   "indicator": "A",
+   "fragment": "XREBHT",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 0,
+   "tableau": "KRYPTOS",
+   "indicator": "A",
+   "fragment": "KXFTXRT",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 1,
+   "tableau": "KRYPTOS",
+   "indicator": "A",
+   "fragment": "PJGXBQE",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 2,
+   "tableau": "KRYPTOS",
+   "indicator": "A",
+   "fragment": "ULABRRN",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.692
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 3,
+   "tableau": "KRYPTOS",
+   "indicator": "A",
+   "fragment": "VELRBCQ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.338
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 4,
+   "tableau": "KRYPTOS",
+   "indicator": "A",
+   "fragment": "JUDBJDR",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 5,
+   "tableau": "KRYPTOS",
+   "indicator": "A",
+   "fragment": "KHLJLLW",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 6,
+   "tableau": "KRYPTOS",
+   "indicator": "A",
+   "fragment": "NUZLXGH",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 7,
+   "tableau": "KRYPTOS",
+   "indicator": "A",
+   "fragment": "KPKXQTF",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 8,
+   "tableau": "KRYPTOS",
+   "indicator": "A",
+   "fragment": "BTAQEYE",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 9,
+   "tableau": "KRYPTOS",
+   "indicator": "A",
+   "fragment": "CEPECRW",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.543
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 10,
+   "tableau": "KRYPTOS",
+   "indicator": "A",
+   "fragment": "JAQCBGU",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 11,
+   "tableau": "KRYPTOS",
+   "indicator": "A",
+   "fragment": "FXMBQEM",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 12,
+   "tableau": "KRYPTOS",
+   "indicator": "A",
+   "fragment": "PVLQMBH",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 13,
+   "tableau": "KRYPTOS",
+   "indicator": "A",
+   "fragment": "RUPMITH",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.992
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 14,
+   "tableau": "KRYPTOS",
+   "indicator": "A",
+   "fragment": "KARIETP",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -4.944
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 0,
+   "tableau": "KRYPTOS",
+   "indicator": "A",
+   "fragment": "ANVAEATY",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.812
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 1,
+   "tableau": "KRYPTOS",
+   "indicator": "A",
+   "fragment": "DEWRUKED",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.052
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 2,
+   "tableau": "KRYPTOS",
+   "indicator": "A",
+   "fragment": "YFLEHANE",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -4.876
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 3,
+   "tableau": "KRYPTOS",
+   "indicator": "A",
+   "fragment": "PSRTUIQM",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.397
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 4,
+   "tableau": "KRYPTOS",
+   "indicator": "A",
+   "fragment": "WJQEPJRH",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 5,
+   "tableau": "KRYPTOS",
+   "indicator": "A",
+   "fragment": "ACRNTWWO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.432
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 6,
+   "tableau": "KRYPTOS",
+   "indicator": "A",
+   "fragment": "KJCQENHP",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 7,
+   "tableau": "KRYPTOS",
+   "indicator": "A",
+   "fragment": "AXDRADFY",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.047
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 8,
+   "tableau": "KRYPTOS",
+   "indicator": "A",
+   "fragment": "IZLWXBEH",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 9,
+   "tableau": "KRYPTOS",
+   "indicator": "A",
+   "fragment": "JSGHVAWF",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.537
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 10,
+   "tableau": "KRYPTOS",
+   "indicator": "A",
+   "fragment": "WYTFUNUC",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.162
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 11,
+   "tableau": "KRYPTOS",
+   "indicator": "A",
+   "fragment": "NNYEALMO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.277
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 12,
+   "tableau": "KRYPTOS",
+   "indicator": "A",
+   "fragment": "DLRWOHHO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 13,
+   "tableau": "KRYPTOS",
+   "indicator": "A",
+   "fragment": "BJGUYDHQ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.572
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 0,
+   "tableau": "KRYPTOS",
+   "indicator": "R",
+   "fragment": "SHNUUS",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.331
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 1,
+   "tableau": "KRYPTOS",
+   "indicator": "R",
+   "fragment": "CSQIOZ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 2,
+   "tableau": "KRYPTOS",
+   "indicator": "R",
+   "fragment": "RAHZXS",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 3,
+   "tableau": "KRYPTOS",
+   "indicator": "R",
+   "fragment": "YRXMOH",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 4,
+   "tableau": "KRYPTOS",
+   "indicator": "R",
+   "fragment": "VELZGI",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 5,
+   "tableau": "KRYPTOS",
+   "indicator": "R",
+   "fragment": "STXAHV",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 6,
+   "tableau": "KRYPTOS",
+   "indicator": "R",
+   "fragment": "ZESBUM",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -4.99
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 7,
+   "tableau": "KRYPTOS",
+   "indicator": "R",
+   "fragment": "SNAILC",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -4.957
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 8,
+   "tableau": "KRYPTOS",
+   "indicator": "R",
+   "fragment": "HQHEBA",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.912
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 9,
+   "tableau": "KRYPTOS",
+   "indicator": "R",
+   "fragment": "IRDYSS",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.579
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 10,
+   "tableau": "KRYPTOS",
+   "indicator": "R",
+   "fragment": "VWRKOM",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.331
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 11,
+   "tableau": "KRYPTOS",
+   "indicator": "R",
+   "fragment": "MHZZLJ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 12,
+   "tableau": "KRYPTOS",
+   "indicator": "R",
+   "fragment": "CFXEIG",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.532
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 13,
+   "tableau": "KRYPTOS",
+   "indicator": "R",
+   "fragment": "AEDCFC",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.532
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 14,
+   "tableau": "KRYPTOS",
+   "indicator": "R",
+   "fragment": "SWBSBC",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 15,
+   "tableau": "KRYPTOS",
+   "indicator": "R",
+   "fragment": "MUOYBX",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 0,
+   "tableau": "KRYPTOS",
+   "indicator": "R",
+   "fragment": "QMSXMUX",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 1,
+   "tableau": "KRYPTOS",
+   "indicator": "R",
+   "fragment": "WDAMYHO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.826
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 2,
+   "tableau": "KRYPTOS",
+   "indicator": "R",
+   "fragment": "IERYUUG",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.93
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 3,
+   "tableau": "KRYPTOS",
+   "indicator": "R",
+   "fragment": "JOEUYPH",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 4,
+   "tableau": "KRYPTOS",
+   "indicator": "R",
+   "fragment": "DITYDTU",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.496
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 5,
+   "tableau": "KRYPTOS",
+   "indicator": "R",
+   "fragment": "QBEDEEL",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.49
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 6,
+   "tableau": "KRYPTOS",
+   "indicator": "R",
+   "fragment": "GINEMAB",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -4.435
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 7,
+   "tableau": "KRYPTOS",
+   "indicator": "R",
+   "fragment": "QWQMHXS",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 8,
+   "tableau": "KRYPTOS",
+   "indicator": "R",
+   "fragment": "YXRHOVO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.362
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 9,
+   "tableau": "KRYPTOS",
+   "indicator": "R",
+   "fragment": "POWOPUL",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.046
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 10,
+   "tableau": "KRYPTOS",
+   "indicator": "R",
+   "fragment": "DRHPYAI",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 11,
+   "tableau": "KRYPTOS",
+   "indicator": "R",
+   "fragment": "SMFYHOF",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.457
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 12,
+   "tableau": "KRYPTOS",
+   "indicator": "R",
+   "fragment": "WJEHFYB",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 13,
+   "tableau": "KRYPTOS",
+   "indicator": "R",
+   "fragment": "UIWFCXB",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 14,
+   "tableau": "KRYPTOS",
+   "indicator": "R",
+   "fragment": "QRUCOXW",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.182
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 0,
+   "tableau": "KRYPTOS",
+   "indicator": "R",
+   "fragment": "RGJRORXV",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 1,
+   "tableau": "KRYPTOS",
+   "indicator": "R",
+   "fragment": "TOLUIQOT",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.968
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 2,
+   "tableau": "KRYPTOS",
+   "indicator": "R",
+   "fragment": "VSEOBRGO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.271
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 3,
+   "tableau": "KRYPTOS",
+   "indicator": "R",
+   "fragment": "WKUXICHF",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.153
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 4,
+   "tableau": "KRYPTOS",
+   "indicator": "R",
+   "fragment": "LDHOWDUB",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.622
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 5,
+   "tableau": "KRYPTOS",
+   "indicator": "R",
+   "fragment": "RPUGXLLZ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.537
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 6,
+   "tableau": "KRYPTOS",
+   "indicator": "R",
+   "fragment": "QDPHOGBW",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.837
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 7,
+   "tableau": "KRYPTOS",
+   "indicator": "R",
+   "fragment": "RMTURTSV",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.415
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 8,
+   "tableau": "KRYPTOS",
+   "indicator": "R",
+   "fragment": "CNELMYOB",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.863
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 9,
+   "tableau": "KRYPTOS",
+   "indicator": "R",
+   "fragment": "DKABJRLS",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 10,
+   "tableau": "KRYPTOS",
+   "indicator": "R",
+   "fragment": "LVXSIGIP",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.356
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 11,
+   "tableau": "KRYPTOS",
+   "indicator": "R",
+   "fragment": "GGVOREFZ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.892
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 12,
+   "tableau": "KRYPTOS",
+   "indicator": "R",
+   "fragment": "TEULZBBZ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.381
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 13,
+   "tableau": "KRYPTOS",
+   "indicator": "R",
+   "fragment": "YDAIVTBH",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.441
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 0,
+   "tableau": "PALIMPSEST",
+   "indicator": "K",
+   "fragment": "OIWTNO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 1,
+   "tableau": "PALIMPSEST",
+   "indicator": "K",
+   "fragment": "BDPBHX",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 2,
+   "tableau": "PALIMPSEST",
+   "indicator": "K",
+   "fragment": "KJASRO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.35
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 3,
+   "tableau": "PALIMPSEST",
+   "indicator": "K",
+   "fragment": "RKYFHG",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.473
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 4,
+   "tableau": "PALIMPSEST",
+   "indicator": "K",
+   "fragment": "UGMSBH",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 5,
+   "tableau": "PALIMPSEST",
+   "indicator": "K",
+   "fragment": "OQYPCU",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 6,
+   "tableau": "PALIMPSEST",
+   "indicator": "K",
+   "fragment": "XGRANL",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.423
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 7,
+   "tableau": "PALIMPSEST",
+   "indicator": "K",
+   "fragment": "OTUBYB",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.088
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 8,
+   "tableau": "PALIMPSEST",
+   "indicator": "K",
+   "fragment": "GBANMS",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.858
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 9,
+   "tableau": "PALIMPSEST",
+   "indicator": "K",
+   "fragment": "HKCWAO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 10,
+   "tableau": "PALIMPSEST",
+   "indicator": "K",
+   "fragment": "UXKRHL",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 11,
+   "tableau": "PALIMPSEST",
+   "indicator": "K",
+   "fragment": "LIGSYI",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.532
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 12,
+   "tableau": "PALIMPSEST",
+   "indicator": "K",
+   "fragment": "BPYNZF",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 13,
+   "tableau": "PALIMPSEST",
+   "indicator": "K",
+   "fragment": "SGCOTB",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.191
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 14,
+   "tableau": "PALIMPSEST",
+   "indicator": "K",
+   "fragment": "OXDZMB",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 15,
+   "tableau": "PALIMPSEST",
+   "indicator": "K",
+   "fragment": "LYQWMW",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 0,
+   "tableau": "PALIMPSEST",
+   "indicator": "K",
+   "fragment": "VVDALPR",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.374
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 1,
+   "tableau": "PALIMPSEST",
+   "indicator": "K",
+   "fragment": "GLJLZEH",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 2,
+   "tableau": "PALIMPSEST",
+   "indicator": "K",
+   "fragment": "REKZSPB",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 3,
+   "tableau": "PALIMPSEST",
+   "indicator": "K",
+   "fragment": "XTGSZVC",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 4,
+   "tableau": "PALIMPSEST",
+   "indicator": "K",
+   "fragment": "YMQZUWN",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 5,
+   "tableau": "PALIMPSEST",
+   "indicator": "K",
+   "fragment": "VDGUVIY",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 6,
+   "tableau": "PALIMPSEST",
+   "indicator": "K",
+   "fragment": "AMTVLFM",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 7,
+   "tableau": "PALIMPSEST",
+   "indicator": "K",
+   "fragment": "VZBLDOA",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 8,
+   "tableau": "PALIMPSEST",
+   "indicator": "K",
+   "fragment": "NPKDNJH",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 9,
+   "tableau": "PALIMPSEST",
+   "indicator": "K",
+   "fragment": "OTXNHPY",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 10,
+   "tableau": "PALIMPSEST",
+   "indicator": "K",
+   "fragment": "YKIHZFZ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 11,
+   "tableau": "PALIMPSEST",
+   "indicator": "K",
+   "fragment": "EVPZDGT",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 12,
+   "tableau": "PALIMPSEST",
+   "indicator": "K",
+   "fragment": "GQGDFUM",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.457
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 13,
+   "tableau": "PALIMPSEST",
+   "indicator": "K",
+   "fragment": "CMXFROM",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.92
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 14,
+   "tableau": "PALIMPSEST",
+   "indicator": "K",
+   "fragment": "VKYRNOQ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 0,
+   "tableau": "PALIMPSEST",
+   "indicator": "K",
+   "fragment": "KLYKTKRW",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.572
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 1,
+   "tableau": "PALIMPSEST",
+   "indicator": "K",
+   "fragment": "ECLNMVHO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 2,
+   "tableau": "PALIMPSEST",
+   "indicator": "K",
+   "fragment": "HHIHDKBQ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 3,
+   "tableau": "PALIMPSEST",
+   "indicator": "K",
+   "fragment": "OJPRMDCZ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 4,
+   "tableau": "PALIMPSEST",
+   "indicator": "K",
+   "fragment": "QFEHZFNT",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 5,
+   "tableau": "PALIMPSEST",
+   "indicator": "K",
+   "fragment": "KOPBPQYH",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.572
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 6,
+   "tableau": "PALIMPSEST",
+   "indicator": "K",
+   "fragment": "VFVCTPMD",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 7,
+   "tableau": "PALIMPSEST",
+   "indicator": "K",
+   "fragment": "KEWNKEAW",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.236
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 8,
+   "tableau": "PALIMPSEST",
+   "indicator": "K",
+   "fragment": "DTIYVIHT",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 9,
+   "tableau": "PALIMPSEST",
+   "indicator": "K",
+   "fragment": "FJFMQKYB",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 10,
+   "tableau": "PALIMPSEST",
+   "indicator": "K",
+   "fragment": "QWOAMPZN",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.463
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 11,
+   "tableau": "PALIMPSEST",
+   "indicator": "K",
+   "fragment": "PLJHKATH",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.261
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 12,
+   "tableau": "PALIMPSEST",
+   "indicator": "K",
+   "fragment": "EZPYNCMH",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 13,
+   "tableau": "PALIMPSEST",
+   "indicator": "K",
+   "fragment": "IFFZYEMA",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.356
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 0,
+   "tableau": "PALIMPSEST",
+   "indicator": "A",
+   "fragment": "IKBRLI",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 1,
+   "tableau": "PALIMPSEST",
+   "indicator": "A",
+   "fragment": "UWGUZC",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 2,
+   "tableau": "PALIMPSEST",
+   "indicator": "A",
+   "fragment": "APHOSI",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -4.21
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 3,
+   "tableau": "PALIMPSEST",
+   "indicator": "A",
+   "fragment": "SADXZY",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 4,
+   "tableau": "PALIMPSEST",
+   "indicator": "A",
+   "fragment": "EYNOUZ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.672
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 5,
+   "tableau": "PALIMPSEST",
+   "indicator": "A",
+   "fragment": "IMDGVE",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 6,
+   "tableau": "PALIMPSEST",
+   "indicator": "A",
+   "fragment": "CYSHLJ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.331
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 7,
+   "tableau": "PALIMPSEST",
+   "indicator": "A",
+   "fragment": "IREUDU",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.96
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 8,
+   "tableau": "PALIMPSEST",
+   "indicator": "A",
+   "fragment": "YUHLNO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 9,
+   "tableau": "PALIMPSEST",
+   "indicator": "A",
+   "fragment": "ZAVBHI",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 10,
+   "tableau": "PALIMPSEST",
+   "indicator": "A",
+   "fragment": "ECASZJ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.821
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 11,
+   "tableau": "PALIMPSEST",
+   "indicator": "A",
+   "fragment": "JKYODK",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 12,
+   "tableau": "PALIMPSEST",
+   "indicator": "A",
+   "fragment": "UGDLFX",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 13,
+   "tableau": "PALIMPSEST",
+   "indicator": "A",
+   "fragment": "OYVIRU",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.572
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 14,
+   "tableau": "PALIMPSEST",
+   "indicator": "A",
+   "fragment": "ICWFNU",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 15,
+   "tableau": "PALIMPSEST",
+   "indicator": "A",
+   "fragment": "JDMBNB",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 0,
+   "tableau": "PALIMPSEST",
+   "indicator": "A",
+   "fragment": "TTWHJGS",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 1,
+   "tableau": "PALIMPSEST",
+   "indicator": "A",
+   "fragment": "YJPJFQZ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 2,
+   "tableau": "PALIMPSEST",
+   "indicator": "A",
+   "fragment": "SQAFOGU",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.406
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 3,
+   "tableau": "PALIMPSEST",
+   "indicator": "A",
+   "fragment": "CRYOFTV",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -4.868
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 4,
+   "tableau": "PALIMPSEST",
+   "indicator": "A",
+   "fragment": "DNMFEBL",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.394
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 5,
+   "tableau": "PALIMPSEST",
+   "indicator": "A",
+   "fragment": "TWYETKD",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.557
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 6,
+   "tableau": "PALIMPSEST",
+   "indicator": "A",
+   "fragment": "HNRTJXN",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 7,
+   "tableau": "PALIMPSEST",
+   "indicator": "A",
+   "fragment": "TFUJWIH",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 8,
+   "tableau": "PALIMPSEST",
+   "indicator": "A",
+   "fragment": "LGAWLPZ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.513
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 9,
+   "tableau": "PALIMPSEST",
+   "indicator": "A",
+   "fragment": "IRCLZGD",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.21
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 10,
+   "tableau": "PALIMPSEST",
+   "indicator": "A",
+   "fragment": "DAKZFXF",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 11,
+   "tableau": "PALIMPSEST",
+   "indicator": "A",
+   "fragment": "QTGFWYR",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 12,
+   "tableau": "PALIMPSEST",
+   "indicator": "A",
+   "fragment": "YMYWXEN",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.557
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 13,
+   "tableau": "PALIMPSEST",
+   "indicator": "A",
+   "fragment": "VNCXSIN",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 14,
+   "tableau": "PALIMPSEST",
+   "indicator": "A",
+   "fragment": "TADSLIM",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.13
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 0,
+   "tableau": "PALIMPSEST",
+   "indicator": "A",
+   "fragment": "AJDARASB",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.481
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 1,
+   "tableau": "PALIMPSEST",
+   "indicator": "A",
+   "fragment": "QVJLNTZI",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.432
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 2,
+   "tableau": "PALIMPSEST",
+   "indicator": "A",
+   "fragment": "ZZKZWAUM",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 3,
+   "tableau": "PALIMPSEST",
+   "indicator": "A",
+   "fragment": "IPGSNWVF",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 4,
+   "tableau": "PALIMPSEST",
+   "indicator": "A",
+   "fragment": "MXQZFXLR",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 5,
+   "tableau": "PALIMPSEST",
+   "indicator": "A",
+   "fragment": "AIGUGMDZ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.381
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 6,
+   "tableau": "PALIMPSEST",
+   "indicator": "A",
+   "fragment": "TXTVRGNW",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 7,
+   "tableau": "PALIMPSEST",
+   "indicator": "A",
+   "fragment": "AQBLAQHB",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.572
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 8,
+   "tableau": "PALIMPSEST",
+   "indicator": "A",
+   "fragment": "WRKDTKZR",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 9,
+   "tableau": "PALIMPSEST",
+   "indicator": "A",
+   "fragment": "XPXNMADU",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.109
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 10,
+   "tableau": "PALIMPSEST",
+   "indicator": "A",
+   "fragment": "MBIHNGFL",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.112
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 11,
+   "tableau": "PALIMPSEST",
+   "indicator": "A",
+   "fragment": "GJPZAHRZ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.572
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 12,
+   "tableau": "PALIMPSEST",
+   "indicator": "A",
+   "fragment": "QFGDLVNZ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 13,
+   "tableau": "PALIMPSEST",
+   "indicator": "A",
+   "fragment": "KXXFDQNH",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 0,
+   "tableau": "PALIMPSEST",
+   "indicator": "R",
+   "fragment": "VTPFUV",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 1,
+   "tableau": "PALIMPSEST",
+   "indicator": "R",
+   "fragment": "GJMGOA",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 2,
+   "tableau": "PALIMPSEST",
+   "indicator": "R",
+   "fragment": "RQSCXV",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 3,
+   "tableau": "PALIMPSEST",
+   "indicator": "R",
+   "fragment": "XRLKON",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.532
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 4,
+   "tableau": "PALIMPSEST",
+   "indicator": "R",
+   "fragment": "YNBCGO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 5,
+   "tableau": "PALIMPSEST",
+   "indicator": "R",
+   "fragment": "VWLMHY",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 6,
+   "tableau": "PALIMPSEST",
+   "indicator": "R",
+   "fragment": "ANXSUE",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 7,
+   "tableau": "PALIMPSEST",
+   "indicator": "R",
+   "fragment": "VFYGLG",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.431
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 8,
+   "tableau": "PALIMPSEST",
+   "indicator": "R",
+   "fragment": "NGSUBC",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -4.284
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 9,
+   "tableau": "PALIMPSEST",
+   "indicator": "R",
+   "fragment": "ORHPSV",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 10,
+   "tableau": "PALIMPSEST",
+   "indicator": "R",
+   "fragment": "YARXOE",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 11,
+   "tableau": "PALIMPSEST",
+   "indicator": "R",
+   "fragment": "ETNCLT",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 12,
+   "tableau": "PALIMPSEST",
+   "indicator": "R",
+   "fragment": "GMLUIK",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 13,
+   "tableau": "PALIMPSEST",
+   "indicator": "R",
+   "fragment": "CNHVFG",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 14,
+   "tableau": "PALIMPSEST",
+   "indicator": "R",
+   "fragment": "VAJIBG",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.431
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 15,
+   "tableau": "PALIMPSEST",
+   "indicator": "R",
+   "fragment": "ELWPBP",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 0,
+   "tableau": "PALIMPSEST",
+   "indicator": "R",
+   "fragment": "ZZJSEMX",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 1,
+   "tableau": "PALIMPSEST",
+   "indicator": "R",
+   "fragment": "NEQEIDO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.197
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 2,
+   "tableau": "PALIMPSEST",
+   "indicator": "R",
+   "fragment": "XDRICMG",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.599
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 3,
+   "tableau": "PALIMPSEST",
+   "indicator": "R",
+   "fragment": "AFNCIZH",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.557
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 4,
+   "tableau": "PALIMPSEST",
+   "indicator": "R",
+   "fragment": "LBWIYPU",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 5,
+   "tableau": "PALIMPSEST",
+   "indicator": "R",
+   "fragment": "ZJNYZTL",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 6,
+   "tableau": "PALIMPSEST",
+   "indicator": "R",
+   "fragment": "SBFZEKB",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 7,
+   "tableau": "PALIMPSEST",
+   "indicator": "R",
+   "fragment": "ZIGEJVS",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.557
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 8,
+   "tableau": "PALIMPSEST",
+   "indicator": "R",
+   "fragment": "UMRJUQO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 9,
+   "tableau": "PALIMPSEST",
+   "indicator": "R",
+   "fragment": "VFAUOML",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 10,
+   "tableau": "PALIMPSEST",
+   "indicator": "R",
+   "fragment": "LRTOIKI",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.911
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 11,
+   "tableau": "PALIMPSEST",
+   "indicator": "R",
+   "fragment": "DZMIJNF",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.513
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 12,
+   "tableau": "PALIMPSEST",
+   "indicator": "R",
+   "fragment": "NWNJKYB",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 13,
+   "tableau": "PALIMPSEST",
+   "indicator": "R",
+   "fragment": "HBAKXVB",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.513
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 14,
+   "tableau": "PALIMPSEST",
+   "indicator": "R",
+   "fragment": "ZRLXUVW",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 0,
+   "tableau": "PALIMPSEST",
+   "indicator": "R",
+   "fragment": "RELRFRXP",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.572
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 1,
+   "tableau": "PALIMPSEST",
+   "indicator": "R",
+   "fragment": "DHEUBZOV",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.512
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 2,
+   "tableau": "PALIMPSEST",
+   "indicator": "R",
+   "fragment": "OOTOJRGW",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.196
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 3,
+   "tableau": "PALIMPSEST",
+   "indicator": "R",
+   "fragment": "VQMXBJHI",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 4,
+   "tableau": "PALIMPSEST",
+   "indicator": "R",
+   "fragment": "WKDOIKUF",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.572
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 5,
+   "tableau": "PALIMPSEST",
+   "indicator": "R",
+   "fragment": "RVMGMWLO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 6,
+   "tableau": "PALIMPSEST",
+   "indicator": "R",
+   "fragment": "ZKZHFMBJ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 7,
+   "tableau": "PALIMPSEST",
+   "indicator": "R",
+   "fragment": "RDPURDSP",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.464
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 8,
+   "tableau": "PALIMPSEST",
+   "indicator": "R",
+   "fragment": "JFTLZTOF",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 9,
+   "tableau": "PALIMPSEST",
+   "indicator": "R",
+   "fragment": "KQKBWRLG",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 10,
+   "tableau": "PALIMPSEST",
+   "indicator": "R",
+   "fragment": "WPVSBMIU",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 11,
+   "tableau": "PALIMPSEST",
+   "indicator": "R",
+   "fragment": "MEQORSFO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.952
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 12,
+   "tableau": "PALIMPSEST",
+   "indicator": "R",
+   "fragment": "DIMLUHBO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.381
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 13,
+   "tableau": "PALIMPSEST",
+   "indicator": "R",
+   "fragment": "TKKILDBS",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.063
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 0,
+   "tableau": "ABSCISSA",
+   "indicator": "K",
+   "fragment": "ORVCMO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 1,
+   "tableau": "ABSCISSA",
+   "indicator": "K",
+   "fragment": "BSSDGX",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 2,
+   "tableau": "ABSCISSA",
+   "indicator": "K",
+   "fragment": "KHIAPO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.357
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 3,
+   "tableau": "ABSCISSA",
+   "indicator": "K",
+   "fragment": "RKZGGG",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 4,
+   "tableau": "ABSCISSA",
+   "indicator": "K",
+   "fragment": "UEFABH",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.648
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 5,
+   "tableau": "ABSCISSA",
+   "indicator": "K",
+   "fragment": "ONZTSU",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 6,
+   "tableau": "ABSCISSA",
+   "indicator": "K",
+   "fragment": "XERUML",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.472
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 7,
+   "tableau": "ABSCISSA",
+   "indicator": "K",
+   "fragment": "OZTDDB",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 8,
+   "tableau": "ABSCISSA",
+   "indicator": "K",
+   "fragment": "GAIXUS",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 9,
+   "tableau": "ABSCISSA",
+   "indicator": "K",
+   "fragment": "HKWLVO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 10,
+   "tableau": "ABSCISSA",
+   "indicator": "K",
+   "fragment": "UCKMGL",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.185
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 11,
+   "tableau": "ABSCISSA",
+   "indicator": "K",
+   "fragment": "LRLADI",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.454
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 12,
+   "tableau": "ABSCISSA",
+   "indicator": "K",
+   "fragment": "BTZXXF",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 13,
+   "tableau": "ABSCISSA",
+   "indicator": "K",
+   "fragment": "SEWOAB",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.057
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 14,
+   "tableau": "ABSCISSA",
+   "indicator": "K",
+   "fragment": "OCNRUB",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.198
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 15,
+   "tableau": "ABSCISSA",
+   "indicator": "K",
+   "fragment": "LVQLUW",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 0,
+   "tableau": "ABSCISSA",
+   "indicator": "K",
+   "fragment": "TASJLUP",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.482
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 1,
+   "tableau": "ABSCISSA",
+   "indicator": "K",
+   "fragment": "DJHLFSG",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.557
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 2,
+   "tableau": "ABSCISSA",
+   "indicator": "K",
+   "fragment": "OQKFOUB",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 3,
+   "tableau": "ABSCISSA",
+   "indicator": "K",
+   "fragment": "WTEOFMS",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.675
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 4,
+   "tableau": "ABSCISSA",
+   "indicator": "K",
+   "fragment": "YNNFANM",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.058
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 5,
+   "tableau": "ABSCISSA",
+   "indicator": "K",
+   "fragment": "TWEABZD",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.201
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 6,
+   "tableau": "ABSCISSA",
+   "indicator": "K",
+   "fragment": "BNZBLQU",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 7,
+   "tableau": "ABSCISSA",
+   "indicator": "K",
+   "fragment": "TFALIEV",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -4.884
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 8,
+   "tableau": "ABSCISSA",
+   "indicator": "K",
+   "fragment": "LGKITFG",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.382
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 9,
+   "tableau": "ABSCISSA",
+   "indicator": "K",
+   "fragment": "MTCTUUD",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 10,
+   "tableau": "ABSCISSA",
+   "indicator": "K",
+   "fragment": "YKRUFQX",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 11,
+   "tableau": "ABSCISSA",
+   "indicator": "K",
+   "fragment": "PATFIHA",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.159
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 12,
+   "tableau": "ABSCISSA",
+   "indicator": "K",
+   "fragment": "DBEIWLU",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.318
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 13,
+   "tableau": "ABSCISSA",
+   "indicator": "K",
+   "fragment": "ENCWZEU",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 14,
+   "tableau": "ABSCISSA",
+   "indicator": "K",
+   "fragment": "TKVZTEO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 0,
+   "tableau": "ABSCISSA",
+   "indicator": "K",
+   "fragment": "KQPKTKPV",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 1,
+   "tableau": "ABSCISSA",
+   "indicator": "K",
+   "fragment": "XBXMNTGN",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 2,
+   "tableau": "ABSCISSA",
+   "indicator": "K",
+   "fragment": "FGZGWKBO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 3,
+   "tableau": "ABSCISSA",
+   "indicator": "K",
+   "fragment": "NJUPNISA",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.204
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 4,
+   "tableau": "ABSCISSA",
+   "indicator": "K",
+   "fragment": "PDSGFDMR",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 5,
+   "tableau": "ABSCISSA",
+   "indicator": "K",
+   "fragment": "KMUBGPDF",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 6,
+   "tableau": "ABSCISSA",
+   "indicator": "K",
+   "fragment": "TDMSTGUG",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.272
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 7,
+   "tableau": "ABSCISSA",
+   "indicator": "K",
+   "fragment": "KYNMKXVV",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 8,
+   "tableau": "ABSCISSA",
+   "indicator": "K",
+   "fragment": "IZZDAYGR",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.368
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 9,
+   "tableau": "ABSCISSA",
+   "indicator": "K",
+   "fragment": "DJQUBKDJ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 10,
+   "tableau": "ABSCISSA",
+   "indicator": "K",
+   "fragment": "PSEVNGXM",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.441
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 11,
+   "tableau": "ABSCISSA",
+   "indicator": "K",
+   "fragment": "GQFGKAAF",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 12,
+   "tableau": "ABSCISSA",
+   "indicator": "K",
+   "fragment": "XRUDCCUF",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 13,
+   "tableau": "ABSCISSA",
+   "indicator": "K",
+   "fragment": "YDQXEXUS",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.397
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 0,
+   "tableau": "ABSCISSA",
+   "indicator": "A",
+   "fragment": "IFJRSI",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.532
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 1,
+   "tableau": "ABSCISSA",
+   "indicator": "A",
+   "fragment": "PQQUXL",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 2,
+   "tableau": "ABSCISSA",
+   "indicator": "A",
+   "fragment": "AYTODI",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -4.949
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 3,
+   "tableau": "ABSCISSA",
+   "indicator": "A",
+   "fragment": "FANXXX",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 4,
+   "tableau": "ABSCISSA",
+   "indicator": "A",
+   "fragment": "HVWOPY",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 5,
+   "tableau": "ABSCISSA",
+   "indicator": "A",
+   "fragment": "ICNGQH",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 6,
+   "tableau": "ABSCISSA",
+   "indicator": "A",
+   "fragment": "LVFHSB",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 7,
+   "tableau": "ABSCISSA",
+   "indicator": "A",
+   "fragment": "INGUUP",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.505
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 8,
+   "tableau": "ABSCISSA",
+   "indicator": "A",
+   "fragment": "XOTLHQ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 9,
+   "tableau": "ABSCISSA",
+   "indicator": "A",
+   "fragment": "YAKBJI",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 10,
+   "tableau": "ABSCISSA",
+   "indicator": "A",
+   "fragment": "HRASXB",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.913
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 11,
+   "tableau": "ABSCISSA",
+   "indicator": "A",
+   "fragment": "BFBOUT",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.743
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 12,
+   "tableau": "ABSCISSA",
+   "indicator": "A",
+   "fragment": "PGNLLW",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 13,
+   "tableau": "ABSCISSA",
+   "indicator": "A",
+   "fragment": "QVKIOP",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 14,
+   "tableau": "ABSCISSA",
+   "indicator": "A",
+   "fragment": "IRCFHP",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 15,
+   "tableau": "ABSCISSA",
+   "indicator": "A",
+   "fragment": "BJEBHK",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 0,
+   "tableau": "ABSCISSA",
+   "indicator": "A",
+   "fragment": "GOQZBHD",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 1,
+   "tableau": "ABSCISSA",
+   "indicator": "A",
+   "fragment": "UZYBWQX",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 2,
+   "tableau": "ABSCISSA",
+   "indicator": "A",
+   "fragment": "IEAWIHP",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.287
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 3,
+   "tableau": "ABSCISSA",
+   "indicator": "A",
+   "fragment": "KGVIWSQ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 4,
+   "tableau": "ABSCISSA",
+   "indicator": "A",
+   "fragment": "MCCWOCS",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 5,
+   "tableau": "ABSCISSA",
+   "indicator": "A",
+   "fragment": "GKVOPNU",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 6,
+   "tableau": "ABSCISSA",
+   "indicator": "A",
+   "fragment": "PCNPBEH",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.557
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 7,
+   "tableau": "ABSCISSA",
+   "indicator": "A",
+   "fragment": "GWOBTVJ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.557
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 8,
+   "tableau": "ABSCISSA",
+   "indicator": "A",
+   "fragment": "BXATGWX",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 9,
+   "tableau": "ABSCISSA",
+   "indicator": "A",
+   "fragment": "SGRGHHU",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.513
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 10,
+   "tableau": "ABSCISSA",
+   "indicator": "A",
+   "fragment": "MAFHWEL",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.438
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 11,
+   "tableau": "ABSCISSA",
+   "indicator": "A",
+   "fragment": "DOGWTYO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.406
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 12,
+   "tableau": "ABSCISSA",
+   "indicator": "A",
+   "fragment": "UPVTKBH",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 13,
+   "tableau": "ABSCISSA",
+   "indicator": "A",
+   "fragment": "VCRKNVH",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 14,
+   "tableau": "ABSCISSA",
+   "indicator": "A",
+   "fragment": "GAJNGVI",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.097
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 0,
+   "tableau": "ABSCISSA",
+   "indicator": "A",
+   "fragment": "AEDAGADJ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.078
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 1,
+   "tableau": "ABSCISSA",
+   "indicator": "A",
+   "fragment": "LPLSCGXC",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 2,
+   "tableau": "ABSCISSA",
+   "indicator": "A",
+   "fragment": "WXNXKAPI",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.432
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 3,
+   "tableau": "ABSCISSA",
+   "indicator": "A",
+   "fragment": "CZHDCTQO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 4,
+   "tableau": "ABSCISSA",
+   "indicator": "A",
+   "fragment": "DUQXWUSF",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 5,
+   "tableau": "ABSCISSA",
+   "indicator": "A",
+   "fragment": "ASHPXDUW",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.349
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 6,
+   "tableau": "ABSCISSA",
+   "indicator": "A",
+   "fragment": "GUSQGXHX",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 7,
+   "tableau": "ABSCISSA",
+   "indicator": "A",
+   "fragment": "AMCSALJJ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.321
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 8,
+   "tableau": "ABSCISSA",
+   "indicator": "A",
+   "fragment": "TNNUOMXF",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 9,
+   "tableau": "ABSCISSA",
+   "indicator": "A",
+   "fragment": "UZEHPAUZ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 10,
+   "tableau": "ABSCISSA",
+   "indicator": "A",
+   "fragment": "DQVJCXLS",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 11,
+   "tableau": "ABSCISSA",
+   "indicator": "A",
+   "fragment": "XEWXAOOW",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 12,
+   "tableau": "ABSCISSA",
+   "indicator": "A",
+   "fragment": "LFHURRHW",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.973
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 13,
+   "tableau": "ABSCISSA",
+   "indicator": "A",
+   "fragment": "MUELVLHQ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.537
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 0,
+   "tableau": "ABSCISSA",
+   "indicator": "R",
+   "fragment": "WZSJUW",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 1,
+   "tableau": "ABSCISSA",
+   "indicator": "R",
+   "fragment": "GHHLOI",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.299
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 2,
+   "tableau": "ABSCISSA",
+   "indicator": "R",
+   "fragment": "RPKFXW",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 3,
+   "tableau": "ABSCISSA",
+   "indicator": "R",
+   "fragment": "ZREOOO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.399
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 4,
+   "tableau": "ABSCISSA",
+   "indicator": "R",
+   "fragment": "BMNFGP",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 5,
+   "tableau": "ABSCISSA",
+   "indicator": "R",
+   "fragment": "WVEAHB",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 6,
+   "tableau": "ABSCISSA",
+   "indicator": "R",
+   "fragment": "IMZBUT",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 7,
+   "tableau": "ABSCISSA",
+   "indicator": "R",
+   "fragment": "WEALLG",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -4.67
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 8,
+   "tableau": "ABSCISSA",
+   "indicator": "R",
+   "fragment": "OFKIBH",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.155
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 9,
+   "tableau": "ABSCISSA",
+   "indicator": "R",
+   "fragment": "PRCTSW",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.081
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 10,
+   "tableau": "ABSCISSA",
+   "indicator": "R",
+   "fragment": "BJRUOT",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 11,
+   "tableau": "ABSCISSA",
+   "indicator": "R",
+   "fragment": "TZTFLK",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 12,
+   "tableau": "ABSCISSA",
+   "indicator": "R",
+   "fragment": "GAEIIN",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.039
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 13,
+   "tableau": "ABSCISSA",
+   "indicator": "R",
+   "fragment": "HMCWFG",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 14,
+   "tableau": "ABSCISSA",
+   "indicator": "R",
+   "fragment": "WJVZBG",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 15,
+   "tableau": "ABSCISSA",
+   "indicator": "R",
+   "fragment": "TSYTBC",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.532
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 0,
+   "tableau": "ABSCISSA",
+   "indicator": "R",
+   "fragment": "AFHQTBX",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 1,
+   "tableau": "ABSCISSA",
+   "indicator": "R",
+   "fragment": "LQPTNHO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 2,
+   "tableau": "ABSCISSA",
+   "indicator": "R",
+   "fragment": "WYRNWBG",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 3,
+   "tableau": "ABSCISSA",
+   "indicator": "R",
+   "fragment": "CAMWNUH",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 4,
+   "tableau": "ABSCISSA",
+   "indicator": "R",
+   "fragment": "DVVNFVU",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 5,
+   "tableau": "ABSCISSA",
+   "indicator": "R",
+   "fragment": "ACMFGEL",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.557
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 6,
+   "tableau": "ABSCISSA",
+   "indicator": "R",
+   "fragment": "GVEGTYB",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 7,
+   "tableau": "ABSCISSA",
+   "indicator": "R",
+   "fragment": "ANFTKMS",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 8,
+   "tableau": "ABSCISSA",
+   "indicator": "R",
+   "fragment": "TORKANO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.119
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 9,
+   "tableau": "ABSCISSA",
+   "indicator": "R",
+   "fragment": "UAJABBL",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.47
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 10,
+   "tableau": "ABSCISSA",
+   "indicator": "R",
+   "fragment": "DRZBNYI",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 11,
+   "tableau": "ABSCISSA",
+   "indicator": "R",
+   "fragment": "XFANKPF",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.156
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 12,
+   "tableau": "ABSCISSA",
+   "indicator": "R",
+   "fragment": "LGMKCTB",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 13,
+   "tableau": "ABSCISSA",
+   "indicator": "R",
+   "fragment": "MVJCEMB",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.216
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 14,
+   "tableau": "ABSCISSA",
+   "indicator": "R",
+   "fragment": "ARSEAMW",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -4.695
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 0,
+   "tableau": "ABSCISSA",
+   "indicator": "R",
+   "fragment": "RYXRARXS",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 1,
+   "tableau": "ABSCISSA",
+   "indicator": "R",
+   "fragment": "IGIUVAOV",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.512
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 2,
+   "tableau": "ABSCISSA",
+   "indicator": "R",
+   "fragment": "NOEOCRGW",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.146
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 3,
+   "tableau": "ABSCISSA",
+   "indicator": "R",
+   "fragment": "VQBXVKHF",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 4,
+   "tableau": "ABSCISSA",
+   "indicator": "R",
+   "fragment": "XLHONLUZ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.929
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 5,
+   "tableau": "ABSCISSA",
+   "indicator": "R",
+   "fragment": "RUBGOXLN",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.416
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 6,
+   "tableau": "ABSCISSA",
+   "indicator": "R",
+   "fragment": "ALUHAOBO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.572
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 7,
+   "tableau": "ABSCISSA",
+   "indicator": "R",
+   "fragment": "RDVURISS",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.662
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 8,
+   "tableau": "ABSCISSA",
+   "indicator": "R",
+   "fragment": "KEELFDOZ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.543
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 9,
+   "tableau": "ABSCISSA",
+   "indicator": "R",
+   "fragment": "LQYBGRLQ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 10,
+   "tableau": "ABSCISSA",
+   "indicator": "R",
+   "fragment": "XHMSVOIU",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.291
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 11,
+   "tableau": "ABSCISSA",
+   "indicator": "R",
+   "fragment": "OYNORFFN",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.012
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 12,
+   "tableau": "ABSCISSA",
+   "indicator": "R",
+   "fragment": "IZBLJJBN",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 13,
+   "tableau": "ABSCISSA",
+   "indicator": "R",
+   "fragment": "DLYIMIBH",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.697
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 0,
+   "tableau": "LATITUDE",
+   "indicator": "K",
+   "fragment": "OORDYO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.547
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 1,
+   "tableau": "LATITUDE",
+   "indicator": "K",
+   "fragment": "BWZOGX",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 2,
+   "tableau": "LATITUDE",
+   "indicator": "K",
+   "fragment": "KTGTPO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 3,
+   "tableau": "LATITUDE",
+   "indicator": "K",
+   "fragment": "RKWFGG",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 4,
+   "tableau": "LATITUDE",
+   "indicator": "K",
+   "fragment": "UZITUH",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 5,
+   "tableau": "LATITUDE",
+   "indicator": "K",
+   "fragment": "OEWWDU",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 6,
+   "tableau": "LATITUDE",
+   "indicator": "K",
+   "fragment": "XZOXYL",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.571
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 7,
+   "tableau": "LATITUDE",
+   "indicator": "K",
+   "fragment": "ORPOSB",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.101
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 8,
+   "tableau": "LATITUDE",
+   "indicator": "K",
+   "fragment": "GSGJAS",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 9,
+   "tableau": "LATITUDE",
+   "indicator": "K",
+   "fragment": "HKERMO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -4.781
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 10,
+   "tableau": "LATITUDE",
+   "indicator": "K",
+   "fragment": "UFKEGL",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.24
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 11,
+   "tableau": "LATITUDE",
+   "indicator": "K",
+   "fragment": "LOLTSI",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.587
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 12,
+   "tableau": "LATITUDE",
+   "indicator": "K",
+   "fragment": "BIWJXF",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 13,
+   "tableau": "LATITUDE",
+   "indicator": "K",
+   "fragment": "SZENIB",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.467
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 14,
+   "tableau": "LATITUDE",
+   "indicator": "K",
+   "fragment": "OFFVAB",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.532
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 15,
+   "tableau": "LATITUDE",
+   "indicator": "K",
+   "fragment": "LJNRAW",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 0,
+   "tableau": "LATITUDE",
+   "indicator": "K",
+   "fragment": "SSWUNXP",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.27
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 1,
+   "tableau": "LATITUDE",
+   "indicator": "K",
+   "fragment": "HLTNAUG",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.005
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 2,
+   "tableau": "LATITUDE",
+   "indicator": "K",
+   "fragment": "PEKACXU",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.243
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 3,
+   "tableau": "LATITUDE",
+   "indicator": "K",
+   "fragment": "XPZCAPD",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.513
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 4,
+   "tableau": "LATITUDE",
+   "indicator": "K",
+   "fragment": "CIEAVQY",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.557
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 5,
+   "tableau": "LATITUDE",
+   "indicator": "K",
+   "fragment": "SGZVWHS",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 6,
+   "tableau": "LATITUDE",
+   "indicator": "K",
+   "fragment": "AIRWNBA",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.929
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 7,
+   "tableau": "LATITUDE",
+   "indicator": "K",
+   "fragment": "SXSNHMM",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 8,
+   "tableau": "LATITUDE",
+   "indicator": "K",
+   "fragment": "MYKHQAG",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 9,
+   "tableau": "LATITUDE",
+   "indicator": "K",
+   "fragment": "NPFQDXS",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 10,
+   "tableau": "LATITUDE",
+   "indicator": "K",
+   "fragment": "CKODABX",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.032
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 11,
+   "tableau": "LATITUDE",
+   "indicator": "K",
+   "fragment": "USIAHGI",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.551
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 12,
+   "tableau": "LATITUDE",
+   "indicator": "K",
+   "fragment": "HBZHMOA",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 13,
+   "tableau": "LATITUDE",
+   "indicator": "K",
+   "fragment": "YIFMSMA",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.253
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 14,
+   "tableau": "LATITUDE",
+   "indicator": "K",
+   "fragment": "SKJSQMO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 0,
+   "tableau": "LATITUDE",
+   "indicator": "K",
+   "fragment": "KZSKPKPY",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 1,
+   "tableau": "LATITUDE",
+   "indicator": "K",
+   "fragment": "UDLYISGQ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.774
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 2,
+   "tableau": "LATITUDE",
+   "indicator": "K",
+   "fragment": "GHHGGKUR",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.512
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 3,
+   "tableau": "LATITUDE",
+   "indicator": "K",
+   "fragment": "OWXPIBDJ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 4,
+   "tableau": "LATITUDE",
+   "indicator": "K",
+   "fragment": "ACUGXCYC",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 5,
+   "tableau": "LATITUDE",
+   "indicator": "K",
+   "fragment": "KNXUYASN",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.372
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 6,
+   "tableau": "LATITUDE",
+   "indicator": "K",
+   "fragment": "SCPDPXAT",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 7,
+   "tableau": "LATITUDE",
+   "indicator": "K",
+   "fragment": "KTQYKUMY",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.537
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 8,
+   "tableau": "LATITUDE",
+   "indicator": "K",
+   "fragment": "BIHSSPGC",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.452
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 9,
+   "tableau": "LATITUDE",
+   "indicator": "K",
+   "fragment": "CWBABKSH",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.492
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 10,
+   "tableau": "LATITUDE",
+   "indicator": "K",
+   "fragment": "AQMMIXXP",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.381
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 11,
+   "tableau": "LATITUDE",
+   "indicator": "K",
+   "fragment": "XZAGKLIN",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.104
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 12,
+   "tableau": "LATITUDE",
+   "indicator": "K",
+   "fragment": "UJXSOEAN",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.356
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 13,
+   "tableau": "LATITUDE",
+   "indicator": "K",
+   "fragment": "PCBXWUAU",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 0,
+   "tableau": "LATITUDE",
+   "indicator": "A",
+   "fragment": "UUBRJU",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 1,
+   "tableau": "LATITUDE",
+   "indicator": "A",
+   "fragment": "VGKUYH",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 2,
+   "tableau": "LATITUDE",
+   "indicator": "A",
+   "fragment": "AOYODU",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 3,
+   "tableau": "LATITUDE",
+   "indicator": "A",
+   "fragment": "BAGXYY",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 4,
+   "tableau": "LATITUDE",
+   "indicator": "A",
+   "fragment": "QKPOQZ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 5,
+   "tableau": "LATITUDE",
+   "indicator": "A",
+   "fragment": "USGGRQ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 6,
+   "tableau": "LATITUDE",
+   "indicator": "A",
+   "fragment": "HKUHJM",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 7,
+   "tableau": "LATITUDE",
+   "indicator": "A",
+   "fragment": "UBDUCV",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.581
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 8,
+   "tableau": "LATITUDE",
+   "indicator": "A",
+   "fragment": "YCYLNC",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.399
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 9,
+   "tableau": "LATITUDE",
+   "indicator": "A",
+   "fragment": "ZASBTU",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.473
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 10,
+   "tableau": "LATITUDE",
+   "indicator": "A",
+   "fragment": "QXASYM",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.934
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 11,
+   "tableau": "LATITUDE",
+   "indicator": "A",
+   "fragment": "MUMOCP",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.005
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 12,
+   "tableau": "LATITUDE",
+   "indicator": "A",
+   "fragment": "VPGLHX",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 13,
+   "tableau": "LATITUDE",
+   "indicator": "A",
+   "fragment": "CKSIPV",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.098
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 14,
+   "tableau": "LATITUDE",
+   "indicator": "A",
+   "fragment": "UXXFNV",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 15,
+   "tableau": "LATITUDE",
+   "indicator": "A",
+   "fragment": "MLIBNG",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.25
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 0,
+   "tableau": "LATITUDE",
+   "indicator": "A",
+   "fragment": "CCGQIHD",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 1,
+   "tableau": "LATITUDE",
+   "indicator": "A",
+   "fragment": "ZMOINQY",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.256
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 2,
+   "tableau": "LATITUDE",
+   "indicator": "A",
+   "fragment": "DSANWHQ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.722
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 3,
+   "tableau": "LATITUDE",
+   "indicator": "A",
+   "fragment": "HDKWNDR",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.457
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 4,
+   "tableau": "LATITUDE",
+   "indicator": "A",
+   "fragment": "WPSNFEJ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 5,
+   "tableau": "LATITUDE",
+   "indicator": "A",
+   "fragment": "CYKFGZC",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 6,
+   "tableau": "LATITUDE",
+   "indicator": "A",
+   "fragment": "NPBGIVN",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 7,
+   "tableau": "LATITUDE",
+   "indicator": "A",
+   "fragment": "CHCIZTT",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.482
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 8,
+   "tableau": "LATITUDE",
+   "indicator": "A",
+   "fragment": "TJAZENY",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.817
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 9,
+   "tableau": "LATITUDE",
+   "indicator": "A",
+   "fragment": "IDXERHC",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.382
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 10,
+   "tableau": "LATITUDE",
+   "indicator": "A",
+   "fragment": "WAURNVH",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.144
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 11,
+   "tableau": "LATITUDE",
+   "indicator": "A",
+   "fragment": "QCPNZYP",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 12,
+   "tableau": "LATITUDE",
+   "indicator": "A",
+   "fragment": "ZVKZTUN",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 13,
+   "tableau": "LATITUDE",
+   "indicator": "A",
+   "fragment": "JPXTCTN",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 14,
+   "tableau": "LATITUDE",
+   "indicator": "A",
+   "fragment": "CALCETU",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -4.857
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 0,
+   "tableau": "LATITUDE",
+   "indicator": "A",
+   "fragment": "AKCADADJ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.781
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 1,
+   "tableau": "LATITUDE",
+   "indicator": "A",
+   "fragment": "QRMJPCYE",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 2,
+   "tableau": "LATITUDE",
+   "indicator": "A",
+   "fragment": "YZZYYAQB",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.572
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 3,
+   "tableau": "LATITUDE",
+   "indicator": "A",
+   "fragment": "UGHDPVRL",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.441
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 4,
+   "tableau": "LATITUDE",
+   "indicator": "A",
+   "fragment": "NWQYHWJW",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 5,
+   "tableau": "LATITUDE",
+   "indicator": "A",
+   "fragment": "AIHQJNCI",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 6,
+   "tableau": "LATITUDE",
+   "indicator": "A",
+   "fragment": "CWDRDHNO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 7,
+   "tableau": "LATITUDE",
+   "indicator": "A",
+   "fragment": "AOEJAQTJ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.572
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 8,
+   "tableau": "LATITUDE",
+   "indicator": "A",
+   "fragment": "VPZCCDYW",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 9,
+   "tableau": "LATITUDE",
+   "indicator": "A",
+   "fragment": "WGVNVACZ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.334
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 10,
+   "tableau": "LATITUDE",
+   "indicator": "A",
+   "fragment": "NETTPHHD",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.173
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 11,
+   "tableau": "LATITUDE",
+   "indicator": "A",
+   "fragment": "HKNYAMPI",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.606
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 12,
+   "tableau": "LATITUDE",
+   "indicator": "A",
+   "fragment": "QLHCUSNI",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.184
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 13,
+   "tableau": "LATITUDE",
+   "indicator": "A",
+   "fragment": "DWVHGQNQ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 0,
+   "tableau": "LATITUDE",
+   "indicator": "R",
+   "fragment": "WWZHUW",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 1,
+   "tableau": "LATITUDE",
+   "indicator": "R",
+   "fragment": "KTDWOI",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 2,
+   "tableau": "LATITUDE",
+   "indicator": "R",
+   "fragment": "RCOCXW",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.028
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 3,
+   "tableau": "LATITUDE",
+   "indicator": "R",
+   "fragment": "ZRTNOO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.925
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 4,
+   "tableau": "LATITUDE",
+   "indicator": "R",
+   "fragment": "GDFCGP",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 5,
+   "tableau": "LATITUDE",
+   "indicator": "R",
+   "fragment": "WJTTHG",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 6,
+   "tableau": "LATITUDE",
+   "indicator": "R",
+   "fragment": "IDWIUE",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.042
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 7,
+   "tableau": "LATITUDE",
+   "indicator": "R",
+   "fragment": "WZXWLK",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 8,
+   "tableau": "LATITUDE",
+   "indicator": "R",
+   "fragment": "OLOQBL",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.35
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 9,
+   "tableau": "LATITUDE",
+   "indicator": "R",
+   "fragment": "PRJZSW",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 10,
+   "tableau": "LATITUDE",
+   "indicator": "R",
+   "fragment": "GNRJOE",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 11,
+   "tableau": "LATITUDE",
+   "indicator": "R",
+   "fragment": "EWECLF",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.965
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 12,
+   "tableau": "LATITUDE",
+   "indicator": "R",
+   "fragment": "KFTQIN",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 13,
+   "tableau": "LATITUDE",
+   "indicator": "R",
+   "fragment": "LDJVFK",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 14,
+   "tableau": "LATITUDE",
+   "indicator": "R",
+   "fragment": "WNNABK",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.942
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 15,
+   "tableau": "LATITUDE",
+   "indicator": "R",
+   "fragment": "EQVZBT",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 0,
+   "tableau": "LATITUDE",
+   "indicator": "R",
+   "fragment": "LLTGVIX",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 1,
+   "tableau": "LATITUDE",
+   "indicator": "R",
+   "fragment": "PECVBGO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 2,
+   "tableau": "LATITUDE",
+   "indicator": "R",
+   "fragment": "XJRBMIG",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.557
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 3,
+   "tableau": "LATITUDE",
+   "indicator": "R",
+   "fragment": "IXDMBXH",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 4,
+   "tableau": "LATITUDE",
+   "indicator": "R",
+   "fragment": "MFJBAYU",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.557
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 5,
+   "tableau": "LATITUDE",
+   "indicator": "R",
+   "fragment": "LODATPL",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.503
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 6,
+   "tableau": "LATITUDE",
+   "indicator": "R",
+   "fragment": "BFZTVKB",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 7,
+   "tableau": "LATITUDE",
+   "indicator": "R",
+   "fragment": "LILVPSS",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 8,
+   "tableau": "LATITUDE",
+   "indicator": "R",
+   "fragment": "SURPYBO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.893
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 9,
+   "tableau": "LATITUDE",
+   "indicator": "R",
+   "fragment": "VXNYHIL",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.212
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 10,
+   "tableau": "LATITUDE",
+   "indicator": "R",
+   "fragment": "MRWHBKI",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 11,
+   "tableau": "LATITUDE",
+   "indicator": "R",
+   "fragment": "GLFBPOF",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 12,
+   "tableau": "LATITUDE",
+   "indicator": "R",
+   "fragment": "PKDPSWB",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 13,
+   "tableau": "LATITUDE",
+   "indicator": "R",
+   "fragment": "UFNSLSB",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 14,
+   "tableau": "LATITUDE",
+   "indicator": "R",
+   "fragment": "LRQLYSW",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.243
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 0,
+   "tableau": "LATITUDE",
+   "indicator": "R",
+   "fragment": "RDLRXRXU",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 1,
+   "tableau": "LATITUDE",
+   "indicator": "R",
+   "fragment": "GHEUFLOY",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.512
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 2,
+   "tableau": "LATITUDE",
+   "indicator": "R",
+   "fragment": "OPPOORGZ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.498
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 3,
+   "tableau": "LATITUDE",
+   "indicator": "R",
+   "fragment": "WTIXFKHQ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 4,
+   "tableau": "LATITUDE",
+   "indicator": "R",
+   "fragment": "BMGOIMUM",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.271
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 5,
+   "tableau": "LATITUDE",
+   "indicator": "R",
+   "fragment": "RVIGUBLV",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.376
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 6,
+   "tableau": "LATITUDE",
+   "indicator": "R",
+   "fragment": "LMXHXIBC",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 7,
+   "tableau": "LATITUDE",
+   "indicator": "R",
+   "fragment": "RCYURGSU",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.181
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 8,
+   "tableau": "LATITUDE",
+   "indicator": "R",
+   "fragment": "KFPLLXOM",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 9,
+   "tableau": "LATITUDE",
+   "indicator": "R",
+   "fragment": "MTKBKRLP",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 10,
+   "tableau": "LATITUDE",
+   "indicator": "R",
+   "fragment": "BYSSFIIX",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.969
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 11,
+   "tableau": "LATITUDE",
+   "indicator": "R",
+   "fragment": "IDBOREFV",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.284
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 12,
+   "tableau": "LATITUDE",
+   "indicator": "R",
+   "fragment": "GQILWJBV",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 13,
+   "tableau": "LATITUDE",
+   "indicator": "R",
+   "fragment": "XMKITGBG",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.512
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 0,
+   "tableau": "MAGNETIC",
+   "indicator": "K",
+   "fragment": "OAREOO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.118
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 1,
+   "tableau": "MAGNETIC",
+   "indicator": "K",
+   "fragment": "BIXIFX",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 2,
+   "tableau": "MAGNETIC",
+   "indicator": "K",
+   "fragment": "KHZARO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.299
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 3,
+   "tableau": "MAGNETIC",
+   "indicator": "K",
+   "fragment": "RKUDFG",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 4,
+   "tableau": "MAGNETIC",
+   "indicator": "K",
+   "fragment": "UBGAXH",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.331
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 5,
+   "tableau": "MAGNETIC",
+   "indicator": "K",
+   "fragment": "OPULIU",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -4.908
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 6,
+   "tableau": "MAGNETIC",
+   "indicator": "K",
+   "fragment": "XBCXOL",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 7,
+   "tableau": "MAGNETIC",
+   "indicator": "K",
+   "fragment": "OVPIDB",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 8,
+   "tableau": "MAGNETIC",
+   "indicator": "K",
+   "fragment": "GEZMNS",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 9,
+   "tableau": "MAGNETIC",
+   "indicator": "K",
+   "fragment": "HKSULO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.272
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 10,
+   "tableau": "MAGNETIC",
+   "indicator": "K",
+   "fragment": "UCKTFL",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.214
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 11,
+   "tableau": "MAGNETIC",
+   "indicator": "K",
+   "fragment": "LAYADI",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.265
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 12,
+   "tableau": "MAGNETIC",
+   "indicator": "K",
+   "fragment": "BJUMAF",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.231
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 13,
+   "tableau": "MAGNETIC",
+   "indicator": "K",
+   "fragment": "SBSRTB",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 14,
+   "tableau": "MAGNETIC",
+   "indicator": "K",
+   "fragment": "OCHWNB",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.473
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 15,
+   "tableau": "MAGNETIC",
+   "indicator": "K",
+   "fragment": "LZOUNW",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.532
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 0,
+   "tableau": "MAGNETIC",
+   "indicator": "K",
+   "fragment": "RCIMGYR",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.307
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 1,
+   "tableau": "MAGNETIC",
+   "indicator": "K",
+   "fragment": "HJHGXIF",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 2,
+   "tableau": "MAGNETIC",
+   "indicator": "K",
+   "fragment": "PQKXTYX",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 3,
+   "tableau": "MAGNETIC",
+   "indicator": "K",
+   "fragment": "VSBTXHI",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 4,
+   "tableau": "MAGNETIC",
+   "indicator": "K",
+   "fragment": "XLPXFUO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 5,
+   "tableau": "MAGNETIC",
+   "indicator": "K",
+   "fragment": "RWBFSND",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 6,
+   "tableau": "MAGNETIC",
+   "indicator": "K",
+   "fragment": "MLVSGXN",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 7,
+   "tableau": "MAGNETIC",
+   "indicator": "K",
+   "fragment": "RAEGWQL",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.421
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 8,
+   "tableau": "MAGNETIC",
+   "indicator": "K",
+   "fragment": "TFKWPGF",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 9,
+   "tableau": "MAGNETIC",
+   "indicator": "K",
+   "fragment": "LSCPAYD",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.318
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 10,
+   "tableau": "MAGNETIC",
+   "indicator": "K",
+   "fragment": "XKAAXXA",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 11,
+   "tableau": "MAGNETIC",
+   "indicator": "K",
+   "fragment": "QCJXWOT",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 12,
+   "tableau": "MAGNETIC",
+   "indicator": "K",
+   "fragment": "HRBWLSN",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.557
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 13,
+   "tableau": "MAGNETIC",
+   "indicator": "K",
+   "fragment": "WLCLRQN",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 14,
+   "tableau": "MAGNETIC",
+   "indicator": "K",
+   "fragment": "RKZRPQQ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 0,
+   "tableau": "MAGNETIC",
+   "indicator": "K",
+   "fragment": "KMWKSKRS",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 1,
+   "tableau": "MAGNETIC",
+   "indicator": "K",
+   "fragment": "ITAOLVFI",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.477
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 2,
+   "tableau": "MAGNETIC",
+   "indicator": "K",
+   "fragment": "HFNFWKXO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 3,
+   "tableau": "MAGNETIC",
+   "indicator": "K",
+   "fragment": "PJYRLMIY",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 4,
+   "tableau": "MAGNETIC",
+   "indicator": "K",
+   "fragment": "RCIFADOR",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.603
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 5,
+   "tableau": "MAGNETIC",
+   "indicator": "K",
+   "fragment": "KOYXFRDJ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 6,
+   "tableau": "MAGNETIC",
+   "indicator": "K",
+   "fragment": "VCHISJNX",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.005
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 7,
+   "tableau": "MAGNETIC",
+   "indicator": "K",
+   "fragment": "KUUOKILS",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.356
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 8,
+   "tableau": "MAGNETIC",
+   "indicator": "K",
+   "fragment": "MNNDCQFR",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 9,
+   "tableau": "MAGNETIC",
+   "indicator": "K",
+   "fragment": "DJXNRKDF",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 10,
+   "tableau": "MAGNETIC",
+   "indicator": "K",
+   "fragment": "RIQLLJAL",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.512
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 11,
+   "tableau": "MAGNETIC",
+   "indicator": "K",
+   "fragment": "JMGFKETJ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.537
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 12,
+   "tableau": "MAGNETIC",
+   "indicator": "K",
+   "fragment": "IHYDTBNJ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.302
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 13,
+   "tableau": "MAGNETIC",
+   "indicator": "K",
+   "fragment": "QCXADINM",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.664
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 0,
+   "tableau": "MAGNETIC",
+   "indicator": "A",
+   "fragment": "NOIRNN",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.299
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 1,
+   "tableau": "MAGNETIC",
+   "indicator": "A",
+   "fragment": "WUHUYH",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 2,
+   "tableau": "MAGNETIC",
+   "indicator": "A",
+   "fragment": "AZKOIN",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.331
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 3,
+   "tableau": "MAGNETIC",
+   "indicator": "A",
+   "fragment": "IABXYP",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.532
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 4,
+   "tableau": "MAGNETIC",
+   "indicator": "A",
+   "fragment": "BWPOHZ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 5,
+   "tableau": "MAGNETIC",
+   "indicator": "A",
+   "fragment": "NEBGUB",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 6,
+   "tableau": "MAGNETIC",
+   "indicator": "A",
+   "fragment": "HWVHNG",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 7,
+   "tableau": "MAGNETIC",
+   "indicator": "A",
+   "fragment": "NDEUXW",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.032
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 8,
+   "tableau": "MAGNETIC",
+   "indicator": "A",
+   "fragment": "PRKLQC",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 9,
+   "tableau": "MAGNETIC",
+   "indicator": "A",
+   "fragment": "ZACBGN",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 10,
+   "tableau": "MAGNETIC",
+   "indicator": "A",
+   "fragment": "BVASYG",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.013
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 11,
+   "tableau": "MAGNETIC",
+   "indicator": "A",
+   "fragment": "GOJOXU",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 12,
+   "tableau": "MAGNETIC",
+   "indicator": "A",
+   "fragment": "WMBLOY",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.191
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 13,
+   "tableau": "MAGNETIC",
+   "indicator": "A",
+   "fragment": "CWCISW",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 14,
+   "tableau": "MAGNETIC",
+   "indicator": "A",
+   "fragment": "NVZFQW",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 15,
+   "tableau": "MAGNETIC",
+   "indicator": "A",
+   "fragment": "GKNBQF",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 0,
+   "tableau": "MAGNETIC",
+   "indicator": "A",
+   "fragment": "IVULPJI",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.94
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 1,
+   "tableau": "MAGNETIC",
+   "indicator": "A",
+   "fragment": "ZMZPHUY",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 2,
+   "tableau": "MAGNETIC",
+   "indicator": "A",
+   "fragment": "ETAHSJH",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.952
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 3,
+   "tableau": "MAGNETIC",
+   "indicator": "A",
+   "fragment": "DCWSHZU",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 4,
+   "tableau": "MAGNETIC",
+   "indicator": "A",
+   "fragment": "HGEHYBN",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.243
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 5,
+   "tableau": "MAGNETIC",
+   "indicator": "A",
+   "fragment": "IFWYCQX",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 6,
+   "tableau": "MAGNETIC",
+   "indicator": "A",
+   "fragment": "LGDCPHQ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 7,
+   "tableau": "MAGNETIC",
+   "indicator": "A",
+   "fragment": "IORPFTG",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.421
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 8,
+   "tableau": "MAGNETIC",
+   "indicator": "A",
+   "fragment": "SYAFEPY",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.438
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 9,
+   "tableau": "MAGNETIC",
+   "indicator": "A",
+   "fragment": "GCVEOJX",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 10,
+   "tableau": "MAGNETIC",
+   "indicator": "A",
+   "fragment": "HAOOHHO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 11,
+   "tableau": "MAGNETIC",
+   "indicator": "A",
+   "fragment": "TVMHFNS",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 12,
+   "tableau": "MAGNETIC",
+   "indicator": "A",
+   "fragment": "ZIWFGCQ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 13,
+   "tableau": "MAGNETIC",
+   "indicator": "A",
+   "fragment": "FGVGITQ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.557
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 14,
+   "tableau": "MAGNETIC",
+   "indicator": "A",
+   "fragment": "IAKIETT",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.342
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 0,
+   "tableau": "MAGNETIC",
+   "indicator": "A",
+   "fragment": "ALFACAIC",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.218
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 1,
+   "tableau": "MAGNETIC",
+   "indicator": "A",
+   "fragment": "USONGDYU",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.452
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 2,
+   "tableau": "MAGNETIC",
+   "indicator": "A",
+   "fragment": "ZYQYFAHN",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.512
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 3,
+   "tableau": "MAGNETIC",
+   "indicator": "A",
+   "fragment": "EMJIGLUJ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.424
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 4,
+   "tableau": "MAGNETIC",
+   "indicator": "A",
+   "fragment": "IVUYOXNI",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 5,
+   "tableau": "MAGNETIC",
+   "indicator": "A",
+   "fragment": "ANJHYIXM",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 6,
+   "tableau": "MAGNETIC",
+   "indicator": "A",
+   "fragment": "DVZUCMQH",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 7,
+   "tableau": "MAGNETIC",
+   "indicator": "A",
+   "fragment": "ABBNAUGC",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.225
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 8,
+   "tableau": "MAGNETIC",
+   "indicator": "A",
+   "fragment": "LQQXVTYI",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 9,
+   "tableau": "MAGNETIC",
+   "indicator": "A",
+   "fragment": "XMHQIAXY",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.537
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 10,
+   "tableau": "MAGNETIC",
+   "indicator": "A",
+   "fragment": "IUTGGMOG",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.441
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 11,
+   "tableau": "MAGNETIC",
+   "indicator": "A",
+   "fragment": "MLPYARSM",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.862
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 12,
+   "tableau": "MAGNETIC",
+   "indicator": "A",
+   "fragment": "UZJXSWQM",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 13,
+   "tableau": "MAGNETIC",
+   "indicator": "A",
+   "fragment": "TVHOXUQL",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.572
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 0,
+   "tableau": "MAGNETIC",
+   "indicator": "R",
+   "fragment": "UIXDUU",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 1,
+   "tableau": "MAGNETIC",
+   "indicator": "R",
+   "fragment": "KHGHOG",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.214
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 2,
+   "tableau": "MAGNETIC",
+   "indicator": "R",
+   "fragment": "RPEIXU",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.272
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 3,
+   "tableau": "MAGNETIC",
+   "indicator": "R",
+   "fragment": "XRZLOC",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 4,
+   "tableau": "MAGNETIC",
+   "indicator": "R",
+   "fragment": "ZKCIGP",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 5,
+   "tableau": "MAGNETIC",
+   "indicator": "R",
+   "fragment": "UVZSHZ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 6,
+   "tableau": "MAGNETIC",
+   "indicator": "R",
+   "fragment": "GKJGUS",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 7,
+   "tableau": "MAGNETIC",
+   "indicator": "R",
+   "fragment": "UMVHLK",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 8,
+   "tableau": "MAGNETIC",
+   "indicator": "R",
+   "fragment": "CDETBY",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.25
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 9,
+   "tableau": "MAGNETIC",
+   "indicator": "R",
+   "fragment": "PRYZSU",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 10,
+   "tableau": "MAGNETIC",
+   "indicator": "R",
+   "fragment": "ZJRFOS",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.431
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 11,
+   "tableau": "MAGNETIC",
+   "indicator": "R",
+   "fragment": "SINILH",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.476
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 12,
+   "tableau": "MAGNETIC",
+   "indicator": "R",
+   "fragment": "KQZTIO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 13,
+   "tableau": "MAGNETIC",
+   "indicator": "R",
+   "fragment": "YKYXFK",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 14,
+   "tableau": "MAGNETIC",
+   "indicator": "R",
+   "fragment": "UJPABK",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 15,
+   "tableau": "MAGNETIC",
+   "indicator": "R",
+   "fragment": "SEUZBA",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 0,
+   "tableau": "MAGNETIC",
+   "indicator": "R",
+   "fragment": "XJHTCNX",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 1,
+   "tableau": "MAGNETIC",
+   "indicator": "R",
+   "fragment": "PQPCGHO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 2,
+   "tableau": "MAGNETIC",
+   "indicator": "R",
+   "fragment": "VWRGFNG",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 3,
+   "tableau": "MAGNETIC",
+   "indicator": "R",
+   "fragment": "MYKFGPH",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 4,
+   "tableau": "MAGNETIC",
+   "indicator": "R",
+   "fragment": "GSVGOZU",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 5,
+   "tableau": "MAGNETIC",
+   "indicator": "R",
+   "fragment": "XAKOYBL",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 6,
+   "tableau": "MAGNETIC",
+   "indicator": "R",
+   "fragment": "TSMYCGB",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.097
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 7,
+   "tableau": "MAGNETIC",
+   "indicator": "R",
+   "fragment": "XIDCAWS",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.056
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 8,
+   "tableau": "MAGNETIC",
+   "indicator": "R",
+   "fragment": "FORAVCO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.726
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 9,
+   "tableau": "MAGNETIC",
+   "indicator": "R",
+   "fragment": "SYJVINL",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.482
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 10,
+   "tableau": "MAGNETIC",
+   "indicator": "R",
+   "fragment": "GRIIGGI",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.139
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 11,
+   "tableau": "MAGNETIC",
+   "indicator": "R",
+   "fragment": "WJQGAUF",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.362
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 12,
+   "tableau": "MAGNETIC",
+   "indicator": "R",
+   "fragment": "PXKASYB",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.557
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 13,
+   "tableau": "MAGNETIC",
+   "indicator": "R",
+   "fragment": "ASJSXWB",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 14,
+   "tableau": "MAGNETIC",
+   "indicator": "R",
+   "fragment": "XREXVWW",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 0,
+   "tableau": "MAGNETIC",
+   "indicator": "R",
+   "fragment": "RTARYRXY",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.365
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 1,
+   "tableau": "MAGNETIC",
+   "indicator": "R",
+   "fragment": "HFIUSMOH",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.771
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 2,
+   "tableau": "MAGNETIC",
+   "indicator": "R",
+   "fragment": "POBOARGU",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.23
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 3,
+   "tableau": "MAGNETIC",
+   "indicator": "R",
+   "fragment": "VQNXSTHN",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 4,
+   "tableau": "MAGNETIC",
+   "indicator": "R",
+   "fragment": "XJHOILUX",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.061
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 5,
+   "tableau": "MAGNETIC",
+   "indicator": "R",
+   "fragment": "RUNGOXLQ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.671
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 6,
+   "tableau": "MAGNETIC",
+   "indicator": "R",
+   "fragment": "MJPHYQBG",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 7,
+   "tableau": "MAGNETIC",
+   "indicator": "R",
+   "fragment": "RZZURHSY",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 8,
+   "tableau": "MAGNETIC",
+   "indicator": "R",
+   "fragment": "TBBLJWOX",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 9,
+   "tableau": "MAGNETIC",
+   "indicator": "R",
+   "fragment": "LQGBXRLO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 10,
+   "tableau": "MAGNETIC",
+   "indicator": "R",
+   "fragment": "XHWSSQIS",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 11,
+   "tableau": "MAGNETIC",
+   "indicator": "R",
+   "fragment": "QTCORDFQ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.491
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 12,
+   "tableau": "MAGNETIC",
+   "indicator": "R",
+   "fragment": "HPNLFKBQ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 13,
+   "tableau": "MAGNETIC",
+   "indicator": "R",
+   "fragment": "WJGILHBT",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 0,
+   "tableau": "COMPASS",
+   "indicator": "K",
+   "fragment": "OCWMNO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 1,
+   "tableau": "COMPASS",
+   "indicator": "K",
+   "fragment": "BECAXX",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.886
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 2,
+   "tableau": "COMPASS",
+   "indicator": "K",
+   "fragment": "KIMHTO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 3,
+   "tableau": "COMPASS",
+   "indicator": "K",
+   "fragment": "RKFDXG",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 4,
+   "tableau": "COMPASS",
+   "indicator": "K",
+   "fragment": "UVSHBH",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 5,
+   "tableau": "COMPASS",
+   "indicator": "K",
+   "fragment": "OQFUDU",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 6,
+   "tableau": "COMPASS",
+   "indicator": "K",
+   "fragment": "XVRVNL",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 7,
+   "tableau": "COMPASS",
+   "indicator": "K",
+   "fragment": "OATAHB",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.602
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 8,
+   "tableau": "COMPASS",
+   "indicator": "K",
+   "fragment": "GSMZMS",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 9,
+   "tableau": "COMPASS",
+   "indicator": "K",
+   "fragment": "HKXNOO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 10,
+   "tableau": "COMPASS",
+   "indicator": "K",
+   "fragment": "UFKLXL",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 11,
+   "tableau": "COMPASS",
+   "indicator": "K",
+   "fragment": "LCJHHI",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 12,
+   "tableau": "COMPASS",
+   "indicator": "K",
+   "fragment": "BZFZEF",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 13,
+   "tableau": "COMPASS",
+   "indicator": "K",
+   "fragment": "SVXWSB",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 14,
+   "tableau": "COMPASS",
+   "indicator": "K",
+   "fragment": "OFUTMB",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.431
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 15,
+   "tableau": "COMPASS",
+   "indicator": "K",
+   "fragment": "LBQNMW",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 0,
+   "tableau": "COMPASS",
+   "indicator": "K",
+   "fragment": "BSEJLDT",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 1,
+   "tableau": "COMPASS",
+   "indicator": "K",
+   "fragment": "HJILWPX",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 2,
+   "tableau": "COMPASS",
+   "indicator": "K",
+   "fragment": "TQKWRDB",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 3,
+   "tableau": "COMPASS",
+   "indicator": "K",
+   "fragment": "XTVRWND",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 4,
+   "tableau": "COMPASS",
+   "indicator": "K",
+   "fragment": "ZCQWSQN",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 5,
+   "tableau": "COMPASS",
+   "indicator": "K",
+   "fragment": "BWVSBCH",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 6,
+   "tableau": "COMPASS",
+   "indicator": "K",
+   "fragment": "MCABLVM",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.852
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 7,
+   "tableau": "COMPASS",
+   "indicator": "K",
+   "fragment": "BFSLGIO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 8,
+   "tableau": "COMPASS",
+   "indicator": "K",
+   "fragment": "LGKGOHX",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 9,
+   "tableau": "COMPASS",
+   "indicator": "K",
+   "fragment": "NTFOCDH",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.073
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 10,
+   "tableau": "COMPASS",
+   "indicator": "K",
+   "fragment": "ZKCCWVE",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 11,
+   "tableau": "COMPASS",
+   "indicator": "K",
+   "fragment": "USZWGRS",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 12,
+   "tableau": "COMPASS",
+   "indicator": "K",
+   "fragment": "HAVGDLM",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 13,
+   "tableau": "COMPASS",
+   "indicator": "K",
+   "fragment": "GCFDAIM",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.278
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 14,
+   "tableau": "COMPASS",
+   "indicator": "K",
+   "fragment": "BKBAOIR",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 0,
+   "tableau": "COMPASS",
+   "indicator": "K",
+   "fragment": "KZUKTKTE",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 1,
+   "tableau": "COMPASS",
+   "indicator": "K",
+   "fragment": "TDYNCGXQ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.381
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 2,
+   "tableau": "COMPASS",
+   "indicator": "K",
+   "fragment": "OHCXWKBR",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 3,
+   "tableau": "COMPASS",
+   "indicator": "K",
+   "fragment": "SJDTCXDO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 4,
+   "tableau": "COMPASS",
+   "indicator": "K",
+   "fragment": "DUPXFYNW",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 5,
+   "tableau": "COMPASS",
+   "indicator": "K",
+   "fragment": "KNDBGDHJ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 6,
+   "tableau": "COMPASS",
+   "indicator": "K",
+   "fragment": "GUNDTMMI",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.724
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 7,
+   "tableau": "COMPASS",
+   "indicator": "K",
+   "fragment": "KPQNKTOE",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.31
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 8,
+   "tableau": "COMPASS",
+   "indicator": "K",
+   "fragment": "XACHSRXW",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.054
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 9,
+   "tableau": "COMPASS",
+   "indicator": "K",
+   "fragment": "YJVMAKHT",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.372
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 10,
+   "tableau": "COMPASS",
+   "indicator": "K",
+   "fragment": "DEIOCMEN",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.952
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 11,
+   "tableau": "COMPASS",
+   "indicator": "K",
+   "fragment": "MZHXKZSJ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 12,
+   "tableau": "COMPASS",
+   "indicator": "K",
+   "fragment": "TYDHHWMJ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 13,
+   "tableau": "COMPASS",
+   "indicator": "K",
+   "fragment": "RUVEETMP",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.121
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 0,
+   "tableau": "COMPASS",
+   "indicator": "A",
+   "fragment": "QNIRBQ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 1,
+   "tableau": "COMPASS",
+   "indicator": "A",
+   "fragment": "WYNUJJ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 2,
+   "tableau": "COMPASS",
+   "indicator": "A",
+   "fragment": "AMROFQ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.971
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 3,
+   "tableau": "COMPASS",
+   "indicator": "A",
+   "fragment": "EAZXJC",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 4,
+   "tableau": "COMPASS",
+   "indicator": "A",
+   "fragment": "GHVOWO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 5,
+   "tableau": "COMPASS",
+   "indicator": "A",
+   "fragment": "QDZGXG",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 6,
+   "tableau": "COMPASS",
+   "indicator": "A",
+   "fragment": "JHEHBS",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 7,
+   "tableau": "COMPASS",
+   "indicator": "A",
+   "fragment": "QUFUOW",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 8,
+   "tableau": "COMPASS",
+   "indicator": "A",
+   "fragment": "CVRLRV",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 9,
+   "tableau": "COMPASS",
+   "indicator": "A",
+   "fragment": "OAJBQQ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 10,
+   "tableau": "COMPASS",
+   "indicator": "A",
+   "fragment": "GZASJS",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 11,
+   "tableau": "COMPASS",
+   "indicator": "A",
+   "fragment": "SNPOOM",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.373
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 12,
+   "tableau": "COMPASS",
+   "indicator": "A",
+   "fragment": "WLZLYZ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 13,
+   "tableau": "COMPASS",
+   "indicator": "A",
+   "fragment": "VHJIVW",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 14,
+   "tableau": "COMPASS",
+   "indicator": "A",
+   "fragment": "QZGFRW",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 15,
+   "tableau": "COMPASS",
+   "indicator": "A",
+   "fragment": "SWDBRI",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.026
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 0,
+   "tableau": "COMPASS",
+   "indicator": "A",
+   "fragment": "WVYPSXF",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 1,
+   "tableau": "COMPASS",
+   "indicator": "A",
+   "fragment": "OPMSITJ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.382
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 2,
+   "tableau": "COMPASS",
+   "indicator": "A",
+   "fragment": "FDAIEXW",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 3,
+   "tableau": "COMPASS",
+   "indicator": "A",
+   "fragment": "JFHEIBX",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.438
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 4,
+   "tableau": "COMPASS",
+   "indicator": "A",
+   "fragment": "LNDIVDB",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.044
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 5,
+   "tableau": "COMPASS",
+   "indicator": "A",
+   "fragment": "WIHVWNO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 6,
+   "tableau": "COMPASS",
+   "indicator": "A",
+   "fragment": "RNUWSHR",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.557
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 7,
+   "tableau": "COMPASS",
+   "indicator": "A",
+   "fragment": "WZVSCMQ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 8,
+   "tableau": "COMPASS",
+   "indicator": "A",
+   "fragment": "SCACQOJ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.111
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 9,
+   "tableau": "COMPASS",
+   "indicator": "A",
+   "fragment": "BFZQNXO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 10,
+   "tableau": "COMPASS",
+   "indicator": "A",
+   "fragment": "LANNIHY",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.132
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 11,
+   "tableau": "COMPASS",
+   "indicator": "A",
+   "fragment": "GVLICEV",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.752
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 12,
+   "tableau": "COMPASS",
+   "indicator": "A",
+   "fragment": "OUHCXSR",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 13,
+   "tableau": "COMPASS",
+   "indicator": "A",
+   "fragment": "CNZXUMR",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 14,
+   "tableau": "COMPASS",
+   "indicator": "A",
+   "fragment": "WAWUQME",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 0,
+   "tableau": "COMPASS",
+   "indicator": "A",
+   "fragment": "ALGAFAFY",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.087
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 1,
+   "tableau": "COMPASS",
+   "indicator": "A",
+   "fragment": "FXKBNCJD",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 2,
+   "tableau": "COMPASS",
+   "indicator": "A",
+   "fragment": "QONJIAWE",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.372
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 3,
+   "tableau": "COMPASS",
+   "indicator": "A",
+   "fragment": "VPXFNJXQ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 4,
+   "tableau": "COMPASS",
+   "indicator": "A",
+   "fragment": "XGTJZKBI",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 5,
+   "tableau": "COMPASS",
+   "indicator": "A",
+   "fragment": "ABXWCXOP",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 6,
+   "tableau": "COMPASS",
+   "indicator": "A",
+   "fragment": "CGBXFRRM",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 7,
+   "tableau": "COMPASS",
+   "indicator": "A",
+   "fragment": "ATDBAFQY",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.537
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 8,
+   "tableau": "COMPASS",
+   "indicator": "A",
+   "fragment": "JUNOVEJI",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.609
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 9,
+   "tableau": "COMPASS",
+   "indicator": "A",
+   "fragment": "KPHRUAOF",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.512
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 10,
+   "tableau": "COMPASS",
+   "indicator": "A",
+   "fragment": "XYMQNRYB",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.572
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 11,
+   "tableau": "COMPASS",
+   "indicator": "A",
+   "fragment": "RLOJALVP",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 12,
+   "tableau": "COMPASS",
+   "indicator": "A",
+   "fragment": "FKXOOIRP",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.477
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 13,
+   "tableau": "COMPASS",
+   "indicator": "A",
+   "fragment": "EGHYYFRT",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 0,
+   "tableau": "COMPASS",
+   "indicator": "R",
+   "fragment": "SACBUS",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.14
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 1,
+   "tableau": "COMPASS",
+   "indicator": "R",
+   "fragment": "GIAEOO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.771
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 2,
+   "tableau": "COMPASS",
+   "indicator": "R",
+   "fragment": "RNBLXS",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.314
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 3,
+   "tableau": "COMPASS",
+   "indicator": "R",
+   "fragment": "WRJHOK",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 4,
+   "tableau": "COMPASS",
+   "indicator": "R",
+   "fragment": "YZFLGL",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 5,
+   "tableau": "COMPASS",
+   "indicator": "R",
+   "fragment": "SVJYHY",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 6,
+   "tableau": "COMPASS",
+   "indicator": "R",
+   "fragment": "OZWZUT",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 7,
+   "tableau": "COMPASS",
+   "indicator": "R",
+   "fragment": "SEXELG",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.026
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 8,
+   "tableau": "COMPASS",
+   "indicator": "R",
+   "fragment": "KFBPBF",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 9,
+   "tableau": "COMPASS",
+   "indicator": "R",
+   "fragment": "LROUSS",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -4.065
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 10,
+   "tableau": "COMPASS",
+   "indicator": "R",
+   "fragment": "YJRTOT",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.974
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 11,
+   "tableau": "COMPASS",
+   "indicator": "R",
+   "fragment": "TAQLLN",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 12,
+   "tableau": "COMPASS",
+   "indicator": "R",
+   "fragment": "GPJPIJ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 13,
+   "tableau": "COMPASS",
+   "indicator": "R",
+   "fragment": "FZOCFG",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 14,
+   "tableau": "COMPASS",
+   "indicator": "R",
+   "fragment": "SJYXBG",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 15,
+   "tableau": "COMPASS",
+   "indicator": "R",
+   "fragment": "TGVUBC",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 0,
+   "tableau": "COMPASS",
+   "indicator": "R",
+   "fragment": "GFIQTHX",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 1,
+   "tableau": "COMPASS",
+   "indicator": "R",
+   "fragment": "LQNTCDO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 2,
+   "tableau": "COMPASS",
+   "indicator": "R",
+   "fragment": "XVRCWHG",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 3,
+   "tableau": "COMPASS",
+   "indicator": "R",
+   "fragment": "OXZWCUH",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 4,
+   "tableau": "COMPASS",
+   "indicator": "R",
+   "fragment": "PAVCFVU",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 5,
+   "tableau": "COMPASS",
+   "indicator": "R",
+   "fragment": "GCZFGAL",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.513
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 6,
+   "tableau": "COMPASS",
+   "indicator": "R",
+   "fragment": "BAEGTZB",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.557
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 7,
+   "tableau": "COMPASS",
+   "indicator": "R",
+   "fragment": "GJFTKNS",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 8,
+   "tableau": "COMPASS",
+   "indicator": "R",
+   "fragment": "TKRKSLO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.061
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 9,
+   "tableau": "COMPASS",
+   "indicator": "R",
+   "fragment": "UXJSAHL",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 10,
+   "tableau": "COMPASS",
+   "indicator": "R",
+   "fragment": "PRAACZI",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.263
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 11,
+   "tableau": "COMPASS",
+   "indicator": "R",
+   "fragment": "YFPCKWF",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 12,
+   "tableau": "COMPASS",
+   "indicator": "R",
+   "fragment": "LEZKHTB",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 13,
+   "tableau": "COMPASS",
+   "indicator": "R",
+   "fragment": "KAJHENB",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.302
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 14,
+   "tableau": "COMPASS",
+   "indicator": "R",
+   "fragment": "GRGESNW",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.784
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 0,
+   "tableau": "COMPASS",
+   "indicator": "R",
+   "fragment": "RPYRXRXI",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.386
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 1,
+   "tableau": "COMPASS",
+   "indicator": "R",
+   "fragment": "XHMUAKOV",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.441
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 2,
+   "tableau": "COMPASS",
+   "indicator": "R",
+   "fragment": "SLAOCRGW",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.452
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 3,
+   "tableau": "COMPASS",
+   "indicator": "R",
+   "fragment": "FQHXAOHS",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.381
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 4,
+   "tableau": "COMPASS",
+   "indicator": "R",
+   "fragment": "HYDOJMUC",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.416
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 5,
+   "tableau": "COMPASS",
+   "indicator": "R",
+   "fragment": "RUHGKHLQ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 6,
+   "tableau": "COMPASS",
+   "indicator": "R",
+   "fragment": "KYUHXBBN",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 7,
+   "tableau": "COMPASS",
+   "indicator": "R",
+   "fragment": "RDVURXSI",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 8,
+   "tableau": "COMPASS",
+   "indicator": "R",
+   "fragment": "OEALFWOC",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.685
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 9,
+   "tableau": "COMPASS",
+   "indicator": "R",
+   "fragment": "MQZBERLX",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.07
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 10,
+   "tableau": "COMPASS",
+   "indicator": "R",
+   "fragment": "HINSABIU",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -4.834
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 11,
+   "tableau": "COMPASS",
+   "indicator": "R",
+   "fragment": "BPLORPFQ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.828
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 12,
+   "tableau": "COMPASS",
+   "indicator": "R",
+   "fragment": "XMHLLCBQ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 13,
+   "tableau": "COMPASS",
+   "indicator": "R",
+   "fragment": "WYZIIXBD",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  }
+ ]
+}
