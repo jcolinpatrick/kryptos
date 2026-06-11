@@ -11,6 +11,15 @@ This is a **plan**, not an action. No bridge audit is run, no
 pseudo-clue pack is authored, and no solver code is changed by this
 document.
 
+**2026-06-11 update:** ready-to-execute acquisition SPECIFICATIONS
+(exact data products, quality thresholds, provenance/chain-of-custody
+rules, and pre-registered measurement protocols) for GAP-04, GAP-09,
+GAP-05, the bespoke chart, and the in-repo circled-tableau extraction
+now live in
+[`docs/REAL_K4_ACQUISITION_SPECS_2026_06_11.md`](REAL_K4_ACQUISITION_SPECS_2026_06_11.md).
+GAP-03 and GAP-10 have since been operationalized/measured analytically
+(see the gap register rows) and need no acquisition.
+
 ---
 
 ## Current research state summary
