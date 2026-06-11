@@ -27,7 +27,7 @@ Classification per project truth taxonomy.
 
 10. **"Avoid the pitfall of the obvious"** (IMG_1560).
 
-11. **Handwritten Kryptos Vigenère tableau** with some letters CIRCLED (IMG_1223-1235). Row N has the documented extra L.
+11. **Handwritten Kryptos Vigenère tableau** with some letters CIRCLED (IMG_1223-1235). CORRECTED 2026-06-11 (SPEC-E blind extraction, `analysis_runs/spec_e_circled_tableau_2026_06_11/`): the prior "Row N has the documented extra L" claim is NOT SUPPORTED — two independent blind examiners found no row with a deviant letter count (third index phantom). Frozen circled set: T(8,24), K(14,14), H(20,22) high-confidence pen rings; D(5,7) faint pencil-weight ring, medium. Grid: 27x30, rows 1-26 keyed KRYPTOS sequence rotations, row 27 standard A-Z; '#2' tab on top edge. Any K4 use of the set requires separate preregistration.
 
 ---
 
