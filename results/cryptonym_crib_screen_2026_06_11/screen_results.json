@@ -1,0 +1,2830 @@
+{
+ "campaign_id": "cryptonym_crib_screen_2026_06_11",
+ "prereg": "docs/campaigns/cryptonym_crib_screen_2026_06_11.md",
+ "git_head": "755e8b9",
+ "n_tests": 270,
+ "observed_exact_words": 0,
+ "expected_exact_words": 0.0301,
+ "observed_prefix_hits": 0,
+ "expected_prefix_hits": 0.0899,
+ "null_rates": {
+  "6": {
+   "p_word": 0.0003,
+   "p_prefix": 0.00089
+  },
+  "7": {
+   "p_word": 1.5e-05,
+   "p_prefix": 4.5e-05
+  },
+  "8": {
+   "p_word": 0.0,
+   "p_prefix": 5e-06
+  }
+ },
+ "word_hits": [],
+ "prefix_hits": [],
+ "top_quadgram": [
+  {
+   "crib": "KUBARK",
+   "pos": 3,
+   "variant": "var_beaufort",
+   "alphabet": "AZ",
+   "fragment": "TANDDE",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -4.211
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 12,
+   "variant": "vigenere",
+   "alphabet": "KA",
+   "fragment": "VIDGERA",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -4.876
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 13,
+   "variant": "vigenere",
+   "alphabet": "AZ",
+   "fragment": "ETHRUNKT",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.006
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 8,
+   "variant": "vigenere",
+   "alphabet": "AZ",
+   "fragment": "BWASIOX",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.155
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 9,
+   "variant": "beaufort",
+   "alphabet": "AZ",
+   "fragment": "MFFULSC",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.281
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 1,
+   "variant": "beaufort",
+   "alphabet": "AZ",
+   "fragment": "LESUFH",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.312
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 11,
+   "variant": "vigenere",
+   "alphabet": "KA",
+   "fragment": "OLERGTE",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.353
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 14,
+   "variant": "var_beaufort",
+   "alphabet": "AZ",
+   "fragment": "RAMOSDV",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.391
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 8,
+   "variant": "var_beaufort",
+   "alphabet": "AZ",
+   "fragment": "ZEAISMD",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.453
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 9,
+   "variant": "vigenere",
+   "alphabet": "KA",
+   "fragment": "HKCROO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.55
+  }
+ ],
+ "all_rows": [
+  {
+   "crib": "KUBARK",
+   "pos": 0,
+   "variant": "vigenere",
+   "alphabet": "AZ",
+   "fragment": "EHJRDE",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 0,
+   "variant": "vigenere",
+   "alphabet": "KA",
+   "fragment": "OGMQQO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 0,
+   "variant": "beaufort",
+   "alphabet": "AZ",
+   "fragment": "YVLRLY",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 0,
+   "variant": "beaufort",
+   "alphabet": "KA",
+   "fragment": "OPBBVO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 0,
+   "variant": "var_beaufort",
+   "alphabet": "AZ",
+   "fragment": "WTRJXW",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 0,
+   "variant": "var_beaufort",
+   "alphabet": "KA",
+   "fragment": "UGBSSU",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.399
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 1,
+   "variant": "vigenere",
+   "alphabet": "AZ",
+   "fragment": "RQQUXN",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 1,
+   "variant": "vigenere",
+   "alphabet": "KA",
+   "fragment": "BONHTX",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.314
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 1,
+   "variant": "beaufort",
+   "alphabet": "AZ",
+   "fragment": "LESUFH",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.312
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 1,
+   "variant": "beaufort",
+   "alphabet": "KA",
+   "fragment": "BUCYSX",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.532
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 1,
+   "variant": "var_beaufort",
+   "alphabet": "AZ",
+   "fragment": "JKKGDN",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 1,
+   "variant": "var_beaufort",
+   "alphabet": "KA",
+   "fragment": "MUAFVY",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 2,
+   "variant": "vigenere",
+   "alphabet": "AZ",
+   "fragment": "AXTOGE",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.581
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 2,
+   "variant": "vigenere",
+   "alphabet": "KA",
+   "fragment": "KSGXWO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 2,
+   "variant": "beaufort",
+   "alphabet": "AZ",
+   "fragment": "ULVOOY",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.299
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 2,
+   "variant": "beaufort",
+   "alphabet": "KA",
+   "fragment": "KVPFZO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 2,
+   "variant": "var_beaufort",
+   "alphabet": "AZ",
+   "fragment": "ADHMUW",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 2,
+   "variant": "var_beaufort",
+   "alphabet": "KA",
+   "fragment": "KQGYPU",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.399
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 3,
+   "variant": "vigenere",
+   "alphabet": "AZ",
+   "fragment": "HANXXW",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 3,
+   "variant": "vigenere",
+   "alphabet": "KA",
+   "fragment": "RKWLTG",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 3,
+   "variant": "beaufort",
+   "alphabet": "AZ",
+   "fragment": "BOPXFQ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 3,
+   "variant": "beaufort",
+   "alphabet": "KA",
+   "fragment": "RJGOSG",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.431
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 3,
+   "variant": "var_beaufort",
+   "alphabet": "AZ",
+   "fragment": "TANDDE",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -4.211
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 3,
+   "variant": "var_beaufort",
+   "alphabet": "KA",
+   "fragment": "ZKPCVG",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 4,
+   "variant": "vigenere",
+   "alphabet": "AZ",
+   "fragment": "KUWOPX",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 4,
+   "variant": "vigenere",
+   "alphabet": "KA",
+   "fragment": "UDJXFH",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 4,
+   "variant": "beaufort",
+   "alphabet": "AZ",
+   "fragment": "EIYOXR",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 4,
+   "variant": "beaufort",
+   "alphabet": "KA",
+   "fragment": "UKSFHH",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 4,
+   "variant": "var_beaufort",
+   "alphabet": "AZ",
+   "fragment": "QGEMLD",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.399
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 4,
+   "variant": "var_beaufort",
+   "alphabet": "KA",
+   "fragment": "OJDYHF",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 5,
+   "variant": "vigenere",
+   "alphabet": "AZ",
+   "fragment": "EDNGQK",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 5,
+   "variant": "vigenere",
+   "alphabet": "KA",
+   "fragment": "OPWSGU",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 5,
+   "variant": "beaufort",
+   "alphabet": "AZ",
+   "fragment": "YRPGYE",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 5,
+   "variant": "beaufort",
+   "alphabet": "KA",
+   "fragment": "ONGQIU",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.532
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 5,
+   "variant": "var_beaufort",
+   "alphabet": "AZ",
+   "fragment": "WXNUKQ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 5,
+   "variant": "var_beaufort",
+   "alphabet": "KA",
+   "fragment": "UWPQGO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 6,
+   "variant": "vigenere",
+   "alphabet": "AZ",
+   "fragment": "NUFHDB",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 6,
+   "variant": "vigenere",
+   "alphabet": "KA",
+   "fragment": "XDOAQL",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 6,
+   "variant": "beaufort",
+   "alphabet": "AZ",
+   "fragment": "HIHHLV",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 6,
+   "variant": "beaufort",
+   "alphabet": "KA",
+   "fragment": "XKUUVL",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 6,
+   "variant": "var_beaufort",
+   "alphabet": "AZ",
+   "fragment": "NGVTXZ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 6,
+   "variant": "var_beaufort",
+   "alphabet": "KA",
+   "fragment": "YJUNSC",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.574
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 7,
+   "variant": "vigenere",
+   "alphabet": "AZ",
+   "fragment": "EMGUUR",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 7,
+   "variant": "vigenere",
+   "alphabet": "KA",
+   "fragment": "OMSHJB",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.145
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 7,
+   "variant": "beaufort",
+   "alphabet": "AZ",
+   "fragment": "YAIUCL",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 7,
+   "variant": "beaufort",
+   "alphabet": "KA",
+   "fragment": "OBVYMB",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 7,
+   "variant": "var_beaufort",
+   "alphabet": "AZ",
+   "fragment": "WOUGGJ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.473
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 7,
+   "variant": "var_beaufort",
+   "alphabet": "KA",
+   "fragment": "UBQFDM",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 8,
+   "variant": "vigenere",
+   "alphabet": "AZ",
+   "fragment": "WNTLKI",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 8,
+   "variant": "vigenere",
+   "alphabet": "KA",
+   "fragment": "GNGDAS",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.884
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 8,
+   "variant": "beaufort",
+   "alphabet": "AZ",
+   "fragment": "QBVLSC",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 8,
+   "variant": "beaufort",
+   "alphabet": "KA",
+   "fragment": "GCPXCS",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 8,
+   "variant": "var_beaufort",
+   "alphabet": "AZ",
+   "fragment": "ENHPQS",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 8,
+   "variant": "var_beaufort",
+   "alphabet": "KA",
+   "fragment": "GAGJNQ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 9,
+   "variant": "vigenere",
+   "alphabet": "AZ",
+   "fragment": "XAKBBE",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 9,
+   "variant": "vigenere",
+   "alphabet": "KA",
+   "fragment": "HKCROO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.55
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 9,
+   "variant": "beaufort",
+   "alphabet": "AZ",
+   "fragment": "ROMBJY",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.72
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 9,
+   "variant": "beaufort",
+   "alphabet": "KA",
+   "fragment": "HJZIAO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 9,
+   "variant": "var_beaufort",
+   "alphabet": "AZ",
+   "fragment": "DAQZZW",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 9,
+   "variant": "var_beaufort",
+   "alphabet": "KA",
+   "fragment": "FKLZUU",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 10,
+   "variant": "vigenere",
+   "alphabet": "AZ",
+   "fragment": "KRASXB",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.272
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 10,
+   "variant": "vigenere",
+   "alphabet": "KA",
+   "fragment": "UVKZTL",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 10,
+   "variant": "beaufort",
+   "alphabet": "AZ",
+   "fragment": "EFCSFV",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 10,
+   "variant": "beaufort",
+   "alphabet": "KA",
+   "fragment": "UFJGSL",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 10,
+   "variant": "var_beaufort",
+   "alphabet": "AZ",
+   "fragment": "QJAIDZ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 10,
+   "variant": "var_beaufort",
+   "alphabet": "KA",
+   "fragment": "OTKRVC",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 11,
+   "variant": "vigenere",
+   "alphabet": "AZ",
+   "fragment": "BHROUY",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.839
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 11,
+   "variant": "vigenere",
+   "alphabet": "KA",
+   "fragment": "LGXXJI",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 11,
+   "variant": "beaufort",
+   "alphabet": "AZ",
+   "fragment": "VVTOCS",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.35
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 11,
+   "variant": "beaufort",
+   "alphabet": "KA",
+   "fragment": "LPHFMI",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 11,
+   "variant": "var_beaufort",
+   "alphabet": "AZ",
+   "fragment": "ZTJMGC",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 11,
+   "variant": "var_beaufort",
+   "alphabet": "KA",
+   "fragment": "CGYYDE",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 12,
+   "variant": "vigenere",
+   "alphabet": "AZ",
+   "fragment": "RYNLRV",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 12,
+   "variant": "vigenere",
+   "alphabet": "KA",
+   "fragment": "BEWDHF",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 12,
+   "variant": "beaufort",
+   "alphabet": "AZ",
+   "fragment": "LMPLZP",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 12,
+   "variant": "beaufort",
+   "alphabet": "KA",
+   "fragment": "BRGXJF",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 12,
+   "variant": "var_beaufort",
+   "alphabet": "AZ",
+   "fragment": "JCNPJF",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 12,
+   "variant": "var_beaufort",
+   "alphabet": "KA",
+   "fragment": "MIPJFH",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 13,
+   "variant": "vigenere",
+   "alphabet": "AZ",
+   "fragment": "IUKIOR",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.272
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 13,
+   "variant": "vigenere",
+   "alphabet": "KA",
+   "fragment": "SDCBEB",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 13,
+   "variant": "beaufort",
+   "alphabet": "AZ",
+   "fragment": "CIMIWL",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.145
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 13,
+   "variant": "beaufort",
+   "alphabet": "KA",
+   "fragment": "SKZVGB",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 13,
+   "variant": "var_beaufort",
+   "alphabet": "AZ",
+   "fragment": "SGQSMJ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 13,
+   "variant": "var_beaufort",
+   "alphabet": "KA",
+   "fragment": "QJLMIM",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.431
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 14,
+   "variant": "vigenere",
+   "alphabet": "AZ",
+   "fragment": "ERHFKR",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 14,
+   "variant": "vigenere",
+   "alphabet": "KA",
+   "fragment": "OVAOAB",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 14,
+   "variant": "beaufort",
+   "alphabet": "AZ",
+   "fragment": "YFJFSL",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 14,
+   "variant": "beaufort",
+   "alphabet": "KA",
+   "fragment": "OFWNCB",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 14,
+   "variant": "var_beaufort",
+   "alphabet": "AZ",
+   "fragment": "WJTVQJ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 14,
+   "variant": "var_beaufort",
+   "alphabet": "KA",
+   "fragment": "UTNUNM",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.052
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 15,
+   "variant": "vigenere",
+   "alphabet": "AZ",
+   "fragment": "BOEBKM",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.532
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 15,
+   "variant": "vigenere",
+   "alphabet": "KA",
+   "fragment": "LQTRAW",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.942
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 15,
+   "variant": "beaufort",
+   "alphabet": "AZ",
+   "fragment": "VCGBSG",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 15,
+   "variant": "beaufort",
+   "alphabet": "KA",
+   "fragment": "LDQICW",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 15,
+   "variant": "var_beaufort",
+   "alphabet": "AZ",
+   "fragment": "ZMWZQO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "KUBARK",
+   "pos": 15,
+   "variant": "var_beaufort",
+   "alphabet": "KA",
+   "fragment": "CSVZNP",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 0,
+   "variant": "vigenere",
+   "alphabet": "AZ",
+   "fragment": "JQQYBKG",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 0,
+   "variant": "vigenere",
+   "alphabet": "KA",
+   "fragment": "NLOWLQW",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.897
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 0,
+   "variant": "beaufort",
+   "alphabet": "AZ",
+   "fragment": "TMEKNSO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.513
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 0,
+   "variant": "beaufort",
+   "alphabet": "KA",
+   "fragment": "LZUOZJZ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 0,
+   "variant": "var_beaufort",
+   "alphabet": "AZ",
+   "fragment": "RKKCZQU",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 0,
+   "variant": "var_beaufort",
+   "alphabet": "KA",
+   "fragment": "ACUPCSP",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.128
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 1,
+   "variant": "vigenere",
+   "alphabet": "AZ",
+   "fragment": "WZXBVTX",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 1,
+   "variant": "vigenere",
+   "alphabet": "KA",
+   "fragment": "VCSLRGT",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 1,
+   "variant": "beaufort",
+   "alphabet": "AZ",
+   "fragment": "GVLNHBF",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 1,
+   "variant": "beaufort",
+   "alphabet": "KA",
+   "fragment": "QLVZCCS",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 1,
+   "variant": "var_beaufort",
+   "alphabet": "AZ",
+   "fragment": "EBDZFHD",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 1,
+   "variant": "var_beaufort",
+   "alphabet": "KA",
+   "fragment": "TLQCZGV",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 2,
+   "variant": "vigenere",
+   "alphabet": "AZ",
+   "fragment": "FGAVEKP",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.905
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 2,
+   "variant": "vigenere",
+   "alphabet": "KA",
+   "fragment": "HDKRQQF",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 2,
+   "variant": "beaufort",
+   "alphabet": "AZ",
+   "fragment": "PCOHQSX",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.557
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 2,
+   "variant": "beaufort",
+   "alphabet": "KA",
+   "fragment": "FMJCYJH",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 2,
+   "variant": "var_beaufort",
+   "alphabet": "AZ",
+   "fragment": "VUAFWQL",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 2,
+   "variant": "var_beaufort",
+   "alphabet": "KA",
+   "fragment": "FJKZSSH",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 3,
+   "variant": "vigenere",
+   "alphabet": "AZ",
+   "fragment": "MJUEVCQ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 3,
+   "variant": "vigenere",
+   "alphabet": "KA",
+   "fragment": "ITDQRYG",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 3,
+   "variant": "beaufort",
+   "alphabet": "AZ",
+   "fragment": "WFIQHKY",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 3,
+   "variant": "beaufort",
+   "alphabet": "KA",
+   "fragment": "GFKYCXI",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 3,
+   "variant": "var_beaufort",
+   "alphabet": "AZ",
+   "fragment": "ORGWFYK",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 3,
+   "variant": "var_beaufort",
+   "alphabet": "KA",
+   "fragment": "EVJSZXG",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 4,
+   "variant": "vigenere",
+   "alphabet": "AZ",
+   "fragment": "PDDVNDD",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 4,
+   "variant": "vigenere",
+   "alphabet": "KA",
+   "fragment": "CHPRCPQ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.191
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 4,
+   "variant": "beaufort",
+   "alphabet": "AZ",
+   "fragment": "ZZRHZLL",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 4,
+   "variant": "beaufort",
+   "alphabet": "KA",
+   "fragment": "AVNCLZV",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 4,
+   "variant": "var_beaufort",
+   "alphabet": "AZ",
+   "fragment": "LXXFNXX",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 4,
+   "variant": "var_beaufort",
+   "alphabet": "KA",
+   "fragment": "LFWZLWS",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 5,
+   "variant": "vigenere",
+   "alphabet": "AZ",
+   "fragment": "JMUNOQU",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.936
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 5,
+   "variant": "vigenere",
+   "alphabet": "KA",
+   "fragment": "NADCDDJ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.457
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 5,
+   "variant": "beaufort",
+   "alphabet": "AZ",
+   "fragment": "TIIZAYC",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 5,
+   "variant": "beaufort",
+   "alphabet": "KA",
+   "fragment": "LIKLMSM",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.394
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 5,
+   "variant": "var_beaufort",
+   "alphabet": "AZ",
+   "fragment": "ROGNMKG",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.176
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 5,
+   "variant": "var_beaufort",
+   "alphabet": "KA",
+   "fragment": "ANJLJJD",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 6,
+   "variant": "vigenere",
+   "alphabet": "AZ",
+   "fragment": "SDMOBHK",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.438
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 6,
+   "variant": "vigenere",
+   "alphabet": "KA",
+   "fragment": "FHMDLSA",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 6,
+   "variant": "beaufort",
+   "alphabet": "AZ",
+   "fragment": "CZAANPS",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.287
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 6,
+   "variant": "beaufort",
+   "alphabet": "KA",
+   "fragment": "DVBMZYC",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 6,
+   "variant": "var_beaufort",
+   "alphabet": "AZ",
+   "fragment": "IXOMZTQ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 6,
+   "variant": "var_beaufort",
+   "alphabet": "KA",
+   "fragment": "HFBJCQN",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 7,
+   "variant": "vigenere",
+   "alphabet": "AZ",
+   "fragment": "JVNBSXB",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 7,
+   "variant": "vigenere",
+   "alphabet": "KA",
+   "fragment": "NVNLGWO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 7,
+   "variant": "beaufort",
+   "alphabet": "AZ",
+   "fragment": "TRBNEFJ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 7,
+   "variant": "beaufort",
+   "alphabet": "KA",
+   "fragment": "LTCZUNA",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.513
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 7,
+   "variant": "var_beaufort",
+   "alphabet": "AZ",
+   "fragment": "RFNZIDZ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.421
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 7,
+   "variant": "var_beaufort",
+   "alphabet": "KA",
+   "fragment": "ATACGPU",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.071
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 8,
+   "variant": "vigenere",
+   "alphabet": "AZ",
+   "fragment": "BWASIOX",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.155
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 8,
+   "variant": "vigenere",
+   "alphabet": "KA",
+   "fragment": "RWKGTUT",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.278
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 8,
+   "variant": "beaufort",
+   "alphabet": "AZ",
+   "fragment": "LSOEUWF",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.274
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 8,
+   "variant": "beaufort",
+   "alphabet": "KA",
+   "fragment": "ZOJUFLS",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 8,
+   "variant": "var_beaufort",
+   "alphabet": "AZ",
+   "fragment": "ZEAISMD",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.453
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 8,
+   "variant": "var_beaufort",
+   "alphabet": "KA",
+   "fragment": "ZPKGVOV",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 9,
+   "variant": "vigenere",
+   "alphabet": "AZ",
+   "fragment": "CJRIZKU",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 9,
+   "variant": "vigenere",
+   "alphabet": "KA",
+   "fragment": "YTVTYQJ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 9,
+   "variant": "beaufort",
+   "alphabet": "AZ",
+   "fragment": "MFFULSC",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.281
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 9,
+   "variant": "beaufort",
+   "alphabet": "KA",
+   "fragment": "KFFFDJM",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 9,
+   "variant": "var_beaufort",
+   "alphabet": "AZ",
+   "fragment": "YRJSBQG",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 9,
+   "variant": "var_beaufort",
+   "alphabet": "KA",
+   "fragment": "XVTVXSD",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 10,
+   "variant": "vigenere",
+   "alphabet": "AZ",
+   "fragment": "PAHZVHR",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 10,
+   "variant": "vigenere",
+   "alphabet": "KA",
+   "fragment": "CKGYRSH",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.557
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 10,
+   "variant": "beaufort",
+   "alphabet": "AZ",
+   "fragment": "ZWVLHPZ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 10,
+   "variant": "beaufort",
+   "alphabet": "KA",
+   "fragment": "ABPDCYJ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 10,
+   "variant": "var_beaufort",
+   "alphabet": "AZ",
+   "fragment": "LATBFTJ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.362
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 10,
+   "variant": "var_beaufort",
+   "alphabet": "KA",
+   "fragment": "LKGXZQF",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 11,
+   "variant": "vigenere",
+   "alphabet": "AZ",
+   "fragment": "GQYVSEO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 11,
+   "variant": "vigenere",
+   "alphabet": "KA",
+   "fragment": "OLERGTE",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.353
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 11,
+   "variant": "beaufort",
+   "alphabet": "AZ",
+   "fragment": "QMMHEMW",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.959
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 11,
+   "variant": "beaufort",
+   "alphabet": "KA",
+   "fragment": "PZRCUKG",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 11,
+   "variant": "var_beaufort",
+   "alphabet": "AZ",
+   "fragment": "UKCFIWM",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 11,
+   "variant": "var_beaufort",
+   "alphabet": "KA",
+   "fragment": "UCIZGVI",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 12,
+   "variant": "vigenere",
+   "alphabet": "AZ",
+   "fragment": "WHUSPBK",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.109
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 12,
+   "variant": "vigenere",
+   "alphabet": "KA",
+   "fragment": "VIDGERA",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -4.876
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 12,
+   "variant": "beaufort",
+   "alphabet": "AZ",
+   "fragment": "GDIEBJS",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.181
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 12,
+   "variant": "beaufort",
+   "alphabet": "KA",
+   "fragment": "QWKUNWC",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.513
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 12,
+   "variant": "var_beaufort",
+   "alphabet": "AZ",
+   "fragment": "ETGILZQ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.057
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 12,
+   "variant": "var_beaufort",
+   "alphabet": "KA",
+   "fragment": "TEJGIZN",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 13,
+   "variant": "vigenere",
+   "alphabet": "AZ",
+   "fragment": "NDRPMXK",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 13,
+   "variant": "vigenere",
+   "alphabet": "KA",
+   "fragment": "QHVEBWA",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 13,
+   "variant": "beaufort",
+   "alphabet": "AZ",
+   "fragment": "XZFBYFS",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 13,
+   "variant": "beaufort",
+   "alphabet": "KA",
+   "fragment": "MVFNJNC",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 13,
+   "variant": "var_beaufort",
+   "alphabet": "AZ",
+   "fragment": "NXJLODQ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 13,
+   "variant": "var_beaufort",
+   "alphabet": "KA",
+   "fragment": "SFTIMPN",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.589
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 14,
+   "variant": "vigenere",
+   "alphabet": "AZ",
+   "fragment": "JAOMIXF",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.287
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 14,
+   "variant": "vigenere",
+   "alphabet": "KA",
+   "fragment": "NKQBTWV",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 14,
+   "variant": "beaufort",
+   "alphabet": "AZ",
+   "fragment": "TWCYUFN",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 14,
+   "variant": "beaufort",
+   "alphabet": "KA",
+   "fragment": "LBDJFNX",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 14,
+   "variant": "var_beaufort",
+   "alphabet": "AZ",
+   "fragment": "RAMOSDV",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.391
+  },
+  {
+   "crib": "FLUTTER",
+   "pos": 14,
+   "variant": "var_beaufort",
+   "alphabet": "KA",
+   "fragment": "AKSMVPT",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.513
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 0,
+   "variant": "vigenere",
+   "alphabet": "AZ",
+   "fragment": "AGGAJAGL",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.921
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 0,
+   "variant": "vigenere",
+   "alphabet": "KA",
+   "fragment": "KFIKTKWU",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 0,
+   "variant": "beaufort",
+   "alphabet": "AZ",
+   "fragment": "CWOIFCOR",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.349
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 0,
+   "variant": "beaufort",
+   "alphabet": "KA",
+   "fragment": "DTEYFDZI",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 0,
+   "variant": "var_beaufort",
+   "alphabet": "AZ",
+   "fragment": "AUUARAUP",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.674
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 0,
+   "variant": "var_beaufort",
+   "alphabet": "KA",
+   "fragment": "KHEKVKPO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 1,
+   "variant": "vigenere",
+   "alphabet": "AZ",
+   "fragment": "NPNDDJXD",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 1,
+   "variant": "vigenere",
+   "alphabet": "KA",
+   "fragment": "PTJQHNTP",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 1,
+   "variant": "beaufort",
+   "alphabet": "AZ",
+   "fragment": "PFVLZLFJ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 1,
+   "variant": "beaufort",
+   "alphabet": "KA",
+   "fragment": "GVFVVPSW",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 1,
+   "variant": "var_beaufort",
+   "alphabet": "AZ",
+   "fragment": "NLNXXRDX",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 1,
+   "variant": "var_beaufort",
+   "alphabet": "KA",
+   "fragment": "WVDSFAVW",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.045
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 2,
+   "variant": "vigenere",
+   "alphabet": "AZ",
+   "fragment": "WWQXMAPE",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.391
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 2,
+   "variant": "vigenere",
+   "alphabet": "KA",
+   "fragment": "UODTAKFT",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.177
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 2,
+   "variant": "beaufort",
+   "alphabet": "AZ",
+   "fragment": "YMYFICXK",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.203
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 2,
+   "variant": "beaufort",
+   "alphabet": "KA",
+   "fragment": "OWSSIDHX",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.851
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 2,
+   "variant": "var_beaufort",
+   "alphabet": "AZ",
+   "fragment": "EEKDOALW",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.115
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 2,
+   "variant": "var_beaufort",
+   "alphabet": "KA",
+   "fragment": "OUJVNKHV",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.572
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 3,
+   "variant": "vigenere",
+   "alphabet": "AZ",
+   "fragment": "DZKGDSQR",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 3,
+   "variant": "vigenere",
+   "alphabet": "KA",
+   "fragment": "VZQWHBGE",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 3,
+   "variant": "beaufort",
+   "alphabet": "AZ",
+   "fragment": "FPSOZUYX",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 3,
+   "variant": "beaufort",
+   "alphabet": "KA",
+   "fragment": "SLJZVMIO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 3,
+   "variant": "var_beaufort",
+   "alphabet": "AZ",
+   "fragment": "XBQUXIKJ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 3,
+   "variant": "var_beaufort",
+   "alphabet": "KA",
+   "fragment": "TRSPFMGI",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 4,
+   "variant": "vigenere",
+   "alphabet": "AZ",
+   "fragment": "GTTXVTDI",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 4,
+   "variant": "vigenere",
+   "alphabet": "KA",
+   "fragment": "JCGTVCQA",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 4,
+   "variant": "beaufort",
+   "alphabet": "AZ",
+   "fragment": "IJBFRVLO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 4,
+   "variant": "beaufort",
+   "alphabet": "KA",
+   "fragment": "KRCSTNVR",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 4,
+   "variant": "var_beaufort",
+   "alphabet": "AZ",
+   "fragment": "UHHDFHXS",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 4,
+   "variant": "var_beaufort",
+   "alphabet": "KA",
+   "fragment": "DLGVTLSN",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 5,
+   "variant": "vigenere",
+   "alphabet": "AZ",
+   "fragment": "ACKPWGUY",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.254
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 5,
+   "variant": "vigenere",
+   "alphabet": "KA",
+   "fragment": "KYQFWJJX",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 5,
+   "variant": "beaufort",
+   "alphabet": "AZ",
+   "fragment": "CSSXSICE",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.148
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 5,
+   "variant": "beaufort",
+   "alphabet": "KA",
+   "fragment": "DQJHOKMM",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 5,
+   "variant": "var_beaufort",
+   "alphabet": "AZ",
+   "fragment": "AYQLEUGC",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.512
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 5,
+   "variant": "var_beaufort",
+   "alphabet": "KA",
+   "fragment": "KXSHPDDY",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 6,
+   "variant": "vigenere",
+   "alphabet": "AZ",
+   "fragment": "JTCQJXKP",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 6,
+   "variant": "vigenere",
+   "alphabet": "KA",
+   "fragment": "NCYGTFAV",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.391
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 6,
+   "variant": "beaufort",
+   "alphabet": "AZ",
+   "fragment": "LJKYFZSV",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 6,
+   "variant": "beaufort",
+   "alphabet": "KA",
+   "fragment": "PRXIFVCJ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 6,
+   "variant": "var_beaufort",
+   "alphabet": "AZ",
+   "fragment": "RHYKRDQL",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 6,
+   "variant": "var_beaufort",
+   "alphabet": "KA",
+   "fragment": "ALXGVHNT",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 7,
+   "variant": "vigenere",
+   "alphabet": "AZ",
+   "fragment": "ALDDANBL",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.948
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 7,
+   "variant": "vigenere",
+   "alphabet": "KA",
+   "fragment": "KLPQKPOU",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 7,
+   "variant": "beaufort",
+   "alphabet": "AZ",
+   "fragment": "CBLLWPJR",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 7,
+   "variant": "beaufort",
+   "alphabet": "KA",
+   "fragment": "DCZVBGAI",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 7,
+   "variant": "var_beaufort",
+   "alphabet": "AZ",
+   "fragment": "APXXANZP",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.572
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 7,
+   "variant": "var_beaufort",
+   "alphabet": "KA",
+   "fragment": "KCWSKWUO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 8,
+   "variant": "vigenere",
+   "alphabet": "AZ",
+   "fragment": "SMQUQEXI",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.409
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 8,
+   "variant": "vigenere",
+   "alphabet": "KA",
+   "fragment": "BMDJLRTA",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 8,
+   "variant": "beaufort",
+   "alphabet": "AZ",
+   "fragment": "UCYCMGFO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 8,
+   "variant": "beaufort",
+   "alphabet": "KA",
+   "fragment": "MDSMZESR",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.186
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 8,
+   "variant": "var_beaufort",
+   "alphabet": "AZ",
+   "fragment": "IOKGKWDS",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 8,
+   "variant": "var_beaufort",
+   "alphabet": "KA",
+   "fragment": "MBJDCZVN",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 9,
+   "variant": "vigenere",
+   "alphabet": "AZ",
+   "fragment": "TZHKHAUF",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.0
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 9,
+   "variant": "vigenere",
+   "alphabet": "KA",
+   "fragment": "CZSAIKJO",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 9,
+   "variant": "beaufort",
+   "alphabet": "AZ",
+   "fragment": "VPPSDCCL",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 9,
+   "variant": "beaufort",
+   "alphabet": "KA",
+   "fragment": "NLYCWDMZ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.321
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 9,
+   "variant": "var_beaufort",
+   "alphabet": "AZ",
+   "fragment": "HBTQTAGV",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 9,
+   "variant": "var_beaufort",
+   "alphabet": "KA",
+   "fragment": "LRQNEKDU",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 10,
+   "variant": "vigenere",
+   "alphabet": "AZ",
+   "fragment": "GQXBDXRC",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 10,
+   "variant": "vigenere",
+   "alphabet": "KA",
+   "fragment": "JUWOHFHY",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 10,
+   "variant": "beaufort",
+   "alphabet": "AZ",
+   "fragment": "IGFJZZZI",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 10,
+   "variant": "beaufort",
+   "alphabet": "KA",
+   "fragment": "KGNAVVJV",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.397
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 10,
+   "variant": "var_beaufort",
+   "alphabet": "AZ",
+   "fragment": "UKDZXDJY",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 10,
+   "variant": "var_beaufort",
+   "alphabet": "KA",
+   "fragment": "DOPUFHFX",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.492
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 11,
+   "variant": "vigenere",
+   "alphabet": "AZ",
+   "fragment": "XGOXAUOY",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 11,
+   "variant": "vigenere",
+   "alphabet": "KA",
+   "fragment": "FFUTKDEX",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 11,
+   "variant": "beaufort",
+   "alphabet": "AZ",
+   "fragment": "ZWWFWWWE",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 11,
+   "variant": "beaufort",
+   "alphabet": "KA",
+   "fragment": "VTLSBQGM",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 11,
+   "variant": "var_beaufort",
+   "alphabet": "AZ",
+   "fragment": "DUMDAGMC",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.209
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 11,
+   "variant": "var_beaufort",
+   "alphabet": "KA",
+   "fragment": "HHOVKJIY",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 12,
+   "variant": "vigenere",
+   "alphabet": "AZ",
+   "fragment": "NXKUXRKY",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 12,
+   "variant": "vigenere",
+   "alphabet": "KA",
+   "fragment": "PDQJXAAX",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 12,
+   "variant": "beaufort",
+   "alphabet": "AZ",
+   "fragment": "PNSCTTSE",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.512
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 12,
+   "variant": "beaufort",
+   "alphabet": "KA",
+   "fragment": "GYJMSLCM",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 12,
+   "variant": "var_beaufort",
+   "alphabet": "AZ",
+   "fragment": "NDQGDJQC",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 12,
+   "variant": "var_beaufort",
+   "alphabet": "KA",
+   "fragment": "WJSDYNNY",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.353
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 13,
+   "variant": "vigenere",
+   "alphabet": "AZ",
+   "fragment": "ETHRUNKT",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.006
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 13,
+   "variant": "vigenere",
+   "alphabet": "KA",
+   "fragment": "RCSHUPAG",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -5.97
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 13,
+   "variant": "beaufort",
+   "alphabet": "AZ",
+   "fragment": "GJPZQPSZ",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 13,
+   "variant": "beaufort",
+   "alphabet": "KA",
+   "fragment": "ERYJPGCA",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.346
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 13,
+   "variant": "var_beaufort",
+   "alphabet": "AZ",
+   "fragment": "WHTJGNQH",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.632
+  },
+  {
+   "crib": "OVERLORD",
+   "pos": 13,
+   "variant": "var_beaufort",
+   "alphabet": "KA",
+   "fragment": "ZLQFOWNG",
+   "is_word": false,
+   "is_prefix": false,
+   "quadgram_pc": -6.321
+  }
+ ]
+}
