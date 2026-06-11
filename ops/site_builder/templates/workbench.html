@@ -50,13 +50,17 @@
       the live questions are about ordering, segmentation, and whether any procedural
       layer is present.
     </p>
-    <p class="wb-mb2"><strong>Eliminated</strong> <span class="verdict verdict-eliminated">proven impossible</span></p>
+    <p class="wb-mb2"><strong>Eliminated</strong> <span class="verdict verdict-eliminated">proven impossible (algebraic)</span></p>
     <ul>
       <li>All single-layer substitution on the raw 97 characters (periodic Vigen&egrave;re/Beaufort/Variant Beaufort, periods 1&ndash;26, both AZ and KA alphabets)</li>
       <li>Pure transposition (CT has 2 E&rsquo;s, cribs need 3)</li>
-      <li>Columnar transposition &times; periodic substitution (47M+ configs tested)</li>
-      <li>Null mask + periodic substitution on any 73-char extract (periods 1&ndash;23)</li>
-      <li>Autokey on raw 97 (exhaustive single-letter + 1M dictionary keys)</li>
+      <li>Null mask + periodic substitution on any 73-char extract (repeat lengths 1&ndash;23)</li>
+      <li>Self-keying (autokey), plaintext- and ciphertext-keyed: structurally impossible even combined with any rearrangement layer</li>
+    </ul>
+    <p class="wb-mb2"><strong>Eliminated</strong> <span class="verdict verdict-eliminated">tested exhaustively</span></p>
+    <ul>
+      <li>Columnar transposition &times; periodic substitution (47M+ configurations, both layer orders)</li>
+      <li>Single-letter and 1M-word dictionary self-keying keys on the raw 97 characters</li>
     </ul>
     <p class="wb-mb2"><strong>Open territory</strong> <span class="verdict verdict-survived">viable</span></p>
     <ul>

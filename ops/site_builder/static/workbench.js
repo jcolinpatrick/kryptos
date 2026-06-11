@@ -69,7 +69,7 @@
     "none:quagmire-ii-autokey": { severity: "exhausted", msg: "Q2 autokey on raw 97: 390 indicator/keyword/variant configs tested (2026-03-14). Best 13/24 with null mask." },
     "columnar:quagmire-ii":  { severity: "open", msg: "Columnar + Q2: KOMPASS:vig+col7 reached 14/24. Below DEFECTOR:AZ_beau+col7 (15/24). Partially explored." },
     "columnar:quagmire-ii-autokey": { severity: "open", msg: "Columnar + Q2 autokey: open territory." },
-    "none:four-square":      { severity: "proven", msg: "Four-Square on raw 97: eliminated. SA 200\u00d780K configs, ceiling 23/24 (never 24). Digraphic IC=1.66 (random)." },
+    "none:four-square":      { severity: "exhausted", msg: "Four-Square on raw 97: heavily tested. SA 200\u00d780K configs, ceiling 23/24 (never 24). Digraphic IC=1.66 (random)." },
     "columnar:four-square":  { severity: "open", msg: "Columnar + Four-Square: open territory." },
     "none:porta":            { severity: "proven", msg: "Porta cipher: eliminated analytically (2026-03-13). Key conflicts at all periods." },
     "none:gronsfeld":        { severity: "proven", msg: "Gronsfeld: eliminated analytically (2026-03-13). Special case of Vigen\u00e8re with digits 0\u20139." },
@@ -1861,6 +1861,10 @@
   if (bifidPeriod) bifidPeriod.addEventListener("input", onInput);
   var wsegColOrderInput = document.getElementById("trans-wseg-colorder");
   if (wsegColOrderInput) wsegColOrderInput.addEventListener("input", onInput);
+  var subKey2El = document.getElementById("sub-key2");
+  var subIndicatorEl = document.getElementById("sub-indicator");
+  if (subKey2El) subKey2El.addEventListener("input", onInput);
+  if (subIndicatorEl) subIndicatorEl.addEventListener("input", onInput);
 
   // Copy PT button
   var copyPtBtn = document.getElementById("copy-pt-btn");

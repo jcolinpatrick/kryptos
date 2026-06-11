@@ -690,6 +690,23 @@ def parse_elimination_tiers(doc_path: str) -> dict[str, int]:
     return tiers
 
 
+def _sanitize_rq_text(text: str) -> str:
+    """Make internal research-note text fit for the public page.
+
+    Strips truth-taxonomy tags ([HYPOTHESIS], [INTERNAL RESULT], ...),
+    parenthetical repo-path references a visitor cannot follow, and stray
+    backticks; maps a few pieces of repo jargon to plain phrasing.
+    """
+    text = re.sub(r"\[(?:[A-Z][A-Z /-]+)\]\s*", "", text)
+    text = re.sub(r"\(see\s+`[^`]*`[^)]*\)", "", text)
+    text = re.sub(r"`([^`]*)`", r"\1", text)
+    text = text.replace(
+        "the repo's direct-positional correspondence model",
+        "the standard letter-for-letter reading",
+    )
+    return re.sub(r"[ \t]{2,}", " ", text).strip()
+
+
 def parse_research_questions(doc_path: str) -> list[dict[str, str]]:
     """Parse docs/research_questions.md into structured RQ entries."""
     rqs: list[dict[str, str]] = []
@@ -718,11 +735,21 @@ def parse_research_questions(doc_path: str) -> list[dict[str, str]]:
         )
         current_state = state_match.group(1).strip() if state_match else ""
 
+        # "If resolved" exists for most RQs and doubles as a plain-language
+        # "why this question matters" line on cards with no other text.
+        resolved_match = re.search(
+            r"\*\*If resolved\*\*:\s*(.+?)(?=\n\n|\n\*\*|\Z)",
+            body,
+            re.DOTALL,
+        )
+        if_resolved = resolved_match.group(1).strip() if resolved_match else ""
+
         rqs.append({
             "id": rq_id,
             "title": title,
             "body": body,
-            "current_state": current_state,
+            "current_state": _sanitize_rq_text(current_state),
+            "if_resolved": _sanitize_rq_text(if_resolved),
         })
 
     return rqs
@@ -835,7 +862,7 @@ def _humanize_title(elim: SiteElimination) -> str:
         prefix, human_part = title.split(": ", 1)
         # If the human part is meaningful (has spaces, mixed case), use it
         if " " in human_part and not human_part.isupper():
-            return human_part[0].upper() + human_part[1:]
+            return _truncate_title(human_part[0].upper() + human_part[1:])
 
     # Skip titles that already look human-readable (but cap paragraph-length
     # ones: some internal log entries leak in as 200+ char titles)
@@ -1144,8 +1171,9 @@ def _generate_plain_summary(elim: SiteElimination) -> str:
         parts.append(f"Tested {technique}.")
     elif elim.cipher_type:
         parts.append(f"Tested {elim.cipher_type}.")
-    else:
-        parts.append("Tested this encryption approach.")
+    # No vacuous fallback: when nothing specific is known, say nothing here.
+    # The config-count and verdict sentences below still provide content, and
+    # templates hide the plain-summary block entirely when it ends up empty.
 
     # 2. How thoroughly + result combined
     if elim.configs_tested > 0:

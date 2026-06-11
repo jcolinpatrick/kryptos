@@ -16,15 +16,17 @@
 {% for rq in tier_rqs %}
 <div class="rq-card" id="{{ rq.id }}">
   <h3>{{ rq.id }}: {{ rq.title }}</h3>
+  {% if rq.if_resolved %}
+  <p><strong>Why it matters:</strong> {{ rq.if_resolved }}</p>
+  {% endif %}
   {% if rq.current_state %}
-  <p>{{ rq.current_state }}</p>
+  <p><strong>Where it stands:</strong> {{ rq.current_state }}</p>
   {% endif %}
   {% if rq.hypotheses_total is defined and rq.hypotheses_total %}
   <div class="rq-meta">
-    {{ rq.hypotheses_eliminated|default(0) }} / {{ rq.hypotheses_total }} hypotheses eliminated
-    <div class="progress-bar">
-      <div class="progress-fill" style="width: {{ (rq.hypotheses_eliminated|default(0) / rq.hypotheses_total * 100) if rq.hypotheses_total else 0 }}%"></div>
-    </div>
+    {{ rq.hypotheses_total }} candidate approaches catalogued for this question in the
+    idea-triage ledger. (Completed experiments are recorded in the
+    <a href="/browse/">elimination database</a>, not in this counter.)
   </div>
   {% endif %}
 </div>

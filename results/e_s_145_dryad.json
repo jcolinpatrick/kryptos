@@ -1,0 +1,10 @@
+{
+  "experiment": "E-S-145-DRYAD-MATRIX",
+  "experiment_id": "E-S-145-DRYAD-MATRIX",
+  "description": "DRYAD-style matrix code lookup using computationally reconstructed grids",
+  "verdict": "NOISE",
+  "best_score": 3,
+  "total_configs": 15000,
+  "timestamp": "2026-02-17",
+  "key_finding": "DRYAD grids derived from public sculpture elements. Cannot test the original coding charts, whose content is not public. Best 3/24."
+}

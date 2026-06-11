@@ -562,7 +562,7 @@
       "alphabet": "AZ",
       "family": "",
       "free_tail_params": null,
-      "kernel_commit": "2049899b72e496a9408152b9a13688ef47042bf7",
+      "kernel_commit": "c5bfbd0421d1ad7bda9a4812c37b9783a32dde8c",
       "max": 7.0,
       "mean": 0.92372,
       "method": "random_text",
@@ -658,7 +658,7 @@
       "alphabet": "AZ",
       "family": "",
       "free_tail_params": null,
-      "kernel_commit": "2049899b72e496a9408152b9a13688ef47042bf7",
+      "kernel_commit": "c5bfbd0421d1ad7bda9a4812c37b9783a32dde8c",
       "max": 8.0,
       "mean": 1.01627,
       "method": "shuffled_ct",
@@ -784,7 +784,7 @@
       "alphabet": "AZ",
       "family": "",
       "free_tail_params": null,
-      "kernel_commit": "2049899b72e496a9408152b9a13688ef47042bf7",
+      "kernel_commit": "c5bfbd0421d1ad7bda9a4812c37b9783a32dde8c",
       "max": -5.912654265957446,
       "mean": -6.426188431148296,
       "method": "random_text",
@@ -844,7 +844,7 @@
       "alphabet": "AZ",
       "family": "",
       "free_tail_params": null,
-      "kernel_commit": "2049899b72e496a9408152b9a13688ef47042bf7",
+      "kernel_commit": "c5bfbd0421d1ad7bda9a4812c37b9783a32dde8c",
       "max": -6.076616914893617,
       "mean": -6.407284957190849,
       "method": "shuffled_ct",
@@ -871,6 +871,6 @@
       "stdev": 0.06479467769433293
     }
   },
-  "kernel_commit_at_latest_write": "2049899b72e496a9408152b9a13688ef47042bf7",
-  "updated_at": "2026-06-11T17:26:14Z"
+  "kernel_commit_at_latest_write": "c5bfbd0421d1ad7bda9a4812c37b9783a32dde8c",
+  "updated_at": "2026-06-11T21:03:45Z"
 }

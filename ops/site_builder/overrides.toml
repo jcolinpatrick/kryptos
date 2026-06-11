@@ -699,3 +699,17 @@ keywords_tested = ["URANIA", "COMPASS", "LODESTONE", "KRYPTOS", "PALIMPSEST", "A
 
 [elimination.BERLIN-CLOCK-PERM-RESULTS]
 keywords_tested = ["URANIA", "WELTZEITUHR", "ALEXANDERPLATZ", "BERLIN", "CLOCK", "BERLINCLOCK"]
+
+# --- Title overrides for records whose source JSON carries no description ---
+
+[elimination."BLITZ-V7/RESULTS"]
+title = "Grille geometry blitz, round 7"
+
+[elimination."BLITZ-V8/RESULTS"]
+title = "Grille geometry blitz, round 8"
+
+[elimination.E-COMPOSE-02]
+title = "Partitioned two-system encryption (variant 2)"
+
+[elimination.TKAS_v1]
+title = "Transposition-keystream alignment search (TKAS v1)"

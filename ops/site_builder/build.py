@@ -615,19 +615,44 @@ def _build_cylinder_viewer(global_ctx: dict):
     """
     import re
 
-    src_html = os.path.join(PROJECT_ROOT, "reference", "tools", "cylinder_viewer.html")
+    src_html = os.path.join(os.path.dirname(__file__), "standalone", "cylinder_viewer.html")
     with open(src_html) as f:
         html = f.read()
 
     # -- 1. Replace <head> internals: add site stylesheets before the inline <style>
     site_head = (
-        '<meta name="description" content="kryptosbot.com | The K4 Elimination Database.">\n'
+        '<meta name="description" content="Explore the Kryptos cipher panel as 28 rotatable rings, like a Jefferson cipher wheel. Slide rows and look for alignments.">\n'
+        '<meta property="og:title" content="Cylinder Viewer | kryptosbot.com">\n'
+        '<meta property="og:image" content="https://kryptosbot.com/static/kryptosbot-og.jpg">\n'
+        '<meta property="og:url" content="https://kryptosbot.com/cylinder-viewer/">\n'
+        '<link rel="canonical" href="https://kryptosbot.com/cylinder-viewer/">\n'
         '<link rel="stylesheet" href="/static/fonts/fonts.css">\n'
         '<link rel="stylesheet" href="/static/style.css">\n'
         '<link rel="icon" href="/favicon.ico" sizes="any">\n'
         '<link rel="icon" type="image/webp" href="/static/kryptosbot.webp">\n'
     )
     html = html.replace('<title>Kryptos Cylinder Viewer</title>', f'<title>Cylinder Viewer | kryptosbot.com</title>\n{site_head}', 1)
+
+    # -- 1b. Add the explanatory intro after the one-line subtitle
+    intro_html = (
+        '<div class="cv-intro">\n'
+        '  <p>\n'
+        '    The Kryptos cipher panel as 28 rotatable rings in a 31-column window.\n'
+        '    Sanborn&rsquo;s encoding chart shows arrows in opposing directions\n'
+        '    (&rarr; line 1, &larr; line 2), suggesting cylindrical rotation where\n'
+        '    rows slide independently, like a Jefferson cipher wheel or combination lock.\n'
+        '    One row (line 5, starting IMVMZJA) has 32 characters instead of 31.\n'
+        '  </p>\n'
+        '  <p>\n'
+        '    Rotate any row with the arrow buttons or by click-dragging. The offset badge\n'
+        '    on the right tracks how far each row has shifted. Look for vertical alignments,\n'
+        '    repeating patterns, or columnar relationships that emerge as you slide rows\n'
+        '    relative to each other.\n'
+        '  </p>\n'
+        '</div>\n'
+    )
+    subtitle_line = '<div class="subtitle">Cipher panel: 28 rows &times; 31 columns. Each row is a rotatable ring</div>'
+    html = html.replace(subtitle_line, subtitle_line + '\n' + intro_html, 1)
 
     # -- 2. Externalise inline <style> and <script> for CSP
     html = re.sub(
@@ -640,28 +665,6 @@ def _build_cylinder_viewer(global_ctx: dict):
         '<script src="/static/cylinder_viewer.js"></script>',
         html, flags=re.DOTALL,
     )
-
-    # -- 2b. Remove the legend (color key) — static swatches look like broken checkboxes
-    legend_start = html.find('<div class="legend">')
-    if legend_start != -1:
-        # Find the closing </div> that ends the legend block
-        # Structure: <div class="legend"> ... 3x <div class="legend-item">...</div> ... </div>
-        # Count div open/close to find the matching end
-        depth = 0
-        i = legend_start
-        while i < len(html):
-            if html[i:i+4] == '<div':
-                depth += 1
-            elif html[i:i+6] == '</div>':
-                depth -= 1
-                if depth == 0:
-                    legend_end = i + 6
-                    # Strip trailing whitespace/newline
-                    while legend_end < len(html) and html[legend_end] in '\n\r':
-                        legend_end += 1
-                    html = html[:legend_start] + html[legend_end:]
-                    break
-            i += 1
 
     # -- 2c. Strip inline onclick handlers (blocked by nginx CSP: script-src 'self')
     #    The JS attaches listeners via addEventListener instead.
