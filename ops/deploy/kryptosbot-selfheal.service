@@ -1,0 +1,12 @@
+[Unit]
+Description=Kryptosbot self-heal watchdog
+After=network-online.target kryptosbot-api.service nginx.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=root
+Group=root
+WorkingDirectory=/home/cpatrick/kryptos
+ExecStart=/home/cpatrick/kryptos/venv/bin/python3 /home/cpatrick/kryptos/ops/tools/self_heal.py
+

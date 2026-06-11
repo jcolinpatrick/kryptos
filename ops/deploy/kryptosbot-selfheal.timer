@@ -1,0 +1,10 @@
+[Unit]
+Description=Run Kryptosbot self-heal watchdog every 5 minutes
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=5min
+Unit=kryptosbot-selfheal.service
+
+[Install]
+WantedBy=timers.target
