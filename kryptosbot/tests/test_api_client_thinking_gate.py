@@ -64,3 +64,26 @@ def test_sonnet_4_6_also_excludes_thinking():
     client._make_api_call([{"role": "user", "content": "hi"}], thinking_budget=8000)
 
     assert "thinking" not in captured
+
+
+def test_fable_5_never_sends_a_thinking_param():
+    # Fable 5 (controller routing default since 2026-06-10) removes
+    # budget_tokens AND 400s on an explicit {"type": "disabled"} — the only
+    # safe request shape is to omit the thinking param entirely.
+    client = KryptosAPIClient(api_key="test-key", model="claude-fable-5")
+    captured = _install_capture(client)
+
+    client._make_api_call([{"role": "user", "content": "hi"}], thinking_budget=8000)
+
+    assert "thinking" not in captured
+
+
+def test_fable_5_priced_in_api_client_pricing_table():
+    # PRICING.get falls back to SONNET rates on a miss, so an absent
+    # claude-fable-5 key would silently under-charge frontier-tier work.
+    from kryptosbot.api_client import PRICING
+
+    fable = PRICING.get("claude-fable-5")
+    assert fable is not None, "claude-fable-5 missing from api_client.PRICING"
+    assert fable["input"] == 10.0
+    assert fable["output"] == 50.0

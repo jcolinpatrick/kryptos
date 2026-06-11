@@ -160,9 +160,23 @@ class TestTokenAccountant:
         # variant must both fold to the opus-4-8 pricing family.
         assert _normalize_model_name("claude-opus-4-8") == "claude-opus-4-8"
         assert _normalize_model_name("claude-opus-4-8[1m]") == "claude-opus-4-8"
+        # Fable 5 migration (2026-06-10): same contract for the new routing
+        # default — an unrecognized fable id would fall to "unknown" and be
+        # over-billed at the conservative Opus rate (safe but wrong).
+        assert _normalize_model_name("claude-fable-5") == "claude-fable-5"
+        assert _normalize_model_name("claude-fable-5[1m]") == "claude-fable-5"
         assert _normalize_model_name("claude-sonnet-4-6-20260101") == (
             "claude-sonnet-4-6"
         )
+
+    def test_fable_5_priced_in_default_table(self):
+        """claude-fable-5 is the controller routing default (2026-06-10);
+        it must price at its own $10/$50 rate, not the unknown-model
+        Opus fallback."""
+        from kryptosbot.token_accountant import _DEFAULT_PRICING
+        assert _DEFAULT_PRICING["claude-fable-5"] == {
+            "input": 10.00, "output": 50.00,
+        }
 
     def test_summary_returns_by_model_totals(self):
         acc = TokenAccountant(max_usd=5.00)
