@@ -1,0 +1,9 @@
+{
+  "experiment": "F-FREE-ALIGN-CLASSICAL-01",
+  "description": "First free-alignment campaign: classical cipher families scored with the known plaintext words allowed to land anywhere in the output, not just at their carved positions (six arms incl. 742,705-word running keys and columnar x additive in both peel orders)",
+  "verdict": "ELIMINATED",
+  "best_score": 10,
+  "total_configs": 5968842,
+  "timestamp": "2026-06-10",
+  "key_finding": "5,968,842 configs across six arms, zero configs reached the preregistered free-crib threshold (11), against free-matched nulls. CLEAN_NULL in all arms; 0 errors, 0 admissibility rejections."
+}

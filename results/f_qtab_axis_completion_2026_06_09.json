@@ -1,0 +1,9 @@
+{
+  "experiment": "F-QTAB-AXIS-450",
+  "description": "Quagmire III tableau-keyword axis completion: diagonal ct==pt tableau variants the earlier DSL could not sweep, under direct and post-transposition alignment",
+  "verdict": "ELIMINATED",
+  "best_score": 6,
+  "total_configs": 450,
+  "timestamp": "2026-06-09",
+  "key_finding": "450-config completion cell closed CLEAN_NULL after a tableau-convention fix; completes the statistic the original 2026-05-28 verdict assumed."
+}

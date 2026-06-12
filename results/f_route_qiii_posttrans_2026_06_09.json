@@ -1,0 +1,9 @@
+{
+  "experiment": "F-ROUTE-QIII-POSTTRANS-01",
+  "description": "Route transposition outer layer (52 routes: serpentine, spiral, diagonal, boustrophedon) combined with Quagmire III keyed substitution inner layer, scored after undoing the route (post-transposition alignment)",
+  "verdict": "ELIMINATED",
+  "best_score": 6,
+  "total_configs": 25272,
+  "timestamp": "2026-06-10",
+  "key_finding": "Preregistered 25,272-config cell closed CLEAN_NULL: best 6/24 known-plaintext letters vs a matched-null mean of 6.46. Closes the route-outer x Quagmire-III-inner cell named by the 2026-06-09 frontier survey."
+}

@@ -1,0 +1,29 @@
+{
+  "campaign": "non_direct_alignment_carter_tape_2026_06_05",
+  "prereg": "docs/campaigns/non_direct_alignment_carter_tape_2026_06_05.md",
+  "source_id": "carter_tomb_vol1",
+  "n_offsets": 287417,
+  "real_universe_hash": "7a9ac67336cd37e2f7be75c59d549b75618395c47a4bcd515d652232996ae6aa",
+  "cardinality_real": 89674104,
+  "real_global_best_crib": 11,
+  "null_global_best_crib": 10,
+  "real_best_ngram_total": -556.250895,
+  "null_max_ngram_total": -557.7845899999998,
+  "real_best_ngram_per_char": -5.917562712765958,
+  "mean_equality_permutation_p": 0.5907,
+  "n_promoted": 0,
+  "promoted": [],
+  "prefilter_validated_samples": 240,
+  "thresholds": {
+    "ngram_floor": -4.5,
+    "signal_crib": 18,
+    "kill_crib": 13
+  },
+  "verdict": "CLEAN_NULL",
+  "scope": "ELIMINATED_UNDER_BOUNDED_CARTER_TAPE_NONDIRECT_UNIVERSE",
+  "experiment": "F-CARTER-TAPE-NONDIRECT-01",
+  "description": "Finite key tape drawn from allowlisted public sources combined with non-direct (post-transposition) alignment - the last open allowlisted-public-source x non-direct cell",
+  "total_configs": 89700000,
+  "timestamp": "2026-06-05",
+  "key_finding": "89.7M configs closed CLEAN_NULL with matched-family null. Closes the final allowlisted-public-source x non-direct alignment cell."
+}

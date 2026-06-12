@@ -1,0 +1,9 @@
+{
+  "experiment": "F-GAP10-POSITIONAL-01",
+  "description": "Three preregistered positional measurements on the regions between and around the known-plaintext anchors: per-period consistency, gap-region letter statistics, and boundary-change tests",
+  "verdict": "NOISE",
+  "best_score": 0,
+  "total_configs": 0,
+  "timestamp": "2026-06-11",
+  "key_finding": "All three components MEASURED_NULL under frozen thresholds; zero evidence candidates. The direct reading frame has zero Bean-surviving repeat lengths in the gap regions. GAP-10 moves from unowned to measured-and-open."
+}

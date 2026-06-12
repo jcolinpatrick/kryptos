@@ -1,0 +1,9 @@
+{
+  "experiment": "F-CRYPTONYM-CRIB-01",
+  "description": "Screen of CIA cryptonym-style words (formation rule documented from Sanborn's own worksheet photographs) as candidate plaintext or key fragments, across additive and Quagmire III convention cells including key phases and gap regions",
+  "verdict": "NOISE",
+  "best_score": 0,
+  "total_configs": 5040,
+  "timestamp": "2026-06-11",
+  "key_finding": "5,040 cumulative convention cells screened against binomial null expectations: MEASURED_NULL under frozen kill rules at every tier. The cryptonym formation rule itself (verified on the worksheet) remains a documented archival observation."
+}

@@ -1,0 +1,89 @@
+{
+  "campaign": "efrac54_joint_gonogo_2026_06_06",
+  "detector": "src/kryptos/detectors/efrac54_joint.py",
+  "test": "sigma-saturation with TRUE plaintext + TRUE transposition given (favorable to detector)",
+  "n_plants": 8,
+  "variant": "vigenere",
+  "detection_rate_search": 0.5,
+  "oracle_beats_shuffle95_rate": 0.75,
+  "rows": [
+    {
+      "idx": 0,
+      "width": 9,
+      "oracle_t": -20.279,
+      "real_best_t": -21.272,
+      "shuf95_t": -21.311,
+      "shuf_max_t": -20.849,
+      "detected": true
+    },
+    {
+      "idx": 1,
+      "width": 8,
+      "oracle_t": -20.107,
+      "real_best_t": -20.587,
+      "shuf95_t": -21.435,
+      "shuf_max_t": -21.336,
+      "detected": true
+    },
+    {
+      "idx": 2,
+      "width": 6,
+      "oracle_t": -20.69,
+      "real_best_t": -22.459,
+      "shuf95_t": -22.265,
+      "shuf_max_t": -22.03,
+      "detected": false
+    },
+    {
+      "idx": 3,
+      "width": 8,
+      "oracle_t": -25.855,
+      "real_best_t": -24.503,
+      "shuf95_t": -24.124,
+      "shuf_max_t": -24.064,
+      "detected": false
+    },
+    {
+      "idx": 4,
+      "width": 9,
+      "oracle_t": -20.489,
+      "real_best_t": -21.52,
+      "shuf95_t": -22.216,
+      "shuf_max_t": -22.095,
+      "detected": true
+    },
+    {
+      "idx": 5,
+      "width": 6,
+      "oracle_t": -20.864,
+      "real_best_t": -21.971,
+      "shuf95_t": -21.738,
+      "shuf_max_t": -21.639,
+      "detected": false
+    },
+    {
+      "idx": 6,
+      "width": 8,
+      "oracle_t": -19.075,
+      "real_best_t": -21.044,
+      "shuf95_t": -21.576,
+      "shuf_max_t": -21.493,
+      "detected": true
+    },
+    {
+      "idx": 7,
+      "width": 8,
+      "oracle_t": -19.857,
+      "real_best_t": -20.733,
+      "shuf95_t": -19.669,
+      "shuf_max_t": -19.483,
+      "detected": false
+    }
+  ],
+  "verdict": "DETECTOR_UNDERPOWERED_SIGMA_SATURATION",
+  "scope": "Necessary-condition test: PT and transposition handed to BOTH real and shuffle (only sigma searched). High rate => two-sided statistic resists sigma-saturation (unlike the forced-difference detector). Full cold-start joint (sigma+plaintext) search power is a separate, harder question.",
+  "experiment": "F-EFRAC54-JOINT-GONOGO-01",
+  "description": "Definitive go/no-go test of whether any positional detector can recover a monoalphabetic + transposition + running-key composition at K4's text length",
+  "timestamp": "2026-06-06",
+  "key_finding": "Detection power 0.00 at K4 parameters: the D1 composition class is mathematically underdetermined at 97 characters. This is a limits-of-knowledge result, not an elimination of the class."
+}

@@ -1,0 +1,86 @@
+{
+  "campaign": "efrac54_joint_coldstart_gonogo_2026_06_06",
+  "detector": "src/kryptos/detectors/efrac54_joint.py + efrac54_joint_search.py",
+  "test": "STRONG cold-start joint (sigma + 73-letter PT) search; real vs shuffled CT",
+  "n_plants": 6,
+  "variant": "vigenere",
+  "n_iters": 100000,
+  "restarts": 2,
+  "n_shuffles": 16,
+  "detection_rate": 0.0,
+  "real_reached_oracle_rate": 1.0,
+  "rows": [
+    {
+      "idx": 0,
+      "width": 9,
+      "oracle_t": -20.279,
+      "real_best_t": -19.015,
+      "shuf95_t": -18.726,
+      "shuf_max_t": -18.39,
+      "shuf_mean_t": -19.151,
+      "detected": false,
+      "real_reached_oracle": true
+    },
+    {
+      "idx": 1,
+      "width": 8,
+      "oracle_t": -20.107,
+      "real_best_t": -18.924,
+      "shuf95_t": -18.88,
+      "shuf_max_t": -18.663,
+      "shuf_mean_t": -19.306,
+      "detected": false,
+      "real_reached_oracle": true
+    },
+    {
+      "idx": 2,
+      "width": 6,
+      "oracle_t": -20.69,
+      "real_best_t": -19.84,
+      "shuf95_t": -18.998,
+      "shuf_max_t": -18.84,
+      "shuf_mean_t": -19.437,
+      "detected": false,
+      "real_reached_oracle": true
+    },
+    {
+      "idx": 3,
+      "width": 8,
+      "oracle_t": -25.855,
+      "real_best_t": -17.839,
+      "shuf95_t": -17.261,
+      "shuf_max_t": -17.256,
+      "shuf_mean_t": -17.553,
+      "detected": false,
+      "real_reached_oracle": true
+    },
+    {
+      "idx": 4,
+      "width": 9,
+      "oracle_t": -20.489,
+      "real_best_t": -20.037,
+      "shuf95_t": -19.703,
+      "shuf_max_t": -19.698,
+      "shuf_mean_t": -20.002,
+      "detected": false,
+      "real_reached_oracle": true
+    },
+    {
+      "idx": 5,
+      "width": 6,
+      "oracle_t": -20.864,
+      "real_best_t": -19.436,
+      "shuf95_t": -18.773,
+      "shuf_max_t": -18.639,
+      "shuf_mean_t": -19.231,
+      "detected": false,
+      "real_reached_oracle": true
+    }
+  ],
+  "verdict": "SATURATION_AT_FULL_SEARCH",
+  "scope": "Realistic cold-start test (no PT given). real_reached_oracle confirms the search is strong; detection_rate vs SATURATION distinguishes whether the two-sided statistic separates real from noise when the search is strong on both.",
+  "experiment": "F-EFRAC54-COLDSTART-01",
+  "description": "Cold-start variant of the joint detector go/no-go for monoalphabetic + transposition + running-key compositions",
+  "timestamp": "2026-06-06",
+  "key_finding": "Detector saturates at noise; confirms the joint go/no-go conclusion that no positional detector helps at K4 parameters."
+}

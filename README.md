@@ -55,11 +55,15 @@ scripts/              # 1,000+ experiment scripts organized by cipher family
   campaigns/          #   Structured multi-stage campaigns (preregistered)
   ...and more
 
-tests/                # 1,500+ unit, QA, and benchmark tests
-bench/                # Cipher-solving benchmark framework
+kryptosbot/           # Multi-agent research controller (Claude Agent SDK):
+                      #   theorist/critic/red-team cycle, typed hypothesis DSL,
+                      #   kernel-verified dispatch, provenance-gated claims
+
+tests/                # 2,000+ unit, QA, and benchmark tests (plus 2,400+ under kryptosbot/tests/)
+bench/                # Cipher-solving benchmark framework + K4Bench synthetic calibration suite
 ops/site_builder/     # Static site generator for kryptosbot.com
 ops/api/              # FastAPI backend (theory classifier, submission queue)
-ops/publish/          # Publishing workflow (filtered push to GitHub)
+ops/publish/          # Content-scan guard run by the pre-push hook
 ```
 
 ## Quick start
@@ -101,7 +105,7 @@ The score is based on crib consistency (do the known plaintext positions produce
 
 ## What's been eliminated
 
-The [kryptosbot.com](https://kryptosbot.com/browse/) site currently documents 494 formal eliminations across 7 categories:
+The [kryptosbot.com](https://kryptosbot.com/browse/) site currently documents 522 recorded eliminations across 7 categories (count as of 2026-06-11; the site rebuilds from the same data in this repo):
 
 - **Substitution.** Vigenere, Beaufort, Quagmire, Hill, Caesar, mixed alphabets.
 - **Transposition.** Columnar, double-columnar, AMSCO, Myszkowski, rail fence, route, grille.
@@ -115,15 +119,35 @@ The [kryptosbot.com](https://kryptosbot.com/browse/) site currently documents 49
 
 ## Working hypotheses
 
-None of these are proven. They represent live hypothesis surfaces or residual coverage gaps. Status as of April 2026.
+None of these are proven. They represent live hypothesis surfaces or residual coverage gaps. Status as of June 2026.
 
 1. **Two systems.** Sanborn has publicly stated K4 uses "two systems of enciphering," distinct from the Vigenere used for K1-K3. The project treats this as **Tier-3 contextual hearsay** (per claims-registry entries `C-SANBORN-01` and `C-SANBORN-02`), not as a load-bearing piece of operational evidence. The phrase admits multiple mutually-incompatible structural interpretations and has so far not produced a non-arbitrary cipher mechanism. Any specific mechanistic interpretation remains a hypothesis that must be paired with independent measurable evidence before it gains evidentiary weight. See the [pseudo-clue-pack admission standard](docs/REAL_K4_PSEUDO_CLUE_PACK_ADMISSION.md) rule 11.
-2. **CT perturbation.** The currently primary anomaly surface. Evidence from photographed coding charts in Sanborn's archive at the Smithsonian suggests the canonical 97-character ciphertext may include a small number of transcription errors. If real, modest CT corrections could unlock cipher families that currently fail by a small margin. Open and actively explored.
+2. **CT perturbation.** Photographed coding charts in Sanborn's archive raised the possibility that the canonical 97-character ciphertext includes a small number of transcription errors. Stage A (every single-character variant) was tested and closed clean-negative in May 2026; the as-carved text is treated as authoritative. Multi-error variants remain formally open but are not a live lead.
 3. **W-delimiter structural hypothesis.** The five carved `W`s at positions 20, 36, 48, 58, and 74 explain the old width-21 vertical-bigram anomaly. As a *single-layer* construction the W-segmentation hypothesis has been saturated (80+ tested, no signal); it remains admissible as one layer within multi-layer constructions. Whether the `W`s are delimiters, nulls, row markers, or something else remains open.
 4. **Null insertion or procedural markers.** Some positions in K4 may be filler or marker symbols. The number, placement, and interpretation remain unknown. The older statistical "null palette" family is retired and should not be treated as evidence.
 5. **Residual running-key and non-periodic additive models.** Within additive-key assumptions and direct correspondence, running-key style models remain an open residual family. That is a scoped statement, not a global claim about all possible K4 constructions.
 
 See [docs/research_questions.md](docs/research_questions.md) for the full list of open questions.
+
+## What is public, and what is not
+
+As of June 2026 this repository is published in full as a gift to the
+Kryptos community, including the complete `kryptosbot/` multi-agent
+controller and the full research history. Exactly four classes stay out
+of the public repo:
+
+1. **Agent and skill definitions** (`.claude/`): the precise prompt
+   construction of the research agents stays private. The architecture
+   they implement is fully visible in `kryptosbot/`.
+2. **Secrets**: API keys and `.env` files.
+3. **Local reference material** (`reference/`, `archive/`,
+   `analysis_runs/`): third-party books and scans (some copyrighted),
+   bulk photo corpora, and community-thread archives. The photographs
+   the project shares are the ones published on
+   [kryptosbot.com/archive](https://kryptosbot.com/archive/).
+4. **Machine outputs**: multi-gigabyte run outputs, caches, and build
+   artifacts. Result summaries that feed the site live in `results/`
+   and `docs/`.
 
 ## Contributing
 
@@ -148,8 +172,7 @@ The whole point of open-sourcing this is to get more eyes on K4.
 
 - [Bean 2021](https://ecp.ep.liu.se/index.php/histocrypt/article/view/153): "Cryptodiagnosis of Kryptos K4," HistoCrypt 2021.
 - [Elonka Dunin's Kryptos page](https://elonka.com/kryptos/): community hub and transcription.
-- [Ed Scheidt dossier](reference/ed_scheidt_dossier.md): what the co-creator has revealed.
-- [Sanborn's open letter (Aug 2025)](reference/sanborn_open_letter_aug2025.md): AI verification, K5 confirmed.
+- Ed Scheidt interviews and Sanborn's August 2025 open letter: summarized on [kryptosbot.com/about-kryptos](https://kryptosbot.com/about-kryptos/). (The project's local `reference/` corpus of third-party source material is not in the public repo for copyright reasons.)
 
 ## Credits
 

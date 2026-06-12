@@ -1,10 +1,18 @@
 # Real-K4 Current Research Position
 
-**Date:** 2026-04-30. Authoritative status report on the real Kryptos
-K4 research position at this commit. This document is the entry
-point if you want one short, rigorous read on what the project can
-do, what it cannot, what it has shown, and why broader search is
-not a rational next step.
+**Date:** 2026-06-11 (original analysis 2026-04-30; updated with the
+May–June empirical record in §1b). Authoritative status report on the
+real Kryptos K4 research position at this commit. This document is
+the entry point if you want one short, rigorous read on what the
+project can do, what it cannot, what it has shown, and where the
+live leads are.
+
+**Posture note (2026-05-01):** real-K4 attack work is **active** by
+project directive — any path with a non-zero chance of solve is in
+scope, and evidence-gap closure runs in parallel rather than as a
+gate. The April analysis below (underdetermination, admission
+discipline, null calibration) remains the epistemic frame; the May–
+June record in §1b is what that frame produced when applied.
 
 Companion documents:
 - [`docs/REAL_K4_EVIDENCE_GAP_REGISTER.md`](REAL_K4_EVIDENCE_GAP_REGISTER.md) — open evidence gaps
@@ -39,6 +47,88 @@ the evidence gap register. Adding more pseudo-clue packs without
 new evidence is anti-productive: the maximum-of-N null threshold
 grows with search breadth, so more packs of the same shape raise
 the bar without raising the evidence quality.
+
+---
+
+## 1b. Update 2026-06-11 — the May–June empirical record
+
+Everything below closed at null or measured-null. The pattern is
+uniform: the platform is healthy, the bounded search cells keep
+closing cleanly, and no computational result has produced signal.
+
+**Multi-layer and alignment-model closures (all CLEAN_NULL with
+matched nulls):**
+- Two-layer columnar × substitution: both peel orders, widths 5–13
+  (earlier record, reconfirmed by later cells).
+- H1 non-columnar middle three-stack (112,320 configs) and H2
+  non-columnar composed transposition (17.5M configs), 2026-05-19.
+- Non-direct alignment program: 52 reorderings × crib-forced
+  periodic inner (2026-05-28); non-periodic public-tape inner with
+  family-matched nulls (2026-05-29); finite public-source key tape
+  × post-transposition alignment, 89.7M configs (2026-06-05) —
+  closing the last allowlisted-public-source × non-direct cell.
+- Running key from a declared licensed corpus × post-transposition
+  alignment, 101,827 configs (2026-06-07).
+- Quagmire III tableau-axis completion cell, 450 configs
+  (2026-06-09), after a tableau-convention fix; 52-route outer ×
+  Quagmire III inner under post-transposition, 25,272 configs
+  (2026-06-10).
+- Free-alignment program (cribs allowed to land anywhere, scored
+  against free-matched nulls): first classical campaign, 5,968,842
+  configs across six arms (2026-06-10); clue-bounded solver run,
+  484 machine-authored specs / 250,348 configs, scored both
+  direct (best 7/24 = the random ceiling) and free (zero configs
+  at threshold), 2026-06-11.
+
+**Limits-of-knowledge results (definitive, not eliminations):**
+- The monoalphabetic + transposition + running-key composition
+  class (D1) is mathematically underdetermined at 97 characters:
+  the joint go/no-go measured detection power 0.00, and a
+  purpose-built monoalphabetic-invariant detector is likewise
+  underpowered (2026-06-06). No positional detector of this family
+  can help at K4's length.
+- A 13-agent, six-surface residual-signal hunt found no
+  unexploited statistical signal in the public evidence
+  (2026-05-29).
+- CT-perturbation Stage A (single-character transcription-error
+  variants of the ciphertext) closed clean-negative (2026-05-02).
+
+**Repo-level verdict (2026-06-06):** an end-to-end audit of every
+plaintext candidate this project has ever produced (13,302) found
+zero kernel-validated solves; the negative is robust to
+counterfactual re-scoring. Recorded as EXHAUSTED_CURRENT_REPO:
+the current repository's evidence pool and bounded search cells
+are exhausted without signal.
+
+**Methodological repairs landed in the same window:** AUDIT-5
+closed (post-transposition scoring now re-derives Bean constraints
+in the route-undone frame, 2026-06-07); free-alignment scoring is
+compared only against free-matched nulls; the known-answer
+readiness gate and assurance suites are green.
+
+**Where the live leads actually are (acquisition, not compute):**
+- **Archival, executed 2026-06-11:** a blind two-examiner
+  extraction of circled letters on the KRYPTOS tableau in
+  Sanborn's working-paper photographs froze four marks — T, K, H
+  (high confidence) and D (faint). Whether they bear on K4 is an
+  open, preregistration-gated question; no analysis result is
+  claimed yet.
+- **Archival context (firsthand, 2026-06-11):** the publicly
+  deposited Sanborn papers were curated before deposit — cipher
+  worksheets visible in earlier photography are absent from the
+  public folders, and some folders are restricted. Earlier "no
+  cipher math in the archive" nulls are therefore curation
+  evidence, not absence evidence. A formal inquiry about the
+  restricted folders is drafted (SPEC-F).
+- **Measurement specs ready to execute:** independent square-on
+  photography of the YAR/DYARO superscript (GAP-04; the prior
+  directional reading was contradicted by forensic measurement),
+  physical-geometry parameter extraction (GAP-05), and the
+  remaining acquisition specs (SPEC-A through SPEC-F).
+- **Open computational surfaces:** non-direct/free alignment cells
+  outside the closed families, and anything a closed GAP row would
+  newly license. The direct-aligned classical space is saturated
+  to the limits documented above.
 
 ---
 
@@ -334,35 +424,40 @@ From the evidence gap register, ranked by tractability and value
 (see [`docs/REAL_K4_EVIDENCE_ACQUISITION_PLAN.md`](REAL_K4_EVIDENCE_ACQUISITION_PLAN.md)
 for the priority ordering and recommended first action):
 
-- **GAP-03 — BCL E0b side-effect operationalization (HIGH, first
-  action).** Define a quantitative extended-position E0b distance
-  statistic and calibrate its null distribution. Acquisition is
-  purely analytical, requires no new primary source, and validates
-  by reproducing Bean's measured `p ≈ 1/5,520` on the disclosed
-  cribs.
-- **GAP-09 — null-mask / stego evidence (HIGH).** Identify or
-  measure an independent-of-score null-mask construct. Three
-  admissible evidence pathways: physical-geometry-derived,
-  independent-statistical-signal-derived, or
-  creator-statement-derived (admission rule 11 only). At most
-  three free parameters with physical or structural justification.
-- **GAP-10 — crib-bound positional mechanism (HIGH).** Compute
-  Bean linear residue-class structure for periods 2 — 26 with
-  multiple-testing correction; gap-region IC permutation null;
-  cross-boundary statistical change tests. Crib-fitting risk is
-  high; gap-regions (positions 0 — 20, 34 — 62, 74 — 96) are the
-  corroboration surface.
-- **GAP-04 — NDYAHR / YAR spatial measurement (LOW).** Quantitative
-  spatial data on the YAR / DYARO superscript: precise vertical
-  displacement, panel-relative coordinates, presence on Antipodes.
+- **GAP-03 — BCL E0b side-effect operationalization (PARTIALLY
+  CLOSED 2026-05-27).** The forward predicate landed
+  (`kernel/scoring/e0b.py`) and reproduces Bean's measurement; the
+  gap now waits on a clearing candidate to apply it to. As a
+  discriminator it already disfavours Beaufort and rejected all
+  1,102 historical high-scoring candidates (overfit pattern).
+- **GAP-09 — null-mask / stego evidence (HIGH, needs NEW
+  evidence).** Pathway 2 (independent statistical signal) closed
+  null (2026-05-27); the null-model fix lowered the posterior on
+  the whole family to roughly 1–3% (2026-05-29). Remaining
+  admissible pathways require new physical or archival data, not
+  more computation.
+- **GAP-10 — crib-bound positional mechanism (MEASURED 2026-06-11,
+  open).** All three preregistered components (residue-class
+  consistency, gap-region statistics, boundary change) measured
+  null; the direct reading frame has zero Bean-surviving repeat
+  lengths in the gap regions. The gap is now measured rather than
+  unowned; closure needs a mechanism hypothesis with independent
+  support.
+- **GAP-04 — NDYAHR / YAR spatial measurement (OPEN, needs an
+  independent square-on photograph).** Forensic measurement
+  contradicted the claimed directional reading of the superscript
+  (2026-05-29); a spec for independent photography is ready
+  (SPEC-D family).
 - **GAP-05 — physical sculpture geometry (LOW).** Measured
   physical geometry that predicts a SPECIFIC cipher parameter and
   ties that parameter to a compilable mechanism.
 - **GAP-07 — archival source-text provenance (MEDIUM).** A
-  specific repo-cited source-text candidate with bounded segment
-  and bounded offset hypothesis. Project-safe candidate pool is
-  `reference/` (Carter, Sanborn correspondence, NSA, Scheidt
-  dossier).
+  specific cited source-text candidate with bounded segment and
+  bounded offset hypothesis. The candidate pool is the project's
+  local reference corpus (Carter volumes, NSA documents, Scheidt
+  dossier; kept out of the public repo for copyright and privacy
+  reasons). Note the running-key negatives already cover this pool
+  under both direct and post-transposition alignment (§1b).
 
 The remaining gaps (GAP-01 Stehle measurement, GAP-02 width-21
 vs CT73 contradiction, GAP-06 Sanborn public-comment provenance,
@@ -374,12 +469,15 @@ for full table.
 
 ## 9. Recommended next actions
 
-1. **Freeze solver development except bug fixes.** The HCC,
-   dispatcher, bridge, and admission standard are validated.
-   Adding new cipher primitives or HCC families now would expand
-   the search surface without raising evidence quality — exactly
-   the failure mode the campaign pause is meant to prevent. Bug
-   fixes (with tests) remain in scope; new family work does not.
+1. **Solver development is capability-complete for the current
+   frontier.** (This supersedes the April "freeze" wording: under
+   the 2026-05-01 active-posture directive, the clue-bounded
+   sweep-authoring solver and the free-alignment scoring path were
+   built, validated, and run — both closed clean null, §1b.) New
+   cipher primitives or families should still only be added when a
+   real evidence gap motivates them; expanding the search surface
+   without new evidence raises the null bar without raising
+   evidence quality.
 2. **Maintain K4Bench as a regression suite.** K4Bench lessons
    through LESSON-022 are validated; new lessons should be added
    only when a real-K4 evidence gap motivates them (`feedback_hcc_only_seeds_not_degraded_fallback.md`).
@@ -425,6 +523,9 @@ for full table.
 
 ---
 
-*Authored 2026-04-30 by Claude Opus 4.7 + Colin Patrick.
-Authoritative status report at this commit. Update when a GAP row
-closes or a new bridge campaign opens.*
+*Authored 2026-04-30 by Claude Opus 4.7 + Colin Patrick; updated
+2026-06-11 (Claude Fable 5 + Colin Patrick) with the May–June
+empirical record (§1b), gap-register status changes (§8), and the
+superseded solver-freeze recommendation (§9). Authoritative status
+report at this commit. Update when a GAP row closes or a new
+campaign opens.*

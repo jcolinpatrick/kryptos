@@ -1,0 +1,9 @@
+{
+  "experiment": "F-SOLVER-FREE-ALIGN-01",
+  "description": "Free-alignment extension of the clue-bounded solver run: the same 484 machine-authored specs rescored with known-plaintext words allowed to land anywhere (free crib alignment), three-layer arms included",
+  "verdict": "ELIMINATED",
+  "best_score": 0,
+  "total_configs": 250348,
+  "timestamp": "2026-06-11",
+  "key_finding": "Preregistered rule: zero configs at or above free-crib 11. Result: zero, with free-matched nulls. Closes the free-alignment arm of the solver campaign."
+}

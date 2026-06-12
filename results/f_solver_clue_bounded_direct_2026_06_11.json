@@ -1,0 +1,9 @@
+{
+  "experiment": "F-SOLVER-CLUE-BOUNDED-DIRECT-01",
+  "description": "First run of the clue-bounded sweep-authoring solver against real K4: 484 machine-authored bounded specs over two- and three-layer compositions, direct positional alignment",
+  "verdict": "ELIMINATED",
+  "best_score": 7,
+  "total_configs": 250348,
+  "timestamp": "2026-06-11",
+  "key_finding": "250,348 configs (exact enumerated cardinality), best 7/24 known-plaintext letters = the random ceiling. Clean null certifies the earlier solver gap cost nothing in the direct-aligned space."
+}

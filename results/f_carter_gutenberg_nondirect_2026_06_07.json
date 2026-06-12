@@ -1,0 +1,9 @@
+{
+  "experiment": "F-CARTER-GUT-NONDIRECT-01",
+  "description": "Running key drawn from a declared licensed corpus (Carter's Tomb of Tutankhamun and Project Gutenberg texts) combined with non-direct (post-transposition) alignment",
+  "verdict": "ELIMINATED",
+  "best_score": 0,
+  "total_configs": 101827,
+  "timestamp": "2026-06-07",
+  "key_finding": "101,827-config bounded spec with matched-family null closed CLEAN_NULL. Extends the public running-key negative from direct to post-transposition alignment."
+}

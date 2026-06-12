@@ -9,7 +9,7 @@ how much resolving them would shrink the remaining search space.
 
 ### RQ-1: What is the cipher TYPE?
 
-**Current state**: Unknown. It is non-periodic within the repo's direct-positional correspondence model, and NOT a simple linear recurrence keystream (orders 1-8 eliminated in-project). [HYPOTHESIS] It may be position-dependent (not state-dependent) based on the K5 shared-positions inference (see `docs/kryptos_ground_truth.md` C5), but this inference is unproven.
+**Current state**: (updated 2026-06-11) Unknown. It is non-periodic within the repo's direct-positional correspondence model, and NOT a simple linear recurrence keystream (orders 1-8 eliminated in-project). The 2026 program extended the negatives beyond the direct reading: post-transposition and free crib alignment campaigns (millions of configurations, matched nulls) closed clean, and the monoalphabetic + transposition + running-key composition class was shown to be mathematically undetectable at 97 characters (detection power 0.00), so it stays open as a limits-of-knowledge result. [HYPOTHESIS] It may be position-dependent (not state-dependent) based on the K5 shared-positions inference (see `docs/kryptos_ground_truth.md` C5), but this inference is unproven.
 
 **What's been eliminated**:
 - Standard Vigenere with periodic key
@@ -70,8 +70,14 @@ how much resolving them would shrink the remaining search space.
 
 ### RQ-3: Is there a transposition layer, and what type?
 
-**Current state**: Mengenlehreuhr (480 perms) and Weltzeituhr permutations
-have been tested with all thematic keyword alphabets. No breakthrough.
+**Current state**: (updated 2026-06-11) Mengenlehreuhr (480 perms) and
+Weltzeituhr permutations have been tested with all thematic keyword
+alphabets; no breakthrough. The 2026 non-direct program scored candidates
+after undoing the route (with Bean constraints re-derived in the
+route-undone frame) across 52 route reorderings, including route-outer x
+Quagmire-III-inner (25,272 configs, 2026-06-10): all clean null. If a
+transposition layer exists, it is not one of the tested families at the
+tested depths.
 
 **Tested and eliminated**:
 - Columnar transposition (widths 5-10) + periodic Vigenere

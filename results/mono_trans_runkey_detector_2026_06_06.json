@@ -1,0 +1,126 @@
+{
+  "campaign": "mono_trans_runkey_detector_2026_06_06",
+  "prereg": "docs/campaigns/mono_trans_runkey_detector_2026_06_06.md",
+  "corpus": {
+    "source_id": "kahn_codebreakers_1967",
+    "sha256": "8ecbf6a0944c9d7a4ddcd29942b28f2463233ea71684dc41d614a9814996acbd"
+  },
+  "universe_hash": "b5bb96ef8fa4f6e54d342d8b026cd5544bab07b53b939d6ad01a7146acf26cb4",
+  "l_max": 12,
+  "power_floor": 0.8,
+  "synthetic_detection_rates": {
+    "model1/vigenere": {
+      "rate": 0.0,
+      "real_minus_null95_gaps": [
+        -0.346,
+        -1.317,
+        -0.988,
+        -0.638,
+        -0.671,
+        -0.27,
+        -0.685,
+        -0.871,
+        -0.371,
+        -0.771
+      ]
+    },
+    "model1/beaufort": {
+      "rate": 0.0,
+      "real_minus_null95_gaps": [
+        -1.66,
+        -1.524,
+        -0.661,
+        -1.035,
+        -0.687,
+        -0.416,
+        -0.878,
+        -1.212,
+        -1.548,
+        -0.698
+      ]
+    },
+    "model1/var_beaufort": {
+      "rate": 0.0,
+      "real_minus_null95_gaps": [
+        -1.66,
+        -1.524,
+        -0.661,
+        -1.035,
+        -0.687,
+        -0.416,
+        -0.878,
+        -1.212,
+        -1.548,
+        -0.698
+      ]
+    },
+    "model2/vigenere": {
+      "rate": 0.2,
+      "real_minus_null95_gaps": [
+        -0.756,
+        0.143,
+        -0.401,
+        0.416,
+        -1.232,
+        -0.44,
+        -1.07,
+        -1.131,
+        -0.622,
+        -1.355
+      ]
+    },
+    "model2/beaufort": {
+      "rate": 0.1,
+      "real_minus_null95_gaps": [
+        -1.358,
+        -0.877,
+        -0.689,
+        -0.489,
+        0.304,
+        -0.873,
+        -0.281,
+        -1.585,
+        -1.03,
+        -0.612
+      ]
+    },
+    "model2/var_beaufort": {
+      "rate": 0.1,
+      "real_minus_null95_gaps": [
+        -1.358,
+        -0.877,
+        -0.689,
+        -0.489,
+        0.304,
+        -0.873,
+        -0.281,
+        -1.585,
+        -1.03,
+        -0.612
+      ]
+    }
+  },
+  "model1_best_rate": 0.0,
+  "detector_underpowered": true,
+  "real_k4": {
+    "best_config": {
+      "name": "col9_024136578",
+      "variant": "beaufort",
+      "model": "model2",
+      "llr": 3.3844625384410847,
+      "n_constraints": 16
+    },
+    "max_llr": 3.3844625384410847,
+    "descriptive_p_value": 0.22448979591836735,
+    "n_null": 48,
+    "null_max_min": 2.273665943391933,
+    "null_max_max": 4.409297486620554,
+    "CONCLUSIVE": false
+  },
+  "verdict": "DETECTOR_UNDERPOWERED",
+  "scope": "Mono+Trans+Running-key remains UNDERDETERMINED; the mono-invariant forced-difference detector cannot recover planted solutions, so the real-K4 numbers below are DESCRIPTIVE ONLY and support neither elimination nor escalation. D1 stays bin-D but is now characterized: no positional forced-difference detector helps at K4's parameters.",
+  "experiment": "F-MONO-INVARIANT-DETECTOR-01",
+  "description": "Monoalphabetic-invariant detector built to find running-key structure that survives an unknown substitution layer",
+  "timestamp": "2026-06-06",
+  "key_finding": "DETECTOR_UNDERPOWERED at K4 length: sharpens the underdetermination result - no detector of this family can distinguish real compositions from noise at 97 characters."
+}

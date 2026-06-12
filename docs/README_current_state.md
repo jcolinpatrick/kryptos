@@ -1,10 +1,19 @@
 ---
 status: live
 type: canonical_entry_index
-last_updated: 2026-04-09
+last_updated: 2026-06-11
 ---
 
 # Current State — Canonical Entry Index
+
+> **Public readers:** the one-document status read is
+> [`docs/REAL_K4_CURRENT_POSITION.md`](REAL_K4_CURRENT_POSITION.md)
+> (updated 2026-06-11: May–June empirical record, gap-register status,
+> live leads). The plain-language version is on
+> [kryptosbot.com/findings](https://kryptosbot.com/findings/). Items
+> below that reference `MEMORY.md` or the session briefing refer to
+> agent-session state that exists on the research machine, not in this
+> repository.
 
 **If you are a fresh agent landing in this repo, this is the file to start with
 after `CLAUDE.md`.** It tells you where *live* state lives and how to
