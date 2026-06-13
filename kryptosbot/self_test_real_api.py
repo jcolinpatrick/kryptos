@@ -229,11 +229,12 @@ class RealApiResult:
 
 def run_real_api_panel(
     panel_id: str,
-    # Default tracks the controller routing default (Fable 5 since
-    # 2026-06-10) so the self-test exercises the same model the live loop
-    # runs. The request body is thinking-free, which is the only shape
-    # Fable 5 accepts (explicit {"type": "disabled"} 400s there).
-    model: str = "claude-fable-5",
+    # Default tracks the controller frontier-tier routing default (Opus 4.8
+    # since 2026-06-13, after Fable 5 was restricted) so the self-test
+    # exercises the same model the live loop runs. The request body omits the
+    # thinking param; on Opus 4.8 an omitted param runs without thinking (a
+    # single bounded panel call, so the GOTCHA2 long-session gate is moot).
+    model: str = "claude-opus-4-8",
     max_usd: float = 5.00,
     api_key: Optional[str] = None,
 ) -> RealApiResult:
@@ -382,7 +383,7 @@ def _load_api_key() -> Optional[str]:
 def main(argv: Optional[list[str]] = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--panel", choices=("k1", "k2", "k3"), default="k1")
-    ap.add_argument("--model", default="claude-fable-5")
+    ap.add_argument("--model", default="claude-opus-4-8")
     ap.add_argument("--max-usd", type=float, default=5.00)
     ap.add_argument("--report-path", type=str, default=None)
     args = ap.parse_args(argv)

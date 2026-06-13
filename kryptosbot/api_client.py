@@ -44,8 +44,12 @@ PRICING = {
     # still miss here; the controller routes bare ids by default, but add a
     # [1m] key if such a variant ever reaches this (secondary/batch) cost
     # path.
+    # opus-4-8 is the controller frontier-tier routing default (2026-06-13,
+    # after Fable 5 was restricted). It MUST stay present: PRICING.get falls
+    # back to Sonnet on a miss, which would under-charge frontier work.
     "claude-opus-4-8":    {"input": 15.0, "output": 75.0, "cache_read": 1.50, "cache_write": 18.75},
-    # fable-5 is the current controller routing default (2026-06-10).
+    # fable-5 is RESTRICTED and no longer routed (2026-06-13); entry retained
+    # so any historical / in-flight charge still prices correctly.
     # $10/$50 per MTok; cache_read = 0.1x input, cache_write = 1.25x input
     # (5-minute TTL), matching the ratio convention of the rows above.
     "claude-fable-5":     {"input": 10.0, "output": 50.0, "cache_read": 1.00, "cache_write": 12.50},

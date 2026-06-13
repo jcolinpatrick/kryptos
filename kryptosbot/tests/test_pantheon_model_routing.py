@@ -3,9 +3,15 @@
 Pins the phase -> (model, fallback) routing policy so future model bumps and
 phase-routing changes are intentional, not accidental. Added 2026-05-29
 alongside the Opus 4.8 migration; updated 2026-06-10 for the Fable 5
-migration, which routes every frontier-tier phase (frontmatter "opus" token
-plus the worker phase) to claude-fable-5 with Sonnet fallback. Prior to this
-file the routing function had no direct test coverage.
+migration, which routed every frontier-tier phase to claude-fable-5.
+
+2026-06-13: Fable 5 was restricted (US-government request to Anthropic), so a
+controller that routes any phase to claude-fable-5 cannot run. The frontier
+tier is therefore designated back to Opus 4.8 (the most capable reachable
+model): the frontmatter "opus" token plus the worker phase route to
+claude-opus-4-8 with Sonnet fallback. _SDK_FABLE is retained (priced for
+accounting back-compat, gate-contract documented) but RESTRICTED — no phase
+may route to it; TestFableNotRouted pins that.
 """
 
 import ast
@@ -30,12 +36,13 @@ def _spec(model):
 
 class TestModelConstants:
     def test_fable_is_5(self):
-        # The Fable 5 migration target (2026-06-10). If this changes, it must
-        # be a deliberate model bump, not an accident.
+        # Constant retained (priced for accounting back-compat, gate contract
+        # documented) but RESTRICTED — no phase routes to it (TestFableNotRouted).
         assert _SDK_FABLE == "claude-fable-5"
 
     def test_opus_is_4_8(self):
-        # Retained for the thinking gate and historical pricing paths.
+        # The frontier-tier routing target (2026-06-13, after Fable 5 was
+        # restricted). Highest-reasoning phases designate this model.
         assert _SDK_OPUS == "claude-opus-4-8"
 
     def test_sonnet_and_haiku_unchanged(self):
@@ -48,13 +55,14 @@ class TestFrontmatterHonoringPhases:
     """theorist / red_team / stat_audit respect the persona frontmatter.
 
     The abstract frontmatter token "opus" means "frontier tier", not a
-    concrete model id — since 2026-06-10 it routes to Fable 5.
+    concrete model id — as of 2026-06-13 (Fable 5 restricted) it routes to
+    Opus 4.8, the most capable reachable model.
     """
 
-    def test_opus_persona_routes_to_fable(self):
+    def test_opus_persona_routes_to_opus(self):
         for phase in ("theorist", "red_team", "stat_audit"):
             assert resolve_model_for_phase(_spec("opus"), phase) == (
-                _SDK_FABLE, _SDK_SONNET,
+                _SDK_OPUS, _SDK_SONNET,
             ), phase
 
     def test_sonnet_persona_routes_to_sonnet(self):
@@ -76,7 +84,7 @@ class TestFrontmatterHonoringPhases:
 
     def test_phase_name_is_case_insensitive(self):
         assert resolve_model_for_phase(_spec("opus"), "THEORIST") == (
-            _SDK_FABLE, _SDK_SONNET,
+            _SDK_OPUS, _SDK_SONNET,
         )
 
 
@@ -84,18 +92,19 @@ class TestWorkerPhaseAlwaysFrontier:
     """Worker runs the frontier-tier model regardless of frontmatter.
 
     2026-05-29: worker upgraded Sonnet/Haiku -> Opus/Sonnet. 2026-06-10:
-    Opus -> Fable 5. The worker translates an approved theory into a
-    kernel-executable DSL HypothesisSpec under a strict fenced-JSON contract;
-    a mis-translated spec wastes a whole bounded campaign or causes a false
-    elimination, so it is routed to the frontier model regardless of
-    frontmatter, with Sonnet (not Haiku) as the capable fallback. A
-    regression here would silently downgrade the worker.
+    Opus -> Fable 5. 2026-06-13: Fable 5 restricted -> back to Opus 4.8. The
+    worker translates an approved theory into a kernel-executable DSL
+    HypothesisSpec under a strict fenced-JSON contract; a mis-translated spec
+    wastes a whole bounded campaign or causes a false elimination, so it is
+    routed to the frontier model regardless of frontmatter, with Sonnet (not
+    Haiku) as the capable fallback. A regression here would silently downgrade
+    the worker.
     """
 
-    def test_worker_ignores_frontmatter_and_uses_fable(self):
+    def test_worker_ignores_frontmatter_and_uses_opus(self):
         for declared in ("opus", "sonnet", "haiku", None):
             assert resolve_model_for_phase(_spec(declared), "worker") == (
-                _SDK_FABLE, _SDK_SONNET,
+                _SDK_OPUS, _SDK_SONNET,
             ), declared
 
     def test_worker_fallback_is_not_haiku(self):
@@ -105,14 +114,20 @@ class TestWorkerPhaseAlwaysFrontier:
         assert fallback == _SDK_SONNET
         assert fallback != _SDK_HAIKU
 
-    def test_worker_fallback_is_not_opus_4_8(self):
-        # Deliberate: the thinking option is computed from the PRIMARY model
-        # (None for Fable 5 — see thinking_config_for_model). An opus-4-8
-        # fallback would then run WITHOUT the disabled-thinking gate and
-        # reintroduce the GOTCHA2 long-session 400 crash. Sonnet is the safe
-        # fallback tier.
-        _, fallback = resolve_model_for_phase(_spec(None), "worker")
-        assert fallback != _SDK_OPUS
+    def test_worker_primary_thinking_value_is_valid_on_the_fallback(self):
+        # The SDK computes ClaudeAgentOptions.thinking ONCE from the PRIMARY
+        # model and reuses it for the fallback session. With Opus 4.8 primary
+        # the gate returns {"type": "disabled"}; the fallback must be a model
+        # that ACCEPTS an explicit disabled dict. Sonnet 4.6 does (Fable 5
+        # would 400 on it — which is exactly why Fable can never be a fallback
+        # for an Opus primary, and is now restricted entirely).
+        from kryptosbot.pantheon import thinking_config_for_model
+        primary, fallback = resolve_model_for_phase(_spec(None), "worker")
+        assert primary == _SDK_OPUS
+        assert thinking_config_for_model(primary) == {"type": "disabled"}
+        assert fallback == _SDK_SONNET
+        # The fallback must not be Fable (rejects explicit disabled).
+        assert fallback != _SDK_FABLE
 
 
 class TestForcedSonnetPhases:
@@ -133,6 +148,29 @@ class TestForcedSonnetPhases:
             assert resolve_model_for_phase(_spec(declared), "pursuit") == (
                 _SDK_SONNET, _SDK_HAIKU,
             ), declared
+
+
+class TestFableNotRouted:
+    """Fable 5 is RESTRICTED (2026-06-13) — no phase may route to it.
+
+    A controller that returns claude-fable-5 as primary OR fallback for any
+    phase cannot run (the model is restricted at the transport gate). This is
+    the regression guard for the whole re-wire: it sweeps every phase against
+    every frontmatter token and asserts Fable never appears in the routing
+    tuple.
+    """
+
+    _PHASES = (
+        "theorist", "red_team", "stat_audit", "worker", "synthesis", "pursuit",
+    )
+    _TOKENS = ("opus", "sonnet", "haiku", None)
+
+    def test_no_phase_routes_to_fable(self):
+        for phase in self._PHASES:
+            for token in self._TOKENS:
+                primary, fallback = resolve_model_for_phase(_spec(token), phase)
+                assert primary != _SDK_FABLE, (phase, token, "primary")
+                assert fallback != _SDK_FABLE, (phase, token, "fallback")
 
 
 class TestThinkingGate:
@@ -181,13 +219,14 @@ class TestThinkingGate:
         from kryptosbot.pantheon import thinking_config_for_model
         assert thinking_config_for_model(None) is None
 
-    def test_resolved_worker_phase_routes_fable_and_omits_thinking(self):
-        # End-to-end with the router: worker phase -> Fable 5 -> thinking
-        # omitted (NOT the opus disabled-dict, which would 400 on Fable).
+    def test_resolved_worker_phase_routes_opus_and_disables_thinking(self):
+        # End-to-end with the router: worker phase -> Opus 4.8 -> thinking
+        # disabled-dict (the GOTCHA2 long-session gate). Fable 5 is restricted
+        # and no longer routed here.
         from kryptosbot.pantheon import thinking_config_for_model
         model, _ = resolve_model_for_phase(_spec("opus"), "worker")
-        assert model == _SDK_FABLE
-        assert thinking_config_for_model(model) is None
+        assert model == _SDK_OPUS
+        assert thinking_config_for_model(model) == {"type": "disabled"}
 
 
 class TestSdkThinkingFieldContract:

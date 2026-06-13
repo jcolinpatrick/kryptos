@@ -1138,17 +1138,26 @@ def load_roster(agents_dir: Path = DEFAULT_AGENTS_DIR) -> dict[str, AgentSpec]:
 
 
 # Model names as the Claude Agent SDK expects them.
-# _SDK_FABLE added 2026-06-10 when Fable 5 (the frontier tier above Opus)
-# became the routing default for every frontmatter-Opus phase
-# (theorist / red_team / stat_audit) and the worker phase, via
+#
+# FRONTIER TIER = Opus 4.8 (_SDK_OPUS). Every frontmatter-Opus phase
+# (theorist / red_team / stat_audit) and the worker phase route here via
 # resolve_model_for_phase. Persona frontmatter uses the abstract token
-# "opus" (meaning "frontier tier"), not a concrete id, so the bump
+# "opus" (meaning "frontier tier"), not a concrete id, so a tier bump
 # propagates to all opus-tagged persona agents automatically — the same
 # single-constant mechanism used for the 2026-05-29 opus-4-7 -> opus-4-8
-# bump. _SDK_OPUS is retained for the thinking gate, pricing history, and
-# manual runs that pass an explicit opus id. Sonnet 4.6 and Haiku 4.5 are
-# already the newest in their tiers, so they are unchanged.
-_SDK_FABLE = "claude-fable-5"
+# bump and the 2026-06-10 -> Fable 5 bump.
+#
+# _SDK_FABLE is RESTRICTED (2026-06-13). Fable 5 had been the frontier
+# routing default since 2026-06-10, but a US-government request to Anthropic
+# restricted the model, so a controller that routes any phase to it cannot
+# run (it fails at the transport gate). The frontier tier is therefore
+# designated back to Opus 4.8, the most capable reachable model. The constant
+# is kept ONLY for pricing/accounting back-compat (api_client.PRICING,
+# token_accountant) and to keep the thinking_config_for_model contract
+# explicit should the restriction ever lift — it must NOT appear in any
+# routing tuple (pinned by test_pantheon_model_routing.TestFableNotRouted).
+# Sonnet 4.6 and Haiku 4.5 are already the newest in their tiers, unchanged.
+_SDK_FABLE = "claude-fable-5"  # RESTRICTED — never route to this
 _SDK_OPUS = "claude-opus-4-8"
 _SDK_SONNET = "claude-sonnet-4-6"
 _SDK_HAIKU = "claude-haiku-4-5"
@@ -1176,7 +1185,9 @@ def thinking_config_for_model(model: str | None) -> dict | None:
     (the thinking param must be omitted entirely; adaptive is the only
     on-mode). The early fable branch below is functionally identical to the
     fall-through but exists so the contract is explicit and pinned by
-    test_pantheon_model_routing.TestThinkingGate.
+    test_pantheon_model_routing.TestThinkingGate. Fable is RESTRICTED and no
+    longer routed (2026-06-13; see the _SDK_FABLE banner), so this branch is
+    now defensive — it keeps the contract correct if the restriction lifts.
     """
     if model and "fable" in model:
         # Omit the thinking param entirely (explicit disabled => 400).
@@ -1194,35 +1205,39 @@ def resolve_model_for_phase(
     Decide which concrete model and fallback the controller should use
     when running this agent in a given pipeline phase.
 
-    Policy:
-      - Theorist phase: respect frontmatter. Fable 5 where frontmatter
+    Policy (frontier tier = Opus 4.8 since 2026-06-13, after Fable 5 was
+    restricted; see the _SDK_FABLE banner):
+      - Theorist phase: respect frontmatter. Opus 4.8 where frontmatter
         declares "opus" (the abstract frontier-tier token), Sonnet where
         frontmatter says sonnet, Sonnet as safe default.
-      - Worker phase: Fable 5 regardless of frontmatter (2026-06-10 bump;
-        2026-05-29 had upgraded it Sonnet -> Opus). The worker translates an
-        approved theory into a kernel-executable DSL HypothesisSpec under a
-        strict fenced-JSON contract; a mis-translated spec wastes a whole
-        bounded campaign or causes a false elimination. Fallback is Sonnet
-        (capable), not Haiku.
-      - Red-team phase: respect frontmatter. Fable 5 for adversarial
+      - Worker phase: Opus 4.8 regardless of frontmatter. The worker
+        translates an approved theory into a kernel-executable DSL
+        HypothesisSpec under a strict fenced-JSON contract; a mis-translated
+        spec wastes a whole bounded campaign or causes a false elimination.
+        Fallback is Sonnet (capable), not Haiku.
+      - Red-team phase: respect frontmatter. Opus 4.8 for adversarial
         reasoning. This is where signal-vs-noise judgment happens.
-      - Stat-audit phase: respect frontmatter. Fable 5 for methodology
+      - Stat-audit phase: respect frontmatter. Opus 4.8 for methodology
         review. Statistical rigor is the bottleneck.
       - Synthesis phase: Sonnet. Mechanical summarization.
       - Pursuit phase: Sonnet. Short, passive structured-verdict ranking.
 
-    Fallback for every Fable phase is Sonnet, NOT opus-4-8: the thinking
-    option is computed from the PRIMARY model (None for Fable), so an
-    opus-4-8 fallback session would run without the disabled-thinking gate
-    and reintroduce the GOTCHA2 long-session 400 crash.
+    Fallback for every Opus phase is Sonnet 4.6. The thinking option is
+    computed from the PRIMARY model (``{"type": "disabled"}`` for opus-4-8)
+    and reused on the fallback session; Sonnet 4.6 ACCEPTS an explicit
+    disabled dict, so the gate stays coherent across the fallback. (Fable 5
+    would 400 on that dict — which is exactly why it could never be a fallback
+    here, and why the prior Fable-primary topology had to use a None gate. It
+    is now restricted entirely.)
 
     Returns (model, fallback_model) as strings the SDK accepts.
     """
     phase = phase.lower()
     declared = (spec.model or "").lower()
 
-    # Worker phase: Fable 5 (2026-06-10 bump; 2026-05-29 upgraded
-    # Sonnet/Haiku -> Opus/Sonnet). Workers write error-prone cipher/DSL
+    # Worker phase: Opus 4.8 (frontier tier; 2026-06-13 after Fable 5 was
+    # restricted — 2026-06-10 had routed it to Fable, 2026-05-29 had upgraded
+    # it Sonnet/Haiku -> Opus/Sonnet). Workers write error-prone cipher/DSL
     # constructions and must satisfy a strict fenced-JSON output contract;
     # there is a documented 21-min/166-turn worker that never emitted a
     # fence. On a MAX plan (no token constraint) the code-correctness
@@ -1233,7 +1248,7 @@ def resolve_model_for_phase(
     # pursuit stay Sonnet below (short, bounded structured-verdict calls
     # where frontier headroom is mostly wasted).
     if phase == "worker":
-        return _SDK_FABLE, _SDK_SONNET
+        return _SDK_OPUS, _SDK_SONNET
 
     # Synthesis phase always uses Sonnet — it's a summarization role.
     if phase == "synthesis":
@@ -1250,9 +1265,9 @@ def resolve_model_for_phase(
 
     # Theorist / red-team / stat-audit: honor the declared model. The
     # frontmatter token "opus" is the abstract frontier-tier marker and
-    # routes to Fable 5 since 2026-06-10.
+    # routes to Opus 4.8 (2026-06-13, after Fable 5 was restricted).
     if declared == "opus":
-        return _SDK_FABLE, _SDK_SONNET
+        return _SDK_OPUS, _SDK_SONNET
     if declared == "sonnet":
         return _SDK_SONNET, _SDK_HAIKU
     if declared == "haiku":

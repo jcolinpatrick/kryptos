@@ -156,19 +156,24 @@ class TestPreflightCheckExplicitModel:
 
     Discovered 2026-06-10 launching the first Fable 5 campaign: the probe
     passed NO model, so the SDK's bundled CLI (2.1.112, older than the PATH
-    CLI) fell through to the user-settings default model ALIAS ("fable"),
-    which it could not resolve — exit 1, campaign HALT at the transport
-    gate. Meanwhile every real controller session passes an explicit
-    "claude-fable-5" id, which the same bundled CLI accepts fine. The probe
-    must therefore exercise the exact model id the campaign will run, both
-    for representativeness and to be independent of user-level settings.
+    CLI) fell through to the user-settings default model ALIAS, which it could
+    not resolve — exit 1, campaign HALT at the transport gate. Meanwhile every
+    real controller session passes an explicit model id, which the same
+    bundled CLI accepts fine. The probe must therefore exercise the exact
+    model id the campaign will run, both for representativeness and to be
+    independent of user-level settings.
+
+    2026-06-13: the frontier-tier routing default is Opus 4.8 (Fable 5 was
+    restricted). The probe pins claude-opus-4-8 and must carry the matching
+    thinking gate — {"type": "disabled"} — so it exercises the exact request
+    shape the campaign's frontier sessions send.
     """
 
     def test_probe_query_pins_routing_default_model(self):
         from types import SimpleNamespace
 
         import kryptosbot.sdk_wrapper as sw
-        from kryptosbot.pantheon import _SDK_FABLE
+        from kryptosbot.pantheon import _SDK_OPUS
 
         captured: dict = {}
 
@@ -181,14 +186,14 @@ class TestPreflightCheckExplicitModel:
 
         assert ok is True
         opts = captured["options"]
-        assert opts.model == _SDK_FABLE, (
+        assert opts.model == _SDK_OPUS, (
             "preflight_check must pin the routing-default model id; an "
             "unset model inherits the user-settings alias, which the SDK's "
             "bundled CLI may not resolve"
         )
-        # Fable 5 rejects an explicit thinking={"type": "disabled"}; the
-        # probe must leave thinking at the SDK default (None / omitted).
-        assert getattr(opts, "thinking", None) is None
+        # Opus 4.8 disables extended thinking (GOTCHA2 long-session gate); the
+        # probe must send the same disabled-dict the campaign sessions send.
+        assert getattr(opts, "thinking", None) == {"type": "disabled"}
 
 
 # ---------------------------------------------------------------------------

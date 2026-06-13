@@ -34,8 +34,9 @@ logger = logging.getLogger("kryptosbot.token_accountant")
 # ``pricing`` kwarg on TokenAccountant or via the
 # ``KRYPTOSBOT_PRICING_JSON`` environment variable.
 _DEFAULT_PRICING: Dict[str, Dict[str, float]] = {
-    # fable-5 is the current routing default (2026-06-10); opus-4-8/4-7
-    # retained so any historical / in-flight charge still prices correctly.
+    # opus-4-8 is the frontier-tier routing default (2026-06-13, after Fable 5
+    # was restricted). fable-5/opus-4-7 retained so any historical / in-flight
+    # charge still prices correctly (fable-5 is restricted and no longer routed).
     "claude-fable-5":    {"input": 10.00, "output": 50.00},
     "claude-opus-4-8":   {"input": 15.00, "output": 75.00},
     "claude-opus-4-7":   {"input": 15.00, "output": 75.00},
