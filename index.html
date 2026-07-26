@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KryptosBot &middot; temporarily offline</title>
+<meta name="description" content="kryptosbot.com is temporarily offline while the server is relocated. The Kryptos K4 research repository remains available on GitHub.">
+<meta name="robots" content="noindex">
+<link rel="icon" href="kryptosbot.png">
+<style>
+  :root {
+    --bg-root: #0a0f14;
+    --bg-surface: #111820;
+    --bg-elevated: #19222d;
+    --text-primary: #e8edf3;
+    --text-secondary: #94a3b8;
+    --text-tertiary: #64748b;
+    --border-default: #1e293b;
+    --border-strong: #334155;
+    --accent: #38bdf8;
+    --accent-hover: #60ccfc;
+    --accent-muted: #0c4a6e;
+    --amber: #fbbf24;
+    --patina: #5b8a72;
+    --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --font-mono: "JetBrains Mono", "SF Mono", "Fira Code", "Cascadia Code", ui-monospace, monospace;
+    --radius: 8px;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { -webkit-text-size-adjust: 100%; }
+
+  body {
+    margin: 0;
+    padding: clamp(1.5rem, 5vw, 4rem) 1.25rem;
+    background: var(--bg-root);
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.65;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+  }
+
+  main { width: 100%; max-width: 40rem; }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    margin-bottom: 2.5rem;
+  }
+  .brand img {
+    width: 3rem;
+    height: auto;
+    max-width: 100%;
+    flex-shrink: 0;
+  }
+  .brand-name {
+    font-size: 1.125rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .brand-sub {
+    font-size: 0.8125rem;
+    color: var(--text-tertiary);
+  }
+
+  .status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--amber);
+    border: 1px solid rgba(251, 191, 36, 0.25);
+    background: rgba(251, 191, 36, 0.1);
+    border-radius: 99px;
+    padding: 0.3rem 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+  .status::before {
+    content: "";
+    width: 0.4rem;
+    height: 0.4rem;
+    border-radius: 50%;
+    background: var(--amber);
+  }
+
+  h1 {
+    font-size: clamp(1.5rem, 5vw, 2rem);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    margin: 0 0 1rem;
+    font-weight: 650;
+  }
+
+  p { margin: 0 0 1rem; color: var(--text-secondary); }
+  p.lead { color: var(--text-primary); }
+
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { color: var(--accent-hover); text-decoration: underline; }
+  a:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 3px;
+  }
+
+  .cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 1.25rem 0 2rem;
+    padding: 0.75rem 1.25rem;
+    background: var(--accent-muted);
+    border: 1px solid var(--accent);
+    border-radius: var(--radius);
+    color: var(--text-primary);
+    font-weight: 550;
+    transition: background 180ms ease;
+  }
+  .cta:hover {
+    background: #0e5c86;
+    color: #fff;
+    text-decoration: none;
+  }
+  .cta .arrow { color: var(--accent); }
+
+  .panel {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.375rem;
+    margin-bottom: 2rem;
+  }
+  .panel h2 {
+    font-size: 0.75rem;
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-tertiary);
+    margin: 0 0 0.875rem;
+    font-weight: 500;
+  }
+  .panel ul { margin: 0; padding: 0; list-style: none; }
+  .panel li {
+    padding: 0.4rem 0;
+    border-top: 1px solid var(--border-default);
+    font-size: 0.9375rem;
+  }
+  .panel li:first-child { border-top: 0; padding-top: 0; }
+  .panel li span { color: var(--text-tertiary); font-size: 0.8125rem; }
+
+  .ct {
+    font-family: var(--font-mono);
+    font-size: clamp(0.5rem, 1.9vw, 0.6875rem);
+    line-height: 1.9;
+    color: var(--patina);
+    opacity: 0.5;
+    word-break: break-all;
+    margin: 0;
+    letter-spacing: 0.06em;
+  }
+
+  footer {
+    margin-top: 2.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--border-default);
+    font-size: 0.8125rem;
+    color: var(--text-tertiary);
+  }
+  footer p { color: var(--text-tertiary); font-size: 0.8125rem; }
+</style>
+</head>
+<body>
+<main>
+
+  <div class="brand">
+    <img src="kryptosbot.png" alt="">
+    <div>
+      <div class="brand-name">KryptosBot</div>
+      <div class="brand-sub">An open-source computational analysis of Kryptos K4</div>
+    </div>
+  </div>
+
+  <div class="status">temporarily offline</div>
+
+  <h1>The site is offline while the server relocates.</h1>
+
+  <p class="lead">
+    kryptosbot.com is self-hosted on a single machine, and that machine is being
+    physically moved. It will be back once it is set up on a stable connection again.
+  </p>
+
+  <p>
+    Nothing is lost. The site is generated from data held in the project's public
+    research repository, so everything it published is still readable there.
+  </p>
+
+  <a class="cta" href="https://github.com/jcolinpatrick/kryptos">
+    Go to the research repository <span class="arrow">&rarr;</span>
+  </a>
+
+  <div class="panel">
+    <h2>What the site published, and where to read it now</h2>
+    <ul>
+      <li>
+        <a href="https://github.com/jcolinpatrick/kryptos/blob/main/docs/REAL_K4_CURRENT_POSITION.md">Current K4 position</a><br>
+        <span>The authoritative status report, including the explicit non-claim statement.</span>
+      </li>
+      <li>
+        <a href="https://github.com/jcolinpatrick/kryptos/blob/main/docs/elimination_tiers.md">What has been eliminated</a><br>
+        <span>The tier framework. Per-experiment records live in <code>exhaustion_log.json</code>.</span>
+      </li>
+      <li>
+        <a href="https://github.com/jcolinpatrick/kryptos/blob/main/docs/research_questions.md">Open research questions</a><br>
+        <span>RQ-1 through RQ-13, the live question surface.</span>
+      </li>
+      <li>
+        <a href="https://github.com/jcolinpatrick/kryptos/issues/new">Submit a theory or report an error</a><br>
+        <span>The automated novelty check ran in the site's API, so submissions are read by hand until it returns.</span>
+      </li>
+    </ul>
+  </div>
+
+  <p style="color:var(--text-tertiary);font-size:0.875rem">
+    The interactive workbench has no offline equivalent. It is a browser application
+    served by the site, and it returns with it.
+  </p>
+
+  <footer>
+    <p style="margin-bottom:0.875rem">K4, still unsolved since 1990:</p>
+    <p class="ct">OBKRUOXOGHULBSOLIFBBWFLRVQQPRNGKSSOTWTQSJQSSEKZZWATJKLUDIAWINFBNYPVTTMZFPKWGDKZXTJCDIGKUHUAUEKCAR</p>
+    <p style="margin-top:1.25rem;margin-bottom:0">
+      No K4 solution is claimed by this project. <em>Kryptos</em> was created by Jim Sanborn
+      with cryptographic assistance from Ed Scheidt.
+    </p>
+  </footer>
+
+</main>
+</body>
+</html>
