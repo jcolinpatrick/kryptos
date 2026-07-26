@@ -111,27 +111,78 @@ minutes, but allow up to an hour, and certificate provisioning can lag behind DN
 ### 3. Verify the forward actually works
 
 Do this **while the server is still running**, so you can back out if the forward
-misbehaves. Check from a machine that is not on your LAN, or the local nginx will answer
-instead of the forward.
+misbehaves.
+
+**Two traps make the naive test lie.** Both were hit on 2026-07-26.
+
+*Trap 1: a stale DNS cache means you test your own server.* Plain
+`curl https://kryptosbot.com` from this machine, or from anywhere with the old A record
+cached, resolves to your WAN IP and gets answered by local nginx. It returns `200` with
+the real site and a `server: nginx` header, which looks like a pass and proves nothing
+about the forward. Query a resolver that has no cached copy, then pin curl to the
+addresses you get back:
 
 ```bash
-# Should show a 3xx with a Location header pointing at github.com
-curl -sSI https://kryptosbot.com | head -20
-
-# Certificate must be valid for kryptosbot.com, or HSTS blocks returning visitors
-curl -sS -o /dev/null -w '%{http_code} %{redirect_url}\n' https://kryptosbot.com
-echo | openssl s_client -connect kryptosbot.com:443 -servername kryptosbot.com 2>/dev/null \
-  | openssl x509 -noout -subject -dates
+# Authoritative answer, bypassing any local cache
+curl -s "https://dns.google/resolve?name=kryptosbot.com&type=A" \
+  | python3 -c "import json,sys; [print(a['data']) for a in json.load(sys.stdin).get('Answer',[])]"
 ```
 
-Look for: a 302 (not 301), a `Location` on github.com, and a certificate whose subject
-covers kryptosbot.com and has not expired.
+A forward is in effect when those addresses are GoDaddy's, not your WAN IP. On
+2026-07-26 they were `3.33.152.147` and `15.197.142.173`. Treat the values as
+changeable and read them from the query rather than hardcoding them.
 
-If the certificate is missing or invalid, returning visitors get a hard TLS error rather
-than a redirect. That is worse than a plain timeout, because it looks like the domain has
-been hijacked. In that case remove the forward and fall back to leaving DNS alone: the
-README notice on GitHub still explains the outage to anyone who arrives from search or a
-link.
+*Trap 2: `curl -I` sends HEAD, and GoDaddy's load balancer rejects it with `405 Not
+Allowed`.* That looks like a broken forward when the forward is fine. Use GET.
+
+```bash
+IP=3.33.152.147     # substitute what the query above returned
+
+# HTTPS: the path that matters, because HSTS forces returning visitors onto it
+curl -sS --max-time 20 --resolve "kryptosbot.com:443:$IP" -o /dev/null \
+  -w 'https code=%{http_code} location=%{redirect_url}\n' https://kryptosbot.com
+
+# HTTP: GET, not HEAD
+curl -sS --max-time 20 --resolve "kryptosbot.com:80:$IP" -o /dev/null \
+  -w 'http  code=%{http_code} location=%{redirect_url}\n' http://kryptosbot.com
+
+# Is 443 even listening? Distinguishes a bad cert from no listener at all.
+timeout 8 bash -c "cat < /dev/null > /dev/tcp/$IP/443" && echo "443 open" || echo "443 closed"
+
+# The certificate HSTS browsers require
+echo | timeout 15 openssl s_client -connect "$IP:443" -servername kryptosbot.com 2>&1 \
+  | grep -E "Verify return code|subject="
+```
+
+Look for: `302` (not 301), a `Location` on github.com, 443 open, and
+`Verify return code: 0 (ok)`.
+
+**What actually happened on 2026-07-26.** HTTP worked correctly and returned
+`302 -> http://github.com/jcolinpatrick/kryptos`, chaining to
+`https://github.com/jcolinpatrick/kryptos` in two hops. HTTPS was completely dead: port
+443 was not listening on either endpoint, so there was no certificate to inspect and no
+handshake to fail. GoDaddy had not provisioned a forwarding certificate.
+
+That combination is the bad case, because HSTS makes HTTPS the *only* path returning
+visitors can take. Their browser rewrites to `https://` before sending a request, hits a
+closed port, and times out. Inbound links from search results are also overwhelmingly
+`https://`. Plain-HTTP forwarding reaches only visitors typing the bare hostname whose
+browser falls back after the HTTPS attempt fails, and reaches nobody with HTTPS-Only
+mode enabled.
+
+If 443 does not open:
+
+1. Confirm SSL forwarding is actually **enabled** in the GoDaddy panel, not just
+   "forward only." If the toggle is off, waiting changes nothing.
+2. If it is on, give it time. GoDaddy provisions the certificate asynchronously, and it
+   can take hours. Poll for the listener rather than guessing:
+   ```bash
+   while ! timeout 8 bash -c "cat < /dev/null > /dev/tcp/3.33.152.147/443" 2>/dev/null; do
+     echo "$(date '+%H:%M:%S') still closed"; sleep 180
+   done; echo "443 open"
+   ```
+3. If it never comes up, switch to the GitHub Pages fallback below. That path gets a
+   real Let's Encrypt certificate automatically and satisfies HSTS for every visitor.
 
 ### 4. Stop services and shut down
 
@@ -145,6 +196,79 @@ sudo shutdown -h now
 Disabling the API service matters if the machine gets powered on at the new location
 before the network is ready. It avoids a half-live service answering on an address DNS
 does not point to.
+
+---
+
+## Fallback: GitHub Pages on the apex domain
+
+Use this when registrar forwarding cannot serve HTTPS. GitHub Pages issues a real
+Let's Encrypt certificate for a custom apex domain, so HSTS is satisfied and returning
+visitors get through. It also puts the explanation on kryptosbot.com itself rather than
+bouncing people to a repository they did not ask for.
+
+**Prepared and standing by, not live.** Branch `site-holding-page` (pushed 2026-07-26)
+is an orphan branch containing only four files:
+
+```
+.nojekyll         suppresses Jekyll processing
+CNAME             kryptosbot.com
+index.html        self-contained holding page, inline CSS, no external requests
+kryptosbot.png    logo, doubles as favicon
+```
+
+It is an orphan branch on purpose: no repo history or source is reachable from it, so
+serving it exposes nothing beyond the page. It is deliberately **not** named `gh-pages`,
+because that name can trigger automatic publication. Nothing happens until Pages is
+explicitly pointed at it.
+
+### Activating
+
+1. **GitHub:** repo Settings, Pages. Source: Deploy from a branch. Branch:
+   `site-holding-page`, folder `/ (root)`. Save. The `CNAME` file in the branch sets the
+   custom domain to kryptosbot.com automatically.
+2. **GoDaddy:** delete the domain forward. Leaving it in place overrides the A record and
+   the Pages site will never be reached.
+3. **GoDaddy:** add A records for the apex pointing at GitHub Pages:
+   ```
+   185.199.108.153
+   185.199.109.153
+   185.199.110.153
+   185.199.111.153
+   ```
+   Optionally add a `www` CNAME to `jcolinpatrick.github.io`.
+4. **Wait for the certificate.** GitHub provisions it only after DNS resolves to Pages.
+   Usually minutes, occasionally up to a few hours. In Settings, Pages, the "Enforce
+   HTTPS" checkbox becomes available once the certificate exists. Tick it.
+
+### Verifying
+
+```bash
+curl -s "https://dns.google/resolve?name=kryptosbot.com&type=A" \
+  | python3 -c "import json,sys; [print(a['data']) for a in json.load(sys.stdin).get('Answer',[])]"
+
+curl -sS --max-time 20 -o /dev/null \
+  -w 'code=%{http_code} bytes=%{size_download}\n' https://kryptosbot.com
+
+echo | timeout 15 openssl s_client -connect kryptosbot.com:443 -servername kryptosbot.com 2>&1 \
+  | grep -E "Verify return code|subject="
+```
+
+Success is `200`, a certificate issued by Let's Encrypt with subject covering
+kryptosbot.com, and `Verify return code: 0 (ok)`. At that point HSTS is satisfied and
+every visitor, returning or not, sees the holding page.
+
+### Deactivating on return
+
+Order matters. Repointing DNS while Pages still claims the domain is harmless, but
+leaving the custom domain set on Pages after the site returns can interfere with
+certificate renewal.
+
+1. GitHub Settings, Pages: set Source to None, and clear the custom domain.
+2. GoDaddy: replace the four Pages A records with a single A record for the new WAN IP.
+3. Continue with "Coming back online" below.
+
+The `site-holding-page` branch can stay in the repo indefinitely. It costs nothing and is
+ready for the next planned outage.
 
 ---
 
@@ -252,7 +376,8 @@ Then push to `main` as usual, subject to whatever push constraints are current.
 
 | Surface | State while offline |
 |---|---|
-| kryptosbot.com and all subpages | Forwarded to the GitHub repository (302) |
+| kryptosbot.com over HTTP | Forwarded to the GitHub repository (302), verified working |
+| kryptosbot.com over HTTPS | Dead until GoDaddy provisions a forwarding certificate or the Pages fallback is activated. HSTS forces returning visitors down this path, so this is the case that matters. |
 | Workbench, VIC workbench, cylinder viewer | Unavailable. Browser apps served by the site. |
 | Theory submission API (`127.0.0.1:8321`) | Stopped. Submissions arrive as GitHub issues instead. |
 | Search index, browse pages, elimination pages | Unavailable on the web. Source data still in the repo. |
