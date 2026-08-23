@@ -10,43 +10,11 @@
 </p>
 
 <p align="center">
-  <strong>kryptosbot.com is temporarily offline while the server relocates.</strong><br>
-  <a href="#site-status">What that means</a> &middot;
-  <a href="docs/REAL_K4_CURRENT_POSITION.md">K4 status</a> &middot;
-  <a href="docs/elimination_tiers.md">What's eliminated</a> &middot;
-  <a href="docs/research_questions.md">Open questions</a> &middot;
-  <a href="https://github.com/jcolinpatrick/kryptos/issues/new">Report an error</a>
+  <a href="https://kryptosbot.com">kryptosbot.com</a> &middot;
+  <a href="https://kryptosbot.com/workbench/">Workbench</a> &middot;
+  <a href="https://kryptosbot.com/submit/">Submit a Theory</a> &middot;
+  <a href="https://kryptosbot.com/browse/">Browse Eliminations</a>
 </p>
-
----
-
-## Site status
-
-> **kryptosbot.com is temporarily offline.**
->
-> The site runs on a single self-hosted machine, and that machine is being physically
-> relocated. It will be back once it is set up on a stable connection again. Nothing is
-> lost: the site is generated from the data in this repository, so everything it
-> published is still here.
->
-> While the server is down, `kryptosbot.com` forwards to this repository, and this
-> repository is the project's home. Every `kryptosbot.com` link in this README and in
-> the docs will fail to load until the server returns. They are left in place
-> deliberately, so they start working again the moment it does.
-
-Where to read the same material here in the meantime:
-
-| The site published | Read it here instead |
-|---|---|
-| Browse Eliminations | [`docs/elimination_tiers.md`](docs/elimination_tiers.md) for the tier framework, plus [`exhaustion_log.json`](exhaustion_log.json) for the authoritative per-experiment record |
-| Findings and current status | [`docs/REAL_K4_CURRENT_POSITION.md`](docs/REAL_K4_CURRENT_POSITION.md), the authoritative status report, including the explicit non-claim statement |
-| Methodology and live research state | [`docs/README_current_state.md`](docs/README_current_state.md), the entry index to the claims registry, open audits, and current position |
-| Research questions | [`docs/research_questions.md`](docs/research_questions.md) |
-| Submit a theory | [Open an issue](https://github.com/jcolinpatrick/kryptos/issues/new). The automated novelty check runs in the site's API, so submissions are read by hand until it is back. |
-| Workbench (interactive solver) | No offline equivalent: it is a browser app served by the site. To run the same transforms locally, see [Quick start](#quick-start). |
-| Archive photographs | Not in this repo, for copyright and size reasons. Returns with the site. |
-
-Operators: the shutdown and restore procedure is in [`ops/deploy/OFFLINE_MODE.md`](ops/deploy/OFFLINE_MODE.md).
 
 ---
 
@@ -120,6 +88,7 @@ PYTHONPATH=src python3 -m kryptos sweep <config.toml>
 PYTHONPATH=src python3 -m kryptos doctor
 ```
 
+
 ## Scoring system
 
 Every candidate decryption is scored against known constraints:
@@ -137,7 +106,7 @@ The score is based on crib consistency (do the known plaintext positions produce
 
 ## What's been eliminated
 
-The site's [browse view](https://kryptosbot.com/browse/) documents 522 recorded eliminations across 7 categories (count as of 2026-06-11). It rebuilds from the same data held in this repo, so while the site is offline, [`exhaustion_log.json`](exhaustion_log.json) is the authoritative record:
+The [kryptosbot.com](https://kryptosbot.com/browse/) site currently documents 522 recorded eliminations across 7 categories (count as of 2026-06-11; the site rebuilds from the same data in this repo):
 
 - **Substitution.** Vigenere, Beaufort, Quagmire, Hill, Caesar, mixed alphabets.
 - **Transposition.** Columnar, double-columnar, AMSCO, Myszkowski, rail fence, route, grille.
@@ -176,8 +145,7 @@ of the public repo:
    `analysis_runs/`): third-party books and scans (some copyrighted),
    bulk photo corpora, and community-thread archives. The photographs
    the project shares are the ones published on
-   [kryptosbot.com/archive](https://kryptosbot.com/archive/)
-   (offline while the server relocates).
+   [kryptosbot.com/archive](https://kryptosbot.com/archive/).
 4. **Machine outputs**: multi-gigabyte run outputs, caches, and build
    artifacts. Result summaries that feed the site live in `results/`
    and `docs/`.
@@ -186,9 +154,9 @@ of the public repo:
 
 The whole point of open-sourcing this is to get more eyes on K4.
 
-**Try a theory:** The [browser workbench](https://kryptosbot.com/workbench/) applies transpositions and substitutions with live crib scores, no install needed. It is offline while the server relocates; until it returns, clone the repo and use the CLI shown in [Quick start](#quick-start).
+**Try a theory:** Use the [browser workbench](https://kryptosbot.com/workbench/), no install needed. Apply transpositions and substitutions, see crib scores in real time.
 
-**Submit a theory:** [kryptosbot.com/submit](https://kryptosbot.com/submit/) checks whether an idea has already been tested and queues novel feasible theories for evaluation. It is offline while the server relocates; in the meantime, [open an issue](https://github.com/jcolinpatrick/kryptos/issues/new) and it will be read by hand.
+**Submit a theory:** Use [kryptosbot.com/submit](https://kryptosbot.com/submit/) to check if your idea has already been tested. Novel feasible theories are queued for evaluation.
 
 **Write an experiment:** See any script in `scripts/` for the pattern. Import constants from `kryptos.kernel.constants`, implement an `attack()` function, check results against the scoring system.
 
@@ -205,7 +173,7 @@ The whole point of open-sourcing this is to get more eyes on K4.
 
 - [Bean 2021](https://ecp.ep.liu.se/index.php/histocrypt/article/view/153): "Cryptodiagnosis of Kryptos K4," HistoCrypt 2021.
 - [Elonka Dunin's Kryptos page](https://elonka.com/kryptos/): community hub and transcription.
-- Ed Scheidt interviews and Sanborn's August 2025 open letter: summarized on [kryptosbot.com/about-kryptos](https://kryptosbot.com/about-kryptos/) (offline while the server relocates). (The project's local `reference/` corpus of third-party source material is not in the public repo for copyright reasons.)
+- Ed Scheidt interviews and Sanborn's August 2025 open letter: summarized on [kryptosbot.com/about-kryptos](https://kryptosbot.com/about-kryptos/). (The project's local `reference/` corpus of third-party source material is not in the public repo for copyright reasons.)
 
 ## Credits
 
@@ -214,4 +182,3 @@ Built by **Colin Patrick** (human lead) and **Claude** (computational partner, A
 The sculpture *Kryptos* was created by **Jim Sanborn** with cryptographic assistance from **Ed Scheidt** (retired Chairman of the CIA Cryptographic Center).
 
 ---
-
