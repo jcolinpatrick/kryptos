@@ -1411,6 +1411,18 @@
     "family": "crib_analysis",
     "status": "exhausted"
   },
+  "e_crib_33_verify_exact_closures": {
+    "audit_reason": "ALL 44 PASS. Establishes the contributed closure script does not over-eliminate, which is the only direction an elimination script fails dangerously.",
+    "description": "e_crib_33_verify_exact_closures.py \u2014 44 positive controls for k4_exact_closures.py: synthesise ciphertext from a known configuration of each family and require the test to report it as surviving.",
+    "family": "crib_analysis",
+    "status": "exhausted"
+  },
+  "e_crib_34_stehle_null": {
+    "audit_reason": "CORRECTION. Honest any-lag null gives p=1/205 (lags 1-30) and 1/234 (lags 1-24), against a previously cited p~1/642 \u2014 generous by ~3x. Lag 4 alone would be 1/5,714 but lag 4 was found by inspection, not pre-registered, so that conditioning is unavailable. Real pattern, weak evidence.",
+    "description": "e_crib_34_stehle_null.py \u2014 recomputes the null for the Stehle constant-difference anomaly (registry E0a).",
+    "family": "crib_analysis",
+    "status": "exhausted"
+  },
   "e_crib_only_keyword_sweep": {
     "description": "e_crib_only_keyword_sweep.py",
     "family": "team",
@@ -6410,6 +6422,12 @@
   "k4_dual_sa": {
     "description": "Dual-objective SA: search for K4 key that produces English plaintext",
     "family": "campaigns",
+    "status": "active"
+  },
+  "k4_exact_closures": {
+    "audit_reason": "Verified: constants match the kernel exactly; all four results reproduce cribs-only and with --opening. 44 positive controls pass (e_crib_33) so it does not over-eliminate. Cribs-only closures: [1] periods 1-26 and 30-52 contradicted, 27-29/53+ vacuous; [2] periods 1-23 contradicted for 6 of 8 conventions; [3] every (P,Q) with P+Q<=24 contradicted; [4] free-alphabet Quagmire I/II contradicted through 12, 14, 15, 17 with period 13 structurally vacuous. KNOWN GAP: test 4's injectivity post-filter is documented but not implemented, so its survivor list is a conservative overcount.",
+    "description": "k4_exact_closures.py \u2014 EXTERNALLY CONTRIBUTED 2026-08-25. Exact non-enumerative crib-constraint closures over Z_26: (1) single additive periodic key, (2) crib words tiled at free relative offsets, (3) key = a[i mod P] + b[i mod Q] via Gaussian elimination mod 2 and mod 13, (4) Quagmire I/II with a completely free mixed alphabet (all 26! at once, graph method). 1-indexed.",
+    "family": "_uncategorized",
     "status": "active"
   },
   "k4_novel_attacks": {

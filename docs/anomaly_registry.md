@@ -293,6 +293,14 @@ Source: Bean, R. "Cryptodiagnosis of Kryptos K4", HistoCrypt 2021. `reference/03
   I−D=5, N−I=5, F−A=5, B−W=5, N−I=5. First noted by Stehle (2000).
 - **Source**: Bean 2021 Section 2.3, citing Stehle (2000) on sci.crypt
 - **Classification**: UNDISCUSSED by Sanborn
+- **Null, recomputed 2026-08-25** (200,000 trials, uniform null, repro
+  `scripts/crib_analysis/e_crib_34_stehle_null.py`): the honest search is
+  "does a run of >= 5 equal lag-L differences occur anywhere, for any lag",
+  because lag 4 and positions 55-63 were both found by inspection rather than
+  pre-registered. P = **1/205** for lags 1-30 and 1/234 for lags 1-24. At the
+  single pre-specified lag 4 it would be 1/5,714, but that conditioning is not
+  available after the fact. A previously cited figure of p ~ 1/642 was
+  generous by roughly 3x. Treat as a real pattern with weak evidential weight.
 - **Crypto significance**: MEDIUM-HIGH — Could indicate:
   (a) A key offset of 5 operating at interval 4 in this segment
   (b) Evidence for a Gromark-like key with particular step structure

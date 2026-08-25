@@ -378,7 +378,7 @@
       "section": "surviving_anomaly",
       "status": "unknown",
       "evidence_class": "empirical_negative",
-      "statement": "Stehle constant-difference (pos 55-63, p~1/642 corrected): unique in K4; local coincidence, not a mechanism.",
+      "statement": "Stehle constant-difference (pos 55-63, 0-indexed): five consecutive equal lag-4 differences. RECOMPUTED 2026-08-25: under a uniform null the natural search 'a run of >=5 equal lag-L differences anywhere in the text, any lag 1-30' has p = 1/205 (200k trials); restricted to lag 1-24 it is 1/234. The previously cited p~1/642 was generous by about 3x. At the specific lag 4 alone it is 1/5,714, but lag 4 was found by inspection, not pre-registered, so the any-lag figure governs. Real pattern, weak evidence: local coincidence, not a mechanism.",
       "scope": "CT positions 55-63 constant-difference statistic",
       "source": "docs/anomaly_registry.md",
       "artifact": null,

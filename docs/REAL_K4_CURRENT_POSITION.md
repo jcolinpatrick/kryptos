@@ -329,9 +329,14 @@ evidence pool.
 ## 6. Why public-data-only K4 is underdetermined
 
 K4 is 97 ciphertext characters. The disclosed cribs cover 24 of
-those positions (EAST 21 — 24, NORTHEAST 25 — 33, BERLIN 64 — 69,
-CLOCK 70 — 74, with compounds EASTNORTHEAST 21 — 33 and
-BERLINCLOCK 63 — 73). The remaining 73 positions are unknown
+those positions. **All positions here are 0-indexed**, matching
+`kryptos.kernel.constants.CRIB_DICT`: EAST 21 — 24, NORTHEAST 25 — 33,
+BERLIN 63 — 68, CLOCK 69 — 73, with compounds EASTNORTHEAST 21 — 33 and
+BERLINCLOCK 63 — 73. (Public sources and Sanborn's own statements are
+1-indexed, where the same spans read EAST 22 — 25, BERLIN 64 — 69,
+CLOCK 70 — 74. A previous revision of this sentence mixed the two
+conventions, giving BERLIN and CLOCK 1-indexed while everything around
+them was 0-indexed.) The remaining 73 positions are unknown
 plaintext. From a public-evidence standpoint, the underdetermination
 is structural:
 
