@@ -1405,6 +1405,12 @@
     "family": "crib_analysis",
     "status": "exhausted"
   },
+  "e_crib_31_filter_power_analysis": {
+    "audit_reason": "CONTROL, not an attack. Shows the ceiling filter's zero-survivor results at hypothesised crib levels L1-L5 are PIGEONHOLE-AUTOMATIC: a uniform random 97-permutation also survives 0/3000 at every swept (level, period) cell with n_cribs >> period. Family-specific elimination claims at L1+ are therefore unearned. The disjunction (truth would survive, so either the mechanism is outside the swept space or the plaintext hypothesis is false) remains valid. Operational rule recorded: never report a ceiling-filter elimination without the matched random-permutation survival rate for the same (n_cribs, period).",
+    "description": "e_crib_31_filter_power_analysis.py \u2014 matched random-permutation null for the attainable-crib-ceiling filter across crib levels L0-L4 and periods 10-80.",
+    "family": "crib_analysis",
+    "status": "exhausted"
+  },
   "e_crib_only_keyword_sweep": {
     "description": "e_crib_only_keyword_sweep.py",
     "family": "team",
