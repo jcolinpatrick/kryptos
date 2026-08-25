@@ -1411,6 +1411,12 @@
     "family": "crib_analysis",
     "status": "exhausted"
   },
+  "e_crib_32_sub_then_strip": {
+    "audit_reason": "CLOSES A REAL GAP. Strip transposition (contiguous block reordering) is a different permutation group from columnar and was absent from every prior sweep. RESULT at L0 (released cribs only, unconditional): strip lengths 4-14 ELIMINATED at every period 1-20 for every key across 4 alphabet pairs and 3 variants. Survivors exist only at L=2 (96) and L=3 (4), periods 11-20, and are ARTEFACTS: a shuffled-ciphertext search succeeds 80.8-100% at L=2 while succeeding 0% at L=3 p13 and L=4 p11. The script's own null_rate samples assignments rather than searching them and misleadingly reports 0.000; corrected numbers are in the docstring. Eliminations are unaffected by this (162/162 positive controls confirm the truth always survives). 12 cells at L=2 p16/17/19 hit the node budget and are labelled INCONCLUSIVE, never eliminated.",
+    "description": "e_crib_32_sub_then_strip.py \u2014 CT = StripTranspose(PeriodicSub(PT)); exact CSP over contiguous-block assignments with forward checking, strip lengths 2-14, periods 1-20, 4 alphabet pairs, 3 variants. Externally proposed 2026-08-25.",
+    "family": "crib_analysis",
+    "status": "exhausted"
+  },
   "e_crib_33_verify_exact_closures": {
     "audit_reason": "ALL 44 PASS. Establishes the contributed closure script does not over-eliminate, which is the only direction an elimination script fails dangerously.",
     "description": "e_crib_33_verify_exact_closures.py \u2014 44 positive controls for k4_exact_closures.py: synthesise ciphertext from a known configuration of each family and require the test to report it as surviving.",
@@ -1420,6 +1426,12 @@
   "e_crib_34_stehle_null": {
     "audit_reason": "CORRECTION. Honest any-lag null gives p=1/205 (lags 1-30) and 1/234 (lags 1-24), against a previously cited p~1/642 \u2014 generous by ~3x. Lag 4 alone would be 1/5,714 but lag 4 was found by inspection, not pre-registered, so that conditioning is unavailable. Real pattern, weak evidence.",
     "description": "e_crib_34_stehle_null.py \u2014 recomputes the null for the Stehle constant-difference anomaly (registry E0a).",
+    "family": "crib_analysis",
+    "status": "exhausted"
+  },
+  "e_crib_35_autokey_peel_correction": {
+    "audit_reason": "CORRECTION TO A PERMANENT-CLASSIFIED ELIMINATION. E-FRAC-37 covered only the substitution-outer peel. In CT=Transpose(Autokey(PT)) the crib problem separates by primer slot. Measured: CT-autokey max 7/24 over 75 transpositions (elimination HOLDS, stronger than the registered 21/24); PT-autokey max 23/24 for primer<=25 (HOLDS) but 24/24 at primer 26 (FAILS). The registered figure 'PT-autokey max=16/24' was wrong. The primer-26 cell is UNDERDETERMINED (26 free letters, 24 cribs, 23 residue classes), not a lead. Elimination rescoped to primer<=25 in elimination_tiers.md (3 sites), two_systems_landscape.md, and session_briefing_claims.json (2 sites).",
+    "description": "e_crib_35_autokey_peel_correction.py \u2014 corrects E-FRAC-37 for the transposition-outer autokey peel.",
     "family": "crib_analysis",
     "status": "exhausted"
   },

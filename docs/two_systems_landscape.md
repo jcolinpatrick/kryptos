@@ -49,7 +49,7 @@ This is the "K4 is one layer" baseline. Most of the project's mass is here.
 | Periodic Vigenère/Beaufort/VarBeau (any period 1-26) | **STRUCTURAL** | E-FRAC-35 Bean impossibility proof | Direct positional alignment + additive class |
 | Hill 2×2 / 3×3 | **STRUCTURAL** | algebraic | Direct positional alignment |
 | Bifid / trifid / ADFGVX / Polybius | **STRUCTURAL** | E-FRAC-21 (parity, alphabet, digit constraints) | Holds with or without transposition |
-| Autokey (PT or CT, Vig/Beau) | **STRUCTURAL** | E-FRAC-37: PT-autokey max 16/24, CT-autokey max 21/24 | Standard autokey rules; non-standard variants not covered |
+| Autokey (PT or CT, Vig/Beau) | **STRUCTURAL, primer ≤ 25** | E-FRAC-37 rescoped by e_crib_35 (2026-08-25): CT-autokey max 7/24; PT-autokey max 23/24 at primer 25, 24/24 at primer 26 (underdetermined) | Standard autokey rules; non-standard variants not covered; original figure 16/24 was wrong |
 | Quagmire I/II/III/IV | **EMPIRICAL** | ~2M configs, eliminated | Periodic keying class; non-periodic Quagmire untested |
 | Running-key from K1/K2/K3 plaintext | **EMPIRICAL** | E-JTS-12, ZERO matches across 694K transpositions | Identity + structured transpositions only |
 | Running-key from Carter / Kahn / 73 Gutenberg books | **EMPIRICAL** | E-FRAC-49: 8.4B checks, ZERO matches | Specific corpora |

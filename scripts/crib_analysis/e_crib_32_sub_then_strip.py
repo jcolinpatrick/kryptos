@@ -47,6 +47,35 @@ CONVENTIONS, stated because they are choices
   * Both the identity assignment and all non-identity assignments are searched;
     the identity is the no-transposition control.
 
+RESULT (2026-08-25)
+-------------------
+  L0 (24 released cribs): 100 of 3120 cells not eliminated, 12 inconclusive.
+  Survivors sit ONLY at strip length 2 (96) and 3 (4), and ONLY at periods
+  11-20. Strip lengths 4-14 are eliminated at every period 1-20, for every
+  key, across 4 alphabet pairs and 3 variants. L3 (46 cribs): 0 of 3120.
+
+  THE SURVIVORS ARE AN ARTEFACT, AND THE null_rate BELOW DOES NOT SHOW IT.
+  `null_rate` samples random ASSIGNMENTS against the real ciphertext, and
+  reports 0.000 everywhere. But this sweep never samples assignments -- it
+  SEARCHES for the best one over 48! of them at L=2. The matched null must
+  therefore be: on a RANDOM ciphertext, does the same search still succeed?
+
+      L=2 p=11   shuffled-CT search succeeds  97/120  = 80.8%
+      L=2 p=15   shuffled-CT search succeeds 120/120  = 100.0%
+      L=2 p=20   shuffled-CT search succeeds  13/15   = 86.7%
+      L=3 p=13   shuffled-CT search succeeds   0/120  = 0.0%
+      L=4 p=11   shuffled-CT search succeeds   0/120  = 0.0%
+
+  So K4 surviving at L=2 is unremarkable: 49 blocks and a period above 10
+  leave the search enough freedom that almost any ciphertext survives.
+  The ELIMINATIONS are unaffected -- the true configuration satisfies the
+  constraints by construction (162/162 positive controls), so a cell that
+  fails to admit any assignment is a sound closure regardless of null rate.
+  Null rates govern the reading of SURVIVORS, not of ELIMINATIONS.
+
+  HEADLINE: strip lengths 4-14 closed on the released cribs alone; strip
+  lengths 2-3 underdetermined, not evidence.
+
 PRE-REGISTERED INTERPRETATION
 -----------------------------
   ceiling/consistency is an EXISTENCE result over ALL keys:
@@ -98,80 +127,116 @@ def blocks_for(L: int):
     return starts, lens, ragged
 
 
-def search(cribs, L, p, ct_tab, pt_tab, variant, forced=None, budget=400_000):
-    """Exact backtracking: does ANY equal-length block assignment admit a key?
+def search(cribs, L, p, ct_tab, pt_tab, variant, budget=150_000):
+    """Exact CSP over block assignments, with forward checking.
+
+    Variables  = PT blocks that contain at least one crib.
+    Domain     = CT blocks of the same length, minus those already used.
+    Constraint = the induced (key-class -> shift) demands must agree, both
+                 within a block and across every pair of blocks.
 
     Returns (found, exhausted). exhausted=False means the node budget ran out,
-    in which case the cell is INCONCLUSIVE and must never be read as an
-    elimination -- a timeout is not a disproof.
+    so the cell is INCONCLUSIVE and must never be read as an elimination.
+
+    The naive version without forward checking does not terminate at L=2
+    (49 blocks, 13 of them crib-bearing); pruning domains on every assignment
+    is what makes small strip lengths tractable at all.
     """
     starts, lens, ragged = blocks_for(L)
     nb = len(starts)
     full = [i for i in range(nb) if lens[i] == L]
-    # group cribs by PT block
+
     by_block: dict[int, list[tuple[int, int, str]]] = {}
     for q, c in cribs.items():
-        a = q // L
-        by_block.setdefault(a, []).append((q % L, q % p, c))
-    crib_blocks = sorted(by_block, key=lambda a: -len(by_block[a]))
+        by_block.setdefault(q // L, []).append((q % L, q % p, c))
+    variables = sorted(by_block)
 
-    def demands(a, b):
-        """(class, shift) pairs if PT-block a sits at CT-block b; None if impossible."""
-        out = []
-        for t, cls, ch in by_block[a]:
-            j = starts[b] + t
-            if j >= N or t >= lens[b]:
-                return None
-            out.append((cls, required_shift(CT[j], ch, ct_tab, pt_tab, variant)))
-        return out
+    # demand[a][b] = list of (class, shift), or None if (a,b) is self-inconsistent
+    demand: dict[int, dict[int, list]] = {}
+    for a in variables:
+        dom = {}
+        cands = [a] if lens[a] != L else full
+        for b in cands:
+            if lens[b] != lens[a]:
+                continue
+            ds, ok, seen = [], True, {}
+            for t, cls, ch in by_block[a]:
+                j = starts[b] + t
+                if t >= lens[b] or j >= N:
+                    ok = False
+                    break
+                sh = required_shift(CT[j], ch, ct_tab, pt_tab, variant)
+                if cls in seen and seen[cls] != sh:
+                    ok = False
+                    break
+                seen[cls] = sh
+                ds.append((cls, sh))
+            if ok:
+                dom[b] = ds
+        demand[a] = dom
 
-    used = set()
-    key: dict[int, int] = {}
+    if any(not demand[a] for a in variables):
+        return False, True
+
     nodes = [0]
 
-    def bt(k):
+    def compatible(a, b, a2, b2):
+        da, db = demand[a][b], demand[a2][b2]
+        m = dict(da)
+        for cls, sh in db:
+            if m.get(cls, sh) != sh:
+                return False
+        return True
+
+    def bt(assigned, used, domains):
         nodes[0] += 1
         if nodes[0] > budget:
             raise TimeoutError
-        if k == len(crib_blocks):
+        rest = [a for a in variables if a not in assigned]
+        if not rest:
             return True
-        a = crib_blocks[k]
-        # the ragged block cannot move, and nothing can move into it
-        cands = [a] if (ragged is not None and a == ragged) else \
-                [b for b in (full if lens[a] == L else [a]) if b not in used]
-        if forced is not None:
-            cands = [b for b in cands if forced(a, b)]
-        for b in cands:
-            d = demands(a, b)
-            if d is None:
+        a = min(rest, key=lambda x: len(domains[x]))      # most-constrained variable
+        for b in list(domains[a]):
+            if b in used:
                 continue
-            added = []
-            ok = True
-            for cls, sh in d:
-                if cls in key:
-                    if key[cls] != sh:
-                        ok = False
-                        break
-                else:
-                    key[cls] = sh
-                    added.append(cls)
-            if ok:
-                used.add(b)
-                if bt(k + 1):
-                    return True
-                used.discard(b)
-            for cls in added:
-                del key[cls]
+            # forward check: prune every other variable's domain
+            nd, dead = {}, False
+            for a2 in rest:
+                if a2 == a:
+                    continue
+                keep = [b2 for b2 in domains[a2]
+                        if b2 != b and compatible(a, b, a2, b2)]
+                if not keep:
+                    dead = True
+                    break
+                nd[a2] = keep
+            if dead:
+                continue
+            assigned[a] = b
+            used.add(b)
+            merged = dict(domains)
+            merged.update(nd)
+            if bt(assigned, used, merged):
+                return True
+            used.discard(b)
+            del assigned[a]
         return False
 
     try:
-        return bt(0), True
+        return bt({}, set(), {a: list(demand[a]) for a in variables}), True
     except TimeoutError:
         return False, False
 
 
 def null_rate(cribs, L, p, ct_tab, pt_tab, variant, trials, rng):
-    """Fraction of RANDOM block assignments that are key-consistent."""
+    """Fraction of RANDOM block assignments that are key-consistent.
+
+    WARNING: this is NOT the matched null for a survivor. It samples
+    assignments while the sweep searches them. It reports 0.000 for cells
+    where a shuffled-ciphertext SEARCH succeeds 80-100% of the time. Read it
+    only as "a blind assignment does not happen to work"; for survivors use
+    the shuffled-ciphertext search null recorded in the module docstring.
+    """
     starts, lens, ragged = blocks_for(L)
     nb = len(starts)
     full = [i for i in range(nb) if lens[i] == L]
@@ -212,7 +277,7 @@ def _job(args):
         ct_tab, pt_tab = index_table(ca), index_table(pa)
         for v in VARIANTS:
             found, done = search(cribs, L, p, ct_tab, pt_tab, v)
-            nr = null_rate(cribs, L, p, ct_tab, pt_tab, v, 120, rng)
+            nr = null_rate(cribs, L, p, ct_tab, pt_tab, v, 60, rng)
             rows.append({"alpha": aname, "variant": v, "consistent": bool(found),
                          "exhausted": bool(done), "null_rate": nr})
     return {"level": lname, "L": L, "period": p, "n_cribs": n,
@@ -225,24 +290,27 @@ def main() -> int:
                     default=max(1, len(os.sched_getaffinity(0)) - 2))
     ap.add_argument("--periods", type=int, default=20)
     ap.add_argument("--lmax", type=int, default=14)
+    ap.add_argument("--levels", type=str, default=None,
+                    help="comma-separated subset of crib levels; default all")
     args = ap.parse_args()
 
-    jobs = [(lv, L, p) for lv in LEVELS
+    levels = args.levels.split(",") if args.levels else list(LEVELS)
+    jobs = [(lv, L, p) for lv in levels
             for L in range(2, args.lmax + 1) for p in range(1, args.periods + 1)]
     print("=" * 88)
     print("SUB-THEN-STRIP:  CT = StripTranspose( PeriodicSub( PT ) )")
     print("=" * 88)
-    print(f"  levels {len(LEVELS)} x strip lengths 2-{args.lmax} x periods 1-{args.periods}"
+    print(f"  levels {len(levels)} x strip lengths 2-{args.lmax} x periods 1-{args.periods}"
           f" x {len(ALPHAS)} alphabet pairs x {len(VARIANTS)} variants")
     print(f"  = {len(jobs) * len(ALPHAS) * len(VARIANTS):,} exact existence searches"
           f"  ({args.workers} workers)")
     print()
     out = []
     with ProcessPoolExecutor(max_workers=args.workers) as ex:
-        for r in ex.map(_job, jobs, chunksize=4):
+        for r in ex.map(_job, jobs, chunksize=1):   # dynamic: cells vary 1000x in cost
             out.append(r)
 
-    for lv in LEVELS:
+    for lv in levels:
         rs = [r for r in out if r["level"] == lv]
         n = rs[0]["n_cribs"]
         tot = sum(len(r["rows"]) for r in rs)
