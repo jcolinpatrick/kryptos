@@ -1,6 +1,6 @@
 """Guard the canonical K1-K3 panel text against silent corruption.
 
-On 2026-08-25 kryptosbot/compute.py was found to carry a FABRICATED K3
+On 2026-08-25 compute.py (this package) was found to carry a FABRICATED K3
 plaintext -- a paraphrase containing phrases absent from K3 and five invented
 'X' separators -- as the last of three K3_PT bindings, so it shadowed the
 correct ones and was the copy exported in SPLIT_TEXT_SOURCES and K123_PT.

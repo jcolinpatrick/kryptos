@@ -902,9 +902,9 @@ _K1_PT = (
 # exact anagram of its ciphertext: the fabricated text failed that test by
 # 18 characters. K2 also carried three corruptions (DOEST-, BURIEDD-, EIGLZT)
 # and was missing its IDBYROWS tail.
-# Authoritative source: kryptosbot/self_test.py panel definitions, which are
+# Authoritative source: self_test.py (this package) panel definitions, which are
 # validated by actual K1/K2 rediscovery. Guarded by
-# kryptosbot/tests/test_canonical_k123_text.py -- do not edit without it passing.
+# tests/test_canonical_k123_text.py (this package) -- do not edit without it passing.
 K1_PT = "BETWEENSUBTLESHADINGANDTHEABSENCEOFLIGHTLIESTHENUANCEOFIQLUSION"
 K2_PT = (
     "ITWASTOTALLYINVISIBLEHOWSTHATPOSSIBLETHEYUSEDTHEEARTHSMAGNETICFIELDX"
