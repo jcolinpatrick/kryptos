@@ -1333,8 +1333,7 @@
   "e_compose_02_extended": {
     "description": "E-COMPOSE-02: Extended novel pipeline compositions \u2014 diagnostics + autokey.",
     "family": "exploration",
-    "notes": " || RETRACTED 2026-08-24 (Bean frame error): this result gated on the FROZEN BEAN_EQ/BEAN_INEQ/BEAN_LINEAR sets across a layer that MOVES crib coordinates. Those sets are a property of the direct-frame (CT, crib) pairing, so the gate produced false rejections and the space is NOT exhausted. Confirmed by adversarial review; see scripts/audit/audit_bean_equality_frame_transfer.py.",
-    "status": "active"
+    "status": "exhausted"
   },
   "e_compose_03_partitioned": {
     "description": "E-COMPOSE-03: Partitioned encryption \u2014 two systems on two message parts.",
@@ -1699,8 +1698,7 @@
     "audit_reason": "tested, 0/24, 1.19B configs",
     "description": "E-EGYPT-01: Egypt Corpus x Columnar Transposition Sweep",
     "family": "transposition/columnar",
-    "notes": " || RETRACTED 2026-08-24 (Bean frame error): this result gated on the FROZEN BEAN_EQ/BEAN_INEQ/BEAN_LINEAR sets across a layer that MOVES crib coordinates. Those sets are a property of the direct-frame (CT, crib) pairing, so the gate produced false rejections and the space is NOT exhausted. Confirmed by adversarial review; see scripts/audit/audit_bean_equality_frame_transfer.py.",
-    "status": "active"
+    "status": "exhausted"
   },
   "e_embedded_foreign_words": {
     "description": "e_embedded_foreign_words.py",
@@ -1868,8 +1866,7 @@
     "audit_reason": "fractionation family eliminated",
     "description": "E-FRAC-01: Width-9 Grid Structural Analysis.",
     "family": "fractionation",
-    "notes": " || RETRACTED 2026-08-24 (Bean frame error): this result gated on the FROZEN BEAN_EQ/BEAN_INEQ/BEAN_LINEAR sets across a layer that MOVES crib coordinates. Those sets are a property of the direct-frame (CT, crib) pairing, so the gate produced false rejections and the space is NOT exhausted. Confirmed by adversarial review; see scripts/audit/audit_bean_equality_frame_transfer.py.",
-    "status": "active"
+    "status": "exhausted"
   },
   "e_frac_02b_colprog_baseline": {
     "description": "E-FRAC-02b: Monte Carlo baseline for column-progressive model.",
@@ -1915,8 +1912,7 @@
     "audit_reason": "fractionation family eliminated",
     "description": "E-FRAC-12: Width-9 Re-evaluation with Strict Scoring (No Bimodal Filter).",
     "family": "fractionation",
-    "notes": " || RETRACTED 2026-08-24 (Bean frame error): this result gated on the FROZEN BEAN_EQ/BEAN_INEQ/BEAN_LINEAR sets across a layer that MOVES crib coordinates. Those sets are a property of the direct-frame (CT, crib) pairing, so the gate produced false rejections and the space is NOT exhausted. Confirmed by adversarial review; see scripts/audit/audit_bean_equality_frame_transfer.py.",
-    "status": "active"
+    "status": "exhausted"
   },
   "e_frac_13_ic_analysis": {
     "description": "E-FRAC-13: IC Statistical Analysis \u2014 Is K4's below-random IC significant?",
@@ -1987,14 +1983,12 @@
   "e_frac_26_w9_quadgram": {
     "description": "E-FRAC-26: Exhaustive Width-9 Columnar with Quadgram Scoring.",
     "family": "fractionation",
-    "notes": " || RETRACTED 2026-08-24 (Bean frame error): this result gated on the FROZEN BEAN_EQ/BEAN_INEQ/BEAN_LINEAR sets across a layer that MOVES crib coordinates. Those sets are a property of the direct-frame (CT, crib) pairing, so the gate produced false rejections and the space is NOT exhausted. Confirmed by adversarial review; see scripts/audit/audit_bean_equality_frame_transfer.py.",
-    "status": "active"
+    "status": "exhausted"
   },
   "e_frac_27_bean_width_profile": {
     "description": "E-FRAC-27: Bean-Compatible Width Profiling.",
     "family": "fractionation",
-    "notes": " || RETRACTED 2026-08-24 (Bean frame error): this result gated on the FROZEN BEAN_EQ/BEAN_INEQ/BEAN_LINEAR sets across a layer that MOVES crib coordinates. Those sets are a property of the direct-frame (CT, crib) pairing, so the gate produced false rejections and the space is NOT exhausted. Confirmed by adversarial review; see scripts/audit/audit_bean_equality_frame_transfer.py.",
-    "status": "active"
+    "status": "exhausted"
   },
   "e_frac_28_w9_bean_key_sa": {
     "description": "E-FRAC-28: SA Key Optimization on Bean-Passing Width-9 Orderings.",
@@ -2039,8 +2033,7 @@
   "e_frac_35_bean_period_impossibility": {
     "description": "E-FRAC-35: Bean Impossibility Proof for Transposition + Periodic Key",
     "family": "fractionation",
-    "notes": " || RETRACTED 2026-08-24 (Bean frame error): this result gated on the FROZEN BEAN_EQ/BEAN_INEQ/BEAN_LINEAR sets across a layer that MOVES crib coordinates. Those sets are a property of the direct-frame (CT, crib) pairing, so the gate produced false rejections and the space is NOT exhausted. Confirmed by adversarial review; see scripts/audit/audit_bean_equality_frame_transfer.py.",
-    "status": "active"
+    "status": "exhausted"
   },
   "e_frac_36_period8_bean_hillclimb": {
     "description": "E-FRAC-36: Period-8 Hill-Climbing with Bean Constraint",
@@ -2131,14 +2124,12 @@
   "e_frac_52_three_layer": {
     "description": "E-FRAC-52: Three-Layer Model Test (Sub + Trans + Sub)",
     "family": "fractionation",
-    "notes": " || RETRACTED 2026-08-24 (Bean frame error): this result gated on the FROZEN BEAN_EQ/BEAN_INEQ/BEAN_LINEAR sets across a layer that MOVES crib coordinates. Those sets are a property of the direct-frame (CT, crib) pairing, so the gate produced false rejections and the space is NOT exhausted. Confirmed by adversarial review; see scripts/audit/audit_bean_equality_frame_transfer.py.",
-    "status": "active"
+    "status": "exhausted"
   },
   "e_frac_53_mono_inner_periodic": {
     "description": "(no description)",
     "family": "fractionation",
-    "notes": " || RETRACTED 2026-08-24 (Bean frame error): this result gated on the FROZEN BEAN_EQ/BEAN_INEQ/BEAN_LINEAR sets across a layer that MOVES crib coordinates. Those sets are a property of the direct-frame (CT, crib) pairing, so the gate produced false rejections and the space is NOT exhausted. Confirmed by adversarial review; see scripts/audit/audit_bean_equality_frame_transfer.py. NOTE: the p3-p7 core SURVIVES and is strengthened (zero solutions over the full 403,920-ordering universe with no Bean filtering); only the p10-p12 scope is retracted (943 genuine solutions were recorded as zero).",
-    "status": "active"
+    "status": "exhausted"
   },
   "e_frac_54_mono_running_key_detection": {
     "description": "(no description)",
@@ -2148,8 +2139,7 @@
   "e_frac_55_bean_surviving_periods": {
     "description": "(no description)",
     "family": "fractionation",
-    "notes": " || RETRACTED 2026-08-24 (Bean frame error): this result gated on the FROZEN BEAN_EQ/BEAN_INEQ/BEAN_LINEAR sets across a layer that MOVES crib coordinates. Those sets are a property of the direct-frame (CT, crib) pairing, so the gate produced false rejections and the space is NOT exhausted. Confirmed by adversarial review; see scripts/audit/audit_bean_equality_frame_transfer.py.",
-    "status": "active"
+    "status": "exhausted"
   },
   "e_fractionated_morse_01": {
     "audit_reason": "0/10367 keywords produced parseable Morse stream. Structural impossibility for keyword-mixed alphabets.",
@@ -2566,8 +2556,7 @@
   "e_hybrid_02_targeted_keywords": {
     "description": "(no description)",
     "family": "_uncategorized",
-    "notes": " || RETRACTED 2026-08-24 (Bean frame error): this result gated on the FROZEN BEAN_EQ/BEAN_INEQ/BEAN_LINEAR sets across a layer that MOVES crib coordinates. Those sets are a property of the direct-frame (CT, crib) pairing, so the gate produced false rejections and the space is NOT exhausted. Confirmed by adversarial review; see scripts/audit/audit_bean_equality_frame_transfer.py.",
-    "status": "active"
+    "status": "exhausted"
   },
   "e_hybrid_03_complete_columnar_vig": {
     "description": "E-HYBRID-03: Complete Columnar+Vigen\u00e8re Hybrid \u2014 All Periods, All Clue Words.",
@@ -2577,8 +2566,7 @@
   "e_hybrid_03_period13_and_gaps": {
     "description": "(no description)",
     "family": "_uncategorized",
-    "notes": " || RETRACTED 2026-08-24 (Bean frame error): this result gated on the FROZEN BEAN_EQ/BEAN_INEQ/BEAN_LINEAR sets across a layer that MOVES crib coordinates. Those sets are a property of the direct-frame (CT, crib) pairing, so the gate produced false rejections and the space is NOT exhausted. Confirmed by adversarial review; see scripts/audit/audit_bean_equality_frame_transfer.py.",
-    "status": "active"
+    "status": "exhausted"
   },
   "e_hybrid_04_reverse_k3": {
     "audit_reason": "tested, 9/24, 109.9M configs",
@@ -2897,9 +2885,8 @@
     "best_score": 0.82,
     "description": "e_keystream_english_likelihood_01.py \u2014 Running-key keystream English-likelihood under transposition. Tests whether Beaufort/Vigenere/VarBeau keystream at 24 crib positions reads as English under identity or columnar (w6/8/9) transposition. 17,124 Bean-eq orderings tested; 0 survive full Bean. Identity keystream scores 36th-82nd percentile (not significant). Running key without mono eliminated for all tested transpositions.",
     "family": "statistical",
-    "notes": " || RETRACTED 2026-08-24 (Bean frame error): this result gated on the FROZEN BEAN_EQ/BEAN_INEQ/BEAN_LINEAR sets across a layer that MOVES crib coordinates. Those sets are a property of the direct-frame (CT, crib) pairing, so the gate produced false rejections and the space is NOT exhausted. Confirmed by adversarial review; see scripts/audit/audit_bean_equality_frame_transfer.py.",
     "results_file": "results/keystream_english_likelihood.json",
-    "status": "active",
+    "status": "exhausted",
     "verdict": "ELIMINATED \u2014 0/17124 columnar orderings survive full Bean; identity keystream indistinguishable from random"
   },
   "e_keystream_forensics": {
@@ -2977,8 +2964,7 @@
   "e_marathon_01_final_assault": {
     "description": "E-MARATHON-01 \u2014 24-Hour Final Assault on K4.",
     "family": "campaigns",
-    "notes": " || RETRACTED 2026-08-24 (Bean frame error): this result gated on the FROZEN BEAN_EQ/BEAN_INEQ/BEAN_LINEAR sets across a layer that MOVES crib coordinates. Those sets are a property of the direct-frame (CT, crib) pairing, so the gate produced false rejections and the space is NOT exhausted. Confirmed by adversarial review; see scripts/audit/audit_bean_equality_frame_transfer.py.",
-    "status": "active"
+    "status": "exhausted"
   },
   "e_mask_ic_hillclimb": {
     "description": "e_mask_ic_hillclimb.py \u2014 E-MASK-IC-HILLCLIMB: Method-agnostic null mask scoring pipeline for K4.",
@@ -3875,8 +3861,7 @@
   "e_route_definitive": {
     "description": "E-ROUTE-DEFINITIVE: Comprehensive Route Transposition at Bean-Surviving Periods.",
     "family": "transposition/other",
-    "notes": " || RETRACTED 2026-08-24 (Bean frame error): this result gated on the FROZEN BEAN_EQ/BEAN_INEQ/BEAN_LINEAR sets across a layer that MOVES crib coordinates. Those sets are a property of the direct-frame (CT, crib) pairing, so the gate produced false rejections and the space is NOT exhausted. Confirmed by adversarial review; see scripts/audit/audit_bean_equality_frame_transfer.py.",
-    "status": "active"
+    "status": "exhausted"
   },
   "e_row_gradient_analysis": {
     "description": "e_row_gradient_analysis.py",
@@ -4929,8 +4914,7 @@
   "e_solve_16_encrypt_transpose": {
     "description": "E-SOLVE-16: Encrypt-Then-Transpose Pigeonhole Analysis",
     "family": "transposition/other",
-    "notes": " || RETRACTED 2026-08-24 (Bean frame error): this result gated on the FROZEN BEAN_EQ/BEAN_INEQ/BEAN_LINEAR sets across a layer that MOVES crib coordinates. Those sets are a property of the direct-frame (CT, crib) pairing, so the gate produced false rejections and the space is NOT exhausted. Confirmed by adversarial review; see scripts/audit/audit_bean_equality_frame_transfer.py.",
-    "status": "active"
+    "status": "exhausted"
   },
   "e_solve_16b_period5_deep": {
     "description": "E-SOLVE-16B: Deep analysis of encrypt-then-transpose at period 5.",
@@ -5040,12 +5024,6 @@
     "family": "analysis",
     "keyspace": "see implementation (~10M+ configs)",
     "status": "active"
-  },
-  "e_struct_ceiling_q3_outer_columnar_2026_08_23": {
-    "audit_reason": "STRUCTURAL IMPOSSIBILITY PROOF (not a search). For CT = Q(transpose(PT)) with Q any periodic substitution whose shift depends only on (position mod p), the max attainable crib_score over ALL 26^p keys and ALL 26 indicators is closed-form in the geometry alone. MEASURED: at L=97 (the 2026-06-17 campaign's frame) the max over its period pool is 19/24, and only 23/24 even at period 26; at L in 74-96 the max at period lengths 3-15 is 18/24. A solution needs 24, first reachable at period length 25. Bound verified over 5,726 random (key,indicator) decrypts, ZERO violations. This is the permutation-transformed form of the Bean-style argument and matches docs/elimination_tiers.md E-FRAC-35 in kind. USE AS A MANDATORY PRE-FILTER. Repro: PYTHONPATH=src python3 scripts/_infra/attainable_crib_ceiling.py --verify --by-period",
-    "description": "Attainable-crib-ceiling pre-filter for periodic-substitution-over-transposition models. Eliminates the single-layer Q3-outer/columnar-inner family for ALL keys at period length <= 24, at every length 74-97. Does NOT eliminate period length >= 25, stacked coprime layers (classes become j mod lcm), or aperiodic/running keys.",
-    "family": "_infra/structural_proof",
-    "status": "exhausted"
   },
   "e_swagman_01": {
     "audit_reason": "Best 5/24 across ~30K Latin squares at orders 4-10. Random-level performance.",
@@ -5774,15 +5752,6 @@
     "family": "campaigns",
     "status": "active"
   },
-  "f_columnar_periodic_rederived_v1": {
-    "best_score": 0,
-    "description": "Columnar + periodic substitution re-run with the Bean frame corrected (no frozen-Bean gate; determined keystream + periodicity only)",
-    "family": "campaigns",
-    "has_attack": false,
-    "has_header": true,
-    "notes": "REPLACES the retracted E-FRAC-26/27/35 and C-BEAN-01 closures of this space. Exhaustive: widths 4-9, all 409,104 orderings, 3 variants, periods 1-26 = 31,910,112 configurations in 20s. Periods 1-24 have ZERO survivors at every width, including Sanborn's demonstrated 8 and 10. All 47,838 survivors sit at p=25/26, the underdetermined band (only 3 and 1 forced equalities), and match the chance expectation at ratio 1.01x (47,838 observed vs 47,270 expected under (1/26)**forced_equalities). No signal. Scope: PT--sub(periodic)-->X--columnar-->CT, additive variants, carved 97-char CT, cribs 21-33/63-73. Does NOT cover non-columnar transpositions, multi-layer, null masks, or aperiodic keys. 2026-08-24.",
-    "status": "exhausted"
-  },
   "f_columnar_sub_exhaustive": {
     "adversarial_review_date": "2026-05-15",
     "adversarial_review_reason": "FAMILY CLEANUP: Formal exhaustive elimination per project_columnar_sub_exhaustive_elimination memo: both peel orders eliminated widths 5-13. Trans(Sub(PT)) 0 Bean; Sub(Trans(PT)) 0 crib-invariant.",
@@ -5790,8 +5759,8 @@
     "classification": "noise",
     "description": "Formal campaign: f_columnar_sub_exhaustive",
     "family": "two_system",
-    "notes": "Auto-added 2026-05-15 during two_system family cleanup || RETRACTED 2026-08-24 (Bean frame error): this result gated on the FROZEN BEAN_EQ/BEAN_INEQ/BEAN_LINEAR sets across a layer that MOVES crib coordinates. Those sets are a property of the direct-frame (CT, crib) pairing, so the gate produced false rejections and the space is NOT exhausted. Confirmed by adversarial review; see scripts/audit/audit_bean_equality_frame_transfer.py.",
-    "status": "active"
+    "notes": "Auto-added 2026-05-15 during two_system family cleanup",
+    "status": "exhausted"
   },
   "f_combined_defector_palimpsest_v1": {
     "description": "f_combined_defector_palimpsest_v1.py",
@@ -5858,8 +5827,8 @@
     "has_header": true,
     "keyspace": "Bean-passing columnar widths {6,8,9} x {Vig, Beau, VarBeau} x offsets(source)",
     "last_run": "Best score:",
-    "notes": "Auto-registered from header 2026-04-09 bulk reconcile pass. || RETRACTED 2026-08-24 (Bean frame error): this result gated on the FROZEN BEAN_EQ/BEAN_INEQ/BEAN_LINEAR sets across a layer that MOVES crib coordinates. Those sets are a property of the direct-frame (CT, crib) pairing, so the gate produced false rejections and the space is NOT exhausted. Confirmed by adversarial review; see scripts/audit/audit_bean_equality_frame_transfer.py.",
-    "status": "active"
+    "notes": "Auto-registered from header 2026-04-09 bulk reconcile pass.",
+    "status": "exhausted"
   },
   "f_final_checklist_c6": {
     "adversarial_review_date": "2026-05-15",
@@ -6094,43 +6063,6 @@
     "result_file": "results/k4_next_goal/qtab_summary.json",
     "status": "exhausted",
     "verdict": "CLEAN_NULL"
-  },
-  "f_ragged_turn_v1": {
-    "best_score": 0,
-    "description": "Ragged-rectangle turn: Sanborn's MEASURED K3 primitive (fill ROW_LR / read COL_BU) applied to the prime length 97 with a short final row, composed with a periodic additive inner layer",
-    "family": "campaigns",
-    "has_attack": false,
-    "has_header": true,
-    "notes": "STRUCTURALLY IMPOSSIBLE below period 24, plus CLEAN NULL on the full sweep. K3-anchored: two turns at widths 14 then 42 reproduce K3's ciphertext exactly, so the operation is Sanborn's real primitive. HEADLINE (closed-form, seconds): the attainable crib ceiling over the entire 1-step universe is 13/24 at period 8 (K2) and 14/24 at period 10 (K1); no period below 24 can reach the 24/24 a solve requires, FOR ANY KEY. Ceiling by period: p2:7 p5:11 p7:13 p8:13 p10:14 p13:17 p20:22 p23:23 p24:24. Confirming sweeps (~29.6M configurations): CW/CCW 1-turn 30,264 and 2-turn 5,871,216, plus K3's full 4x4 traversal vocabulary 1-step 242,112 and 2-step same-op 23,484,864. ZERO survivors at any period <=20 in every sweep; all survivors at p>=21 sit at or BELOW the matched null (0.63-0.99x). Method: no Bean filter (vacuous on a determined keystream); periodicity only; both composition orders (sub-then-turn keys by PT position, turn-then-sub by post-turn position). Scope: direct crib alignment, periodic inner key, 1-2 steps. NOT covered: different-op 2-step pairs, 3+ steps, aperiodic or running inner keys, null masks, variable PT length. LESSON: run the attainable-crib ceiling BEFORE the campaign; it settles in seconds what the sweep takes minutes to confirm. 2026-08-24.",
-    "status": "exhausted"
-  },
-  "f_released_length_q3_outer_columnar_inner_2026_08_23": {
-    "audit_reason": "UPGRADED 2026-08-23 to STRUCTURAL IMPOSSIBILITY (red-team RT-1, independently verified). This tier is not merely empty, it is deductively incapable of a solution: the Quagmire shift depends only on (j mod p), so a crib at plaintext position q requires shift t_q = (ct_idx[CT[iperm[q]]] - pt_idx[c]) mod 26, which is INDEPENDENT of key and indicator. Cribs congruent mod p must agree, capping the attainable crib_score by geometry alone. MEASURED over all lengths 74-96, 359 columnar keywords and 5 conventions: max attainable at the pool's period lengths 3-15 is 18/24; a solution needs 24; 24/24 first becomes reachable at period length 25. Bound verified over 5,726 random (key, indicator) decrypts, ZERO violations. NO KEY WHATSOEVER can solve this tier at period length <= 24. Recompute: PYTHONPATH=src python3 scripts/_infra/attainable_crib_ceiling.py --verify --by-period. Supersedes the prior 'pool searched, CLEAN_NULL' reason, which understated it. NOTE: the same argument kills f_quagmire_iii_outer_columnar_inner_2026_06_17 at L=97 (max 19/24 over its pool). PRIOR EMPIRICAL RECORD (still valid): CLEAN_NULL. 1,804,380 configs; best kernel-verified crib 8/24. N-B matched-keyword null (M=200, breadth- and length-matched exactly, 1,804,380 cfg/replicate): max-of-N min=7 p50=8 p95=9 p99=10 max=10; 190/200 replicates >= observed; p=0.950 (Phipson-Smyth); null_beats_real=True. The observed best is the NULL MEDIAN. Planted-control gate PASS (65/65 exact round-trip + crib 24/24 across 13 lengths x 2 conventions). Fast path cross-validated AGREE vs job_dispatcher.execute() at L=97. universe_hash 2ed8df7cf805d5d0. Prereg: docs/campaigns/released_length_q3_outer_columnar_inner_2026_08_23.md",
-    "description": "Released-length Quagmire III OUTER over keyed-columnar INNER. Releases the fixed_97 assumption of f_..._2026_06_17: PT length L in 74..96 with contiguous trailing carve padding, clean rectangular grids only (width divides L). 13 lengths x 986 (length,columnar-keyword) pairs x 366 period keywords x 5 distinct (tableau, alphabet-convention) pairs. ELIMINATES that universe. Does NOT eliminate: keys outside the thematic pool, ragged grids (tier S1), leading pad (S2), lcm-stack (S3), rule-generated null masks, free alignment, L<74, non-columnar inner transpositions.",
-    "family": "campaigns/quagmire_iii_x_columnar_composed",
-    "status": "exhausted",
-    "universe_hash": "2ed8df7cf805d5d0aa66d221a41fd902539bac1e46d786b1e4433f57a4e44abe"
-  },
-  "f_released_length_q3_outer_columnar_inner_2026_08_23_S1": {
-    "audit_reason": "UPGRADED 2026-08-23 to STRUCTURAL IMPOSSIBILITY (red-team RT-1, independently verified). This tier is not merely empty, it is deductively incapable of a solution: the Quagmire shift depends only on (j mod p), so a crib at plaintext position q requires shift t_q = (ct_idx[CT[iperm[q]]] - pt_idx[c]) mod 26, which is INDEPENDENT of key and indicator. Cribs congruent mod p must agree, capping the attainable crib_score by geometry alone. MEASURED over all lengths 74-96, 359 columnar keywords and 5 conventions: max attainable at the pool's period lengths 3-15 is 18/24; a solution needs 24; 24/24 first becomes reachable at period length 25. Bound verified over 5,726 random (key, indicator) decrypts, ZERO violations. NO KEY WHATSOEVER can solve this tier at period length <= 24. Recompute: PYTHONPATH=src python3 scripts/_infra/attainable_crib_ceiling.py --verify --by-period. Supersedes the prior 'pool searched, CLEAN_NULL' reason, which understated it. NOTE: the same argument kills f_quagmire_iii_outer_columnar_inner_2026_06_17 at L=97 (max 19/24 over its pool). PRIOR EMPIRICAL RECORD (still valid): CLEAN_NULL. Tier S1 (RAGGED grids, trailing pad). 15,152,400 configs (23 lengths 74-96 x 360 columnar keywords x 366 period keywords x 5 tableau/convention pairs); best kernel-verified crib 8/24, 0 stored at STORE. N-B matched-keyword null M=200, breadth+length matched exactly (15,152,400 cfg/replicate): max-of-N min=8 p50=9 p95=10 p99=10 max=11; 200/200 replicates >= observed; p=1.0; null_beats_real=True. WITHDRAWN (RT-3): p=1.000 is a CEILING ARTIFACT, not a strong negative. The null support effectively begins at 8 and the observation is 8, so n_ge=M is structural. Analytic P(max>=8) at this breadth = 0.999999999999951. Planted-control gate PASS 115/115. Prereg: docs/campaigns/released_length_q3_outer_columnar_inner_2026_08_23.md",
-    "description": "Released-length Q3 OUTER over keyed-columnar INNER, RAGGED grids (width need not divide L). Drops the clean-rectangle restriction of tier P1. ELIMINATES that universe. Does NOT eliminate keys outside the thematic pool, leading pad (S2), lcm-stack (S3), rule-generated null masks, free alignment, L<74, or non-columnar inner transpositions.",
-    "family": "campaigns/quagmire_iii_x_columnar_composed",
-    "status": "exhausted",
-    "universe_hash": "670281be655ed3b2c0ed769c1cbeec065c1d91349a1aecf494c1809a1d22cca7"
-  },
-  "f_released_length_q3_outer_columnar_inner_2026_08_23_S2": {
-    "audit_reason": "UPGRADED 2026-08-23 to STRUCTURAL IMPOSSIBILITY (red-team RT-1, independently verified). This tier is not merely empty, it is deductively incapable of a solution: the Quagmire shift depends only on (j mod p), so a crib at plaintext position q requires shift t_q = (ct_idx[CT[iperm[q]]] - pt_idx[c]) mod 26, which is INDEPENDENT of key and indicator. Cribs congruent mod p must agree, capping the attainable crib_score by geometry alone. MEASURED over all lengths 74-96, 359 columnar keywords and 5 conventions: max attainable at the pool's period lengths 3-15 is 18/24; a solution needs 24; 24/24 first becomes reachable at period length 25. Bound verified over 5,726 random (key, indicator) decrypts, ZERO violations. NO KEY WHATSOEVER can solve this tier at period length <= 24. Recompute: PYTHONPATH=src python3 scripts/_infra/attainable_crib_ceiling.py --verify --by-period. Supersedes the prior 'pool searched, CLEAN_NULL' reason, which understated it. NOTE: the same argument kills f_quagmire_iii_outer_columnar_inner_2026_06_17 at L=97 (max 19/24 over its pool). PRIOR EMPIRICAL RECORD (still valid): CLEAN_NULL. Tier S2 (clean grids, LEADING pad, cribs re-anchored by 97-L). 1,760,460 configs (12 lengths 76-96; L>=76 required so carved crib index 21 stays in frame); best kernel-verified crib 9/24, 0 stored at STORE. N-B matched-keyword null M=200, breadth+length matched exactly (1,760,460 cfg/replicate): max-of-N min=7 p50=8 p95=9 p99=9 max=10; 37/200 replicates >= observed; p=0.189; null_beats_real=True. Planted-control gate PASS 60/60 with SHIFTED crib anchors. Prereg: docs/campaigns/released_length_q3_outer_columnar_inner_2026_08_23.md",
-    "description": "Released-length Q3 OUTER over keyed-columnar INNER with the carve filler at the FRONT, so the disclosed carved indices shift by 97-L and the cribs are re-anchored into the PT frame. ELIMINATES that universe. Does NOT eliminate keys outside the thematic pool, ragged grids under leading pad, split padding across both ends, or anything in the P1/S1 not-eliminated list.",
-    "family": "campaigns/quagmire_iii_x_columnar_composed",
-    "status": "exhausted",
-    "universe_hash": "44c3f89e1b6757b7f068a86fb8581fff0be4bc299068eaf643720e9b378aa6cd"
-  },
-  "f_released_length_q3_outer_columnar_inner_2026_08_23_S3": {
-    "audit_reason": "GENUINE EMPIRICAL CLEAN_NULL (unlike P1/S1/S2). RT-1's structural impossibility does NOT apply: with two stacked layers the binding residue classes are j mod lcm(p_a,p_b), which at coprime periods is fine enough that 84 of 100 coprime pairs at L=84 admit a ceiling of 24. So this tier COULD have found a solution and did not. SCOPE CORRECTION (RT-7): the '22-word length-diverse' outer pool is an alphabetical artifact of sorted()[:2] -- 19 of 22 words begin with 'A' -- so only 6.0% of the 366 outer periods were tested and 'coprime-lcm-stacked closed' is WITHDRAWN. The Egyptological coincidence in the top candidate is inflated ~3.6x by that bias (50% of the outer pool is Egyptological vs 13.7% of the full pool). CLEAN_NULL. Tier S3 (lcm-stacked Q3, clean grids, trailing pad): CT = Q3_b(Q3_a(columnar(PT))), 6 ordered distinct tableau pairs, outer period capped to a 22-word length-diverse slice, only coprime period-length pairs kept (4,828 of 8,052). 28,562,448 configs; best kernel-verified crib 10/24; 1 stored at STORE, 0 at SIGNAL. N-B matched-keyword null M=200, breadth+length matched exactly (28,562,448 cfg/replicate): max-of-N min=8 p50=9 p95=10 p99=10 max=11; 36/200 replicates >= observed; p=0.184; null_beats_real=True. ANTI-OVERFIT NOTE: the single stored candidate is columnar OSIRIS / inner period TUTANKHAMUN / outer period AMUN at L=84, thematically resonant with K3's Carter tomb-opening passage and passing the ngram floor (-6.06 > -6.2), but its crib score of 10 IS the null p99 and 36/200 random replicates matched or beat it. Suggestive keyword semantics with a noise-level score. Do NOT revive. Planted-control gate PASS 78/78. Prereg: docs/campaigns/released_length_q3_outer_columnar_inner_2026_08_23.md",
-    "description": "Released-length Q3 OUTER over keyed-columnar INNER with TWO stacked Quagmire III layers whose period lengths are coprime (the lcm superposition a single short period cannot express). ELIMINATES that universe. Does NOT eliminate 3+ substitution layers, non-coprime stacks, outer periods outside the 22-word cap, same-tableau stacks, ragged grids under stacking, leading pad under stacking, or keys outside the thematic pool.",
-    "family": "campaigns/quagmire_iii_x_columnar_composed",
-    "status": "exhausted",
-    "universe_hash": "4647acbc9951af7f1e1f4061b67e53d8f4ada7feeb67a48f04d593d89641d0f5"
   },
   "f_route_outer_quagmire_iii_posttrans_2026_06_09": {
     "date": "2026-06-10",
