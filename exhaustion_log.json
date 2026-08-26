@@ -1435,6 +1435,18 @@
     "family": "crib_analysis",
     "status": "exhausted"
   },
+  "e_crib_37_single_omission_sweep": {
+    "audit_reason": "CLEAN NULL, and predicted in advance. Pre-registered decision rule: a hit counts only at period <= 20 with a ~0 matched null. Result: 0 hits at period <= 20 for BOTH the real and the shuffled ciphertext; all 75,816 real hits sit at periods 27-30 where 24 cribs occupy 24 residue classes and the ceiling is 24 by construction (the shuffled null gives 76,943, i.e. more). Re-index self-check asserts every crib still lands on its carved letter after insertion. NOTE the ceiling filter saturates above period 25 with 24 cribs, so this result is scope-limited; see e_crib_38 for the non-saturating test.",
+    "description": "e_crib_37_single_omission_sweep.py \u2014 98-char true-CT hypothesis (one letter omitted in carving); all 2,548 corrected ciphertexts x 9 tableaux x periods 1-30 through the attainable-crib-ceiling filter, with a shuffled-CT matched null.",
+    "family": "crib_analysis",
+    "status": "exhausted"
+  },
+  "e_crib_38_omission_quagmire_search": {
+    "audit_reason": "CLEAN NULL BOTH MODES. 2,221,856 configurations each. OMISSION: no corrected ciphertext reached even 8/24 cribs with any keyword. SUBSTITUTION: best over 2,425 variants was 7/24 cribs at ngram -6.931/quadgram (random ~-7.19, English ~-4.1); modal best 6/24, which is simply the max-of-872-keywords order statistic. Zero alerts under the pre-registered threshold (>=20/24, or ngram>=-5.0 with >=12/24). CLOSES A REAL GAP: CT-perturbation Stage A put Quagmire III explicitly OUT OF SCOPE, so Sanborn's own demonstrated cipher family had never been tested against any CT perturbation. Scope: Quagmire III only, direct alignment, single errors, 872 keywords.",
+    "description": "e_crib_38_omission_quagmire_search.py \u2014 decrypt-and-score test of single-carving-error K4. Both modes: OMISSION (98-char, insert one letter) and SUBSTITUTION (97-char, change one letter, env K4_SUBST=1). Quagmire III over an 872-keyword thematic pool.",
+    "family": "crib_analysis",
+    "status": "exhausted"
+  },
   "e_crib_only_keyword_sweep": {
     "description": "e_crib_only_keyword_sweep.py",
     "family": "team",
