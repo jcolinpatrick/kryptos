@@ -37,7 +37,7 @@ Two pieces of green-grid quadrille paper, photographed separately (white backgro
 | 7 | K2 | 31 | |
 | 8 | K2 | 30 + `?` | image ends here; K2 continues on sheets not shown |
 
-Concatenating the chart's K1 ciphertext rows (including the overflow D) reproduces the 63-character K1 ciphertext exactly. Concatenating rows 3 to 8 reproduces the first 185 letters of K2 ciphertext (a full transcription pass with enhanced crops is pending; two letters in row 6 were ambiguous at screen resolution, R/E and D/O).
+Concatenating the chart's K1 ciphertext rows (including the overflow D) reproduces the 63-character K1 ciphertext exactly. Rows 3 to 8 reproduce the first 185 letters of the carved K2 ciphertext with one exception: at row 6, column 21 the chart has E where the copper has R (see §9.6).
 
 Repro:
 ```bash
@@ -52,7 +52,7 @@ PYTHONPATH=src:kryptosbot python3 -c "import panel_cribs as pc; P=pc._K2_PT; pri
 Made from 3x enlarged, auto-contrasted crops of the original image. These are visual observations, not measurements.
 
 1. **The two pieces are separated.** There is a white background gap between the K1 piece and the K2 piece. They were not joined when photographed.
-2. **Tape residue is at the ends, not across the middle.** The bottom edge of the K1 piece carries a tape tab at the left (the overflow D is written on or under it) and a small tab at the right. The top edge of the K2 piece carries matching tabs, left and right. This is the pattern left when two short corner tabs are severed, not the pattern left by cutting a full-width strip in half.
+2. **Tape residue at the main seam is in several separate patches, not one strip.** The bottom edge of the K1 piece carries a tan adhesive strip with a patch at the left (the overflow D is written on or under it) and a smaller patch at the right. The top edge of the K2 piece carries patches at the left, the centre and the right (measured at roughly x 0-190, 380-615, 740-830 and 745-990 px). The pieces were joined by tape and later separated. The exact bridging arrangement cannot be recovered from this image.
 3. **An unruled band separates rows 6 and 7.** It spans the full width, has no grid lines, and the row 6 ciphertext (`GZLECGY...`) is written in it without cells. Tape is present on or beside this band.
 4. **Three lines of writing sit in unruled edge bands:** the overflow D (bottom of the K1 piece), the `ABSCISSA` header (top of the K2 piece), and the row 6 ciphertext (§3.3). All three coincide with tape.
 5. **Row 5 overflows to the left.** The 32nd character of the row is placed to the left of column 0 in a hand-drawn box, whereas the K1 overflow after row 2 was placed below the block in column 0. Same problem, two different placements.
@@ -68,9 +68,9 @@ Made from 3x enlarged, auto-contrasted crops of the original image. These are vi
 Computation pads have unruled margins at the top and bottom of each page. The simplest account of §3 is:
 
 - Where a three-line block ran off the ruled area of a page, the third line was written in the unruled margin rather than restarting the block on the next page. This keeps plaintext, key and ciphertext vertically aligned, which is the point of the worksheet.
-- The next page was then hinged on underneath with two short tape tabs at the corners. Two tabs, rather than a full-width strip, make a hinge that folds.
+- The next page was then hinged on underneath with pieces of tape. Separate patches, rather than a continuous seal, are consistent with a join that folds.
 - The result was a long, hinged, foldable scroll of pad pages carrying the whole encipherment in one continuous keystream. The 2026-03 Smithsonian photo notes recorded accordion folds on the charts, which fits.
-- The scroll was later cut back apart at the tabs, plausibly for framing, photography or sale.
+- The scroll was later cut back apart at the joins, plausibly for framing, photography or sale.
 
 None of this requires a cryptographic explanation. The blank fourth line is the ordinary separator of a Vigenère hand worksheet.
 
@@ -114,7 +114,7 @@ This also bounds what "worksheet correct, copper wrong" can mean: the chart spel
 ## 7. Confidence and limitations
 
 - **High:** the row-break mismatch between chart and copper (§5); the row 5 32-cell overflow; the K1 concatenation check; the measured results in §9.
-- **Medium:** the corner-tab reading of the main-seam tape residue (§3.2) and the three-patch reading of the rows 6/7 join, from a ~1.5 MP web JPEG. Higher-resolution imagery or the physical object could overturn either.
+- **Medium:** the multi-patch reading of the main-seam tape residue (§3.2) and the three-patch reading of the rows 6/7 join, from a ~1.5 MP web JPEG. Higher-resolution imagery or the physical object could overturn either.
 - **Medium:** the two blue-grey margin rectangles and the row 4 crease line are present; their nature is open.
 - The image passed through the photographer, NYT prepress and web export. Pixel-level steganalysis (LSB, chi-square) is non-probative on it and contributed to no conclusion here.
 - Global levels adjustments of the same JPEG add no information. They can still be a useful visualisation: a hard saturation push isolates the yellowed adhesive and the blue-grey rectangles far more legibly than the original. The speckle they produce in blank cells is amplified paper grain and JPEG chroma noise, not bleed-through (§9.5).
@@ -143,16 +143,16 @@ Thirty-two vertical rules, so 31 columns, on both pieces. Cell pitch 34.3 px on 
 The rows 7 to 8 grid is offset by about 2 px from the rows 5 to 6 grid at identical pitch, and the vertical rules drop to zero contrast through the rows 6/7 band. Together with the tape patches, the darker and more chromatic ink of the row 6 ciphertext (matching the ABSCISSA header, which also sits on tape), and the freehand placement of that line, this makes the rows 6/7 band a second physical join. The prior project note had recorded it only as a fold crease.
 
 ### 9.3 Hidden or faint content
-A letter-sized matched filter over every blank region (header band, blank rows, inter-row gaps, margins, both seams, the area below row 8) returns a noise floor of 2 to 3 grey levels. The faintest genuine pencil glyph on the page returns 12.4 and the median glyph 31.4. Anything about four times fainter than the faintest real glyph would have been detected. Every maximum in the blank regions is a catalogued mark or filter leakage from an adjacent line. No indentation ghost, reverse-side bleed-through or erased text is recoverable from this image. Top-hat and black-hat stroke isolation at five kernel sizes agree.
+A letter-sized matched filter over every blank region (header band, blank rows, inter-row gaps, margins, both seams, the area below row 8) returns a noise floor of 2 to 3 grey levels. The faintest genuine pencil glyph on the page returns 12.4 and the median glyph 31.4. The detection floor at three standard deviations is 6 to 10 grey levels, so anything about half as faint as the faintest real pencil glyph would have been detected. The margin is modest, not large. Every maximum in the blank regions is a catalogued mark or filter leakage from an adjacent line. No indentation ghost, reverse-side bleed-through or erased text is recoverable from this image. Top-hat and black-hat stroke isolation at five kernel sizes agree.
 
 ### 9.4 Ink classes
-Pixels separate into printed green rule and low-chroma graphite; 381 pixels in the whole image (0.03 percent) fall in neither. No writing line is in a different ink class from its neighbours. The two chroma outliers (row 6 ciphertext, ABSCISSA header) are the two lines written on tape, so a substrate effect. There is no evidence of a second pen or a second writing session, and the row 5 margin box is in the same class as the grid letters.
+Pixels separate into printed green rule and low-chroma graphite; 381 pixels in the whole image (0.03 percent) fall in neither. No writing line is in a different ink class from its neighbours. The two chroma outliers (row 6 ciphertext, ABSCISSA header) are the two lines written on tape, so a substrate effect. Within what this JPEG can separate, there is no second ink class, and the row 5 margin box is in the same class as the grid letters. That does not establish that one pen or one sitting produced the sheet. It says only that this image cannot distinguish otherwise.
 
 ### 9.5 The apparent bleed-through in extreme levels renderings
 In blank cells the paper-grain residual has a standard deviation of about 6.5 grey levels and each ruled cell has a slightly different mean tone. A 10-level global window amplifies that grain roughly 25 times and clips each cell differently, and the 4:4:4 chroma at quality 93 saturates to multicoloured speckle. The blocky, multicoloured texture in blank cells of the extreme renderings is therefore an artefact of the source encoding, not content.
 
 ### 9.6 Cell-by-cell transcription
-All 744 cells were read at 3x to 9x against the canonical K1/K2 layout built from the kernel constants, with an independent template matcher as a second reader. Exactly two cells disagree with the canonical text, and both were already known to the community:
+All 744 cells were read at 3x to 9x against the canonical K1/K2 layout built from the kernel constants, with an independent template matcher as a second reader. Exactly two letter positions (four written cells) disagree with the canonical text, and both were already known to the community:
 
 | Chart cell | Line | Canonical | Chart | Kernel check |
 |---|---|---|---|---|
