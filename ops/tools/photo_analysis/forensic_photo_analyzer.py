@@ -761,7 +761,8 @@ def run_line_analysis(
     count = 0
     if lines is not None:
         for line in lines[:500]:
-            x1, y1, x2, y2 = line[0]
+            # OpenCV 4 returns shape (N, 1, 4); OpenCV 5 may return (N, 4).
+            x1, y1, x2, y2 = (int(v) for v in np.asarray(line).ravel()[:4])
             cv2.line(overlay, (x1, y1), (x2, y2), (0, 255, 0), 1)
             angle = math.degrees(math.atan2(y2 - y1, x2 - x1))
             angle = ((angle + 90) % 180) - 90
