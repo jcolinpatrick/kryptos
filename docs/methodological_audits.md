@@ -241,6 +241,40 @@ must rely on the dispatcher's `post_transposition` path (or recompute Bean with
 
 ---
 
+## AUDIT-6 — Invented K1-K3 texts in scripts; mislabelled K3 method; unsupported Gromark and Quagmire IV claims
+
+**Status:** OPEN (docs corrected 2026-09-29; evidence import pending).
+**Raised:** 2026-09-29 (clean-room "do not trust prior work" session).
+**Dossier:** `docs/audits/kryptos_text_integrity_audit_2026_09_29.md`.
+
+**Affected claims / surfaces:**
+
+- Any running-key, crib-drag or keystream result from the 57 scripts that embed
+  invented K1-K3 texts (listed in the dossier; guard
+  `scripts/audit/audit_kryptos_text_integrity.py` reports 113 divergent literals).
+- `docs/elimination_tiers.md` Gromark / Vimark and "Additive mask + Vimark p=5"
+  rows, and the E-TABLEAU-20 "K3-method" citations.
+- `docs/invariants.md` Gromark row and K1-K3 running-key row.
+- `docs/research_questions.md` RQ-8 "K3 method" line.
+- `scripts/crib_analysis/e_crib_71_quagmire_iv_exact.py` and
+  `e_crib_72_quagmire_iv_exact.py` "Q4 consistent at every period" note.
+- `scripts/campaigns/f_columnar_periodic_rederived_v1.py` variant labels.
+
+**The worry (plain terms):**
+
+Several recorded results rest on text that is not the real K1-K3 text, on a
+wrong description of K3's method, or on reasoning that does not hold (a
+retracted proof, "Vimark is periodic", an unknowns-versus-equations count that
+ignores injectivity). Each correction is checked in the dossier; the
+re-derivations that replace the evidence were run in a session scratchpad and
+are not yet repo artifacts.
+
+**Close condition:** the 2026-09-29 re-derivations (running key on verified
+texts; Gromark over keyed alphabets; Quagmire IV any-alphabet periods) are
+imported as scripts with results, AND every affected claim above cites either
+those artifacts or a derived fact, AND the text-integrity guard passes or each
+remaining divergent literal is explicitly allowlisted with a reason.
+
 ## Rules for this file
 
 - An audit closes only when **every affected claim** listed under it has

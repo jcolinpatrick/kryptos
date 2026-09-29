@@ -6,13 +6,15 @@
 {% block content %}
 <h1>VIC Cipher Workbench</h1>
 
-<div class="finding-caveat" style="margin-bottom: 1.5rem;">
-  <h3>Elimination status: Fully tested</h3>
+<div class="finding-caveat u-mb-lg">
+  <h3>Elimination status: widely tested, no signal</h3>
   <p>
-    The VIC cipher and its variants have been comprehensively tested against K4.
+    The VIC cipher and several variants have been tested against K4 at scale.
     Over 1.1 billion configurations were scored across standard VIC, non-standard
     key schedules, and straddling checkerboard variants. All produced noise-level
-    results. This tool is retained for educational and historical reference.
+    results. VIC&rsquo;s key inputs (a phrase, a date, a personal number and a
+    five-digit group) can be almost anything, so this covers likely choices, not
+    every possible key. This tool is retained for educational and historical reference.
     See the <a href="/browse/bespoke/">bespoke eliminations</a> for details.
   </p>
 </div>
@@ -26,8 +28,9 @@
   <label>
     <input type="checkbox" id="wb-share-signal">
     Share promising results (18+ out of 24) with the site maintainer.
-    Sends only the method, the key inputs you entered, and the first 40 letters
-    of the result. Off by default; nothing is ever sent without this box checked.
+    Sends only the score, the method, the key inputs you entered, and the first 40
+    letters of the result, through the third-party notification service ntfy.sh.
+    Off by default; nothing is ever sent without this box checked.
   </label>
 </p>
 
@@ -42,9 +45,11 @@
     </p>
     <p>
       <strong>Why test it on K4?</strong> Ed Scheidt (retired Chairman of the CIA Cryptographic Center)
-      studied NSA cryptographic methods during his Army service and spent 26 years at CIA,
-      where the VIC cipher was studied extensively after its discovery in 1953.
-      Sanborn stated K4 uses &ldquo;two systems of enciphering,&rdquo; and VIC is
+      worked in Army signals intelligence and then spent 26 years at CIA (1963 to 1989),
+      in the decades after VIC messages were found in 1953 and the cipher was explained
+      following H&auml;yh&auml;nen&rsquo;s 1957 defection.
+      At the 1990 dedication Sanborn said there are &ldquo;two systems of enciphering the
+      bottom text&rdquo; (the lower panel holds both K3 and K4), and VIC is
       a real-world precedent for combining substitution (checkerboard) with multiple
       transpositions in a single hand-executable system.
     </p>
@@ -186,7 +191,7 @@
 
     <div class="wb-reset-wrap">
       <button id="vic-reset-btn" type="button" class="wb-reset-btn">Reset all</button>
-      <button id="vic-run-btn" type="button" class="wb-reset-btn" style="background:var(--accent-muted);color:var(--accent);border-color:var(--accent);">Decrypt K4</button>
+      <button id="vic-run-btn" type="button" class="wb-reset-btn wb-run-btn">Decrypt K4</button>
     </div>
   </div>
 
@@ -230,12 +235,12 @@
 
       <details>
         <summary>Digit stream</summary>
-        <pre id="vic-digit-stream" class="text-mono" style="font-size:var(--text-xs);white-space:pre-wrap;word-break:break-all;"></pre>
+        <pre id="vic-digit-stream" class="text-mono u-stream-pre"></pre>
       </details>
 
       <details>
         <summary>Keystream at crib positions</summary>
-        <pre id="vic-keystream-detail" class="text-mono" style="font-size:var(--text-xs);white-space:pre-wrap;"></pre>
+        <pre id="vic-keystream-detail" class="text-mono u-stream-pre-nobreak"></pre>
       </details>
 
       <details id="vic-history-panel">
@@ -257,5 +262,5 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="/static/vic_workbench.js?v=1"></script>
+<script src="/static/vic_workbench.js"></script>
 {% endblock %}

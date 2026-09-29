@@ -160,6 +160,6 @@ mandatory closure of AUDIT-3 in `docs/methodological_audits.md`.
 | Affine recurrence orders 1-8 | ELIMINATED | Same proof |
 | Polynomial position key k[i]=f(i), degrees 1-20 | ELIMINATED | No solution over Z_26 |
 | Columnar transposition + periodic Vigenere (widths 5-10, periods 1-22) | ELIMINATED | ~8M orderings tested both directions |
-| Running key from K1-K3 PT/CT, Carter book, Morse | ELIMINATED | At noise floor (5/24) |
-| Gromark/Vimark (linear recurrence ≤ order 8) | ELIMINATED | Subsumed by recurrence elimination |
+| Running key from K1-K3 PT/CT, Carter book, Morse | ELIMINATED (direct alignment) | At noise floor (5/24). *Note 2026-09-29: several contributing scripts used invented K1-K3 texts (docs/audits/kryptos_text_integrity_audit_2026_09_29.md); the conclusion was re-derived on verified texts (best 8/24, matched-null level) in a session whose scripts are not yet imported.* |
+| Gromark/Vimark | PARTIAL (see erratum) | *Erratum 2026-09-29: previously "ELIMINATED, subsumed by recurrence elimination". That was unsupported: the recurrence proofs assume fixed AZ/KA alphabets, while Gromark uses keyed alphabets and a small-base key.* [DERIVED FACT] ACA-standard Gromark (straight plain alphabet, any keyed cipher alphabet) cannot produce the cribs under direct alignment with any key values in 0..10: CT P encrypts PT R at 27 and PT C at 72, forcing k72 - k27 = 15 or -11. Gromark with keyed alphabets on both sides is open in the repo record. See docs/audits/kryptos_text_integrity_audit_2026_09_29.md section 3. |
 | State-dependent ciphers (Chaocipher, Enigma) | ELIMINATED [HYPOTHESIS — depends on K5 position-dependence inference, see section 8] | K5 position-dependent constraint |

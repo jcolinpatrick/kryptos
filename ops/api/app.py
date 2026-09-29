@@ -1,5 +1,6 @@
 """FastAPI theory classifier API for kryptosbot.com."""
 
+import logging
 import os
 import re
 import urllib.request
@@ -11,6 +12,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field, field_validator
+
+# Uvicorn runs under systemd, so this reaches journalctl. Used to count usage
+# of the deprecated status path form; it never records the token itself.
+logger = logging.getLogger("kryptosbot.api")
 
 from ops.api.classifier import classify_theory, load_elimination_index, ClassifyResult
 from ops.api.queue import (
@@ -132,7 +137,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=_CORS_ORIGINS,
     allow_methods=["GET", "POST"],
-    allow_headers=["Content-Type"],
+    allow_headers=["Content-Type", "Authorization"],
 )
 
 
@@ -141,10 +146,20 @@ app.add_middleware(
 # ---------------------------------------------------------------------------
 
 def _client_ip(request: Request) -> str:
-    """Extract client IP, respecting X-Forwarded-For behind a reverse proxy."""
+    """Extract the CloudFront viewer IP from the trusted proxy chain.
+
+    The EC2 security group accepts HTTP only from CloudFront. CloudFront adds
+    the viewer address to ``X-Forwarded-For`` and nginx appends the trusted
+    CloudFront peer address when proxying to Uvicorn. A viewer can prepend
+    arbitrary values, so the first address is not a safe rate-limit key.
+    """
     forwarded = request.headers.get("x-forwarded-for")
     if forwarded:
-        return forwarded.split(",")[0].strip()
+        addresses = [address.strip() for address in forwarded.split(",") if address.strip()]
+        if len(addresses) >= 2:
+            return addresses[-2]
+        # Local development does not have the CloudFront-nginx two-hop chain.
+        return addresses[0]
     return request.client.host if request.client else "unknown"
 
 
@@ -174,9 +189,22 @@ async def health():
     return {"status": "ok", "index_loaded": _index_context is not None}
 
 
-@app.get("/api/status/{token}")
-async def theory_status(token: str):
-    """Look up a submission's status by its token."""
+def _extract_bearer(header_value: Optional[str]) -> Optional[str]:
+    """Pull the token out of an ``Authorization: Bearer <token>`` header.
+
+    The scheme must be stripped BEFORE the strict ``len(token) != 32`` check
+    below, or every header-form request answers 400.
+    """
+    if not header_value:
+        return None
+    parts = header_value.split(None, 1)
+    if len(parts) != 2 or parts[0].lower() != "bearer":
+        return None
+    return parts[1].strip()
+
+
+def _status_response(token: Optional[str]):
+    """Shared body for both entry points, so they cannot drift apart."""
     if not token or len(token) != 32 or not all(c in "0123456789abcdef" for c in token):
         return JSONResponse(status_code=400, content={"detail": "Invalid token format."})
     theory = get_by_token(token)
@@ -188,9 +216,65 @@ async def theory_status(token: str):
         "submitted": theory["timestamp"],
         "theory_preview": theory["theory_text"][:200],
     }
-    if theory.get("result_note"):
-        response["note"] = theory["result_note"]
+    # Never return a bare terminal status. The submit page promises "detailed
+    # results", and three early rejections (ids 1, 4, 5) carry no note, so
+    # their submitters saw only the word "rejected". A default keeps that
+    # promise even where the note was never backfilled.
+    note = theory.get("result_note")
+    if not note:
+        note = _DEFAULT_STATUS_NOTES.get(theory["status"])
+    if note:
+        response["note"] = note
     return response
+
+
+@app.get("/api/status")
+async def theory_status_by_header(request: Request):
+    """Look up a submission by a token carried in the Authorization header.
+
+    This is the form the site uses. It exists because AWS WAF logs record
+    ``httpRequest.uri`` verbatim and only query strings are redactable, so a
+    token in the URL path is written to a log file on every request. The
+    ``authorization`` header is already redacted in the WAF logging config, and
+    CloudFront access logs do not record request headers at all.
+    """
+    return _status_response(_extract_bearer(request.headers.get("authorization")))
+
+
+@app.get("/api/status/{token}")
+async def theory_status(token: str):
+    """DEPRECATED path form, kept so nothing breaks mid-transition.
+
+    Removing it outright would be an invisible, actively misleading failure:
+    an unmatched /api/* falls through to the StaticFiles mount and answers a
+    JSON 404, and status.js renders ANY 404 as "No submission found for this
+    token." Every user holding cached JS would be told their submission was
+    lost, and nothing would alarm - the canary only checks /api/health and a
+    404 is not a 5xx.
+
+    Retire it once this counter stops moving. Logged rather than counted in
+    memory because the process restarts on every release.
+    """
+    logger.info("deprecated_status_path_form used")
+    return _status_response(token)
+
+
+_DEFAULT_STATUS_NOTES = {
+    "rejected": (
+        "This submission was reviewed and not taken forward. It predates our "
+        "practice of recording a written reason for every decision, so the "
+        "specific finding was not saved. That is our omission, not a comment "
+        "on the idea. If you would like it re-reviewed with a written result, "
+        "resubmit it and it will get one."
+    ),
+    "testing": (
+        "This submission is currently being run through the framework. The "
+        "result will appear here when the run completes."
+    ),
+    "pending": (
+        "This submission is queued for review. It has not been tested yet."
+    ),
+}
 
 
 @app.get("/api/classify/stats")
@@ -306,13 +390,61 @@ async def verify_challenge(submission: ChallengeSubmission, request: Request):
     correct = h == CHALLENGE_K4_HASH
 
     if correct:
-        _notify_challenge_solved(cleaned, str(request.client.host))
+        ip = str(request.client.host)
+        # Durable record FIRST (survives ntfy's ~12h retention), then notify.
+        # ntfy truncates the answer to 50 chars; the log keeps the full plaintext.
+        _persist_challenge_solve(cleaned, ip)
+        _notify_challenge_solved(cleaned, ip)
 
     return JSONResponse({
         "correct": correct,
         "hash": h,
         "expected_hash": CHALLENGE_K4_HASH,
     })
+
+
+# Durable, append-only solve log. logs/ is gitignored, so the full plaintext
+# recorded here never reaches the public repo.
+CHALLENGE_SOLVES_FILE = os.path.join(
+    os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
+    "logs", "challenge_solves.json"
+)
+
+
+def _persist_challenge_solve(answer: str, ip: str) -> None:
+    """Append a full, server-verified solve record to CHALLENGE_SOLVES_FILE.
+
+    Best-effort and fail-safe: a logging failure must never break the verify
+    endpoint. Unlike the ntfy push, this captures the COMPLETE plaintext.
+    """
+    import json
+    import time
+    try:
+        os.makedirs(os.path.dirname(CHALLENGE_SOLVES_FILE), exist_ok=True)
+        data = {"solves": []}
+        if os.path.exists(CHALLENGE_SOLVES_FILE):
+            try:
+                with open(CHALLENGE_SOLVES_FILE) as f:
+                    data = json.load(f)
+            except Exception:
+                data = {"solves": []}
+        data.setdefault("solves", [])
+        data["solves"].append({
+            "solved": True,
+            "server_verified": True,
+            "unix_time": int(time.time()),
+            "source_ip": ip,
+            "expected_hash": CHALLENGE_K4_HASH,
+            "full_plaintext": answer,
+            "answer_prefix": answer[:50],
+            "solver_name": None,
+            "solver_method": None,
+            "credit_status": "pending",
+        })
+        with open(CHALLENGE_SOLVES_FILE, "w") as f:
+            json.dump(data, f, indent=2)
+    except Exception:
+        pass
 
 
 def _notify_challenge_solved(answer: str, ip: str) -> None:

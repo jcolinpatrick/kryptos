@@ -1,0 +1,379 @@
+{#
+  Shared figure macros.
+
+  Design vocabulary, three roles, all from existing tokens in static/style.css:
+    --accent-warm (copper)  the carved medium        -> ciphertext
+    --patina      (verdigris) surface that changed   -> recovered plaintext
+    --accent      (sky)     the instrument layer     -> rulers, ticks, axes
+
+  Styles live in static/style.css under the "Figure vocabulary" heading, scoped
+  to .fig-*. Never use a style="" attribute here: nginx serves the site under
+  `style-src 'self'` with no 'unsafe-inline', so inline styles are dropped
+  silently and the element renders unstyled.
+#}
+
+{#
+  position_strip: the 97 carved characters as a scale drawing.
+
+  Laid out as CSS Grid in fixed-width blocks rather than a wrapping flex row,
+  because a ruler can only stay aligned to its letters if both sit in the same
+  grid columns. Each block is three grid rows (ruler / ciphertext / plaintext)
+  so alignment holds by construction at any width.
+
+  ct       the ciphertext string
+  cribs    [{start, text}] plaintext known to sit at that 0-indexed offset
+  marks    [{start, end, label, kind}] extra spans to tint (kind: anomaly|segment)
+  per_row  characters per block; 24 keeps a block readable on a phone
+#}
+{% macro position_strip(ct, cribs=[], marks=[], target=33, show_ruler=true, show_plaintext=true, caption='', label='') %}
+{% set n = ct|length %}
+{#- 97 is prime, so a fixed per-row count strands a remainder (24 gave four full
+    rows and a single orphaned letter). Pick the row COUNT first, then divide as
+    evenly as possible: 3 rows of 33/33/31 rather than 24/24/24/24/1. -#}
+{% set rows_n = (n / target)|round(0, 'ceil')|int %}
+{% set per_row = (n / rows_n)|round(0, 'ceil')|int %}
+{% set crib_at = {} %}
+{% for c in cribs %}
+  {% for i in range(c.text|length) %}
+    {% set _ = crib_at.update({c.start + i: c.text[i]}) %}
+  {% endfor %}
+{% endfor %}
+{% set mark_at = {} %}
+{% for m in marks %}
+  {% for i in range(m.start, m.end + 1) %}
+    {% set _ = mark_at.update({i: m.kind|default('anomaly')}) %}
+  {% endfor %}
+{% endfor %}
+<figure class="fig fig-strip">
+  {% if label %}<figcaption class="fig-label">{{ label }}</figcaption>{% endif %}
+  <div class="fig-strip-scroll">
+    {#- Every row uses the same column template, so a short final row leaves
+        trailing columns empty and the ruler stays aligned above its letters. -#}
+    <div class="fig-strip-block fig-cols-{{ per_row }}">
+      {% for start in range(0, n, per_row) %}
+        {% set stop = [start + per_row, n]|min %}
+        {% if show_ruler %}
+        <div class="fig-strip-row fig-strip-ruler" aria-hidden="true">
+          {% for i in range(start, stop) %}
+            <span class="fig-tick{% if i % 10 == 0 %} fig-tick-major{% elif i % 5 == 0 %} fig-tick-minor{% endif %}"
+            ><span class="fig-tick-n">{% if i % 10 == 0 %}{{ i }}{% endif %}</span></span>
+          {% endfor %}
+        </div>
+        {% endif %}
+        <div class="fig-strip-row fig-strip-ct">
+          {% for i in range(start, stop) %}
+            <span class="fig-cell fig-ct{% if i in crib_at %} fig-known{% endif %}{% if i in mark_at %} fig-{{ mark_at[i] }}{% endif %}"
+                  data-pos="{{ i }}">{{ ct[i] }}</span>
+          {% endfor %}
+        </div>
+        {% if show_plaintext %}
+        <div class="fig-strip-row fig-strip-pt">
+          {% for i in range(start, stop) %}
+            <span class="fig-cell fig-pt{% if i in crib_at %} fig-known{% endif %}"
+            >{% if i in crib_at %}{{ crib_at[i] }}{% else %}<span class="fig-unknown">&middot;</span>{% endif %}</span>
+          {% endfor %}
+        </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+  {% if caption %}<figcaption class="fig-caption">{{ caption }}</figcaption>{% endif %}
+</figure>
+{% endmacro %}
+
+
+{#
+  segment_rule: the dimension callout beneath a strip. Reads like a drawing.
+  segments: [{len, known, name}]
+#}
+{% macro segment_rule(segments, total) %}
+<figure class="fig fig-rule">
+  <div class="fig-rule-track">
+    {% for s in segments %}
+      <div class="fig-rule-seg{% if s.known %} fig-known{% endif %}"
+           data-span="{{ s.len }}">
+        <span class="fig-rule-len">{{ s.len }}</span>
+        <span class="fig-rule-name">{{ s.name }}</span>
+      </div>
+    {% endfor %}
+  </div>
+  <figcaption class="fig-caption">
+    {{ total }} characters. {{ segments|selectattr('known')|map(attribute='len')|sum }} known, {{ total - segments|selectattr('known')|map(attribute='len')|sum }} unknown.
+  </figcaption>
+</figure>
+{% endmacro %}
+
+
+{#
+  section_bars: K1-K4 at a glance. Bar width is proportional to real character
+  count, so the reader sees the proportions instead of being told them.
+
+  The widths themselves are in style.css (.fig-bar-N), NOT here: the site is
+  served under CSP `style-src 'self'`, so a style attribute computed from
+  `widest` would be blocked in production and every bar would collapse to zero.
+  tests/test_site_builder_build.py pins the CSS to build.py's K4_SECTIONS.
+  sections: [{name, chars, cipher, key, solved, opening}]
+#}
+{% macro section_bars(sections) %}
+{% set widest = sections|map(attribute='chars')|max %}
+<figure class="fig fig-sections">
+  <div class="fig-sections-list">
+    {% for s in sections %}
+      <div class="fig-section{% if not s.solved %} fig-unsolved{% endif %}">
+        <div class="fig-section-head">
+          <span class="fig-section-name">{{ s.name }}</span>
+          <span class="fig-section-chars">{{ s.chars }} chars</span>
+        </div>
+        <div class="fig-section-track">
+          <div class="fig-section-bar fig-bar-{{ loop.index }}"></div>
+        </div>
+        <div class="fig-section-meta">
+          <span class="fig-section-cipher">{{ s.cipher }}</span>
+          <span class="fig-section-key">{% if s.key %}key <code>{{ s.key }}</code>{% elif s.solved %}no key{% else %}key unknown{% endif %}</span>
+          <span class="fig-section-solved">{{ s.solved or 'unsolved' }}</span>
+        </div>
+        {% if s.opening %}<p class="fig-section-opening">{{ s.opening }}</p>{% endif %}
+      </div>
+    {% endfor %}
+  </div>
+</figure>
+{% endmacro %}
+
+
+{#
+  funnel: gives the configuration count a denominator and a destination.
+  Log-scaled, because 671 billion to 0 has no linear rendering.
+  stages: [{n, label, note, terminal}]
+#}
+{% macro funnel(stages) %}
+<figure class="fig fig-funnel">
+  <ol class="fig-funnel-list">
+    {% for s in stages %}
+      <li class="fig-funnel-stage{% if s.terminal %} fig-terminal{% endif %} fig-funnel-w{{ loop.index }}">
+        <span class="fig-funnel-n">{{ s.n }}</span>
+        <span class="fig-funnel-label">{{ s.label }}</span>
+        {% if s.note %}<span class="fig-funnel-note">{{ s.note }}</span>{% endif %}
+      </li>
+    {% endfor %}
+  </ol>
+</figure>
+{% endmacro %}
+
+
+{#
+  tableau: how a lookup on the sculpture's own Vigenere chart actually works.
+
+  A tableau is a lookup table, which is the canonical case where prose loses to a
+  picture. This one is the cipher that solved K1 and K2. It is cut into the RIGHT
+  HALF OF THE COPPER SCREEN itself -- not into the granite, which is a different
+  element of the installation -- and mirror-reversed, so it reads only from behind
+  the sculpture. (CIA's published description, reference/cia_kryptos_page.md:46.)
+
+  Solvers catalogue this arrangement under the American Cryptogram Association
+  name Quagmire III. That label is the puzzle community's, not Sanborn's; prefer
+  the sculpture's own vocabulary in anything reader-facing.
+
+  Only the rows the cycleword actually selects are drawn. K1 uses eight of the
+  twenty-six, and seeing that is most of the intuition.
+#}
+{% macro tableau_figure(t, label='', caption='') %}
+<figure class="fig fig-tableau">
+  {% if label %}<figcaption class="fig-label">{{ label }}</figcaption>{% endif %}
+  <div class="fig-tableau-scroll">
+    <table class="fig-tab">
+      <thead>
+        <tr>
+          <th class="fig-tab-corner"><span class="fig-tab-corner-key">key</span><span class="fig-tab-corner-pt">plain</span></th>
+          {% for ch in t.alphabet %}
+            <th class="fig-tab-head{% if ch == t.example.pt %} fig-tab-col{% endif %}">{{ ch }}</th>
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in t.rows %}
+          <tr class="{% if row.key == t.example.key %}fig-tab-rowsel{% endif %}">
+            <th class="fig-tab-rowhead">{{ row.key }}</th>
+            {% for ch in row.letters %}
+              {% set is_hit = row.key == t.example.key and t.alphabet[loop.index0] == t.example.pt %}
+              <td class="fig-tab-cell{% if is_hit %} fig-tab-hit{% endif %}{% if t.alphabet[loop.index0] == t.example.pt %} fig-tab-col{% endif %}">{{ ch }}</td>
+            {% endfor %}
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <ol class="fig-tab-steps">
+    <li><span class="fig-tab-step-n">1</span> Take the next plaintext letter,
+        <code class="fig-tab-pt">{{ t.example.pt }}</code>. Find its column along the top.</li>
+    <li><span class="fig-tab-step-n">2</span> Take the next letter of the cycleword
+        <code>{{ t.cycleword }}</code>, here <code class="fig-tab-key">{{ t.example.key }}</code>.
+        Find its row down the side.</li>
+    <li><span class="fig-tab-step-n">3</span> Read off where they meet:
+        <code class="fig-tab-ct">{{ t.example.ct }}</code>. That is the ciphertext letter.</li>
+  </ol>
+  {% if caption %}<figcaption class="fig-caption">{{ caption }}</figcaption>{% endif %}
+</figure>
+{% endmacro %}
+
+
+{#
+  scoring_chart: the scoring bands and the random-key baseline on one pair of axes.
+
+  Replaces two tables and two paragraphs. The insight is that a fixed threshold is
+  fighting a rising baseline and they cross, which is a crossing of two lines and a
+  slow thing to say in prose.
+
+  Inline SVG: allowed under the site's CSP (it is neither a style nor a script
+  source), gzips with the page, costs no extra request. Styled with class=, never
+  style=, and never a <style> block inside the SVG.
+#}
+{% macro scoring_figure(c, label='', caption='') %}
+<figure class="fig fig-chart">
+  {% if label %}<figcaption class="fig-label">{{ label }}</figcaption>{% endif %}
+  <div class="fig-chart-scroll">
+    <svg class="fig-svg" viewBox="0 0 760 320" role="img"
+         aria-label="Expected score of a random key, plotted against key period, over the {{ c.bands|length }} scoring bands. The baseline rises overall, from {{ c.dots[0].value }} at period {{ c.dots[0].period }} to {{ c.dots[-1].value }} at period {{ c.dots[-1].period }}, and first enters the SIGNAL band at period {{ (c.dots|selectattr('hot')|first).period }}.">
+      {% for b in c.bands %}
+        <rect class="fig-band fig-band-{{ b.cls }}" x="{{ c.x0 }}" y="{{ b.y }}"
+              width="{{ c.x1 - c.x0 }}" height="{{ b.h }}"></rect>
+        <text class="fig-band-label" x="{{ c.x0 + 8 }}" y="{{ b.y + 13 }}">{{ b.label }} {{ b.lo }}&#8211;{{ b.hi }}</text>
+      {% endfor %}
+
+      {% for t in c.yticks %}
+        <line class="fig-grid" x1="{{ c.x0 }}" y1="{{ t.y }}" x2="{{ c.x1 }}" y2="{{ t.y }}"></line>
+        <text class="fig-axis-label fig-axis-y" x="{{ c.x0 - 8 }}" y="{{ t.y + 4 }}">{{ t.label }}</text>
+      {% endfor %}
+
+      {# The SIGNAL floor (18). Where the random baseline rises above it, a SIGNAL-band score is what chance alone produces. #}
+      <line class="fig-threshold" x1="{{ c.x0 }}" y1="{{ c.signal_y }}" x2="{{ c.x1 }}" y2="{{ c.signal_y }}"></line>
+
+      <polyline class="fig-line" points="{{ c.points }}"></polyline>
+      {% for d in c.dots %}
+        <circle class="fig-dot{% if d.hot %} fig-dot-hot{% endif %}" cx="{{ d.x }}" cy="{{ d.y }}" r="{% if d.hot %}4{% else %}2.5{% endif %}">
+          <title>period {{ d.period }}: a random key scores {{ d.value }} of 24</title>
+        </circle>
+      {% endfor %}
+
+      {% for t in c.xticks %}
+        <text class="fig-axis-label" x="{{ t.x }}" y="{{ c.y1 + 18 }}">{{ t.label }}</text>
+      {% endfor %}
+      <text class="fig-axis-title" x="{{ (c.x0 + c.x1) / 2 }}" y="{{ c.y1 + 40 }}">key period</text>
+      <text class="fig-axis-title fig-axis-title-y" x="14" y="{{ (c.y0 + c.y1) / 2 }}"
+            transform="rotate(-90 14 {{ (c.y0 + c.y1) / 2 }})">crib score</text>
+    </svg>
+  </div>
+  {% if caption %}<figcaption class="fig-caption">{{ caption }}</figcaption>{% endif %}
+</figure>
+{% endmacro %}
+
+
+{#
+  transposition_shapes: four rearrangements, drawn.
+
+  The site names many letter-rearrangement methods, and "rail fence", "spiral"
+  and "zigzag" are literally the names of shapes, so this draws four of them.
+  Each cell shows its letter and, small, the position that letter takes in the
+  output, so the read-out path is visible rather than described.
+#}
+{% macro transposition_figure(shapes, sample, label='', caption='') %}
+<figure class="fig fig-shapes">
+  {% if label %}<figcaption class="fig-label">{{ label }}</figcaption>{% endif %}
+  <p class="fig-shapes-input">Every one of these starts from <code>{{ sample }}</code>.</p>
+  <div class="fig-shapes-grid">
+    {% for s in shapes %}
+      <div class="fig-shape{% if s.wide %} fig-shape-wide{% endif %}">
+        <h3 class="fig-shape-name">{{ s.name }}</h3>
+        <p class="fig-shape-note">{{ s.note }}</p>
+        <div class="fig-shape-scroll">
+          <div class="fig-shape-rows">
+            {% for row in s.grid %}
+              <div class="fig-shape-row">
+                {% for cell in row %}
+                  {% if cell %}
+                    <span class="fig-shape-cell"><b>{{ cell.ch }}</b><i>{{ cell.n }}</i></span>
+                  {% else %}
+                    <span class="fig-shape-cell fig-shape-gap" aria-hidden="true"></span>
+                  {% endif %}
+                {% endfor %}
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+        <p class="fig-shape-out"><span>reads out</span> <code>{{ s.out }}</code></p>
+      </div>
+    {% endfor %}
+  </div>
+  {% if caption %}<figcaption class="fig-caption">{{ caption }}</figcaption>{% endif %}
+</figure>
+{% endmacro %}
+
+
+{#
+  w_segments: the 97 characters re-flowed at the five carved Ws.
+
+  This is a claim about where line breaks fall, so it has to show the breaks.
+  Rows are deliberately ragged: the right edge IS the figure. The crib blocks stay
+  tinted so the reader can see where they land relative to a run's end, which is
+  where the interesting geometry is (two characters after EASTNORTHEAST, four
+  before BERLINCLOCK).
+#}
+{% macro w_segment_strip(w, label='', caption='') %}
+<figure class="fig fig-wseg">
+  {% if label %}<figcaption class="fig-label">{{ label }}</figcaption>{% endif %}
+  <div class="fig-wseg-scroll">
+    {% for seg in w.segments %}
+      <div class="fig-wseg-row">
+        <span class="fig-wseg-meta">{{ seg.start }}&ndash;{{ seg.end }}</span>
+        <span class="fig-wseg-cells">
+          {% for c in seg.cells %}
+            <span class="fig-cell fig-ct{% if c.known %} fig-known{% endif %}" data-pos="{{ c.i }}">{{ c.ch }}</span>
+          {% endfor %}
+          {% if seg.w is not none %}<span class="fig-cell fig-wmark" title="carved W at position {{ seg.w }}">W</span>{% endif %}
+        </span>
+        <span class="fig-wseg-len">{{ seg.len }}</span>
+      </div>
+    {% endfor %}
+  </div>
+  {% if caption %}<figcaption class="fig-caption">{{ caption }}</figcaption>{% endif %}
+</figure>
+{% endmacro %}
+
+
+{#
+  bean_constraints: one equality and 242 inequalities over the 97 positions.
+
+  The reader otherwise has to hold four coordinates and a relation in their head to
+  see why one repeated ciphertext letter constrains anything. Drawn once it is
+  obvious, and the 242 inequalities are shown as density rather than enumerated.
+#}
+{% macro bean_figure_svg(b, label='', caption='') %}
+<figure class="fig fig-bean">
+  {% if label %}<figcaption class="fig-label">{{ label }}</figcaption>{% endif %}
+  <div class="fig-chart-scroll">
+    <svg class="fig-svg fig-bean-svg" viewBox="0 0 760 172" role="img"
+         aria-label="The 97 ciphertext positions on one axis. A single bold arc joins positions {{ b.eq.a }} and {{ b.eq.b }}, which both carry the ciphertext letter {{ b.eq.ct }} and are read as decrypting to {{ b.eq.pt }}, so, if nothing rearranges the letters, their key values must be equal. Below the axis, {{ b.n_ineq }} faint arcs show the pairs of key positions that must differ under that same assumption and the standard A to Z alphabet.">
+
+      {# the single equality, above the axis #}
+      <path class="fig-bean-eq" d="{{ b.eq.d }}"></path>
+      <text class="fig-bean-eqlabel" x="{{ b.eq.mid_x }}" y="16">k<tspan class="fig-sub" dy="3">{{ b.eq.a }}</tspan><tspan dy="-3"> = k</tspan><tspan class="fig-sub" dy="3">{{ b.eq.b }}</tspan></text>
+
+      {# 242 inequalities, below #}
+      {% for c in b.chords %}<path class="fig-bean-ineq" d="{{ c.d }}"></path>{% endfor %}
+
+      <line class="fig-bean-axis" x1="{{ b.x0 }}" y1="{{ b.axis_y }}" x2="{{ b.x1 }}" y2="{{ b.axis_y }}"></line>
+      {% for c in b.cribs %}<circle class="fig-bean-crib" cx="{{ c.x }}" cy="{{ b.axis_y }}" r="2.5"></circle>{% endfor %}
+
+      {# the two positions that carry the whole equality #}
+      <circle class="fig-bean-node" cx="{{ b.eq.ax }}" cy="{{ b.axis_y }}" r="5"></circle>
+      <circle class="fig-bean-node" cx="{{ b.eq.bx }}" cy="{{ b.axis_y }}" r="5"></circle>
+      <text class="fig-bean-node-label" x="{{ b.eq.ax }}" y="{{ b.axis_y + 22 }}">{{ b.eq.ct }} &#8594; {{ b.eq.pt }}</text>
+      <text class="fig-bean-node-label" x="{{ b.eq.bx }}" y="{{ b.axis_y + 22 }}">{{ b.eq.ct }} &#8594; {{ b.eq.pt }}</text>
+
+      {% for t in b.ticks %}
+        <text class="fig-axis-label" x="{{ t.x }}" y="{{ b.axis_y - 10 }}">{{ t.label }}</text>
+      {% endfor %}
+    </svg>
+  </div>
+  {% if caption %}<figcaption class="fig-caption">{{ caption }}</figcaption>{% endif %}
+</figure>
+{% endmacro %}

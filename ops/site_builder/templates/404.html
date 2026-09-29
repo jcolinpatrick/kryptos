@@ -1,15 +1,14 @@
 {% extends "base.html" %}
 {% block title %}Page Not Found | kryptosbot.com{% endblock %}
-{% block head_extra %}<meta name="robots" content="noindex">{% endblock %}
 
 {% block content %}
-<section style="text-align: center; padding: var(--sp-8) 0;">
-  <img src="/static/404-bot.jpg" alt="KryptosBot scratching its head, confused, with 404 on its screen" style="max-width: 160px; width: 100%; border-radius: var(--radius-lg); margin-bottom: var(--sp-4);">
+<section class="u-center-section">
+  <img src="/static/404-bot.jpg" alt="KryptosBot scratching its head, confused, with 404 on its screen" class="u-404-img">
   <h1>404: Page Not Found</h1>
   <p>
     This page has been eliminated from the search space.
   </p>
-  <p style="margin-top: var(--sp-6);">
+  <p class="u-mt-6">
     <a href="/">Home</a> &middot;
     <a href="/browse/">Browse eliminations</a> &middot;
     <a href="/search/">Search</a> &middot;

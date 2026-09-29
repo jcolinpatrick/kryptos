@@ -45,8 +45,8 @@ Assess the theory against these criteria:
   * Methods requiring <10^10 configurations are FEASIBLE (hours to days).
   * If the theory has a natural parameter space, estimate its size.
 - Does it violate known constraints?
-  * All 26 letters appear in K4 ciphertext — any cipher requiring a 25-letter alphabet (I/J merge) is IMPOSSIBLE (Bifid, Trifid, Playfair, ADFGVX, ADFGX, etc.).
-  * Bean constraints: k[27] must equal k[65]; 242 variant-independent inequality pairs derived from all C(24,2) crib position pairs.
+  * All 26 letters appear in K4 ciphertext, so any cipher whose output uses a 25-letter alphabet (I/J merged) is IMPOSSIBLE as the final step (5x5 Bifid, Playfair, Two-Square, standard Four-Square, etc.). ADFGVX and ADFGX are also IMPOSSIBLE as the final step, for a different reason: they turn each letter into two, so their output always has an even length (K4 has 97 letters) and uses only 6 (or 5) different letters. Trifid uses 27 symbols, so this 26-letter argument does not apply to it.
+  * Bean constraints: k[27] must equal k[65], plus 242 inequality pairs derived from the 24 crib positions. These apply only to additive (Vigenere/Beaufort-type) keys when the carved letters line up directly with the plaintext (no transposition, reordering or filler removal first), and the 242 inequalities also assume the standard A-Z alphabet. They cannot be used to rule out a theory with a transposition or other reordering layer (project correction, 2026-08-24), and the inequalities do not apply to keyed alphabets such as the KRYPTOS alphabet (project audit, 2026-09-28). Never use them to call such a theory impossible.
 - Is it falsifiable? Can we define what "success" looks like (24/24 crib match)?
 
 TONE RULES — CRITICAL:
@@ -79,31 +79,31 @@ For a novel but IMPOSSIBLE (violates known constraints) theory:
 
 # Comprehensive summary of what has been eliminated, keyed to index IDs
 COMMON_ELIMINATIONS = """\
-EXHAUSTIVE ELIMINATIONS (always match these — do NOT classify as novel):
+EXHAUSTIVE ELIMINATIONS (match a theory to these only within the scope each line states; where a line says a case is open, disputed, not covered or not ruled out, do NOT call that case eliminated):
 
-TIER 1 — MATHEMATICALLY PROVEN IMPOSSIBLE (permanent, cannot be revisited):
-- ALL periodic polyalphabetic ciphers at ALL periods 1-26, ALL variants (Vigenere, Beaufort, Variant Beaufort) with direct positional correspondence → PROVEN IMPOSSIBLE via Bean constraint algebra. This includes ALL single-layer Vigenere, Beaufort, and Variant Beaufort ciphers regardless of keyword.
-- ALL autokey variants (PT-autokey Vigenere, PT-autokey Beaufort, CT-autokey Vigenere, CT-autokey Beaufort) even combined with arbitrary transposition → PROVEN IMPOSSIBLE. Structural proof: PT-max=16/24, CT-max=21/24. The crib-feedback mechanism creates contradictions.
+TIER 1: PROOFS AND EXHAUSTIVE SEARCHES (each holds only within the scope stated on its line; most assume the carved letters line up directly with the plaintext, and a transposition or other rearrangement layer usually falls outside that scope):
+- Repeating-key Vigenere, Beaufort and Variant Beaufort applied directly to the carved text (each carved letter decrypts to the plaintext letter in the same position), on the standard A-Z alphabet or the KRYPTOS alphabet → PROVEN IMPOSSIBLE at every key length from 1 to 26 and from 30 to 52, whatever the keyword: the known letters themselves demand conflicting key values (a direct consistency check, not a Bean argument). Key lengths 27-29 and 53 or more are not covered. With one keyword-mixed alphabet used on both sides (the way K1 and K2 used the KRYPTOS alphabet), key lengths 1-22, 24 and 25 are ruled out for every possible mixed alphabet; lengths 23, 26 and 27 or more are not. Two different mixed alphabets (one for the plaintext side, one for the ciphertext side) are NOT fully ruled out. None of this covers a repeating key combined with a transposition or other rearrangement.
+- Self-keying (autokey) ciphers, plaintext-keyed or ciphertext-keyed, Vigenere, Beaufort or Variant Beaufort, on the standard or KRYPTOS alphabet, applied DIRECTLY to the carved text (no rearrangement) → ruled out for starting keys (primers) of 1 to 25 letters: plaintext-keyed reaches at most 21 of the 24 known letters (22 for one KRYPTOS-alphabet variant) and ciphertext-keyed at most 4-6. A match of all 24 first becomes possible with a 27-letter starting key. Self-keying WITH a letter-rearrangement layer is NOT ruled out: an explicit rearrangement of the 97 carved letters followed by ciphertext-keyed Vigenere decryption reproduces all 24 known letters. An unrestricted rearrangement leaves too much freedom for the known letters to rule it out; that makes it 'not ruled out', not a lead. Never tell a submitter that autokey plus a transposition is impossible.
 - ALL Playfair ciphers → IMPOSSIBLE (K4 has all 26 letters; Playfair requires 25-letter I/J merge).
 - ALL Bifid ciphers (5x5) → IMPOSSIBLE (same 26-letter reason).
-- ALL Trifid ciphers → IMPOSSIBLE (same reason).
-- ALL ADFGVX / ADFGX ciphers → IMPOSSIBLE (6-symbol intermediate, incompatible with 26-letter CT).
-- ALL Four-Square ciphers → IMPOSSIBLE (digraphic, tested: single-layer max 23/24 = overfitting artifact).
-- ALL Hill ciphers (2x2, 3x3) → ALGEBRAIC IMPOSSIBILITY.
+- Trifid → NOT fully ruled out. With the carved letters lined up directly with the plaintext, algebraic checks against the known letters rule out some key periods (at least 9-14 and 16, in scripts that can still be re-run), but the older claim covering every period from 2 to 97 has no complete proof in the current record (E-FRAC-21 scope correction, 2026-08-24). The 26-letter argument does not apply: Trifid uses 27 symbols. Do not tell submitters Trifid is eliminated.
+- ADFGVX / ADFGX as the final step → IMPOSSIBLE (each letter becomes two, so the output length is always even while K4 has 97 letters, and the output uses only 6 or 5 different letters while K4 uses all 26).
+- Four-Square and Two-Square (standard 5x5 squares) as the final step → IMPOSSIBLE (they encrypt letter pairs, so the output length is even while K4 has 97 letters, and their squares hold only 25 letters while K4 uses all 26). A separate search of digraphic variants reached at most 23/24, judged an overfitting artifact; that is a search result, not the proof.
+- Hill ciphers (2x2, 3x3) with the carved letters lined up directly with the plaintext → ALGEBRAIC IMPOSSIBILITY. Not proven when a transposition or other rearrangement layer is present.
 - Pure transposition alone → IMPOSSIBLE (CT has 2 E's, known PT needs 3).
-- ALL Gromark/Vimark ciphers (orders 1-8, 8.74 billion configurations) → ELIMINATED. Match to Gromark elimination entries.
-- Progressive key → IMPOSSIBLE (Bean: delta restricted to {0,13} only).
-- Quadratic key → IMPOSSIBLE (0/676 survive Bean constraints).
-- Fibonacci key → IMPOSSIBLE (0/676 survive Bean constraints).
+- Gromark/Vimark → PARTIAL, NOT eliminated as a family (corrected 2026-09-29). Only ACA-standard Gromark (straight plain alphabet) is impossible under direct alignment for key values 0-10, and the fixed-alphabet Vimark result under columnar and strip transpositions stands within its scope. Gromark with keyed alphabets on both sides is OPEN in the project record: do not tell submitters it is eliminated.
+- Progressive key (the key shifts by a fixed step each letter) with the carved letters lined up directly with the plaintext → IMPOSSIBLE (Bean equality restricts the step to 0 or 13, which makes the key repeat every 1 or 2 letters, already ruled out). Not proven when a transposition or other rearrangement layer is present.
+- Quadratic key → IMPOSSIBLE with the carved letters lined up directly with the plaintext and the standard A-Z alphabet (0/676 survive Bean constraints); not proven when a transposition or other rearrangement layer is present.
+- Fibonacci key → IMPOSSIBLE with the carved letters lined up directly with the plaintext and the standard A-Z alphabet (0/676 survive Bean constraints); not proven when a transposition or other rearrangement layer is present.
 - Null mask (any 24 positions) + periodic substitution p=1-23 → ALGEBRAIC PROOF of impossibility.
-- Three-layer Sub+Trans+Sub at p1*p2<=50 → ZERO candidates survive.
-- Mono+Trans+Periodic at periods 3-7 → ZERO candidates (bipartite constraint too stringent).
-- ALL columnar transpositions w5,w7 → ZERO Bean passes across all orderings.
-- ALL columnar w6,w8,w9 → exhaustive, max 13-14/24 = noise.
-- ALL double columnar (9 Bean-compatible width pairs) → max 15/24 = random.
-- ALL Myszkowski transpositions w5-13 → max 15/24 = random.
-- AMSCO/Nihilist/Swapped transposition w8-13 → ZERO Bean passes.
-- ANY transposition + periodic key at 17 of 25 periods → Bean impossibility proof.
+- Three-layer Sub+Trans+Sub (columnar widths 6, 8, 9) → DISPUTED, NOT an elimination: the original run (E-FRAC-52) evaluated only 1.32% of its own declared space (2026-08-24 retraction).
+- Mono+Trans+Periodic with columnar widths 6, 8, 9 at periods 3-7 → ZERO candidates (bipartite constraint too stringent). Periods 10-12 were retracted; other transposition families are not covered.
+- Columnar w5, w7 + repeating key: the old "ZERO Bean passes" result is DISPUTED since 2026-08-24 (frozen Bean applied across a transposition). A re-run without the Bean filter (f_columnar_periodic_rederived_v1: repeating-key Vigenere/Beaufort-type substitution, then columnar transposition, all orderings of widths 4-9) found ZERO solutions at periods 1-24; periods 25-26 are underdetermined.
+- Columnar w6, w8, w9 + repeating key → covered by the same Bean-free re-run (all column orders, periods 1-24, standard A-Z alphabet, zero solutions). The older width-9 score (E-FRAC-12) was retracted on 2026-08-24 (Bean frame error) and should not be cited on its own.
+- Double columnar, 9 width pairs drawn from widths 6, 8, 9, + repeating key → max 15/24 = random (E-FRAC-46). Other width pairs are not covered (pairs using width 5 or 7 were skipped on a Bean ruling that is now disputed).
+- Myszkowski transpositions w5-13 + repeating key (exhaustive at w5-7, sampled at w8-13) → max 15/24 = random.
+- AMSCO/Nihilist/Swapped columnar w8-13 + repeating key (width 8 exhaustive, widths 9-13 sampled) → eliminated on the attainable-crib ceiling (at most 16/24 at periods 8-10 and 23/24 at period 24; 24/24 only at periods 25-26, which are underdetermined). The old "ZERO Bean passes" wording is retired.
+- RETRACTED 2026-08-24, never cite: the "any transposition + periodic key" Bean impossibility proof (E-FRAC-35) and the list of "Bean-surviving periods {8,13,16,19,20,23,24,26}". A transposition combined with a repeating key is NOT proven impossible in general; only specific transposition families have been searched.
 
 TIER 2 — EXHAUSTIVELY TESTED (eliminated as single-layer, open as one layer of multi-layer):
 - ALL Caesar/ROT shifts (0-25) → ELIMINATED. Match to [e-disproof-01].
@@ -123,31 +123,31 @@ TIER 2 — EXHAUSTIVELY TESTED (eliminated as single-layer, open as one layer of
 - K3-style double rotational transposition applied to K4 → ELIMINATED.
 - Simulated annealing on pure transposition → ceiling at -3.73/char, no English.
 - RS44, VIC, Wheatstone, ITA-2, interrupted-key, Wilson, sawtooth, Baudot, Ubchi, Soviet three-step, Sanborn matrix → ALL NOISE.
-- 671 billion+ total configurations tested across 993 experiment scripts (944 tracked in exhaustion log).
+- Do not quote totals of configurations or scripts: the site computes them at build time, and some older records inside those totals were later reopened or retracted. A large count is not proof that an idea is ruled out.
 
 KEY FACTS ABOUT K4:
 - Ciphertext: OBKRUOXOGHULBSOLIFBBWFLRVQQPRNGKSSOTWTQSJQSSEKZZWATJKLUDIAWINFBNYPVTTMZFPKWGDKZXTJCDIGKUHUAUEKCAR
 - Length: 97 (prime), all 26 letters present, IC = 0.0361
-- Known plaintext (cribs): positions 21-33 = EASTNORTHEAST, positions 63-73 = BERLINCLOCK
+- Known plaintext (cribs): positions 21-33 = EASTNORTHEAST, positions 63-73 = BERLINCLOCK (counting from 0; positions 22-34 and 64-74 counting from 1, as usually published). That the carved letter at each position decrypts to the plaintext letter at the same position is the best-supported reading, but it rests on relayed remarks, not a Sanborn quote.
 - Self-encrypting positions: CT[32]=PT[32]=S, CT[73]=PT[73]=K
-- Bean equality constraint: k[27] = k[65]; 242 variant-independent inequality constraints
+- Bean equality constraint: k[27] = k[65], plus 242 inequality constraints (valid only for additive keys with the carved letters lined up directly with the plaintext; the inequalities also assume the standard A-Z alphabet; they cannot rule out a theory with a transposition or reordering layer)
 - Kryptos Alphabet (KA): KRYPTOSABCDEFGHIJLMNQUVWXZ (all 26 letters, keyword-ordered)
-- K1-K3 used Vigenere on a KA tableau. Sanborn confirmed K4 uses a DIFFERENT, harder method.
-- Sanborn: "There are TWO SYSTEMS of enciphering the bottom text... a major clue in itself"
-- Scheidt: method is bespoke but hand-executable. "Mirrors and obfuscation."
+- K1 and K2 used a Vigenere-style cipher on the KRYPTOS-keyed alphabet (keys PALIMPSEST and ABSCISSA). K3 is a pure transposition (an unkeyed double rotation: 8 rows of 42, then 24 rows of 14), NOT Vigenere. Sanborn and Scheidt have both said they intended K4 to be the hardest section (Wired, 2009), and Scheidt has spoken of an intentional "change in the methodology" of the encryption.
+- Sanborn is quoted, in a transcript of a talk he gave at the CIA (believed to be the 1990 dedication) that reaches us through a community researcher, as saying there are 'two systems of enciphering the bottom text' and that this is 'a major clue in itself'. Whether 'the bottom text' means K4 alone or the whole lower plate (K3 and K4) is not clear, so do not state that K4 itself uses two systems.
+- Scheidt (Wired interview, January 2005): in the first three sections the English language is still visible through the code, so frequency counting helps; in part four he disguised that, so the technique has to be solved first.
 - The carved text may be SCRAMBLED ciphertext (transposition of real CT), not direct CT.
 
 PHYSICAL ANOMALIES:
-- Deliberate misspellings: K1 IQLUSION (L→Q), K2 UNDERGRUUND (O→U), K3 DESPARATLY (E→A)
+- Misspellings in the solved texts: K1 IQLUSION and K3 DESPARATLY (whether these were intentional is not established here). K2 UNDERGRUUND and the K2 ending IDBYROWS (correct ending XLAYERTWO, an error Sanborn acknowledged in 2006) are ERRORS, not intentional. Never describe them as deliberate.
 - Morse code (K0): VIRTUALLY INVISIBLE, DIGETAL INTERPRETATIU, SHADOW FORCES, LUCID MEMORY, T IS YOUR POSITION, SOS, RQ
 - 25-26 extra E characters in Morse code (E = single dit, shortest Morse character)
-- Lodestone deflects compass toward ENE (~67.5°) = EASTNORTHEAST crib
-- 5 raised characters on sculpture: D, Y, A, R, O
+- One granite slab at the site has an engraved compass rose pointing to a lodestone. Reports of the direction it indicates disagree, and any link to the EASTNORTHEAST crib is conjecture.
+- Raised letters on the sculpture: only Y, A and R, inside ENDYAHR at the very start of the K3 ciphertext (the "YAR" superscript, confirmed by rubbings in 2002). A five-letter "DYARO" reading is a community suggestion and is not supported.
 - K2 coordinates: 38°57'6.5"N, 77°8'44"W (near CIA but exact target debated)
 
 WHAT REMAINS OPEN (leading hypotheses — do NOT match these to eliminations):
 - Running key from UNTESTED source texts (model survives Bean, 13 mono degrees of freedom). Priority sources: Kahn's "Codebreakers", Schliemann Troy texts, pre-1990 Egyptological texts.
-- Bespoke chart-based system — Sanborn archive shows "Code Breaker" overlay sketch and "actual coding charts." Physical overlay cipher mechanism outside classical families.
+- Bespoke chart-based system. Sanborn's papers include a "Coded" / "Code Breaker" concept sketch (an artistic idea, not a documented cipher mechanism); his K4 coding charts are not public.
 - Multi-layer hand-executable systems — single-layer eliminations do NOT eliminate those families as one layer of a multi-layer construction. Mono+Trans+Running key is UNDERDETERMINED.
 - External evidence: K5 ciphertext, recovered coding charts, circled letters on sculpture photos.
 
@@ -155,18 +155,18 @@ RETIRED HYPOTHESES (do NOT treat as live evidence, but classify matching submiss
 - Null palette {B,G,I,K,O,W,Z} anomaly — RETIRED 2026-04. Matched controls (April 2026) disproved specificity: among 100 random 7-letter palettes, BGIKOWZ ranked in the 1st percentile for cross-model mask agreement, and 76 of 133 single-letter-swap neighbors outperformed it. The convergence improvement from palette constraints is a generic combinatorial property, not evidence for these letters. Palette constraints remain useful as a computational technique but BGIKOWZ is not a privileged signal. The earlier p~3e-5 claim was post-hoc and traced to selection from positions already containing palette letters. The 17-position CONSENSUS_NULL_POSITIONS mask derived from this construct is likewise unsupported and should not be cited as ground truth.
 
 OPEN RESEARCH QUESTIONS (RQ-1 through RQ-13):
-- RQ-1: What cipher type? Not any standard single-layer classical cipher.
+- RQ-1: What cipher type? None of the simple single-layer ciphers tested so far fits; running keys from untested texts and some keyed-alphabet variants remain open.
 - RQ-2: What is the key source? Thematic keyword? Running-key text? Chart-derived?
 - RQ-3: Is there a transposition layer? What permutation?
 - RQ-4: What is "the point"? (Sanborn: "What's the point?")
 - RQ-5: What connects Egypt and Berlin themes in the plaintext?
-- RQ-6: How is the full plaintext delivered? (Only 24 of ~73-97 chars known)
+- RQ-6: What does "delivering a message" mean? (2025 reporting attributes the phrase to Sanborn. Only 24 plaintext letters are known.)
 - RQ-7: What precedes EASTNORTHEAST in the plaintext?
-- RQ-8: Did K3→K4 methodology change? (K1-K3 used Quagmire III / Vigenere)
-- RQ-9: Does K5 exist? What constraints would it add?
+- RQ-8: Did K3→K4 methodology change? (K1 and K2 used a Vigenere-style cipher on the KRYPTOS alphabet; K3 is a pure transposition)
+- RQ-9: What is K5 and how does it relate to K4? (In his August 2025 open letter Sanborn wrote that K4's riddle "will persist as K5"; 2025 reporting attributes to him that K5 is 97 characters and shares some coded words at the same positions as K4.)
 - RQ-10: Do physical installation properties encode information?
 - RQ-11: Do keystream values carry structural patterns?
-- RQ-12: Does the Kryptos alphabet (KA) have undiscovered variants?
+- RQ-12: Could the cipher use a non-standard alphabet (keyword-mixed, reversed, etc.)?
 - RQ-13: Could K4 use a non-standard reading direction?
 """
 
@@ -193,8 +193,8 @@ class ClassifyResult:
 def load_elimination_index(path: str) -> str:
     """Read search-index.json and build a compact context string for the classifier.
 
-    Also loads anomaly registry, research questions, and elimination tiers
-    if available, to give the classifier comprehensive knowledge.
+    Also loads the research questions and elimination tiers if available.
+    docs/anomaly_registry.md is deliberately not loaded (see below).
     """
     with open(path, "r") as f:
         data = json.load(f)
@@ -239,18 +239,11 @@ def load_elimination_index(path: str) -> str:
     # Try to load additional context files
     project_root = str(Path(path).parent.parent)
 
-    # Anomaly registry
-    anomaly_path = os.path.join(project_root, "docs", "anomaly_registry.md")
-    if os.path.exists(anomaly_path):
-        try:
-            with open(anomaly_path) as f:
-                anomaly_text = f.read()
-            # Truncate to keep context manageable
-            if len(anomaly_text) > 4000:
-                anomaly_text = anomaly_text[:4000] + "\n[... truncated]"
-            context += f"\n\nANOMALY REGISTRY:\n{anomaly_text}"
-        except Exception:
-            pass
+    # docs/anomaly_registry.md is deliberately NOT loaded. Its own banner says it
+    # is a historical working document, not authoritative for prompting, and it
+    # carries superseded readings (for example UNDERGRUUND called deliberate and
+    # IDBYROWS treated as an instruction). The curated PHYSICAL ANOMALIES block
+    # in COMMON_ELIMINATIONS replaces it.
 
     # Research questions
     rq_path = os.path.join(project_root, "docs", "research_questions.md")
@@ -332,6 +325,9 @@ async def classify_theory(theory: str, index_context: str) -> ClassifyResult:
             if text.endswith("```"):
                 text = text[:-3].strip()
         result = json.loads(text)
+        if not isinstance(result, dict):
+            # Valid JSON but not an object: handled below as an unknown status.
+            result = {}
 
         if result.get("status") == "matched":
             eid = result.get("elimination_id", "")
@@ -358,11 +354,30 @@ async def classify_theory(theory: str, index_context: str) -> ClassifyResult:
                     feasibility=feasibility,
                     reason=result.get("reason", ""),
                 )
+        elif result.get("status") == "rejected":
+            # The system prompt's reply for off-topic or abusive text. Never queue it.
+            return ClassifyResult(
+                status="rejected",
+                feasibility=result.get("feasibility", "untestable"),
+                reason=result.get("reason", ""),
+            )
         else:
-            return ClassifyResult(status="novel", feasibility="feasible")
+            # Unknown status: do not queue an unclassified submission as novel.
+            return ClassifyResult(
+                status="rejected",
+                feasibility="unclassified",
+                reason="We couldn't classify this one automatically. Try rephrasing "
+                       "with a bit more detail about the method you have in mind.",
+            )
 
     except (json.JSONDecodeError, KeyError, IndexError):
-        # If Haiku returns unparseable output, treat as novel to be safe
-        return ClassifyResult(status="novel", feasibility="feasible")
+        # Unparseable output: do not queue it as a novel theory; ask the
+        # submitter to rephrase instead.
+        return ClassifyResult(
+            status="rejected",
+            feasibility="unclassified",
+            reason="We couldn't classify this one automatically. Try rephrasing "
+                   "with a bit more detail about the method you have in mind.",
+        )
     except anthropic.APIError:
         raise

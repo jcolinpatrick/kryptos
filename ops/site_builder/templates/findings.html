@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "_macros.html" import w_segment_strip %}
 {% block title %}What We've Learned | kryptosbot.com{% endblock %}
 {% block page_path %}/findings/{% endblock %}
 {% block meta_description %}The main results of this archive's Kryptos K4 research in plain language: what is ruled out, what is uncertain, and what remains open.{% endblock %}
@@ -14,28 +15,45 @@
   <p class="findings-kicker">After {{ total_configs_disproven }} configurations tested</p>
   <h1>What we&rsquo;ve learned</h1>
   <p class="findings-intro">
-    No standard single-layer classical cipher has survived against K4 under the
-    project&rsquo;s direct-positional, additive-key test frame. Large bounded slices of
+    None of the standard single-layer classical ciphers fully tested so far has survived
+    against K4 under the project&rsquo;s direct-positional, additive-key test frame; a few,
+    such as repeating-key ciphers with two different keyword-mixed alphabets, Gromark with
+    keyed alphabets on both sides, and Trifid, have been only partly tested. Large bounded slices of
     two-layer and three-layer classical space are also saturated, and a 2026
     program extended the negatives beyond the standard reading: scoring after
     undoing candidate rearrangements, and letting the known plaintext words land
     anywhere in the output, both closed cleanly at millions of configurations.
     The CT-perturbation idea (small transcription differences between
-    Sanborn&rsquo;s archived coding charts and the carved text) was tested
-    exhaustively at one-letter depth and closed negative in May 2026, so the
-    carved text is treated as authoritative. The <code>W</code>-delimiter
+    Sanborn&rsquo;s archived coding charts and the carved text) was tested at
+    one-letter depth and closed negative in May 2026; follow-up searches in
+    August and September 2026 (a missing or wrong letter under the
+    KRYPTOS-alphabet cipher used for K1 and K2, and a single wrong, missing,
+    extra or swapped letter combined with a grid rearrangement) also found
+    nothing within their tested ranges. These results are narrower than they
+    sound: no single-letter error in the carved text unlocked K4 under the
+    cipher families, alphabets and keyword lists tested. It does not
+    show that the carved text is correct, and two-character differences
+    anchored to the archive were never run. The <code>W</code>-delimiter
     interpretation stays available only as one ingredient of a multi-step scheme,
     and several earlier &ldquo;signals&rdquo; were retired after stricter controls.
   </p>
   <p class="findings-intro">
-    <strong>Status as of June 11, 2026:</strong> K4 remains unsolved here and
-    everywhere else. An end-to-end audit of every candidate answer this project
-    has ever produced (13,302 of them) confirmed zero survive verification. The
-    live leads are not computational: they are physical and archival, such as
-    newly documented circled letters on a tableau in the sculptor&rsquo;s working
-    papers (pending a preregistered analysis) and measurement work on the
-    sculpture itself. The full, rigorous status report lives in the research
-    repository as <code>docs/REAL_K4_CURRENT_POSITION.md</code>.
+    <strong>Status as of September 29, 2026:</strong> K4 remains unsolved: no
+    verified plaintext has been published. (In September 2025 Jarett Kobek and
+    Richard Byrne found scrambled plaintext strips in Sanborn&rsquo;s papers at the
+    Smithsonian&rsquo;s Archives of American Art. Sanborn confirmed the find but said
+    it does not reveal the coding method or key, and the files were sealed.
+    Paradigm, which now holds Sanborn&rsquo;s Kryptos archive, runs an online
+    checker for K4 guesses without publishing the answer.) An end-to-end audit in
+    June 2026 of every candidate answer this project had produced up to then
+    (13,302 of them) confirmed zero survive verification, and the searches run
+    since, through September 2026, have also come back empty. Computer searches
+    continue, but the main open leads are physical and archival, such as newly
+    documented circled letters on a tableau in the sculptor&rsquo;s working papers
+    (not yet analyzed; any use for K4 must be preregistered first) and planned
+    measurements of the sculpture itself. A longer technical status report is in the
+    research repository as <code>docs/REAL_K4_CURRENT_POSITION.md</code>; it is dated
+    June 2026 and does not include the August and September 2026 corrections described below.
   </p>
 </header>
 
@@ -44,8 +62,10 @@
 <section class="ct-exhibit">
   <h2 class="section-label">The K4 Ciphertext (97 Characters)</h2>
   <p class="ct-legend-intro">
-    Hover or tap a letter to see its position. Colors show known plaintext regions
-    and the Stehle anomaly zone.
+    Hover or tap a letter to see its position. Positions on this page count from 0,
+    as in the project&rsquo;s code; most public sources count from 1, which puts
+    EASTNORTHEAST at 22&ndash;34 and BERLINCLOCK at 64&ndash;74. Colors show known
+    plaintext regions and the Stehle anomaly zone.
   </p>
   <div class="ct-visual" id="ct-visual" aria-label="K4 ciphertext with regions highlighted">
     {% for i in range(97) %}
@@ -56,8 +76,8 @@
       <span class="ct-char{% if is_crib_ene or is_crib_bcl %} ct-crib{% endif %}{% if is_stehle and not is_crib_bcl %} ct-stehle{% endif %}"
             data-pos="{{ i }}"
             data-char="{{ ch }}"
-            {% if is_crib_ene %}title="Position {{ i }}: {{ ch }} decrypts to {{ 'EASTNORTHEAST'[i-21] }}"{% endif %}
-            {% if is_crib_bcl %}title="Position {{ i }}: {{ ch }} decrypts to {{ 'BERLINCLOCK'[i-63] }}"{% endif %}
+            {% if is_crib_ene %}title="Position {{ i }}: carved {{ ch }}; plaintext here is {{ 'EASTNORTHEAST'[i-21] }}"{% endif %}
+            {% if is_crib_bcl %}title="Position {{ i }}: carved {{ ch }}; plaintext here is {{ 'BERLINCLOCK'[i-63] }}"{% endif %}
       >{{ ch }}</span>
     {% endfor %}
   </div>
@@ -80,36 +100,59 @@
   </p>
   <ul class="provenance-list">
     <li>
-      <strong>All repeating-key polyalphabetic ciphers</strong> (Vigen&egrave;re, Beaufort,
-      Variant Beaufort) at every key length 1&ndash;26: mathematically impossible
-      within the direct-positional additive-key model.
+      <strong>Repeating-key Vigen&egrave;re, Beaufort and Variant Beaufort</strong>, on the
+      standard or the KRYPTOS alphabet, at every key length 1&ndash;26: mathematically impossible
+      within the direct-positional additive-key model. With one keyword-mixed alphabet used the
+      way K1 and K2 used theirs (the same mixed alphabet for plaintext and ciphertext), key
+      lengths 1&ndash;22, 24 and 25 are ruled out whatever the keyword. Versions with two
+      different mixed alphabets are not fully ruled out.
     </li>
     <li>
-      <strong>All autokey variants</strong> (PT-autokey, CT-autokey, both Vigen&egrave;re
-      and Beaufort): structurally impossible, even composed with arbitrary transposition.
+      <strong>Self-keying (autokey) ciphers</strong> (keyed by the plaintext or by the
+      ciphertext; Vigen&egrave;re, Beaufort or Variant Beaufort; standard or KRYPTOS alphabet),
+      applied directly to the carved text: no starting key of up to 25 letters fits the known
+      plaintext. Some starting keys of 27 letters or more can fit, so this result does not cover
+      longer keys. With a letter-rearrangement layer added, self-keying is not ruled out either: an unrestricted
+      rearrangement leaves too much freedom for the known letters to rule it out, which is not
+      the same as evidence for it.
     </li>
     <li>
-      <strong>All fractionation families</strong> (Bifid, Trifid, Playfair, Four-Square, ADFGVX):
-      eliminated by structural proofs (K4 uses all 26 letters; Bifid requires 25).
+      <strong>Standard fractionation ciphers</strong> (Bifid, Playfair, Two-Square and Four-Square
+      on 5&times;5 squares; ADFGX and ADFGVX): ruled out in their standard forms by simple
+      structural facts. A 5&times;5 square holds only 25 letters, and K4 uses all 26; ADFGX and
+      ADFGVX always produce an even number of letters, and K4 has 97. Trifid (27 symbols) and
+      Bifid on a 6&times;6 square (36 symbols) are not covered by this argument, and the
+      project&rsquo;s tests of them are not conclusive.
     </li>
     <li>
-      <strong>Many structured transposition + periodic substitution combinations</strong>:
-      exhaustively negative or algebraically blocked within their tested families.
+      <strong>Many structured rearrangement + repeating-key combinations</strong>:
+      negative within their tested families. An earlier shortcut proof that claimed to rule
+      out repeating keys of most lengths under any rearrangement was withdrawn in August 2026
+      (it applied a key-consistency check in the wrong frame). The column-rearrangement cases
+      (widths 4 to 9, standard A-to-Z alphabet, key applied before the rearrangement) were then
+      searched again directly at key lengths 1 to 24, and none fits.
     </li>
     <li>
-      <strong>Running keys from 60,000+ public English texts</strong> combined with structured
-      transposition: zero candidates across 106 billion position checks. A later check
-      (April 2026) found that running-key combined with columnar transposition at
-      widths 6/8/9 is also blocked by the current 242-inequality Bean constraint set
-      regardless of which source text is used. This does not rule out running keys from
-      non-English or non-standard texts under other transposition types.
+      <strong>Running keys from 60,000+ public English texts</strong> (Project Gutenberg&rsquo;s
+      English-language texts), read straight across the carved text with no rearrangement, and
+      across 73-letter versions with suspected filler letters removed: zero candidates across
+      106 billion position checks (best 10 of 24 known letters, a chance-level score). Running
+      keys combined with rearrangements have been tested only for a limited set of source texts,
+      such as the first volume of Howard Carter&rsquo;s <em>The Tomb of Tut-ankh-Amen</em> under
+      column and route rearrangements (no signal). An April 2026 claim that column
+      rearrangements at widths 6, 8 and 9 block every running key, whatever the source text,
+      was withdrawn in August 2026: it rested on a key-consistency check applied in the wrong
+      frame. None of this rules out running keys from other texts, non-English texts, or with
+      other rearrangements.
     </li>
     <li>
-      <strong>Two-layer and three-layer compositions tested so far</strong>: 105,692
-      two-layer branches (additive &times; transposition, transposition &times; periodic
-      substitution, 6 stateful families) and 838,350 non-columnar three-layer branches.
-      Max crib score 7/24 across the three-layer enumeration. All noise within the
-      registered layer families and default keyword sets.
+      <strong>Two-layer and three-layer compositions</strong>: an April 2026 count gave
+      105,692 two-layer branches (additive &times; transposition, transposition &times;
+      repeating-key substitution, 6 stateful families) and 838,350 non-columnar three-layer
+      branches, with a best of 7 of 24 known letters on the three-layer set. Later campaigns
+      (May to September 2026) added more than 100 million further multi-layer configurations,
+      such as 17.5 million in May 2026 that combined two rearrangements with a keyword
+      substitution. All noise within the families and keyword sets tested.
     </li>
     <li>
       <strong>Many bespoke or historical systems</strong> (VIC, RS44, Wheatstone,
@@ -125,16 +168,19 @@
     to suggest the problem is closed.
   </p>
   <p>
-    With one exception, these eliminations do not rule out the same families as one
-    layer of a multi-layer construction. The exception is self-keying (autokey), which
-    is structurally impossible even when combined with any rearrangement layer. None of
-    these results apply if K4 uses a non-additive cipher mechanism.
+    These eliminations do not rule out the same families as one layer of a multi-layer
+    construction; that includes self-keying, which is not ruled out once a letter-rearrangement
+    layer is added. The repeating-key, self-keying and running-key results do not apply
+    if K4 uses a non-additive cipher mechanism, and the results that read the carved text
+    straight across assume that each carved letter decrypts to the plaintext letter in the
+    same position (see &ldquo;What remains unknown&rdquo; below).
     See the <a href="/browse/">elimination database</a> for the full inventory, and the
     <a href="/research-questions/">open questions</a> for what remains.
   </p>
   <p>
-    The entire codebase is <a href="https://github.com/jcolinpatrick/kryptos">open source</a>.
-    Every elimination includes a reproduction command.
+    The research code is <a href="https://github.com/jcolinpatrick/kryptos">public on GitHub</a>,
+    though the public copy can lag behind the working version. Most elimination records include
+    a reproduction command.
   </p>
 </section>
 
@@ -151,31 +197,70 @@
   <div class="finding-plain">
     <h3>The short version</h3>
     <p>
-      The five carved <code>W</code>s at positions 20, 36, 48, 58, and 74 explain the old
-      width-21 vertical-bigram anomaly: remove those five letters and the anomaly disappears.
-      As of April 2026 the single-layer construction is saturated: 80+ direct W-segmentation
-      hypotheses tested, no signal. W-segmentation is therefore no longer the primary anchor.
+      Delete the five carved <code>W</code>s at positions 20, 36, 48, 58 and 74 and the old
+      width-21 vertical-bigram anomaly disappears. That looked for a while like an explanation.
+      A May 2026 audit showed it is not one: replace every <code>W</code> with any one other
+      letter, keeping the text 97 characters long, and all eleven repeated bigrams survive intact.
+      A September 2026 audit explained why: the count depends only on which positions hold the
+      same letter, so replacing every <code>W</code> with one other letter cannot remove any of
+      the eleven, while deleting a letter shifts every later position and breaks the pairs that
+      straddle the deletion. Deleting other letters spread through the middle of the text weakens
+      or removes the anomaly in the same way. What the anomaly responds to is where letters are
+      deleted, not which letters they are.
+      By April 2026, 80+ direct single-layer W-segmentation hypotheses had been tested, with no
+      signal. W-segmentation is therefore no longer the primary anchor.
       It remains admissible inside multi-layer hypotheses, and the public reading is still
       &ldquo;if K4 has a delimiter or row-end mechanism, the W positions are the cleanest
       bounded place to test it,&rdquo; not &ldquo;the Ws are proven delimiters.&rdquo;
     </p>
   </div>
 
+  {{ w_segment_strip(w_delimiter,
+     label='The 97 characters, broken at the five Ws',
+     caption='Six runs of ' ~ w_delimiter.segments|map(attribute='len')|join(', ') ~ ', totalling
+              ' ~ w_delimiter.total ~ ' once the five delimiters themselves are set aside. The
+              tinted cells are the known plaintext. Note where they fall against the run ends:
+              only ' ~ w_delimiter.after_ene ~ ' characters separate EASTNORTHEAST from the next W,
+              and ' ~ w_delimiter.before_bcl ~ ' separate a W from the start of BERLINCLOCK.') }}
+
   <div class="finding-caveat">
     <h3>What we know and don&rsquo;t know</h3>
     <p>
-      We know the width-21 effect is largely explained by <code>W</code> placement. We do
-      <strong>not</strong> know whether the <code>W</code>s are ciphertext, nulls, row-end markers,
-      or some other procedural feature. The live value of this anomaly is that it creates a
-      finite structural test surface: six segments with fixed crib geometry, including only
-      two characters after <code>EASTNORTHEAST</code> and four before <code>BERLINCLOCK</code>.
+      We know the width-21 effect is <strong>not</strong> explained by <code>W</code> placement:
+      it survives replacing every <code>W</code>, and deleting other letters from the middle of the
+      text weakens or removes it too (deleting from the very start barely changes it). Removing all
+      eight <code>K</code>s leaves one repeated bigram; removing all five <code>W</code>s leaves
+      none. The <code>W</code>s sit between positions 20 and 74, never more than 16 apart, so
+      almost every stretch of 21 letters contains one, and deleting them breaks all eleven pairs. The anomaly therefore says
+      nothing about the <code>W</code>s. We also do <strong>not</strong> know whether the
+      <code>W</code>s are ciphertext, filler, row-end markers, or some other procedural feature.
+      What the <code>W</code> positions give us, independently of the anomaly, is a finite
+      structural test surface: six segments with fixed crib geometry, including only two
+      characters after <code>EASTNORTHEAST</code> and four before <code>BERLINCLOCK</code>.
     </p>
     <p>
-      One live interpretation worth testing is a <strong>punctuation or marker convention</strong>:
-      after decryption, some or all carved <code>W</code>s may correspond to plaintext letters such
-      as <code>X</code>, <code>Q</code>, or <code>Z</code> used as separators or punctuation-like markers,
-      analogous to delimiter behavior seen elsewhere in Kryptos. The site treats that as a
-      bounded hypothesis surface, not as a recovered fact about the plaintext.
+      One reading that keeps coming up is a <strong>punctuation or marker convention</strong>:
+      that after decryption some or all carved <code>W</code>s would turn out to be plaintext
+      letters such as <code>X</code>, <code>Q</code> or <code>Z</code>, used as separators the way
+      K2 and K3 use <code>X</code> and <code>Q</code>. That reading splits in two, and neither half
+      is a lead. If all five <code>W</code>s stand for the same separator under a repeating-key
+      cipher, the key must have the same value at all five <code>W</code> positions. With no
+      repeated letters in the key, its length must divide every gap between the <code>W</code>s
+      (16, 12, 10 and 16 letters), which leaves a length of 1 or 2, and the cribs alone rule both
+      out: the <code>T</code> at positions 24 and 28 would have to encipher to the same letter,
+      but the carving shows <code>V</code> and <code>R</code>. A longer key that repeats a letter
+      could also do it, but the cribs already rule out every Vigen&egrave;re- or Beaufort-style
+      repeating key up to 26 letters long, on either the standard or the KRYPTOS alphabet. Some
+      longer keys (27 letters or more) do fit the cribs, and this argument does not rule them out.
+      If only some <code>W</code>s are separators,
+      or the key never repeats, the reading makes no prediction we can test. The K2 precedent
+      also points the other way: its <code>X</code> separators were ordinary plaintext letters
+      that enciphered to whatever the key produced (<code>A</code>, <code>S</code> and
+      <code>T</code>), not to one fixed carved letter. K3 has no key at all (it is a pure
+      rearrangement), so its <code>X</code> and <code>Q</code> were carved as themselves, only
+      moved, which says nothing either way about <code>W</code>. We keep the
+      <code>W</code> positions as a bounded test surface for delimiter or row-end mechanisms. We
+      do not carry the marker reading as a lead.
     </p>
   </div>
 </section>
@@ -189,25 +274,26 @@
       <h2>The Stehle Anomaly</h2>
       <p class="finding-subtitle">A unique constant-difference pattern at positions 55&ndash;63</p>
     </div>
-    <span class="finding-pvalue">~1 in 642</span>
+    <span class="finding-pvalue">~1 in 205</span>
   </div>
 
-  <div class="confidence-indicator confidence-moderate">
-    <div class="confidence-bar confidence-moderate">
+  <div class="confidence-indicator confidence-low">
+    <div class="confidence-bar confidence-low">
       <span class="filled"></span><span class="filled"></span><span class="filled"></span>
-      <span class="filled"></span><span class="filled"></span><span class="filled"></span>
+      <span></span><span></span><span></span>
       <span></span><span></span><span></span><span></span>
     </div>
-    <span class="confidence-label">Moderate confidence: real pattern, unexploited</span>
+    <span class="confidence-label">Low confidence: a real pattern, but weak evidence and unexploited</span>
   </div>
 
   <div class="finding-plain">
     <h3>The short version</h3>
     <p>
-      Every 4th character in one region of K4 (positions 55&ndash;63) differs from its predecessor
-      by exactly 5 in the alphabet. This pattern appears nowhere else in the ciphertext.
-      After correcting for 712 statistical tests, the odds of this happening by chance are about
-      <strong>1 in 642</strong>.
+      In one region of K4 (positions 55&ndash;63), every pair of characters four apart differs by
+      exactly 5 in the alphabet. This pattern appears nowhere else in the ciphertext. Counting the
+      whole search that found it &mdash; any run this long, at any spacing &mdash; the odds of it
+      happening by chance are about <strong>1 in 205</strong>. That is a real pattern carrying
+      weak evidence, not a discovery.
     </p>
   </div>
 
@@ -221,9 +307,14 @@
     </p>
     <p>
       We searched the entire ciphertext for this kind of pattern at every possible spacing
-      and every possible difference value. <strong>This is the only one.</strong> After
-      correcting for the 712 statistical tests we ran, the probability of seeing this
-      by chance is about <strong>1 in 642</strong> (Bonferroni-corrected: 712 / 456,976).
+      and every possible difference value. <strong>This is the only one.</strong> Because both the
+      spacing of 4 and the region were found by looking rather than chosen in advance, the honest
+      question is how often a run this long appears at <em>any</em> spacing. Re-measured in August
+      2026 over 200,000 simulated ciphertexts, that happens about <strong>1 in 205</strong> times
+      for spacings 1 to 30, or 1 in 234 for spacings 1 to 24. Had the spacing of 4 been named in
+      advance the figure would be 1 in 5,714, but it was not, so that number is unavailable.
+      An earlier version of this page cited 1 in 642, from a Bonferroni correction over 712 tests;
+      that was roughly three times too generous and is superseded.
     </p>
     </div>
   </details>
@@ -279,15 +370,16 @@
       <span class="stat-pill-value">Zero</span>
     </div>
     <div class="stat-pill">
-      <span class="stat-pill-label">Odds after correcting for 712 tests</span>
-      <span class="stat-pill-value">~1 in 642</span>
+      <span class="stat-pill-label">Odds once the whole search is counted</span>
+      <span class="stat-pill-value">~1 in 205</span>
     </div>
   </div>
 
   <div class="finding-caveat">
     <h3>What we know and don&rsquo;t know</h3>
     <p>
-      The pattern is real and survives multiple-testing correction. However, we have not
+      The pattern is real, and it stays unusual (about 1 in 205) even after counting the whole
+      search that found it. However, we have not
       been able to exploit it: no cipher mechanism we&rsquo;ve tested produces this
       pattern as a consequence of its key schedule. It may be a local coincidence
       in the cipher structure, not a clue to the method. It remains a live local
@@ -300,10 +392,10 @@
 
 <section class="finding" id="finding-retired">
   <div class="finding-header">
-    <span class="finding-number" style="background: #dc3545;">&#x2717;</span>
+    <span class="finding-number finding-number--retired">&#x2717;</span>
     <div>
       <h2>Retired Claims</h2>
-      <p class="finding-subtitle">Promising leads that did not survive matched controls</p>
+      <p class="finding-subtitle">Promising leads that did not survive matched controls, and errors we found in our own methods</p>
     </div>
   </div>
 
@@ -315,26 +407,61 @@
       looking right.
     </p>
 
-    <h3>The Null Palette (retired April 2026)</h3>
+    <h3>The Filler-Letter (&ldquo;Null&rdquo;) Palette (retired April 2026)</h3>
     <p>
-      The project previously centered a score-conditioned null-palette story as its
-      strongest signal. That claim did not survive matched controls and is now retired.
-      The underlying lesson is methodological rather than cryptographic: post-hoc
-      anomaly selection can manufacture persuasive-looking structure unless the null
-      model is explicit and adversarially checked.
+      The project previously presented, as its strongest signal, a claim that 17 suspected
+      filler letters in K4 (the &ldquo;null palette&rdquo;) used only seven distinct letters.
+      That claim did not survive a control that repeated the same search on shuffled text, and
+      it is now retired. The underlying lesson is methodological rather than cryptographic:
+      picking out anomalies after the fact can manufacture persuasive-looking structure unless
+      the chance baseline is spelled out and deliberately challenged.
       <a href="https://github.com/jcolinpatrick/kryptos/blob/main/docs/a1_score_conditioned_null_report.md">Full report.</a>
     </p>
     <p>
       <strong>Follow-up audit (2026-04-08):</strong> An adversarial internal review
       reclassified 19 additional &ldquo;interesting&rdquo; results as eliminated once
-      their dependence on the retired palette or on structural disqualifiers (autokey
-      family, VIC family, period underdetermination) was identified. We also ran a
-      pre-registered checklist: Carter Vol&nbsp;1 and Kahn Codebreakers as running-key
-      sources against columnar widths 6/8/9, and a non-columnar three-layer enumeration
-      of 838,350 compositions. All returned zero candidates under pre-committed
-      conjunctive thresholds. Full records are in the
+      their dependence on the retired palette or on structural disqualifiers (the
+      self-keying family, the VIC family, key lengths too long for the clues to test; the
+      self-keying reason has since proved too broad, see below) was identified. We also ran a pre-registered checklist. Its non-columnar three-layer
+      enumeration of 838,350 compositions returned zero candidates under pre-committed
+      conjunctive thresholds. Its other two items, Carter Vol&nbsp;1 and Kahn Codebreakers
+      as running-key sources against columnar widths 6/8/9, turned out in August 2026 to
+      have tested nothing: the faulty key-consistency check described below discarded every
+      arrangement before either text was read. Carter&rsquo;s volume was also tested in other
+      searches under column and route rearrangements, with no signal; Kahn&rsquo;s book has
+      not been re-run. Full records are in the
       internal status audit (<code>docs/exhaustion_audit_2026_04_08.md</code> in the
       research repository), which is deliberately adversarial about our own claims.
+    </p>
+
+    <h3>Our own errors, corrected (August and September 2026)</h3>
+    <p>
+      In August 2026 we found that a key-consistency check used across the project (the
+      Bean constraints) had been applied in the wrong frame in tests that also rearranged
+      the letters, so the failures it reported in those tests could not be trusted. That
+      withdrew an earlier proof that claimed to rule out repeating keys of most lengths under
+      any rearrangement, together with the list of &ldquo;surviving&rdquo; key lengths it
+      produced, and reopened 18 records we had marked exhausted. The column-rearrangement
+      cases (widths 4 to 9, key lengths 1 to 24, standard alphabet) were then searched again
+      without that check, and nothing fits. In September 2026 we found that most of the same
+      check (all but its one equality and the pairs Bean himself published) only works on the
+      standard A-to-Z alphabet and gives false failures on the KRYPTOS
+      alphabet used for K1 and K2. No recorded elimination is overturned by that, but one
+      search had skipped half its cases because of it; that half has since been run, with
+      nothing found, though the search&rsquo;s detection tests later proved weak and its result
+      is now marked provisional. The same month, an audit found that 57 older experiment
+      scripts carried copies of the K1 to K3 texts that match the real texts only for a stretch
+      (often the first 20 to 60 letters) and then diverge, often into invented text. Results
+      computed from those copies did not test the real texts beyond that point. The main
+      conclusion, that the K1 to K3 texts do not work as a running key for K4 read straight
+      across, was re-checked on the verified texts and still fails (best 8 of 24 known
+      letters, a chance-level score); that re-check is not yet in the repository. Also in
+      September 2026, we found that an older claim, that self-keying (autokey) ciphers cannot fit
+      the known letters even when combined with any letter rearrangement, was wrong: an explicit
+      rearrangement of the 97 carved letters followed by ciphertext-keyed self-keying decryption
+      reproduces all 24 known letters. Self-keying applied directly to the carved text is still
+      ruled out for starting keys of up to 25 letters; with a rearrangement it is not ruled out,
+      though that is not a lead.
     </p>
   </div>
 </section>
@@ -348,20 +475,19 @@
       <h3>What we established</h3>
       <ul>
         <li><strong>{{ total_configs_disproven }} configurations evaluated</strong> across recorded experiments, with no solution-grade signal in the bounded classical slices tested so far</li>
-        <li>Standard single-layer classical families are saturated within the project&rsquo;s direct-positional additive-key frame</li>
-        <li>A few anomaly surfaces remain live: the CT-perturbation hypothesis (currently primary), the Stehle local regularity, and the W-delimiter interpretation as a multi-layer-only component after its single-layer construction saturated</li>
-        <li>Multiple earlier signals were retired when controls failed</li>
-        <li>Every result is <a href="https://github.com/jcolinpatrick/kryptos">open source</a>
-            and independently reproducible</li>
+        <li>Most standard single-layer classical ciphers are ruled out within the project&rsquo;s direct-positional additive-key frame; a few are only partly tested</li>
+        <li>A few anomaly surfaces remain live: the Stehle local regularity and the W-delimiter interpretation as a multi-layer-only component after its single-layer construction saturated. The CT-perturbation hypothesis is <strong>demoted, not closed</strong>: the May 2026 search tested every one-letter substitution in the carved text and found nothing, and later single-error searches (August and September 2026) were also empty, which leaves two-character and archive-anchored differences untested</li>
+        <li>Multiple earlier signals were retired when controls failed, and in August and September 2026 we found and corrected errors in some of our own earlier methods (see Retired Claims above)</li>
       </ul>
     </div>
     <div class="conclusion-card conclusion-open">
       <h3>What remains unknown</h3>
       <ul>
         <li>The cipher type and key. The site cannot claim to have exhausted non-standard or bespoke space.</li>
+        <li>Whether each carved letter decrypts to the plaintext letter in the same position. Sanborn&rsquo;s clues fix where the words sit in the plaintext, and the usual reading lines them up with the carved letters, but that rests on newspaper narration and remarks relayed from conversations, not on his own quoted words</li>
         <li>Whether the carved <code>W</code>s are ciphertext or delimiters, and whether any physical or procedural segmentation rule is real</li>
-        <li>Whether K4 contains null characters under any independently justified rule; the old statistical null palette is retired</li>
-        <li>Running keys from non-public or non-English sources, or combined with monoalphabetic substitution + non-standard transposition</li>
+        <li>Whether K4 contains filler characters under any independently justified rule; the old statistical filler-letter (&ldquo;null&rdquo;) palette is retired</li>
+        <li>Running keys combined with rearrangements (only a limited set of source texts has been tested that way), running keys from non-public or non-English sources, or running keys combined with monoalphabetic substitution + non-standard transposition</li>
         <li>Bespoke procedural mechanisms using Sanborn&rsquo;s encoding charts or
             physical installation features</li>
         <li>Whether K5, archive photographs, or other primary-source evidence would
@@ -373,8 +499,8 @@
     </div>
   </div>
   <p class="conclusion-footer">
-    All analysis is <a href="https://github.com/jcolinpatrick/kryptos">open source</a>
-    and independently reproducible. If you see an error,
+    The analysis code is <a href="https://github.com/jcolinpatrick/kryptos">public on GitHub</a>,
+    and most results come with a command to rerun them. If you see an error,
     <a href="/report-error/">report it</a>.
   </p>
 </section>

@@ -57,6 +57,31 @@
   border-radius: var(--radius-sm);
 }
 
+.ch-badge.solved {
+  color: var(--green);
+  background: var(--green-bg);
+  border-color: var(--green-border);
+}
+
+/* --- Solved banner --- */
+.ch-solved-banner {
+  margin: var(--sp-6) 0;
+  padding: var(--sp-4) var(--sp-6);
+  color: var(--green);
+  background: var(--green-bg);
+  border: 1px solid var(--green-border);
+  border-radius: var(--radius-sm);
+}
+
+.ch-solved-banner strong { color: var(--green); }
+
+.ch-solved-banner .ch-solved-meta {
+  margin-top: var(--sp-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--text-tertiary);
+}
+
 /* --- Sections --- */
 .ch-section {
   margin-bottom: var(--sp-12);

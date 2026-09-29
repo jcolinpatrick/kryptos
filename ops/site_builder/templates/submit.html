@@ -1,24 +1,30 @@
 {% extends "base.html" %}
 {% block title %}Submit a Theory | kryptosbot.com{% endblock %}
 {% block page_path %}/submit/{% endblock %}
-{% block meta_description %}Submit your Kryptos K4 theory. If it has not been tried and can be written as a concrete test, it gets tested.{% endblock %}
+{% block meta_description %}Submit your Kryptos K4 theory. An automated check compares it with experiments already on record; new, testable ideas are queued for a human to review and, where possible, test.{% endblock %}
 
 {% block content %}
 <h1>Submit a Theory</h1>
 <p>
-  Have an idea about how K4 works? We want to hear it. Every novel theory
-  submitted here is read by a human and tested on a 28-core server
-  against the actual ciphertext. If your idea hasn't been tried before
-  and can be written as a concrete, runnable test, we will run it.
+  Have an idea about how K4 works? We want to hear it. An automated
+  classifier (a Claude language model) first compares your theory with the
+  experiments already on record. If it judges the idea new, specific and
+  practical to test, a human reviews it, and if it can be written as a
+  concrete, runnable test, we aim to run it on our 28-core research server
+  against the actual ciphertext.
 </p>
 
 <div class="credit-notice">
-  <strong>Your idea stays yours.</strong> You retain all rights to everything
-  you submit. We do not claim any ownership of your work.
+  <strong>We don&rsquo;t claim ownership.</strong> Submitting does not transfer
+  ownership of what you write to us; you keep whatever rights you hold in it. It
+  does give us a broad license to use it, including to store, test, publish and
+  credit it, as set out in our Terms.
   If your idea leads to the solution of K4 and you&rsquo;d like to be credited,
-  include a name or handle in your submission &mdash; otherwise it stays anonymous.
-  We don&rsquo;t collect emails or require accounts.
-  See our <a href="/terms/">Terms and Conditions</a> for the full details.
+  include a name or handle in your submission. The first 300 characters of recent
+  submissions appear on the site&rsquo;s public statistics feed, so include a name
+  only if you are happy for it to be public.
+  Submitting needs no email address or account.
+  See our <a href="/terms/">Terms of Use</a> for the full details.
 </div>
 
 <p>
@@ -33,19 +39,25 @@
   <ol>
     <li><strong>Submit</strong> your theory in plain English below.</li>
     <li><strong>Instant check:</strong> we'll tell you immediately if
-      this exact approach has already been tested ({{ total_experiments }}
-      have been so far). No guessing, no gatekeeping. You'll see the
-      specific results.</li>
+      your approach matches one of the {{ total_experiments }} experiments
+      recorded so far, with a link to the specific results. The check is
+      automated and can be wrong.</li>
     <li><strong>Novel ideas get queued:</strong> if your theory is new,
-      you'll receive a private status link. Bookmark it.</li>
+      specific and practical to test, you'll receive a private status link.
+      Bookmark it.</li>
     <li><strong>We test it:</strong> a real person reviews your
-      submission and runs it through our framework. You can check your
-      status link anytime to see: pending, testing, or completed with
-      detailed results.</li>
+      submission and, if it can be tested, runs it through our framework. You can check your
+      status link anytime to see: pending, testing, tested and published
+      with results, or reviewed but not testable.</li>
   </ol>
   <p>
-    Your submission is anonymous. We don't collect names or emails,
-    just the theory and a private token so you can check back.
+    We don't require names or emails, but a submission is not fully anonymous.
+    We keep the first 300 characters of your theory (the full text if it is
+    queued), the time you sent it, the automated result, a private token if it is
+    queued, and a hash of your IP address that could be matched back to the
+    address. Your text is sent to Anthropic's Claude for the automated check, and
+    the first 300 characters of recent submissions are shown on a public
+    statistics feed. See our <a href="/privacy/">Privacy Policy</a>.
   </p>
 </details>
 
@@ -57,7 +69,7 @@
 
   <div class="submit-actions">
     <button type="submit" id="submit-btn" disabled>Test My Theory</button>
-    <button type="button" id="clear-btn" class="btn-secondary" style="display:none">Clear</button>
+    <button type="button" id="clear-btn" class="btn-secondary u-hidden">Clear</button>
   </div>
 </form>
 
@@ -74,7 +86,7 @@
   <p>
     The theory classifier requires JavaScript.
     You can still <a href="/browse/">browse the database</a> or
-    <a href="https://github.com/jcolinpatrick/kryptos/issues/new">open a GitHub Issue</a>
+    <a href="https://github.com/jcolinpatrick/kryptos/issues/new">open a public GitHub Issue</a>
     to submit your theory manually.
   </p>
 </noscript>

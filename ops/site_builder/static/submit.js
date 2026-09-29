@@ -34,7 +34,11 @@
       submitBtn.disabled = false;
     }
 
-    clearBtn.style.display = len > 0 ? "" : "none";
+    // Toggle the class, not .style.display: the button's hidden state is
+    // declared by .u-hidden in style.css (CSP blocks the style="" attribute
+    // it used to carry), so clearing an inline value would fall back to that
+    // rule and the button would never appear.
+    clearBtn.classList.toggle("u-hidden", len === 0);
   }
 
   textarea.addEventListener("input", updateCounter);

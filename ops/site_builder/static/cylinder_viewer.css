@@ -321,3 +321,33 @@
   .cv-page .arrow-btn { width: 22px; height: 22px; font-size: 0.85em; }
   .cv-page .offset-badge { min-width: 36px; font-size: 0.75em; }
 }
+
+/* Swatch fills. These live here rather than in a style="" attribute because the
+   site is served under CSP `style-src 'self'` with no 'unsafe-inline', which
+   blocks inline style attributes -- they silently rendered as colourless boxes.
+   The standalone build keeps its inline styles; the builder swaps in these
+   classes. */
+.cv-page .legend-swatch.sw-ene {
+  background: var(--cv-ene);
+}
+
+.cv-page .legend-swatch.sw-bcl {
+  background: var(--cv-bcl);
+}
+
+.cv-page .legend-swatch.sw-filler {
+  background: var(--cv-cell);
+  border-color: var(--cv-anomaly);
+}
+
+/* Intro copy injected by the site builder (_build_cylinder_viewer). */
+.cv-page .cv-intro {
+  max-width: 70ch;
+  margin: 0 0 1.25rem;
+  color: var(--cv-cell-text, inherit);
+}
+
+.cv-page .cv-intro p {
+  margin: 0 0 0.75rem;
+  line-height: 1.6;
+}

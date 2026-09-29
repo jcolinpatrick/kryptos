@@ -40,7 +40,7 @@
       "theme": "steganographic",
       "selected": true,
       "prior_page": true,
-      "rationale": "CRITICAL: Direct statement of steganographic principle — 'encrypted message is included within set of modern day font characters'",
+      "rationale": "Note: 'encrypted message is included within set of modern day font characters. Could be done to shade an area'; does not say how characters are picked out; not certainly about Kryptos",
       "manual_verified": true
     },
     {
@@ -49,7 +49,7 @@
       "theme": "cipher_materials",
       "selected": true,
       "prior_page": true,
-      "rationale": "Original KA Vigenere tableau — the physical working document for K1-K3 encryption",
+      "rationale": "Handwritten KA Vigenere tableau (27x30) of the kind used for K1-K2; K3 is a pure transposition",
       "manual_verified": true
     },
     {
@@ -85,7 +85,7 @@
       "theme": "cipher_materials",
       "selected": true,
       "prior_page": true,
-      "rationale": "Repeating key pattern grid on graph paper — shows cipher key construction method",
+      "rationale": "Cyrillic grid: a row of letters over the repeating sequence ФЧШЖИ (repeating-key layout); likely Cyrillic Projector material",
       "manual_verified": true
     },
     {
@@ -103,7 +103,7 @@
       "theme": "cipher_materials",
       "selected": true,
       "prior_page": true,
-      "rationale": "Working cipher grid with mixed scripts — shows multi-script cipher construction",
+      "rationale": "Russian enciphering worksheet (plaintext / repeating key МЕДУЗА / cipher rows) matching the Sakharov-Pugwash text of the Cyrillic Projector; Arabic page beside it",
       "manual_verified": true
     },
     {
@@ -112,7 +112,7 @@
       "theme": "creation_process",
       "selected": true,
       "prior_page": false,
-      "rationale": "CRITICAL: Sanborn writes 'I wrote the plain text Kryptos & encrypted it' and 'Text to be enigmatic'",
+      "rationale": "Retrospective notes: 'I wrote the plain text to be enigmatic and...' / 'I encoded it to make it challenging'; mentions 1988 and later worldwide coverage",
       "manual_verified": true
     },
     {
@@ -157,7 +157,7 @@
       "theme": "steganographic",
       "selected": true,
       "prior_page": true,
-      "rationale": "Transparent overlay/grille with grid patterns — possible physical Cardan grille",
+      "rationale": "Amber map-like transparency over a KA tableau-like sheet; map identity unverified; nothing shows it is a grille",
       "manual_verified": true
     },
     {
@@ -211,7 +211,7 @@
       "theme": "production",
       "selected": true,
       "prior_page": true,
-      "rationale": "Stencil job order with '7x88 on a side' dimension — possible grid parameter",
+      "rationale": "Stencil type job order; note reads '7a88 on a side', meaning unclear, not read as a cipher grid",
       "manual_verified": true
     },
     {
@@ -355,7 +355,7 @@
       "theme": "sculpture_context",
       "selected": true,
       "prior_page": false,
-      "rationale": "Compass rose/pool element with alphabet perimeter — shows spatial design",
+      "rationale": "Red granite slab with circular green-blue stain, tableau side of Kryptos behind it",
       "manual_verified": true
     },
     {
@@ -391,7 +391,7 @@
       "theme": "sculpture_context",
       "selected": true,
       "prior_page": true,
-      "rationale": "Installation description: 'perforated with descriptive text' and light projection — same method as Kryptos",
+      "rationale": "Proposal board for an Alexandria King Street Gateway: copper 'perforated with descriptive text', sunlight projecting a map; same cut-through technique as Kryptos",
       "manual_verified": true
     },
     {
@@ -482,7 +482,7 @@
     "IMG_1556.jpg — Copper Plate Codes sketch",
     "IMG_1265.jpg — Kryptos/Arabic sector notebook",
     "IMG_1224.jpg — KA tableau detail with circled H",
-    "IMG_1100.jpg — Kryptos compass rose/pool",
+    "IMG_1100.jpg: red granite slab with circular green-blue stain",
     "IMG_1101.jpg — Kryptos full sculpture view",
     "IMG_1492.jpg — Press article"
   ],

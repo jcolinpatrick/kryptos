@@ -2325,6 +2325,14 @@ main section + section {
 
 .bean-pass { color: var(--green); font-weight: 700; }
 .bean-fail { color: var(--red); font-weight: 700; }
+/* Withdrawn check: neither a pass nor a fail. Muted so it does not read as a verdict. */
+/* .detail-grid dd is display:flex, so its children lay out in a ROW.
+   Wrapping the withdrawal in one element makes it a single flex item and
+   lets the label and the note stack normally at every width. */
+.bean-withdrawn { display: block; }
+.bean-withdrawn .bean-na { display: block; margin-bottom: .35rem;
+  color: var(--text-muted, #8a8a8a); font-weight: 700; letter-spacing: .02em; }
+.bean-withdrawn small { display: block; line-height: 1.55; max-width: 62ch; }
 
 
 /* ============================================================
@@ -2667,3 +2675,831 @@ main section + section {
   .score-sub-grid { grid-template-columns: repeat(2, 1fr); }
   .score-hero-num { font-size: var(--text-2xl); }
 }
+
+/* ── CSP utility classes ───────────────────────────────────────────────────
+   nginx serves this site under `style-src 'self'` with no 'unsafe-inline',
+   so a style="" attribute in markup is dropped outright. Anything that would
+   have been an inline style lives here instead. Note the difference from
+   JS: element.style.foo = ... is CSSOM and is NOT blocked, so scripts may
+   still set styles directly -- but a script toggling something declared here
+   must toggle the CLASS, or clearing the inline value falls back to this rule.
+   ------------------------------------------------------------------------ */
+.u-hidden { display: none; }
+.u-center-section { text-align: center; padding: var(--sp-8) 0; }
+.u-404-img {
+  max-width: 160px;
+  width: 100%;
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--sp-4);
+}
+.u-mt-6 { margin-top: var(--sp-6); }
+.u-mb-lg { margin-bottom: 1.5rem; }
+.u-ml-3 { margin-left: var(--sp-3); }
+.u-mono { font-family: monospace; }
+.u-status-line { font-size: var(--text-sm); margin-bottom: var(--sp-4); }
+.u-stream-pre {
+  font-size: var(--text-xs);
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+.u-stream-pre-nobreak { font-size: var(--text-xs); white-space: pre-wrap; }
+.wb-run-btn {
+  background: var(--accent-muted);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+.finding-number--retired { background: #dc3545; }
+
+/* ── Figure vocabulary ──────────────────────────────────────────────────────
+   Shared diagram components emitted by templates/_macros.html.
+
+   Three semantic roles, drawn from the sculpture's own materials, which the
+   token system already encodes:
+     --accent-warm  copper      the carved medium          -> ciphertext
+     --patina       verdigris   surface that has changed   -> recovered plaintext
+     --accent       sky         the instrument layer       -> rulers, ticks, axes
+
+   Cribs are deliberately --patina rather than --green. Green-as-success is a
+   generic UI read; patina is the colour copper actually turns once it has been
+   exposed long enough to change, which is what a recovered crib is.
+
+   Every cell is a fixed width so that the ruler row, the ciphertext row and the
+   plaintext row land in the same columns. A wrapping flex row (the older
+   .ct-visual) cannot carry a ruler for exactly this reason.
+   ------------------------------------------------------------------------ */
+
+.fig {
+  margin: var(--sp-8) 0;
+  text-align: left;
+  /* body is a column flex container, so an over-wide descendant inflates <main>
+     past the viewport unless each link in the chain is explicitly capped. */
+  max-width: 100%;
+  min-width: 0;
+}
+
+.fig-label {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: var(--sp-3);
+}
+
+.fig-caption {
+  text-align: left;
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-top: var(--sp-3);
+  max-width: 62ch;
+}
+
+/* ── Position strip ── */
+
+.fig-strip-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+  background: var(--code-bg);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  padding: var(--sp-5) var(--sp-5) var(--sp-4);
+}
+
+.fig-strip-block { min-width: 30rem; }
+
+/* Every row in a strip shares one column template, so a short final row leaves
+   trailing columns empty rather than stretching its cells out of alignment with
+   the ruler above. 1fr columns make the strip fill its container instead of
+   sitting in the left half of it. */
+.fig-strip-row {
+  display: grid;
+  font-family: var(--font-mono);
+}
+
+.fig-cols-31 .fig-strip-row { grid-template-columns: repeat(31, 1fr); }
+.fig-cols-32 .fig-strip-row { grid-template-columns: repeat(32, 1fr); }
+.fig-cols-33 .fig-strip-row { grid-template-columns: repeat(33, 1fr); }
+.fig-cols-20 .fig-strip-row { grid-template-columns: repeat(20, 1fr); }
+.fig-cols-25 .fig-strip-row { grid-template-columns: repeat(25, 1fr); }
+.fig-cols-49 .fig-strip-row { grid-template-columns: repeat(49, 1fr); }
+
+.fig-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 1.6em;
+}
+
+/* Ruler: the instrument layer. Position is the most load-bearing fact in K4
+   work and the commonest source of error (0-indexed here, 1-indexed in most
+   published sources), so it is drawn rather than hidden in a hover tooltip.
+   The numeral sits ABOVE its tick; they used to overlap. */
+.fig-strip-ruler {
+  height: 1.75rem;
+  align-items: end;
+}
+
+.fig-strip-row.fig-strip-ruler + .fig-strip-ct { margin-top: 1px; }
+.fig-strip-pt + .fig-strip-ruler { margin-top: var(--sp-5); }
+
+.fig-tick {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  height: 100%;
+}
+
+.fig-tick-n {
+  font-size: 0.625rem;
+  line-height: 1;
+  color: var(--text-tertiary);
+  padding-bottom: 11px;   /* clears the 8px major tick below it */
+}
+
+.fig-tick::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 1px;
+  height: 3px;
+  background: var(--border-strong);
+}
+
+.fig-tick-minor::after { height: 5px; background: var(--text-quaternary); }
+
+.fig-tick-major .fig-tick-n { color: var(--accent); font-weight: 600; }
+.fig-tick-major::after { height: 8px; background: var(--accent); }
+
+/* Ciphertext: copper, the carved medium. */
+.fig-ct {
+  color: var(--accent-warm);
+  font-size: 0.9375rem;
+  border-radius: 2px;
+}
+
+/* Recovered plaintext: verdigris. */
+.fig-ct.fig-known {
+  color: var(--patina);
+  font-weight: 700;
+  background: var(--patina-faint);
+}
+
+.fig-pt {
+  font-size: 0.75rem;
+  color: var(--patina);
+  font-weight: 700;
+  height: 1.3em;
+}
+
+.fig-unknown {
+  color: var(--text-quaternary);
+  font-weight: 400;
+}
+
+.fig-anomaly {
+  box-shadow: inset 0 -2px 0 var(--amber);
+}
+
+/* ── Dimension callout ── */
+
+.fig-rule-track {
+  display: flex;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.fig-rule-seg {
+  flex: var(--seg-grow, 1) 1 0;
+  padding: var(--sp-3) var(--sp-2);
+  text-align: center;
+  border-right: 1px solid var(--border-default);
+  background: var(--bg-surface);
+  min-width: 0;
+}
+
+.fig-rule-seg:last-child { border-right: 0; }
+
+.fig-rule-seg.fig-known {
+  background: var(--patina-faint);
+}
+
+.fig-rule-len {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: var(--text-lg);
+  color: var(--accent-warm);
+}
+
+.fig-rule-seg.fig-known .fig-rule-len { color: var(--patina); }
+
+.fig-rule-name {
+  display: block;
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+  margin-top: 2px;
+}
+
+/* ── Section bars ── */
+
+.fig-sections-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-5);
+}
+
+.fig-section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-2);
+}
+
+.fig-section-name {
+  font-family: var(--font-mono);
+  font-size: var(--text-lg);
+  color: var(--text-primary);
+}
+
+.fig-section-chars {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+}
+
+.fig-section-track {
+  background: var(--bg-surface);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  height: 10px;
+}
+
+.fig-section-bar {
+  height: 100%;
+  background: var(--patina);
+}
+
+/* Widths are proportional to the real ciphertext letter counts in K4_SECTIONS
+   (build.py): 63, 369, 336, 97, each over the widest, 369.
+
+   These cannot be computed in the template: the site is served under CSP
+   `style-src 'self'` with no 'unsafe-inline', so a style="--w: 17%" attribute is
+   blocked in production and every bar would collapse. They are therefore
+   hardcoded here and pinned by test_section_bar_widths_match_character_counts,
+   which recomputes them from K4_SECTIONS. If that test fails, fix these numbers
+   rather than the test. They were wrong from 2026-08-23 to 2026-08-24 because
+   K1 carried the whole screen's 869-character count instead of its own 63. */
+.fig-bar-1 { width: 17.1%; }
+.fig-bar-2 { width: 100%; }
+.fig-bar-3 { width: 91.1%; }
+.fig-bar-4 { width: 26.3%; }
+
+.fig-unsolved .fig-section-bar {
+  background: repeating-linear-gradient(
+    135deg,
+    var(--accent-warm-muted) 0 6px,
+    transparent 6px 12px
+  );
+  border: 1px solid var(--accent-warm);
+  box-sizing: border-box;
+}
+
+.fig-unsolved .fig-section-name { color: var(--accent-warm); }
+
+.fig-section-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2) var(--sp-4);
+  margin-top: var(--sp-2);
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+}
+
+.fig-section-opening {
+  margin: var(--sp-2) 0 0;
+  font-size: var(--text-sm);
+  color: var(--text-tertiary);
+  font-style: italic;
+}
+
+/* ── Funnel ── */
+
+.fig-funnel-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.fig-funnel-stage {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--sp-2) var(--sp-4);
+  padding: var(--sp-3) var(--sp-4);
+  border-radius: var(--radius-sm);
+  background: var(--patina-faint);
+  border-left: 3px solid var(--patina);
+}
+
+/* Log-scaled: 671.1B to 0 has no honest linear rendering. */
+.fig-funnel-w1 { width: 100%; }
+.fig-funnel-w2 { width: 78%; }
+.fig-funnel-w3 { width: 62%; }
+.fig-funnel-w4 { width: 46%; }
+.fig-funnel-w5 { width: 34%; }
+
+.fig-funnel-n {
+  font-family: var(--font-mono);
+  font-size: var(--text-lg);
+  color: var(--patina);
+}
+
+.fig-funnel-label {
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+}
+
+.fig-funnel-note {
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+}
+
+.fig-funnel-stage.fig-terminal {
+  background: var(--accent-warm-faint);
+  border-left-color: var(--accent-warm);
+}
+
+.fig-terminal .fig-funnel-n { color: var(--accent-warm); }
+
+@media (max-width: 640px) {
+  .fig-strip-block { --fig-cell: 1.3rem; }
+  .fig-funnel-stage { width: 100% !important; }
+}
+
+/* Quality floor: the site had no reduced-motion handling at all, while
+   scroll-behavior:smooth is global and ~40 transitions plus hover transforms
+   run unguarded. */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ── Photographs ── */
+
+.fig-photo picture,
+.fig-photo img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-default);
+}
+
+.fig-photo figcaption {
+  margin-top: var(--sp-3);
+}
+
+/* Portrait photographs. At full column width a tall photo reserves well over a
+   thousand pixels of height and pushes the whole page apart, so cap the image and
+   centre it. The caption still spans the column, which reads as deliberate. */
+.fig-photo-portrait picture,
+.fig-photo-portrait img {
+  max-width: min(100%, 24rem);
+  margin-inline: auto;
+}
+
+/* Video figures. Same frame as .fig-photo, with an aspect box so the page does
+   not reflow when the poster or first frame arrives. The site has no inline
+   styles (CSP), so dimensions live here, not on the element. */
+.fig-video-frame {
+  aspect-ratio: 16 / 9;
+  max-width: 100%;
+  background: var(--code-bg);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+.fig-video video,
+.fig-video-frame img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border: 0;
+}
+.fig-video figcaption {
+  margin-top: var(--sp-3);
+}
+.fig-video-links {
+  display: block;
+  margin-top: var(--sp-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+}
+
+/* Claims crosswalk: three former scales merged into one table. */
+.claims-crosswalk { width: 100%; border-collapse: collapse; margin: var(--sp-5) 0; font-size: var(--text-sm); }
+.claims-crosswalk th { text-align: left; font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-tertiary); padding: var(--sp-2) var(--sp-3); border-bottom: 1px solid var(--border-default); }
+.claims-crosswalk td { padding: var(--sp-3); border-bottom: 1px solid var(--border-subtle); vertical-align: top; color: var(--text-secondary); }
+.claims-crosswalk td:nth-child(2), .claims-crosswalk td:nth-child(3) { font-family: var(--font-mono); color: var(--text-tertiary); white-space: nowrap; }
+
+/* ── Quagmire III tableau ──
+   A lookup table drawn as a lookup table. Row = cycleword letter, column =
+   plaintext letter, cell = ciphertext letter. Only the rows the cycleword
+   selects are rendered. */
+
+.fig-tableau-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+  background: var(--code-bg);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  padding: var(--sp-4);
+}
+
+.fig-tab {
+  border-collapse: collapse;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  min-width: max-content;
+}
+
+.fig-tab th,
+.fig-tab td {
+  width: 1.35rem;
+  height: 1.35rem;
+  text-align: center;
+  padding: 0;
+  font-weight: 400;
+  color: var(--text-tertiary);
+}
+
+.fig-tab-corner {
+  width: 3rem;
+  font-size: 0.5625rem;
+  line-height: 1.1;
+  color: var(--text-quaternary);
+}
+
+.fig-tab-corner-key,
+.fig-tab-corner-pt { display: block; }
+.fig-tab-corner-key { color: var(--accent); }
+.fig-tab-corner-pt { color: var(--accent-warm); }
+
+/* The header row is the KRYPTOS-mixed alphabet: the sculpture's own ordering. */
+.fig-tab-head { color: var(--accent-warm); border-bottom: 1px solid var(--border-default); }
+
+.fig-tab-rowhead {
+  color: var(--accent);
+  border-right: 1px solid var(--border-default);
+  padding-right: var(--sp-2);
+}
+
+.fig-tab-cell { color: var(--text-quaternary); }
+
+/* Selected row and column: the two lookups the reader is following. */
+.fig-tab-rowsel .fig-tab-cell { color: var(--text-secondary); background: var(--accent-faint); }
+.fig-tab-rowsel .fig-tab-rowhead { color: var(--accent); font-weight: 700; background: var(--accent-faint); }
+.fig-tab-col { background: var(--accent-warm-faint); }
+.fig-tab-head.fig-tab-col { color: var(--accent-warm); font-weight: 700; }
+
+/* The intersection: the answer. */
+.fig-tab-hit {
+  background: var(--patina) !important;
+  color: var(--bg-root) !important;
+  font-weight: 700;
+  border-radius: 2px;
+}
+
+.fig-tab-steps {
+  list-style: none;
+  margin: var(--sp-4) 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  max-width: 62ch;
+}
+
+.fig-tab-steps li {
+  /* Deliberately NOT display:flex. A flex container promotes EVERY child to a
+     flex item, including each anonymous text node, so prose either side of an
+     inline <code> becomes its own independently-wrapping box with a forced
+     `gap` between. Step 2 of the tableau walkthrough has two <code> elements
+     and three text runs, so it fragmented into six boxes: "cycleword" dropped
+     to a second line and "here" / "side." were stranded with gaps.
+     Normal inline flow keeps the sentence a sentence; the hanging indent still
+     aligns wrapped lines past the numbered badge. */
+  padding-left: calc(1.5em + var(--sp-2));
+  text-indent: calc(-1.5em - var(--sp-2));
+}
+
+.fig-tab-step-n {
+  margin-right: var(--sp-2);
+  text-indent: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5em;
+  height: 1.5em;
+  border-radius: 50%;
+  background: var(--bg-elevated);
+  color: var(--text-tertiary);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+}
+
+.fig-tab-pt  { color: var(--accent-warm); }
+.fig-tab-key { color: var(--accent); }
+.fig-tab-ct  { color: var(--patina); font-weight: 700; }
+
+/* body is display:flex, so its children default to min-width:auto and refuse to
+   shrink below their widest content. Any wide child (a data table, a code block,
+   a figure with its own horizontal scroller) therefore inflates <main> past the
+   viewport and scrolls the whole page sideways on a phone, instead of scrolling
+   inside its own container. min-width:0 restores normal shrinking, which lets
+   overflow-x:auto do its job where it is declared. */
+body > main,
+body > footer,
+body > nav {
+  /* An explicit definite width. Content-based sizing was letting any wide
+     descendant (a table, a code block, a figure) inflate these past the viewport
+     and scroll the whole page sideways on a phone, rather than scrolling inside
+     the element that declares overflow-x:auto. Pre-existing: /archive/ and
+     /findings/ overflowed this way before any figure was added. */
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+}
+
+/* A long unbreakable link (a bare URL or a run-on identifier) is enough to push a
+   page sideways on a phone. Let them wrap rather than overflow. */
+main a,
+main code {
+  overflow-wrap: break-word;
+}
+
+/* ── Charts (inline SVG) ──
+   SVG is styled by class here, never by a style="" attribute or an internal
+   <style> block; both are dropped under `style-src 'self'`. Presentation
+   attributes on the element (fill=, stroke=) would be allowed but would not
+   follow the theme. */
+
+.fig-chart-scroll {
+  overflow-x: auto;
+  max-width: 100%;
+  background: var(--code-bg);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  padding: var(--sp-4) var(--sp-3) var(--sp-2);
+}
+
+.fig-svg {
+  display: block;
+  width: 100%;
+  min-width: 34rem;
+  height: auto;
+  overflow: visible;
+}
+
+/* Bands reuse the score palette the elimination pages already use. */
+.fig-band-noise  { fill: var(--bg-surface); }
+.fig-band-store  { fill: var(--amber-bg); }
+.fig-band-signal { fill: var(--red-bg); }
+
+.fig-band-label {
+  fill: var(--text-tertiary);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.06em;
+}
+
+.fig-grid { stroke: var(--border-subtle); stroke-width: 1; }
+
+/* The SIGNAL floor. Dashed because it is a convention, not a measurement. */
+.fig-threshold {
+  stroke: var(--red);
+  stroke-width: 1.5;
+  stroke-dasharray: 5 4;
+}
+
+/* The random-key baseline: copper, because it is the thing being measured. */
+.fig-line {
+  fill: none;
+  stroke: var(--accent-warm);
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.fig-dot { fill: var(--accent-warm); }
+.fig-dot-hot { fill: var(--red); }
+
+.fig-axis-label {
+  fill: var(--text-tertiary);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-anchor: middle;
+}
+
+.fig-axis-y { text-anchor: end; }
+
+.fig-axis-title {
+  fill: var(--text-secondary);
+  font-family: var(--font-sans);
+  font-size: 11px;
+  text-anchor: middle;
+}
+
+/* ── Transposition shapes ── */
+
+.fig-shapes-input {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  margin: 0 0 var(--sp-4);
+}
+
+.fig-shapes-grid {
+  display: grid;
+  /* 11rem lets the three 4-column grids share one row beneath the
+     full-width rail fence, instead of stranding one on a half-empty row. */
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+  gap: var(--sp-4);
+}
+
+.fig-shape {
+  background: var(--code-bg);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  padding: var(--sp-4);
+  min-width: 0;
+}
+
+/* The rail fence is 12 columns wide, not 4, so it takes the full row. */
+.fig-shape-wide { grid-column: 1 / -1; }
+
+.fig-shape-name {
+  margin: 0;
+  font-size: var(--text-base);
+  color: var(--text-primary);
+}
+
+.fig-shape-note {
+  margin: 2px 0 var(--sp-3);
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+}
+
+.fig-shape-scroll { overflow-x: auto; max-width: 100%; }
+
+.fig-shape-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  width: max-content;
+}
+
+.fig-shape-row { display: flex; gap: 3px; }
+
+.fig-shape-cell {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--radius-sm);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  font-family: var(--font-mono);
+}
+
+.fig-shape-cell b {
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--accent-warm);
+}
+
+/* The small numeral is the letter's position in the OUTPUT: the read path. */
+.fig-shape-cell i {
+  position: absolute;
+  top: 1px;
+  right: 3px;
+  font-style: normal;
+  font-size: 0.5rem;
+  line-height: 1;
+  color: var(--accent);
+}
+
+.fig-shape-gap { background: none; border-color: transparent; }
+
+.fig-shape-out {
+  margin: var(--sp-3) 0 0;
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+}
+
+.fig-shape-out span { margin-right: var(--sp-2); }
+
+.fig-shape-out code {
+  color: var(--patina);
+  font-size: var(--text-xs);
+  word-break: break-all;
+}
+
+/* ── W-delimiter segmentation ── */
+
+.fig-wseg-scroll {
+  overflow-x: auto;
+  max-width: 100%;
+  background: var(--code-bg);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  padding: var(--sp-5) var(--sp-5) var(--sp-4);
+}
+
+.fig-wseg-row {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  width: max-content;
+}
+
+.fig-wseg-row + .fig-wseg-row { margin-top: 3px; }
+
+.fig-wseg-meta,
+.fig-wseg-len {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  color: var(--text-quaternary);
+  flex: 0 0 auto;
+}
+
+.fig-wseg-meta { width: 3.2rem; text-align: right; }
+.fig-wseg-len  { width: 1.5rem; }
+
+.fig-wseg-cells { display: flex; }
+
+.fig-wseg-cells .fig-cell {
+  width: 1.35rem;
+  height: 1.5em;
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+}
+
+/* The delimiter itself: present, but not part of the run it closes. */
+.fig-wmark {
+  color: var(--accent);
+  font-weight: 700;
+  background: var(--accent-faint);
+  border-radius: 2px;
+}
+
+/* ── Bean constraints ── */
+
+.fig-bean-svg { min-width: 30rem; }
+
+.fig-bean-axis { stroke: var(--border-strong); stroke-width: 1; }
+.fig-bean-crib { fill: var(--patina); }
+
+/* 242 inequalities: individually meaningless, collectively the point. */
+.fig-bean-ineq {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 0.7;
+  opacity: 0.16;
+}
+
+/* The one equality that a repeated ciphertext letter forces. */
+.fig-bean-eq {
+  fill: none;
+  stroke: var(--accent-warm);
+  stroke-width: 2;
+}
+
+.fig-bean-node { fill: var(--accent-warm); }
+
+.fig-bean-eqlabel,
+.fig-bean-node-label {
+  fill: var(--accent-warm);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-anchor: middle;
+}
+
+.fig-bean-node-label { fill: var(--text-secondary); font-size: 10px; }
+.fig-sub { font-size: 8px; }

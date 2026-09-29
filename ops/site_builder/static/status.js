@@ -34,10 +34,24 @@
     btn.innerHTML = '<span class="spinner"></span>Checking...';
     hideResult();
 
-    fetch("/api/status/" + encodeURIComponent(token))
+    // The token travels in a header, not the URL. AWS WAF logs record
+    // httpRequest.uri verbatim and only query strings are redactable, so the
+    // old "/api/status/<token>" form wrote a bearer credential into a log file
+    // on every lookup. The authorization header is already redacted there, and
+    // CloudFront access logs do not record request headers at all.
+    fetch("/api/status", {
+      headers: { "Authorization": "Bearer " + token }
+    })
       .then(function (res) {
         if (res.status === 404) {
           showResult("error", "No submission found for this token. Please double-check and try again.");
+          return null;
+        }
+        // 400 means the token was malformed, which is a different thing from
+        // "no such submission". Saying "not found" here would tell someone
+        // their work was lost when they simply mistyped a character.
+        if (res.status === 400) {
+          showResult("error", "That doesn't look like a valid token. It should be 32 characters, 0-9 and a-f.");
           return null;
         }
         if (!res.ok) throw new Error("Server error: " + res.status);

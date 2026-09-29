@@ -48,38 +48,38 @@
     "none:vigenere":     { severity: "proven", msg: "Single-layer Vigen\u00e8re on raw 97 chars is mathematically eliminated (key conflicts at all periods 1\u201326)." },
     "none:beaufort":     { severity: "proven", msg: "Single-layer Beaufort on raw 97 chars is mathematically eliminated (key conflicts at all periods 1\u201326)." },
     "none:varbeaufort":  { severity: "proven", msg: "Single-layer Variant Beaufort on raw 97 chars is mathematically eliminated (key conflicts at all periods 1\u201326)." },
-    "none:autokey-vig":  { severity: "exhausted", msg: "Autokey Vigen\u00e8re on raw 97 chars: exhaustively tested (156 single-letter + 1M dictionary keys). Zero crib hits." },
-    "none:autokey-beau": { severity: "exhausted", msg: "Autokey Beaufort on raw 97 chars: exhaustively tested. Zero crib hits." },
+    "none:autokey-vig":  { severity: "proven", msg: "Autokey Vigen\u00e8re on raw 97 chars: no starting key of up to 25 letters fits all 24 known letters, on either alphabet (checked directly from the known letters). Trials of 156 single-letter and 1M dictionary keys also found no fit. Some starting keys of 27 letters or more can fit, so longer keys are not all ruled out." },
+    "none:autokey-beau": { severity: "proven", msg: "Autokey Beaufort on raw 97 chars: no starting key of up to 25 letters fits all 24 known letters, on either alphabet (checked directly from the known letters). Some starting keys of 27 letters or more can fit, so longer keys are not all ruled out." },
     "none:caesar":       { severity: "proven", msg: "Caesar (monoalphabetic shift) is a special case of Vigen\u00e8re period 1 \u2014 mathematically eliminated." },
     "none:atbash":       { severity: "proven", msg: "Atbash is a fixed monoalphabetic substitution \u2014 mathematically eliminated." },
-    "columnar:vigenere":   { severity: "exhausted", msg: "Columnar \u00d7 periodic Vigen\u00e8re: 47M+ configs tested across all widths and periods 1\u201313. Best: 9/24 (noise)." },
-    "columnar:beaufort":   { severity: "exhausted", msg: "Columnar \u00d7 periodic Beaufort: 47M+ configs tested. Best: 9/24 (noise)." },
-    "columnar:varbeaufort": { severity: "exhausted", msg: "Columnar \u00d7 periodic Variant Beaufort: 47M+ configs tested. Best: 9/24 (noise)." },
-    "columnar:autokey-vig":  { severity: "open", msg: "Columnar + autokey Vigen\u00e8re: partially tested but large keyspace remains. Productive territory." },
-    "columnar:autokey-beau": { severity: "open", msg: "Columnar + autokey Beaufort: partially tested. Productive territory." },
-    "railfence:vigenere":    { severity: "open", msg: "Rail fence + Vigen\u00e8re: open territory. Non-standard transposition not exhaustively tested." },
-    "railfence:beaufort":    { severity: "open", msg: "Rail fence + Beaufort: open territory." },
-    "serpentine:vigenere":   { severity: "open", msg: "Serpentine + Vigen\u00e8re: open territory. Boustrophedon reading not yet tested with substitution." },
-    "serpentine:beaufort":   { severity: "open", msg: "Serpentine + Beaufort: open territory." },
-    "spiral:vigenere":       { severity: "open", msg: "Spiral + Vigen\u00e8re: open territory. Spiral transposition not yet tested." },
-    "spiral:beaufort":       { severity: "open", msg: "Spiral + Beaufort: open territory." },
-    "myszkowski:vigenere":   { severity: "open", msg: "Myszkowski + Vigen\u00e8re: open territory. Tied-column transposition not exhaustively tested." },
-    "myszkowski:beaufort":   { severity: "open", msg: "Myszkowski + Beaufort: open territory." },
-    "none:quagmire-ii":      { severity: "exhausted", msg: "Quagmire II (sculpture tableau) on raw 97: all periods 1\u201326 eliminated. Cross-alphabet key conflicts at all periods." },
-    "none:quagmire-ii-autokey": { severity: "exhausted", msg: "Q2 autokey on raw 97: 390 indicator/keyword/variant configs tested (2026-03-14). Best 13/24 with null mask." },
+    "columnar:vigenere":   { severity: "exhausted", msg: "Columnar \u00d7 repeating-key Vigen\u00e8re (A\u2013Z alphabet): widths 4\u20139 with every column order and key lengths 1\u201324 were tested exhaustively (re-run August 2026); no combination fits all 24 known letters. Wider grids were sampled, not exhausted." },
+    "columnar:beaufort":   { severity: "exhausted", msg: "Columnar \u00d7 repeating-key Beaufort (A\u2013Z alphabet): widths 4\u20139, every column order, key lengths 1\u201324: no combination fits (exhaustive re-run, August 2026)." },
+    "columnar:varbeaufort": { severity: "exhausted", msg: "Columnar \u00d7 repeating-key Variant Beaufort (A\u2013Z alphabet): widths 4\u20139, every column order, key lengths 1\u201324: no combination fits (exhaustive re-run, August 2026)." },
+    "columnar:autokey-vig":  { severity: "open", msg: "Columnar + autokey Vigen\u00e8re: partially tested but a large keyspace remains. Not ruled out." },
+    "columnar:autokey-beau": { severity: "open", msg: "Columnar + autokey Beaufort: partially tested. Not ruled out." },
+    "railfence:vigenere":    { severity: "open", msg: "Rail fence + Vigen\u00e8re: depths 2\u201320 tested with repeating keys of length 2\u20137, no signal above chance. Longer or non-repeating keys remain open." },
+    "railfence:beaufort":    { severity: "open", msg: "Rail fence + Beaufort: depths 2–20 tested with repeating keys of length 2–7, no signal above chance. Longer or non-repeating keys remain open." },
+    "serpentine:vigenere":   { severity: "open", msg: "Serpentine + Vigen\u00e8re: grid widths 6\u201313 tested with repeating keys of length 2\u20137, no signal above chance. Longer or non-repeating keys remain open." },
+    "serpentine:beaufort":   { severity: "open", msg: "Serpentine + Beaufort: grid widths 6–13 tested with repeating keys of length 2–7, no signal above chance. Longer or non-repeating keys remain open." },
+    "spiral:vigenere":       { severity: "open", msg: "Spiral + Vigen\u00e8re: clockwise spirals on grid widths 6\u201313 tested with repeating keys of length 2\u20137, no signal above chance. Other spirals and longer or non-repeating keys remain open." },
+    "spiral:beaufort":       { severity: "open", msg: "Spiral + Beaufort: clockwise spirals on grid widths 6–13 tested with repeating keys of length 2–7, no signal above chance. Other spirals and longer or non-repeating keys remain open." },
+    "myszkowski:vigenere":   { severity: "open", msg: "Myszkowski + Vigen\u00e8re: widths 5\u201313 tested with repeating keys of length 2\u20137 (exhaustive at widths 5\u20137, sampled above), no signal above chance. Longer or non-repeating keys remain open." },
+    "myszkowski:beaufort":   { severity: "open", msg: "Myszkowski + Beaufort: widths 5–13 tested with repeating keys of length 2–7 (exhaustive at widths 5–7, sampled above), no signal above chance. Longer or non-repeating keys remain open." },
+    "none:quagmire-ii":      { severity: "exhausted", msg: "Quagmire II (sculpture tableau), as this tool implements it, on raw 97: every key length from 1 to 26 is ruled out by conflicts at the known plaintext positions. Some longer keys (27 to 29 letters, or 53 or more) are not ruled out this way." },
+    "none:quagmire-ii-autokey": { severity: "proven", msg: "Quagmire II autokey, as this tool implements it, on raw 97: no starting key of up to 25 letters fits all 24 known letters, for any indicator (checked directly from the known letters). Some starting keys of 27 letters or more can fit, so longer keys are not all ruled out. An earlier trial of 390 indicator, keyword and variant settings (March 2026) also found no fit." },
     "columnar:quagmire-ii":  { severity: "open", msg: "Columnar + Q2: KOMPASS:vig+col7 reached 14/24. Below DEFECTOR:AZ_beau+col7 (15/24). Partially explored." },
     "columnar:quagmire-ii-autokey": { severity: "open", msg: "Columnar + Q2 autokey: open territory." },
-    "none:four-square":      { severity: "exhausted", msg: "Four-Square on raw 97: heavily tested. SA 200\u00d780K configs, ceiling 23/24 (never 24). Digraphic IC=1.66 (random)." },
+    "none:four-square":      { severity: "proven", msg: "Four-Square on raw 97: ruled out in its standard form, because its 5\u00d75 squares hold only 25 letters and K4's ciphertext uses all 26. Earlier computer searches reached at most 23 of 24 known letters, never 24; high scores like that are overfitting artifacts." },
     "columnar:four-square":  { severity: "open", msg: "Columnar + Four-Square: open territory." },
     "none:porta":            { severity: "proven", msg: "Porta cipher: eliminated analytically (2026-03-13). Key conflicts at all periods." },
     "none:gronsfeld":        { severity: "proven", msg: "Gronsfeld: eliminated analytically (2026-03-13). Special case of Vigen\u00e8re with digits 0\u20139." },
-    "none:affine":           { severity: "proven", msg: "Affine cipher on 97 chars: all 9,312 (a,b) pairs tested exhaustively. Best 8/24 (noise)." },
+    "none:affine":           { severity: "proven", msg: "Affine cipher: a fixed one-for-one letter substitution, so the known plaintext rules out all 312 valid (a,b) keys (the two adjacent carved Qs, at positions 25 and 26 counting from 0, would have to decrypt to both N and O)." },
     "none:rot13":            { severity: "proven", msg: "ROT13: special case of Caesar shift 13 \u2014 mathematically eliminated." },
-    "none:ct-autokey-vig":   { severity: "proven", msg: "CT-Autokey Vigen\u00e8re on raw 97: all 576 configs eliminated analytically (2026-03-13)." },
-    "none:ct-autokey-beau":  { severity: "proven", msg: "CT-Autokey Beaufort on raw 97: all 576 configs eliminated analytically (2026-03-13)." },
-    "none:running-key-vig":  { severity: "exhausted", msg: "Running-key Vigen\u00e8re on raw 97 (Carter books + K1-K3 PT): max 7/24 direct, 9/24 with transposition." },
-    "none:running-key-beau": { severity: "exhausted", msg: "Running-key Beaufort on raw 97 (Carter books + K1-K3 PT): max 7/24 direct, 9/24 with transposition." },
-    "none:gromark":          { severity: "exhausted", msg: "Gromark on raw 97: 3.2 billion primers tested (Bean 2021 paper). Zero crib hits. Nearly eliminated." },
+    "none:ct-autokey-vig":   { severity: "proven", msg: "CT-Autokey Vigen\u00e8re on raw 97: ruled out for starting keys of up to 25 letters, on either alphabet. After the starting key, each key letter is a carved letter, so the known plaintext can be checked directly, and no such key fits more than 6 of the 24 known letters." },
+    "none:ct-autokey-beau":  { severity: "proven", msg: "CT-Autokey Beaufort on raw 97: ruled out for starting keys of up to 25 letters, on either alphabet. After the starting key, each key letter is a carved letter, so the known plaintext can be checked directly, and no such key fits more than 6 of the 24 known letters." },
+    "none:running-key-vig":  { severity: "exhausted", msg: "Running-key Vigen\u00e8re on raw 97 with the Carter books or the K1\u2013K3 plaintexts as the key: no match, best scores at chance level. (An earlier K1\u2013K3 run used faulty copies of those texts; a September 2026 re-check on the verified texts also found nothing.) Other source texts remain possible." },
+    "none:running-key-beau": { severity: "exhausted", msg: "Running-key Beaufort on raw 97 with the Carter books or the K1–K3 plaintexts as the key: no match, best scores at chance level. (An earlier K1–K3 run used faulty copies of those texts; a September 2026 re-check on the verified texts also found nothing.) Other source texts remain possible." },
+    "none:gromark":          { severity: "open", msg: "Gromark on raw 97: not ruled out in general. This tool uses the plain A–Z alphabet on both sides, and in that form no base-10 key can fit the known plaintext. With mixed alphabets, Bean (2021) found 39 five-digit base-10 primers that could fit it, but no convincing plaintext has been found." },
     "none:bifid":            { severity: "proven", msg: "Bifid on raw 97: all 26 letters present in K4 CT, but Bifid requires 5\u00d75 grid (I/J merged = 25 letters). Structurally incompatible." },
     "columnar:ct-autokey-vig":   { severity: "open", msg: "Columnar + CT-Autokey Vigen\u00e8re: open territory." },
     "columnar:ct-autokey-beau":  { severity: "open", msg: "Columnar + CT-Autokey Beaufort: open territory." },
@@ -202,7 +202,7 @@
     }
     nullGrid.innerHTML = html;
     if (nullGridCount) {
-      nullGridCount.textContent = nullPos.length + "/24 nulls";
+      nullGridCount.textContent = nullPos.length + "/24 fillers";
     }
 
     // Click + keyboard handlers (WCAG: Enter/Space to activate)
@@ -221,7 +221,7 @@
       current.sort(function (a, b) { return a - b; });
       nullPositionsInput.value = current.join(",");
       cell.classList.toggle("is-null");
-      if (nullGridCount) nullGridCount.textContent = current.length + "/24 nulls";
+      if (nullGridCount) nullGridCount.textContent = current.length + "/24 fillers";
       updateNullOptions();
       runPipeline();
     }
@@ -1478,7 +1478,7 @@
     if (nullActive && (severity === "proven" || severity === "exhausted")) {
       severity = "open";
       msg = msg.replace(/on raw 97 chars?/g, "on raw 97")
-        + " <em>However, you have a null mask active — the cipher operates on the extracted text, not raw 97. This elimination may not apply. Treat as open territory.</em>";
+        + " <em>However, you have filler letters removed, so the cipher runs on the shorter extracted text, not the raw 97. This result may not apply. Treat it as open territory.</em>";
     }
 
     var cls = "wb-warning wb-warning-" + severity;
@@ -1695,7 +1695,7 @@
       // null slots included -- crib scoring ignores null positions.
       // Show a soft advisory rather than blocking.
       eliminationWarning.className = "wb-warning wb-warning-open";
-      eliminationWarning.innerHTML = "<strong>NOTE</strong> Model B: cribs fixed at CT97 positions. Transposition applies to the full 97-char text (including nulls). Crib positions are not remapped. If this is unintended, switch to Model A.";
+      eliminationWarning.innerHTML = "<strong>NOTE</strong> Model B: cribs fixed at CT97 positions. Transposition applies to the full 97-char text (including the filler positions). Crib positions are not remapped. If this is unintended, switch to Model A.";
     }
     {
       workingCT = applyTransposition(workingCT);

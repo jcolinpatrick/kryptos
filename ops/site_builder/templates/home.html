@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "_macros.html" import position_strip, funnel %}
 {% block title %}kryptosbot.com | Kryptos K4 Research Archive{% endblock %}
 {% block page_path %}/{% endblock %}
 
@@ -9,8 +10,8 @@
       <h1>Kryptos K4 remains unsolved.<br>
         <span class="hero-emphasis">Here&rsquo;s everything we&rsquo;ve ruled out.</span></h1>
       <p class="hero-sub">
-        An open-source research archive documenting {{ total_configs }} tested configurations
-        across {{ total_experiments }} recorded experiments, with scope notes and reproduction commands.
+        A public research archive documenting {{ total_configs }} tested configurations
+        across {{ total_experiments }} recorded experiments, with reproduction commands and scope notes where the record has them.
         Built by a human and an AI who find this problem genuinely fascinating.
       </p>
       <div class="hero-cta-row">
@@ -22,21 +23,18 @@
     <div class="hero-logo">
       <picture>
         <source srcset="/static/kryptosbot.webp" type="image/webp">
-        <img src="/static/kryptosbot.png" alt="KryptosBot, a copper robot holding a cipher scroll" class="hero-logo-img">
+        <img src="/static/kryptosbot.png" alt="KryptosBot, a copper robot holding a cipher scroll" class="hero-logo-img" width="160" height="160">
       </picture>
     </div>
   </div>
 </section>
 
-<div class="credibility-bar">
-  <strong>{{ total_configs }}</strong> configurations tested
-  <span class="sep">&middot;</span>
-  <strong>{{ total_experiments }}</strong> experiments
-  <span class="sep">&middot;</span>
-  <strong>0</strong> solutions
-  <span class="sep">&middot;</span>
-  Everything documented.
-</div>
+{{ funnel([
+  {'n': total_configs,      'label': 'configurations evaluated', 'note': 'summed from the counts each run reports'},
+  {'n': total_experiments,  'label': 'recorded experiments',     'note': 'repro commands and scope notes where recorded'},
+  {'n': total_experiments,  'label': 'published eliminations',   'note': 'written up and browsable'},
+  {'n': '0',                'label': 'solutions', 'note': 'K4 is still unsolved', 'terminal': True},
+]) }}
 
 <div class="two-paths">
   <div class="path-card path-card-research">
@@ -53,6 +51,7 @@
       <li><a href="/research-questions/">Open questions</a></li>
       <li><a href="/recent/">Recent additions</a></li>
       <li><a href="/archive/">Archive research photos</a></li>
+      <li><a href="/encoding-chart/">The encoding chart, unfolded</a></li>
     </ul>
   </div>
   <div class="path-card path-card-explore">
@@ -77,20 +76,25 @@
     <span class="finding-preview-num">Open lead, heavily tested</span>
     <h3>The W-Delimiter Hypothesis</h3>
     <p>
-      Five of K4's carved letters are <code>W</code>s, and treating them as
-      dividers neatly explains a statistical oddity that puzzled researchers for
-      years. Every simple version of this idea has now been tested without success;
-      it stays alive only as one ingredient of a more complex scheme.
+      Five of K4's carved letters are <code>W</code>s, and one idea is that they act
+      as dividers. Deleting them makes a statistical oddity vanish, which once looked
+      like support, but a 2026 audit showed that the oddity cannot tell one letter
+      from another: deleting other letters breaks it too, so it says nothing about
+      the <code>W</code>s. Every simple version of the divider idea has now been
+      tested without success; it stays alive only as one ingredient of a more
+      complex scheme.
     </p>
     <a href="/findings/#finding-w-delimiter" class="entry-arrow">Read more &rarr;</a>
   </div>
   <div class="finding-preview-card">
     <span class="finding-preview-num">Key result</span>
-    <h3>The Textbook Ciphers Are Ruled Out</h3>
+    <h3>Most Textbook Ciphers Are Ruled Out</h3>
     <p>
-      Every standard classical cipher, applied in the ordinary way, has been
-      tested against K4 and failed: repeating keywords, letter rearrangements,
-      and huge swaths of two- and three-step combinations. Whatever K4 is, it is
+      Most standard classical ciphers, applied in the ordinary way, have been
+      tested against K4 and failed: repeating keywords on the standard and KRYPTOS
+      alphabets, letter rearrangements, and large bounded slices of two- and
+      three-step combinations. A few variants built on keyword-mixed alphabets
+      are not yet fully closed. Whatever K4 is, it is probably
       not a textbook cipher used the textbook way.
     </p>
     <a href="/findings/" class="entry-arrow">Read more &rarr;</a>
@@ -100,23 +104,23 @@
 <section class="why-section">
   <h2>Why this exists</h2>
   <p>
-    Kryptos K4 has been unsolved for 35 years. In that time, thousands of people
+    Kryptos K4 has been unsolved since 1990. In that time, thousands of people
     have independently tried the same approaches (Vigen&egrave;re with every keyword,
     columnar transposition at every width, Beaufort with every alphabet) and
     hit the same walls, alone, with no way to know someone else already tried it.
   </p>
   <p>
-    This site is an attempt to fix that. Every recorded approach is documented
-    with its parameters, score, scope limits, and a command you can run to verify
-    the result yourself. If an idea has already failed inside a bounded test
+    This site is an attempt to fix that. Each recorded approach is documented
+    with its verdict and best score and, where the record has them, its parameters,
+    scope limits, and a command you can run to verify the result yourself. If an idea has already failed inside a bounded test
     envelope, you&rsquo;ll know that before you spend a week on it.
   </p>
   <p>
     The project started as one person&rsquo;s obsession with a sculpture and grew into
     a collaboration between a human researcher and Claude, an AI that turned out to
     be an excellent partner for exhaustive cryptanalysis. The codebase is
-    <a href="https://github.com/jcolinpatrick/kryptos">open source</a>.
-    The findings are reproducible. The failures are documented as carefully as the successes.
+    <a href="https://github.com/jcolinpatrick/kryptos">public on GitHub</a>.
+    Most recorded experiments include a command to re-run them. The failures are documented as carefully as the successes.
   </p>
   <p>
     We haven&rsquo;t solved K4. But we&rsquo;ve mapped a lot of the territory where the answer isn&rsquo;t.
@@ -127,25 +131,33 @@
   <h3>What this site is not</h3>
   <p>
     This is not a solution claim. We don&rsquo;t know how K4 was encrypted,
-    and we don&rsquo;t know the plaintext. What we do know, rigorously and
-    reproducibly, is a large number of approaches that <em>don&rsquo;t</em> work.
+    and we don&rsquo;t know the plaintext. What we do know is a large number of
+    approaches that <em>don&rsquo;t</em> work within the scope each test covered.
     The statistical observations documented here are model-conditional and
     do not independently prove how K4 was constructed.
     We are not affiliated with Jim Sanborn, Ed Scheidt, the CIA, or
-    the Kryptos Keepers.
+    Paradigm Operations LP.
   </p>
 </aside>
 
 <div class="section-label">What is Kryptos K4?</div>
 <p>
   <strong><a href="https://www.cia.gov/legacy/headquarters/kryptos-sculpture/">Kryptos</a></strong>
-  is an encrypted sculpture at CIA headquarters containing four messages. K1&ndash;K3 were solved in 1998&ndash;1999. K4
-  (<strong>97 characters</strong>) has resisted all public cryptanalytic
-  attempts for over 35 years. 24 plaintext characters are known:
-  <code>EASTNORTHEAST</code> at positions 21&ndash;33 and
-  <code>BERLINCLOCK</code> at positions 63&ndash;73.
+  is an encrypted sculpture at CIA headquarters carrying four messages. The first three were
+  solved in the 1990s. This is the fourth, still unsolved since the sculpture was dedicated in 1990:
+  scrambled strips of its plaintext turned up in Sanborn&rsquo;s archived papers in 2025 but have never
+  been published, and the method has never been made public.
   <a href="/about-kryptos/">Learn more &rarr;</a>
 </p>
+
+{{ position_strip(ct, cribs=k4_cribs, label='K4: 97 characters, 24 of them known',
+   caption='Sanborn released these plaintext words between 2010 and 2020, and a 2025 layout
+            image from him shows them in these slots. Drawing them under the carved letters
+            assumes each carved letter decrypts to the plaintext letter in the same position:
+            the best-supported reading, but it rests on relayed conversations, not a direct
+            quote from Sanborn. The rest of the plaintext has not been published. Positions
+            are 0-indexed, as they are throughout this site; most published sources count
+            from 1 (22 to 34 and 64 to 74).') }}
 
 <div class="section-label">Categories</div>
 <div class="category-list">

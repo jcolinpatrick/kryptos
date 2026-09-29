@@ -22,7 +22,7 @@ Disallow: /api/
 Disallow: /db/
 
 # Sitemap
-Sitemap: https://kryptosbot.com/sitemap.xml
+Sitemap: https://www.kryptosbot.com/sitemap.xml
 
 # Crawl-delay for aggressive bots
 User-agent: AhrefsBot

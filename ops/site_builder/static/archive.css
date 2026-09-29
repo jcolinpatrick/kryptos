@@ -10,8 +10,8 @@
 
 /* Legal disclaimer box */
 .archive-legal {
-  background: var(--surface);
-  border: 1px solid var(--border);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
   border-left: 3px solid var(--amber);
   border-radius: var(--radius-md);
   padding: var(--sp-6);
@@ -43,8 +43,8 @@
   border-bottom: none;
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
-  background: var(--surface);
-  border: 1px solid var(--border);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
   border-radius: var(--radius-md);
   padding: var(--sp-6);
   margin-bottom: var(--sp-12);
@@ -88,7 +88,7 @@
   font-size: var(--text-2xl);
   margin-bottom: var(--sp-2);
   padding-bottom: var(--sp-3);
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--border-default);
 }
 .section-intro {
   color: var(--text-secondary);
@@ -115,7 +115,7 @@
 
 /* Featured items get a subtle highlight */
 .archive-item-featured {
-  background: var(--surface);
+  background: var(--bg-surface);
   border: 1px solid var(--accent-muted, rgba(56, 189, 248, 0.2));
   border-radius: var(--radius-lg);
   padding: var(--sp-6);
@@ -128,8 +128,8 @@
   position: relative;
   overflow: hidden;
   border-radius: var(--radius-md);
-  background: var(--surface);
-  border: 1px solid var(--border);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
 }
 .archive-img-wrap a {
   display: block;
@@ -172,8 +172,8 @@
 
 /* About section at bottom */
 .archive-about {
-  background: var(--surface);
-  border: 1px solid var(--border);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
   border-radius: var(--radius-lg);
   padding: var(--sp-8);
   margin-top: var(--sp-12);

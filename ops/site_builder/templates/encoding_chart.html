@@ -1,0 +1,548 @@
+{% extends "base.html" %}
+{% block title %}The Encoding Chart, Unfolded | kryptosbot.com{% endblock %}
+{% block page_path %}/encoding-chart/{% endblock %}
+{% block meta_description %}Jim Sanborn said his handwritten K1 and K2 encoding chart rewarded forensic study. We took him at his word: how the sheets were taped and folded, what the margins hold, and what the two famous misspellings actually show.{% endblock %}
+{% block og_title %}The Encoding Chart, Unfolded{% endblock %}
+{% block head_extra %}
+<link rel="stylesheet" href="/static/findings.css">
+<link rel="stylesheet" href="/static/archive.css">
+{% endblock %}
+
+{% block content %}
+<h1>The encoding chart, unfolded</h1>
+
+<p>
+  In November 2010 the New York Times published two sheets of Jim Sanborn&rsquo;s
+  handwriting: the worksheet on which he enciphered the first two sections of
+  Kryptos. Two days later he told NPR that if people studied the sheets
+  &ldquo;in a forensic manner, there might be revelations in there.&rdquo;
+  We took him at his word and read the published chart cell by cell. This page is
+  what we found, what we did not find, and one way the sheets may have folded.
+</p>
+
+<figure class="fig fig-video">
+  <div class="fig-video-frame">
+    <video autoplay muted loop playsinline controls preload="metadata"
+           poster="/static/media/chart-fold-poster-2ee6bc1a.jpg"
+           width="1280" height="720"
+           aria-label="Animation: the taped sheets of the K1 and K2 encoding chart are reconnected at their joins, folded like a small accordion, and reopened.">
+      <source src="/static/media/chart-fold-dac3c7b4.mp4" type="video/mp4">
+      <img src="/static/media/chart-fold-poster-2ee6bc1a.jpg" width="1280" height="720"
+           alt="Still from the animation: the K1 and K2 chart pieces laid out one above the other, with their taped joins marked.">
+    </video>
+  </div>
+  <figcaption class="fig-caption">
+    One possible reconstruction of how the K1/K2 encoding worksheet could have
+    folded at its taped joins. The fold locations, directions and sequence are
+    unverified, and no K4 mechanism is established. The animation is built from
+    the tape and margin evidence described below, not from a photograph of the
+    folded object. The handwriting is Sanborn&rsquo;s; the paper motion is ours.
+    <span class="fig-video-links">58 seconds, silent. <a href="/static/media/chart-fold-b0b0a3c1.gif">Download as GIF (7.5&nbsp;MB)</a></span>
+  </figcaption>
+</figure>
+
+<div class="plain-summary">
+  <strong>In plain English:</strong> the chart is a working sheet on pad paper,
+  most likely taped page to page so it could fold like a small scroll. Every mark on
+  it that is not a letter looks like ordinary bookkeeping. Its rows break in different places from the letters on
+  the copper. The one thing it settles is that the two famous misspellings in K1
+  and K2 happened at different stages: one on this sheet, one after it.
+</div>
+
+<nav class="archive-toc">
+  <h2>Contents</h2>
+  <ol>
+    <li><a href="#what-he-said">What Sanborn actually said</a></li>
+    <li><a href="#what-it-is">What the chart is</a></li>
+    <li><a href="#assembly">How it was physically put together</a></li>
+    <li><a href="#row-breaks">The row breaks do not match the copper</a></li>
+    <li><a href="#two-misspellings">The two misspellings</a></li>
+    <li><a href="#not-found">What we looked for and did not find</a></li>
+    <li><a href="#open-items">What would settle the open items</a></li>
+    <li><a href="#confidence">How confident we are</a></li>
+  </ol>
+</nav>
+
+<section id="what-he-said">
+  <h2>What Sanborn actually said</h2>
+  <p>
+    The remark comes from NPR&rsquo;s <em>All Things Considered</em> on
+    November 22, 2010, two days after the Times published the charts alongside
+    the BERLIN clue. Asked whether releasing a clue meant he wanted the puzzle
+    solved, Sanborn answered:
+  </p>
+  <blockquote>
+    &ldquo;I also divulged, or gave images, of my original decoding charts, the
+    ones that I, well, actually, for me they were encoding charts. And I think
+    once the Krypto-philes study it in a forensic manner, there might be
+    revelations in there. So in a way, I gave more than just Berlin.&rdquo;
+  </blockquote>
+  <p>Three things he did not say are worth stating plainly:</p>
+  <ul>
+    <li>He named no kind of examination. Paper, handwriting, corrections,
+      erasures and margins are all the community&rsquo;s later elaboration.</li>
+    <li>He was talking about these two K1 and K2 sheets only. The K3 chart was
+      not shown until 2013, and the K4 material was not public in 2010.</li>
+    <li>He did not say the charts contain a clue to K4. &ldquo;Revelations&rdquo;
+      is left open.</li>
+  </ul>
+  <p>
+    One later report points somewhere specific. An attendee at a 2013 American
+    Cryptogram Association dinner wrote that Sanborn urged people to study the
+    released charts &ldquo;particularly regarding misspelled words.&rdquo; That
+    is an unrecorded second-hand account
+    <span class="tier-badge tier-4">Unverified</span>, but it matches what the
+    chart turns out to carry, so we come back to it below.
+  </p>
+</section>
+
+<section id="what-it-is">
+  <h2>What the chart is</h2>
+  <p>
+    Two pieces of green-grid computation paper, photographed separately. Each
+    line of the message takes a block of four ruled rows: the plain text, the
+    keyword written out letter by letter beneath it, the resulting cipher text,
+    and a blank row. The keyword for K1 is PALIMPSEST and for K2 is ABSCISSA;
+    how those keywords drive the letter substitution is explained on
+    <a href="/about-kryptos/">the About page</a>. Rows are numbered 1 to 8 in
+    the left margin and every row is 31 cells wide.
+  </p>
+  <figure class="fig fig-photo fig-photo-portrait">
+    <picture>
+      <source srcset="/static/photos/enc-chart-b-flat-median101-1770daef.webp" type="image/webp">
+      <img src="/static/photos/enc-chart-b-flat-median101-1770daef.jpg"
+           alt="The full K1 and K2 encoding chart with the paper tone flattened so the pencil reads evenly: an upper piece holding rows 1 and 2 under the heading PALIMPCEST, and a lower piece holding rows 3 to 8 under the heading ABSCISSA. Each row is three lines of capital letters in a printed grid, with a blank line between rows."
+           width="1150" height="1346" loading="lazy" decoding="async">
+    </picture>
+    <figcaption class="fig-caption">
+      The published chart with the paper tone flattened by dividing out a wide
+      median of the background. This is the same photograph the Times ran, not a
+      new image; the processing only evens the lighting so faint pencil and tape
+      edges can be compared across the sheet.
+    </figcaption>
+  </figure>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Chart row</th><th>Section</th><th>Cells with letters</th><th>Notes</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>K1</td><td>31</td><td>The header line above it reads PALIMPCEST, spelled with a C.</td></tr>
+        <tr><td>2</td><td>K1</td><td>31, plus one</td><td>K1 has 63 letters. The 63rd is written as a little vertical stack, N over L over D, in the first column below the block.</td></tr>
+        <tr><td>3</td><td>K2</td><td>31</td><td>The header ABSCISSA sits in the unruled top margin, on the tape.</td></tr>
+        <tr><td>4</td><td>K2</td><td>30 and a <code>?</code></td><td>The question mark takes a cell and is copied down through all three lines. The keyword does not advance on it.</td></tr>
+        <tr><td>5</td><td>K2</td><td><strong>32</strong></td><td>One cell too many for the grid. The extra letter, its key letter and its cipher letter are boxed by hand in the left margin.</td></tr>
+        <tr><td>6</td><td>K2</td><td>31</td><td>The cipher line is written in a band with no printed grid, between rows 6 and 7.</td></tr>
+        <tr><td>7</td><td>K2</td><td>31</td><td></td></tr>
+        <tr><td>8</td><td>K2</td><td>30 and a <code>?</code></td><td>The photograph ends here. K2 continues on sheets that were not published.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>
+    We checked every one of the 744 cells against the K1 and K2 text using the
+    same cipher code that reproduces the solved sections. Reading the K1 cipher
+    rows in order, including the stacked D, gives the 63 carved K1 letters
+    exactly. The K2 rows give the first 185 carved letters with one exception,
+    described below.
+  </p>
+</section>
+
+<section id="assembly">
+  <h2>How it was physically put together</h2>
+  <p>
+    This is the part of the chart that a levels adjustment in an image editor
+    tends to miss, because it is about the paper rather than the pencil. Six
+    things are visible once the tape and the paper edges are isolated by colour.
+  </p>
+  <figure class="fig fig-photo fig-photo-portrait">
+    <picture>
+      <source srcset="/static/photos/enc-chart-c-tape-candidates-overlay-6d7c1a3a.webp" type="image/webp">
+      <img src="/static/photos/enc-chart-c-tape-candidates-overlay-6d7c1a3a.jpg"
+           alt="The chart with red rectangles drawn around the areas whose colour matches aged adhesive tape: several patches along the bottom edge of the upper piece and the top edge of the lower piece, a run along the left margin, and three separate patches in the band between rows 6 and 7."
+           width="1150" height="1346" loading="lazy" decoding="async">
+    </picture>
+    <figcaption class="fig-caption">
+      Regions whose colour matches yellowed adhesive, outlined in red. They
+      cluster at the join between the two pieces, along the left margin, and in
+      three separate patches on the band between rows 6 and 7.
+    </figcaption>
+  </figure>
+  <ol>
+    <li><strong>The two pieces were taped together and later separated.</strong>
+      Tape residue at the join is in several separate patches, not one continuous
+      strip, on both the bottom edge of the K1 piece and the top edge of the K2
+      piece. The exact way they bridged cannot be recovered from this photograph.</li>
+    <li><strong>There is a second join inside the K2 piece.</strong> Between rows 6
+      and 7 runs a full-width band with no printed grid. The printed grid below it
+      is shifted about 2 pixels sideways from the grid above it, and three tape
+      patches sit on the band, left, centre and right. Rows 3 to 6 and rows 7 to 8
+      are two pieces of paper.</li>
+    <li><strong>Three lines of writing sit in unruled margins, and all three are on
+      tape:</strong> the stacked D at the foot of the K1 piece, the ABSCISSA
+      heading at the top of the K2 piece, and the whole cipher line of row 6,
+      written freehand across the band with no cells to guide it.</li>
+    <li><strong>Overflow was handled two ways.</strong> K1&rsquo;s 63rd letter went
+      below the block in the first column. Row 5&rsquo;s 32nd letter went to the
+      left of the grid in a box drawn by hand, with its key letter and cipher
+      letter boxed beneath it. Same problem, two different fixes.</li>
+    <li><strong>A crease runs along the top of the row 4 cipher line,</strong> a thin
+      yellow-brown line the full width of the sheet. The letters beneath it are
+      not degraded.</li>
+    <li><strong>Two pale blue-grey rectangles sit in the left margin,</strong> each
+      about a cell wide and a cell and a half tall, beside row 3 and again beside
+      row 7. Each is at the head of a piece of paper. We return to them below.</li>
+  </ol>
+  <figure class="fig fig-photo">
+    <picture>
+      <source srcset="/static/photos/enc-chart-r02-margin-NLD-c1bd04be.webp" type="image/webp">
+      <img src="/static/photos/enc-chart-r02-margin-NLD-c1bd04be.jpg"
+           alt="Close view of the bottom left of the K1 piece: the letters N, L and D stacked vertically in the first column of three otherwise empty grid rows, with the D sitting below the last printed rule on a strip of tape."
+           width="1600" height="387" loading="lazy" decoding="async">
+    </picture>
+    <figcaption class="fig-caption">
+      The 63rd letter of K1. Plain text N, key letter L, cipher letter D, stacked
+      in the first column below row 2 because the row was full. The D is written
+      on the tape at the foot of the sheet.
+    </figcaption>
+  </figure>
+  <figure class="fig fig-photo">
+    <picture>
+      <source srcset="/static/photos/enc-chart-row6-L-d1eafa5a.webp" type="image/webp">
+      <img src="/static/photos/enc-chart-row6-L-d1eafa5a.jpg"
+           alt="Close view of the left half of the row 6 cipher line: the letters G Z L E C G Y U X U E E N J T B written freehand on a band of paper with no printed grid, below a ruled row of keyword letters."
+           width="1600" height="280" loading="lazy" decoding="async">
+    </picture>
+    <figcaption class="fig-caption">
+      The row 6 cipher line, written on the unruled band between the two pieces
+      of the K2 sheet. Its pencil is measurably darker than the lines in the grid
+      above, as is the ABSCISSA heading, which also sits on tape.
+    </figcaption>
+  </figure>
+  <h3>Why not a larger sheet?</h3>
+  <p>
+    Computation pads have unruled margins at the top and bottom of every page.
+    The simplest account of everything above is that when a three-line block ran
+    off the ruled area of a page, Sanborn wrote the third line in the margin
+    rather than start the block again on the next page, which keeps plain text,
+    key and cipher text lined up vertically. That is the whole point of the
+    worksheet. The next page was then taped on underneath, in patches rather than
+    a sealed strip, so the join could fold. The result is a long, hinged run of
+    pad pages carrying the whole encipherment in one unbroken keyword sequence,
+    later cut back apart at the joins, plausibly for framing or photography. The
+    31-cell width is the pad&rsquo;s width and the copper&rsquo;s. It was the
+    page height that ran out, and tape is how a pad becomes a scroll.
+  </p>
+  <p>
+    That is what the animation at the top of the page shows, and it is a
+    reconstruction, not a record. One more caution before anyone measures
+    anything: the two pieces were placed and resized separately when the
+    photograph was assembled. The upper piece is reproduced about 1 percent
+    wider and 2 percent taller than the lower one. The published image cannot be
+    used to compare the chart&rsquo;s dimensions with the sculpture&rsquo;s.
+  </p>
+</section>
+
+<section id="row-breaks">
+  <h2>The row breaks do not match the copper</h2>
+  <p>
+    The chart breaks every row at 31 cells, with the two overflow tricks above.
+    The lines cut into the copper do not. Reading down the left panel of the
+    sculpture, the K1 and K2 lines run 32, 31, 31, 30, 31, 32, 31 and 31 letters.
+  </p>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Line</th><th>Letters on the copper</th><th>Letters on the chart row</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>32</td><td>31</td></tr>
+        <tr><td>2</td><td>31</td><td>31, plus the stacked D</td></tr>
+        <tr><td>3</td><td>31</td><td>31</td></tr>
+        <tr><td>4</td><td>30</td><td>31, counting the <code>?</code></td></tr>
+        <tr><td>5</td><td>31</td><td>32</td></tr>
+        <tr><td>6</td><td>32</td><td>31</td></tr>
+        <tr><td>7</td><td>31</td><td>31</td></tr>
+        <tr><td>8</td><td>31</td><td>31, counting the <code>?</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>
+    Concretely: the J that ends the first carved line is the first cell of the
+    chart&rsquo;s row 2. The T that begins the fifth carved line is the last cell
+    of the chart&rsquo;s row 4. The D that ends the second carved line is the
+    chart&rsquo;s little stack below row 2. The letters are the same sequence in
+    the same order, poured into different line lengths.
+  </p>
+  <p>
+    Sanborn explained why in the same NPR interview: &ldquo;there were several
+    ways I could manipulate the lines of text so I would end up with a panel
+    that&rsquo;s square on the sides.&rdquo; The chart is the encipherment draft
+    at a steady 31 per row. The line lengths on the copper were adjusted afterward
+    for the look of the panel&rsquo;s edge. Anyone using the chart&rsquo;s row
+    breaks as evidence about the copper layout, or the other way round, should
+    know they differ.
+  </p>
+  <figure class="fig fig-photo fig-photo-portrait">
+    <picture>
+      <source srcset="/static/photos/enc-chart-f-grid-overlay-97fe0a2f.webp" type="image/webp">
+      <img src="/static/photos/enc-chart-f-grid-overlay-97fe0a2f.jpg"
+           alt="The chart with the detected printed grid drawn over it: thirty-two vertical lines in blue on the upper piece and red on the lower piece, with horizontal lines in green, showing 31 columns on both pieces."
+           width="1150" height="1346" loading="lazy" decoding="async">
+    </picture>
+    <figcaption class="fig-caption">
+      The printed grid as detected by the software: 32 vertical rules on each
+      piece, so 31 columns. The cell pitch is about 34 pixels on both pieces, but
+      not the same 34 pixels, which is how the separate resizing of the two
+      pieces was found.
+    </figcaption>
+  </figure>
+</section>
+
+<section id="two-misspellings">
+  <h2>The two misspellings happened at different stages</h2>
+  <p>
+    The copper spells ILLUSION as IQLUSION in K1 and UNDERGROUND as UNDERGRUUND
+    in K2. Both words are spelled correctly on the chart. Of the 744 cells on the
+    sheet, two letter positions, four written cells, disagree with what is on the
+    copper, and they disagree in opposite directions.
+  </p>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Chart cell</th><th>Line</th><th>Expected</th><th>On the chart</th><th>On the copper</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Row 2, column 25</td><td>plain text</td><td>Q (as carved)</td><td><strong>L</strong> (ILLUSION)</td><td>&mdash;</td></tr>
+        <tr><td>Row 2, column 25</td><td>keyword</td><td>S (PALIMPSEST)</td><td><strong>C</strong> (PALIMPCEST)</td><td>&mdash;</td></tr>
+        <tr><td>Row 2, column 25</td><td>cipher text</td><td>K</td><td>K</td><td>K, matches the chart</td></tr>
+        <tr><td>Row 6, column 21</td><td>plain text</td><td>U (as carved)</td><td><strong>O</strong> (UNDERGROUND)</td><td>&mdash;</td></tr>
+        <tr><td>Row 6, column 21</td><td>cipher text</td><td>R</td><td><strong>E</strong></td><td>R, does not match the chart</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>Columns are counted from 0, as everywhere on this site.</p>
+  <figure class="fig fig-photo">
+    <picture>
+      <source srcset="/static/photos/enc-chart-zoom-row2-c22-28-aaa1b18f.webp" type="image/webp">
+      <img src="/static/photos/enc-chart-zoom-row2-c22-28-aaa1b18f.jpg"
+           alt="Enlarged cells from row 2 of the chart: the plain text reads E O F I L L U S, the keyword row beneath reads L I M P C E S T, and the cipher row reads Y Q T M K Y R D. The C of the keyword sits under the first L of ILLUSION."
+           width="1600" height="605" loading="lazy" decoding="async">
+    </picture>
+    <figcaption class="fig-caption">
+      Row 2, columns 21 to 28. ILLUSION is spelled correctly in the top line.
+      The keyword beneath it is written PALIMP<strong>C</strong>EST, and the
+      letter C under the first L produces the cipher letter K, which is what was
+      carved. Decoding K with the correct keyword letter S gives Q, hence IQLUSION.
+    </figcaption>
+  </figure>
+  <figure class="fig fig-photo">
+    <picture>
+      <source srcset="/static/photos/enc-chart-zoom-row6-c16-23-dbbd7983.webp" type="image/webp">
+      <img src="/static/photos/enc-chart-zoom-row6-c16-23-dbbd7983.jpg"
+           alt="Enlarged cells from row 6 of the chart: the plain text reads N D E R G R O U N, the keyword row reads I S S A A B S C I, and the cipher line below the grid reads B J L B Q C E T B. The O of UNDERGROUND sits above the cipher letter E."
+           width="1600" height="522" loading="lazy" decoding="async">
+    </picture>
+    <figcaption class="fig-caption">
+      Row 6, columns 15 to 23. UNDERGROUND is spelled correctly, the keyword
+      letter under the O is S, and the cipher letter Sanborn wrote is E. The
+      copper has R at that position. The O beside a clearly open-topped U in the
+      next cell shows the hand distinguishes the two letters.
+    </figcaption>
+  </figure>
+  <details class="finding-technical">
+    <summary>The letter arithmetic, checked against our cipher code</summary>
+    <div class="wb-details-body">
+      <p>
+        K1 and K2 use the keyed-alphabet substitution described on the About
+        page. Running our implementation of it on the four cells in question:
+      </p>
+<pre>enc(L, key C) = K   chart row 2, col 25  -&gt; the carved K1 letter
+enc(Q, key S) = K   expected             -&gt; same letter by a different route
+enc(O, key S) = E   chart row 6, col 21  -&gt; the letter on the chart
+enc(U, key S) = R   expected             -&gt; the carved K2 letter</pre>
+      <p>
+        Replacing the single keyword letter at K1 position 56 with C, and keeping
+        the plain text ILLUSION, reproduces all 63 carved K1 letters. The chart
+        was read at three to nine times magnification, with an independent
+        template matcher as a second reader; at both cells the matcher ranked the
+        chart&rsquo;s letter above the expected one, and it ranked the expected
+        letter first at neighbouring control cells.
+      </p>
+    </div>
+  </details>
+  <p>
+    So the two errors have different histories. IQLUSION was made on this sheet:
+    the keyword was miswritten as PALIMPCEST, the same spelling that heads the
+    page, and the cipher letter Sanborn computed from it is the one on the copper.
+    The sculpture faithfully reproduces a worksheet that was already wrong.
+    UNDERGRUUND was made after this sheet: the worksheet is entirely correct, and
+    the wrong letter appeared somewhere between this page and the copper. Both
+    conclusions had been reached by the community from the published image. What
+    is new is that they are now verified cell by cell against the cipher code.
+  </p>
+  <p>
+    That matters for any theory that treats the misspellings as deliberate
+    signals. At the moment of encipherment, ILLUSION was spelled correctly in
+    front of him. Whatever IQLUSION means, it was not visible as a choice on the
+    plain text line when the cipher was made.
+  </p>
+</section>
+
+<section id="not-found">
+  <h2>What we looked for and did not find</h2>
+  <p>
+    Because Sanborn left &ldquo;revelations&rdquo; open, we also looked for
+    things that were not letters. All of the following are results about this
+    one published photograph, a 1.5-megapixel web JPEG that passed through the
+    photographer, the newspaper and an image editor before it reached us.
+  </p>
+  <div class="finding-stats">
+    <div class="stat-pill">
+      <span class="stat-pill-label">Cells read</span>
+      <span class="stat-pill-value">744</span>
+    </div>
+    <div class="stat-pill">
+      <span class="stat-pill-label">Positions differing from the copper</span>
+      <span class="stat-pill-value">2</span>
+    </div>
+    <div class="stat-pill">
+      <span class="stat-pill-label">Hidden marks recovered</span>
+      <span class="stat-pill-value">0</span>
+    </div>
+  </div>
+  <ul>
+    <li><strong>No faint or erased writing.</strong> A letter-sized detector was run
+      over every blank region: the header band, the blank rows, the gaps between
+      rows, the margins, both joins and the strip below row 8. Its noise floor is
+      2 to 3 grey levels; the faintest real pencil letter on the page scores 12.4.
+      Anything about half as faint as the faintest real letter would have shown,
+      and nothing did. This says nothing about pressure marks with no tonal
+      trace, which need raking light on the object itself.</li>
+    <li><strong>No second ink.</strong> Every stroke on the sheet falls into one
+      colour class once the paper tone is removed. Within what this image can
+      separate there is no second pen, though that does not prove one pen or one
+      sitting.</li>
+    <li><strong>No hidden pattern.</strong> The frequency picture of the image
+      contains the printed grid, the four-row block rhythm and nothing else.</li>
+    <li><strong>Thirty-one marks that are not letters,</strong> all catalogued
+      with coordinates: row numbers, two arrows, a check mark, ticks, corner
+      brackets, isolated dots, a heavily traced S and Y, a struck-through H,
+      lower-case letters inside BURIED. None has more than one indicator pointing
+      beyond place-keeping while working across several hundred cells by hand.</li>
+    <li><strong>The &ldquo;bleed-through&rdquo; is grain.</strong> Pushing the
+      levels of this JPEG to extremes fills the blank cells with coloured speckle.
+      That is paper texture and compression noise amplified about 25 times, with
+      each printed cell clipping slightly differently. It is not writing on the
+      reverse side.</li>
+  </ul>
+  <aside class="not-a-claim">
+    <h3>Two things we cannot explain from this image</h3>
+    <p>
+      The pale blue-grey rectangles beside rows 3 and 7 are real, not artefacts:
+      each is slightly darker and bluer than the paper around it, and each sits at
+      the top of a piece of paper. Something on the reverse side seen through the
+      sheet, such as adhesive or a label, would look like this. So would a thin or
+      translucent patch. One photograph cannot tell them apart. The crease along
+      row 4 is likewise present and unexplained. We list both as observations,
+      not findings.
+    </p>
+  </aside>
+  <figure class="fig fig-photo fig-photo-portrait">
+    <picture>
+      <source srcset="/static/photos/enc-chart-margin-row7-f3060200.webp" type="image/webp">
+      <img src="/static/photos/enc-chart-margin-row7-f3060200.jpg"
+           alt="Enlarged left margin beside row 7 of the chart: the row number 7, the first cells of the three lines K, I and I, and to their left a faint pale blue-grey rectangle about one cell wide and a cell and a half tall."
+           width="560" height="560" loading="lazy" decoding="async">
+    </picture>
+    <figcaption class="fig-caption">
+      The left margin beside row 7, enlarged four times. The faint blue-grey
+      rectangle to the left of the grid has a twin beside row 3.
+    </figcaption>
+  </figure>
+</section>
+
+<section id="open-items">
+  <h2>What would settle the open items</h2>
+  <p>Each of these needs the physical sheets or new photography of them, not another pass over the published image.</p>
+  <ol>
+    <li>Raking light across the surface, to separate pressure impressions from surface pencil.</li>
+    <li>Light through the paper, to show anything on the reverse side, what the tape covers, and what the two margin rectangles are.</li>
+    <li>Measurement in millimetres and a look for a watermark, to establish whether the three pieces are from the same pad.</li>
+    <li>The remaining K2 sheets, which the 2010 photograph does not include.</li>
+  </ol>
+</section>
+
+<section id="confidence">
+  <h2>How confident we are</h2>
+  <div class="finding-caveat">
+    <h3>What we know and don&rsquo;t know</h3>
+    <p>
+      Everything on this page rests on one published photograph and on cipher
+      arithmetic that anyone can repeat. The arithmetic is certain. The physical
+      readings are as good as a 1.5-megapixel web image allows, and a better
+      image or the object itself could overturn the medium-confidence ones. The
+      animation is a reconstruction of one way the sheets could have folded, and
+      it should be read as an illustration of the tape evidence, not as a record
+      of what Sanborn did.
+    </p>
+  </div>
+  <div class="confidence-indicator confidence-high">
+    <div class="confidence-bar confidence-high">
+      <span class="filled"></span><span class="filled"></span><span class="filled"></span>
+      <span class="filled"></span><span class="filled"></span><span class="filled"></span>
+      <span class="filled"></span><span class="filled"></span><span class="filled"></span><span></span>
+    </div>
+    <span class="confidence-label">High: the row breaks differ from the copper; row 5 has 32 cells; the two misspellings differ from the copper in the way described; no faint writing is recoverable from this image.</span>
+  </div>
+  <div class="confidence-indicator confidence-moderate">
+    <div class="confidence-bar confidence-moderate">
+      <span class="filled"></span><span class="filled"></span><span class="filled"></span>
+      <span class="filled"></span><span class="filled"></span><span class="filled"></span>
+      <span></span><span></span><span></span><span></span>
+    </div>
+    <span class="confidence-label">Moderate: the second join at rows 6 and 7; the tape readings at the main join; the pad-page account of how the sheet was assembled.</span>
+  </div>
+  <div class="confidence-indicator confidence-low">
+    <div class="confidence-bar confidence-low">
+      <span class="filled"></span><span class="filled"></span><span class="filled"></span>
+      <span></span><span></span><span></span>
+      <span></span><span></span><span></span><span></span>
+    </div>
+    <span class="confidence-label">Low: what the two blue-grey margin rectangles and the row 4 crease are. Present, nature unknown.</span>
+  </div>
+</section>
+
+<hr>
+<p class="fig-caption">
+  <strong>Images.</strong> The chart is Jim Sanborn&rsquo;s work. The photograph
+  of it was published by The New York Times with John Schwartz&rsquo;s article
+  &ldquo;Original Decoding Charts for &lsquo;Kryptos&rsquo;&rdquo; (November 2010)
+  and is reproduced here at reduced size, with enlarged and tone-flattened
+  details derived from it, for commentary and education on a non-commercial
+  research site. The animation is built on period screenshot copies of the same
+  publication hosted by
+  <a href="https://kryptosfan.wordpress.com/2010/11/24/all-things-considered-kryptos/" rel="nofollow">Kryptos&ndash;Beyond K4</a>.
+  If you hold rights in any image here,
+  <a href="mailto:contact@kryptosbot.com">write to us</a> and it will be credited
+  or removed the same day, whichever you prefer.
+</p>
+<p class="fig-caption">
+  <strong>Sources.</strong> NPR, <em>All Things Considered</em>, November 22,
+  2010, Mary Louise Kelly interviewing Jim Sanborn.
+  <a href="https://www.nytimes.com/2010/11/21/us/21codecharts.html" rel="nofollow">The New York Times, November 21, 2010</a> (posted online November 20).
+  The full working note with cell coordinates, measurements and the corrections
+  made along the way is
+  <a href="https://github.com/jcolinpatrick/kryptos/blob/main/docs/nyt_k1k2_chart_physical_layout_2026_09_19.md">on GitHub</a>.
+  For how we grade claims, see <a href="/methodology/#how-to-read-claims">How we test</a>.
+</p>
+
+<p>
+  <a href="/about-kryptos/">About Kryptos &amp; how the cipher works &rarr;</a> &middot;
+  <a href="/archive/#cipher-materials">Sanborn&rsquo;s other working papers &rarr;</a> &middot;
+  <a href="/findings/">What we&rsquo;ve learned about K4 &rarr;</a>
+</p>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/chart_fold.js"></script>
+{% endblock %}

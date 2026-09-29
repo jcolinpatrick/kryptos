@@ -24,21 +24,25 @@ Classification key:
 ## A. CIPHER SIDE (Left panel, 869 characters)
 
 ### A1. Omitted letter (X separator in K2)
-- **What**: An "X" separator was omitted from the K2 ciphertext, causing the ending
-  to decrypt as "ID BY ROWS" instead of "X LAYER TWO"
+- **What**: One ciphertext letter (an S, which enciphers the plaintext separator X) was
+  omitted near the end of K2, causing the ending to decrypt as "ID BY ROWS" instead of
+  "X LAYER TWO"
 - **Sanborn's response**: ADMITTED ERROR â€” "for aesthetic reasons, to keep the sculpture
   visually balanced." He contacted the Kryptos Group in April 2006 to correct this.
   He later said he "didn't know the decryption was altered even some time after the
   solution was revealed."
 - **Classification**: ADMITTED ERROR
-- **Crypto significance**: HIGH â€” "LAYER TWO" is now confirmed as the correct ending of K2.
-  This is an operational instruction, not decoration.
+- **Crypto significance**: "LAYER TWO" is the correct ending of K2 (Sanborn's 2006
+  correction). [HYPOTHESIS] It may describe a layered method; that reading is ours, not
+  Sanborn's, and is unproven.
 - **Our interpretation**: "LAYER TWO" = compound encipherment instruction
 - **TWO GROUND TRUTHS** (see `docs/two_ground_truths.md`):
   - **Physical (A)**: Both Kryptos AND Antipodes decrypt to IDBYROWS. Neither sculpture
     was ever physically corrected. Only 4 delimiter X exist on physical copper.
   - **Intent (B)**: Sanborn says it should be XLAYERTWO (2006 correction, never on copper).
-  - IDBYROWS ("ID BY ROWS") may itself be meaningful as an operational instruction.
+  - IDBYROWS is the product of that error, not an intended reading (project correction
+    2026-09-29, `docs/audits/kryptos_text_integrity_audit_2026_09_29.md`). Do not treat it
+    as an instruction.
 
 ### A2. IQLUSION misspelling (K1 plaintext)
 - **What**: "ILLUSION" spelled as "IQLUSION" in the decrypted K1 plaintext
@@ -54,18 +58,19 @@ Classification key:
   Could indicate: "look at positions where the keyword is wrong"
 
 ### A3. UNDERGRUUND misspelling (K2 plaintext)  
-- **What**: "UNDERGROUND" spelled with two U's instead of "O" at position
-- **Sanborn's response**: Behind closed doors reportedly confirmed deliberate (per Dunin).
+- **What**: "UNDERGROUND" appears as "UNDERGRUUND" (a U in place of the O) in the K2 plaintext
+- **Status (2026-09-29)**: an ERROR, not intentional (see
+  `docs/audits/kryptos_text_integrity_audit_2026_09_29.md`). An older second-hand claim that
+  Sanborn privately called it deliberate (per Dunin) is not accepted.
   In the original coding chart, UNDERGROUND is correctly spelled AND the keyword ABSCISSA
   is correctly spelled AND the ciphertext letter is E. On the sculpture, E became R.
   So the error occurred during TRANSCRIPTION onto copper, not in the encoding.
-- **Classification**: EVASIVE/CAGEY â€” confirmed deliberate privately but the mechanism
-  (transcription error vs. coding error) matters. The coding chart is correct; only
-  the physical sculpture has the error.
-- **Crypto significance**: HIGH â€” This is a transcription-phase error. If Sanborn
-  deliberately changed Eâ†’R during hand-cutting, that's a signal that the physical
-  sculpture's ciphertext is NOT identical to the coding charts. This means:
-  the sculpture IS the message, errors included.
+- **Classification**: ERROR (made while cutting the copper). The coding chart is correct;
+  only the physical sculpture has the error.
+- **Crypto significance**: LOW as a clue. It is a transcription error made during
+  cutting, not a deliberate change. It does show that the carved text can differ from
+  the coding charts, which matters when checking any method against the physical
+  sculpture.
 
 ### A4. DESPARATLY misspelling (K3 plaintext)
 - **What**: "DESPERATELY" spelled as "DESPARATLY" in decrypted K3 plaintext
@@ -244,11 +249,9 @@ Classification key:
   which aligns with EASTNORTHEAST in K4.
 - **Sanborn's response**: CLAIMED INTENTIONAL (this is the core of the installation)
 - **Classification**: CLAIMED INTENTIONAL
-- **Crypto significance**: VERY HIGH â€” This IS the calibration mechanism. The
-  lodestone deflects the compass to point in a specific direction. That direction
-  = EASTNORTHEAST = the first known K4 plaintext word. The compass literally
-  points at the answer. Through our tradecraft lens: the agent measures the
-  compass bearing, gets ~67.5Â° (ENE), and uses that as the starting position.
+- **Crypto significance**: [HYPOTHESIS] It could be a calibration device pointing to
+  EASTNORTHEAST, but reports of the direction it indicates disagree (see What above), and
+  the link is conjecture, not established.
 
 ### D2. K2 coordinates point ~150-174 ft SE of sculpture
 - **What**: 38Â°57'6.5"N 77Â°8'44"W points not to Kryptos itself but to a spot
@@ -293,6 +296,14 @@ Source: Bean, R. "Cryptodiagnosis of Kryptos K4", HistoCrypt 2021. `reference/03
   I−D=5, N−I=5, F−A=5, B−W=5, N−I=5. First noted by Stehle (2000).
 - **Source**: Bean 2021 Section 2.3, citing Stehle (2000) on sci.crypt
 - **Classification**: UNDISCUSSED by Sanborn
+- **Null, recomputed 2026-08-25** (200,000 trials, uniform null, repro
+  `scripts/crib_analysis/e_crib_34_stehle_null.py`): the honest search is
+  "does a run of >= 5 equal lag-L differences occur anywhere, for any lag",
+  because lag 4 and positions 55-63 were both found by inspection rather than
+  pre-registered. P = **1/205** for lags 1-30 and 1/234 for lags 1-24. At the
+  single pre-specified lag 4 it would be 1/5,714, but that conditioning is not
+  available after the fact. A previously cited figure of p ~ 1/642 was
+  generous by roughly 3x. Treat as a real pattern with weak evidential weight.
 - **Crypto significance**: MEDIUM-HIGH — Could indicate:
   (a) A key offset of 5 operating at interval 4 in this segment
   (b) Evidence for a Gromark-like key with particular step structure
@@ -356,9 +367,9 @@ Source: Bean, R. "Cryptodiagnosis of Kryptos K4", HistoCrypt 2021. `reference/03
 | K1 (key)  | PALIMPSEST | PALIMPCEST | S→C (pos 7 of keyword) | DELIBERATE |
 | K1 (pt)   | ILLUSION | IQLUSION | L→Q (pos 2 of word) | DELIBERATE |
 | K2 (ct→pt)| UNDERGROUND | UNDERGRUUND | O→U (pos 10 of word) | **NOT a misspelling** — cipher error R→E, corrected on Antipodes |
-| K3 (pt)   | DESPERATELY | DESPARATLY | E→A (pos 5), E→ø (pos 8) | DELIBERATE (Sanborn refused to answer) |
+| K3 (pt)   | DESPERATELY | DESPARATLY | E→A (pos 5), E→ø (pos 8) | UNCLEAR (Sanborn reportedly declined to answer) |
 | Morse     | DIGITAL | DIGETAL | I→E (pos 4 of word) | DELIBERATE (Sanborn implied) |
-| Morse     | INTERPRETATION | INTERPRETATIU | ON→U (end of word) | DELIBERATE? Logic unclear |
+| Morse     | INTERPRETATION | INTERPRETATIU | ON→U (end of word) | DELIBERATE? Logic unclear. Transcription disputed (INTERPRETATIT in some sources). Triplet-phase reading (raw-mark net −3 "re-lock" with DIGETAL) tested NULL 2026-08-26: convention-dependent (2/4 cells re-lock ≈ chance) and padding-e placement shows no triplet registration (exact p=0.93) — `results/e04_k0_markstream_relock.json` |
 
 **Note on "EQUAL" anagram**: Community (Nina) noted wrong letters Q, U, A, E, L = "EQUAL".
 However, the U comes from UNDERGRUUND which is NOT a deliberate misspelling (corrected on
@@ -385,14 +396,17 @@ E, U (from Morse-side). The "EQUAL" anagram is therefore INVALID.
 ## G. ASSESSMENT: WHAT'S OPERATIVE?
 
 ### Tier 1: Almost certainly cryptographically operative
-- **A1** (LAYER TWO): Confirmed instruction. Compound encipherment.
-- **D1** (Compass/lodestone): Physical calibration. Points to EASTNORTHEAST.
+- **A1** (LAYER TWO): [HYPOTHESIS] We read it as an instruction for layered encipherment;
+  Sanborn has not said so. The corrected K2 ending is confirmed; its meaning is not.
+- **D1** (Compass/lodestone): Reports of the direction the compass indicates disagree;
+  any link to EASTNORTHEAST is conjecture.
 - **C5** (T IS YOUR POSITION): Operational instruction from Scheidt's world.
   *(A5/YAR downgraded to Tier 2 on 2026-04-03 — see below)*
 
 ### Tier 2: Probably operative (Sanborn evasive = likely intentional)
 - **A5** (YAR superscript): Physical displacement confirmed (Elonka rubbings 2002). Sanborn reportedly said "important." Downgraded from Tier 1 (2026-04-03 audit): 50 scripts zero cipher signal; hand-jigsaw fabrication makes baseline displacement expected; no full-sculpture baseline survey; quote provenance weak. Likely structural signpost, not direct key material. See `reports/yar_anomaly_audit_2026_04_03.md`.
-- **A3** (UNDERGRUUND): Transcription-phase change. Sculpture â‰  coding chart.
+- ~~**A3** (UNDERGRUUND)~~: removed from this tier 2026-09-29. It is an error made while
+  cutting the copper, not intentional, so it is not operative.
 - **A4** (DESPARATLY): Sanborn's REFUSAL to answer is the loudest signal.
 - **B1** (Extra L / HILL): Creates a cipher name on the tableau. Same line as YAR.
 - **C1/C2** (Extra E's / DIGETAL): 26 E's = alphabet-sized set of markers.
@@ -426,7 +440,9 @@ If K4 uses a Hill cipher layer (matrix multiplication), this would:
 - Be consistent with "LAYER TWO" (Layer 1 = transposition, Layer 2 = Hill)
 - Require a 2Ã—2 or 3Ã—3 key matrix (4 or 9 unknown values)
 - Be testable: Hill cipher + known plaintext â†’ solvable system of equations
-This is a HIGH-PRIORITY new hypothesis.
+[Status: Hill 2x2 and 3x3 with the carved letters lined up directly with the plaintext are
+algebraically impossible (docs/elimination_tiers.md Tier 1). A Hill layer combined with a
+transposition is not covered by that proof.]
 
 ### H3. DESPARATLY as positional clue
 The letters removed/changed from DESPERATELY:
@@ -435,10 +451,12 @@ The letters removed/changed from DESPERATELY:
 Could 5 and 8 be: Vimark period? Block offset? Primer values?
 
 ### H4. "You could not make any mistake with 1,800 letters"
-This is Sanborn's most revealing statement. He's telling us:
-NOTHING ON THE SCULPTURE IS A MISTAKE. Every anomaly is a design choice.
-The only admitted error (omitted X) he went out of his way to correct 16 years later.
-Everything else? Intentional until proven otherwise.
+[RETRACTED READING 2026-09-29] This section once read the quote as "nothing on the
+sculpture is a mistake; every anomaly is a design choice". That reading is wrong:
+UNDERGRUUND and IDBYROWS are errors, not intentional
+(`docs/audits/kryptos_text_integrity_audit_2026_09_29.md`). The quote, given when Sanborn
+was asked about the letter-cutting process, concerns mistakes in cutting that could not be
+repaired; it is not evidence that every anomaly is deliberate.
 
 ---
 

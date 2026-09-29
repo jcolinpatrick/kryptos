@@ -3,25 +3,32 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="{% block meta_description %}kryptosbot.com | Kryptos K4 Research Archive. Open-source research archive documenting tested Kryptos K4 hypotheses, eliminations, and open questions.{% endblock %}">
+  <meta name="description" content="{% block meta_description %}kryptosbot.com | Kryptos K4 Research Archive. Public research archive documenting tested Kryptos K4 hypotheses, eliminations, and open questions.{% endblock %}">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="kryptosbot.com">
   <meta property="og:title" content="{% block og_title %}{{ self.title() }}{% endblock %}">
   <meta property="og:description" content="{{ self.meta_description() }}">
-  <meta property="og:image" content="https://kryptosbot.com/static/kryptosbot-og.jpg">
+  <meta property="og:image" content="{{ site_origin }}/static/kryptosbot-og.jpg">
   {# Pages set page_path (e.g. "/faq/") to get og:url + canonical; pages
      that do not set it emit neither, rather than a wrong homepage URL. #}
-  {% block og_url %}{% if self.page_path()|trim %}<meta property="og:url" content="https://kryptosbot.com{% block page_path %}{% endblock %}">{% endif %}{% endblock %}
+  {% block og_url %}{% if self.page_path()|trim %}<meta property="og:url" content="{{ site_origin }}{% block page_path %}{% endblock %}">{% endif %}{% endblock %}
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="{% block twitter_title %}{{ self.og_title() }}{% endblock %}">
   <meta name="twitter:description" content="{{ self.meta_description() }}">
-  <meta name="twitter:image" content="https://kryptosbot.com/static/kryptosbot-og.jpg">
-  {% block canonical %}{% if self.page_path()|trim %}<link rel="canonical" href="https://kryptosbot.com{{ self.page_path()|trim }}">{% endif %}{% endblock %}
+  <meta name="twitter:image" content="{{ site_origin }}/static/kryptosbot-og.jpg">
+  {% block canonical %}{% if self.page_path()|trim %}<link rel="canonical" href="{{ site_origin }}{{ self.page_path()|trim }}">{% endif %}{% endblock %}
+  {% if noindex %}<meta name="robots" content="noindex,follow">{% endif %}
   <title>{% block title %}kryptosbot.com{% endblock %}</title>
   <link rel="stylesheet" href="/static/fonts/fonts.css">
   <link rel="stylesheet" href="/static/style.css">
   <link rel="icon" href="/favicon.ico" sizes="any">
-  <link rel="icon" type="image/webp" href="/static/kryptosbot.webp">
+  <link rel="icon" type="image/webp" href="/static/kryptosbot-nav.webp">
+  {% if ga4_measurement_id %}
+  <script src="/static/ga4.js" data-measurement-id="{{ ga4_measurement_id }}"></script>
+  {% endif %}
+  {% if adsense_client_id and show_ads %}
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={{ adsense_client_id }}" crossorigin="anonymous"></script>
+  {% endif %}
   {% block head_extra %}{% endblock %}
 </head>
 <body>
@@ -32,7 +39,7 @@
 
   <nav>
     <ul>
-      <li><strong><a href="/" class="nav-brand"><img src="/static/kryptosbot.webp" alt="" class="nav-logo">kryptosbot</a></strong></li>
+      <li><strong><a href="/" class="nav-brand"><img src="/static/kryptosbot-nav.webp" alt="" class="nav-logo" width="28" height="28">kryptosbot</a></strong></li>
     </ul>
     <input type="checkbox" id="nav-toggle" class="nav-toggle" aria-label="Toggle navigation">
     <label for="nav-toggle" class="nav-toggle-label" aria-hidden="true">
@@ -54,7 +61,8 @@
       <li><a href="/submit/">Submit</a></li>
       <li><a href="/faq/">FAQ</a></li>
       <li><a href="/archive/">Archive Photos</a></li>
-      <li><a href="/challenge/" class="nav-new">Challenge</a></li>
+      <li><a href="/encoding-chart/">Encoding Chart</a></li>
+      <li><a href="/challenge/">Challenge</a></li>
       <li><a href="/about-kryptos/">About</a></li>
     </ul>
   </nav>
@@ -69,10 +77,12 @@
       Built by <a href="/about-me/">Colin Patrick</a> &amp; <a href="https://claude.ai">Claude</a>
       &middot; <a href="https://github.com/jcolinpatrick/kryptos">Source</a>
       &middot; <a href="/terms/">Terms</a>
+      &middot; <a href="/privacy/">Privacy</a>
       &middot; <a href="mailto:contact@kryptosbot.com">Contact</a>
       &middot; <a href="/report-error/">Report error</a>
     </p>
-    <p><small>Not affiliated with the CIA, Jim Sanborn, Ed Scheidt, or the Kryptos Keepers. This site does not know the solution.</small></p>
+    <p><small>Not affiliated with the CIA, Jim Sanborn, Ed Scheidt, or Paradigm Operations LP. This site does not know the solution.</small></p>
+    {% if build_date %}<p><small class="text-muted">Site rebuilt {{ build_date }}{% if newest_result_date %} &middot; newest research input {{ newest_result_date }}{% endif %}</small></p>{% endif %}
   </footer>
 
   {% block scripts %}{% endblock %}

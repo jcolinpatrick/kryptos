@@ -29,9 +29,12 @@ class SiteElimination:
     transposition_family: str = ""
     alphabet: str = ""
     configs_tested: int = 0
-    best_score: int = 0
+    # None = no crib score recorded; pages show N/A rather than "0 / 24".
+    best_score: int | None = None
     expected_random: float = 0.0
-    bean_passed: bool = False
+    # None = no Bean check recorded. No loader path reads one, so the old
+    # default of False printed "Bean FAIL" on every record that never ran it.
+    bean_passed: bool | None = None
     verdict: str = ""
     confidence_tier: int = 0
     scope_limitations: str = ""
@@ -41,6 +44,10 @@ class SiteElimination:
     artifact_path: str = ""
     date_tested: str = ""
     experiment_script: str = ""
+    # Set when this experiment's Bean verdict was invalidated by the
+    # 2026-08-24 frame-error retraction: frozen Bean applied across a
+    # layer that moves crib coordinates yields FALSE rejections.
+    bean_frame_retracted: bool = False
     research_questions: list[str] = field(default_factory=list)
     github_issue_url: str = ""
 
@@ -73,8 +80,8 @@ class RQCoverage:
 def _normalize_verdict(raw: str) -> str:
     """Normalize a verdict string to the canonical set.
 
-    Canonical verdicts: NOISE, ELIMINATED, INTERESTING, SIGNAL, FULL MATCH.
-    Everything else is mapped based on the score or intent.
+    Canonical verdicts: NOISE, ELIMINATED, INCONCLUSIVE, INTERESTING, SIGNAL,
+    FULL MATCH. Everything else is mapped based on the score or intent.
     """
     if not raw:
         return "NOISE"
@@ -83,13 +90,23 @@ def _normalize_verdict(raw: str) -> str:
     v = raw.strip().upper()
 
     # Already canonical
-    if v in ("NOISE", "ELIMINATED", "INTERESTING", "SIGNAL", "FULL MATCH"):
+    if v in ("NOISE", "ELIMINATED", "INCONCLUSIVE", "INTERESTING", "SIGNAL", "FULL MATCH"):
         return v
+
+    # A record that ended with something still standing (surviving periods or
+    # candidates, or a detector too weak to decide) is not a negative
+    # result. The record page defines NOISE as a search that found
+    # nothing beyond chance, so these must not be shown as NOISE. An override
+    # in overrides.toml still wins where the operator judged otherwise.
+    if v.startswith(("OPEN", "LIKELY_OPEN", "VIABLE", "NARROW_RESIDUAL",
+                     "SURVIVORS_PRESENT", "DETECTOR_UNDERPOWERED",
+                     "INCONCLUSIVE")):
+        return "INCONCLUSIVE"
 
     # Map known non-standard verdicts
     noise_like = {
         "ALL NOISE", "DISPROVED", "TESTED", "TOOL", "NOISE + TOOL",
-        "WEAK", "ELEVATED_NOISE", "NEAR_MISS", "LIKELY_OPEN", "OPEN",
+        "WEAK", "ELEVATED_NOISE", "NEAR_MISS",
         "FEASIBLE_BUT_WEAK", "UNDERDETERMINED", "PROMISING", "INVESTIGATE",
         "STRUCTURALLY_ELIMINATED", "NONE",
     }
@@ -114,9 +131,10 @@ def _normalize_verdict(raw: str) -> str:
     if v.startswith("ELIMINATED"):
         return "ELIMINATED"
 
-    # "38 PERIODS SURVIVE" etc. — research results, not decryption verdicts
-    if "SURVIVE" in v or "PERIODS" in v:
-        return "NOISE"
+    # "38 PERIODS SURVIVE": periods were left standing, so this is not a
+    # negative result.
+    if "SURVIVE" in v:
+        return "INCONCLUSIVE"
 
     # Single letters or very short strings — data parsing errors
     if len(v) <= 2:
@@ -369,8 +387,8 @@ def _extract_keywords(res: dict[str, Any]) -> list[str]:
         "COLOPHON", "DEFECTOR", "MAGNETIC", "ANTIPODES",
         "UNDERGRUUND", "GROMARK",
     }
-    for field in ("key_finding", "key_findings", "description"):
-        val = res.get(field)
+    for source_field in ("key_finding", "key_findings", "description"):
+        val = res.get(source_field)
         if isinstance(val, str):
             upper = val.upper()
             for tk in _THEMATIC:
@@ -396,17 +414,25 @@ def _detect_experiment_script(experiment_id: str, scripts_dir: str) -> str:
     normalized = experiment_id.lower().replace("-", "_")
     if not os.path.isdir(scripts_dir):
         return ""
+    # Prefer a whole-token match: E-S-10 must not claim
+    # e_s_107_shifted_mixed_alpha.py, nor E-ROMAN-03 e_roman_03b_*.py.
+    token = re.compile(r"(?:^|_)" + re.escape(normalized) + r"(?:_|$)")
+    fallback = ""
     for dirpath, _dirnames, filenames in os.walk(scripts_dir):
         for fname in filenames:
-            if fname.endswith(".py") and normalized in fname.replace("-", "_"):
-                # Return path relative to project root
-                full = os.path.join(dirpath, fname)
-                try:
-                    rel = os.path.relpath(full, os.path.dirname(scripts_dir))
-                except ValueError:
-                    rel = full
+            stem = fname[:-3].replace("-", "_") if fname.endswith(".py") else ""
+            if not stem or normalized not in stem:
+                continue
+            # Return path relative to project root
+            full = os.path.join(dirpath, fname)
+            try:
+                rel = os.path.relpath(full, os.path.dirname(scripts_dir))
+            except ValueError:
+                rel = full
+            if token.search(stem):
                 return rel
-    return ""
+            fallback = fallback or rel
+    return fallback
 
 
 def build_eliminations_from_hypotheses(
@@ -427,8 +453,12 @@ def build_eliminations_from_hypotheses(
         tags = _parse_tags(hyp.get("tags"))
         rqs = _parse_research_questions(hyp.get("research_questions"))
 
+        # The ledger keeps the best crib score only in elimination_reason
+        # ("Score 4 at noise floor"); without this every such page showed 0/24.
+        score_m = re.search(r"\b[Ss]core (\d+)\b", str(hyp.get("elimination_reason", "") or ""))
         elim = SiteElimination(
             id=hyp_id,
+            best_score=int(score_m.group(1)) if score_m else None,
             slug=_slugify(desc[:60] if desc else hyp_id),
             title=desc[:120] if desc else hyp_id,
             description=desc,
@@ -454,7 +484,7 @@ def build_eliminations_from_hypotheses(
     return elims
 
 
-def _extract_best_score(res: dict[str, Any]) -> int:
+def _extract_best_score(res: dict[str, Any]) -> int | None:
     """Extract best score from a results JSON, handling nested structures.
 
     If an explicit `best_score` integer is present at the top level, it is
@@ -463,17 +493,37 @@ def _extract_best_score(res: dict[str, Any]) -> int:
     """
     # Authoritative: explicit best_score integer takes priority
     explicit = res.get("best_score")
-    if isinstance(explicit, int):
+    if isinstance(explicit, int) and not isinstance(explicit, bool):
         return explicit
+    # A whole-number float in 0-24 is a crib score (E-S-32 records 17.0);
+    # negative floats in this field are quadgram scores, not crib counts.
+    if isinstance(explicit, float) and explicit.is_integer() and 0 <= explicit <= 24:
+        return int(explicit)
 
-    best = 0
+    # None until a number that can be a count of the 24 known letters is
+    # found. Starting from 0 printed "0 / 24, no better than random guessing"
+    # on records whose score field was empty, non-numeric, or under a key
+    # not read here (E-AFFINE-MONO holds 5, e_csp_p23_w15_beau_01 holds 24).
+    best: int | None = None
 
-    # 1) Top-level score fields (excluding best_score, already checked)
-    for key in ("best_cribs", "global_best_score", "max_score",
-                "phase1_best", "overall_best"):
-        val = res.get(key)
-        if isinstance(val, (int, float)) and val > best:
+    def _take(val: Any) -> None:
+        nonlocal best
+        if isinstance(val, bool) or not isinstance(val, (int, float)):
+            return
+        if 0 <= val <= 24 and (best is None or int(val) > best):
             best = int(val)
+
+    # 1) Top-level score fields (excluding best_score, already checked).
+    # ct_max and ct_autokey_best are left out on purpose: they hold only the
+    # ciphertext-keyed half of an autokey test (e_crib_35 records ct_max 7
+    # beside plaintext-keyed maxima up to 24).
+    for key in ("best_cribs", "global_best_score", "max_score",
+                "phase1_best", "overall_best", "overall_best_score",
+                "best_overall_score", "global_best", "best_crib_score",
+                "max_crib_score", "best_crib_matches", "real_best_crib",
+                "max_crib_match", "best_crib", "crib_score", "max_vig",
+                "max_beau"):
+        _take(res.get(key))
 
     # 2) Nested dict fields with score/matches
     for key in ("global_best", "best_config", "mc_best", "ct_feedback_best",
@@ -481,9 +531,14 @@ def _extract_best_score(res: dict[str, Any]) -> int:
         val = res.get(key)
         if isinstance(val, dict):
             for score_key in ("score", "matches", "best_score", "cribs"):
-                s = val.get(score_key)
-                if isinstance(s, (int, float)) and s > best:
-                    best = int(s)
+                _take(val.get(score_key))
+    # best_overall / best_crib dicts: "cribs" is skipped because a sentinel
+    # record ({"score": -999, "cribs": 0}) means nothing was found.
+    for key in ("best_overall", "best_crib"):
+        val = res.get(key)
+        if isinstance(val, dict):
+            for score_key in ("score", "crib_score"):
+                _take(val.get(score_key))
 
     # 3) Grouped results (best_by_type, best_by_family, etc.)
     for key in ("best_by_type", "best_by_family", "best_by_variant"):
@@ -492,9 +547,7 @@ def _extract_best_score(res: dict[str, Any]) -> int:
             for group_data in val.values():
                 if isinstance(group_data, dict):
                     for score_key in ("score", "matches", "best_score"):
-                        s = group_data.get(score_key)
-                        if isinstance(s, (int, float)) and s > best:
-                            best = int(s)
+                        _take(group_data.get(score_key))
 
     # 4) Top results lists
     for key in ("top_results", "top_20", "top_10", "top_hits"):
@@ -502,21 +555,24 @@ def _extract_best_score(res: dict[str, Any]) -> int:
         if isinstance(val, list) and val:
             first = val[0]
             if isinstance(first, dict):
-                for score_key in ("score", "matches", "cribs"):
-                    s = first.get(score_key)
-                    if isinstance(s, (int, float)) and s > best:
-                        best = int(s)
+                for score_key in ("score", "matches", "cribs", "crib_score",
+                                  "crib_matches"):
+                    _take(first.get(score_key))
 
     # 5) Score distribution keys (e.g. {"15": 2, "14": 29})
     dist = res.get("score_distribution")
     if isinstance(dist, dict):
-        for k in dist:
+        for k, count in dist.items():
             try:
                 s = int(k)
-                if s > best:
-                    best = s
             except (ValueError, TypeError):
-                pass
+                continue
+            # A bucket with count 0 is not an observed score. Distributions
+            # are often written with every bucket 0..24 present, which made
+            # E-NULL-SEQ-KEY (true best 3/24) publish as 24/24.
+            if isinstance(count, (int, float)) and count <= 0:
+                continue
+            _take(s)
 
     # 6) Phase-level scores
     phases = res.get("phases", {})
@@ -524,9 +580,7 @@ def _extract_best_score(res: dict[str, Any]) -> int:
         for phase_data in phases.values():
             if isinstance(phase_data, dict):
                 for score_key in ("best_score", "best_cribs"):
-                    s = phase_data.get(score_key)
-                    if isinstance(s, (int, float)) and s > best:
-                        best = int(s)
+                    _take(phase_data.get(score_key))
 
     return best
 
@@ -560,6 +614,12 @@ def build_eliminations_from_results(
         if "checkpoint" in res.get("_source_file", "").lower():
             continue
 
+        # Skip the VM hardware report written by scripts/vm_capability_report.sh.
+        # It is not an experiment; loading it listed "Vm Capability" as the
+        # newest K4 record on /recent/ with a NOISE 0/24 verdict.
+        if res.get("_source_file", "") == "vm_capability.json":
+            continue
+
         desc = res.get("description", res.get("hypothesis", ""))
         verdict = res.get("verdict", res.get("classification", ""))
 
@@ -575,7 +635,16 @@ def build_eliminations_from_results(
 
         script = _detect_experiment_script(exp_id, scripts_dir)
         repro_cmd = res.get("repro_command", res.get("repro", ""))
-        if not repro_cmd and script:
+        if not isinstance(repro_cmd, str):
+            repro_cmd = ""
+        # Scripts moved into family subdirectories on 2026-03-04, so a recorded
+        # command naming a path that no longer exists would not run.
+        project_root = os.path.dirname(scripts_dir)
+        stale = any(
+            not os.path.exists(os.path.join(project_root, p))
+            for p in re.findall(r"scripts/\S+?\.py", repro_cmd)
+        )
+        if script and (not repro_cmd or stale):
             repro_cmd = f"PYTHONPATH=src python3 -u {script}"
 
         elim = SiteElimination(
@@ -639,6 +708,12 @@ def apply_overrides(
                     value = _normalize_verdict(str(value))
                 setattr(elim, attr, value)
 
+        # TOML has no null, so an override says "this record has no crib score"
+        # (a proof, or a test that is not a decryption) with no_score = true.
+        # The page then shows N/A instead of "0 / 24, no better than random".
+        if ovr.get("no_score"):
+            elim.best_score = None
+
         if "tags" in ovr:
             # Merge, don't replace
             existing = set(elim.tags)
@@ -674,6 +749,12 @@ def parse_elimination_tiers(doc_path: str) -> dict[str, int]:
             if m:
                 current_tier = int(m.group(1))
                 continue
+            if line.startswith("## "):
+                # Any other section ends the tier tables. Without this, header
+                # rows of later tables ("Experiment", "Corpus") were read as
+                # Tier 4 families and stamped "Fully open" on finished records.
+                current_tier = 0
+                continue
             # Table rows: | Family | ...
             if current_tier > 0 and line.startswith("|") and not line.startswith("|--"):
                 cols = [c.strip() for c in line.split("|")]
@@ -681,6 +762,10 @@ def parse_elimination_tiers(doc_path: str) -> dict[str, int]:
                     family = cols[1].strip()
                     # Skip header rows
                     if family and family not in ("Proof", "Family", "Hypothesis", "Claimed Signal"):
+                        # A struck-through row has been resolved and no longer
+                        # carries this tier, so it must not tag pages.
+                        if family.startswith("~~"):
+                            continue
                         # Clean strikethrough
                         family = re.sub(r"~~([^~]+)~~", r"\1", family)
                         family = family.strip("* ")
@@ -823,6 +908,13 @@ def load_all(
                 ):
                     elim.confidence_tier = tier
                     break
+
+    # 8b) A proof runs no search, so it has no best score. The results files
+    # for the Tier 1 proofs store best_score 0, which printed "0 / 24, no
+    # better than random guessing" on pages where nothing was searched.
+    for elim in site_elims:
+        if elim.confidence_tier == 1 and elim.configs_tested == 0 and elim.best_score == 0:
+            elim.best_score = None
 
     # 9) Ensure all slugs are unique
     seen_slugs: dict[str, int] = {}
@@ -998,7 +1090,7 @@ _PLAIN_CIPHER_DESCRIPTIONS: dict[str, str] = {
     "nihilist-transposition": "a transposition variant with swapped or modified column reading",
     "rail-fence": "a method that writes text in a zigzag pattern across rows (rail fence cipher)",
     "route-cipher": "a method that writes text into a grid and reads it along a path (spiral, zigzag, etc.)",
-    "turning-grille": "a method using a physical card with holes that rotates to select letters (grille cipher)",
+    "turning-grille": "a method that uses a card with holes (a grille, often rotated between passes) to pick out letters",
     "grid-rotation": "a method that reads text from a grid in various rotated arrangements",
     "cyclic-affine": "simple rearrangements like shifting all letters by a fixed amount or reversing blocks",
     "reading-order": "alternative ways of reading the carved text (backwards, alternating rows, etc.)",
@@ -1022,7 +1114,7 @@ _PLAIN_CIPHER_DESCRIPTIONS: dict[str, str] = {
     "homophonic-hybrid": "a method where each letter can be represented by multiple different symbols",
     # Key models
     "running-key": "using a passage from a book or document as the encryption key",
-    "autokey": "a method where the key starts with a short word, then extends using the message itself",
+    "autokey": "a self-keying (autokey) method, where the key starts with a short word and then continues with letters of the message itself",
     "progressive": "a key that increases by a fixed amount at each position",
     "date-derived": "a key derived from a date (like when Kryptos was built)",
     "keyword-derived": "a key derived from a thematic word or phrase",
@@ -1031,7 +1123,7 @@ _PLAIN_CIPHER_DESCRIPTIONS: dict[str, str] = {
     "thematic": "a key based on themes from the sculpture (Egypt, CIA, Berlin, etc.)",
     "k123-derived": "a key derived from the solutions to K1, K2, or K3",
     # Bespoke
-    "physical-sculpture": "methods based on the physical properties of the sculpture itself",
+    "physical-sculpture": "methods based on the sculpture itself or things it may point to (compass bearings, coordinates, clocks, Morse code and similar)",
     "nato-comsec": "military or Cold War era cipher systems (VIC, DRYAD, one-time pads, etc.)",
     "tableau-methods": "non-standard encryption tables or lookup charts",
 }
@@ -1161,8 +1253,8 @@ def _generate_plain_summary(elim: SiteElimination) -> str:
     if specific and technique:
         # Specific detail exists — lead with it, add technique as context
         # Avoid "using using" when technique already starts with "using"
-        connector = "—" if technique.startswith("using") else "— using"
-        parts.append(f"{specific} {connector} {technique}.")
+        connector = "," if technique.startswith("using") else ", using"
+        parts.append(f"{specific}{connector} {technique}.")
     elif specific:
         # Only specifics, no technique mapping
         parts.append(f"{specific}.")
@@ -1180,31 +1272,62 @@ def _generate_plain_summary(elim: SiteElimination) -> str:
         count_str = _format_count(elim.configs_tested)
 
         if elim.confidence_tier == 1:
-            parts.append("Mathematically proven impossible as a single layer applied directly to the carved text — no key or setting can make it work.")
+            parts.append("Mathematically proven impossible as a single layer applied directly to the carved text, under the assumptions stated for this record.")
         elif elim.confidence_tier == 2:
-            parts.append(f"Every possible combination was tested ({count_str} configurations) — none produced a valid solution.")
+            parts.append(f"Every combination within the stated scope was tested ({count_str} configurations); none produced a valid solution.")
         else:
             parts.append(f"{count_str} key/parameter combinations were tested.")
 
     elif elim.confidence_tier == 1:
-        parts.append("Mathematically proven impossible as a single layer applied directly to the carved text — no key or setting can make it work.")
+        parts.append("Mathematically proven impossible as a single layer applied directly to the carved text, under the assumptions stated for this record.")
 
     # 3. Score context (only if it adds useful info)
     if elim.best_score is not None and elim.best_score > 0:
         if elim.best_score >= 24:
-            parts.append("The best result matched all 24 known letters — under investigation.")
+            if elim.verdict in ("NOISE", "ELIMINATED"):
+                parts.append(
+                    "The best result matched all 24 known letters, but on checking it is "
+                    "not a solution (a match this complete can come from key settings "
+                    "loose enough to fit any 24 letters)."
+                )
+            else:
+                parts.append("The best result matched all 24 known letters.")
         elif elim.best_score >= 18:
-            parts.append(
-                f"Best match: {elim.best_score}/24 known letters "
-                f"(statistically expected at this key length, not a real signal)."
-            )
+            if elim.verdict in ("SIGNAL", "FULL MATCH"):
+                parts.append(
+                    f"Best match: {elim.best_score}/24 known letters, flagged for "
+                    f"further checking."
+                )
+            elif elim.verdict in ("NOISE", "ELIMINATED"):
+                # Not "expected at this key length": several of these
+                # searches have no repeating key (E-CHART-02-AUTOKEY).
+                parts.append(
+                    f"Best match: {elim.best_score}/24 known letters. That is not a "
+                    f"real signal: searches of this kind can reach scores this high "
+                    f"without the right key."
+                )
+            else:
+                parts.append(
+                    f"Best match: {elim.best_score}/24 known letters. A score this "
+                    f"high is not by itself a sign of a solution."
+                )
         elif elim.best_score >= 10:
+            # Not "above random": E-S-32 scored 17/24 at a key length where
+            # a random key averages about 19.
             parts.append(
-                f"Best match: {elim.best_score}/24 known letters — "
-                f"slightly above random, almost certainly coincidence."
+                f"Best match: {elim.best_score}/24 known letters, a level that "
+                f"searches like this can reach without the right key."
             )
-        # Skip mentioning low scores — "no better than random" is obvious
+        # Skip mentioning low scores: "no better than random" is obvious
         # and just adds noise to the summary
+
+    # 4. The 2026-08-24 Bean-frame retraction: the search discarded candidates
+    # with a check that does not hold for it, so its negative result is void.
+    if elim.bean_frame_retracted:
+        parts.append(
+            "A consistency check this search used to discard candidates was later "
+            "found invalid for it, so this result no longer rules the method out."
+        )
 
     return " ".join(parts)
 

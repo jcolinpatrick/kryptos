@@ -35,12 +35,17 @@ verdict = "NOISE"
 # NOISE (0-9), INTERESTING (10-17), SIGNAL (18-23), FULL MATCH (24).
 # Cross-referenced with MEMORY.md, elimination_ledger, and project memory files.
 
-# SIGNAL → NOISE: autokey is PROVEN IMPOSSIBLE per MEMORY.md
-# ("All autokey (all forms) + arbitrary transposition"). Score 11/24 is noise.
+# SIGNAL → NOISE: 11/24 from an optimizing search over filler masks is noise.
+# Corrected 2026-09-29: self-keying (autokey) is ruled out only when applied
+# directly to the carved text with a starting key of 25 letters or fewer. With
+# a letter-rearrangement layer it is NOT ruled out; the old "all autokey (all
+# forms) + arbitrary transposition" claim was wrong.
 [elimination.e_combined_ptct_autokey]
 verdict = "NOISE"
 [elimination.E-COMBINED-PTCT-AUTOKEY]
 verdict = "NOISE"
+title = "Combined plaintext-plus-ciphertext self-keying cipher (Callimahos form)"
+description = "A self-keying cipher whose key is the sum of an earlier plaintext letter and an earlier ciphertext letter (a form described by Callimahos), tried with short starting keys and named keywords. It was run on the carved text and on filler-letter models. The best, 11 of 24 known letters, came from an optimizing search over which letters are filler, where scores that high are expected by chance."
 
 # SIGNAL → NOISE: SA running key produces underdetermination artifacts
 # (Sessions 12, 16-17 in eliminations.md). SA achieves word-salad at 24/24
@@ -137,102 +142,130 @@ verdict = "NOISE"
 
 [elimination.E-BESPOKE-02-ABSCISSA-LINEAR]
 title = "Abscissa-derived linear keys"
-category = "bespoke"
-subcategory = "physical-sculpture"
-scope_limitations = "Single-layer only. Does not test abscissa concept as part of multi-layer cipher."
-assumptions = "Direct positional correspondence (CT[i] -> PT[i]); Standard A-Z alphabet"
+category = "key-models"
+subcategory = "progressive"
+description = "Abscissa-derived linear keys: fixed-step keys and fixed-step letter reorderings suggested by ABSCISSA, the K2 keyword (it means the x-coordinate)"
+scope_limitations = "Tests every key that changes by a fixed step from one letter to the next (all 26 step sizes and 26 starting values, Vigenere, Beaufort and Variant Beaufort) applied directly to the carved text, and letter reorderings of the same fixed-step form using selected sculpture-derived settings, alone or followed by such a key or by one of six keyword keys. Also tries affine letter substitution and some cut-off and coordinate-pair readings. Other reorderings, other key forms and other multi-layer uses of the idea are not ruled out."
+assumptions = "Key values or reordering steps follow a fixed-step (linear) formula; Standard A-Z alphabet"
+configs_tested = 237672
+best_score = 7
 confidence_tier = 2
 repro_command = "PYTHONPATH=src python3 -u scripts/exploration/e_bespoke_02_abscissa_linear.py"
 
 [elimination.E-BESPOKE-10-ROTATION-GRID]
 title = "K3-style rotation grid applied to K4"
+description = "K3-style rotation grid applied to K4, single rotations at grid widths 2 to 48"
 category = "transposition"
 subcategory = "grid-rotation"
-scope_limitations = "Only tests grids matching K3's 42x8 rotation method. Does not test arbitrary grid dimensions."
-assumptions = "K4 uses the same rotation grid method as K3; Standard reading order"
+scope_limitations = "Tests one quarter-turn or half-turn of the grid at every width from 2 to 48 columns (padded with X), plus a few grids close to 97 cells (7x14, 14x7, 10x10, 9x11, 11x9, 8x13, 13x8) with other padding, an inserted L, or a keyword columnar step, with or without a Vigenere or Beaufort step using six fixed keywords. K3 itself used two rotations on two different grids (8 rows of 42, then 24 rows of 14), and that two-grid procedure was not tested."
+assumptions = "K4 uses a K3-style grid rotation; Standard reading order"
+configs_tested = 444582
+best_score = 6
 confidence_tier = 2
 repro_command = "PYTHONPATH=src python3 -u scripts/exploration/e_bespoke_10_rotation_grid.py"
 
 [elimination.E-CHART-01-RUNNING-KEY]
-title = "Running key from known reference texts + columnar transposition"
+title = "Running key from the K1-K3 plaintexts + width-8 columnar transposition"
+description = "15 running-key sources built from the K1, K2 and K3 plaintexts, with a width-8 columnar step. The configuration count, best score and date shown on this page come from a summary file of the original 2026-02 run that does not match that script's own output, so treat them as unverified. The complete 2026-09-18 re-run checked 1,770 distinct key streams in 12 cipher modes against every width-8 column order and found no setting that matches all 24 known letters."
+plain_summary = "A running key is a long passage of text used as the key. A complete re-run on 2026-09-18 tried 15 passages built from the K1, K2 and K3 plaintexts, at every starting point, with every width-8 column shuffle, in both layer orders, on the standard and KRYPTOS alphabets, and found no setting that matches all 24 known letters."
 category = "multi-layer"
 subcategory = "transposition-plus-substitution"
-scope_limitations = "Only tests against 15+ specific known texts (Carter volumes, Gutenberg editions, K1-K3 plaintext). Does not eliminate running key from unknown source text."
-assumptions = "Columnar transposition widths 5-15; Vigenere/Beaufort/VB variants; Known reference texts only"
+scope_limitations = "The original 2026-02 run tried the columnar step only on its 10 best-scoring settings and used altered copies of the K1-K3 texts, so it could have missed a true solution. A complete re-run on 2026-09-18 (15 source versions built from the verified K1-K3 texts, every source offset, every width-8 column order, the key step before or after the columnar step, standard and KRYPTOS alphabets) found no setting matching all 24 known letters. Its K2 text used the carved IDBYROWS ending, an error Sanborn acknowledged. The corrected XLAYERTWO ending, other source texts and other widths are not covered."
+assumptions = "Running key taken from the K1, K2 and K3 plaintexts; Vigenere, Beaufort and Variant Beaufort arithmetic; Width-8 columnar transposition only"
 confidence_tier = 2
-repro_command = "PYTHONPATH=src python3 -u scripts/running_key/e_chart_01_running_key.py"
+repro_command = "PYTHONPATH=src python3 -u scripts/running_key/e_chart_01_running_key.py --input scripts/running_key/fixtures/chart01_complete_request_20260918.json --output /tmp/chart01_replay_new.json"
 
 [elimination.E-CHART-02-AUTOKEY]
-title = "Autokey cipher with all variant combinations"
-category = "substitution"
-subcategory = "vigenere"
-scope_limitations = "Does not test autokey as one layer of multi-layer. Structural ceiling proven: autokey max 21/24."
-assumptions = "Direct positional correspondence; All autokey seed lengths tested"
-confidence_tier = 1
+title = "Self-keying (autokey) cipher with short starting keys, alone or with a width-8 column shuffle"
+description = "26 one-letter and 25 short word or letter-group starting keys, in six forms (plaintext- or ciphertext-keyed Vigenere, Beaufort or Variant Beaufort) on the standard and KRYPTOS alphabets. Each was applied directly to the carved text, and then with every width-8 column order added before or after the self-keying step, for the 10 best direct settings and for all 26 one-letter starting keys. Best result: 9 of 24 known letters (4 of 24 without the column shuffle). An older summary of this run reported 21 of 24; re-running the script on 2026-09-29 gives 9."
+category = "key-models"
+subcategory = "autokey"
+scope_limitations = "Starting keys other than the 51 tried here, and column shuffles at widths other than 8, except where the separate check below applies; Starting keys longer than 25 letters: a separate check shows that self-keying applied directly to the carved text (no rearrangement), in all three forms on the standard or KRYPTOS alphabet, cannot match all 24 known letters when the starting key is 25 letters or fewer, but it does not cover longer starting keys; Self-keying combined with a general letter rearrangement: the separate check does not cover it, and an unrestricted rearrangement leaves too much freedom for the known letters to rule it out"
+assumptions = "Known letters at their standard positions; Width-8 columnar transposition filled row by row and read column by column"
+configs_tested = 25966692
+best_score = 9
+confidence_tier = 3
 repro_command = "PYTHONPATH=src python3 -u scripts/polyalphabetic/e_chart_02_autokey.py"
 
 [elimination.E-CHART-03-MISSPELLING]
 title = "Misspelling-derived tableau reconstruction"
+description = "Misspelling-derived tableau reconstruction from five misspelled-letter swaps"
 category = "bespoke"
 subcategory = "misspelling-derived"
-scope_limitations = "Only tests tableau modifications derived from the 4-5 known misspellings. Does not eliminate arbitrary tableau modifications."
-assumptions = "Misspelling letter pairs encode tableau column shifts or substitutions"
-confidence_tier = 2
+scope_limitations = "Only tests tableau changes built from five letter swaps (S to C, L to Q, O to U, E to A, I to E). The O to U swap comes from UNDERGRUUND, which was a carving error, not a deliberate change. The running-key part used copies of the K2 and K3 plaintexts that stop matching the real texts (K3 after 44 letters, K2 after 115), so most of its running-key tests did not use the real texts. Does not eliminate arbitrary tableau modifications."
+assumptions = "Test hypothesis: the misspelled letter pairs encode tableau column shifts or substitutions"
+configs_tested = 363726
+best_score = 8
+confidence_tier = 3
 repro_command = "PYTHONPATH=src python3 -u scripts/tableau/e_chart_03_misspelling_tableau.py"
 
 [elimination.E-OPGOLD-01-KEYWORDS]
 title = "Operation Gold / Stopwatch thematic keywords"
 category = "key-models"
 subcategory = "keyword-derived"
-scope_limitations = "Only tests specific Operation Gold keywords as cipher keys. Does not eliminate all keyword possibilities."
-assumptions = "Single keyword used directly as periodic key; Vigenere/Beaufort/VB"
+description = "19 Operation Gold / Stopwatch thematic keywords as repeating cipher keys (Vigenere, Beaufort, Variant Beaufort), applied directly and after undoing a columnar transposition"
+scope_limitations = "Keywords other than the 19 tried; Columnar widths other than 8, 13, 16, 19, 20, 23, 24 and 26, which were taken from a list of 'Bean-compatible' numbers that rests on a proof withdrawn on 2026-08-24; Column orders at widths above 8 other than the in-order and reversed orders and their cyclic shifts (width 8 was tested in every order); The other layer order, where encryption rearranges the letters before applying the key"
+assumptions = "Keyword repeated as the key; Standard A-Z alphabet; Columnar transposition undone first, then the key applied"
+configs_tested = 2314371
+best_score = 7
 confidence_tier = 2
 repro_command = "PYTHONPATH=src python3 -u scripts/_uncategorized/e_opgold_01_keywords.py"
 
 [elimination.E-OPGOLD-03-BRITISH]
-title = "British intelligence keywords (MI6, GCHQ, ENIGMA, TURING, etc.)"
+title = "British intelligence and codebreaking keywords (GCHQ, SIS, ENIGMA, TURING, etc.)"
+description = "British intelligence and codebreaking keywords (GCHQ, SIS, ENIGMA, TURING, etc.) as cipher keys, 42 words"
 category = "key-models"
 subcategory = "keyword-derived"
-scope_limitations = "Only tests British intelligence agency names and codebreaker names as keys."
-assumptions = "Single keyword used directly as periodic key"
+scope_limitations = "Words other than the 42 tried (British intelligence, codebreaking, Operation Gold, NATO phonetic and a few Cold War phrases); Columnar widths other than 8, 13 and 16, which were taken from a list of 'Bean-compatible' numbers that rests on a proof withdrawn on 2026-08-24; Most column orders at widths 13 and 16 (only the in-order, reversed and 1,000 random orders were tried; width 8 was tested in every order)"
+assumptions = "Keyword repeated as the key; Vigenere, Beaufort or Variant Beaufort; Standard A-Z alphabet; Columnar step before or after the key"
+configs_tested = 10665774
+best_score = 9
 confidence_tier = 2
 repro_command = "PYTHONPATH=src python3 -u scripts/_uncategorized/e_opgold_03_british.py"
 
 [elimination.E-ROMAN-01-COMPREHENSIVE]
-title = "Roman numeral / coordinate-based decryption"
+title = "Roman numeral keys (Carter's Tutankhamun book, excavation dates, K3's X)"
+description = "Chapter and plate numbers from Howard Carter's book, excavation dates, the Roman-numeral letters in K4's own ciphertext, and the X in K3 read as the numeral 10, used as key values or grid settings"
 category = "bespoke"
 subcategory = "roman-numeral"
-scope_limitations = "Only tests specific coordinate-to-key mappings. Does not eliminate all positional ciphers."
-assumptions = "Roman numerals on sculpture encode key positions or values"
+scope_limitations = "Only tests keys built from those numbers. Does not eliminate other number-derived keys."
+assumptions = "Roman numerals from Carter's book or in the ciphertext, or dates of the excavation, give key values or grid settings"
+configs_tested = 66648
+best_score = 6
 confidence_tier = 2
 repro_command = "PYTHONPATH=src python3 -u scripts/_uncategorized/e_roman_01_comprehensive.py"
 
 [elimination.E-S-06-DOUBLE-COLUMNAR]
-title = "Double columnar transposition (all keyword pairs, widths 5-15)"
+title = "Double columnar transposition + repeating-key Vigenere (widths 5-7, plus 7x8 and 8x7)"
+description = "Every column order for each width pair, key lengths 3 to 15, with the Vigenere step applied before both column shuffles"
 category = "transposition"
 subcategory = "double-columnar"
-scope_limitations = "Single-layer only. Does not eliminate double columnar as transposition step in multi-layer."
-assumptions = "Direct positional correspondence; Both columns use widths 5-15; Standard alphabetic ordering"
+scope_limitations = "Covers only width pairs 5x5 to 7x7 plus 7x8 and 8x7. Does not cover Beaufort, other width pairs, or other layer orders."
+assumptions = "Vigenere applied first, then two columnar transpositions; Repeating key of length 3 to 15; Standard A-Z alphabet"
 confidence_tier = 2
 repro_command = "PYTHONPATH=src python3 -u scripts/transposition/columnar/e_s_06_double_columnar.py"
 
 [elimination.E-S-09-BIFID-ALGEBRAIC]
-title = "Bifid cipher (algebraic proof of impossibility)"
+title = "5x5 Bifid cipher (proof of impossibility)"
+description = "5x5 Bifid cipher (proof of impossibility): a 5x5 grid holds only 25 letters (I and J merged), but all 26 letters appear in K4"
 category = "fractionation"
 subcategory = "bifid"
-scope_limitations = "Permanent elimination. Bifid requires 25-letter alphabet (I/J merged), but all 26 letters appear in K4."
-assumptions = "None (structural impossibility)"
+scope_limitations = "Covers only the standard 5x5 Bifid. A 6x6 Bifid (36 symbols) can output all 26 letters, so this argument does not rule it out."
+assumptions = "Standard 5x5 Bifid grid; Bifid is the last letter-changing step (a later transposition does not matter)"
 confidence_tier = 1
-repro_command = "PYTHONPATH=src python3 -u scripts/substitution/e_s_09_bifid_algebraic.py"
+repro_command = "PYTHONPATH=src python3 -u scripts/fractionation/e_frac_21_fractionation_structural_proofs.py"
 truth_tag = "[DERIVED FACT]"
 
 [elimination.E-S-18-TURNING-GRILLE]
 title = "Turning grille transposition"
 category = "transposition"
 subcategory = "turning-grille"
-scope_limitations = "Tested standard Fleissner-style grilles. Does not eliminate non-standard grille patterns."
-assumptions = "Standard square grille rotated 4 times; Grid sizes matching K4 length"
-confidence_tier = 2
+description = "Turning grille transposition, 10x10 grid, small random sample"
+scope_limitations = "Tests only a random sample of 10x10 grilles plus a few patterned ones, a negligible fraction of the roughly 1.1 quadrillion possible, each paired with a short repeating Vigenere or Beaufort key (mostly lengths 5 to 8) applied before or after the grille. An older claim that a general proof closes this family relied on E-FRAC-35, which was retracted on 2026-08-24."
+assumptions = "10x10 grille rotated 4 times, holding the 97 letters plus 3 padding letters; Repeating-key Vigenere or Beaufort with the grille"
+configs_tested = 28000420
+best_score = 16
+confidence_tier = 3
 repro_command = "PYTHONPATH=src python3 -u scripts/_uncategorized/e_s_18_turning_grille.py"
 
 [elimination.E-S-35-NULL-CIPHER]
@@ -248,8 +281,10 @@ repro_command = "PYTHONPATH=src python3 -u scripts/_uncategorized/e_s_35_null_ci
 title = "Myszkowski transposition"
 category = "transposition"
 subcategory = "myszkowski"
-scope_limitations = "Single-layer only. Does not eliminate Myszkowski as one step of multi-layer."
-assumptions = "Direct positional correspondence; Standard keyword-derived column ordering"
+description = "Myszkowski transposition at width 7 only, with a repeating-key Vigenere or Beaufort. The script records only whether a setting fits all 24 known letters (none did), so the best partial score shown on this page comes from an older summary and is unverified."
+configs_tested = 2459236
+scope_limitations = "Covers width 7 only (all 47,293 column rankings, including tied columns), with key lengths 2 to 14. Does not cover other widths."
+assumptions = "Repeating-key substitution (Vigenere or Beaufort) at key lengths 2 to 14; Every ranking of 7 columns, including ties"
 confidence_tier = 2
 repro_command = "PYTHONPATH=src python3 -u scripts/transposition/other/e_s_39_myszkowski.py"
 
@@ -257,26 +292,32 @@ repro_command = "PYTHONPATH=src python3 -u scripts/transposition/other/e_s_39_my
 title = "Rail fence / redefence transposition"
 category = "transposition"
 subcategory = "rail-fence"
-scope_limitations = "Tested standard rail fence with 2-20 rails. Does not eliminate irregular rail fence variants."
-assumptions = "Standard zig-zag pattern; Direct positional correspondence"
-confidence_tier = 2
+description = "Rail fence / redefence transposition, 3-14 rails, 7-letter repeating key"
+scope_limitations = "Every rail order was tried for 3 to 7 rails, but only about 100 sampled orders for 8 to 14 rails, and only a repeating key of length 7 (Vigenere, Beaufort or Variant Beaufort) applied after the transposition. Does not cover other key lengths, more rails, or irregular rail fence variants."
+assumptions = "Standard zig-zag pattern, rails read in a keyed order; Repeating key of length 7"
+configs_tested = 136230
+best_score = 14
+confidence_tier = 3
 repro_command = "PYTHONPATH=src python3 -u scripts/transposition/other/e_s_88_redefence.py"
 
 [elimination.E-S-134-WELTZEITUHR-DDR]
-title = "Weltzeituhr (World Clock) Berlin permutations"
+title = "Weltzeituhr (World Clock) city lists as key material"
+description = "Weltzeituhr (World Clock) city lists as key material, from a reconstructed 1989 list and the modern list, alone or with a width-7 columnar step"
 category = "bespoke"
-subcategory = "physical-sculpture"
-scope_limitations = "Only tests Weltzeituhr clock face permutations. Does not eliminate all Berlin-themed approaches."
-assumptions = "Clock positions map to transposition columns or key values"
+subcategory = "thematic"
+scope_limitations = "Key material other than the city names, initials and counts on the clock's faces; A width-7 column shuffle combined with keys other than the few chosen for it (the Washington, Berlin and Moscow face initials and some related keys); Other Berlin-themed approaches"
+configs_tested = 636006
+best_score = 7
+assumptions = "City names, initials or counts on the clock faces give the key or a keyed alphabet"
 confidence_tier = 2
 repro_command = "PYTHONPATH=src python3 -u scripts/thematic/berlin_clock/e_s_134_weltzeituhr_ddr_era.py"
-keywords_tested = ["WELTZEITUHR", "URANIA", "ALEXANDERPLATZ", "BERLIN", "CLOCK"]
+keywords_tested = ["WELTZEITUHR", "BERLIN"]
 
 [elimination.E-S-145-DRYAD-MATRIX]
 title = "DRYAD-style matrix code lookup"
 category = "bespoke"
 subcategory = "nato-comsec"
-scope_limitations = "Only tests computationally reconstructible DRYAD grids. Cannot test the original coding charts, whose content is not public."
+scope_limitations = "Only tests computationally reconstructible DRYAD grids. Cannot test the original K4 coding chart, whose content is not public (images of the K1-K2 and K3 charts have been published). The parts that used K1 or K3 plaintext to choose rows used copies that stop matching the real texts after about 45 letters."
 assumptions = "DRYAD grid derivable from public sculpture elements; Standard DRYAD row/column structure"
 confidence_tier = 3
 repro_command = "PYTHONPATH=src python3 -u scripts/_uncategorized/e_s_145_dryad_matrix.py"
@@ -285,8 +326,10 @@ repro_command = "PYTHONPATH=src python3 -u scripts/_uncategorized/e_s_145_dryad_
 title = "Hill cipher with YAR-derived matrix parameters (width 9)"
 category = "substitution"
 subcategory = "hill"
-scope_limitations = "Tested Hill 2x2 and 3x3 with YAR/RQ parameters. Hill cipher is structurally incompatible with K4 crib pattern."
-assumptions = "YAR superscript values (Y=24, A=0, R=17) form Hill cipher matrix"
+description = "Hill cipher with YAR-derived matrix parameters (width 9): every width-9 column order with any 2x2 Hill matrix (both layer orders) or any 3x3 Hill matrix (one layer order only). Also a 100,000-order sample at width 10 with a 2x2 Hill cipher, and 56 specific 2x2 matrices built from the raised YAR letters, tried directly and with every width-9 column order. No setting fits all 24 known letters. The script records only whether a setting fits all 24, so the 0 shown as Best Score is not a measured partial score."
+scope_limitations = "The 3x3 Hill cipher in the other layer order; Larger Hill matrices; Width-10 column orders outside the 100,000 sampled; Other widths and other transpositions"
+assumptions = "Hill cipher on the standard A-Z alphabet; Columnar transposition written in rows and read out by columns; For the YAR tests, matrices built from the raised letters (Y=24, A=0, R=17, with T=19 or D=3)"
+configs_tested = 43282720
 # Tier 2, not 1: this entry is a bounded YAR-parameter sweep. The general
 # Hill 2x2/3x3 Tier-1 impossibility is a separate result (elimination_tiers.md).
 confidence_tier = 2
@@ -296,7 +339,7 @@ repro_command = "PYTHONPATH=src python3 -u scripts/substitution/e_s_151_hill_w9_
 title = "NATO/COMSEC protocol keys (DRYAD, KA running key, chain addition)"
 category = "bespoke"
 subcategory = "nato-comsec"
-scope_limitations = "Tests NATO-style key generation methods computationally. Cannot test physical coding chart content."
+scope_limitations = "Tests NATO-style key generation methods computationally. Cannot test the K4 coding chart, whose content is not public. The running-key part used a copy of the K3 plaintext that stops matching the real text after 44 letters, and a K2 copy with two extra X letters inserted, so its running-key results do not cover the real K3 text and cover the real K2 text only in part."
 assumptions = "NATO-standard key generation; KA alphabet running key; Chain addition from sculpture values"
 confidence_tier = 2
 repro_command = "PYTHONPATH=src python3 -u scripts/_uncategorized/e_s_152_nato_protocol.py"
@@ -306,8 +349,10 @@ title = "AMSCO + disrupted columnar transposition (Swapped, Nihilist)"
 category = "transposition"
 subcategory = "amsco"
 verdict = "NOISE: 15/24 at period 8 only; period 7 = 0/24; Bean FAIL"
-scope_limitations = "Single-layer only. Tests AMSCO (1-2 alternating), Nihilist transposition, and swapped columnar at widths 5-14."
-assumptions = "Direct positional correspondence; Periodic substitution (Vigenere/Beaufort) at periods tested; Standard AMSCO alternating fill pattern"
+description = "AMSCO + disrupted columnar transposition (Swapped, Nihilist) at widths 5-8 only"
+scope_limitations = "Covers AMSCO (1-2 alternating), Nihilist transposition and swapped columnar at widths 5 to 8 only (the script skipped widths 9 to 14 as too large), with a repeating-key Vigenere or Beaufort at key lengths 3 to 8, in both layer orders. Its Bean check was applied after the transposition had moved the known letters, which is not valid (see the 2026-08-24 Bean-frame retraction), so the result rests on the match scores alone."
+assumptions = "Repeating-key substitution (Vigenere or Beaufort) at key lengths 3 to 8; Substitution before or after the transposition; Standard AMSCO alternating fill pattern"
+configs_tested = 4435200
 confidence_tier = 2
 repro_command = "PYTHONPATH=src python3 -u scripts/transposition/other/e_s_22_amsco_disrupted.py"
 
@@ -316,19 +361,20 @@ title = "Expanded keyword columnar + Myszkowski sweep (293 thematic keywords)"
 category = "transposition"
 subcategory = "keyword-columnar"
 verdict = "NOISE: 18/24 at period 13 (expected random ~13.5 at p=13; false positive from underdetermination)"
-scope_limitations = "Single-layer only. Only tests 293 thematic keywords. Does not eliminate arbitrary keyword columnar."
-assumptions = "Direct positional correspondence; Periodic substitution (Vigenere/Beaufort/VB) at periods tested"
+scope_limitations = "Only tests column orders derived from 293 thematic keywords (standard and tied-column Myszkowski forms), each with a repeating-key substitution at key lengths 2 to 14, in both layer orders. Does not eliminate arbitrary keyword columnar."
+assumptions = "Repeating-key substitution (Vigenere, Beaufort or Variant Beaufort) at key lengths 2 to 14"
 confidence_tier = 2
 repro_command = "PYTHONPATH=src python3 -u scripts/transposition/columnar/e_rerun_03_columnar_expanded.py"
-keywords_tested = ["URANIA", "ALEXANDERPLATZ", "BERLINCLOCK", "COMPASS", "HOROLOGE", "KRYPTOS", "LODESTONE", "PALIMPSEST", "SANBORN", "SHADOW", "SPHINX", "TUTANKHAMUN", "VERDIGRIS", "WELTZEITUHR"]
+keywords_tested = ["URANIA", "ALEXANDERPLATZ", "BERLINCLOCK", "KRYPTOS", "LODESTONE", "PALIMPSEST", "SANBORN", "TUTANKHAMUN", "WELTZEITUHR"]
 
 [elimination.DRAGNET-V4]
-title = "Dragnet v4: Double columnar exhaustive (w7-9) + single columnar exhaustive (w10-12) + keyword columnar (w13-15)"
+title = "Dragnet v4: Double columnar (6 width pairs, w7-9) + single columnar (w10-12) + keyword columnar (w13-15)"
+description = "Double columnar (6 width pairs, w7-9) + single columnar (w10-12) + keyword columnar (w13-15), repeating-key lengths 8 and 13 only"
 category = "transposition"
 subcategory = "double-columnar"
 tags = ["transposition", "double-columnar", "columnar", "exhaustive", "periodic"]
-scope_limitations = "Exhaustive for single columnar w5-12 and double columnar w7-9 width pairs. Keyword-only for w13-15. Does not cover double columnar with w10+ (too many permutations). Does not test non-columnar transpositions."
-assumptions = "Columnar transposition (standard reading order); Periodic substitution (Vigenere or Beaufort) at periods 8 and 13; Direct positional correspondence within each model"
+scope_limitations = "Designed to try every column order for single columnar at widths 10 to 12 and for six double-columnar width pairs (7x9, 9x7, 8x8, 8x9, 9x8, 9x9), plus dictionary-keyword orders at widths 13 to 15. No detailed run output (checkpoint or results database) is kept in the repository, so completion of the largest cases cannot be checked. Only repeating-key lengths 8 and 13 were tried. That choice came from a Bean-constraint proof (E-FRAC-35) retracted on 2026-08-24, so other key lengths are untested here. Does not cover double columnar with widths of 10 or more, or non-columnar transpositions."
+assumptions = "Columnar transposition (standard reading order); Repeating-key substitution (Vigenere or Beaufort) at key lengths 8 and 13 only"
 confidence_tier = 2
 truth_tag = "[INTERNAL RESULT]"
 repro_command = "PYTHONPATH=src python3 -u scripts/_infra/dragnet_v4.py --workers 14"
@@ -340,20 +386,21 @@ research_questions = ["RQ-1", "RQ-2"]
 title = "Webster family names as cipher key material (DRUSILLA, WEBSTER, WILLIAM)"
 category = "key-models"
 subcategory = "keyword-derived"
-scope_limitations = "Only tests Webster family name variants as periodic keys. Does not test other biographical key sources."
-assumptions = "Periodic key derived from names; Vigenere/Beaufort/VB; Direct positional correspondence"
+scope_limitations = "Only tests Webster family name variants as repeating keys. Does not test other biographical key sources."
+assumptions = "Repeating key derived from names; Vigenere/Beaufort/VB; Direct positional correspondence"
 confidence_tier = 2
 repro_command = "PYTHONPATH=src python3 -u scripts/cfm/e_cfm_00_drusilla_hypothesis.py"
 research_questions = ["RQ-2"]
 
 [elimination.E-CFM-01]
-title = "Foreign language running keys: German and French historical texts"
+title = "Foreign-language running keys (short German and French passages)"
+description = "Nine hand-typed passages, five German and four French, each used as a running key at every offset"
 category = "key-models"
 subcategory = "running-key"
-scope_limitations = "Only tests 6 specific German/French texts. Does not eliminate all foreign language running keys."
-assumptions = "Running key from published text; Vigenere/Beaufort/VB; Identity transposition; Forward and reversed"
+scope_limitations = "Only tests 9 short hand-typed passages (about 150 to 550 letters each), including a repeated-alphabet baseline and a set of common French phrases. The passages cite no source, and several are translations or paraphrases rather than original wording (Kennedy's and Reagan's Berlin speeches were given in English). Does not eliminate foreign-language running keys in general."
+assumptions = "Running key from the listed passages; Vigenere/Beaufort/VB; No transposition; Forward and reversed"
 confidence_tier = 2
-repro_command = "PYTHONPATH=src python3 -u scripts/running_key/e_cfm_01_running_key_foreign.py"
+repro_command = "PYTHONPATH=src python3 -u scripts/archive/c7_rejected/e_cfm_01_running_key_foreign.py"
 research_questions = ["RQ-2", "RQ-3"]
 
 [elimination.E-CFM-02]
@@ -378,10 +425,12 @@ repro_command = "PYTHONPATH=src python3 -u scripts/cfm/e_cfm_03_null_extraction.
 research_questions = ["RQ-1"]
 
 [elimination.E-CFM-04]
-title = "Homophonic substitution: structural impossibility proof (direct correspondence)"
+title = "Homophonic substitution applied directly to the carved text (proof of impossibility)"
+description = "In a homophonic cipher each carved letter stands for exactly one plaintext letter. At the 24 known positions, 9 of the 14 different carved letters would have to stand for two different plaintext letters (for example, carved Q would be both N and O), so this cipher cannot have been applied directly to the carved text."
 category = "substitution"
 subcategory = "monoalphabetic"
-scope_limitations = "Only eliminates DIRECT homophonic substitution (CT[i]→PT[i]). OPEN with transposition layer that changes positional mapping."
+plain_summary = "A homophonic cipher lets each plaintext letter be written with several different letters, but each carved letter must still stand for just one plaintext letter. At the known positions, 9 carved letters would each have to stand for two different plaintext letters, so this cipher cannot have been applied directly to the carved text. It is not ruled out if the letters were also rearranged."
+scope_limitations = "Homophonic substitution combined with a letter rearrangement, which changes which carved letter lines up with each known letter"
 assumptions = "Direct positional correspondence (no transposition)"
 confidence_tier = 1
 truth_tag = "[DERIVED FACT]"
@@ -389,24 +438,27 @@ repro_command = "PYTHONPATH=src python3 -u scripts/substitution/e_cfm_04_homopho
 research_questions = ["RQ-1"]
 
 [elimination.E-CFM-05]
-title = "Nomenclator (code+cipher): structural impossibility proof (pure model)"
+title = "Nomenclator (code plus cipher) with one fixed code group per word (proof of impossibility)"
+description = "EAST appears twice in the known plaintext (positions 21-24 and 30-33, counting from 0) but is carved as FLRV the first time and GKSS the second, so a system that always turns the same word or letter into the same code cannot have produced K4 directly."
 category = "substitution"
 subcategory = "monoalphabetic"
-scope_limitations = "Only eliminates PURE nomenclator without superencipherment. OPEN with position-dependent superencipherment layer."
-assumptions = "Each plaintext word/unit maps to fixed ciphertext code group; No position-dependent layer"
+plain_summary = "A nomenclator replaces whole words (or letters) with fixed code groups. The word EAST appears twice in the known plaintext but is carved differently each time (FLRV, then GKSS), so a nomenclator with one fixed code per word cannot have produced K4 directly. A second encryption step on top, or a rearrangement of the letters, is not ruled out."
+scope_limitations = "A nomenclator followed by a second, position-dependent encryption step (superencipherment); A nomenclator with more than one code group per word, or combined with a letter rearrangement"
+assumptions = "Each plaintext word or unit maps to one fixed ciphertext code group; No position-dependent layer; Known letters line up with the carved letters at their stated positions"
 confidence_tier = 1
 truth_tag = "[DERIVED FACT]"
 repro_command = "PYTHONPATH=src python3 -u scripts/cfm/e_cfm_05_nomenclator_model.py"
 research_questions = ["RQ-1"]
 
 [elimination.E-CFM-06]
-title = "EAST repetition constraint: gap-9 differential filter for running key identification"
+title = "Running-key scan using the two EASTs in the known plaintext (gap-9 key-difference filter)"
+description = "A running-key scan of about 4 million letters of source text, using a fast filter based on the repeated EAST. EAST appears twice in the known plaintext, 9 letters apart, so for a running key applied directly to the carved text the key letters under the second EAST must differ from those under the first by a fixed pattern. 34 places passed the filter and none fitted all 24 known letters."
 category = "key-models"
 subcategory = "running-key"
-scope_limitations = "Filter only works under identity transposition. Under arbitrary transposition, EAST diffs change per permutation."
+scope_limitations = "Running keys combined with a letter rearrangement, which changes the key differences the filter relies on; Source texts not scanned"
 assumptions = "Additive substitution (Vigenere/Beaufort/VB); Running key from contiguous text passage"
 confidence_tier = 2
-truth_tag = "[DERIVED FACT]"
+truth_tag = "[INTERNAL RESULT]"
 repro_command = "PYTHONPATH=src python3 -u scripts/cfm/e_cfm_06_east_constraint.py"
 research_questions = ["RQ-2", "RQ-3"]
 
@@ -415,7 +467,7 @@ title = "K3-style rotational transposition applied to K4 (CW/CCW, pad 0-5)"
 category = "transposition"
 subcategory = "grid-rotation"
 scope_limitations = "Tests K3's specific CW rotation method at padded lengths 98-102. Does not test arbitrary rotation parameters."
-assumptions = "K4 uses same rotation method as K3; Rectangular grids from K4-length factorization; Padding with A or Z"
+assumptions = "K4 uses same rotation method as K3; Rectangular grids from K4-length factorization; Padding with X at the start or end"
 confidence_tier = 2
 repro_command = "PYTHONPATH=src python3 -u scripts/k3_continuity/e_cfm_07_k3_rotational.py"
 research_questions = ["RQ-1", "RQ-2"]
@@ -424,7 +476,7 @@ research_questions = ["RQ-1", "RQ-2"]
 title = "Transposition-guided running key fragment scoring (28M Monte Carlo, 28 cores)"
 category = "multi-layer"
 subcategory = "transposition-plus-substitution"
-scope_limitations = "Proves underdetermination, optimal transposition produces English-like key fragments by coincidence from C(97,24)≈5e21 assignment freedom."
+scope_limitations = "Proves underdetermination, optimal transposition produces English-like key fragments by coincidence from C(97,24)≈3.5e22 assignment freedom."
 assumptions = "Model A: CT = Trans(Vig(PT, K)); Vigenere running key; Quadgram scoring of 24-char key fragments"
 confidence_tier = 3
 verdict = "NOISE"
@@ -446,23 +498,23 @@ repro_command = "PYTHONPATH=src python3 -u scripts/_uncategorized/e_egypt_00_cor
 research_questions = ["RQ-2", "RQ-3"]
 
 [elimination.E-EGYPT-01]
-title = "Egypt corpus x columnar transposition sweep: widths 5-11, 3 variants, 9 corpora"
+title = "Egyptological running-key texts with a columnar transposition (widths 5 to 11)"
 category = "multi-layer"
 subcategory = "transposition-plus-substitution"
-tags = ["running-key", "columnar", "egyptian", "corpus", "transposition", "exhaustive"]
-scope_limitations = "Exhaustive for columnar widths 5-11 (44M permutations). Does not test width >= 12, non-columnar transpositions, or non-Egyptological source texts."
+tags = ["running-key", "columnar", "egyptian", "corpus", "transposition"]
+scope_limitations = "Not exhaustive. Before any source text was checked, the keystream-consistency (Bean) filter, withdrawn on 2026-08-24 because it does not apply once letters are rearranged, discarded at least 95% of the 44M column orderings for widths 5-11, so most of this space was never tested. Standard A-Z alphabet only. Does not test width >= 12, non-columnar transpositions, or non-Egyptological source texts."
 assumptions = "Model A: CT[sigma(j)] = Enc(PT[j], Source[j+offset]); Columnar transposition; Running key from Egyptological corpus; Vigenere/Beaufort/VB"
-confidence_tier = 2
+confidence_tier = 3
 truth_tag = "[INTERNAL RESULT]"
 repro_command = "PYTHONPATH=src python3 -u scripts/transposition/columnar/e_egypt_01_columnar_sweep.py"
 research_questions = ["RQ-2", "RQ-3"]
 
 [elimination.E-CFM-09]
-title = "Gutenberg-scale EAST constraint scan: 73 books, 47.4M characters"
+title = "Running-key scan of 73 Project Gutenberg books and 8 other texts (47.4 million letters)"
 category = "key-models"
 subcategory = "running-key"
-scope_limitations = "Only tests 73 specific Gutenberg texts (English + German). Does not eliminate running key from untested texts or non-published sources."
-assumptions = "Running key from contiguous published text; Vigenere/Beaufort/VB; Identity transposition"
+scope_limitations = "Only tests 73 specific Gutenberg texts (English + German) and 8 other local texts. Does not eliminate running key from untested texts or non-published sources; The KRYPTOS-alphabet tableau used for K1 and K2 (only the standard A-Z alphabet was used)"
+assumptions = "Running key from contiguous published text; Vigenere/Beaufort/VB on the standard A-Z alphabet only; Identity transposition"
 confidence_tier = 2
 truth_tag = "[INTERNAL RESULT]"
 repro_command = "PYTHONPATH=src python3 -u scripts/cfm/e_cfm_09_gutenberg_east_scan.py"
@@ -477,13 +529,14 @@ research_questions = ["RQ-2", "RQ-3"]
 [elimination.e_varying_null_resolution]
 best_score = 0
 verdict = "NOISE"
-title = "Null mask crib preservation analysis (not a decryption test)"
-description = "Measures whether crib positions are preserved under varying null masks. All masks trivially score 24/24 because crib positions are always kept. This is a structural analysis tool, not a cipher attack."
-scope_limitations = "Score of 24/24 reflects crib preservation, not decryption success. Not comparable to cipher attack scores."
+title = "Check that proposed filler-letter masks keep the known letters (not a decryption test)"
+description = "Checks whether the 24 known letters survive when different sets of carved letters are treated as filler and removed. Every mask tested keeps them, so each one trivially 'scores' 24 of 24; that is how the masks were built, not a decryption result. The Best Score of 0 on this page is a placeholder, not a result."
+scope_limitations = "Anything about whether K4 contains filler letters: this record decrypts nothing, so it neither supports nor rules out any cipher"
 
-# H4 fix: Autokey 21/24 needs context — structurally impossible
+# H4 fix: a 21/24 autokey score needs context. Rescoped 2026-09-29: the
+# impossibility holds only for direct application with starting keys <= 25.
 [elimination.E-AUTOKEY-VIG-AZ]
-scope_limitations = "Autokey is proven structurally impossible (crib feedback contradiction). The 21/24 score is the maximum achievable before the contradiction manifests, not near-success. See E-FRAC-37."
+scope_limitations = "Starting keys longer than 25 letters: a separate check shows that plaintext-keyed self-keying (autokey) applied directly to the carved text on the standard alphabet reaches at most 21 of 24 known letters with a starting key of 1 to 25 letters, so a 21 is that ceiling rather than a near-solution, but longer starting keys are not covered; Self-keying combined with a letter rearrangement: an unrestricted rearrangement leaves too much freedom for the known letters to rule it out"
 
 # ── Keyword enrichment for searchability ──────────────────────────────────
 
@@ -503,7 +556,7 @@ configs_tested = 61500000
 
 [elimination.E-D13-WIDTH13-P13]
 title = "Width-13 columnar + period-13 substitution: algebraic impossibility proof"
-description = "When width = period = 13, column swaps cannot move positions across residue classes. Backtracking proves zero solutions exist for ANY cipher variant or alphabet. Width-13 is special because 97 = 7×13 + 8 (close to 8 lines × 13 columns)."
+description = "When width = period = 13, column swaps cannot move positions across residue classes. Backtracking proves zero solutions exist for ANY cipher variant or alphabet. Width-13 is special because 97 = 7×13 + 6 (seven full rows of 13 plus 6 letters)."
 category = "multi-layer"
 subcategory = "transposition-plus-substitution"
 scope_limitations = "Specific to width=period=13. Other width-13 transpositions with non-period-13 substitution remain open."
@@ -513,11 +566,11 @@ truth_tag = "[DERIVED FACT]"
 verdict = "ALGEBRAICALLY IMPOSSIBLE: zero solutions exist"
 
 [elimination.E-D13-AUTOKEY-13]
-title = "Autokey cipher with ≤13-character primers + optional columnar transposition"
-description = "Tested autokey ciphers (PT/CT feedback × Vig/Beau/VBeau × AZ/KA) with primers up to 13 characters matching EASTNORTHEAST length, with and without columnar transposition. 7.9M configurations. Top result: 9/24 crib hits, exactly matches binomial expectation for volume tested."
-category = "substitution"
-subcategory = "vigenere"
-scope_limitations = "Only tests primer lengths ≤13. Longer primers or non-standard autokey variants remain open (though autokey is structurally limited to max 21/24 per E-FRAC-37)."
+title = "Self-keying (autokey) cipher with starting keys of up to 13 letters, with or without a columnar transposition"
+description = "Tested self-keying ciphers in six forms (plaintext- or ciphertext-keyed Vigenere, Beaufort or Variant Beaufort) on the standard and KRYPTOS alphabets, with starting keys of up to 13 letters, with and without a columnar transposition. 7.9 million configurations. Top result: 9 of 24 known letters, consistent with chance for a search this size."
+category = "key-models"
+subcategory = "autokey"
+scope_limitations = "Starting keys longer than 13 letters, and rearrangements other than the columnar orders tried; Self-keying combined with other letter rearrangements: a separate check rules out self-keying applied directly to the carved text (no rearrangement) with starting keys of up to 25 letters, in all three forms on the standard or KRYPTOS alphabet, but not self-keying with a rearrangement, where the known letters leave too much freedom"
 assumptions = "Autokey cipher with short primer; Optional columnar transposition; Standard crib positions"
 confidence_tier = 2
 truth_tag = "[INTERNAL RESULT]"
@@ -526,7 +579,7 @@ configs_tested = 7900000
 
 [elimination.E-WCLUSTERING-TRANS]
 title = "W-clustering via single-layer transposition: ruled out"
-description = "Tested whether any transposition brings K4's 5 W positions [20,36,48,58,74] adjacent (suggesting they were separated by transposition). 62K+ columnar configs (widths 2-48), rail fence, serpentine, spiral. Best: cluster of 3 (width-10 only). Width-13 uniquely produces WWWW blocks (4 consecutive), but 5th W remains isolated. No transposition brings all 5 W's contiguous within a 10-char window."
+description = "Tested whether any transposition brings K4's 5 W positions [20,36,48,58,74] adjacent (suggesting they were separated by transposition). 62K+ columnar configs (widths 2-48), rail fence, serpentine, spiral. Best: cluster of 3 (width-10 only). Width-13 uniquely produces WWWW blocks (4 consecutive), but 5th W remains isolated. None of the tested transpositions brings all 5 W's within a 10-letter window."
 category = "transposition"
 subcategory = "columnar"
 scope_limitations = "Only tests single-layer transpositions. Double transposition or non-standard transpositions could still cluster W's."
@@ -573,7 +626,7 @@ verdict = "NOISE"
 
 [elimination.E-RUNKEY-K123]
 title = "Running-key crib-drag on K1-K3 plaintext (with and without transposition)"
-description = "K1+K2+K3 plaintext (658 chars), individual sections, reversed, concatenated × Vig/Beau/VBeau. Direct: max 5/24. With transposition (23 keywords × widths 4-14): max 6/24."
+description = "Copies of the K1, K2 and K3 plaintexts totalling 658 letters (the real texts total 63 + 369 + 336 = 768 letters, so these copies are incomplete or altered; see the 2026-09-29 text-integrity audit), used individually, reversed and concatenated × Vig/Beau/VBeau. Direct: max 5/24. With transposition (23 keywords × widths 4-14): max 6/24."
 category = "key-models"
 subcategory = "running-key"
 scope_limitations = "Only tests K1-K3 plaintext as running key. Does not eliminate K1-K3 ciphertext or other derived key material."
@@ -596,12 +649,12 @@ verdict = "ELIMINATED"
 # ── Session 2026-03-12: 73-char column mask deep investigation ───────────
 
 [elimination.E-COLMASK-AUTOKEY]
-title = "Autokey cipher on 73-char column mask extract (all variants)"
-description = "Tested autokey (PT/CT feedback × Vig/Beau/VBeau × AZ/KA), progressive key, running key on 73-char column mask extracts from the 28×31 native grid null band. 46,170 configs across 9 keep-column variants. Max 6/24 = NOISE. This is a DIFFERENT test from autokey on raw 97, shifted crib positions (ENE at 13-25, BC at 47-57) and different ciphertext."
-category = "substitution"
-subcategory = "vigenere"
-scope_limitations = "Only tests autokey on column-mask-extracted 73-char text. Other null mask patterns untested with autokey. Running key from limited dictionary only."
-assumptions = "Column mask removes cols 8-16 minus one kept col; Shifted crib positions; Standard autokey PT/CT feedback"
+title = "Self-keying (autokey) cipher on the 73 letters left by a column-band filler model"
+description = "Self-keying ciphers in six forms on the standard and KRYPTOS alphabets, plus fixed-step keys and keys made from the carved text itself, tried on 73-letter texts. Each text comes from laying the sculpture's full cipher text out in 28 rows of 31 letters and treating the 24 K4 letters in columns 8 to 16, apart from one kept column, as filler. Nine versions (one per kept column), 46,170 settings, best 6 of 24 known letters, which is chance level. Removing the filler letters changes both the text and where the known letters sit, so this is a different test from self-keying on all 97 carved letters."
+category = "key-models"
+subcategory = "autokey"
+scope_limitations = "Other ways of choosing the 24 filler letters; Starting keys other than the 26 single letters, 25 keywords and the first 2 to 13 letters of those keywords; Running keys other than the carved text itself"
+assumptions = "Filler letters are the K4 letters in columns 8 to 16 of a 28-by-31 layout of the cipher text, minus one kept column; Known letters move to positions 13-25 and 47-57 of the 73 (counting from 0)"
 confidence_tier = 2
 truth_tag = "[INTERNAL RESULT]"
 verdict = "NOISE"
@@ -609,8 +662,9 @@ configs_tested = 46170
 repro_command = "PYTHONPATH=src python3 -u scripts/grille/e_column_mask_autokey_01.py"
 
 [elimination.E-COLMASK-GRID-COORD]
-title = "Grid-coordinate-derived substitution keys on 73-char column mask extract"
-description = "Tested 150+ key derivation functions from (row, col) grid coordinates: row, col, row+col, row-col, |col-15|, modular keys, KRYPTOS keyword cycling, bearing-derived keys, triangular numbers, etc. Also exhaustive affine fit key=a*col+b*row+c mod 26 (17,576 combinations). 3,726 configs. Max 5/24 = NOISE. Required Vig keystream at crib positions (BLZCDCYYGCKAZ, MUYKLGKORNA) is completely irregular, no coordinate-based pattern fits."
+title = "Keys from grid row and column numbers, on 73 letters left by a column-band filler model"
+description = "Keys computed from each letter's row and column in a 28-by-31 layout of the sculpture's cipher text, tried on the 73 letters left by a column-band filler model. More than 150 formulas were used (row, column, their sum or difference, remainders, KRYPTOS repeated along the grid, bearing-based values), plus a check of every key of the form a×column + b×row + c. 3,726 settings, best 5 of 24 known letters (chance level). None of the tested formulas produces the key values the known letters require (BLZCDCYYGCKAZ and MUYKLGKORNA for Vigenere)."
+plain_summary = "Tried keys worked out from each letter's row and column number in a 28-by-31 layout of the cipher text, on the 73 letters left by a column-band filler model. None of the more than 150 formulas did better than chance (best 5 of 24 known letters)."
 category = "bespoke"
 subcategory = "physical-sculpture"
 scope_limitations = "Only tests functions of (row, col). Does not test arbitrary position-dependent keys beyond coordinate derivation."
@@ -622,12 +676,12 @@ configs_tested = 3726
 repro_command = "PYTHONPATH=src python3 -u scripts/grille/e_grid_coordinate_keys_01.py"
 
 [elimination.E-COLMASK-MITM-TRANS-SUB]
-title = "MITM: columnar transposition × periodic substitution on 73-char column mask extract"
-description = "Meet-in-the-Middle attack on 73-char column mask extract: columnar transposition (w7-9 exhaustive, 408,240 permutations) × periodic sub (p1-13) × Vig/Beau/VBeau × key-at-CT and key-at-PT models. Also tested rail fence (depths 2-15) and route ciphers (serpentine, spiral, colwise for widths 7-14). 31.8M total configs. Best: 18/24 at w9/p11/vigenere. Monte Carlo verification (100K random w9 perms at p11) shows ~3.6 expected hits in full 362,880 search = MARGINAL NOISE. Decrypted texts: IC 0.035-0.044 (random), zero crib matches at expected positions."
+title = "Column and route rearrangements plus a repeating key, on 73 letters left by a column-band filler model"
+description = "A repeating-key Vigenere, Beaufort or Variant Beaufort cipher (key lengths 1 to 13) combined with column, rail-fence and route rearrangements, on the 73 letters left by a column-band filler model. Rearrangements: every column order at widths 7, 8 and 9 (408,240 orders), rail fence with 2 to 15 rails, and serpentine, spiral and column-by-column routes at widths 7 to 14, with the key lined up with either the carved or the rearranged order. The 73 letters are what remains after treating 24 K4 letters in columns 8 to 16 of a 28-by-31 layout of the cipher text as filler. 31.8 million settings. The best, 18 of 24 known letters at width 9 with an 11-letter key, is noise: a random-order check suggests about 3 or 4 settings that good are expected by chance in the full width-9 search."
 category = "multi-layer"
 subcategory = "transposition-plus-substitution"
-scope_limitations = "Only columnar, rail fence, and route transpositions. Other transposition types (double columnar, Myszkowski, turning grille) untested on 73-char extract."
-assumptions = "Column mask null removal; Columnar/route transposition; Periodic substitution; Shifted crib positions (ENE 13-25, BC 47-57)"
+scope_limitations = "Other rearrangements (for example double columnar, Myszkowski or turning grille); Column orders at widths other than 7 to 9; Key lengths above 13; Other ways of choosing the 24 filler letters"
+assumptions = "Filler letters are the K4 letters in columns 8 to 16 of a 28-by-31 layout of the cipher text, minus one kept column; Known letters move to positions 13-25 and 47-57 of the 73 (counting from 0); Repeating key of length 1 to 13"
 confidence_tier = 2
 truth_tag = "[INTERNAL RESULT]"
 verdict = "NOISE: best 18/24 at w9/p11 ≈ expected by chance (Monte Carlo: ~3.6 hits expected)"
@@ -635,12 +689,12 @@ configs_tested = 31800000
 repro_command = "PYTHONPATH=src python3 -u scripts/grille/e_mitm_trans_sub_73_01.py"
 
 [elimination.E-COLMASK-NATIVE-GRID-READING]
-title = "Native 28×31 grid reading orders + periodic substitution on 73-char extract"
-description = "Tested 10+ native grid reading orders (column-by-column L→R/R→L, serpentine columns/rows, diagonal TLBR/TRBL, spiral CW, paired mirror columns, row-reversed) × Vig/Beau/VBeau × periods 1-26 on 73-char column mask extract. Also tested on full 97-char text with grid column reading. 2,262 configs on 73-char, best 22/24 at serpentine_row/beaufort/p24 = UNDERDETERMINED NOISE (period 24 with 24 cribs means each residue class has ≤1 crib position). Full 97-char: best 20/24 at p25."
+title = "Grid reading orders plus a repeating key, on 73 letters left by a column-band filler model"
+description = "More than ten ways of reading a 28-by-31 layout of the cipher text, each with a repeating key of length 1 to 26, on the 73 letters left by a column-band filler model. The key was tried in Vigenere, Beaufort and Variant Beaufort form. Reading orders: column by column in either direction, back and forth by rows or columns, diagonals, a clockwise spiral, paired mirror columns, and the whole text read backwards. The 73 letters are what remains after treating 24 K4 letters in columns 8 to 16 as filler (2,262 settings). The best, 22 of 24 known letters (back and forth by rows, Beaufort, key length 24), is noise: with a 24-letter key there are as many key letters as known letters, so high scores come easily by chance. At key lengths of 7 or less, where the test can separate signal from chance, the best was about 12 of 24. Column reading of all 97 carved letters gave at best 20 of 24 at key length 25, also too long a key to mean anything."
 category = "multi-layer"
 subcategory = "transposition-plus-substitution"
-scope_limitations = "Only tests periodic substitution after grid reading transposition. Non-periodic ciphers with grid reading remain open."
-assumptions = "28×31 native grid layout; Column mask null removal; Reading order = transposition; Periodic substitution"
+scope_limitations = "Keys that do not repeat (self-keying, running keys and others) combined with these reading orders; Reading orders not in the list; Other ways of choosing the 24 filler letters"
+assumptions = "The cipher text laid out in 28 rows of 31 letters; Filler letters are the K4 letters in columns 8 to 16, minus one kept column; A reading order of the grid is the letter rearrangement; Repeating key of length 1 to 26"
 confidence_tier = 2
 truth_tag = "[INTERNAL RESULT]"
 verdict = "NOISE: all high scores at high periods (underdetermined). Discriminating periods (≤7): max ~12/24"
@@ -649,12 +703,12 @@ repro_command = "PYTHONPATH=src python3 -u scripts/grille/e_native_grid_reading_
 
 [elimination.E-FLEISSNER-8X9-180]
 title = "Fleissner 8×9 turning grille (180° rotation) + periodic substitution"
-description = "Fleissner 8×9 turning grille on 72-char delimiter model (remove first O or last R → 96 chars, 24 nulls → 72 = 8×9). 180° rotation gives 36 position pairs, 2^36 ≈ 68.7B configs. P1: Periodic sub (p1-13) proven impossible under ANY null mask for BOTH delimiter models, 14 distinct Vig / 12 distinct Beau key values at crib positions are invariant to Fleissner configuration. P2: Keyword SA (8 keywords × Vig/Beau × 20 restarts × 100K steps): best quadgram -6.584 = NOISE. P3: Monte Carlo 500K random Fleissner trials: max 6/24 crib matches = NOISE."
+description = "Fleissner 8×9 turning grille on 72-char delimiter model (remove first O or last R → 96 chars, 24 nulls → 72 = 8×9). 180° rotation gives 36 position pairs, 2^36 ≈ 68.7B configs. P1: if the known letters stay lined up with their carved letters (only the filler removal changes which key letter applies to each), a repeating key of length 1-13 is impossible for Vigenere and Variant Beaufort under any filler mask, because the known letters need 14 different key values (standard alphabet); Beaufort needs only 12, so its key lengths 12-13 were only searched, not proven (the search found no consistent setting). This argument does not apply if the grille moves the known letters, which is what the model proposes. P2: Keyword SA (8 keywords × Vig/Beau × 20 restarts × 100K steps): best quadgram -6.584 = NOISE. P3: Monte Carlo 500K random Fleissner trials: max 6/24 crib matches = NOISE."
 category = "multi-layer"
 subcategory = "turning-grille"
 scope_limitations = "Only tests periodic sub (p1-13) and keyword Vig/Beau after Fleissner transposition. Non-periodic ciphers (autokey, running key, custom tableau) with Fleissner remain OPEN."
-assumptions = "72 = 8×9 Fleissner grid; Delimiter model (remove first O or last R); 180° turning grille; Periodic substitution or keyword substitution"
-confidence_tier = 1
+assumptions = "72 = 8×9 Fleissner grid; Delimiter model (remove first O or last R); 180° turning grille; Periodic substitution or keyword substitution; Standard A-Z alphabet"
+confidence_tier = 3
 truth_tag = "[INTERNAL RESULT]"
 verdict = "PERIODIC SUB IMPOSSIBLE (algebraic proof). Keyword SA = NOISE. MC baseline max 6/24."
 configs_tested = 500000
@@ -689,16 +743,21 @@ repro_command = "PYTHONPATH=src python3 -u scripts/two_system/e_mitm_periodic_tr
 # ── Keyword enrichment for searchability ──────────────────────────────────
 
 [elimination.E-KASISKI-00]
-keywords_tested = ["URANIA", "WELTZEITUHR", "ALEXANDERPLATZ", "COMPASS", "LODESTONE", "SHADOW", "SPHINX", "PHARAOH", "TUTANKHAMUN", "CARNARVON", "HOROLOGE", "PALIMPSEST", "ABSCISSA", "KRYPTOS", "BERLINCLOCK", "SANBORN", "DESPARATLY", "IQLUSION", "IDBYROWS", "VERDIGRIS"]
+title = "Repeating-key tests on K4 (repeated letter groups, letter-frequency checks and 23 keywords)"
+description = "Classic tests for a repeating key (repeated letter groups, and letter-frequency checks at every key length from 1 to 30), plus 23 keywords tried as repeating Vigenere and Beaufort keys. It also works out a best-guess key at several key lengths. The keywords include the K1 and K2 keywords, names, and words or letter strings from the sculpture. Nothing rose above chance: the best was 4 of 24 known letters."
+category = "substitution"
+subcategory = "vigenere"
+best_score = 4
+keywords_tested = ["PALIMPSEST", "ABSCISSA", "KRYPTOS", "SANBORN", "SCHEIDT", "SHADOW", "LUCID", "BERLINCLOCK", "EQUINOX", "LOOMIS", "BOWEN", "IQLUSION", "DESPARATLY", "IDBYROWS"]
 
 [elimination.E-POLY-01]
-keywords_tested = ["URANIA", "COMPASS", "LODESTONE", "ALEXANDERPLATZ", "KRYPTOS", "PALIMPSEST", "ABSCISSA", "BERLINCLOCK", "SANBORN"]
+keywords_tested = ["KOBEK", "BYRNE", "ANTIPODES", "HIRSHHORN", "SMITHSONIAN", "NINETYSEVEN", "CREATIVITY", "WEBSTER", "WILLIAM", "ARCHIVE", "MAQUETTE"]
 
 [elimination.E-POLY-02]
-keywords_tested = ["URANIA", "COMPASS", "LODESTONE", "KRYPTOS", "PALIMPSEST", "ABSCISSA", "BERLINCLOCK"]
+keywords_tested = ["EQUINOX", "SOLSTICE", "LOOMIS", "BOWEN", "MCLEAN", "LANGLEY", "HOWARD", "CARNARVON", "TUTANKHAMEN", "GILLOGLY", "SHADOW", "LATITUDE", "LONGITUDE", "BERLIN", "COPPER", "GRANITE", "PETRIFIED", "WHIRLPOOL", "UNDERGROUND"]
 
 [elimination.BERLIN-CLOCK-PERM-RESULTS]
-keywords_tested = ["URANIA", "WELTZEITUHR", "ALEXANDERPLATZ", "BERLIN", "CLOCK", "BERLINCLOCK"]
+keywords_tested = ["HOROLOGE", "KRYPTOS", "PALIMPSEST", "ABSCISSA", "DEFECTOR", "PARALLAX", "COLOPHON", "CLOCK", "BERLIN", "MENGENLEHREUHR", "ZEITGEBER", "BERLINCLOCK"]
 
 # --- Title overrides for records whose source JSON carries no description ---
 
@@ -713,3 +772,153 @@ title = "Partitioned two-system encryption (variant 2)"
 
 [elimination.TKAS_v1]
 title = "Transposition-keystream alignment search (TKAS v1)"
+
+# --- 2026-09-29 round 2: pages whose builder defaults were misleading ---
+
+[elimination.E-S-32]
+title = "Keys from compass bearings, map coordinates and dates tied to the clues"
+description = "43 key sequences built from bearings, distances and map coordinates linking Kryptos, the Berlin clock, the Berlin Wall, Giza and the Valley of the Kings, plus the years 1986 and 1989, the east-northeast bearing and a few digit strings, added to or subtracted from the carved text, directly and after three width-7 column orders (344 settings). Each result was then checked for a repeating key of length 2 to 24 on top."
+plain_summary = "Tried keys made from compass bearings, map coordinates and dates connected to the clues, directly and with a simple column shuffle, then checked whether a repeating key could explain the rest. The score on this page is not a count of matched letters: it counts key positions that agree with the known letters at the best key length tried, and at key length 24 almost every position agrees automatically (any text scores at least 14). The best, 17 at key length 24, is within what chance can produce across 344 settings."
+category = "key-models"
+subcategory = "thematic"
+configs_tested = 344
+scope_limitations = "Key sequences other than the 43 built here; Column shuffles other than the three width-7 orders tried; Repeating keys longer than 24 letters"
+assumptions = "Key values added to or subtracted from the carved letters on the standard A-Z alphabet; Known letters at their standard positions"
+
+[elimination.MITM-AUTOKEY-TRANSPOSITION]
+title = "Self-keying (autokey) cipher after structured letter rearrangements (consistency filter)"
+description = "About 4.2 million structured rearrangements (every column order at widths 2 to 10, keyword columnar, rail fence, routes, fixed-step readings and others) were each combined with self-keying ciphers with starting keys of 1 to 20 letters (plaintext- or ciphertext-keyed Vigenere, Beaufort or Variant Beaufort, on the standard and KRYPTOS alphabets). For the plaintext-keyed form only the few known letters that end up exactly one starting-key length apart can be checked, 3 to 5 per setting here. 2,054 settings passed all of their checks. With so few checks that is weak evidence either way, and those settings were not followed up, so this record does not rule the model out."
+plain_summary = "Tried self-keying ciphers after about 4.2 million structured letter rearrangements. For the plaintext-keyed form only a handful of known letters can be checked for each setting, and 2,054 settings passed their checks. They were not followed up, so this search neither found a solution nor ruled the idea out."
+category = "multi-layer"
+subcategory = "transposition-plus-substitution"
+scope_limitations = "Self-keying after a letter rearrangement, including the 2,054 settings that passed this filter and were never decrypted in full; Rearrangements outside the listed families; Starting keys longer than 20 letters"
+assumptions = "Letters rearranged first, then the self-keying cipher applied; Known letters at their standard positions in the plaintext; A setting passes if every checkable known letter agrees and at least 3 can be checked"
+confidence_tier = 3
+
+[elimination.e_s_134]
+category = "key-models"
+subcategory = "thematic"
+
+[elimination.F-COLUMNAR-PERIODIC-REDERIVED-V1]
+title = "Repeating-key cipher followed by a columnar transposition, widths 4 to 9, every column order"
+description = "Every column order at widths 4 to 9 (409,104 orders), each with a repeating key of length 1 to 26 applied before the columnar step, checked directly against the 24 known letters without the Bean filter that was withdrawn on 2026-08-24. This re-run replaces earlier columnar results (E-FRAC-26, 27 and 35) that relied on that filter. The run's own count of 31.9 million settings includes Variant Beaufort, which here always gives the same result as Vigenere (the run's output also swaps the Beaufort and Variant Beaufort labels), so the count shown on this page, 21.3 million, counts distinct tests only."
+plain_summary = "Tried a repeating-key cipher followed by a columnar transposition, at widths 4 to 9 in every column order and key lengths 1 to 26. No setting with a key of 24 letters or fewer fits all 24 known letters. Some settings with 25- or 26-letter keys fit, but a key that long can fit almost any text, and their number matches what chance predicts."
+category = "multi-layer"
+subcategory = "transposition-plus-substitution"
+configs_tested = 21273408
+scope_limitations = "Widths above 9; The other layer order (letters rearranged before the key is applied); Alphabets other than the standard A-Z; Keys that do not repeat"
+assumptions = "Repeating key applied first, then a standard columnar transposition (written in rows, read out by columns); Standard A-Z alphabet; Known letters at their standard positions in the plaintext"
+confidence_tier = 2
+truth_tag = "[INTERNAL RESULT]"
+
+[elimination.EXHAUSTIVE-PALETTE-MASK-01]
+title = "All 2,629,575 ways to pick 24 filler letters from the retired filler-palette positions"
+category = "multi-layer"
+subcategory = "null-extraction"
+
+[elimination.PALETTE-CONTROLS-01]
+title = "Control tests for the retired filler-palette idea"
+category = "multi-layer"
+subcategory = "null-extraction"
+
+# --- 2026-09-29: accuracy pass (retracted premises, K3 method, invented K1-K3 texts) ---
+
+[elimination.E-HYBRID-04]
+title = "Vigenère-family substitution before or after columnar transposition (two-layer test)"
+category = "multi-layer"
+subcategory = "transposition-plus-substitution"
+description = "Tested a Vigenère-family substitution followed by a columnar transposition, and the reverse order, using keys worked out from the known letters and a list of keywords. The original record called one order 'the K3 method', but K3 was not made that way: K3 is a pure transposition (two grid rotations, with no key and no substitution)."
+
+[elimination.E-ROUTE-DEFINITIVE]
+title = "Route transposition at periods 8, 13 and 16, plus double routes"
+description = "Route transpositions (serpentine, spiral and others, single and double) combined with a repeating-key substitution at periods 8, 13 and 16. Those periods were chosen by a 'Bean-surviving periods' rule that was retracted on 2026-08-24."
+scope_limitations = "Any other period: this run tested only 8, 13 and 16, and the rule that picked them was retracted on 2026-08-24"
+
+[elimination.f_archive_col_notation_v1]
+title = "Columnar widths 4, 8, 9 and 10 with a substitution step (from a misread archive note)"
+category = "multi-layer"
+subcategory = "transposition-plus-substitution"
+description = "Tested columnar transposition at widths 4, 8, 9 and 10 combined with a letter-substitution step. The widths came from reading a note in Sanborn's archive papers as '4, 8, 10, 26 = Col'; re-examination of the original showed that reading was wrong, so this run has no archive support. Its Bean filter rejected every ordering at widths 4, 8 and 9, but that filter does not hold after a transposition (retracted 2026-08-24; re-derived correctly, width 4 passes 72 of 72)."
+scope_limitations = "Widths 4, 8 and 9: the invalid filter rejected every ordering, so nothing at those widths was actually tested here"
+
+[elimination.f_w10_quagmire_iii_v1]
+title = "K2's cipher (Vigenère-style on the KRYPTOS alphabet, key ABSCISSA) after two width-10 column orders"
+category = "multi-layer"
+subcategory = "transposition-plus-substitution"
+description = "Applied K2's own cipher settings after two width-10 columnar orders kept by an earlier run (f_archive_col_notation_v1). Both matched 1 of 24 known letters. That earlier run took its widths from a misread archive note and kept these orders with a Bean filter that does not hold after a transposition (retracted 2026-08-24), so they were not a meaningful shortlist. Solvers catalogue K2's cipher as Quagmire III."
+
+[elimination.E-S-27]
+title = "Withdrawn claim of a Bean proof against a repeating key plus transposition (see E-S-28)"
+description = "This run claimed that the Bean constraints rule out a repeating-key cipher followed by any transposition at most periods. The claim does not hold: E-S-28 found the check proved nothing (it was true by construction), and the related 'universal period proof' (E-FRAC-35) was retracted on 2026-08-24. Kept for the record only."
+
+[elimination.E-REF-00]
+title = "8-row grid transposition (from a misreading of a Sanborn note)"
+category = "multi-layer"
+subcategory = "transposition-plus-substitution"
+description = "Tested columnar grids of width 12, 13 and 14, filled row by row, with Vigenère-family substitution. The '8 lines' figure behind this test came from misreading a handwritten Sanborn note, so the test has no support from that note."
+
+[elimination.E-S-15]
+scope_limitations = "Anything that depends on the real K3 text: this script used its own copy, which departs from the real text partway through (found 2026-09-29)"
+
+[elimination.CORPUS_KEYSTREAM_SEARCH]
+scope_limitations = "Anything that depends on the real K1 and K3 texts: this script used its own copies, which depart from the real texts partway through (found 2026-09-29)"
+
+[elimination.E-CT80-CIPHER-ATTACK]
+scope_limitations = "Anything that depends on the real K1-K3 texts: this script used its own copies, which depart from the real texts partway through (found 2026-09-29)"
+
+[elimination.e_bifid_5x6_ka]
+scope_limitations = "Anything that depends on the real K1-K3 texts: this script used its own copies, which depart from the real texts partway through (found 2026-09-29)"
+
+[elimination.E-GRILLE-13]
+scope_limitations = "Anything that depends on the real K1-K3 texts: this script used its own copies, which depart from the real texts partway through (found 2026-09-29)"
+
+[elimination.e_keystream_grid_coordinates]
+scope_limitations = "Anything that depends on the real K3 text: this script used its own copy, which departs from the real text partway through (found 2026-09-29)"
+
+[elimination.E-S-30]
+scope_limitations = "Anything that depends on the real K2 and K3 texts: this script used its own copies, which depart from the real texts partway through (found 2026-09-29)"
+
+[elimination.F-SCULPTURE-PATH-SEARCH-V1]
+scope_limitations = "Anything that depends on the real K3 text: this script used its own copy, which departs from the real text partway through (found 2026-09-29)"
+
+[elimination.GKO-RUNNING-KEY-SEARCH]
+scope_limitations = "Anything that depends on the real K2 text: this script used its own copy, which departs from the real text partway through (found 2026-09-29)"
+
+[elimination.E-TOP3-MASK-CIPHER-ATTACK]
+scope_limitations = "Anything that depends on the real K1 text: this script used its own copy, which departs from the real text partway through (found 2026-09-29)"
+
+[elimination.E-NULL-ARITHMETIC-CENSUS]
+scope_limitations = "Any arrangement of filler letters other than the proposed 17-position mask assumed here, which was withdrawn in April 2026 as a selection artifact"
+
+[elimination."Brute-force 7 remaining null positions (consensus 17 fixed)"]
+scope_limitations = "Any arrangement of filler letters other than the proposed 17-position mask assumed here, which was withdrawn in April 2026 as a selection artifact"
+
+[elimination.E-NDYAHR-COUPLING-01]
+scope_limitations = "Any arrangement of filler letters other than the proposed 17-position mask assumed here, which was withdrawn in April 2026 as a selection artifact"
+
+[elimination.E-NULL-SEQ-KEY]
+scope_limitations = "Key material other than the sequence read off the proposed 17-position filler mask, which was withdrawn in April 2026 as a selection artifact"
+
+[elimination.89f255c3676b]
+title = "Coordinate-style key '3817N7709W' as vigenere (labelled CIA HQ, but HQ is near 38°57′N, not 38°17′N)"
+description = "The key tested was the string '3817N7709W'. It was meant as the CIA headquarters position, but the latitude is wrong: the headquarters, where Kryptos stands, is at about 38°57′N 77°09′W."
+
+[elimination.e27f2faa0001]
+title = "Coordinate-style key '3817N7709W' as beaufort (labelled CIA HQ, but HQ is near 38°57′N, not 38°17′N)"
+description = "The key tested was the string '3817N7709W'. It was meant as the CIA headquarters position, but the latitude is wrong: the headquarters, where Kryptos stands, is at about 38°57′N 77°09′W."
+
+[elimination.08bf4f760b4d]
+title = "Coordinate-style key '3817N7709W' as var_beaufort (labelled CIA HQ, but HQ is near 38°57′N, not 38°17′N)"
+description = "The key tested was the string '3817N7709W'. It was meant as the CIA headquarters position, but the latitude is wrong: the headquarters, where Kryptos stands, is at about 38°57′N 77°09′W."
+
+[elimination.62ba33978729]
+title = "Coordinate key '385709N0770706W' as vigenere (close to, not exactly, K2's 38°57′6.5″N 77°8′44″W)"
+description = "The key tested was the string '385709N0770706W'. It is close to, but not the same as, the position in K2's plaintext (38°57′6.5″N 77°8′44″W)."
+
+[elimination.0e12ec6dd388]
+title = "Coordinate key '385709N0770706W' as beaufort (close to, not exactly, K2's 38°57′6.5″N 77°8′44″W)"
+description = "The key tested was the string '385709N0770706W'. It is close to, but not the same as, the position in K2's plaintext (38°57′6.5″N 77°8′44″W)."
+
+[elimination.936b0e438628]
+title = "Coordinate key '385709N0770706W' as var_beaufort (close to, not exactly, K2's 38°57′6.5″N 77°8′44″W)"
+description = "The key tested was the string '385709N0770706W'. It is close to, but not the same as, the position in K2's plaintext (38°57′6.5″N 77°8′44″W)."

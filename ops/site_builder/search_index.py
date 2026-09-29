@@ -24,7 +24,7 @@ def build_search_documents(eliminations: list[SiteElimination]) -> list[dict]:
             "transposition_family": elim.transposition_family,
             "keywords_tested": " ".join(elim.keywords_tested),
             "verdict": elim.verdict,
-            "best_score": str(elim.best_score),
+            "best_score": str(elim.best_score) if elim.best_score is not None else None,
             "configs_tested": str(elim.configs_tested),
             "experiment_id": elim.id,
         }

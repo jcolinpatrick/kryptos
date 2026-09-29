@@ -9,6 +9,19 @@ Best score:
 """
 """E-TABLEAU-20: K3-Method Extension — Thematic Keywords at Bean-Surviving Periods
 
+ERRATUM 2026-09-29 (see docs/audits/kryptos_text_integrity_audit_2026_09_29.md, section 2):
+- The "K3 method" line below is WRONG. K3 is a pure transposition with no
+  substitution: an unkeyed double rotation (8 rows of 42, then 24 rows of 14,
+  columns read bottom to top), i.e. PT[i] = CT[(191 + 192*i) mod 337]. This
+  experiment is therefore NOT a test of K3's method; it tests width-8/13
+  columnar with specific keywords at periods 8 and 13.
+- The E-FRAC-35 "proof" cited below was RETRACTED on 2026-08-24 (Bean frame
+  error), so the "Bean-surviving periods" restriction has no valid basis.
+- check_bean() applies the frozen canonical BEAN_EQ/BEAN_INEQ sets to a key
+  read through the transposition; scripts/audit/audit_bean_frame_static.py
+  flags this script for it. Those sets are frame-bound, so any configuration
+  it rejected on Bean grounds was not validly rejected (CLAUDE.md Key Gotchas).
+
 Tests K4 as a K3-style compound cipher (transposition + Vigenère/Beaufort)
 using thematic keywords at Bean-surviving periods.
 

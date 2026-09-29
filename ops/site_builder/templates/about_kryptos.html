@@ -1,10 +1,28 @@
 {% extends "base.html" %}
+{% from "_macros.html" import section_bars, position_strip, tableau_figure %}
 {% block title %}About Kryptos &amp; Jim Sanborn | kryptosbot.com{% endblock %}
 {% block page_path %}/about-kryptos/{% endblock %}
 {% block meta_description %}The story of Kryptos, Jim Sanborn's encrypted sculpture at CIA headquarters, and its unsolved final section, K4.{% endblock %}
 
 {% block content %}
 <h1>About Kryptos &amp; Jim Sanborn</h1>
+
+<figure class="fig fig-photo">
+  <picture>
+    <source srcset="/static/photos/kryptos-courtyard.webp" type="image/webp">
+    <img src="/static/photos/kryptos-courtyard.jpg"
+         alt="The Kryptos sculpture in the CIA courtyard: a tall S-curved copper screen, weathered to green patina, with thousands of capital letters cut clean through it. The left half carries the four encrypted messages; the right half carries a mirrored alphabet chart. A petrified tree trunk stands at the left edge and slabs of red granite lie in front."
+         width="1147" height="942" loading="eager" decoding="async">
+  </picture>
+  <figcaption class="fig-caption">
+    <em>Kryptos</em> (1990), in the courtyard of the CIA&rsquo;s New Headquarters
+    Building, Langley, Virginia. The letters are cut clean through the copper, so
+    the sculpture is legible from either side and throws its own text across the
+    paving in sunlight. The left half of the screen holds the four encrypted
+    messages; <code>OBKR</code>, the opening of K4, follows a carved question mark
+    on the lower left panel.
+  </figcaption>
+</figure>
 
 <section>
   <h2>The Sculpture</h2>
@@ -16,17 +34,88 @@
     cryptographic consultation from <strong>Ed Scheidt</strong>, retired Chairman of the CIA Cryptographic Center.
   </p>
   <p>
-    The sculpture consists of a large S-shaped copper screen inscribed with four
-    encrypted messages, set between a petrified tree and a pool of water, surrounded
-    by granite slabs bearing a Vigen&egrave;re tableau and other encoded elements.
-    It is widely considered one of the most famous unsolved codes in the world.
+    The sculpture is a large S-shaped copper screen, supported by a petrified tree
+    and curving around a bubbling pool of water. Its left half carries four encrypted
+    messages; its right half carries the alphabet chart used to encrypt K1 and K2,
+    deliberately mirrored so that it reads only from behind the piece. The screen is
+    the centerpiece of a two-part work. At the entrance to the New Headquarters
+    Building, tilted slabs of red granite flank the walkway, with copper sheets
+    carrying International Morse code laid between the stone layers, and a lodestone
+    sits beside a compass rose. In the courtyard, across from the screen, a
+    reflective pool lies between layered slabs of granite.
   </p>
   <p>
-    Three of the four messages (K1, K2, and K3) were solved by CIA analyst
-    David Stein (1998, classified at the time) and, independently, by computer
-    scientist Jim Gillogly (1999). The fourth
-    section (<strong>K4</strong>, just 97 characters) has resisted all
-    attempts at solution for over 35 years.
+    Three of the four messages were first solved in late 1992 by a small NSA team,
+    a result the agency did not make public until 2000. CIA analyst David Stein
+    solved them independently in 1998, classified at the time, and computer scientist
+    Jim Gillogly did the same in 1999, the first to announce a solution publicly. The
+    fourth has resisted every attempt to decipher it since.
+  </p>
+
+  {{ section_bars(k4_sections) }}
+  <p class="fig-caption">
+    Bar widths are the real character counts. K4 is 97 characters, second
+    shortest after K1, and the only one whose plaintext has not been published. Its shortness is part of
+    the difficulty: there is very little text to get statistical purchase on.
+    The counts above are ciphertext <em>letters</em>, and they total 865. The
+    screen also carries four question marks, which is why the text as a whole is
+    usually quoted as 869 characters.
+  </p>
+</section>
+
+<section>
+  <h2>How the cipher works</h2>
+  <p>
+    Sanborn did not hide the chart. He carved it into the sculpture. The right-hand
+    half of the copper screen is an alphabet chart of the kind published by the
+    16th-century French cryptographer Blaise de Vigen&egrave;re, and the CIA&rsquo;s
+    own description of the piece says the artist used that chart, &ldquo;in
+    combination with matrix coding systems,&rdquo; to encipher the first three
+    messages. The chart is mirror-reversed, so it can only be read from behind the
+    screen.
+  </p>
+
+  <figure class="fig fig-photo fig-photo-portrait">
+    <picture>
+      <source srcset="/static/photos/kryptos-tableau.webp" type="image/webp">
+      <img src="/static/photos/kryptos-tableau.jpg"
+           alt="Close view of the right-hand half of the Kryptos screen, seen from behind. Twenty-six rows of capital letters are cut through the green copper. The row beginning with A reads KRYPTOSABCDEF, and each row below it begins one letter further along the same sequence."
+           width="867" height="1515" loading="lazy" decoding="async">
+    </picture>
+    <figcaption class="fig-caption">
+      The chart on the sculpture, photographed from behind, where it reads the right
+      way round. The row labelled <code>A</code> begins <code>KRYPTOS</code>; every
+      row below it is the same alphabet shifted one place further along. This is the
+      table the cipher is looked up in.
+    </figcaption>
+  </figure>
+
+  <p>
+    It works as a lookup table: plaintext letter along the top, key letter down the
+    side, ciphertext letter where the two meet. The alphabet is not A to Z. It
+    starts with <code>KRYPTOS</code> and then runs through the letters that keyword
+    has not already used, which is why the top row of the chart below reads
+    <code>{{ tableau.alphabet }}</code>, and the row labelled A on the sculpture
+    begins with the same sequence.
+  </p>
+
+  {{ tableau_figure(tableau,
+     label='The eight rows K1 uses',
+     caption='K1 repeats the cycleword PALIMPSEST, so only the eight rows named by its
+              distinct letters are ever consulted. The other eighteen rows of the
+              chart go unused for the whole of K1. K2 works identically with
+              ABSCISSA. K3 is not this cipher at all: it is a transposition, which
+              moves letters rather than replacing them, so its ciphertext uses exactly
+              the letters of its plaintext, rearranged.') }}
+
+  <p class="fig-caption">
+    A note on names. Cryptanalysts file this particular arrangement under
+    <em>Quagmire III</em>, a label from the American Cryptogram Association&rsquo;s
+    classification scheme. It is a useful term for searching the literature, and you
+    will meet it everywhere in the K4 community, but it is the solvers&rsquo; word
+    rather than the sculpture&rsquo;s. Sanborn and the CIA both describe the piece
+    in plainer terms, as a Vigen&egrave;re chart, and this site
+    follows them.
   </p>
 </section>
 
@@ -35,50 +124,72 @@
   <p>
     Jim Sanborn is an American sculptor whose career spans five decades. His work
     explores the intersection of science, nature, and secrecy, from uranium-ore
-    installations to lodestone compass pieces to encrypted texts embedded in
+    photographs to lodestone compass pieces to encrypted texts embedded in
     stone and copper. Kryptos is his most widely known work, but it represents
     one facet of a deeply considered artistic practice.
   </p>
   <p>
-    Sanborn conceived Kryptos not as a puzzle but as a layered meditation on
-    the nature of intelligence, hidden knowledge, and the act of discovery itself.
-    He spent two and a half years hand-cutting the letters with 20 assistants,
-    going through 900 jigsaw blades in the process. He composed the plaintext
-    himself (deliberately cryptic prose that &ldquo;alludes to things beyond
-    Kryptos&rdquo;) so that as few people as possible would know its contents.
+    The CIA gives the sculpture&rsquo;s theme as &ldquo;intelligence gathering&rdquo;,
+    and says Sanborn chose to interpret it in terms of how information is accrued
+    throughout the ages. The letters were cut by hand with jigsaws: by
+    Sanborn&rsquo;s own written account, the chart plates alone took eight months,
+    twenty assistants, nine jigsaws and nine hundred blades. He wrote the plaintext
+    himself, as enigmatic prose (K3 paraphrases Howard Carter&rsquo;s account of
+    opening Tutankhamun&rsquo;s tomb). He had once thought of asking a well-known
+    novelist to contribute, but came to see that the fewer people who knew the
+    text, the better.
   </p>
   <p>
-    Sanborn has spent over 35 years as the sole keeper of K4&rsquo;s
-    secret, patiently fielding thousands of inquiries from amateur and
-    professional cryptanalysts, releasing periodic clues to sustain interest, and
-    maintaining an extraordinary discipline in never revealing more than he
-    intends.
+    For 35 years, from the 1990 dedication until 2025, Sanborn kept K4&rsquo;s
+    secret himself. He fielded thousands of inquiries from amateur and professional
+    cryptanalysts and released periodic clues to sustain interest, while revealing
+    little about the method. That is the part of the achievement that is easiest to
+    overlook and hardest to imitate. Designing a cipher is a season&rsquo;s work;
+    keeping one for three and a half decades, in public, under sustained and often
+    ingenious pressure, is something else entirely.
+  </p>
+  <p>
+    In September 2025 the writers Jarett Kobek and Richard Byrne found scrambled
+    strips of K4&rsquo;s plaintext among Sanborn&rsquo;s papers at the
+    Smithsonian&rsquo;s Archives of American Art. Sanborn confirmed them, said they
+    had been included by mistake, and the files were sealed. On November 20, 2025 he
+    sold his Kryptos archive, including the K4 solution and his coding charts; in
+    June 2026 the buyer was revealed as Paradigm. As of
+    September 2026 no verified K4 plaintext has been made public.
   </p>
 </section>
 
 <section>
-  <h2>Acknowledgment</h2>
+  <h2>With thanks to Jim Sanborn</h2>
   <p>
-    This site exists because of Jim Sanborn&rsquo;s work. Kryptos is a singular
-    achievement, a work of art that has captivated cryptographers,
-    intelligence professionals, and amateur codebreakers for over three decades.
-    The K4 community owes its existence to his vision and craftsmanship.
+    Kryptos is Jim Sanborn&rsquo;s work, and everything on this site is downstream
+    of it. He made something genuinely new: a work of art that is also a real
+    cryptographic problem, built to outlast the people who came to look at it. It
+    has held up for more than 35 years against some of the most capable
+    cryptanalysts in the world, professional and amateur alike, and it is still
+    beautiful to stand in front of.
   </p>
   <p>
-    This site is a computational research tool: it can tell you whether a
-    particular cipher method has already been tested and failed within a recorded scope, but it cannot
-    replace the insight of the artist who designed the encryption.
+    He has also been remarkably generous. For decades he has answered letters and
+    emails from strangers, sat for interviews, corrected the record when the record
+    needed correcting, released clues when interest flagged, and treated a very
+    large number of persistent people with patience and good humour. None of that
+    was required of him. An artist would have been well within their rights to
+    install the piece, say nothing further, and let the world make of it what it
+    would. He did the opposite, and the whole community that has grown up around
+    Kryptos exists because of that choice.
   </p>
   <p>
-    To learn more about Jim Sanborn and his broader body of work, visit
-    <a href="https://jimsanborn.net">jimsanborn.net</a>.
+    We are grateful for both the puzzle and the generosity. His own site is
+    <a href="https://jimsanborn.net/">jimsanborn.net</a>, and his broader body of
+    work rewards the visit.
   </p>
 </section>
 
 <section>
   <h2>What This Site Is (and Isn&rsquo;t)</h2>
   <p>
-    <strong>kryptosbot.com</strong> is an open-source elimination database. It
+    <strong>kryptosbot.com</strong> is a public elimination database. It
     documents what has been <em>tested</em>, what has been ruled out within
     bounded assumptions, and which claims were later retired, so that the K4
     community can focus its energy on genuinely open approaches rather than
@@ -87,39 +198,63 @@
   <p>
     This site does not claim to be close to solving K4. It has no access to
     private information and is not affiliated with Jim Sanborn, Ed Scheidt, the
-    CIA, the Smithsonian Institution, or the Kryptos Keepers (custodians of
-    the official solution). Every result published here is reproducible
-    from the <a href="https://github.com/jcolinpatrick/kryptos">open-source codebase</a>.
+    CIA, the Smithsonian Institution, or Paradigm Operations LP. Results
+    published here come from the project&rsquo;s own code, in its
+    <a href="https://github.com/jcolinpatrick/kryptos">public codebase on GitHub</a>.
+    That public repository can lag behind this site, and some scripts read reference
+    texts that are not published there, so not every result can yet be re-run from
+    it alone.
   </p>
 </section>
 
 <section>
   <h2>Related Works by Sanborn</h2>
   <p>
-    <strong>Antipodes</strong> (1999): A sister sculpture at the Hirshhorn
-    Museum (Smithsonian) in Washington, D.C. Two copper scrolls attached to
-    petrified wood, repeating elements of the Kryptos text with deliberate
-    differences. Sanborn has stated there is &ldquo;one clue&rdquo; on Kryptos
-    that is not on Antipodes. The Hirshhorn piece is publicly accessible without
-    security clearance.
+    <strong>Antipodes</strong> (1997): A sister sculpture at the Hirshhorn
+    Museum (Smithsonian) in Washington, D.C. Two curved copper scrolls attached to
+    petrified wood. One repeats the Kryptos ciphertext in a different order (K3, K4,
+    K1, K2, then partly repeated), with small differences in spacing, dots and
+    letters, one of which corrects the K2 error that reads UNDERGRUUND on Kryptos;
+    the other carries Cyrillic text. Community accounts report Sanborn saying there
+    is one clue on Kryptos that is not on Antipodes; we have not found a primary
+    source for the remark. Unlike Kryptos, it belongs to a public museum, so no
+    security clearance is needed to see it when it is on view.
   </p>
   <p>
-    <strong>Cyrillic Projector</strong> (1997): An installation at the
-    University of North Carolina at Charlotte. A bronze cylinder with Cyrillic text
-    cut through its walls, using a Vigen&egrave;re cipher with the keyword
-    <em>ТЕНЬ</em> (Russian for &ldquo;shadow&rdquo;). The encrypted content includes
-    KGB documents about Andrei Sakharov and Boris Pasternak. Solved in 2003 by
+    On <em>Antipodes</em> the K4 passage, beginning
+    <code>OBKRUOXOGHULBSOLIFBBWFLRVQQPRNGKSS</code>, has the same 97 letters as K4 on Kryptos.
+  </p>
+  <p>
+    <strong>Cyrillic Projector</strong> (early 1990s): An installation at the
+    University of North Carolina at Charlotte, which bought it in 1997. A bronze cylinder with Cyrillic text
+    cut through its walls, enciphered with a Vigen&egrave;re chart whose alphabet
+    begins with <em>ТЕНЬ</em> (Russian for &ldquo;shadow&rdquo;); the repeating key
+    is reported to be <em>МЕДУЗА</em> (&ldquo;Medusa&rdquo;). The decrypted text is in Russian:
+    instructions on using psychological control to develop and keep sources of
+    information, and part of a classified KGB memo about the dissident Andrei Sakharov. Solved in 2003 by
     Frank Corr and Mike Bales. Sanborn&rsquo;s working charts for this piece
     (preserved at the Smithsonian) reveal a multi-step encoding process
-    (letters to Morse code to binary numbers) used to control the cutting tool,
-    confirming his familiarity with Morse code as a working tool. We tested
+    (letters to Morse code to binary numbers). We tested
     this same encoding process on K4 and it didn&rsquo;t produce any matches,
     though it can&rsquo;t be entirely ruled out as one layer of a more complex scheme.
   </p>
 </section>
 
 <hr>
+<p class="fig-caption">
+  <strong>Images.</strong> <em>Kryptos</em> is copyright Jim Sanborn. The two
+  photographs on this page are reproduced for commentary and education on a
+  non-commercial research site. Both come from the community photo record of the
+  sculpture that has circulated publicly for two decades, much of it gathered at
+  <a href="https://kryptosfan.wordpress.com/" rel="nofollow">kryptosfan</a>. The
+  original photographers are not recorded in the copies we hold and we would like
+  to credit them properly. If you took one of these pictures, or hold rights in any
+  image here, <a href="mailto:contact@kryptosbot.com">write to us</a> and it will be
+  credited or removed the same day, whichever you prefer.
+</p>
+
 <p>
+  <a href="/encoding-chart/">Sanborn&rsquo;s K1/K2 encoding chart, examined &rarr;</a> &middot;
   <a href="/about-me/">About this project &amp; contributors &rarr;</a> &middot;
   <a href="/faq/">FAQ &rarr;</a>
 </p>

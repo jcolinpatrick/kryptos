@@ -1,5 +1,55 @@
 # Elimination Confidence Tiers
 
+> ## ⚠ RETRACTION BANNER — 2026-08-24 — BEAN FRAME ERROR
+>
+> **A systemic defect invalidates a set of the transposition-bearing eliminations
+> recorded in this document. Do not cite the affected rows as proof.**
+>
+> The frozen `BEAN_EQ` / `BEAN_INEQ` / `BEAN_LINEAR` sets are produced by
+> `derive_bean_constraints(ct, crib_dict, ...)`, which reads `ct[p]` at each
+> canonical crib position and pairs it with `crib_dict[p]`. They are therefore a
+> property of **that pairing**. Any layer that MOVES crib coordinates
+> (transposition, route, permutation, grille, renumbering mask) means the implied
+> keystream comes from a different CT/PT pairing, so applying the frozen sets is a
+> frame error and every resulting "Bean failure" is a **false rejection**.
+>
+> **21 scripts confirmed** after adversarial review; **18 were recorded as
+> exhausted** and have been reopened in `exhaustion_log.json`.
+>
+> Specifically retracted here:
+>
+> | Claim | Status |
+> |---|---|
+> | **E-FRAC-35 universal period proof** (rows 24, 205; Weltzeituhr row 133) | **RETIRED.** Falsified by constructive counterexample. `inv_perm` is free, so period 2 admits **267** valid key pairs (e.g. key `(0,1)`). The derived `BEAN_SURVIVING = {8,13,16,19,20,23,24,26}` doctrine falls with it, along with the pruning it imposed on at least six downstream campaigns. |
+> | **E-FRAC-26/27 widths 5 & 7 "ZERO Bean passes"** (rows 8, 83, 84) | **DISPUTED.** The gate rejects configurations that provably recover all 24 cribs; it admitted 0/120 and 0/5040 orderings, so nothing was tested. Survives only for inner periods dividing 38, i.e. {1, 2, 19}. |
+> | **C-BEAN-01 / w4,6,8,9 columnar + additive** (rows 95, 96) | **DISPUTED.** `f_final_checklist_c1_c2` scanned **0** offsets; `f_archive_col_notation_v1` w4 gives **72/72 PASS** when Bean is re-derived, against a recorded 0/72. |
+> | **AMSCO/Nihilist/Swapped w8-13** (row 92) | **REWORDED, conclusion UPHELD.** The "ZERO Bean passes / structurally Bean-incompatible" wording is vacuous (frozen Bean applied in the transposed frame) and is retired. The elimination stands on the attainable-crib ceiling instead: 16/24 at periods 8-10, 23/24 at period 24, reaching 24 only at p=25/26. Verified over 561,280 permutations; w8 exhaustive, w9-13 sampled 20k. See `scripts/audit/audit_sbp015_amsco_recheck.py`. |
+> | **E-FRAC-52 three-layer** (rows 39, 108) | **DISPUTED.** Only 1.32% of its own declared model space was evaluated. |
+> | **E-FRAC-53 mono inner** (rows 45, 109) | **PARTIAL.** p10-p12 retracted (943 genuine solutions recorded as zero); **the p3-p7 core survives and is strengthened**. |
+> | **E-FRAC-55 Bean-surviving period gap** (row 123) | **DISPUTED.** Its Phase-1 gate discarded 95.8% of orderings. |
+>
+> **Transfer conditions.** `BEAN_EQ` (k[27]==k[65], gap 38 = 2x19) transfers across
+> a transposition **iff the inner period divides 38**. `BEAN_INEQ` and
+> `BEAN_LINEAR` **do not transfer at all**.
+>
+> **Unaffected and standing:** E-FRAC-46 (double columnar), E-FRAC-47 (Myszkowski),
+> `f_sub_columnar_pilot` (the peel order that got the frame right), and all
+> score-based results that never gate on the frozen sets.
+>
+> Standing guard: `scripts/audit/audit_bean_frame_static.py` (a screen, 94% recall,
+> blind to the no-CT-read variant). Retraction evidence:
+> `scripts/audit/audit_bean_equality_frame_transfer.py`.
+
+> ## Correction block 2026-09-29 (prior-work audit)
+>
+> See `docs/audits/kryptos_text_integrity_audit_2026_09_29.md` for evidence. Affected rows are annotated inline.
+>
+> | Claim | Status |
+> |---|---|
+> | **Gromark / Vimark ELIMINATED** (Tier 2 rows "Gromark / Vimark" and "Additive mask + Vimark p=5") | **PARTIAL.** "Vimark is periodic" is false and E-FRAC-35 is retracted. What stands: ACA-standard Gromark (straight plain alphabet) is impossible under direct alignment for key values in 0..10 [DERIVED FACT: CT P encrypts PT R at 27 and PT C at 72, forcing k72 - k27 = 15 or -11]; the JTS linear-algebra result for fixed-alphabet Vimark under columnar and strip transpositions stands within its own scope. Gromark with keyed alphabets on both sides is open in the repo record. |
+> | **E-TABLEAU-20 "K3-method" keywords** (rows citing E-TABLEAU-20) | **MISLABELLED.** K3 is an unkeyed double rotation with no substitution, PT[i] = CT[(191 + 192*i) mod 337], not "Columnar(7, KRYPTOS) then Vigenere(PALIMPSEST)". E-TABLEAU-20 tested width-8/13 columnar with specific keywords at periods 8 and 13; its period choice came from the retracted E-FRAC-35 and its Bean gate is flagged by `audit_bean_frame_static.py`. |
+> | **Running key from K1-K3 texts** (Tier 2 row "Running Key (K1-K3 as keystream)") | **CONCLUSION STANDS, EVIDENCE REPLACED.** 57 scripts embed invented K1-K3 texts that diverge from the real ones after 20-60 letters (guard: `scripts/audit/audit_kryptos_text_integrity.py`). The null was re-derived on verified texts on 2026-09-29 (best 8/24, matched-null level); those scripts are not yet imported. |
+
 **CRITICAL FRAMING:** Every exhaustive-search elimination in this project was conducted under the assumption of **direct positional correspondence** — meaning CT position N maps to PT position N with no transposition. The primary hypothesis (H1) is that a transposition layer exists, which means **the substitution families below have NOT been tested in their correct context as one layer of a multi-layer system.** Multi-layer testing was completed across 250+ experiments (see `reports/final_synthesis.md`).
 
 **FRAC AGENT STATUS (2026-02-21, FINAL):** The FRAC agent has completed 55 experiments (E-FRAC-01 through E-FRAC-55). Mandate COMPLETE + running key gap closure + English key detection + three-layer model + mono inner layer + mono running key underdetermination + Bean-surviving period gap closed. Key results that affect this document:
@@ -23,7 +73,7 @@
 - Recommended JTS thresholds: crib=24 + Bean + quadgram > -5.0 + IC > 0.055 + word ≥6 chars
 - **Bean impossibility proof (E-FRAC-35):** ALL periods 2-12, 14, 15, 17, 18, 21, 22, 25 eliminated for ANY transposition + periodic key. Only 8 of 25 periods (2-26) survive: {8, 13, 16, 19, 20, 23, 24, 26}. This is a UNIVERSAL PROOF holding for all 97! permutations.
 - **Bean-surviving period validation (E-FRAC-36):** Hill-climbing at periods 8 and 13 (first two Bean-surviving periods) with Bean as HARD constraint. 175 false 24/24+Bean solutions found; ALL have quadgram < -5.0/char (best: -6.171). Multi-objective oracle discriminates at Bean-surviving periods too.
-- **Autokey structural elimination (E-FRAC-37):** Autokey (PT/CT × Vig/Beau) + arbitrary transposition CANNOT reach 24/24. PT-autokey max=16/24, CT-autokey max=21/24. Autokey is MORE constrained than periodic keying. This is a structural elimination, not just noise.
+- **Autokey structural elimination (E-FRAC-37) — RESCOPED 2026-08-25:** Autokey (PT/CT × Vig/Beau) + arbitrary transposition cannot reach 24/24 **for primer length ≤ 25**. [RESCOPED 2026-08-25, e_crib_35_autokey_peel_correction] The original result covered only the substitution-outer peel. In the transposition-outer peel, CT = Transpose(Autokey(PT)), PT[q] depends only on primer[q mod m] and the crib problem separates exactly. Measured: CT-autokey max 7/24 over 75 transpositions (STRONGER than the registered 21/24, elimination holds). PT-autokey max 23/24 for primer <= 25 (elimination holds) but 24/24 AT PRIMER 26, where 26 free letters face 24 cribs in 23 residue classes. So 'cannot reach 24/24' is FALSE at primer 26 and the permanent classification is rescoped to primer <= 25. The primer-26 case is UNDERDETERMINED, not a lead. The figure 'PT-autokey max=16/24' was wrong.
 - **Comprehensive key model Bean analysis (E-FRAC-38):** Progressive key BEAN-ELIMINATED (δ∈{0,13} only). Quadratic key BEAN-ELIMINATED (0/676 survive full Bean). Fibonacci key BEAN-ELIMINATED (0/676 survive). Running key is the only structured model surviving Bean constraints under additive-key assumptions (Level A).
 - **Running key + structured columnar: ELIMINATED for known reference texts** (E-FRAC-49)
   - Widths 6, 8, 9 exhaustive: 16,597 Bean-passing configs × 7 texts × 3 variants, 8.4B checks, ZERO matches
@@ -97,7 +147,7 @@ A claim of running-key-source-independence at widths {w} therefore eliminates *"
 | **Progressive key (k[i]=k[0]+iδ) + ANY transposition** | **BEAN-ELIMINATED: 38δ ≡ 0 (mod 26) → δ ∈ {0,13}. δ=0 is mono (trivial). δ=13 ≈ period-2 (Bean-eliminated by E-FRAC-35).** | **Requires Bean constraint (E-FRAC-38)** |
 | **Quadratic key (k[i]=ai²+bi+c) + ANY transposition** | **BEAN-ELIMINATED: 0/676 (a,b) pairs survive full Bean inequalities.** | **Requires Bean constraint (E-FRAC-38)** |
 | **Fibonacci key + ANY transposition** | **BEAN-ELIMINATED: 0/676 seeds survive full Bean inequalities.** | **Requires Bean constraint (E-FRAC-38)** |
-| **Autokey (PT/CT) + arbitrary transposition** | **STRUCTURAL: Cannot reach 24/24 cribs. PT-autokey max=16/24, CT-autokey max=21/24. More constrained than periodic.** | **Requires cribs (E-FRAC-37)** |
+| **Autokey (PT/CT) + arbitrary transposition** | **STRUCTURAL, RESCOPED 2026-08-25: cannot reach 24/24 for primer ≤ 25. CT-autokey max 7/24 (both peels). PT-autokey max 23/24 at primer 25, but 24/24 at primer 26 in the transposition-outer peel — underdetermined, not a lead.** | **Requires cribs (E-FRAC-37 + e_crib_35)** |
 | **Columnar (ANY width) + period-13 substitution** | **STRUCTURAL: P(all 11 mod-13 residues match) ≈ 2.5×10⁻¹⁶ per ordering. 61.5M configs across widths 2-48, ZERO hits. Width=period=13 proven algebraically impossible (backtracking: zero solutions).** | **Requires cribs and CT correctness (E-D13-COLUMNAR-ALL, 2026-03-11)** |
 | **Null mask (any 24 positions) + periodic sub (p=1-23)** | **ALGEBRAIC PROOF: Consistency depends only on (n1,n2,n3) = null counts in 3 crib segments. All ~325 valid triples fail at periods 1-23. 550K random masks confirm. Only p=24-26 survive (underdetermined).** | **Requires cribs and CT correctness (E-NULLMASK-PERIODIC, 2026-03-11)** |
 | **Null mask + periodic Beaufort (sliding crib window, p=1-8)** | **ADMISSIBILITY PROOF: All 44,400 (ene_start × bcl_start × period 1-8) CSPs formally UNSAT via `f_null_beaufort_exhaustive_v1.py` admissibility framework. Extends E-NULLMASK-PERIODIC to the sliding-crib-window framing (cribs not fixed at canonical positions). `phase2_verdict: formal_unsat`, `phase2_is_exact: true`.** | **Requires cribs and CT correctness (E-NULLMASK-BEAUFORT-ADMISSIBILITY, 2026-04-08). Certificate: `results/admissibility_elimination_v1/null_beaufort_phase2.json`** |
@@ -122,16 +172,16 @@ These eliminations are solid FOR THEIR SPECIFIC MODEL: "Is K4 cipher family X ap
 |--------|---------------|-----------|----------------------|--------------------------|
 | Vigenère (periodic, all variants) | ~3 billion | 14/24 | ELIMINATED | **ELIMINATED — periodic key at ALL transpositions: p2-7 Bean-impossible (E-FRAC-35 proof), p8+ noise/underdetermined (E-FRAC-55). ALL structured transposition families exhaustively tested (FRAC/TRANS/JTS: columnar w5-15, simple families, double columnar, Myszkowski, AMSCO, strip, grid reads). OPEN only for running key model (non-periodic).** |
 | Beaufort / Variant Beaufort | ~500 million | 14/24 | ELIMINATED | **ELIMINATED — same as Vigenère (E-FRAC-35 proof is variant-independent). OPEN only for running key model.** |
-| Gromark / Vimark (p=4–7) | ~12 million | 14/24 | ELIMINATED | **ELIMINATED — Vimark is periodic/linear recurrence. E-FRAC-35 covers periods 2-7. JTS linear algebra (E-JTS-08/11) proves ZERO consistent Vimark primers for columnar AND strip transpositions at ALL periods 2-13. E-FRAC-38 eliminates Fibonacci/progressive/quadratic recurrence keys via Bean.** |
+| Gromark / Vimark (p=4–7) | ~12 million | 14/24 | PARTIAL (see 2026-09-29 correction block) | *[2026-09-29: the reasoning below is not valid support; see the correction block.]* **ELIMINATED — Vimark is periodic/linear recurrence. E-FRAC-35 covers periods 2-7. JTS linear algebra (E-JTS-08/11) proves ZERO consistent Vimark primers for columnar AND strip transpositions at ALL periods 2-13. E-FRAC-38 eliminates Fibonacci/progressive/quadratic recurrence keys via Bean.** |
 | Quagmire I/II/III/IV | ~2 million | 17/24 (artifact) | ELIMINATED | **ELIMINATED — Quagmire uses periodic keyed-alphabet lookup. E-FRAC-35 covers periodic keying at p2-7 for ANY polyalphabetic cipher. E-TABLEAU-21 tested KA/PAL/ABS keyed alphabets + columnar + running key: ZERO in English range. JTS E-JTS-13 tested Quagmire variants + structured transpositions.** |
 | Bifid / Playfair / Four-Square / Two-Square | ~4.9 billion | 11/24 | ELIMINATED | **STRUCTURALLY ELIMINATED** (E-FRAC-21: parity + alphabet proofs hold with or without transposition) |
 | Nihilist | ~4.9 billion | 11/24 | ELIMINATED | **ELIMINATED — Nihilist substitution is periodic polyalphabetic. E-FRAC-35 covers p2-7 for ANY transposition. Nihilist transposition tested at w8-13: 0% Bean pass rate, structurally incompatible (E-FRAC-48).** |
-| Autokey (PT and CT) | ~50,000 | 6/24 | ELIMINATED | **STRUCTURALLY ELIMINATED** (E-FRAC-37: cannot reach 24/24 even with arbitrary transposition; PT max=16/24, CT max=21/24) |
-| Running Key (K1–K3 as keystream) | ~45,000 | 7/24 | ELIMINATED | **ELIMINATED for known texts + structured transpositions** (E-FRAC-49/50: columnar w6/8/9, affine, cyclic, double columnar × 7 reference texts × 3 variants = 0 matches out of 17B checks). **ELIMINATED for unknown English text + columnar** (E-FRAC-51: 0/16,597 in English range). **ELIMINATED for K1/K2/K3 as key** (E-JTS-12: 0 matches). **ELIMINATED for KA/PAL/ABS alphabets** (E-TABLEAU-21). **STRENGTHENED 2026-04-08 (certificate §4-5):** at columnar widths 4/6/8/9 the elimination is running-key-source-independent *within the analyzed class* (carved CT, direct positional crib mapping, additive Vig/Beau/VarBeau) — under the full 242-inequality Bean constraint, ZERO of 1,211,760 (ordering, variant) pairs at w6/8/9 (plus 72 at w4) admit a Bean-consistent keystream, so no running-key source text can produce a solution in that class. **Does NOT eliminate**: non-columnar transpositions, columnar widths outside {4,6,8,9}, non-additive keystreams, or composed ciphers where an outer layer precedes the columnar step. See AUDIT-1 (closed 2026-04-09) in `docs/methodological_audits.md`. |
+| Autokey (PT and CT) | ~50,000 | 6/24 | ELIMINATED (primer ≤ 25) | **STRUCTURALLY ELIMINATED for primer ≤ 25** (E-FRAC-37, rescoped by e_crib_35: CT-autokey max 7/24; PT-autokey max 23/24 at primer 25, reaching 24/24 only at primer 26 where the model is underdetermined) |
+| Running Key (K1–K3 as keystream) | ~45,000 | 7/24 | ELIMINATED *[2026-09-29: several source scripts used invented K1-K3 texts; conclusion re-derived on verified texts, see correction block]* | **ELIMINATED for known texts + structured transpositions** (E-FRAC-49/50: columnar w6/8/9, affine, cyclic, double columnar × 7 reference texts × 3 variants = 0 matches out of 17B checks). **ELIMINATED for unknown English text + columnar** (E-FRAC-51: 0/16,597 in English range). **ELIMINATED for K1/K2/K3 as key** (E-JTS-12: 0 matches). **ELIMINATED for KA/PAL/ABS alphabets** (E-TABLEAU-21). **STRENGTHENED 2026-04-08 (certificate §4-5):** at columnar widths 4/6/8/9 the elimination is running-key-source-independent *within the analyzed class* (carved CT, direct positional crib mapping, additive Vig/Beau/VarBeau) — under the full 242-inequality Bean constraint, ZERO of 1,211,760 (ordering, variant) pairs at w6/8/9 (plus 72 at w4) admit a Bean-consistent keystream, so no running-key source text can produce a solution in that class. **Does NOT eliminate**: non-columnar transpositions, columnar widths outside {4,6,8,9}, non-additive keystreams, or composed ciphers where an outer layer precedes the columnar step. See AUDIT-1 (closed 2026-04-09) in `docs/methodological_audits.md`. |
 | Grid Rotation (K3-style) | ~14,000 | 7/24 | ELIMINATED | N/A (is itself a transposition) |
 | Columnar + Vigenère (no bimodal pre-filter) | ~4 million | 12/15 | ELIMINATED (widths 5–10) | **ELIMINATED by FRAC — widths 5-15 comprehensively tested (E-FRAC-12/29/30), ALL noise. E-FRAC-35 proof covers ALL transpositions at p2-7. Extended to double columnar (E-FRAC-46), Myszkowski (E-FRAC-47), AMSCO/Nihilist/Swapped (E-FRAC-48), simple families (E-FRAC-32), grid reading orders (E-FRAC-45), strip transpositions (E-JTS-09/10/11). Bean-surviving periods closed (E-FRAC-55). Periodic key + ANY transposition = ELIMINATED at ALL periods.** |
 | Weltzeituhr permutations | ~295 million | 14/24 | ELIMINATED | **ELIMINATED as transposition source — E-FRAC-35 proof covers ALL 97! permutations (including Weltzeituhr-derived) + periodic key. Running key + Weltzeituhr: covered by E-FRAC-50 (identity + simple families) but specific Weltzeituhr permutations not individually tested with running key.** |
-| Additive mask + Vimark p=5 | ~3.375 billion | 16/24 | ELIMINATED (0 Bean passes) | **ELIMINATED — Vimark at p=5 is Bean-impossible (E-FRAC-35). JTS linear algebra (E-JTS-08/11) proves 0 consistent Vimark primers at p=5 for columnar and strip transpositions. Additive mask doesn't change periodicity.** |
+| Additive mask + Vimark p=5 | ~3.375 billion | 16/24 | ELIMINATED on JTS linear algebra only | *[2026-09-29: the Bean support (E-FRAC-35, "0 Bean passes") is retracted; the JTS result stands within its scope.]* **ELIMINATED — Vimark at p=5 is Bean-impossible (E-FRAC-35). JTS linear algebra (E-JTS-08/11) proves 0 consistent Vimark primers at p=5 for columnar and strip transpositions. Additive mask doesn't change periodicity.** |
 | VIC-family / Chain Addition | ~2 million | noise floor | ELIMINATED | **VIC contains straddling checkerboard → STRUCTURALLY ELIMINATED** (E-FRAC-21) |
 
 ---
@@ -167,7 +217,7 @@ These hypothesis classes appear in the status report's "What We Have NOT Tested"
 | ~~Non-standard cipher models (Polybius, affine, column/row-specific keys)~~ | **DONE — BESPOKE E-BESPOKE-50: Polybius coordinate, affine (12 multipliers), column-specific, row-specific, diagonal keys + columnar. Max 19/24 (row-specific at w6 = underdetermined). No viable candidates. ELIMINATED.** | ~~BESPOKE~~ COMPLETE |
 | Bespoke physical transposition (S-curve, strip manipulation) | Cannot be enumerated without creative hypothesis | BESPOKE |
 | ~~Non-standard tableau usage~~ | **DONE — 20 experiments (E-TABLEAU-01 to 20). Column reads, rotations, paths, physical keys, misspelling keywords, Hill 2×2, autokey, affine, cross-alphabet Quagmire, K3-method thematic keywords at Bean-surviving periods: ALL ELIMINATED. Tableau is for substitution, not key generation.** | ~~TABLEAU~~ COMPLETE |
-| ~~Position-dependent alphabets~~ | **DONE — Equivalent to running key model. Tested via TABLEAU (non-standard key generation) and FRAC (running key + transposition underdetermined, E-FRAC-39). No structured position-dependent model survives Bean + crib constraints except running key from unknown text. K3-method keywords at Bean-surviving periods 8 and 13: ELIMINATED (E-TABLEAU-20).** | ~~TABLEAU~~ COMPLETE |
+| ~~Position-dependent alphabets~~ | **DONE — Equivalent to running key model. Tested via TABLEAU (non-standard key generation) and FRAC (running key + transposition underdetermined, E-FRAC-39). No structured position-dependent model survives Bean + crib constraints except running key from unknown text. K3-method keywords at Bean-surviving periods 8 and 13: ELIMINATED (E-TABLEAU-20). *[2026-09-29: E-TABLEAU-20 is mislabelled as K3's method and its period restriction came from the retracted E-FRAC-35; see the correction block.]*** | ~~TABLEAU~~ COMPLETE |
 | ~~Fractionation with proper recovery (ADFGVX, straddling checkerboard)~~ | **DONE — ALL 10 fractionation families structurally eliminated** (E-FRAC-21). Proofs hold with or without transposition. | ~~FRAC~~ COMPLETE |
 
 ---
@@ -222,7 +272,7 @@ The persistent 14–17/24 ceiling across all families has been interpreted as ev
 | E-CFM-04 | **Homophonic substitution (direct correspondence)** — 9/14 CT letters at crib positions map to 2+ PT letters | Structural impossibility proof. OPEN with transposition |
 | E-CFM-05 | **Pure nomenclator** — EAST→FLRV vs EAST→GKSS (non-constant shift) | Identical words produce different CT. OPEN with superencipherment |
 | E-CFM-06 | Running key from ~4M chars of tested corpora (under identity transposition) | EAST gap-9 diffs [1,25,1,23] + Bean-EQ combined filter: zero pass |
-| E-CFM-07 | K3-style CW/CCW rotational transposition for K4 (pad 0-5, single + double, 1000+ configs) | Max 4/24, all Bean FAIL |
+| E-CFM-07 | K3-style CW/CCW rotational transposition for K4 (pad 0-5, single + double, 1000+ configs) | Max 4/24 (far below the ~14/24 random baseline) — elimination stands on the SCORE alone. ~~all Bean FAIL~~ **struck 2026-08-24:** Bean was applied to keys derived after a rotation moved the crib coordinates, where the frozen sets do not hold; that half of the row was vacuous. |
 | E-CFM-09 | Running key from 73 Gutenberg books (47.4M English chars, identity transposition) | 462 EAST matches, 19 Bean-EQ passes, 0 full 24-position matches |
 
 E-CFM-02 and E-CFM-08 produced UNDERDETERMINED results (mono DOF / trans+key co-optimization) — not eliminations.

@@ -39,20 +39,20 @@
         </td>
         <td class="text-mono">{{ "{:,}".format(e.configs_tested) if e.configs_tested else "N/A" }}</td>
         <td>
-          {% if e.best_score is not none %}
+          {% if e.best_score %}
             <span class="{% if e.best_score >= 24 %}score-breakthrough{% elif e.best_score >= 18 %}score-signal{% elif e.best_score >= 10 %}score-store{% else %}score-noise{% endif %}">
               {{ e.best_score }}/24
             </span>
             {% if e.expected_random %}
-              <small class="text-muted">({{ e.expected_random }})</small>
+              <small class="text-muted">(random: {{ e.expected_random }})</small>
             {% endif %}
           {% else %}
             N/A
           {% endif %}
         </td>
         <td>
-          <span class="verdict verdict-{{ e.verdict|lower if e.verdict else 'noise' }}">
-            {{ e.verdict or "NOISE" }}
+          <span class="verdict verdict-{{ e.verdict|lower if e.verdict else 'inconclusive' }}">
+            {{ e.verdict or "NOT RECORDED" }}
           </span>
         </td>
         <td>

@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 {% block title %}About | kryptosbot.com{% endblock %}
 {% block page_path %}/about-me/{% endblock %}
-{% block meta_description %}Why this site exists: an independent, open effort to document every tested and eliminated approach to Kryptos K4.{% endblock %}
+{% block meta_description %}Why this site exists: an independent, public record of the approaches to Kryptos K4 this project has tested, and what each test ruled out.{% endblock %}
 
 {% block content %}
 <section class="hero">
   <div class="hero-inner">
     <div class="hero-text">
-      <div class="hero-tagline">An open-source K4 elimination database</div>
+      <div class="hero-tagline">A public K4 elimination database</div>
       <h1>Why This Site Exists</h1>
       <p>
         Kryptos K4 has been unsolved for over 35 years. Over that time, countless
@@ -19,7 +19,7 @@
     <div class="hero-logo">
       <picture>
         <source srcset="/static/kryptosbot.webp" type="image/webp">
-        <img src="/static/kryptosbot.png" alt="KryptosBot logo" class="hero-logo-img">
+        <img src="/static/kryptosbot.png" alt="KryptosBot logo" class="hero-logo-img" width="160" height="160">
       </picture>
     </div>
   </div>
@@ -28,13 +28,15 @@
 <section>
   <h2>The Sculpture</h2>
   <p>
-    Jim Sanborn spent two and a half years hand-cutting nearly 870 characters into copper with
-    20 assistants and 900 jigsaw blades. The result is one of the most widely
+    Jim Sanborn and his assistants cut almost 2,000 letters through copper plate by hand, with
+    jigsaws: nearly 870 characters of encrypted text on one half of the S-curved screen and
+    an alphabet table on the other. The result is one of the most widely
     recognized works of public art in the intelligence community, and one of
-    the most famous unsolved ciphers. Sanborn has said that Kryptos is &ldquo;available to
-    all,&rdquo; and created <a href="/about-kryptos/">Antipodes</a> at the
-    Hirshhorn Museum so that anyone could engage with it, not just those with
-    a security clearance.
+    the most famous unsolved ciphers. Kryptos stands in a courtyard at CIA headquarters,
+    which is not open to the public, but Sanborn&rsquo;s 1997 sister sculpture,
+    <a href="/about-kryptos/">Antipodes</a>, repeats much of the same text and belongs to
+    the Smithsonian&rsquo;s Hirshhorn Museum in Washington, a public museum rather than a
+    secure government site.
   </p>
   <p>
     This site is built with deep respect for Sanborn&rsquo;s work and the
@@ -45,21 +47,24 @@
 <section>
   <h2>The Project</h2>
   <p>
-    kryptosbot is an open-source research archive. It documents what has
-    been tested, what was eliminated within scope, and which earlier claims
-    were later retired so the K4 community can focus on approaches that
-    genuinely remain open.
+    kryptosbot is a public research archive. It also records which of its own
+    earlier claims were later retired.
   </p>
   <p>
     The project is a collaboration between Colin Patrick and
     <a href="https://claude.ai">Claude</a> (Anthropic). Together we have
     tested <strong>{{ total_configs_disproven }}</strong> configurations across
-    {{ total_experiments }}+ recorded experiments, saturating the standard
-    bounded classical families we know how to test cleanly against K4.
+    {{ total_experiments }} recorded experiments. That is a record of what has been
+    tested, not proof that every classical method is ruled out: some earlier
+    eliminations have since been narrowed or withdrawn, and some standard
+    hand-cipher families are still open.
   </p>
   <p>
-    The codebase is <a href="https://github.com/jcolinpatrick/kryptos">open source</a>.
-    Every result is reproducible. If you think you have an approach we haven&rsquo;t
+    The codebase is <a href="https://github.com/jcolinpatrick/kryptos">public on GitHub</a>.
+    Many results can be re-run from the scripts in the public repository. Some cannot yet:
+    newer scripts are not all published, some runs depend on source texts that are not in
+    the public repository, and some older results have been withdrawn or are being redone
+    after audits found errors in them. If you think you have an approach we haven&rsquo;t
     tried, <a href="/submit/">submit it</a>, or better yet, clone the repo
     and prove us wrong.
   </p>
@@ -68,7 +73,7 @@
 <section>
   <h2>About Colin</h2>
   <p>
-    I&rsquo;m a cybersecurity practitioner based in Maryland, with a background
+    I&rsquo;m a cybersecurity practitioner based in Kentucky, with a background
     in audio engineering, film, and telecommunications.
   </p>
   <p>

@@ -20,7 +20,7 @@
 {% if e.plain_summary %}
 <div class="plain-summary">
   <strong>In plain English:</strong> {{ e.plain_summary }}
-  {% if e.best_score is not none and e.best_score < 24 %}
+  {% if not e.bean_frame_retracted and (e.verdict == "ELIMINATED" or (e.verdict == "NOISE" and e.best_score is not none)) %}
     <strong>This record is negative within the tested scope.</strong>
   {% endif %}
 </div>
@@ -29,13 +29,13 @@
   We tested {{ "{:,}".format(e.configs_tested) }} configurations of {{ e.cipher_type or "this approach" }}.
   {% if e.best_score is not none %}
     The best result matched {{ e.best_score }} of 24 known letters:
-    {% if e.best_score >= 24 %}all known letters matched. Under active investigation.
-    {% elif e.best_score >= 18 %}worth investigating further, but not a solution.
-    {% elif e.best_score >= 10 %}slightly above random, but almost certainly coincidence.
-    {% else %}no better than random guessing.
+    {% if e.best_score >= 24 %}all known letters matched{% if e.verdict in ("NOISE", "ELIMINATED") %}, but this was checked and is not a solution{% endif %}.
+    {% elif e.best_score >= 18 %}{% if e.verdict in ("SIGNAL", "FULL MATCH") %}worth investigating further, but not a solution.{% elif e.verdict in ("NOISE", "ELIMINATED") %}high, but judged to be chance for a search like this, not a solution.{% else %}high, but not by itself a sign of a solution.{% endif %}
+    {% elif e.best_score >= 10 %}a level that can occur by chance in searches like this.
+    {% else %}low, with no sign of a solution.
     {% endif %}
   {% endif %}
-  {% if e.best_score is none or e.best_score < 24 %}
+  {% if not e.bean_frame_retracted and (e.verdict == "ELIMINATED" or (e.verdict == "NOISE" and e.best_score is not none)) %}
     <strong>This record is negative within the tested scope.</strong>
   {% endif %}
 </div>
@@ -53,11 +53,11 @@
 <details class="field-guide-toggle">
   <summary>How to read this record</summary>
   <ul class="field-guide">
-    <li><strong>Verdict</strong> &ndash; NOISE (no better than random guessing), INTERESTING (slightly above random, almost certainly coincidence), SIGNAL (statistically unusual, warrants investigation), or FULL MATCH (all 24 known letters correct).</li>
-    <li><strong>Confidence Tier</strong> &ndash; Tier 1 = mathematical proof (permanent). Tier 2 = every possibility tested. Tier 3 = partially tested. Tier 4 = not yet tested.</li>
+    <li><strong>Verdict</strong> &ndash; ELIMINATED (ruled out within the tested scope), NOISE (nothing beyond what chance produces for a search of this size; also shown when a record stored no verdict of its own), INCONCLUSIVE (the test left candidates or options standing, or could not decide, so it does not rule the method out), INTERESTING (slightly above random, almost certainly coincidence), SIGNAL (statistically unusual, warrants investigation), or FULL MATCH (all 24 known letters correct).</li>
+    <li><strong>Confidence Tier</strong> &ndash; Tier 1 = mathematical proof, valid while its stated assumptions hold. Tier 2 = every possibility within the stated scope tested. Tier 3 = partially tested or sampled. Tier 4 = not yet properly tested.</li>
     <li><strong>Configs Tested</strong> &ndash; How many different key/parameter combinations were tried.</li>
-    <li><strong>Best Score</strong> &ndash; How many of the 24 known plaintext letters the best attempt matched (out of 24).</li>
-    <li><strong>Keystream Consistency (Bean)</strong> &ndash; Whether the key values at different positions are mathematically consistent with each other.</li>
+    <li><strong>Best Score</strong> &ndash; How many of the 24 known plaintext letters the best attempt matched (out of 24). N/A means no such score could be read from this record.</li>
+    <li><strong>Keystream Consistency (Bean)</strong> &ndash; Whether the key values at different positions are mathematically consistent with each other. The check only holds when the known letters stay in their carved positions (no letters rearranged or removed), and the full set used here assumes the standard A to Z alphabet.</li>
     <li><strong>Scope Limitations</strong> &ndash; What this elimination does <em>not</em> rule out.</li>
   </ul>
 </details>
@@ -98,36 +98,49 @@
         {{ e.best_score }} / 24
       </span>
       <small class="score-explanation">known letters matched &middot;
-        {% if e.best_score >= 24 %}all known letters correct
-        {% elif e.best_score >= 18 %}worth investigating
-        {% elif e.best_score >= 10 %}above random, likely coincidence
-        {% else %}no better than random guessing
+        {% if e.best_score >= 24 %}all known letters matched{% if e.verdict in ("NOISE", "ELIMINATED") %}, but checked: not a solution{% endif %}
+        {% elif e.best_score >= 18 %}{% if e.verdict in ("SIGNAL", "FULL MATCH") %}worth investigating{% elif e.verdict in ("NOISE", "ELIMINATED") %}high, but judged chance for this search{% else %}high, but not by itself a sign of a solution{% endif %}
+        {% elif e.best_score >= 10 %}can occur by chance in searches like this
+        {% else %}low, no sign of a solution
         {% endif %}
       </small>
       {% if e.expected_random %}
-        <small class="text-muted" style="margin-left:var(--sp-3)">(random guess would score: {{ e.expected_random }})</small>
+        <small class="text-muted u-ml-3">(random guess would score: {{ e.expected_random }})</small>
       {% endif %}
     {% else %}
       N/A
     {% endif %}
   </dd>
 
-  {% if e.bean_passed is not none %}
+  {% if e.bean_frame_retracted or e.bean_passed is not none %}
   <dt>Keystream Consistency (Bean)</dt>
   <dd>
-    {% if e.bean_passed %}
+    {% if e.bean_frame_retracted %}
+      <div class="bean-withdrawn">
+      <span class="bean-na">NOT APPLICABLE</span>
+      <small class="text-muted"><strong>Corrected 2026-08-24.</strong>
+      This experiment applies a transposition, which moves the known-plaintext
+      positions. The stored Bean check compared the result against constants
+      derived for the <em>unmoved</em> arrangement, so any &ldquo;failure&rdquo;
+      it reported was an artifact of the mismatch rather than a fact about K4.
+      The check is withdrawn for this page. Because the search used it to throw out
+      candidates, it may have discarded valid ones, so this search no longer rules
+      the method out.</small>
+      </div>
+    {% elif e.bean_passed %}
       <span class="bean-pass">PASS</span>
+      <br><small class="text-muted">Checks whether the key values at different positions are mathematically consistent with each other.</small>
     {% else %}
       <span class="bean-fail">FAIL</span>
+      <br><small class="text-muted">Checks whether the key values at different positions are mathematically consistent with each other.</small>
     {% endif %}
-    <br><small class="text-muted">Checks whether the key values at different positions are mathematically consistent with each other.</small>
   </dd>
   {% endif %}
 
   <dt>Confidence</dt>
   <dd>
     {% if e.confidence_tier == 1 %}
-      <strong>Tier 1</strong>: Mathematical proof. Permanently valid unless cribs or CT are wrong.
+      <strong>Tier 1</strong>: Mathematical proof. Holds as long as the ciphertext, the known-letter positions and the assumptions listed on this page are correct.
     {% elif e.confidence_tier == 2 %}
       <strong>Tier 2</strong>: Exhaustive search under stated assumptions. Does not eliminate multi-layer variants.
     {% elif e.confidence_tier == 3 %}
@@ -188,7 +201,8 @@
 <pre><code>{{ e.repro_command }}</code></pre>
 <p><small>
   Requires the <a href="https://github.com/jcolinpatrick/kryptos">kryptos repo</a>,
-  Python 3.11+, PYTHONPATH=src.
+  Python 3.11+, PYTHONPATH=src. Some recent scripts may not be in the public
+  repository yet.
 </small></p>
 {% endif %}
 

@@ -6,7 +6,9 @@
 {% block content %}
 <h1>Recent Additions</h1>
 <p>
-  The most recently recorded eliminations, in reverse chronological order.
+  The 50 most recent experiment records that carry a test date, newest first.
+  Records without a recorded date, and recent campaigns documented in the
+  project repository but not yet imported into this site, do not appear here.
 </p>
 
 {% if recent_eliminations %}
@@ -17,7 +19,7 @@
     <h3><a href="/elimination/{{ e.slug }}/">{{ e.title }}</a></h3>
     <div class="meta">
       <span class="verdict verdict-{{ e.verdict|lower if e.verdict else 'noise' }}">{{ e.verdict or "NOISE" }}</span>
-      <span>{{ e.best_score }}/24</span>
+      <span>{% if e.best_score is not none %}{{ e.best_score }}/24{% else %}score N/A{% endif %}</span>
       <span>{{ "{:,}".format(e.configs_tested) if e.configs_tested else "N/A" }} configs</span>
     </div>
   </div>

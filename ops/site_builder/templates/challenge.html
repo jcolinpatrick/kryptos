@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Community Cipher Challenge | kryptosbot.com{% endblock %}
 {% block page_path %}/challenge/{% endblock %}
-{% block meta_description %}A community cipher challenge built with the same methods studied for Kryptos K4. Can you crack it?{% endblock %}
+{% block meta_description %}A community cipher challenge built with the same methods studied for Kryptos K4. Solved in July 2026 by David A. Jordan. The solution stays sealed so the puzzle remains a fair test; the ciphertext, rules, and hints stay published and you can still check your own answer.{% endblock %}
 
 {% block head_extra %}
 <link rel="stylesheet" href="/static/challenge-page.css">
@@ -17,8 +17,16 @@
     A two-system puzzle built with the same <strong>hand-executable</strong> methods
     available to Sanborn and Scheidt in&nbsp;1989.
   </p>
-  <div class="ch-badge">Unsolved / April 2026</div>
+  <div class="ch-badge solved">Solved / July&nbsp;2026</div>
 </header>
+<div class="ch-solved-banner">
+  <strong>Solved by David&nbsp;A.&nbsp;Jordan (<a href="https://x.com/DavidJorda42197" rel="nofollow noopener" target="_blank">@DavidJorda42197</a>).</strong>
+  David recovered the full plaintext and both systems and supplied a complete write-up
+  that reproduces every ciphertext character exactly. Independently verified.
+  Congratulations, and thank you for playing. The solution stays sealed so the
+  puzzle remains a fair test for others; you can still check your own answer below.
+  <div class="ch-solved-meta">First solve: 2026-07-20 &middot; David&nbsp;A.&nbsp;Jordan</div>
+</div>
 
 <section class="ch-section">
   <h2 class="ch-section-label">The Ciphertext</h2>
@@ -105,8 +113,10 @@
 <section class="ch-verify-section">
   <h3 class="ch-sub-label">Verify your answer</h3>
   <p>
-    Enter your proposed plaintext to check it instantly.
-    Correct answers trigger a notification to the puzzle&nbsp;creators.
+    Enter your proposed plaintext to check it instantly. The check runs in your
+    browser; for a wrong guess, the site records only its length. A correct
+    answer is sent to the site, recorded, and triggers a notification to the
+    puzzle&nbsp;creators (see our <a href="/privacy/">Privacy Policy</a>).
   </p>
   <div class="ch-verify-form">
     <textarea id="ch-answer" class="ch-input" rows="3"
@@ -131,9 +141,11 @@
 <section class="ch-section ch-why">
   <h3 class="ch-sub-label">Why this puzzle exists</h3>
   <p>
-    After testing over <strong>{{ total_configs_disproven }}</strong>, enumerating
-    <strong>105,692 two-layer compositions</strong>, and adding another
-    <strong>838,350 non-columnar three-layer compositions</strong>, we wanted to
+    We published this puzzle in April 2026, after enumerating
+    <strong>105,692 two-layer compositions</strong> and
+    <strong>838,350 non-columnar three-layer compositions</strong> against the
+    real K4 (the project's running total now stands at
+    <strong>{{ total_configs_disproven }}</strong> configurations tested). We wanted to
     test something different: can a puzzle built with the same classical toolkit
     resist our automated framework while remaining solvable by skilled
     human&nbsp;cryptanalysts?

@@ -184,7 +184,9 @@ def categorize_elimination(elim: SiteElimination) -> None:
         elim.key_model.lower(),
         elim.transposition_family.lower(),
         elim.id.lower(),
-        elim.experiment_script.lower(),
+        # File name only: a scripts/grille/ or scripts/polyalphabetic/ folder
+        # is not evidence of the cipher family a record tested.
+        elim.experiment_script.rsplit("/", 1)[-1].lower(),
     ])
     search_text = raw.replace("_", " ").replace("-", " ")
 
@@ -240,7 +242,7 @@ def get_category_stats(tree: dict[str, dict[str, list[SiteElimination]]]) -> lis
             e.configs_tested for elims in subcats.values() for e in elims
         )
         best = max(
-            (e.best_score for elims in subcats.values() for e in elims),
+            (e.best_score or 0 for elims in subcats.values() for e in elims),
             default=0,
         )
         stats.append({

@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "_macros.html" import position_strip, scoring_figure, bean_figure_svg %}
 {% block title %}Methodology | kryptosbot.com{% endblock %}
 {% block page_path %}/methodology/{% endblock %}
 {% block meta_description %}How this archive tests Kryptos K4 hypotheses: scoring, constraints, reproducibility, and the bar for calling something eliminated.{% endblock %}
@@ -12,106 +13,94 @@
 
 <h2>The K4 Ciphertext</h2>
 <p>
-  K4 consists of 97 characters, and all 26 letters of the English alphabet appear
-  at least once. The ciphertext is shown below with known plaintext positions highlighted:
+  All 26 letters of the alphabet appear at least once. Sanborn has released the
+  plaintext at two spans, 24 characters in all. That those letters sit directly under
+  the matching carved letters is the best-supported reading, but it rests on relayed
+  conversations with Sanborn, not on a statement from him on the record.
 </p>
-<div class="ct-display">{{ ct[:21] }}<span class="crib">{{ ct[21:34] }}</span>{{ ct[34:63] }}<span class="crib">{{ ct[63:74] }}</span>{{ ct[74:] }}</div>
 
-<p>
-  <strong>Known plaintext</strong> (positions numbered from 0, confirmed by Jim Sanborn):
-</p>
-<ul>
-  <li>Positions 21&ndash;33: <code>EASTNORTHEAST</code> (13 characters)</li>
-  <li>Positions 63&ndash;73: <code>BERLINCLOCK</code> (11 characters)</li>
-</ul>
-<p>
-  These 24 known characters are the foundation of our scoring system.
-  They also reveal the internal key values the cipher uses at those positions,
-  which constrain what methods and keys are possible.
-</p>
+{{ position_strip(ct, cribs=k4_cribs,
+   caption='Those 24 characters are the foundation of the scoring below. If each carved
+            letter is enciphered in place, they also fix the key values at those positions,
+            which is what makes whole families of cipher and key testable at all. Positions
+            on this page count from 0, as the code does; most published sources count from 1,
+            which puts the two spans at 22 to 34 and 64 to 74.') }}
 
 <h2>Scoring: Crib Matching (0&ndash;24)</h2>
 <p>
-  For any proposed decryption method and key, we check how many of the 24
-  known plaintext positions produce the correct letter. This gives a score
-  from 0 to 24.
+  For any proposed method and key, we count how many of the 24 known plaintext
+  positions come out right. That is the score. A single random key with a 26-letter
+  alphabet would land fewer than one of them by luck, and 6 or more happens only about
+  once in 4,000 tries. But a search tries millions of keys and keeps the best, so scores
+  of 6 or more turn up by chance alone, and the bands below are set with that in mind.
 </p>
 
-<div class="table-wrap">
-  <table>
-    <thead>
-      <tr><th>Score</th><th>Classification</th><th>Meaning</th></tr>
-    </thead>
-    <tbody>
-      <tr><td>0&ndash;9</td><td>NOISE</td><td>Expected performance from a random key/method. Not recorded.</td></tr>
-      <tr><td>10&ndash;17</td><td>INTERESTING</td><td>Above noise floor. Recorded for completeness, but almost certainly coincidental.</td></tr>
-      <tr><td>18&ndash;23</td><td>SIGNAL</td><td>Statistically unusual. Warrants investigation, but may be a false positive at high periods.</td></tr>
-      <tr><td>24</td><td>FULL MATCH</td><td>All 24 cribs match. Requires Bean constraint validation, quadgram analysis, and human review before any claim is made.</td></tr>
-    </tbody>
-  </table>
-</div>
-<p>
-  These thresholds are conservative. With a random key and a 26-letter alphabet,
-  you&rsquo;d expect fewer than 1 letter out of 24 to match by pure luck.
-  A score of 6 is already far beyond chance. The SIGNAL threshold at 18
-  is set high because longer keys can produce misleadingly high scores (see below).
-</p>
+{{ scoring_figure(scoring_chart,
+   label='Scoring bands against the random-key baseline',
+   caption='The copper line is what the best-fitting repeating key scores on average by luck
+            alone, on a wrong guess, and it is not flat. A repeating key forces every known
+            position that falls on the same letter of the key to take the same key value,
+            and a search picks whichever value satisfies the most of them, so longer keys
+            buy free matches. At period 7 the baseline is ' ~ scoring_chart.at7 ~ '
+            of 24 and a real result stands out. By period 24 it is ' ~ scoring_chart.at24 ~ ',
+            inside the SIGNAL band, so a "significant" score there means nothing at all.') }}
 
-<h2>Expected Random Scores by Period</h2>
 <p>
-  A critical subtlety: how well a random key scores depends on the key&rsquo;s
-  length. Longer keys have fewer checks per key position, so random
-  matches become more common, inflating scores artificially.
+  The dip is not noise. K4&rsquo;s known letters sit in two blocks, at positions 21 to 33
+  and 63 to 73, and how those blocks line up under a given period decides how many
+  separate key letters the known positions fall on. At period 21 they fall on only 13 and the
+  baseline falls back to {{ scoring_chart.at21 }}; at period 24 they fall on 19 and it climbs to
+  {{ scoring_chart.at24 }}. Read the chart, not the number.
 </p>
-
-<div class="table-wrap">
-  <table>
-    <thead>
-      <tr><th>Period</th><th>Approx. Expected Random Score</th><th>Discriminative?</th></tr>
-    </thead>
-    <tbody>
-      <tr><td>2&ndash;7</td><td>&sim;8 / 24</td><td><strong>Yes</strong>, meaningful range</td></tr>
-      <tr><td>8</td><td>&sim;10 / 24</td><td>Marginally</td></tr>
-      <tr><td>13</td><td>&sim;14 / 24</td><td>Weak</td></tr>
-      <tr><td>17</td><td>&sim;17 / 24</td><td>No (random matches 17+)</td></tr>
-      <tr><td>24</td><td>&sim;19 / 24</td><td>No (random matches 19+)</td></tr>
-      <tr><td>26</td><td>&sim;20 / 24</td><td>No</td></tr>
-    </tbody>
-  </table>
-</div>
 <p>
-  These values are approximate, based on how many known-letter positions share each
-  key position at a given key length. The key insight:
-  at key length 17 or above, random keys routinely score above our SIGNAL threshold,
-  making those scores meaningless. Only scores at key length 7 or below are
-  reliable.
+  The practical rule: <strong>scores are only discriminating at period 7 or below.</strong>
+  Above that the threshold is chasing the baseline, and at 24 and up the baseline has
+  overtaken it. The curve is computed from the real crib positions rather than
+  transcribed; the derivation is in <code>ops/site_builder/build.py</code>.
 </p>
 
 <h2>Bean Constraints</h2>
 <p>
-  In 2021, Richard Bean published additional constraints on the K4 keystream,
-  derived from the repeated letter P at positions 27 and 65 of the ciphertext
-  (both of which decrypt to R). This gives:
+  In 2021 Richard Bean published constraints on the K4 keystream. The best known comes
+  from one observation: the ciphertext letter <code>{{ bean_figure.eq.ct }}</code>
+  appears at both position {{ bean_figure.eq.a }} and position {{ bean_figure.eq.b }},
+  and the released cribs say both decrypt to <code>{{ bean_figure.eq.pt }}</code>. The
+  rest come from comparing other pairs of known positions in the same way.
 </p>
-<ul>
-  <li><strong>Equality:</strong> The key values at positions 27 and 65 must be equal</li>
-  <li><strong>242 inequalities:</strong> Hundreds of pairs of key positions that must differ,
-      regardless of which cipher variant is used</li>
-</ul>
+
+{{ bean_figure_svg(bean_figure,
+   label='One equality, ' ~ bean_figure.n_ineq ~ ' inequalities',
+   caption='Same ciphertext letter, same plaintext letter, so the key value at those two
+            positions has to be identical. Bean also listed 21 pairs that must differ because
+            they share a plaintext or a ciphertext letter; those hold whatever alphabets are
+            used. Doing the arithmetic in the standard A to Z alphabet gives a larger set:
+            ' ~ bean_figure.n_ineq ~ ' pairs of key positions that must DIFFER, drawn faintly
+            below the axis, plus ' ~ bean_figure.n_linear ~ ' linear relations not shown.
+            Together they cut the admissible keystreams at those 24 positions from 26 to the
+            power 24 down to exactly 624. That count and the larger set hold only for the
+            standard A to Z alphabet with each carved letter enciphered in place.') }}
+
 <p>
-  These constraints hold no matter which cipher variant is used (Vigen&egrave;re, Beaufort,
-  or Variant Beaufort). Any valid solution must satisfy all of them, <strong>provided the
-  cipher uses an additive key model</strong> (CT[i] = f(PT[i], K[i]) mod 26). If K4 uses
-  a non-additive cipher (lookup table, physical overlay, or grid-based system), Bean
-  constraints do not apply.
+  The full set shown above holds whichever variant is in play, Vigen&egrave;re, Beaufort or
+  Variant Beaufort, <strong>provided the cipher shifts each letter by a key value</strong> (an
+  additive key), each carved letter is enciphered in place, and the alphabet is the
+  standard A to Z. A lookup table, a physical overlay or a grid-based system is outside
+  their reach. Two audits drew these limits. In August 2026 we found the constraints do not
+  in general carry over when a transposition layer rearranges the letters. In September
+  2026 we found the larger set is tied to the A to Z alphabet: with the KRYPTOS alphabet
+  used in K1 and K2, the true key values break 9 or 10 of the &ldquo;must differ&rdquo;
+  pairs, though the equality and Bean&rsquo;s own 21 pairs still hold. Results found to
+  rely on them outside those limits have been withdrawn, reopened or re-checked.
 </p>
 <p>
-  Combined with a counting argument about repeated key values, these constraints show that
-  <strong>no repeating key of any length</strong> can produce the K4 plaintext under direct
-  positional correspondence (CT[i] &rarr; PT[i]) and additive-key assumptions.
-  This is a deterministic proof (Level A), reproducible from the codebase. It does not apply
-  if a transposition layer reorders positions before substitution, or if the cipher is
-  non-additive.
+  Checking the 24 known key values directly shows that
+  <strong>no repeating key of 26 letters or fewer</strong> can produce the K4 plaintext
+  under direct positional correspondence and additive-key assumptions, on either the
+  standard or the KRYPTOS alphabet. That is a deterministic proof, reproducible from the
+  codebase. Some longer keys (27 to 29 letters, or 53 and more) never put two known
+  positions on the same letter of the key, so they cannot be ruled out this way. It says
+  nothing about a transposition layer that reorders positions, about versions that use two
+  different scrambled alphabets, or about a non-additive cipher.
 </p>
 
 <h2>Two-System Model</h2>
@@ -120,8 +109,11 @@
   of enciphering the bottom text.&rdquo;</em> Scheidt stated that he <em>&ldquo;masked the
   English language so it&rsquo;s more of a challenge&rdquo;</em> and that solvers need to
   <em>&ldquo;solve the technique first and then go for the puzzle.&rdquo;</em> The
-  &ldquo;two systems&rdquo; quote is public evidence. Any specific interpretation of that quote
-  is a hypothesis, not a fact.
+  &ldquo;two systems&rdquo; quote is about the bottom half of the panel, which holds both K3
+  and K4, and K3 is a pure rearrangement, so how it applies to K4 alone is an
+  interpretation. The quote is on the public record, but like the makers&rsquo; other
+  general remarks about the method, we treat it as context, not proof. Any specific
+  interpretation of that quote is a hypothesis, not a fact.
 </p>
 <p>
   Pure transposition is independently impossible: the ciphertext contains only
@@ -132,8 +124,8 @@
 <ul>
   <li><strong>Layered classical models</strong>: heavily tested in bounded structured families, but not globally exhausted.</li>
   <li><strong>Procedural or physical constructions</strong>: still live, but only as explicit, finite, testable procedures.</li>
-  <li><strong>W-delimiter segmentation</strong>: the five carved W positions explain the old width-21 anomaly. As of April 2026 the single-layer construction is saturated (80+ tested, no signal) and is now admissible only as a multi-layer component; the interpretation is otherwise still open.</li>
-  <li><strong>Null extraction</strong>: still possible in principle, but the old score-conditioned null-palette result is retired and cannot be cited as evidence.</li>
+  <li><strong>W-delimiter segmentation</strong>: deleting the five carved Ws destroys the old width-21 anomaly, but audits in May and September 2026 showed that says nothing about the Ws: replacing every W with one other letter leaves the anomaly intact, and deleting other letters spread through the text weakens or removes it too. By April 2026, 80+ direct single-layer tests had found no signal, so the idea is now admissible only as one layer of a multi-layer scheme; the interpretation is otherwise still open.</li>
+  <li><strong>Filler-letter (null) extraction</strong>: still possible in principle, but the old filler-letter palette result is retired and cannot be cited as evidence.</li>
 </ul>
 <p>
   The April 2026 audit explicitly rejected treating any single two-system story as the
@@ -141,57 +133,61 @@
   technique beyond straightforward single-layer classical encryption, but the exact
   composition is unknown.
 </p>
-<h3>What Has Been Exhaustively Tested</h3>
+<h3>What Has Been Tested</h3>
 <p>
   Over <strong>{{ total_experiments }} experiments</strong> spanning
   <strong>{{ total_configs }} individual hypothesis evaluations</strong>
-  have been run (with overlaps across experiments), eliminating:
+  have been run (with overlaps across experiments). Each result below holds only within
+  its stated scope:
 </p>
 <ul>
-  <li><strong>All repeating-key ciphers</strong> (every variant, both alphabets, all key lengths): proven impossible under direct positional correspondence and additive-key assumptions (Level A)</li>
-  <li><strong>All self-keying ciphers</strong> (every variant, all primers): proven structurally impossible under additive-key assumptions (Level A)</li>
-  <li><strong>Many structured substitution + rearrangement combinations</strong> (~1.2 billion evaluations): 14 rearrangement families under the registered bounded search programs</li>
-  <li><strong>All Cold War-era cipher models</strong> (VIC family): extensively tested across multiple variants</li>
-  <li><strong>All letter-pair ciphers</strong> (Four-Square, Playfair, Two-Square): apparent high scores are overfitting artifacts</li>
-  <li><strong>Every specialized cipher we could find</strong>: Gromark (8.74 billion keys), plus Feistel, Gronsfeld, Porta, and more</li>
-  <li><strong>Running key from 60,000+ public texts</strong> (106 billion position-checks): zero signal. A narrower follow-up (April 2026) found that running-key &times; columnar widths 6/8/9 is blocked by the current 242-inequality Bean constraint set regardless of source text; other transposition families and non-English sources are not covered by that result.</li>
-  <li><strong>Two-layer compositions tested</strong> (105,692 branches): additive &times; transposition, transposition &times; periodic substitution, 6 stateful families &mdash; zero Bean passes, max crib score 6/24 within the registered layer families and default keyword sets</li>
+  <li><strong>Repeating-key ciphers</strong> (Vigen&egrave;re, Beaufort and Variant Beaufort, standard and KRYPTOS alphabets, keys of up to 26 letters): proven impossible under direct positional correspondence and additive-key assumptions (Level A). With one keyword-mixed alphabet used the way K1 and K2 used theirs, key lengths 1 to 22, 24 and 25 are ruled out whatever the keyword; versions with two different mixed alphabets are not fully ruled out.</li>
+  <li><strong>Self-keying ciphers</strong> (every variant, both alphabets, starting keys of up to 25 letters): proven impossible under direct positional correspondence and additive-key assumptions (Level A). Some starting keys of 27 letters or more can fit the known letters, so the proof does not cover longer keys, and self-keying combined with a letter-rearrangement layer is not ruled out.</li>
+  <li><strong>Many structured substitution + rearrangement combinations</strong>: many rearrangement families, each searched only within bounded settings, with no solution</li>
+  <li><strong>VIC-family ciphers</strong> (a Cold War Soviet hand cipher): extensively tested across multiple variants</li>
+  <li><strong>Letter-pair ciphers</strong> (Four-Square, Playfair, Two-Square): the standard forms need a 25-letter alphabet, but K4 uses all 26 letters; apparent high scores in other tests were overfitting artifacts</li>
+  <li><strong>Specialized ciphers</strong>: Feistel, Gronsfeld, Porta, and more. Gromark is only partly ruled out: its standard form (an unscrambled plaintext alphabet, key digits 0 to 9) cannot fit the known letters in place, but the form with scrambled alphabets on both sides is still open in our records, because earlier sweeps used fixed alphabets.</li>
+  <li><strong>Running key from 60,000+ public English texts</strong> (106 billion position checks, about half of them on 73-letter versions of the text with suspected filler letters removed): no candidate. A narrower April 2026 result, that a column-rearrangement layer at widths 6, 8 or 9 blocks every running key regardless of source text, has been disputed since August 2026 and is not relied on: it applied the Bean constraints across a transposition, where they do not hold.</li>
+  <li><strong>Two-layer compositions tested</strong> (105,692 branches): additive &times; transposition, transposition &times; repeating-key substitution, 6 stateful families: max crib score 6/24 within the registered layer families and default keyword sets. Some of the transposition &times; repeating-key branches ran on an 80-letter text made by removing the 17 letters of the retired filler pattern (see below).</li>
   <li><strong>Three-layer non-columnar compositions tested</strong> (838,350 branches, April 2026): {additive, Vig, Beau} &times; {myszkowski, rail fence, route, block transposition} &times; {additive, Vig, Beau} &mdash; max crib score 7/24. This covers the enumerated layer registry with default parameter generators; non-registered outer families (e.g., homophonic, bifid, four-square as composition outer) are not included.</li>
-  <li><strong>All rearrangements of the 73-character text</strong>: 4.5 million rearrangements tested with each cipher variant</li>
-  <li><strong>Sculpture reading paths as keys</strong>: 10,777 paths tested, all noise</li>
-  <li><strong>Grid-position-based keys</strong>: key derived from position on the grid, zero signal</li>
+  <li><strong>Rearrangements of a 73-character text</strong>: about 4.5 million structured rearrangements tested with each cipher variant, but on a text built from a filler pattern that has since been retired (see below), so this result carries little weight</li>
+  <li><strong>Sculpture reading paths as keys</strong>: 10,777 paths tested, all noise. The search used a copy of K3&rsquo;s plaintext that goes wrong after its first 205 letters, so paths reading the rest of K3 did not test the real text (found in a September 2026 audit).</li>
+  <li><strong>Grid-position-based keys</strong>: key derived from position on the grid, tested only on a 73-letter version of the text under one filler model, no signal (best 5 of 24 known letters)</li>
   <li><strong>Morse code hypotheses</strong>: multiple Morse-based encoding schemes, all noise</li>
 </ul>
 
 <h2>73-Character Hypothesis</h2>
 <p>
   The carved text has 97 characters. One working model proposes that <strong>24 characters
-  are nulls</strong> (97 &minus; 24 = 73 real ciphertext characters). This is a hypothesis,
+  are filler letters</strong> (97 &minus; 24 = 73 real ciphertext characters). This is a hypothesis,
   not a proven fact.
 </p>
 <p>
-  The strongest current public support is not the old null-palette result; that evidence
+  The strongest current public support is not the old filler-letter palette result; that evidence
   was retired in April 2026. The cleaner live structural observation is that the five
   carved <code>W</code>s create a bounded segmentation hypothesis. Even that does not prove
-  nulls. The 73-character idea remains open, but it currently lacks independent,
+  the letters are filler. The 73-character idea remains open, but it currently lacks independent,
   model-neutral quantitative support.
 </p>
 <p>
   <em>Note: The number 24 also appears in other K4 contexts (24 crib characters,
-  Berlin Clock has 24 facets, K3 chart has 24 rows). These coincidences are not
+  Berlin&rsquo;s World Clock has 24 facets, K3 chart has 24 rows). These coincidences are not
   evidence; many small integers recur naturally. They are documented
   here only because they are frequently mentioned in community discussions.</em>
 </p>
 
-<h3>The Null Palette (Retired April 2026)</h3>
+<h3>The Filler-Letter (&ldquo;Null&rdquo;) Palette (Retired April 2026)</h3>
 <p>
-  A score-conditioned null-palette result was once treated as a key observation.
-  It is retained in the repo only as a cautionary historical case.
+  A claim that 17 suspected filler letters in K4 used only seven distinct letters (the
+  &ldquo;null palette&rdquo;) was once treated as a key observation. It is retained in the
+  repo only as a cautionary historical case.
 </p>
 <p>
-  <strong>Matched controls disproved the palette&rsquo;s specificity.</strong>
-  The apparent convergence advantage was generic to restrictive palette-constrained
-  search and did not justify treating that letter set as real evidence about K4.
+  <strong>Matched controls showed the palette was not special.</strong>
+  Rerunning the same search on shuffled versions of the text gave results like the real
+  text&rsquo;s, and the search itself did not reproduce the seven-letter pattern: that came
+  from how the 17 positions had been picked (only from positions already holding those
+  letters), so that letter set is not evidence about K4.
 </p>
 <p>
   Palette constraints remain useful as a <strong>computational technique</strong>
@@ -201,13 +197,15 @@
 
 <h3>What Remains</h3>
 <p>
-  <strong>Null mask + periodic substitution</strong> is proven impossible for ANY choice
-  of 24 filler positions at every repeat length from 1 to 23. The algebraic argument
-  depends only on how many filler letters fall in each of the three known-plaintext
-  segments, and every possible split fails. (Repeat lengths 24&ndash;26 are too long to be
-  decided either way on a 73-letter text.) If the 73-character model is correct, the cipher
-  operating on the extracted characters must use a <strong>non-periodic key</strong>:
-  a running key from an unknown source, a bespoke procedural method, or a one-time key.
+  <strong>Filler letters + a repeating-key cipher</strong> is proven impossible for ANY choice
+  of 24 filler positions (none of them among the 24 known letters) at every repeat length
+  from 1 to 23, on the standard or the KRYPTOS alphabet. The algebraic argument depends only
+  on how many filler letters fall before, between and after the two known spans, and every
+  possible split fails. (Repeat lengths 24&ndash;26 are too long to be decided either way on
+  a 73-letter text.) If the 73-character model is correct and the remaining letters are
+  enciphered in place with an additive key, that key cannot repeat every 23 letters or
+  fewer: it would be, for example, a running key from an unknown source, a bespoke procedural method,
+  a one-time key, or a repeating key of 24 letters or more.
 </p>
 <p>
   On 2026-04-08 we ran an adversarial internal audit of the scope of our own testing
@@ -219,7 +217,9 @@
   what <em>we</em> have tested under our specific assumptions, not a claim about
   K4 as a mathematical object. Full audit and record are in the
   internal status audit (<code>docs/exhaustion_audit_2026_04_08.md</code> in the
-  research repository).
+  research repository). Later audits, in August and September 2026, withdrew or narrowed
+  several earlier results; open audits are tracked in
+  <code>docs/methodological_audits.md</code>.
 </p>
 <p>
   If you have an idea we have not tested, the <a href="/submit/">Submit a Theory</a>
@@ -234,7 +234,7 @@
 </p>
 <ul>
   <li>Crib score: 24/24</li>
-  <li>Bean constraints: PASS</li>
+  <li>Bean constraints: PASS, with the constraints worked out for the candidate&rsquo;s own alphabet and letter order (the standard set applies only to an in-place cipher on the A to Z alphabet)</li>
   <li>Text quality: letter patterns must match normal English (measured by how common its 4-letter sequences are)</li>
   <li>Letter frequency: must match the statistical profile of English text</li>
   <li>Readability: must produce meaningful English with recognizable words (human review required)</li>
@@ -242,66 +242,67 @@
 
 <h2 id="how-to-read-claims">How to Read Claims on This Site</h2>
 <p>
-  We classify every claim by its evidence strength. When reading results on this site:
-</p>
-<dl>
-  <dt>Level A: Proven within stated assumptions</dt>
-  <dd>Mathematical proof or complete enumeration. Always conditioned on explicit assumptions
-    (e.g., correct cribs, additive key model). If you disagree with the assumptions,
-    the proof does not apply.</dd>
-  <dt>Level B: Exhaustively negative within tested scope</dt>
-  <dd>Every configuration in a defined parameter space was tested and produced noise.
-    Does <strong>not</strong> extend to untested variants or multi-layer combinations.
-    &ldquo;Ruled out within tested scope&rdquo; means exactly that.</dd>
-  <dt>Level C: Descriptive anomaly</dt>
-  <dd>A pattern discovered post-hoc (from the data, not predicted in advance).
-    P-values are uncorrected for search breadth unless stated otherwise.
-    Does not prove how K4 was encrypted.</dd>
-  <dt>Level D: Hypothesis</dt>
-  <dd>A plausible conjecture without quantitative support. Labeled
-    &ldquo;hypothesis&rdquo; or &ldquo;open question.&rdquo;</dd>
-</dl>
-<p>
-  All p-values on this site are uncorrected for the project&rsquo;s full search
-  breadth (~1000 experiments) unless explicitly stated. Over that many tests,
-  individually &ldquo;significant&rdquo; results are expected by chance. We document
-  them for transparency, not as proof.
+  Two questions decide how much weight a claim carries: how strong it is, and how
+  thorough the search behind it was.
 </p>
 
-<h2>Truth Taxonomy</h2>
-<p>
-  Every claim in our database is classified by its evidence level:
-</p>
-<dl>
-  <dt>[PUBLIC FACT]</dt>
-  <dd>Verified by reputable public reporting or primary-source statements.</dd>
-  <dt>[DERIVED FACT]</dt>
-  <dd>Deterministic consequence of public facts, reproducible by a provided command.</dd>
-  <dt>[INTERNAL RESULT]</dt>
-  <dd>Empirical result from this project. Includes artifact pointers and a reproduction command.</dd>
-  <dt>[HYPOTHESIS]</dt>
-  <dd>Plausible claim not yet proven. Includes a test plan.</dd>
-</dl>
+<table class="claims-crosswalk">
+  <thead>
+    <tr><th>Strength</th><th>Level</th><th>Tier</th><th>What it means</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><span class="tier-badge tier-1">Proven</span></td>
+      <td>A</td><td>1</td>
+      <td>Mathematical proof or complete enumeration, conditioned on stated assumptions.
+          Disagree with the assumptions and the proof does not apply.</td>
+    </tr>
+    <tr>
+      <td><span class="tier-badge tier-2">Exhausted</span></td>
+      <td>B</td><td>2</td>
+      <td>Every configuration in a defined space tested, all noise. Does <strong>not</strong>
+          extend to untested variants or multi-layer combinations.</td>
+    </tr>
+    <tr>
+      <td><span class="tier-badge tier-3">Descriptive</span></td>
+      <td>C</td><td>3</td>
+      <td>A pattern found after the fact, or a search that sampled rather than covered.
+          Does not show how K4 was encrypted.</td>
+    </tr>
+    <tr>
+      <td><span class="tier-badge tier-4">Open</span></td>
+      <td>D</td><td>4</td>
+      <td>A conjecture, or a method never properly tested.</td>
+    </tr>
+  </tbody>
+</table>
 
-<h2>Confidence Tiers</h2>
-<dl>
-  <dt>Tier 1: Mathematical Proof</dt>
-  <dd>Algebraic proof that the method cannot produce the known plaintext. Permanently valid
-      unless crib positions or ciphertext transcription are wrong.</dd>
-  <dt>Tier 2: Exhaustive Search</dt>
-  <dd>Every possible configuration was tested under stated assumptions. Solid for the specific
-      model tested, but does not eliminate multi-layer variants.</dd>
-  <dt>Tier 3: Partial/Statistical</dt>
-  <dd>Sampling-based or incomplete coverage. May warrant re-testing under different assumptions.</dd>
-  <dt>Tier 4: Untested</dt>
-  <dd>Never properly tested. Fully open.</dd>
-</dl>
+<p>
+  Level and tier line up exactly at A/1 and B/2. Lower down they drift: C and D describe
+  a finding, tiers 3 and 4 describe coverage.
+</p>
+<p>
+  Claims also carry a provenance tag, which is a separate question from strength.
+  <code>[PUBLIC FACT]</code> is reputable reporting or a primary source,
+  <code>[DERIVED FACT]</code> a deterministic consequence of one,
+  <code>[INTERNAL RESULT]</code> our own output with a repro command, and
+  <code>[HYPOTHESIS]</code> a claim that ships with a test plan instead of a result.
+</p>
+<p>
+  Odds quoted on this site are not corrected for the
+  {{ "{:,}".format(total_scripts) }} experiment scripts the project tracks, unless stated. Across that
+  many tests, some individually &ldquo;significant&rdquo; results are expected by chance.
+  They are documented for transparency, not offered as proof.
+</p>
 
 <h2>Reproducibility</h2>
 <p>
-  Every elimination includes a <strong>reproduction command</strong>
-  you can run yourself. The entire codebase is
-  <a href="https://github.com/jcolinpatrick/kryptos">open source</a>. Clone the repo,
-  install Python 3.11+, and run any experiment with <code>PYTHONPATH=src</code>.
+  Most eliminations include a <strong>reproduction command</strong>
+  you can run yourself. The codebase is
+  <a href="https://github.com/jcolinpatrick/kryptos">public on GitHub</a>. Clone the repo,
+  install Python 3.11+, and run experiments with <code>PYTHONPATH=src</code>. The public copy
+  can lag behind the working version, most stored result files are not in it, and some
+  experiments need large inputs (such as the Project Gutenberg texts) that you must fetch
+  yourself.
 </p>
 {% endblock %}

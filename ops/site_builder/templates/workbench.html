@@ -14,8 +14,10 @@
   <label>
     <input type="checkbox" id="wb-share-signal">
     Share promising results (18+ out of 24) with the site maintainer.
-    Sends only the method, the key you entered, and the first 40 letters of the
-    result. Off by default; nothing is ever sent without this box checked.
+    Sends only the score, the method, the substitution key you entered, the number
+    of filler positions removed (if any), and the first 40 letters of the result,
+    through the third-party notification service ntfy.sh. Off by default; nothing
+    is ever sent without this box checked.
   </label>
 </p>
 
@@ -23,13 +25,14 @@
   <summary>Your odds of solving K4 right here (spoiler: astronomical)</summary>
   <div class="wb-details-body">
     <p>
-      This workbench exposes roughly <strong>10<sup>35</sup></strong> possible configurations.
-      At 3 per minute, 8 hours a day, 365 days a year, you would finish in about
-      <strong>10<sup>28</sup> years</strong> (roughly <em>a quintillion universe lifetimes</em>). Bring snacks.
+      This workbench exposes well over <strong>10<sup>35</sup></strong> possible configurations
+      (a hand-entered 97-letter rearrangement alone allows about 10<sup>152</sup>).
+      At 3 per minute, 8 hours a day, 365 days a year, even 10<sup>35</sup> would take about
+      <strong>2 &times; 10<sup>29</sup> years</strong> (more than <em>ten quintillion universe lifetimes</em>). Bring snacks.
     </p>
     <p>
-      You are <strong>10<sup>12</sup>&times;</strong> more likely to win the Powerball
-      <em>twice in a row</em> than to stumble on the answer here. And yet, someone,
+      You are more than <strong>10<sup>12</sup>&times;</strong> more likely to win the Powerball
+      <em>twice in a row</em> than to stumble on the answer here in a year of trying. And yet, someone,
       someday, might try an &ldquo;obvious&rdquo; keyword that over 35 years of PhDs missed and
       crack the last unsolved message at CIA headquarters. That&rsquo;s cryptanalysis.
     </p>
@@ -44,7 +47,9 @@
   <summary>What we know about K4 (research context)</summary>
   <div class="wb-details-body">
     <p>
-      Sanborn stated K4 uses <strong>two systems of encipherment</strong>.
+      At the 1990 dedication Sanborn said there are <strong>&ldquo;two systems of enciphering the
+      bottom text&rdquo;</strong>. The lower half of the panel holds both K3 and K4, so how that
+      applies to K4 alone is an interpretation, not a fact.
       Pure transposition is impossible (CT has 2 E&rsquo;s, cribs need 3),
       so at least one layer is substitution. Beyond that, the architecture is open:
       the live questions are about ordering, segmentation, and whether any procedural
@@ -52,35 +57,42 @@
     </p>
     <p class="wb-mb2"><strong>Eliminated</strong> <span class="verdict verdict-eliminated">proven impossible (algebraic)</span></p>
     <ul>
-      <li>All single-layer substitution on the raw 97 characters (periodic Vigen&egrave;re/Beaufort/Variant Beaufort, periods 1&ndash;26, both AZ and KA alphabets)</li>
+      <li>Repeating-key substitution on the raw 97 characters (Vigen&egrave;re, Beaufort and Variant Beaufort, key lengths 1&ndash;26, on both the A&ndash;Z and the KRYPTOS alphabet)</li>
       <li>Pure transposition (CT has 2 E&rsquo;s, cribs need 3)</li>
-      <li>Null mask + periodic substitution on any 73-char extract (repeat lengths 1&ndash;23)</li>
-      <li>Self-keying (autokey), plaintext- and ciphertext-keyed: structurally impossible even combined with any rearrangement layer</li>
+      <li>Filler letters removed (any 24 of the 97, none of them known-plaintext letters) + repeating-key substitution on the 73 letters left (key lengths 1&ndash;23, standard or KRYPTOS alphabet)</li>
+      <li>Self-keying (autokey), plaintext- and ciphertext-keyed, on the raw 97 characters with a starting key of up to 25 letters. With an unrestricted rearrangement layer added, it is not ruled out.</li>
     </ul>
     <p class="wb-mb2"><strong>Eliminated</strong> <span class="verdict verdict-eliminated">tested exhaustively</span></p>
     <ul>
-      <li>Columnar transposition &times; periodic substitution (47M+ configurations, both layer orders)</li>
+      <li>Columnar transposition (widths 4&ndash;9, every column order) &times; repeating-key substitution (key lengths 1&ndash;24, A&ndash;Z alphabet): no combination fits (exhaustive re-run, August 2026)</li>
       <li>Single-letter and 1M-word dictionary self-keying keys on the raw 97 characters</li>
     </ul>
     <p class="wb-mb2"><strong>Open territory</strong> <span class="verdict verdict-survived">viable</span></p>
     <ul>
-      <li>Non-standard transpositions (serpentine, spiral, Myszkowski) + substitution</li>
-      <li>Autokey / running key after undoing transposition</li>
-      <li>Custom or Quagmire tableaux</li>
-      <li>73-char hypothesis with non-periodic cipher after null removal</li>
-      <li><strong>W-delimiter hypothesis (2026-04-17):</strong> the 5 W characters at positions 20, 36, 48, 58, 74
-        divide K4 into 6 segments of 20|15|11|9|15|22 chars. Removing them eliminates the width-21 vertical
-        bigram anomaly entirely, making them a live structural hypothesis surface. Use the
-        &ldquo;W-segment&rdquo; transposition and &ldquo;W positions only&rdquo; null mask to explore this.</li>
+      <li>Non-standard transpositions (serpentine, spiral, Myszkowski) with a longer or non-repeating key (with repeating keys of length 2 to 7 they were tested, no signal)</li>
+      <li>Self-keying (autokey) or running key after undoing a rearrangement</li>
+      <li>Custom tableaux, including repeating keys that use a different alphabet for plaintext than for ciphertext (for example two different keyword-mixed alphabets), or one keyword-mixed alphabet used the K1/K2 way with a key of 23 letters or of 26 or more</li>
+      <li>Filler-letter hypotheses (for example 24 fillers leaving 73 letters) with a non-repeating key: not ruled out, but no independent evidence supports them</li>
+      <li><strong>W-delimiter hypothesis:</strong> the 5 W characters at positions 20, 36, 48, 58, 74
+        divide K4 into 6 segments of 20|15|11|9|15|22 chars. That makes them a bounded layout to test, not
+        evidence of a delimiter: the old width-21 repeated-bigram effect that vanishes when the Ws are removed
+        also weakens or vanishes when other letters spread through the text are deleted, so it says nothing about the Ws
+        (<a href="/findings/#finding-w-delimiter">Finding 1</a>). Use the
+        &ldquo;W-segment&rdquo; transposition and the &ldquo;W positions only&rdquo; filler setting to explore this.</li>
     </ul>
-    <p class="wb-mb2"><strong>Watch for 23/24</strong></p>
+    <p class="wb-mb2"><strong>About near misses (23/24)</strong></p>
     <p><small class="text-muted">
-      Some researchers explore whether K4 could use a delimiter convention analogous to
-      marker-like characters elsewhere in Kryptos. That is a hypothesis, not a fact. If
-      you hit 23/24, inspect whether a single site behaves like a marker rather than
-      assuming the miss is random. One concrete variant: carved <code>W</code> may decrypt
-      to a rare plaintext letter such as <code>X</code>, <code>Q</code>, or <code>Z</code>
-      serving a punctuation-like role.
+      A 23/24 is not a sign of a hidden delimiter. Long keys and flexible methods reach
+      23/24 by chance, and none of the 24 known-plaintext positions holds a carved
+      <code>W</code>. The idea that all five carved <code>W</code>s decrypt to one separator
+      letter such as <code>X</code>, <code>Q</code> or <code>Z</code> does not work with any
+      repeating key of up to 26 letters on the standard or KRYPTOS alphabet: a key with no
+      repeated letters would need a length of 1 or 2 to fit the gaps between the <code>W</code>s,
+      and the known plaintext rules out every repeating key of up to 26 letters on those alphabets
+      anyway. Some keys of 27 letters or more do fit the known plaintext, and this argument does
+      not rule them out. If only some of the <code>W</code>s do, or the key never repeats,
+      the idea makes no prediction that can be tested
+      (<a href="/findings/#finding-w-delimiter">Finding 1</a>).
     </small></p>
     <p><a href="/methodology/">Full methodology and elimination landscape &rarr;</a></p>
   </div>
@@ -88,31 +100,31 @@
 
 <h3 class="wb-mt6">Quick presets</h3>
 <div class="wb-presets" id="presets">
-  <div class="preset-card" data-preset="vig-kryptos" title="How K1-K3 were encrypted (Vigen&egrave;re with KRYPTOS key)">
+  <div class="preset-card" data-preset="vig-kryptos" title="Vigen&egrave;re with the keyword KRYPTOS: a natural first guess, not the K1-K3 method. K1 and K2 used a Vigen&egrave;re-style cipher on the KRYPTOS alphabet with the keywords PALIMPSEST and ABSCISSA; K3 was a transposition.">
     <h4>Vigen&egrave;re + KRYPTOS</h4>
-    <p>K1&ndash;K3 method <span class="verdict verdict-eliminated wb-verdict-inline">eliminated</span></p>
+    <p>Classic first guess <span class="verdict verdict-eliminated wb-verdict-inline">eliminated</span></p>
   </div>
   <div class="preset-card" data-preset="beau-kryptos-ka" title="Beaufort with KRYPTOS key on KA alphabet">
     <h4>Beaufort + KA alphabet</h4>
     <p>Kryptos-keyed Beaufort <span class="verdict verdict-eliminated wb-verdict-inline">eliminated</span></p>
   </div>
-  <div class="preset-card" data-preset="col7-vig" title="Columnar width 7 + Vigen&egrave;re (open territory)">
+  <div class="preset-card" data-preset="col7-vig" title="Columnar width 7 + repeating-key Vigen&egrave;re: ruled out. No column order at widths 4-9 fits any key length 1-24 on the A-Z alphabet (exhaustive re-run, August 2026).">
     <h4>Columnar w=7 + Vig</h4>
-    <p>Two-system model <span class="verdict verdict-survived wb-verdict-inline">open</span></p>
+    <p>Columns + repeating key <span class="verdict verdict-eliminated wb-verdict-inline">eliminated</span></p>
   </div>
-  <div class="preset-card" data-preset="rail-beau" title="Rail fence depth 7 + Beaufort">
+  <div class="preset-card" data-preset="rail-beau" title="Rail fence depth 7 + Beaufort. Rail fence depths 2-20 were tested with repeating keys of length 2-7: no signal above chance. Longer or non-repeating keys remain open.">
     <h4>Rail fence + Beaufort</h4>
-    <p>Non-standard transposition <span class="verdict verdict-survived wb-verdict-inline">open</span></p>
+    <p>Short keys tested <span class="verdict verdict-noise wb-verdict-inline">no signal</span></p>
   </div>
-  <div class="preset-card" data-preset="serpentine-vig" title="Serpentine reading + Vigen&egrave;re">
+  <div class="preset-card" data-preset="serpentine-vig" title="Serpentine reading + Vigen&egrave;re. Serpentine grids of width 6-13 were tested with repeating keys of length 2-7: no signal above chance. Longer or non-repeating keys remain open.">
     <h4>Serpentine + Vig</h4>
-    <p>Boustrophedon reading <span class="verdict verdict-survived wb-verdict-inline">open</span></p>
+    <p>Short keys tested <span class="verdict verdict-noise wb-verdict-inline">no signal</span></p>
   </div>
-  <div class="preset-card" data-preset="best-lead" title="DEFECTOR:AZ_beau + col7 + null mask (15/24) — historically notable, since disproven">
+  <div class="preset-card" data-preset="best-lead" title="Keyword DEFECTOR with self-keying Beaufort, width-7 columns and 24 filler positions removed: 15 of 24 known letters. Historically notable, since disproven.">
     <h4>DEFECTOR 15/24</h4>
     <p>Historic high score <span class="verdict verdict-eliminated wb-verdict-inline">disproven</span></p>
   </div>
-  <div class="preset-card" data-preset="w-delimiter" title="W-delimiter hypothesis: 5 W's may be row-end markers dividing K4 into 6 segments of 20/15/11/9/15/22 chars. Removing W's eliminates the width-21 bigram anomaly entirely. As of 2026-04-20 the single-layer construction is saturated (80+ tested with no signal); still admissible as one layer within multi-layer hypotheses.">
+  <div class="preset-card" data-preset="w-delimiter" title="W-delimiter hypothesis: 5 W's may be row-end markers dividing K4 into 6 segments of 20/15/11/9/15/22 chars. The width-21 bigram effect that disappears when the W's are removed is not evidence for this: it also weakens or vanishes when other letters spread through the text are deleted. As of 2026-04-20 the single-layer construction is saturated (80+ tested with no signal); still admissible as one layer within multi-layer hypotheses.">
     <h4>W-delimiter (92-char)</h4>
     <p>Single-layer saturated <span class="verdict verdict-eliminated wb-verdict-inline">multi-layer only</span></p>
   </div>
@@ -139,24 +151,24 @@
   <div class="wb-controls">
     <div class="wb-pipeline-flow">
       <div class="card wb-step-card" id="null-mask-panel">
-        <div class="wb-step-label"><span class="wb-step-num">0</span> Null Mask</div>
-        <p><small class="text-muted">73-char hypothesis: 24 of 97 are nulls.</small></p>
+        <div class="wb-step-label"><span class="wb-step-num">0</span> Filler letters (null mask)</div>
+        <p><small class="text-muted">One hypothesis: 24 of the 97 letters are filler, leaving 73.</small></p>
 
         <label for="null-mode">Mode</label>
         <select id="null-mode">
           <option value="disabled">Disabled</option>
           <option value="manual">Manual positions</option>
-          <option value="w-only">W positions only (5 nulls)</option>
+          <option value="w-only">W positions only (5 filler letters)</option>
         </select>
 
         <div id="null-manual-group" class="hidden">
-          <label for="null-positions">Null positions <small class="text-muted">(0-indexed, comma-sep)</small></label>
+          <label for="null-positions">Filler positions <small class="text-muted">(0-indexed, comma-sep)</small></label>
           <input type="text" id="null-positions" placeholder="e.g. 20,36,48,58,74">
         </div>
 
         <label for="null-crib-model">Crib model</label>
         <select id="null-crib-model">
-          <option value="A">Model A: cribs shift after null removal</option>
+          <option value="A">Model A: cribs shift after fillers are removed</option>
           <option value="B">Model B: cribs stay at original positions</option>
         </select>
 
@@ -164,14 +176,14 @@
           <div class="null-grid" id="null-grid"></div>
           <div class="null-grid-legend">
             <span><i class="ngl-crib"></i> crib</span>
-            <span><i class="ngl-null"></i> null</span>
+            <span><i class="ngl-null"></i> filler</span>
             <span><i class="ngl-w"></i> W</span>
             <span class="ngl-count" id="null-grid-count"></span>
           </div>
         </div>
 
         <div id="null-extracted" class="hidden">
-          <p><small>Extracted CT (<span id="null-extracted-len">0</span> chars, <span id="null-count">0</span> nulls removed):</small></p>
+          <p><small>Extracted CT (<span id="null-extracted-len">0</span> chars, <span id="null-count">0</span> fillers removed):</small></p>
           <div class="null-extracted" id="null-extracted-ct"></div>
         </div>
       </div>
@@ -258,7 +270,7 @@
         <div id="trans-opts-wseg" class="hidden">
           <p><small class="text-muted">
             6 W-delimited segments as grid rows: <strong>20 | 15 | 11 | 9 | 15 | 22</strong> chars (sum = 92).
-            Set null mask to &ldquo;W positions only&rdquo; first to extract the 92-char text.
+            Set step 0 to &ldquo;W positions only&rdquo; first to extract the 92-char text.
           </small></p>
           <label for="trans-wseg-colorder">Column order <small class="text-muted">(optional keyword or 0-based indices)</small></label>
           <input type="text" id="trans-wseg-colorder" placeholder="Natural order if blank">
@@ -392,12 +404,12 @@
       <details>
         <summary>Derived keystream at crib positions</summary>
         <pre id="keystream-detail"></pre>
-        <p class="wb-mt3"><small class="text-muted">Bean constraint (k[27]=k[65]): <strong id="score-bean">--</strong> (PASS requires the correct solution; always FAIL on raw 97).</small></p>
+        <p class="wb-mt3"><small class="text-muted">Bean constraint (k[27]=k[65]): <strong id="score-bean">--</strong>. This also checks the 242 Bean inequalities. With no transposition and the A&ndash;Z alphabet, the correct solution must pass, but passing does not make a result correct. With a transposition or the KRYPTOS alphabet selected, these constraints do not apply and a correct solution can show FAIL.</small></p>
       </details>
 
       <details>
         <summary>Period consistency analysis</summary>
-        <p><small class="text-muted">For each period, counts how many crib-position keystream values conflict (share a residue class but have different key values). Zero conflicts = consistent with that period.</small></p>
+        <p><small class="text-muted">For each period, counts how many crib-position keystream values conflict (fall on the same key letter but need different key values). Zero conflicts = consistent with that period.</small></p>
         <div id="keystream-analysis"></div>
       </details>
     </div>
@@ -419,5 +431,5 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="/static/workbench.js?v=7"></script>
+<script src="/static/workbench.js"></script>
 {% endblock %}

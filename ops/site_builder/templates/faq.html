@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "_macros.html" import transposition_figure %}
 {% block title %}FAQ | kryptosbot.com{% endblock %}
 {% block page_path %}/faq/{% endblock %}
 {% block meta_description %}Common questions about Kryptos K4 and this research archive: what has been ruled out, what remains open, and how to contribute.{% endblock %}
@@ -6,23 +7,55 @@
 {% block content %}
 <h1>Frequently Asked Questions</h1>
 
+<h2>The basics</h2>
 <details open>
   <summary>Is Kryptos K4 solved?</summary>
   <p>
-    No. As of 2026, K4 remains unsolved after over 35 years. The public does
-    not know either the full plaintext or the encryption method.
+    No. As of September 2026, K4 remains unsolved after more than 35 years: no one has
+    published its plaintext or its encryption method. In September 2025 two writers,
+    Jarett Kobek and Richard Byrne, found scrambled strips of the plaintext among
+    Sanborn&rsquo;s papers at the Smithsonian&rsquo;s Archives of American Art. Sanborn
+    confirmed the find but stressed that &ldquo;K4 has not been solved or decrypted&rdquo;,
+    because the coding method and key were not found. The finders have pledged not to
+    release the text.
   </p>
 </details>
 
+<details>
+  <summary>Why can&rsquo;t computers just solve K4?</summary>
+  <p>
+    K4 has only 97 characters, too short for most statistical attacks to
+    distinguish signal from noise. Repeating-key ciphers on the standard or KRYPTOS
+    alphabet are ruled out at every key length from 1 to 26 when each carved letter decrypts
+    to the plaintext letter in the same position. Pure transposition is independently impossible (the
+    ciphertext has 2 E&rsquo;s but the 24 known plaintext letters contain 3), so K4 must involve
+    at least some substitution. The exact multi-step structure is unknown.
+    There are an astronomically large number of possible methods that could
+    produce the 24 known letters, far too many to test one by one.
+    Solving K4 requires identifying the specific <em>method</em>, not just
+    trying all keys &mdash; and the public evidence currently available
+    is not specific enough to identify that method.
+    (At the 1990 dedication Sanborn said there are &ldquo;two systems of enciphering the
+    bottom text&rdquo;. The bottom half of the panel holds both K3 and K4, so how that applies
+    to K4 alone is an interpretation, and this project treats such remarks as context, not as
+    a specification of the method.)
+  </p>
+</details>
+
+<h2>What has been tried</h2>
 <details>
   <summary>What has already been tried?</summary>
   <p>
     {{ total_experiments }} recorded experiments covering {{ total_configs_disproven }}
     configurations have been run, testing every major classical cipher family:
     Vigen&egrave;re, Beaufort, columnar transposition, Playfair, Bifid, running
-    keys, and more. All single-layer classical ciphers have been eliminated
+    keys, and more. The standard single-layer classical ciphers have been eliminated
     under direct positional correspondence (where ciphertext position N maps
-    directly to plaintext position N). These eliminations do not rule out the
+    directly to plaintext position N), with some gaps still open in our published record,
+    including running keys taken from texts we have not tested; repeating-key ciphers that use two
+    different keyword-mixed alphabets; a Gromark cipher with keyed alphabets on both sides;
+    keys longer than our checks cover (for example, repeating keys of 27 to 29 letters, or 53
+    or more); and Trifid and Bifid on a 6&times;6 square, whose tests were not conclusive. These eliminations do not rule out the
     same families as one layer of a multi-layer construction.
     <a href="/browse/">Browse the full database</a> to see what has been tested.
   </p>
@@ -31,22 +64,36 @@
 <details>
   <summary>Did you try scrambling the letters AND using a keyed substitution?</summary>
   <p>
-    Yes. This is one of the most common suggestions we receive, and we&rsquo;ve tested
-    it extensively. We combined <strong>14 different letter-rearrangement methods</strong>
-    (columnar grids at all widths, rail fence, spiral, zigzag, double columnar, and more)
-    with <strong>keyed substitution</strong> (Vigen&egrave;re, Beaufort, and Variant Beaufort
-    with every possible key length). Over <strong>1.2 billion combinations</strong> were tested.
-    None produced a solution.
+    Yes. It is one of the most common suggestions we get, and it has been tested
+    extensively: <strong>many letter-rearrangement methods</strong> (columnar, rail fence,
+    route, serpentine, spiral, Myszkowski and others) combined with
+    <strong>keyed substitution</strong> (Vigen&egrave;re, Beaufort and Variant Beaufort with
+    repeating keys). None produced a solution. Some of these searches used a consistency
+    check that turned out to be invalid once letters are rearranged; see below for what was
+    withdrawn and what was re-run.
   </p>
+
+  {{ transposition_figure(transposition_shapes, transposition_sample,
+     label='Four of the methods tested',
+     caption='A transposition keeps every letter and changes only the order, so the
+              letter frequencies come out identical and the text stays unreadable. The
+              small blue numeral in each cell is where that letter ends up in the output.
+              These four are drawn with the same permutation code the searches use.') }}
   <p>
-    We also <strong>mathematically proved</strong> that for 17 out of 25 possible key lengths,
-    no rearrangement of any kind &mdash; not just the structured ones &mdash; can produce a valid
-    solution with a repeating-key cipher. This proof holds for all 97! possible letter orderings
-    (a number with 152 digits).
+    An earlier version of this page said we had <strong>mathematically proved</strong> that
+    17 of 25 key lengths fail for every possible rearrangement. <strong>That proof was withdrawn
+    in August 2026</strong>: it relied on a consistency check that is only valid when the letters
+    stay in place, and a counterexample showed it was false. We re-ran the columnar searches
+    without that check. For every grid width from 4 to 9 and every column order (substitution
+    first, then rearrangement), no repeating key of length 1 to 24 on the standard alphabet fits
+    the 24 known letters; at lengths 25 and 26 there are too few known letters to tell a real key
+    from chance. Other rearrangement searches that relied on the withdrawn check have been
+    reopened, so a repeating key combined with a rearrangement we have not re-searched is not
+    ruled out.
   </p>
   <p>
     However, some combinations remain open: if the substitution uses a <strong>non-repeating key</strong>
-    (like a passage from a book), the rearrangement + substitution model is still possible. This is
+    (like a passage from a book, or a self-keying cipher), the rearrangement + substitution model is still possible. This is
     still an open residual family, though the April 2026 audit no longer treats it as
     the project&rsquo;s leading hypothesis. See the
     <a href="/browse/multi-layer/">multi-layer category</a> for full details.
@@ -65,7 +112,7 @@
   <p>
     This is why we test <strong>structured</strong> rearrangement methods &mdash; methods a
     human could describe with a rule (like &ldquo;write into 8 columns, read them in
-    this order&rdquo;). A human encryptor like Sanborn would have used a describable
+    this order&rdquo;). We assume that a human encryptor like Sanborn used a describable
     method, not a random shuffling.
   </p>
 </details>
@@ -76,8 +123,10 @@
     We&rsquo;ve tested hundreds of thematic keywords including KRYPTOS, PALIMPSEST,
     ABSCISSA, BERLIN, TUTANKHAMUN, SANBORN, SCHEIDT, COMPASS, SHADOW, SPHINX, and
     many more. But more importantly: <strong>the specific keyword doesn&rsquo;t matter</strong>
-    for most cipher types we&rsquo;ve tested, because we tested <em>every possible key
-    of every possible length</em>, which includes any keyword you could name.
+    for most cipher types we&rsquo;ve tested, because for repeating-key ciphers on the standard or KRYPTOS alphabet we ruled
+    out <em>every possible key of every length from 1 to 26 letters</em> (when each carved
+    letter decrypts to the plaintext letter in the same position), which covers any keyword of
+    that length you could name.
   </p>
   <p>
     The exception is <strong>running keys</strong> (where a long passage of text is the key).
@@ -90,57 +139,70 @@
 <details>
   <summary>What approaches remain open?</summary>
   <p>
-    All standard single-layer cipher families have been eliminated under direct
-    positional correspondence and additive-key assumptions, including all
-    repeating-key ciphers (proven impossible at every key length), all autokey
-    ciphers (proven structurally impossible), and running keys from 60,000+
-    publicly available English texts (106 billion position-checks). We have
-    also enumerated 105,692 two-layer compositions and 838,350 non-columnar
+    Most standard single-layer cipher families have been eliminated under direct
+    positional correspondence and additive-key assumptions, including repeating-key
+    ciphers on the standard or KRYPTOS alphabet (impossible at every key length from 1
+    to 26), self-keying ciphers with a starting key of up to 25 letters, and running keys
+    from 60,000+ publicly available English texts (about 53 billion position-checks in
+    this reading). Some ciphers built on keyword-mixed alphabets are not yet ruled out in our
+    published record: repeating-key ciphers that use two different mixed alphabets, and a
+    Gromark cipher with keyed alphabets on both sides. By April
+    2026 we had also enumerated 105,692 two-layer compositions and 838,350 non-columnar
     three-layer compositions within our registered layer families with no
     signal above noise. Classical cipher space has infinite variation, so this
-    does not rule out everything; it describes what we have tested. Open
-    directions we are interested in include:
-    (1) W-delimiter or other finite segmentation procedures;
-    (2) punctuation-style marker conventions where carved <code>W</code> decrypts to a rare
-    plaintext letter such as <code>X</code>, <code>Q</code>, or <code>Z</code>;
-    (3) running keys from non-public or non-English source texts;
-    (4) monoalphabetic + transposition + running-key compositions (proven in
-    June 2026 to be mathematically undetectable at K4&rsquo;s 97-letter length:
-    no statistical test of this family can tell a real key from gibberish, so
-    this stays open as a limits-of-knowledge result rather than a lead);
-    (5) bespoke procedural ciphers using Sanborn&rsquo;s encoding charts or other
-    physically motivated rules;
-    (6) non-standard transpositions, homophonic or digraphic outer layers, and
-    anything else not yet in our layer registry;
-    (7) a genuinely novel mechanism we have not thought of.
+    does not rule out everything; it describes what we have tested.
+  </p>
+  <p>Open directions we are interested in:</p>
+  <ul>
+    <li>W-delimiter or other finite segmentation procedures. The narrower idea that the
+        carved <code>W</code>s decrypt to separator letters such as <code>X</code> or
+        <code>Q</code> is not on this list; see
+        <a href="/findings/#finding-w-delimiter">Finding 1</a> for why.</li>
+    <li>Running keys from non-public or non-English source texts</li>
+    <li>Monoalphabetic + transposition + running-key compositions. In June 2026 tests at
+        K4&rsquo;s 97-letter length, the strongest detector we built for this family scored
+        real and shuffled text alike (0 of 6 planted test cases detected). It stays open as
+        a limit on what we can detect rather than as a lead.</li>
+    <li>Bespoke procedural ciphers using Sanborn&rsquo;s encoding charts or other
+        physically motivated rules</li>
+    <li>Non-standard transpositions, homophonic or digraphic outer layers, and anything
+        else not yet in our layer registry</li>
+    <li>A genuinely novel mechanism we have not thought of</li>
+  </ul>
+  <p>
     If you have an idea we have not tested, the <a href="/submit/">Submit a Theory</a>
     page is the fastest way to route it into our classifier. See also the
     <a href="/research-questions/">Research Questions</a> page.
   </p>
 </details>
 
+<h2>Contributing</h2>
 <details>
   <summary>Can I submit my own theory?</summary>
   <p>
     Yes. Use the <a href="/submit/">Submit a Theory</a> page. Describe your idea
-    in plain English and the theory classifier will check whether it matches
-    anything in the elimination database. If your theory is genuinely novel,
-    it will be queued for evaluation.
+    in plain English and an automated classifier, which can be wrong, will check whether it
+    matches anything in the elimination database. If it looks new, specific and practical to
+    test, it is queued for a person to review.
   </p>
   <div class="credit-notice">
-    You retain all rights to your submissions. If your idea leads to the
-    solution and you&rsquo;d like credit, include a name or handle &mdash; otherwise
-    it stays anonymous. This site exists solely to support the K4 community.
+    You keep whatever copyright you hold in your submission, but submitting it grants this
+    site a broad license to use it. If your idea leads to the
+    solution and you&rsquo;d like credit, include a name or handle; otherwise no name is
+    attached to it. This site exists to support the K4 community.
     See our <a href="/terms/">Terms and Conditions</a> for details.
   </div>
 </details>
 
+<h2>About this project</h2>
 <details>
   <summary>How do I know your results are correct?</summary>
   <p>
-    Every elimination includes a <strong>reproduction command</strong> you can
-    run yourself. The codebase is fully
-    <a href="https://github.com/jcolinpatrick/kryptos">open source</a>. We also
+    Most elimination pages include a <strong>reproduction command</strong> you can
+    run yourself. The code is public on
+    <a href="https://github.com/jcolinpatrick/kryptos">GitHub</a>, though the public copy can
+    lag behind the working version, and most of the stored result files these pages are built
+    from are not in it, so rerunning a command is the way to check a result. We also
     classify results by confidence tier and list explicit scope limitations
     for each elimination. If you find an error,
     <a href="/report-error/">report it</a> and we will investigate.
@@ -154,28 +216,10 @@
     <strong>Claude</strong> (AI computational partner, by Anthropic). The project
     began as a systematic attempt to solve K4 using computational cryptanalysis
     and evolved into a public elimination database so the community can
-    build on our work rather than re-testing approaches already proven
-    fruitless. This site does not know the solution and is not affiliated
-    with the official Kryptos Keepers or their verification site.
-  </p>
-</details>
-
-<details>
-  <summary>Why can&rsquo;t computers just solve K4?</summary>
-  <p>
-    K4 has only 97 characters, too short for most statistical attacks to
-    distinguish signal from noise. Exhaustive testing has eliminated all standard
-    periodic keys. Pure transposition is independently impossible (the
-    ciphertext has 2 E&rsquo;s but the cribs require 3), so K4 must involve
-    at least some substitution. The exact multi-step structure is unknown.
-    There are an astronomically large number of possible methods that could
-    produce the 24 known letters, far too many to test one by one.
-    Solving K4 requires identifying the specific <em>method</em>, not just
-    trying all keys &mdash; and the public evidence currently available
-    is not specific enough to identify that method.
-    (Sanborn has publicly described K4 as using &ldquo;two systems&rdquo; of
-    encipherment, but the public commentary is treated by this project as
-    contextual hearsay, not as an operational mechanism specification.)
+    build on our work rather than re-testing approaches that have already
+    come up empty. This site does not know the solution and is not affiliated
+    with Paradigm Operations LP or any other rights holder or verifier of
+    the official solution.
   </p>
 </details>
 {% endblock %}

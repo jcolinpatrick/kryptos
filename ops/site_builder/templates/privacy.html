@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block title %}Privacy Policy | kryptosbot.com{% endblock %}
+{% block page_path %}/privacy/{% endblock %}
+{% block meta_description %}How kryptosbot.com collects, uses, and shares information, including analytics, advertising, server logs, and theory submissions.{% endblock %}
+
+{% block content %}
+<article class="legal-page">
+  <h1>Privacy Policy</h1>
+  <p class="legal-effective"><strong>Effective Date: August 25, 2026</strong><br><strong>Last Updated: September 29, 2026</strong></p>
+
+  <p>This Privacy Policy explains how <strong>kryptosbot.com</strong> (the &ldquo;Site&rdquo;), operated by Colin Patrick under the name <strong>KryptosBot</strong>, handles information. It is incorporated into the <a href="/terms/">Terms of Use</a>; where the two conflict on a personal-information question, this Policy controls.</p>
+
+  <p>The Site is an independent, non-commercial research archive. It has <strong>no user accounts, no login, and no newsletter</strong>. It has no form fields for your name, email address, postal address, or phone number. (The submission page does invite you to put a name or handle in your theory text if you want credit; anything you write there is handled as described in sections 1.4 and 2.)</p>
+
+  <h2>1. What the Site Collects</h2>
+
+  <h3>1.1 Technical request records</h3>
+  <p>Like any website, the Site records routine technical information for every request, generated automatically by the content delivery network and web application firewall that serve it. These records may include your Internet Protocol (IP) address, user-agent string, browser and operating-system information, approximate country as determined by the network provider, the URL requested, the referring URL, HTTP status codes, timestamps, and request volume.</p>
+  <p>Requests to the Site&rsquo;s submission, status and challenge services also pass through the server that runs those services, and may be recorded in that server&rsquo;s routine request logs as well.</p>
+  <p>These records are used to operate and secure the Site, to distinguish human visitors from automated scanners, to diagnose faults, and to investigate abuse. A very large share of requests to this Site are automated vulnerability scans, and separating those from real readers is a routine operational necessity.</p>
+
+  <h3>1.2 Analytics</h3>
+  <p>The Site uses <strong>Google Analytics 4</strong> to understand aggregate readership: how many people visit, which pages they read, roughly where in the world they are, what kind of device and browser they use, and how they found the Site. Google Analytics sets first-party cookies or similar identifiers in your browser and processes data on Google&rsquo;s infrastructure as our service provider.</p>
+  <p>We do not send names, email addresses, or account identifiers to Google Analytics.</p>
+
+  <h3>1.3 Advertising</h3>
+  <p>The Site may display advertising supplied by <strong>Google AdSense</strong> in order to offset hosting costs.</p>
+  <ul>
+    <li>Third-party vendors, including Google, use cookies to serve ads based on your prior visits to this Site or other websites.</li>
+    <li>Google&rsquo;s use of advertising cookies enables it and its partners to serve ads to you based on your visit to this Site and other sites on the Internet.</li>
+    <li>You may opt out of personalised advertising by visiting <a href="https://www.google.com/settings/ads" rel="nofollow noopener" target="_blank">Google Ads Settings</a>. You may opt out of some third-party vendors&rsquo; use of cookies for personalised advertising at <a href="https://www.aboutads.info/choices/" rel="nofollow noopener" target="_blank">aboutads.info/choices</a>.</li>
+    <li>Third-party advertising vendors set their own cookies and are governed by their own privacy policies, which we do not control.</li>
+  </ul>
+  <p><strong>Some pages of this Site never carry advertising.</strong> The <a href="/archive/">archive</a>, which reproduces archival source imagery, is served without ads, as are this Privacy Policy and the individual record, search and status pages. Those materials are presented for non-commercial research, scholarship, and commentary, and running advertising alongside them would be inconsistent with that basis.</p>
+
+  <h3>1.4 Theory submissions</h3>
+  <p>If you voluntarily submit a theory through the submission form, the Site records the first 300 characters of the text, the time of submission, the automated classification result, and a <strong>SHA-256 hash of your IP address</strong>. If the theory is classified as new and testable, the full text is also queued for review and you receive a randomly generated status token. The hash is used for rate limiting and is also stored with these records; the Site does not store your raw IP address with your submission. The hash is made without a secret key, so whoever holds it could work out an IPv4 address by trying every possible address. Treat it as a stand-in for your address, not as a guarantee of anonymity.</p>
+  <p>Submissions are kept in a database that is not published, with one exception: the Site&rsquo;s public statistics feed currently shows the first 300 characters of the 50 most recent submissions, with their submission times and classification results (not IP addresses or hashes). Submitting is entirely optional; reading the Site requires no submission.</p>
+
+  <h3>1.5 Challenge attempts</h3>
+  <p>If you use the interactive challenge, the Site records attempt and solve counts and the length of each guess, not the guess itself. If you enter the correct answer, the full answer is also recorded together with the network address the request arrived from, and its first 50 characters and that address are sent to the operator as a push notification through <strong>ntfy.sh</strong>.</p>
+
+  <h3>1.6 Optional workbench sharing</h3>
+  <p>The cipher workbench and the VIC cipher tool each have a sharing box that is off by default. If you tick it, results scoring 18 or more out of 24 are sent from your browser to the operator through <strong>ntfy.sh</strong>: the score, a summary of the method and key settings you entered, and the first 40 letters of the result. Because your browser sends it directly, ntfy.sh also receives your IP address with the request. The notification channel is not private: anyone who knows its name, which appears in the page&rsquo;s code, can read what is sent. Nothing is sent while the box is unticked.</p>
+
+  <h3>1.7 Email and GitHub</h3>
+  <p>If you email the Site&rsquo;s contact address, we receive your email address and whatever your message contains. Mail to that address is received by the email-forwarding service <strong>ImprovMX</strong> and forwarded to the operator. If you follow the Site&rsquo;s links to open an issue on GitHub, what you post there is public and is handled under GitHub&rsquo;s own privacy policy.</p>
+
+  <h2>2. Automated Processing of Submissions</h2>
+  <p>This is the disclosure most likely to matter to you, so it has its own section.</p>
+  <p><strong>The text of a theory you submit is transmitted to Anthropic, PBC and processed by a Claude language model</strong> in order to classify it, compare it against previously tested hypotheses, and generate a response. Do not submit anything you are unwilling to have processed by a third-party artificial-intelligence service.</p>
+  <p>When a submission is classified as new and testable, its first 200 characters are also delivered to the operator as a push notification through the third-party service <strong>ntfy.sh</strong>.</p>
+  <p>Automated classification can be wrong. A response generated by the Site is not acceptance, validation, rejection, or official verification of a theory.</p>
+
+  <h2>3. What the Site Does Not Do</h2>
+  <ul>
+    <li>It does not sell personal information.</li>
+    <li>It has no form fields for names, email addresses, or telephone numbers.</li>
+    <li>It does not create user accounts or profiles.</li>
+    <li>It does not knowingly collect information from children under 13, and is not directed to children.</li>
+    <li>It does not accept file uploads.</li>
+    <li>It does not use analytics or advertising identifiers to attempt to identify an individual reader.</li>
+  </ul>
+
+  <h2>4. Cookies and Similar Technologies</h2>
+  <p>The Site itself does not require cookies to function; you can read every page with cookies disabled. Cookies and similar identifiers on the Site come from the analytics service and, on pages that load it, the advertising service described above. You can block or delete cookies through your browser settings. Blocking them may affect how advertising is selected but will not prevent you from reading the Site.</p>
+
+  <h2>5. Where Information Goes</h2>
+  <p>Information described in this Policy may be processed by the following categories of service provider:</p>
+  <ul>
+    <li><strong>Cloud hosting, content delivery, and security</strong> &mdash; Amazon Web Services, which serves the Site and produces the technical request records described in section 1.1.</li>
+    <li><strong>Analytics</strong> &mdash; Google, as described in section 1.2.</li>
+    <li><strong>Advertising</strong> &mdash; Google and its advertising partners, as described in section 1.3.</li>
+    <li><strong>Automated classification</strong> &mdash; Anthropic, as described in section 2, for submitted theory text only.</li>
+    <li><strong>Operator notifications</strong> &mdash; ntfy.sh, as described in sections 1.5, 1.6 and 2, for submission previews, correct challenge answers, and workbench results you choose to share.</li>
+    <li><strong>Email forwarding</strong>: ImprovMX, as described in section 1.7, for messages sent to the Site&rsquo;s contact address.</li>
+  </ul>
+  <p>Information may also be disclosed where required by law, or to establish, exercise, or defend legal claims.</p>
+  <p>These providers operate internationally, including in the United States. Using the Site involves transferring information to the United States.</p>
+
+  <h2>6. Retention</h2>
+  <p>Content delivery network access logs are deleted automatically after 35 days, and web application firewall logs after 90 days. Analytics data is retained according to the retention period configured in Google Analytics. Theory submissions, including the hashed IP address stored with each one, are retained for as long as the research archive is maintained, because they form part of the record of what has been tested. Separate rate-limiting records are deleted automatically, at the next submission after they turn an hour old. The record of a correct challenge answer, described in section 1.5, is not deleted automatically.</p>
+
+  <h2>7. Your Choices</h2>
+  <ul>
+    <li><strong>Analytics:</strong> install the <a href="https://tools.google.com/dlpage/gaoptout" rel="nofollow noopener" target="_blank">Google Analytics opt-out browser add-on</a>, or block the analytics script with a content blocker.</li>
+    <li><strong>Advertising:</strong> use the opt-out links in section 1.3.</li>
+    <li><strong>Submissions:</strong> simply do not submit. Reading requires nothing.</li>
+    <li><strong>Deletion:</strong> if you submitted a theory and want it removed, contact us with the status token you were given. Only submissions classified as new and testable receive a token; for any other submission, send the approximate date and time you submitted it and a distinctive phrase from the text so we can find the record.</li>
+  </ul>
+  <p>Depending on where you live, you may have additional rights over personal information, such as access, correction, deletion, or objection. Contact us to exercise them. Note that for most visitors, the information the Site holds is limited to the content delivery and firewall records described in section 1.1, which include IP addresses and are deleted automatically within 90 days, and the analytics data described in section 1.2.</p>
+
+  <h2>8. Security</h2>
+  <p>The Site is served over HTTPS, is fronted by a web application firewall, and stores runtime secrets outside its source code. No system is perfectly secure, and no method of transmission or storage can be guaranteed.</p>
+
+  <h2>9. Changes</h2>
+  <p>This Policy may be updated. Material changes will be reflected in the &ldquo;Last Updated&rdquo; date above. Continued use of the Site after a change constitutes acceptance of the updated Policy.</p>
+
+  <h2>10. Contact</h2>
+  <p>Questions about this Policy may be sent to <a href="mailto:contact@kryptosbot.com">contact@kryptosbot.com</a>.</p>
+</article>
+{% endblock %}
