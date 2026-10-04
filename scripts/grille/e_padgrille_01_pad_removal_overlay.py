@@ -2,10 +2,10 @@
 """
 Cipher: pad-letter removal from the full cipher panel + Cardan-style overlay (key generation)
 Family: grille
-Status: active
+Status: exhausted
 Keyspace: see PREREG (7 grid models x 8 letter-removal sets x 2 question-mark modes, deduped to layouts; x 4 overlay targets x 4 hole rules x ADV/SKIP x all phases x 7 tableau cells; plus a full-offset running-key sweep of 4 sculpture streams x 7 cells)
-Last run:
-Best score:
+Last run: 2026-10-04 (full_prereg_2026_10_04; result in docs/campaigns/pad_removal_grille_overlay_prereg_2026_10_04.md section 13)
+Best score: 7/24 (family max; matched-null family-wise p 0.78; 0 promoted, 0 nominated)
 
 E-PADGRILLE-01: if "buffer" letters (Q, X, plaintext pad letters, the ? marks) are deleted from
 the whole K1-K4 cipher panel and the reflowed panel is laid over the tableau (or over itself),

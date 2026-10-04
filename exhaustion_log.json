@@ -3438,6 +3438,17 @@
     "status": "exhausted",
     "status_previous": "active"
   },
+  "e_padgrille_01_pad_removal_overlay": {
+    "best_score": 7,
+    "description": "E-PADGRILLE-01: delete buffer letters (Q, X, Q+X, K1-K3 plaintext pads, ? marks) from the full K1-K4 cipher panel, lay the reflowed panel over the tableau (straight/folded/L-reflowed) or the panel itself, read K4's key (footprint, through deleted cells, slid letters, letter matches) + every offset of tableau/panel streams as running key. Pre-registered, matched null, planted power.",
+    "family": "grille",
+    "has_attack": false,
+    "has_header": true,
+    "keyspace": "7 grid models (NYT 31-cell x 6 ? variants + copper lines) x 8 letter-deletion sets x 2 ? modes = 104 distinct layouts; x 4 targets x FOOT/REMOVED/SLID/MATCH x ADV/SKIP x all phases x 7 tableau cells; + SWEEP 4 streams x all offsets x 7 cells. 416,087 configs on real K4.",
+    "last_run": "2026-10-04 (full_prereg_2026_10_04, universe e00d7825; results/e_padgrille_01/full_prereg_2026_10_04/)",
+    "notes": "Registered 2026-10-04. Pre-registration + result: docs/campaigns/pad_removal_grille_overlay_prereg_2026_10_04.md (section 13), frozen at 50ac7e7c. Result: CLEAN NEGATIVE, 0 promoted (>=18), 0 nominated (ALL max >=9). K4 family max 7/24 vs 1000-world matched null (family-wise p 0.78); exact-model power 500/500. K4's own QQ (CT 25-26) encrypt N,O under the public EASTNORTHEAST clue, so Q-as-pad inside K4 is excluded a priori (variants run, ceiling 22). Prior overlay scripts re-checked: e_tableau_overlay used a fabricated K3. Not covered: other reading orders, sectioned NYT layout, Antipodes layout, non-deletion offsets, cylinder, deleting other letters, non-additive keys, keyed-alphabet use, non-direct crib alignment.",
+    "status": "exhausted"
+  },
   "e_palette_controls_01": {
     "adversarial_review_date": "2026-05-15",
     "adversarial_review_reason": "FAMILY CLEANUP: Subsumed by C-PALETTE-01 retirement (2026-04-01) \u2014 the 7-letter palette {B,G,I,K,O,W,Z}, 17-position CONSENSUS_NULL_POSITIONS mask, and all derived palette constructs are retired. See docs/claims_registry.json + docs/a1_score_conditioned_null_report.md.",

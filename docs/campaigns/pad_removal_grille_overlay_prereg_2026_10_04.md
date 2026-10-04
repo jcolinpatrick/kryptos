@@ -1,6 +1,6 @@
 # E-PADGRILLE-01: pad-letter removal from the full cipher panel + overlay as a key generator: pre-registration
 
-**Status:** FROZEN before the real-K4 statistic was computed. Calibration (matched null, power) used only
+**Status:** COMPLETE (clean negative, 2026-10-04). Frozen at 50ac7e7c before the real-K4 statistic was computed. Calibration (matched null, power) used only
 null worlds and planted synthetic K4s.
 **Runner:** `scripts/grille/e_padgrille_01_pad_removal_overlay.py`
 **Universe hash:** `e00d78252176586cf4f7166f3225f8610811cc4640dc9df078268c48bf309c2b` (PREREG dict + the 104 layout names)
@@ -176,6 +176,32 @@ Selftest (18 checks) PASS: cipher round trips; K1/K2 keystreams; K3 permutation;
 positions; copper rows; tableau rows; PTPAD; K4 Q at crib positions; layout spot checks; 5 planted controls
 (MATCH, MATCH, SLID, FOOT, REMOVED) each found at 24/24.
 
-## 13. Result
+## 13. Result (2026-10-04)
 
-(pending)
+Run `full_prereg_2026_10_04` at frozen commit 50ac7e7c (universe e00d7825...; artifact
+`results/e_padgrille_01/full_prereg_2026_10_04/real.json`). Selftest 18/18 PASS before scoring.
+Repro: `PYTHONPATH=src python3 -u scripts/grille/e_padgrille_01_pad_removal_overlay.py --mode real --workers 22 --run-id <id>`.
+
+[INTERNAL RESULT] **CLEAN NEGATIVE. 0 promoted, 0 nominated.**
+
+| family | K4 max | family-wise p vs matched null |
+|---|---|---|
+| ALL | 7/24 | 782/1001 = 0.78 |
+| FOOT | 4 | 0.99 |
+| REMOVED | 6 | 1.00 |
+| SLID | 6 | 0.77 |
+| MATCH | 7 | 0.35 |
+| SWEEP | 6 | 0.87 |
+
+416,087 configs scored; histogram 0: 181,279, 1: 148,615, 2: 63,826, 3: 17,917, 4: 3,766, 5: 597, 6: 84, 7: 3
+(mean 0.92 = 24/26, the random-key expectation). The three 7s are one config under X-deletion aliases
+(`MATCH|COPPER|X_pre/X_all|drop|TAB_FOLD|*|25-26|KA-beau`); plaintext is gibberish
+(`KVRPNCJFTFLZVBLWWBEOHZBS...`). Exact-model power 1.00 (500/500 planted).
+
+**Deviation disclosed.** The real run scored 416,087 configs vs 273,196 per null world: on the real panel,
+`MATCH` against the unshifted `PANEL` target matches every cell (panel over itself), producing K1-K3 CT as a
+768-letter periodic key; the shuffled null target cannot reproduce that identity. This gives the REAL run
+more chances, biasing its max upward, so it cannot manufacture a negative; it would matter only for a
+borderline positive.
+
+What this closes and does not close: section 9.
