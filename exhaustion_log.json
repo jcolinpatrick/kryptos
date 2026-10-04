@@ -5379,6 +5379,17 @@
     "keyspace": "~4 top-rows x 2 dates x 9 PNs x 45 prefix-pairs x 2 transposition-orders = ~6,480 core",
     "status": "active"
   },
+  "e_w31rk_01_running_key_turn": {
+    "best_score": null,
+    "description": "E-W31RK-01: English running key + width-31 grid turn (fill rows / read columns), both layer orders. Source-free test: the key stretches forced at PT 21-33 and 63-73 are scored as English (mean quadgram log10). Pre-registered, calibrated on English text, matched shuffled-CT null.",
+    "family": "transposition",
+    "has_attack": false,
+    "has_header": true,
+    "keyspace": "Tier 1: 16 distinct width-31 turn orderings (4 fill corners x 4 read corners x blanks end/start x P/P^-1) x 7 cells (AZ/KA vig/beau/varbeau + sculpture tableau) = 112, key by PT position; Tier 2a: same 112, key by CT position (unigram statistic); Tier 2b: widths 2-96, 1,492 orderings x 7 = 10,444, key by PT position",
+    "last_run": "2026-10-04 (full_prereg_2026_10_04, universe f8134f51; results/e_w31rk_01/full_prereg_2026_10_04/)",
+    "notes": "Registered 2026-10-04. Pre-registration + result: docs/campaigns/w31_running_key_prereg_2026_10_04.md (section 13), frozen at commit 37f20408 before the real run. Result: 0 promoted, 0 nominated. Tier 1 K4 family max -5.823 vs bar -4.924 (family-wise p 0.624; calibrated power 0.988). Tier 2a max -1.374 vs -1.272 (p 0.40; power 0.687). Tier 2b max -5.357 vs -4.941 (p 0.649; power 0.984). Not covered: non-English keys, keyed column orders, 2+ turns, nulls, length != 97, non-additive substitution; key-after-turn only at Tier-2 strength.",
+    "status": "exhausted"
+  },
   "e_w92_autokey": {
     "description": "e_w92_autokey.py",
     "family": "campaigns",
