@@ -95,7 +95,7 @@ None of this requires a cryptographic explanation. The blank fourth line is the 
 
 Concretely: the J that ends carved line 1 is the first cell of chart row 2; the T that begins carved line 5 is the last cell of chart row 4; the D that ends carved line 2 is the chart's column-0 overflow. The carved text is the same letter sequence reflowed into different line lengths.
 
-[PUBLIC FACT, same NPR interview] Sanborn: "there were several ways I could manipulate the lines of text so I would end up with a panel that's square on the sides... I did leave an X out."
+[PUBLIC FACT, NPR *All Things Considered*, 21 Apr 2006, host Melissa Block, "Enigmatic CIA Puzzle 'Kryptos' May Be Flawed", transcript https://www.npr.org/transcripts/5356012. This is the segment about the X missing from K2, not the 22 Nov 2010 interview quoted in §1; attribution corrected 2026-10-04.] Sanborn: "there were several ways I could manipulate the lines of text so I would end up with a panel that's square on the sides... I did leave an X out."
 
 Reading: the chart is the encipherment draft at a fixed 31-per-row rhythm. Line lengths on the copper were adjusted afterward for the panel's visual edge, either on a separate layout drawing or during letter placement. Anyone using the chart's row breaks as evidence about the copper layout, or vice versa, should note they differ.
 
@@ -175,5 +175,6 @@ Every physical feature of the chart resolves to production mechanics: pad width 
 ## Sources held locally (private `reference/` tree, not in the public repo)
 
 - NPR transcript compilation, 22 Nov 2010 segment (quote at 02:47 to 03:16 per the LEMMiNO reference list).
+- NPR transcript compilation, 21 Apr 2006 segment (Melissa Block; also public at https://www.npr.org/transcripts/5356012). Source of the §5 line-length quote.
 - Standard left-panel transcription with line breaks (matches `kryptos.kernel` K1/K2 constants on concatenation).
 - Prior Smithsonian photo notes on paper stock and folds (2026-03).
