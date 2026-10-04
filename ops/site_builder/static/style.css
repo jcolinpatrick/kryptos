@@ -2083,6 +2083,7 @@ main section + section {
 
 .confidence-indicator {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: var(--sp-3);
   margin-bottom: var(--sp-6);
@@ -2090,6 +2091,7 @@ main section + section {
 
 .confidence-bar {
   display: flex;
+  flex-shrink: 0;
   gap: 2px;
 }
 
@@ -2109,6 +2111,10 @@ main section + section {
 .confidence-bar.confidence-low span.filled { background: var(--amber); }
 
 .confidence-label {
+  /* Long labels used to be squeezed into ~90px and clipped on phones; this lets
+     them wrap below the bar instead when the row is too narrow. */
+  flex: 1 1 16rem;
+  min-width: 0;
   font-size: var(--text-xs);
   font-weight: 600;
   text-transform: uppercase;

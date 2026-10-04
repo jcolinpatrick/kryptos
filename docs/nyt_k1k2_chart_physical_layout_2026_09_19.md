@@ -1,7 +1,7 @@
 # The K1/K2 Encoding Chart: Physical Layout, Tape, Margins, and Row Breaks
 
 **Date:** 2026-09-19
-**Status:** Observational note with a completed digital forensic pass (local enhancement, ink separation, grid metrology, 744-cell transcription check, mark inventory). Full measured report and re-runnable scripts are local-only under `analysis_runs/nyt_coding_chart_forensics_20260919/`; the measured results are summarised in §9.
+**Status:** Observational note with a completed digital forensic pass (local enhancement, ink separation, grid metrology, 744-cell transcription check, mark inventory). Full measured report and re-runnable scripts are local-only under `analysis_runs/nyt_coding_chart_forensics_20260919/`; the measured results are summarised in §9. **Updated 2026-10-04:** §9.9 adds evidence that the keyword was first written PALIMPCEST in row 1 and corrected.
 **Subject image:** the K1/K2 handwritten encoding chart published by The New York Times (John Schwartz, "Original Decoding Charts for 'Kryptos'," 20/21 Nov 2010), analysed here from a 1150 x 1346 px JPEG copy.
 
 This note records what is physically visible on the chart, what the layout is consistent with, and how the chart relates to the carved copper. It deliberately separates observation from inference. It makes no claim about the K4 method.
@@ -113,9 +113,10 @@ This also bounds what "worksheet correct, copper wrong" can mean: the chart spel
 
 ## 7. Confidence and limitations
 
-- **High:** the row-break mismatch between chart and copper (§5); the row 5 32-cell overflow; the K1 concatenation check; the measured results in §9.
+- **High:** the row-break mismatch between chart and copper (§5); the row 5 32-cell overflow; the K1 concatenation check; the measured results in §9.1 to §9.8.
 - **Medium:** the multi-patch reading of the main-seam tape residue (§3.2) and the three-patch reading of the rows 6/7 join, from a ~1.5 MP web JPEG. Higher-resolution imagery or the physical object could overturn either.
 - **Medium:** the two blue-grey margin rectangles and the row 4 crease line are present; their nature is open.
+- **Medium-low:** the row 1 keyword corrections (§9.9). Two indicators agree, and one was a prediction stated before measuring, but both are read from one web JPEG.
 - The image passed through the photographer, NYT prepress and web export. Pixel-level steganalysis (LSB, chi-square) is non-probative on it and contributed to no conclusion here.
 - Global levels adjustments of the same JPEG add no information. They can still be a useful visualisation: a hard saturation push isolates the yellowed adhesive and the blue-grey rectangles far more legibly than the original. The speckle they produce in blank cells is amplified paper grain and JPEG chroma noise, not bleed-through (§9.5).
 
@@ -165,10 +166,40 @@ The two divergences have different mechanisms, and the chart proves it. For IQLU
 Consequence for any hypothesis keyed on "Sanborn's deliberate misspellings": at least one of the two K1/K2 misspellings was not visible as a decision at encipherment time, because at that moment the plaintext was spelled correctly.
 
 ### 9.7 Mark inventory
-Thirty-one non-letter marks catalogued with coordinates (arrows, a check-mark, ticks, corner brackets, isolated dots, a heavily traced S and Y, an underline stroke, a struck H, lower-case letters inside BURIED, the pass-through question-mark cells, the tape patches, and the items in §3.7 to §3.9). None has more than one indicator pointing beyond place-keeping while working across several hundred cells by hand. The row 7 letters are not underlined; they sit slightly high in their cells above the printed rule.
+Thirty-one non-letter marks catalogued with coordinates (arrows, a check-mark, ticks, corner brackets, isolated dots, a heavily traced S and Y, an underline stroke, a struck H, lower-case letters inside BURIED, the pass-through question-mark cells, the tape patches, and the items in §3.7 to §3.9). None has more than one indicator pointing beyond place-keeping while working across several hundred cells by hand. **Revised 2026-10-04:** the heavily traced keyword S (row 1, column 16) is not place-keeping; with its neighbours it is a correction from C to S (§9.9). The row 7 letters are not underlined; they sit slightly high in their cells above the printed rule.
 
 ### 9.8 What the chart does and does not carry
-Every physical feature of the chart resolves to production mechanics: pad width sets 31 columns, overflow characters go into hand-drawn margin cells or unruled edge bands, tape joins pad pages, marks are place-keeping. Beyond the published text, the only substantive information recoverable from this image is the asymmetry in §9.6, and that was already on record. The remark that forensic study "might" reveal something remains open with respect to the physical object, which this image cannot stand in for.
+Every physical feature of the chart resolves to production mechanics: pad width sets 31 columns, overflow characters go into hand-drawn margin cells or unruled edge bands, tape joins pad pages, marks are place-keeping. Beyond the published text, the substantive information recoverable from this image is the asymmetry in §9.6, which was already on record, and the row 1 keyword corrections in §9.9, which were not (added 2026-10-04). The remark that forensic study "might" reveal something remains open with respect to the physical object, which this image cannot stand in for.
+
+### 9.9 Row 1: the keyword was first written with C, then corrected (added 2026-10-04)
+
+[INTERNAL RESULT] Prompted by an observation from Colin Patrick on 2026-10-04: in row 1 the keyword looks as if it was written PALIMPCEST, the spelling in the header, and then corrected to PALIMPSEST. Script: `analysis_runs/nyt_coding_chart_forensics_20260919/scripts/slot6_corrections.py` (writes `slot6_corrections.json` and `crops/row1_slot6_panel.png`). Prior-art check the same day found no earlier record of this in the repo.
+
+**What the cells show.** Keyword slot 6 (the first S of PALIMPSEST, the letter written as C in the header) falls at K1 positions 6, 16, 26, 36, 46 and 56. At 6, 16 and 26 (row 1) the S has a C-shaped upper arc with a heavier lower stroke added; the keyword's other S (slot 8: positions 8, 18, 28, 38, 48, 58; key ink 0.55x to 0.94x) and the slot-6 S's in row 2 (36, 46; 0.55x and 0.64x) are lighter, and the five inspected by eye (8, 18, 28, 36, 46) are plain. Position 56 is the C (§9.6).
+
+**Prediction, stated before the cipher cells were measured.** A keyword letter changed from C to S after its cipher letter had been worked out forces the cipher letter to be redone. With key C the cipher letters at 6, 16 and 26 would have been Y, N and J (KA tableau, `enc(B, P) = E` convention check); the carved letters are Z, J and G.
+
+**Measurement 1** (per-cell ink on the original JPEG, interior inset 4 px, as a multiple of the median of the same written line):
+
+| K1 position | Slot | Key letter | Key ink | Cipher letter | Cipher ink (rank of 31 in the line) | Cipher letter if key were C |
+|---|---|---|---|---|---|---|
+| 6 | 6 | S | 1.41 | Z | 1.98 (1) | Y |
+| 16 | 6 | S | 1.51 | J | 1.62 (3) | N |
+| 26 | 6 | S | 0.99 | G | 1.06 (12) | J |
+| 36 | 6 | S | 0.55 | U | 0.74 (26) | X |
+| 46 | 6 | S | 0.64 | L | 0.72 (28) | Q |
+| 56 | 6 | C | 0.75 | K | 0.95 (18) | K |
+| 8, 18, 28 | 8 | S | 0.63, 0.79, 0.87 | R, Z, F | 1.10, 0.79, 1.39 | |
+
+Row 1's other Z, at position 18, is light (0.79), so the heavy Z at 6 is not a property of the letter.
+
+**Measurement 2** (independent): the grid-suppressed ink masses from the original pass (`cell_metrics.json`, `scripts/cells.py`), normalised by line median and then by the median of the same letter across all 707 scored letter cells (row 6 cipher line excluded as off-grid; `ink_outliers_by_letter.json`). The position-16 S ranks 1st on the whole sheet (2.07x), the Z under position 6 2nd (1.92x), the position-6 S 9th (1.58x) and the J under position 16 15th (1.52x). Sheet percentiles: median 1.00, 95th 1.35, 99th 1.58. Column 30 carries a systematic edge bias in this measure (median 1.25x against 1.00x for columns 1 to 29), so other high cells in column 30 are not read as corrections. The keyword E after two of the corrected S's (positions 17 and 27) is also heavy (mark M5; 1.54x at 27).
+
+**Reading.** Sanborn began with the header spelling, wrote C at slot 6 in row 1, worked out at least the first two cipher letters with it, then corrected key and cipher letters. Position 26 may have been caught before its cipher letter was written. Row 2 has S written cleanly at 36 and 46; position 56 has C again, with K worked out from it and never changed. The header was never corrected.
+
+**Consequence.** By position 56 he had corrected the spelling three times, so not knowing the spelling no longer explains the C at 56. A lapse back to the header spelling and a deliberate choice both remain; the chart cannot separate them. Sanborn's reported statements ("a clue", 2005; "to mix it up", 2020; `docs/anomaly_registry.md` A2) bear on the second and are Tier-3 under project doctrine.
+
+**Limits.** Medium-low confidence. Both measurements come from one 1.5 MP web JPEG, and ink mass also tracks letter shape and pencil pressure. No ghost Y or N is legible under the corrected cipher letters at this resolution; the J at 16 shows a faint extra upright left of its stem, consistent with an earlier N but not establishing it. Retracing for some other reason (for example while checking a column) would also put extra ink in a key cell and the cell below it; what ties these cells to a C-to-S correction is that they sit in the one keyword slot the header spells with C. Raking-light photography of the original (§8 item 1) would settle it.
 
 ---
 
