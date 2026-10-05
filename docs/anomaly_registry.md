@@ -43,6 +43,12 @@ Classification key:
   - IDBYROWS is the product of that error, not an intended reading (project correction
     2026-09-29, `docs/audits/kryptos_text_integrity_audit_2026_09_29.md`). Do not treat it
     as an instruction.
+- **Worksheet evidence (added 2026-10-05)**: an RR Auction photograph of the K2 encoding
+  chart's row 14 shows the WEST X column (plaintext X, key B, cipher S) circled, with an
+  arrow to the S and the pencil note "could take out". The copper drops that S and leaves
+  every later cipher letter unchanged. That turns WESTXLAYERTWO into WESTIDBYROWS. So the
+  omission was a marked, considered edit, and IDBYROWS is its unintended consequence.
+  Details: `docs/nyt_k1k2_chart_physical_layout_2026_09_19.md` §10.
 
 ### A2. IQLUSION misspelling (K1 plaintext)
 - **What**: "ILLUSION" spelled as "IQLUSION" in the decrypted K1 plaintext

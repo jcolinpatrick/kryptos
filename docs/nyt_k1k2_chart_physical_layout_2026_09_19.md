@@ -1,7 +1,7 @@
 # The K1/K2 Encoding Chart: Physical Layout, Tape, Margins, and Row Breaks
 
 **Date:** 2026-09-19
-**Status:** Observational note with a completed digital forensic pass (local enhancement, ink separation, grid metrology, 744-cell transcription check, mark inventory). Full measured report and re-runnable scripts are local-only under `analysis_runs/nyt_coding_chart_forensics_20260919/`; the measured results are summarised in §9. **Updated 2026-10-04:** §9.9 adds evidence that the keyword was first written PALIMPCEST in row 1 and corrected.
+**Status:** Observational note with a completed digital forensic pass (local enhancement, ink separation, grid metrology, 744-cell transcription check, mark inventory). Full measured report and re-runnable scripts are local-only under `analysis_runs/nyt_coding_chart_forensics_20260919/`; the measured results are summarised in §9. **Updated 2026-10-04:** §9.9 adds evidence that the keyword was first written PALIMPCEST in row 1 and corrected. **Updated 2026-10-05:** §10 adds rows 9 to 14 from auction photographs, including the "could take out" note on the dropped X.
 **Subject image:** the K1/K2 handwritten encoding chart published by The New York Times (John Schwartz, "Original Decoding Charts for 'Kryptos'," 20/21 Nov 2010), analysed here from a 1150 x 1346 px JPEG copy.
 
 This note records what is physically visible on the chart, what the layout is consistent with, and how the chart relates to the carved copper. It deliberately separates observation from inference. It makes no claim about the K4 method.
@@ -35,7 +35,7 @@ Two pieces of green-grid quadrille paper, photographed separately (white backgro
 | 5 | K2 | **32** | `CFIELDXTHEINFORMATIONWASGATHERED`; the leading C, its key S and its ciphertext I sit in a hand-drawn box in the **left margin**, outside the grid |
 | 6 | K2 | 31 | ciphertext line written in an **unruled band** between rows 6 and 7, not in cells (see §3) |
 | 7 | K2 | 31 | |
-| 8 | K2 | 30 + `?` | image ends here; K2 continues on sheets not shown |
+| 8 | K2 | 30 + `?` | image ends here; K2 continues on sheets not shown (rows 9 to 14: §10) |
 
 Concatenating the chart's K1 ciphertext rows (including the overflow D) reproduces the 63-character K1 ciphertext exactly. Rows 3 to 8 reproduce the first 185 letters of the carved K2 ciphertext with one exception: at row 6, column 21 the chart has E where the copper has R (see §9.6).
 
@@ -127,7 +127,7 @@ This also bounds what "worksheet correct, copper wrong" can mean: the chart spel
 1. Raking-light photography, to separate pressure indentation from surface graphite. The tonal null in §9.3 says nothing about impressions with no tonal signature.
 2. Transmitted or backlit photography: reverse-side content, what the tape patches cover, and what the two blue-grey margin rectangles are.
 3. Physical measurement in millimetres plus watermark, to settle whether the K1 piece, the K2 rows 3 to 6 piece and the rows 7 to 8 piece are from the same pad.
-4. The remaining K2 sheets, which the NYT image does not include.
+4. The remaining K2 sheets, which the NYT image does not include. Partly met on 2026-10-05 by two low-resolution auction photographs of rows 9 to 14 (§10); rows 13 and 14 are legible.
 
 ---
 
@@ -200,6 +200,43 @@ Row 1's other Z, at position 18, is light (0.79), so the heavy Z at 6 is not a p
 **Consequence.** By position 56 he had corrected the spelling three times, so not knowing the spelling no longer explains the C at 56. A lapse back to the header spelling and a deliberate choice both remain; the chart cannot separate them. Sanborn's reported statements ("a clue", 2005; "to mix it up", 2020; `docs/anomaly_registry.md` A2) bear on the second and are Tier-3 under project doctrine.
 
 **Limits.** Medium-low confidence. Both measurements come from one 1.5 MP web JPEG, and ink mass also tracks letter shape and pencil pressure. No ghost Y or N is legible under the corrected cipher letters at this resolution; the J at 16 shows a faint extra upright left of its stem, consistent with an earlier N but not establishing it. Retracing for some other reason (for example while checking a column) would also put extra ink in a key cell and the cell below it; what ties these cells to a C-to-S correction is that they sit in the one keyword slot the header spells with C. Raking-light photography of the original (§8 item 1) would settle it.
+
+---
+
+## 10. Rows 9 to 14 from auction photographs (added 2026-10-05)
+
+**Source.** [PUBLIC FACT for the listing details] Two web photographs from rrauction.com, supplied by Colin Patrick on 2026-10-05. The archive was RR Auction "Decoding History: Kryptos, Enigma, and the Rosetta Stone" (#730), lot 2001, "The Complete Secrets of Kryptos: Jim Sanborn's Private Archive", which ended 20 Nov 2025 ([lot page](https://www.rrauction.com/auctions/lot-detail/350761607302001-the-complete-secrets-of-kryptos-jim-sanborns-private-archive/)). The K1/K2/K3 coding charts are its item 4. The lot page says "For reasons of secrecy, no photos will be provided of items 1–7", so these images come from elsewhere on the RR site; the exact page is not yet recorded. The images are not reproduced here. Local copies with SHA-256 hashes, crops and the re-runnable script are under `analysis_runs/k2_bottom_photos_20261005/` (local-only).
+
+**What is visible.** A bright white ruled sheet labelled "K2" in pencil lies over cream sheets. The white sheet is in two pieces: the rows 9 to 10 piece lies underneath and the rows 11 to 14 piece lies over it. Rows 13 and 14 of a cream sheet are visible below the white sheet, and only these rows are letter-legible. Row blocks have the same plaintext / keyword / ciphertext / blank structure as rows 1 to 8, and rows are numbered in the left margin.
+
+**10.1 Rows 13 and 14** [INTERNAL RESULT read from the photographs; layout check is DERIVED FACT]. Read from the cream sheet (blur misreads P/F, G/W, D/O resolved by the kernel):
+
+| Row | Line | Cells |
+|---|---|---|
+| 13 | plaintext | `THSEVENTYSEVENDEGREESEIGHTMINUT` |
+| 13 | ciphertext | `NQFMPNZGLFLPMRJQYALMGNUVPDXVKPD` |
+| 14 | plaintext | `ESFORTYFOURSECONDSWESTXLAYERTWO` |
+| 14 | keyword | `CISSAABSCISSAABSCISSAABSCISSAAB` |
+| 14 | ciphertext | `QUMEBEDMHDAFMJGZNUPLGESWJLLAETG` |
+
+These are exactly what follows if rows 9 to 14 continue at 31 cells per row, with `?` taking a cell and **no further margin boxes**. The H pushed out of row 8 by its `?` starts row 9 inside the grid. The row 5 margin box (§3.5) was a one-off. K2 therefore fills chart rows 3 to 14 exactly: 370 letters plus 3 `?` cells = 12 x 31 + the one row 5 box. The X of WEST X LAYER TWO is at row 14, column 22. Neither sheet has writing in its left margin beyond the row numbers.
+
+**10.2 "could take out"** [INTERNAL RESULT for the note; DERIVED FACT for the decryption]. An oval encloses the whole X column of row 14 (plaintext X, key B, ciphertext S), an arrow points up to the S, and the pencil note below reads "could take out". The white sheet carries an oval and arrow at the same cell, with a note that is illegible at this resolution. Copper line 14 (`DQUMEBEDMHDAFMJGZNUPLGEWJLLAETG`) is chart row 14 with only the S deleted, plus the D carried from row 13. Every later cipher letter is unchanged, so the deletion was made in the ciphertext without re-enciphering the tail. Decrypting chart row 14 gives `...WESTXLAYERTWO`, and the same row without the S gives `...WESTIDBYROWS`.
+
+**Reading.** Leaving the X off the copper was a considered edit, marked on the worksheet. That fits Sanborn's 2006 account (§5: "several ways I could manipulate the lines of text so I would end up with a panel that's square on the sides... I did leave an X out"). IDBYROWS is still an error. Under a single substitution alphabet, deleting a cipher letter would delete only one plaintext letter. Under ABSCISSA it shifts the key phase for every following letter. Because this X was K2's last separator, only eight letters were damaged. Letter count alone does not force the deletion: with the S kept, copper line 14 would have 32 characters, the same as copper lines 1, 6 and 9. Any fit argument needs physical letter widths.
+
+**10.3 A heavy vertical bar** [INTERNAL RESULT, medium confidence on the row]. The white sheet carries a single short, very dark vertical stroke on a cell boundary, after the fifth cell of the top row of the rows 11 to 14 piece. It is the darkest mark on the sheet. Six row labels are visible in the white sheet's left margin: two on the underlying piece and four on the overlying one. The bottom row carries the oval, which makes it row 14, so the bar is on row 11. A six-row overlying piece would need a row pitch of about 58 px against the 85 to 100 px measured. The bar's row was placed from label positions and pitch, not by reading its letters.
+
+On row 11 the bar falls between `SAGEX` and `THIRTYEIGHTDEGREES...`, the boundary between "his last message X" and the start of the coordinates. [DERIVED FACT] It does not mark a copper line break. Mapped onto the chart, carved K2 lines start only at chart column 0 or columns 29 to 30, so no carved line break falls after column 5 of any row. [HYPOTHESIS] The bar is a section mark before the coordinates. Tests: whether the cream original carries the same bar (it is covered by the white sheet in both photographs), and whether the white sheet is a reduced copy, in which case the bar was added later.
+
+**10.4 Paper** [INTERNAL RESULT, low confidence]. Neither sheet shows the green rules of the NYT-published pieces (§2). The rules on the cream sheet sample at the paper's own hue, and the white sheet's cells look smaller than the cream sheet's. These are either a different stock or reproductions. Web JPEGs with unknown white balance cannot settle which.
+
+Repro (layout, copper line-start mapping, kernel checks):
+```bash
+PYTHONPATH=src python3 analysis_runs/k2_bottom_photos_20261005/scripts/revised_layout.py
+```
+
+**Limits.** Both images are small, heavily blurred web crops. Only rows 13 and 14 are read letter by letter. Everything else in this section rests on layout, position and the kernel arithmetic.
 
 ---
 
