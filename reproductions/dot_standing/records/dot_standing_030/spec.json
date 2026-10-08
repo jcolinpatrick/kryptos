@@ -1,0 +1,522 @@
+{
+  "hypothesis": "Invertible 2x2 Hill cipher followed by exhaustive keyed columnar widths2..10, all column orders and forward/inverse maps",
+  "control_plan": "1600 true-frame distinct-key plants (200 per8bases),1600 certified partial-crib corruptions,1600 random true-frame negatives;144 whole-universe plants covering every base/width/direction plus8 whole-universe randoms; exact key/route/full97plaintext recovery; no target before independent scientific review",
+  "instrument_files": [
+    "hill_columnar_probe.py",
+    "test_hill_columnar_probe.py",
+    "hill_columnar_core.py",
+    "test_hill_columnar_core.py",
+    "keyed_bank_access.py",
+    "test_keyed_bank_access.py",
+    "keyed_routes.py",
+    "test_keyed_routes.py",
+    "hill_probe.py",
+    "routed_probe.py",
+    "affine_probe.py",
+    "cryptolab/tools/hill_cipher.py"
+  ],
+  "review_extra_sources": [
+    "hill_columnar_core.py",
+    "keyed_bank_access.py",
+    "test_hill_columnar_core.py",
+    "test_hill_columnar_probe.py"
+  ],
+  "resources": "2 numerical workers per Hill experiment, one native thread each; concurrent current monoalphabetic controls2 means total4; MemAvailable>=16GiB, conservative own-groupRSS<=32GiB and per-processAS<=32GiB guards; deadline2026-10-06T23:30Z; Maxsubscriptiononly zeroextraspend;E8paused",
+  "control_cap_seconds": 14400,
+  "target_cap_seconds": 300,
+  "target_workers": 2,
+  "parameters": {
+    "widths": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "max_width": 10,
+    "all_column_orders": true,
+    "inverse_maps": true,
+    "matrix_dimension": 2,
+    "block_phases": [
+      0,
+      1
+    ],
+    "plaintext_alphabets": [
+      "AZ",
+      "KA"
+    ],
+    "ciphertext_alphabets": [
+      "AZ",
+      "KA"
+    ],
+    "workers": 2,
+    "batch_size": 65536,
+    "affinity": "inherited",
+    "invertible_matrices_per_base": 157248
+  },
+  "runtime_env": {
+    "K4_WORKERS": "2",
+    "K4_BATCH_SIZE": "65536"
+  },
+  "reasoning": "Planner030 conditional GO, no scientific STOP. Bank028 now passed independent full97map/digit-plane/bijection/roundtrip audit of all8075824recipes, unique count8075824. Compact factoradic metadata accessor independently matched every literal metadata record in51.922s. Hill core3tests passed0.741s including all26^4 matrix enumeration/157248invertible count, complete rank-deficient toy key sets, both partial-crib checks, nonsymmetric keys and all8alph/phase roundtrips. Search-path2tests passed0.557s across all8bases/bothdirections/batchoffsets and pooled first-survivor cleanup. Code/source frozen before full benchmark/controls. Existing VM headroom permits2additional synthetic workers while028controls2 continue; fourtotal, guardRAMfloor enforced. This is within owner standing limits and does not overlap the closed width9campaign.",
+  "planner_corrections": "Exactly144 whole-universe planted fixtures =8bases*9widths*2directions, fixed before search; ambiguous288 in proposal discarded by arithmetic, no adaptive control reduction. All144+8 scan full8*8075824=64606592 contexts each. No probability estimates adopted. Public rank2 overGF2/GF13 must hold all8bases, with complete676-coefficient signature oracle per output column and determinantunit filter. Edge rule is numeric pass-through at96(phase0) or0(phase1); edge lies outside24cribs and cannot gate key compatibility. Column convention is row-write left-to-right, short columns rightmost, all column orders; inverse maps also tested. Affinity inherited; no system-affinity tuning or claims of optimal throughput. Benchmark1vs2workers before controls; projection failure is inconclusive, never truncation or NULL.",
+  "scope": "Exactly pure invertible2x2 row-vector Hill P*M=Cmod26, phases0/1, AZ/KA plaintext and ciphertext alphabets, numeric pass-through single edge, then frozen8075824 keyed-columnar maps widths2..10. All24 published crib positions enforced, including2partiallyknown blocks. Other matrix dimensions, affine offsets, other alphabets/ragged conventions, padding/nulls, and transposition-before-Hill unexcluded. Counts are context evaluations, not independent trials or unique key enumeration. First any compatible target lead stops; independent full97encode/decode verification required before reporting significance.",
+  "prior_contact": "All24cribpositions treated exposed; prior VOID007targetdiagnostics acknowledged. No blind/statistical/globalK4claim. E1-E7, old experiments, memories and kryptos claims are unverified leads; controlled retesting is legitimate coverage and novelty is not a stop reason.",
+  "numerical_notes": "Two single-thread workers; max2active of8base tasks. Batch<=65536. PrimaryGF2/GF13CRT fit plus determinantunit/full24crib checks; independent all676column-coefficient signatures and scalar forward enumeration for partial blocks. Capture candidate key/globalrouteindex before reference validation, including nonzero chunk offset. Any candidate marker including interrupted temporary file forcesSTOP. All8completeper-task8075824receipts/noerrors/hits/markers and pre/post source/bank/runtime hashes required NULL. Guards ownPGonly;300stargetcap and hard23:30Zdeadline.",
+  "reuse_bank_from": "analysis_runs/dot_standing_028",
+  "reuse_bank_mode": "hardlink",
+  "launcher": "finite_chunked_target.py",
+  "pre_control_benchmark_workers": [
+    1,
+    2
+  ],
+  "benchmark_max_seconds": 240,
+  "planned_global_plants": 144,
+  "oracle_function": "core.reference_assignments",
+  "search_space_size": 64606592,
+  "bank_source_hashes": {
+    "routes.npy": "5e7c51ca7235d84e0ce83bab7f173386ce5ce0ad4e1e87e199a6b881a4939ca1",
+    "routes.json": "183bf712677a6ea6433fb8b30f85087e0fef52ca831eafd650fa40af776c9e31",
+    "reference_routes.npy": "5e7c51ca7235d84e0ce83bab7f173386ce5ce0ad4e1e87e199a6b881a4939ca1",
+    "bank-audit.json": "68f2b5986204c98885d4c08f3e3f99d9ec205aa0d9392848bf223040cf0b320b"
+  },
+  "id": "dot-standing-030",
+  "configurations": [
+    [
+      0,
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    ],
+    [
+      0,
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+    ],
+    [
+      0,
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    ],
+    [
+      0,
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+    ],
+    [
+      1,
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    ],
+    [
+      1,
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+    ],
+    [
+      1,
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    ],
+    [
+      1,
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+    ]
+  ],
+  "configuration_count": 8,
+  "geometry": {
+    "bank": {
+      "passed": true,
+      "recipes_audited": 8075824,
+      "unique_maps": 8075824,
+      "length": 97,
+      "widths": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "per_width": [
+        {
+          "width": 2,
+          "unique_added": 4,
+          "recipes_audited": 4
+        },
+        {
+          "width": 3,
+          "unique_added": 12,
+          "recipes_audited": 12
+        },
+        {
+          "width": 4,
+          "unique_added": 48,
+          "recipes_audited": 48
+        },
+        {
+          "width": 5,
+          "unique_added": 240,
+          "recipes_audited": 240
+        },
+        {
+          "width": 6,
+          "unique_added": 1440,
+          "recipes_audited": 1440
+        },
+        {
+          "width": 7,
+          "unique_added": 10080,
+          "recipes_audited": 10080
+        },
+        {
+          "width": 8,
+          "unique_added": 80640,
+          "recipes_audited": 80640
+        },
+        {
+          "width": 9,
+          "unique_added": 725760,
+          "recipes_audited": 725760
+        },
+        {
+          "width": 10,
+          "unique_added": 7257600,
+          "recipes_audited": 7257600
+        }
+      ],
+      "independent_digit_plane_map_bijection_roundtrip_all_recipes": true,
+      "seconds": 1260.782570362091,
+      "no_target_ciphertext_used": true
+    },
+    "bases": [
+      {
+        "config": [
+          0,
+          "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+          "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        ],
+        "known_complete_blocks": [
+          22,
+          24,
+          26,
+          28,
+          30,
+          32,
+          64,
+          66,
+          68,
+          70,
+          72
+        ],
+        "partial_blocks": [
+          20,
+          62
+        ],
+        "ranks": {
+          "2": 2,
+          "13": 2
+        },
+        "field_pivot_rows": {
+          "2": [
+            1,
+            2
+          ],
+          "13": [
+            0,
+            1
+          ]
+        },
+        "reference_column_signatures": 676,
+        "covered_crib_letters": 24
+      },
+      {
+        "config": [
+          0,
+          "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+          "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+        ],
+        "known_complete_blocks": [
+          22,
+          24,
+          26,
+          28,
+          30,
+          32,
+          64,
+          66,
+          68,
+          70,
+          72
+        ],
+        "partial_blocks": [
+          20,
+          62
+        ],
+        "ranks": {
+          "2": 2,
+          "13": 2
+        },
+        "field_pivot_rows": {
+          "2": [
+            1,
+            2
+          ],
+          "13": [
+            0,
+            1
+          ]
+        },
+        "reference_column_signatures": 676,
+        "covered_crib_letters": 24
+      },
+      {
+        "config": [
+          0,
+          "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+          "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        ],
+        "known_complete_blocks": [
+          22,
+          24,
+          26,
+          28,
+          30,
+          32,
+          64,
+          66,
+          68,
+          70,
+          72
+        ],
+        "partial_blocks": [
+          20,
+          62
+        ],
+        "ranks": {
+          "2": 2,
+          "13": 2
+        },
+        "field_pivot_rows": {
+          "2": [
+            0,
+            1
+          ],
+          "13": [
+            0,
+            1
+          ]
+        },
+        "reference_column_signatures": 676,
+        "covered_crib_letters": 24
+      },
+      {
+        "config": [
+          0,
+          "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+          "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+        ],
+        "known_complete_blocks": [
+          22,
+          24,
+          26,
+          28,
+          30,
+          32,
+          64,
+          66,
+          68,
+          70,
+          72
+        ],
+        "partial_blocks": [
+          20,
+          62
+        ],
+        "ranks": {
+          "2": 2,
+          "13": 2
+        },
+        "field_pivot_rows": {
+          "2": [
+            0,
+            1
+          ],
+          "13": [
+            0,
+            1
+          ]
+        },
+        "reference_column_signatures": 676,
+        "covered_crib_letters": 24
+      },
+      {
+        "config": [
+          1,
+          "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+          "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        ],
+        "known_complete_blocks": [
+          21,
+          23,
+          25,
+          27,
+          29,
+          31,
+          63,
+          65,
+          67,
+          69,
+          71
+        ],
+        "partial_blocks": [
+          33,
+          73
+        ],
+        "ranks": {
+          "2": 2,
+          "13": 2
+        },
+        "field_pivot_rows": {
+          "2": [
+            1,
+            2
+          ],
+          "13": [
+            0,
+            1
+          ]
+        },
+        "reference_column_signatures": 676,
+        "covered_crib_letters": 24
+      },
+      {
+        "config": [
+          1,
+          "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+          "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+        ],
+        "known_complete_blocks": [
+          21,
+          23,
+          25,
+          27,
+          29,
+          31,
+          63,
+          65,
+          67,
+          69,
+          71
+        ],
+        "partial_blocks": [
+          33,
+          73
+        ],
+        "ranks": {
+          "2": 2,
+          "13": 2
+        },
+        "field_pivot_rows": {
+          "2": [
+            1,
+            2
+          ],
+          "13": [
+            0,
+            1
+          ]
+        },
+        "reference_column_signatures": 676,
+        "covered_crib_letters": 24
+      },
+      {
+        "config": [
+          1,
+          "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+          "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        ],
+        "known_complete_blocks": [
+          21,
+          23,
+          25,
+          27,
+          29,
+          31,
+          63,
+          65,
+          67,
+          69,
+          71
+        ],
+        "partial_blocks": [
+          33,
+          73
+        ],
+        "ranks": {
+          "2": 2,
+          "13": 2
+        },
+        "field_pivot_rows": {
+          "2": [
+            0,
+            3
+          ],
+          "13": [
+            0,
+            1
+          ]
+        },
+        "reference_column_signatures": 676,
+        "covered_crib_letters": 24
+      },
+      {
+        "config": [
+          1,
+          "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+          "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+        ],
+        "known_complete_blocks": [
+          21,
+          23,
+          25,
+          27,
+          29,
+          31,
+          63,
+          65,
+          67,
+          69,
+          71
+        ],
+        "partial_blocks": [
+          33,
+          73
+        ],
+        "ranks": {
+          "2": 2,
+          "13": 2
+        },
+        "field_pivot_rows": {
+          "2": [
+            0,
+            3
+          ],
+          "13": [
+            0,
+            1
+          ]
+        },
+        "reference_column_signatures": 676,
+        "covered_crib_letters": 24
+      }
+    ]
+  }
+}

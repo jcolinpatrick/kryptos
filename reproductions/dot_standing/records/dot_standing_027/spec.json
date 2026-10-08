@@ -1,0 +1,117 @@
+{
+  "hypothesis": "Anybijective26-lettermonoalphabetic substitution composedwithALLkeyedcolumnarwidth2..9left-raggedcolumnorders andinverse maps; exactsymbolic13!key-completionfibers",
+  "control_plan": "3200full-bankplants:200per16width/directionstrata, distinctfullrandom26!keys;3200repetitioncorruptions+3200injectivitycollisions+3200randoms local;48stratifiedfull-universeplants+8fullrandoms; exhaustive6-letterall720keys/all6compatiblecompletions toy proof beforemaincontrols",
+  "instrument_files": [
+    "mono_fiber_v2_probe.py",
+    "test_mono_fiber_v2_probe.py",
+    "keyed_routes.py",
+    "test_keyed_routes.py",
+    "hill_probe.py",
+    "routed_probe.py",
+    "affine_probe.py",
+    "cryptolab/tools/hill_cipher.py"
+  ],
+  "resources": "12numericalworkers max controls/target,threads1,RAMavailable>=16GiB;zeroextraspend;deadline2026-10-06T23:30Z",
+  "control_cap_seconds": 7200,
+  "target_cap_seconds": 60,
+  "target_workers": 12,
+  "parameters": {
+    "widths": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
+    "all_column_orders": true,
+    "inverse_maps": true,
+    "substitution": "all26!bijections",
+    "workers": 12,
+    "max_width": 9
+  },
+  "runtime_env": {},
+  "reasoning": "SuggestedbySCI025 generalmonoalph coversunit-affine plusmanyother26! permutations. Completeacceptedfiber fixed13injectivePUBmapentries,unused13plain/cipher sets, ALL13!bijectionsuntruncated. Truekey/fullPTmembership recovered, NOTuniqueplaintext; canonicalWITNESS lexcompletionseparate. Planner027 explicitlyapprovedsymbolicfiberstandingrecoverycriterion, scientificreviewstillseparateaftercontrols. Exhaustive6lettertoy720truekeys\u00d7all720candidateoracle vsall6fibercompletions comparesexactsets; repetitionandcollisionnegativechecks, synthetic12workerstop.3tests passed0.573s. Everylocalplant searchesALL818224maps, recordsotheracceptedmaps/equivalentcrib-image aliases;200distinctfullkeysperwidth/mode. Primaryvectorsame-PUB-letterequality+13mappedlettersinjective; independentownliteralEnecessaryprune/scalarbidirectionaldict usingauditedmanualrefmaps, allcontextsdecided notsampled. Noactualtargetconstraints evaluated. Width9 expansion requires rebuilding/auditing bank and all new exact-universe controls. Engine v2 derives width strata/counts from frozen bank; mathematics unchanged.",
+  "planner_corrections": "No probabilityestimates adopted. RecoveryONLY exactcompletekeyfiberandfullPTmembership, notsinglewitnessrecovery. Mainfixed13pairsand13!remainingcompletions keycountnotdistinctplaintextcount; absentcipherletters canmakeplaintextaliaskeys. Negativecorruption/collisioncertifiedontrueframe only,notclaimallotherrouteframesnegative. Fulluniformrandomscansexactwholebank0hitsexpectobserved, no false-positive-ratecalibrationclaim. No uniquenessfilter, aliasedroutefiberslegal. 1base=allbijectiveletters,not48affineconfigs; countsroutecontexts notenumerated26!keys. Enecessaryprunethirdpathrejectsallnonprunepassingcontextsbylogicalnecessity, scalarreferenceeveryremainingroute, independentofprimarymask. Newbank independently audits every recipe and full97map.",
+  "scope": "ExactlyANY26-letterbijective monoalphabeticlettermap plusfrozen818224literalkeyedcolumnarwidth2..9left-raggedcolumnorders/forwardinverse. All26! keys handledsymbolically; anacceptedroute impliesexact13!keycompletions. Homophonic/nonbijective/polyalphabetic maps,otherwidths/raggedconventions/routesunexcluded. All24exposedcribconditional, no blind/statistical/full-decryption/uniquenessclaim; firstanycompatiblefiberlead STOP.",
+  "prior_contact": "Publicciphertextpreviouslyvisible, VOID007manualresidue0/6diagnostics; conservativelyall24cribpositions exposed. No blindK4/statisticalclaim. Syntheticblinds verifycontrolledrecovery only. E1-E7/alloldmemories/kryptosclaims unverifiedleads; controlledretesting legitimate noveltynostop.",
+  "numerical_notes": "12singlethreadcontrolworkers,1numericaltargettaskwithinpool12;RAMavailable>=16GiB, controls7200s,target60sPGand23:30Zdeadline. Primarybeforeoracle atomicrecorder capturesassignedmap/cfg/route, pools12forkproof beforetarget. All1complete818224route receipt/no stopped/marker/hit/exception requiredNULL. Hashbank/referencebank/audit/source/controls/canonical beforeafter; freshoneusemarkers; manualcolumnar/scalarfullfiberverifier+WITNESSfull97encode proof. NoNumeric26!enumeration, compressionlosslessverifiedexhaustivesmallalphabet. E8paused,$0extraMaxonly,oldhistoryunverifiednoveltynostop.",
+  "oracle_function": "reference_assignments",
+  "search_space_size": 818224,
+  "bank_source_hashes": {
+    "routes.npy": "ada97c8c76070a98b5398e74f54ef5560e05b3201e3e3d0765eb2605be766bc7",
+    "routes.json": "76fb3ac2d86c6fad2c0d3182f388ed1c3ce4676b8483606fdadfa173e611dabc",
+    "reference_routes.npy": "ada97c8c76070a98b5398e74f54ef5560e05b3201e3e3d0765eb2605be766bc7",
+    "bank-audit.json": "2d770259e62e21fffd1ed48c7fce6b1da093aead91427557fca1833dc01dce61"
+  },
+  "id": "dot-standing-027",
+  "configurations": [
+    [
+      "any_bijective_monoalphabetic"
+    ]
+  ],
+  "configuration_count": 1,
+  "geometry": {
+    "passed": true,
+    "recipes_audited": 818224,
+    "unique_maps": 818224,
+    "length": 97,
+    "widths": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
+    "per_width": [
+      {
+        "width": 2,
+        "unique_added": 4,
+        "recipes_audited": 4
+      },
+      {
+        "width": 3,
+        "unique_added": 12,
+        "recipes_audited": 12
+      },
+      {
+        "width": 4,
+        "unique_added": 48,
+        "recipes_audited": 48
+      },
+      {
+        "width": 5,
+        "unique_added": 240,
+        "recipes_audited": 240
+      },
+      {
+        "width": 6,
+        "unique_added": 1440,
+        "recipes_audited": 1440
+      },
+      {
+        "width": 7,
+        "unique_added": 10080,
+        "recipes_audited": 10080
+      },
+      {
+        "width": 8,
+        "unique_added": 80640,
+        "recipes_audited": 80640
+      },
+      {
+        "width": 9,
+        "unique_added": 725760,
+        "recipes_audited": 725760
+      }
+    ],
+    "independent_digit_plane_map_bijection_roundtrip_all_recipes": true,
+    "seconds": 129.02171516418457,
+    "no_target_ciphertext_used": true
+  }
+}

@@ -1,0 +1,82 @@
+{
+  "id": "dot-standing-010",
+  "hypothesis": "direct invertible4x4 Hill row vectors c=pM mod26, phases0/3, each AZ/KA plaintext/cipher alphabet",
+  "configurations": [
+    [
+      0,
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    ],
+    [
+      0,
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+    ],
+    [
+      0,
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    ],
+    [
+      0,
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+    ],
+    [
+      3,
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    ],
+    [
+      3,
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+    ],
+    [
+      3,
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    ],
+    [
+      3,
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+    ]
+  ],
+  "configurations_count": 8,
+  "public_crib_fullblock_ranks": [
+    [
+      0,
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      3,
+      3
+    ],
+    [
+      0,
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      3,
+      4
+    ],
+    [
+      3,
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      3,
+      4
+    ],
+    [
+      3,
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      4,
+      3
+    ]
+  ],
+  "operational_candidate_cap_per_implementation": 10000,
+  "solver": "all24 crib letters impose inverse-column equations; primary CRT affine systems, independent oracle brute all16/28561 field coefficient vectors per column, combine keys and filter determinant; full keysets must agree",
+  "control_plan": "200 distinct random invertible planted keys/cell,200 random ciphertexts/cell,zero ciphertext/cell; first10plants/cell crossfed to all8 cells, reversed ciphertext,phase1/2 andHill3 sources; record compatible hits and full keyset agreement; lowrank nullspace tests enumeratefree2",
+  "reasoning": "Previously omitted rank-deficient phases are finite and partial crib blocks can resolve ambiguities. Planner forward product unnecessary: inverse full-crib equations are smaller. Planner phase3 partial-block list missed block19..22; code builds every crib letter by direct position, test covers all8 cells. No guessed bounds or planner false-positive claims accepted.",
+  "scope_not_excluded": "otherblock sizes/phases outsideearliercoverage,affineoffsets,transpositions,otheralphabets,changingkeys,unconstrainededges",
+  "prior_contact": "Ciphertext and prior VOID007 residue0/6 diagnostic exposed; no blind/statistical claims. No010 target arithmetic before controls/review. Earlierresults unverified leads; retest legitimate new coverage, novelty no stop.",
+  "review_followup": "All C1-C6 conditional009 review addressed: general nullspace enumeration with explicit10000candidate cap, early counted; structured controls and lowrank unit test; outcome exceptions INCONCLUSIVE. Necessary rank proof: every column coefficient system includes every completely known block, so its rank >= rank(Cfull). For a compatible invertible key rank(Cfull)=rank(Pfull)>=3 in each field; nevertheless code now enumeratesfree>1 and operational cap explicitly. No probability estimate adopted.",
+  "resources": "worker1 thread1,RAMavailable>=16GiB,controlcap1800s,targetcap60s,absolute deadline2026-10-06T23:30Z; subscriptiononly zero extra spend; first survivor stops",
+  "tests": "3 synthetic tests passed; coreCI prior001 unchangedcore provenance, no claim newrootcode covered by that earlierCI"
+}

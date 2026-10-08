@@ -1,0 +1,7 @@
+{
+  "hill_probe.py": "125d17c9b80b87e14ad1a64b4905107d48ff25fed11f7d9824ffac98f64f5772",
+  "test_hill_probe.py": "6fb5a643e59dca9e5c620c719ea72406ea82c5626118c616da451cbd53a39bc0",
+  "analysis_runs/dot_standing_001/spec.json": "6c331c89c3f6559f6c9a4f387f83af8201b5ee7cd08b1324d5f4e7047bb363e2",
+  "docs/AGENT_HANDOFF.md": "6b53b681be4b4e6a636e95802d7695bbb8bad1e3f9ed83de9dacc170bee29c12",
+  "cryptolab/tools/hill_cipher.py": "80f92c0769b4b5f49ed332bf12b890cd04e7b12f21e0f3586f6949286449a553"
+}

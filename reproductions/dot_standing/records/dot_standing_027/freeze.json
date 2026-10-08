@@ -1,0 +1,17 @@
+{
+  "mono_fiber_v2_probe.py": "b0c0ed4c91e4da3b64213ff87d673a35602ac447f03c91a74ead134ff27b0919",
+  "test_mono_fiber_v2_probe.py": "2d86d3111b54fcf1c720244a88a15146b1ef4f13aadd909620f26532220f2de4",
+  "keyed_routes.py": "607c1d3186088e3a9b465b92e54565636dd8bbda98a52fdab30239b8e2c50e90",
+  "test_keyed_routes.py": "a2ab7c01c93f921faa5aeb96a2b94dedff4cbc6ff3be6df232a62a453f291cf0",
+  "hill_probe.py": "125d17c9b80b87e14ad1a64b4905107d48ff25fed11f7d9824ffac98f64f5772",
+  "routed_probe.py": "9371eb8062dbe226f52bb02d9f06f11dde1780a1dae219ab9489bbee34dc9e9a",
+  "affine_probe.py": "7a9b67af5918746041b919acc92e3ad03a9951405892eea08546081620338775",
+  "cryptolab/tools/hill_cipher.py": "80f92c0769b4b5f49ed332bf12b890cd04e7b12f21e0f3586f6949286449a553",
+  "analysis_runs/dot_standing_027/routes.npy": "ada97c8c76070a98b5398e74f54ef5560e05b3201e3e3d0765eb2605be766bc7",
+  "analysis_runs/dot_standing_027/routes.json": "76fb3ac2d86c6fad2c0d3182f388ed1c3ce4676b8483606fdadfa173e611dabc",
+  "analysis_runs/dot_standing_027/reference_routes.npy": "ada97c8c76070a98b5398e74f54ef5560e05b3201e3e3d0765eb2605be766bc7",
+  "analysis_runs/dot_standing_027/bank-audit.json": "2d770259e62e21fffd1ed48c7fce6b1da093aead91427557fca1833dc01dce61",
+  "docs/AGENT_HANDOFF.md": "6b53b681be4b4e6a636e95802d7695bbb8bad1e3f9ed83de9dacc170bee29c12",
+  "cryptolab/research_bridge/k4.py": "5bb7998a7b39c823f6915d27136884bade08808cf83e9881118f7d27ed322d06",
+  "analysis_runs/dot_standing_027/spec.json": "a1b77e8c60e24040688b73c17e6cf502385172778ef7077d25ec88420fbecffc"
+}

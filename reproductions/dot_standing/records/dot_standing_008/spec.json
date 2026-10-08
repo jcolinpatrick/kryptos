@@ -1,0 +1,53 @@
+{
+  "id": "dot-standing-008",
+  "hypothesis": "direct period7 additive progression ca(C_i)=sign*pa(P_i)+a[i%7]+b[i%7]*(i//7) mod26",
+  "configs": [
+    [
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      1
+    ],
+    [
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      -1
+    ],
+    [
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      1
+    ],
+    [
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      -1
+    ],
+    [
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      1
+    ],
+    [
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      -1
+    ],
+    [
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      1
+    ],
+    [
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      -1
+    ]
+  ],
+  "size": 8,
+  "prior_contact": "Proposal007 VOID: host improperly manually checked a few actual K4 values before controls. No survivor, no coverage claimed. Unchanged universe proposed before those checks; no blind-target or statistical claim. Independent reviewer may STOP. No further target evaluation before this gate.",
+  "controls": "1600 plants,1600 certified near misses,1600 uniform random; all eight cells searched independently by CRT and exhaustive676 coefficient-pairs per residue. True cell must recover both keys including truth and full plaintext; exactly7 positions shift13. Matching extra cells permitted and reported due parameter intersections.",
+  "history": "Earlier E1-E7, historical experiments and older memories/kryptos claims unverified leads, not established coverage. Controlled retests legitimate; novelty not a stop reason.",
+  "scope": "direct97 positions; AZ/KA plaintext/cipher alphabet, global +/- sign, arbitrary14 mod26 coefficients; other routes/periods/alphabet/key laws not excluded",
+  "resources": "one numerical process,one thread,>=16GiB available,controlcap1800s,targetcap60s,absolute authorization deadline",
+  "reasoning": "Retests rank-deficient omitted period7 by enumerating its one-bit nullspace instead of discarding it. All compatible keys enumerated per cell, never interpret two alternatives as unique plaintext."
+}

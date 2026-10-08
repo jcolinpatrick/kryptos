@@ -1,0 +1,290 @@
+{
+  "rows_tested": 28,
+  "expected": 28,
+  "survivors": [],
+  "seconds": 0.8207104206085205,
+  "cells": [
+    {
+      "config": [
+        3,
+        0,
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      ],
+      "status": "NULL",
+      "compatible_keys": 0
+    },
+    {
+      "config": [
+        3,
+        0,
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+      ],
+      "status": "NULL",
+      "compatible_keys": 0
+    },
+    {
+      "config": [
+        3,
+        0,
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      ],
+      "status": "NULL",
+      "compatible_keys": 0
+    },
+    {
+      "config": [
+        3,
+        0,
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+      ],
+      "status": "NULL",
+      "compatible_keys": 0
+    },
+    {
+      "config": [
+        3,
+        1,
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      ],
+      "status": "NULL",
+      "compatible_keys": 0
+    },
+    {
+      "config": [
+        3,
+        1,
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+      ],
+      "status": "NULL",
+      "compatible_keys": 0
+    },
+    {
+      "config": [
+        3,
+        1,
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      ],
+      "status": "NULL",
+      "compatible_keys": 0
+    },
+    {
+      "config": [
+        3,
+        1,
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+      ],
+      "status": "NULL",
+      "compatible_keys": 0
+    },
+    {
+      "config": [
+        3,
+        2,
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      ],
+      "status": "NULL",
+      "compatible_keys": 0
+    },
+    {
+      "config": [
+        3,
+        2,
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+      ],
+      "status": "NULL",
+      "compatible_keys": 0
+    },
+    {
+      "config": [
+        3,
+        2,
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      ],
+      "status": "NULL",
+      "compatible_keys": 0
+    },
+    {
+      "config": [
+        3,
+        2,
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+      ],
+      "status": "NULL",
+      "compatible_keys": 0
+    },
+    {
+      "config": [
+        4,
+        0,
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      ],
+      "status": "NULL",
+      "compatible_keys": 0
+    },
+    {
+      "config": [
+        4,
+        0,
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+      ],
+      "status": "NULL",
+      "compatible_keys": 0
+    },
+    {
+      "config": [
+        4,
+        0,
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      ],
+      "status": "NULL",
+      "compatible_keys": 0
+    },
+    {
+      "config": [
+        4,
+        0,
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+      ],
+      "status": "NULL",
+      "compatible_keys": 0
+    },
+    {
+      "config": [
+        4,
+        1,
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      ],
+      "status": "NULL",
+      "compatible_keys": 0
+    },
+    {
+      "config": [
+        4,
+        1,
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+      ],
+      "status": "NULL",
+      "compatible_keys": 0
+    },
+    {
+      "config": [
+        4,
+        1,
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      ],
+      "status": "NULL",
+      "compatible_keys": 0
+    },
+    {
+      "config": [
+        4,
+        1,
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+      ],
+      "status": "NULL",
+      "compatible_keys": 0
+    },
+    {
+      "config": [
+        4,
+        2,
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      ],
+      "status": "NULL",
+      "compatible_keys": 0
+    },
+    {
+      "config": [
+        4,
+        2,
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+      ],
+      "status": "NULL",
+      "compatible_keys": 0
+    },
+    {
+      "config": [
+        4,
+        2,
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      ],
+      "status": "NULL",
+      "compatible_keys": 0
+    },
+    {
+      "config": [
+        4,
+        2,
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+      ],
+      "status": "NULL",
+      "compatible_keys": 0
+    },
+    {
+      "config": [
+        4,
+        3,
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      ],
+      "status": "NULL",
+      "compatible_keys": 0
+    },
+    {
+      "config": [
+        4,
+        3,
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+      ],
+      "status": "NULL",
+      "compatible_keys": 0
+    },
+    {
+      "config": [
+        4,
+        3,
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      ],
+      "status": "NULL",
+      "compatible_keys": 0
+    },
+    {
+      "config": [
+        4,
+        3,
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+      ],
+      "status": "NULL",
+      "compatible_keys": 0
+    }
+  ],
+  "inconclusive_cells": [],
+  "failure": null
+}

@@ -1,0 +1,14 @@
+{
+  "rows_tested": 92464,
+  "expected": 92464,
+  "survivors": [],
+  "seconds": 0.29877209663391113,
+  "coverage_complete": true,
+  "all_owned_workers_closed": true,
+  "workers": 12,
+  "threads_each": 1,
+  "distinct_configs_recorded": 1,
+  "worker_records_verified": true,
+  "pool_worker_limit": 12,
+  "active_numerical_tasks": 1
+}

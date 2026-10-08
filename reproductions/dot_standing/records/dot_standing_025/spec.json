@@ -1,0 +1,360 @@
+{
+  "hypothesis": "Allkeyedcolumnarcolumnorders widths2..8,encodeanddecode maps, composedwithconstantunit-affineletter map CA(C_pre_i)=gPA(P_i)+dmod26",
+  "control_plan": "Exhaustive92464route-recipes independentdigit-plane+bijection+roundtrip audit;9600localplants+9600certifiednonfirstcribcorruptions+9600randoms over48baseconfigs;48full-universeplants all48bases+8fullrandoms",
+  "instrument_files": [
+    "keyed_routes.py",
+    "test_keyed_routes.py",
+    "keyed_affine_probe.py",
+    "test_keyed_affine_probe.py",
+    "hill_probe.py",
+    "routed_probe.py",
+    "affine_probe.py",
+    "cryptolab/tools/hill_cipher.py"
+  ],
+  "resources": "12numericalworkers max controls/target,threads1,RAMavailable>=16GiB;zeroextraspend;deadline2026-10-06T23:30Z",
+  "control_cap_seconds": 3600,
+  "target_cap_seconds": 60,
+  "target_workers": 12,
+  "parameters": {
+    "widths": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "all_column_orders": true,
+    "inverse_maps": true,
+    "multipliers": [
+      1,
+      3,
+      5,
+      7,
+      9,
+      11,
+      15,
+      17,
+      19,
+      21,
+      23,
+      25
+    ],
+    "offsets": 26,
+    "alphabet_pairs": 4,
+    "workers": 12
+  },
+  "runtime_env": {},
+  "reasoning": "Bankexpansion ratherthan assumedoldcoverage. Sumfactorials2..8=46232orders,92464forward/inverserecipes. Arithmeticgenerator outputj=start(column)+row, manualauditor list-ofrows columnreader/reconstructsegments separate; EVERYrecipe checked97uniquedigitplanes bijection/raggedheights/roundtrip. Dedup full97permutation maps only, exactcountcomputedandfrozen. Reference_routes.npy generatedseparatelybymanualdigitplanes forallrecipes, auditmatchesarithmeticmaps;cachedindependentmap thenall26offsetforward oracle EVERYnumericcontext vsprimaryconstantresidual, owncrib/alphabet maps. Bankmodel compositionposition-independent affine mapcommutes, noorderclaim.3synthetictests passed0.020s handwrittenABCDEFGHIJ width3order2,0,1=>CFIADGJBEH/allordersw2..4 plusall48basesroutew8. NoactualK4constraints evaluated.",
+  "planner_corrections": "No uniquenessrequired aliaseslegal truecfg/map/d/PT amongall. Local9600*3 controls eachoneplantedmap/base NOT28800full-universe searches, plus56full-universe; planner1.3e11 countmisreadingnotadopted. NumPynativekernelhotpath,nocompulsoryNumbaifmeasuredcoldruntimefitsbudget. Independentmanualevery-recipe inversioncachedasreferencearray, fullyauditednot re-decodingall97lettersPython EVERYruntimeframe; bothindepmaparrays frozen. Bankdedup unknownuntilbuild, nofictionalcount.12operatorchosenwithin26notuserfixed, noCLIaffinity/checkpointflags neededforboundedshortpass,recordperformance deviation. Pureidentity lettermap corneroffset0/13 includedlocal allbases; non-first J[1]cribmutated+1CA,only24/24exactmatcheslead.",
+  "scope": "Exactlyrow-write97left-raggedgrid thenreadcolumns inEVERYpermutation forwidth2..8; allinverse maps included; duplicatefull97mapsdeduped. Constantunit-affinelettermap12g*26d*4AZ/KApairs. Nootherwidths/right-fill/padding/differentcolumnarconventions/generalmonoalphabetic/nonunitg/progressivekeylaws excluded. All24exposedcribconditional; no blind/statistical/uniquenessclaim. Literalmapcountfrozenafterfullindepaudit.",
+  "prior_contact": "Publicciphertextpreviouslyvisible, VOID007manualresidue0/6diagnostics; conservativelyall24cribpositions exposed. No blindK4/statisticalclaim. Syntheticblinds verifycontrolledrecovery only. E1-E7/alloldmemories/kryptosclaims unverifiedleads; controlledretesting legitimate noveltynostop.",
+  "numerical_notes": "12workersnative1thread,\u226516GiBavailable,controls3600s andbankbuild600s bound, target60sPG/23:30Zdeadline. All48distincttaskreceipts eachfullbankcount/sumfrozen universe/no hits/stopped/exception mandatoryNULL. Pre-reference trace handlesmatch_data aswellasscan, persistsprimaryoffset/map/cfg atomically beforecomparison orassertfailure; anypresenceSTOP. Indepcandidateverifier manualcolumnar+full26d+directinverseg97PT readybeforetarget. Hashbank/referencebank/audit/source/control/canonical beforeafter; coldobservedfullsyntheticbenchmark beforetarget. Oldhistoryunverified noveltyneverstop,E8paused,$0extra.",
+  "search_space_size": 4438272,
+  "bank_source_hashes": {
+    "routes.npy": "cf355df9642d8967f80ac5ac463d5126bc132fa5061030d420c651cf17457c5b",
+    "routes.json": "b6f513beeeced498ab1d1a94b2b61b72b7d3f64ad8eeb5585cf5277c2e5691f5",
+    "reference_routes.npy": "cf355df9642d8967f80ac5ac463d5126bc132fa5061030d420c651cf17457c5b",
+    "bank-audit.json": "16f19eb638a2d4ecf928ce696942bb49bc2ac6533207900fe46b293f2bf391cf"
+  },
+  "id": "dot-standing-025",
+  "configurations": [
+    [
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      1
+    ],
+    [
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      3
+    ],
+    [
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      5
+    ],
+    [
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      7
+    ],
+    [
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      9
+    ],
+    [
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      11
+    ],
+    [
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      15
+    ],
+    [
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      17
+    ],
+    [
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      19
+    ],
+    [
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      21
+    ],
+    [
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      23
+    ],
+    [
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      25
+    ],
+    [
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      1
+    ],
+    [
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      3
+    ],
+    [
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      5
+    ],
+    [
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      7
+    ],
+    [
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      9
+    ],
+    [
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      11
+    ],
+    [
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      15
+    ],
+    [
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      17
+    ],
+    [
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      19
+    ],
+    [
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      21
+    ],
+    [
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      23
+    ],
+    [
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      25
+    ],
+    [
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      1
+    ],
+    [
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      3
+    ],
+    [
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      5
+    ],
+    [
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      7
+    ],
+    [
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      9
+    ],
+    [
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      11
+    ],
+    [
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      15
+    ],
+    [
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      17
+    ],
+    [
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      19
+    ],
+    [
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      21
+    ],
+    [
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      23
+    ],
+    [
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      25
+    ],
+    [
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      1
+    ],
+    [
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      3
+    ],
+    [
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      5
+    ],
+    [
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      7
+    ],
+    [
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      9
+    ],
+    [
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      11
+    ],
+    [
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      15
+    ],
+    [
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      17
+    ],
+    [
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      19
+    ],
+    [
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      21
+    ],
+    [
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      23
+    ],
+    [
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      25
+    ]
+  ],
+  "configuration_count": 48,
+  "geometry": {
+    "passed": true,
+    "recipes_audited": 92464,
+    "unique_maps": 92464,
+    "length": 97,
+    "widths": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "per_width": [
+      {
+        "width": 2,
+        "unique_added": 4,
+        "recipes_audited": 4
+      },
+      {
+        "width": 3,
+        "unique_added": 12,
+        "recipes_audited": 12
+      },
+      {
+        "width": 4,
+        "unique_added": 48,
+        "recipes_audited": 48
+      },
+      {
+        "width": 5,
+        "unique_added": 240,
+        "recipes_audited": 240
+      },
+      {
+        "width": 6,
+        "unique_added": 1440,
+        "recipes_audited": 1440
+      },
+      {
+        "width": 7,
+        "unique_added": 10080,
+        "recipes_audited": 10080
+      },
+      {
+        "width": 8,
+        "unique_added": 80640,
+        "recipes_audited": 80640
+      }
+    ],
+    "independent_digit_plane_map_bijection_roundtrip_all_recipes": true,
+    "seconds": 14.572532892227173,
+    "no_target_ciphertext_used": true
+  }
+}

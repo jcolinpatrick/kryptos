@@ -1,0 +1,130 @@
+{
+  "hypothesis": "Anybijective26-lettermonoalphabetic substitution composedwithALLkeyedcolumnarwidth2..10left-raggedcolumnorders andinverse maps; exactsymbolic13!key-completionfibers",
+  "control_plan": "3600full-bankplants:200per18width/directionstrata, distinctfullrandom26!keys;3600repetitioncorruptions+3600injectivitycollisions+3600randoms local;48stratifiedfull-universeplants+8fullrandoms; exhaustive6-letterall720keys/all6compatiblecompletions toy proof beforemaincontrols",
+  "instrument_files": [
+    "mono_fiber_v3_probe.py",
+    "test_mono_fiber_v3_probe.py",
+    "keyed_routes.py",
+    "test_keyed_routes.py",
+    "hill_probe.py",
+    "routed_probe.py",
+    "affine_probe.py",
+    "cryptolab/tools/hill_cipher.py"
+  ],
+  "resources": "2numericalworkers max controls/target,threads1,RAMavailable>=16GiB;zeroextraspend;deadline2026-10-06T23:30Z",
+  "control_cap_seconds": 14400,
+  "target_cap_seconds": 60,
+  "target_workers": 2,
+  "parameters": {
+    "widths": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "all_column_orders": true,
+    "inverse_maps": true,
+    "substitution": "all26!bijections",
+    "workers": 2,
+    "max_width": 10,
+    "batch_size": 65536
+  },
+  "runtime_env": {
+    "K4_WORKERS": "2",
+    "K4_BATCH_SIZE": "65536"
+  },
+  "reasoning": "SuggestedbySCI025 generalmonoalph coversunit-affine plusmanyother26! permutations. Completeacceptedfiber fixed13injectivePUBmapentries,unused13plain/cipher sets, ALL13!bijectionsuntruncated. Truekey/fullPTmembership recovered, NOTuniqueplaintext; canonicalWITNESS lexcompletionseparate. Planner028 explicitlyapprovedsymbolicfiberstandingrecoverycriterion, scientificreviewstillseparateaftercontrols. Exhaustive6lettertoy720truekeys\u00d7all720candidateoracle vsall6fibercompletions comparesexactsets; repetitionandcollisionnegativechecks, synthetic12workerstop.3tests passed0.573s. Everylocalplant searchesALL8075824maps, recordsotheracceptedmaps/equivalentcrib-image aliases;200distinctfullkeysperwidth/mode. Primaryvectorsame-PUB-letterequality+13mappedlettersinjective; independentownliteralEnecessaryprune/scalarbidirectionaldict usingauditedmanualrefmaps, allcontextsdecided notsampled. Noactualtargetconstraints evaluated. Width9 expansion requires rebuilding/auditing bank and all new exact-universe controls. Engine v2 derives width strata/counts from frozen bank; mathematics unchanged. Planner028 GO conditional: no concurrent width9/10 numerical work; per-processRLIMIT_AS32GiB, conservative aggregateRSS32GiB watchdogandMemAvailable16GiBfloor, ownedPG-onlycleanup. Fixed2workers/65536batch/inheritedaffinity; deterministicstratumcheckpoints; no silentcuts or tuner. ScientificreviewAFTERcontrols BEFOREtarget (planner sequence typo rejected). Bankalgorithm unchangedfullaudit; new bank artifacts versionedbycampaign/sourceSHA. No projection treated as fact.",
+  "planner_corrections": "No probabilityestimates adopted. RecoveryONLY exactcompletekeyfiberandfullPTmembership, notsinglewitnessrecovery. Mainfixed13pairsand13!remainingcompletions keycountnotdistinctplaintextcount; absentcipherletters canmakeplaintextaliaskeys. Negativecorruption/collisioncertifiedontrueframe only,notclaimallotherrouteframesnegative. Fulluniformrandomscansexactwholebank0hitsexpectobserved, no false-positive-ratecalibrationclaim. No uniquenessfilter, aliasedroutefiberslegal. 1base=allbijectiveletters,not48affineconfigs; countsroutecontexts notenumerated26!keys. Enecessaryprunethirdpathrejectsallnonprunepassingcontextsbylogicalnecessity, scalarreferenceeveryremainingroute, independentofprimarymask. Newbank independently audits every recipe and full97map.",
+  "scope": "ExactlyANY26-letterbijective monoalphabeticlettermap plusfrozen8075824literalkeyedcolumnarwidth2..10left-raggedcolumnorders/forwardinverse. All26! keys handledsymbolically; anacceptedroute impliesexact13!keycompletions. Homophonic/nonbijective/polyalphabetic maps,otherwidths/raggedconventions/routesunexcluded. All24exposedcribconditional, no blind/statistical/full-decryption/uniquenessclaim; firstanycompatiblefiberlead STOP.",
+  "prior_contact": "Publicciphertextpreviouslyvisible, VOID007manualresidue0/6diagnostics; conservativelyall24cribpositions exposed. No blindK4/statisticalclaim. Syntheticblinds verifycontrolledrecovery only. E1-E7/alloldmemories/kryptosclaims unverifiedleads; controlledretesting legitimate noveltynostop.",
+  "numerical_notes": "2singlethreadcontrolworkers,1numericaltargettaskwithinpool12;RAMavailable>=16GiB, controls14400s,target60sPGand23:30Zdeadline. Primarybeforeoracle atomicrecorder capturesassignedmap/cfg/route, pools12forkproof beforetarget. All1complete8075824route receipt/no stopped/marker/hit/exception requiredNULL. Hashbank/referencebank/audit/source/controls/canonical beforeafter; freshoneusemarkers; manualcolumnar/scalarfullfiberverifier+WITNESSfull97encode proof. NoNumeric26!enumeration, compressionlosslessverifiedexhaustivesmallalphabet. E8paused,$0extraMaxonly,oldhistoryunverifiednoveltynostop.",
+  "oracle_function": "reference_assignments",
+  "bank_cap_seconds": 3600,
+  "launcher": "finite_guarded_symbolic_target.py",
+  "search_space_size": 8075824,
+  "bank_source_hashes": {
+    "routes.npy": "5e7c51ca7235d84e0ce83bab7f173386ce5ce0ad4e1e87e199a6b881a4939ca1",
+    "routes.json": "183bf712677a6ea6433fb8b30f85087e0fef52ca831eafd650fa40af776c9e31",
+    "reference_routes.npy": "5e7c51ca7235d84e0ce83bab7f173386ce5ce0ad4e1e87e199a6b881a4939ca1",
+    "bank-audit.json": "68f2b5986204c98885d4c08f3e3f99d9ec205aa0d9392848bf223040cf0b320b"
+  },
+  "id": "dot-standing-028",
+  "configurations": [
+    [
+      "any_bijective_monoalphabetic"
+    ]
+  ],
+  "configuration_count": 1,
+  "geometry": {
+    "passed": true,
+    "recipes_audited": 8075824,
+    "unique_maps": 8075824,
+    "length": 97,
+    "widths": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "per_width": [
+      {
+        "width": 2,
+        "unique_added": 4,
+        "recipes_audited": 4
+      },
+      {
+        "width": 3,
+        "unique_added": 12,
+        "recipes_audited": 12
+      },
+      {
+        "width": 4,
+        "unique_added": 48,
+        "recipes_audited": 48
+      },
+      {
+        "width": 5,
+        "unique_added": 240,
+        "recipes_audited": 240
+      },
+      {
+        "width": 6,
+        "unique_added": 1440,
+        "recipes_audited": 1440
+      },
+      {
+        "width": 7,
+        "unique_added": 10080,
+        "recipes_audited": 10080
+      },
+      {
+        "width": 8,
+        "unique_added": 80640,
+        "recipes_audited": 80640
+      },
+      {
+        "width": 9,
+        "unique_added": 725760,
+        "recipes_audited": 725760
+      },
+      {
+        "width": 10,
+        "unique_added": 7257600,
+        "recipes_audited": 7257600
+      }
+    ],
+    "independent_digit_plane_map_bijection_roundtrip_all_recipes": true,
+    "seconds": 1260.782570362091,
+    "no_target_ciphertext_used": true
+  }
+}

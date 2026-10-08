@@ -922,3 +922,751 @@ description = "The key tested was the string '385709N0770706W'. It is close to, 
 [elimination.936b0e438628]
 title = "Coordinate key '385709N0770706W' as var_beaufort (close to, not exactly, K2's 38°57′6.5″N 77°8′44″W)"
 description = "The key tested was the string '385709N0770706W'. It is close to, but not the same as, the position in K2's plaintext (38°57′6.5″N 77°8′44″W)."
+
+# --- 2026-10-07: standing-run campaigns dot-standing-001..065 (46 scoped nulls), added by Claude for Colin ---
+# Data: results/dot_standing_run_2026_10.json. ELIMINATED here means null within the frozen scope stated on each page.
+# 001-030: public reproductions in scripts/dot_standing/ + reproductions/dot_standing/. 032-065: reproductions pending.
+
+[elimination.DOT-STANDING-001]
+category = "substitution"
+confidence_tier = 2
+no_score = true
+description = "Invertible Hill cipher, n=2 and n=3, and powered n=4 at phases 1 and 2, applied directly to the carved text. Executed: 28 target evaluations. Run in the private cryptolab standing campaign dot-standing-001 (verdict NULL_WITHIN_DIRECT_HILL_SCOPE, unattested; exact incompatibility language independent, 0 survivors); RESULTS.md sha256 cf5b4db32904. The frozen search code, its recorded inputs and this result record are public in reproductions/dot_standing/ in the kryptos repository; the command below re-runs the search and checks the result."
+plain_summary = "Tests invertible Hill cipher, n=2 and n=3, and powered n=4 at phases 1 and 2, applied directly to the carved text, with the known plaintext at its carved positions. Every setting in scope was tested, and none was consistent with the 24 known plaintext letters."
+assumptions = [
+  "The cribs EASTNORTHEAST and BERLINCLOCK sit at their carved positions (1-based 22-34 and 64-74)",
+  "The cipher model named above applies directly to the 97 carved letters",
+]
+scope_limitations = [
+  "Settings outside the ranges named above",
+  "Arrangements in which the known plaintext is not at its carved positions",
+]
+
+[elimination.DOT-STANDING-002]
+category = "substitution"
+confidence_tier = 2
+no_score = true
+description = "Affine Hill cipher, n=2 and n=3, with powered cells, applied directly to the carved text. Executed: 18 target evaluations. Run in the private cryptolab standing campaign dot-standing-002 (verdict NULL_WITHIN_FROZEN_SCOPE_UNATTESTED, 0 survivors); RESULTS.md sha256 0271c5edc159. The frozen search code, its recorded inputs and this result record are public in reproductions/dot_standing/ in the kryptos repository; the command below re-runs the search and checks the result."
+plain_summary = "Tests affine Hill cipher, n=2 and n=3, with powered cells, applied directly to the carved text, with the known plaintext at its carved positions. Every setting in scope was tested, and none was consistent with the 24 known plaintext letters."
+assumptions = [
+  "The cribs EASTNORTHEAST and BERLINCLOCK sit at their carved positions (1-based 22-34 and 64-74)",
+  "The cipher model named above applies directly to the 97 carved letters",
+]
+scope_limitations = [
+  "Settings outside the ranges named above",
+  "Arrangements in which the known plaintext is not at its carved positions",
+]
+
+[elimination.DOT-STANDING-003]
+category = "multi-layer"
+confidence_tier = 2
+no_score = true
+description = "Hill or affine Hill cipher followed by each of 26,612 frozen transposition routes. Executed: 532,240 target evaluations. Run in the private cryptolab standing campaign dot-standing-003 (verdict NULL_WITHIN_FROZEN_SCOPE_UNATTESTED, 0 survivors); RESULTS.md sha256 93ed3e8191ae. The frozen search code, its recorded inputs and this result record are public in reproductions/dot_standing/ in the kryptos repository; the command below re-runs the search and checks the result."
+plain_summary = "Tests Hill or affine Hill cipher followed by each of 26,612 frozen transposition routes, with the known plaintext at its carved positions. Every setting in scope was tested, and none was consistent with the 24 known plaintext letters."
+assumptions = [
+  "The cribs EASTNORTHEAST and BERLINCLOCK sit at their carved positions (1-based 22-34 and 64-74)",
+  "The cipher model named above applies directly to the 97 carved letters",
+]
+scope_limitations = [
+  "Settings outside the ranges named above",
+  "Arrangements in which the known plaintext is not at its carved positions",
+]
+
+[elimination.DOT-STANDING-004]
+category = "multi-layer"
+confidence_tier = 2
+no_score = true
+description = "Linear progressive key followed by the frozen transposition route bank. Executed: 2,554,752 target evaluations. Run in the private cryptolab standing campaign dot-standing-004 (verdict NULL_WITHIN_FROZEN_SCOPE_UNATTESTED, 0 survivors); RESULTS.md sha256 57e292f921ba. The frozen search code, its recorded inputs and this result record are public in reproductions/dot_standing/ in the kryptos repository; the command below re-runs the search and checks the result."
+plain_summary = "Tests linear progressive key followed by the frozen transposition route bank, with the known plaintext at its carved positions. Every setting in scope was tested, and none was consistent with the 24 known plaintext letters."
+assumptions = [
+  "The cribs EASTNORTHEAST and BERLINCLOCK sit at their carved positions (1-based 22-34 and 64-74)",
+  "The cipher model named above applies directly to the 97 carved letters",
+]
+scope_limitations = [
+  "Settings outside the ranges named above",
+  "Arrangements in which the known plaintext is not at its carved positions",
+]
+
+[elimination.DOT-STANDING-006]
+category = "key-models"
+confidence_tier = 2
+no_score = true
+description = "Signed ciphertext-feedback (autokey-family) keys with lags 1-25, applied directly. Executed: 800 target evaluations. Run in the private cryptolab standing campaign dot-standing-006 (verdict NULL_WITHIN_DIRECT_FEEDBACK_SCOPE_UNATTESTED, 0 survivors); RESULTS.md sha256 964b32519b4e. The frozen search code, its recorded inputs and this result record are public in reproductions/dot_standing/ in the kryptos repository; the command below re-runs the search and checks the result."
+plain_summary = "Tests signed ciphertext-feedback (autokey-family) keys with lags 1-25, applied directly, with the known plaintext at its carved positions. Every setting in scope was tested, and none was consistent with the 24 known plaintext letters."
+assumptions = [
+  "The cribs EASTNORTHEAST and BERLINCLOCK sit at their carved positions (1-based 22-34 and 64-74)",
+  "The cipher model named above applies directly to the 97 carved letters",
+]
+scope_limitations = [
+  "Settings outside the ranges named above",
+  "Arrangements in which the known plaintext is not at its carved positions",
+]
+
+[elimination.DOT-STANDING-008]
+category = "key-models"
+confidence_tier = 2
+no_score = true
+description = "Period-7 linear key progression with complete two-key fibers, applied directly. Executed: 8 target evaluations. Run in the private cryptolab standing campaign dot-standing-008 (verdict NULL_WITHIN_FROZEN_DIRECT_PERIOD7_SCOPE_NONBLIND_UNATTESTED, 0 survivors); RESULTS.md sha256 63e82847031e. The frozen search code, its recorded inputs and this result record are public in reproductions/dot_standing/ in the kryptos repository; the command below re-runs the search and checks the result."
+plain_summary = "Tests period-7 linear key progression with complete two-key fibers, applied directly, with the known plaintext at its carved positions. Every setting in scope was tested, and none was consistent with the 24 known plaintext letters."
+assumptions = [
+  "The cribs EASTNORTHEAST and BERLINCLOCK sit at their carved positions (1-based 22-34 and 64-74)",
+  "The cipher model named above applies directly to the 97 carved letters",
+]
+scope_limitations = [
+  "Settings outside the ranges named above",
+  "Arrangements in which the known plaintext is not at its carved positions",
+]
+
+[elimination.DOT-STANDING-010]
+category = "substitution"
+confidence_tier = 2
+no_score = true
+description = "Hill cipher n=4 at phases 0 and 3, applied directly. Executed: 8 target evaluations. Run in the private cryptolab standing campaign dot-standing-010 (verdict NULL_WITHIN_FROZEN_SCOPE_NONBLIND_UNATTESTED, 0 survivors); RESULTS.md sha256 4c0f316bd960. The frozen search code, its recorded inputs and this result record are public in reproductions/dot_standing/ in the kryptos repository; the command below re-runs the search and checks the result."
+plain_summary = "Tests Hill cipher n=4 at phases 0 and 3, applied directly, with the known plaintext at its carved positions. Every setting in scope was tested, and none was consistent with the 24 known plaintext letters."
+assumptions = [
+  "The cribs EASTNORTHEAST and BERLINCLOCK sit at their carved positions (1-based 22-34 and 64-74)",
+  "The cipher model named above applies directly to the 97 carved letters",
+]
+scope_limitations = [
+  "Settings outside the ranges named above",
+  "Arrangements in which the known plaintext is not at its carved positions",
+]
+
+[elimination.DOT-STANDING-012]
+category = "multi-layer"
+confidence_tier = 2
+no_score = true
+description = "Quadratic key progression (periods 1, 2, 3, 4, 6) followed by the frozen transposition route bank. Executed: 1,064,480 target evaluations. Run in the private cryptolab standing campaign dot-standing-012 (verdict NULL_WITHIN_FROZEN_SCOPE_NONBLIND_UNATTESTED, 0 survivors); RESULTS.md sha256 1a8fb13a2059. The frozen search code, its recorded inputs and this result record are public in reproductions/dot_standing/ in the kryptos repository; the command below re-runs the search and checks the result."
+plain_summary = "Tests quadratic key progression (periods 1, 2, 3, 4, 6) followed by the frozen transposition route bank, with the known plaintext at its carved positions. Every setting in scope was tested, and none was consistent with the 24 known plaintext letters."
+assumptions = [
+  "The cribs EASTNORTHEAST and BERLINCLOCK sit at their carved positions (1-based 22-34 and 64-74)",
+  "The cipher model named above applies directly to the 97 carved letters",
+]
+scope_limitations = [
+  "Settings outside the ranges named above",
+  "Arrangements in which the known plaintext is not at its carved positions",
+]
+
+[elimination.DOT-STANDING-014]
+category = "substitution"
+confidence_tier = 2
+no_score = true
+description = "Affine Hill cipher n=3 and n=4 at all phases, applied directly. Executed: 28 target evaluations. Run in the private cryptolab standing campaign dot-standing-014 (verdict NULL_WITHIN_FROZEN_SCOPE_NONBLIND_UNATTESTED, 0 survivors); RESULTS.md sha256 806137e5cc15. The frozen search code, its recorded inputs and this result record are public in reproductions/dot_standing/ in the kryptos repository; the command below re-runs the search and checks the result."
+plain_summary = "Tests affine Hill cipher n=3 and n=4 at all phases, applied directly, with the known plaintext at its carved positions. Every setting in scope was tested, and none was consistent with the 24 known plaintext letters."
+assumptions = [
+  "The cribs EASTNORTHEAST and BERLINCLOCK sit at their carved positions (1-based 22-34 and 64-74)",
+  "The cipher model named above applies directly to the 97 carved letters",
+]
+scope_limitations = [
+  "Settings outside the ranges named above",
+  "Arrangements in which the known plaintext is not at its carved positions",
+]
+
+[elimination.DOT-STANDING-015]
+category = "multi-layer"
+confidence_tier = 2
+no_score = true
+description = "Signed ciphertext-feedback keys with lags 1-25 followed by the frozen transposition route bank. Executed: 21,289,600 target evaluations. Run in the private cryptolab standing campaign dot-standing-015 (verdict NULL_WITHIN_FROZEN_SCOPE_NONBLIND_UNATTESTED, 0 survivors); RESULTS.md sha256 d2bb6de800b1. The frozen search code, its recorded inputs and this result record are public in reproductions/dot_standing/ in the kryptos repository; the command below re-runs the search and checks the result."
+plain_summary = "Tests signed ciphertext-feedback keys with lags 1-25 followed by the frozen transposition route bank, with the known plaintext at its carved positions. Every setting in scope was tested, and none was consistent with the 24 known plaintext letters."
+assumptions = [
+  "The cribs EASTNORTHEAST and BERLINCLOCK sit at their carved positions (1-based 22-34 and 64-74)",
+  "The cipher model named above applies directly to the 97 carved letters",
+]
+scope_limitations = [
+  "Settings outside the ranges named above",
+  "Arrangements in which the known plaintext is not at its carved positions",
+]
+
+[elimination.DOT-STANDING-016]
+category = "multi-layer"
+confidence_tier = 2
+no_score = true
+description = "Cubic key progression (periods 1-4) followed by the frozen transposition route bank. Executed: 851,584 target evaluations. Run in the private cryptolab standing campaign dot-standing-016 (verdict NULL_WITHIN_FROZEN_SCOPE_NONBLIND_UNATTESTED, 0 survivors); RESULTS.md sha256 ccebd542953a. The frozen search code, its recorded inputs and this result record are public in reproductions/dot_standing/ in the kryptos repository; the command below re-runs the search and checks the result."
+plain_summary = "Tests cubic key progression (periods 1-4) followed by the frozen transposition route bank, with the known plaintext at its carved positions. Every setting in scope was tested, and none was consistent with the 24 known plaintext letters."
+assumptions = [
+  "The cribs EASTNORTHEAST and BERLINCLOCK sit at their carved positions (1-based 22-34 and 64-74)",
+  "The cipher model named above applies directly to the 97 carved letters",
+]
+scope_limitations = [
+  "Settings outside the ranges named above",
+  "Arrangements in which the known plaintext is not at its carved positions",
+]
+
+[elimination.DOT-STANDING-018]
+category = "multi-layer"
+confidence_tier = 2
+no_score = true
+description = "Unit-affine ciphertext-feedback keys with lags 1-31 followed by the frozen transposition route bank. Executed: 6,599,776 target evaluations. Run in the private cryptolab standing campaign dot-standing-018 (verdict NULL_WITHIN_FROZEN_SCOPE_NONBLIND_UNATTESTED, 0 survivors); RESULTS.md sha256 f662447c3b99. The frozen search code, its recorded inputs and this result record are public in reproductions/dot_standing/ in the kryptos repository; the command below re-runs the search and checks the result."
+plain_summary = "Tests unit-affine ciphertext-feedback keys with lags 1-31 followed by the frozen transposition route bank, with the known plaintext at its carved positions. Every setting in scope was tested, and none was consistent with the 24 known plaintext letters."
+assumptions = [
+  "The cribs EASTNORTHEAST and BERLINCLOCK sit at their carved positions (1-based 22-34 and 64-74)",
+  "The cipher model named above applies directly to the 97 carved letters",
+]
+scope_limitations = [
+  "Settings outside the ranges named above",
+  "Arrangements in which the known plaintext is not at its carved positions",
+]
+
+[elimination.DOT-STANDING-019]
+category = "key-models"
+confidence_tier = 2
+no_score = true
+description = "Quadratic key progression with period 5 and complete four-key fibers. Executed: 212,896 target evaluations. Run in the private cryptolab standing campaign dot-standing-019 (verdict NULL_WITHIN_FROZEN_SCOPE_NONBLIND_UNATTESTED, 0 survivors); RESULTS.md sha256 6b924b468777. The frozen search code, its recorded inputs and this result record are public in reproductions/dot_standing/ in the kryptos repository; the command below re-runs the search and checks the result."
+plain_summary = "Tests quadratic key progression with period 5 and complete four-key fibers, with the known plaintext at its carved positions. Every setting in scope was tested, and none was consistent with the 24 known plaintext letters."
+assumptions = [
+  "The cribs EASTNORTHEAST and BERLINCLOCK sit at their carved positions (1-based 22-34 and 64-74)",
+  "The cipher model named above applies directly to the 97 carved letters",
+]
+scope_limitations = [
+  "Settings outside the ranges named above",
+  "Arrangements in which the known plaintext is not at its carved positions",
+]
+
+[elimination.DOT-STANDING-020]
+category = "multi-layer"
+confidence_tier = 2
+no_score = true
+description = "Quartic key progression (periods 1 and 2) followed by the frozen transposition route bank. Executed: 425,792 target evaluations. Run in the private cryptolab standing campaign dot-standing-020 (verdict NULL_WITHIN_FROZEN_SCOPE_NONBLIND_UNATTESTED, 0 survivors); RESULTS.md sha256 287b0c56e305. The frozen search code, its recorded inputs and this result record are public in reproductions/dot_standing/ in the kryptos repository; the command below re-runs the search and checks the result."
+plain_summary = "Tests quartic key progression (periods 1 and 2) followed by the frozen transposition route bank, with the known plaintext at its carved positions. Every setting in scope was tested, and none was consistent with the 24 known plaintext letters."
+assumptions = [
+  "The cribs EASTNORTHEAST and BERLINCLOCK sit at their carved positions (1-based 22-34 and 64-74)",
+  "The cipher model named above applies directly to the 97 carved letters",
+]
+scope_limitations = [
+  "Settings outside the ranges named above",
+  "Arrangements in which the known plaintext is not at its carved positions",
+]
+
+[elimination.DOT-STANDING-021]
+category = "multi-layer"
+confidence_tier = 2
+no_score = true
+description = "Unit-multiplier quadratic key progression (periods 1, 2, 3, 4, 6) followed by the frozen transposition route bank. Executed: 6,386,880 target evaluations. Run in the private cryptolab standing campaign dot-standing-021 (verdict NULL_WITHIN_FROZEN_SCOPE_NONBLIND_UNATTESTED, 0 survivors); RESULTS.md sha256 f385a88a45b6. The frozen search code, its recorded inputs and this result record are public in reproductions/dot_standing/ in the kryptos repository; the command below re-runs the search and checks the result."
+plain_summary = "Tests unit-multiplier quadratic key progression (periods 1, 2, 3, 4, 6) followed by the frozen transposition route bank, with the known plaintext at its carved positions. Every setting in scope was tested, and none was consistent with the 24 known plaintext letters."
+assumptions = [
+  "The cribs EASTNORTHEAST and BERLINCLOCK sit at their carved positions (1-based 22-34 and 64-74)",
+  "The cipher model named above applies directly to the 97 carved letters",
+]
+scope_limitations = [
+  "Settings outside the ranges named above",
+  "Arrangements in which the known plaintext is not at its carved positions",
+]
+
+[elimination.DOT-STANDING-022]
+category = "multi-layer"
+confidence_tier = 2
+no_score = true
+description = "Unit-multiplier cubic key progression (periods 1-4) followed by the frozen transposition route bank. Executed: 5,109,504 target evaluations. Run in the private cryptolab standing campaign dot-standing-022 (verdict NULL_WITHIN_FROZEN_SCOPE_NONBLIND_UNATTESTED, 0 survivors); RESULTS.md sha256 c6cccc816a96. The frozen search code, its recorded inputs and this result record are public in reproductions/dot_standing/ in the kryptos repository; the command below re-runs the search and checks the result."
+plain_summary = "Tests unit-multiplier cubic key progression (periods 1-4) followed by the frozen transposition route bank, with the known plaintext at its carved positions. Every setting in scope was tested, and none was consistent with the 24 known plaintext letters."
+assumptions = [
+  "The cribs EASTNORTHEAST and BERLINCLOCK sit at their carved positions (1-based 22-34 and 64-74)",
+  "The cipher model named above applies directly to the 97 carved letters",
+]
+scope_limitations = [
+  "Settings outside the ranges named above",
+  "Arrangements in which the known plaintext is not at its carved positions",
+]
+
+[elimination.DOT-STANDING-023]
+category = "key-models"
+confidence_tier = 2
+no_score = true
+description = "Plaintext-first periodic keys with periods 1-12. Executed: 12,391,008 target evaluations. Run in the private cryptolab standing campaign dot-standing-023 (verdict NULL_WITHIN_FROZEN_SCOPE_NONBLIND_UNATTESTED, 0 survivors); RESULTS.md sha256 872ded6fdd58. The frozen search code, its recorded inputs and this result record are public in reproductions/dot_standing/ in the kryptos repository; the command below re-runs the search and checks the result."
+plain_summary = "Tests plaintext-first periodic keys with periods 1-12, with the known plaintext at its carved positions. Every setting in scope was tested, and none was consistent with the 24 known plaintext letters."
+assumptions = [
+  "The cribs EASTNORTHEAST and BERLINCLOCK sit at their carved positions (1-based 22-34 and 64-74)",
+  "The cipher model named above applies directly to the 97 carved letters",
+]
+scope_limitations = [
+  "Settings outside the ranges named above",
+  "Arrangements in which the known plaintext is not at its carved positions",
+]
+
+[elimination.DOT-STANDING-024]
+category = "key-models"
+confidence_tier = 2
+no_score = true
+description = "Plaintext-first linear keys with periods 1-8. Executed: 6,499,872 target evaluations. Run in the private cryptolab standing campaign dot-standing-024 (verdict NULL_WITHIN_FROZEN_SCOPE_NONBLIND_UNATTESTED, 0 survivors); RESULTS.md sha256 f7e7b8ec0b42. The frozen search code, its recorded inputs and this result record are public in reproductions/dot_standing/ in the kryptos repository; the command below re-runs the search and checks the result."
+plain_summary = "Tests plaintext-first linear keys with periods 1-8, with the known plaintext at its carved positions. Every setting in scope was tested, and none was consistent with the 24 known plaintext letters."
+assumptions = [
+  "The cribs EASTNORTHEAST and BERLINCLOCK sit at their carved positions (1-based 22-34 and 64-74)",
+  "The cipher model named above applies directly to the 97 carved letters",
+]
+scope_limitations = [
+  "Settings outside the ranges named above",
+  "Arrangements in which the known plaintext is not at its carved positions",
+]
+
+[elimination.DOT-STANDING-025]
+category = "multi-layer"
+confidence_tier = 2
+no_score = true
+description = "Keyed columnar transposition, widths 2-8, combined with a constant unit-affine letter map. Executed: 4,438,272 target evaluations. Run in the private cryptolab standing campaign dot-standing-025 (verdict NULL_WITHIN_FROZEN_SCOPE_NONBLIND_UNATTESTED, 0 survivors); RESULTS.md sha256 c2202fe82d55. The frozen search code, its recorded inputs and this result record are public in reproductions/dot_standing/ in the kryptos repository; the command below re-runs the search and checks the result."
+plain_summary = "Tests keyed columnar transposition, widths 2-8, combined with a constant unit-affine letter map, with the known plaintext at its carved positions. Every setting in scope was tested, and none was consistent with the 24 known plaintext letters."
+assumptions = [
+  "The cribs EASTNORTHEAST and BERLINCLOCK sit at their carved positions (1-based 22-34 and 64-74)",
+  "The cipher model named above applies directly to the 97 carved letters",
+]
+scope_limitations = [
+  "Settings outside the ranges named above",
+  "Arrangements in which the known plaintext is not at its carved positions",
+]
+
+[elimination.DOT-STANDING-026]
+category = "multi-layer"
+confidence_tier = 2
+no_score = true
+description = "Keyed columnar transposition, widths 2-8, combined with any bijective monoalphabetic key. Executed: 92,464 target evaluations. Run in the private cryptolab standing campaign dot-standing-026 (verdict NULL_WITHIN_FROZEN_SCOPE_NONBLIND_UNATTESTED, 0 survivors); RESULTS.md sha256 2cb222f5c117. The frozen search code, its recorded inputs and this result record are public in reproductions/dot_standing/ in the kryptos repository; the command below re-runs the search and checks the result."
+plain_summary = "Tests keyed columnar transposition, widths 2-8, combined with any bijective monoalphabetic key, with the known plaintext at its carved positions. Every setting in scope was tested, and none was consistent with the 24 known plaintext letters."
+assumptions = [
+  "The cribs EASTNORTHEAST and BERLINCLOCK sit at their carved positions (1-based 22-34 and 64-74)",
+  "The cipher model named above applies directly to the 97 carved letters",
+]
+scope_limitations = [
+  "Settings outside the ranges named above",
+  "Arrangements in which the known plaintext is not at its carved positions",
+]
+
+[elimination.DOT-STANDING-027]
+category = "multi-layer"
+confidence_tier = 2
+no_score = true
+description = "Keyed columnar transposition, widths 2-9, combined with any bijective monoalphabetic key. Executed: 818,224 target evaluations. Run in the private cryptolab standing campaign dot-standing-027 (verdict NULL_WITHIN_FROZEN_SCOPE_NONBLIND_UNATTESTED, 0 survivors); RESULTS.md sha256 e8ef648bf31c. The frozen search code, its recorded inputs and this result record are public in reproductions/dot_standing/ in the kryptos repository; the command below re-runs the search and checks the result."
+plain_summary = "Tests keyed columnar transposition, widths 2-9, combined with any bijective monoalphabetic key, with the known plaintext at its carved positions. Every setting in scope was tested, and none was consistent with the 24 known plaintext letters."
+assumptions = [
+  "The cribs EASTNORTHEAST and BERLINCLOCK sit at their carved positions (1-based 22-34 and 64-74)",
+  "The cipher model named above applies directly to the 97 carved letters",
+]
+scope_limitations = [
+  "Settings outside the ranges named above",
+  "Arrangements in which the known plaintext is not at its carved positions",
+]
+
+[elimination.DOT-STANDING-028]
+category = "multi-layer"
+confidence_tier = 2
+no_score = true
+description = "Keyed columnar transposition, widths 2-10 (every column order, both directions), combined with any bijective monoalphabetic key. Executed: 8,075,824 target evaluations. Run in the private cryptolab standing campaign dot-standing-028 (verdict NULL_WITHIN_FROZEN_SCOPE_NONBLIND_UNATTESTED, 0 survivors); RESULTS.md sha256 bb4608327b3b. The frozen search code, its recorded inputs and this result record are public in reproductions/dot_standing/ in the kryptos repository; the command below re-runs the search and checks the result."
+plain_summary = "Tests keyed columnar transposition, widths 2-10 (every column order, both directions), combined with any bijective monoalphabetic key, with the known plaintext at its carved positions. Every setting in scope was tested, and none was consistent with the 24 known plaintext letters."
+assumptions = [
+  "The cribs EASTNORTHEAST and BERLINCLOCK sit at their carved positions (1-based 22-34 and 64-74)",
+  "The cipher model named above applies directly to the 97 carved letters",
+]
+scope_limitations = [
+  "Settings outside the ranges named above",
+  "Arrangements in which the known plaintext is not at its carved positions",
+]
+
+[elimination.DOT-STANDING-030]
+category = "multi-layer"
+confidence_tier = 2
+no_score = true
+description = "Invertible Hill cipher n=2 followed by keyed columnar transposition, widths 2-10. Executed: 64,606,592 target evaluations. Run in the private cryptolab standing campaign dot-standing-030 (verdict NULL_WITHIN_FROZEN_SCOPE_NONBLIND_UNATTESTED, 0 survivors); RESULTS.md sha256 cc6bf3ff2aea. The frozen search code, its recorded inputs and this result record are public in reproductions/dot_standing/ in the kryptos repository; the command below re-runs the search and checks the result."
+plain_summary = "Tests invertible Hill cipher n=2 followed by keyed columnar transposition, widths 2-10, with the known plaintext at its carved positions. Every setting in scope was tested, and none was consistent with the 24 known plaintext letters."
+assumptions = [
+  "The cribs EASTNORTHEAST and BERLINCLOCK sit at their carved positions (1-based 22-34 and 64-74)",
+  "The cipher model named above applies directly to the 97 carved letters",
+]
+scope_limitations = [
+  "Settings outside the ranges named above",
+  "Arrangements in which the known plaintext is not at its carved positions",
+]
+
+[elimination.DOT-STANDING-032]
+category = "key-models"
+confidence_tier = 2
+no_score = true
+description = "Two dictionary words overlaid in place: all phases, word lengths 2-17, AZ and KRYPTOS alphabets, 128 sign and alphabet conventions. Executed: 8,026,695,424 dictionary-index lookups. The index joins cover 5,381,359,374,103,296 logical configurations (overlapping, not unique). Run in the private cryptolab standing campaign dot-standing-032 (verdict NULL_WITHIN_FROZEN_SCOPE_NONBLIND_UNATTESTED, 0 survivors); RESULTS.md sha256 d740e5f7ef0c. Evidence is held with SHA-256 manifests and is available from the owner on request."
+plain_summary = "Tests two dictionary words overlaid in place: all phases, word lengths 2-17, AZ and KRYPTOS alphabets, 128 sign and alphabet conventions, with the known plaintext at its carved positions. Every setting in scope was tested, and none was consistent with the 24 known plaintext letters."
+assumptions = [
+  "The cribs EASTNORTHEAST and BERLINCLOCK sit at their carved positions (1-based 22-34 and 64-74)",
+  "The cipher model named above applies directly to the 97 carved letters",
+]
+scope_limitations = [
+  "Settings outside the ranges named above",
+  "Arrangements in which the known plaintext is not at its carved positions",
+]
+
+[elimination.DOT-STANDING-035]
+category = "key-models"
+confidence_tier = 2
+no_score = true
+description = "A repeating dictionary word combined with a 12-, 24- or 60-position clock ring. Executed: 7,188,480 dictionary-index lookups. The index joins cover 69,274,389,749,760 logical configurations (overlapping, not unique). Run in the private cryptolab standing campaign dot-standing-035 (verdict NULL_WITHIN_FROZEN_SCOPE_NONBLIND_UNATTESTED, 0 survivors); RESULTS.md sha256 fcfcd3452d1c. Evidence is held with SHA-256 manifests and is available from the owner on request."
+plain_summary = "Tests A repeating dictionary word combined with a 12-, 24- or 60-position clock ring, with the known plaintext at its carved positions. Every setting in scope was tested, and none was consistent with the 24 known plaintext letters."
+assumptions = [
+  "The cribs EASTNORTHEAST and BERLINCLOCK sit at their carved positions (1-based 22-34 and 64-74)",
+  "The cipher model named above applies directly to the 97 carved letters",
+]
+scope_limitations = [
+  "Settings outside the ranges named above",
+  "Arrangements in which the known plaintext is not at its carved positions",
+]
+
+[elimination.DOT-STANDING-036]
+category = "key-models"
+confidence_tier = 2
+no_score = true
+description = "Word-tied keyword alphabets combined with two-word overlays. Executed: 3,083,795,840 dictionary-index lookups. The index joins cover 26,906,796,870,516,480 logical configurations (overlapping, not unique). Run in the private cryptolab standing campaign dot-standing-036 (verdict NULL_WITHIN_FROZEN_SCOPE_NONBLIND_UNATTESTED, 0 survivors); RESULTS.md sha256 e8393444889f. Evidence is held with SHA-256 manifests and is available from the owner on request."
+plain_summary = "Tests word-tied keyword alphabets combined with two-word overlays, with the known plaintext at its carved positions. Every setting in scope was tested, and none was consistent with the 24 known plaintext letters."
+assumptions = [
+  "The cribs EASTNORTHEAST and BERLINCLOCK sit at their carved positions (1-based 22-34 and 64-74)",
+  "The cipher model named above applies directly to the 97 carved letters",
+]
+scope_limitations = [
+  "Settings outside the ranges named above",
+  "Arrangements in which the known plaintext is not at its carved positions",
+]
+
+[elimination.DOT-STANDING-037]
+category = "key-models"
+confidence_tier = 2
+no_score = true
+description = "The verified K1-K3 plaintexts as running keys, alone or with dictionary-word overlays, at every cyclic start, forward and reverse. Executed: 25,559,040 dictionary-index lookups. The index joins cover 197,047,158,177,792 logical configurations (overlapping, not unique). Run in the private cryptolab standing campaign dot-standing-037 (verdict NULL_WITHIN_FROZEN_SCOPE_NONBLIND_UNATTESTED, 0 survivors); RESULTS.md sha256 336280a4cd1c. Evidence is held with SHA-256 manifests and is available from the owner on request."
+plain_summary = "Tests the verified K1-K3 plaintexts as running keys, alone or with dictionary-word overlays, at every cyclic start, forward and reverse, with the known plaintext at its carved positions. Every setting in scope was tested, and none was consistent with the 24 known plaintext letters."
+assumptions = [
+  "The cribs EASTNORTHEAST and BERLINCLOCK sit at their carved positions (1-based 22-34 and 64-74)",
+  "The cipher model named above applies directly to the 97 carved letters",
+]
+scope_limitations = [
+  "Settings outside the ranges named above",
+  "Arrangements in which the known plaintext is not at its carved positions",
+]
+
+[elimination.DOT-STANDING-038]
+category = "key-models"
+confidence_tier = 2
+no_score = true
+description = "A running key from Howard Carter's book (vol. 1, OCR text), with the first 13-letter block exact and the second within offset +/-2 and edit distance 1. Executed: 470,594,176 dictionary-index lookups. The index joins cover 7,058,912,640 logical configurations (overlapping, not unique). Run in the private cryptolab standing campaign dot-standing-038 (verdict NULL_WITHIN_FROZEN_SCOPE_NONBLIND_UNATTESTED, 0 survivors); RESULTS.md sha256 e73db0726df0. Evidence is held with SHA-256 manifests and is available from the owner on request."
+plain_summary = "Tests A running key from Howard Carter's book (vol. 1, OCR text), with the first 13-letter block exact and the second within offset +/-2 and edit distance 1, with the known plaintext at its carved positions. Every setting in scope was tested, and none was consistent with the 24 known plaintext letters."
+assumptions = [
+  "The cribs EASTNORTHEAST and BERLINCLOCK sit at their carved positions (1-based 22-34 and 64-74)",
+  "The cipher model named above applies directly to the 97 carved letters",
+]
+scope_limitations = [
+  "Settings outside the ranges named above",
+  "Arrangements in which the known plaintext is not at its carved positions",
+  "Start points inside the OCR text's page headings, captions and page numbers (about 6-7% of start points; rerun on a cleaned copy in DOT-STANDING-059 and 065)",
+  "Second-block alignments beyond offset +/-2 or edit distance 1",
+]
+
+[elimination.DOT-STANDING-039]
+category = "key-models"
+confidence_tier = 2
+no_score = true
+description = "A repeating dictionary word combined with a running key from Howard Carter's book (vol. 1, OCR text). Executed: 1,882,376,704 dictionary-index lookups. The index joins cover 272,103,067,926,942,720 logical configurations (overlapping, not unique). Run in the private cryptolab standing campaign dot-standing-039 (verdict NULL_WITHIN_FROZEN_SCOPE_NONBLIND_UNATTESTED, 0 survivors); RESULTS.md sha256 f664a9e4e370. Evidence is held with SHA-256 manifests and is available from the owner on request. Independently re-checked field by field on the server by a second agent (Claude)."
+plain_summary = "Tests A repeating dictionary word combined with a running key from Howard Carter's book (vol. 1, OCR text), with the known plaintext at its carved positions. Every setting in scope was tested, and none was consistent with the 24 known plaintext letters."
+assumptions = [
+  "The cribs EASTNORTHEAST and BERLINCLOCK sit at their carved positions (1-based 22-34 and 64-74)",
+  "The cipher model named above applies directly to the 97 carved letters",
+]
+scope_limitations = [
+  "Settings outside the ranges named above",
+  "Arrangements in which the known plaintext is not at its carved positions",
+  "Start points inside the OCR text's page headings, captions and page numbers (about 6-7% of start points; rerun on a cleaned copy in DOT-STANDING-059 and 065)",
+]
+
+[elimination.DOT-STANDING-040]
+category = "key-models"
+confidence_tier = 2
+no_score = true
+description = "An independent keyword-keyed alphabet combined with a repeating dictionary word: all phases and shifts, 112 conventions. Executed: 80,341,632 dictionary-index lookups. The index joins cover 20,130,271,731,408,384 logical configurations (overlapping, not unique). Run in the private cryptolab standing campaign dot-standing-040 (verdict NULL_WITHIN_FROZEN_SCOPE_NONBLIND_UNATTESTED, 0 survivors); RESULTS.md sha256 98e86bd1baab. Evidence is held with SHA-256 manifests and is available from the owner on request. Independently re-checked field by field on the server by a second agent (Claude)."
+plain_summary = "Tests an independent keyword-keyed alphabet combined with a repeating dictionary word: all phases and shifts, 112 conventions, with the known plaintext at its carved positions. Every setting in scope was tested, and none was consistent with the 24 known plaintext letters."
+assumptions = [
+  "The cribs EASTNORTHEAST and BERLINCLOCK sit at their carved positions (1-based 22-34 and 64-74)",
+  "The cipher model named above applies directly to the 97 carved letters",
+]
+scope_limitations = [
+  "Settings outside the ranges named above",
+  "Arrangements in which the known plaintext is not at its carved positions",
+]
+
+[elimination.DOT-STANDING-042]
+category = "key-models"
+confidence_tier = 2
+no_score = true
+description = "An independent keyword alphabet combined with the verified K1-K3 running keys: 6,144 logical routes, all 26 biases, 112 conventions. Executed: 80,341,632 dictionary-index lookups. The index joins cover 12,834,093,662,208 logical configurations (overlapping, not unique). Run in the private cryptolab standing campaign dot-standing-042 (verdict NULL_WITHIN_FROZEN_SCOPE_NONBLIND_UNATTESTED, 0 survivors); RESULTS.md sha256 10c570835565. Evidence is held with SHA-256 manifests and is available from the owner on request."
+plain_summary = "Tests an independent keyword alphabet combined with the verified K1-K3 running keys: 6,144 logical routes, all 26 biases, 112 conventions, with the known plaintext at its carved positions. Every setting in scope was tested, and none was consistent with the 24 known plaintext letters."
+assumptions = [
+  "The cribs EASTNORTHEAST and BERLINCLOCK sit at their carved positions (1-based 22-34 and 64-74)",
+  "The cipher model named above applies directly to the 97 carved letters",
+]
+scope_limitations = [
+  "Settings outside the ranges named above",
+  "Arrangements in which the known plaintext is not at its carved positions",
+]
+
+[elimination.DOT-STANDING-043]
+category = "key-models"
+confidence_tier = 2
+no_score = true
+description = "An independent keyword alphabet combined with a 12-, 24- or 60-position numeric clock ring: all origins, strides and biases, 56 conventions. Executed: 40,170,816 dictionary-index lookups. The index joins cover 4,511,986,053,120 logical configurations (overlapping, not unique). Run in the private cryptolab standing campaign dot-standing-043 (verdict NULL_WITHIN_FROZEN_SCOPE_NONBLIND_UNATTESTED, 0 survivors); RESULTS.md sha256 0f4e18018303. Evidence is held with SHA-256 manifests and is available from the owner on request. Independently re-checked field by field on the server by a second agent (Claude)."
+plain_summary = "Tests an independent keyword alphabet combined with a 12-, 24- or 60-position numeric clock ring: all origins, strides and biases, 56 conventions, with the known plaintext at its carved positions. Every setting in scope was tested, and none was consistent with the 24 known plaintext letters."
+assumptions = [
+  "The cribs EASTNORTHEAST and BERLINCLOCK sit at their carved positions (1-based 22-34 and 64-74)",
+  "The cipher model named above applies directly to the 97 carved letters",
+]
+scope_limitations = [
+  "Settings outside the ranges named above",
+  "Arrangements in which the known plaintext is not at its carved positions",
+]
+
+[elimination.DOT-STANDING-045]
+category = "bespoke"
+confidence_tier = 2
+no_score = true
+description = "Circular stepping over K4's 97 letters or 98 cells, after Sanborn's \"compass\" and \"several directions\" remarks. Executed: 1,928,199,168 heavy dictionary-index lookups. 38,995 distinct reading orders, each also screened against whole periodic, monoalphabetic, K1-K3 and Carter key families. Run in the private cryptolab standing campaign dot-standing-045 (verdict NULL_WITHIN_FROZEN_SCOPE, 0 survivors); RESULTS.md sha256 868bd25cd646. Evidence is held with SHA-256 manifests and is available from the owner on request. Independently re-checked field by field on the server by a second agent (Claude)."
+plain_summary = "Tests whether K4's letters were rearranged by circular stepping over K4's 97 letters or 98 cells, after Sanborn's \"compass\" and \"several directions\" remarks before a standard cipher was applied. All 38,995 reading orders in scope were tested, and none was consistent with the 24 known plaintext letters."
+assumptions = [
+  "Cribs-in-place is not assumed: the cribs constrain the plaintext only after the rearrangement is undone",
+  "K4 tested as 97 letters, and as 98 cells with the preceding '?' (dropped after the rearrangement, or kept as an unknown symbol in quick screens)",
+  "Layer order: the rearrangement is applied last, C = T(inner(P))",
+]
+scope_limitations = [
+  "Reading orders outside this campaign's frozen procedure card",
+  "Substitution applied after the rearrangement, C = inner(T(P))",
+  "The 98-cell unknown-symbol model beyond quick inner screens",
+  "Keys that a light decoy calibration could miss (3 uniform + 3 shuffled synthetic texts per heavy inner): a null is not a statistical guarantee",
+  "Heavy-search calibration against shuffled decoys, which was missing here (supplied by DOT-STANDING-053)",
+]
+
+[elimination.DOT-STANDING-046]
+category = "bespoke"
+confidence_tier = 2
+no_score = true
+description = "16- and 32-point compass roses: ring and spoke placements, all bearings, steps and radial directions, with inverses. Executed: 1,928,199,168 heavy dictionary-index lookups. 29,217 distinct reading orders, each also screened against whole periodic, monoalphabetic, K1-K3 and Carter key families. Run in the private cryptolab standing campaign dot-standing-046 (verdict NULL_WITHIN_FROZEN_SCOPE, 0 survivors); RESULTS.md sha256 493081d28d0e. Evidence is held with SHA-256 manifests and is available from the owner on request. Independently re-checked field by field on the server by a second agent (Claude)."
+plain_summary = "Tests whether K4's letters were rearranged by 16- and 32-point compass roses: ring and spoke placements, all bearings, steps and radial directions, with inverses before a standard cipher was applied. All 29,217 reading orders in scope were tested, and none was consistent with the 24 known plaintext letters."
+assumptions = [
+  "Cribs-in-place is not assumed: the cribs constrain the plaintext only after the rearrangement is undone",
+  "K4 tested as 97 letters, and as 98 cells with the preceding '?' (dropped after the rearrangement, or kept as an unknown symbol in quick screens)",
+  "Layer order: the rearrangement is applied last, C = T(inner(P))",
+]
+scope_limitations = [
+  "Reading orders outside this campaign's frozen procedure card",
+  "Substitution applied after the rearrangement, C = inner(T(P))",
+  "The 98-cell unknown-symbol model beyond quick inner screens",
+  "Keys that a light decoy calibration could miss (3 uniform + 3 shuffled synthetic texts per heavy inner): a null is not a statistical guarantee",
+  "Heavy-search calibration against shuffled decoys, which was missing here (supplied by DOT-STANDING-053)",
+]
+
+[elimination.DOT-STANDING-047]
+category = "bespoke"
+confidence_tier = 2
+no_score = true
+description = "Compass direction programs across rectangles and the sculpture's carved 31-wide layout. Executed: 1,928,199,168 heavy dictionary-index lookups. 108,629 distinct reading orders, each also screened against whole periodic, monoalphabetic, K1-K3 and Carter key families. Run in the private cryptolab standing campaign dot-standing-047 (verdict NULL_WITHIN_FROZEN_SCOPE, 0 survivors); RESULTS.md sha256 69c6ae42634e. Evidence is held with SHA-256 manifests and is available from the owner on request. Independently re-checked field by field on the server by a second agent (Claude)."
+plain_summary = "Tests whether K4's letters were rearranged by compass direction programs across rectangles and the sculpture's carved 31-wide layout before a standard cipher was applied. All 108,629 reading orders in scope were tested, and none was consistent with the 24 known plaintext letters."
+assumptions = [
+  "Cribs-in-place is not assumed: the cribs constrain the plaintext only after the rearrangement is undone",
+  "K4 tested as 97 letters, and as 98 cells with the preceding '?' (dropped after the rearrangement, or kept as an unknown symbol in quick screens)",
+  "Layer order: the rearrangement is applied last, C = T(inner(P))",
+]
+scope_limitations = [
+  "Reading orders outside this campaign's frozen procedure card",
+  "Substitution applied after the rearrangement, C = inner(T(P))",
+  "The 98-cell unknown-symbol model beyond quick inner screens",
+  "Keys that a light decoy calibration could miss (3 uniform + 3 shuffled synthetic texts per heavy inner): a null is not a statistical guarantee",
+  "Anything a stronger heavy decoy test might reveal (3 + 3 decoys, not matched to K4 letter frequencies)",
+]
+
+[elimination.DOT-STANDING-048]
+category = "bespoke"
+confidence_tier = 2
+no_score = true
+description = "Rectangles, the carved stub, rings and spirals, and two 7x7 layers. Executed: 1,928,199,168 heavy dictionary-index lookups. 7,287 distinct reading orders, each also screened against whole periodic, monoalphabetic, K1-K3 and Carter key families. Run in the private cryptolab standing campaign dot-standing-048 (verdict NULL_WITHIN_FROZEN_SCOPE, 0 survivors); RESULTS.md sha256 26a2ce8739f0. Evidence is held with SHA-256 manifests and is available from the owner on request. Independently re-checked field by field on the server by a second agent (Claude)."
+plain_summary = "Tests whether K4's letters were rearranged by rectangles, the carved stub, rings and spirals, and two 7x7 layers before a standard cipher was applied. All 7,287 reading orders in scope were tested, and none was consistent with the 24 known plaintext letters."
+assumptions = [
+  "Cribs-in-place is not assumed: the cribs constrain the plaintext only after the rearrangement is undone",
+  "K4 tested as 97 letters, and as 98 cells with the preceding '?' (dropped after the rearrangement, or kept as an unknown symbol in quick screens)",
+  "Layer order: the rearrangement is applied last, C = T(inner(P))",
+]
+scope_limitations = [
+  "Reading orders outside this campaign's frozen procedure card",
+  "Substitution applied after the rearrangement, C = inner(T(P))",
+  "The 98-cell unknown-symbol model beyond quick inner screens",
+  "Keys that a light decoy calibration could miss (3 uniform + 3 shuffled synthetic texts per heavy inner): a null is not a statistical guarantee",
+  "In the 98-cell model, the unknown symbol at crib indices 26, 28, 69 or 71 (unreachable in this bank)",
+]
+
+[elimination.DOT-STANDING-051]
+category = "bespoke"
+confidence_tier = 2
+no_score = true
+description = "Positional overlays derived from the physical tableau, including its extra L. Executed: 1,928,199,168 heavy dictionary-index lookups. 86,808 distinct reading orders, each also screened against whole periodic, monoalphabetic, K1-K3 and Carter key families. Run in the private cryptolab standing campaign dot-standing-051 (verdict NULL_WITHIN_FROZEN_SCOPE, 0 survivors); RESULTS.md sha256 7c1fbf5775a5. Evidence is held with SHA-256 manifests and is available from the owner on request. Independently re-checked field by field on the server by a second agent (Claude)."
+plain_summary = "Tests whether K4's letters were rearranged by positional overlays derived from the physical tableau, including its extra L before a standard cipher was applied. All 86,808 reading orders in scope were tested, and none was consistent with the 24 known plaintext letters."
+assumptions = [
+  "Cribs-in-place is not assumed: the cribs constrain the plaintext only after the rearrangement is undone",
+  "K4 tested as 97 letters, and as 98 cells with the preceding '?' (dropped after the rearrangement, or kept as an unknown symbol in quick screens)",
+  "Layer order: the rearrangement is applied last, C = T(inner(P))",
+]
+scope_limitations = [
+  "Reading orders outside this campaign's frozen procedure card",
+  "Substitution applied after the rearrangement, C = inner(T(P))",
+  "The 98-cell unknown-symbol model beyond quick inner screens",
+  "Keys that a light decoy calibration could miss (3 uniform + 3 shuffled synthetic texts per heavy inner): a null is not a statistical guarantee",
+  "Tableau registrations other than the conditional transcript used here",
+]
+
+[elimination.DOT-STANDING-053]
+category = "bespoke"
+confidence_tier = 2
+no_score = true
+description = "The 045 and 046 heavy primaries rerun with both uniform and shuffled decoys. Executed: 3,856,398,336 heavy dictionary-index lookups. 24 distinct reading orders, each also screened against whole periodic, monoalphabetic, K1-K3 and Carter key families. Run in the private cryptolab standing campaign dot-standing-053 (verdict NULL_WITHIN_FROZEN_SCOPE, 0 survivors); RESULTS.md sha256 e46f05ce100f. Evidence is held with SHA-256 manifests and is available from the owner on request. Independently re-checked field by field on the server by a second agent (Claude)."
+plain_summary = "Tests whether K4's letters were rearranged by the 045 and 046 heavy primaries rerun with both uniform and shuffled decoys before a standard cipher was applied. All 24 reading orders in scope were tested, and none was consistent with the 24 known plaintext letters."
+assumptions = [
+  "Cribs-in-place is not assumed: the cribs constrain the plaintext only after the rearrangement is undone",
+  "K4 tested as 97 letters, and as 98 cells with the preceding '?' (dropped after the rearrangement, or kept as an unknown symbol in quick screens)",
+  "Layer order: the rearrangement is applied last, C = T(inner(P))",
+]
+scope_limitations = [
+  "Reading orders outside this campaign's frozen procedure card",
+  "Substitution applied after the rearrangement, C = inner(T(P))",
+  "The 98-cell unknown-symbol model beyond quick inner screens",
+  "Keys that a light decoy calibration could miss (3 uniform + 3 shuffled synthetic texts per heavy inner): a null is not a statistical guarantee",
+  "Unknown-symbol placements at crib positions (none reachable in this bank)",
+]
+
+[elimination.DOT-STANDING-054]
+category = "bespoke"
+confidence_tier = 2
+no_score = true
+description = "The raised YAR letters as a positional anchor, with horizontal-gap walks. Executed: 2,892,298,752 heavy dictionary-index lookups. 360 distinct reading orders, each also screened against whole periodic, monoalphabetic, K1-K3 and Carter key families. Run in the private cryptolab standing campaign dot-standing-054 (verdict NULL_WITHIN_FROZEN_SCOPE, 0 survivors); RESULTS.md sha256 ac44b8dec85d. Evidence is held with SHA-256 manifests and is available from the owner on request. Independently re-checked field by field on the server by a second agent (Claude)."
+plain_summary = "Tests whether K4's letters were rearranged by the raised YAR letters as a positional anchor, with horizontal-gap walks before a standard cipher was applied. All 360 reading orders in scope were tested, and none was consistent with the 24 known plaintext letters."
+assumptions = [
+  "Cribs-in-place is not assumed: the cribs constrain the plaintext only after the rearrangement is undone",
+  "K4 tested as 97 letters, and as 98 cells with the preceding '?' (dropped after the rearrangement, or kept as an unknown symbol in quick screens)",
+  "Layer order: the rearrangement is applied last, C = T(inner(P))",
+]
+scope_limitations = [
+  "Reading orders outside this campaign's frozen procedure card",
+  "Substitution applied after the rearrangement, C = inner(T(P))",
+  "The 98-cell unknown-symbol model beyond quick inner screens",
+  "Keys that a light decoy calibration could miss (3 uniform + 3 shuffled synthetic texts per heavy inner): a null is not a statistical guarantee",
+  "Unknown-symbol placements at 18 of the 24 crib positions (unreachable in this procedure)",
+]
+
+[elimination.DOT-STANDING-056]
+category = "bespoke"
+confidence_tier = 2
+no_score = true
+description = "A rotating 24-column band modelled on Berlin's Weltzeituhr (World Clock). Executed: 11,569,195,008 heavy dictionary-index lookups. 1,972 distinct reading orders, each also screened against whole periodic, monoalphabetic, K1-K3 and Carter key families. Run in the private cryptolab standing campaign dot-standing-056 (verdict NULL_WITHIN_FROZEN_SCOPE, 0 survivors); RESULTS.md sha256 a76860ae09ec. Evidence is held with SHA-256 manifests and is available from the owner on request. Independently re-checked field by field on the server by a second agent (Claude)."
+plain_summary = "Tests whether K4's letters were rearranged by A rotating 24-column band modelled on Berlin's Weltzeituhr (World Clock) before a standard cipher was applied. All 1,972 reading orders in scope were tested, and none was consistent with the 24 known plaintext letters."
+assumptions = [
+  "Cribs-in-place is not assumed: the cribs constrain the plaintext only after the rearrangement is undone",
+  "K4 tested as 97 letters, and as 98 cells with the preceding '?' (dropped after the rearrangement, or kept as an unknown symbol in quick screens)",
+  "Layer order: the rearrangement is applied last, C = T(inner(P))",
+]
+scope_limitations = [
+  "Reading orders outside this campaign's frozen procedure card",
+  "Substitution applied after the rearrangement, C = inner(T(P))",
+  "The 98-cell unknown-symbol model beyond quick inner screens",
+  "Keys that a light decoy calibration could miss (3 uniform + 3 shuffled synthetic texts per heavy inner): a null is not a statistical guarantee",
+  "Clock-band layouts other than the five hypothesised letter bands",
+  "Heavy searches over the other 31 of 32 reading strata in each phase",
+]
+
+[elimination.DOT-STANDING-057]
+category = "bespoke"
+confidence_tier = 2
+no_score = true
+description = "Two-pass letter masks over the tableau. Executed: 241,024,896 heavy dictionary-index lookups. 924 distinct reading orders, each also screened against whole periodic, monoalphabetic, K1-K3 and Carter key families. Run in the private cryptolab standing campaign dot-standing-057 (verdict NULL_WITHIN_FROZEN_SCOPE, 0 survivors); RESULTS.md sha256 009dc8502597. Evidence is held with SHA-256 manifests and is available from the owner on request. Independently re-checked field by field on the server by a second agent (Claude)."
+plain_summary = "Tests whether K4's letters were rearranged by two-pass letter masks over the tableau before a standard cipher was applied. All 924 reading orders in scope were tested, and none was consistent with the 24 known plaintext letters."
+assumptions = [
+  "Cribs-in-place is not assumed: the cribs constrain the plaintext only after the rearrangement is undone",
+  "K4 tested as 97 letters, and as 98 cells with the preceding '?' (dropped after the rearrangement, or kept as an unknown symbol in quick screens)",
+  "Layer order: the rearrangement is applied last, C = T(inner(P))",
+]
+scope_limitations = [
+  "Reading orders outside this campaign's frozen procedure card",
+  "Substitution applied after the rearrangement, C = inner(T(P))",
+  "The 98-cell unknown-symbol model beyond quick inner screens",
+  "Keys that a light decoy calibration could miss (3 uniform + 3 shuffled synthetic texts per heavy inner): a null is not a statistical guarantee",
+  "The extra L: row N is never sampled here (covered by DOT-STANDING-063)",
+]
+
+[elimination.DOT-STANDING-058]
+category = "bespoke"
+confidence_tier = 2
+no_score = true
+description = "Counting off the Morse-code inscription around a circle of K4 positions. Executed: 964,099,584 heavy dictionary-index lookups. 4,680 distinct reading orders, each also screened against whole periodic, monoalphabetic, K1-K3 and Carter key families. Run in the private cryptolab standing campaign dot-standing-058 (verdict NULL_WITHIN_FROZEN_SCOPE, 0 survivors); RESULTS.md sha256 1798290855e9. Evidence is held with SHA-256 manifests and is available from the owner on request. Independently re-checked field by field on the server by a second agent (Claude)."
+plain_summary = "Tests whether K4's letters were rearranged by counting off the Morse-code inscription around a circle of K4 positions before a standard cipher was applied. All 4,680 reading orders in scope were tested, and none was consistent with the 24 known plaintext letters."
+assumptions = [
+  "Cribs-in-place is not assumed: the cribs constrain the plaintext only after the rearrangement is undone",
+  "K4 tested as 97 letters, and as 98 cells with the preceding '?' (dropped after the rearrangement, or kept as an unknown symbol in quick screens)",
+  "Layer order: the rearrangement is applied last, C = T(inner(P))",
+]
+scope_limitations = [
+  "Reading orders outside this campaign's frozen procedure card",
+  "Substitution applied after the rearrangement, C = inner(T(P))",
+  "The 98-cell unknown-symbol model beyond quick inner screens",
+  "Keys that a light decoy calibration could miss (3 uniform + 3 shuffled synthetic texts per heavy inner): a null is not a statistical guarantee",
+]
+
+[elimination.DOT-STANDING-059]
+category = "key-models"
+confidence_tier = 2
+no_score = true
+description = "A running key from a cleaned copy of Howard Carter's book, with page headings, captions and page numbers removed: a rerun of DOT-STANDING-038. Executed: 462,635,264 dictionary-index lookups. The index joins cover 6,939,528,960 logical configurations (overlapping, not unique). Run in the private cryptolab standing campaign dot-standing-059 (verdict NULL_WITHIN_FROZEN_SCOPE, 0 survivors); RESULTS.md sha256 e2d7151804dc. Evidence is held with SHA-256 manifests and is available from the owner on request. Independently re-checked field by field on the server by a second agent (Claude)."
+plain_summary = "Tests A running key from a cleaned copy of Howard Carter's book, with page headings, captions and page numbers removed: a rerun of DOT-STANDING-038, with the known plaintext at its carved positions. Every setting in scope was tested, and none was consistent with the 24 known plaintext letters."
+assumptions = [
+  "The cribs EASTNORTHEAST and BERLINCLOCK sit at their carved positions (1-based 22-34 and 64-74)",
+  "The cipher model named above applies directly to the 97 carved letters",
+]
+scope_limitations = [
+  "Settings outside the ranges named above",
+  "Arrangements in which the known plaintext is not at its carved positions",
+  "Start points at the 42 plate anchors left unresolved in the cleaned copy",
+  "Second-block alignments beyond offset +/-2 or edit distance 1",
+]
+
+[elimination.DOT-STANDING-063]
+category = "bespoke"
+confidence_tier = 2
+no_score = true
+description = "Successive letter apertures on the physical tableau, including the extra-L row (row N). Executed: 1,446,149,376 heavy dictionary-index lookups. 89,472 distinct reading orders, each also screened against whole periodic, monoalphabetic, K1-K3 and Carter key families. Run in the private cryptolab standing campaign dot-standing-063 (verdict NULL_WITHIN_FROZEN_SCOPE, 0 survivors); RESULTS.md sha256 e22918b849e3. Evidence is held with SHA-256 manifests and is available from the owner on request. Independently re-checked field by field on the server by a second agent (Claude)."
+plain_summary = "Tests whether K4's letters were rearranged by successive letter apertures on the physical tableau, including the extra-L row (row N) before a standard cipher was applied. All 89,472 reading orders in scope were tested, and none was consistent with the 24 known plaintext letters."
+assumptions = [
+  "Cribs-in-place is not assumed: the cribs constrain the plaintext only after the rearrangement is undone",
+  "K4 tested as 97 letters, and as 98 cells with the preceding '?' (dropped after the rearrangement, or kept as an unknown symbol in quick screens)",
+  "Layer order: the rearrangement is applied last, C = T(inner(P))",
+]
+scope_limitations = [
+  "Reading orders outside this campaign's frozen procedure card",
+  "Substitution applied after the rearrangement, C = inner(T(P))",
+  "The 98-cell unknown-symbol model beyond quick inner screens",
+  "Keys that a light decoy calibration could miss (3 uniform + 3 shuffled synthetic texts per heavy inner): a null is not a statistical guarantee",
+  "Anything the quick-screen controls reused from an interrupted earlier run (identical routes) could have missed",
+]
+
+[elimination.DOT-STANDING-064]
+category = "bespoke"
+confidence_tier = 2
+no_score = true
+description = "Two successive rectangular readings in the style of K3's verified method (42 then 14 wide), plus the exact 7x14 and 14x7 rectangles. Executed: 3,615,373,440 heavy dictionary-index lookups. 1,340 distinct reading orders, each also screened against whole periodic, monoalphabetic, K1-K3 and Carter key families. Run in the private cryptolab standing campaign dot-standing-064 (verdict NULL_WITHIN_FROZEN_SCOPE, 0 survivors); RESULTS.md sha256 13ef6ca94c1b. Evidence is held with SHA-256 manifests and is available from the owner on request. Independently re-checked field by field on the server by a second agent (Claude)."
+plain_summary = "Tests whether K4's letters were rearranged by two successive rectangular readings in the style of K3's verified method (42 then 14 wide), plus the exact 7x14 and 14x7 rectangles before a standard cipher was applied. All 1,340 reading orders in scope were tested, and none was consistent with the 24 known plaintext letters."
+assumptions = [
+  "Cribs-in-place is not assumed: the cribs constrain the plaintext only after the rearrangement is undone",
+  "K4 tested as 97 letters, and as 98 cells with the preceding '?' (dropped after the rearrangement, or kept as an unknown symbol in quick screens)",
+  "Layer order: the rearrangement is applied last, C = T(inner(P))",
+]
+scope_limitations = [
+  "Reading orders outside this campaign's frozen procedure card",
+  "Substitution applied after the rearrangement, C = inner(T(P))",
+  "The 98-cell unknown-symbol model beyond quick inner screens",
+  "Keys that a light decoy calibration could miss (3 uniform + 3 shuffled synthetic texts per heavy inner): a null is not a statistical guarantee",
+  "Grids whose short rows fall in the middle (only head- or tail-short rows were tested)",
+]
+
+[elimination.DOT-STANDING-065]
+category = "key-models"
+confidence_tier = 2
+no_score = true
+description = "A repeating dictionary word combined with a running key from the cleaned copy of Howard Carter's book: a rerun of DOT-STANDING-039. Executed: 1,850,541,056 dictionary-index lookups. The index joins cover 267,501,131,730,094,080 logical configurations (overlapping, not unique). Run in the private cryptolab standing campaign dot-standing-065 (verdict NULL_WITHIN_FROZEN_SCOPE, 0 survivors); RESULTS.md sha256 bd6f0c3cd6cd. Evidence is held with SHA-256 manifests and is available from the owner on request. Independently re-checked field by field on the server by a second agent (Claude)."
+plain_summary = "Tests A repeating dictionary word combined with a running key from the cleaned copy of Howard Carter's book: a rerun of DOT-STANDING-039, with the known plaintext at its carved positions. Every setting in scope was tested, and none was consistent with the 24 known plaintext letters."
+assumptions = [
+  "The cribs EASTNORTHEAST and BERLINCLOCK sit at their carved positions (1-based 22-34 and 64-74)",
+  "The cipher model named above applies directly to the 97 carved letters",
+]
+scope_limitations = [
+  "Settings outside the ranges named above",
+  "Arrangements in which the known plaintext is not at its carved positions",
+  "Start points at the 42 plate anchors left unresolved in the cleaned copy",
+]

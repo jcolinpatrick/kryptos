@@ -1,0 +1,9 @@
+{
+  "hill_gap_v2_probe.py": "f28cdde7663e16a369b5da96b037fc94c03e6946395db37cf2d4e72a49dbcfbb",
+  "test_hill_gap_v2_probe.py": "822fb0e57b3c826b5526a2c2ca6ee62255f4638671c731bf16523d799cfc15d6",
+  "hill_probe.py": "125d17c9b80b87e14ad1a64b4905107d48ff25fed11f7d9824ffac98f64f5772",
+  "cryptolab/tools/hill_cipher.py": "80f92c0769b4b5f49ed332bf12b890cd04e7b12f21e0f3586f6949286449a553",
+  "cryptolab/research_bridge/k4.py": "5bb7998a7b39c823f6915d27136884bade08808cf83e9881118f7d27ed322d06",
+  "docs/AGENT_HANDOFF.md": "6b53b681be4b4e6a636e95802d7695bbb8bad1e3f9ed83de9dacc170bee29c12",
+  "analysis_runs/dot_standing_010/spec.json": "80d3a59c94a3b0882e8b0ce5546cc6dadae55bd5d753dd7d78f06d7001d8a46c"
+}

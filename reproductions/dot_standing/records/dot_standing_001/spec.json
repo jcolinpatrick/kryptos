@@ -1,0 +1,25 @@
+{
+  "id": "dot-standing-001",
+  "hypothesis": "Pure fixed invertible Hill block map over Z26 in the direct frame",
+  "scope": "n2 phases0,1; n3 phases0,1,2; n4 phases1,2; 4 AZ/KA pairings; row and column keys cover identical matrix space, deduplicated",
+  "configurations": 28,
+  "matrix_keys": "all invertible matrices, solved algebraically not sampled for target",
+  "excluded_from_target": "n4 phases0,3 because authentic crib rank deficient; n5,6; affine offsets; transposition; other alphabets and layers",
+  "target": "canonical repository K4 sha256 eea813570c7f1fd3b34674e47b5c3da8948026f5cefee612a0b38ffaa515ceab; 24 confirmed letters",
+  "controls": "20 independent trusted-encoder plants per config with authentic cribs, exact key and complete block recovery required; 20 random-span plants per config; known vector and consistency tests",
+  "power_bar": "100 percent exact in all 28 authentic-crib configurations, all supplemental plants and unit tests",
+  "stopping": "one finite target compatibility pass; any non-rejected survivor stops further research and notifies Colin, no English gate used",
+  "resources": "one numerical process one thread; <1GiB planned; 16GiB available RAM minimum; target <=60s",
+  "negative": "unattested exact incompatibility in this scope only; no statistical p-value or English language assumption",
+  "independence": "trusted existing Hill encoder distinct from new matrix-fitting search; separate Claude reviewer receives full source and controls before target",
+  "reasoning": "low prior but cheap class-wide test; E8 covers periodic/CTAK coincidence classes not polygraphic linear maps; matrices solved as a class rather than dictionary keys; planner scope narrowed by actual crib rank power",
+  "authorization": "direct typed Colin standing authorization in current task; no per-campaign GO required",
+  "plan": [
+    "unit tests RED then GREEN",
+    "freeze source and spec",
+    "independent plants against frozen bytes",
+    "independent Claude review",
+    "if approved exact target pass",
+    "record one scoped result summary and usage"
+  ]
+}

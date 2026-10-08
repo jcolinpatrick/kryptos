@@ -1,0 +1,221 @@
+{
+  "id": "dot-standing-003",
+  "hypothesis": "fixed reversible block Hill or affine Hill THEN one frozen keyless rearrangement",
+  "routes": 26612,
+  "route_definition": "exact frozen mappings from existing trusted engine, widths2..48 single/double90-degree rotations,spiral,diagonal,boustrophedon,rail,skip all starts,natural-columnar,identity,reversal; add every inverse; deduplicate bytewise; conventions are these exact maps, no claim of other ragged-grid conventions",
+  "base_configs": [
+    [
+      "affine",
+      [
+        2,
+        0,
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      ]
+    ],
+    [
+      "affine",
+      [
+        2,
+        0,
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+      ]
+    ],
+    [
+      "affine",
+      [
+        2,
+        0,
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      ]
+    ],
+    [
+      "affine",
+      [
+        2,
+        0,
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+      ]
+    ],
+    [
+      "affine",
+      [
+        2,
+        1,
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      ]
+    ],
+    [
+      "affine",
+      [
+        2,
+        1,
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+      ]
+    ],
+    [
+      "affine",
+      [
+        2,
+        1,
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      ]
+    ],
+    [
+      "affine",
+      [
+        2,
+        1,
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+      ]
+    ],
+    [
+      "affine",
+      [
+        3,
+        0,
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      ]
+    ],
+    [
+      "affine",
+      [
+        3,
+        0,
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+      ]
+    ],
+    [
+      "affine",
+      [
+        3,
+        0,
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      ]
+    ],
+    [
+      "affine",
+      [
+        3,
+        0,
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+      ]
+    ],
+    [
+      "affine",
+      [
+        3,
+        1,
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      ]
+    ],
+    [
+      "affine",
+      [
+        3,
+        1,
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+      ]
+    ],
+    [
+      "affine",
+      [
+        3,
+        2,
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      ]
+    ],
+    [
+      "affine",
+      [
+        3,
+        2,
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+      ]
+    ],
+    [
+      "affine",
+      [
+        3,
+        2,
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      ]
+    ],
+    [
+      "affine",
+      [
+        3,
+        2,
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+      ]
+    ],
+    [
+      "pure",
+      [
+        3,
+        1,
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      ]
+    ],
+    [
+      "pure",
+      [
+        3,
+        1,
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+      ]
+    ]
+  ],
+  "configuration_cardinality": 532240,
+  "key_scope": "all invertible block matrices n2/3 and all constant offsets where authentic crib rank full; affine contains pure, so pure only adds two KA n3phase1 cases; affine n3phase1KA remains untested as a general affine class",
+  "cribs": {
+    "21": "EASTNORTHEAST",
+    "63": "BERLINCLOCK"
+  },
+  "ciphertext_identity": "eea813570c7f1fd3b34674e47b5c3da8948026f5cefee612a0b38ffaa515ceab",
+  "ciphertext_source_fresh_check": "CIA https://www.cia.gov/legacy/headquarters/kryptos-sculpture/ text lines101-104 fetched2026-10-05; 97 letters match canonical repository constant; earlier model claims not relied on",
+  "scope_not_excluded": "other alphabets; widthsoutside2..48; arbitrary keyed column orders; substitution after transposition; n>=4; error models; other layers; unidentifiable affine cells",
+  "edges": "pre-rearrangement incomplete leading/trailing Hill blocks unconstrained; full97-letter plaintext not claimed; recovered complete blocks reencoded exactly",
+  "controls": "200 independent trusted full-engine planted recoveries per20base configs; authenticcrubs and random filler; first/last origin samples perfamily/direction plus random maps; 200random negatives perbase; every26612map audited against trusted engine with two index-digit strings, fullskiparm also handwritten modularindex oracle",
+  "power_bar": "4000/4000 exact key/offset plants;4000/4000random negatives rejected;26612/26612maps validated;3unit tests pass; algebraic and independent exhaustive coefficient lookup agree on everycontrol and everytargetframe",
+  "independent_reference": "exhaustively enumerate26^d peroutput coefficients; map ALL completecribblock images to coefficients; require exactly26^d unique signatures; dictionarylookup is exact full exhaustive solution with no rank/CRT logic; matrixinvertibility checked by trusted implementation",
+  "resources": {
+    "max_numerical_workers": 20,
+    "threads_each": 1,
+    "minimum_available_ram_bytes": 17179869184,
+    "target_seconds_cap": 3600,
+    "worker_seconds_cap": 3500,
+    "planned_memory_bytes": 8589934592
+  },
+  "stopping": "scientificreviewSTOP binding; no target before allcontrols and APPROVE; anysurvivor immediately stopsallworkers andmessagesColin; timeoutpartial=INCONCLUSIVE",
+  "statistics": "no numericalchance-rate claim; finite exact incompatibility only; negativesunattested; no English filter",
+  "history": "ALL historical E1-E7/other experiments and older memory/kryptosclaims unverified leads; retesting legitimate newcoverage; noveltynotstopreason",
+  "planner_corrections": "post-decryption partial-crib checks ARE valid once full key recovered because entire ciphertextblock known; planner advice otherwise mistaken. Do not use planner falsepositive estimates as evidence. Actual forward/inversebank counts measured beforetarget.",
+  "plan": [
+    "freeze specification,code and bank",
+    "controls and benchmark onsyntheticdata",
+    "independentClaudescientificreview",
+    "externalverifyseals,canonicalhash,RAM",
+    "finiteprocesspool exacttargetpass",
+    "one resultsummary,usage,time,scope"
+  ]
+}

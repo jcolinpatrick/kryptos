@@ -1,0 +1,64 @@
+{
+  "periods": [
+    {
+      "period": 1,
+      "eligible_routes": 26403,
+      "ineligible_routes": 209,
+      "redundant_equations": 22,
+      "unknowns": 2
+    },
+    {
+      "period": 2,
+      "eligible_routes": 25438,
+      "ineligible_routes": 1174,
+      "redundant_equations": 20,
+      "unknowns": 4
+    },
+    {
+      "period": 3,
+      "eligible_routes": 22421,
+      "ineligible_routes": 4191,
+      "redundant_equations": 18,
+      "unknowns": 6
+    },
+    {
+      "period": 4,
+      "eligible_routes": 20598,
+      "ineligible_routes": 6014,
+      "redundant_equations": 16,
+      "unknowns": 8
+    },
+    {
+      "period": 5,
+      "eligible_routes": 16988,
+      "ineligible_routes": 9624,
+      "redundant_equations": 14,
+      "unknowns": 10
+    },
+    {
+      "period": 6,
+      "eligible_routes": 11116,
+      "ineligible_routes": 15496,
+      "redundant_equations": 12,
+      "unknowns": 12
+    },
+    {
+      "period": 7,
+      "eligible_routes": 8319,
+      "ineligible_routes": 18293,
+      "redundant_equations": 10,
+      "unknowns": 14
+    },
+    {
+      "period": 8,
+      "eligible_routes": 4131,
+      "ineligible_routes": 22481,
+      "redundant_equations": 8,
+      "unknowns": 16
+    }
+  ],
+  "route_bank_size": 26612,
+  "involutions": 66,
+  "gate_inputs": "route array and24PUBinputindices only; no ciphertext",
+  "route_direction": "inputi -> middleoutput route[i]"
+}

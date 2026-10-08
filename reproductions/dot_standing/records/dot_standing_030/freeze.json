@@ -1,0 +1,21 @@
+{
+  "hill_columnar_probe.py": "5e3aa94a00b342a9d5dfa595d73c85511333c8c7452b960f519040d5f99db30a",
+  "test_hill_columnar_probe.py": "73e5810a269f08c977734c06fe7638bed34e2442fae9c0b70c7617a0bfc8598a",
+  "hill_columnar_core.py": "80f02a358e9d3af47ddac2ac5e9951167997c357d72785548800468e3170c2c6",
+  "test_hill_columnar_core.py": "91678880244d233b91569b88fc9176ff3b5e566174b8fec50e0ce1d39a6f9b70",
+  "keyed_bank_access.py": "5393f7590e90a9d4c0b778060e849c12bca7e2904a63bd480446d0abd564f1ba",
+  "test_keyed_bank_access.py": "fb70ebd025680bc8bc7902e9430afd1dba2e2bf2511c2581f4b7da8abd99fbd3",
+  "keyed_routes.py": "607c1d3186088e3a9b465b92e54565636dd8bbda98a52fdab30239b8e2c50e90",
+  "test_keyed_routes.py": "a2ab7c01c93f921faa5aeb96a2b94dedff4cbc6ff3be6df232a62a453f291cf0",
+  "hill_probe.py": "125d17c9b80b87e14ad1a64b4905107d48ff25fed11f7d9824ffac98f64f5772",
+  "routed_probe.py": "9371eb8062dbe226f52bb02d9f06f11dde1780a1dae219ab9489bbee34dc9e9a",
+  "affine_probe.py": "7a9b67af5918746041b919acc92e3ad03a9951405892eea08546081620338775",
+  "cryptolab/tools/hill_cipher.py": "80f92c0769b4b5f49ed332bf12b890cd04e7b12f21e0f3586f6949286449a553",
+  "analysis_runs/dot_standing_030/routes.npy": "5e7c51ca7235d84e0ce83bab7f173386ce5ce0ad4e1e87e199a6b881a4939ca1",
+  "analysis_runs/dot_standing_030/routes.json": "183bf712677a6ea6433fb8b30f85087e0fef52ca831eafd650fa40af776c9e31",
+  "analysis_runs/dot_standing_030/reference_routes.npy": "5e7c51ca7235d84e0ce83bab7f173386ce5ce0ad4e1e87e199a6b881a4939ca1",
+  "analysis_runs/dot_standing_030/bank-audit.json": "68f2b5986204c98885d4c08f3e3f99d9ec205aa0d9392848bf223040cf0b320b",
+  "docs/AGENT_HANDOFF.md": "6b53b681be4b4e6a636e95802d7695bbb8bad1e3f9ed83de9dacc170bee29c12",
+  "cryptolab/research_bridge/k4.py": "5bb7998a7b39c823f6915d27136884bade08808cf83e9881118f7d27ed322d06",
+  "analysis_runs/dot_standing_030/spec.json": "ed24c0aeedb1a83b9872e28188cc5a50b2573cc2118ceea9ee0ed773805a9823"
+}

@@ -1,0 +1,80 @@
+{
+  "periods": [
+    {
+      "period": 1,
+      "eligible_routes": 26612,
+      "ineligible_routes": 0,
+      "redundant_equations": 23
+    },
+    {
+      "period": 2,
+      "eligible_routes": 26403,
+      "ineligible_routes": 209,
+      "redundant_equations": 22
+    },
+    {
+      "period": 3,
+      "eligible_routes": 25962,
+      "ineligible_routes": 650,
+      "redundant_equations": 21
+    },
+    {
+      "period": 4,
+      "eligible_routes": 25440,
+      "ineligible_routes": 1172,
+      "redundant_equations": 20
+    },
+    {
+      "period": 5,
+      "eligible_routes": 24784,
+      "ineligible_routes": 1828,
+      "redundant_equations": 19
+    },
+    {
+      "period": 6,
+      "eligible_routes": 22425,
+      "ineligible_routes": 4187,
+      "redundant_equations": 18
+    },
+    {
+      "period": 7,
+      "eligible_routes": 23150,
+      "ineligible_routes": 3462,
+      "redundant_equations": 17
+    },
+    {
+      "period": 8,
+      "eligible_routes": 20629,
+      "ineligible_routes": 5983,
+      "redundant_equations": 16
+    },
+    {
+      "period": 9,
+      "eligible_routes": 18780,
+      "ineligible_routes": 7832,
+      "redundant_equations": 15
+    },
+    {
+      "period": 10,
+      "eligible_routes": 17053,
+      "ineligible_routes": 9559,
+      "redundant_equations": 14
+    },
+    {
+      "period": 11,
+      "eligible_routes": 15657,
+      "ineligible_routes": 10955,
+      "redundant_equations": 13
+    },
+    {
+      "period": 12,
+      "eligible_routes": 11251,
+      "ineligible_routes": 15361,
+      "redundant_equations": 12
+    }
+  ],
+  "route_bank_size": 26612,
+  "involutions": 66,
+  "gate_inputs": "route array and24PUBinputindices only; no ciphertext",
+  "route_direction": "inputi -> middleoutput route[i]"
+}

@@ -1,0 +1,9 @@
+{
+  "affine_inverse_v3_probe.py": "d80fd4e684ff62cb07f53975176060f6cc62a9c119a9f9884f4a6aa62a1adaa0",
+  "test_affine_inverse_v3_probe.py": "e933bfb20634b575c2493c5de710b70edc112740d115383ce43eb278baefdd37",
+  "hill_probe.py": "125d17c9b80b87e14ad1a64b4905107d48ff25fed11f7d9824ffac98f64f5772",
+  "cryptolab/tools/hill_cipher.py": "80f92c0769b4b5f49ed332bf12b890cd04e7b12f21e0f3586f6949286449a553",
+  "docs/AGENT_HANDOFF.md": "6b53b681be4b4e6a636e95802d7695bbb8bad1e3f9ed83de9dacc170bee29c12",
+  "cryptolab/research_bridge/k4.py": "5bb7998a7b39c823f6915d27136884bade08808cf83e9881118f7d27ed322d06",
+  "analysis_runs/dot_standing_014/spec.json": "29e39ca49643136a669443f4ce14527b041f0b9ad27060c345c2755c1a2a7846"
+}

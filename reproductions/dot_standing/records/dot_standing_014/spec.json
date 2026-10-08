@@ -1,0 +1,685 @@
+{
+  "hypothesis": "direct affineHill c=pM+b, invertibleM, n3 allphases andn4 allphases, AZ/KA plaintext/cipheralphabets, exact24 crib constraints",
+  "control_plan": "5600distinctkey-offsetplants+5600random+840structured+28zero; truekeyamongALLcompatiblekeys; CRT solver and exhaustivefieldvectororacle fullkeysetagreement; every returnedcoveredtext reencoded",
+  "instrument_files": [
+    "affine_inverse_v3_probe.py",
+    "test_affine_inverse_v3_probe.py",
+    "hill_probe.py",
+    "cryptolab/tools/hill_cipher.py"
+  ],
+  "resources": "4 numerical workers controls,1target,threads1,RAMavailable>=16GiB; $0extraspend; deadline2026-10-06T23:30Z",
+  "control_cap_seconds": 1800,
+  "target_cap_seconds": 60,
+  "operational_cap": 50000,
+  "reasoning": "Allcribinverseaffine equations include partialblocks; extendsfresh002 to dropped3lettercells and4letterfamily. Oracle brute16/28561 or32/371293fieldvectors no sharedRREF.2synthetic tests passed28cells2.425s, handvectors establish rowoffset convention. Fullcontrolsource hashes checkedbeforeafter. No planner falsepositive/rank/geometryclaims adopted without computedvalidation. Corrected011: operationalcap10000 excluded a legitimate planted17576candidate case before target. Newcap50000, unchangedscientific28cells, same fullcontrol plan rerun; workercheckpoint/progress counts durable; earlier011INVALIDexcludesnothing. Targetcap60s still binding; overcap/timeoutINCONCLUSIVE. Independentviabilityreview013 REPAIR minimal: wrongfamilystructuredspecificCapExceeded recorded separately (NO rejection/agreementclaim); allpositive/random/zerooffsetcases remainhardrequirements. Reviewer bindingSTOPifanyofthese failsagain, thenretirefamily no more repair. Real searchpercellcapINCONCLUSIVEcontinuesothercells butfirstsurvivorstop andanyunknowncellpreventwholeNULL.",
+  "prior_contact": "Publicciphertext previouslyvisible; VOID007 manualresidue0/6 diagnostics conservativelyall24 cribpositions exposed. No blind/statisticalclaim. No011 targetarithmetic beforegates.",
+  "scope": "Coveredcompleteblocks only,edgesunconstrained; otheralphabets,affinenoninvertiblematrices,othern,routes,changingkeys untested. Compatiblelead notsolution; firstsurvivor stops.",
+  "history": "E1-E7/allolderclaims unverifiedleads. Controlledretesting countsnewcoverage, noveltynotreasonSTOP.",
+  "numerical_notes": "Structuralwrongn/phase/alphabet/reversed/singularsource inputs may genuinelyfit anotherinclasskey; recordhits, notdefects. Randomnegatives measuredcompatibility only. Offsetszero actuallyinclass sanityplant, notnegative. Unchanged coreCI prior001provenance, rootprobe tests separate; no claimlatercodepassedpriorCI.",
+  "id": "dot-standing-014",
+  "configurations": [
+    [
+      3,
+      0,
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    ],
+    [
+      3,
+      0,
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+    ],
+    [
+      3,
+      0,
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    ],
+    [
+      3,
+      0,
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+    ],
+    [
+      3,
+      1,
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    ],
+    [
+      3,
+      1,
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+    ],
+    [
+      3,
+      1,
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    ],
+    [
+      3,
+      1,
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+    ],
+    [
+      3,
+      2,
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    ],
+    [
+      3,
+      2,
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+    ],
+    [
+      3,
+      2,
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    ],
+    [
+      3,
+      2,
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+    ],
+    [
+      4,
+      0,
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    ],
+    [
+      4,
+      0,
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+    ],
+    [
+      4,
+      0,
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    ],
+    [
+      4,
+      0,
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+    ],
+    [
+      4,
+      1,
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    ],
+    [
+      4,
+      1,
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+    ],
+    [
+      4,
+      1,
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    ],
+    [
+      4,
+      1,
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+    ],
+    [
+      4,
+      2,
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    ],
+    [
+      4,
+      2,
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+    ],
+    [
+      4,
+      2,
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    ],
+    [
+      4,
+      2,
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+    ],
+    [
+      4,
+      3,
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    ],
+    [
+      4,
+      3,
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+    ],
+    [
+      4,
+      3,
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    ],
+    [
+      4,
+      3,
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+    ]
+  ],
+  "configuration_count": 28,
+  "geometry": [
+    {
+      "config": [
+        3,
+        0,
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      ],
+      "equations_per_column": [
+        9,
+        8,
+        7
+      ],
+      "fullknown_augmented_ranks": [
+        4,
+        4
+      ]
+    },
+    {
+      "config": [
+        3,
+        0,
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+      ],
+      "equations_per_column": [
+        9,
+        8,
+        7
+      ],
+      "fullknown_augmented_ranks": [
+        4,
+        4
+      ]
+    },
+    {
+      "config": [
+        3,
+        0,
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      ],
+      "equations_per_column": [
+        9,
+        8,
+        7
+      ],
+      "fullknown_augmented_ranks": [
+        4,
+        4
+      ]
+    },
+    {
+      "config": [
+        3,
+        0,
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+      ],
+      "equations_per_column": [
+        9,
+        8,
+        7
+      ],
+      "fullknown_augmented_ranks": [
+        4,
+        4
+      ]
+    },
+    {
+      "config": [
+        3,
+        1,
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      ],
+      "equations_per_column": [
+        8,
+        7,
+        9
+      ],
+      "fullknown_augmented_ranks": [
+        4,
+        4
+      ]
+    },
+    {
+      "config": [
+        3,
+        1,
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+      ],
+      "equations_per_column": [
+        8,
+        7,
+        9
+      ],
+      "fullknown_augmented_ranks": [
+        4,
+        4
+      ]
+    },
+    {
+      "config": [
+        3,
+        1,
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      ],
+      "equations_per_column": [
+        8,
+        7,
+        9
+      ],
+      "fullknown_augmented_ranks": [
+        3,
+        4
+      ]
+    },
+    {
+      "config": [
+        3,
+        1,
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+      ],
+      "equations_per_column": [
+        8,
+        7,
+        9
+      ],
+      "fullknown_augmented_ranks": [
+        3,
+        4
+      ]
+    },
+    {
+      "config": [
+        3,
+        2,
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      ],
+      "equations_per_column": [
+        7,
+        9,
+        8
+      ],
+      "fullknown_augmented_ranks": [
+        4,
+        4
+      ]
+    },
+    {
+      "config": [
+        3,
+        2,
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+      ],
+      "equations_per_column": [
+        7,
+        9,
+        8
+      ],
+      "fullknown_augmented_ranks": [
+        4,
+        4
+      ]
+    },
+    {
+      "config": [
+        3,
+        2,
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      ],
+      "equations_per_column": [
+        7,
+        9,
+        8
+      ],
+      "fullknown_augmented_ranks": [
+        4,
+        4
+      ]
+    },
+    {
+      "config": [
+        3,
+        2,
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+      ],
+      "equations_per_column": [
+        7,
+        9,
+        8
+      ],
+      "fullknown_augmented_ranks": [
+        4,
+        4
+      ]
+    },
+    {
+      "config": [
+        4,
+        0,
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      ],
+      "equations_per_column": [
+        6,
+        7,
+        5,
+        6
+      ],
+      "fullknown_augmented_ranks": [
+        4,
+        4
+      ]
+    },
+    {
+      "config": [
+        4,
+        0,
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+      ],
+      "equations_per_column": [
+        6,
+        7,
+        5,
+        6
+      ],
+      "fullknown_augmented_ranks": [
+        4,
+        4
+      ]
+    },
+    {
+      "config": [
+        4,
+        0,
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      ],
+      "equations_per_column": [
+        6,
+        7,
+        5,
+        6
+      ],
+      "fullknown_augmented_ranks": [
+        3,
+        4
+      ]
+    },
+    {
+      "config": [
+        4,
+        0,
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+      ],
+      "equations_per_column": [
+        6,
+        7,
+        5,
+        6
+      ],
+      "fullknown_augmented_ranks": [
+        3,
+        4
+      ]
+    },
+    {
+      "config": [
+        4,
+        1,
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      ],
+      "equations_per_column": [
+        7,
+        5,
+        6,
+        6
+      ],
+      "fullknown_augmented_ranks": [
+        4,
+        5
+      ]
+    },
+    {
+      "config": [
+        4,
+        1,
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+      ],
+      "equations_per_column": [
+        7,
+        5,
+        6,
+        6
+      ],
+      "fullknown_augmented_ranks": [
+        4,
+        5
+      ]
+    },
+    {
+      "config": [
+        4,
+        1,
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      ],
+      "equations_per_column": [
+        7,
+        5,
+        6,
+        6
+      ],
+      "fullknown_augmented_ranks": [
+        4,
+        5
+      ]
+    },
+    {
+      "config": [
+        4,
+        1,
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+      ],
+      "equations_per_column": [
+        7,
+        5,
+        6,
+        6
+      ],
+      "fullknown_augmented_ranks": [
+        4,
+        5
+      ]
+    },
+    {
+      "config": [
+        4,
+        2,
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      ],
+      "equations_per_column": [
+        5,
+        6,
+        6,
+        7
+      ],
+      "fullknown_augmented_ranks": [
+        4,
+        5
+      ]
+    },
+    {
+      "config": [
+        4,
+        2,
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+      ],
+      "equations_per_column": [
+        5,
+        6,
+        6,
+        7
+      ],
+      "fullknown_augmented_ranks": [
+        4,
+        5
+      ]
+    },
+    {
+      "config": [
+        4,
+        2,
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      ],
+      "equations_per_column": [
+        5,
+        6,
+        6,
+        7
+      ],
+      "fullknown_augmented_ranks": [
+        4,
+        5
+      ]
+    },
+    {
+      "config": [
+        4,
+        2,
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+      ],
+      "equations_per_column": [
+        5,
+        6,
+        6,
+        7
+      ],
+      "fullknown_augmented_ranks": [
+        4,
+        5
+      ]
+    },
+    {
+      "config": [
+        4,
+        3,
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      ],
+      "equations_per_column": [
+        6,
+        6,
+        7,
+        5
+      ],
+      "fullknown_augmented_ranks": [
+        4,
+        4
+      ]
+    },
+    {
+      "config": [
+        4,
+        3,
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+      ],
+      "equations_per_column": [
+        6,
+        6,
+        7,
+        5
+      ],
+      "fullknown_augmented_ranks": [
+        4,
+        4
+      ]
+    },
+    {
+      "config": [
+        4,
+        3,
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      ],
+      "equations_per_column": [
+        6,
+        6,
+        7,
+        5
+      ],
+      "fullknown_augmented_ranks": [
+        4,
+        4
+      ]
+    },
+    {
+      "config": [
+        4,
+        3,
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+      ],
+      "equations_per_column": [
+        6,
+        6,
+        7,
+        5
+      ],
+      "fullknown_augmented_ranks": [
+        4,
+        4
+      ]
+    }
+  ]
+}

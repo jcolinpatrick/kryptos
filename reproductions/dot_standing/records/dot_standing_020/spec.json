@@ -1,0 +1,216 @@
+{
+  "hypothesis": "Integer-valued quartic progressive key then post-key finite route, periods1/2, coefficients a0..4 byresidue using binom(floor(i/p),z)",
+  "control_plan": "35644128 exhaustivefull26coefficient crosschecks in3residuepatterns;3200localplants+3200certifiednear+3200random;16full-universeplants+8fullrandom,425792contexts each",
+  "instrument_files": [
+    "polynomial_v2_probe.py",
+    "test_polynomial_v2_probe.py",
+    "hill_probe.py",
+    "routed_probe.py",
+    "affine_probe.py",
+    "cryptolab/tools/hill_cipher.py",
+    "cryptolab/research_bridge/cribsolve_perm.py",
+    "cryptolab/research_bridge/cribsolve.py"
+  ],
+  "reuse_bank_from": "analysis_runs/dot_standing_003",
+  "resources": "12numericalworkers max controls/target,threads1,RAMavailable>=16GiB;zeroextraspend;deadline2026-10-06T23:30Z",
+  "control_cap_seconds": 3600,
+  "target_cap_seconds": 60,
+  "target_workers": 12,
+  "parameters": {
+    "degree": 4,
+    "periods": [
+      1,
+      2
+    ],
+    "workers": 12
+  },
+  "runtime_env": {
+    "K4_POLY_DEGREE": "4",
+    "K4_POLY_PERIODS": "1,2",
+    "K4_NUMERIC_WORKERS": "12"
+  },
+  "reasoning": "Freshcubic016 notexclude degree4. Publicdesignranks p1(5,5),p2(10,10). PrimarybulkCRT inverse/all24residual vs independentownquarticexplicitbasis/crib/alph maps exhaustive32/371293fieldcoeff signatures,EVERYframeagreement. Full26^5=11881376coefficientvectors per3patterns=35644128,32768vector batchesboundedmemory. Everyplant full97closedbinomialencoder agreesindependentfourth-difference recurrence. 3synthetic tests passed48.420s;initialtestexpected BEKXAZ wrong,handfinite-differencescorrectBEKXAH recorded beforefreeze. Noactualtargetevaluated.",
+  "planner_corrections": "Post-keyroute unroute restorespre-key cribindices so designranksfixed,notperroute; indexingq=i//p,r=i%p. Planner incorrectlymade ranksroute-dependent andprobabilityguesses; neitheradopted. p3rank15/14 omittednotexcluded; p4rank20/20 deliberatelydeferredweakredundancy,no targetevaluated. No13-keyfitguaranteeforinconsistentp3frames. Plannerclaims638688*3solves overcount: proposed24basesalreadyperiods included;frozen16bases425792 only.12workeroperatorchoice,no userfixed12. No CLIbenchmark/affinity/checkpoint;inheritsettings,one-shot60s operationalcap.",
+  "scope": "16bases p1,2 AZ/KAalph pairs signplus/minus \u00d726612literal frozenpost-keymaps=425792contexts, all26^(5p)coefficientkeys modeled,integerbinomiallawmod26. Otherperiods/routes/lawsunexcluded. Exposedcribspriorcontact, no blind/statistical/uniquenessclaim.",
+  "prior_contact": "Publicciphertextpreviouslyvisible, VOID007manualresidue0/6diagnostics; conservativelyall24cribpositions exposed. No blindK4/statisticalclaim. Syntheticblinds verifycontrolledrecovery only. E1-E7/alloldmemories/kryptosclaims unverifiedleads; controlledretesting legitimate noveltynostop.",
+  "numerical_notes": "12singlethreadworkers,RAM>=16GiBavailable,controls3600s,target60s andabsolute23:30Zdeadline. Everyfieldsignaturetableexactinjectivity check. Batchedfull26 coefficientcrosschecks prevent11.8m-tuplesallocation. Poolinheritsreadonlytables; source/bankhashbeforeafter.16distinctworkerreceipts,sum425792,each26612,coveragecomplete requiredNULL. Markerpresence mandatesSTOP despiteJSON/childrace; independentfourth-difference candidateverification beforeclaim. Numericthreads1 environmentexplicit.",
+  "search_space_size": 425792,
+  "bank_source_hashes": {
+    "routes.npy": "3841c9f317c06f21331757a13c15f61ed37fb0da9cbf374081171884774ebd30",
+    "routes.json": "39411a1bdefb990fc6bb075ef63571769db1e5c766ad417b148f84dde4b936bc"
+  },
+  "id": "dot-standing-020",
+  "configurations": [
+    [
+      1,
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      1
+    ],
+    [
+      1,
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      -1
+    ],
+    [
+      1,
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      1
+    ],
+    [
+      1,
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      -1
+    ],
+    [
+      1,
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      1
+    ],
+    [
+      1,
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      -1
+    ],
+    [
+      1,
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      1
+    ],
+    [
+      1,
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      -1
+    ],
+    [
+      2,
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      1
+    ],
+    [
+      2,
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      -1
+    ],
+    [
+      2,
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      1
+    ],
+    [
+      2,
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      -1
+    ],
+    [
+      2,
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      1
+    ],
+    [
+      2,
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      -1
+    ],
+    [
+      2,
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      1
+    ],
+    [
+      2,
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      -1
+    ]
+  ],
+  "configuration_count": 16,
+  "geometry": [
+    {
+      "period": 1,
+      "unknowns": 5,
+      "ranks": [
+        5,
+        5
+      ],
+      "crib_equations": 24
+    },
+    {
+      "period": 2,
+      "unknowns": 10,
+      "ranks": [
+        10,
+        10
+      ],
+      "crib_equations": 24
+    },
+    {
+      "period": 3,
+      "unknowns": 15,
+      "ranks": [
+        15,
+        14
+      ],
+      "crib_equations": 24
+    },
+    {
+      "period": 4,
+      "unknowns": 20,
+      "ranks": [
+        20,
+        20
+      ],
+      "crib_equations": 24
+    },
+    {
+      "period": 5,
+      "unknowns": 25,
+      "ranks": [
+        13,
+        23
+      ],
+      "crib_equations": 24
+    },
+    {
+      "period": 6,
+      "unknowns": 30,
+      "ranks": [
+        19,
+        24
+      ],
+      "crib_equations": 24
+    },
+    {
+      "period": 7,
+      "unknowns": 35,
+      "ranks": [
+        24,
+        24
+      ],
+      "crib_equations": 24
+    },
+    {
+      "period": 8,
+      "unknowns": 40,
+      "ranks": [
+        24,
+        24
+      ],
+      "crib_equations": 24
+    }
+  ]
+}

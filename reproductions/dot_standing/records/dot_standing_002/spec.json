@@ -1,0 +1,146 @@
+{
+  "id": "dot-standing-002",
+  "hypothesis": "fixed affine Hill direct frame c=pM+b mod26, all invertible M and offsets b",
+  "allowed": [
+    [
+      2,
+      0,
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    ],
+    [
+      2,
+      0,
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+    ],
+    [
+      2,
+      0,
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    ],
+    [
+      2,
+      0,
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+    ],
+    [
+      2,
+      1,
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    ],
+    [
+      2,
+      1,
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+    ],
+    [
+      2,
+      1,
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    ],
+    [
+      2,
+      1,
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+    ],
+    [
+      3,
+      0,
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    ],
+    [
+      3,
+      0,
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+    ],
+    [
+      3,
+      0,
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    ],
+    [
+      3,
+      0,
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+    ],
+    [
+      3,
+      1,
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    ],
+    [
+      3,
+      1,
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+    ],
+    [
+      3,
+      2,
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    ],
+    [
+      3,
+      2,
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+    ],
+    [
+      3,
+      2,
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    ],
+    [
+      3,
+      2,
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+    ]
+  ],
+  "dropped": [
+    [
+      3,
+      1,
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    ],
+    [
+      3,
+      1,
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+    ]
+  ],
+  "frames": "complete blocks starting phase+k*n; leading/trailing incomplete blocks unconstrained; all crib letters are covered",
+  "scope_not_excluded": "dropped two KA plaintext n3 phase1 cells; n>=4; other alphabets; transpositions; errors; changing key or offset; other layers",
+  "language": "no language gate; exact compatibility only",
+  "controls": "200 authentic-crib independent-encoder exact-key plants per cell; 200 random negatives and one singular plant per cell; both independent exhaustive and algebraic solvers must agree on every control",
+  "power_bar": "all true-key plants exactly recovered; no false random survivors; no primary/exhaustive disagreement",
+  "independent_reference": "per output column exhaustive enumeration 26^(n+1) coefficient tuples, all crib blocks; no CRT or rank logic for coefficient solving; independent trusted matrix invertibility check",
+  "resources": {
+    "worker_processes": 1,
+    "threads_each": 1,
+    "minimum_available_ram": 17179869184,
+    "controls_seconds_cap": 600,
+    "target_seconds_cap": 60,
+    "memory_bytes_cap": 1073741824
+  },
+  "stopping": "one finite target pass; any compatible survivor stop and message Colin; no escalation of scientific reviewer STOP",
+  "history": "ALL older K4 results and memories/kryptos claims unverified leads; controlled retesting legitimate new coverage; novelty is not a stop reason",
+  "reasoning": "class-wide reversible affine block mixing; extends fresh direct Hill test with unknown fixed offsets; drop rank-deficient cells before target; brute force second implementation prevents shared linear-solver defect",
+  "authorization": "Colin direct typed standing authorization, same task until2026-10-06T23:30Z; E8 paused; $0 extra spend"
+}

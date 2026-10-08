@@ -1,0 +1,15 @@
+{
+  "quadratic_probe.py": "9afc8719210676b5454d348cd201e0db806879222e2297d017aec11bb1fd7d50",
+  "test_quadratic_probe.py": "953cce117979155763d393ee58d19b6604448f3b7fdc891651bf815c4c588820",
+  "hill_probe.py": "125d17c9b80b87e14ad1a64b4905107d48ff25fed11f7d9824ffac98f64f5772",
+  "routed_probe.py": "9371eb8062dbe226f52bb02d9f06f11dde1780a1dae219ab9489bbee34dc9e9a",
+  "affine_probe.py": "7a9b67af5918746041b919acc92e3ad03a9951405892eea08546081620338775",
+  "cryptolab/tools/hill_cipher.py": "80f92c0769b4b5f49ed332bf12b890cd04e7b12f21e0f3586f6949286449a553",
+  "cryptolab/research_bridge/cribsolve_perm.py": "99d23bc030851f421199bf5fc327e8c9da5ec4552b087454eb4a43a0ccf75e69",
+  "cryptolab/research_bridge/cribsolve.py": "0fb705b5df8eaf003e229760f515868a3a9bd691757c2ae0c274632013e00bee",
+  "analysis_runs/dot_standing_012/routes.npy": "3841c9f317c06f21331757a13c15f61ed37fb0da9cbf374081171884774ebd30",
+  "analysis_runs/dot_standing_012/routes.json": "39411a1bdefb990fc6bb075ef63571769db1e5c766ad417b148f84dde4b936bc",
+  "docs/AGENT_HANDOFF.md": "6b53b681be4b4e6a636e95802d7695bbb8bad1e3f9ed83de9dacc170bee29c12",
+  "cryptolab/research_bridge/k4.py": "5bb7998a7b39c823f6915d27136884bade08808cf83e9881118f7d27ed322d06",
+  "analysis_runs/dot_standing_012/spec.json": "a61973868f2993f0c06ebe7378c5008e744c64ea9351db773744eee8632355f0"
+}

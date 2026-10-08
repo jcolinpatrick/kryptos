@@ -1,0 +1,10 @@
+{
+  "affine_probe.py": "7a9b67af5918746041b919acc92e3ad03a9951405892eea08546081620338775",
+  "hill_probe.py": "125d17c9b80b87e14ad1a64b4905107d48ff25fed11f7d9824ffac98f64f5772",
+  "test_affine_probe.py": "8337829eff9613540cfbcaddeb580e3a71f0aeab68c4ca5644906fd7c54a2636",
+  "cryptolab/tools/hill_cipher.py": "80f92c0769b4b5f49ed332bf12b890cd04e7b12f21e0f3586f6949286449a553",
+  "cryptolab/tools/alphabets.py": "20f449e51d0e986240cb0f5c9f0db9ee84dd50a33aebf3071df54bb643867c5a",
+  "cryptolab/research_bridge/k4.py": "5bb7998a7b39c823f6915d27136884bade08808cf83e9881118f7d27ed322d06",
+  "docs/AGENT_HANDOFF.md": "6b53b681be4b4e6a636e95802d7695bbb8bad1e3f9ed83de9dacc170bee29c12",
+  "analysis_runs/dot_standing_002/spec.json": "22bf4447a41fb5eaa1d4d9ef460ac287a5fca93883a66334c9cf0e851d439845"
+}

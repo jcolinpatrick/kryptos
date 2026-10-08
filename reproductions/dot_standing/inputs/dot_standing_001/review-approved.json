@@ -1,0 +1,10 @@
+{
+  "approved": true,
+  "review_sha256": "c48e99da7c1f545dd9af5f8dceb4896de9309fa586ab9150021304d2af7c484c",
+  "controls_sha256": "31e30f990b449c45939146c089031baba387085cde7bbbad96f53a18dc7b03fa",
+  "freeze_sha256": "918318253c85cbf5faae962eea266e35824c43943c52a4c5df426c2fe785166b",
+  "target_sha256": "eea813570c7f1fd3b34674e47b5c3da8948026f5cefee612a0b38ffaa515ceab",
+  "mem_available": 65276362752,
+  "approved_utc": "2026-10-05T23:44:50.213658+00:00",
+  "conditions": "frozen bytes verified externally and canonical ciphertext checked against literal frozen spec identity"
+}

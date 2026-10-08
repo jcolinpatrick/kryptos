@@ -1,0 +1,343 @@
+{
+  "passed": true,
+  "plants": 1120,
+  "seconds": 0.671666145324707,
+  "records": [
+    {
+      "config": [
+        2,
+        0,
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      ],
+      "true_crib_plants": 20,
+      "exact": 20,
+      "compatible": 0,
+      "random_span_exact": 20
+    },
+    {
+      "config": [
+        2,
+        0,
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+      ],
+      "true_crib_plants": 20,
+      "exact": 20,
+      "compatible": 0,
+      "random_span_exact": 20
+    },
+    {
+      "config": [
+        2,
+        0,
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      ],
+      "true_crib_plants": 20,
+      "exact": 20,
+      "compatible": 0,
+      "random_span_exact": 20
+    },
+    {
+      "config": [
+        2,
+        0,
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+      ],
+      "true_crib_plants": 20,
+      "exact": 20,
+      "compatible": 0,
+      "random_span_exact": 20
+    },
+    {
+      "config": [
+        2,
+        1,
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      ],
+      "true_crib_plants": 20,
+      "exact": 20,
+      "compatible": 0,
+      "random_span_exact": 20
+    },
+    {
+      "config": [
+        2,
+        1,
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+      ],
+      "true_crib_plants": 20,
+      "exact": 20,
+      "compatible": 0,
+      "random_span_exact": 20
+    },
+    {
+      "config": [
+        2,
+        1,
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      ],
+      "true_crib_plants": 20,
+      "exact": 20,
+      "compatible": 0,
+      "random_span_exact": 20
+    },
+    {
+      "config": [
+        2,
+        1,
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+      ],
+      "true_crib_plants": 20,
+      "exact": 20,
+      "compatible": 0,
+      "random_span_exact": 20
+    },
+    {
+      "config": [
+        3,
+        0,
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      ],
+      "true_crib_plants": 20,
+      "exact": 20,
+      "compatible": 0,
+      "random_span_exact": 20
+    },
+    {
+      "config": [
+        3,
+        0,
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+      ],
+      "true_crib_plants": 20,
+      "exact": 20,
+      "compatible": 0,
+      "random_span_exact": 20
+    },
+    {
+      "config": [
+        3,
+        0,
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      ],
+      "true_crib_plants": 20,
+      "exact": 20,
+      "compatible": 0,
+      "random_span_exact": 20
+    },
+    {
+      "config": [
+        3,
+        0,
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+      ],
+      "true_crib_plants": 20,
+      "exact": 20,
+      "compatible": 0,
+      "random_span_exact": 20
+    },
+    {
+      "config": [
+        3,
+        1,
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      ],
+      "true_crib_plants": 20,
+      "exact": 20,
+      "compatible": 0,
+      "random_span_exact": 20
+    },
+    {
+      "config": [
+        3,
+        1,
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+      ],
+      "true_crib_plants": 20,
+      "exact": 20,
+      "compatible": 0,
+      "random_span_exact": 20
+    },
+    {
+      "config": [
+        3,
+        1,
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      ],
+      "true_crib_plants": 20,
+      "exact": 20,
+      "compatible": 0,
+      "random_span_exact": 20
+    },
+    {
+      "config": [
+        3,
+        1,
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+      ],
+      "true_crib_plants": 20,
+      "exact": 20,
+      "compatible": 0,
+      "random_span_exact": 20
+    },
+    {
+      "config": [
+        3,
+        2,
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      ],
+      "true_crib_plants": 20,
+      "exact": 20,
+      "compatible": 0,
+      "random_span_exact": 20
+    },
+    {
+      "config": [
+        3,
+        2,
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+      ],
+      "true_crib_plants": 20,
+      "exact": 20,
+      "compatible": 0,
+      "random_span_exact": 20
+    },
+    {
+      "config": [
+        3,
+        2,
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      ],
+      "true_crib_plants": 20,
+      "exact": 20,
+      "compatible": 0,
+      "random_span_exact": 20
+    },
+    {
+      "config": [
+        3,
+        2,
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+      ],
+      "true_crib_plants": 20,
+      "exact": 20,
+      "compatible": 0,
+      "random_span_exact": 20
+    },
+    {
+      "config": [
+        4,
+        1,
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      ],
+      "true_crib_plants": 20,
+      "exact": 20,
+      "compatible": 0,
+      "random_span_exact": 20
+    },
+    {
+      "config": [
+        4,
+        1,
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+      ],
+      "true_crib_plants": 20,
+      "exact": 20,
+      "compatible": 0,
+      "random_span_exact": 20
+    },
+    {
+      "config": [
+        4,
+        1,
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      ],
+      "true_crib_plants": 20,
+      "exact": 20,
+      "compatible": 0,
+      "random_span_exact": 20
+    },
+    {
+      "config": [
+        4,
+        1,
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+      ],
+      "true_crib_plants": 20,
+      "exact": 20,
+      "compatible": 0,
+      "random_span_exact": 20
+    },
+    {
+      "config": [
+        4,
+        2,
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      ],
+      "true_crib_plants": 20,
+      "exact": 20,
+      "compatible": 0,
+      "random_span_exact": 20
+    },
+    {
+      "config": [
+        4,
+        2,
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+      ],
+      "true_crib_plants": 20,
+      "exact": 20,
+      "compatible": 0,
+      "random_span_exact": 20
+    },
+    {
+      "config": [
+        4,
+        2,
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      ],
+      "true_crib_plants": 20,
+      "exact": 20,
+      "compatible": 0,
+      "random_span_exact": 20
+    },
+    {
+      "config": [
+        4,
+        2,
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+      ],
+      "true_crib_plants": 20,
+      "exact": 20,
+      "compatible": 0,
+      "random_span_exact": 20
+    }
+  ]
+}

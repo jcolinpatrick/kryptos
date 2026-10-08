@@ -1,0 +1,13 @@
+{
+  "feedback_probe.py": "0438a313d66b7c1b3c2bcc3584696f393063ac1d6cfce07e4be5a8392d70a9ce",
+  "test_feedback_probe.py": "82dca1b9d4cdeedfcbc9828ae693bd9563e97a9ca6c90d321b5553a07f9c4d03",
+  "hill_probe.py": "125d17c9b80b87e14ad1a64b4905107d48ff25fed11f7d9824ffac98f64f5772",
+  "cryptolab/research_bridge/k4.py": "5bb7998a7b39c823f6915d27136884bade08808cf83e9881118f7d27ed322d06",
+  "docs/AGENT_HANDOFF.md": "6b53b681be4b4e6a636e95802d7695bbb8bad1e3f9ed83de9dacc170bee29c12",
+  "analysis_runs/dot_standing_006/spec.json": "65c14a47f28fcf8444efda8a918d1ea42bc82283401aa36c81be7b25597d849d",
+  "analysis_runs/dot_standing_006/controls.json": "ff44a65e84dbaffc5ebc8266bf240c7dd6ecbf5d048774d1299c08bb424ab9a8",
+  "analysis_runs/dot_standing_006/control-reuse.json": "fb9a636e4b014baabacac1cb150a4f8010a0f602e037762ed5097703e15ce8ea",
+  "analysis_runs/dot_standing_006/plant-survivor-counts.npy": "ca4a6e973875eb6d11cae02e76205d51a142df9a897a8a67b31c858db6142440",
+  "analysis_runs/dot_standing_006/near-miss-survivor-counts.npy": "ed0fa2c774741dd2d3da39abd13f624b520b81e0fe015e4bb9fb65f5eb233c79",
+  "analysis_runs/dot_standing_006/random-survivor-counts.npy": "ed0fa2c774741dd2d3da39abd13f624b520b81e0fe015e4bb9fb65f5eb233c79"
+}

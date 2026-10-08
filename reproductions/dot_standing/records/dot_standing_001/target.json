@@ -1,0 +1,312 @@
+{
+  "rows": [
+    {
+      "n": 2,
+      "phase": 0,
+      "pa": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "ca": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "blocks": 11,
+      "ranks": [
+        2
+      ],
+      "class": "rejected"
+    },
+    {
+      "n": 2,
+      "phase": 0,
+      "pa": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "ca": "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "blocks": 11,
+      "ranks": [
+        2
+      ],
+      "class": "rejected"
+    },
+    {
+      "n": 2,
+      "phase": 0,
+      "pa": "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "ca": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "blocks": 11,
+      "ranks": [
+        2
+      ],
+      "class": "rejected"
+    },
+    {
+      "n": 2,
+      "phase": 0,
+      "pa": "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "ca": "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "blocks": 11,
+      "ranks": [
+        2
+      ],
+      "class": "rejected"
+    },
+    {
+      "n": 2,
+      "phase": 1,
+      "pa": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "ca": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "blocks": 11,
+      "ranks": [
+        2
+      ],
+      "class": "rejected"
+    },
+    {
+      "n": 2,
+      "phase": 1,
+      "pa": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "ca": "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "blocks": 11,
+      "ranks": [
+        2
+      ],
+      "class": "rejected"
+    },
+    {
+      "n": 2,
+      "phase": 1,
+      "pa": "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "ca": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "blocks": 11,
+      "ranks": [
+        2
+      ],
+      "class": "rejected"
+    },
+    {
+      "n": 2,
+      "phase": 1,
+      "pa": "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "ca": "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "blocks": 11,
+      "ranks": [
+        2
+      ],
+      "class": "rejected"
+    },
+    {
+      "n": 3,
+      "phase": 0,
+      "pa": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "ca": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "blocks": 7,
+      "ranks": [
+        3
+      ],
+      "class": "rejected"
+    },
+    {
+      "n": 3,
+      "phase": 0,
+      "pa": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "ca": "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "blocks": 7,
+      "ranks": [
+        3
+      ],
+      "class": "rejected"
+    },
+    {
+      "n": 3,
+      "phase": 0,
+      "pa": "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "ca": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "blocks": 7,
+      "ranks": [
+        3
+      ],
+      "class": "rejected"
+    },
+    {
+      "n": 3,
+      "phase": 0,
+      "pa": "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "ca": "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "blocks": 7,
+      "ranks": [
+        3
+      ],
+      "class": "rejected"
+    },
+    {
+      "n": 3,
+      "phase": 1,
+      "pa": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "ca": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "blocks": 7,
+      "ranks": [
+        3
+      ],
+      "class": "rejected"
+    },
+    {
+      "n": 3,
+      "phase": 1,
+      "pa": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "ca": "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "blocks": 7,
+      "ranks": [
+        3
+      ],
+      "class": "rejected"
+    },
+    {
+      "n": 3,
+      "phase": 1,
+      "pa": "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "ca": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "blocks": 7,
+      "ranks": [
+        3
+      ],
+      "class": "rejected"
+    },
+    {
+      "n": 3,
+      "phase": 1,
+      "pa": "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "ca": "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "blocks": 7,
+      "ranks": [
+        3
+      ],
+      "class": "rejected"
+    },
+    {
+      "n": 3,
+      "phase": 2,
+      "pa": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "ca": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "blocks": 6,
+      "ranks": [
+        3
+      ],
+      "class": "rejected"
+    },
+    {
+      "n": 3,
+      "phase": 2,
+      "pa": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "ca": "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "blocks": 6,
+      "ranks": [
+        3
+      ],
+      "class": "rejected"
+    },
+    {
+      "n": 3,
+      "phase": 2,
+      "pa": "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "ca": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "blocks": 6,
+      "ranks": [
+        3
+      ],
+      "class": "rejected"
+    },
+    {
+      "n": 3,
+      "phase": 2,
+      "pa": "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "ca": "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "blocks": 6,
+      "ranks": [
+        3
+      ],
+      "class": "rejected"
+    },
+    {
+      "n": 4,
+      "phase": 1,
+      "pa": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "ca": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "blocks": 5,
+      "ranks": [
+        4
+      ],
+      "class": "rejected"
+    },
+    {
+      "n": 4,
+      "phase": 1,
+      "pa": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "ca": "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "blocks": 5,
+      "ranks": [
+        4
+      ],
+      "class": "rejected"
+    },
+    {
+      "n": 4,
+      "phase": 1,
+      "pa": "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "ca": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "blocks": 5,
+      "ranks": [
+        4
+      ],
+      "class": "rejected"
+    },
+    {
+      "n": 4,
+      "phase": 1,
+      "pa": "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "ca": "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "blocks": 5,
+      "ranks": [
+        4
+      ],
+      "class": "rejected"
+    },
+    {
+      "n": 4,
+      "phase": 2,
+      "pa": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "ca": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "blocks": 5,
+      "ranks": [
+        4
+      ],
+      "class": "rejected"
+    },
+    {
+      "n": 4,
+      "phase": 2,
+      "pa": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "ca": "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "blocks": 5,
+      "ranks": [
+        4
+      ],
+      "class": "rejected"
+    },
+    {
+      "n": 4,
+      "phase": 2,
+      "pa": "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "ca": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "blocks": 5,
+      "ranks": [
+        4
+      ],
+      "class": "rejected"
+    },
+    {
+      "n": 4,
+      "phase": 2,
+      "pa": "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "ca": "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "blocks": 5,
+      "ranks": [
+        4
+      ],
+      "class": "rejected"
+    }
+  ]
+}

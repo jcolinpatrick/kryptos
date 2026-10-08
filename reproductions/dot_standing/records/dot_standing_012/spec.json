@@ -1,0 +1,346 @@
+{
+  "hypothesis": "integer-valuedquadratic progressiveadditivekey followedby exact frozenroute: ca(C_i)=sign*pa(P_i)+a_r+b_r*q+c_r*q(q-1)/2mod26, r=i%p q=i//p; p1,2,3,4,6 only; AZ/KA alphabets,+/-sign",
+  "control_plan": "8000trueplants+8000certifiednear+8000random,40full-universeblindplants+8full-universeuniformrandoms; actualscanner all1064480configs perfixture noearlystop; truthroute/key/fulltext amongallcandidates",
+  "instrument_files": [
+    "quadratic_probe.py",
+    "test_quadratic_probe.py",
+    "hill_probe.py",
+    "routed_probe.py",
+    "affine_probe.py",
+    "cryptolab/tools/hill_cipher.py",
+    "cryptolab/research_bridge/cribsolve_perm.py",
+    "cryptolab/research_bridge/cribsolve.py"
+  ],
+  "reuse_bank_from": "analysis_runs/dot_standing_003",
+  "resources": "12numericalworkersmaximum controls/target,threads1,RAMavailable>=16GiB; remaining concurrentaffinecontrolworkers4 =>16total; $0extraspend; deadline2026-10-06T23:30Z",
+  "control_cap_seconds": 3600,
+  "target_cap_seconds": 60,
+  "target_workers": 12,
+  "reasoning": "Fresh004linearprogression notcurvaturecoverage. Integer-valuedbinomialbasis removesmonomialmod2parameterredundancy. Publicdesignranksfull forp1,2,3,4,6; p5,7,8omittedbeforetarget. PrimarybulkCRTleftinverse/all24check,int32toavoidbinomialvalueoverflow; independentexhaustive26^3signature/residue withowncrib/alphabet/residualcode onEVERYframe. Existingfresh003 exact26612bankhashcopied; fullcontroltruthencodedbyseparaterouteengine andallcandidatefull97reencodedindependently.3tests passed0.753s including12worker actualsyntheticstop/cleanup. NoK4targetcontact inthiscampaign; syntheticcandidateisnotK4survivor.",
+  "scope": "Exact40bases*26612maps=1064480configurations, p1/2/3/4/6 only, integer-valuedquadraticbasis; p5/7/8 unidentifiedomitted, otherperiods/routes/alphabets/keylawsunexcluded. Candidate leadnotuniqueplaintext; nestedperiods andalphabetaliases maygiveequivalenttext, reportcandidatecounts anddistincttext hashes. NoEnglishgate, userfirstsurvivorstop binding.",
+  "prior_contact": "Ciphertext public/previouslyvisible andVOID007 manualresidue0/6diagnostics; conservatively all24cribpositions exposed. No blindK4/statisticalclaims. Full-universe syntheticblinds demonstratecontrolledrecovery only. EarlierE1-E7/memories/kryptosunverifiedleads, retestinglegitnoveltynostop.",
+  "numerical_notes": "Planner012 recommended48fulluniversecontrolruns adopted; guessedfalsepositive/nestingestimates notadoptedasmeasurements. Differentbankmaps maysharecribimagesandproduceotherleads. Allcandidateconfig/key comparisons+fullreencoding insharedscanner; nullrequirescomplete1064480 configurations; partial/cap/timeout/disagreementINCONCLUSIVE. Deadline/target60souterprocessgroup cleanup; rootstopfile onfirstcandidate.",
+  "search_space_size": 1064480,
+  "bank_source_hashes": {
+    "routes.npy": "3841c9f317c06f21331757a13c15f61ed37fb0da9cbf374081171884774ebd30",
+    "routes.json": "39411a1bdefb990fc6bb075ef63571769db1e5c766ad417b148f84dde4b936bc"
+  },
+  "id": "dot-standing-012",
+  "configurations": [
+    [
+      1,
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      1
+    ],
+    [
+      1,
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      -1
+    ],
+    [
+      1,
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      1
+    ],
+    [
+      1,
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      -1
+    ],
+    [
+      1,
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      1
+    ],
+    [
+      1,
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      -1
+    ],
+    [
+      1,
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      1
+    ],
+    [
+      1,
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      -1
+    ],
+    [
+      2,
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      1
+    ],
+    [
+      2,
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      -1
+    ],
+    [
+      2,
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      1
+    ],
+    [
+      2,
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      -1
+    ],
+    [
+      2,
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      1
+    ],
+    [
+      2,
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      -1
+    ],
+    [
+      2,
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      1
+    ],
+    [
+      2,
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      -1
+    ],
+    [
+      3,
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      1
+    ],
+    [
+      3,
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      -1
+    ],
+    [
+      3,
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      1
+    ],
+    [
+      3,
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      -1
+    ],
+    [
+      3,
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      1
+    ],
+    [
+      3,
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      -1
+    ],
+    [
+      3,
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      1
+    ],
+    [
+      3,
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      -1
+    ],
+    [
+      4,
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      1
+    ],
+    [
+      4,
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      -1
+    ],
+    [
+      4,
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      1
+    ],
+    [
+      4,
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      -1
+    ],
+    [
+      4,
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      1
+    ],
+    [
+      4,
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      -1
+    ],
+    [
+      4,
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      1
+    ],
+    [
+      4,
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      -1
+    ],
+    [
+      6,
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      1
+    ],
+    [
+      6,
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      -1
+    ],
+    [
+      6,
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      1
+    ],
+    [
+      6,
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      -1
+    ],
+    [
+      6,
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      1
+    ],
+    [
+      6,
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      -1
+    ],
+    [
+      6,
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      1
+    ],
+    [
+      6,
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      -1
+    ]
+  ],
+  "configuration_count": 40,
+  "geometry": [
+    {
+      "period": 1,
+      "unknowns": 3,
+      "ranks": [
+        3,
+        3
+      ],
+      "crib_equations": 24
+    },
+    {
+      "period": 2,
+      "unknowns": 6,
+      "ranks": [
+        6,
+        6
+      ],
+      "crib_equations": 24
+    },
+    {
+      "period": 3,
+      "unknowns": 9,
+      "ranks": [
+        9,
+        9
+      ],
+      "crib_equations": 24
+    },
+    {
+      "period": 4,
+      "unknowns": 12,
+      "ranks": [
+        12,
+        12
+      ],
+      "crib_equations": 24
+    },
+    {
+      "period": 5,
+      "unknowns": 15,
+      "ranks": [
+        13,
+        15
+      ],
+      "crib_equations": 24
+    },
+    {
+      "period": 6,
+      "unknowns": 18,
+      "ranks": [
+        18,
+        18
+      ],
+      "crib_equations": 24
+    },
+    {
+      "period": 7,
+      "unknowns": 21,
+      "ranks": [
+        20,
+        20
+      ],
+      "crib_equations": 24
+    },
+    {
+      "period": 8,
+      "unknowns": 24,
+      "ranks": [
+        21,
+        21
+      ],
+      "crib_equations": 24
+    }
+  ]
+}

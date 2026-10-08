@@ -1,0 +1,2908 @@
+{
+ "schema": "kryptos.dot_standing.repro.v1",
+ "about": "Public reproduction of the DOT-STANDING eliminations published on kryptosbot.com. Frozen sources are byte-identical to the files that ran in the private cryptolab standing campaigns.",
+ "original_root": "/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001",
+ "rewrites": [
+  [
+   "/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001/.venv/bin/python",
+   "{PY}"
+  ],
+  [
+   "/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001",
+   "{WORK}"
+  ],
+  [
+   "/home/cpatrick/cryptolab_queue_outcomes",
+   "{WORK}/_outcomes"
+  ],
+  [
+   "/home/cpatrick/cryptolab_queue_campaigns/dot-standing-20261005",
+   "{WORK}/_campaign"
+  ]
+ ],
+ "volatile_key_regex": "(second|time|elapsed|wall|utc|timestamp|started|finished|pid|mem_avail|duration)",
+ "ciphertext_sha256": "eea813570c7f1fd3b34674e47b5c3da8948026f5cefee612a0b38ffaa515ceab",
+ "requires_modules": [
+  "numpy",
+  "pydantic"
+ ],
+ "tested_with": {
+  "python": "3.12.3",
+  "numpy": "2.4.3",
+  "pydantic": "2.11.10",
+  "pydantic-core": "2.33.2"
+ },
+ "campaigns": {
+  "DOT-STANDING-001": {
+   "run": "dot_standing_001",
+   "title": "Hill cipher, direct",
+   "tier": "A",
+   "claim": "0 survivors; 28 configurations (NULL_WITHIN_DIRECT_HILL_SCOPE, unattested; exact incompatibility language independent)",
+   "epoch": 1791243890.213658,
+   "env": {},
+   "code": {
+    "cryptolab/__init__.py": {
+     "kind": "redacted",
+     "sha256": "768ca92876ecbc33d1d57e392b59150a741a1ec21a85c0fcaec3c319b17ed17f",
+     "original_sha256": "243c7870d0ba41d8f5e0f0bcd1b6915131796b13283c167adbe227c9b5cd85e4"
+    },
+    "cryptolab/research_bridge/__init__.py": {
+     "kind": "shim",
+     "sha256": "16a9ab72a99e1041721f3a3b58f86af5a31192d8eae51808d0faf12c0ea2ea26"
+    },
+    "cryptolab/research_bridge/cribsolve.py": {
+     "kind": "redacted",
+     "sha256": "df4be2031a966f64a98f07b67b58a8ec0a073b85b48fddc20c1a7fde5d37465e",
+     "original_sha256": "0fb705b5df8eaf003e229760f515868a3a9bd691757c2ae0c274632013e00bee"
+    },
+    "cryptolab/research_bridge/cribsolve_perm.py": {
+     "kind": "redacted",
+     "sha256": "9b7372774dd5968bfdc6f9e8b469fdb39b590fbf2ccf3ad29940544386812eb2",
+     "original_sha256": "99d23bc030851f421199bf5fc327e8c9da5ec4552b087454eb4a43a0ccf75e69"
+    },
+    "cryptolab/research_bridge/k4.py": {
+     "kind": "shim",
+     "sha256": "09a3132c3d8dbeb63aaa222104ed74d600c55448628768fd079e8866930f976b"
+    },
+    "cryptolab/tools/__init__.py": {
+     "kind": "shim",
+     "sha256": "36817edfdd209aff2d625a782461d49c686c1f3734dab2088b26fd68859242fd"
+    },
+    "cryptolab/tools/alphabets.py": {
+     "kind": "redacted",
+     "sha256": "350396d73935cb98f79284e6f0b1d2f682452918eea65f81179cc27c54779ed3",
+     "original_sha256": "20f449e51d0e986240cb0f5c9f0db9ee84dd50a33aebf3071df54bb643867c5a"
+    },
+    "cryptolab/tools/fitness.py": {
+     "kind": "shim",
+     "sha256": "494bbb6072cf682945b065132cfc16f31131ef8b5e002d000f79ae81e0a99c41"
+    },
+    "cryptolab/tools/hill_cipher.py": {
+     "kind": "redacted",
+     "sha256": "aade4534c5b7369c621b9f04a64d6c0c28f0578ed605fd48dcbadd503b0a4f8c",
+     "original_sha256": "80f92c0769b4b5f49ed332bf12b890cd04e7b12f21e0f3586f6949286449a553"
+    },
+    "cryptolab/tools/transforms.py": {
+     "kind": "shim",
+     "sha256": "2032e82d8501335a3aa6cf07bbafca7fa478bf69d8aa853e44ce158c0a3a9b8d"
+    },
+    "cryptolab/tools/transposition.py": {
+     "kind": "redacted",
+     "sha256": "f3ff7ed635838118ff183f4f2838e388b34a37faf71f54dbce3200f0f740d9e9",
+     "original_sha256": "5a79c870dbd76263dfad326f3ec87a9caafe62a623fc135cd8adac0a6f20d58c"
+    },
+    "hill_probe.py": {
+     "kind": "frozen",
+     "sha256": "125d17c9b80b87e14ad1a64b4905107d48ff25fed11f7d9824ffac98f64f5772"
+    }
+   },
+   "frozen_at_run": [
+    "hill_probe.py"
+   ],
+   "not_in_freeze_record": [
+    "cryptolab/__init__.py",
+    "cryptolab/research_bridge/cribsolve.py",
+    "cryptolab/research_bridge/cribsolve_perm.py",
+    "cryptolab/tools/alphabets.py",
+    "cryptolab/tools/transposition.py"
+   ],
+   "inputs": {
+    "analysis_runs/dot_standing_001/controls.json": "31e30f990b449c45939146c089031baba387085cde7bbbad96f53a18dc7b03fa",
+    "analysis_runs/dot_standing_001/review-approved.json": "4ad59d1fa04eb81b7f3f89e7254ccca7bb1132734524ae82f3171f064272af69"
+   },
+   "banks": [],
+   "target": {
+    "argv": [
+     "{PY}",
+     "hill_probe.py",
+     "target",
+     "analysis_runs/dot_standing_001"
+    ],
+    "source": "inferred: launch command predates process logging; call taken from the frozen probe and accepted only because the result matches",
+    "stdout_is_result": false
+   },
+   "compare": {
+    "reference_key": null,
+    "produced_key": null,
+    "sort": false,
+    "annotations": [],
+    "reference_sha256": "befe4b59cc96efd072fa9800c4e7c28cc397595a030a44354e76d9ac5e856425",
+    "reference_stripped_keys": [],
+    "original_record_sha256": "befe4b59cc96efd072fa9800c4e7c28cc397595a030a44354e76d9ac5e856425",
+    "results_md_sha256": "cf5b4db32904f9df3d3fc040b2d1364f477d24a905566a341433de4d99c20e67"
+   }
+  },
+  "DOT-STANDING-002": {
+   "run": "dot_standing_002",
+   "title": "Affine Hill cipher, direct",
+   "tier": "A",
+   "claim": "0 survivors; 18 configurations (NULL_WITHIN_FROZEN_SCOPE_UNATTESTED)",
+   "epoch": 1791244336.5781615,
+   "env": {},
+   "code": {
+    "affine_probe.py": {
+     "kind": "frozen",
+     "sha256": "7a9b67af5918746041b919acc92e3ad03a9951405892eea08546081620338775"
+    },
+    "cryptolab/__init__.py": {
+     "kind": "redacted",
+     "sha256": "768ca92876ecbc33d1d57e392b59150a741a1ec21a85c0fcaec3c319b17ed17f",
+     "original_sha256": "243c7870d0ba41d8f5e0f0bcd1b6915131796b13283c167adbe227c9b5cd85e4"
+    },
+    "cryptolab/research_bridge/__init__.py": {
+     "kind": "shim",
+     "sha256": "16a9ab72a99e1041721f3a3b58f86af5a31192d8eae51808d0faf12c0ea2ea26"
+    },
+    "cryptolab/research_bridge/cribsolve.py": {
+     "kind": "redacted",
+     "sha256": "df4be2031a966f64a98f07b67b58a8ec0a073b85b48fddc20c1a7fde5d37465e",
+     "original_sha256": "0fb705b5df8eaf003e229760f515868a3a9bd691757c2ae0c274632013e00bee"
+    },
+    "cryptolab/research_bridge/cribsolve_perm.py": {
+     "kind": "redacted",
+     "sha256": "9b7372774dd5968bfdc6f9e8b469fdb39b590fbf2ccf3ad29940544386812eb2",
+     "original_sha256": "99d23bc030851f421199bf5fc327e8c9da5ec4552b087454eb4a43a0ccf75e69"
+    },
+    "cryptolab/research_bridge/k4.py": {
+     "kind": "shim",
+     "sha256": "09a3132c3d8dbeb63aaa222104ed74d600c55448628768fd079e8866930f976b"
+    },
+    "cryptolab/tools/__init__.py": {
+     "kind": "shim",
+     "sha256": "36817edfdd209aff2d625a782461d49c686c1f3734dab2088b26fd68859242fd"
+    },
+    "cryptolab/tools/alphabets.py": {
+     "kind": "redacted",
+     "sha256": "350396d73935cb98f79284e6f0b1d2f682452918eea65f81179cc27c54779ed3",
+     "original_sha256": "20f449e51d0e986240cb0f5c9f0db9ee84dd50a33aebf3071df54bb643867c5a"
+    },
+    "cryptolab/tools/fitness.py": {
+     "kind": "shim",
+     "sha256": "494bbb6072cf682945b065132cfc16f31131ef8b5e002d000f79ae81e0a99c41"
+    },
+    "cryptolab/tools/hill_cipher.py": {
+     "kind": "redacted",
+     "sha256": "aade4534c5b7369c621b9f04a64d6c0c28f0578ed605fd48dcbadd503b0a4f8c",
+     "original_sha256": "80f92c0769b4b5f49ed332bf12b890cd04e7b12f21e0f3586f6949286449a553"
+    },
+    "cryptolab/tools/transforms.py": {
+     "kind": "shim",
+     "sha256": "2032e82d8501335a3aa6cf07bbafca7fa478bf69d8aa853e44ce158c0a3a9b8d"
+    },
+    "cryptolab/tools/transposition.py": {
+     "kind": "redacted",
+     "sha256": "f3ff7ed635838118ff183f4f2838e388b34a37faf71f54dbce3200f0f740d9e9",
+     "original_sha256": "5a79c870dbd76263dfad326f3ec87a9caafe62a623fc135cd8adac0a6f20d58c"
+    },
+    "hill_probe.py": {
+     "kind": "frozen",
+     "sha256": "125d17c9b80b87e14ad1a64b4905107d48ff25fed11f7d9824ffac98f64f5772"
+    }
+   },
+   "frozen_at_run": [
+    "affine_probe.py",
+    "hill_probe.py"
+   ],
+   "not_in_freeze_record": [
+    "cryptolab/__init__.py",
+    "cryptolab/research_bridge/cribsolve.py",
+    "cryptolab/research_bridge/cribsolve_perm.py",
+    "cryptolab/tools/transposition.py"
+   ],
+   "inputs": {
+    "analysis_runs/dot_standing_002/controls.json": "d2cf5c64ea4e68a0429cb068092989b79a032a625d9a29898b1fb597ec4026ff",
+    "analysis_runs/dot_standing_002/review-approved.json": "5c029e51e2dec7eab2206fec152b9e5706944df6227a9a27f01bd98c371956a8"
+   },
+   "banks": [],
+   "target": {
+    "argv": [
+     "{PY}",
+     "affine_probe.py",
+     "target",
+     "analysis_runs/dot_standing_002"
+    ],
+    "source": "inferred: launch command predates process logging; call taken from the frozen probe and accepted only because the result matches",
+    "stdout_is_result": false
+   },
+   "compare": {
+    "reference_key": null,
+    "produced_key": null,
+    "sort": false,
+    "annotations": [],
+    "reference_sha256": "7c56aefe307c2f21e6008f522f13459eedd7ed1dd85ec4d36d5ebe43727b968b",
+    "reference_stripped_keys": [],
+    "original_record_sha256": "7c56aefe307c2f21e6008f522f13459eedd7ed1dd85ec4d36d5ebe43727b968b",
+    "results_md_sha256": "0271c5edc159fcd2aac310b0a25dd6d0c60f3745d1376ecf86127af1b9b4fe59"
+   }
+  },
+  "DOT-STANDING-003": {
+   "run": "dot_standing_003",
+   "title": "Hill or affine Hill, then a frozen route bank",
+   "tier": "A",
+   "claim": "0 survivors; 532,240 configurations (NULL_WITHIN_FROZEN_SCOPE_UNATTESTED)",
+   "epoch": 1791245052.3399918,
+   "env": {},
+   "code": {
+    "affine_probe.py": {
+     "kind": "frozen",
+     "sha256": "7a9b67af5918746041b919acc92e3ad03a9951405892eea08546081620338775"
+    },
+    "cryptolab/__init__.py": {
+     "kind": "redacted",
+     "sha256": "768ca92876ecbc33d1d57e392b59150a741a1ec21a85c0fcaec3c319b17ed17f",
+     "original_sha256": "243c7870d0ba41d8f5e0f0bcd1b6915131796b13283c167adbe227c9b5cd85e4"
+    },
+    "cryptolab/research_bridge/__init__.py": {
+     "kind": "shim",
+     "sha256": "16a9ab72a99e1041721f3a3b58f86af5a31192d8eae51808d0faf12c0ea2ea26"
+    },
+    "cryptolab/research_bridge/cribsolve.py": {
+     "kind": "redacted",
+     "sha256": "df4be2031a966f64a98f07b67b58a8ec0a073b85b48fddc20c1a7fde5d37465e",
+     "original_sha256": "0fb705b5df8eaf003e229760f515868a3a9bd691757c2ae0c274632013e00bee"
+    },
+    "cryptolab/research_bridge/cribsolve_perm.py": {
+     "kind": "redacted",
+     "sha256": "9b7372774dd5968bfdc6f9e8b469fdb39b590fbf2ccf3ad29940544386812eb2",
+     "original_sha256": "99d23bc030851f421199bf5fc327e8c9da5ec4552b087454eb4a43a0ccf75e69"
+    },
+    "cryptolab/research_bridge/k4.py": {
+     "kind": "shim",
+     "sha256": "09a3132c3d8dbeb63aaa222104ed74d600c55448628768fd079e8866930f976b"
+    },
+    "cryptolab/tools/__init__.py": {
+     "kind": "shim",
+     "sha256": "36817edfdd209aff2d625a782461d49c686c1f3734dab2088b26fd68859242fd"
+    },
+    "cryptolab/tools/alphabets.py": {
+     "kind": "redacted",
+     "sha256": "350396d73935cb98f79284e6f0b1d2f682452918eea65f81179cc27c54779ed3",
+     "original_sha256": "20f449e51d0e986240cb0f5c9f0db9ee84dd50a33aebf3071df54bb643867c5a"
+    },
+    "cryptolab/tools/fitness.py": {
+     "kind": "shim",
+     "sha256": "494bbb6072cf682945b065132cfc16f31131ef8b5e002d000f79ae81e0a99c41"
+    },
+    "cryptolab/tools/hill_cipher.py": {
+     "kind": "redacted",
+     "sha256": "aade4534c5b7369c621b9f04a64d6c0c28f0578ed605fd48dcbadd503b0a4f8c",
+     "original_sha256": "80f92c0769b4b5f49ed332bf12b890cd04e7b12f21e0f3586f6949286449a553"
+    },
+    "cryptolab/tools/transforms.py": {
+     "kind": "shim",
+     "sha256": "2032e82d8501335a3aa6cf07bbafca7fa478bf69d8aa853e44ce158c0a3a9b8d"
+    },
+    "cryptolab/tools/transposition.py": {
+     "kind": "redacted",
+     "sha256": "f3ff7ed635838118ff183f4f2838e388b34a37faf71f54dbce3200f0f740d9e9",
+     "original_sha256": "5a79c870dbd76263dfad326f3ec87a9caafe62a623fc135cd8adac0a6f20d58c"
+    },
+    "hill_probe.py": {
+     "kind": "frozen",
+     "sha256": "125d17c9b80b87e14ad1a64b4905107d48ff25fed11f7d9824ffac98f64f5772"
+    },
+    "routed_probe.py": {
+     "kind": "frozen",
+     "sha256": "9371eb8062dbe226f52bb02d9f06f11dde1780a1dae219ab9489bbee34dc9e9a"
+    }
+   },
+   "frozen_at_run": [
+    "affine_probe.py",
+    "hill_probe.py",
+    "routed_probe.py"
+   ],
+   "not_in_freeze_record": [
+    "cryptolab/__init__.py"
+   ],
+   "inputs": {},
+   "banks": [
+    {
+     "name": "transposition route bank (routed_probe.py bank)",
+     "source": "inferred: routed_probe.py CLI 'bank' mode",
+     "of": "003",
+     "argv": [
+      "{PY}",
+      "routed_probe.py",
+      "bank",
+      "analysis_runs/dot_standing_003"
+     ],
+     "expect": {
+      "analysis_runs/dot_standing_003/routes.npy": "3841c9f317c06f21331757a13c15f61ed37fb0da9cbf374081171884774ebd30",
+      "analysis_runs/dot_standing_003/routes.json": "39411a1bdefb990fc6bb075ef63571769db1e5c766ad417b148f84dde4b936bc"
+     }
+    }
+   ],
+   "target": {
+    "argv": [
+     "{PY}",
+     "-c",
+     "import sys,json;from pathlib import Path;sys.path.insert(0,'/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001');from concurrent.futures import ProcessPoolExecutor;import routed_probe as p;out=Path('/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001/analysis_runs/dot_standing_003');ex=ProcessPoolExecutor(4);r=list(ex.map(p.target_task,[(str(out),b,list(range(26612))) for b in p.base_configs()]));print(json.dumps(r))"
+    ],
+    "source": "inferred: the private orchestrator called target_task once per base configuration over all 26,612 routes on 4 workers; this one-line loop does the same and the per-configuration results must match",
+    "stdout_is_result": true
+   },
+   "compare": {
+    "reference_key": "worker_results",
+    "produced_key": null,
+    "sort": true,
+    "annotations": [],
+    "reference_sha256": "374492c0475fd44c1fdbdcbd47db4540ff4f143c81d39dc2ba1056cfc5443c0c",
+    "reference_stripped_keys": [],
+    "original_record_sha256": "374492c0475fd44c1fdbdcbd47db4540ff4f143c81d39dc2ba1056cfc5443c0c",
+    "results_md_sha256": "93ed3e8191ae37dcac08aa8bd9ea7b749375a1e8d1be6d5bdd58b89927f4e7a8"
+   }
+  },
+  "DOT-STANDING-004": {
+   "run": "dot_standing_004",
+   "title": "Linear progressive key, then a frozen route bank",
+   "tier": "A",
+   "claim": "0 survivors; 2,554,752 configurations (NULL_WITHIN_FROZEN_SCOPE_UNATTESTED)",
+   "epoch": 1791246008.6855018,
+   "env": {},
+   "code": {
+    "affine_probe.py": {
+     "kind": "frozen",
+     "sha256": "7a9b67af5918746041b919acc92e3ad03a9951405892eea08546081620338775"
+    },
+    "cryptolab/__init__.py": {
+     "kind": "redacted",
+     "sha256": "768ca92876ecbc33d1d57e392b59150a741a1ec21a85c0fcaec3c319b17ed17f",
+     "original_sha256": "243c7870d0ba41d8f5e0f0bcd1b6915131796b13283c167adbe227c9b5cd85e4"
+    },
+    "cryptolab/research_bridge/__init__.py": {
+     "kind": "shim",
+     "sha256": "16a9ab72a99e1041721f3a3b58f86af5a31192d8eae51808d0faf12c0ea2ea26"
+    },
+    "cryptolab/research_bridge/cribsolve.py": {
+     "kind": "redacted",
+     "sha256": "df4be2031a966f64a98f07b67b58a8ec0a073b85b48fddc20c1a7fde5d37465e",
+     "original_sha256": "0fb705b5df8eaf003e229760f515868a3a9bd691757c2ae0c274632013e00bee"
+    },
+    "cryptolab/research_bridge/cribsolve_perm.py": {
+     "kind": "redacted",
+     "sha256": "9b7372774dd5968bfdc6f9e8b469fdb39b590fbf2ccf3ad29940544386812eb2",
+     "original_sha256": "99d23bc030851f421199bf5fc327e8c9da5ec4552b087454eb4a43a0ccf75e69"
+    },
+    "cryptolab/research_bridge/k4.py": {
+     "kind": "shim",
+     "sha256": "09a3132c3d8dbeb63aaa222104ed74d600c55448628768fd079e8866930f976b"
+    },
+    "cryptolab/tools/__init__.py": {
+     "kind": "shim",
+     "sha256": "36817edfdd209aff2d625a782461d49c686c1f3734dab2088b26fd68859242fd"
+    },
+    "cryptolab/tools/alphabets.py": {
+     "kind": "redacted",
+     "sha256": "350396d73935cb98f79284e6f0b1d2f682452918eea65f81179cc27c54779ed3",
+     "original_sha256": "20f449e51d0e986240cb0f5c9f0db9ee84dd50a33aebf3071df54bb643867c5a"
+    },
+    "cryptolab/tools/fitness.py": {
+     "kind": "shim",
+     "sha256": "494bbb6072cf682945b065132cfc16f31131ef8b5e002d000f79ae81e0a99c41"
+    },
+    "cryptolab/tools/hill_cipher.py": {
+     "kind": "redacted",
+     "sha256": "aade4534c5b7369c621b9f04a64d6c0c28f0578ed605fd48dcbadd503b0a4f8c",
+     "original_sha256": "80f92c0769b4b5f49ed332bf12b890cd04e7b12f21e0f3586f6949286449a553"
+    },
+    "cryptolab/tools/transforms.py": {
+     "kind": "shim",
+     "sha256": "2032e82d8501335a3aa6cf07bbafca7fa478bf69d8aa853e44ce158c0a3a9b8d"
+    },
+    "cryptolab/tools/transposition.py": {
+     "kind": "redacted",
+     "sha256": "f3ff7ed635838118ff183f4f2838e388b34a37faf71f54dbce3200f0f740d9e9",
+     "original_sha256": "5a79c870dbd76263dfad326f3ec87a9caafe62a623fc135cd8adac0a6f20d58c"
+    },
+    "hill_probe.py": {
+     "kind": "frozen",
+     "sha256": "125d17c9b80b87e14ad1a64b4905107d48ff25fed11f7d9824ffac98f64f5772"
+    },
+    "progressive_probe.py": {
+     "kind": "frozen",
+     "sha256": "239be7c82276a790c7cd3c66067313f52de1cd0ef60c55e1ebab73b75d572e50"
+    },
+    "routed_probe.py": {
+     "kind": "frozen",
+     "sha256": "9371eb8062dbe226f52bb02d9f06f11dde1780a1dae219ab9489bbee34dc9e9a"
+    }
+   },
+   "frozen_at_run": [
+    "affine_probe.py",
+    "hill_probe.py",
+    "progressive_probe.py",
+    "routed_probe.py"
+   ],
+   "not_in_freeze_record": [
+    "cryptolab/__init__.py"
+   ],
+   "inputs": {},
+   "banks": [
+    {
+     "name": "transposition route bank (routed_probe.py bank)",
+     "source": "inferred: routed_probe.py CLI 'bank' mode",
+     "of": "004",
+     "argv": [
+      "{PY}",
+      "routed_probe.py",
+      "bank",
+      "analysis_runs/dot_standing_004"
+     ],
+     "expect": {
+      "analysis_runs/dot_standing_004/routes.npy": "3841c9f317c06f21331757a13c15f61ed37fb0da9cbf374081171884774ebd30",
+      "analysis_runs/dot_standing_004/routes.json": "39411a1bdefb990fc6bb075ef63571769db1e5c766ad417b148f84dde4b936bc"
+     }
+    }
+   ],
+   "target": {
+    "argv": [
+     "{PY}",
+     "-c",
+     "import sys,json;from pathlib import Path;sys.path.insert(0,'/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001');from concurrent.futures import ProcessPoolExecutor;import progressive_probe as p;out=Path('/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001/analysis_runs/dot_standing_004');ex=ProcessPoolExecutor(4);r=list(ex.map(p.target_task,[(str(out),b,list(range(26612))) for b in p.configs()]));print(json.dumps(r))"
+    ],
+    "source": "inferred: the private orchestrator called target_task once per base configuration over all 26,612 routes on 4 workers; this one-line loop does the same and the per-configuration results must match",
+    "stdout_is_result": true
+   },
+   "compare": {
+    "reference_key": "worker_results",
+    "produced_key": null,
+    "sort": true,
+    "annotations": [],
+    "reference_sha256": "7a352c0fd8d3b056d38fd5ed5af598eeae2eec2336f8d1aac11dc1c987ef5b39",
+    "reference_stripped_keys": [
+     "subscription_usage"
+    ],
+    "original_record_sha256": "1d91e2318dac21f3f0667a6b1ab9e913b45a00562c3d2f860751f7aeb2be498c",
+    "results_md_sha256": "57e292f921babb51e5b7759ef6c23a3e142ffe6fe5b5b77e3893e78c68e1829f"
+   }
+  },
+  "DOT-STANDING-006": {
+   "run": "dot_standing_006",
+   "title": "Signed ciphertext feedback, lags 1-25",
+   "tier": "A",
+   "claim": "0 survivors; 800 configurations (NULL_WITHIN_DIRECT_FEEDBACK_SCOPE_UNATTESTED)",
+   "epoch": 1791248342.434428,
+   "env": {},
+   "code": {
+    "cryptolab/__init__.py": {
+     "kind": "redacted",
+     "sha256": "768ca92876ecbc33d1d57e392b59150a741a1ec21a85c0fcaec3c319b17ed17f",
+     "original_sha256": "243c7870d0ba41d8f5e0f0bcd1b6915131796b13283c167adbe227c9b5cd85e4"
+    },
+    "cryptolab/research_bridge/__init__.py": {
+     "kind": "shim",
+     "sha256": "16a9ab72a99e1041721f3a3b58f86af5a31192d8eae51808d0faf12c0ea2ea26"
+    },
+    "cryptolab/research_bridge/cribsolve.py": {
+     "kind": "redacted",
+     "sha256": "df4be2031a966f64a98f07b67b58a8ec0a073b85b48fddc20c1a7fde5d37465e",
+     "original_sha256": "0fb705b5df8eaf003e229760f515868a3a9bd691757c2ae0c274632013e00bee"
+    },
+    "cryptolab/research_bridge/cribsolve_perm.py": {
+     "kind": "redacted",
+     "sha256": "9b7372774dd5968bfdc6f9e8b469fdb39b590fbf2ccf3ad29940544386812eb2",
+     "original_sha256": "99d23bc030851f421199bf5fc327e8c9da5ec4552b087454eb4a43a0ccf75e69"
+    },
+    "cryptolab/research_bridge/k4.py": {
+     "kind": "shim",
+     "sha256": "09a3132c3d8dbeb63aaa222104ed74d600c55448628768fd079e8866930f976b"
+    },
+    "cryptolab/tools/__init__.py": {
+     "kind": "shim",
+     "sha256": "36817edfdd209aff2d625a782461d49c686c1f3734dab2088b26fd68859242fd"
+    },
+    "cryptolab/tools/alphabets.py": {
+     "kind": "redacted",
+     "sha256": "350396d73935cb98f79284e6f0b1d2f682452918eea65f81179cc27c54779ed3",
+     "original_sha256": "20f449e51d0e986240cb0f5c9f0db9ee84dd50a33aebf3071df54bb643867c5a"
+    },
+    "cryptolab/tools/fitness.py": {
+     "kind": "shim",
+     "sha256": "494bbb6072cf682945b065132cfc16f31131ef8b5e002d000f79ae81e0a99c41"
+    },
+    "cryptolab/tools/hill_cipher.py": {
+     "kind": "redacted",
+     "sha256": "aade4534c5b7369c621b9f04a64d6c0c28f0578ed605fd48dcbadd503b0a4f8c",
+     "original_sha256": "80f92c0769b4b5f49ed332bf12b890cd04e7b12f21e0f3586f6949286449a553"
+    },
+    "cryptolab/tools/transforms.py": {
+     "kind": "shim",
+     "sha256": "2032e82d8501335a3aa6cf07bbafca7fa478bf69d8aa853e44ce158c0a3a9b8d"
+    },
+    "cryptolab/tools/transposition.py": {
+     "kind": "redacted",
+     "sha256": "f3ff7ed635838118ff183f4f2838e388b34a37faf71f54dbce3200f0f740d9e9",
+     "original_sha256": "5a79c870dbd76263dfad326f3ec87a9caafe62a623fc135cd8adac0a6f20d58c"
+    },
+    "feedback_probe.py": {
+     "kind": "frozen",
+     "sha256": "0438a313d66b7c1b3c2bcc3584696f393063ac1d6cfce07e4be5a8392d70a9ce"
+    },
+    "hill_probe.py": {
+     "kind": "frozen",
+     "sha256": "125d17c9b80b87e14ad1a64b4905107d48ff25fed11f7d9824ffac98f64f5772"
+    }
+   },
+   "frozen_at_run": [
+    "feedback_probe.py",
+    "hill_probe.py"
+   ],
+   "not_in_freeze_record": [
+    "cryptolab/__init__.py",
+    "cryptolab/research_bridge/cribsolve.py",
+    "cryptolab/research_bridge/cribsolve_perm.py",
+    "cryptolab/tools/alphabets.py",
+    "cryptolab/tools/hill_cipher.py",
+    "cryptolab/tools/transposition.py"
+   ],
+   "inputs": {},
+   "banks": [],
+   "target": {
+    "argv": [
+     "{PY}",
+     "-c",
+     "import sys,json;from pathlib import Path;sys.path.insert(0,'/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001');import feedback_probe as p;print(json.dumps(p.target(Path('/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001/analysis_runs/dot_standing_006'))))"
+    ],
+    "source": "inferred: launch command predates process logging; call taken from the frozen probe and accepted only because the result matches",
+    "stdout_is_result": true
+   },
+   "compare": {
+    "reference_key": "result",
+    "produced_key": null,
+    "sort": false,
+    "annotations": [],
+    "reference_sha256": "b5a9893ef1a86323bb99371a3158c3dde8cc26bad7ce56554c6ca4855b3a604d",
+    "reference_stripped_keys": [
+     "subscription_usage"
+    ],
+    "original_record_sha256": "b1b39d01a8948961d7efd481614cc06317cc2b89abde644ad9ac78692b3fe5de",
+    "results_md_sha256": "964b32519b4ee4d1edec4169b60d741df397442b806755d250e6ca94e5cae42a"
+   }
+  },
+  "DOT-STANDING-008": {
+   "run": "dot_standing_008",
+   "title": "Period-7 linear key progression",
+   "tier": "A",
+   "claim": "0 survivors; 8 configurations (NULL_WITHIN_FROZEN_DIRECT_PERIOD7_SCOPE_NONBLIND_UNATTESTED)",
+   "epoch": 1791250784.149012,
+   "env": {},
+   "code": {
+    "affine_probe.py": {
+     "kind": "frozen",
+     "sha256": "7a9b67af5918746041b919acc92e3ad03a9951405892eea08546081620338775"
+    },
+    "cryptolab/__init__.py": {
+     "kind": "redacted",
+     "sha256": "768ca92876ecbc33d1d57e392b59150a741a1ec21a85c0fcaec3c319b17ed17f",
+     "original_sha256": "243c7870d0ba41d8f5e0f0bcd1b6915131796b13283c167adbe227c9b5cd85e4"
+    },
+    "cryptolab/research_bridge/__init__.py": {
+     "kind": "shim",
+     "sha256": "16a9ab72a99e1041721f3a3b58f86af5a31192d8eae51808d0faf12c0ea2ea26"
+    },
+    "cryptolab/research_bridge/cribsolve.py": {
+     "kind": "redacted",
+     "sha256": "df4be2031a966f64a98f07b67b58a8ec0a073b85b48fddc20c1a7fde5d37465e",
+     "original_sha256": "0fb705b5df8eaf003e229760f515868a3a9bd691757c2ae0c274632013e00bee"
+    },
+    "cryptolab/research_bridge/cribsolve_perm.py": {
+     "kind": "redacted",
+     "sha256": "9b7372774dd5968bfdc6f9e8b469fdb39b590fbf2ccf3ad29940544386812eb2",
+     "original_sha256": "99d23bc030851f421199bf5fc327e8c9da5ec4552b087454eb4a43a0ccf75e69"
+    },
+    "cryptolab/research_bridge/k4.py": {
+     "kind": "shim",
+     "sha256": "09a3132c3d8dbeb63aaa222104ed74d600c55448628768fd079e8866930f976b"
+    },
+    "cryptolab/tools/__init__.py": {
+     "kind": "shim",
+     "sha256": "36817edfdd209aff2d625a782461d49c686c1f3734dab2088b26fd68859242fd"
+    },
+    "cryptolab/tools/alphabets.py": {
+     "kind": "redacted",
+     "sha256": "350396d73935cb98f79284e6f0b1d2f682452918eea65f81179cc27c54779ed3",
+     "original_sha256": "20f449e51d0e986240cb0f5c9f0db9ee84dd50a33aebf3071df54bb643867c5a"
+    },
+    "cryptolab/tools/fitness.py": {
+     "kind": "shim",
+     "sha256": "494bbb6072cf682945b065132cfc16f31131ef8b5e002d000f79ae81e0a99c41"
+    },
+    "cryptolab/tools/hill_cipher.py": {
+     "kind": "redacted",
+     "sha256": "aade4534c5b7369c621b9f04a64d6c0c28f0578ed605fd48dcbadd503b0a4f8c",
+     "original_sha256": "80f92c0769b4b5f49ed332bf12b890cd04e7b12f21e0f3586f6949286449a553"
+    },
+    "cryptolab/tools/transforms.py": {
+     "kind": "shim",
+     "sha256": "2032e82d8501335a3aa6cf07bbafca7fa478bf69d8aa853e44ce158c0a3a9b8d"
+    },
+    "cryptolab/tools/transposition.py": {
+     "kind": "redacted",
+     "sha256": "f3ff7ed635838118ff183f4f2838e388b34a37faf71f54dbce3200f0f740d9e9",
+     "original_sha256": "5a79c870dbd76263dfad326f3ec87a9caafe62a623fc135cd8adac0a6f20d58c"
+    },
+    "hill_probe.py": {
+     "kind": "frozen",
+     "sha256": "125d17c9b80b87e14ad1a64b4905107d48ff25fed11f7d9824ffac98f64f5772"
+    },
+    "period7_probe.py": {
+     "kind": "frozen",
+     "sha256": "e80df7fcdcc5ab84d7428c8c75462c7c39a2416d67ad7afb377303f71cec7f12"
+    },
+    "progressive_probe.py": {
+     "kind": "frozen",
+     "sha256": "239be7c82276a790c7cd3c66067313f52de1cd0ef60c55e1ebab73b75d572e50"
+    },
+    "routed_probe.py": {
+     "kind": "frozen",
+     "sha256": "9371eb8062dbe226f52bb02d9f06f11dde1780a1dae219ab9489bbee34dc9e9a"
+    }
+   },
+   "frozen_at_run": [
+    "hill_probe.py",
+    "period7_probe.py",
+    "progressive_probe.py"
+   ],
+   "not_in_freeze_record": [
+    "affine_probe.py",
+    "cryptolab/__init__.py",
+    "cryptolab/research_bridge/cribsolve.py",
+    "cryptolab/research_bridge/cribsolve_perm.py",
+    "cryptolab/tools/alphabets.py",
+    "cryptolab/tools/hill_cipher.py",
+    "cryptolab/tools/transposition.py",
+    "routed_probe.py"
+   ],
+   "inputs": {},
+   "banks": [],
+   "target": {
+    "argv": [
+     "{PY}",
+     "-c",
+     "import sys,json;from pathlib import Path;sys.path.insert(0,'/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001');import period7_probe as p;print(json.dumps(p.target(Path('/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001/analysis_runs/dot_standing_008'))))"
+    ],
+    "source": "inferred: launch command predates process logging; call taken from the frozen probe and accepted only because the result matches",
+    "stdout_is_result": true
+   },
+   "compare": {
+    "reference_key": null,
+    "produced_key": null,
+    "sort": false,
+    "annotations": [],
+    "reference_sha256": "3349bee4b3c4e0f1bd2b55c383b746c96cb9c86243e82156a0233ac78542d83c",
+    "reference_stripped_keys": [],
+    "original_record_sha256": "3349bee4b3c4e0f1bd2b55c383b746c96cb9c86243e82156a0233ac78542d83c",
+    "results_md_sha256": "63e82847031eeea7456c218c1eb1e6df87199a493b4a95b63a33a7b7bdb95a79"
+   }
+  },
+  "DOT-STANDING-010": {
+   "run": "dot_standing_010",
+   "title": "Hill cipher n=4, phases 0 and 3",
+   "tier": "A",
+   "claim": "0 survivors; 8 configurations (NULL_WITHIN_FROZEN_SCOPE_NONBLIND_UNATTESTED)",
+   "epoch": 1791251540.077942,
+   "env": {},
+   "code": {
+    "cryptolab/__init__.py": {
+     "kind": "redacted",
+     "sha256": "768ca92876ecbc33d1d57e392b59150a741a1ec21a85c0fcaec3c319b17ed17f",
+     "original_sha256": "243c7870d0ba41d8f5e0f0bcd1b6915131796b13283c167adbe227c9b5cd85e4"
+    },
+    "cryptolab/research_bridge/__init__.py": {
+     "kind": "shim",
+     "sha256": "16a9ab72a99e1041721f3a3b58f86af5a31192d8eae51808d0faf12c0ea2ea26"
+    },
+    "cryptolab/research_bridge/cribsolve.py": {
+     "kind": "redacted",
+     "sha256": "df4be2031a966f64a98f07b67b58a8ec0a073b85b48fddc20c1a7fde5d37465e",
+     "original_sha256": "0fb705b5df8eaf003e229760f515868a3a9bd691757c2ae0c274632013e00bee"
+    },
+    "cryptolab/research_bridge/cribsolve_perm.py": {
+     "kind": "redacted",
+     "sha256": "9b7372774dd5968bfdc6f9e8b469fdb39b590fbf2ccf3ad29940544386812eb2",
+     "original_sha256": "99d23bc030851f421199bf5fc327e8c9da5ec4552b087454eb4a43a0ccf75e69"
+    },
+    "cryptolab/research_bridge/k4.py": {
+     "kind": "shim",
+     "sha256": "09a3132c3d8dbeb63aaa222104ed74d600c55448628768fd079e8866930f976b"
+    },
+    "cryptolab/tools/__init__.py": {
+     "kind": "shim",
+     "sha256": "36817edfdd209aff2d625a782461d49c686c1f3734dab2088b26fd68859242fd"
+    },
+    "cryptolab/tools/alphabets.py": {
+     "kind": "redacted",
+     "sha256": "350396d73935cb98f79284e6f0b1d2f682452918eea65f81179cc27c54779ed3",
+     "original_sha256": "20f449e51d0e986240cb0f5c9f0db9ee84dd50a33aebf3071df54bb643867c5a"
+    },
+    "cryptolab/tools/fitness.py": {
+     "kind": "shim",
+     "sha256": "494bbb6072cf682945b065132cfc16f31131ef8b5e002d000f79ae81e0a99c41"
+    },
+    "cryptolab/tools/hill_cipher.py": {
+     "kind": "redacted",
+     "sha256": "aade4534c5b7369c621b9f04a64d6c0c28f0578ed605fd48dcbadd503b0a4f8c",
+     "original_sha256": "80f92c0769b4b5f49ed332bf12b890cd04e7b12f21e0f3586f6949286449a553"
+    },
+    "cryptolab/tools/transforms.py": {
+     "kind": "shim",
+     "sha256": "2032e82d8501335a3aa6cf07bbafca7fa478bf69d8aa853e44ce158c0a3a9b8d"
+    },
+    "cryptolab/tools/transposition.py": {
+     "kind": "redacted",
+     "sha256": "f3ff7ed635838118ff183f4f2838e388b34a37faf71f54dbce3200f0f740d9e9",
+     "original_sha256": "5a79c870dbd76263dfad326f3ec87a9caafe62a623fc135cd8adac0a6f20d58c"
+    },
+    "hill_gap_v2_probe.py": {
+     "kind": "frozen",
+     "sha256": "f28cdde7663e16a369b5da96b037fc94c03e6946395db37cf2d4e72a49dbcfbb"
+    },
+    "hill_probe.py": {
+     "kind": "frozen",
+     "sha256": "125d17c9b80b87e14ad1a64b4905107d48ff25fed11f7d9824ffac98f64f5772"
+    }
+   },
+   "frozen_at_run": [
+    "hill_gap_v2_probe.py",
+    "hill_probe.py"
+   ],
+   "not_in_freeze_record": [
+    "cryptolab/__init__.py",
+    "cryptolab/research_bridge/cribsolve.py",
+    "cryptolab/research_bridge/cribsolve_perm.py",
+    "cryptolab/tools/alphabets.py",
+    "cryptolab/tools/transposition.py"
+   ],
+   "inputs": {},
+   "banks": [],
+   "target": {
+    "argv": [
+     "{PY}",
+     "-c",
+     "import json,sys;from pathlib import Path;sys.path.insert(0,'/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001');import hill_gap_v2_probe as p;print(json.dumps(p.target(Path('/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001/analysis_runs/dot_standing_010'))))"
+    ],
+    "source": "recorded launch command (cryptolab process record process-3055967-1791251540079162394)",
+    "stdout_is_result": true
+   },
+   "compare": {
+    "reference_key": null,
+    "produced_key": null,
+    "sort": false,
+    "annotations": [],
+    "reference_sha256": "159c47862afe4911381d4fdccc76b484c4c53c9f7e02c8e3d85f418e068c07c7",
+    "reference_stripped_keys": [],
+    "original_record_sha256": "159c47862afe4911381d4fdccc76b484c4c53c9f7e02c8e3d85f418e068c07c7",
+    "results_md_sha256": "4c0f316bd960d9fb0e5717891375d9768ffd4f8a95311454f638127f05630f6f"
+   }
+  },
+  "DOT-STANDING-012": {
+   "run": "dot_standing_012",
+   "title": "Quadratic key progression, then a frozen route bank",
+   "tier": "A",
+   "claim": "0 survivors; 1,064,480 configurations (NULL_WITHIN_FROZEN_SCOPE_NONBLIND_UNATTESTED)",
+   "epoch": 1791253678.049935,
+   "env": {},
+   "code": {
+    "affine_probe.py": {
+     "kind": "frozen",
+     "sha256": "7a9b67af5918746041b919acc92e3ad03a9951405892eea08546081620338775"
+    },
+    "cryptolab/__init__.py": {
+     "kind": "redacted",
+     "sha256": "768ca92876ecbc33d1d57e392b59150a741a1ec21a85c0fcaec3c319b17ed17f",
+     "original_sha256": "243c7870d0ba41d8f5e0f0bcd1b6915131796b13283c167adbe227c9b5cd85e4"
+    },
+    "cryptolab/research_bridge/__init__.py": {
+     "kind": "shim",
+     "sha256": "16a9ab72a99e1041721f3a3b58f86af5a31192d8eae51808d0faf12c0ea2ea26"
+    },
+    "cryptolab/research_bridge/cribsolve.py": {
+     "kind": "redacted",
+     "sha256": "df4be2031a966f64a98f07b67b58a8ec0a073b85b48fddc20c1a7fde5d37465e",
+     "original_sha256": "0fb705b5df8eaf003e229760f515868a3a9bd691757c2ae0c274632013e00bee"
+    },
+    "cryptolab/research_bridge/cribsolve_perm.py": {
+     "kind": "redacted",
+     "sha256": "9b7372774dd5968bfdc6f9e8b469fdb39b590fbf2ccf3ad29940544386812eb2",
+     "original_sha256": "99d23bc030851f421199bf5fc327e8c9da5ec4552b087454eb4a43a0ccf75e69"
+    },
+    "cryptolab/research_bridge/k4.py": {
+     "kind": "shim",
+     "sha256": "09a3132c3d8dbeb63aaa222104ed74d600c55448628768fd079e8866930f976b"
+    },
+    "cryptolab/tools/__init__.py": {
+     "kind": "shim",
+     "sha256": "36817edfdd209aff2d625a782461d49c686c1f3734dab2088b26fd68859242fd"
+    },
+    "cryptolab/tools/alphabets.py": {
+     "kind": "redacted",
+     "sha256": "350396d73935cb98f79284e6f0b1d2f682452918eea65f81179cc27c54779ed3",
+     "original_sha256": "20f449e51d0e986240cb0f5c9f0db9ee84dd50a33aebf3071df54bb643867c5a"
+    },
+    "cryptolab/tools/fitness.py": {
+     "kind": "shim",
+     "sha256": "494bbb6072cf682945b065132cfc16f31131ef8b5e002d000f79ae81e0a99c41"
+    },
+    "cryptolab/tools/hill_cipher.py": {
+     "kind": "redacted",
+     "sha256": "aade4534c5b7369c621b9f04a64d6c0c28f0578ed605fd48dcbadd503b0a4f8c",
+     "original_sha256": "80f92c0769b4b5f49ed332bf12b890cd04e7b12f21e0f3586f6949286449a553"
+    },
+    "cryptolab/tools/transforms.py": {
+     "kind": "shim",
+     "sha256": "2032e82d8501335a3aa6cf07bbafca7fa478bf69d8aa853e44ce158c0a3a9b8d"
+    },
+    "cryptolab/tools/transposition.py": {
+     "kind": "redacted",
+     "sha256": "f3ff7ed635838118ff183f4f2838e388b34a37faf71f54dbce3200f0f740d9e9",
+     "original_sha256": "5a79c870dbd76263dfad326f3ec87a9caafe62a623fc135cd8adac0a6f20d58c"
+    },
+    "hill_probe.py": {
+     "kind": "frozen",
+     "sha256": "125d17c9b80b87e14ad1a64b4905107d48ff25fed11f7d9824ffac98f64f5772"
+    },
+    "quadratic_probe.py": {
+     "kind": "frozen",
+     "sha256": "9afc8719210676b5454d348cd201e0db806879222e2297d017aec11bb1fd7d50"
+    },
+    "routed_probe.py": {
+     "kind": "frozen",
+     "sha256": "9371eb8062dbe226f52bb02d9f06f11dde1780a1dae219ab9489bbee34dc9e9a"
+    }
+   },
+   "frozen_at_run": [
+    "affine_probe.py",
+    "hill_probe.py",
+    "quadratic_probe.py",
+    "routed_probe.py"
+   ],
+   "not_in_freeze_record": [
+    "cryptolab/__init__.py",
+    "cryptolab/tools/alphabets.py",
+    "cryptolab/tools/transposition.py"
+   ],
+   "inputs": {},
+   "banks": [
+    {
+     "name": "transposition route bank (routed_probe.py bank)",
+     "source": "inferred: routed_probe.py CLI 'bank' mode",
+     "of": "012",
+     "argv": [
+      "{PY}",
+      "routed_probe.py",
+      "bank",
+      "analysis_runs/dot_standing_012"
+     ],
+     "expect": {
+      "analysis_runs/dot_standing_012/routes.npy": "3841c9f317c06f21331757a13c15f61ed37fb0da9cbf374081171884774ebd30",
+      "analysis_runs/dot_standing_012/routes.json": "39411a1bdefb990fc6bb075ef63571769db1e5c766ad417b148f84dde4b936bc"
+     }
+    }
+   ],
+   "target": {
+    "argv": [
+     "{PY}",
+     "-c",
+     "import json,sys;from pathlib import Path;sys.path.insert(0,'/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001');import quadratic_probe as p\noriginal=p.scan_task\ndef recorded_scan(task):\n result=original(task)\n index=p.configs().index(task[1])\n with (Path(task[0])/(\"target-worker-\"+str(index)+\".json\")).open(\"x\") as f:json.dump(result,f)\n return result\np.scan_task=recorded_scan\nprint(json.dumps(p.target(Path('/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001/analysis_runs/dot_standing_012'))))"
+    ],
+    "source": "recorded launch command (cryptolab process record process-3063104-1791253678051109891)",
+    "stdout_is_result": true
+   },
+   "compare": {
+    "reference_key": null,
+    "produced_key": null,
+    "sort": false,
+    "annotations": [
+     "distinct_configs_recorded",
+     "worker_records_verified"
+    ],
+    "reference_sha256": "e3abbe4107cb6dbc68047b0adefec170780e3f860826900cc6c5e74d0d973739",
+    "reference_stripped_keys": [],
+    "original_record_sha256": "e3abbe4107cb6dbc68047b0adefec170780e3f860826900cc6c5e74d0d973739",
+    "results_md_sha256": "1a8fb13a2059e8f831a61e3a537c4c6b533d58e526a72bb056faba76b7632bcb"
+   }
+  },
+  "DOT-STANDING-014": {
+   "run": "dot_standing_014",
+   "title": "Affine Hill cipher n=3 and n=4, all phases",
+   "tier": "A",
+   "claim": "0 survivors; 28 configurations (NULL_WITHIN_FROZEN_SCOPE_NONBLIND_UNATTESTED)",
+   "epoch": 1791253430.680926,
+   "env": {},
+   "code": {
+    "affine_inverse_v3_probe.py": {
+     "kind": "frozen",
+     "sha256": "d80fd4e684ff62cb07f53975176060f6cc62a9c119a9f9884f4a6aa62a1adaa0"
+    },
+    "cryptolab/__init__.py": {
+     "kind": "redacted",
+     "sha256": "768ca92876ecbc33d1d57e392b59150a741a1ec21a85c0fcaec3c319b17ed17f",
+     "original_sha256": "243c7870d0ba41d8f5e0f0bcd1b6915131796b13283c167adbe227c9b5cd85e4"
+    },
+    "cryptolab/research_bridge/__init__.py": {
+     "kind": "shim",
+     "sha256": "16a9ab72a99e1041721f3a3b58f86af5a31192d8eae51808d0faf12c0ea2ea26"
+    },
+    "cryptolab/research_bridge/cribsolve.py": {
+     "kind": "redacted",
+     "sha256": "df4be2031a966f64a98f07b67b58a8ec0a073b85b48fddc20c1a7fde5d37465e",
+     "original_sha256": "0fb705b5df8eaf003e229760f515868a3a9bd691757c2ae0c274632013e00bee"
+    },
+    "cryptolab/research_bridge/cribsolve_perm.py": {
+     "kind": "redacted",
+     "sha256": "9b7372774dd5968bfdc6f9e8b469fdb39b590fbf2ccf3ad29940544386812eb2",
+     "original_sha256": "99d23bc030851f421199bf5fc327e8c9da5ec4552b087454eb4a43a0ccf75e69"
+    },
+    "cryptolab/research_bridge/k4.py": {
+     "kind": "shim",
+     "sha256": "09a3132c3d8dbeb63aaa222104ed74d600c55448628768fd079e8866930f976b"
+    },
+    "cryptolab/tools/__init__.py": {
+     "kind": "shim",
+     "sha256": "36817edfdd209aff2d625a782461d49c686c1f3734dab2088b26fd68859242fd"
+    },
+    "cryptolab/tools/alphabets.py": {
+     "kind": "redacted",
+     "sha256": "350396d73935cb98f79284e6f0b1d2f682452918eea65f81179cc27c54779ed3",
+     "original_sha256": "20f449e51d0e986240cb0f5c9f0db9ee84dd50a33aebf3071df54bb643867c5a"
+    },
+    "cryptolab/tools/fitness.py": {
+     "kind": "shim",
+     "sha256": "494bbb6072cf682945b065132cfc16f31131ef8b5e002d000f79ae81e0a99c41"
+    },
+    "cryptolab/tools/hill_cipher.py": {
+     "kind": "redacted",
+     "sha256": "aade4534c5b7369c621b9f04a64d6c0c28f0578ed605fd48dcbadd503b0a4f8c",
+     "original_sha256": "80f92c0769b4b5f49ed332bf12b890cd04e7b12f21e0f3586f6949286449a553"
+    },
+    "cryptolab/tools/transforms.py": {
+     "kind": "shim",
+     "sha256": "2032e82d8501335a3aa6cf07bbafca7fa478bf69d8aa853e44ce158c0a3a9b8d"
+    },
+    "cryptolab/tools/transposition.py": {
+     "kind": "redacted",
+     "sha256": "f3ff7ed635838118ff183f4f2838e388b34a37faf71f54dbce3200f0f740d9e9",
+     "original_sha256": "5a79c870dbd76263dfad326f3ec87a9caafe62a623fc135cd8adac0a6f20d58c"
+    },
+    "hill_probe.py": {
+     "kind": "frozen",
+     "sha256": "125d17c9b80b87e14ad1a64b4905107d48ff25fed11f7d9824ffac98f64f5772"
+    }
+   },
+   "frozen_at_run": [
+    "affine_inverse_v3_probe.py",
+    "hill_probe.py"
+   ],
+   "not_in_freeze_record": [
+    "cryptolab/__init__.py",
+    "cryptolab/research_bridge/cribsolve.py",
+    "cryptolab/research_bridge/cribsolve_perm.py",
+    "cryptolab/tools/alphabets.py",
+    "cryptolab/tools/transposition.py"
+   ],
+   "inputs": {},
+   "banks": [],
+   "target": {
+    "argv": [
+     "{PY}",
+     "-c",
+     "import json,sys;from pathlib import Path;sys.path.insert(0,'/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001');import affine_inverse_v3_probe as p\nprint(json.dumps(p.target(Path('/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001/analysis_runs/dot_standing_014'))))"
+    ],
+    "source": "recorded launch command (cryptolab process record process-3062395-1791253430682079707)",
+    "stdout_is_result": true
+   },
+   "compare": {
+    "reference_key": null,
+    "produced_key": null,
+    "sort": false,
+    "annotations": [],
+    "reference_sha256": "ad6e9bfb3a41b6b74dc78ba6776ca234c43a407d422c01e9015c1293428288c2",
+    "reference_stripped_keys": [],
+    "original_record_sha256": "ad6e9bfb3a41b6b74dc78ba6776ca234c43a407d422c01e9015c1293428288c2",
+    "results_md_sha256": "806137e5cc15bf3c78c8a569852d19ba581c7284270786c796d4ee0853c44287"
+   }
+  },
+  "DOT-STANDING-015": {
+   "run": "dot_standing_015",
+   "title": "Ciphertext feedback, then a frozen route bank",
+   "tier": "A",
+   "claim": "0 survivors; 21,289,600 configurations (NULL_WITHIN_FROZEN_SCOPE_NONBLIND_UNATTESTED)",
+   "epoch": 1791256398.241916,
+   "env": {},
+   "code": {
+    "affine_probe.py": {
+     "kind": "frozen",
+     "sha256": "7a9b67af5918746041b919acc92e3ad03a9951405892eea08546081620338775"
+    },
+    "cryptolab/__init__.py": {
+     "kind": "redacted",
+     "sha256": "768ca92876ecbc33d1d57e392b59150a741a1ec21a85c0fcaec3c319b17ed17f",
+     "original_sha256": "243c7870d0ba41d8f5e0f0bcd1b6915131796b13283c167adbe227c9b5cd85e4"
+    },
+    "cryptolab/research_bridge/__init__.py": {
+     "kind": "shim",
+     "sha256": "16a9ab72a99e1041721f3a3b58f86af5a31192d8eae51808d0faf12c0ea2ea26"
+    },
+    "cryptolab/research_bridge/cribsolve.py": {
+     "kind": "redacted",
+     "sha256": "df4be2031a966f64a98f07b67b58a8ec0a073b85b48fddc20c1a7fde5d37465e",
+     "original_sha256": "0fb705b5df8eaf003e229760f515868a3a9bd691757c2ae0c274632013e00bee"
+    },
+    "cryptolab/research_bridge/cribsolve_perm.py": {
+     "kind": "redacted",
+     "sha256": "9b7372774dd5968bfdc6f9e8b469fdb39b590fbf2ccf3ad29940544386812eb2",
+     "original_sha256": "99d23bc030851f421199bf5fc327e8c9da5ec4552b087454eb4a43a0ccf75e69"
+    },
+    "cryptolab/research_bridge/k4.py": {
+     "kind": "shim",
+     "sha256": "09a3132c3d8dbeb63aaa222104ed74d600c55448628768fd079e8866930f976b"
+    },
+    "cryptolab/tools/__init__.py": {
+     "kind": "shim",
+     "sha256": "36817edfdd209aff2d625a782461d49c686c1f3734dab2088b26fd68859242fd"
+    },
+    "cryptolab/tools/alphabets.py": {
+     "kind": "redacted",
+     "sha256": "350396d73935cb98f79284e6f0b1d2f682452918eea65f81179cc27c54779ed3",
+     "original_sha256": "20f449e51d0e986240cb0f5c9f0db9ee84dd50a33aebf3071df54bb643867c5a"
+    },
+    "cryptolab/tools/fitness.py": {
+     "kind": "shim",
+     "sha256": "494bbb6072cf682945b065132cfc16f31131ef8b5e002d000f79ae81e0a99c41"
+    },
+    "cryptolab/tools/hill_cipher.py": {
+     "kind": "redacted",
+     "sha256": "aade4534c5b7369c621b9f04a64d6c0c28f0578ed605fd48dcbadd503b0a4f8c",
+     "original_sha256": "80f92c0769b4b5f49ed332bf12b890cd04e7b12f21e0f3586f6949286449a553"
+    },
+    "cryptolab/tools/transforms.py": {
+     "kind": "shim",
+     "sha256": "2032e82d8501335a3aa6cf07bbafca7fa478bf69d8aa853e44ce158c0a3a9b8d"
+    },
+    "cryptolab/tools/transposition.py": {
+     "kind": "redacted",
+     "sha256": "f3ff7ed635838118ff183f4f2838e388b34a37faf71f54dbce3200f0f740d9e9",
+     "original_sha256": "5a79c870dbd76263dfad326f3ec87a9caafe62a623fc135cd8adac0a6f20d58c"
+    },
+    "feedback_probe.py": {
+     "kind": "frozen",
+     "sha256": "0438a313d66b7c1b3c2bcc3584696f393063ac1d6cfce07e4be5a8392d70a9ce"
+    },
+    "hill_probe.py": {
+     "kind": "frozen",
+     "sha256": "125d17c9b80b87e14ad1a64b4905107d48ff25fed11f7d9824ffac98f64f5772"
+    },
+    "routed_feedback_probe.py": {
+     "kind": "frozen",
+     "sha256": "06bf0cc80e43a7d3d6868a460f6260cbe6801616833855217f83f10c1d0970cc"
+    },
+    "routed_probe.py": {
+     "kind": "frozen",
+     "sha256": "9371eb8062dbe226f52bb02d9f06f11dde1780a1dae219ab9489bbee34dc9e9a"
+    }
+   },
+   "frozen_at_run": [
+    "affine_probe.py",
+    "feedback_probe.py",
+    "hill_probe.py",
+    "routed_feedback_probe.py",
+    "routed_probe.py"
+   ],
+   "not_in_freeze_record": [
+    "cryptolab/__init__.py",
+    "cryptolab/tools/alphabets.py",
+    "cryptolab/tools/transposition.py"
+   ],
+   "inputs": {},
+   "banks": [
+    {
+     "name": "transposition route bank (routed_probe.py bank)",
+     "source": "inferred: routed_probe.py CLI 'bank' mode",
+     "of": "015",
+     "argv": [
+      "{PY}",
+      "routed_probe.py",
+      "bank",
+      "analysis_runs/dot_standing_015"
+     ],
+     "expect": {
+      "analysis_runs/dot_standing_015/routes.npy": "3841c9f317c06f21331757a13c15f61ed37fb0da9cbf374081171884774ebd30",
+      "analysis_runs/dot_standing_015/routes.json": "39411a1bdefb990fc6bb075ef63571769db1e5c766ad417b148f84dde4b936bc"
+     }
+    }
+   ],
+   "target": {
+    "argv": [
+     "{PY}",
+     "-c",
+     "import json,sys;from pathlib import Path;sys.path.insert(0,'/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001');import routed_feedback_probe as p\noriginal=p.scan_task\ndef recorded_scan(task):\n result=original(task)\n index=p.configs().index(task[1])\n with (Path(task[0])/(\"target-worker-\"+str(index)+\".json\")).open(\"x\") as f:json.dump(result,f)\n return result\np.scan_task=recorded_scan\nprint(json.dumps(p.target(Path('/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001/analysis_runs/dot_standing_015'))))"
+    ],
+    "source": "recorded launch command (cryptolab process record process-3071054-1791256398243127002)",
+    "stdout_is_result": true
+   },
+   "compare": {
+    "reference_key": null,
+    "produced_key": null,
+    "sort": false,
+    "annotations": [
+     "distinct_configs_recorded",
+     "worker_records_verified"
+    ],
+    "reference_sha256": "9bef35333f59fc1bd29d4185ab3fabe1a7751a0b3524ac092054d6c182b53d1a",
+    "reference_stripped_keys": [],
+    "original_record_sha256": "9bef35333f59fc1bd29d4185ab3fabe1a7751a0b3524ac092054d6c182b53d1a",
+    "results_md_sha256": "d2bb6de800b11f7b23b3366504fa4762601e571c48d688664b3ac1c63818cb9c"
+   }
+  },
+  "DOT-STANDING-016": {
+   "run": "dot_standing_016",
+   "title": "Cubic key progression, then a frozen route bank",
+   "tier": "A",
+   "claim": "0 survivors; 851,584 configurations (NULL_WITHIN_FROZEN_SCOPE_NONBLIND_UNATTESTED)",
+   "epoch": 1791258321.580344,
+   "env": {},
+   "code": {
+    "affine_probe.py": {
+     "kind": "frozen",
+     "sha256": "7a9b67af5918746041b919acc92e3ad03a9951405892eea08546081620338775"
+    },
+    "cryptolab/__init__.py": {
+     "kind": "redacted",
+     "sha256": "768ca92876ecbc33d1d57e392b59150a741a1ec21a85c0fcaec3c319b17ed17f",
+     "original_sha256": "243c7870d0ba41d8f5e0f0bcd1b6915131796b13283c167adbe227c9b5cd85e4"
+    },
+    "cryptolab/research_bridge/__init__.py": {
+     "kind": "shim",
+     "sha256": "16a9ab72a99e1041721f3a3b58f86af5a31192d8eae51808d0faf12c0ea2ea26"
+    },
+    "cryptolab/research_bridge/cribsolve.py": {
+     "kind": "redacted",
+     "sha256": "df4be2031a966f64a98f07b67b58a8ec0a073b85b48fddc20c1a7fde5d37465e",
+     "original_sha256": "0fb705b5df8eaf003e229760f515868a3a9bd691757c2ae0c274632013e00bee"
+    },
+    "cryptolab/research_bridge/cribsolve_perm.py": {
+     "kind": "redacted",
+     "sha256": "9b7372774dd5968bfdc6f9e8b469fdb39b590fbf2ccf3ad29940544386812eb2",
+     "original_sha256": "99d23bc030851f421199bf5fc327e8c9da5ec4552b087454eb4a43a0ccf75e69"
+    },
+    "cryptolab/research_bridge/k4.py": {
+     "kind": "shim",
+     "sha256": "09a3132c3d8dbeb63aaa222104ed74d600c55448628768fd079e8866930f976b"
+    },
+    "cryptolab/tools/__init__.py": {
+     "kind": "shim",
+     "sha256": "36817edfdd209aff2d625a782461d49c686c1f3734dab2088b26fd68859242fd"
+    },
+    "cryptolab/tools/alphabets.py": {
+     "kind": "redacted",
+     "sha256": "350396d73935cb98f79284e6f0b1d2f682452918eea65f81179cc27c54779ed3",
+     "original_sha256": "20f449e51d0e986240cb0f5c9f0db9ee84dd50a33aebf3071df54bb643867c5a"
+    },
+    "cryptolab/tools/fitness.py": {
+     "kind": "shim",
+     "sha256": "494bbb6072cf682945b065132cfc16f31131ef8b5e002d000f79ae81e0a99c41"
+    },
+    "cryptolab/tools/hill_cipher.py": {
+     "kind": "redacted",
+     "sha256": "aade4534c5b7369c621b9f04a64d6c0c28f0578ed605fd48dcbadd503b0a4f8c",
+     "original_sha256": "80f92c0769b4b5f49ed332bf12b890cd04e7b12f21e0f3586f6949286449a553"
+    },
+    "cryptolab/tools/transforms.py": {
+     "kind": "shim",
+     "sha256": "2032e82d8501335a3aa6cf07bbafca7fa478bf69d8aa853e44ce158c0a3a9b8d"
+    },
+    "cryptolab/tools/transposition.py": {
+     "kind": "redacted",
+     "sha256": "f3ff7ed635838118ff183f4f2838e388b34a37faf71f54dbce3200f0f740d9e9",
+     "original_sha256": "5a79c870dbd76263dfad326f3ec87a9caafe62a623fc135cd8adac0a6f20d58c"
+    },
+    "hill_probe.py": {
+     "kind": "frozen",
+     "sha256": "125d17c9b80b87e14ad1a64b4905107d48ff25fed11f7d9824ffac98f64f5772"
+    },
+    "polynomial_probe.py": {
+     "kind": "frozen",
+     "sha256": "4a82fd8163f7c507ede22b9f3c1fe23a4201f4cedc7e21dafed65be050398a88"
+    },
+    "routed_probe.py": {
+     "kind": "frozen",
+     "sha256": "9371eb8062dbe226f52bb02d9f06f11dde1780a1dae219ab9489bbee34dc9e9a"
+    }
+   },
+   "frozen_at_run": [
+    "affine_probe.py",
+    "hill_probe.py",
+    "polynomial_probe.py",
+    "routed_probe.py"
+   ],
+   "not_in_freeze_record": [
+    "cryptolab/__init__.py",
+    "cryptolab/tools/alphabets.py",
+    "cryptolab/tools/transposition.py"
+   ],
+   "inputs": {},
+   "banks": [
+    {
+     "name": "transposition route bank (routed_probe.py bank)",
+     "source": "inferred: routed_probe.py CLI 'bank' mode",
+     "of": "016",
+     "argv": [
+      "{PY}",
+      "routed_probe.py",
+      "bank",
+      "analysis_runs/dot_standing_016"
+     ],
+     "expect": {
+      "analysis_runs/dot_standing_016/routes.npy": "3841c9f317c06f21331757a13c15f61ed37fb0da9cbf374081171884774ebd30",
+      "analysis_runs/dot_standing_016/routes.json": "39411a1bdefb990fc6bb075ef63571769db1e5c766ad417b148f84dde4b936bc"
+     }
+    }
+   ],
+   "target": {
+    "argv": [
+     "{PY}",
+     "-c",
+     "import json,sys;from pathlib import Path;sys.path.insert(0,'/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001');import polynomial_probe as p\noriginal=p.scan_task\ndef recorded_scan(task):\n result=original(task)\n index=p.configs().index(task[1])\n with (Path(task[0])/(\"target-worker-\"+str(index)+\".json\")).open(\"x\") as f:json.dump(result,f)\n return result\np.scan_task=recorded_scan\nprint(json.dumps(p.target(Path('/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001/analysis_runs/dot_standing_016'))))"
+    ],
+    "source": "recorded launch command (cryptolab process record process-3076617-1791258321581710975)",
+    "stdout_is_result": true
+   },
+   "compare": {
+    "reference_key": null,
+    "produced_key": null,
+    "sort": false,
+    "annotations": [
+     "distinct_configs_recorded",
+     "worker_records_verified"
+    ],
+    "reference_sha256": "80dbb71f361f6fd01f40730ccfde0c97d1e7d900ad46aab0cd59288885db9797",
+    "reference_stripped_keys": [],
+    "original_record_sha256": "80dbb71f361f6fd01f40730ccfde0c97d1e7d900ad46aab0cd59288885db9797",
+    "results_md_sha256": "ccebd542953ae8583f12d21f74ff9edd8d598f5204b5ea8bb7cc965367da67f8"
+   }
+  },
+  "DOT-STANDING-018": {
+   "run": "dot_standing_018",
+   "title": "Unit-affine feedback, then a frozen route bank",
+   "tier": "A",
+   "claim": "0 survivors; 6,599,776 configurations (NULL_WITHIN_FROZEN_SCOPE_NONBLIND_UNATTESTED)",
+   "epoch": 1791260046.692712,
+   "env": {},
+   "code": {
+    "affine_feedback_v2_probe.py": {
+     "kind": "frozen",
+     "sha256": "7c5259b4e2398080e61a337f9628eee4cb7f69ecc3ffb804ebad3f3503fe9983"
+    },
+    "affine_probe.py": {
+     "kind": "frozen",
+     "sha256": "7a9b67af5918746041b919acc92e3ad03a9951405892eea08546081620338775"
+    },
+    "cryptolab/__init__.py": {
+     "kind": "redacted",
+     "sha256": "768ca92876ecbc33d1d57e392b59150a741a1ec21a85c0fcaec3c319b17ed17f",
+     "original_sha256": "243c7870d0ba41d8f5e0f0bcd1b6915131796b13283c167adbe227c9b5cd85e4"
+    },
+    "cryptolab/research_bridge/__init__.py": {
+     "kind": "shim",
+     "sha256": "16a9ab72a99e1041721f3a3b58f86af5a31192d8eae51808d0faf12c0ea2ea26"
+    },
+    "cryptolab/research_bridge/cribsolve.py": {
+     "kind": "redacted",
+     "sha256": "df4be2031a966f64a98f07b67b58a8ec0a073b85b48fddc20c1a7fde5d37465e",
+     "original_sha256": "0fb705b5df8eaf003e229760f515868a3a9bd691757c2ae0c274632013e00bee"
+    },
+    "cryptolab/research_bridge/cribsolve_perm.py": {
+     "kind": "redacted",
+     "sha256": "9b7372774dd5968bfdc6f9e8b469fdb39b590fbf2ccf3ad29940544386812eb2",
+     "original_sha256": "99d23bc030851f421199bf5fc327e8c9da5ec4552b087454eb4a43a0ccf75e69"
+    },
+    "cryptolab/research_bridge/k4.py": {
+     "kind": "shim",
+     "sha256": "09a3132c3d8dbeb63aaa222104ed74d600c55448628768fd079e8866930f976b"
+    },
+    "cryptolab/tools/__init__.py": {
+     "kind": "shim",
+     "sha256": "36817edfdd209aff2d625a782461d49c686c1f3734dab2088b26fd68859242fd"
+    },
+    "cryptolab/tools/alphabets.py": {
+     "kind": "redacted",
+     "sha256": "350396d73935cb98f79284e6f0b1d2f682452918eea65f81179cc27c54779ed3",
+     "original_sha256": "20f449e51d0e986240cb0f5c9f0db9ee84dd50a33aebf3071df54bb643867c5a"
+    },
+    "cryptolab/tools/fitness.py": {
+     "kind": "shim",
+     "sha256": "494bbb6072cf682945b065132cfc16f31131ef8b5e002d000f79ae81e0a99c41"
+    },
+    "cryptolab/tools/hill_cipher.py": {
+     "kind": "redacted",
+     "sha256": "aade4534c5b7369c621b9f04a64d6c0c28f0578ed605fd48dcbadd503b0a4f8c",
+     "original_sha256": "80f92c0769b4b5f49ed332bf12b890cd04e7b12f21e0f3586f6949286449a553"
+    },
+    "cryptolab/tools/transforms.py": {
+     "kind": "shim",
+     "sha256": "2032e82d8501335a3aa6cf07bbafca7fa478bf69d8aa853e44ce158c0a3a9b8d"
+    },
+    "cryptolab/tools/transposition.py": {
+     "kind": "redacted",
+     "sha256": "f3ff7ed635838118ff183f4f2838e388b34a37faf71f54dbce3200f0f740d9e9",
+     "original_sha256": "5a79c870dbd76263dfad326f3ec87a9caafe62a623fc135cd8adac0a6f20d58c"
+    },
+    "hill_probe.py": {
+     "kind": "frozen",
+     "sha256": "125d17c9b80b87e14ad1a64b4905107d48ff25fed11f7d9824ffac98f64f5772"
+    },
+    "routed_probe.py": {
+     "kind": "frozen",
+     "sha256": "9371eb8062dbe226f52bb02d9f06f11dde1780a1dae219ab9489bbee34dc9e9a"
+    }
+   },
+   "frozen_at_run": [
+    "affine_feedback_v2_probe.py",
+    "affine_probe.py",
+    "hill_probe.py",
+    "routed_probe.py"
+   ],
+   "not_in_freeze_record": [
+    "cryptolab/__init__.py",
+    "cryptolab/tools/alphabets.py",
+    "cryptolab/tools/transposition.py"
+   ],
+   "inputs": {},
+   "banks": [
+    {
+     "name": "transposition route bank (routed_probe.py bank)",
+     "source": "inferred: routed_probe.py CLI 'bank' mode",
+     "of": "018",
+     "argv": [
+      "{PY}",
+      "routed_probe.py",
+      "bank",
+      "analysis_runs/dot_standing_018"
+     ],
+     "expect": {
+      "analysis_runs/dot_standing_018/routes.npy": "3841c9f317c06f21331757a13c15f61ed37fb0da9cbf374081171884774ebd30",
+      "analysis_runs/dot_standing_018/routes.json": "39411a1bdefb990fc6bb075ef63571769db1e5c766ad417b148f84dde4b936bc"
+     }
+    }
+   ],
+   "target": {
+    "argv": [
+     "{PY}",
+     "-c",
+     "import json,sys;from pathlib import Path;sys.path.insert(0,'/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001');import affine_feedback_v2_probe as p\noriginal=p.scan_task\ndef recorded_scan(task):\n result=original(task)\n index=p.configs().index(task[1])\n with (Path(task[0])/(\"target-worker-\"+str(index)+\".json\")).open(\"x\") as f:json.dump(result,f)\n return result\np.scan_task=recorded_scan\nprint(json.dumps(p.target(Path('/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001/analysis_runs/dot_standing_018'))))"
+    ],
+    "source": "recorded launch command (cryptolab process record process-3082392-1791260046693958575)",
+    "stdout_is_result": true
+   },
+   "compare": {
+    "reference_key": null,
+    "produced_key": null,
+    "sort": false,
+    "annotations": [
+     "distinct_configs_recorded",
+     "distinct_partial_plaintexts",
+     "worker_records_verified"
+    ],
+    "reference_sha256": "cd0d58f67ca2273b8f98cd4ac84da524c71ec25a2a2d3b608251aaf61ea25d06",
+    "reference_stripped_keys": [],
+    "original_record_sha256": "cd0d58f67ca2273b8f98cd4ac84da524c71ec25a2a2d3b608251aaf61ea25d06",
+    "results_md_sha256": "f662447c3b9999c6e0463e00719a265dae51018a651a2c75bc2e9c6265067e03"
+   }
+  },
+  "DOT-STANDING-019": {
+   "run": "dot_standing_019",
+   "title": "Quadratic key progression, period 5",
+   "tier": "A",
+   "claim": "0 survivors; 212,896 configurations (NULL_WITHIN_FROZEN_SCOPE_NONBLIND_UNATTESTED)",
+   "epoch": 1791260443.450168,
+   "env": {},
+   "code": {
+    "affine_probe.py": {
+     "kind": "frozen",
+     "sha256": "7a9b67af5918746041b919acc92e3ad03a9951405892eea08546081620338775"
+    },
+    "cryptolab/__init__.py": {
+     "kind": "redacted",
+     "sha256": "768ca92876ecbc33d1d57e392b59150a741a1ec21a85c0fcaec3c319b17ed17f",
+     "original_sha256": "243c7870d0ba41d8f5e0f0bcd1b6915131796b13283c167adbe227c9b5cd85e4"
+    },
+    "cryptolab/research_bridge/__init__.py": {
+     "kind": "shim",
+     "sha256": "16a9ab72a99e1041721f3a3b58f86af5a31192d8eae51808d0faf12c0ea2ea26"
+    },
+    "cryptolab/research_bridge/cribsolve.py": {
+     "kind": "redacted",
+     "sha256": "df4be2031a966f64a98f07b67b58a8ec0a073b85b48fddc20c1a7fde5d37465e",
+     "original_sha256": "0fb705b5df8eaf003e229760f515868a3a9bd691757c2ae0c274632013e00bee"
+    },
+    "cryptolab/research_bridge/cribsolve_perm.py": {
+     "kind": "redacted",
+     "sha256": "9b7372774dd5968bfdc6f9e8b469fdb39b590fbf2ccf3ad29940544386812eb2",
+     "original_sha256": "99d23bc030851f421199bf5fc327e8c9da5ec4552b087454eb4a43a0ccf75e69"
+    },
+    "cryptolab/research_bridge/k4.py": {
+     "kind": "shim",
+     "sha256": "09a3132c3d8dbeb63aaa222104ed74d600c55448628768fd079e8866930f976b"
+    },
+    "cryptolab/tools/__init__.py": {
+     "kind": "shim",
+     "sha256": "36817edfdd209aff2d625a782461d49c686c1f3734dab2088b26fd68859242fd"
+    },
+    "cryptolab/tools/alphabets.py": {
+     "kind": "redacted",
+     "sha256": "350396d73935cb98f79284e6f0b1d2f682452918eea65f81179cc27c54779ed3",
+     "original_sha256": "20f449e51d0e986240cb0f5c9f0db9ee84dd50a33aebf3071df54bb643867c5a"
+    },
+    "cryptolab/tools/fitness.py": {
+     "kind": "shim",
+     "sha256": "494bbb6072cf682945b065132cfc16f31131ef8b5e002d000f79ae81e0a99c41"
+    },
+    "cryptolab/tools/hill_cipher.py": {
+     "kind": "redacted",
+     "sha256": "aade4534c5b7369c621b9f04a64d6c0c28f0578ed605fd48dcbadd503b0a4f8c",
+     "original_sha256": "80f92c0769b4b5f49ed332bf12b890cd04e7b12f21e0f3586f6949286449a553"
+    },
+    "cryptolab/tools/transforms.py": {
+     "kind": "shim",
+     "sha256": "2032e82d8501335a3aa6cf07bbafca7fa478bf69d8aa853e44ce158c0a3a9b8d"
+    },
+    "cryptolab/tools/transposition.py": {
+     "kind": "redacted",
+     "sha256": "f3ff7ed635838118ff183f4f2838e388b34a37faf71f54dbce3200f0f740d9e9",
+     "original_sha256": "5a79c870dbd76263dfad326f3ec87a9caafe62a623fc135cd8adac0a6f20d58c"
+    },
+    "hill_probe.py": {
+     "kind": "frozen",
+     "sha256": "125d17c9b80b87e14ad1a64b4905107d48ff25fed11f7d9824ffac98f64f5772"
+    },
+    "quadratic_fiber_probe.py": {
+     "kind": "frozen",
+     "sha256": "4a03d314024676f6e0c52c4067791a521a22f1a8bc3fba3c32fbe9654c2e2b71"
+    },
+    "routed_probe.py": {
+     "kind": "frozen",
+     "sha256": "9371eb8062dbe226f52bb02d9f06f11dde1780a1dae219ab9489bbee34dc9e9a"
+    }
+   },
+   "frozen_at_run": [
+    "affine_probe.py",
+    "hill_probe.py",
+    "quadratic_fiber_probe.py",
+    "routed_probe.py"
+   ],
+   "not_in_freeze_record": [
+    "cryptolab/__init__.py",
+    "cryptolab/tools/alphabets.py",
+    "cryptolab/tools/transposition.py"
+   ],
+   "inputs": {},
+   "banks": [
+    {
+     "name": "transposition route bank (routed_probe.py bank)",
+     "source": "inferred: routed_probe.py CLI 'bank' mode",
+     "of": "019",
+     "argv": [
+      "{PY}",
+      "routed_probe.py",
+      "bank",
+      "analysis_runs/dot_standing_019"
+     ],
+     "expect": {
+      "analysis_runs/dot_standing_019/routes.npy": "3841c9f317c06f21331757a13c15f61ed37fb0da9cbf374081171884774ebd30",
+      "analysis_runs/dot_standing_019/routes.json": "39411a1bdefb990fc6bb075ef63571769db1e5c766ad417b148f84dde4b936bc"
+     }
+    }
+   ],
+   "target": {
+    "argv": [
+     "{PY}",
+     "-c",
+     "import json,sys;from pathlib import Path;sys.path.insert(0,'/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001');import quadratic_fiber_probe as p\noriginal=p.scan_task\ndef recorded_scan(task):\n result=original(task)\n index=p.configs().index(task[1])\n with (Path(task[0])/(\"target-worker-\"+str(index)+\".json\")).open(\"x\") as f:json.dump(result,f)\n return result\np.scan_task=recorded_scan\nprint(json.dumps(p.target(Path('/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001/analysis_runs/dot_standing_019'))))"
+    ],
+    "source": "recorded launch command (cryptolab process record process-3083857-1791260443451556219)",
+    "stdout_is_result": true
+   },
+   "compare": {
+    "reference_key": null,
+    "produced_key": null,
+    "sort": false,
+    "annotations": [
+     "distinct_configs_recorded",
+     "worker_records_verified"
+    ],
+    "reference_sha256": "1493bf4ff2ad96126a31b488f83690278211f4925b12e588583f32939ed52e16",
+    "reference_stripped_keys": [],
+    "original_record_sha256": "1493bf4ff2ad96126a31b488f83690278211f4925b12e588583f32939ed52e16",
+    "results_md_sha256": "6b924b46877759f2aa51d5e5f4306832ace3cb43ced7e1ec7dd368ab63c9b49d"
+   }
+  },
+  "DOT-STANDING-020": {
+   "run": "dot_standing_020",
+   "title": "Quartic key progression, then a frozen route bank",
+   "tier": "A",
+   "claim": "0 survivors; 425,792 configurations (NULL_WITHIN_FROZEN_SCOPE_NONBLIND_UNATTESTED)",
+   "epoch": 1791261424.226787,
+   "env": {},
+   "code": {
+    "affine_probe.py": {
+     "kind": "frozen",
+     "sha256": "7a9b67af5918746041b919acc92e3ad03a9951405892eea08546081620338775"
+    },
+    "cryptolab/__init__.py": {
+     "kind": "redacted",
+     "sha256": "768ca92876ecbc33d1d57e392b59150a741a1ec21a85c0fcaec3c319b17ed17f",
+     "original_sha256": "243c7870d0ba41d8f5e0f0bcd1b6915131796b13283c167adbe227c9b5cd85e4"
+    },
+    "cryptolab/research_bridge/__init__.py": {
+     "kind": "shim",
+     "sha256": "16a9ab72a99e1041721f3a3b58f86af5a31192d8eae51808d0faf12c0ea2ea26"
+    },
+    "cryptolab/research_bridge/cribsolve.py": {
+     "kind": "redacted",
+     "sha256": "df4be2031a966f64a98f07b67b58a8ec0a073b85b48fddc20c1a7fde5d37465e",
+     "original_sha256": "0fb705b5df8eaf003e229760f515868a3a9bd691757c2ae0c274632013e00bee"
+    },
+    "cryptolab/research_bridge/cribsolve_perm.py": {
+     "kind": "redacted",
+     "sha256": "9b7372774dd5968bfdc6f9e8b469fdb39b590fbf2ccf3ad29940544386812eb2",
+     "original_sha256": "99d23bc030851f421199bf5fc327e8c9da5ec4552b087454eb4a43a0ccf75e69"
+    },
+    "cryptolab/research_bridge/k4.py": {
+     "kind": "shim",
+     "sha256": "09a3132c3d8dbeb63aaa222104ed74d600c55448628768fd079e8866930f976b"
+    },
+    "cryptolab/tools/__init__.py": {
+     "kind": "shim",
+     "sha256": "36817edfdd209aff2d625a782461d49c686c1f3734dab2088b26fd68859242fd"
+    },
+    "cryptolab/tools/alphabets.py": {
+     "kind": "redacted",
+     "sha256": "350396d73935cb98f79284e6f0b1d2f682452918eea65f81179cc27c54779ed3",
+     "original_sha256": "20f449e51d0e986240cb0f5c9f0db9ee84dd50a33aebf3071df54bb643867c5a"
+    },
+    "cryptolab/tools/fitness.py": {
+     "kind": "shim",
+     "sha256": "494bbb6072cf682945b065132cfc16f31131ef8b5e002d000f79ae81e0a99c41"
+    },
+    "cryptolab/tools/hill_cipher.py": {
+     "kind": "redacted",
+     "sha256": "aade4534c5b7369c621b9f04a64d6c0c28f0578ed605fd48dcbadd503b0a4f8c",
+     "original_sha256": "80f92c0769b4b5f49ed332bf12b890cd04e7b12f21e0f3586f6949286449a553"
+    },
+    "cryptolab/tools/transforms.py": {
+     "kind": "shim",
+     "sha256": "2032e82d8501335a3aa6cf07bbafca7fa478bf69d8aa853e44ce158c0a3a9b8d"
+    },
+    "cryptolab/tools/transposition.py": {
+     "kind": "redacted",
+     "sha256": "f3ff7ed635838118ff183f4f2838e388b34a37faf71f54dbce3200f0f740d9e9",
+     "original_sha256": "5a79c870dbd76263dfad326f3ec87a9caafe62a623fc135cd8adac0a6f20d58c"
+    },
+    "hill_probe.py": {
+     "kind": "frozen",
+     "sha256": "125d17c9b80b87e14ad1a64b4905107d48ff25fed11f7d9824ffac98f64f5772"
+    },
+    "polynomial_v2_probe.py": {
+     "kind": "frozen",
+     "sha256": "e54bd784ccc53222190f804bb3584934f548a70211e106d0482dc7812b6f6031"
+    },
+    "routed_probe.py": {
+     "kind": "frozen",
+     "sha256": "9371eb8062dbe226f52bb02d9f06f11dde1780a1dae219ab9489bbee34dc9e9a"
+    }
+   },
+   "frozen_at_run": [
+    "affine_probe.py",
+    "hill_probe.py",
+    "polynomial_v2_probe.py",
+    "routed_probe.py"
+   ],
+   "not_in_freeze_record": [
+    "cryptolab/__init__.py",
+    "cryptolab/tools/alphabets.py",
+    "cryptolab/tools/transposition.py"
+   ],
+   "inputs": {},
+   "banks": [
+    {
+     "name": "transposition route bank (routed_probe.py bank)",
+     "source": "inferred: routed_probe.py CLI 'bank' mode",
+     "of": "020",
+     "argv": [
+      "{PY}",
+      "routed_probe.py",
+      "bank",
+      "analysis_runs/dot_standing_020"
+     ],
+     "expect": {
+      "analysis_runs/dot_standing_020/routes.npy": "3841c9f317c06f21331757a13c15f61ed37fb0da9cbf374081171884774ebd30",
+      "analysis_runs/dot_standing_020/routes.json": "39411a1bdefb990fc6bb075ef63571769db1e5c766ad417b148f84dde4b936bc"
+     }
+    }
+   ],
+   "target": {
+    "argv": [
+     "{PY}",
+     "-c",
+     "import json,sys;from pathlib import Path;sys.path.insert(0,'/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001');import polynomial_v2_probe as p\noriginal=p.scan_task\ndef recorded_scan(task):\n result=original(task)\n index=p.configs().index(task[1])\n with (Path(task[0])/(\"target-worker-\"+str(index)+\".json\")).open(\"x\") as f:json.dump(result,f)\n return result\np.scan_task=recorded_scan\noriginal_pullback=p.pullback\ndef custody_pullback(ct,route):\n import inspect,os,json\n frame=inspect.currentframe().f_back.f_locals\n if 'key' in frame and 'cfg' in frame and 'index' in frame:\n  cfg=frame['cfg']; index=int(frame['index']); ci=next(n for n,c in enumerate(p.configs()) if tuple(c)==tuple(cfg)); record={'config':cfg,'route_index':index,'key':frame['key'],'validation_pending':True,'is_solution':False}; path=Path('/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001/analysis_runs/dot_standing_020')/('compatibility-worker-'+str(ci)+'.json'); temp=path.with_suffix('.tmp-'+str(os.getpid())); temp.write_text(json.dumps(record));\n  try:os.link(temp,path)\n  except FileExistsError:pass\n  temp.unlink()\n return original_pullback(ct,route)\np.pullback=custody_pullback\nprint(json.dumps(p.target(Path('/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001/analysis_runs/dot_standing_020'))))"
+    ],
+    "source": "recorded launch command (cryptolab process record process-3087693-1791261424228012536)",
+    "stdout_is_result": true
+   },
+   "compare": {
+    "reference_key": null,
+    "produced_key": null,
+    "sort": false,
+    "annotations": [
+     "distinct_configs_recorded",
+     "worker_records_verified"
+    ],
+    "reference_sha256": "889f5a01e7e2bc1a840110ef76a67463c8529c436656f8aef67f8e7bd4874f03",
+    "reference_stripped_keys": [],
+    "original_record_sha256": "889f5a01e7e2bc1a840110ef76a67463c8529c436656f8aef67f8e7bd4874f03",
+    "results_md_sha256": "287b0c56e305d7cc2d66d44299d670b70b5322c9bb987f5bd20d9408daf26494"
+   }
+  },
+  "DOT-STANDING-021": {
+   "run": "dot_standing_021",
+   "title": "Unit-multiplier quadratic keys, then a route bank",
+   "tier": "A",
+   "claim": "0 survivors; 6,386,880 configurations (NULL_WITHIN_FROZEN_SCOPE_NONBLIND_UNATTESTED)",
+   "epoch": 1791261899.480772,
+   "env": {},
+   "code": {
+    "affine_probe.py": {
+     "kind": "frozen",
+     "sha256": "7a9b67af5918746041b919acc92e3ad03a9951405892eea08546081620338775"
+    },
+    "cryptolab/__init__.py": {
+     "kind": "redacted",
+     "sha256": "768ca92876ecbc33d1d57e392b59150a741a1ec21a85c0fcaec3c319b17ed17f",
+     "original_sha256": "243c7870d0ba41d8f5e0f0bcd1b6915131796b13283c167adbe227c9b5cd85e4"
+    },
+    "cryptolab/research_bridge/__init__.py": {
+     "kind": "shim",
+     "sha256": "16a9ab72a99e1041721f3a3b58f86af5a31192d8eae51808d0faf12c0ea2ea26"
+    },
+    "cryptolab/research_bridge/cribsolve.py": {
+     "kind": "redacted",
+     "sha256": "df4be2031a966f64a98f07b67b58a8ec0a073b85b48fddc20c1a7fde5d37465e",
+     "original_sha256": "0fb705b5df8eaf003e229760f515868a3a9bd691757c2ae0c274632013e00bee"
+    },
+    "cryptolab/research_bridge/cribsolve_perm.py": {
+     "kind": "redacted",
+     "sha256": "9b7372774dd5968bfdc6f9e8b469fdb39b590fbf2ccf3ad29940544386812eb2",
+     "original_sha256": "99d23bc030851f421199bf5fc327e8c9da5ec4552b087454eb4a43a0ccf75e69"
+    },
+    "cryptolab/research_bridge/k4.py": {
+     "kind": "shim",
+     "sha256": "09a3132c3d8dbeb63aaa222104ed74d600c55448628768fd079e8866930f976b"
+    },
+    "cryptolab/tools/__init__.py": {
+     "kind": "shim",
+     "sha256": "36817edfdd209aff2d625a782461d49c686c1f3734dab2088b26fd68859242fd"
+    },
+    "cryptolab/tools/alphabets.py": {
+     "kind": "redacted",
+     "sha256": "350396d73935cb98f79284e6f0b1d2f682452918eea65f81179cc27c54779ed3",
+     "original_sha256": "20f449e51d0e986240cb0f5c9f0db9ee84dd50a33aebf3071df54bb643867c5a"
+    },
+    "cryptolab/tools/fitness.py": {
+     "kind": "shim",
+     "sha256": "494bbb6072cf682945b065132cfc16f31131ef8b5e002d000f79ae81e0a99c41"
+    },
+    "cryptolab/tools/hill_cipher.py": {
+     "kind": "redacted",
+     "sha256": "aade4534c5b7369c621b9f04a64d6c0c28f0578ed605fd48dcbadd503b0a4f8c",
+     "original_sha256": "80f92c0769b4b5f49ed332bf12b890cd04e7b12f21e0f3586f6949286449a553"
+    },
+    "cryptolab/tools/transforms.py": {
+     "kind": "shim",
+     "sha256": "2032e82d8501335a3aa6cf07bbafca7fa478bf69d8aa853e44ce158c0a3a9b8d"
+    },
+    "cryptolab/tools/transposition.py": {
+     "kind": "redacted",
+     "sha256": "f3ff7ed635838118ff183f4f2838e388b34a37faf71f54dbce3200f0f740d9e9",
+     "original_sha256": "5a79c870dbd76263dfad326f3ec87a9caafe62a623fc135cd8adac0a6f20d58c"
+    },
+    "hill_probe.py": {
+     "kind": "frozen",
+     "sha256": "125d17c9b80b87e14ad1a64b4905107d48ff25fed11f7d9824ffac98f64f5772"
+    },
+    "routed_probe.py": {
+     "kind": "frozen",
+     "sha256": "9371eb8062dbe226f52bb02d9f06f11dde1780a1dae219ab9489bbee34dc9e9a"
+    },
+    "unit_polynomial_probe.py": {
+     "kind": "frozen",
+     "sha256": "c36a8113cac97f2a8387bfa4cd31ac0a4c978c82880d016784da8e48442a555b"
+    }
+   },
+   "frozen_at_run": [
+    "affine_probe.py",
+    "hill_probe.py",
+    "routed_probe.py",
+    "unit_polynomial_probe.py"
+   ],
+   "not_in_freeze_record": [
+    "cryptolab/__init__.py",
+    "cryptolab/tools/alphabets.py",
+    "cryptolab/tools/transposition.py"
+   ],
+   "inputs": {},
+   "banks": [
+    {
+     "name": "transposition route bank (routed_probe.py bank)",
+     "source": "inferred: routed_probe.py CLI 'bank' mode",
+     "of": "021",
+     "argv": [
+      "{PY}",
+      "routed_probe.py",
+      "bank",
+      "analysis_runs/dot_standing_021"
+     ],
+     "expect": {
+      "analysis_runs/dot_standing_021/routes.npy": "3841c9f317c06f21331757a13c15f61ed37fb0da9cbf374081171884774ebd30",
+      "analysis_runs/dot_standing_021/routes.json": "39411a1bdefb990fc6bb075ef63571769db1e5c766ad417b148f84dde4b936bc"
+     }
+    }
+   ],
+   "target": {
+    "argv": [
+     "{PY}",
+     "-c",
+     "import json,sys;from pathlib import Path;sys.path.insert(0,'/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001');import unit_polynomial_probe as p\noriginal=p.scan_task\ndef recorded_scan(task):\n result=original(task)\n index=p.configs().index(task[1])\n with (Path(task[0])/(\"target-worker-\"+str(index)+\".json\")).open(\"x\") as f:json.dump(result,f)\n return result\np.scan_task=recorded_scan\noriginal_pullback=p.pullback\ndef custody_pullback(ct,route):\n import inspect,os,json\n frame=inspect.currentframe().f_back.f_locals\n if 'key' in frame and 'cfg' in frame and 'index' in frame:\n  cfg=frame['cfg']; index=int(frame['index']); ci=next(n for n,c in enumerate(p.configs()) if tuple(c)==tuple(cfg)); record={'config':cfg,'route_index':index,'key':frame['key'],'validation_pending':True,'is_solution':False}; path=Path('/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001/analysis_runs/dot_standing_021')/('compatibility-worker-'+str(ci)+'.json'); temp=path.with_suffix('.tmp-'+str(os.getpid())); temp.write_text(json.dumps(record));\n  try:os.link(temp,path)\n  except FileExistsError:pass\n  temp.unlink()\n return original_pullback(ct,route)\np.pullback=custody_pullback\nimport sys,os,inspect\ndef primary_custody_trace(frame,event,arg):\n if event=='call' and frame.f_code is p.scan.__code__:return primary_custody_line\n return None\ndef primary_custody_line(frame,event,arg):\n local=frame.f_locals\n if event=='line' and 'primary' in local:\n  frame.f_trace_lines=False; primary=local['primary']\n  if primary:\n   index=next(iter(primary)); cfg=local['cfg']; ci=next(n for n,c in enumerate(p.configs()) if tuple(c)==tuple(cfg)); record={'config':cfg,'route_index':int(index),'key':primary[index],'route':p.bank('/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001/analysis_runs/dot_standing_021')[1][index],'reference_validation_pending':True,'is_solution':False}; path=Path('/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001/analysis_runs/dot_standing_021')/('compatibility-worker-'+str(ci)+'.json'); temp=path.with_suffix('.tmp-'+str(os.getpid())); temp.write_text(json.dumps(record))\n   try:os.link(temp,path)\n   except FileExistsError:pass\n   temp.unlink()\n return primary_custody_line\nsys.settrace(primary_custody_trace)\nprint(json.dumps(p.target(Path('/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001/analysis_runs/dot_standing_021'))))"
+    ],
+    "source": "recorded launch command (cryptolab process record process-3089850-1791261899481967197)",
+    "stdout_is_result": true
+   },
+   "compare": {
+    "reference_key": null,
+    "produced_key": null,
+    "sort": false,
+    "annotations": [
+     "distinct_configs_recorded",
+     "worker_records_verified"
+    ],
+    "reference_sha256": "6c0fea16f1ee93e82dd930955aebeb88e6caf38fbc017564cc79cb6e6cd81e56",
+    "reference_stripped_keys": [],
+    "original_record_sha256": "6c0fea16f1ee93e82dd930955aebeb88e6caf38fbc017564cc79cb6e6cd81e56",
+    "results_md_sha256": "f385a88a45b6b38bb47382538a1131bdfcaa23bd31b8e59b63a57e2028bcfbcb"
+   }
+  },
+  "DOT-STANDING-022": {
+   "run": "dot_standing_022",
+   "title": "Unit-multiplier cubic keys, then a route bank",
+   "tier": "A",
+   "claim": "0 survivors; 5,109,504 configurations (NULL_WITHIN_FROZEN_SCOPE_NONBLIND_UNATTESTED)",
+   "epoch": 1791262426.325454,
+   "env": {
+    "K4_POLY_DEGREE": "3",
+    "K4_POLY_PERIODS": "1,2,3,4"
+   },
+   "code": {
+    "affine_probe.py": {
+     "kind": "frozen",
+     "sha256": "7a9b67af5918746041b919acc92e3ad03a9951405892eea08546081620338775"
+    },
+    "cryptolab/__init__.py": {
+     "kind": "redacted",
+     "sha256": "768ca92876ecbc33d1d57e392b59150a741a1ec21a85c0fcaec3c319b17ed17f",
+     "original_sha256": "243c7870d0ba41d8f5e0f0bcd1b6915131796b13283c167adbe227c9b5cd85e4"
+    },
+    "cryptolab/research_bridge/__init__.py": {
+     "kind": "shim",
+     "sha256": "16a9ab72a99e1041721f3a3b58f86af5a31192d8eae51808d0faf12c0ea2ea26"
+    },
+    "cryptolab/research_bridge/cribsolve.py": {
+     "kind": "redacted",
+     "sha256": "df4be2031a966f64a98f07b67b58a8ec0a073b85b48fddc20c1a7fde5d37465e",
+     "original_sha256": "0fb705b5df8eaf003e229760f515868a3a9bd691757c2ae0c274632013e00bee"
+    },
+    "cryptolab/research_bridge/cribsolve_perm.py": {
+     "kind": "redacted",
+     "sha256": "9b7372774dd5968bfdc6f9e8b469fdb39b590fbf2ccf3ad29940544386812eb2",
+     "original_sha256": "99d23bc030851f421199bf5fc327e8c9da5ec4552b087454eb4a43a0ccf75e69"
+    },
+    "cryptolab/research_bridge/k4.py": {
+     "kind": "shim",
+     "sha256": "09a3132c3d8dbeb63aaa222104ed74d600c55448628768fd079e8866930f976b"
+    },
+    "cryptolab/tools/__init__.py": {
+     "kind": "shim",
+     "sha256": "36817edfdd209aff2d625a782461d49c686c1f3734dab2088b26fd68859242fd"
+    },
+    "cryptolab/tools/alphabets.py": {
+     "kind": "redacted",
+     "sha256": "350396d73935cb98f79284e6f0b1d2f682452918eea65f81179cc27c54779ed3",
+     "original_sha256": "20f449e51d0e986240cb0f5c9f0db9ee84dd50a33aebf3071df54bb643867c5a"
+    },
+    "cryptolab/tools/fitness.py": {
+     "kind": "shim",
+     "sha256": "494bbb6072cf682945b065132cfc16f31131ef8b5e002d000f79ae81e0a99c41"
+    },
+    "cryptolab/tools/hill_cipher.py": {
+     "kind": "redacted",
+     "sha256": "aade4534c5b7369c621b9f04a64d6c0c28f0578ed605fd48dcbadd503b0a4f8c",
+     "original_sha256": "80f92c0769b4b5f49ed332bf12b890cd04e7b12f21e0f3586f6949286449a553"
+    },
+    "cryptolab/tools/transforms.py": {
+     "kind": "shim",
+     "sha256": "2032e82d8501335a3aa6cf07bbafca7fa478bf69d8aa853e44ce158c0a3a9b8d"
+    },
+    "cryptolab/tools/transposition.py": {
+     "kind": "redacted",
+     "sha256": "f3ff7ed635838118ff183f4f2838e388b34a37faf71f54dbce3200f0f740d9e9",
+     "original_sha256": "5a79c870dbd76263dfad326f3ec87a9caafe62a623fc135cd8adac0a6f20d58c"
+    },
+    "hill_probe.py": {
+     "kind": "frozen",
+     "sha256": "125d17c9b80b87e14ad1a64b4905107d48ff25fed11f7d9824ffac98f64f5772"
+    },
+    "routed_probe.py": {
+     "kind": "frozen",
+     "sha256": "9371eb8062dbe226f52bb02d9f06f11dde1780a1dae219ab9489bbee34dc9e9a"
+    },
+    "unit_polynomial_probe.py": {
+     "kind": "frozen",
+     "sha256": "c36a8113cac97f2a8387bfa4cd31ac0a4c978c82880d016784da8e48442a555b"
+    }
+   },
+   "frozen_at_run": [
+    "affine_probe.py",
+    "hill_probe.py",
+    "routed_probe.py",
+    "unit_polynomial_probe.py"
+   ],
+   "not_in_freeze_record": [
+    "cryptolab/__init__.py",
+    "cryptolab/tools/alphabets.py",
+    "cryptolab/tools/transposition.py"
+   ],
+   "inputs": {},
+   "banks": [
+    {
+     "name": "transposition route bank (routed_probe.py bank)",
+     "source": "inferred: routed_probe.py CLI 'bank' mode",
+     "of": "022",
+     "argv": [
+      "{PY}",
+      "routed_probe.py",
+      "bank",
+      "analysis_runs/dot_standing_022"
+     ],
+     "expect": {
+      "analysis_runs/dot_standing_022/routes.npy": "3841c9f317c06f21331757a13c15f61ed37fb0da9cbf374081171884774ebd30",
+      "analysis_runs/dot_standing_022/routes.json": "39411a1bdefb990fc6bb075ef63571769db1e5c766ad417b148f84dde4b936bc"
+     }
+    }
+   ],
+   "target": {
+    "argv": [
+     "{PY}",
+     "-c",
+     "import json,sys;from pathlib import Path;sys.path.insert(0,'/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001');import unit_polynomial_probe as p\noriginal=p.scan_task\ndef recorded_scan(task):\n result=original(task)\n index=p.configs().index(task[1])\n with (Path(task[0])/(\"target-worker-\"+str(index)+\".json\")).open(\"x\") as f:json.dump(result,f)\n return result\np.scan_task=recorded_scan\noriginal_pullback=p.pullback\ndef custody_pullback(ct,route):\n import inspect,os,json\n frame=inspect.currentframe().f_back.f_locals\n if 'key' in frame and 'cfg' in frame and 'index' in frame:\n  cfg=frame['cfg']; index=int(frame['index']); ci=next(n for n,c in enumerate(p.configs()) if tuple(c)==tuple(cfg)); record={'config':cfg,'route_index':index,'key':frame['key'],'validation_pending':True,'is_solution':False}; path=Path('/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001/analysis_runs/dot_standing_022')/('compatibility-worker-'+str(ci)+'.json'); temp=path.with_suffix('.tmp-'+str(os.getpid())); temp.write_text(json.dumps(record));\n  try:os.link(temp,path)\n  except FileExistsError:pass\n  temp.unlink()\n return original_pullback(ct,route)\np.pullback=custody_pullback\nimport sys,os,inspect\ndef primary_custody_trace(frame,event,arg):\n if event=='call' and frame.f_code is p.scan.__code__:return primary_custody_line\n return None\ndef primary_custody_line(frame,event,arg):\n local=frame.f_locals\n if event=='line' and 'primary' in local:\n  frame.f_trace_lines=False; primary=local['primary']\n  if primary:\n   index=next(iter(primary)); cfg=local['cfg']; ci=next(n for n,c in enumerate(p.configs()) if tuple(c)==tuple(cfg)); record={'config':cfg,'route_index':int(index),'key':primary[index],'route':p.bank('/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001/analysis_runs/dot_standing_022')[1][index],'reference_validation_pending':True,'is_solution':False}; path=Path('/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001/analysis_runs/dot_standing_022')/('compatibility-worker-'+str(ci)+'.json'); temp=path.with_suffix('.tmp-'+str(os.getpid())); temp.write_text(json.dumps(record))\n   try:os.link(temp,path)\n   except FileExistsError:pass\n   temp.unlink()\n return primary_custody_line\nsys.settrace(primary_custody_trace)\nprint(json.dumps(p.target(Path('/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001/analysis_runs/dot_standing_022'))))"
+    ],
+    "source": "recorded launch command (cryptolab process record process-3092121-1791262426326777058)",
+    "stdout_is_result": true
+   },
+   "compare": {
+    "reference_key": null,
+    "produced_key": null,
+    "sort": false,
+    "annotations": [
+     "distinct_configs_recorded",
+     "worker_records_verified"
+    ],
+    "reference_sha256": "a70b2ac4ce2b0fd0973a4a01de9c83c1a65c4716c206a8308ad82bf091fbd915",
+    "reference_stripped_keys": [],
+    "original_record_sha256": "a70b2ac4ce2b0fd0973a4a01de9c83c1a65c4716c206a8308ad82bf091fbd915",
+    "results_md_sha256": "c6cccc816a961d97c1f4f4dd50d0646f669ba1489d262d4a00f25ebb4cb9313b"
+   }
+  },
+  "DOT-STANDING-023": {
+   "run": "dot_standing_023",
+   "title": "Plaintext-first periodic keys, periods 1-12",
+   "tier": "A",
+   "claim": "0 survivors; 12,391,008 configurations (NULL_WITHIN_FROZEN_SCOPE_NONBLIND_UNATTESTED)",
+   "epoch": 1791263156.93683,
+   "env": {},
+   "code": {
+    "affine_probe.py": {
+     "kind": "frozen",
+     "sha256": "7a9b67af5918746041b919acc92e3ad03a9951405892eea08546081620338775"
+    },
+    "cryptolab/__init__.py": {
+     "kind": "redacted",
+     "sha256": "768ca92876ecbc33d1d57e392b59150a741a1ec21a85c0fcaec3c319b17ed17f",
+     "original_sha256": "243c7870d0ba41d8f5e0f0bcd1b6915131796b13283c167adbe227c9b5cd85e4"
+    },
+    "cryptolab/research_bridge/__init__.py": {
+     "kind": "shim",
+     "sha256": "16a9ab72a99e1041721f3a3b58f86af5a31192d8eae51808d0faf12c0ea2ea26"
+    },
+    "cryptolab/research_bridge/cribsolve.py": {
+     "kind": "redacted",
+     "sha256": "df4be2031a966f64a98f07b67b58a8ec0a073b85b48fddc20c1a7fde5d37465e",
+     "original_sha256": "0fb705b5df8eaf003e229760f515868a3a9bd691757c2ae0c274632013e00bee"
+    },
+    "cryptolab/research_bridge/cribsolve_perm.py": {
+     "kind": "redacted",
+     "sha256": "9b7372774dd5968bfdc6f9e8b469fdb39b590fbf2ccf3ad29940544386812eb2",
+     "original_sha256": "99d23bc030851f421199bf5fc327e8c9da5ec4552b087454eb4a43a0ccf75e69"
+    },
+    "cryptolab/research_bridge/k4.py": {
+     "kind": "shim",
+     "sha256": "09a3132c3d8dbeb63aaa222104ed74d600c55448628768fd079e8866930f976b"
+    },
+    "cryptolab/tools/__init__.py": {
+     "kind": "shim",
+     "sha256": "36817edfdd209aff2d625a782461d49c686c1f3734dab2088b26fd68859242fd"
+    },
+    "cryptolab/tools/alphabets.py": {
+     "kind": "redacted",
+     "sha256": "350396d73935cb98f79284e6f0b1d2f682452918eea65f81179cc27c54779ed3",
+     "original_sha256": "20f449e51d0e986240cb0f5c9f0db9ee84dd50a33aebf3071df54bb643867c5a"
+    },
+    "cryptolab/tools/fitness.py": {
+     "kind": "shim",
+     "sha256": "494bbb6072cf682945b065132cfc16f31131ef8b5e002d000f79ae81e0a99c41"
+    },
+    "cryptolab/tools/hill_cipher.py": {
+     "kind": "redacted",
+     "sha256": "aade4534c5b7369c621b9f04a64d6c0c28f0578ed605fd48dcbadd503b0a4f8c",
+     "original_sha256": "80f92c0769b4b5f49ed332bf12b890cd04e7b12f21e0f3586f6949286449a553"
+    },
+    "cryptolab/tools/transforms.py": {
+     "kind": "shim",
+     "sha256": "2032e82d8501335a3aa6cf07bbafca7fa478bf69d8aa853e44ce158c0a3a9b8d"
+    },
+    "cryptolab/tools/transposition.py": {
+     "kind": "redacted",
+     "sha256": "f3ff7ed635838118ff183f4f2838e388b34a37faf71f54dbce3200f0f740d9e9",
+     "original_sha256": "5a79c870dbd76263dfad326f3ec87a9caafe62a623fc135cd8adac0a6f20d58c"
+    },
+    "hill_probe.py": {
+     "kind": "frozen",
+     "sha256": "125d17c9b80b87e14ad1a64b4905107d48ff25fed11f7d9824ffac98f64f5772"
+    },
+    "prekey_periodic_probe.py": {
+     "kind": "frozen",
+     "sha256": "ecb77a060650b27aa513624d60a41d352b1c2e09e5bdf3033ec5ba0982aafa95"
+    },
+    "routed_probe.py": {
+     "kind": "frozen",
+     "sha256": "9371eb8062dbe226f52bb02d9f06f11dde1780a1dae219ab9489bbee34dc9e9a"
+    }
+   },
+   "frozen_at_run": [
+    "affine_probe.py",
+    "hill_probe.py",
+    "prekey_periodic_probe.py",
+    "routed_probe.py"
+   ],
+   "not_in_freeze_record": [
+    "cryptolab/__init__.py",
+    "cryptolab/tools/alphabets.py",
+    "cryptolab/tools/transposition.py"
+   ],
+   "inputs": {
+    "analysis_runs/dot_standing_023/eligibility.json": "90da60f73055c7be53d1db7832cd1acac8be042f014ec8eac455c1771aa95290"
+   },
+   "banks": [
+    {
+     "name": "transposition route bank (routed_probe.py bank)",
+     "source": "inferred: routed_probe.py CLI 'bank' mode",
+     "of": "023",
+     "argv": [
+      "{PY}",
+      "routed_probe.py",
+      "bank",
+      "analysis_runs/dot_standing_023"
+     ],
+     "expect": {
+      "analysis_runs/dot_standing_023/routes.npy": "3841c9f317c06f21331757a13c15f61ed37fb0da9cbf374081171884774ebd30",
+      "analysis_runs/dot_standing_023/routes.json": "39411a1bdefb990fc6bb075ef63571769db1e5c766ad417b148f84dde4b936bc"
+     }
+    }
+   ],
+   "target": {
+    "argv": [
+     "{PY}",
+     "-c",
+     "import json,sys;from pathlib import Path;sys.path.insert(0,'/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001');import prekey_periodic_probe as p\noriginal=p.scan_task\ndef recorded_scan(task):\n result=original(task)\n index=p.configs().index(task[1])\n with (Path(task[0])/(\"target-worker-\"+str(index)+\".json\")).open(\"x\") as f:json.dump(result,f)\n return result\np.scan_task=recorded_scan\noriginal_pullback=p.pullback\ndef custody_pullback(ct,route):\n import inspect,os,json\n frame=inspect.currentframe().f_back.f_locals\n if 'key' in frame and 'cfg' in frame and 'index' in frame:\n  cfg=frame['cfg']; index=int(frame['index']); ci=next(n for n,c in enumerate(p.configs()) if tuple(c)==tuple(cfg)); record={'config':cfg,'route_index':index,'key':frame['key'],'validation_pending':True,'is_solution':False}; path=Path('/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001/analysis_runs/dot_standing_023')/('compatibility-worker-'+str(ci)+'.json'); temp=path.with_suffix('.tmp-'+str(os.getpid())); temp.write_text(json.dumps(record));\n  try:os.link(temp,path)\n  except FileExistsError:pass\n  temp.unlink()\n return original_pullback(ct,route)\np.pullback=custody_pullback\nimport sys,os,inspect\ndef primary_custody_trace(frame,event,arg):\n if event=='call' and frame.f_code is p.scan.__code__:return primary_custody_line\n return None\ndef primary_custody_line(frame,event,arg):\n local=frame.f_locals\n if event=='line' and 'primary' in local:\n  frame.f_trace_lines=False; primary=local['primary']\n  if primary:\n   index=next(iter(primary)); cfg=local['cfg']; ci=next(n for n,c in enumerate(p.configs()) if tuple(c)==tuple(cfg)); record={'config':cfg,'route_index':int(index),'key':primary[index],'route':p.bank('/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001/analysis_runs/dot_standing_023')[1][index],'reference_validation_pending':True,'is_solution':False}; path=Path('/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001/analysis_runs/dot_standing_023')/('compatibility-worker-'+str(ci)+'.json'); temp=path.with_suffix('.tmp-'+str(os.getpid())); temp.write_text(json.dumps(record))\n   try:os.link(temp,path)\n   except FileExistsError:pass\n   temp.unlink()\n return primary_custody_line\nsys.settrace(primary_custody_trace)\nprint(json.dumps(p.target(Path('/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001/analysis_runs/dot_standing_023'))))"
+    ],
+    "source": "recorded launch command (cryptolab process record process-3094467-1791263156938101821)",
+    "stdout_is_result": true
+   },
+   "compare": {
+    "reference_key": null,
+    "produced_key": null,
+    "sort": false,
+    "annotations": [
+     "distinct_configs_recorded",
+     "worker_records_verified"
+    ],
+    "reference_sha256": "092b4e16818a314e383b88071fcde1757d0512684df46c573f883b9fa47cdb59",
+    "reference_stripped_keys": [],
+    "original_record_sha256": "092b4e16818a314e383b88071fcde1757d0512684df46c573f883b9fa47cdb59",
+    "results_md_sha256": "872ded6fdd587ae67b057c9f78fdffccc56640944636e8c337f41777984cd2ad"
+   }
+  },
+  "DOT-STANDING-024": {
+   "run": "dot_standing_024",
+   "title": "Plaintext-first linear keys, periods 1-8",
+   "tier": "A",
+   "claim": "0 survivors; 6,499,872 configurations (NULL_WITHIN_FROZEN_SCOPE_NONBLIND_UNATTESTED)",
+   "epoch": 1791264430.935954,
+   "env": {},
+   "code": {
+    "affine_probe.py": {
+     "kind": "frozen",
+     "sha256": "7a9b67af5918746041b919acc92e3ad03a9951405892eea08546081620338775"
+    },
+    "cryptolab/__init__.py": {
+     "kind": "redacted",
+     "sha256": "768ca92876ecbc33d1d57e392b59150a741a1ec21a85c0fcaec3c319b17ed17f",
+     "original_sha256": "243c7870d0ba41d8f5e0f0bcd1b6915131796b13283c167adbe227c9b5cd85e4"
+    },
+    "cryptolab/research_bridge/__init__.py": {
+     "kind": "shim",
+     "sha256": "16a9ab72a99e1041721f3a3b58f86af5a31192d8eae51808d0faf12c0ea2ea26"
+    },
+    "cryptolab/research_bridge/cribsolve.py": {
+     "kind": "redacted",
+     "sha256": "df4be2031a966f64a98f07b67b58a8ec0a073b85b48fddc20c1a7fde5d37465e",
+     "original_sha256": "0fb705b5df8eaf003e229760f515868a3a9bd691757c2ae0c274632013e00bee"
+    },
+    "cryptolab/research_bridge/cribsolve_perm.py": {
+     "kind": "redacted",
+     "sha256": "9b7372774dd5968bfdc6f9e8b469fdb39b590fbf2ccf3ad29940544386812eb2",
+     "original_sha256": "99d23bc030851f421199bf5fc327e8c9da5ec4552b087454eb4a43a0ccf75e69"
+    },
+    "cryptolab/research_bridge/k4.py": {
+     "kind": "shim",
+     "sha256": "09a3132c3d8dbeb63aaa222104ed74d600c55448628768fd079e8866930f976b"
+    },
+    "cryptolab/tools/__init__.py": {
+     "kind": "shim",
+     "sha256": "36817edfdd209aff2d625a782461d49c686c1f3734dab2088b26fd68859242fd"
+    },
+    "cryptolab/tools/alphabets.py": {
+     "kind": "redacted",
+     "sha256": "350396d73935cb98f79284e6f0b1d2f682452918eea65f81179cc27c54779ed3",
+     "original_sha256": "20f449e51d0e986240cb0f5c9f0db9ee84dd50a33aebf3071df54bb643867c5a"
+    },
+    "cryptolab/tools/fitness.py": {
+     "kind": "shim",
+     "sha256": "494bbb6072cf682945b065132cfc16f31131ef8b5e002d000f79ae81e0a99c41"
+    },
+    "cryptolab/tools/hill_cipher.py": {
+     "kind": "redacted",
+     "sha256": "aade4534c5b7369c621b9f04a64d6c0c28f0578ed605fd48dcbadd503b0a4f8c",
+     "original_sha256": "80f92c0769b4b5f49ed332bf12b890cd04e7b12f21e0f3586f6949286449a553"
+    },
+    "cryptolab/tools/transforms.py": {
+     "kind": "shim",
+     "sha256": "2032e82d8501335a3aa6cf07bbafca7fa478bf69d8aa853e44ce158c0a3a9b8d"
+    },
+    "cryptolab/tools/transposition.py": {
+     "kind": "redacted",
+     "sha256": "f3ff7ed635838118ff183f4f2838e388b34a37faf71f54dbce3200f0f740d9e9",
+     "original_sha256": "5a79c870dbd76263dfad326f3ec87a9caafe62a623fc135cd8adac0a6f20d58c"
+    },
+    "hill_probe.py": {
+     "kind": "frozen",
+     "sha256": "125d17c9b80b87e14ad1a64b4905107d48ff25fed11f7d9824ffac98f64f5772"
+    },
+    "prekey_linear_probe.py": {
+     "kind": "frozen",
+     "sha256": "fb116222d50a0c6c9cd40be8140737b0ef4d6b7e9410962278fcff3ab967734e"
+    },
+    "routed_probe.py": {
+     "kind": "frozen",
+     "sha256": "9371eb8062dbe226f52bb02d9f06f11dde1780a1dae219ab9489bbee34dc9e9a"
+    }
+   },
+   "frozen_at_run": [
+    "affine_probe.py",
+    "hill_probe.py",
+    "prekey_linear_probe.py",
+    "routed_probe.py"
+   ],
+   "not_in_freeze_record": [
+    "cryptolab/__init__.py",
+    "cryptolab/tools/alphabets.py",
+    "cryptolab/tools/transposition.py"
+   ],
+   "inputs": {
+    "analysis_runs/dot_standing_024/eligibility.json": "0f1a9e8d6ab09fe6ab5e39c73531ba8c4fcce564d6611b322e72d072c9f02ead"
+   },
+   "banks": [
+    {
+     "name": "transposition route bank (routed_probe.py bank)",
+     "source": "inferred: routed_probe.py CLI 'bank' mode",
+     "of": "024",
+     "argv": [
+      "{PY}",
+      "routed_probe.py",
+      "bank",
+      "analysis_runs/dot_standing_024"
+     ],
+     "expect": {
+      "analysis_runs/dot_standing_024/routes.npy": "3841c9f317c06f21331757a13c15f61ed37fb0da9cbf374081171884774ebd30",
+      "analysis_runs/dot_standing_024/routes.json": "39411a1bdefb990fc6bb075ef63571769db1e5c766ad417b148f84dde4b936bc"
+     }
+    }
+   ],
+   "target": {
+    "argv": [
+     "{PY}",
+     "-c",
+     "import json,sys;from pathlib import Path;sys.path.insert(0,'/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001');import prekey_linear_probe as p\noriginal=p.scan_task\ndef recorded_scan(task):\n result=original(task)\n index=p.configs().index(task[1])\n with (Path(task[0])/(\"target-worker-\"+str(index)+\".json\")).open(\"x\") as f:json.dump(result,f)\n return result\np.scan_task=recorded_scan\noriginal_pullback=p.pullback\ndef custody_pullback(ct,route):\n import inspect,os,json\n frame=inspect.currentframe().f_back.f_locals\n if 'key' in frame and 'cfg' in frame and 'index' in frame:\n  cfg=frame['cfg']; index=int(frame['index']); ci=next(n for n,c in enumerate(p.configs()) if tuple(c)==tuple(cfg)); record={'config':cfg,'route_index':index,'key':frame['key'],'validation_pending':True,'is_solution':False}; path=Path('/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001/analysis_runs/dot_standing_024')/('compatibility-worker-'+str(ci)+'.json'); temp=path.with_suffix('.tmp-'+str(os.getpid())); temp.write_text(json.dumps(record));\n  try:os.link(temp,path)\n  except FileExistsError:pass\n  temp.unlink()\n return original_pullback(ct,route)\np.pullback=custody_pullback\nimport sys,os,inspect\ndef primary_custody_trace(frame,event,arg):\n if event=='call' and frame.f_code is p.scan.__code__:return primary_custody_line\n return None\ndef primary_custody_line(frame,event,arg):\n local=frame.f_locals\n if event=='line' and 'primary' in local:\n  frame.f_trace_lines=False; primary=local['primary']\n  if primary:\n   index=next(iter(primary)); cfg=local['cfg']; ci=next(n for n,c in enumerate(p.configs()) if tuple(c)==tuple(cfg)); record={'config':cfg,'route_index':int(index),'key':primary[index],'route':p.bank('/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001/analysis_runs/dot_standing_024')[1][index],'reference_validation_pending':True,'is_solution':False}; path=Path('/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001/analysis_runs/dot_standing_024')/('compatibility-worker-'+str(ci)+'.json'); temp=path.with_suffix('.tmp-'+str(os.getpid())); temp.write_text(json.dumps(record))\n   try:os.link(temp,path)\n   except FileExistsError:pass\n   temp.unlink()\n return primary_custody_line\nsys.settrace(primary_custody_trace)\nprint(json.dumps(p.target(Path('/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001/analysis_runs/dot_standing_024'))))"
+    ],
+    "source": "recorded launch command (cryptolab process record process-3099123-1791264430937283726)",
+    "stdout_is_result": true
+   },
+   "compare": {
+    "reference_key": null,
+    "produced_key": null,
+    "sort": false,
+    "annotations": [
+     "distinct_configs_recorded",
+     "worker_records_verified"
+    ],
+    "reference_sha256": "d8baaf9a5be3e50ec28714d424256ea928eb433ad8a8943bf53d3ff157fb9490",
+    "reference_stripped_keys": [],
+    "original_record_sha256": "d8baaf9a5be3e50ec28714d424256ea928eb433ad8a8943bf53d3ff157fb9490",
+    "results_md_sha256": "f7e7b8ec0b424dc371405f62b5d52eeb516d75e8db16aa55b9d6917faefe2a51"
+   }
+  },
+  "DOT-STANDING-025": {
+   "run": "dot_standing_025",
+   "title": "Keyed columnar w2-8 plus unit-affine letter map",
+   "tier": "A",
+   "claim": "0 survivors; 4,438,272 configurations (NULL_WITHIN_FROZEN_SCOPE_NONBLIND_UNATTESTED)",
+   "epoch": 1791265331.982516,
+   "env": {},
+   "code": {
+    "affine_probe.py": {
+     "kind": "frozen",
+     "sha256": "7a9b67af5918746041b919acc92e3ad03a9951405892eea08546081620338775"
+    },
+    "cryptolab/__init__.py": {
+     "kind": "redacted",
+     "sha256": "768ca92876ecbc33d1d57e392b59150a741a1ec21a85c0fcaec3c319b17ed17f",
+     "original_sha256": "243c7870d0ba41d8f5e0f0bcd1b6915131796b13283c167adbe227c9b5cd85e4"
+    },
+    "cryptolab/research_bridge/__init__.py": {
+     "kind": "shim",
+     "sha256": "16a9ab72a99e1041721f3a3b58f86af5a31192d8eae51808d0faf12c0ea2ea26"
+    },
+    "cryptolab/research_bridge/cribsolve.py": {
+     "kind": "redacted",
+     "sha256": "df4be2031a966f64a98f07b67b58a8ec0a073b85b48fddc20c1a7fde5d37465e",
+     "original_sha256": "0fb705b5df8eaf003e229760f515868a3a9bd691757c2ae0c274632013e00bee"
+    },
+    "cryptolab/research_bridge/cribsolve_perm.py": {
+     "kind": "redacted",
+     "sha256": "9b7372774dd5968bfdc6f9e8b469fdb39b590fbf2ccf3ad29940544386812eb2",
+     "original_sha256": "99d23bc030851f421199bf5fc327e8c9da5ec4552b087454eb4a43a0ccf75e69"
+    },
+    "cryptolab/research_bridge/k4.py": {
+     "kind": "shim",
+     "sha256": "09a3132c3d8dbeb63aaa222104ed74d600c55448628768fd079e8866930f976b"
+    },
+    "cryptolab/tools/__init__.py": {
+     "kind": "shim",
+     "sha256": "36817edfdd209aff2d625a782461d49c686c1f3734dab2088b26fd68859242fd"
+    },
+    "cryptolab/tools/alphabets.py": {
+     "kind": "redacted",
+     "sha256": "350396d73935cb98f79284e6f0b1d2f682452918eea65f81179cc27c54779ed3",
+     "original_sha256": "20f449e51d0e986240cb0f5c9f0db9ee84dd50a33aebf3071df54bb643867c5a"
+    },
+    "cryptolab/tools/fitness.py": {
+     "kind": "shim",
+     "sha256": "494bbb6072cf682945b065132cfc16f31131ef8b5e002d000f79ae81e0a99c41"
+    },
+    "cryptolab/tools/hill_cipher.py": {
+     "kind": "redacted",
+     "sha256": "aade4534c5b7369c621b9f04a64d6c0c28f0578ed605fd48dcbadd503b0a4f8c",
+     "original_sha256": "80f92c0769b4b5f49ed332bf12b890cd04e7b12f21e0f3586f6949286449a553"
+    },
+    "cryptolab/tools/transforms.py": {
+     "kind": "shim",
+     "sha256": "2032e82d8501335a3aa6cf07bbafca7fa478bf69d8aa853e44ce158c0a3a9b8d"
+    },
+    "cryptolab/tools/transposition.py": {
+     "kind": "redacted",
+     "sha256": "f3ff7ed635838118ff183f4f2838e388b34a37faf71f54dbce3200f0f740d9e9",
+     "original_sha256": "5a79c870dbd76263dfad326f3ec87a9caafe62a623fc135cd8adac0a6f20d58c"
+    },
+    "hill_probe.py": {
+     "kind": "frozen",
+     "sha256": "125d17c9b80b87e14ad1a64b4905107d48ff25fed11f7d9824ffac98f64f5772"
+    },
+    "keyed_affine_probe.py": {
+     "kind": "frozen",
+     "sha256": "69fa1431ef43047b2b512ff88edeaed6b46a87763711285fd24b52fe46ba1012"
+    },
+    "keyed_routes.py": {
+     "kind": "frozen",
+     "sha256": "607c1d3186088e3a9b465b92e54565636dd8bbda98a52fdab30239b8e2c50e90"
+    },
+    "routed_probe.py": {
+     "kind": "frozen",
+     "sha256": "9371eb8062dbe226f52bb02d9f06f11dde1780a1dae219ab9489bbee34dc9e9a"
+    }
+   },
+   "frozen_at_run": [
+    "affine_probe.py",
+    "hill_probe.py",
+    "keyed_affine_probe.py",
+    "keyed_routes.py",
+    "routed_probe.py"
+   ],
+   "not_in_freeze_record": [
+    "cryptolab/__init__.py",
+    "cryptolab/research_bridge/cribsolve.py",
+    "cryptolab/research_bridge/cribsolve_perm.py",
+    "cryptolab/tools/alphabets.py",
+    "cryptolab/tools/transposition.py"
+   ],
+   "inputs": {},
+   "banks": [
+    {
+     "name": "keyed route bank (keyed_routes.build)",
+     "source": "recorded bank-build process for this campaign",
+     "of": "025",
+     "argv": [
+      "{PY}",
+      "-c",
+      "import sys,json;from pathlib import Path;sys.path.insert(0,'/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001');import keyed_routes as k;print(json.dumps(k.build(Path('/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001/analysis_runs/dot_standing_025'))))"
+     ],
+     "expect": {
+      "analysis_runs/dot_standing_025/routes.npy": "cf355df9642d8967f80ac5ac463d5126bc132fa5061030d420c651cf17457c5b",
+      "analysis_runs/dot_standing_025/routes.json": "b6f513beeeced498ab1d1a94b2b61b72b7d3f64ad8eeb5585cf5277c2e5691f5",
+      "analysis_runs/dot_standing_025/reference_routes.npy": "cf355df9642d8967f80ac5ac463d5126bc132fa5061030d420c651cf17457c5b",
+      "analysis_runs/dot_standing_025/bank-audit.json": {
+       "canonical_json_sha256": "50f3f669ebb54aa1a4fcc6c0eb96aea5de2ad5d19ef9b5510b75c2bb1182e90f"
+      }
+     }
+    }
+   ],
+   "target": {
+    "argv": [
+     "{PY}",
+     "-c",
+     "import json,sys;from pathlib import Path;sys.path.insert(0,'/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001');import keyed_affine_probe as p\noriginal=p.scan_task\ndef recorded_scan(task):\n result=original(task)\n index=p.configs().index(task[1])\n with (Path(task[0])/(\"target-worker-\"+str(index)+\".json\")).open(\"x\") as f:json.dump(result,f)\n return result\np.scan_task=recorded_scan\noriginal_pullback=p.pullback\ndef custody_pullback(ct,route):\n import inspect,os,json\n frame=inspect.currentframe().f_back.f_locals\n if 'key' in frame and 'cfg' in frame and 'index' in frame:\n  cfg=frame['cfg']; index=int(frame['index']); ci=next(n for n,c in enumerate(p.configs()) if tuple(c)==tuple(cfg)); record={'config':cfg,'route_index':index,'key':frame['key'],'validation_pending':True,'is_solution':False}; path=Path('/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001/analysis_runs/dot_standing_025')/('compatibility-worker-'+str(ci)+'.json'); temp=path.with_suffix('.tmp-'+str(os.getpid())); temp.write_text(json.dumps(record));\n  try:os.link(temp,path)\n  except FileExistsError:pass\n  temp.unlink()\n return original_pullback(ct,route)\np.pullback=custody_pullback\nimport sys,os,inspect\ndef primary_custody_trace(frame,event,arg):\n if event=='call' and frame.f_code in (p.scan.__code__,p.match_data.__code__):return primary_custody_line\n return None\ndef primary_custody_line(frame,event,arg):\n local=frame.f_locals\n if event=='line' and 'primary' in local:\n  frame.f_trace_lines=False; primary=local['primary']\n  if primary:\n   index=next(iter(primary)); cfg=local['cfg']; ci=next(n for n,c in enumerate(p.configs()) if tuple(c)==tuple(cfg)); record={'config':cfg,'route_index':int(index),'key':primary[index],'route':p.bank('/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001/analysis_runs/dot_standing_025')[1][index],'reference_validation_pending':True,'is_solution':False}; path=Path('/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001/analysis_runs/dot_standing_025')/('compatibility-worker-'+str(ci)+'.json'); temp=path.with_suffix('.tmp-'+str(os.getpid())); temp.write_text(json.dumps(record))\n   try:os.link(temp,path)\n   except FileExistsError:pass\n   temp.unlink()\n return primary_custody_line\nsys.settrace(primary_custody_trace)\nprint(json.dumps(p.target(Path('/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001/analysis_runs/dot_standing_025'))))"
+    ],
+    "source": "recorded launch command (cryptolab process record process-3102316-1791265331983810527)",
+    "stdout_is_result": true
+   },
+   "compare": {
+    "reference_key": null,
+    "produced_key": null,
+    "sort": false,
+    "annotations": [
+     "distinct_configs_recorded",
+     "worker_records_verified"
+    ],
+    "reference_sha256": "09c689d050299b7c070b49f841b3a1fa782e0cb00063774fe6e693100936f857",
+    "reference_stripped_keys": [],
+    "original_record_sha256": "09c689d050299b7c070b49f841b3a1fa782e0cb00063774fe6e693100936f857",
+    "results_md_sha256": "c2202fe82d5534aecc4a1e5727624961a0084fc7f661ee950e946d444d849d1f"
+   }
+  },
+  "DOT-STANDING-026": {
+   "run": "dot_standing_026",
+   "title": "Keyed columnar w2-8 plus any monoalphabetic key",
+   "tier": "A",
+   "claim": "0 survivors; 92,464 configurations (NULL_WITHIN_FROZEN_SCOPE_NONBLIND_UNATTESTED)",
+   "epoch": 1791267859.839658,
+   "env": {},
+   "code": {
+    "affine_probe.py": {
+     "kind": "frozen",
+     "sha256": "7a9b67af5918746041b919acc92e3ad03a9951405892eea08546081620338775"
+    },
+    "cryptolab/__init__.py": {
+     "kind": "redacted",
+     "sha256": "768ca92876ecbc33d1d57e392b59150a741a1ec21a85c0fcaec3c319b17ed17f",
+     "original_sha256": "243c7870d0ba41d8f5e0f0bcd1b6915131796b13283c167adbe227c9b5cd85e4"
+    },
+    "cryptolab/research_bridge/__init__.py": {
+     "kind": "shim",
+     "sha256": "16a9ab72a99e1041721f3a3b58f86af5a31192d8eae51808d0faf12c0ea2ea26"
+    },
+    "cryptolab/research_bridge/cribsolve.py": {
+     "kind": "redacted",
+     "sha256": "df4be2031a966f64a98f07b67b58a8ec0a073b85b48fddc20c1a7fde5d37465e",
+     "original_sha256": "0fb705b5df8eaf003e229760f515868a3a9bd691757c2ae0c274632013e00bee"
+    },
+    "cryptolab/research_bridge/cribsolve_perm.py": {
+     "kind": "redacted",
+     "sha256": "9b7372774dd5968bfdc6f9e8b469fdb39b590fbf2ccf3ad29940544386812eb2",
+     "original_sha256": "99d23bc030851f421199bf5fc327e8c9da5ec4552b087454eb4a43a0ccf75e69"
+    },
+    "cryptolab/research_bridge/k4.py": {
+     "kind": "shim",
+     "sha256": "09a3132c3d8dbeb63aaa222104ed74d600c55448628768fd079e8866930f976b"
+    },
+    "cryptolab/tools/__init__.py": {
+     "kind": "shim",
+     "sha256": "36817edfdd209aff2d625a782461d49c686c1f3734dab2088b26fd68859242fd"
+    },
+    "cryptolab/tools/alphabets.py": {
+     "kind": "redacted",
+     "sha256": "350396d73935cb98f79284e6f0b1d2f682452918eea65f81179cc27c54779ed3",
+     "original_sha256": "20f449e51d0e986240cb0f5c9f0db9ee84dd50a33aebf3071df54bb643867c5a"
+    },
+    "cryptolab/tools/fitness.py": {
+     "kind": "shim",
+     "sha256": "494bbb6072cf682945b065132cfc16f31131ef8b5e002d000f79ae81e0a99c41"
+    },
+    "cryptolab/tools/hill_cipher.py": {
+     "kind": "redacted",
+     "sha256": "aade4534c5b7369c621b9f04a64d6c0c28f0578ed605fd48dcbadd503b0a4f8c",
+     "original_sha256": "80f92c0769b4b5f49ed332bf12b890cd04e7b12f21e0f3586f6949286449a553"
+    },
+    "cryptolab/tools/transforms.py": {
+     "kind": "shim",
+     "sha256": "2032e82d8501335a3aa6cf07bbafca7fa478bf69d8aa853e44ce158c0a3a9b8d"
+    },
+    "cryptolab/tools/transposition.py": {
+     "kind": "redacted",
+     "sha256": "f3ff7ed635838118ff183f4f2838e388b34a37faf71f54dbce3200f0f740d9e9",
+     "original_sha256": "5a79c870dbd76263dfad326f3ec87a9caafe62a623fc135cd8adac0a6f20d58c"
+    },
+    "hill_probe.py": {
+     "kind": "frozen",
+     "sha256": "125d17c9b80b87e14ad1a64b4905107d48ff25fed11f7d9824ffac98f64f5772"
+    },
+    "keyed_routes.py": {
+     "kind": "frozen",
+     "sha256": "607c1d3186088e3a9b465b92e54565636dd8bbda98a52fdab30239b8e2c50e90"
+    },
+    "mono_fiber_probe.py": {
+     "kind": "frozen",
+     "sha256": "f7aa78a7a4514f1bfc5452dc910156823a4a747dfaaa8a1431a3c6cebed491f7"
+    },
+    "routed_probe.py": {
+     "kind": "frozen",
+     "sha256": "9371eb8062dbe226f52bb02d9f06f11dde1780a1dae219ab9489bbee34dc9e9a"
+    }
+   },
+   "frozen_at_run": [
+    "affine_probe.py",
+    "hill_probe.py",
+    "keyed_routes.py",
+    "mono_fiber_probe.py",
+    "routed_probe.py"
+   ],
+   "not_in_freeze_record": [
+    "cryptolab/__init__.py",
+    "cryptolab/research_bridge/cribsolve.py",
+    "cryptolab/research_bridge/cribsolve_perm.py",
+    "cryptolab/tools/alphabets.py",
+    "cryptolab/tools/transposition.py"
+   ],
+   "inputs": {},
+   "banks": [
+    {
+     "name": "keyed route bank (keyed_routes.build)",
+     "source": "same builder and arguments as the recorded bank build of DOT-STANDING-025; bank bytes must match this campaign's recorded bank",
+     "of": "026",
+     "argv": [
+      "{PY}",
+      "-c",
+      "import sys,json;from pathlib import Path;sys.path.insert(0,'/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001');import keyed_routes as k;print(json.dumps(k.build(Path('/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001/analysis_runs/dot_standing_026'))))"
+     ],
+     "expect": {
+      "analysis_runs/dot_standing_026/routes.npy": "cf355df9642d8967f80ac5ac463d5126bc132fa5061030d420c651cf17457c5b",
+      "analysis_runs/dot_standing_026/routes.json": "b6f513beeeced498ab1d1a94b2b61b72b7d3f64ad8eeb5585cf5277c2e5691f5",
+      "analysis_runs/dot_standing_026/reference_routes.npy": "cf355df9642d8967f80ac5ac463d5126bc132fa5061030d420c651cf17457c5b",
+      "analysis_runs/dot_standing_026/bank-audit.json": {
+       "canonical_json_sha256": "50f3f669ebb54aa1a4fcc6c0eb96aea5de2ad5d19ef9b5510b75c2bb1182e90f"
+      }
+     }
+    }
+   ],
+   "target": {
+    "argv": [
+     "{PY}",
+     "-c",
+     "import json,sys;from pathlib import Path;sys.path.insert(0,'/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001');import mono_fiber_probe as p\noriginal=p.scan_task\ndef recorded_scan(task):\n result=original(task)\n index=p.configs().index(task[1])\n with (Path(task[0])/(\"target-worker-\"+str(index)+\".json\")).open(\"x\") as f:json.dump(result,f)\n return result\np.scan_task=recorded_scan\noriginal_pullback=p.pullback\ndef custody_pullback(ct,route):\n import inspect,os,json\n frame=inspect.currentframe().f_back.f_locals\n if 'key' in frame and 'cfg' in frame and 'index' in frame:\n  cfg=frame['cfg']; index=int(frame['index']); ci=next(n for n,c in enumerate(p.configs()) if tuple(c)==tuple(cfg)); record={'config':cfg,'route_index':index,'key':frame['key'],'validation_pending':True,'is_solution':False}; path=Path('/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001/analysis_runs/dot_standing_026')/('compatibility-worker-'+str(ci)+'.json'); temp=path.with_suffix('.tmp-'+str(os.getpid())); temp.write_text(json.dumps(record));\n  try:os.link(temp,path)\n  except FileExistsError:pass\n  temp.unlink()\n return original_pullback(ct,route)\np.pullback=custody_pullback\nimport sys,os,inspect\ndef primary_custody_trace(frame,event,arg):\n if event=='call' and frame.f_code in (p.scan.__code__,p.match_data.__code__):return primary_custody_line\n return None\ndef primary_custody_line(frame,event,arg):\n local=frame.f_locals\n if event=='line' and 'primary' in local:\n  frame.f_trace_lines=False; primary=local['primary']\n  if primary:\n   index=next(iter(primary)); cfg=local['cfg']; ci=next(n for n,c in enumerate(p.configs()) if tuple(c)==tuple(cfg)); record={'config':cfg,'route_index':int(index),'key':primary[index],'route':p.bank('/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001/analysis_runs/dot_standing_026')[1][index],'reference_validation_pending':True,'is_solution':False}; path=Path('/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001/analysis_runs/dot_standing_026')/('compatibility-worker-'+str(ci)+'.json'); temp=path.with_suffix('.tmp-'+str(os.getpid())); temp.write_text(json.dumps(record))\n   try:os.link(temp,path)\n   except FileExistsError:pass\n   temp.unlink()\n return primary_custody_line\nsys.settrace(primary_custody_trace)\nOriginalPool=p.ProcessPoolExecutor\nclass BaseExceptionPool(OriginalPool):\n def shutdown(self,*args,**kwargs):\n  if sys.exc_info()[0] is not None and self._processes:\n   for worker in list(self._processes.values()):\n    if worker.is_alive():worker.terminate()\n  return super().shutdown(*args,**kwargs)\np.ProcessPoolExecutor=BaseExceptionPool\nprint(json.dumps(p.target(Path('/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001/analysis_runs/dot_standing_026'))))"
+    ],
+    "source": "recorded launch command (cryptolab process record process-3109822-1791267859840944010)",
+    "stdout_is_result": true
+   },
+   "compare": {
+    "reference_key": null,
+    "produced_key": null,
+    "sort": false,
+    "annotations": [
+     "active_numerical_tasks",
+     "distinct_configs_recorded",
+     "pool_worker_limit",
+     "worker_records_verified"
+    ],
+    "reference_sha256": "f21e622f9956d920b22c89ae902b96b2eb48015659532658ca270eacc730c7ee",
+    "reference_stripped_keys": [],
+    "original_record_sha256": "f21e622f9956d920b22c89ae902b96b2eb48015659532658ca270eacc730c7ee",
+    "results_md_sha256": "2cb222f5c117c10d16f61fa1b9f17ba9e7cbc1d08a7ef05de5869e5c33683b05"
+   }
+  },
+  "DOT-STANDING-027": {
+   "run": "dot_standing_027",
+   "title": "Keyed columnar w2-9 plus any monoalphabetic key",
+   "tier": "A",
+   "claim": "0 survivors; 818,224 configurations (NULL_WITHIN_FROZEN_SCOPE_NONBLIND_UNATTESTED)",
+   "epoch": 1791268626.991276,
+   "env": {},
+   "code": {
+    "affine_probe.py": {
+     "kind": "frozen",
+     "sha256": "7a9b67af5918746041b919acc92e3ad03a9951405892eea08546081620338775"
+    },
+    "cryptolab/__init__.py": {
+     "kind": "redacted",
+     "sha256": "768ca92876ecbc33d1d57e392b59150a741a1ec21a85c0fcaec3c319b17ed17f",
+     "original_sha256": "243c7870d0ba41d8f5e0f0bcd1b6915131796b13283c167adbe227c9b5cd85e4"
+    },
+    "cryptolab/research_bridge/__init__.py": {
+     "kind": "shim",
+     "sha256": "16a9ab72a99e1041721f3a3b58f86af5a31192d8eae51808d0faf12c0ea2ea26"
+    },
+    "cryptolab/research_bridge/cribsolve.py": {
+     "kind": "redacted",
+     "sha256": "df4be2031a966f64a98f07b67b58a8ec0a073b85b48fddc20c1a7fde5d37465e",
+     "original_sha256": "0fb705b5df8eaf003e229760f515868a3a9bd691757c2ae0c274632013e00bee"
+    },
+    "cryptolab/research_bridge/cribsolve_perm.py": {
+     "kind": "redacted",
+     "sha256": "9b7372774dd5968bfdc6f9e8b469fdb39b590fbf2ccf3ad29940544386812eb2",
+     "original_sha256": "99d23bc030851f421199bf5fc327e8c9da5ec4552b087454eb4a43a0ccf75e69"
+    },
+    "cryptolab/research_bridge/k4.py": {
+     "kind": "shim",
+     "sha256": "09a3132c3d8dbeb63aaa222104ed74d600c55448628768fd079e8866930f976b"
+    },
+    "cryptolab/tools/__init__.py": {
+     "kind": "shim",
+     "sha256": "36817edfdd209aff2d625a782461d49c686c1f3734dab2088b26fd68859242fd"
+    },
+    "cryptolab/tools/alphabets.py": {
+     "kind": "redacted",
+     "sha256": "350396d73935cb98f79284e6f0b1d2f682452918eea65f81179cc27c54779ed3",
+     "original_sha256": "20f449e51d0e986240cb0f5c9f0db9ee84dd50a33aebf3071df54bb643867c5a"
+    },
+    "cryptolab/tools/fitness.py": {
+     "kind": "shim",
+     "sha256": "494bbb6072cf682945b065132cfc16f31131ef8b5e002d000f79ae81e0a99c41"
+    },
+    "cryptolab/tools/hill_cipher.py": {
+     "kind": "redacted",
+     "sha256": "aade4534c5b7369c621b9f04a64d6c0c28f0578ed605fd48dcbadd503b0a4f8c",
+     "original_sha256": "80f92c0769b4b5f49ed332bf12b890cd04e7b12f21e0f3586f6949286449a553"
+    },
+    "cryptolab/tools/transforms.py": {
+     "kind": "shim",
+     "sha256": "2032e82d8501335a3aa6cf07bbafca7fa478bf69d8aa853e44ce158c0a3a9b8d"
+    },
+    "cryptolab/tools/transposition.py": {
+     "kind": "redacted",
+     "sha256": "f3ff7ed635838118ff183f4f2838e388b34a37faf71f54dbce3200f0f740d9e9",
+     "original_sha256": "5a79c870dbd76263dfad326f3ec87a9caafe62a623fc135cd8adac0a6f20d58c"
+    },
+    "hill_probe.py": {
+     "kind": "frozen",
+     "sha256": "125d17c9b80b87e14ad1a64b4905107d48ff25fed11f7d9824ffac98f64f5772"
+    },
+    "keyed_routes.py": {
+     "kind": "frozen",
+     "sha256": "607c1d3186088e3a9b465b92e54565636dd8bbda98a52fdab30239b8e2c50e90"
+    },
+    "mono_fiber_v2_probe.py": {
+     "kind": "frozen",
+     "sha256": "b0c0ed4c91e4da3b64213ff87d673a35602ac447f03c91a74ead134ff27b0919"
+    },
+    "routed_probe.py": {
+     "kind": "frozen",
+     "sha256": "9371eb8062dbe226f52bb02d9f06f11dde1780a1dae219ab9489bbee34dc9e9a"
+    }
+   },
+   "frozen_at_run": [
+    "affine_probe.py",
+    "hill_probe.py",
+    "keyed_routes.py",
+    "mono_fiber_v2_probe.py",
+    "routed_probe.py"
+   ],
+   "not_in_freeze_record": [
+    "cryptolab/__init__.py",
+    "cryptolab/research_bridge/cribsolve.py",
+    "cryptolab/research_bridge/cribsolve_perm.py",
+    "cryptolab/tools/alphabets.py",
+    "cryptolab/tools/transposition.py"
+   ],
+   "inputs": {},
+   "banks": [
+    {
+     "name": "keyed route bank (keyed_routes.build max_width=9)",
+     "source": "recorded bank-build process for this campaign",
+     "of": "027",
+     "argv": [
+      "{PY}",
+      "-c",
+      "import sys,json;from pathlib import Path;sys.path.insert(0,'/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001');import keyed_routes as k;print(json.dumps(k.build(Path('/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001/analysis_runs/dot_standing_027'),max_width=9)))"
+     ],
+     "expect": {
+      "analysis_runs/dot_standing_027/routes.npy": "ada97c8c76070a98b5398e74f54ef5560e05b3201e3e3d0765eb2605be766bc7",
+      "analysis_runs/dot_standing_027/routes.json": "76fb3ac2d86c6fad2c0d3182f388ed1c3ce4676b8483606fdadfa173e611dabc",
+      "analysis_runs/dot_standing_027/reference_routes.npy": "ada97c8c76070a98b5398e74f54ef5560e05b3201e3e3d0765eb2605be766bc7",
+      "analysis_runs/dot_standing_027/bank-audit.json": {
+       "canonical_json_sha256": "d162dc2265669457ef793a921c17a3d3c54adc7c3d8da9d0e31051f071a2b166"
+      }
+     }
+    }
+   ],
+   "target": {
+    "argv": [
+     "{PY}",
+     "-c",
+     "import json,sys;from pathlib import Path;sys.path.insert(0,'/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001');import mono_fiber_v2_probe as p\noriginal=p.scan_task\ndef recorded_scan(task):\n result=original(task)\n index=p.configs().index(task[1])\n with (Path(task[0])/(\"target-worker-\"+str(index)+\".json\")).open(\"x\") as f:json.dump(result,f)\n return result\np.scan_task=recorded_scan\noriginal_pullback=p.pullback\ndef custody_pullback(ct,route):\n import inspect,os,json\n frame=inspect.currentframe().f_back.f_locals\n if 'key' in frame and 'cfg' in frame and 'index' in frame:\n  cfg=frame['cfg']; index=int(frame['index']); ci=next(n for n,c in enumerate(p.configs()) if tuple(c)==tuple(cfg)); record={'config':cfg,'route_index':index,'key':frame['key'],'validation_pending':True,'is_solution':False}; path=Path('/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001/analysis_runs/dot_standing_027')/('compatibility-worker-'+str(ci)+'.json'); temp=path.with_suffix('.tmp-'+str(os.getpid())); temp.write_text(json.dumps(record));\n  try:os.link(temp,path)\n  except FileExistsError:pass\n  temp.unlink()\n return original_pullback(ct,route)\np.pullback=custody_pullback\nimport sys,os,inspect\ndef primary_custody_trace(frame,event,arg):\n if event=='call' and frame.f_code in (p.scan.__code__,p.match_data.__code__):return primary_custody_line\n return None\ndef primary_custody_line(frame,event,arg):\n local=frame.f_locals\n if event=='line' and 'primary' in local:\n  frame.f_trace_lines=False; primary=local['primary']\n  if primary:\n   index=next(iter(primary)); cfg=local['cfg']; ci=next(n for n,c in enumerate(p.configs()) if tuple(c)==tuple(cfg)); record={'config':cfg,'route_index':int(index),'key':primary[index],'route':p.bank('/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001/analysis_runs/dot_standing_027')[1][index],'reference_validation_pending':True,'is_solution':False}; path=Path('/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001/analysis_runs/dot_standing_027')/('compatibility-worker-'+str(ci)+'.json'); temp=path.with_suffix('.tmp-'+str(os.getpid())); temp.write_text(json.dumps(record))\n   try:os.link(temp,path)\n   except FileExistsError:pass\n   temp.unlink()\n return primary_custody_line\nsys.settrace(primary_custody_trace)\nOriginalPool=p.ProcessPoolExecutor\nclass BaseExceptionPool(OriginalPool):\n def shutdown(self,*args,**kwargs):\n  if sys.exc_info()[0] is not None and self._processes:\n   for worker in list(self._processes.values()):\n    if worker.is_alive():worker.terminate()\n  return super().shutdown(*args,**kwargs)\np.ProcessPoolExecutor=BaseExceptionPool\nprint(json.dumps(p.target(Path('/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001/analysis_runs/dot_standing_027'))))"
+    ],
+    "source": "recorded launch command (cryptolab process record process-3112572-1791268626992560835)",
+    "stdout_is_result": true
+   },
+   "compare": {
+    "reference_key": null,
+    "produced_key": null,
+    "sort": false,
+    "annotations": [
+     "active_numerical_tasks",
+     "distinct_configs_recorded",
+     "pool_worker_limit",
+     "worker_records_verified"
+    ],
+    "reference_sha256": "c35244cb5b740770b075255142bf2e13464a21e132d2c31fc7e89fc0b1c6ed7e",
+    "reference_stripped_keys": [],
+    "original_record_sha256": "c35244cb5b740770b075255142bf2e13464a21e132d2c31fc7e89fc0b1c6ed7e",
+    "results_md_sha256": "e8ef648bf31cbac76d4d88a1de101adc1960260ab933a20ecb12c9e1f4b7c48d"
+   }
+  },
+  "DOT-STANDING-028": {
+   "run": "dot_standing_028",
+   "title": "Keyed columnar w2-10 plus any monoalphabetic key",
+   "tier": "A",
+   "claim": "0 survivors; 8,075,824 configurations (NULL_WITHIN_FROZEN_SCOPE_NONBLIND_UNATTESTED)",
+   "epoch": 1791282535.576342,
+   "env": {},
+   "code": {
+    "affine_probe.py": {
+     "kind": "frozen",
+     "sha256": "7a9b67af5918746041b919acc92e3ad03a9951405892eea08546081620338775"
+    },
+    "cryptolab/__init__.py": {
+     "kind": "redacted",
+     "sha256": "768ca92876ecbc33d1d57e392b59150a741a1ec21a85c0fcaec3c319b17ed17f",
+     "original_sha256": "243c7870d0ba41d8f5e0f0bcd1b6915131796b13283c167adbe227c9b5cd85e4"
+    },
+    "cryptolab/research_bridge/__init__.py": {
+     "kind": "shim",
+     "sha256": "16a9ab72a99e1041721f3a3b58f86af5a31192d8eae51808d0faf12c0ea2ea26"
+    },
+    "cryptolab/research_bridge/cribsolve.py": {
+     "kind": "redacted",
+     "sha256": "df4be2031a966f64a98f07b67b58a8ec0a073b85b48fddc20c1a7fde5d37465e",
+     "original_sha256": "0fb705b5df8eaf003e229760f515868a3a9bd691757c2ae0c274632013e00bee"
+    },
+    "cryptolab/research_bridge/cribsolve_perm.py": {
+     "kind": "redacted",
+     "sha256": "9b7372774dd5968bfdc6f9e8b469fdb39b590fbf2ccf3ad29940544386812eb2",
+     "original_sha256": "99d23bc030851f421199bf5fc327e8c9da5ec4552b087454eb4a43a0ccf75e69"
+    },
+    "cryptolab/research_bridge/k4.py": {
+     "kind": "shim",
+     "sha256": "09a3132c3d8dbeb63aaa222104ed74d600c55448628768fd079e8866930f976b"
+    },
+    "cryptolab/tools/__init__.py": {
+     "kind": "shim",
+     "sha256": "36817edfdd209aff2d625a782461d49c686c1f3734dab2088b26fd68859242fd"
+    },
+    "cryptolab/tools/alphabets.py": {
+     "kind": "redacted",
+     "sha256": "350396d73935cb98f79284e6f0b1d2f682452918eea65f81179cc27c54779ed3",
+     "original_sha256": "20f449e51d0e986240cb0f5c9f0db9ee84dd50a33aebf3071df54bb643867c5a"
+    },
+    "cryptolab/tools/fitness.py": {
+     "kind": "shim",
+     "sha256": "494bbb6072cf682945b065132cfc16f31131ef8b5e002d000f79ae81e0a99c41"
+    },
+    "cryptolab/tools/hill_cipher.py": {
+     "kind": "redacted",
+     "sha256": "aade4534c5b7369c621b9f04a64d6c0c28f0578ed605fd48dcbadd503b0a4f8c",
+     "original_sha256": "80f92c0769b4b5f49ed332bf12b890cd04e7b12f21e0f3586f6949286449a553"
+    },
+    "cryptolab/tools/transforms.py": {
+     "kind": "shim",
+     "sha256": "2032e82d8501335a3aa6cf07bbafca7fa478bf69d8aa853e44ce158c0a3a9b8d"
+    },
+    "cryptolab/tools/transposition.py": {
+     "kind": "redacted",
+     "sha256": "f3ff7ed635838118ff183f4f2838e388b34a37faf71f54dbce3200f0f740d9e9",
+     "original_sha256": "5a79c870dbd76263dfad326f3ec87a9caafe62a623fc135cd8adac0a6f20d58c"
+    },
+    "hill_probe.py": {
+     "kind": "frozen",
+     "sha256": "125d17c9b80b87e14ad1a64b4905107d48ff25fed11f7d9824ffac98f64f5772"
+    },
+    "keyed_routes.py": {
+     "kind": "frozen",
+     "sha256": "607c1d3186088e3a9b465b92e54565636dd8bbda98a52fdab30239b8e2c50e90"
+    },
+    "mono_fiber_v3_probe.py": {
+     "kind": "frozen",
+     "sha256": "041b0c0dc66424a889c4006ac79d13954bab999f255b48c518315b493ec66601"
+    },
+    "routed_probe.py": {
+     "kind": "frozen",
+     "sha256": "9371eb8062dbe226f52bb02d9f06f11dde1780a1dae219ab9489bbee34dc9e9a"
+    }
+   },
+   "frozen_at_run": [
+    "affine_probe.py",
+    "hill_probe.py",
+    "keyed_routes.py",
+    "mono_fiber_v3_probe.py",
+    "routed_probe.py"
+   ],
+   "not_in_freeze_record": [
+    "cryptolab/__init__.py",
+    "cryptolab/research_bridge/cribsolve.py",
+    "cryptolab/research_bridge/cribsolve_perm.py",
+    "cryptolab/tools/alphabets.py",
+    "cryptolab/tools/transposition.py"
+   ],
+   "inputs": {},
+   "banks": [
+    {
+     "name": "keyed route bank (keyed_routes.build max_width=10)",
+     "source": "recorded bank-build process for this campaign",
+     "of": "028",
+     "argv": [
+      "{PY}",
+      "-c",
+      "import sys,json;from pathlib import Path;sys.path.insert(0,'/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001');import keyed_routes as k;print(json.dumps(k.build(Path('/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001/analysis_runs/dot_standing_028'),max_width=10)))"
+     ],
+     "expect": {
+      "analysis_runs/dot_standing_028/routes.npy": "5e7c51ca7235d84e0ce83bab7f173386ce5ce0ad4e1e87e199a6b881a4939ca1",
+      "analysis_runs/dot_standing_028/routes.json": "183bf712677a6ea6433fb8b30f85087e0fef52ca831eafd650fa40af776c9e31",
+      "analysis_runs/dot_standing_028/reference_routes.npy": "5e7c51ca7235d84e0ce83bab7f173386ce5ce0ad4e1e87e199a6b881a4939ca1",
+      "analysis_runs/dot_standing_028/bank-audit.json": {
+       "canonical_json_sha256": "5a24530da0b5602e8da669c0ca04ba89449baf07dd594be0a06e86d67dfe7615"
+      }
+     }
+    }
+   ],
+   "target": {
+    "argv": [
+     "{PY}",
+     "-c",
+     "import json,sys;from pathlib import Path;sys.path.insert(0,'/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001');import mono_fiber_v3_probe as p\noriginal=p.scan_task\ndef recorded_scan(task):\n result=original(task)\n index=p.configs().index(task[1])\n with (Path(task[0])/(\"target-worker-\"+str(index)+\".json\")).open(\"x\") as f:json.dump(result,f)\n return result\np.scan_task=recorded_scan\noriginal_pullback=p.pullback\ndef custody_pullback(ct,route):\n import inspect,os,json\n frame=inspect.currentframe().f_back.f_locals\n if 'key' in frame and 'cfg' in frame and 'index' in frame:\n  cfg=frame['cfg']; index=int(frame['index']); ci=next(n for n,c in enumerate(p.configs()) if tuple(c)==tuple(cfg)); record={'config':cfg,'route_index':index,'key':frame['key'],'validation_pending':True,'is_solution':False}; path=Path('/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001/analysis_runs/dot_standing_028')/('compatibility-worker-'+str(ci)+'.json'); temp=path.with_suffix('.tmp-'+str(os.getpid())); temp.write_text(json.dumps(record));\n  try:os.link(temp,path)\n  except FileExistsError:pass\n  temp.unlink()\n return original_pullback(ct,route)\np.pullback=custody_pullback\nimport sys,os,inspect\ndef primary_custody_trace(frame,event,arg):\n if event=='call' and frame.f_code in (p.scan.__code__,p.match_data.__code__):return primary_custody_line\n return None\ndef primary_custody_line(frame,event,arg):\n local=frame.f_locals\n if event=='line' and 'primary' in local:\n  frame.f_trace_lines=False; primary=local['primary']\n  if primary:\n   index=next(iter(primary)); cfg=local['cfg']; ci=next(n for n,c in enumerate(p.configs()) if tuple(c)==tuple(cfg)); record={'config':cfg,'route_index':int(index),'key':primary[index],'route':p.bank('/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001/analysis_runs/dot_standing_028')[1][index],'reference_validation_pending':True,'is_solution':False}; path=Path('/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001/analysis_runs/dot_standing_028')/('compatibility-worker-'+str(ci)+'.json'); temp=path.with_suffix('.tmp-'+str(os.getpid())); temp.write_text(json.dumps(record))\n   try:os.link(temp,path)\n   except FileExistsError:pass\n   temp.unlink()\n return primary_custody_line\nsys.settrace(primary_custody_trace)\nOriginalPool=p.ProcessPoolExecutor\nclass BaseExceptionPool(OriginalPool):\n def shutdown(self,*args,**kwargs):\n  if sys.exc_info()[0] is not None and self._processes:\n   for worker in list(self._processes.values()):\n    if worker.is_alive():worker.terminate()\n  return super().shutdown(*args,**kwargs)\np.ProcessPoolExecutor=BaseExceptionPool\nprint(json.dumps(p.target(Path('/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001/analysis_runs/dot_standing_028'))))"
+    ],
+    "source": "recorded launch command (cryptolab process record guarded-process-3151491-32885716)",
+    "stdout_is_result": true
+   },
+   "compare": {
+    "reference_key": null,
+    "produced_key": null,
+    "sort": false,
+    "annotations": [
+     "active_numerical_tasks",
+     "distinct_configs_recorded",
+     "pool_worker_limit",
+     "worker_records_verified"
+    ],
+    "reference_sha256": "c570604cecb3773e74644a9fb0274d55fe5a2c941ff59284b423e7da700f1901",
+    "reference_stripped_keys": [],
+    "original_record_sha256": "c570604cecb3773e74644a9fb0274d55fe5a2c941ff59284b423e7da700f1901",
+    "results_md_sha256": "bb4608327b3b46e690c506faf9995e2180a154b0ee036ef0cee41c1685d1b9ee"
+   }
+  },
+  "DOT-STANDING-030": {
+   "run": "dot_standing_030",
+   "title": "Hill n=2, then keyed columnar w2-10",
+   "tier": "A",
+   "claim": "0 survivors; 64,606,592 configurations (NULL_WITHIN_FROZEN_SCOPE_NONBLIND_UNATTESTED)",
+   "epoch": 1791290702.774292,
+   "env": {},
+   "code": {
+    "affine_probe.py": {
+     "kind": "frozen",
+     "sha256": "7a9b67af5918746041b919acc92e3ad03a9951405892eea08546081620338775"
+    },
+    "cryptolab/__init__.py": {
+     "kind": "redacted",
+     "sha256": "768ca92876ecbc33d1d57e392b59150a741a1ec21a85c0fcaec3c319b17ed17f",
+     "original_sha256": "243c7870d0ba41d8f5e0f0bcd1b6915131796b13283c167adbe227c9b5cd85e4"
+    },
+    "cryptolab/research_bridge/__init__.py": {
+     "kind": "shim",
+     "sha256": "16a9ab72a99e1041721f3a3b58f86af5a31192d8eae51808d0faf12c0ea2ea26"
+    },
+    "cryptolab/research_bridge/cribsolve.py": {
+     "kind": "redacted",
+     "sha256": "df4be2031a966f64a98f07b67b58a8ec0a073b85b48fddc20c1a7fde5d37465e",
+     "original_sha256": "0fb705b5df8eaf003e229760f515868a3a9bd691757c2ae0c274632013e00bee"
+    },
+    "cryptolab/research_bridge/cribsolve_perm.py": {
+     "kind": "redacted",
+     "sha256": "9b7372774dd5968bfdc6f9e8b469fdb39b590fbf2ccf3ad29940544386812eb2",
+     "original_sha256": "99d23bc030851f421199bf5fc327e8c9da5ec4552b087454eb4a43a0ccf75e69"
+    },
+    "cryptolab/research_bridge/k4.py": {
+     "kind": "shim",
+     "sha256": "09a3132c3d8dbeb63aaa222104ed74d600c55448628768fd079e8866930f976b"
+    },
+    "cryptolab/tools/__init__.py": {
+     "kind": "shim",
+     "sha256": "36817edfdd209aff2d625a782461d49c686c1f3734dab2088b26fd68859242fd"
+    },
+    "cryptolab/tools/alphabets.py": {
+     "kind": "redacted",
+     "sha256": "350396d73935cb98f79284e6f0b1d2f682452918eea65f81179cc27c54779ed3",
+     "original_sha256": "20f449e51d0e986240cb0f5c9f0db9ee84dd50a33aebf3071df54bb643867c5a"
+    },
+    "cryptolab/tools/fitness.py": {
+     "kind": "shim",
+     "sha256": "494bbb6072cf682945b065132cfc16f31131ef8b5e002d000f79ae81e0a99c41"
+    },
+    "cryptolab/tools/hill_cipher.py": {
+     "kind": "redacted",
+     "sha256": "aade4534c5b7369c621b9f04a64d6c0c28f0578ed605fd48dcbadd503b0a4f8c",
+     "original_sha256": "80f92c0769b4b5f49ed332bf12b890cd04e7b12f21e0f3586f6949286449a553"
+    },
+    "cryptolab/tools/transforms.py": {
+     "kind": "shim",
+     "sha256": "2032e82d8501335a3aa6cf07bbafca7fa478bf69d8aa853e44ce158c0a3a9b8d"
+    },
+    "cryptolab/tools/transposition.py": {
+     "kind": "redacted",
+     "sha256": "f3ff7ed635838118ff183f4f2838e388b34a37faf71f54dbce3200f0f740d9e9",
+     "original_sha256": "5a79c870dbd76263dfad326f3ec87a9caafe62a623fc135cd8adac0a6f20d58c"
+    },
+    "hill_columnar_core.py": {
+     "kind": "frozen",
+     "sha256": "80f02a358e9d3af47ddac2ac5e9951167997c357d72785548800468e3170c2c6"
+    },
+    "hill_columnar_probe.py": {
+     "kind": "frozen",
+     "sha256": "5e3aa94a00b342a9d5dfa595d73c85511333c8c7452b960f519040d5f99db30a"
+    },
+    "hill_probe.py": {
+     "kind": "frozen",
+     "sha256": "125d17c9b80b87e14ad1a64b4905107d48ff25fed11f7d9824ffac98f64f5772"
+    },
+    "keyed_bank_access.py": {
+     "kind": "frozen",
+     "sha256": "5393f7590e90a9d4c0b778060e849c12bca7e2904a63bd480446d0abd564f1ba"
+    },
+    "keyed_routes.py": {
+     "kind": "frozen",
+     "sha256": "607c1d3186088e3a9b465b92e54565636dd8bbda98a52fdab30239b8e2c50e90"
+    },
+    "routed_probe.py": {
+     "kind": "frozen",
+     "sha256": "9371eb8062dbe226f52bb02d9f06f11dde1780a1dae219ab9489bbee34dc9e9a"
+    }
+   },
+   "frozen_at_run": [
+    "affine_probe.py",
+    "hill_columnar_core.py",
+    "hill_columnar_probe.py",
+    "hill_probe.py",
+    "keyed_bank_access.py",
+    "keyed_routes.py",
+    "routed_probe.py"
+   ],
+   "not_in_freeze_record": [
+    "cryptolab/__init__.py",
+    "cryptolab/research_bridge/cribsolve.py",
+    "cryptolab/research_bridge/cribsolve_perm.py",
+    "cryptolab/tools/alphabets.py",
+    "cryptolab/tools/transposition.py"
+   ],
+   "inputs": {},
+   "banks": [
+    {
+     "name": "keyed route bank (keyed_routes.build max_width=10)",
+     "source": "same builder and arguments as the recorded bank build of DOT-STANDING-028; bank bytes must match this campaign's recorded bank",
+     "of": "030",
+     "argv": [
+      "{PY}",
+      "-c",
+      "import sys,json;from pathlib import Path;sys.path.insert(0,'/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001');import keyed_routes as k;print(json.dumps(k.build(Path('/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001/analysis_runs/dot_standing_030'),max_width=10)))"
+     ],
+     "expect": {
+      "analysis_runs/dot_standing_030/routes.npy": "5e7c51ca7235d84e0ce83bab7f173386ce5ce0ad4e1e87e199a6b881a4939ca1",
+      "analysis_runs/dot_standing_030/routes.json": "183bf712677a6ea6433fb8b30f85087e0fef52ca831eafd650fa40af776c9e31",
+      "analysis_runs/dot_standing_030/reference_routes.npy": "5e7c51ca7235d84e0ce83bab7f173386ce5ce0ad4e1e87e199a6b881a4939ca1",
+      "analysis_runs/dot_standing_030/bank-audit.json": {
+       "canonical_json_sha256": "5a24530da0b5602e8da669c0ca04ba89449baf07dd594be0a06e86d67dfe7615"
+      }
+     }
+    },
+    {
+     "name": "the same bank in DOT-STANDING-028's directory, which this search also reads",
+     "of": "028",
+     "source": "copied from the bank rebuilt above, then checked against DOT-STANDING-028's recorded bank",
+     "copy": {
+      "from": "analysis_runs/dot_standing_030",
+      "to": "analysis_runs/dot_standing_028",
+      "files": [
+       "routes.npy",
+       "routes.json",
+       "reference_routes.npy",
+       "bank-audit.json"
+      ]
+     },
+     "expect": {
+      "analysis_runs/dot_standing_028/routes.npy": "5e7c51ca7235d84e0ce83bab7f173386ce5ce0ad4e1e87e199a6b881a4939ca1",
+      "analysis_runs/dot_standing_028/routes.json": "183bf712677a6ea6433fb8b30f85087e0fef52ca831eafd650fa40af776c9e31",
+      "analysis_runs/dot_standing_028/reference_routes.npy": "5e7c51ca7235d84e0ce83bab7f173386ce5ce0ad4e1e87e199a6b881a4939ca1",
+      "analysis_runs/dot_standing_028/bank-audit.json": {
+       "canonical_json_sha256": "5a24530da0b5602e8da669c0ca04ba89449baf07dd594be0a06e86d67dfe7615"
+      }
+     }
+    }
+   ],
+   "target": {
+    "argv": [
+     "{PY}",
+     "-c",
+     "import json,sys;from pathlib import Path;sys.path.insert(0,'/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001');import hill_columnar_probe as p\noriginal=p.scan_task\ndef recorded_scan(task):\n result=original(task)\n index=p.configs().index(task[1])\n with (Path(task[0])/(\"target-worker-\"+str(index)+\".json\")).open(\"x\") as f:json.dump(result,f)\n return result\np.scan_task=recorded_scan\noriginal_pullback=p.pullback\ndef custody_pullback(ct,route):\n import inspect,os,json\n frame=inspect.currentframe().f_back.f_locals\n if 'key' in frame and 'cfg' in frame and 'index' in frame:\n  cfg=frame['cfg']; index=int(frame['index']); ci=next(n for n,c in enumerate(p.configs()) if tuple(c)==tuple(cfg)); record={'config':cfg,'route_index':index,'key':frame['key'],'validation_pending':True,'is_solution':False}; path=Path('/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001/analysis_runs/dot_standing_030')/('compatibility-worker-'+str(ci)+'.json'); temp=path.with_suffix('.tmp-'+str(os.getpid())); temp.write_text(json.dumps(record));\n  try:os.link(temp,path)\n  except FileExistsError:pass\n  temp.unlink()\n return original_pullback(ct,route)\np.pullback=custody_pullback\nimport sys,os,inspect\ndef primary_custody_trace(frame,event,arg):\n if event=='call' and frame.f_code in (p.scan.__code__,p.match_data.__code__):return primary_custody_line\n return None\ndef primary_custody_line(frame,event,arg):\n local=frame.f_locals\n if event=='line' and 'primary' in local:\n  frame.f_trace_lines=False; primary=local['primary']\n  if primary:\n   index=next(iter(primary)); offset=int(local.get('route_offset',0) if frame.f_code==p.scan.__code__ else frame.f_back.f_locals.get('route_offset',0)); global_index=offset+int(index); cfg=local['cfg']; ci=next(n for n,c in enumerate(p.configs()) if tuple(c)==tuple(cfg)); record={'config':cfg,'route_index':global_index,'key':primary[index],'route':p.bank('/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001/analysis_runs/dot_standing_030')[1][global_index],'reference_validation_pending':True,'is_solution':False}; path=Path('/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001/analysis_runs/dot_standing_030')/('compatibility-worker-'+str(ci)+'.json'); temp=path.with_suffix('.tmp-'+str(os.getpid())); temp.write_text(json.dumps(record))\n   try:os.link(temp,path)\n   except FileExistsError:pass\n   temp.unlink()\n return primary_custody_line\nsys.settrace(primary_custody_trace)\nOriginalPool=p.ProcessPoolExecutor\nclass BaseExceptionPool(OriginalPool):\n def shutdown(self,*args,**kwargs):\n  if sys.exc_info()[0] is not None and self._processes:\n   for worker in list(self._processes.values()):\n    if worker.is_alive():worker.terminate()\n  return super().shutdown(*args,**kwargs)\np.ProcessPoolExecutor=BaseExceptionPool\nprint(json.dumps(p.target(Path('/home/cpatrick/cryptolab_queue_worktrees/dot-standing-001/analysis_runs/dot_standing_030'))))"
+    ],
+    "source": "recorded launch command (cryptolab process record guarded-process-3169303-33702435)",
+    "stdout_is_result": true
+   },
+   "compare": {
+    "reference_key": null,
+    "produced_key": null,
+    "sort": false,
+    "annotations": [
+     "active_numerical_tasks",
+     "distinct_configs_recorded",
+     "pool_worker_limit",
+     "worker_records_verified"
+    ],
+    "reference_sha256": "243f77c5044624e89bfad3ab2ec19c5adc9f5adb7439e0f555cfda40e6b98e52",
+    "reference_stripped_keys": [],
+    "original_record_sha256": "243f77c5044624e89bfad3ab2ec19c5adc9f5adb7439e0f555cfda40e6b98e52",
+    "results_md_sha256": "cc6bf3ff2aeaff3bf246a83d20b342e5e746f2b936fecbcfcff139480016d271"
+   }
+  }
+ }
+}

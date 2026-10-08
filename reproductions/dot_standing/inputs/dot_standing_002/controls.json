@@ -1,0 +1,238 @@
+{
+  "passed": true,
+  "records": [
+    {
+      "config": [
+        2,
+        0,
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      ],
+      "positive_exact": 200,
+      "random_negatives_rejected": 200,
+      "singular_rejected": 1,
+      "independent_exhaustive_agreement": true
+    },
+    {
+      "config": [
+        2,
+        0,
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+      ],
+      "positive_exact": 200,
+      "random_negatives_rejected": 200,
+      "singular_rejected": 1,
+      "independent_exhaustive_agreement": true
+    },
+    {
+      "config": [
+        2,
+        0,
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      ],
+      "positive_exact": 200,
+      "random_negatives_rejected": 200,
+      "singular_rejected": 1,
+      "independent_exhaustive_agreement": true
+    },
+    {
+      "config": [
+        2,
+        0,
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+      ],
+      "positive_exact": 200,
+      "random_negatives_rejected": 200,
+      "singular_rejected": 1,
+      "independent_exhaustive_agreement": true
+    },
+    {
+      "config": [
+        2,
+        1,
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      ],
+      "positive_exact": 200,
+      "random_negatives_rejected": 200,
+      "singular_rejected": 1,
+      "independent_exhaustive_agreement": true
+    },
+    {
+      "config": [
+        2,
+        1,
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+      ],
+      "positive_exact": 200,
+      "random_negatives_rejected": 200,
+      "singular_rejected": 1,
+      "independent_exhaustive_agreement": true
+    },
+    {
+      "config": [
+        2,
+        1,
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      ],
+      "positive_exact": 200,
+      "random_negatives_rejected": 200,
+      "singular_rejected": 1,
+      "independent_exhaustive_agreement": true
+    },
+    {
+      "config": [
+        2,
+        1,
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+      ],
+      "positive_exact": 200,
+      "random_negatives_rejected": 200,
+      "singular_rejected": 1,
+      "independent_exhaustive_agreement": true
+    },
+    {
+      "config": [
+        3,
+        0,
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      ],
+      "positive_exact": 200,
+      "random_negatives_rejected": 200,
+      "singular_rejected": 1,
+      "independent_exhaustive_agreement": true
+    },
+    {
+      "config": [
+        3,
+        0,
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+      ],
+      "positive_exact": 200,
+      "random_negatives_rejected": 200,
+      "singular_rejected": 1,
+      "independent_exhaustive_agreement": true
+    },
+    {
+      "config": [
+        3,
+        0,
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      ],
+      "positive_exact": 200,
+      "random_negatives_rejected": 200,
+      "singular_rejected": 1,
+      "independent_exhaustive_agreement": true
+    },
+    {
+      "config": [
+        3,
+        0,
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+      ],
+      "positive_exact": 200,
+      "random_negatives_rejected": 200,
+      "singular_rejected": 1,
+      "independent_exhaustive_agreement": true
+    },
+    {
+      "config": [
+        3,
+        1,
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      ],
+      "positive_exact": 200,
+      "random_negatives_rejected": 200,
+      "singular_rejected": 1,
+      "independent_exhaustive_agreement": true
+    },
+    {
+      "config": [
+        3,
+        1,
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+      ],
+      "positive_exact": 200,
+      "random_negatives_rejected": 200,
+      "singular_rejected": 1,
+      "independent_exhaustive_agreement": true
+    },
+    {
+      "config": [
+        3,
+        2,
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      ],
+      "positive_exact": 200,
+      "random_negatives_rejected": 200,
+      "singular_rejected": 1,
+      "independent_exhaustive_agreement": true
+    },
+    {
+      "config": [
+        3,
+        2,
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+      ],
+      "positive_exact": 200,
+      "random_negatives_rejected": 200,
+      "singular_rejected": 1,
+      "independent_exhaustive_agreement": true
+    },
+    {
+      "config": [
+        3,
+        2,
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      ],
+      "positive_exact": 200,
+      "random_negatives_rejected": 200,
+      "singular_rejected": 1,
+      "independent_exhaustive_agreement": true
+    },
+    {
+      "config": [
+        3,
+        2,
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+        "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+      ],
+      "positive_exact": 200,
+      "random_negatives_rejected": 200,
+      "singular_rejected": 1,
+      "independent_exhaustive_agreement": true
+    }
+  ],
+  "dropped": [
+    [
+      3,
+      1,
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    ],
+    [
+      3,
+      1,
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ",
+      "KRYPTOSABCDEFGHIJLMNQUVWXZ"
+    ]
+  ],
+  "positive_plants": 3600,
+  "negative_random": 3600,
+  "seconds": 8.280207633972168
+}
