@@ -749,6 +749,10 @@ def build():
     _render(env, "encoding_chart.html", "encoding-chart/index.html", global_ctx)
     pages_built += 1
 
+    # Odd and even in the K4 cribs: the parity pattern and its Lean proofs (article)
+    _render(env, "crib_parity.html", "crib-parity/index.html", global_ctx)
+    pages_built += 1
+
     # Challenge K4
     _render(env, "challenge.html", "challenge/index.html", global_ctx)
     pages_built += 1
@@ -1424,6 +1428,7 @@ def _write_sitemap(tree: dict, output_dir: str):
         ("/about-kryptos/", "0.5", "monthly"),
         ("/archive/", "0.7", "monthly"),
         ("/encoding-chart/", "0.7", "monthly"),
+        ("/crib-parity/", "0.7", "monthly"),
         ("/challenge/", "0.7", "weekly"),
         ("/about-me/", "0.3", "monthly"),
         ("/terms/", "0.1", "yearly"),

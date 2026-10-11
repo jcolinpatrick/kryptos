@@ -1501,6 +1501,12 @@
     "keyspace": "all reference texts + wordlists + auto-generated sequences",
     "status": "active"
   },
+  "e_crib_34_stehle_null": {
+    "audit_reason": "CORRECTION. Honest any-lag null gives p=1/205 (lags 1-30) and 1/234 (lags 1-24), against a previously cited p~1/642 \u2014 generous by ~3x. Lag 4 alone would be 1/5,714 but lag 4 was found by inspection, not pre-registered, so that conditioning is unavailable. Real pattern, weak evidence.",
+    "description": "e_crib_34_stehle_null.py \u2014 recomputes the null for the Stehle constant-difference anomaly (registry E0a).",
+    "family": "crib_analysis",
+    "status": "exhausted"
+  },
   "e_crib_only_keyword_sweep": {
     "description": "e_crib_only_keyword_sweep.py",
     "family": "team",

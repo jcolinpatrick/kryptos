@@ -1,0 +1,429 @@
+{% extends "base.html" %}
+{% block title %}Odd and Even in the K4 Cribs | kryptosbot.com{% endblock %}
+{% block page_path %}/crib-parity/{% endblock %}
+{% block meta_description %}Add each K4 cipher letter's number to its position, and every repeated letter in Sanborn's cribs comes out odd every time or even every time: 13 pairs out of 13. How unusual that is, what it would mean, what it cannot tell us, and the computer-checked proofs.{% endblock %}
+{% block og_title %}Odd and Even in the K4 Cribs{% endblock %}
+{% block head_extra %}
+<link rel="stylesheet" href="/static/findings.css">
+<link rel="stylesheet" href="/static/archive.css">
+{% endblock %}
+
+{% block content %}
+<h1>Odd and even in the K4 cribs</h1>
+
+<p>
+  Colin Patrick noticed a small regularity in the two stretches of K4 plaintext
+  that Jim Sanborn has released. It takes a few minutes to check by hand. We
+  checked it by machine, wrote the arithmetic on this page as proofs that a
+  computer verifies step by step, and worked out what the pattern would and
+  would not mean if it is more than chance.
+</p>
+
+<div class="plain-summary">
+  <strong>In plain English:</strong> number the letters A&nbsp;=&nbsp;0 to
+  Z&nbsp;=&nbsp;25 and, at each crib position, add the cipher letter&rsquo;s
+  number to the position. Every plaintext letter that appears more than once in
+  the cribs gives an answer that is odd every time or even every time: 13 pairs
+  out of 13. With random cipher letters that happens about once in 2,000 tries.
+  Allowing for the other patterns that were looked at before this one turned up,
+  it is more like once in 100 to 200. If the pattern is real, it is a fact about
+  the key, not the message. It cannot be used to find the plaintext: the cipher
+  method that would explain it narrows each unknown letter by one odd-or-even
+  test, and nothing more.
+</div>
+
+<nav class="archive-toc">
+  <h2>Contents</h2>
+  <ol>
+    <li><a href="#pattern">The pattern</a></li>
+    <li><a href="#key">Why it is about the key</a></li>
+    <li><a href="#odds">How unusual it is</a></li>
+    <li><a href="#order">What it says about how K4 was built</a></li>
+    <li><a href="#stehle">Together with the Stehle run</a></li>
+    <li><a href="#limits">What it cannot tell us</a></li>
+    <li><a href="#predictions">What new plaintext would show</a></li>
+    <li><a href="#proofs">Checked by computer</a></li>
+    <li><a href="#confidence">How confident we are</a></li>
+  </ol>
+</nav>
+
+<section id="pattern">
+  <h2>The pattern</h2>
+  <p>
+    The ciphertext is the standard 97-letter transcription. The cribs are
+    EASTNORTHEAST at positions 22&ndash;34 and BERLINCLOCK at positions
+    64&ndash;74, counting from 1. At each crib position, take the cipher
+    letter&rsquo;s number (A&nbsp;=&nbsp;0, B&nbsp;=&nbsp;1, &hellip;,
+    Z&nbsp;=&nbsp;25) and add the position. In the table, the cipher
+    letter is in brackets after its number.
+  </p>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Letter</th><th>Position + number</th><th>Odd or even</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>E</td><td>22 + 5 (F) = 27<br>31 + 6 (G) = 37<br>65 + 24 (Y) = 89</td><td>all odd</td></tr>
+        <tr><td>S</td><td>24 + 17 (R) = 41<br>33 + 18 (S) = 51</td><td>odd</td></tr>
+        <tr><td>O</td><td>27 + 16 (Q) = 43<br>72 + 5 (F) = 77</td><td>odd</td></tr>
+        <tr><td>R</td><td>28 + 15 (P) = 43<br>66 + 15 (P) = 81</td><td>odd</td></tr>
+        <tr><td>A</td><td>23 + 11 (L) = 34<br>32 + 10 (K) = 42</td><td>even</td></tr>
+        <tr><td>T</td><td>25 + 21 (V) = 46<br>29 + 17 (R) = 46<br>34 + 18 (S) = 52</td><td>all even</td></tr>
+        <tr><td>N</td><td>26 + 16 (Q) = 42<br>69 + 19 (T) = 88</td><td>even</td></tr>
+        <tr><td>L</td><td>67 + 21 (V) = 88<br>71 + 25 (Z) = 96</td><td>even</td></tr>
+        <tr><td>C</td><td>70 + 12 (M) = 82<br>73 + 15 (P) = 88</td><td>even</td></tr>
+        <tr><td>H, B, I, K</td><td>H: 30 + 13 (N) = 43<br>B: 64 + 13 (N) = 77<br>I: 68 + 19 (T) = 87<br>K: 74 + 10 (K) = 84</td><td>once each</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>
+    That is 13 pairs of matching plaintext letters, and all 13 agree. They are
+    not 13 separate tests: a letter seen three times gives two independent
+    comparisons, so there are 11 independent checks. The letters fall into two
+    groups: <strong>B, E, H, I, O, R, S</strong> on the odd side and
+    <strong>A, C, K, L, N, T</strong> on the even side.
+  </p>
+  <p>
+    The usual conventions make no difference. Counting positions from 0, or
+    numbering the alphabet from A&nbsp;=&nbsp;1, flips every answer at once, so
+    the pairs still agree.
+  </p>
+  <p>
+    A fair first objection is that the two EASTs are nine positions apart, so
+    their positions already differ between odd and even. That is exactly why it
+    is a test. For E to keep the same total, its cipher letter has to switch too,
+    and it does (F&nbsp;=&nbsp;5, then G&nbsp;=&nbsp;6). All four letters of EAST
+    do: FLRV are all odd (5, 11, 17, 21) and GKSS are all even (6, 10, 18, 18).
+  </p>
+</section>
+
+<section id="key">
+  <h2>Why it is about the key</h2>
+  <p>
+    In the cipher families most often proposed for K4, each plaintext letter is
+    shifted along the alphabet by a key letter. Vigen&egrave;re, Beaufort and
+    variant Beaufort differ only in the direction of the shift. In all three,
+    whether the key plus the position is odd or even is fixed by two things: the
+    same odd-or-even answer as in the table, and the plaintext letter. Within a
+    pair the plaintext letter is the same, so it cancels. The pattern therefore
+    says: <em>at the crib positions, whether the key plus the position is odd or
+    even depends only on which plaintext letter is being enciphered.</em>
+  </p>
+  <p>
+    Going round the end of the alphabet does not disturb this, because 26 is
+    even: taking away 26 never changes whether a number is odd or even.
+  </p>
+  <p>
+    One of the 13 pairs was already known. R at positions 28 and 66 is
+    enciphered as P both times, so the key is the same at those two positions.
+    That is the key equality Richard Bean recorded in his 2021 paper (he counts
+    from 0, so it appears there as positions 27 and 65). Colin did not find the
+    odd-and-even pattern across the other pairs stated there or elsewhere.
+  </p>
+  <details class="finding-technical">
+    <summary>The algebra</summary>
+    <div class="wb-details-body">
+<pre>key = C &minus; P   (Vigen&egrave;re)
+key = C + P   (Beaufort)
+key = P &minus; C   (variant Beaufort)        all counted mod 26
+
+parity(key + i) = parity(C + i) + parity(P)       in every case, mod 2
+
+same plaintext letter P at positions i and j:
+  parity(C<sub>i</sub> + i) = parity(C<sub>j</sub> + j)   exactly when   parity(key<sub>i</sub> + i) = parity(key<sub>j</sub> + j)</pre>
+      <p>
+        Parity is well defined on letters counted mod 26 because 26 is even, so
+        reducing mod 2 is compatible with every addition and subtraction above.
+      </p>
+    </div>
+  </details>
+</section>
+
+<section id="odds">
+  <h2>How unusual it is</h2>
+  <p>
+    &ldquo;How likely is this by chance?&rdquo; has more than one honest
+    answer, depending on what is allowed to be random. All three below are exact
+    counts, not estimates.
+  </p>
+  <ul>
+    <li>
+      <strong>If the cipher letters at the crib positions were random:</strong>
+      13 letters have odd numbers and 13 have even ones, so each of the 11 checks
+      is a fair coin. All 11 coming out the same way has odds of exactly
+      <strong>1 in 2,048</strong>.
+    </li>
+    <li>
+      <strong>If K4&rsquo;s own 97 letters were shuffled into a random
+      order:</strong> <strong>1 in 1,996</strong>. This keeps K4&rsquo;s actual
+      mix of odd and even letters, so the pattern is not a side effect of which
+      letters K4 happens to use. Colin&rsquo;s original check, 2,000,000 random
+      shuffles with 994 hits, agrees with it.
+    </li>
+    <li>
+      <strong>If the alphabet were numbered in a random order instead of A to
+      Z,</strong> with the carved letters left where they are:
+      <strong>1 in 433</strong>. This is lower because two of the 11 checks pass
+      under any numbering at all. R is enciphered as P at both of its positions,
+      so that pair always agrees. And the S pair (positions 24 and 33) and one T
+      pair (29 and 34) use the same two cipher letters, R and S, in the same
+      roles, so they agree or disagree together. Only 9 checks are left to
+      chance.
+    </li>
+  </ul>
+  <p>
+    Then there is how the pattern was found. Colin came across it while
+    computing about ten different statistics on the cribs, and also tried the
+    KRYPTOS-keyed alphabet, where the pattern does not appear (6 of 13 pairs
+    agree). His own allowance for that search puts a fair overall figure at
+    roughly <strong>1 in 100 to 200</strong>. That allowance is a judgement, not
+    a calculation, and it is the honest headline: interesting, not proof.
+  </p>
+</section>
+
+<section id="order">
+  <h2>What it says about how K4 was built</h2>
+  <p>
+    Suppose K4 combines a letter-for-letter substitution (a mixed alphabet) with
+    a shifting key. If the pattern comes from the method rather than luck, it
+    means the pattern would hold whatever key had been chosen. Under that
+    assumption, which the proofs state openly, the order of the two steps
+    matters:
+  </p>
+  <ul>
+    <li>
+      <strong>Substitute first, then shift:</strong> the pattern follows
+      automatically, provided the key&rsquo;s odd-or-even value steps in time
+      with the position. Each plaintext letter&rsquo;s group is then simply
+      whether the substitution sends it to an odd or an even number.
+    </li>
+    <li>
+      <strong>Shift first, then substitute:</strong> the pattern can hold for
+      every key only if the substitution keeps odd letters odd and even letters
+      even, or swaps the two halves wholesale. The groups would then have to
+      match the ordinary alphabet&rsquo;s odd and even letters. They do not: E
+      (4, even) and R (17, odd) are in the same group. So this order cannot
+      produce the pattern by design.
+    </li>
+    <li>
+      <strong>Two shifting keys</strong> add up to a single shifting key, so
+      nothing on this page can tell them apart.
+    </li>
+    <li>
+      <strong>A transposition as the last step</strong> adds a term that depends
+      on where each letter moved. For a keyed columnar transposition of odd width
+      that term is the same all the way down each column, and 38,805 of the
+      409,112 keys of widths 2 to 9 leave it the same at all 24 crib positions.
+      So the pattern cannot rule a final transposition in or out.
+    </li>
+    <li>
+      <strong>One method across both cribs:</strong> four of the checks link the
+      two cribs, because E, N, O and R appear in both. If the cribs had been
+      enciphered separately, those four would be coin flips. All four agree, a
+      1 in 16 coincidence on its own: mild evidence for one method spanning
+      positions 22&ndash;74.
+    </li>
+  </ul>
+  <p>
+    It also says less about the cipher alphabet than it might seem to. The
+    pattern only fixes which letters count as odd and which as even. Any
+    renumbering that keeps the odd letters together, or swaps the two halves
+    wholesale, keeps all 13 pairs; swapping A and C is one example. So the
+    pattern points to an alphabet whose odd/even split is the ordinary one, not
+    to the ordinary order itself.
+  </p>
+</section>
+
+<section id="stehle">
+  <h2>Together with the Stehle run</h2>
+  <p>
+    K4 has a second well-known oddity next to BERLINCLOCK. In the nine letters
+    DIAWINFBN at positions 56&ndash;64, every letter is exactly five places
+    further along the alphabet than the letter four positions before it (D to I,
+    I to N, A to F, W to B going round from Z to A, I to N). Ferdinando Stehle
+    pointed this out on the sci.crypt newsgroup in 2000, and Bean&rsquo;s 2021
+    paper cites it.
+    Allowing for the fact that both the gap of four and the place were found by
+    looking, a run like this turns up by chance about once in 205 tries.
+  </p>
+  <p>
+    If both patterns are real and come from the &ldquo;substitute first, then
+    shift&rdquo; method above, they combine like this:
+  </p>
+  <ul>
+    <li>
+      The key&rsquo;s change across each four-letter step is even, so the key
+      cannot supply the whole 5. Each 5 splits into an odd part on the plaintext
+      side and an even part on the key side.
+    </li>
+    <li>
+      So in positions 56&ndash;64, plaintext letters four apart always sit in
+      opposite groups, and no plaintext letter repeats four positions later.
+    </li>
+    <li>
+      Position 64 is the B of BERLIN, which is in the odd group. So position 60
+      is not B, E, H, I, O, R or S, and position 56 is not A, C, K, L, N or T.
+      Letters outside the 13 grouped ones are not constrained at all.
+    </li>
+  </ul>
+</section>
+
+<section id="limits">
+  <h2>What it cannot tell us</h2>
+  <p>
+    This is the most important result on the page. Under that method, once the
+    substitution is fixed, a candidate plaintext is possible for some key
+    <strong>exactly when</strong> it passes one odd-or-even test at each
+    position. The key is otherwise free, so the method never predicts a key
+    value. The Stehle run adds nothing beyond that test: any plaintext that
+    passes it already has all the Stehle consequences above.
+  </p>
+  <p>
+    The test allows exactly 13 of the 26 letters at each unknown position once
+    the substitution is known, and more before it is. That still leaves 13
+    choices for each of the 73 unknown letters before anyone asks whether the
+    result reads as English. To show how loose it is, the proofs include a
+    complete 97-letter plaintext that fits both patterns and both cribs and
+    uses only A and B everywhere else. Guessing plaintext against these
+    constraints is not a way to search. Their use is to reject proposed
+    solutions that come from somewhere else.
+  </p>
+</section>
+
+<section id="predictions">
+  <h2>What new plaintext would show</h2>
+  <p>
+    If the pattern comes from the method, it has to hold across the whole
+    message: every plaintext letter must give the same odd-or-even answer at
+    every one of its positions. Over 97 letters that is dozens of independent
+    checks, which chance would essentially never pass. If more plaintext is ever
+    published, this is a one-line check.
+  </p>
+  <p>
+    Any newly released crib letter that is one of the 13 grouped letters must
+    land in its group, and each one is a fair test with an even chance of
+    breaking the pattern. If the pattern is luck, eight such letters would all
+    fit only about once in 256 tries.
+  </p>
+</section>
+
+<section id="proofs">
+  <h2>Checked by computer</h2>
+  <p>
+    The arithmetic on this page is written as proofs in
+    <a href="https://lean-lang.org/" rel="nofollow">Lean</a>, a proof assistant:
+    a program that checks every step of a mathematical argument and refuses any
+    step it cannot verify. The proofs start from the carved ciphertext itself,
+    read letter by letter, and an automated test fails if that text ever differs
+    from the repository&rsquo;s reference copy. A final audit confirms that no
+    step was taken on trust.
+  </p>
+  <p>
+    Four figures are exact counts made by a short Python script in the same
+    folder rather than Lean proofs: the shuffle and random-numbering odds, the
+    KRYPTOS-alphabet count and the transposition count. The 1-in-205 figure for
+    the Stehle run comes from a separate script, linked below.
+  </p>
+  <h3>Reproduce</h3>
+<pre><code>bash formal/k4_parity/reproduce.sh</code></pre>
+  <p><small>
+    Run from a clone of the <a href="https://github.com/jcolinpatrick/kryptos">kryptos repo</a>.
+    Needs Python 3.11+ and <a href="https://github.com/leanprover/elan" rel="nofollow">elan</a>,
+    the Lean installer. The first run downloads the Lean toolchain, the Mathlib
+    library and its prebuilt files; allow about 11&nbsp;GB of disk space. The
+    proofs, the script and a theorem-by-theorem index
+    are in
+    <a href="https://github.com/jcolinpatrick/kryptos/tree/main/formal/k4_parity">formal/k4_parity</a>.
+  </small></p>
+  <details class="finding-technical">
+    <summary>What changed when the arithmetic was checked</summary>
+    <div class="wb-details-body">
+      <p>Writing the proofs changed four things in the original write-up of this pattern.</p>
+      <ol>
+        <li>
+          It had said the pattern pins the cipher alphabet to the ordinary order,
+          up to a simple multiply-and-shift relabeling. It pins only the
+          odd/even split. Every one of the roughly
+          7.8&nbsp;&times;&nbsp;10<sup>19</sup> numberings with the ordinary
+          odd/even split keeps all 13 pairs, and only 312 of those are
+          multiply-and-shift relabelings; swapping A and C is one that is not.
+        </li>
+        <li>
+          The random-numbering odds are 1 in 433, not 1 in 2,048, because two of
+          the checks pass under every numbering. An earlier sampled estimate of
+          1 in 457 is replaced by the exact figure, and the sampled shuffle
+          figure of 1 in 2,012 by the exact 1 in 1,996.
+        </li>
+        <li>
+          &ldquo;No plaintext letter repeats four positions later&rdquo; does not
+          need the substitution to be one-to-one. Any substitution will do.
+        </li>
+        <li>
+          The order-of-operations result depends on reading &ldquo;comes from the
+          method&rdquo; as &ldquo;would hold whatever key was chosen&rdquo;. The
+          proof now states that assumption instead of leaving it implicit.
+        </li>
+      </ol>
+    </div>
+  </details>
+</section>
+
+<section id="confidence">
+  <h2>How confident we are</h2>
+  <div class="finding-caveat">
+    <h3>What we know and don&rsquo;t know</h3>
+    <p>
+      The arithmetic is certain: it is short, anyone can check it by hand, and a
+      proof checker has verified it. What it means is far less certain. Nothing
+      on this page can tell a property of Sanborn&rsquo;s method apart from a
+      1-in-a-few-hundred coincidence that was noticed because someone was
+      looking. Only more plaintext can settle that.
+    </p>
+  </div>
+  <div class="confidence-indicator confidence-high">
+    <div class="confidence-bar confidence-high">
+      <span class="filled"></span><span class="filled"></span><span class="filled"></span>
+      <span class="filled"></span><span class="filled"></span><span class="filled"></span>
+      <span class="filled"></span><span class="filled"></span><span class="filled"></span><span></span>
+    </div>
+    <span class="confidence-label">High: the 13 of 13 agreement, the exact odds, and every consequence of the cipher model described above.</span>
+  </div>
+  <div class="confidence-indicator confidence-moderate">
+    <div class="confidence-bar confidence-moderate">
+      <span class="filled"></span><span class="filled"></span><span class="filled"></span>
+      <span class="filled"></span><span class="filled"></span><span class="filled"></span>
+      <span></span><span></span><span></span><span></span>
+    </div>
+    <span class="confidence-label">Moderate: that the pattern is unusual. About 1 in 2,000 before allowing for the search, roughly 1 in 100 to 200 after; the allowance is an estimate.</span>
+  </div>
+  <div class="confidence-indicator confidence-low">
+    <div class="confidence-bar confidence-low">
+      <span class="filled"></span><span class="filled"></span><span class="filled"></span>
+      <span></span><span></span><span></span>
+      <span></span><span></span><span></span><span></span>
+    </div>
+    <span class="confidence-label">Low: that it reflects how K4 was enciphered rather than chance.</span>
+  </div>
+</section>
+
+<hr>
+<p class="fig-caption">
+  <strong>Sources.</strong> Richard Bean,
+  <a href="https://ecp.ep.liu.se/index.php/histocrypt/article/view/153" rel="nofollow">&ldquo;Cryptodiagnosis of Kryptos K4&rdquo;</a>,
+  HistoCrypt 2021 (the key equality at positions 28 and 66, and the Stehle run).
+  Ferdinando Stehle,
+  <a href="https://groups.google.com/g/sci.crypt/c/EYd9673EihM" rel="nofollow">&ldquo;help needed to break KRYPTOS&rdquo;</a>,
+  sci.crypt, 2000. Proofs, figures
+  and the reproduction command:
+  <a href="https://github.com/jcolinpatrick/kryptos/tree/main/formal/k4_parity">formal/k4_parity on GitHub</a>.
+  The Stehle chance figure:
+  <a href="https://github.com/jcolinpatrick/kryptos/blob/main/scripts/crib_analysis/e_crib_34_stehle_null.py">scripts/crib_analysis/e_crib_34_stehle_null.py</a>.
+  For how we grade claims, see <a href="/methodology/#how-to-read-claims">How we test</a>.
+</p>
+
+<p>
+  <a href="/findings/">What we&rsquo;ve learned about K4 &rarr;</a> &middot;
+  <a href="/about-kryptos/">About Kryptos &amp; how the cipher works &rarr;</a> &middot;
+  <a href="/methodology/">How we test &rarr;</a>
+</p>
+{% endblock %}

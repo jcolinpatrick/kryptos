@@ -1,0 +1,14 @@
+name = "k4parity"
+version = "0.1.0"
+defaultTargets = ["K4Parity"]
+
+# Pinned to the Mathlib tag that matches lean-toolchain exactly (v4.33.1), so a
+# fresh clone does not pull a second toolchain. `lake exe cache get` downloads
+# prebuilt Mathlib; never build Mathlib from source.
+[[require]]
+name = "mathlib"
+git = "https://github.com/leanprover-community/mathlib4"
+rev = "v4.33.1"
+
+[[lean_lib]]
+name = "K4Parity"
