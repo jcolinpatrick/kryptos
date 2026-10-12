@@ -453,10 +453,20 @@ nav strong a:visited {
   transition: transform var(--transition), opacity var(--transition);
 }
 
-/* Hamburger up to 1024px: at 769-1024px (iPad) the ten nav links no longer
-   fit on one nowrap row once the tablet font bump applies, so the full-width
-   tablet range collapses to the menu too. */
-@media (max-width: 1024px) {
+/* Full bar only: trim link padding and gaps so the twelve top-level links and
+   the logo fit from 1,290px up. Dropdown items keep their own padding. */
+@media (min-width: 1290px) {
+  nav { padding: 0 var(--sp-4); }
+  nav .nav-links { gap: 2px; }
+  nav .nav-links > li > a,
+  nav strong a { padding: var(--sp-2) 7px; }
+}
+
+/* Hamburger up to 1289px. The full bar is one nowrap row; with twelve links it
+   needs 1,283px at the spacing below (measured 2026-10-11 in Chromium), so any
+   narrower viewport collapses to the menu. Before this the cut was 1024px and
+   the bar, then 1,344px wide, scrolled every page sideways at 1025-1343px. */
+@media (max-width: 1289px) {
   .nav-toggle-label {
     display: block;
   }
